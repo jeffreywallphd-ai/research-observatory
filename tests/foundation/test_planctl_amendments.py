@@ -382,8 +382,21 @@ class PlanctlAmendmentTests(unittest.TestCase):
     def test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut(self) -> None:
         from governance_kernel import paused_predecessor_record_hash
 
+        # Use authentic immutable correction authority. Renaming an older
+        # proposal cannot authenticate its superseded governed experience.
+        packet = json.loads(
+            subprocess.check_output(
+                [
+                    "git",
+                    "show",
+                    "2160cc9917282d80848189dc9669fe3827979246:planning/enabler-change-requests/ECR-0008.packet.json",
+                ],
+                cwd=REPO,
+            )
+        )
+        predecessor = packet["authorityChain"]["pausedPredecessor"]
         source = subprocess.check_output(
-            ["git", "show", "07473e15a6212995fa48ece9909f0d51be7ebc26:planning/backlog.yaml"], cwd=REPO
+            ["git", "show", f"{predecessor['effectiveStateCommit']}:planning/backlog.yaml"], cwd=REPO
         )
         backlog = yaml.safe_load(source)
         parent = backlog["wave_amendments"][-1]
@@ -399,19 +412,11 @@ class PlanctlAmendmentTests(unittest.TestCase):
                 "sha256": reference["sha256"],
                 "introductionCommit": reference["introduction_commit"],
             },
-            "effectiveStateCommit": "07473e15a6212995fa48ece9909f0d51be7ebc26",
+            "effectiveStateCommit": predecessor["effectiveStateCommit"],
             "recordSha256": paused_predecessor_record_hash(parent),
             "returnPolicy": "paused-predecessor",
         }
-        packet = json.loads(
-            (REPO / "planning/enabler-change-requests/ECR-0007.packet.json")
-            .read_text(encoding="utf-8")
-            .replace("ECR-0007", "ECR-0008")
-            .replace("W1.A08", "W1.A09")
-        )
-        packet.update(schemaVersion="4.1-proposal")
-        packet["$schema"] = "./enabler-change-request.v4.1.schema.json"
-        packet["authorityChain"]["pausedPredecessor"] = binding
+        self.assertEqual(binding, predecessor)
         with patch("planctl.load_backlog", return_value=(backlog, REPO / "planning/backlog.yaml")):
             self.assertEqual([], self._fixture_authority_chain_v4_errors(packet))
         injected = {

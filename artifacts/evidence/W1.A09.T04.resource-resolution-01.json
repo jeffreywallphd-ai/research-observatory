@@ -1,0 +1,38 @@
+{
+  "taskId": "W1.A09.T04",
+  "status": "PASS_WITHIN_RELEASE_RESOURCE_SCOPE",
+  "sourceBuildRecord": "artifacts/evidence/W1.A09.T04.native-builds-01.json",
+  "packageRecord": "artifacts/evidence/W1.A09.T04.packaging-production-02.json",
+  "runnerSha256": "a07542e81f1b626aa65e5b2b3cb537288d4c8041966d92e3b1fa7984c76127cc",
+  "nativeSha256": "c34ff6713b89a1418ee61f3e340b46880927d0747242acc2aa6b2bc01a46d5c3",
+  "all161BuildInputsUnchanged": true,
+  "fixture": "artifacts/tmp/t04-resource-resolution-9v0cv_o7",
+  "fixturesRetained": true,
+  "missingPackage": {
+    "coreStarted": false,
+    "debugAssertions": false,
+    "kind": "actual-tauri-resource-resolution",
+    "normalSetupInvoked": false,
+    "readOnly": true,
+    "resourceDirectoryMatchesExecutableParent": true,
+    "resourceRootConstructorAccepted": false,
+    "runtimeConfigAccepted": false,
+    "runtimeConfigError": "RO-CORE-NOT-PACKAGED",
+    "scope": "actual-tauri-resource-resolution-not-production-runtime-qualification"
+  },
+  "verifiedProductionPackage": {
+    "coreStarted": false,
+    "debugAssertions": false,
+    "kind": "actual-tauri-resource-resolution",
+    "normalSetupInvoked": false,
+    "readOnly": true,
+    "resourceDirectoryMatchesExecutableParent": true,
+    "resourceRootConstructorAccepted": true,
+    "runtimeConfigAccepted": true,
+    "runtimeConfigError": null,
+    "scope": "actual-tauri-resource-resolution-not-production-runtime-qualification"
+  },
+  "packageInventoryVerifiedBeforeAndAfter": true,
+  "system32OnlyPath": true,
+  "scope": "Actual Tauri resource_dir and release runtime_config without debug fallback. Production sidecar copied and verified, never started. No normal desktop setup, policy, vault, WebView, sign-in or production-session qualification."
+}

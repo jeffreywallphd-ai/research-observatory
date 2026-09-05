@@ -1,0 +1,80 @@
+{
+  "taskId": "W1.A09.T04",
+  "phase": "Read-only diagnosis preceding bounded test-fixture maintenance",
+  "authority": "GOV-MIG-0001: generic evidence/test correction without expanded product/controller authority",
+  "predecessorTestSha256": "5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f",
+  "adverseReport": {
+    "path": "artifacts/evidence/W1.A09.T04.authority-return-check-01.json",
+    "sha256": "41a454466e79b01313918e217ca338c42f9863d062a22f45273b161ccf4fc035"
+  },
+  "diagnostic": {
+    "taskId": "W1.A09.T04",
+    "inputsBefore": {
+      "tests/foundation/test_planctl_amendments.py": "5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f",
+      "tools/planctl.py": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6",
+      "tools/governance_kernel.py": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7",
+      "planning/enabler-change-requests/ECR-0008.packet.json": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+      "planning/wave-amendment-approvals/W1.A09.json": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+      "planning/enabler-change-requests/ECR-0007.packet.json": "f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15",
+      "design/ui-reference/REFERENCE_MANIFEST.yaml": "7bb860f9a513fc4df5848b4398484a1914c3d43bb242ac421575fe67aa4f8032",
+      "design/ui-reference/APPROVAL.yaml": "ea7adfa964e06af55bf67d9a105c3d69859c4ee33edb0a3d8118d77f309376f0",
+      "design/ui-reference/STYLE_GUIDE.md": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946",
+      "design/ui-reference/assets/app.css": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee"
+    },
+    "inputsAfter": {
+      "tests/foundation/test_planctl_amendments.py": "5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f",
+      "tools/planctl.py": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6",
+      "tools/governance_kernel.py": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7",
+      "planning/enabler-change-requests/ECR-0008.packet.json": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+      "planning/wave-amendment-approvals/W1.A09.json": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+      "planning/enabler-change-requests/ECR-0007.packet.json": "f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15",
+      "design/ui-reference/REFERENCE_MANIFEST.yaml": "7bb860f9a513fc4df5848b4398484a1914c3d43bb242ac421575fe67aa4f8032",
+      "design/ui-reference/APPROVAL.yaml": "ea7adfa964e06af55bf67d9a105c3d69859c4ee33edb0a3d8118d77f309376f0",
+      "design/ui-reference/STYLE_GUIDE.md": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946",
+      "design/ui-reference/assets/app.css": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee"
+    },
+    "predecessorBlob": {
+      "commit": "07473e15a6212995fa48ece9909f0d51be7ebc26",
+      "path": "planning/backlog.yaml",
+      "sha256": "1064069098cb73ddc62a42d45b09ffb70b8191f5181dbd8b9ad8932347e5c2c9"
+    },
+    "approvedPacketBlob": {
+      "commit": "2160cc9917282d80848189dc9669fe3827979246",
+      "path": "planning/enabler-change-requests/ECR-0008.packet.json",
+      "sha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+      "matchesOwnerApprovalHash": true,
+      "currentJsonEqualsImmutable": true
+    },
+    "samePausedBinding": false,
+    "renamedHistoricalFixtureErrors": [
+      "ECR governed experience: repository file hash mismatch: design/ui-reference/REFERENCE_MANIFEST.yaml",
+      "ECR governed experience: repository file hash mismatch: design/ui-reference/APPROVAL.yaml",
+      "ECR governed experience: repository file hash mismatch: design/ui-reference/STYLE_GUIDE.md",
+      "ECR governed experience: repository file hash mismatch: design/ui-reference/assets/app.css",
+      "Historical experience approval or packet was substituted"
+    ],
+    "immutableApprovedPacketWithSamePausedBaselineErrors": [],
+    "unchangedInjectedHistoryCaseErrors": [
+      "ECR correction relation differs from its materialized authority",
+      "ECR v4 target Wave is not paused at the required entry boundary"
+    ],
+    "injectedRejectedAtRequiredBoundary": true,
+    "actualCurrentAuthorityErrors": []
+  },
+  "counterfactual": {
+    "counterfactualOnly": true,
+    "approvedPacketSha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+    "frozenBaselineCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+    "frozenBaselineSha256": "1064069098cb73ddc62a42d45b09ffb70b8191f5181dbd8b9ad8932347e5c2c9",
+    "parentCanonicalHashMatches": true,
+    "positiveErrors": [],
+    "injectedErrors": [
+      "ECR v4 target Wave is not paused at the required entry boundary"
+    ],
+    "existingNegativeAssertionPasses": true
+  },
+  "disposition": "Stale synthetic historical test setup, not a reproduced current authority/return defect. Current validator correctly rejects a string-renamed ECR-0007 proposal retaining old governed-reference hashes and correctly validates immutable approved A09 authority.",
+  "plannedCorrection": "Change only test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut fixture input to ECR-0008.packet.json at approved commit 2160cc9917282d80848189dc9669fe3827979246 and load backlog at its exact pausedPredecessor.effectiveStateCommit; assert the reconstructed parent binding equals the packet binding. Preserve current positive and injected-history rejection assertions. No validator changes.",
+  "nuance": "Old hardcoded 07473e15… and approved 5329e538… predecessor commits have identical recorded backlog blob SHA256 but are different commit identities. The complete proposed correction follows the approved identity, not merely equivalent bytes.",
+  "limits": "Counterfactual validator invocations were in memory, with existing synthetic backlog/global-ID substitutions only; they are not a passing replay of the unedited failing test, live approval/adoption or final task acceptance."
+}

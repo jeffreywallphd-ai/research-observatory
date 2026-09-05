@@ -1333,7 +1333,7 @@ mod tests {
         mode: SignInMode,
         inactivity_timeout_minutes: u8,
     ) -> ApplicationLockManager {
-        let store = PolicyStore::new(&root);
+        let store = PolicyStore::new(root);
         let loaded = store.initialize();
         let policy = SignInPolicy::normalized_target(2, mode, None, inactivity_timeout_minutes)
             .expect("test policy");
@@ -1343,7 +1343,7 @@ mod tests {
             .publish(staged, &loaded.source)
             .expect("publish test policy");
         drop(_guard);
-        ApplicationLockManager::new(&root)
+        ApplicationLockManager::new(root)
     }
 
     fn manager() -> ApplicationLockManager {

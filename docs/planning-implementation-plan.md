@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dc58b5f03ee1f370091880df02cdd1d09c17a8f9423f8ce06103a41f336e09df
+source_sha256: 95c6693d686a9c2b262b4d653cf77f8296e3b43e105936116926c9aa17cf1c0f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2149,7 +2149,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T03`
 

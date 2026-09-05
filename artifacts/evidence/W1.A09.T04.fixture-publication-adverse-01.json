@@ -1,0 +1,25 @@
+{
+  "taskId": "W1.A09.T04",
+  "phase": "Failing-before native fixture publication characterization",
+  "observedAt": "2026-09-05T22:24:08.906316+00:00",
+  "workingBase": "cd4838e9c64fdbf3adb8f326781f95404a0c945d",
+  "sourceHashesBefore": {
+    "apps/desktop/src-tauri/src/lib.rs": "f3af26dbdc486afcf1057884906361e45e84902fb95e0a90ac78bf7d6ec04ad0",
+    "apps/desktop/src-tauri/src/application_lock.rs": "225658c2ea9098916221af304d1a428189245131c4197afeeec2e5b1e5fd464a",
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs": "1bfc1cbe440b11fc3843b0f032a3e0d96930d8136b157e36881342a65ffa37cb",
+    "apps/desktop/src-tauri/Cargo.toml": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+    "Cargo.toml": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+    "Cargo.lock": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf"
+  },
+  "sourceHashesAfterEqualBefore": true,
+  "command": ["{pinned-cargo}", "test", "--locked", "--offline", "-p", "research-observatory-desktop", "--lib", "--features", "integration-harness", "directory_integration_harness::tests::fixture_pins_allow_core_style_staged_child_publication", "--", "--exact", "--nocapture"],
+  "exitCode": 101,
+  "testSummary": {"passed": 0, "failed": 1, "ignored": 0, "filtered": 98},
+  "failedTest": "directory_integration_harness::tests::fixture_pins_allow_core_style_staged_child_publication",
+  "assertion": "fixture pins must permit Core's staged-child publication",
+  "nativeErrorCode": 32,
+  "nativeErrorMessage": "The process cannot access the file because it is being used by another process.",
+  "temporaryNamespace": "artifacts/tmp/t04-native-publication-ipnkq8h9",
+  "scope": "Real native Fixture::create pins and staged-child directory rename; no UI, Core process, ordinary vault or policy. Existing read-only share mode still present. This is adverse predecessor evidence, not passing qualification."
+}

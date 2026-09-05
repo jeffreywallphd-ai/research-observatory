@@ -1,0 +1,43 @@
+{
+  "documentType": "wave-amendment-return-preparation",
+  "schemaVersion": "1.0",
+  "taskId": "W1.A09.T04",
+  "amendmentId": "W1.A09",
+  "targetWave": "W1",
+  "status": "inert-preparation-not-adoption-evidence",
+  "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+  "approvedPacket": "planning/enabler-change-requests/ECR-0008.packet.json",
+  "correctionReturn": {
+    "id": "W1.A08",
+    "changeRequestId": "ECR-0007",
+    "status": "PAUSED",
+    "packetCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
+    "approvalReference": {
+      "path": "planning/wave-amendment-approvals/W1.A08.json",
+      "sha256": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
+      "introductionCommit": "979486506a62b5dbf1b7a0af711079bdaa34cd44"
+    },
+    "effectiveStateCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+    "recordSha256": "3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506",
+    "returnPolicy": "paused-predecessor"
+  },
+  "requiredBeforeAdoption": [
+    "All four A09 tasks DONE with independent exact-commit approved dispositions.",
+    "Independent contribution review across all four slice criteria.",
+    "Committed criterion-linked amendment exit evidence and supported frozen exit submission.",
+    "Independent approved exit round with no blocking findings, then a committed exact approved completion state.",
+    "Separate committed adoption evidence binding that reviewedCompletionCommit, exact approved exit history and correctionReturn."
+  ],
+  "expectedReturn": {
+    "holdOwner": "W1.A08",
+    "parentStatus": "PAUSED",
+    "parentHistory": "unchanged",
+    "parentLease": null,
+    "ordinaryWaveResumeAuthorized": false,
+    "cap07RecoveryAuthorized": false,
+    "gateApprovalAuthorized": false
+  },
+  "remainingParentWork": "Explicit A08 activation and approved T02 recovery, actual sidebar/spacing qualification, independent review/exit/adoption before ordinary W1 resume.",
+  "retainedReleaseDuty": "Complete W1 repository/Windows qualification and independent Wave review before human G1 approval.",
+  "mutationPerformed": false
+}

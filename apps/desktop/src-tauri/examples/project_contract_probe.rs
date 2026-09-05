@@ -25,6 +25,18 @@ mod probe {
         let arguments: Vec<OsString> = std::env::args_os().skip(1).collect();
         if arguments
             .first()
+            .is_some_and(|value| value == "--check-tauri-resource-root")
+        {
+            if arguments.len() != 1 {
+                return Err("probe-arguments-invalid");
+            }
+            #[cfg(windows)]
+            return emit(&research_observatory_desktop_lib::directory_integration_harness::observe_tauri_resource_root()?);
+            #[cfg(not(windows))]
+            return Err("probe-windows-required");
+        }
+        if arguments
+            .first()
             .is_some_and(|value| value == "--default-parent")
         {
             if arguments.len() != 1 {

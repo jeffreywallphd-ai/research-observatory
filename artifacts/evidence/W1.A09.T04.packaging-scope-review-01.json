@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "w1-a09-t04-packaging-scope-reconciliation",
+  "taskId": "W1.A09.T04",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "observedAt": "2026-09-05T23:12:54.2490218Z",
+  "disposition": "No additional frozen-fixture Core integrated lifecycle is presently required solely by the approved T04 packaging wording.",
+  "taskAcceptance": "not T04 acceptance",
+  "purpose": "Append-only correction of this reviewer's earlier over-specific T03 description, and a bounded interpretation of the approved T04 integration/packaging criterion. No historical artifact or approved criterion is changed.",
+  "approvedAuthority": {
+    "approvalRecord": {
+      "path": "planning/wave-amendment-approvals/W1.A09.json",
+      "rawSha256": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+      "packetCommit": "2160cc9917282d80848189dc9669fe3827979246",
+      "packetSha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+      "proposalSha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560"
+    },
+    "files": [
+      {
+        "path": "planning/enabler-change-requests/ECR-0008.packet.json",
+        "approvedCommit": "2160cc9917282d80848189dc9669fe3827979246",
+        "approvedBlob": "c6feece6b55be2da0e853cc624fb2e4aa48a8dc0",
+        "approvedBytesSha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+        "currentCleanBlob": "c6feece6b55be2da0e853cc624fb2e4aa48a8dc0",
+        "currentCleanBytesMatchApproved": true
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+        "approvedCommit": "2160cc9917282d80848189dc9669fe3827979246",
+        "approvedBlob": "9ee6f0ce866f122ff55769c833045911ad8fe005",
+        "approvedBytesSha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560",
+        "currentCleanBlob": "9ee6f0ce866f122ff55769c833045911ad8fe005",
+        "currentCleanBytesMatchApproved": true
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0008.ux-addendum-01.md",
+        "approvedCommit": "2160cc9917282d80848189dc9669fe3827979246",
+        "approvedBlob": "a1e614d3afd97385b79eee0157d2e69d24423bd8",
+        "approvedBytesSha256": "694872d27297d3a4f142356a06ce37f75d3142e0c30b290b103102018a775924",
+        "currentCleanBlob": "a1e614d3afd97385b79eee0157d2e69d24423bd8",
+        "currentCleanBytesMatchApproved": true
+      }
+    ],
+    "clauses": [
+      {
+        "path": "planning/enabler-change-requests/ECR-0008.packet.json",
+        "location": "taskInventory, W1.A09.T04, acceptanceCriteria[1]; current line 276",
+        "text": "Run accumulated affected unit/contract/renderer/native/Core union plus clean Windows build/packaging smoke, security, failure, cancel, restart/recovery, accessibility and performance paths; static reference captures are distinct from product/native evidence."
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0008.packet.json",
+        "location": "slice acceptanceCriteria[0]; current line 180",
+        "text": "All reference, native transport/readiness and shared folder-selection task criteria pass together on actual Windows/native/Core boundaries including failure/denial/cancellation/lock/close/recovery."
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+        "location": "Ordered work and risk-selected verification; current line 97",
+        "text": "T04 runs the accumulated affected renderer/component/native/contract and clean build/packaging smoke union, plus real Windows experience, security, cancellation/restart/recovery, accessibility and performance paths."
+      },
+      {
+        "path": "planning/enabler-change-requests/ECR-0008.ux-addendum-01.md",
+        "location": "Acceptance closure items 2, 5 and 7",
+        "interpretation": "Actual disposable Core must be reached through compiled native transport, including persistence/reopen and relevant safeguards; affected packaging/build checks remain required. These items do not require the complete lifecycle to run through a frozen production Core or ordinary production profile."
+      }
+    ]
+  },
+  "historicalWordingCorrection": {
+    "originalTaskEvidence": {
+      "path": "artifacts/evidence/W1.A09.T03.json",
+      "rawSha256": "13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4",
+      "locations": [
+        "proofComposition, current line 93",
+        "deferred broader coverage, current line 191"
+      ]
+    },
+    "originalReviewerLedger": {
+      "path": "artifacts/evidence/W1.A09.T03.review-R01.json",
+      "rawSha256": "04bbbd016f496e82b09c2245909cd70493d04c6cb2d4d37771efda57d92e8642",
+      "locations": [
+        "criterion 6 basis, current line 127",
+        "qualification limits, current line 140"
+      ]
+    },
+    "overSpecificPhrase": "single packaged renderer/native/Core lifecycle",
+    "reviewerAcknowledgement": "I repeated the T03 evidence's stronger phrase in my T03 R01 ledger and called integrated packaged lifecycle qualification explicitly assigned to T04. That characterization is more specific than the immutable approved T04 wording. It must not be imported as a new acceptance criterion.",
+    "correction": "The approved requirement is an accumulated real Windows/native/Core integration union plus clean build/packaging smoke, with each proof's actual composition disclosed. A single fully frozen lifecycle is a possible verification method, not an independently approved additional T04 gate.",
+    "originalHistoryPreserved": true,
+    "originalT03EvidenceAndLedgerUnchanged": true,
+    "noCriterionWaiver": true,
+    "noExpandedAuthority": true,
+    "noControllerOrPlanningMutation": true
+  },
+  "specificEvidenceInspected": [
+    {
+      "path": "artifacts/evidence/W1.A09.T04.native-ui-observations-01.json",
+      "rawSha256": "6dae910f41e88057e24b8a58240d6bd34583218c65a0174c4680b2bcb3980c64",
+      "inspection": "Read the actual lifecycle observations and residuals.",
+      "supports": "Reported real built React/Tauri/native IPC and Windows Shell with actual supervised Core, fixture-only absent policy/default None and storage roots; friendly-name/default create, explicit open, app/Core restart, native folder selection without path typing, selection-alone no-open, retained name/objective and explicit close.",
+      "doesNotSupport": "No browser invoke doubles in this run, but this is source-built fixture composition, not frozen-Core startup, unmodified ordinary-profile startup, credentials or an installer."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.packaging-production-01.json",
+      "rawSha256": "1eaa2503786697e103ce28fa933d357707813206f528c4baa4765d5ed7ee5efc",
+      "inspection": "Reviewed package runner and report scope/status/source fields.",
+      "supports": "Completed fresh governed production sidecar build/inventory and frozen --check smoke with exit codes zero and no system Python on PATH.",
+      "doesNotSupport": "No project, actor/vault, socket or --supervised startup. Its original helper hash is historical and output-only redaction is separately disclosed."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.packaging-production-02.json",
+      "rawSha256": "55098533839d9a765b3f40d6afb6659aaa72cf4ebc7b380bd2196eb2e0ada0f0",
+      "inspection": "Confirmed the second report exists, is completed, and records actual zero build/configuration exit codes, unchanged inputs and current helper binding.",
+      "supports": "Fresh current-context frozen production --check and manifest verification.",
+      "doesNotSupport": "Not inferred from a missing/pending report; no frozen Core lifecycle or ordinary-profile initialization."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.resource-resolution-01.json",
+      "rawSha256": "d01e8120040f9ad3b2740f0434e1a162e92042dccb4796428172a575ee3f43c4",
+      "inspection": "Read missing-package and verified-package observations and scope.",
+      "supports": "Actual Tauri resource_dir and release runtime_config without debug fallback; absent package rejected, verified package accepted, package inventory verified before/after.",
+      "doesNotSupport": "The package was never started; normal setup, WebView, policy/vault and production-session startup were not invoked."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.production-native-build-01.json",
+      "rawSha256": "27c24727c98eccd3b657e2839f6e247cc39f1fe7df9736cb57b58297068e6c7c",
+      "inspection": "Read production/no-harness build declaration, unchanged-input claim, exact command, executable hash, executed=false and scope.",
+      "supports": "Production release binary compile without integration-harness; declared executable SHA256 8910e49058761c7657fff959f0a35dd026793529f02f52b9d9fd9e7607d13511.",
+      "doesNotSupport": "The production binary was not launched; no installer or production-session qualification."
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.verification-integration-01.json",
+      "rawSha256": "162d1dfa2f557138c62efdfeb00c881dc81f8a1430824d58174f528123922d22",
+      "inspection": "Reviewed its two check names, actual result/status and preserved source-hash fields during maintenance review.",
+      "supports": "Reported passing actual generated/native/Core and production packaging contract/failure/recovery checks.",
+      "doesNotSupport": "This scope advisory does not independently rerun or authenticate the complete future candidate bundle."
+    },
+    {
+      "path": "tests/packaging/test_core_sidecar_package.py",
+      "rawSha256": "8b0cb8fe0e749d539a1bf9631b0aebc56f0a73af88c53e5d1807bc892ba91982",
+      "inspection": "Read the actual packaged-sidecar smoke implementation, including governed manifest/runtime archive checks, System32-only --check, and missing-runtime-file failure/recovery path.",
+      "supports": "The existing affected packaging smoke contract is a real frozen --check/inventory/dependency-failure boundary.",
+      "doesNotSupport": "The test does not execute frozen production --supervised or persistence in an ordinary profile."
+    }
+  ],
+  "assessment": {
+    "integrationPackagingPortion": "The reported real embedded renderer/native/Core fixture lifecycle and separately completed production build/packaging/resource checks can satisfy the approved T04 integration-versus-packaging portion compositionally. This is conditional on final exact candidate/source/evidence binding and all other required criterion paths actually passing.",
+    "additionalFrozenFixtureRun": "Could add confidence, but no additional such run is an acceptance-bound requirement established by the cited T04 authority alone. This does not erase a concrete reproduced packaging/runtime defect; any such defect would require a new assessment.",
+    "unproved": "A single fully packaged renderer-to-frozen-Core lifecycle, frozen Core service/persistence startup and unmodified ordinary-profile production startup remain unproved by these observations.",
+    "laterQualification": "Carry those unproved production/frozen/ordinary-profile boundaries explicitly into the later required W1/release qualification matrix; do not represent this correction task as full production-session, signed-installer or W1 qualification.",
+    "safety": "Ordinary production startup would access the actual account policy/vault and remains outside the present authorized fixture scope. This advisory authorizes no such launch, account creation, OS change or new production override."
+  },
+  "limits": [
+    "No full T04 acceptance, independent slice/exit approval, amendment adoption, A08 activation, W1 completion or G1/release decision.",
+    "No waiver of security, cancellation, recovery, accessibility, performance, evidence truth or remaining approved T04 criteria.",
+    "No silent rewrite of T03 evidence or reviewer history; this new file is the explicit reconciliation.",
+    "This is source/authority/report inspection and scope reasoning, not an independent replay of native UI, frozen service startup or complete package qualification."
+  ],
+  "actions": {
+    "newFileOnly": "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json",
+    "writer": "apply_patch",
+    "gui": false,
+    "performance": false,
+    "cargo": false,
+    "builds": false,
+    "sourceOrControllerChanges": false,
+    "gitMutation": false,
+    "ordinaryProfileAccess": false
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "w1-a09-t04-bounded-maintenance-advisory",
+  "taskId": "W1.A09.T04",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "disposition": "no remaining blocking findings within reviewed maintenance scope",
+  "taskAcceptance": "not T04 acceptance",
+  "observedAt": "2026-09-05T23:09:22.2702349Z",
+  "reviewedCurrentFilesRawSha256": {
+    "tests/foundation/test_planctl_amendments.py": "c4e464c5b103b902f52899b422ef75cdcd31bea9f51e69620d8987d233d932eb",
+    "artifacts/evidence/W1.A09.T04.package-check-01.py": "3846974fdbea0e00f79ee78c65187297f9d918e6bebe828171860faebf7b9fe3",
+    "artifacts/evidence/W1.A09.T04.verify-01.py": "3f4c5e067f7b8e3cc5f7a6e3238885fb02bb68751d6e69151dbfa4cb5d89213d",
+    "artifacts/evidence/W1.A09.T04.redaction-test-01.py": "938c668d12f020dfc582c8d725897eddc6df2af6ddf05e635e6d4874b0569f61",
+    "artifacts/evidence/W1.A09.T04.authority-return-check-01.json": "41a454466e79b01313918e217ca338c42f9863d062a22f45273b161ccf4fc035",
+    "artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json": "89c4fecba1633747de7c61fabb742083fe14b43f115fb12771f1573ace56135f",
+    "artifacts/evidence/W1.A09.T04.authority-return-check-02.json": "07c4a002b68ecba21d15832dbe588d67c9080ec192a09df2cfc5fabfb96b19ab",
+    "artifacts/evidence/W1.A09.T04.packaging-production-01.json": "1eaa2503786697e103ce28fa933d357707813206f528c4baa4765d5ed7ee5efc",
+    "artifacts/evidence/W1.A09.T04.packaging-production-02.json": "55098533839d9a765b3f40d6afb6659aaa72cf4ebc7b380bd2196eb2e0ada0f0",
+    "artifacts/evidence/W1.A09.T04.verification-units-01.json": "6698feb24a0e848ca7ad605c8b256043d6a517ac94dea62dda9128a4803352a1",
+    "artifacts/evidence/W1.A09.T04.verification-units-02.json": "e8bfee21c504bff49996b122042a8ee96e5e3e9111161bf436f81dd14c1e2dba",
+    "artifacts/evidence/W1.A09.T04.verification-integration-01.json": "162d1dfa2f557138c62efdfeb00c881dc81f8a1430824d58174f528123922d22",
+    "artifacts/evidence/W1.A09.T04.task-start.md": "da9627e149c0ad7aabb8157708d3d199069d77d80277d62aafe53c5afaa54f50",
+    "tools/planctl.py": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6",
+    "tools/governance_kernel.py": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7"
+  },
+  "scope": {
+    "substantiveReview": [
+      "One paused-correction test-fixture correction in tests/foundation/test_planctl_amendments.py.",
+      "Publication redactors in W1.A09.T04.package-check-01.py and W1.A09.T04.verify-01.py, and their synthetic redaction-test-01.py.",
+      "Declared output-only sanitization and retained status/source binding in the bounded T04 package/unit/integration reports."
+    ],
+    "privacyOnly": "The final narrow scan covered 21 current W1.A09.T04.* files, including new native UI, resource and production-build evidence, for account/profile/SID and absolute repository-path leakage. That content scan is not a substantive review of those native/UI/resource/production-build claims.",
+    "excluded": [
+      "No formal frozen-candidate T04 acceptance review.",
+      "No native UI, resource-resolution, production-build, packaging integration, blind usability or release qualification disposition.",
+      "No review or access of the protected A04 witness or sibling workspace."
+    ]
+  },
+  "pausedCorrectionFixture": {
+    "sourceSha256": "c4e464c5b103b902f52899b422ef75cdcd31bea9f51e69620d8987d233d932eb",
+    "review": "The exact scoped diff changes only test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut. It replaces a string-renamed ECR-0007 proposal that retained obsolete governed-reference hashes with the immutable approved ECR-0008 packet.",
+    "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "approvedPacketPath": "planning/enabler-change-requests/ECR-0008.packet.json",
+    "effectivePausedPredecessorCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+    "retainedAssertions": [
+      "Reconstructed parent binding must exactly equal the packet-declared pausedPredecessor.",
+      "Authentic paused baseline passes the unchanged authority-chain validator.",
+      "Injected materialization/history shortcut and ACTIVE ordinary-Wave state remain rejected at the required entry boundary."
+    ],
+    "controllerChanges": false,
+    "controllerBinding": "Current planctl.py and governance_kernel.py hashes match the earlier retained diagnostic's before/after hashes. No validator or controller change is part of this correction.",
+    "authorReplay": {
+      "performedBy": "agent:/root/t03_native_replay",
+      "independentlyExecutedByThisReviewer": false,
+      "independentlyReadAndCheckedByThisReviewer": true,
+      "report": "artifacts/evidence/W1.A09.T04.authority-return-check-02.json",
+      "reportRawSha256": "07c4a002b68ecba21d15832dbe588d67c9080ec192a09df2cfc5fabfb96b19ab",
+      "testsPassed": 4,
+      "testsFailed": 0,
+      "unittestDurationSeconds": 50.598,
+      "testSelection": "test_planctl_amendments.py -k paused_correction",
+      "ruff": "PASS",
+      "sourceAndAuthorityInputCount": 19,
+      "beforeAfterInputsIdentical": true,
+      "limits": "Author-owned real replay is distinguished from this reviewer's read-only diff/authority inspection."
+    }
+  },
+  "independentRedactorReplay": {
+    "performedBy": "agent:/root/t03_acceptance_review",
+    "execution": "Read each current helper source into an AST, extract only its redact function, compile that function alone, and supply an invented repository path/profile environment. Neither helper main nor helper imports/builds/tests were executed.",
+    "result": "PASS",
+    "actualCaseCount": 14,
+    "functions": [
+      {
+        "source": "artifacts/evidence/W1.A09.T04.package-check-01.py",
+        "rawSha256": "3846974fdbea0e00f79ee78c65187297f9d918e6bebe828171860faebf7b9fe3",
+        "cases": [
+          {
+            "name": "plain-profile-path",
+            "result": "PASS"
+          },
+          {
+            "name": "repr-doubled-backslash-profile-path",
+            "result": "PASS"
+          },
+          {
+            "name": "plain-repository-path",
+            "result": "PASS"
+          },
+          {
+            "name": "repr-doubled-backslash-repository-path",
+            "result": "PASS"
+          },
+          {
+            "name": "forward-slash-profile-path",
+            "result": "PASS"
+          },
+          {
+            "name": "git-principal-and-sid-with-error-preserved",
+            "result": "PASS"
+          },
+          {
+            "name": "adverse-result-and-relative-evidence-unchanged",
+            "result": "PASS"
+          }
+        ]
+      },
+      {
+        "source": "artifacts/evidence/W1.A09.T04.verify-01.py",
+        "rawSha256": "3f4c5e067f7b8e3cc5f7a6e3238885fb02bb68751d6e69151dbfa4cb5d89213d",
+        "cases": [
+          {
+            "name": "plain-profile-path",
+            "result": "PASS"
+          },
+          {
+            "name": "repr-doubled-backslash-profile-path",
+            "result": "PASS"
+          },
+          {
+            "name": "plain-repository-path",
+            "result": "PASS"
+          },
+          {
+            "name": "repr-doubled-backslash-repository-path",
+            "result": "PASS"
+          },
+          {
+            "name": "forward-slash-profile-path",
+            "result": "PASS"
+          },
+          {
+            "name": "git-principal-and-sid-with-error-preserved",
+            "result": "PASS"
+          },
+          {
+            "name": "adverse-result-and-relative-evidence-unchanged",
+            "result": "PASS"
+          }
+        ]
+      }
+    ],
+    "outputsEquivalentForAllSevenCases": true,
+    "outcomePreservation": "The Git failure message remained visible after principal/SID replacement. The failure outcome and repository-relative evidence path remained byte-equivalent.",
+    "existingSyntheticTests": "Reviewed redaction-test-01.py's three synthetic tests. Root's earlier three-test result is not counted as a reviewer replay; the independent fourteen-case replay above additionally exercised the verifier's nested redactor."
+  },
+  "privacyFindingHistory": [
+    {
+      "id": "advisory-integration-log-identifiers",
+      "severity": "P2",
+      "acceptanceBoundary": "T04 evidence publication privacy and truthful qualification reporting",
+      "status": "closed-before-publication",
+      "finding": "Initial scan found four actual account/profile occurrences and 34 absolute repository-path occurrences in the integration report's captured subprocess output, raw JSON line 384. Identifiers were not echoed in the advisory.",
+      "path": "artifacts/evidence/W1.A09.T04.verification-integration-01.json",
+      "observedBeforeRawSha256": "43d2d98ade037504c06073355d3abbbd1139fb4a49675cbbeab83d674d121673",
+      "remediatedRawSha256": "162d1dfa2f557138c62efdfeb00c881dc81f8a1430824d58174f528123922d22",
+      "remediationOwner": "root task",
+      "reviewerMadeEdits": false,
+      "closure": "Root applied output-only identity placeholders and disclosed the additional correction in task-start. Independent rescan found zero account/profile, actual username, SID or absolute repository-path occurrences in the revised report."
+    }
+  ],
+  "retainedAdverseAndBinding": {
+    "authorityAdverseReport": {
+      "path": "artifacts/evidence/W1.A09.T04.authority-return-check-01.json",
+      "rawSha256": "41a454466e79b01313918e217ca338c42f9863d062a22f45273b161ccf4fc035"
+    },
+    "authorityDiagnosticReport": {
+      "path": "artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json",
+      "rawSha256": "89c4fecba1633747de7c61fabb742083fe14b43f115fb12771f1573ace56135f"
+    },
+    "authorityAdverseQualification": "The original failed stale-fixture observation and read-only counterfactual diagnosis remain retained; the later actual corrected replay does not rewrite them.",
+    "units01": {
+      "ok": false,
+      "checkCount": 15,
+      "failingChecks": [
+        "semantic-predecessor-compatibility",
+        "renderer-recovery"
+      ],
+      "bothFailureExitCodes": 1,
+      "testSelectionStillSatisfied": true,
+      "inputsUnchanged": true
+    },
+    "integration01": {
+      "ok": true,
+      "checkCount": 2,
+      "allExitCodes": 0,
+      "allTestSelectionsSatisfied": true,
+      "inputsUnchanged": true
+    },
+    "package01": {
+      "status": "PASS_WITHIN_PACKAGING_SMOKE_SCOPE",
+      "buildExitCode": 0,
+      "configurationExitCode": 0,
+      "inputsUnchanged": true
+    },
+    "package02": {
+      "observedCompleted": true,
+      "status": "PASS_WITHIN_PACKAGING_SMOKE_SCOPE",
+      "buildExitCode": 0,
+      "configurationExitCode": 0,
+      "inputsUnchanged": true,
+      "bindsCurrentPackageHelper": true
+    },
+    "historicalRunnerHashes": {
+      "package01": "cd4e3263bc949c35ca6ac5c712920457a6e22b59300bbdbd23c805c5fa6b2f78",
+      "units01": "d383a693d8ac1e7d174f593cbe232bbfe727bd11a8c5a147e02310c8183773ed",
+      "integration01": "5951368ffdf9978155c8bec79d06820826bc1a42a2c51d2aeb25ac9f33e7dae6"
+    },
+    "sanitizationQualification": "Task-start explicitly records output-only replacement of local identifiers before publication, without changing original outcomes, timestamps, artifact inventories or observed input hashes. This reviewer inspected the corrected outputs/statuses and original helper-hash fields, not a recovered raw-log byte-for-byte diff. No claim is made that an old helper hash equals current bytes; final source-equivalence/commit binding remains a task-packet duty."
+  },
+  "privacyRescan": {
+    "scope": "Only current artifacts/evidence/W1.A09.T04.* files.",
+    "fileCountAtFinalScan": 21,
+    "actualAccountProfileSidOrAbsoluteRepositoryHits": 0,
+    "deliberateSyntheticHits": "Only redaction-test-01.py contains invented profile-path and SID examples; these are test input, not real account discovery.",
+    "newEvidenceQualification": "native-ui-observations-01.json, resource-check-01.py, resource-resolution-01.json and production-native-build-01.json were privacy-scanned only, not substantively accepted by this advisory."
+  },
+  "actions": {
+    "duringAdvisory": "Read-only source/report inspection, scoped Git diff/read/hash operations, and fourteen pure synthetic redactor cases.",
+    "duringRetention": "Only this new maintenance-review-01.json was written, using apply_patch.",
+    "productEdits": false,
+    "controllerMutations": false,
+    "gitMutations": false,
+    "cargo": false,
+    "builds": false,
+    "ui": false,
+    "ordinaryPolicyVaultCredentials": false,
+    "remote": false
+  },
+  "limits": "This is a bounded maintenance/privacy advisory with a closed publication finding. It does not approve T04, A09 adoption, A08 return, a design change or release."
+}

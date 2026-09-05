@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "desktop-performance-report",
+  "ok": true,
+  "source": {
+    "commit": "cd4838e9c64fdbf3adb8f326781f95404a0c945d",
+    "dirty": true,
+    "dirtyPaths": [
+      "apps/desktop/src-tauri/examples/project_contract_probe.rs",
+      "apps/desktop/src-tauri/src/application_lock.rs",
+      "apps/desktop/src-tauri/src/lib.rs",
+      "artifacts/evidence/W1.A04.B00.json",
+      "artifacts/evidence/W1.A09.T04.authority-return-check-01.json",
+      "artifacts/evidence/W1.A09.T04.authority-return-check-02.json",
+      "artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json",
+      "artifacts/evidence/W1.A09.T04.blind-usability-01.assessment.md",
+      "artifacts/evidence/W1.A09.T04.blind-usability-01.transcript.md",
+      "artifacts/evidence/W1.A09.T04.fixture-publication-adverse-01.json",
+      "artifacts/evidence/W1.A09.T04.maintenance-review-01.json",
+      "artifacts/evidence/W1.A09.T04.native-builds-01.json",
+      "artifacts/evidence/W1.A09.T04.native-fixture-verification-01.json",
+      "artifacts/evidence/W1.A09.T04.native-ui-observations-01.json",
+      "artifacts/evidence/W1.A09.T04.package-check-01.py",
+      "artifacts/evidence/W1.A09.T04.packaging-production-01.json",
+      "artifacts/evidence/W1.A09.T04.packaging-production-02.json",
+      "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json",
+      "artifacts/evidence/W1.A09.T04.performance-output-adverse-01.json",
+      "artifacts/evidence/W1.A09.T04.presentation-check-01.json",
+      "artifacts/evidence/W1.A09.T04.production-native-build-01.json",
+      "artifacts/evidence/W1.A09.T04.redaction-test-01.py",
+      "artifacts/evidence/W1.A09.T04.resource-check-01.py",
+      "artifacts/evidence/W1.A09.T04.resource-resolution-01.json",
+      "artifacts/evidence/W1.A09.T04.return-preparation.json",
+      "artifacts/evidence/W1.A09.T04.review-bundle.md",
+      "artifacts/evidence/W1.A09.T04.source-binding-audit-01.json",
+      "artifacts/evidence/W1.A09.T04.task-start.md",
+      "artifacts/evidence/W1.A09.T04.verification-integration-01.json",
+      "artifacts/evidence/W1.A09.T04.verification-native-01.json",
+      "artifacts/evidence/W1.A09.T04.verification-native-02.json",
+      "artifacts/evidence/W1.A09.T04.verification-units-01.json",
+      "artifacts/evidence/W1.A09.T04.verification-units-02.json",
+      "artifacts/evidence/W1.A09.T04.verification-units-03.json",
+      "artifacts/evidence/W1.A09.T04.verify-01.py",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0008.html",
+      "planning/review-site/manifest.json",
+      "planning/status-summary.md",
+      "tests/foundation/test_planctl_amendments.py"
+    ]
+  },
+  "regressionBaseline": {
+    "path": "verification/baselines/desktop-performance.json",
+    "sha256": "e85f168b4385a640f73bb6d871424e32d29583282fc741e54cb765bda92bac1a",
+    "sourceCommit": "6d69c499c61e698a32281b667f2612884c6bc890"
+  },
+  "platform": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
+  "fixture": {
+    "profile": "windows-x64",
+    "applicationManifest": "apps/desktop/product-dist/application-manifest.json",
+    "applicationManifestSha256": "8a4998342ee2ad1bbb493b24827c9b1f2e2202b0f6ac62ecf891ef71deb57c12",
+    "runtimeSha256": "70a3e5aba6a8381006b0535c84e1c46f48e37d7bb39132b14cfc08099c6f5f59",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "coldRoute": "index.html",
+    "warmRoute": "index.html#commands"
+  },
+  "methodology": {
+    "browserEngine": "chromium",
+    "browserVersion": "145.0.7632.6",
+    "playwrightVersion": "1.58.0",
+    "cpuThrottleRate": 1,
+    "hardwareQualification": "representative measured Windows x64 workstation",
+    "repetitions": 12,
+    "coldState": "new isolated browser context per repetition; browser process startup, an unmeasured data-URL paint-pipeline primer, and browser installation excluded",
+    "warmState": "route navigation after the production index shell is loaded in the same context",
+    "distribution": "nearest-rank p50 and p95 over every measured repetition; no samples discarded",
+    "visibleSkeleton": "elapsed host monotonic time from navigation start until main#main-content is visible",
+    "usable": "elapsed host monotonic time from navigation start until data-application-ready=true",
+    "paint": "Chromium first-contentful-paint from navigation start via buffered PerformancePaintTiming; the CDP Performance-domain value for the same metric is the fail-closed retrieval fallback"
+  },
+  "measurements": {
+    "coldShellFirstContentfulPaint": {
+      "samplesMs": [
+        48,
+        44,
+        44,
+        44,
+        32,
+        44,
+        32,
+        52,
+        36,
+        44,
+        32,
+        44
+      ],
+      "minimumMs": 32,
+      "p50Ms": 44,
+      "p95Ms": 52,
+      "maximumMs": 52,
+      "absoluteBudgetMs": 2500,
+      "passesAbsoluteBudget": true,
+      "passesRegressionThreshold": true,
+      "futureRegressionThreshold": {
+        "baselineP95Ms": 96,
+        "maximumIncreasePercent": 20,
+        "maximumFutureP95Ms": 115.2,
+        "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+      }
+    },
+    "warmRouteVisibleSkeleton": {
+      "samplesMs": [
+        19.123,
+        16.579,
+        20.449,
+        14.121,
+        18.749,
+        13.645,
+        13.902,
+        15.936,
+        14.318,
+        13.714,
+        15.92,
+        19.05
+      ],
+      "minimumMs": 13.645,
+      "p50Ms": 15.92,
+      "p95Ms": 20.449,
+      "maximumMs": 20.449,
+      "absoluteBudgetMs": 150,
+      "passesAbsoluteBudget": true,
+      "passesRegressionThreshold": true,
+      "futureRegressionThreshold": {
+        "baselineP95Ms": 73.033,
+        "maximumIncreasePercent": 20,
+        "maximumFutureP95Ms": 87.64,
+        "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+      }
+    },
+    "warmRouteUsable": {
+      "samplesMs": [
+        20.975,
+        18.292,
+        24.294,
+        15.73,
+        20.513,
+        15.371,
+        15.842,
+        18.652,
+        16.18,
+        15.336,
+        17.65,
+        20.634
+      ],
+      "minimumMs": 15.336,
+      "p50Ms": 17.65,
+      "p95Ms": 24.294,
+      "maximumMs": 24.294,
+      "absoluteBudgetMs": 1000,
+      "passesAbsoluteBudget": true,
+      "passesRegressionThreshold": true,
+      "futureRegressionThreshold": {
+        "baselineP95Ms": 77.622,
+        "maximumIncreasePercent": 20,
+        "maximumFutureP95Ms": 93.146,
+        "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+      }
+    }
+  },
+  "uiComponentPerformance": {
+    "ok": true,
+    "regressionBaseline": {
+      "path": "verification/baselines/ui-components-data-table-performance.json",
+      "sha256": "ffe08c53f0bc0127b7de99c9d7d3c39a20c155ac50abb4a8ffec29c2964f211a",
+      "sourceCommit": "b09fb7f254763912b999e2e491cd89a083c97ba0"
+    },
+    "fixture": {
+      "version": "data-table-10000-v1",
+      "totalRows": 10000,
+      "columns": 3,
+      "pageSize": 50,
+      "pageCount": 200,
+      "maximumRenderedRows": 50,
+      "firstPageMarkupBytes": 4879,
+      "lastPageMarkupBytes": 4997,
+      "benchmarkEntry": "tests/desktop/fixtures/data-table-10000.tsx",
+      "benchmarkEntrySha256": "94703cee80e3a31f0d36e5cc6b792402cc548fb6d9c6d9e1c3f058a8e5e18053",
+      "benchmarkRunner": "tests/desktop/fixtures/data-table-performance.mjs",
+      "benchmarkRunnerSha256": "f4c3db4b027c048a9ebbb49fb3927e2243f625bebf790e02e72cd737cacd5b0c",
+      "componentContractVersion": "1.2.0"
+    },
+    "methodology": {
+      "runtime": "Node 24.19.0, React 19.2.8 production SSR, Vite 8.2.1",
+      "state": "warm after five unmeasured render batches; the immutable dataset is constructed before timing",
+      "operation": "alternating first/last accessible server-rendered pagination windows",
+      "repetitions": 20,
+      "rendersPerSample": 1000,
+      "warmupBatches": 5,
+      "distribution": "nearest-rank p50 and p95 over every measured batch; no samples discarded",
+      "hardwareQualification": "representative measured Windows x64 workstation",
+      "regressionThresholdPercent": 20
+    },
+    "measurements": {
+      "warmPaginatedRenderBatch": {
+        "samplesMs": [
+          37.182,
+          38.472,
+          35.932,
+          36.541,
+          36.766,
+          40.561,
+          36.437,
+          35.76,
+          37.353,
+          36.219,
+          36.006,
+          35.527,
+          35.601,
+          35.919,
+          35.358,
+          35.978,
+          35.951,
+          35.458,
+          36.971,
+          35.927
+        ],
+        "minimumMs": 35.358,
+        "p50Ms": 35.978,
+        "p95Ms": 38.472,
+        "maximumMs": 40.561,
+        "absoluteBudgetMs": 100,
+        "passesAbsoluteBudget": true,
+        "passesRegressionThreshold": true,
+        "futureRegressionThreshold": {
+          "baselineP95Ms": 39.097,
+          "maximumIncreasePercent": 20,
+          "maximumFutureP95Ms": 46.916,
+          "rule": "Future p95 must remain within both the absolute budget and 120% of this commit-bound baseline."
+        }
+      }
+    },
+    "errors": []
+  },
+  "unexpectedRequests": [],
+  "errors": []
+}

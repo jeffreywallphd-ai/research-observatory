@@ -1,0 +1,10 @@
+{
+  "taskId": "W1.A09.T04",
+  "kind": "benchmark-report-destination-denied",
+  "command": ".venv/Scripts/python.exe tools/desktop_performance_check.py --repo . --report artifacts/evidence/W1.A09.T04.performance-01.json --allow-dirty",
+  "exitCode": 1,
+  "ok": false,
+  "errors": ["build manifest output must remain under canonical artifacts/tmp: artifacts\\evidence\\W1.A09.T04.performance-01.json"],
+  "metricsAvailable": false,
+  "qualification": "The existing checker requires report publication under artifacts/tmp. No benchmark metrics were returned or retained by this failed invocation; it is neither a performance pass nor an observed threshold failure. Repeat the unchanged checker with its required temporary output path and retain that complete report. Do not alter thresholds or remove samples."
+}

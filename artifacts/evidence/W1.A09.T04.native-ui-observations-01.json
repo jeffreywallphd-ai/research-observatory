@@ -1,0 +1,69 @@
+{
+  "taskId": "W1.A09.T04",
+  "status": "PASS_WITHIN_DECLARED_LIFECYCLE_SCOPE",
+  "buildRecord": "artifacts/evidence/W1.A09.T04.native-builds-01.json",
+  "all161BuildInputsUnchangedAcrossUi": true,
+  "debugAndReleaseExecutablesUnchangedAcrossUi": true,
+  "method": "Authorized computer-use skill, actual built React/Tauri/native IPC/Windows Shell and real supervised Core with synthetic storage. No browser invoke doubles. Screenshots inspected live, not saved; structured observations retain only synthetic project data.",
+  "fixture": "artifacts/tmp/directory-dialog-lifecycle-20260905-d01",
+  "fixtureSubstitutions": ["policy-root", "Core-vault", "WebView-data-directory", "Core-temp", "default-project-parent"],
+  "fixturesRetained": true,
+  "project": {
+    "displayName": "Café continuity study",
+    "childName": "cafe-continuity-study",
+    "projectId": "bacfe519-5fc7-4d0e-9aa3-f8c497e591ef",
+    "objective": "Check that a synthetic study keeps its name and objective after reopening.",
+    "useCase": "Rapid field orientation"
+  },
+  "firstSession": {
+    "mode": "lifecycle",
+    "actualSignInMode": "none",
+    "credentialsInvoked": false,
+    "startupCoreReadyAndNoProjectOpen": true,
+    "defaultParentPreselected": true,
+    "folderPathTyping": false,
+    "creationFolderDialogUsed": false,
+    "destinationDerivedFromFriendlyName": true,
+    "createCompleted": true,
+    "createdProjectClosedCompatibleRevisionZero": true,
+    "explicitOpenCompleted": true,
+    "guidedResearchIntentBecameCurrent": true,
+    "savedObjectiveObservedInResearchIntent": true,
+    "applicationClosedWhileProjectOpen": true,
+    "processExitCode": 0,
+    "directoryAdmissionClosedAndNoPendingDialog": true
+  },
+  "restartSession": {
+    "mode": "lifecycle-resume",
+    "sameIdentityValidatedFixture": true,
+    "actualSignInMode": "none",
+    "credentialsInvoked": false,
+    "startupCoreReadyAndNoProjectOpen": true,
+    "creationDraftCleared": true,
+    "openProjectSelectionCleared": true,
+    "defaultParentPreselected": true,
+    "nativePickerOpenedAtFixtureProjects": true,
+    "selectedExistingFolderByClickWithoutPathTyping": true,
+    "nativeSelectedResult": true,
+    "selectionAloneDidNotOpenProject": true,
+    "explicitOpenCompleted": true,
+    "sameDisplayNameAndSavedObjectiveObserved": true,
+    "explicitCloseCompleted": true,
+    "closedStateObserved": true,
+    "applicationExitCode": 0,
+    "directoryAdmissionClosedAndNoPendingDialog": true,
+    "noSyntheticWindowRemained": true
+  },
+  "toolObservations": [
+    "Immediate post-action UI snapshots sometimes preceded asynchronous React updates; a fresh observation established the final state before another action.",
+    "The use-case popup was owned by WebView; after the tool rejected a non-target click, fresh activation/observation and keyboard selection succeeded.",
+    "Following a turn interruption, the minimized window required fresh selection and activation. The tool refused stale state; no unobserved input was assumed successful.",
+    "The folder dialog accessibility index was not usable in the main-window cache. Fresh screenshot-backed coordinates in the returned related-dialog screenshot selected and confirmed the synthetic folder."
+  ],
+  "residuals": [
+    "Actual ordinary-default parent creation/parity is separately evidenced by T03; this UI run substitutes a synthetic default parent.",
+    "This proves real source-built application lifecycle, not unmodified production-profile startup, frozen-Core startup, authentication, signed installer or complete W1 qualification.",
+    "Active/Closed wording and expired supporting-context guidance were observed and are not claimed fixed here; retain their existing usability/routing ownership.",
+    "Full-height sidebar and effective paragraph-spacing findings remain assigned to A08.T02."
+  ]
+}

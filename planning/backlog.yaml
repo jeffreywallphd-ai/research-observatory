@@ -40517,14 +40517,17 @@ wave_amendments:
     - Real persistence/authority return binding through reviewed existing adapters
     - Negative source/history/scope and protected-state checks; full matrix at W1 exit
     packet_task_sha256: ecc830ede218ff101b55d9224c14f6906ba3744a3e155e55fd7e33fe0e7853d0
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-09-05T22:18:10+00:00'
+    status: IN_PROGRESS
+    owner: codex
+    branch: codex/w1-windows-local-runtime
+    base_sha: cd4838e9c64fdbf3adb8f326781f95404a0c945d
+    worktree: C:/ai-projects/research-observatory
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-05T22:20:19+00:00'
+      expires_at: '2026-09-06T06:20:19+00:00'
+    started_at: '2026-09-05T22:20:19+00:00'
+    updated_at: '2026-09-05T22:20:19+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

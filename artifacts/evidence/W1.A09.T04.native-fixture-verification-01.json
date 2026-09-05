@@ -1,0 +1,160 @@
+{
+  "taskId": "W1.A09.T04",
+  "phase": "Scoped harness implementation verification; not task approval",
+  "observedAt": "2026-09-05T22:30:23.874551+00:00",
+  "workingBase": "cd4838e9c64fdbf3adb8f326781f95404a0c945d",
+  "result": "PASS",
+  "author": "t03_native_replay",
+  "inputsBefore": {
+    "apps/desktop/src-tauri/src/lib.rs": "da37d351d79e4bdd1c4be75127ac9983dabc8fdbca9c8317bedad1cdcee22faa",
+    "apps/desktop/src-tauri/src/application_lock.rs": "225658c2ea9098916221af304d1a428189245131c4197afeeec2e5b1e5fd464a",
+    "apps/desktop/src-tauri/src/directory_picker.rs": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs": "bb217095a662d6429016954dce91fdb0dfe6d029d8a08c8071f30c04415cdc65",
+    "apps/desktop/src-tauri/Cargo.toml": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+    "Cargo.toml": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+    "Cargo.lock": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf"
+  },
+  "inputsAfter": {
+    "apps/desktop/src-tauri/src/lib.rs": "da37d351d79e4bdd1c4be75127ac9983dabc8fdbca9c8317bedad1cdcee22faa",
+    "apps/desktop/src-tauri/src/application_lock.rs": "225658c2ea9098916221af304d1a428189245131c4197afeeec2e5b1e5fd464a",
+    "apps/desktop/src-tauri/src/directory_picker.rs": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+    "apps/desktop/src-tauri/examples/project_contract_probe.rs": "bb217095a662d6429016954dce91fdb0dfe6d029d8a08c8071f30c04415cdc65",
+    "apps/desktop/src-tauri/Cargo.toml": "de349b7dd5173393909ab699f908a904bed2a64add9e0d9ae436fe96c791f3dc",
+    "Cargo.toml": "1dbeb127b2bb9b68a8f8b667286dcdc3d824eab04de4d01210ada478de867d29",
+    "Cargo.lock": "bdba8ac6f9ade57ff31322b30a97bb8f1439fe2db5c4f0dd6725ef76a14490d8",
+    "tools/desktop_app_check.py": "6d1dd754d56e4eb071386cce4720d9d70689f083c0722d850f7882ea5fb4ccbf"
+  },
+  "inputBindingScope": "Exact selected native, dependency and pinned-tool helper raw working bytes. This is not the final closed product build inventory or commit-bound task acceptance packet.",
+  "namespace": "artifacts/tmp/t04-native-replay-8el4wpuf",
+  "checks": [
+    {
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--features",
+        "integration-harness",
+        "directory_integration_harness::tests"
+      ],
+      "exitCode": 0,
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 92
+    },
+    {
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "passed": 25,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 67
+    },
+    {
+      "command": [
+        "{pinned-cargo}",
+        "test",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--features",
+        "integration-harness",
+        "directory_picker"
+      ],
+      "exitCode": 0,
+      "passed": 25,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 80
+    },
+    {
+      "command": [
+        "{pinned-cargo}",
+        "clippy",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--lib",
+        "--tests",
+        "--examples",
+        "--features",
+        "integration-harness",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "testOutputRetention": "Exact result counts and commands transcribed from subprocess JSON output; full test-name output remains in the agent execution transcript, not claimed as a separate retained raw-log artifact.",
+  "priorObservations": {
+    "publicationFailure": "artifacts/evidence/W1.A09.T04.fixture-publication-adverse-01.json",
+    "compileFailure": {
+      "observedAt": "2026-09-05T22:29:18.212803+00:00",
+      "libSha256": "dd9b6fd7a0a5ad0b186968c7a01972a3532dc301dbebb8b68a79a892d8124cf1",
+      "exampleSha256": "bb217095a662d6429016954dce91fdb0dfe6d029d8a08c8071f30c04415cdc65",
+      "exitCode": 101,
+      "testsExecuted": 0,
+      "diagnostic": "E0433: ApplicationLockState missing from fixture tests scope at two new assertions. Corrected by importing the existing enum in tests only; no runtime behavior change.",
+      "namespace": "artifacts/tmp/t04-native-fixture-l78h_3h7"
+    },
+    "firstCorrectedFixtureReplay": {
+      "observedAt": "2026-09-05T22:29:35.060727+00:00",
+      "libSha256": "209a94394eb9e2770cacdd7a86f35d2cdf666174539e3cd515d74d31b3186fe0",
+      "exitCode": 0,
+      "passed": 13,
+      "failed": 0,
+      "ignored": 0,
+      "filtered": 92,
+      "namespace": "artifacts/tmp/t04-native-fixture-uuxjngpt"
+    }
+  },
+  "riskSelection": [
+    "Changed harness sharing can affect staged-child rename and fixture confinement claims: real native staged publication, all fixed-directory parent rename denial, held-handle and named identity revalidation, actual in-place junction mutation detection.",
+    "New lifecycle resume can cross fixture identity and default-policy boundaries: unseeded policy yields actual None/Unlocked, original fixture retains synthetic project bytes after lock manager and fixture are dropped/reacquired; deny path-like/missing/protected-without-receipt input, changed nonce/version/unknown fields, oversized/hardlinked receipts, and replaced vault directory.",
+    "Existing native picker cancellation/close/security paths could regress under harness compilation: replay all 25 production and 25 integration-harness picker tests.",
+    "New existing-example resource-check argument must compile without hidden normal setup: structural seam test and lib/tests/examples Clippy. Actual release resource resolution is deferred to the owner with the freshly packaged artifact."
+  ],
+  "scope": {
+    "ownedSourceFiles": [
+      "apps/desktop/src-tauri/src/lib.rs",
+      "apps/desktop/src-tauri/examples/project_contract_probe.rs"
+    ],
+    "productionAuthorityChanged": false,
+    "fixturePolicy": "Lifecycle create leaves policy absent before invoking actual ApplicationLockManager; earlier protected modes continue writing their established synthetic WindowsPassword policy.",
+    "resumeBoundary": "Nonce only; fixed repository artifacts/tmp/directory-dialog-{nonce}; original root and all six fixed directory identities; non-reparse, single-link receipt capped at 4096 bytes; no generic caller path, renderer IPC, environment vault override or production entrypoint switch.",
+    "sharing": "FILE_SHARE_READ|FILE_SHARE_WRITE, no FILE_SHARE_DELETE. Permits staged-child publication and denies parent rename. Same-account in-place reparse mutation remains possible but is observed and denied; no race-free confinement or hostile same-account isolation claim.",
+    "resourceProbe": "Existing example --check-tauri-resource-root uses windowless bare Tauri context, actual resource_dir and runtime_config plus resource-root constructor; reports bounded booleans and stable error only, no Core start, normal setup, policy, vault or WebView.",
+    "resourceProbeQualification": "Compilation/structural proof here only; actual release runtime resource resolution and no-debug-fallback check remain separate. It does not qualify a running production Core."
+  },
+  "deferred": [
+    "Owner actual fresh UI/Core default-only Create, Close/Open, application/Core restart and reopen with retained fixture.",
+    "Owner current-source real release Tauri resource acceptance/denial and no-debug-fallback against fresh production package; no normal production runtime launch.",
+    "Independent commit-bound task review and accumulated T04 verification; complete Wave-exit matrix."
+  ],
+  "privacy": {
+    "repositoryRelativeEvidencePathsOnly": true,
+    "personalAccountOrAbsoluteHostPathsStored": false,
+    "ordinaryProfileAccess": false,
+    "protectedWitnessAccess": false,
+    "siblingRepositoryAccess": false,
+    "fixtureCleanup": "Synthetic fixtures retained; no broad cleanup performed."
+  }
+}

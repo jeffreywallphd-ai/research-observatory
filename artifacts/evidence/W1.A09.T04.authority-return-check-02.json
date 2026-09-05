@@ -1,0 +1,150 @@
+{
+  "taskId": "W1.A09.T04",
+  "observedAt": "2026-09-05T23:06:22.077541+00:00",
+  "temporaryNamespace": "artifacts/tmp/t04-authority-return-remedy-y_tluso4",
+  "inputsBefore": {
+    "tests/foundation/test_planctl_amendments.py": "c4e464c5b103b902f52899b422ef75cdcd31bea9f51e69620d8987d233d932eb",
+    "tools/planctl.py": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6",
+    "tools/governance_kernel.py": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7",
+    "tools/taskctl.py": "40e5e014b343cde302d93d215150c269769c62e1edaebd371a31f1f7d4784d60",
+    "tools/ui_conformance.py": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a",
+    "tools/ui_reference_check.py": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+    "planning/enabler-change-requests/enabler-change-request.v4.schema.json": "69b378e5958e460354ec523fe23bfcdae11b1e321388e41bd101ce1d9f20f347",
+    "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c",
+    "planning/enabler-change-requests/ECR-0008.packet.json": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+    "planning/wave-amendment-approvals/W1.A09.json": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+    "planning/wave-amendment-approvals/W1.A08.json": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
+    "planning/enabler-change-requests/ECR-0003.packet.json": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+    "planning/wave-amendment-approvals/W1.A04.json": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+    "planning/governance-migrations/GOV-MIG-0001.json": "4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d",
+    "design/ui-reference/REFERENCE_MANIFEST.yaml": "7bb860f9a513fc4df5848b4398484a1914c3d43bb242ac421575fe67aa4f8032",
+    "design/ui-reference/APPROVAL.yaml": "ea7adfa964e06af55bf67d9a105c3d69859c4ee33edb0a3d8118d77f309376f0",
+    "design/ui-reference/STYLE_GUIDE.md": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946",
+    "design/ui-reference/assets/app.css": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee",
+    "pyproject.toml": "bb6d5c66a5b75dab7a0847c9af6a09865dec022328c7a899c111c6775eafb125"
+  },
+  "inputsAfter": {
+    "tests/foundation/test_planctl_amendments.py": "c4e464c5b103b902f52899b422ef75cdcd31bea9f51e69620d8987d233d932eb",
+    "tools/planctl.py": "fd378358a5a098ee24c95767bfda0ee479ce34f775cc6e5eeee7279ddc711cf6",
+    "tools/governance_kernel.py": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7",
+    "tools/taskctl.py": "40e5e014b343cde302d93d215150c269769c62e1edaebd371a31f1f7d4784d60",
+    "tools/ui_conformance.py": "67f55790422db9dcc2356f7972a8a2d93c80c03780a447344eb6da35c1c1e37a",
+    "tools/ui_reference_check.py": "77cee156dc22574c53521a05b71a82d8da7db99cc9022e85ab712de963b8a1f6",
+    "planning/enabler-change-requests/enabler-change-request.v4.schema.json": "69b378e5958e460354ec523fe23bfcdae11b1e321388e41bd101ce1d9f20f347",
+    "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c",
+    "planning/enabler-change-requests/ECR-0008.packet.json": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+    "planning/wave-amendment-approvals/W1.A09.json": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+    "planning/wave-amendment-approvals/W1.A08.json": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
+    "planning/enabler-change-requests/ECR-0003.packet.json": "3ed869e5c8e894c665b9972400d9fd20de458a302abbbc9aa52da7c8eb440687",
+    "planning/wave-amendment-approvals/W1.A04.json": "4c40aba122f87cd7a3ddc82a52fbefc089b40d6e894c991548954c73b19869ab",
+    "planning/governance-migrations/GOV-MIG-0001.json": "4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d",
+    "design/ui-reference/REFERENCE_MANIFEST.yaml": "7bb860f9a513fc4df5848b4398484a1914c3d43bb242ac421575fe67aa4f8032",
+    "design/ui-reference/APPROVAL.yaml": "ea7adfa964e06af55bf67d9a105c3d69859c4ee33edb0a3d8118d77f309376f0",
+    "design/ui-reference/STYLE_GUIDE.md": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946",
+    "design/ui-reference/assets/app.css": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee",
+    "pyproject.toml": "bb6d5c66a5b75dab7a0847c9af6a09865dec022328c7a899c111c6775eafb125"
+  },
+  "checks": [
+    {
+      "command": [
+        "{repository-python}",
+        "-I",
+        "-B",
+        "-c",
+        "{input-guarded-unittest-entry}",
+        "discover",
+        "-s",
+        "tests/foundation",
+        "-p",
+        "test_planctl_amendments.py",
+        "-k",
+        "paused_correction",
+        "-v"
+      ],
+      "expectedTestCount": 4,
+      "observedTestCounts": [
+        4
+      ],
+      "exitCode": 0,
+      "durationSeconds": 51.580644,
+      "output": "test_paused_correction_authenticates_real_git_and_returned_history (test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_authenticates_real_git_and_returned_history) ... ok\ntest_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut (test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut) ... ok\ntest_paused_correction_schema_is_explicit_and_keeps_v4_bytes (test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_schema_is_explicit_and_keeps_v4_bytes) ... ok\ntest_paused_correction_snapshot_itself_must_be_quiescent (test_planctl_amendments.PlanctlAmendmentTests.test_paused_correction_snapshot_itself_must_be_quiescent) ... ok\n\n----------------------------------------------------------------------\nRan 4 tests in 50.598s\n\nOK\n"
+    },
+    {
+      "command": [
+        "{repository-python}",
+        "-I",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "tests/foundation/test_planctl_amendments.py"
+      ],
+      "expectedTestCount": null,
+      "observedTestCounts": [],
+      "exitCode": 0,
+      "durationSeconds": 0.119635,
+      "output": "All checks passed!\n"
+    }
+  ],
+  "phase": "Bounded verification maintenance replay; not task approval",
+  "result": "PASS",
+  "summary": {
+    "selectedTests": 4,
+    "passed": 4,
+    "failed": 0,
+    "errors": 0,
+    "ruff": "PASS",
+    "stableInputs": 19,
+    "inputsUnchanged": true
+  },
+  "predecessor": {
+    "testFile": "tests/foundation/test_planctl_amendments.py",
+    "sha256": "5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f",
+    "adverseReport": {
+      "path": "artifacts/evidence/W1.A09.T04.authority-return-check-01.json",
+      "sha256": "41a454466e79b01313918e217ca338c42f9863d062a22f45273b161ccf4fc035"
+    },
+    "diagnosticReport": {
+      "path": "artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json",
+      "sha256": "89c4fecba1633747de7c61fabb742083fe14b43f115fb12771f1573ace56135f"
+    }
+  },
+  "scope": {
+    "authority": "GOV-MIG-0001 bounded evidence/test maintenance, owner-scoped within T04 acceptance and return qualification.",
+    "onlyChangedFunction": "PlanctlAmendmentTests.test_paused_correction_chain_accepts_exact_parent_not_injected_historical_shortcut",
+    "delta": "Use immutable approved ECR-0008 packet instead of string-renamed historical ECR-0007; load the exact packet-bound paused baseline; assert its independently reconstructed binding equals the approved packet. Existing positive and injected-history rejection assertions remain.",
+    "productionValidatorChanged": false,
+    "otherHistoricalFixturesChanged": false,
+    "liveBacklogChanged": false,
+    "gitMutationOutsideSyntheticTests": false,
+    "nativeSourceChanged": false,
+    "failureCause": "Historical fake packet retained 1.5 governed hashes after approved 1.6 publication and therefore correctly failed authentic historical-packet checks; current real A09 authority and the exact counterfactual passed without validator changes.",
+    "riskSelection": "Replay all four paused_correction tests in the changed module and lint that file. No helper/validator implementation changed, so the earlier six UI and six workflow passes need no repetition for this fixture-only delta.",
+    "deferred": "Independent bounded review and final commit-bound T04 qualification remain with the owner. This does not approve correctionReturn/adoption or activate the paused predecessor.",
+    "inputBinding": "Exact selected working source/validator/schema/authority/reference input hashes before and after; not a complete transitive authority-read inventory."
+  },
+  "immutableFixture": {
+    "counterfactualOnly": true,
+    "approvedPacketSha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+    "frozenBaselineCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+    "frozenBaselineSha256": "1064069098cb73ddc62a42d45b09ffb70b8191f5181dbd8b9ad8932347e5c2c9",
+    "parentCanonicalHashMatches": true,
+    "positiveErrors": [],
+    "injectedErrors": [
+      "ECR v4 target Wave is not paused at the required entry boundary"
+    ],
+    "existingNegativeAssertionPasses": true
+  },
+  "execution": {
+    "principal": "Current Windows user via scoped approved execution; no safe.directory/global account changes.",
+    "testEntry": "Unmodified unittest with an audit hook rejecting protected witness and excluded sibling file/subprocess access.",
+    "outputScope": "Captured and redacted; synthetic test Git/CAS mutations only.",
+    "timeoutSeconds": 240
+  },
+  "privacy": {
+    "personalAccountPathsOrSidStored": false,
+    "protectedWitnessAccess": false,
+    "siblingRepositoryAccess": false,
+    "credentialsOrOrdinaryProfileAccess": false
+  }
+}

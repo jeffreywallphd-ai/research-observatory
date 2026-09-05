@@ -564,7 +564,7 @@ pub mod directory_integration_harness {
     use crate::application_sign_in_policy::{POLICY_FILE, SignInPolicy};
     use serde_json::{Value, json};
     use std::ffi::{OsStr, OsString};
-    use std::io::Write;
+    use std::io::{Read, Write};
     use std::os::windows::{
         fs::{MetadataExt, OpenOptionsExt},
         io::AsRawHandle,
@@ -581,6 +581,8 @@ pub mod directory_integration_harness {
         Selection,
         ManualLock,
         MainClose,
+        Lifecycle,
+        LifecycleResume,
     }
 
     impl Mode {
@@ -589,6 +591,8 @@ pub mod directory_integration_harness {
                 "selection" => Some(Self::Selection),
                 "manual-lock" => Some(Self::ManualLock),
                 "main-close" => Some(Self::MainClose),
+                "lifecycle" => Some(Self::Lifecycle),
+                "lifecycle-resume" => Some(Self::LifecycleResume),
                 _ => None,
             }
         }
@@ -597,8 +601,35 @@ pub mod directory_integration_harness {
                 Self::Selection => "selection",
                 Self::ManualLock => "manual-lock",
                 Self::MainClose => "main-close",
+                Self::Lifecycle => "lifecycle",
+                Self::LifecycleResume => "lifecycle-resume",
             }
         }
+
+        fn is_lifecycle(self) -> bool {
+            matches!(self, Self::Lifecycle | Self::LifecycleResume)
+        }
+    }
+
+    const LIFECYCLE_RECEIPT: &str = "t04-lifecycle-fixture.json";
+    const FIXTURE_DIRECTORIES: [&str; 6] = [
+        "application-data",
+        "projects",
+        "vault",
+        "webview",
+        "temporary",
+        "application-data/security",
+    ];
+
+    // This is fixture provenance, not a capability or a production controller.
+    // Resume accepts only the original directory identities in our fixed test
+    // namespace. Hostile same-account modification is not an isolation claim.
+    #[derive(serde::Deserialize, serde::Serialize)]
+    #[serde(rename_all = "camelCase", deny_unknown_fields)]
+    struct LifecycleReceipt {
+        version: String,
+        nonce: String,
+        directories: std::collections::BTreeMap<String, (u64, u64)>,
     }
 
     #[derive(Clone)]
@@ -633,14 +664,14 @@ pub mod directory_integration_harness {
     }
 
     fn open_pinned_directory(path: &Path) -> Result<std::fs::File, &'static str> {
-        // List-directory + read attributes; share reads only. Attribute-only
-        // handles do not participate in Windows share-delete denial. Denying
-        // directory write/delete
-        // sharing prevents rename and in-place reparse substitution while
-        // ordinary creation/opening of child files remains available.
+        // List-directory + read attributes; allow reads/writes so Core can
+        // publish staged children, but deny delete-sharing to prevent parent
+        // rename. Revalidate both held and named objects. These pins do not
+        // prevent hostile same-account in-place reparse mutation or guarantee
+        // race-free confinement; observed drift must stop fixture consumers.
         std::fs::OpenOptions::new()
             .access_mode(0x81)
-            .share_mode(0x1)
+            .share_mode(0x3)
             .custom_flags(0x02000000 | 0x00200000)
             .open(path)
             .map_err(|_| "probe-fixture-pin-unavailable")
@@ -773,6 +804,37 @@ pub mod directory_integration_harness {
         }
 
         fn create(nonce: &str) -> Result<Self, &'static str> {
+            Self::create_with_policy(nonce, true)
+        }
+
+        fn create_lifecycle(nonce: &str) -> Result<Self, &'static str> {
+            Self::create_with_policy(nonce, false)
+        }
+
+        fn layout(root: PathBuf) -> Self {
+            Self {
+                application_data: root.join("application-data"),
+                projects: root.join("projects"),
+                vault: root.join("vault"),
+                webview: root.join("webview"),
+                temporary: root.join("temporary"),
+                root,
+                pins: std::sync::Arc::new(Vec::new()),
+            }
+        }
+
+        fn directory_identities(&self) -> std::collections::BTreeMap<String, (u64, u64)> {
+            self.pins
+                .iter()
+                .filter_map(|pin| {
+                    pin.path.strip_prefix(&self.root).ok().map(|relative| {
+                        (relative.to_string_lossy().replace('\\', "/"), pin.identity)
+                    })
+                })
+                .collect()
+        }
+
+        fn create_with_policy(nonce: &str, protected: bool) -> Result<Self, &'static str> {
             // Reject path-like input before resolving or inspecting any caller
             // target; an occupied child is never reused or cleaned up.
             if !valid_nonce(nonce) {
@@ -786,37 +848,88 @@ pub mod directory_integration_harness {
             std::fs::create_dir(&root).map_err(|_| "probe-fixture-create-denied")?;
             pins.push(PinnedDirectory::acquire(root.clone())?);
             validate_directory(&root)?;
-            let mut fixture = Self {
-                application_data: root.join("application-data"),
-                projects: root.join("projects"),
-                vault: root.join("vault"),
-                webview: root.join("webview"),
-                temporary: root.join("temporary"),
-                root,
-                pins: std::sync::Arc::new(Vec::new()),
-            };
-            for path in [
-                &fixture.application_data,
-                &fixture.projects,
-                &fixture.vault,
-                &fixture.webview,
-                &fixture.temporary,
-            ] {
-                std::fs::create_dir(path).map_err(|_| "probe-fixture-create-denied")?;
+            let mut fixture = Self::layout(root);
+            for relative in FIXTURE_DIRECTORIES {
+                let path = fixture.root.join(relative);
+                std::fs::create_dir(&path).map_err(|_| "probe-fixture-create-denied")?;
                 pins.push(PinnedDirectory::acquire(path.clone())?);
-                validate_directory(path)?;
+                validate_directory(&path)?;
             }
-            let security = fixture.application_data.join("security");
-            std::fs::create_dir(&security).map_err(|_| "probe-fixture-create-denied")?;
-            pins.push(PinnedDirectory::acquire(security.clone())?);
-            let policy = SignInPolicy::normalized_target(1, SignInMode::WindowsPassword, None, 0)
-                .and_then(|policy| policy.canonical_bytes())?;
-            let mut file = std::fs::File::create_new(security.join(POLICY_FILE))
+            if protected {
+                let policy =
+                    SignInPolicy::normalized_target(1, SignInMode::WindowsPassword, None, 0)
+                        .and_then(|policy| policy.canonical_bytes())?;
+                let mut file = std::fs::File::create_new(
+                    fixture.application_data.join("security").join(POLICY_FILE),
+                )
                 .map_err(|_| "probe-policy-create-denied")?;
-            file.write_all(&policy)
-                .and_then(|_| file.sync_all())
-                .map_err(|_| "probe-policy-create-denied")?;
+                file.write_all(&policy)
+                    .and_then(|_| file.sync_all())
+                    .map_err(|_| "probe-policy-create-denied")?;
+            }
             fixture.pins = std::sync::Arc::new(pins);
+            fixture.revalidate()?;
+            if !protected {
+                let receipt = LifecycleReceipt {
+                    version: "t04-directory-lifecycle-v1".into(),
+                    nonce: nonce.into(),
+                    directories: fixture.directory_identities(),
+                };
+                let bytes = serde_json::to_vec(&receipt).map_err(|_| "probe-receipt-invalid")?;
+                let mut file = std::fs::File::create_new(fixture.root.join(LIFECYCLE_RECEIPT))
+                    .map_err(|_| "probe-receipt-create-denied")?;
+                file.write_all(&bytes)
+                    .and_then(|_| file.sync_all())
+                    .map_err(|_| "probe-receipt-create-denied")?;
+                fixture.revalidate()?;
+            }
+            Ok(fixture)
+        }
+
+        fn resume_lifecycle(nonce: &str) -> Result<Self, &'static str> {
+            if !valid_nonce(nonce) {
+                return Err("probe-fixture-name-invalid");
+            }
+            let root = repository()?
+                .join("artifacts/tmp")
+                .join(format!("directory-dialog-{nonce}"));
+            validate_directory(&root)?;
+            let mut pins = pin_ancestors(&root)?;
+            for relative in FIXTURE_DIRECTORIES {
+                let path = root.join(relative);
+                validate_directory(&path)?;
+                pins.push(PinnedDirectory::acquire(path)?);
+            }
+            let mut fixture = Self::layout(root);
+            fixture.pins = std::sync::Arc::new(pins);
+            let file = std::fs::OpenOptions::new()
+                .read(true)
+                .share_mode(0x1)
+                .custom_flags(0x00200000)
+                .open(fixture.root.join(LIFECYCLE_RECEIPT))
+                .map_err(|_| "probe-receipt-unavailable")?;
+            let mut information = BY_HANDLE_FILE_INFORMATION::default();
+            if unsafe { GetFileInformationByHandle(file.as_raw_handle(), &mut information) } == 0
+                || information.dwFileAttributes & (0x10 | 0x400) != 0
+                || information.nNumberOfLinks != 1
+                || information.nFileSizeHigh != 0
+                || information.nFileSizeLow > 4096
+            {
+                return Err("probe-receipt-invalid");
+            }
+            let mut bytes = Vec::new();
+            (&file)
+                .take(4097)
+                .read_to_end(&mut bytes)
+                .map_err(|_| "probe-receipt-unavailable")?;
+            let receipt: LifecycleReceipt =
+                serde_json::from_slice(&bytes).map_err(|_| "probe-receipt-invalid")?;
+            if receipt.version != "t04-directory-lifecycle-v1"
+                || receipt.nonce != nonce
+                || receipt.directories != fixture.directory_identities()
+            {
+                return Err("probe-receipt-identity-mismatch");
+            }
             fixture.revalidate()?;
             Ok(fixture)
         }
@@ -937,7 +1050,7 @@ pub mod directory_integration_harness {
                             .is_some_and(|window| window.close().is_ok());
                         emit(json!({"kind":"tauri-directory-main-close", "requested":requested}));
                     }
-                    Mode::Selection => {}
+                    Mode::Selection | Mode::Lifecycle | Mode::LifecycleResume => {}
                 }
             }
             let deadline = Instant::now() + Duration::from_secs(180);
@@ -952,9 +1065,47 @@ pub mod directory_integration_harness {
         });
     }
 
+    /// Read-only packaging observation: no normal setup, policy, vault, Core,
+    /// WebView, or renderer is started. Release runtime_config has no fallback.
+    pub fn observe_tauri_resource_root() -> Result<Value, &'static str> {
+        let mut context = tauri::generate_context!();
+        for window in &mut context.config_mut().app.windows {
+            window.create = false;
+        }
+        let app = tauri::Builder::default()
+            .build(context)
+            .map_err(|_| "probe-resource-context-unavailable")?;
+        let resource_root = app
+            .path()
+            .resource_dir()
+            .map_err(|_| "probe-resource-directory-unavailable")?;
+        let executable = std::env::current_exe().map_err(|_| "probe-executable-unavailable")?;
+        let at_executable = executable.parent().is_some_and(|parent| {
+            matches!(
+                (dunce::canonicalize(parent), dunce::canonicalize(&resource_root)),
+                (Ok(parent), Ok(resource)) if parent == resource
+            )
+        });
+        let resource_config = SupervisorConfig::from_resource_root(&resource_root);
+        let runtime = runtime_config(&app);
+        Ok(json!({
+            "kind":"actual-tauri-resource-resolution", "debugAssertions":cfg!(debug_assertions),
+            "resourceDirectoryMatchesExecutableParent":at_executable,
+            "resourceRootConstructorAccepted":resource_config.is_ok(),
+            "runtimeConfigAccepted":runtime.is_ok(), "runtimeConfigError":runtime.err(),
+            "normalSetupInvoked":false, "coreStarted":false, "readOnly":true,
+            "scope":"actual-tauri-resource-resolution-not-production-runtime-qualification"
+        }))
+    }
+
     pub fn run(mode: Mode, nonce: &OsStr) -> Result<(), &'static str> {
         validate_environment(std::env::vars_os().map(|(name, _)| name))?;
-        let fixture = Fixture::create(nonce.to_str().ok_or("probe-fixture-name-invalid")?)?;
+        let nonce = nonce.to_str().ok_or("probe-fixture-name-invalid")?;
+        let fixture = match mode {
+            Mode::Lifecycle => Fixture::create_lifecycle(nonce)?,
+            Mode::LifecycleResume => Fixture::resume_lifecycle(nonce)?,
+            _ => Fixture::create(nonce)?,
+        };
         let config = fixture.supervisor_config()?;
         let mut context = tauri::generate_context!();
         let window_config = context
@@ -982,7 +1133,7 @@ pub mod directory_integration_harness {
             let main = tauri::WebviewWindowBuilder::from_config(app, &window_config)
                 .and_then(|builder| builder
                 .data_directory(fixture.webview.clone())
-                .title(format!("Research Observatory — SYNTHETIC T03 {}", mode.name())).build())
+                .title(format!("Research Observatory — SYNTHETIC {} {}", if mode.is_lifecycle() { "T04" } else { "T03" }, mode.name())).build())
                 .inspect_err(|_| { app.state::<RuntimeSupervisor>().stop(); })?;
             emit(json!({"kind":"tauri-directory-start", "mode":mode.name(), "fixture":fixture.relative_root(),
                 "ownerHwnd":main.hwnd().ok().map(|handle| handle.0 as isize),
@@ -990,7 +1141,14 @@ pub mod directory_integration_harness {
                 "scope":"actual-renderer-tauri-ipc-lock-and-close-with-fixture-storage",
                 "credentialsInvoked":false, "productionPackagedQualification":false,
                 "projects":format!("{}/projects", fixture.relative_root()), "fixturesRetained":true}));
-            observe_pending(app.handle().clone(), mode);
+            if mode.is_lifecycle() {
+                emit(json!({"kind":"tauri-lifecycle-ready", "mode":mode.name(),
+                    "signInMode":app.state::<ApplicationLockManager>().status().sign_in_mode,
+                    "resumedOriginalFixture":mode == Mode::LifecycleResume,
+                    "scope":"actual-runtime-with-fixture-storage-no-ordinary-profile-access"}));
+            } else {
+                observe_pending(app.handle().clone(), mode);
+            }
             Ok(())
         }).build(context).map_err(|_| "probe-tauri-build-failed")?;
         // Builder::build has not run setup. Capture native clones only on Ready,
@@ -1031,6 +1189,7 @@ pub mod directory_integration_harness {
     #[cfg(test)]
     mod tests {
         use super::*;
+        use crate::application_lock::ApplicationLockState;
         use crate::application_sign_in_policy::secure_random_hex;
 
         fn nonce() -> String {
@@ -1183,6 +1342,236 @@ pub mod directory_integration_harness {
                     validate_environment([OsString::from(name)]),
                     Err("probe-webview-environment-override-denied")
                 );
+            }
+        }
+
+        #[test]
+        fn fixture_pins_allow_core_style_staged_child_publication() {
+            let fixture = Fixture::create(&nonce()).unwrap();
+            let staging = fixture.projects.join("synthetic-staging");
+            let published = fixture.projects.join("synthetic-published");
+            std::fs::create_dir(&staging).unwrap();
+            std::fs::write(staging.join("marker"), b"synthetic staged payload").unwrap();
+            std::fs::rename(&staging, &published)
+                .expect("fixture pins must permit Core's staged-child publication");
+            fixture.revalidate().unwrap();
+            assert_eq!(
+                std::fs::read(published.join("marker")).unwrap(),
+                b"synthetic staged payload"
+            );
+            assert!(!staging.exists());
+        }
+
+        #[test]
+        fn lifecycle_starts_without_policy_and_resumes_only_original_fixture() {
+            let name = nonce();
+            let fixture = Fixture::create_lifecycle(&name).unwrap();
+            let policy = fixture.application_data.join("security").join(POLICY_FILE);
+            assert!(
+                !policy.exists(),
+                "lifecycle must exercise actual default policy"
+            );
+            let manager = ApplicationLockManager::acquire(&fixture.application_data).unwrap();
+            assert_eq!(manager.status().sign_in_mode, SignInMode::None);
+            assert_eq!(manager.status().state, ApplicationLockState::Unlocked);
+            let identities = fixture.directory_identities();
+            let child = fixture.projects.join("synthetic-project");
+            std::fs::create_dir(&child).unwrap();
+            std::fs::write(child.join("marker"), b"retained synthetic project").unwrap();
+            drop(manager);
+            drop(fixture);
+            assert!(matches!(
+                Fixture::create(&name),
+                Err("probe-fixture-create-denied")
+            ));
+            let resumed = Fixture::resume_lifecycle(&name).unwrap();
+            assert_eq!(resumed.directory_identities(), identities);
+            assert_eq!(
+                std::fs::read(child.join("marker")).unwrap(),
+                b"retained synthetic project"
+            );
+            let manager = ApplicationLockManager::acquire(&resumed.application_data).unwrap();
+            assert_eq!(manager.status().sign_in_mode, SignInMode::None);
+            assert_eq!(manager.status().state, ApplicationLockState::Unlocked);
+            resumed.revalidate().unwrap();
+        }
+
+        #[test]
+        fn lifecycle_resume_denies_unowned_missing_and_path_inputs() {
+            for invalid in ["", "..", "../outside", "C:\\outside", "nested/name"] {
+                assert!(matches!(
+                    Fixture::resume_lifecycle(invalid),
+                    Err("probe-fixture-name-invalid")
+                ));
+            }
+            let absent = nonce();
+            assert!(Fixture::resume_lifecycle(&absent).is_err());
+            assert!(
+                !repository()
+                    .unwrap()
+                    .join("artifacts/tmp")
+                    .join(format!("directory-dialog-{absent}"))
+                    .exists()
+            );
+            let name = nonce();
+            let protected = Fixture::create(&name).unwrap();
+            let policy = protected
+                .application_data
+                .join("security")
+                .join(POLICY_FILE);
+            let before = std::fs::read(&policy).unwrap();
+            assert!(matches!(
+                Fixture::resume_lifecycle(&name),
+                Err("probe-receipt-unavailable")
+            ));
+            assert_eq!(std::fs::read(policy).unwrap(), before);
+        }
+
+        #[test]
+        fn lifecycle_resume_rejects_receipt_changes_and_directory_replacement() {
+            let name = nonce();
+            let fixture = Fixture::create_lifecycle(&name).unwrap();
+            let receipt_path = fixture.root.join(LIFECYCLE_RECEIPT);
+            let original = std::fs::read(&receipt_path).unwrap();
+            for field in ["nonce", "version", "unknown"] {
+                let mut changed: Value = serde_json::from_slice(&original).unwrap();
+                changed[field] = json!("not-the-original-fixture");
+                std::fs::write(&receipt_path, serde_json::to_vec(&changed).unwrap()).unwrap();
+                assert!(Fixture::resume_lifecycle(&name).is_err());
+            }
+            std::fs::write(&receipt_path, &original).unwrap();
+            let vault = fixture.vault.clone();
+            let moved = fixture.root.join("retained-original-vault");
+            drop(fixture);
+            std::fs::rename(&vault, &moved).unwrap();
+            std::fs::create_dir(&vault).unwrap();
+            assert!(matches!(
+                Fixture::resume_lifecycle(&name),
+                Err("probe-receipt-identity-mismatch")
+            ));
+            assert!(moved.is_dir());
+            assert_eq!(std::fs::read(receipt_path).unwrap(), original);
+        }
+
+        #[test]
+        fn lifecycle_resume_rejects_oversized_and_hardlinked_receipts() {
+            let name = nonce();
+            let fixture = Fixture::create_lifecycle(&name).unwrap();
+            let receipt = fixture.root.join(LIFECYCLE_RECEIPT);
+            let original = std::fs::read(&receipt).unwrap();
+            std::fs::write(&receipt, vec![b' '; 4097]).unwrap();
+            assert!(matches!(
+                Fixture::resume_lifecycle(&name),
+                Err("probe-receipt-invalid")
+            ));
+            std::fs::write(&receipt, original).unwrap();
+            std::fs::hard_link(&receipt, fixture.root.join("receipt-hardlink")).unwrap();
+            assert!(matches!(
+                Fixture::resume_lifecycle(&name),
+                Err("probe-receipt-invalid")
+            ));
+        }
+
+        #[test]
+        fn fixture_detects_same_account_in_place_reparse_mutation() {
+            use std::os::windows::ffi::OsStrExt;
+            #[link(name = "kernel32")]
+            unsafe extern "system" {
+                fn DeviceIoControl(
+                    device: *mut std::ffi::c_void,
+                    code: u32,
+                    input: *const std::ffi::c_void,
+                    input_length: u32,
+                    output: *mut std::ffi::c_void,
+                    output_length: u32,
+                    returned: *mut u32,
+                    overlapped: *mut std::ffi::c_void,
+                ) -> i32;
+            }
+            let fixture = Fixture::create_lifecycle(&nonce()).unwrap();
+            let target = fixture.root.join("synthetic-reparse-target");
+            std::fs::create_dir(&target).unwrap();
+            let printable: Vec<u16> = target.as_os_str().encode_wide().collect();
+            let substitute: Vec<u16> = OsString::from(format!("\\??\\{}", target.display()))
+                .encode_wide()
+                .collect();
+            let mut payload = Vec::new();
+            payload.extend(0xA0000003u32.to_le_bytes());
+            for value in [
+                8 + substitute.len() * 2 + 2 + printable.len() * 2 + 2,
+                0,
+                0,
+                substitute.len() * 2,
+                substitute.len() * 2 + 2,
+                printable.len() * 2,
+            ] {
+                payload.extend(u16::try_from(value).unwrap().to_le_bytes());
+            }
+            for value in substitute
+                .into_iter()
+                .chain([0])
+                .chain(printable)
+                .chain([0])
+            {
+                payload.extend(value.to_le_bytes());
+            }
+            let handle = std::fs::OpenOptions::new()
+                .access_mode(0x40000000)
+                .share_mode(0x7)
+                .custom_flags(0x02200000)
+                .open(&fixture.vault)
+                .unwrap();
+            let mut returned = 0;
+            assert_ne!(
+                unsafe {
+                    DeviceIoControl(
+                        handle.as_raw_handle(),
+                        0x000900A4,
+                        payload.as_ptr().cast(),
+                        payload.len().try_into().unwrap(),
+                        std::ptr::null_mut(),
+                        0,
+                        &mut returned,
+                        std::ptr::null_mut(),
+                    )
+                },
+                0,
+                "characterize real same-account mutation without claiming isolation"
+            );
+            assert_eq!(fixture.revalidate(), Err("probe-fixture-identity-invalid"));
+            let request = CoreApiRequest {
+                method: "GET".into(),
+                path: "/workflow-profiles/catalog".into(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            };
+            assert!(!fixture.permits_request(&request));
+            assert!(target.is_dir());
+        }
+
+        #[test]
+        fn resource_probe_has_no_normal_setup_or_runtime_launch() {
+            let source = include_str!("lib.rs");
+            let probe = source
+                .split_once("pub fn observe_tauri_resource_root()")
+                .unwrap()
+                .1
+                .split_once("pub fn run(mode: Mode")
+                .unwrap()
+                .0;
+            assert!(probe.contains("window.create = false"));
+            assert!(probe.contains("runtime_config(&app)"));
+            assert!(probe.contains(".resource_dir()"));
+            for forbidden in [
+                "setup_runtime(",
+                "application_builder(",
+                "ApplicationLockManager::",
+                "RuntimeSupervisor::",
+                "run_return(",
+                "app_local_data_dir(",
+            ] {
+                assert!(!probe.contains(forbidden));
             }
         }
 

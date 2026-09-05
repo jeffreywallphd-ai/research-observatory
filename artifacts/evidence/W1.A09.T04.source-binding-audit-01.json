@@ -1,0 +1,1037 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "w1-a09-t04-current-source-binding-audit",
+  "taskId": "W1.A09.T04",
+  "auditor": "agent:/root/t03_native_replay",
+  "observedAt": "2026-09-05T23:18:55.974921+00:00",
+  "disposition": "Mechanical source/artifact binding audit with explicitly classified historical mismatches; not independent task approval",
+  "independenceLimit": "Auditor authored the T04 fixture/lifecycle harness and paused-correction test-fixture remedy. These mechanical comparisons cannot supply independent approval for that work.",
+  "scope": {
+    "retainedReportCount": 23,
+    "t04ReportCount": 20,
+    "priorT03ReportCount": 3,
+    "mapTraversalUniqueCurrentPaths": 2013,
+    "reportHashConvention": "Raw bytes plus canonical JSON SHA256 (UTF-8, sorted keys, compact separators, ensure_ascii=false). Declared source inventories are compared to raw current bytes, with LF-only equality separately checked; none of the listed source mismatches is merely LF-only equality.",
+    "rawReportStability": {
+      "preexistingReportsRechecked": 21,
+      "changedDuringAudit": [],
+      "newlyCompletedReports": [
+        "artifacts/evidence/W1.A09.T04.verification-units-03.json",
+        "artifacts/evidence/W1.A09.T04.verification-native-02.json"
+      ]
+    },
+    "mutableReturnPreparationExcluded": true,
+    "method": "Read only exact T04 JSON reports, their declared source inventories and package manifests, current relevant native source, and three exact retained T03 modal/build records. Git reads only the exact cd4838e9c64fdbf3adb8f326781f95404a0c945d native source blobs and scoped diffs. No tests, builds, native UI, performance or controller mutations.",
+    "safety": "No protected A04 witness or sibling workspace read/hash/copy; no ordinary policy/vault/credentials; no ACL/account/global safe.directory changes."
+  },
+  "summary": {
+    "currentNativeDebugReleaseInputs": "161/161 each raw-match",
+    "productionNativeInputs": "161/161 raw-match; binary hash matches, not executed",
+    "presentationInputs": "425/425 raw-match",
+    "currentPackage02Inputs": "183/183 raw-match; all 710 package files hash-match under their creating Windows user",
+    "currentUnits03Inputs": "336/336 raw-match; 15 reported checks passed",
+    "currentNative02Inputs": "336/336 raw-match; 4 reported checks passed",
+    "integration01Inputs": "335/336 raw-match; only older verifier helper hash differs; its two recorded command definitions match current helper exactly after tool-location/separator normalization",
+    "authorityRemedyInputs": "19/19 before and after raw-match",
+    "currentFixtureInputs": "8/8 before and after raw-match"
+  },
+  "reports": [
+    {
+      "path": "artifacts/evidence/W1.A09.T04.authority-return-check-01.json",
+      "rawSha256": "41a454466e79b01313918e217ca338c42f9863d062a22f45273b161ccf4fc035",
+      "canonicalJsonSha256": "6ba1ad64153e011b3d9ab5fec7dea9f35c4300c180c6acd52ff48f25a604a675",
+      "inventories": [
+        {
+          "location": "/inputsBefore",
+          "entries": 266,
+          "rawMatches": 265,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M01"
+          ]
+        },
+        {
+          "location": "/inputsAfter",
+          "entries": 266,
+          "rawMatches": 265,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M01"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "exitCode": 0,
+          "selectionCountMatches": true
+        },
+        {
+          "exitCode": 0,
+          "selectionCountMatches": true
+        },
+        {
+          "exitCode": 1,
+          "selectionCountMatches": true
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.authority-return-check-02.json",
+      "rawSha256": "07c4a002b68ecba21d15832dbe588d67c9080ec192a09df2cfc5fabfb96b19ab",
+      "canonicalJsonSha256": "45ef5d3d6241eaf15730ac8fd75cb272701eb64ef5554f44929b7e695b473cb3",
+      "inventories": [
+        {
+          "location": "/inputsBefore",
+          "entries": 19,
+          "rawMatches": 19,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        },
+        {
+          "location": "/inputsAfter",
+          "entries": 19,
+          "rawMatches": 19,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ],
+      "checks": [
+        {
+          "exitCode": 0
+        },
+        {
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.authority-return-diagnostic-01.json",
+      "rawSha256": "89c4fecba1633747de7c61fabb742083fe14b43f115fb12771f1573ace56135f",
+      "canonicalJsonSha256": "2cc2d7a31b028a60f65401df39d7991a2d48494ac6937c5ed48b4e73e1bf0f5e",
+      "inventories": [
+        {
+          "location": "/diagnostic/inputsBefore",
+          "entries": 10,
+          "rawMatches": 9,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M01"
+          ]
+        },
+        {
+          "location": "/diagnostic/inputsAfter",
+          "entries": 10,
+          "rawMatches": 9,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M01"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.fixture-publication-adverse-01.json",
+      "rawSha256": "1f6be5c6e2b66b9c27126e9c53228fe173f903e0409421db7d5f0081e6c74c9c",
+      "canonicalJsonSha256": "8bb82bd10762c4e8bafa51d660e2ca6ccd43e107f4eaef0edf724e32d5a57af3",
+      "inventories": [
+        {
+          "location": "/sourceHashesBefore",
+          "entries": 7,
+          "rawMatches": 5,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M02",
+            "M03"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.maintenance-review-01.json",
+      "rawSha256": "2088eb9d389816be98cff4474fe570326fa5872e7a8c304c94224d2930a67637",
+      "canonicalJsonSha256": "5e6bf04e8f23838ba36b722cae3bc1e355fbf556191f706fbfd9c69a62b96fae",
+      "inventories": [
+        {
+          "location": "/reviewedCurrentFilesRawSha256",
+          "entries": 15,
+          "rawMatches": 15,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.native-builds-01.json",
+      "rawSha256": "2666fb7ff47311ede643b99f4db3dddceb79e680933b64373e050f6f465b14fb",
+      "canonicalJsonSha256": "4ea22d939d1129ec72ef9b0c707ca2f66f7892c95b183b799409a62716e1aa1e",
+      "inventories": [
+        {
+          "location": "/builds/0/inputSha256",
+          "entries": 161,
+          "rawMatches": 161,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        },
+        {
+          "location": "/builds/1/inputSha256",
+          "entries": 161,
+          "rawMatches": 161,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.native-fixture-verification-01.json",
+      "rawSha256": "45c674a9ebb4935e89527235865046e34888fa7e1b56fcdb7146b1a2ca272b2a",
+      "canonicalJsonSha256": "76f6ad6616219b32894fac5402ec851ad35d267694674fa59479302cd7aa4f36",
+      "inventories": [
+        {
+          "location": "/inputsBefore",
+          "entries": 8,
+          "rawMatches": 8,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        },
+        {
+          "location": "/inputsAfter",
+          "entries": 8,
+          "rawMatches": 8,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ],
+      "checks": [
+        {
+          "exitCode": 0
+        },
+        {
+          "exitCode": 0
+        },
+        {
+          "exitCode": 0
+        },
+        {
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.native-ui-observations-01.json",
+      "rawSha256": "6dae910f41e88057e24b8a58240d6bd34583218c65a0174c4680b2bcb3980c64",
+      "canonicalJsonSha256": "60fcabbccf6913935c277bd58147b21559dcf995d0dfc03ec5dbb2d9c8ab7db5",
+      "inventories": []
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.packaging-production-01.json",
+      "rawSha256": "1eaa2503786697e103ce28fa933d357707813206f528c4baa4765d5ed7ee5efc",
+      "canonicalJsonSha256": "e402463266a509baeda5562c7d745befb79e418a880b7e11d063b2b7442005f9",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 183,
+          "rawMatches": 182,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M04"
+          ]
+        }
+      ],
+      "packageInventory": {
+        "entries": 710,
+        "verifiedHashMatches": 710,
+        "verificationPrincipal": "restricted tool principal",
+        "otherPrincipalAccessDenied": true
+      }
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.packaging-production-02.json",
+      "rawSha256": "55098533839d9a765b3f40d6afb6659aaa72cf4ebc7b380bd2196eb2e0ada0f0",
+      "canonicalJsonSha256": "028122bc4469e448e8ad27095128c5ea9728bd83c2ca9df54c5d9f6cf38c4bbb",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 183,
+          "rawMatches": 183,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ],
+      "packageInventory": {
+        "entries": 710,
+        "verifiedHashMatches": 710,
+        "verificationPrincipal": "current Windows user",
+        "otherPrincipalAccessDenied": true
+      }
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json",
+      "rawSha256": "5d0434b8d32724b1ec817ca7029905273823d14c9c2c1189d562b9e1cb82da10",
+      "canonicalJsonSha256": "911d1c66e42b9e51afc22d6ab82c6b91a0f53e2ff48ffaf52a73dc82a66be878",
+      "inventories": []
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.presentation-check-01.json",
+      "rawSha256": "605c3723bea2659f3b86a756cae686a455faff5311e2c18ec5f5a50d04244928",
+      "canonicalJsonSha256": "8be73d00cc3686d1267494fe6138de42716e83c932e076a34e8c81341b316553",
+      "inventories": [
+        {
+          "location": "/inputBinding/inputFilesRawSha256",
+          "entries": 425,
+          "rawMatches": 425,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ],
+      "checks": [
+        {
+          "name": "reference-tokens",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "name": "reference-routes",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "name": "reference-workflows",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "name": "reference-accessibility",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "name": "reference-visual",
+          "status": "PASS",
+          "exitCode": 0
+        },
+        {
+          "name": "built-product-frame",
+          "status": "PASS",
+          "exitCode": 0
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.production-native-build-01.json",
+      "rawSha256": "27c24727c98eccd3b657e2839f6e247cc39f1fe7df9736cb57b58297068e6c7c",
+      "canonicalJsonSha256": "b6392a638a9e9cd189fc38e1f7b029fbb5df92caf171b463a4eff70069481df3",
+      "inventories": [
+        {
+          "location": "/inputSha256",
+          "entries": 161,
+          "rawMatches": 161,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.resource-resolution-01.json",
+      "rawSha256": "d01e8120040f9ad3b2740f0434e1a162e92042dccb4796428172a575ee3f43c4",
+      "canonicalJsonSha256": "eedcae6484a39a5c0d075a5fd6e434cfaf51496b0f6b17fd146713f76526ac8f",
+      "inventories": []
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.verification-integration-01.json",
+      "rawSha256": "162d1dfa2f557138c62efdfeb00c881dc81f8a1430824d58174f528123922d22",
+      "canonicalJsonSha256": "1211ce0e3a45ebb8051613c63969016cdf55bc474961139975ba99a54b1912dc",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 336,
+          "rawMatches": 335,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M05"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "name": "actual-generated-native-core",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "production-package-contract-failure-recovery",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.verification-native-01.json",
+      "rawSha256": "ca5122967666bf6c8c8a9f0e1e90eb0903ef2bc871d77cf9fc8518c5bb853f97",
+      "canonicalJsonSha256": "b4878a9cca9cfabb95fd99951146032dd31634ee057227f4e25e0aeea6f07b73",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 336,
+          "rawMatches": 335,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M06"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "name": "native-production-lib",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "native-harness-lib",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "native-production-all-test-lint",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "native-harness-all-test-lint",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.verification-native-02.json",
+      "rawSha256": "470235ace7eaaf6fdb2db927c9a52cda408a134ccaa03ce96809392f0db34332",
+      "canonicalJsonSha256": "47c3973bdf5c6ca720bf5b1f85cb18cb510c5bceab51a0ba08ef1742bb9ec700",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 336,
+          "rawMatches": 336,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ],
+      "checks": [
+        {
+          "name": "native-production-lib",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "native-harness-lib",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "native-production-all-test-lint",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "native-harness-all-test-lint",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.verification-units-01.json",
+      "rawSha256": "6698feb24a0e848ca7ad605c8b256043d6a517ac94dea62dda9128a4803352a1",
+      "canonicalJsonSha256": "a7c809aba094709e53731ab0ea80fec6397557d9f1da0c60292f07e9c01aec31",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 336,
+          "rawMatches": 335,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M06"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "name": "generated-core-contract",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "generated-client-and-workflow",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-affected-union",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "shared-fields",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "semantic-predecessor-compatibility",
+          "exitCode": 1,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "protected-source",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "core-project-lifecycle",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "build-binding",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-recovery",
+          "exitCode": 1,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "default-proof-safeguards",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-lint",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "contracts-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "shared-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "backlog-views",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.verification-units-02.json",
+      "rawSha256": "e8bfee21c504bff49996b122042a8ee96e5e3e9111161bf436f81dd14c1e2dba",
+      "canonicalJsonSha256": "0e3b13fdf2961997bee864a940e9849c01ac71646c22b644a1eeb3ccde1e6a99",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 336,
+          "rawMatches": 335,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M05"
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "name": "generated-core-contract",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "generated-client-and-workflow",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-affected-union",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "shared-fields",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "semantic-predecessor-compatibility",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "protected-source",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "core-project-lifecycle",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "build-binding",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-recovery",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "default-proof-safeguards",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-lint",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "contracts-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "shared-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "backlog-views",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T04.verification-units-03.json",
+      "rawSha256": "e891fc75a2a2227e753212843aa0ae1908e658d4157f509b3bc8efed80fb9db7",
+      "canonicalJsonSha256": "0f658ae367284b8458fe7142656da896313db90a6dacab94aa714c3a36e20363",
+      "inventories": [
+        {
+          "location": "/sourceHashes",
+          "entries": 336,
+          "rawMatches": 336,
+          "lfOnlyMatches": 0,
+          "mismatchIds": []
+        }
+      ],
+      "checks": [
+        {
+          "name": "generated-core-contract",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "generated-client-and-workflow",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-affected-union",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "shared-fields",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "semantic-predecessor-compatibility",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "protected-source",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "core-project-lifecycle",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "build-binding",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-recovery",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "default-proof-safeguards",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-lint",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "renderer-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "contracts-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "shared-types",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        },
+        {
+          "name": "backlog-views",
+          "exitCode": 0,
+          "testSelectionSatisfied": true
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-ui-build-04.json",
+      "rawSha256": "f9ffd174b2ba82a15ac2da7db26a13bf25ba70e0a2143981d516a0473f468697",
+      "canonicalJsonSha256": "d3677345fd746f3f9e8462ebbe4eb327e7367a6ee36659f3f554138d919b5248",
+      "inventories": [
+        {
+          "location": "/inputSha256",
+          "entries": 161,
+          "rawMatches": 156,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M07",
+            "M03",
+            "M08",
+            "M09",
+            "M10"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-ui-observations-04.json",
+      "rawSha256": "130a94dd19c648ada946b555e2303cad782be50f9185aede70700ebc8d4cf457",
+      "canonicalJsonSha256": "872cb5e6f28a26cad66a2064c5a1d8534c5e4694d7a2ea4d53538749538f1509",
+      "inventories": [
+        {
+          "location": "/sourceHashesAfter",
+          "entries": 4,
+          "rawMatches": 1,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M11",
+            "M09",
+            "M10"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "artifacts/evidence/W1.A09.T03.native-builds-05.json",
+      "rawSha256": "fc20b07e47584c654f894023a15b634f60c22d78299d2e52f95917212db4e211",
+      "canonicalJsonSha256": "eb4428b6fce9e736a2d38c3eb246c78566b8eb7143db4f06c6551755b3db6ddc",
+      "inventories": [
+        {
+          "location": "/builds/0/inputSha256",
+          "entries": 161,
+          "rawMatches": 157,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M07",
+            "M03",
+            "M08",
+            "M09"
+          ]
+        },
+        {
+          "location": "/builds/1/inputSha256",
+          "entries": 161,
+          "rawMatches": 157,
+          "lfOnlyMatches": 0,
+          "mismatchIds": [
+            "M07",
+            "M03",
+            "M08",
+            "M09"
+          ]
+        }
+      ]
+    }
+  ],
+  "mismatches": [
+    {
+      "id": "M01",
+      "path": "tests/foundation/test_planctl_amendments.py",
+      "recordedSha256": "5cc7be6f4c39b4dc5036a8bbfc83424854f8c7f640bc8221d903442dc18ebb6f",
+      "currentRawSha256": "c4e464c5b103b902f52899b422ef75cdcd31bea9f51e69620d8987d233d932eb",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M02",
+      "path": "apps/desktop/src-tauri/src/lib.rs",
+      "recordedSha256": "f3af26dbdc486afcf1057884906361e45e84902fb95e0a90ac78bf7d6ec04ad0",
+      "currentRawSha256": "da37d351d79e4bdd1c4be75127ac9983dabc8fdbca9c8317bedad1cdcee22faa",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M03",
+      "path": "apps/desktop/src-tauri/examples/project_contract_probe.rs",
+      "recordedSha256": "1bfc1cbe440b11fc3843b0f032a3e0d96930d8136b157e36881342a65ffa37cb",
+      "currentRawSha256": "bb217095a662d6429016954dce91fdb0dfe6d029d8a08c8071f30c04415cdc65",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M04",
+      "path": "artifacts/evidence/W1.A09.T04.package-check-01.py",
+      "recordedSha256": "cd4e3263bc949c35ca6ac5c712920457a6e22b59300bbdbd23c805c5fa6b2f78",
+      "currentRawSha256": "3846974fdbea0e00f79ee78c65187297f9d918e6bebe828171860faebf7b9fe3",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M05",
+      "path": "artifacts/evidence/W1.A09.T04.verify-01.py",
+      "recordedSha256": "5951368ffdf9978155c8bec79d06820826bc1a42a2c51d2aeb25ac9f33e7dae6",
+      "currentRawSha256": "3f4c5e067f7b8e3cc5f7a6e3238885fb02bb68751d6e69151dbfa4cb5d89213d",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M06",
+      "path": "artifacts/evidence/W1.A09.T04.verify-01.py",
+      "recordedSha256": "d383a693d8ac1e7d174f593cbe232bbfe727bd11a8c5a147e02310c8183773ed",
+      "currentRawSha256": "3f4c5e067f7b8e3cc5f7a6e3238885fb02bb68751d6e69151dbfa4cb5d89213d",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M07",
+      "path": "apps/desktop/product-dist/application-manifest.json",
+      "recordedSha256": "58b835c4f5f97ae748d94062bc86dd714429ac0fd276a6679e43df711871cd06",
+      "currentRawSha256": "8a4998342ee2ad1bbb493b24827c9b1f2e2202b0f6ac62ecf891ef71deb57c12",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M08",
+      "path": "apps/desktop/src-tauri/src/application_lock.rs",
+      "recordedSha256": "fd99a3176badd6b5d46473d9d4f25ef44f3ee22e949bbf38ef4c0da08da90680",
+      "currentRawSha256": "225658c2ea9098916221af304d1a428189245131c4197afeeec2e5b1e5fd464a",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M09",
+      "path": "apps/desktop/src-tauri/src/lib.rs",
+      "recordedSha256": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+      "currentRawSha256": "da37d351d79e4bdd1c4be75127ac9983dabc8fdbca9c8317bedad1cdcee22faa",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M10",
+      "path": "tests/service/test_native_project_contract.py",
+      "recordedSha256": "36ef78ec9c222a02489c867940f76a837f2f25562d0003bf0733e0ea3406e5d5",
+      "currentRawSha256": "48b4ec1a256fe9d686887588ca1ffece341bd2f26508c21aac739ca96e38e458",
+      "classification": "different-or-missing"
+    },
+    {
+      "id": "M11",
+      "path": "target/debug/examples/project_contract_probe.exe",
+      "recordedSha256": "f73661fc06c4cb081ac08ac35808b2983fa9d4de4682b3e2343b6eecab6eac8d",
+      "currentRawSha256": "c3f5bdb12a90bffaca895197dba58d93c3bd1d8ef7da162092928836f148be2e",
+      "classification": "different-or-missing"
+    }
+  ],
+  "historicalMismatchTreatment": [
+    {
+      "paths": [
+        "tests/foundation/test_planctl_amendments.py"
+      ],
+      "treatment": "Old failed authority and diagnostic records intentionally retain predecessor 5cc7…; corrected source c4e464… is bound by authority-return-check-02. Do not update historical hashes or mark adverse01 passing."
+    },
+    {
+      "paths": [
+        "artifacts/evidence/W1.A09.T04.package-check-01.py"
+      ],
+      "treatment": "Package01 records older cd4e… helper; package02 binds current3846… helper. Independent maintenance-review-01 documents output-only privacy correction; package01 outcomes remain historical."
+    },
+    {
+      "paths": [
+        "artifacts/evidence/W1.A09.T04.verify-01.py"
+      ],
+      "treatment": "Native01/units01 retain d383… and units02/integration01 retain5951… while current helper is3f4c…. units03/native02 now bind current helper exactly. Integration01 remains the explicit older-helper bridge until owner’s fresh replay. Current command names/kinds/argument sequences match all retained reports; old full helper bytes were not recovered, so this is not a complete old-versus-new implementation byte-equivalence claim."
+    },
+    {
+      "paths": [
+        "apps/desktop/src-tauri/src/lib.rs",
+        "apps/desktop/src-tauri/examples/project_contract_probe.rs"
+      ],
+      "treatment": "Prior fixture failure and T03 reports bind genuine predecessor bytes; T04 added lifecycle/resume/read-only-resource support and corrected harness sharing. Whole lib/example files are not unchanged. Current 161-input build evidence and current fixture/full native replay bind those changes."
+    },
+    {
+      "paths": [
+        "apps/desktop/src-tauri/src/application_lock.rs"
+      ],
+      "treatment": "Current whole raw hash differs; exact prior Git blob matches T03 raw hash when represented as CRLF. After line-ending normalization the complete file delta is only the two needless-borrow removals in tests::manager_at; production lock implementation is unchanged."
+    },
+    {
+      "paths": [
+        "apps/desktop/product-dist/application-manifest.json"
+      ],
+      "treatment": "Old T03 manifest hash differs. All four actual renderer artifacts and other renderer-source entries in the T03 161-input inventory match current bytes. The previous manifest bytes were not recovered here, so no exact manifest-only content diff is asserted."
+    },
+    {
+      "paths": [
+        "tests/service/test_native_project_contract.py"
+      ],
+      "treatment": "T03 UI04 used prior36ef… helper. Retained T03 builds05 use current48b… helper and report the identical then-UI binary hash; current T04 builds also bind48b…. This is a historical helper bridge, not a fresh modal run."
+    },
+    {
+      "paths": [
+        "target/debug/examples/project_contract_probe.exe"
+      ],
+      "treatment": "T03 historical executable hash f736… is now replaced at the shared build location by current T04 c3f5…; current binary matches T04 native-builds01. Do not claim the old executable remains at that path or that T04 actual UI replayed T03 protected modes."
+    }
+  ],
+  "principalHandling": {
+    "initialObservation": "Restricted-principal Path.is_file returned false for Windows-user-owned package02/resource children; explicit listing established AccessDenied, not deletion.",
+    "correctedVerification": "Package02 all710 and resource copy all710 verified with approved read-only Windows-user execution. Package01 all710 verified under restricted principal; inverse user access denial was not treated as missing data.",
+    "authority": "No ACL, account or security-setting modification; use the creating principal for any future exact artifact replay.",
+    "resourceCopy": {
+      "path": "artifacts/tmp/t04-resource-resolution-9v0cv_o7",
+      "probeSha256": "c34ff6713b89a1418ee61f3e340b46880927d0747242acc2aa6b2bc01a46d5c3",
+      "matchesResourceObservation": true,
+      "packageEntries": 710,
+      "packageHashMismatches": [],
+      "resourceRunnerSha256": "a07542e81f1b626aa65e5b2b3cb537288d4c8041966d92e3b1fa7984c76127cc",
+      "matchesRunnerObservation": true
+    }
+  },
+  "protectedModalReuse": {
+    "mechanicalComparison": {
+      "gitComparisonBase": "cd4838e9c64fdbf3adb8f326781f95404a0c945d",
+      "lib": {
+        "path": "apps/desktop/src-tauri/src/lib.rs",
+        "baseGitBlobSha256": "3e68ee13c83d6da379244ce4b49558839a0b678dc030f89cbf7decac3ed0b35f",
+        "baseCrlfRepresentationSha256": "0c5360b4f21ac67327458c27bcf80ea33b45794fca1e24a87fcd8028712afd53",
+        "currentRawSha256": "da37d351d79e4bdd1c4be75127ac9983dabc8fdbca9c8317bedad1cdcee22faa",
+        "productionPrefixEqual": true,
+        "productionAndTestSuffixEqual": true,
+        "wholeLibEqual": false,
+        "protectedObserverEqualExceptNewInertLifecycleArms": true
+      },
+      "applicationLock": {
+        "path": "apps/desktop/src-tauri/src/application_lock.rs",
+        "baseGitBlobSha256": "49bdc28bbe13b254eb4cc0c65dd39f4e4111b799fae402a08b61d65fd88d5ad4",
+        "baseCrlfRepresentationSha256": "fd99a3176badd6b5d46473d9d4f25ef44f3ee22e949bbf38ef4c0da08da90680",
+        "currentRawSha256": "225658c2ea9098916221af304d1a428189245131c4197afeeec2e5b1e5fd464a",
+        "nonTestImplementationEqual": true,
+        "onlyTwoNeedlessBorrowRemovals": true
+      },
+      "directoryPicker": {
+        "currentRawSha256": "d92245fed1ccc744d664b9615278d1b723eb7afc2b74abf18deb2527a2b87388",
+        "matchesT03ObservedSource": true
+      },
+      "nativeExecutables": [
+        {
+          "path": "target/debug/examples/project_contract_probe.exe",
+          "currentSha256": "c3f5bdb12a90bffaca895197dba58d93c3bd1d8ef7da162092928836f148be2e",
+          "expectedSha256": "c3f5bdb12a90bffaca895197dba58d93c3bd1d8ef7da162092928836f148be2e",
+          "matches": true
+        },
+        {
+          "path": "target/release/examples/project_contract_probe.exe",
+          "currentSha256": "c34ff6713b89a1418ee61f3e340b46880927d0747242acc2aa6b2bc01a46d5c3",
+          "expectedSha256": "c34ff6713b89a1418ee61f3e340b46880927d0747242acc2aa6b2bc01a46d5c3",
+          "matches": true
+        },
+        {
+          "path": "target/release/research-observatory-desktop.exe",
+          "currentSha256": "8910e49058761c7657fff959f0a35dd026793529f02f52b9d9fd9e7607d13511",
+          "expectedSha256": "8910e49058761c7657fff959f0a35dd026793529f02f52b9d9fd9e7607d13511",
+          "matches": true
+        }
+      ],
+      "resourceCopy": {
+        "path": "artifacts/tmp/t04-resource-resolution-9v0cv_o7",
+        "probeSha256": "c34ff6713b89a1418ee61f3e340b46880927d0747242acc2aa6b2bc01a46d5c3",
+        "matchesResourceObservation": true,
+        "packageEntries": 710,
+        "packageHashMismatches": [],
+        "resourceRunnerSha256": "a07542e81f1b626aa65e5b2b3cb537288d4c8041966d92e3b1fa7984c76127cc",
+        "matchesRunnerObservation": true
+      }
+    },
+    "renderer": "All T03-rendered artifact hashes (app.js, app.js.map, app.css, index.html) match current; unchanged matching source inventory covers renderer lock/selection state.",
+    "sourceAssessment": "Production lib prefix (including IPC admission/cancellation/main-close handling) and production suffix (monitor/runtime config) exactly match the T03-bound predecessor after newline normalization; directory_picker.rs raw bytes are identical. Protected observe_pending differs only in additional no-op lifecycle arms. Existing Selection/ManualLock/MainClose continue through the protected-policy fixture branch and observer; lifecycle-specific absent-policy/resume behavior is separate.",
+    "fixtureChangeLimit": "Harness read+write/no-delete directory sharing and fixture constructor refactoring are real changes, not byte-identical T03 composition. Current staged-publication, parent-rename denial, held/named reparse detection, default-None/resume tests and actual T04 create/open/restart lifecycle cover those new risks. No malicious same-account or race-free confinement claim.",
+    "reuseDisposition": "T03 c11 protected manual-lock cancellation, c12 main-close cancellation and c13 Escape/selection/focus observations remain useful bounded evidence for unchanged modal/renderer mechanisms. They must remain labeled as prior-source observations, combined with current source compatibility and current T04 tests—not represented as a new T04 protected-modal GUI run.",
+    "notProved": "This audit does not execute native modal dialogs, authenticate, qualify ordinary-profile/frozen production startup, or approve T04/A09 adoption/A08 return/W1."
+  },
+  "helperCommandComparison": {
+    "verifyHelperRawSha256": "3f4c5e067f7b8e3cc5f7a6e3238885fb02bb68751d6e69151dbfa4cb5d89213d",
+    "method": "AST evaluated only inspected literal command dictionary with inert constructors; no helper imports/main/checks run. Only tool locations and separators normalized.",
+    "comparisons": [
+      {
+        "report": "W1.A09.T04.verification-units-01.json",
+        "commandCount": 15,
+        "currentCommandNameKindAndArgumentSequenceMatches": true,
+        "ok": false
+      },
+      {
+        "report": "W1.A09.T04.verification-units-02.json",
+        "commandCount": 15,
+        "currentCommandNameKindAndArgumentSequenceMatches": true,
+        "ok": true
+      },
+      {
+        "report": "W1.A09.T04.verification-units-03.json",
+        "commandCount": 15,
+        "currentCommandNameKindAndArgumentSequenceMatches": true,
+        "ok": true
+      },
+      {
+        "report": "W1.A09.T04.verification-native-01.json",
+        "commandCount": 4,
+        "currentCommandNameKindAndArgumentSequenceMatches": true,
+        "ok": true
+      },
+      {
+        "report": "W1.A09.T04.verification-native-02.json",
+        "commandCount": 4,
+        "currentCommandNameKindAndArgumentSequenceMatches": true,
+        "ok": true
+      },
+      {
+        "report": "W1.A09.T04.verification-integration-01.json",
+        "commandCount": 2,
+        "currentCommandNameKindAndArgumentSequenceMatches": true,
+        "ok": true
+      }
+    ],
+    "wholeApplicationLockEqualsOnlyTwoManagerAtNeedlessBorrowRemovals": true
+  },
+  "finalBindingDuty": "Bind the final immutable candidate, current sources and these retained report hashes in the owner’s task packet. Include the later integration replay only after its actual report exists; retain all adverse reports and old helper hashes."
+}
