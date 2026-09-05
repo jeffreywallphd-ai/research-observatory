@@ -1,0 +1,11 @@
+{
+  "taskId": "W1.A09.T04",
+  "candidateCommit": "5a3d15508bb908420834babb7b0d5304b4f16b27",
+  "exitCode": 1,
+  "failure": "Windows text-mode subprocess input translated newline-delimited Git path records into CRLF. git check-ignore treated the carriage return as part of each path and quoted it in output, so exact returned-path equality failed.",
+  "failureBoundary": "Before final report publication; every selected content hash still matched. No ignore configuration was changed.",
+  "correction": "Use Git's NUL-delimited -z --stdin byte protocol, preserving exact path identities without platform newline translation or C-style quoting.",
+  "rootCause": "The new cross-report binding helper initially conflated raw and canonical text hashes, source membership and generated-input qualification, then text-line and Git path protocols. Correct those explicit schema/platform boundaries and independently inspect the helper before relying on it for task acceptance; do not broaden tolerances or suppress failed assertions.",
+  "productBenchmarkOrIgnoreChanges": false,
+  "priorAdverseHistoryPreserved": true
+}

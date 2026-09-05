@@ -141,9 +141,9 @@ def main() -> None:
         for name in nontracked
     )
     ignored = subprocess.check_output(
-        ["git", "check-ignore", "--stdin"], cwd=REPO,
-        input="\n".join(sorted(nontracked)) + "\n", text=True, encoding="utf-8",
-    ).splitlines()
+        ["git", "check-ignore", "-z", "--stdin"], cwd=REPO,
+        input=("\0".join(sorted(nontracked)) + "\0").encode("utf-8"),
+    ).decode("utf-8").rstrip("\0").split("\0")
     assert set(ignored) == nontracked
     assert inline_product_index(REPO), "Product assembly manifest must validate against current inputs"
     assert not set(git("diff", "--name-only", "HEAD").splitlines()) & set(observed_sources)
