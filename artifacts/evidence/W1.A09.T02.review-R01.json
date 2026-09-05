@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "task_id": "W1.A09.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "a6a219ce0ec32bc96b151aad13c19c5646ec8db6",
+  "reviewer": "agent:/root/t01_publication_checkpoint",
+  "result": "approved",
+  "notes": "Independent expanded review approves the exact frozen T02 candidate and five acceptance criteria. Exact request admission, narrative handling, authentic readiness and explicit read recovery, current-source compiled native/Core persistence, and the bounded neutral-surface measurement correction are supported by authenticated evidence and independent adversarial replays. Prior failures and disclosed limitations remain visible. This is task disposition only, not A09/A08 adoption, slice or Wave approval, release approval, local-main integration authority, or permission for remote effects.",
+  "findings": [],
+  "closures": [],
+  "review_scope": {
+    "base_commit": "cc1d0407e6882b724e628caa136dfe4b9569410c",
+    "tested_product_commit": "3c020e36c67249712621f07036d921fe0ebafedf",
+    "incremental_test_commit": "00797f5673e87dcd31bf552540e7107213acbbc4",
+    "submission_delivery_commit": "aaa0307906171251c91f60de5793c96ace10ce50",
+    "packet_sha256": "6015c4c671b4a031d109130d2105f882ec73221b46272a7ee41752d0e6f2e415",
+    "manifest_path": "artifacts/evidence/W1.A09.T02.json",
+    "manifest_canonical_sha256": "22af4093b462a8f3d97642b36b5a3714f5fa9adc3d0982294a9e2ae3445b08a1",
+    "approved_packet_commit": "2160cc9917282d80848189dc9669fe3827979246",
+    "changed_path_count": 24,
+    "acceptance_criterion_count": 5,
+    "prior_attempts": 0,
+    "prior_open_findings": [],
+    "binding_checked_at": "2026-09-05T14:16:50Z",
+    "risk_selection": "Expanded review is warranted by public/cross-process request admission, canonical executable-path handling, protected-generation interactions, asynchronous renderer recovery and evidence-control changes. Replay the affected native library, generated contract tests, actual Windows native/Core persistence and new browser negatives. Inspect the retained complete affected product-frame result and lint/type results without repeating the broad repository or deployment profiles. The seven-line field-validation-only descendant is reviewed and replayed incrementally."
+  },
+  "authority_and_binding_checks": [
+    {
+      "name": "committed-frozen-submission",
+      "result": "passed",
+      "detail": "Read the T02 record from the submission-delivery Git blob. It is REVIEW/R01 with the exact candidate/base, five criteria, 24 changed paths, no earlier attempts and no open findings. Independently recomputed the packet hash and manifest hash. The delivery changes exactly the manifest, backlog and four generated-view paths; no product, native, contract, test or harness input differs from the candidate."
+    },
+    {
+      "name": "source-and-evidence-authentication",
+      "result": "passed",
+      "detail": "All 326 verification-02 source inputs matched their raw hashes and exact tested Git blobs before the test-only descendant. At final binding, the single test-file hash was replaced only by the exact verification-03 hash; all 326 inputs matched, and stat-independent Git clean hashing authenticated 335 source/evidence/backlog files to aaa0307906171251c91f60de5793c96ace10ce50 with zero mismatches. The only post-full-test source delta is the reviewed seven-line field-validation regression."
+    },
+    {
+      "name": "preserved-authority-and-semantics",
+      "result": "passed",
+      "detail": "Independently compared all 247 invariant-report Git blobs at the claim base and candidate. Core semantics, OpenAPI/schemas, semantic workflow sources, native startup/unlock/generation owners, active UI reference and visual baselines are unchanged. The task's immutable criteria and dependency identities are preserved."
+    },
+    {
+      "name": "evidence-control-maintenance-boundary",
+      "result": "passed",
+      "detail": "The original measurement selected the first panel/card even when it was a valid success-tone status panel. The correction selects the first visible neutral/untoned panel or card by semantic role, including the measured surface itself. It never selects by computed color, Projects identity or title, manufactures a token value, or falls back to a tonal panel. Missing neutral surfaces still fail. Existing surface-1 equality, geometry, focus, overflow, motion and state assertions are unchanged. The exact cross-proof inventory permits this acceptance-linked harness correction; no product/CSS/reference or approval authority expands."
+    }
+  ],
+  "independent_replays": [
+    {
+      "name": "neutral-surface-and-project-recovery-browser",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/desktop -p test_desktop_app_check.py -v -k test_neutral_workspace_measurement -k test_product_style_qualification_contract_is_exact -k ProjectRecoveryInteractionTests",
+      "exit_code": 0,
+      "result": "3 tests passed in 4.543 seconds. Both-theme neutral measurement accepts the correct surface despite preceding tonal/hidden panels, rejects wrong and missing backgrounds, and supports the surface itself. Exact matrix negatives remain effective. Projects observes startup without another automatic start or catalog request, separates catalog failure/read retry from operation failure, preserves input, never automatically repeats the mutation, and discards a late result after navigation."
+    },
+    {
+      "name": "actual-build-bound-native-and-protected-core",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/service -p test_native_project_contract.py -v",
+      "exit_code": 0,
+      "result": "3 tests passed in 7.905 seconds. Actual Cargo build inputs are bound before/after compilation and checked before/after generated-client execution; missing/substituted binding is rejected before project-fixture creation. Real asynchronous native dispatch and authenticated Core with isolated DPAPI/SQLCipher persistence return 14 catalog profiles, preserve exact multiline creation, saved intent and selection through close/reopen/restart, and retain six lineage nodes including the predecessor. Six pre-readiness and eight live substituted requests are denied; unknown and wrong-project revisions retain empty integrity-review/export-denied behavior. Read retry creates no project. Native exits normally with zero stderr bytes. Plain/verbatim paths are accepted and actual NTFS-junction redirects denied; symbolic-link creation privilege is unavailable, not a passing symlink test.",
+      "replay_report": "artifacts/tmp/project-native-contract-xJ2qKe/report.json",
+      "replay_report_raw_sha256": "5dd22ee2d6d193239673d5ce3fd709ae149bb4b5446e1608849e0b3ebff81e83",
+      "retained_path_fixture": "artifacts/tmp/project-native-path-ilqwsqo9",
+      "boundary_limit": "The integration example exercises production async supervisor dispatch, authentication and actual Core persistence. It does not prove Tauri IPC/window interaction, packaged no-fallback startup or the native folder dialog. Canonical lineage is explicitly seeded through the real unit of work while the synthetic encrypted project is closed."
+    },
+    {
+      "name": "generated-client-contracts",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe packages/contracts/node_modules/vitest/vitest.mjs run packages/contracts/core-api/generated.test.ts",
+      "exit_code": 0,
+      "result": "43 tests in 3 selected files passed. LF/CR/TAB narratives reach the transport unchanged; nonblank, length and invalid-control/NUL/DEL rejection remain effective. Generator and generated-output diff is the intended boundedNarrative substitution only."
+    },
+    {
+      "name": "native-admission-generation-and-path-library",
+      "command": "Pinned cargo test --locked -p research-observatory-desktop --lib, with TEMP and TMP bound to a fresh owned child-process namespace",
+      "exit_code": 0,
+      "result": "64 tests passed; the separate renderer contract witness remains explicitly ignored by this invocation. Exact catalog/lineage bodies and envelopes, narrative controls, equivalent verbatim/noncanonical path behavior, inflight cancellation and existing application-lock/generation tests pass. The legacy migration fixture passes in the fresh namespace; this does not claim its preexisting PID-reuse isolation weakness is fixed.",
+      "retained_temporary_namespace": "artifacts/tmp/t02-independent-native-8b770fec86124427bc4617db48d5093d"
+    },
+    {
+      "name": "incremental-field-validation-vs-operation-failure",
+      "command": ".venv/Scripts/python.exe -m unittest discover -s tests/desktop -p test_desktop_app_check.py -v -k ProjectRecoveryInteractionTests",
+      "exit_code": 0,
+      "result": "1 test passed in 3.755 seconds after reviewing the exact seven-line delta at 00797f5673e87dcd31bf552540e7107213acbbc4. An invalid relative parent produces Review project details / No project request was sent, zero native mutation calls and the retained name. Restoring the valid parent then exercises the distinct native-operation failure and existing recovery/late-result assertions. No product input changed."
+    }
+  ],
+  "reviewed_producer_evidence": {
+    "passing_report": "artifacts/evidence/W1.A09.T02.verification-02.json",
+    "incremental_report": "artifacts/evidence/W1.A09.T02.verification-03.json",
+    "result": "The authenticated full affected report contains 13 passing selected checks with stable source hashes and HEAD: generated contract, affected Python lint, scoped generator types, native library, production Clippy, selected generated/renderer tests, renderer lint/types and contract types, security-source tests, actual native/Core tests and eight browser/security tests including the complete existing product-frame assertion. Verification-03 authenticates the sole test-only descendant and its focused passing test/lint replay. These producer runs were reviewed as evidence, not falsely reported as independent reruns."
+  },
+  "acceptance_disposition": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "basis": "Exact catalog GET and typed six-field lineage POST admission, absent extra headers, UUIDv7/direction/integer/body bounds, duplicate/missing/unknown/coercion denial, and actual generated/native/Core positive and adversarial requests."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "basis": "Generated bounded narrative validation preserves LF/CR/TAB with existing desktop bounds and nonblank/control rejection; native nonblank handling agrees, actual Core receives exact multiline text, and semantic/API schema blobs remain unchanged. Existing broader Unicode/DEL differences are disclosed rather than claimed repaired."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "basis": "Production Projects receives no injected catalog, reuses authentic status-only native observation, gates catalog reads on ready, distinguishes waiting/loading/catalog failure/local validation/project failure and retains valid input. Existing async startup/unlock and lock owners are unchanged; safe verbatim spelling no longer triggers false integrity denial."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "basis": "Explicit read-only catalog and bounded Core retry cannot invoke project mutations. Synchronous mutation admission and unmount ownership prevent duplicate admission and stale adoption; application lock clears/unmounts Projects and existing native process/generation response guards remain intact. Fixed catalog help suppresses raw exceptions and no fallback catalog is introduced."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "basis": "Independently replayed current-source build-bound native supervisor to real disposable protected Core, with exact generated requests, catalog, multiline create, retained intent/selection/lineage and close/reopen/restart. Browser fixtures are explicitly separate from this principal-boundary proof."
+    }
+  ],
+  "retained_history_and_residuals": [
+    "verification-01 and product-frame-01 retain the six original Projects theme-measurement failures. The correction preserves the substantive assertion and is independently replayed; no report or adverse history is overwritten.",
+    "The task-start record retains failing-before route/narrative/path/readiness observations, invalid initial lineage fixture assumptions, wrong synthetic executable basename, legacy PID-reuse test contamination and scoped-vs-whole-import typing failures. No product assertion or policy was weakened to suppress them.",
+    "Python still counts Unicode code points and accepts DEL where the existing desktop/native validation counts UTF-16 units and rejects DEL. T02 closes LF/CR/TAB parity without claiming complete accepted-input equivalence or changing Core schema authority.",
+    "Symbolic-link fixture creation lacked Windows privilege 1314. Actual junction denial passed; no elevated symlink creation or actual synthetic executable launch was attempted.",
+    "T03 still owns the shared native folder selector, dev/production default existing parent, stable destination and real dialog cancellation/focus/lock/close/no-overwrite proof.",
+    "T04 still owns accumulated integration, real packaged Tauri/window/native dialog/no-fallback qualification, recovery, accessibility and performance. Existing all-target Clippy test-helper warnings and legacy native fixture isolation require qualification follow-up; production Clippy and isolated native library evidence do not close them.",
+    "Full Core typing remains a W1 obligation; scoped generator mypy is not a passing full-Core typing claim. Returned A08 still owns the full-height sidebar and effective paragraph spacing.",
+    "Usability U01-U04 still need integrated closure and a fresh blind retest. U05 comparison completeness and U06 clarity remain explicitly recorded W1 issues outside this task's authority; neither is silently closed.",
+    "Independent slice/amendment/Wave review, A09 return/A08 adoption, complete Windows W1 qualification and the human W1/G1 gate remain due. Task approval grants no local-main integration through unmet ancestry, remote push, destructive researcher-data action or later-Wave authority."
+  ],
+  "reviewer_safety": "Review was read-only except for this new ledger and ordinary owned test fixtures/build outputs produced by authorized replays. No source, backlog, Git, real researcher/profile data or remote state was mutated by the reviewer. The protected unrelated W1.A04.B00.json artifact was never opened, read, hashed or modified; the sibling planning workspace was not accessed."
+}
