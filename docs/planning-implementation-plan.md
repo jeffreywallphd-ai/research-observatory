@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 087b68c8a0c4d484810b2832a63408369f8c2923eb6fd97df49b799d91b1d80f
+source_sha256: 44941ced8601cfb12c5e532a082c5d85ae294ce69f09e16b2d7030d725e4fbd3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -275,7 +275,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 
@@ -9584,7 +9584,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-07.S01.T02 - Implement model registry and capability discovery
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -9615,7 +9615,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** Reopened: The stale ordering blocker is resolved: CAP-03.S04 through CAP-03.S06 and their dependency-ordered predecessors are DONE and independently approved, W1.CP07 records the closed workflow-profile risk cluster, and CAP-07.S01 is now the current W1 slice. No prior T02 product work existed.
+**Latest notes:** Reopened: Approved styling amendments adopted; development-origin correction and instruction-routing maintenance independently approved and integrated. Resume the existing model registry task without changing its approved contract or claim history.
 
 #### - [ ] CAP-07.S01.T03 - Implement routing, fallback, timeout, and circuit-breaker policy
 

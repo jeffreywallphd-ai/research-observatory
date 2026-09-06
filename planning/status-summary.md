@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 087b68c8a0c4d484810b2832a63408369f8c2923eb6fd97df49b799d91b1d80f
+source_sha256: 44941ced8601cfb12c5e532a082c5d85ae294ce69f09e16b2d7030d725e4fbd3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -37,8 +37,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
+| `ACTIVE` | 1 |
 | `NONE` | 11 |
-| `PAUSED` | 1 |
 
 ### Slice completion
 
@@ -52,7 +52,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 254 |
-| `BLOCKED` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 65 |
 | `DEFERRED` | 36 |
 
@@ -640,7 +640,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 14/15 | 47/49 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 14/15 | 47/49 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -698,7 +698,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
+| `CAP-07.S01.T02` Implement model registry and capability discovery | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
 
 ## Linked corrective tasks
 
