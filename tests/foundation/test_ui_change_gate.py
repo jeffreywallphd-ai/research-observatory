@@ -18,6 +18,7 @@ from jsonschema import Draft202012Validator
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+import ui_change_gate as ui_gate  # noqa: E402
 from ui_change_gate import (  # noqa: E402
     APPLICATION_INVENTORY_HARDENING_ENVELOPE,
     additive_preimplementation_quality_scope_errors,
@@ -36,6 +37,249 @@ from ui_change_gate import (  # noqa: E402
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def legacy_control_fixture(self, temporary: str, mutation: str = "") -> tuple[Path, str, str, str]:
+        root, predecessor, _ = self.prepare(temporary)
+        stem = "artifacts/evidence/fixture-control"
+        contract_path, evidence_path, review_path = (
+            stem + ".maintenance-01.md",
+            stem + ".evidence-01.json",
+            stem + ".review-01.json",
+        )
+        sources = [contract_path, "tools/ui_conformance.py"]
+        if mutation == "product":
+            sources.append("apps/desktop/src-tauri/src/lib.rs")
+        elif mutation == "build-tool":
+            sources.append("tools/core_sidecar_build.py")
+        for path in sources:
+            target = root / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("# Bounded synthetic control fixture\n", encoding="utf-8")
+        candidate = self.commit(root, "legacy control candidate")
+        bindings = [
+            {
+                "path": path,
+                "blob": self.git(root, "rev-parse", candidate + ":" + path),
+                "sha256": hashlib.sha256((root / path).read_bytes()).hexdigest(),
+            }
+            for path in sorted(sources)
+        ]
+        evidence = {
+            "schemaVersion": "1.0",
+            "documentType": "bounded-governance-maintenance-evidence",
+            "candidateCommit": candidate,
+            "predecessorCommit": predecessor,
+            "implementer": "agent:codex",
+            "riskTier": 2,
+            "contract": contract_path,
+            "selectedChecksStatus": "PASS",
+            "independentReviewStatus": "PENDING",
+            "changedFiles": bindings,
+        }
+        if mutation == "missing-implementer":
+            evidence.pop("implementer")
+        elif mutation == "invalid-implementer":
+            evidence["implementer"] = "not an agent"
+        self.write_json(root / evidence_path, evidence)
+        if mutation == "mixed-evidence":
+            (root / "extra.txt").write_text("extra delivery\n", encoding="utf-8")
+        delivery = self.commit(root, "legacy evidence delivery")
+        review: dict[str, Any] = {
+            "schemaVersion": "1.0",
+            "documentType": "bounded-governance-maintenance-independent-review",
+            "reviewId": "fixture-control.review-01",
+            "reviewedCommit": candidate,
+            "predecessorCommit": predecessor,
+            "reviewedAt": "2026-09-01T00:00:00Z",
+            "reviewer": "agent:independent-reviewer",
+            "independence": {"implementer": "agent:codex", "implementationAuthoredByReviewer": False},
+            "disposition": "ACCEPTED",
+            "findings": [],
+            "evidence": {
+                "path": evidence_path,
+                "introductionCommit": delivery,
+                "gitBlob": self.git(root, "rev-parse", delivery + ":" + evidence_path),
+                "sha256": hashlib.sha256((root / evidence_path).read_bytes()).hexdigest(),
+            },
+            "reviewedArtifacts": [
+                {"path": item["path"], "gitBlob": item["blob"], "sha256": item["sha256"]} for item in bindings
+            ],
+        }
+        if mutation == "self-review":
+            review["reviewer"] = "agent:co_dex"
+        elif mutation == "missing-implementer":
+            review["independence"].pop("implementer")
+        elif mutation == "invalid-implementer":
+            review["independence"]["implementer"] = "not an agent"
+        elif mutation == "wrong-candidate":
+            review["reviewedCommit"] = predecessor
+        elif mutation == "wrong-predecessor":
+            review["predecessorCommit"] = candidate
+        elif mutation == "evidence-hash":
+            review["evidence"]["sha256"] = "0" * 64
+        elif mutation == "source-hash":
+            review["reviewedArtifacts"][0]["sha256"] = "0" * 64
+        elif mutation == "adverse":
+            review["findings"] = [{"id": "OPEN"}]
+        self.write_json(root / review_path, review)
+        if mutation == "mixed-review":
+            (root / "extra-review.txt").write_text("extra delivery\n", encoding="utf-8")
+        self.commit(root, "legacy independent review")
+        if mutation == "rewrite-revert":
+            self.write_json(root / review_path, {**review, "findings": [{"id": "changed"}]})
+            self.commit(root, "rewrite historical review")
+            self.write_json(root / review_path, review)
+            self.commit(root, "restore historical review bytes")
+        (root / "claim-marker.txt").write_text("later correction start\n", encoding="utf-8")
+        cutoff = self.commit(root, "correction task start")
+        return root, candidate, cutoff, review_path
+
+    def test_legacy_control_maintenance_authenticates_existing_protocol(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, candidate, cutoff, _ = self.legacy_control_fixture(temporary)
+            self.assertEqual([], ui_gate.legacy_control_maintenance_errors(root, candidate, cutoff, cutoff))
+
+    def test_legacy_control_maintenance_rejects_false_or_late_authority(self) -> None:
+        for mutation in (
+            "self-review",
+            "wrong-candidate",
+            "wrong-predecessor",
+            "evidence-hash",
+            "source-hash",
+            "adverse",
+            "product",
+            "build-tool",
+            "mixed-evidence",
+            "mixed-review",
+            "rewrite-revert",
+            "late",
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, candidate, cutoff, _ = self.legacy_control_fixture(temporary, mutation)
+                boundary = candidate if mutation == "late" else cutoff
+                self.assertTrue(ui_gate.legacy_control_maintenance_errors(root, candidate, cutoff, boundary))
+
+    def test_legacy_control_maintenance_requires_valid_implementer_identity(self) -> None:
+        for mutation in ("missing-implementer", "invalid-implementer"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, candidate, cutoff, _ = self.legacy_control_fixture(temporary, mutation)
+                self.assertTrue(ui_gate.legacy_control_maintenance_errors(root, candidate, cutoff, cutoff))
+
+    def test_inherited_control_admission_requires_exact_complete_linear_range(self) -> None:
+        for mutation in ("", "extra-path", "hidden-extra-revert", "overlap", "outside", "merge", "later-revert"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, base, _ = self.prepare(temporary)
+                policy = json.loads((root / "ui-change-policy.json").read_text())
+                source = root / "tools/ui_conformance.py"
+                source.parent.mkdir(parents=True, exist_ok=True)
+                source.write_text("CHECK = True\n", encoding="utf-8")
+                (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'inherited';\n")
+                if mutation in {"extra-path", "hidden-extra-revert"}:
+                    (root / "extra.txt").write_text("not reviewed\n")
+                candidate = self.commit(root, "reviewed correction control and UI")
+                if mutation == "hidden-extra-revert":
+                    self.git(root, "rm", "extra.txt")
+                    candidate = self.commit(root, "remove undeclared intermediate path")
+                paths = ["apps/desktop/src/View.tsx", "tools/ui_conformance.py"]
+                ranges = [{"base": base, "candidate": candidate, "paths": paths}]
+                if mutation == "overlap":
+                    ranges *= 2
+                elif mutation == "outside":
+                    ranges = []
+                if mutation == "merge":
+                    self.git(root, "switch", "-c", "side")
+                    (root / "side.txt").write_text("side\n")
+                    self.commit(root, "side history")
+                    self.git(root, "switch", "main")
+                    self.git(root, "merge", "--no-ff", "side", "-m", "merge ambiguity")
+                (root / "activation.txt").write_text("returned parent\n")
+                activation = self.commit(root, "parent activation")
+                if mutation == "later-revert":
+                    source.write_text("CHECK = False\n")
+                    self.commit(root, "unreviewed later control")
+                    source.write_text("CHECK = True\n")
+                    self.commit(root, "restore later control bytes")
+                (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'restored';\n")
+                head = self.commit(root, "resumed UI")
+                scope = {"correctionSubmissionRanges": ranges, "reactivationCommit": activation}
+                errors = application_activation_errors(
+                    root,
+                    base,
+                    head,
+                    ["tools/ui_conformance.py"],
+                    {"schemaVersion": "1.1", "changeKind": "defect-restoration", "amendmentAuthority": {}},
+                    policy,
+                    resumed_scope=scope,
+                )
+                self.assertEqual(bool(mutation), bool(errors), errors)
+
+    def test_public_resumed_control_dispatch_authenticates_once_before_admission(self) -> None:
+        for invalid_authority in (False, True):
+            with self.subTest(invalid_authority=invalid_authority), tempfile.TemporaryDirectory() as temporary:
+                root, base, package = self.prepare(temporary)
+                (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'restored';\n")
+                (root / "tools").mkdir(exist_ok=True)
+                (root / "tools/ui_conformance.py").write_text("CHECK = True\n")
+                contract = self.contract("defect-restoration", package, base, task_id="W1.A08.T02")
+                contract.update(
+                    {
+                        "schemaVersion": "1.1",
+                        "amendmentAuthority": {
+                            "correctionId": "W1.A09",
+                            "adoptionCommit": "c" * 40,
+                            "reactivationCommit": "d" * 40,
+                            "inheritedCorrectionUiFiles": ["apps/desktop/src/View.tsx"],
+                            "resumedUiFiles": ["apps/desktop/src/View.tsx"],
+                            "classification": {
+                                "path": "artifacts/evidence/W1.A08.T02.ui-classification-R01.json",
+                                "sha256": "e" * 64,
+                                "commit": "f" * 40,
+                            },
+                        },
+                    }
+                )
+                self.install_contract(root, contract, base_sha=base)
+                backlog_path = root / "planning/backlog.yaml"
+                backlog = yaml.safe_load(backlog_path.read_text())
+                task = backlog["wave_amendments"][0]["tasks"][0]
+                task.update({"branch": "main", "lease": {"claimed_by": "codex"}})
+                self.write_yaml(backlog_path, backlog)
+                head = self.commit(root, "synthetic resumed public boundary")
+                calls: list[str] = []
+                scope = {"correctionSubmissionRanges": [], "reactivationCommit": "d" * 40}
+
+                # Stub only authenticated authority/classification for this
+                # public dispatch test; real Git range/review checks are separate.
+                def authenticate(
+                    *_args: object,
+                    recorded: list[str] = calls,
+                    invalid: bool = invalid_authority,
+                    bound_scope: dict[str, Any] = scope,
+                ) -> dict[str, Any]:
+                    recorded.append("authenticate")
+                    if invalid:
+                        raise ValueError("unadopted or unreviewed correction")
+                    return bound_scope
+
+                def admit(
+                    *_args: object,
+                    recorded: list[str] = calls,
+                    bound_scope: dict[str, Any] = scope,
+                    **kwargs: object,
+                ) -> list[str]:
+                    recorded.append("admit")
+                    self.assertIs(bound_scope, kwargs.get("resumed_scope"))
+                    return []
+
+                with (
+                    patch("ui_change_gate.resumed_amendment_authority", side_effect=authenticate) as authority,
+                    patch("ui_change_gate.application_activation_errors", side_effect=admit),
+                    patch("ui_change_gate.restoration_classification_errors", return_value=[]),
+                ):
+                    result = validate(root, base, head)
+                self.assertEqual(not invalid_authority, result["ok"], result["errors"])
+                self.assertEqual(["authenticate"] if invalid_authority else ["authenticate", "admit"], calls)
+                authority.assert_called_once()
+
     def test_resumed_hold_rejects_inconsistent_current_authority(self) -> None:
         parent: dict[str, Any] = {
             "id": "W1.A08",

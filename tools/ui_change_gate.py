@@ -23,6 +23,7 @@ REFERENCE_EXCLUSIONS = frozenset(
     {"REFERENCE_MANIFEST.yaml", "SHA256SUMS.txt", "VALIDATION_REPORT.md", "ui-reference-validation.json"}
 )
 HUMAN_ID = re.compile(r"^human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$")
+AGENT_ID = re.compile(r"agent:(?:/?[a-z0-9_-]+)(?:/[a-z0-9_-]+)*")
 EXPECTED_POLICY_SCALARS = {
     "schemaVersion": "1.0",
     "documentType": "ui-change-policy",
@@ -97,6 +98,19 @@ MAINTENANCE_CONTROL_PATHS = GATE_CONTROL_PATHS | frozenset(
         "docs/automation/design-first-ui-changes.md",
         "tests/desktop/test_ui_conformance.py",
         "tests/foundation/test_ui_change_gate.py",
+    }
+)
+LEGACY_GOVERNANCE_CONTROL_PATHS = MAINTENANCE_CONTROL_PATHS | frozenset(
+    {
+        "docs/automation/governance-automation-simplification.md",
+        "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+        "tests/foundation/test_governance_kernel.py",
+        "tests/foundation/test_planctl_amendments.py",
+        "tests/foundation/test_taskctl_workflow.py",
+        "tools/governance_kernel.py",
+        "tools/plan_review_site.py",
+        "tools/planctl.py",
+        "tools/taskctl.py",
     }
 )
 MAINTENANCE_CONTROL_ENVELOPE_CUTOVER = "07cecd999e84e1e6096df5fbbefe044c4789893f"
@@ -712,6 +726,128 @@ def reviewed_preimplementation_maintenance_errors(
     return errors
 
 
+def legacy_control_maintenance_errors(repo: Path, commit: str, head: str, cutoff: str) -> list[str]:
+    """Read the existing pre-correction maintenance protocol, without inventing adoption.
+
+    Only filename-qualified review records are discovered. Their immutable
+    candidate/evidence/review chain must already precede the authenticated
+    correction task boundary; this cannot approve new resumed-task changes.
+    """
+    try:
+        inventory = git(repo, "ls-tree", "-r", "--name-only", "-z", head, "--", "artifacts/evidence")
+        candidates = []
+        for name in inventory.split(b"\0"):
+            if not re.fullmatch(rb"artifacts/evidence/[A-Za-z0-9_-]+\.review-[0-9]{2}\.json", name):
+                continue
+            path = name.decode("ascii")
+            if tree_entry(repo, head, path) != ("100644", "blob"):
+                continue
+            record = json_object(blob(repo, head, path), "historical maintenance review")
+            if (
+                record.get("documentType") == "bounded-governance-maintenance-independent-review"
+                and record.get("reviewedCommit") == commit
+            ):
+                candidates.append(path)
+        if len(candidates) != 1:
+            return ["historical control maintenance lacks one exact independent review"]
+        review_path = candidates[0]
+        review, introduction = immutable_record(repo, head, review_path)
+        independence = review.get("independence") or {}
+        implementer = independence.get("implementer")
+        if (
+            review.get("schemaVersion") != "1.0"
+            or review.get("reviewId") != PurePosixPath(review_path).stem
+            or review.get("disposition") != "ACCEPTED"
+            or review.get("findings") != []
+            or not review.get("reviewedAt")
+            or independence.get("implementationAuthoredByReviewer") is not False
+            or not isinstance(implementer, str)
+            or AGENT_ID.fullmatch(implementer) is None
+            or not independent_identity(review.get("reviewer"), implementer)
+            or not is_ancestor(repo, introduction, cutoff)
+            or not is_ancestor(repo, cutoff, head)
+        ):
+            return ["historical control maintenance lacks independent accepted pre-correction authority"]
+        reference = review["evidence"]
+        evidence_path = str(reference["path"])
+        stem = review_path.rsplit(".review-", 1)[0]
+        if not re.fullmatch(re.escape(stem) + r"\.evidence-[0-9]{2}\.json", evidence_path):
+            return ["historical control maintenance evidence namespace differs"]
+        evidence, delivery = immutable_record(repo, head, evidence_path, reference["sha256"])
+        predecessor = review["predecessorCommit"]
+        for child, parent in ((commit, predecessor), (delivery, commit), (introduction, delivery)):
+            if git(repo, "rev-list", "--parents", "-n", "1", child).decode().split() != [child, parent]:
+                return ["historical control maintenance requires sole-parent candidate/evidence/review delivery"]
+        if (
+            reference.get("introductionCommit") != delivery
+            or git(repo, "rev-parse", f"{delivery}:{evidence_path}").decode().strip() != reference.get("gitBlob")
+            or commit_paths(repo, delivery) != {evidence_path}
+            or commit_paths(repo, introduction) != {review_path}
+            or evidence.get("schemaVersion") != "1.0"
+            or evidence.get("documentType") != "bounded-governance-maintenance-evidence"
+            or evidence.get("candidateCommit") != commit
+            or evidence.get("predecessorCommit") != predecessor
+            or evidence.get("implementer") != implementer
+            or type(evidence.get("riskTier")) is not int
+            or evidence.get("riskTier") != 2
+            or evidence.get("selectedChecksStatus") != "PASS"
+        ):
+            return ["historical control maintenance evidence identity or delivery differs"]
+        contract_path = str(evidence.get("contract"))
+        if not re.fullmatch(re.escape(stem) + r"\.maintenance-[0-9]{2}\.md", contract_path):
+            return ["historical control maintenance contract namespace differs"]
+        paths = commit_paths(repo, commit)
+        if contract_path not in paths or paths - (LEGACY_GOVERNANCE_CONTROL_PATHS | {contract_path}):
+            return ["historical control maintenance must remain control-only"]
+        artifacts, declared = review.get("reviewedArtifacts"), evidence.get("changedFiles")
+        if not isinstance(artifacts, list) or not isinstance(declared, list):
+            return ["historical control maintenance requires exact source inventories"]
+        for inventory_rows, blob_key in ((artifacts, "gitBlob"), (declared, "blob")):
+            names = [row.get("path") for row in inventory_rows if isinstance(row, dict)]
+            if len(names) != len(inventory_rows) or len(names) != len(paths) or set(names) != paths:
+                return ["historical control maintenance source inventory differs from its candidate"]
+            for row in inventory_rows:
+                path = row["path"]
+                if tree_entry(repo, commit, path) not in {("100644", "blob"), ("100755", "blob")}:
+                    return ["historical control maintenance source is not a regular Git blob"]
+                payload = blob(repo, commit, path)
+                if git(repo, "rev-parse", f"{commit}:{path}").decode().strip() != row.get(blob_key) or hashlib.sha256(
+                    payload
+                ).hexdigest() != row.get("sha256"):
+                    return ["historical control maintenance source binding differs"]
+        return []
+    except (KeyError, TypeError, ValueError, UnicodeError, json.JSONDecodeError) as exc:
+        return [f"invalid historical control maintenance: {exc}"]
+
+
+def inherited_control_commits(
+    repo: Path, base: str, head: str, scope: dict[str, Any], policy: dict[str, Any]
+) -> tuple[set[str], str]:
+    """Classify only internally authenticated correction ranges, not contract declarations."""
+    ranges = scope["correctionSubmissionRanges"]
+    activation = scope["reactivationCommit"]
+    # Reuse the exact linear, no-hidden-path, original-range boundary.
+    restoration_segments(repo, base, head, activation, ranges, policy)
+    commits = [base, *git(repo, "rev-list", "--reverse", f"{base}..{head}").decode().splitlines()]
+    positions = {commit: index for index, commit in enumerate(commits)}
+    if not ranges:
+        raise ValueError("inherited controls require authenticated correction submissions")
+    cutoff = min((item["base"] for item in ranges), key=positions.__getitem__)
+    admitted: set[str] = set()
+    for commit in commits[1:]:
+        paths = commit_paths(repo, commit)
+        if not paths & GATE_CONTROL_PATHS:
+            continue
+        matches = [
+            item for item in ranges if positions[item["base"]] < positions[commit] <= positions[item["candidate"]]
+        ]
+        if len(matches) > 1 or (matches and not paths.issubset(matches[0]["paths"])):
+            raise ValueError("inherited control commit has overlapping authority or unreviewed extra paths")
+        if matches:
+            admitted.add(commit)
+    return admitted, cutoff
+
+
 def application_activation_errors(
     repo: Path,
     base: str,
@@ -719,6 +855,8 @@ def application_activation_errors(
     protected_changes: list[str],
     contract: dict[str, Any],
     policy: dict[str, Any],
+    *,
+    resumed_scope: dict[str, Any] | None = None,
 ) -> list[str]:
     errors: list[str] = []
     if contract.get("changeKind") != "approved-reference-implementation" and not (
@@ -727,6 +865,13 @@ def application_activation_errors(
         and isinstance(contract.get("amendmentAuthority"), dict)
     ):
         return ["UI implementation cannot change its own design-first gate controls in the same range"]
+    inherited: set[str] = set()
+    cutoff: str | None = None
+    if resumed_scope is not None:
+        try:
+            inherited, cutoff = inherited_control_commits(repo, base, head, resumed_scope, policy)
+        except (KeyError, TypeError, ValueError) as exc:
+            return [f"invalid inherited correction control authority: {exc}"]
     commits = git(repo, "rev-list", "--reverse", "--topo-order", f"{base}..{head}").decode("ascii").splitlines()
     protected_positions: list[int] = []
     implementation_positions: list[int] = []
@@ -748,6 +893,10 @@ def application_activation_errors(
     activation_positions = [position for position in protected_positions if position not in late_protected]
     activation_errors: list[str] = []
     for position in activation_positions:
+        if commits[position] in inherited:
+            continue
+        if cutoff is not None and not legacy_control_maintenance_errors(repo, commits[position], head, cutoff):
+            continue
         quality_errors = additive_preimplementation_quality_scope_errors(repo, commits[position], policy)
         if quality_errors:
             maintenance_errors = reviewed_preimplementation_maintenance_errors(
@@ -762,6 +911,10 @@ def application_activation_errors(
                 activation_errors.extend(maintenance_errors)
     if late_protected:
         for position in late_protected:
+            if commits[position] in inherited:
+                continue
+            if cutoff is not None and not legacy_control_maintenance_errors(repo, commits[position], head, cutoff):
+                continue
             if not additive_preimplementation_quality_scope_errors(repo, commits[position], policy):
                 continue
             maintenance_errors = reviewed_preimplementation_maintenance_errors(
@@ -799,7 +952,7 @@ def application_activation_errors(
             except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
                 errors.extend(maintenance_errors)
                 errors.append(f"invalid post-implementation gate-hardening provenance: {exc}")
-    if set(protected_changes) == APPLICATION_ACTIVATION_PATHS:
+    if resumed_scope is None and set(protected_changes) == APPLICATION_ACTIVATION_PATHS:
         try:
             base_activation = json_object(
                 blob(repo, base, "verification/extensions/desktop-ui.json"), "base desktop UI activation"
@@ -1262,7 +1415,7 @@ def approved_amendment_packet(repo: Path, head: str, amendment: dict[str, Any]) 
 
 def independent_identity(reviewer: object, owner: object) -> bool:
     """Match supported local agent task names without claiming human identity proof."""
-    if not isinstance(reviewer, str) or re.fullmatch(r"agent:(?:/?[a-z0-9_-]+)(?:/[a-z0-9_-]+)*", reviewer) is None:
+    if not isinstance(reviewer, str) or AGENT_ID.fullmatch(reviewer) is None:
         return False
 
     def canonical(value: object) -> str:
@@ -1648,6 +1801,7 @@ def resumed_amendment_authority(
                 raise ValueError("superseded parent reference no longer matches its approved original base")
     return {
         **segments,
+        "correctionSubmissionRanges": ranges,
         "parentPacketCommit": parent_packet_commit,
         "correctionPacketCommit": packet_commit,
         "adoptionCommit": adoption,
@@ -1843,8 +1997,20 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
     if errors:
         return report
 
+    resumed_scope: dict[str, Any] | None = None
+    if "amendmentAuthority" in contract:
+        try:
+            resumed_scope = resumed_amendment_authority(repo, base, head, contract, policy)
+            report["rangeAuthority"] = resumed_scope
+        except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+            errors.append(f"invalid resumed amendment UI authority: {exc}")
+            return report
     if protected_changes:
-        errors.extend(application_activation_errors(repo, base, head, protected_changes, contract, policy))
+        errors.extend(
+            application_activation_errors(
+                repo, base, head, protected_changes, contract, policy, resumed_scope=resumed_scope
+            )
+        )
         if errors:
             return report
 
@@ -1929,9 +2095,9 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             errors.append("resumed UI task branch or lease owner differs from the current claim")
         if not errors:
             try:
-                scope = resumed_amendment_authority(repo, base, head, contract, policy)
-                report["rangeAuthority"] = scope
-                errors.extend(restoration_classification_errors(repo, base, head, contract, scope, policy))
+                if resumed_scope is None:
+                    raise ValueError("resumed control authority was not authenticated")
+                errors.extend(restoration_classification_errors(repo, base, head, contract, resumed_scope, policy))
             except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
                 errors.append(f"invalid resumed amendment UI authority: {exc}")
     elif kind == "intentional-design-change":

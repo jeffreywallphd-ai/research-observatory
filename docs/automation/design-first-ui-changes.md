@@ -77,3 +77,22 @@ UI gate control. Every commit is checked, including intermediate changes later
 reverted. Missing, pre-existing or redirected sources, removal/reordering, and
 all other quality-scope changes still require the existing independent control
 maintenance process. This does not alter task or reference authority.
+
+For an opt-in resumed amendment, authenticate its adopted correction before
+classifying inherited control changes. An exact control-changing commit inside
+one completed, independently reviewed correction submission is inherited work,
+not self-modification by the resumed task. Its entire changed-path inventory
+must be covered by that reviewed range. The range comes from authenticated
+approval/submission/review/adoption records, never caller-supplied contract data.
+Unknown, overlapping, extra-path, merge and later unreviewed changes remain denied;
+the original task base and full per-commit traversal do not change.
+
+Earlier bounded maintenance can use its existing
+`bounded-governance-maintenance-independent-review` carrier instead of a newer
+GOV-MAINT projection. Recognition authenticates its sole-parent candidate,
+evidence-only and review-only deliveries, immutable full source hashes/blobs,
+independent accepted disposition with no findings, and control-only scope before
+the authenticated correction task start. It does not create a retrospective
+approval or authorize product/launcher changes. Subsequent control modifications
+still need their own exact review. The complete public UI gate must pass; these
+individual provenance checks are not task completion evidence on their own.

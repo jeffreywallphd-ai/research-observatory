@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0021",
+  "title": "Authenticate inherited correction controls and earlier bounded maintenance at the public UI gate",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "be3b7da5efa370e42849d1626d032dbc9d61fc66",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": "W1.A08.T02",
+    "taskStatus": "IN_PROGRESS",
+    "sourceSha256": {
+      "tools/ui_change_gate.py": "d3b8fab3a6f5a0c551ed092c6e5df39837b5b89d31143902306f6545d9564c9c",
+      "tests/foundation/test_ui_change_gate.py": "6cf37c0c784594de7ae17939c6685bf8ac58215c5b447587e8cd434b682324c9",
+      "docs/automation/design-first-ui-changes.md": "f061df1d7f8f4d32ecb8144042da1ea6045637fd6b3475a6cb7da24ba3f9e5c2"
+    }
+  },
+  "trigger": {
+    "command": ".venv/Scripts/python.exe tools/ui_change_gate.py --repo . --base 46e88d171795b76a2f1588d69756f4184c01a89b --head HEAD",
+    "observedHead": "be3b7da5efa370e42849d1626d032dbc9d61fc66",
+    "exitCode": 1,
+    "diagnosis": "The actual complete original-base gate rejects seven inherited controls before it authenticates resumed amendment authority. Five commits belong to the exact completed independently approved W1.A09.T01 submission; two have authentic earlier bounded-governance-maintenance-independent-review carriers. None uses the current GOV-MAINT-only projection expected by flat control admission. Independent diagnosis found no missing review among these seven. Existing GOV-MAINT-0018/0019/0020 and additive privacy inventory recognition pass. The separately executed current resumed authority/classification also passes, but is not the full gate.",
+    "atomicity": "Keep task submission and all backlog/amendment/Wave/gate/main/remote mutations paused. No product/reference/capture/historical-record edits. The developer-origin fix is separate planned W1 restoration, not part of this increment."
+  },
+  "authority": "AGENTS.md post-GOV-MIG-0001 bounded Tier 2 maintenance preserving existing approval authority. Recognize authenticated earlier independent review and adopted correction attribution without creating new historical approvals, identity allowlists, controllers, task bases or exemptions. Independent commit-bound review is required before adoption; full original-base UI validation still must pass before W1.A08.T02 submission.",
+  "intendedDelta": {
+    "implementation": "Authenticate the opt-in resumed amendment once before control admission. Use only internally authenticated, completed and independently reviewed adopted-correction submission ranges to attribute inherited control commits; require exact whole-commit scope and linear ancestry. Recognize the earlier bounded maintenance evidence/review protocol with exact immutable candidate/evidence/review provenance, full source hashes/blobs, independent accepted/no-findings disposition and control-only scope before correction task execution. Preserve ordinary paths, current-task control review, full original-base inventory and per-commit detection including reverted changes.",
+    "failClosed": [
+      "No caller-declared or unadopted correction range, unknown control commit, overlapping range, hidden extra/intermediate path, ambiguous merge or later unreviewed change is admitted.",
+      "No rewritten/synthetic retrospective review, self review, missing evidence, mismatched candidate/parent/source inventory, non-control maintenance mutation or unsupported receipt shape is admitted.",
+      "No root launcher/product change, new reference, privacy baseline update, task approval, release decision or remote side effect is part of this correction."
+    ],
+    "changedPaths": [
+      "docs/automation/design-first-ui-changes.md",
+      "planning/governance-migrations/GOV-MAINT-0021.json",
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py"
+    ]
+  },
+  "verification": {
+    "status": "Implementation checks passed; independent commit-bound review pending. Complete original-base public validation follows adoption.",
+    "riskAnalysis": "Control/evidence boundary. First reproduce public admission failure and focused synthetic denial cases. Run real Git tests for exact historical carrier provenance and correction range scope plus public dispatch/ordering; preserve ordinary UI-control denials. After candidate commit and independent adoption run the actual complete original-base UI gate, not merely helper calls. Product/browser/performance inputs remain unchanged and their exact producer-bound evidence is retained; no full repository/deployment replay is warranted by this bounded control change.",
+    "independentPreflight": "agent:/root/ui_guard_planning independently mapped all seven candidates to existing authority. agent:/root/t03_acceptance_review separately confirmed the two earlier independent carriers. These read-only diagnoses are not maintenance or task approval.",
+    "results": [
+      {
+        "command": "Four new real-Git historical-maintenance, inherited-range and public-dispatch tests",
+        "result": "passed",
+        "detail": "4 tests passed in 34.742 seconds; exact protocol positive, twelve historical-authority denials, six complete-linear-range cases, and public authentication-once/denial order."
+      },
+      {
+        "command": "Ruff check/format and scoped mypy for tools/ui_change_gate.py and tests/foundation/test_ui_change_gate.py",
+        "result": "passed",
+        "detail": "Agent-run scoped checks passed after test formatting and safe closure capture correction. No rule suppression."
+      },
+      {
+        "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_ui_change_gate.UiChangeGateTests.test_legacy_control_maintenance_authenticates_existing_protocol tests.foundation.test_ui_change_gate.UiChangeGateTests.test_legacy_control_maintenance_rejects_false_or_late_authority tests.foundation.test_ui_change_gate.UiChangeGateTests.test_legacy_control_maintenance_requires_valid_implementer_identity tests.foundation.test_ui_change_gate.UiChangeGateTests.test_inherited_control_admission_requires_exact_complete_linear_range tests.foundation.test_ui_change_gate.UiChangeGateTests.test_public_resumed_control_dispatch_authenticates_once_before_admission tests.foundation.test_ui_change_gate.UiChangeGateTests.test_public_validation_rejects_inventory_control_change_even_after_exact_revert tests.foundation.test_ui_change_gate.UiChangeGateTests.test_late_additive_python_inventory_does_not_change_ui_authority tests.foundation.test_ui_change_gate.UiChangeGateTests.test_independently_reviewed_maintenance_can_repair_the_gate_after_ui tests.foundation.test_ui_change_gate.UiChangeGateTests.test_postimplementation_maintenance_still_rejects_self_review tests.foundation.test_ui_change_gate.UiChangeGateTests.test_postimplementation_maintenance_rejects_mixed_product_mutation tests.foundation.test_ui_change_gate.UiChangeGateTests.test_ui_implementation_cannot_weaken_gate_controls_in_same_range tests.foundation.test_ui_change_gate.UiChangeGateTests.test_restoration_segments_authenticate_each_real_git_commit tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_hold_rejects_inconsistent_current_authority tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks -v",
+        "result": "passed",
+        "detail": "14 tests passed in 55.081 seconds. Includes legacy exact provenance and denial cases, missing/invalid implementer identity, inherited whole-range coverage, hidden extra-path/add-revert, public authentication-first/once, and adjacent historical maintenance/public controls."
+      },
+      {
+        "command": "Exact historical legacy carrier predicates",
+        "result": "passed",
+        "detail": "c6cff6f3c99beb23e0adc3890941f2e8ef8b7ce3 and 81fccc337b92e4911e5937ca1817d0bbad9fa3a0 each returned no errors at be3b7da5efa370e42849d1626d032dbc9d61fc66 with authenticated cutoff 92175839dc92a736a6d5ad0330d13efb382701f1; combined 6.447 seconds. This is not a full public gate or task approval."
+      },
+      {
+        "command": "Final scoped static checks and exact predecessor Git-blob hashes",
+        "result": "passed",
+        "detail": "Ruff lint/format, scoped mypy and git diff --check pass. Root independently confirmed all three predecessor source hashes against raw be3b7da5 Git blobs."
+      }
+    ],
+    "testFirst": "Before implementation, three selected new tests failed in 9.964 seconds: absent historical helper, unsupported inherited-scope input, and public control dispatch before authentication. After the correction, four new tests passed in 34.742 seconds (12 legacy negative cases and six inherited-range cases). Initial test-only formatting/loop-closure lint was corrected without suppression. Root preflight then identified missing/invalid implementer identities matching across legacy evidence/review. A new test with two subcases failed in 5.340 seconds; the correction now requires the same valid agent identity grammar for the implementer, without changing existing reviewer syntax."
+  },
+  "rollback": "Retain candidate and every adverse result/review append-only. Do not submit task evidence or integrate across a failed gate; correct only the existing recognition path without weakening substantive invariants or rewriting authority.",
+  "reviewAttempts": [],
+  "review": null
+}
