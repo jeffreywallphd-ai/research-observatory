@@ -1,0 +1,1226 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-visual-disposition",
+  "taskId": "W1.A08.T02",
+  "reviewId": "W1.A08.T02.visual-review-04",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "reviewedAt": "2026-09-06T01:54:56Z",
+  "disposition": "approved",
+  "formalTaskApproval": false,
+  "scope": "Incremental visual remediation of W1.A08.T02-visual-03-F01 at producer 497cca81, with prior F02/UX01 and context-action closures retained. This is the distinct criterion-4 visual disposition supported by exact capture05 plus the independently authored and executed current-navigation observer. It is not formal task, slice, amendment, release or W1 approval; it does not approve a changed reference or UI-restoration classification.",
+  "bindings": {
+    "producerCommit": "497cca81efff033449a9b794af76d60f2f13e0d7",
+    "captureDeliveryCommit": "ea962fbcbda5009c77a3df131c3a4d19e7598a29",
+    "manifest": "artifacts/evidence/W1.A08.T02.captures-05/manifest.json",
+    "manifestSha256": "59de10510c2a2a896a0b8e97d2d4a12ad0a8f7d7f74fba15b19fff7d9bd62f8d",
+    "manifestSerialization": "Digest authenticates the exact published capture JSON bytes.",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "approvalPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "normativeSections": [
+      "W1.A08.T02 criteria 3 and 4; criterion 2 shared-style boundary checked incrementally",
+      "design/ui-reference/STYLE_GUIDE.md sections 5, 6 and 9",
+      "ECR-0008.execution-01.md effective presentation 1.6 overlay and retained F02/UX01"
+    ],
+    "producerInputCount": 503,
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app.css",
+        "rawSha256": "428b9a3deaef78018600c711d5a33e8239428ed810df548d83781e8c86af655c",
+        "gitBlob": "8a2df03d2f96ef9cd81e41c6f0335b91c4e9f2fb"
+      },
+      {
+        "path": "apps/desktop/src/app/WorkflowNavigation.tsx",
+        "rawSha256": "24eb46492844f121b90644a41bbb8dbfb6d10ea7a9985edb4c85d9ad4246c7fe",
+        "gitBlob": "4fcca745f0e765147f00a8ad56b14bb90ba72abe"
+      },
+      {
+        "path": "packages/ui-components/src/styles.css",
+        "rawSha256": "d502b754768242b4efcac717e1c9f77cc3c8fdef0176f640879f475a4f89db6c",
+        "gitBlob": "7336f2ba28ef094b9e9f0e290e1f20e614d5e7de"
+      },
+      {
+        "path": "packages/ui-components/src/index.tsx",
+        "rawSha256": "b69dba38dec1ff69c50076cedc9ffd94ddaa29b23f9762c4af9589d7b7d00a45",
+        "gitBlob": "57296476590722185176288ac4e09201fa2a9598"
+      },
+      {
+        "path": "tools/desktop_app_check.py",
+        "rawSha256": "5bdce257d7e9dd497a88cd2bf4d753761481330a85281f767697120535d5beea",
+        "gitBlob": "d1132da03e0ba962abcd91acff9cd00cb28a0871"
+      },
+      {
+        "path": "tools/product_layout_measurements.py",
+        "rawSha256": "dec5e00e2957614431ee425fa4bd9c757596a5c9ce953ad49abfed7ec7062baa",
+        "gitBlob": "f9568afc70fef3755ea8a7148c7177c7735e9a9f"
+      },
+      {
+        "path": "tools/product_style_check.py",
+        "rawSha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+        "gitBlob": "663902b96bdc6499834aabf366b689a9091fa554"
+      },
+      {
+        "path": "design/ui-reference/assets/tokens.css",
+        "rawSha256": "475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230",
+        "gitBlob": "7adcd7c0577308763d07a81404067c3d4a3eee71"
+      },
+      {
+        "path": "design/ui-reference/assets/app.css",
+        "rawSha256": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee",
+        "gitBlob": "d5154e5a893372b03275deb82ae11b7216a96bfb"
+      },
+      {
+        "path": "apps/desktop/src/app/ApplicationRuntime.tsx",
+        "rawSha256": "1bda1aa9dc6870728e6a8c1f7e9e085a379d2bed403e39b10c65682043e0ef83",
+        "gitBlob": "d66cba076f31d61a7d64c22fc4272db89d88e16d"
+      }
+    ],
+    "supplemental": {
+      "deliveryCommit": "63957d0b86ad6db291d8d57f73c6c53f3b3f2b7b",
+      "manifest": "artifacts/evidence/W1.A08.T02.navigation-captures-01/manifest.json",
+      "manifestSha256": "4fbeb3d18825b0a9796d8b8b035ff117c15c0c95833484a54d91b08bb919984a",
+      "observer": {
+        "commit": "db6d896acbcee73a10b68efdbab4acb577743ec4",
+        "gitBlob": "fd562b521dbb474009a87753e9d52c51ff75bdaf",
+        "path": "artifacts/evidence/W1.A08.T02.context-observer-02.py",
+        "rawSha256": "13914d48754a9623863b5f11035cc3ac19a1a98ebdbb2828f2cc33b4c0e547b3"
+      },
+      "producerCommit": "497cca81efff033449a9b794af76d60f2f13e0d7",
+      "producerCheckout": ".local/qualification-worktrees/w1-a08-t02",
+      "producerInputCount": 503
+    },
+    "priorVisualReview": {
+      "path": "artifacts/evidence/W1.A08.T02.visual-review-03.json",
+      "sha256": "d8090a237c465d1c47ee8316a90ed1e1ace326a56832964ca87dd4c27f3f159d",
+      "deliveryCommit": "7fb773d1e5eb6cdca66274eaba035fc095c95ebf",
+      "disposition": "changes-requested",
+      "preserved": true
+    },
+    "crossCheckoutQualification": {
+      "all503GitInputBlobsEqual": true,
+      "rawInputDifferenceCount": 50,
+      "rawInputDifferencePaths": [
+        "apps/desktop/scripts/assemble-application.mjs",
+        "apps/desktop/scripts/assemble-reference.mjs",
+        "apps/desktop/scripts/intent-native-integration.mjs",
+        "apps/desktop/src-tauri/examples/project_contract_probe.rs",
+        "apps/desktop/src-tauri/examples/supervision_check.rs",
+        "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+        "apps/desktop/src-tauri/src/application_lock.rs",
+        "apps/desktop/src-tauri/src/directory_picker.rs",
+        "apps/desktop/src-tauri/src/lib.rs",
+        "apps/desktop/src-tauri/src/supervisor.rs",
+        "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+        "apps/desktop/src/app/ApplicationRuntime.tsx",
+        "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+        "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+        "apps/desktop/src/app/AuditLineageWorkspace.tsx",
+        "apps/desktop/src/app/DiagnosticsWorkspace.test.tsx",
+        "apps/desktop/src/app/DiagnosticsWorkspace.tsx",
+        "apps/desktop/src/app/IntentWorkspace.test.tsx",
+        "apps/desktop/src/app/IntentWorkspace.tsx",
+        "apps/desktop/src/app/LocalServiceBoundary.tsx",
+        "apps/desktop/src/app/ProjectHomeWorkspace.test.tsx",
+        "apps/desktop/src/app/ProjectHomeWorkspace.tsx",
+        "apps/desktop/src/app/ProjectSettingsWorkspace.tsx",
+        "apps/desktop/src/app/ProjectsWorkspace.test.tsx",
+        "apps/desktop/src/app/ProjectsWorkspace.tsx",
+        "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+        "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+        "apps/desktop/src/app/WorkflowNavigation.tsx",
+        "apps/desktop/src/app/directoryPicker.test.ts",
+        "apps/desktop/src/app/directoryPicker.ts",
+        "apps/desktop/src/app/workflowNavigation.test.ts",
+        "apps/desktop/src/app/workflowNavigationModel.ts",
+        "design/ui-reference/VALIDATION_REPORT.md",
+        "design/ui-reference/assets/app.js",
+        "design/ui-reference/assets/print.css",
+        "design/ui-reference/assets/tokens.css",
+        "design/ui-reference/scripts/render_previews.py",
+        "design/ui-reference/scripts/smoke_interactions.py",
+        "design/ui-reference/scripts/verify_site.py",
+        "design/ui-reference/ui-reference-validation.json",
+        "packages/contracts/core-api/generated.test.ts",
+        "packages/contracts/domain/lifecycle.generated.ts",
+        "packages/contracts/workflow-profile/generate.mjs",
+        "packages/contracts/workflow-profile/generated.ts",
+        "packages/contracts/workflow-profile/workflow-profile.template.py.txt",
+        "packages/contracts/workflow-profile/workflow-profile.template.ts.txt",
+        "packages/contracts/workflow-profile/workflow-profile.test.ts",
+        "packages/ui-components/src/DirectoryPickerField.tsx",
+        "packages/ui-components/src/index.tsx",
+        "packages/ui-components/tests/package.test.tsx"
+      ],
+      "executedProductArtifacts": [
+        "assets/app.css",
+        "assets/app.js",
+        "index.html"
+      ],
+      "executedProductArtifactSha256": {
+        "assets/app.css": "ea03589770d2e2328998b78a02d15efbd49b8f41f6a71088b2ed5d8f14ddf2a5",
+        "assets/app.js": "df2749dc1e0f28d245f2d93f8fde9a3412df0f562c8dbee7cdd2307da29e53dd",
+        "index.html": "d3499c13b59f8e03aec1235d8262ab6191f6418ed36029f2e6b3012ad04cd771"
+      },
+      "productSourceMapDiffers": true,
+      "claim": "Both independently authenticated producer snapshots bind the same 503 Git blobs and byte-identical executed HTML/JS/CSS. Working-checkout raw bytes are not all equal; the source maps differ. This is not a claim that complete raw snapshots/build manifests match each other."
+    }
+  },
+  "verificationActuallyPerformed": [
+    {
+      "check": "Observer source and synthetic boundary review",
+      "result": "PASS",
+      "details": "Read the complete frozen observer source and imports; checked both JavaScript functions with Node --check and imported Python without main. Nine earlier synthetic validator cases passed: valid sample; reject disabled, opacity, clipped text, missing marker, old dark label, old marker color, missing current-page inventory and alpha foreground. This was observer validation, not product/native execution."
+    },
+    {
+      "check": "Actual source-bound supplemental run",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe artifacts/evidence/W1.A08.T02.context-observer-02.py --observer-commit db6d896acbcee73a10b68efdbab4acb577743ec4 --producer-commit 497cca81efff033449a9b794af76d60f2f13e0d7 --output artifacts/evidence/W1.A08.T02.navigation-captures-01",
+      "exitCode": 0,
+      "details": "Ran the unchanged qualification checkout's real compiled React product in its existing deterministic runtime_frame_errors workflow. Only the six settings matrix cases were sampled; no fake app markup, native GUI, ordinary policy/vault, production Core or full runtime-frame PASS is claimed. Twelve viewport images observe current step/page separately. The original six context keyboard/geometry observations remain valid."
+    },
+    {
+      "check": "Independent immutable capture05 authentication",
+      "result": "PASS",
+      "command": ".venv/Scripts/python.exe tools/product_style_check.py --repo . --verify-captures artifacts/evidence/W1.A08.T02.captures-05/manifest.json --delivery-commit ea962fbcbda5009c77a3df131c3a4d19e7598a29",
+      "exitCode": 0,
+      "authenticatedImages": 108,
+      "details": "Supported verifier authenticated exact Git delivery, PNG bytes/dimensions/inventory, producer source/build/reference/renderer snapshot and all 48 workspace plus 6 designated matrix measurements. This read-only check does not recapture the matrix."
+    },
+    {
+      "check": "Independent supplemental authentication and replay",
+      "result": "PASS",
+      "authenticatedImages": 12,
+      "settingsValidators": 6,
+      "independentContrastCalculations": 30,
+      "details": "Constructed the 12-case contract independently from two current states, two themes and the three required viewports. Used read_capture_bundle against delivery 63957d0b; re-derived the full qualification producer snapshot, authenticated committed observer bytes/blob and re-ran six unchanged geometry validators. Revalidated all observed visible/enabled/opaque/Tab-focused states and independently recomputed all 30 WCAG ratios from the recorded actual foreground/background pairs; every sample meets 4.5. Each sample reports at least three identical stable frames and zero running/pending animations."
+    },
+    {
+      "check": "Actual pixel inspection",
+      "result": "PASS",
+      "imagesActuallyViewedThisRound": 18,
+      "details": "Viewed all 12 navigation product PNGs, plus capture05 product/reference pairs for light Task Center at 1440x900 and 720x450 and dark Project settings at 1440x900. This is 18 actual images, not a claim to view every image in the authenticated 108-image matrix."
+    },
+    {
+      "check": "Incremental source and adverse-history inspection",
+      "result": "PASS",
+      "details": "Read the exact 497cca81 CSS/test diff and contrast-remediation-01 notes. The production delta uses existing palette tokens for current-page/current-step text and marker, without token/reference/label/disabled/callback/geometry changes. Authenticated the prior adverse visual03 bytes to their delivery and kept them unchanged. The author's seven-test, lint/type/build and performance results are not relabeled as this reviewer's replays."
+    }
+  ],
+  "inspectedImages": [
+    {
+      "caseId": "current-navigation:page:settings:dark:1280x720",
+      "file": "0cfb8c3fcd958f9bde9992a3497b78d0d7562b7cecca7be1a756b980ce7ce69a.png",
+      "height": 720,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "93f3a51f00e4e10ad60a0a22f8e2beaf9ac6d0c2595d4ed7b5c9649ae978777f",
+      "stateId": "enabled-current-page-text",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "width": 1280,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/0cfb8c3fcd958f9bde9992a3497b78d0d7562b7cecca7be1a756b980ce7ce69a.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:page:settings:light:1440x900",
+      "file": "1c435e921a06e4e7cdd04c4d0d58f0536b45a568347f6175a611bb2549f20d04.png",
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "61ad95d9dde7a040c9a863b8d781e4572512d4c61d6dc35ac6373b5912f08506",
+      "stateId": "enabled-current-page-text",
+      "surfaceId": "settings",
+      "theme": "light",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/1c435e921a06e4e7cdd04c4d0d58f0536b45a568347f6175a611bb2549f20d04.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:step:settings:dark:1440x900",
+      "file": "3f2bf9b554635c3dd66c6f563a1bfd9a9f4898eb25cc5479548432216b9f120d.png",
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "9a67b7131cb1e70b010d23c67cae284771684a2fef5ac908800d5a2c73c5c36b",
+      "stateId": "enabled-current-step-text",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/3f2bf9b554635c3dd66c6f563a1bfd9a9f4898eb25cc5479548432216b9f120d.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:page:settings:light:1280x720",
+      "file": "501eb03bfe4d1974556dfe1a4a8230f85187c4ff63a4ed7780a6e342ffe86141.png",
+      "height": 720,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "cc2843dd9e8563627e992daf68f8658e882164f791c069266688e6d7f6ca199e",
+      "stateId": "enabled-current-page-text",
+      "surfaceId": "settings",
+      "theme": "light",
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "width": 1280,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/501eb03bfe4d1974556dfe1a4a8230f85187c4ff63a4ed7780a6e342ffe86141.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:step:settings:light:1280x720",
+      "file": "5478dc848fd3324a964bcd730075d838a36e714e20fc341c59cc6a449f13f8b3.png",
+      "height": 720,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "9f7339a2e7cc66c63dda590915ab97f47ee83b6387ff6df7328a0e4bfea4df7b",
+      "stateId": "enabled-current-step-text",
+      "surfaceId": "settings",
+      "theme": "light",
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "width": 1280,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/5478dc848fd3324a964bcd730075d838a36e714e20fc341c59cc6a449f13f8b3.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:page:settings:dark:720x450",
+      "file": "5d068f305bc02f5e88330314679825871cee9a2925796a6a1cb4b8914f8b54ce.png",
+      "height": 450,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "fc19cebf9e4502d79d3b1171315d6301c36f3e62cea0a572b160c30f832043be",
+      "stateId": "enabled-current-page-text",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 450,
+        "width": 720
+      },
+      "width": 720,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/5d068f305bc02f5e88330314679825871cee9a2925796a6a1cb4b8914f8b54ce.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:step:settings:light:720x450",
+      "file": "6c9534837819fbd7fa7390a96cf27c03598a39acef2cd5085844711819535b91.png",
+      "height": 450,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "970fed9714a59667428a1d1de29e36618dafa45d0ea95a1f58d2dcf80b87c4d6",
+      "stateId": "enabled-current-step-text",
+      "surfaceId": "settings",
+      "theme": "light",
+      "viewport": {
+        "height": 450,
+        "width": 720
+      },
+      "width": 720,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/6c9534837819fbd7fa7390a96cf27c03598a39acef2cd5085844711819535b91.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:step:settings:light:1440x900",
+      "file": "882c509df0408dbb96f4eb4a6a01948c3ccc087335229884dbf4645283d077ab.png",
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "109c88671b84803af78769165b7d60e89241e5d45c3ebc081eac3e0632d9f1b8",
+      "stateId": "enabled-current-step-text",
+      "surfaceId": "settings",
+      "theme": "light",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/882c509df0408dbb96f4eb4a6a01948c3ccc087335229884dbf4645283d077ab.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:page:settings:dark:1440x900",
+      "file": "c89d247d2e39f6b3852050a5344506d4991da7842c8a2ca0f615610cfec49517.png",
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "120e6b1f357a6bd83650d5b2c5b02d2d82198d95594d77d29c16c933e59d969b",
+      "stateId": "enabled-current-page-text",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/c89d247d2e39f6b3852050a5344506d4991da7842c8a2ca0f615610cfec49517.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:page:settings:light:720x450",
+      "file": "dad314966bb4c7802c181d6896b56d0dbc28b14fdc140e3fc69d12332d78024f.png",
+      "height": 450,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "c51e9e538c40fa323d7cbb68b9746256586de0fe4898f572d3086e900d2bb3e6",
+      "stateId": "enabled-current-page-text",
+      "surfaceId": "settings",
+      "theme": "light",
+      "viewport": {
+        "height": 450,
+        "width": 720
+      },
+      "width": 720,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/dad314966bb4c7802c181d6896b56d0dbc28b14fdc140e3fc69d12332d78024f.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:step:settings:dark:1280x720",
+      "file": "f3890a8e6360ba32a152177bdbaa2110072ebda05de1d7ee6b47b74bb26d9934.png",
+      "height": 720,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "6e05c32ba7887b94a1e2a91faeebc43fd55ed46a87232a5bbbbe4c8b9dcc3242",
+      "stateId": "enabled-current-step-text",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 720,
+        "width": 1280
+      },
+      "width": 1280,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/f3890a8e6360ba32a152177bdbaa2110072ebda05de1d7ee6b47b74bb26d9934.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "current-navigation:step:settings:dark:720x450",
+      "file": "fa85b1329430ebf3e7fbde5b4412ed38e35c2cf5ab6f00c228fcbcdb9140c730.png",
+      "height": 450,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "8515de7cee61eb775089ceada52e180b5b827f9f2a51379b950f28ca4a6f16e0",
+      "stateId": "enabled-current-step-text",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 450,
+        "width": 720
+      },
+      "width": 720,
+      "path": "artifacts/evidence/W1.A08.T02.navigation-captures-01/fa85b1329430ebf3e7fbde5b4412ed38e35c2cf5ab6f00c228fcbcdb9140c730.png",
+      "inspection": "Actual product PNG viewed; target current navigation text and real Tab focus visible."
+    },
+    {
+      "caseId": "workspace:tasks:light:1440x900",
+      "file": "021f101b988eed83cb3cbe63271209ca741370b825e6bfe36d473650599e22d9.png",
+      "height": 900,
+      "referencePage": "task-center.html",
+      "role": "reference",
+      "sha256": "70efa1c7312e87c04e2ea34005986450d71906f52d30567ecff4f9c03124fccf",
+      "stateId": "populated-task-center",
+      "surfaceId": "tasks",
+      "theme": "light",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/021f101b988eed83cb3cbe63271209ca741370b825e6bfe36d473650599e22d9.png",
+      "inspection": "Actual approved reference PNG viewed as general-style comparison, not product execution."
+    },
+    {
+      "caseId": "workspace:tasks:light:720x450",
+      "file": "05e308280e9f69634bfaf21da52acf7f42edcd372f55e6e550465f313180851e.png",
+      "height": 450,
+      "referencePage": "task-center.html",
+      "role": "product",
+      "sha256": "86a5a53bc8a8554c3a14f3ac4ac15c46de882991570b9d699d8448122b8f02d7",
+      "stateId": "populated-task-center",
+      "surfaceId": "tasks",
+      "theme": "light",
+      "viewport": {
+        "height": 450,
+        "width": 720
+      },
+      "width": 720,
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/05e308280e9f69634bfaf21da52acf7f42edcd372f55e6e550465f313180851e.png",
+      "inspection": "Actual compiled product PNG viewed for incremental flow, shell, hierarchy and focus regression."
+    },
+    {
+      "caseId": "workspace:settings:dark:1440x900",
+      "file": "166936d1a5aa909b04c5d3a28fe26a1bc81b1f1926e63239c120b0807c8c2e33.png",
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "role": "product",
+      "sha256": "65b33e4310b04636811a2f0ad198b58f304188d5a6ef2d8228fb734b9ae526cc",
+      "stateId": "project-settings",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/166936d1a5aa909b04c5d3a28fe26a1bc81b1f1926e63239c120b0807c8c2e33.png",
+      "inspection": "Actual compiled product PNG viewed for incremental flow, shell, hierarchy and focus regression."
+    },
+    {
+      "caseId": "workspace:tasks:light:1440x900",
+      "file": "2512de22bebc7cc71986860b693bfe748a81f5df5a29fe08097b370b1e7a2eff.png",
+      "height": 900,
+      "referencePage": "task-center.html",
+      "role": "product",
+      "sha256": "b1dac06ca31fe31e72e2457367a9baf70f99b5c35443329f80cd8fc40d64de00",
+      "stateId": "populated-task-center",
+      "surfaceId": "tasks",
+      "theme": "light",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/2512de22bebc7cc71986860b693bfe748a81f5df5a29fe08097b370b1e7a2eff.png",
+      "inspection": "Actual compiled product PNG viewed for incremental flow, shell, hierarchy and focus regression."
+    },
+    {
+      "caseId": "workspace:settings:dark:1440x900",
+      "file": "99b39822e21e5ba370f24f61fbe43b724923c7c92be95915d20299f7ef3def18.png",
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "role": "reference",
+      "sha256": "10b1f9ce6b36ff4e12f5948bc61c2413a155e822c267a3e14d6960b3e8979d78",
+      "stateId": "project-settings",
+      "surfaceId": "settings",
+      "theme": "dark",
+      "viewport": {
+        "height": 900,
+        "width": 1440
+      },
+      "width": 1440,
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/99b39822e21e5ba370f24f61fbe43b724923c7c92be95915d20299f7ef3def18.png",
+      "inspection": "Actual approved reference PNG viewed as general-style comparison, not product execution."
+    },
+    {
+      "caseId": "workspace:tasks:light:720x450",
+      "file": "ebb2889bb4cc18ec210db64d79b957692ff867b7d7812991c5d0ecc216b07140.png",
+      "height": 450,
+      "referencePage": "task-center.html",
+      "role": "reference",
+      "sha256": "b3383cc309565127b3fa6c2863d41c4d35d27f1c93a1b51757b1425436aaa53a",
+      "stateId": "populated-task-center",
+      "surfaceId": "tasks",
+      "theme": "light",
+      "viewport": {
+        "height": 450,
+        "width": 720
+      },
+      "width": 720,
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/ebb2889bb4cc18ec210db64d79b957692ff867b7d7812991c5d0ecc216b07140.png",
+      "inspection": "Actual approved reference PNG viewed as general-style comparison, not product execution."
+    }
+  ],
+  "visualAssessment": {
+    "currentNavigation": "The dark Research Intent label is now bright and distinguishable from the dark selected surface; its numbered marker is legible. The Project settings current-page label receives the same correction. Both themes and all three viewport sizes show the complete target label/marker/metadata with visible keyboard focus. Actual sample state confirms enabled controls rather than invoking a disabled-text exemption.",
+    "hierarchyDensityAlignment": "Fresh Task Center and Project settings pairs retain readable title/section hierarchy, aligned shared controls, bounded cards and effective panel spacing. The product's sparse real implemented state is not required to copy the reference's illustrative data-rich composition.",
+    "overflowAndShell": "Wide current-page screenshots reach the real shared footer with sidebar/main edges aligned. Narrow screenshots show the natural stacked navigation and actual scrolling needed to reach the current page. Text is not horizontally clipped; page/step targets are fully in viewport. Captures focus on different scroll positions, not an assertion that all controls fit one viewport.",
+    "priorF02UX01": "Earlier effective-child-margin, exact panel inventory, genuine short-shell, long-page, narrow stacking and keyboard/scroll findings remain closed by the retained preflight/test and visual history. Fresh six settings validators plus current source binding and selected current Task Center pixels show no incremental regression. This round did not repeat the dedicated short-shell fixture or the complete prior product suite.",
+    "contextActions": "Previous visual02 F01 remains closed: current source retains the shared Button implementation, and wide current-step supplemental pixels again show coherent disabled Next and enabled Return controls. The unchanged recorder confirmed 2 context buttons, 1 enabled and 1 actually traversed in all 6 settings cases. No new claim that Previous is rendered in the first-step fixture is made.",
+    "themeContrast": "All 30 direct rendered text samples meet normal-text AA without exemption: light label 8.0585755, light marker 5.1685556, light metadata 4.7049090; dark label 6.1923038, dark marker 5.0606172, dark metadata 7.1538378. Metadata and the aria-hidden visual number were included.",
+    "authority": "No normative reference change is inferred. Semantic workflow identity 1.5 and unknown checkpoint authority remain visible and truthful under the approved presentation-1.6 overlay."
+  },
+  "currentNavigationObservationSummary": [
+    {
+      "caseId": "current-navigation:step:settings:light:1440x900",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "marker",
+          "text": "1",
+          "foregroundHex": "#ffffff",
+          "backgroundHex": "#2563eb",
+          "contrastRatio": 5.168555560022562,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "label",
+          "text": "Research Intent",
+          "foregroundHex": "#1e40af",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 8.05857550070301,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Current",
+          "foregroundHex": "#5b7089",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 4.70490904797579,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:page:settings:light:1440x900",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "label",
+          "text": "Project settings",
+          "foregroundHex": "#1e40af",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 8.05857550070301,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Supporting tool",
+          "foregroundHex": "#5b7089",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 4.70490904797579,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:step:settings:dark:1440x900",
+      "settled": {
+        "frames": 10,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "marker",
+          "text": "1",
+          "foregroundHex": "#071629",
+          "backgroundHex": "#4f83f1",
+          "contrastRatio": 5.06061722221506,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "label",
+          "text": "Research Intent",
+          "foregroundHex": "#72a0ff",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 6.192303839469574,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Current",
+          "foregroundHex": "#9db0c6",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 7.1538377851339,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:page:settings:dark:1440x900",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "label",
+          "text": "Project settings",
+          "foregroundHex": "#72a0ff",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 6.192303839469574,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Supporting tool",
+          "foregroundHex": "#9db0c6",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 7.1538377851339,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:step:settings:light:1280x720",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "marker",
+          "text": "1",
+          "foregroundHex": "#ffffff",
+          "backgroundHex": "#2563eb",
+          "contrastRatio": 5.168555560022562,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "label",
+          "text": "Research Intent",
+          "foregroundHex": "#1e40af",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 8.05857550070301,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Current",
+          "foregroundHex": "#5b7089",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 4.70490904797579,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:page:settings:light:1280x720",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "label",
+          "text": "Project settings",
+          "foregroundHex": "#1e40af",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 8.05857550070301,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Supporting tool",
+          "foregroundHex": "#5b7089",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 4.70490904797579,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:step:settings:dark:1280x720",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "marker",
+          "text": "1",
+          "foregroundHex": "#071629",
+          "backgroundHex": "#4f83f1",
+          "contrastRatio": 5.06061722221506,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "label",
+          "text": "Research Intent",
+          "foregroundHex": "#72a0ff",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 6.192303839469574,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Current",
+          "foregroundHex": "#9db0c6",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 7.1538377851339,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:page:settings:dark:1280x720",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "label",
+          "text": "Project settings",
+          "foregroundHex": "#72a0ff",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 6.192303839469574,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Supporting tool",
+          "foregroundHex": "#9db0c6",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 7.1538377851339,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:step:settings:light:720x450",
+      "settled": {
+        "frames": 10,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "marker",
+          "text": "1",
+          "foregroundHex": "#ffffff",
+          "backgroundHex": "#2563eb",
+          "contrastRatio": 5.168555560022562,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "label",
+          "text": "Research Intent",
+          "foregroundHex": "#1e40af",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 8.05857550070301,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Current",
+          "foregroundHex": "#5b7089",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 4.70490904797579,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:page:settings:light:720x450",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "label",
+          "text": "Project settings",
+          "foregroundHex": "#1e40af",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 8.05857550070301,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Supporting tool",
+          "foregroundHex": "#5b7089",
+          "backgroundHex": "#f2f6ff",
+          "contrastRatio": 4.70490904797579,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:step:settings:dark:720x450",
+      "settled": {
+        "frames": 10,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "marker",
+          "text": "1",
+          "foregroundHex": "#071629",
+          "backgroundHex": "#4f83f1",
+          "contrastRatio": 5.06061722221506,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "label",
+          "text": "Research Intent",
+          "foregroundHex": "#72a0ff",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 6.192303839469574,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Current",
+          "foregroundHex": "#9db0c6",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 7.1538377851339,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    },
+    {
+      "caseId": "current-navigation:page:settings:dark:720x450",
+      "settled": {
+        "frames": 4,
+        "pendingAnimations": 0,
+        "runningAnimations": 0,
+        "stableFrames": 3
+      },
+      "keyboard": true,
+      "visible": true,
+      "disabled": false,
+      "currentInventory": [
+        {
+          "disabled": false,
+          "state": "step",
+          "visible": true
+        },
+        {
+          "disabled": false,
+          "state": "page",
+          "visible": true
+        }
+      ],
+      "opacity": 1,
+      "outlineWidth": 2,
+      "samples": [
+        {
+          "role": "label",
+          "text": "Project settings",
+          "foregroundHex": "#72a0ff",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 6.192303839469574,
+          "fontSize": "14px",
+          "visible": true,
+          "inViewport": true
+        },
+        {
+          "role": "metadata",
+          "text": "Supporting tool",
+          "foregroundHex": "#9db0c6",
+          "backgroundHex": "#0d2241",
+          "contrastRatio": 7.1538377851339,
+          "fontSize": "12px",
+          "visible": true,
+          "inViewport": true
+        }
+      ]
+    }
+  ],
+  "acceptedVariance": [
+    "The product implements the actual local W1 surfaces and states; reference mock counts, names, icons, future capabilities and denser page composition are illustrative. This does not waive a semantic, interaction or accessibility failure.",
+    "Ordinary vertical scrolling may clip the top or bottom of a full page in a viewport screenshot. Current page and current step are separate observations because both cannot fit the narrow viewport simultaneously. Every sampled target and its text were visibly reached using real Tab, with recorded scrolling.",
+    "The new label uses the existing approved brand-400 token rather than copying the reference's exact literal color. It preserves the approved light-on-dark current-navigation treatment and exceeds the required text contrast.",
+    "Observer and matrix builds execute byte-identical product HTML, JS and CSS at the same Git producer. Their complete raw input maps and source maps are intentionally not described as byte-identical."
+  ],
+  "closures": [
+    {
+      "findingId": "W1.A08.T02-visual-03-F01",
+      "priorPriority": "P2",
+      "disposition": "closed",
+      "blockingVisualAcceptance": false,
+      "criterionIds": [
+        "W1.A08.T02 acceptance criterion 3",
+        "W1.A08.T02 acceptance criterion 4"
+      ],
+      "closureEvidence": [
+        "497cca81efff033449a9b794af76d60f2f13e0d7",
+        "artifacts/evidence/W1.A08.T02.captures-05/manifest.json",
+        "artifacts/evidence/W1.A08.T02.navigation-captures-01/manifest.json"
+      ],
+      "rationale": "The exact inherited dark current-label pair (2.38865:1) and 12px current-marker pair (3.93622:1) are no longer rendered. Source-bound actual current step/page controls, including every direct label/marker/metadata text sample, exceed 4.5 in both themes at all required viewports. All 12 actual PNGs were inspected after the settled, enabled, opaque, keyboard-focused state was measured; neither source declarations alone nor reference pixels substitute for product proof."
+    },
+    {
+      "findingId": "W1.A08.T02-visual-02-F01",
+      "disposition": "previous closure retained",
+      "blockingVisualAcceptance": false,
+      "closureEvidence": [
+        "artifacts/evidence/W1.A08.T02.visual-review-03.json",
+        "artifacts/evidence/W1.A08.T02.context-captures-01/manifest.json"
+      ],
+      "rationale": "The prior source-bound six-context visual/keyboard closure remains intact. This correction changes only current-navigation colors; the shared workflow action component and its predicates/callbacks remain unchanged, with fresh settings context keyboard observations also passing."
+    }
+  ],
+  "findings": [],
+  "historyAndLimits": [
+    "Visual02 and adverse visual03, all prior captures, preflight failures and failed producer/test attempts remain append-only. This approved follow-up does not erase the original contrast defect or the earlier missed observation.",
+    "The root author first raised the dark-label/marker concern during review03 preparation; this reviewer independently corroborated it and issued the adverse disposition. This review does not claim discovery credit or prior contrast coverage that did not occur.",
+    "contrast-remediation-01.md retains the failed initial transition sampling, marker-only correction still failing labels, specificity rejection, missing-step fixture assertion, and toolchain/type/lint corrections. They are not counted as passing independent replays here.",
+    "The observer waits for three stable, animation-free frames and checks sample equality before/after screenshot. The initial dark transition needed 10 frames in this run; two arbitrary RAFs would not have been sufficient evidence.",
+    "Reference capture verification and actual product observation are distinct modalities. The observer deliberately stops after the existing settings workflow; it does not claim the remainder of runtime_frame_errors passed.",
+    "No native/Core integration, packaging, performance, whole-task acceptance or W1 qualification was independently rerun or approved by this record. Those remain separately bound review obligations.",
+    "All writes in this reviewer follow-up are new observer/capture/review artifacts. No product, immutable authority, backlog, controller, real Git index/branch, private state, excluded protected witness or sibling workspace was changed or accessed."
+  ]
+}

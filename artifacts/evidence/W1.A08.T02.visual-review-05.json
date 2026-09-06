@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-visual-disposition",
+  "taskId": "W1.A08.T02",
+  "reviewId": "W1.A08.T02.visual-review-05",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "reviewedAt": "2026-09-06T01:58:10Z",
+  "disposition": "changes-requested",
+  "formalTaskApproval": false,
+  "scope": "Append-only bounded follow-up for exactly two additional dark accent text consumers: the Application Settings eyebrow and keyboard-visible Skip to project home link. The preceding visual04 closes current-navigation label/marker contrast only; it is not overwritten or used to waive these newly established accessibility failures. Restoration classification remains withheld. This is not a new full product audit or a formal task review round.",
+  "bindings": {
+    "producerCommit": "497cca81efff033449a9b794af76d60f2f13e0d7",
+    "captureDeliveryCommit": "ea962fbcbda5009c77a3df131c3a4d19e7598a29",
+    "manifest": "artifacts/evidence/W1.A08.T02.captures-05/manifest.json",
+    "manifestSha256": "59de10510c2a2a896a0b8e97d2d4a12ad0a8f7d7f74fba15b19fff7d9bd62f8d",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "approvalPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app.css",
+        "rawSha256": "428b9a3deaef78018600c711d5a33e8239428ed810df548d83781e8c86af655c",
+        "gitBlob": "8a2df03d2f96ef9cd81e41c6f0335b91c4e9f2fb"
+      },
+      {
+        "path": "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+        "rawSha256": "d4c6c2c630c6611c074196f8e233314ff8eab63021ab2727013047884152a603",
+        "gitBlob": "f0a372bb1e8d14e6584ca0941fdbbc4fdccea6ba"
+      },
+      {
+        "path": "apps/desktop/src/app/ApplicationRuntime.tsx",
+        "rawSha256": "1bda1aa9dc6870728e6a8c1f7e9e085a379d2bed403e39b10c65682043e0ef83",
+        "gitBlob": "d66cba076f31d61a7d64c22fc4272db89d88e16d"
+      },
+      {
+        "path": "design/ui-reference/assets/tokens.css",
+        "rawSha256": "475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230",
+        "gitBlob": "7adcd7c0577308763d07a81404067c3d4a3eee71"
+      }
+    ],
+    "priorBoundedClosure": {
+      "path": "artifacts/evidence/W1.A08.T02.visual-review-04.json",
+      "rawSha256": "66977f13c2991d0bfaeaf19e4afc504139ef21c9feb34333bd2f0df009e8b107",
+      "bytes": 49633,
+      "deliveryStatus": "Not yet committed when this follow-up was authored; exact local bytes checked and retained unchanged.",
+      "disposition": "approved",
+      "scope": "Bounded current-navigation visual closure; formalTaskApproval false."
+    },
+    "ownerDiagnosticCommit": "dd8803c0526edfaca53d3a5b25faf4bb0cdf8854",
+    "ownerDiagnosticProductProducer": "497cca81efff033449a9b794af76d60f2f13e0d7",
+    "ownerDiagnosticSourceContinuity": "Independent read-only Git diff found no changes between the declared product producer and diagnostic commit in the four source paths bound above. This does not independently authenticate or replay the owner's in-memory diagnostic output."
+  },
+  "verificationActuallyPerformed": [
+    {
+      "check": "Existing immutable capture05 authentication reused",
+      "result": "PASS",
+      "details": "This same reviewer already authenticated all 108 capture05 PNGs, complete inventory and producer/reference/renderer bindings in visual04. No matrix rerun was needed."
+    },
+    {
+      "check": "Actual Application Settings pixels",
+      "result": "CONFIRMED",
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/9f1c52b9371a22da72dc9a237e423453f4b247416ba0f05593483889b87f5852.png",
+      "sha256": "4a0dd11ecc1361bf94329de021fff6260f08cb571e54f5965231247077d28dd5",
+      "caseId": "workspace:application-settings:dark:1440x900",
+      "role": "product",
+      "details": "Viewed this actual compiled-product PNG after visual04 was authored. The Application Settings eyebrow is visible at the top of the workspace; it is not disabled text. No skip-link screenshot was viewed or claimed."
+    },
+    {
+      "check": "Source inspection and independent color arithmetic",
+      "result": "CONFIRMED",
+      "details": "Read app.css body, eyebrow and skip-link/focus declarations; ApplicationSettingsWorkspace's actual eyebrow node; ApplicationRuntime's actual enabled anchor. Recomputed WCAG relative-luminance ratios with an independent sRGB calculation. The root had first raised these two consumers; this reviewer independently corroborated their acceptance impact."
+    },
+    {
+      "check": "Owner-reported actual renderer diagnostic",
+      "result": "ADVERSE, owner-reported only",
+      "details": "Root reported an actual headless built-product check at dd8803c0 using unchanged task_center_interactions and DIRECTORY_PICKER_FIXTURE. Local profile opened Application Settings; the dark eyebrow was visible at 12px with foreground rgb(61,112,220), canvas rgb(6,21,39). Real Shift+Tab reached the visible, focused 14px Skip to project home anchor with foreground rgb(7,22,41), background rgb(61,112,220). It had no screenshots. This reviewer did not run that browser diagnostic, and does not relabel the owner's separate 152-input build check as its own replay."
+    },
+    {
+      "check": "Prior visual04 preservation",
+      "result": "PASS",
+      "details": "Checked exact SHA-256 66977f13c2991d0bfaeaf19e4afc504139ef21c9feb34333bd2f0df009e8b107 and 49,633-byte size before this new artifact. No edits to the prior review, observer or captures."
+    }
+  ],
+  "findings": [
+    {
+      "findingId": "W1.A08.T02-visual-05-F01",
+      "priority": "P2",
+      "status": "open",
+      "blockingVisualAcceptance": true,
+      "title": "Two visible dark accent text consumers fail normal-text AA contrast",
+      "criterionIds": [
+        "W1.A08.T02 acceptance criterion 3",
+        "W1.A08.T02 acceptance criterion 4"
+      ],
+      "normativeBasis": "STYLE_GUIDE section 9 requires WCAG 2.2 AA. Task criterion 4 explicitly forbids accepted visual variance from waiving accessibility or interaction contracts. These are ordinary visible text and an enabled keyboard link, not disabled content or a decorative logo.",
+      "locations": [
+        {
+          "path": "apps/desktop/src/app.css",
+          "line": 84,
+          "role": "Application Settings eyebrow color and 12px font"
+        },
+        {
+          "path": "apps/desktop/src/app.css",
+          "line": 7,
+          "role": "Skip-link foreground/background; line 8 reveals it on focus"
+        },
+        {
+          "path": "apps/desktop/src/app/ApplicationSettingsWorkspace.tsx",
+          "line": 196,
+          "role": "Actual eyebrow text node"
+        },
+        {
+          "path": "apps/desktop/src/app/ApplicationRuntime.tsx",
+          "line": 1080,
+          "role": "Actual enabled keyboard skip link"
+        }
+      ],
+      "observedPairs": [
+        {
+          "consumer": "Application Settings eyebrow",
+          "foreground": "#3d70dc",
+          "background": "#061527",
+          "fontSizePx": 12,
+          "contrastRatio": 3.9758140584016304,
+          "requiredRatio": 4.5,
+          "modality": "Independent source and actual existing product PNG; owner separately reported matching computed colors."
+        },
+        {
+          "consumer": "Keyboard-visible Skip to project home",
+          "foreground": "#071629",
+          "background": "#3d70dc",
+          "fontSizePx": 14,
+          "contrastRatio": 3.936219553124029,
+          "requiredRatio": 4.5,
+          "modality": "Independent source and arithmetic; actual visible/focused computed state reported by root, not independently browser-replayed or captured."
+        }
+      ],
+      "reproduction": [
+        "Use the actual product built at producer 497cca81 with existing isolated deterministic local adapters, not an ordinary user profile.",
+        "Select dark theme, open Local profile to actual Application Settings, and inspect the visible Application Settings eyebrow's computed text color, canvas background and 12px size.",
+        "Traverse the real keyboard order with Shift+Tab to Skip to project home; confirm the anchor is visible and focused, then inspect its computed foreground/background and 14px size.",
+        "Apply the normal-text WCAG relative-luminance contrast formula: the two ratios are about 3.976 and 3.936, both below 4.5."
+      ],
+      "impact": "The live-product styling qualification would admit known inaccessible small text and a keyboard-visible navigation action if classification proceeded. Palette identity, reference screenshots and the prior navigation-only correction do not establish contrast for these actual consumers.",
+      "requestedCorrection": "Restore adequate contrast for these two product consumers using existing approved tokens and theme-aware shared styling. Preserve the reference, control labels, link target, keyboard behavior and state authority. Add focused pre-correction failing/negative coverage and actual computed dark/light browser states; retain source-bound fresh visual evidence and a later independent follow-up. No wider audit or new product authority is requested."
+    }
+  ],
+  "closuresRetained": [
+    {
+      "findingId": "W1.A08.T02-visual-03-F01",
+      "state": "closed by unchanged visual04",
+      "rationale": "Current step/page labels and marker remain genuinely repaired and independently observed; this new finding is not a reversal of that bounded evidence."
+    },
+    {
+      "findingId": "W1.A08.T02-visual-02-F01",
+      "state": "prior shared context-action closure retained",
+      "rationale": "Nothing here reopens the supported shared Button/geometry/keyboard correction."
+    }
+  ],
+  "dispositionRationale": "Withhold UI-restoration classification and any global accessibility acceptance until this consolidated P2 is closed. The approved reference's use of an accent color does not override its explicit AA contract. A minimal conformance restoration can remain within existing W1.A08.T02 authority; this record does not authorize or approve a particular implementation.",
+  "historyAndLimits": [
+    "The root first identified these adjacent consumers after the bounded visual04 record had been written. This follow-up preserves that chronology and all earlier adverse findings without rewriting historical judgments.",
+    "Only the two identified actual text states were assessed. No conclusions about ordinary anchors, brand/logo artwork or unrelated controls are added.",
+    "No new browser, performance, native, Core, ordinary-profile, policy/vault or credential run was performed by this reviewer in this follow-up.",
+    "No product, helper, controller, authority, backlog, real Git index/branch, protected witness or sibling workspace was modified or accessed."
+  ]
+}
