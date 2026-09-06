@@ -24,6 +24,8 @@ REQUIRED_STABLE_INTERFACES = {
 _DATABASE_MODULES = {"sqlite3", "sqlalchemy"}
 _DATABASE_CALLS = {"connect", "cursor", "execute", "executemany", "executescript"}
 _CONNECTION_AUTHORITIES = {"CanonicalConnection", "open_canonical_database"}
+_REPOSITORY_ADAPTER_MODULES = {"repositories", "model_registry_repository"}
+_DATA_ADAPTER_FILES = {"object_store.py", "storage.py"} | {f"{module}.py" for module in _REPOSITORY_ADAPTER_MODULES}
 
 
 def _is_storage_module(module: str) -> bool:
@@ -32,7 +34,7 @@ def _is_storage_module(module: str) -> bool:
 
 def _is_concrete_repository_module(module: str) -> bool:
     parts = module.split(".")
-    return bool(parts) and parts[-1] == "repositories" and (len(parts) < 2 or parts[-2] != "ports")
+    return bool(parts) and parts[-1] in _REPOSITORY_ADAPTER_MODULES and (len(parts) < 2 or parts[-2] != "ports")
 
 
 def _is_concrete_object_store_module(module: str) -> bool:
@@ -52,7 +54,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
     for path in sorted(root.rglob("*.py")):
         relative = path.relative_to(root).as_posix()
         parts = path.relative_to(root).parts
-        is_adapter = relative in {"object_store.py", "repositories.py", "storage.py"} or "migrations" in parts
+        is_adapter = relative in _DATA_ADAPTER_FILES or "migrations" in parts
         is_port = "ports" in parts
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
@@ -73,7 +75,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                 imported = {alias.name for alias in node.names}
                 if (is_port or not is_adapter) and module in _DATABASE_MODULES:
                     errors.append(f"{relative}:{node.lineno}: database dependency outside adapter")
-                if is_port and full_module.split(".")[-1] in {"repositories", "storage"}:
+                if is_port and full_module.split(".")[-1] in _REPOSITORY_ADAPTER_MODULES | {"storage"}:
                     errors.append(f"{relative}:{node.lineno}: port depends on concrete data adapter")
                 if not is_adapter and _is_storage_module(full_module):
                     for authority in sorted(imported & _CONNECTION_AUTHORITIES):
@@ -90,7 +92,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                     and (
                         _is_concrete_repository_module(full_module)
                         or (
-                            "repositories" in imported
+                            bool(imported & _REPOSITORY_ADAPTER_MODULES)
                             and (not full_module or full_module.endswith("research_observatory_core"))
                         )
                     )

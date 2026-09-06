@@ -154,7 +154,8 @@ class ModelRegistryRejection(RegistryModel):
     manifest_id: RegistryCode
     manifest_revision: RegistryRevision
     manifest_hash: RegistryHash
-    reason_codes: Annotated[tuple[RegistryCode, ...], Field(min_length=1, max_length=32)]
+    # Keep all 32 bounded policy denials plus the matcher's local failures.
+    reason_codes: Annotated[tuple[RegistryCode, ...], Field(min_length=1, max_length=64)]
 
 
 class ModelRegistryResolution(RegistryModel):

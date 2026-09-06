@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "independent-pre-submission-review-observation",
+  "taskId": "CAP-07.S01.T02",
+  "candidateCommit": "4538f1e6b93c2a115f89a1e7596d6b26e83bf9b7",
+  "reviewer": "agent:/root/model_registry_review",
+  "disposition": "changes-required-before-submission",
+  "approvalGranted": false,
+  "formalSubmissionCreated": false,
+  "scope": "Acceptance-bound expanded review of the model registry product, contract, persistence, client and Model Center increment from b643ecbd. The parent stopped qualification before taskctl submission after the architecture check reported the new SQL adapter outside its enumerated persistence boundary. This record is a pre-submission observation, not a frozen taskctl review round.",
+  "independentChecks": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.ai.test_model_registry tests.service.test_model_registry_repository tests.service.test_model_registry_service",
+      "candidateCommit": "4538f1e6b93c2a115f89a1e7596d6b26e83bf9b7",
+      "exitCode": 0,
+      "testCount": 24,
+      "runnerElapsedSeconds": 4.274,
+      "result": "passed",
+      "coverage": "Matcher denials and exact identities; protected fixture SQLCipher storage reconstruction, revision conflict, concurrent compare-and-swap, atomic rollback and idempotent replay; authenticated Core API and real loopback generated TypeScript client against synthetic project storage.",
+      "limits": "Inventory and policy witnesses are synthetic fixtures. This run does not establish production inventory, source-rights policy implementation, native window behavior, live inference, full-profile qualification or release readiness. No build or UI test was run by this reviewer."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-07.S01.T02-R01-F01",
+      "identifierNote": "Proposed stable finding identifier retained for remediation linkage; R01 is not an existing frozen taskctl round at this pre-submission stage.",
+      "severity": "P2",
+      "blocking": true,
+      "status": "open",
+      "title": "Schema-valid policy denials can overflow the combined rejection result",
+      "criterion": "CAP-07.S01.T02 capability/permission eligibility and material failure behavior; approved CAP-07.S01 section 5.3 requires eligible routes and rejections, section 8 requires structured setup/policy reasons when no route is eligible; task-start Eligibility row requires stable denials.",
+      "locations": [
+        "services/core-api/src/research_observatory_core/model_registry.py:93",
+        "services/core-api/src/research_observatory_core/model_registry.py:97",
+        "services/core-api/src/research_observatory_core/model_registry_contracts.py:132",
+        "services/core-api/src/research_observatory_core/model_registry_contracts.py:157"
+      ],
+      "reproduction": "At the bound candidate, construct ModelRegistryTests from tests.ai.test_model_registry and call setUp(). Set case.policy.reason_codes = tuple(f'policy-denial-{i:02d}' for i in range(32)); set case.inventory.observations = (); call case.resolve(). The permission witness is schema-valid. The registry adds availability-unknown to its 32 policy reasons.",
+      "observed": "Pydantic ValidationError: ModelRegistryRejection.reason_codes must contain at most 32 items, but receives 33. Resolution raises instead of returning the structured denied candidate and no-eligible-model result.",
+      "expected": "Return a deterministic bounded rejection preserving every material policy and locally generated denial reason; do not issue eligibility or silently discard adverse reasons.",
+      "smallestAdequateClosure": "Add a regression with the maximum valid policy reason set plus local rejection reasons, then give combined rejection output an explicitly adequate bound or a documented overflow representation that preserves the reasons. Repeat that regression and affected matcher/contracts checks at the corrected committed candidate."
+    }
+  ],
+  "safety": "Review and tests used source and synthetic temporary fixture projects only. No ordinary project, vault, policy, credentials or normal application launch was accessed. No source edits, branch changes, commits, pushes, hook changes or baseline changes were performed by the reviewer. The prohibited artifact was observed by filename/status only."
+}

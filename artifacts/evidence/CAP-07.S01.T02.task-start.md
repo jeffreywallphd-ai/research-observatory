@@ -108,3 +108,26 @@ against exact OpenAPI bytes; generation now names the public digest explicitly
 and preserves the existing exported constant as an alias. The new and affected
 Core API tests use ephemeral tokens instead of committed token literals. Scanner rules,
 sealed admissions, hook inputs and the privacy baseline remain unchanged.
+
+### Pre-submission findings at candidate 4538f1e6
+
+Fresh qualification stopped at the architecture check; it did not produce a
+passing manifest or a task submission. The checker recognized only the previous
+concrete adapter names. Bounded verification maintenance binds predecessor
+`4538f1e6b93c2a115f89a1e7596d6b26e83bf9b7`, file
+`tools/architecture_check.py`, Git blob `fd33ac2cfae88b6bc7ec8b11600825238b64b5c2`.
+The intended delta is one shared explicit repository-adapter inventory, used
+both to admit SQL inside the new root adapter and reject its import from business
+modules/ports. Negative tests cover direct/package/alias imports and a same-name
+file outside the root. Existing SQL/import restrictions, composition authority,
+architecture and approvals must not expand. Independent review covers this
+control correction before integration; no new controller or approval is created.
+
+The independent pre-submission observation is retained in
+`CAP-07.S01.T02.preflight-01.json`. Its P2 finding
+`CAP-07.S01.T02-R01-F01` showed that a valid 32-code policy denial plus a local
+failure overflowed the 32-code rejection bound. The new failing regression
+reproduced the error; the result now allows 64 codes, preserving all bounded
+policy and local reasons rather than truncating adverse diagnostics. Policy input
+limits remain unchanged. This is not a formal taskctl review round or approval.
+The successor candidate receives fresh checks and independent finding replay.

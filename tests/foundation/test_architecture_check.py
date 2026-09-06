@@ -108,6 +108,40 @@ class ArchitectureContractTests(unittest.TestCase):
                 errors = core_data_boundary_errors(root)
                 self.assertTrue(any(expected in error for error in errors), errors)
 
+    def test_model_catalog_adapter_is_owned_and_cannot_leak_into_business_or_ports(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "model_registry_repository.py").write_text(
+                "import sqlite3\nfrom .storage import open_canonical_database\n"
+                "def save(connection):\n    connection.execute('SELECT 1')\n",
+                encoding="utf-8",
+            )
+            (root / "main.py").write_text(
+                "from .model_registry_repository import sqlite_model_catalog_repository\n",
+                encoding="utf-8",
+            )
+            self.assertEqual([], core_data_boundary_errors(root))
+        imports = (
+            "from .model_registry_repository import SqliteModelCatalogRepository\n",
+            "import research_observatory_core.model_registry_repository as adapter\n",
+            "from research_observatory_core import model_registry_repository as adapter\n",
+            "from . import model_registry_repository\n",
+        )
+        for location in ("business.py", "ports/model_registry.py"):
+            for source in imports:
+                with self.subTest(location=location, source=source), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    path = root / location
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(source, encoding="utf-8")
+                    self.assertTrue(any("concrete" in error for error in core_data_boundary_errors(root)))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            rogue = root / "business/model_registry_repository.py"
+            rogue.parent.mkdir()
+            rogue.write_text("import sqlite3\n", encoding="utf-8")
+            self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
+
 
 if __name__ == "__main__":
     unittest.main()

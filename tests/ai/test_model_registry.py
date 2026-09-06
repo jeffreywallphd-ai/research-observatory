@@ -255,6 +255,16 @@ class ModelRegistryTests(unittest.TestCase):
                 self.assertFalse(result.eligible)
                 self.assertIn("permission-unavailable", result.rejected[0].reason_codes)
 
+    def test_maximum_policy_denials_combine_with_local_failures_without_losing_reasons(self) -> None:
+        self.policy.reason_codes = tuple(f"policy-denial-{index:02d}" for index in range(32))
+        self.inventory.observations = ()
+        result = self.resolve()
+        self.assertFalse(result.eligible)
+        self.assertEqual(("no-eligible-model",), result.reason_codes)
+        self.assertEqual(
+            tuple(sorted((*self.policy.reason_codes, "availability-unknown"))), result.rejected[0].reason_codes
+        )
+
     def test_thousand_manifest_matching_is_bounded_and_deterministic(self) -> None:
         manifests = []
         for index in range(1000):
