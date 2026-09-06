@@ -1,0 +1,964 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-visual-disposition",
+  "taskId": "W1.A08.T02",
+  "reviewId": "W1.A08.T02.visual-review-06",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "reviewedAt": "2026-09-06T03:20:16Z",
+  "disposition": "approved",
+  "formalTaskApproval": false,
+  "scope": "Bounded visual follow-up closing W1.A08.T02-visual-05-F01: actual Application Settings eyebrow and keyboard-visible Skip to project home at the corrected producer, both themes and all three required viewports. Prior navigation, context-action, F02 and UX01 dispositions are carried forward only at unchanged boundaries. This is neither formal task acceptance nor the separately required independent restoration classification.",
+  "bindings": {
+    "producerCommit": "a7f39e43c77055dc1c115dbd3b3529bd90518ac2",
+    "captureDeliveryCommit": "9b96c7337c6cc26c02be2920b344857c2e018458",
+    "manifest": "artifacts/evidence/W1.A08.T02.captures-06/manifest.json",
+    "manifestSha256": "0b0b4a573260d3a703ab6f1f6fdc4355fb52d405effe02edc5904bf5c6508b22",
+    "manifestSerialization": "SHA-256 of exact published JSON bytes, not a newly canonicalized serialization.",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "approvalPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "normativeSections": [
+      "W1.A08.T02 acceptance criteria 3 and 4; shared-style criterion 2 checked only for incremental effects.",
+      "design/ui-reference/STYLE_GUIDE.md sections 5, 6 and 9; normal-text WCAG AA contrast is not waived by illustrative reference colors.",
+      "Effective approved presentation 1.6 overlay and retained F02 effective child spacing / UX01 actual sidebar-to-footer geometry."
+    ],
+    "producerInputCount": 503,
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app.css",
+        "producerAndDeliveryGitBlob": "dfc3f9b92eec75f35f20899a6b1f141b004f46a0",
+        "gitContentSha256": "284830119f6919c92f38392a15af764433712705066b465c64b8ba70350a73df",
+        "workingRawSha256": "284830119f6919c92f38392a15af764433712705066b465c64b8ba70350a73df",
+        "changedSincePrior": true
+      },
+      {
+        "path": "apps/desktop/src/app/WorkflowNavigation.tsx",
+        "producerAndDeliveryGitBlob": "4fcca745f0e765147f00a8ad56b14bb90ba72abe",
+        "gitContentSha256": "24eb46492844f121b90644a41bbb8dbfb6d10ea7a9985edb4c85d9ad4246c7fe",
+        "workingRawSha256": "24eb46492844f121b90644a41bbb8dbfb6d10ea7a9985edb4c85d9ad4246c7fe",
+        "changedSincePrior": false
+      },
+      {
+        "path": "packages/ui-components/src/styles.css",
+        "producerAndDeliveryGitBlob": "7336f2ba28ef094b9e9f0e290e1f20e614d5e7de",
+        "gitContentSha256": "d502b754768242b4efcac717e1c9f77cc3c8fdef0176f640879f475a4f89db6c",
+        "workingRawSha256": "d502b754768242b4efcac717e1c9f77cc3c8fdef0176f640879f475a4f89db6c",
+        "changedSincePrior": false
+      },
+      {
+        "path": "tools/product_layout_measurements.py",
+        "producerAndDeliveryGitBlob": "f9568afc70fef3755ea8a7148c7177c7735e9a9f",
+        "gitContentSha256": "dec5e00e2957614431ee425fa4bd9c757596a5c9ce953ad49abfed7ec7062baa",
+        "workingRawSha256": "dec5e00e2957614431ee425fa4bd9c757596a5c9ce953ad49abfed7ec7062baa",
+        "changedSincePrior": false
+      },
+      {
+        "path": "tools/desktop_app_check.py",
+        "producerAndDeliveryGitBlob": "d1132da03e0ba962abcd91acff9cd00cb28a0871",
+        "gitContentSha256": "5bdce257d7e9dd497a88cd2bf4d753761481330a85281f767697120535d5beea",
+        "workingRawSha256": "5bdce257d7e9dd497a88cd2bf4d753761481330a85281f767697120535d5beea",
+        "changedSincePrior": false
+      },
+      {
+        "path": "tools/product_style_check.py",
+        "producerAndDeliveryGitBlob": "663902b96bdc6499834aabf366b689a9091fa554",
+        "gitContentSha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+        "workingRawSha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+        "changedSincePrior": false
+      },
+      {
+        "path": "tests/desktop/test_product_layout_measurements.py",
+        "producerAndDeliveryGitBlob": "6730d734ce473b00f4f5f559a8229f854f120db0",
+        "gitContentSha256": "eb9515ea4e0ae4db384281b6eb05ff930a4a861e45341dacc468b7429010822e",
+        "workingRawSha256": "eb9515ea4e0ae4db384281b6eb05ff930a4a861e45341dacc468b7429010822e",
+        "changedSincePrior": true
+      },
+      {
+        "path": "artifacts/evidence/W1.A08.T02.contrast-remediation-02.md",
+        "producerAndDeliveryGitBlob": "d1cd5bfc207e89e8a0cfa4717c48dfd728871ae5",
+        "gitContentSha256": "57804e408e52620a041d703f0e10b6d7516ab411426454790e15f6bfa963e6b2",
+        "workingRawSha256": "57804e408e52620a041d703f0e10b6d7516ab411426454790e15f6bfa963e6b2",
+        "changedSincePrior": true
+      }
+    ],
+    "selectedManifestSourceBindings": {
+      "apps/desktop/src/app.css": {
+        "gitBlob": "dfc3f9b92eec75f35f20899a6b1f141b004f46a0",
+        "rootRawSha256": "284830119f6919c92f38392a15af764433712705066b465c64b8ba70350a73df",
+        "qualificationRawSha256": "284830119f6919c92f38392a15af764433712705066b465c64b8ba70350a73df"
+      },
+      "apps/desktop/src/app/WorkflowNavigation.tsx": {
+        "gitBlob": "4fcca745f0e765147f00a8ad56b14bb90ba72abe",
+        "rootRawSha256": "24eb46492844f121b90644a41bbb8dbfb6d10ea7a9985edb4c85d9ad4246c7fe",
+        "qualificationRawSha256": "f8f2b73da8862fa160195377a13e95bf630948e40c4d15ae8784210f5439b23f"
+      },
+      "apps/desktop/src/app/ApplicationRuntime.tsx": {
+        "gitBlob": "d66cba076f31d61a7d64c22fc4272db89d88e16d",
+        "rootRawSha256": "1bda1aa9dc6870728e6a8c1f7e9e085a379d2bed403e39b10c65682043e0ef83",
+        "qualificationRawSha256": "aa8e397d97b1f568cfcffdd9e2748bb7e7daa112af9a6764acba77477c862700"
+      },
+      "packages/ui-components/src/styles.css": {
+        "gitBlob": "7336f2ba28ef094b9e9f0e290e1f20e614d5e7de",
+        "rootRawSha256": "d502b754768242b4efcac717e1c9f77cc3c8fdef0176f640879f475a4f89db6c",
+        "qualificationRawSha256": "d502b754768242b4efcac717e1c9f77cc3c8fdef0176f640879f475a4f89db6c"
+      },
+      "tools/product_layout_measurements.py": {
+        "gitBlob": "f9568afc70fef3755ea8a7148c7177c7735e9a9f",
+        "rootRawSha256": "dec5e00e2957614431ee425fa4bd9c757596a5c9ce953ad49abfed7ec7062baa",
+        "qualificationRawSha256": "dec5e00e2957614431ee425fa4bd9c757596a5c9ce953ad49abfed7ec7062baa"
+      },
+      "tools/desktop_app_check.py": {
+        "gitBlob": "d1132da03e0ba962abcd91acff9cd00cb28a0871",
+        "rootRawSha256": "5bdce257d7e9dd497a88cd2bf4d753761481330a85281f767697120535d5beea",
+        "qualificationRawSha256": "5bdce257d7e9dd497a88cd2bf4d753761481330a85281f767697120535d5beea"
+      },
+      "tools/product_style_check.py": {
+        "gitBlob": "663902b96bdc6499834aabf366b689a9091fa554",
+        "rootRawSha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+        "qualificationRawSha256": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0"
+      },
+      "tests/desktop/fixtures/task_center_interactions.js": {
+        "gitBlob": "eac750b52fb04ae4507adf8f7dfe6abec93ddacf",
+        "rootRawSha256": "ac6d63c6ae33a04471abd179ca23afd53a1cc3d6c3728e293d6dceed4fca7fd9",
+        "qualificationRawSha256": "ac6d63c6ae33a04471abd179ca23afd53a1cc3d6c3728e293d6dceed4fca7fd9"
+      },
+      "design/ui-reference/STYLE_GUIDE.md": {
+        "gitBlob": "7f1ad75afbb1787768afd04e090bb74e4733ce21",
+        "rootRawSha256": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946",
+        "qualificationRawSha256": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946"
+      },
+      "design/ui-reference/assets/tokens.css": {
+        "gitBlob": "7adcd7c0577308763d07a81404067c3d4a3eee71",
+        "rootRawSha256": "475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230",
+        "qualificationRawSha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"
+      },
+      "design/ui-reference/assets/app.css": {
+        "gitBlob": "d5154e5a893372b03275deb82ae11b7216a96bfb",
+        "rootRawSha256": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee",
+        "qualificationRawSha256": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee"
+      }
+    },
+    "supplemental": {
+      "deliveryCommit": "9b96c7337c6cc26c02be2920b344857c2e018458",
+      "manifest": "artifacts/evidence/W1.A08.T02.accent-captures-01/manifest.json",
+      "manifestSha256": "1c17871bb193be7499d7f1c2120d7bd28d0be9a25e09dbd142ba3964d40575c4",
+      "producerCommit": "a7f39e43c77055dc1c115dbd3b3529bd90518ac2",
+      "producerCheckout": ".local/qualification-worktrees/w1-a08-t02",
+      "producerInputCount": 503,
+      "observer": {
+        "path": "artifacts/evidence/W1.A08.T02.accent-observer-01.py",
+        "commit": "a0a9302697e561580e1de8241f668322ed31b708",
+        "gitBlob": "34d37b691a1005e0d72f767fe0164964495c536a",
+        "rawSha256": "0fe9ce39457f5963ace9483a2aab90499ba5b1c222d88c3191ef1f4b4c886f0a"
+      },
+      "executionAttribution": "Observer instrumentation authored by this reviewer and independently source-reviewed by the root agent; the actual six-context/twelve-capture run was executed by the root agent. This reviewer independently authenticated the immutable output, examined the observed states, recomputed contrast, and viewed the pixels; no new browser execution is claimed here."
+    },
+    "priorVisualReviews": [
+      {
+        "path": "artifacts/evidence/W1.A08.T02.visual-review-04.json",
+        "sha256": "66977f13c2991d0bfaeaf19e4afc504139ef21c9feb34333bd2f0df009e8b107",
+        "gitBlob": "f72d557aab0df4176fa36ce864da37029f71da0e",
+        "reviewId": "W1.A08.T02.visual-review-04",
+        "deliveryCommit": "9b96c7337c6cc26c02be2920b344857c2e018458",
+        "disposition": "approved",
+        "preserved": true
+      },
+      {
+        "path": "artifacts/evidence/W1.A08.T02.visual-review-05.json",
+        "sha256": "b4661a83f9c24fbd26e0312894c23dc08ffd47849f50f1f70bc1556d5549afe8",
+        "gitBlob": "b4265deccc9fd077e36b2b54874695ca66663d82",
+        "reviewId": "W1.A08.T02.visual-review-05",
+        "deliveryCommit": "9b96c7337c6cc26c02be2920b344857c2e018458",
+        "disposition": "changes-requested",
+        "preserved": true
+      }
+    ],
+    "priorVisualProducer": "497cca81efff033449a9b794af76d60f2f13e0d7",
+    "crossCheckoutQualification": {
+      "all503GitInputBlobsEqual": true,
+      "sameRawSnapshotClaimed": false,
+      "explanation": "The matrix was produced from the root checkout and the accent observation from the task-owned qualification checkout. Earlier independent pre-delivery source/build/reference authentication recomputed each complete 503-input snapshot at its actual location before and after, with exact matches and stable bytes. The identical manifests are now authenticated to immutable delivery. Some checkout raw source bytes differ through line-ending representation; equality of the two whole raw snapshots or complete build manifests is not asserted.",
+      "reusedIndependentSourceProof": {
+        "path": ".local/security-audit/W1.A08.T02-artifact-privacy-01/review-details.json",
+        "sha256": "66963cc5968faead68ff35590ec73b5fc045e3ab7775bfc2bedf0f73c1d49b2a",
+        "modality": "Retained local independent source-binding checks performed for these exact artifact bytes before delivery; not itself visual/task approval."
+      }
+    }
+  },
+  "verificationActuallyPerformed": [
+    {
+      "check": "Immutable matrix and supplemental capture authentication",
+      "result": "PASS",
+      "mechanism": "Read-only product_style_check.read_capture_bundle with desktop_app_check.qualification_capture_contract and the separately constructed twelve-case accent contract, against delivery 9b96c7337c6cc26c02be2920b344857c2e018458.",
+      "authenticatedMatrixImages": 108,
+      "authenticatedAccentImages": 12,
+      "details": "Exact manifest and PNG bytes match Git delivery; expected metadata, filenames, dimensions, directory inventory, producer ancestry and before/after held-bundle stability pass. No new capture or browser execution occurred."
+    },
+    {
+      "check": "Current matrix measurement validation",
+      "result": "PASS",
+      "workspaceCases": 48,
+      "designatedCases": 6,
+      "details": "Ran unchanged desktop_app_check.qualification_report_errors on the authenticated report. All renderer pins, request inventory, case identities, controls, actual panel-flow inventory, focus, horizontal containment and shared-shell measurements validate. All 48 workspace panel-body counts are positive (2 through 8) and correspond to their observed flow lists. There are 32 side-by-side and 16 stacked workspace cases, with no reported horizontal document escape. All six Project settings cases retain two context buttons, one enabled action and one actually Tab-traversed action."
+    },
+    {
+      "check": "Independent twelve-state arithmetic and observation inspection",
+      "result": "PASS",
+      "independentContrastCalculations": 12,
+      "normalTextThreshold": 4.5,
+      "minimumObservedRatio": 5.06061722221506,
+      "details": "Independently implemented sRGB linearization and WCAG relative-luminance arithmetic in the review, without calling the observer's ratio helper. All twelve recorded ratios match within 1e-10. Rechecked exact text and case inventory, opaque computed colors, nonempty fully viewport-contained control and text rectangles, every ancestor's display/visibility and multiplied opacity of one, enabled state, application readiness and actual Settings visibility. Every sample records three equal stable frames and zero pending/running animations. Every skip sample is an anchor with unchanged #main-content target, actual Shift+Tab reachability (two reverse tabs), focus and a 2px outline."
+    },
+    {
+      "check": "Independent actual pixel inspection",
+      "result": "PASS",
+      "imagesActuallyViewedThisFollowUp": 12,
+      "details": "Directly viewed all twelve immutable accent PNGs at original resolution in this follow-up. The earlier privacy review had also inspected these pixels, but is not substituted for this visual judgment. No matrix PNG is represented as newly viewed in this follow-up; the prior actual matrix/reference observations and their bounded dispositions are reused only where source continuity and current measured geometry support them."
+    },
+    {
+      "check": "Incremental source, observer and adverse-history authentication",
+      "result": "PASS",
+      "details": "Compared the governed product source roots from 497cca81 to a7f39e43: only app.css differs, containing the skip-link background change to existing brand-600 and the zero-specificity dark eyebrow foreground override to existing brand-400. Verified selected source, regression test and remediation-note Git blobs at producer and delivery and compared working bytes. WorkflowNavigation, component styles, actual Application Settings/Runtime, layout collector/validator, capture machinery, approved reference and token files remain unchanged at the relevant boundaries. Authenticated observer bytes to its exact committed source and to delivery, and visual04/05 bytes to delivery; preserved both ledgers unchanged."
+    },
+    {
+      "check": "Observer evidence semantics and regression-source inspection",
+      "result": "PASS",
+      "details": "Inspected the frozen observer's actual built-product/fixture setup, Local profile transition, real Shift+Tab traversal, visible/nonempty/effective-opacity checks, three-stable-frame and no-animation settling, pre-capture sample equality and post-screenshot equality assertion, Windows input holds, source snapshots, and exclusive existing bundle publisher. The report records the accepted sample and settling counts; equality before and after screenshot is enforced by the authenticated source, not falsely described as two separately retained full samples. Reviewed the new built-product regression and retained remediation note; the owner's eight-test, lint/type/build results were not independently browser-replayed here."
+    }
+  ],
+  "inspectedImages": [
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/3061ef8217c48a05639be97c961885d4f612a47ea00cd6ccd2d70a2b564dedc7.png",
+      "sha256": "8f0cc15002f1704bb7a8b3539f2665410dbbb0e4ef8f5fa9c14fb644813e2222",
+      "caseId": "accent:eyebrow:application-settings:light:1440x900",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/5079db86d48bd573023b52053327a223103007c193b6198c2187760359b9c62d.png",
+      "sha256": "4f8fdb3d5c9ab6eba738fdf2628e8b625fbcaaffb66946f4519716b37f8c393e",
+      "caseId": "accent:skip-link:application-settings:light:1440x900",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/357489dfad2cc4f34c4b96ce541d62448cc897927fd04ae1731f42e0766beaff.png",
+      "sha256": "90dcfce0dd706a83e20992eb449a0851b63aae9212d0ca19c0ae785f72463958",
+      "caseId": "accent:eyebrow:application-settings:dark:1440x900",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/d1c634346aadc5b1e9b569936381aba33bddb115e4b4bc4adb97bcc3e00be39b.png",
+      "sha256": "81658cfb0fcdda8055fc2d482b78a8de9d070c6fcc4d2a8b8748dbd703c0063b",
+      "caseId": "accent:skip-link:application-settings:dark:1440x900",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/62bd47084d443dbb3e4195fba428ad9d49128a1c65f3ace6e69071c082fda2e3.png",
+      "sha256": "22337a30e940bc1aae720590e7be9cd5cf440aea7cac7e8847eb045425bc49ad",
+      "caseId": "accent:eyebrow:application-settings:light:1280x720",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/d59b65133776c4ae1998bd1c6be75ff3eb9f3f143e612c506470a399aea345ef.png",
+      "sha256": "d6f276d72430e044b933c7b2e73a13c24ed0130bf17fb327215acc0ab6be471c",
+      "caseId": "accent:skip-link:application-settings:light:1280x720",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/9bd0cde15877708d486351659568698465256caa152a181e939a59601850b753.png",
+      "sha256": "6019fb2f897106deaf207ac84e5a45607c3f935e069907d7677e5bcbc54cdb30",
+      "caseId": "accent:eyebrow:application-settings:dark:1280x720",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/f6b19ae544519e4b2e470821d630d616f506da3946299c706888bf8a36ae8db8.png",
+      "sha256": "907e7fae0929d2a161abc5dbd9441573d544b86eb81e1556178ad08e73ef08ee",
+      "caseId": "accent:skip-link:application-settings:dark:1280x720",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/552b3db921298e64b6bed004153ed8527ace3eaec68542999f4e228b93595d73.png",
+      "sha256": "26a9a9520d681e2a90ec0681b7ac100c9497a185a5408bccce5291bf3d80030f",
+      "caseId": "accent:eyebrow:application-settings:light:720x450",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/e7c556c611f122135bfa517ddba99c431d5c6e0dfb9307b154bbbda1526f2cbd.png",
+      "sha256": "cbdfaac7ef7e5e388b41ade6866415ffb494706e1157ba45cbbd514924651aa1",
+      "caseId": "accent:skip-link:application-settings:light:720x450",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/9a3c7bc4997f8855225c5a1eb55bddf22b92f8e6d2d907d3012f6d2537414ace.png",
+      "sha256": "4c0d1041fd7d4a87e7077bb644be274b23b924259e87f531270bad415e01cdbc",
+      "caseId": "accent:eyebrow:application-settings:dark:720x450",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/bb48fd77308704bdaf1fbcfcd78ee9decb5fa4dedf539dca5c8f7d6c8bf523f8.png",
+      "sha256": "216d1e474a38de31421647f915c8771c57fb8f0b4b8eb76440dd68d0fb96c74e",
+      "caseId": "accent:skip-link:application-settings:dark:720x450",
+      "role": "product",
+      "modality": "Actual compiled product viewport PNG, directly viewed at original resolution in this follow-up.",
+      "assessed": "Corrected text is readable and fully present; theme, focus where applicable, alignment and local context are coherent."
+    }
+  ],
+  "accentObservationSummary": {
+    "executionModality": "Actual compiled React product with unchanged task_center_interactions and DIRECTORY_PICKER_FIXTURE adapters; Local profile opens the actual Application Settings workspace. No native GUI, ordinary user profile or real Core/policy/vault behavior is proved by this browser fixture.",
+    "pageErrors": 0,
+    "blockedRequests": 0,
+    "recordedProducerStableBeforeAfter": true,
+    "normalTextThreshold": 4.5,
+    "independentFormula": "For each opaque RGB channel c/255, use c/12.92 when c <= 0.04045, otherwise ((c+0.055)/1.055)^2.4; L = 0.2126R + 0.7152G + 0.0722B; ratio = (max(L1,L2)+0.05)/(min(L1,L2)+0.05).",
+    "cases": [
+      {
+        "caseId": "accent:eyebrow:application-settings:light:1440x900",
+        "consumer": "eyebrow",
+        "theme": "light",
+        "viewport": {
+          "height": 900,
+          "width": 1440
+        },
+        "color": "rgb(29, 78, 216)",
+        "background": "rgb(245, 247, 251)",
+        "independentRatio": 6.248400116366518,
+        "recordedRatio": 6.248400116366518,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "focused": false,
+        "outlineWidth": 0,
+        "reachedByActualShiftTab": false,
+        "reverseTabCount": 0,
+        "settled": {
+          "frames": 4,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 110,
+          "height": 18,
+          "left": 268,
+          "right": 1201.953125,
+          "top": 92,
+          "width": 933.953125
+        },
+        "textRects": [
+          {
+            "bottom": 109,
+            "height": 16,
+            "left": 268,
+            "right": 419.40625,
+            "top": 93,
+            "width": 151.40625
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/3061ef8217c48a05639be97c961885d4f612a47ea00cd6ccd2d70a2b564dedc7.png",
+        "imageSha256": "8f0cc15002f1704bb7a8b3539f2665410dbbb0e4ef8f5fa9c14fb644813e2222"
+      },
+      {
+        "caseId": "accent:skip-link:application-settings:light:1440x900",
+        "consumer": "skip-link",
+        "theme": "light",
+        "viewport": {
+          "height": 900,
+          "width": 1440
+        },
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(37, 99, 235)",
+        "independentRatio": 5.168555560022562,
+        "recordedRatio": 5.168555560022562,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "focused": true,
+        "outlineWidth": 2,
+        "reachedByActualShiftTab": true,
+        "reverseTabCount": 2,
+        "settled": {
+          "frames": 4,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 45,
+          "height": 37,
+          "left": 8,
+          "right": 161.203125,
+          "top": 8,
+          "width": 153.203125
+        },
+        "textRects": [
+          {
+            "bottom": 36,
+            "height": 19,
+            "left": 20,
+            "right": 149.203125,
+            "top": 17,
+            "width": 129.203125
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/5079db86d48bd573023b52053327a223103007c193b6198c2187760359b9c62d.png",
+        "imageSha256": "4f8fdb3d5c9ab6eba738fdf2628e8b625fbcaaffb66946f4519716b37f8c393e"
+      },
+      {
+        "caseId": "accent:eyebrow:application-settings:dark:1440x900",
+        "consumer": "eyebrow",
+        "theme": "dark",
+        "viewport": {
+          "height": 900,
+          "width": 1440
+        },
+        "color": "rgb(114, 160, 255)",
+        "background": "rgb(6, 21, 39)",
+        "independentRatio": 7.1552546163818045,
+        "recordedRatio": 7.1552546163818045,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "focused": false,
+        "outlineWidth": 0,
+        "reachedByActualShiftTab": false,
+        "reverseTabCount": 0,
+        "settled": {
+          "frames": 12,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 110,
+          "height": 18,
+          "left": 268,
+          "right": 1201.953125,
+          "top": 92,
+          "width": 933.953125
+        },
+        "textRects": [
+          {
+            "bottom": 109,
+            "height": 16,
+            "left": 268,
+            "right": 419.40625,
+            "top": 93,
+            "width": 151.40625
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/357489dfad2cc4f34c4b96ce541d62448cc897927fd04ae1731f42e0766beaff.png",
+        "imageSha256": "90dcfce0dd706a83e20992eb449a0851b63aae9212d0ca19c0ae785f72463958"
+      },
+      {
+        "caseId": "accent:skip-link:application-settings:dark:1440x900",
+        "consumer": "skip-link",
+        "theme": "dark",
+        "viewport": {
+          "height": 900,
+          "width": 1440
+        },
+        "color": "rgb(7, 22, 41)",
+        "background": "rgb(79, 131, 241)",
+        "independentRatio": 5.06061722221506,
+        "recordedRatio": 5.06061722221506,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "focused": true,
+        "outlineWidth": 2,
+        "reachedByActualShiftTab": true,
+        "reverseTabCount": 2,
+        "settled": {
+          "frames": 5,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 45,
+          "height": 37,
+          "left": 8,
+          "right": 161.203125,
+          "top": 8,
+          "width": 153.203125
+        },
+        "textRects": [
+          {
+            "bottom": 36,
+            "height": 19,
+            "left": 20,
+            "right": 149.203125,
+            "top": 17,
+            "width": 129.203125
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/d1c634346aadc5b1e9b569936381aba33bddb115e4b4bc4adb97bcc3e00be39b.png",
+        "imageSha256": "81658cfb0fcdda8055fc2d482b78a8de9d070c6fcc4d2a8b8748dbd703c0063b"
+      },
+      {
+        "caseId": "accent:eyebrow:application-settings:light:1280x720",
+        "consumer": "eyebrow",
+        "theme": "light",
+        "viewport": {
+          "height": 720,
+          "width": 1280
+        },
+        "color": "rgb(29, 78, 216)",
+        "background": "rgb(245, 247, 251)",
+        "independentRatio": 6.248400116366518,
+        "recordedRatio": 6.248400116366518,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "focused": false,
+        "outlineWidth": 0,
+        "reachedByActualShiftTab": false,
+        "reverseTabCount": 0,
+        "settled": {
+          "frames": 4,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 102,
+          "height": 18,
+          "left": 236,
+          "right": 1049.953125,
+          "top": 84,
+          "width": 813.953125
+        },
+        "textRects": [
+          {
+            "bottom": 101,
+            "height": 16,
+            "left": 236,
+            "right": 387.40625,
+            "top": 85,
+            "width": 151.40625
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/62bd47084d443dbb3e4195fba428ad9d49128a1c65f3ace6e69071c082fda2e3.png",
+        "imageSha256": "22337a30e940bc1aae720590e7be9cd5cf440aea7cac7e8847eb045425bc49ad"
+      },
+      {
+        "caseId": "accent:skip-link:application-settings:light:1280x720",
+        "consumer": "skip-link",
+        "theme": "light",
+        "viewport": {
+          "height": 720,
+          "width": 1280
+        },
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(37, 99, 235)",
+        "independentRatio": 5.168555560022562,
+        "recordedRatio": 5.168555560022562,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "focused": true,
+        "outlineWidth": 2,
+        "reachedByActualShiftTab": true,
+        "reverseTabCount": 2,
+        "settled": {
+          "frames": 5,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 45,
+          "height": 37,
+          "left": 8,
+          "right": 161.203125,
+          "top": 8,
+          "width": 153.203125
+        },
+        "textRects": [
+          {
+            "bottom": 36,
+            "height": 19,
+            "left": 20,
+            "right": 149.203125,
+            "top": 17,
+            "width": 129.203125
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/d59b65133776c4ae1998bd1c6be75ff3eb9f3f143e612c506470a399aea345ef.png",
+        "imageSha256": "d6f276d72430e044b933c7b2e73a13c24ed0130bf17fb327215acc0ab6be471c"
+      },
+      {
+        "caseId": "accent:eyebrow:application-settings:dark:1280x720",
+        "consumer": "eyebrow",
+        "theme": "dark",
+        "viewport": {
+          "height": 720,
+          "width": 1280
+        },
+        "color": "rgb(114, 160, 255)",
+        "background": "rgb(6, 21, 39)",
+        "independentRatio": 7.1552546163818045,
+        "recordedRatio": 7.1552546163818045,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "focused": false,
+        "outlineWidth": 0,
+        "reachedByActualShiftTab": false,
+        "reverseTabCount": 0,
+        "settled": {
+          "frames": 13,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 102,
+          "height": 18,
+          "left": 236,
+          "right": 1049.953125,
+          "top": 84,
+          "width": 813.953125
+        },
+        "textRects": [
+          {
+            "bottom": 101,
+            "height": 16,
+            "left": 236,
+            "right": 387.40625,
+            "top": 85,
+            "width": 151.40625
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/9bd0cde15877708d486351659568698465256caa152a181e939a59601850b753.png",
+        "imageSha256": "6019fb2f897106deaf207ac84e5a45607c3f935e069907d7677e5bcbc54cdb30"
+      },
+      {
+        "caseId": "accent:skip-link:application-settings:dark:1280x720",
+        "consumer": "skip-link",
+        "theme": "dark",
+        "viewport": {
+          "height": 720,
+          "width": 1280
+        },
+        "color": "rgb(7, 22, 41)",
+        "background": "rgb(79, 131, 241)",
+        "independentRatio": 5.06061722221506,
+        "recordedRatio": 5.06061722221506,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "focused": true,
+        "outlineWidth": 2,
+        "reachedByActualShiftTab": true,
+        "reverseTabCount": 2,
+        "settled": {
+          "frames": 5,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 45,
+          "height": 37,
+          "left": 8,
+          "right": 161.203125,
+          "top": 8,
+          "width": 153.203125
+        },
+        "textRects": [
+          {
+            "bottom": 36,
+            "height": 19,
+            "left": 20,
+            "right": 149.203125,
+            "top": 17,
+            "width": 129.203125
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/f6b19ae544519e4b2e470821d630d616f506da3946299c706888bf8a36ae8db8.png",
+        "imageSha256": "907e7fae0929d2a161abc5dbd9441573d544b86eb81e1556178ad08e73ef08ee"
+      },
+      {
+        "caseId": "accent:eyebrow:application-settings:light:720x450",
+        "consumer": "eyebrow",
+        "theme": "light",
+        "viewport": {
+          "height": 450,
+          "width": 720
+        },
+        "color": "rgb(29, 78, 216)",
+        "background": "rgb(245, 247, 251)",
+        "independentRatio": 6.248400116366518,
+        "recordedRatio": 6.248400116366518,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "focused": false,
+        "outlineWidth": 0,
+        "reachedByActualShiftTab": false,
+        "reverseTabCount": 0,
+        "settled": {
+          "frames": 4,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 298,
+          "height": 18,
+          "left": 16,
+          "right": 704,
+          "top": 280,
+          "width": 688
+        },
+        "textRects": [
+          {
+            "bottom": 297,
+            "height": 16,
+            "left": 16,
+            "right": 167.40625,
+            "top": 281,
+            "width": 151.40625
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/552b3db921298e64b6bed004153ed8527ace3eaec68542999f4e228b93595d73.png",
+        "imageSha256": "26a9a9520d681e2a90ec0681b7ac100c9497a185a5408bccce5291bf3d80030f"
+      },
+      {
+        "caseId": "accent:skip-link:application-settings:light:720x450",
+        "consumer": "skip-link",
+        "theme": "light",
+        "viewport": {
+          "height": 450,
+          "width": 720
+        },
+        "color": "rgb(255, 255, 255)",
+        "background": "rgb(37, 99, 235)",
+        "independentRatio": 5.168555560022562,
+        "recordedRatio": 5.168555560022562,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "focused": true,
+        "outlineWidth": 2,
+        "reachedByActualShiftTab": true,
+        "reverseTabCount": 2,
+        "settled": {
+          "frames": 4,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 45,
+          "height": 37,
+          "left": 8,
+          "right": 161.203125,
+          "top": 8,
+          "width": 153.203125
+        },
+        "textRects": [
+          {
+            "bottom": 36,
+            "height": 19,
+            "left": 20,
+            "right": 149.203125,
+            "top": 17,
+            "width": 129.203125
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/e7c556c611f122135bfa517ddba99c431d5c6e0dfb9307b154bbbda1526f2cbd.png",
+        "imageSha256": "cbdfaac7ef7e5e388b41ade6866415ffb494706e1157ba45cbbd514924651aa1"
+      },
+      {
+        "caseId": "accent:eyebrow:application-settings:dark:720x450",
+        "consumer": "eyebrow",
+        "theme": "dark",
+        "viewport": {
+          "height": 450,
+          "width": 720
+        },
+        "color": "rgb(114, 160, 255)",
+        "background": "rgb(6, 21, 39)",
+        "independentRatio": 7.1552546163818045,
+        "recordedRatio": 7.1552546163818045,
+        "fontSize": "12px",
+        "fontWeight": "700",
+        "focused": false,
+        "outlineWidth": 0,
+        "reachedByActualShiftTab": false,
+        "reverseTabCount": 0,
+        "settled": {
+          "frames": 13,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 298,
+          "height": 18,
+          "left": 16,
+          "right": 704,
+          "top": 280,
+          "width": 688
+        },
+        "textRects": [
+          {
+            "bottom": 297,
+            "height": 16,
+            "left": 16,
+            "right": 167.40625,
+            "top": 281,
+            "width": 151.40625
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/9a3c7bc4997f8855225c5a1eb55bddf22b92f8e6d2d907d3012f6d2537414ace.png",
+        "imageSha256": "4c0d1041fd7d4a87e7077bb644be274b23b924259e87f531270bad415e01cdbc"
+      },
+      {
+        "caseId": "accent:skip-link:application-settings:dark:720x450",
+        "consumer": "skip-link",
+        "theme": "dark",
+        "viewport": {
+          "height": 450,
+          "width": 720
+        },
+        "color": "rgb(7, 22, 41)",
+        "background": "rgb(79, 131, 241)",
+        "independentRatio": 5.06061722221506,
+        "recordedRatio": 5.06061722221506,
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "focused": true,
+        "outlineWidth": 2,
+        "reachedByActualShiftTab": true,
+        "reverseTabCount": 2,
+        "settled": {
+          "frames": 4,
+          "pendingAnimations": 0,
+          "runningAnimations": 0,
+          "stableFrames": 3
+        },
+        "effectiveOpacity": 1,
+        "allRectsNonemptyAndContained": true,
+        "rect": {
+          "bottom": 45,
+          "height": 37,
+          "left": 8,
+          "right": 161.203125,
+          "top": 8,
+          "width": 153.203125
+        },
+        "textRects": [
+          {
+            "bottom": 36,
+            "height": 19,
+            "left": 20,
+            "right": 149.203125,
+            "top": 17,
+            "width": 129.203125
+          }
+        ],
+        "imagePath": "artifacts/evidence/W1.A08.T02.accent-captures-01/bb48fd77308704bdaf1fbcfcd78ee9decb5fa4dedf539dca5c8f7d6c8bf523f8.png",
+        "imageSha256": "216d1e474a38de31421647f915c8771c57fb8f0b4b8eb76440dd68d0fb96c74e"
+      }
+    ]
+  },
+  "visualAssessment": {
+    "eyebrow": "Application Settings is visibly readable in both themes at 1440x900, 1280x720 and 720x450. The dark foreground now provides 7.155254616:1 against the actual canvas; the unchanged light foreground provides 6.248400116:1. Its compact 12px uppercase treatment and title hierarchy are preserved rather than excused as decorative or large text.",
+    "keyboardSkipLink": "The actual keyboard-visible Skip to project home link is legible and has a visible focus outline at all six theme/viewport combinations. Light contrast is 5.168555560:1 and dark contrast is 5.060617222:1 for 14px ordinary text. The foreground, label, target, position, reveal transform and traversal semantics are unchanged; the shared background token supplies the correction.",
+    "layoutAndDensity": "The fresh accent pixels show coherent section/title hierarchy and aligned shared actions. Wide layouts keep the sidebar and main side by side; narrow layouts stack them and preserve readable Settings heading/actions. A viewport image may intentionally end before the lower content: it does not claim that the long page fits without scrolling.",
+    "navigationCarryForward": "Retain visual04's bounded current-page/current-step label, marker and metadata contrast closure. The diff changes neither current-navigation selectors nor relevant tokens, component markup, predicates or callbacks. The earlier actual twelve navigation images and thirty independently calculated ratios remain the principal proof for that boundary. This accent fixture explicitly has no active project/current Research Intent and is not relabeled as new current-step evidence.",
+    "contextActionsCarryForward": "Retain visual02-F01's closure recorded by visual03/04. WorkflowNavigation and shared component styles are byte-identical at the Git boundary, and fresh matrix06 records two context buttons, one enabled and one Tab-traversed in all six Project settings cases. Earlier actual context pixels remain the visual proof; this round does not claim a Previous button is present in the first-step fixture.",
+    "f02CarryForward": "Retain the effective-child-margin and spacing disposition. Shared component styles, panel collector/count validation and flow arithmetic are unchanged, and all current 48 workspace measurements validate actual positive panel inventories and child flow. This is more than declaration-only CSS inspection, but no new short-shell or browser test execution is claimed.",
+    "ux01CarryForward": "Retain the prior actual short-shell, long-page, footer-edge, narrow-stacking and keyboard/scroll disposition. The shell grid/height/layout rules and relevant measurement helpers are unchanged; matrix06 freshly records passing shared geometry across 32 side-by-side and 16 stacked workspace cases. The dedicated genuinely short-shell fixture's earlier test evidence is reused; the current long-page screenshot matrix is not misrepresented as new short-page proof."
+  },
+  "acceptedVariance": [
+    "Illustrative reference data/composition and sparse implemented fixture data need not pixel-match. This does not waive hierarchy, usable geometry, accessibility, keyboard behavior or truthful state authority.",
+    "Recorded viewport scrolling and focus may clip content outside the viewport. The two reviewed accent text targets themselves are nonempty and completely in viewport, with no horizontal document escape.",
+    "The visible skip link intentionally overlays part of the fixed top-left brand while focused; the existing positioning and target are unchanged, and the complete link text and focus indication are visible.",
+    "No further contrast exception is granted to enabled ordinary text. This approval closes the exact known two-consumer defect, not an unbounded audit of every possible product state."
+  ],
+  "closures": [
+    {
+      "findingId": "W1.A08.T02-visual-05-F01",
+      "priorPriority": "P2",
+      "disposition": "closed",
+      "blockingVisualAcceptance": false,
+      "criterionIds": [
+        "W1.A08.T02 acceptance criterion 3",
+        "W1.A08.T02 acceptance criterion 4"
+      ],
+      "closureEvidence": [
+        "a7f39e43c77055dc1c115dbd3b3529bd90518ac2",
+        "artifacts/evidence/W1.A08.T02.captures-06/manifest.json",
+        "artifacts/evidence/W1.A08.T02.accent-captures-01/manifest.json"
+      ],
+      "rationale": "The previous actual dark eyebrow pair (3.975814:1) and keyboard-visible skip-link pair (3.936220:1) are replaced by observed 7.155255:1 and 5.060617:1 pairs. Both light counterparts also pass. Twelve exact-producer observations and directly inspected immutable PNGs cover both consumers at all three viewports in both themes, including real keyboard focus, fully visible nonempty text and stable opaque colors. Source declarations or reference pixels alone are not used as closure."
+    },
+    {
+      "findingId": "W1.A08.T02-visual-03-F01",
+      "disposition": "previous closure retained",
+      "blockingVisualAcceptance": false,
+      "closureEvidence": [
+        "artifacts/evidence/W1.A08.T02.visual-review-04.json",
+        "artifacts/evidence/W1.A08.T02.navigation-captures-01/manifest.json"
+      ],
+      "rationale": "No change to current page/step/marker/metadata rules, tokens or semantic component behavior; the prior actual navigation-specific disposition remains valid and is not expanded by the accent observation."
+    },
+    {
+      "findingId": "W1.A08.T02-visual-02-F01",
+      "disposition": "previous closure retained",
+      "blockingVisualAcceptance": false,
+      "closureEvidence": [
+        "artifacts/evidence/W1.A08.T02.visual-review-03.json",
+        "artifacts/evidence/W1.A08.T02.visual-review-04.json",
+        "artifacts/evidence/W1.A08.T02.context-captures-01/manifest.json"
+      ],
+      "rationale": "Shared contextual Button implementation is unchanged, prior actual visual proof remains available, and current matrix06 retains all six context-action keyboard inventory results."
+    }
+  ],
+  "findings": [],
+  "historyAndLimits": [
+    "Visual01 through visual05, all earlier captures and adverse/preflight records remain immutable. Visual04's bounded navigation approval and visual05's subsequent two-consumer changes-requested disposition are both preserved; the latter is closed only by this append-only follow-up.",
+    "The retained remediation note records the initial premature transform sampling, two actual failing dark subcases, visibility/nonempty/effective-opacity sampler correction, and lint correction. Those failures are not erased or counted as passing independent product replays.",
+    "A first ad-hoc read-only authentication wrapper in this follow-up incorrectly requested producer['commit'] and stopped with KeyError after matrix bundle authentication. Inspection confirmed the actual schema field is producerCommit; the corrected wrapper authenticated both unchanged bundles. This was review orchestration, not a product or bundle validation failure.",
+    "No new browser, native/Core, packaging, performance, test suite or W1 qualification was run by this follow-up. Root-recorded executions and the reviewer's previously executed checks are explicitly distinguished from fresh independent artifact/arithmetic/pixel checks.",
+    "The separate restoration classification, formal task review, subsequent slice/amendment integration and full W1 release qualification remain separate obligations. This record grants no task, reference, security, domain-state, adoption or release authority.",
+    "Only this new review file is authored. No product, prior evidence, authority, backlog, controller, real Git index/branch, remote, ordinary account state, policy/vault, excluded witness or sibling workspace is altered or accessed."
+  ]
+}
