@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "1.0",
+  "task_id": "W1.A09.T04",
+  "attempt_id": "R02",
+  "candidate_commit": "6cb1514f2f2349e3e34e40e059986e635cd609cc",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "result": "approved",
+  "notes": "Independent incremental W1.A09.T04 review approves the frozen R02 candidate and closes both R01 findings as fixed. The 11 focused tests and lint pass in the reviewer's fresh retained synthetic fixture. Canonical exclusion is enforced before lookup, linked/redirecting entries are rejected before content reads, and bounded snapshots are authenticated directly to explicit candidate blobs before report parsing. Independent current-input/report and frozen-packet comparisons match. No additional acceptance-blocking defect was found in the changed helper/test/evidence boundary. The unchanged R01 product/native/Core, qualified packaging, presentation/performance and return dispositions carry forward without a redundant product audit. This approves W1.A09.T04 only: not contribution/exit/adoption, W1.A08 activation, ordinary-profile startup, Wave/release qualification, G1 or remote effects.",
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W1.A09.T04.R01.F01",
+      "disposition": "fixed",
+      "evidence": "Reviewed candidate final-binding-01.py raw SHA256 61c36a60b1d0b553d4432dd94f9df5c88247273813bac25e6d36f721f848623c. scoped is now lexical-only: it rejects prohibited separators/control/device/short-name/dot/stream spellings and the case-insensitive excluded identity before filesystem lookup. held_path checks top-down lstat metadata for symlink/reparse and file type, rejects multi-link files, acquires existing no-delete Windows ancestor guards and no-write/delete file guards, and checks identities. snapshot uses a bounded read with path/handle type, device/inode, size, mtime, link and attribute checks. Independently ran the exact 11-test suite at this candidate: all pass, including 17 string-only protected/unsafe spelling subcases with no resolver/metadata calls, mocked root/intermediate/leaf redirects with no content read or descent through the redirect, a real synthetic hardlink denial, and valid text/binary/executable-extension inputs. Guarded reads of the 566 actual declared inputs also match. Protected aliases/redirects were never tested against the real filesystem; no excluded content was accessed. Existing disclosed limits against malicious same-account races remain unchanged and are not presented as isolation guarantees."
+    },
+    {
+      "finding_id": "W1.A09.T04.R01.F02",
+      "disposition": "fixed",
+      "evidence": "Reviewed CandidateInputs and main: each tracked input and selected report is read into one bounded snapshot, hashed through Git clean conversion using the explicit candidate's attributes, and compared directly with that candidate's ls-tree blob before the bytes can be parsed as JSON. Raw and field-specific LF hashes use the same cached snapshot, while later drift is rechecked. No git diff/index flag result is used as candidate equivalence. Independently replayed the real dummy-Git assume-unchanged and skip-worktree negatives, normal changed selected-report rejection before json.loads, valid CRLF/binary/report binding, unknown report denial and cached-snapshot/later-mutation case; all pass. Independently checked all 532 reported candidate blob identities at both tested494243d3 and candidate6cb1514f, all 566 current source hashes, and read all seven distinct selected reports through the real corrected CandidateInputs bound explicitly to tested494243d3; their raw snapshots and final stability match. The historical backlog snapshot is validated against the tested Git content, not the later REVIEW projection. Generated/runtime artifacts remain separately identified. Original flawed final-binding-01.json and R01 remain unchanged."
+    }
+  ],
+  "review_scope": {
+    "base_commit": "6a078f982815e547a57f4b2c670e50661b2d0bf3",
+    "tested_remediation_commit": "494243d307c797d965bb58ec3d7a96839dabec0c",
+    "submission_delivery_commit": "efb66f594a4b25ae35f5ee5cf343fbac2812fd7b",
+    "later_generated_site_commit": "0f67a490c946fc99c24bc192067953b160acad54",
+    "packet_sha256": "0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1",
+    "manifest_path": "artifacts/evidence/W1.A09.T04.remediation-02.json",
+    "manifest_canonical_sha256": "e16fd7421b597c1c3a84078ec87feb34c27d1c92070566546d22efbbbf2167a5",
+    "manifest_hash_convention": "SHA-256 after CRLF and lone CR normalization to LF. Packet/criteria/selection digests use taskctl's sorted compact JSON convention.",
+    "approved_packet_commit": "2160cc9917282d80848189dc9669fe3827979246",
+    "changed_path_count": 14,
+    "acceptance_criterion_count": 5,
+    "selected_check_description_count": 6,
+    "prior_attempt_count": 1,
+    "prior_open_findings": ["W1.A09.T04.R01.F01", "W1.A09.T04.R01.F02"],
+    "packet_binding_checked_at": "2026-09-06T00:00:13.194984+00:00",
+    "risk_selection": "Replay the exact R01 path-safety and candidate-binding defects and their incremental compatibility/snapshot boundaries. Inspect the new helper, focused tests, retained adverse runs and fresh binding report. Reuse R01's independently reviewed unchanged native fixture/product/Core/reference/performance/packaging/return evidence. No new product, native UI, Cargo, build, benchmark, ordinary-profile or full-repository run is warranted by this evidence-only remediation."
+  },
+  "authority_and_binding_checks": [
+    {
+      "name": "frozen-R02-and-R01-history",
+      "result": "passed",
+      "detail": "Read the committed delivery backlog. Confirmed W1.A09.T04 REVIEW/R02, one retained R01 attempt, exact predecessor R01 candidate/base and both open finding IDs. Recomputed R02 packet, unchanged five-criterion digest, verification-selection digest and LF-normalized manifest digest. Checks, command IDs, rationale, deferrals and all 14 base-to-candidate paths match the frozen manifest. Current task equals the committed delivery task; the current manifest equals its delivery blob under the declared newline convention. Ancestry base-to-tested-to-candidate-to-delivery is valid. Tested-to-candidate adds only binding-verification-02.json and final-binding-02.json. Candidate-to-delivery changes only the remediation manifest, backlog and two backlog projections. The later HEAD adds only ECR-0008.html and review-site/manifest.json, with no substantive input or task-packet change.",
+      "acceptance_criteria_sha256": "7a36e66d2182dbfc662a4717b7f62f0528f2eefab8e9d982fcd1e2ae1133a513",
+      "selection_sha256": "c4a8266ab90453207e2e1871bbca8da0c2d754d0bc1a6ece3aa437cac495d193"
+    },
+    {
+      "name": "actual-remediation-and-report-authentication",
+      "result": "passed",
+      "detail": "All eight specifically reviewed incremental helper/test/report/ledger files match candidate Git blobs through candidate-attribute clean hashing. The R01 manifest, original final-binding report, benchmark report, review bundle and return preparation retain identical committed bytes. No product, native fixture, Core, reference, baseline or controller path changes appear in the exact 14-path incremental diff. The R01 review ledger retains its original raw digest and adverse disposition.",
+      "prior_review_raw_sha256": "0845069546686e2ebf9f8e60b147936bcb4ec3c3f1a9565a3c6270a282622389"
+    },
+    {
+      "name": "reported-inputs-and-selected-reports",
+      "result": "passed",
+      "detail": "The new final-binding report declares 583 authenticated snapshots and 532 candidate blobs, including report/authority/baseline inputs beyond its 566-source inventory. Independently compared every one of the 532 blob IDs with both tested and submitted candidate trees. All 566 current raw source hashes match via the corrected guarded reader. Independently read the seven distinct selected reports through CandidateInputs at the explicit historical tested commit and verified their recorded raw hashes plus verify_unchanged. The eight selected-report rows include two profiles from the same native-build report; they are not eight distinct reports. The historical IN_PROGRESS backlog raw snapshot matches its tested Git content with the declared CRLF representation. The full helper main was not rerun against the current REVIEW backlog.",
+      "source_input_count": 566,
+      "declared_generated_runtime_source_count": 49,
+      "recorded_authenticated_snapshot_count": 583,
+      "candidate_blob_identity_comparisons": 532,
+      "distinct_selected_reports_replayed": 7
+    }
+  ],
+  "independent_replays": [
+    {
+      "name": "R01-finding-regression-suite",
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py",
+      "exit_code": 0,
+      "tests_passed": 11,
+      "tests_failed": 0,
+      "tests_errored": 0,
+      "tests_skipped": 0,
+      "reported_unittest_seconds": 0.933,
+      "fixture": "artifacts/tmp/W1.A09.T04.binding-tests-yhmoetmw",
+      "input_hashes_unchanged_before_after": true,
+      "cases": [
+        "17 lexical protected/unsafe spelling subcases denied before filesystem lookup; protected identities are strings and mocks only",
+        "mock root reparse denied without resolving or reading a target",
+        "mock intermediate and leaf redirects denied below valid ancestors before content access or descent",
+        "real synthetic multi-link file denied",
+        "valid guarded CRLF snapshot accepted",
+        "synthetic .exe extension accepted using file type rather than Windows synthesized permission-bit equality; never executed",
+        "valid direct candidate CRLF text, binary and report snapshots accepted",
+        "real synthetic assume-unchanged and skip-worktree source modifications rejected despite absence from git diff",
+        "normal changed selected report rejected before JSON parsing",
+        "unknown untracked input rejected as a report",
+        "cached snapshot remains internally consistent and later mutation is rejected by verify_unchanged"
+      ],
+      "execution_limits": "Fresh dummy Git repository only, retained after execution. Inherited Git routing variables were removed for the invocation and global/system Git configuration excluded. Tests modify only synthetic files/index. No production data, actual protected alias, native launch or full helper main is involved."
+    },
+    {
+      "name": "focused-Python-lint",
+      "command": ".venv/Scripts/python.exe -m ruff check artifacts/evidence/W1.A09.T04.final-binding-01.py artifacts/evidence/W1.A09.T04.binding-tests-01.py",
+      "exit_code": 0,
+      "result": "All checks passed."
+    },
+    {
+      "name": "explicit-historical-candidate-report-reader",
+      "method": "Import the reviewed helper without invoking main, construct CandidateInputs with tested commit 494243d307c797d965bb58ec3d7a96839dabec0c, validate candidate blob identities, read the declared selected reports and compare recorded raw digests, then verify unchanged snapshots. Separately use guarded sha reads for the exact 566 declared safe source names. No report is published by this replay.",
+      "result": "Passed: 532 blob identities at both commits; 566 current raw source hashes; seven selected report snapshots and stability; historical backlog snapshot. No drift and no protected access."
+    }
+  ],
+  "reviewed_evidence_raw_sha256": {
+    "artifacts/evidence/W1.A09.T04.final-binding-01.py": "61c36a60b1d0b553d4432dd94f9df5c88247273813bac25e6d36f721f848623c",
+    "artifacts/evidence/W1.A09.T04.binding-tests-01.py": "cc4b3763ef4e6410e6b34a3e2836895d76a6648c5a38f1ad1d11347ee449e992",
+    "artifacts/evidence/W1.A09.T04.binding-remediation-01.md": "f656f5afb29998cfe4116ccd305cb49c7c279317ebfb20daaf55c08eec91e827",
+    "artifacts/evidence/W1.A09.T04.binding-verification-02.json": "36b4a6a300e79a96b8c25af6c475c752e39e5f617a071c1e410eb796e5ba7308",
+    "artifacts/evidence/W1.A09.T04.final-binding-02.json": "0ee46e68944d831b335f6e9243d73f30c0263fd5880b270e26beedf5aa8f4936",
+    "artifacts/evidence/W1.A09.T04.binding-tests-adverse-01.json": "540c123b89431539e2aadc840b0cc963711f309f72e8b737d642841cdabb1902",
+    "artifacts/evidence/W1.A09.T04.binding-tests-adverse-02.json": "a7885fcffd956a70350598f567fdc6efb6af0db9f96af8bd49b8b3df87d160d7",
+    "artifacts/evidence/W1.A09.T04.review-R01.json": "0845069546686e2ebf9f8e60b147936bcb4ec3c3f1a9565a3c6270a282622389"
+  },
+  "acceptance_disposition": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "basis": "Carry forward R01's independently reviewed unchanged F01/UX02-UX06 mapping and partial blind-usability evidence. F02/UX01 remain W1.A08.T02, and U02/U03/U05/U06 are not falsely closed. The corrected evidence reader restores the exact candidate-proof boundary without adding product scope."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "basis": "Carry forward the unchanged accumulated unit/contract/renderer/native/Core, actual fixture lifecycle, prior-source modal/lock/close, clean build/packaging smoke, resource, presentation and performance evidence reviewed in R01. Their actual source/report identities remain bound. Reference captures and renderer doubles remain distinct from real native/Core observations; frozen ordinary-profile startup is not claimed. This evidence-only increment does not require new product or full-profile replay."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "basis": "Both medium blocking R01 findings are explicitly closed as fixed after independent focused replay. The helper now enforces the scoped read boundary and directly authenticates tracked sources and selected report snapshots to the candidate before trusting them. The complete unchanged independent review bundle retains exact authority, semantic compatibility and qualified Windows/Core proof without a weakened valid test, widened product permission, rewritten history or second token system."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "basis": "The unchanged amendment-exit and exact correctionReturn preparation remain inert and preserve subsequent independent contribution/exit review and supported adoption requirements. This task review supplies no self-adoption or parent activation."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "basis": "The unchanged return procedure preserves frozen W1.A08 history and its PAUSED parent state. W1.A08.T02 and W1.A08 qualification/adoption precede ordinary W1/CAP-07 recovery. Complete W1 qualification, independent Wave review and human G1 remain mandatory."
+    }
+  ],
+  "retained_history_and_residuals": [
+    "R01 remains changes-requested with its exact two findings and original ledger bytes. Closures occur only here; the supported controller may append this disposition, not overwrite R01.",
+    "binding-tests-adverse-01 truthfully separates 14 reproduced failing subcases from six errors due to the proposed snapshot/CandidateInputs interface not yet existing. Those interface errors are not represented as prior Git false-acceptance executions; R01's original isolated Git characterization remains their behavioral evidence.",
+    "binding-tests-adverse-02 retains the real Windows .exe st_mode mismatch before any final report publication. The correction compares S_IFMT while preserving actual identity/content/reparse/link metadata and existing guards. The focused synthetic .exe test independently passes without execution. No permission boundary or valid test assertion was weakened to hide drift.",
+    "Fresh producer binding-verification-02 and final-binding-02 are owner observations, not independent approval. This review separately executes the focused tests and actual reader comparisons. Original reports and precommit observation identities, including adverse tests/lint history and benchmark dirty-state disclosure, are not relabeled.",
+    "Snapshot guards are per-read and the aggregate unchanged check is not an atomic defense against hostile same-account change-and-restore. The current explicit scope does not claim such isolation. No real protected alias/redirect experiment is needed or authorized by these closures.",
+    "The append-only packaging-scope reconciliation from R01 remains effective: the approved W1.A09.T04 criterion is accumulated actual Windows/native/Core integration plus clean build/packaging smoke, not this reviewer's earlier over-specific single fully frozen lifecycle phrase. Ordinary-profile/frozen production startup and required installer/authentication/full-W1 qualification remain unproved later duties; neither the original history nor the approved criterion is changed.",
+    "Retained usability findings and subsequently requested startup/test-window geometry need lawful W1 experience handling. This evidence-only correction implements no extra UX. No full nine-task blind success, W1.A09 contribution/exit approval, adoption, W1.A08 activation, main integration across an unmet gate or G1 approval is implied."
+  ],
+  "reviewer_safety": "The reviewer authored only this new formal ledger; the provided focused test suite created a fresh retained synthetic fixture and dummy Git repository. No real repository/index/branch, product/helper, backlog/controller or existing evidence mutation occurred. No native UI, build, Cargo, benchmark, ordinary policy/vault/project/credentials, remote or sibling-workspace access was performed. All protected-name and redirect cases were mocks, with zero actual protected-filesystem access. The excluded W1.A04.B00.json was never opened, read, hashed, copied or changed; tree filename inventories were not followed to that artifact."
+}

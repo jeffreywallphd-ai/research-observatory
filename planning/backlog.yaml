@@ -40517,18 +40517,15 @@ wave_amendments:
     - Real persistence/authority return binding through reviewed existing adapters
     - Negative source/history/scope and protected-state checks; full matrix at W1 exit
     packet_task_sha256: ecc830ede218ff101b55d9224c14f6906ba3744a3e155e55fd7e33fe0e7853d0
-    status: REVIEW
+    status: DONE
     owner: codex
     branch: codex/w1-windows-local-runtime
     base_sha: cd4838e9c64fdbf3adb8f326781f95404a0c945d
     worktree: C:/ai-projects/research-observatory
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-05T23:46:30+00:00'
-      expires_at: '2026-09-06T07:46:30+00:00'
+    lease: null
     started_at: '2026-09-05T22:20:19+00:00'
-    updated_at: '2026-09-05T23:56:21+00:00'
-    completed_at: null
+    updated_at: '2026-09-06T00:03:20+00:00'
+    completed_at: '2026-09-06T00:03:20+00:00'
     blocker: null
     implementation_notes: ''
     evidence:
@@ -40545,16 +40542,16 @@ wave_amendments:
     verification_state: passed
     review: &id127
       reviewer: agent:/root/t03_acceptance_review
-      result: changes-requested
-      reviewed_at: '2026-09-05T23:46:30+00:00'
-      notes: 'Independent expanded W1.A09.T04 review requests two bounded corrections to the new final-binding evidence helper.
-        Mocked path tests reproduce exclusion/redirect guard bypasses; an isolated dummy Git repository reproduces false candidate
-        binding for masked source changes and an ordinary changed selected report. No actual candidate drift or protected-file
-        access was observed: independent direct comparison confirms 566 recorded inputs and all 517 tracked candidate blobs,
-        and separately all 42 changed non-projection files. Those matching observations do not approve the defective helper.
-        Product/native/Core, packaging, reference/product, performance and return evidence otherwise support their expressly
-        limited task boundaries. This is an adverse task disposition, not contribution/exit/adoption, A08 activation, Wave/release
-        approval or authorization for ordinary-profile startup.'
+      result: approved
+      reviewed_at: '2026-09-06T00:03:20+00:00'
+      notes: 'Independent incremental W1.A09.T04 review approves the frozen R02 candidate and closes both R01 findings as
+        fixed. The 11 focused tests and lint pass in the reviewer''s fresh retained synthetic fixture. Canonical exclusion
+        is enforced before lookup, linked/redirecting entries are rejected before content reads, and bounded snapshots are
+        authenticated directly to explicit candidate blobs before report parsing. Independent current-input/report and frozen-packet
+        comparisons match. No additional acceptance-blocking defect was found in the changed helper/test/evidence boundary.
+        The unchanged R01 product/native/Core, qualified packaging, presentation/performance and return dispositions carry
+        forward without a redundant product audit. This approves W1.A09.T04 only: not contribution/exit/adoption, W1.A08 activation,
+        ordinary-profile startup, Wave/release qualification, G1 or remote effects.'
     review_control:
       version: 1
       attempts:
@@ -40675,7 +40672,18 @@ wave_amendments:
           - desktop:ui-accessibility
           - desktop:ui-visual-regression
           packet_sha256: b4524611c2c91be1b101834c232ab0608c2f7addb86e37cbb2535d1610181c4e
-        review: *id127
+        review:
+          reviewer: agent:/root/t03_acceptance_review
+          result: changes-requested
+          reviewed_at: '2026-09-05T23:46:30+00:00'
+          notes: 'Independent expanded W1.A09.T04 review requests two bounded corrections to the new final-binding evidence
+            helper. Mocked path tests reproduce exclusion/redirect guard bypasses; an isolated dummy Git repository reproduces
+            false candidate binding for masked source changes and an ordinary changed selected report. No actual candidate
+            drift or protected-file access was observed: independent direct comparison confirms 566 recorded inputs and all
+            517 tracked candidate blobs, and separately all 42 changed non-projection files. Those matching observations do
+            not approve the defective helper. Product/native/Core, packaging, reference/product, performance and return evidence
+            otherwise support their expressly limited task boundaries. This is an adverse task disposition, not contribution/exit/adoption,
+            A08 activation, Wave/release approval or authorization for ordinary-profile startup.'
         ledger:
           path: artifacts/evidence/W1.A09.T04.review-R01.json
           sha256: 0845069546686e2ebf9f8e60b147936bcb4ec3c3f1a9565a3c6270a282622389
@@ -40763,68 +40771,127 @@ wave_amendments:
             prior_attempt_id: null
             replayed_finding_ids: []
             closed_finding_ids: []
-      current_submission:
-        id: R02
-        submitted_by: codex
-        submitted_at: '2026-09-05T23:56:21+00:00'
-        candidate_commit: 6cb1514f2f2349e3e34e40e059986e635cd609cc
-        base_commit: 6a078f982815e547a57f4b2c670e50661b2d0bf3
-        branch: codex/w1-windows-local-runtime
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W1.A09.T04.remediation-02.json
-          sha256: e16fd7421b597c1c3a84078ec87feb34c27d1c92070566546d22efbbbf2167a5
-          commit: 6cb1514f2f2349e3e34e40e059986e635cd609cc
-          recorded_at: '2026-09-05T23:56:21+00:00'
-        acceptance_criteria_sha256: 7a36e66d2182dbfc662a4717b7f62f0528f2eefab8e9d982fcd1e2ae1133a513
-        changed_paths:
-        - artifacts/evidence/W1.A09.T04.binding-remediation-01.md
-        - artifacts/evidence/W1.A09.T04.binding-tests-01.py
-        - artifacts/evidence/W1.A09.T04.binding-tests-adverse-01.json
-        - artifacts/evidence/W1.A09.T04.binding-tests-adverse-02.json
-        - artifacts/evidence/W1.A09.T04.binding-verification-02.json
-        - artifacts/evidence/W1.A09.T04.final-binding-01.py
-        - artifacts/evidence/W1.A09.T04.final-binding-02.json
-        - artifacts/evidence/W1.A09.T04.json
-        - artifacts/evidence/W1.A09.T04.review-R01.json
-        - docs/planning-implementation-plan.md
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0008.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        selected_checks:
-        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py
-        - .venv/Scripts/python.exe -m ruff check artifacts/evidence/W1.A09.T04.final-binding-01.py artifacts/evidence/W1.A09.T04.binding-tests-01.py
-        - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json
-        - .venv/Scripts/python.exe tools/backlog_views.py --repo . --check
-        - .venv/Scripts/python.exe tools/plan_review_check.py --repo .
-        - git diff --check
-        deferred_checks:
-        - Independent W1.A09.T04 R02 finding closures and contribution/amendment exit/adoption remain subsequent supported
-          transitions.
-        - W1.A08.T02 full-height sidebar/spacing follows exact PAUSED return; W1.A08 adoption precedes ordinary W1/CAP-07
-          recovery.
-        - Retained usability issues and requested maximized startup/test-window geometry require their lawful W1 experience
-          handling; no extra product scope is implemented here.
-        - Full Windows/repository W1 exit matrix, ordinary-profile production startup and required installer/authentication
-          qualification, independent Wave review and human G1 remain due.
-        selection_rationale: Incremental evidence-only remediation of W1.A09.T04.R01.F01 and W1.A09.T04.R01.F02. Select canonical/no-follow
-          snapshot and real dummy-Git candidate binding tests, Windows path/handle metadata compatibility, lint, fresh direct
-          binding of the retained affected product evidence, and changed backlog/view checks. These are the narrow foundation/evidence
-          maintenance boundaries; actual commands are listed without pretending the full foundation or product suites ran.
-          R01 independently accepted the unchanged product criterion boundaries. No product, native runtime, Core, security
-          authority, reference, baseline, build dependency or controller changes warrant full requalification now. Original
-          adverse reports and review findings remain append-only.
-        selection_sha256: c4a8266ab90453207e2e1871bbca8da0c2d754d0bc1a6ece3aa437cac495d193
-        prior_attempt_id: R01
-        open_finding_ids:
-        - W1.A09.T04.R01.F01
-        - W1.A09.T04.R01.F02
-        root_cause_analysis: null
-        selected_command_ids:
-        - foundation:unit
-        - foundation:backlog-views
-        packet_sha256: 0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1
+      - submission:
+          id: R02
+          submitted_by: codex
+          submitted_at: '2026-09-05T23:56:21+00:00'
+          candidate_commit: 6cb1514f2f2349e3e34e40e059986e635cd609cc
+          base_commit: 6a078f982815e547a57f4b2c670e50661b2d0bf3
+          branch: codex/w1-windows-local-runtime
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W1.A09.T04.remediation-02.json
+            sha256: e16fd7421b597c1c3a84078ec87feb34c27d1c92070566546d22efbbbf2167a5
+            commit: 6cb1514f2f2349e3e34e40e059986e635cd609cc
+            recorded_at: '2026-09-05T23:56:21+00:00'
+          acceptance_criteria_sha256: 7a36e66d2182dbfc662a4717b7f62f0528f2eefab8e9d982fcd1e2ae1133a513
+          changed_paths:
+          - artifacts/evidence/W1.A09.T04.binding-remediation-01.md
+          - artifacts/evidence/W1.A09.T04.binding-tests-01.py
+          - artifacts/evidence/W1.A09.T04.binding-tests-adverse-01.json
+          - artifacts/evidence/W1.A09.T04.binding-tests-adverse-02.json
+          - artifacts/evidence/W1.A09.T04.binding-verification-02.json
+          - artifacts/evidence/W1.A09.T04.final-binding-01.py
+          - artifacts/evidence/W1.A09.T04.final-binding-02.json
+          - artifacts/evidence/W1.A09.T04.json
+          - artifacts/evidence/W1.A09.T04.review-R01.json
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0008.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          selected_checks:
+          - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py
+          - .venv/Scripts/python.exe -m ruff check artifacts/evidence/W1.A09.T04.final-binding-01.py artifacts/evidence/W1.A09.T04.binding-tests-01.py
+          - .venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json
+          - .venv/Scripts/python.exe tools/backlog_views.py --repo . --check
+          - .venv/Scripts/python.exe tools/plan_review_check.py --repo .
+          - git diff --check
+          deferred_checks:
+          - Independent W1.A09.T04 R02 finding closures and contribution/amendment exit/adoption remain subsequent supported
+            transitions.
+          - W1.A08.T02 full-height sidebar/spacing follows exact PAUSED return; W1.A08 adoption precedes ordinary W1/CAP-07
+            recovery.
+          - Retained usability issues and requested maximized startup/test-window geometry require their lawful W1 experience
+            handling; no extra product scope is implemented here.
+          - Full Windows/repository W1 exit matrix, ordinary-profile production startup and required installer/authentication
+            qualification, independent Wave review and human G1 remain due.
+          selection_rationale: Incremental evidence-only remediation of W1.A09.T04.R01.F01 and W1.A09.T04.R01.F02. Select
+            canonical/no-follow snapshot and real dummy-Git candidate binding tests, Windows path/handle metadata compatibility,
+            lint, fresh direct binding of the retained affected product evidence, and changed backlog/view checks. These are
+            the narrow foundation/evidence maintenance boundaries; actual commands are listed without pretending the full
+            foundation or product suites ran. R01 independently accepted the unchanged product criterion boundaries. No product,
+            native runtime, Core, security authority, reference, baseline, build dependency or controller changes warrant
+            full requalification now. Original adverse reports and review findings remain append-only.
+          selection_sha256: c4a8266ab90453207e2e1871bbca8da0c2d754d0bc1a6ece3aa437cac495d193
+          prior_attempt_id: R01
+          open_finding_ids:
+          - W1.A09.T04.R01.F01
+          - W1.A09.T04.R01.F02
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:unit
+          - foundation:backlog-views
+          packet_sha256: 0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1
+        review: *id127
+        ledger:
+          path: artifacts/evidence/W1.A09.T04.review-R02.json
+          sha256: 94c747ec3d0630687e2befe96a6f1fe041de8b04b12852c770dc543805b33f68
+        findings: []
+        closures:
+        - finding_id: W1.A09.T04.R01.F01
+          disposition: fixed
+          evidence: 'Reviewed candidate final-binding-01.py raw SHA256 61c36a60b1d0b553d4432dd94f9df5c88247273813bac25e6d36f721f848623c.
+            scoped is now lexical-only: it rejects prohibited separators/control/device/short-name/dot/stream spellings and
+            the case-insensitive excluded identity before filesystem lookup. held_path checks top-down lstat metadata for
+            symlink/reparse and file type, rejects multi-link files, acquires existing no-delete Windows ancestor guards and
+            no-write/delete file guards, and checks identities. snapshot uses a bounded read with path/handle type, device/inode,
+            size, mtime, link and attribute checks. Independently ran the exact 11-test suite at this candidate: all pass,
+            including 17 string-only protected/unsafe spelling subcases with no resolver/metadata calls, mocked root/intermediate/leaf
+            redirects with no content read or descent through the redirect, a real synthetic hardlink denial, and valid text/binary/executable-extension
+            inputs. Guarded reads of the 566 actual declared inputs also match. Protected aliases/redirects were never tested
+            against the real filesystem; no excluded content was accessed. Existing disclosed limits against malicious same-account
+            races remain unchanged and are not presented as isolation guarantees.'
+        - finding_id: W1.A09.T04.R01.F02
+          disposition: fixed
+          evidence: 'Reviewed CandidateInputs and main: each tracked input and selected report is read into one bounded snapshot,
+            hashed through Git clean conversion using the explicit candidate''s attributes, and compared directly with that
+            candidate''s ls-tree blob before the bytes can be parsed as JSON. Raw and field-specific LF hashes use the same
+            cached snapshot, while later drift is rechecked. No git diff/index flag result is used as candidate equivalence.
+            Independently replayed the real dummy-Git assume-unchanged and skip-worktree negatives, normal changed selected-report
+            rejection before json.loads, valid CRLF/binary/report binding, unknown report denial and cached-snapshot/later-mutation
+            case; all pass. Independently checked all 532 reported candidate blob identities at both tested494243d3 and candidate6cb1514f,
+            all 566 current source hashes, and read all seven distinct selected reports through the real corrected CandidateInputs
+            bound explicitly to tested494243d3; their raw snapshots and final stability match. The historical backlog snapshot
+            is validated against the tested Git content, not the later REVIEW projection. Generated/runtime artifacts remain
+            separately identified. Original flawed final-binding-01.json and R01 remain unchanged.'
+        telemetry:
+          task_id: W1.A09.T04
+          amendment_id: W1.A09
+          attempt_id: R02
+          submitted_at: '2026-09-05T23:56:21+00:00'
+          reviewed_at: '2026-09-06T00:03:20+00:00'
+          duration_seconds: 419
+          outcome: approved
+          finding_counts:
+            critical: 0
+            high: 0
+            medium: 0
+            low: 0
+            blocking: 0
+            total: 0
+          command_ids:
+          - foundation:unit
+          - foundation:backlog-views
+          remediation:
+            prior_attempt_id: R01
+            replayed_finding_ids:
+            - W1.A09.T04.R01.F01
+            - W1.A09.T04.R01.F02
+            closed_finding_ids:
+            - W1.A09.T04.R01.F01
+            - W1.A09.T04.R01.F02
+      current_submission: null
   completion:
     status: PENDING
     reviewer: null

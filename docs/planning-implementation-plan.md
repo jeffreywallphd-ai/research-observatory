@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0f739d982288b34c4912e5c42bf395e24d0166bd2c6060bbbe23f27cdd39a0d0
+source_sha256: dab3f29426e38dd5816dc9cb98032e8a440b33631d75b9b1ebd763f3abc1d6ee
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2147,9 +2147,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A09.T04 - Qualify correction and prepare authenticated return
+### - [x] W1.A09.T04 - Qualify correction and prepare authenticated return
 
-**Status / owner / review:** `REVIEW` / codex / agent:/root/t03_acceptance_review (`changes-requested`)
+**Status / owner / review:** `DONE` / codex / agent:/root/t03_acceptance_review (`approved`)
 
 **Dependencies:** `W1.A09.B00`, `W1.A09.T03`
 
@@ -2177,7 +2177,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A09.T04
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -2210,7 +2210,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1`
 
 - Candidate / base / branch: `6cb1514f2f2349e3e34e40e059986e635cd609cc` / `6a078f982815e547a57f4b2c670e50661b2d0bf3` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-05T23:56:21+00:00`
@@ -2224,11 +2226,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W1.A09.T04.R01.F01`, `W1.A09.T04.R01.F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:/root/t03_acceptance_review at `2026-09-05T23:46:30+00:00`
+**Disposition / reviewer / time:** `approved` / agent:/root/t03_acceptance_review / `2026-09-06T00:03:20+00:00`
 
-**Latest notes:** Independent expanded W1.A09.T04 review requests two bounded corrections to the new final-binding evidence helper. Mocked path tests reproduce exclusion/redirect guard bypasses; an isolated dummy Git repository reproduces false candidate binding for masked source changes and an ordinary changed selected report. No actual candidate drift or protected-file access was observed: independent direct comparison confirms 566 recorded inputs and all 517 tracked candidate blobs, and separately all 42 changed non-projection files. Those matching observations do not approve the defective helper. Product/native/Core, packaging, reference/product, performance and return evidence otherwise support their expressly limited task boundaries. This is an adverse task disposition, not contribution/exit/adoption, A08 activation, Wave/release approval or authorization for ordinary-profile startup.
+**Immutable review ledger:** `artifacts/evidence/W1.A09.T04.review-R02.json` / `94c747ec3d0630687e2befe96a6f1fe041de8b04b12852c770dc543805b33f68`
 
-**Currently open findings:** `W1.A09.T04.R01.F01`, `W1.A09.T04.R01.F02`
+**Review notes:** Independent incremental W1.A09.T04 review approves the frozen R02 candidate and closes both R01 findings as fixed. The 11 focused tests and lint pass in the reviewer's fresh retained synthetic fixture. Canonical exclusion is enforced before lookup, linked/redirecting entries are rejected before content reads, and bounded snapshots are authenticated directly to explicit candidate blobs before report parsing. Independent current-input/report and frozen-packet comparisons match. No additional acceptance-blocking defect was found in the changed helper/test/evidence boundary. The unchanged R01 product/native/Core, qualified packaging, presentation/performance and return dispositions carry forward without a redundant product audit. This approves W1.A09.T04 only: not contribution/exit/adoption, W1.A08 activation, ordinary-profile startup, Wave/release qualification, G1 or remote effects.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W1.A09.T04.R01.F01` `fixed` — Reviewed candidate final-binding-01.py raw SHA256 61c36a60b1d0b553d4432dd94f9df5c88247273813bac25e6d36f721f848623c. scoped is now lexical-only: it rejects prohibited separators/control/device/short-name/dot/stream spellings and the case-insensitive excluded identity before filesystem lookup. held_path checks top-down lstat metadata for symlink/reparse and file type, rejects multi-link files, acquires existing no-delete Windows ancestor guards and no-write/delete file guards, and checks identities. snapshot uses a bounded read with path/handle type, device/inode, size, mtime, link and attribute checks. Independently ran the exact 11-test suite at this candidate: all pass, including 17 string-only protected/unsafe spelling subcases with no resolver/metadata calls, mocked root/intermediate/leaf redirects with no content read or descent through the redirect, a real synthetic hardlink denial, and valid text/binary/executable-extension inputs. Guarded reads of the 566 actual declared inputs also match. Protected aliases/redirects were never tested against the real filesystem; no excluded content was accessed. Existing disclosed limits against malicious same-account races remain unchanged and are not presented as isolation guarantees.
+- `W1.A09.T04.R01.F02` `fixed` — Reviewed CandidateInputs and main: each tracked input and selected report is read into one bounded snapshot, hashed through Git clean conversion using the explicit candidate's attributes, and compared directly with that candidate's ls-tree blob before the bytes can be parsed as JSON. Raw and field-specific LF hashes use the same cached snapshot, while later drift is rechecked. No git diff/index flag result is used as candidate equivalence. Independently replayed the real dummy-Git assume-unchanged and skip-worktree negatives, normal changed selected-report rejection before json.loads, valid CRLF/binary/report binding, unknown report denial and cached-snapshot/later-mutation case; all pass. Independently checked all 532 reported candidate blob identities at both tested494243d3 and candidate6cb1514f, all 566 current source hashes, and read all seven distinct selected reports through the real corrected CandidateInputs bound explicitly to tested494243d3; their raw snapshots and final stability match. The historical backlog snapshot is validated against the tested Git content, not the later REVIEW projection. Generated/runtime artifacts remain separately identified. Original flawed final-binding-01.json and R01 remain unchanged.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/t03_acceptance_review at `2026-09-06T00:03:20+00:00`
+
+**Latest notes:** Independent incremental W1.A09.T04 review approves the frozen R02 candidate and closes both R01 findings as fixed. The 11 focused tests and lint pass in the reviewer's fresh retained synthetic fixture. Canonical exclusion is enforced before lookup, linked/redirecting entries are rejected before content reads, and bounded snapshots are authenticated directly to explicit candidate blobs before report parsing. Independent current-input/report and frozen-packet comparisons match. No additional acceptance-blocking defect was found in the changed helper/test/evidence boundary. The unchanged R01 product/native/Core, qualified packaging, presentation/performance and return dispositions carry forward without a redundant product audit. This approves W1.A09.T04 only: not contribution/exit/adoption, W1.A08 activation, ordinary-profile startup, Wave/release qualification, G1 or remote effects.
+
+**Currently open findings:** -
 
 
 # Capability contributions, slices, and tasks
