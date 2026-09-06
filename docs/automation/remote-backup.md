@@ -6,11 +6,15 @@ earlier private-original/public-derivative restriction for this explicit backup.
 It does not authorize credentials, ignored local output, uncommitted files,
 or new account/path disclosures. It is not a Wave or release approval.
 
-The active local branch publishes to the separate remote branch
-`codex/w1-windows-local-runtime-original`. Existing sanitized branches remain
-unchanged. Repository-local `push.default=upstream` supports the deliberately
-different local and remote names. Use plain `git push`, not `--all`, `--mirror`,
-or a force push. No historical source, approval, or evidence is rewritten.
+Local `main` pushes to remote `main`; local `codex/...` branches push to the same
+remote branch names. Repository-local `push.default=simple` restores ordinary
+`git push`. No renamed backup branches or duplicate working histories are used.
+The owner reversed the earlier sanitized-publication-only arrangement. The
+already published sanitized tips are preserved in verified local recovery
+copies before a one-time exact-lease reconciliation with original branch tips.
+Routine future pushes are normal fast-forwards, not force or mirror pushes.
+Original local source, approval and evidence history is not rewritten. The three
+previously deleted recovery branches are not republished automatically.
 
 The installed, pinned local pre-commit, commit-message and pre-push checks run
 `tools/prospective_privacy.py` using an explicit privacy policy and pinned
@@ -43,8 +47,8 @@ Detection cannot guarantee the absence of all sensitive information.
 
 The backup contains committed Git objects only. It does not contain ignored
 environments, databases, credentials, work-in-progress edits or local toolchains.
-Restore by cloning the original-history branch; do not merge the sanitized
-publication branches merely to resolve their intentionally different history.
+Restore by cloning the corresponding ordinary branch. Keep the retained
+sanitized-history recovery copies separate; do not casually merge them back.
 
 ## Reinstalling on a recovered development machine
 
@@ -52,8 +56,8 @@ Run the repository Python environment's interpreter with
 `tools/install_privacy_hooks.py --repo . --scanner <verified-gitleaks-executable>`.
 The executable must match the policy's SHA-256. Preparation prints a new
 `hooksPath` and does not change Git configuration. After checking that output,
-set repository-local `core.hooksPath` to it. Also set `push.default` to `upstream`
-and the active runtime branch's upstream to the original-history backup branch.
+set repository-local `core.hooksPath` to it. Also set `push.default` to `simple`
+and each supported local branch's upstream to the same remote branch name.
 Use `git push --dry-run` to check routing and hooks before uploading.
 Do not disable hooks to get around a blocked finding; correct the content or
 independently review an exact false positive and deliberately reinstall controls.

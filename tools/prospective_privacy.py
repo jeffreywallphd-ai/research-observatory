@@ -21,6 +21,11 @@ EMAIL = re.compile(rf"(?<![{EMAIL_LOCAL}])[{EMAIL_LOCAL}]+@[A-Za-z0-9.-]+\.[A-Za
 PROFILE = re.compile(r"(?i)(?:[a-z]:/|(?<![\w:])/)(?:users|home|documents and settings)/([^/\s\"'<>`]+)")
 WORKSPACE = re.compile(r"(?i)[a-z]:/ai-projects(?:/|\b)")
 BINARY = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".zip", ".exe", ".dll"}
+RETIRED_REFS = {
+    "refs/heads/codex/t03-lineage-safety-92ec600",
+    "refs/heads/codex/t03-unsplit-backup",
+    "refs/heads/codex/w1-t02-invalid-hardening-backup",
+}
 REDIRECT = {"GIT_DIR", "GIT_WORK_TREE", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_SHALLOW_FILE", "GIT_GRAFT_FILE"}
 
 
@@ -236,17 +241,19 @@ def inspect(
     return {"status": "PASS", "commitsChecked": len(commits), "entriesChecked": count, "findings": []}
 
 
-def push_tips(data: str, destination: str) -> list[str]:
+def push_tips(data: str, destinations: list[str]) -> list[str]:
     tips = []
     for line in data.splitlines():
         fields = line.split()
         if len(fields) != 4:
             raise ValueError("Malformed push update")
-        _, local, remote_ref, remote = fields
+        local_ref, local, remote_ref, remote = fields
         if not SHA.fullmatch(local) or not SHA.fullmatch(remote) or local == "0" * 40:
             raise ValueError("Invalid push or deletion")
-        if remote_ref != destination:
-            raise ValueError("Push destination is not the configured backup branch")
+        if local_ref != remote_ref or remote_ref in RETIRED_REFS:
+            raise ValueError("Renamed or retired branch publication is not permitted")
+        if remote_ref not in destinations and not remote_ref.startswith("refs/heads/codex/"):
+            raise ValueError("Push destination must be main or a same-name codex branch")
         tips.append(local)
     return sorted(set(tips))
 
@@ -276,7 +283,7 @@ def main() -> int:
         if args.mode == "push":
             if args.remote_url != policy["remoteUrl"]:
                 raise ValueError("Unexpected remote URL")
-            tips = push_tips(sys.stdin.read(), policy["remoteRef"])
+            tips = push_tips(sys.stdin.read(), policy["remoteRefs"])
             if not tips:
                 print("Prospective privacy: no new push objects.")
                 return 0

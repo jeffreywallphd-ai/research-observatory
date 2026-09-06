@@ -50,7 +50,7 @@ class ProspectivePrivacyTests(unittest.TestCase):
             "allowedContentEmails": [],
             "scannerSha256": hashlib.sha256(SCANNER.read_bytes()).hexdigest(),
             "remoteUrl": "https://example.invalid/repo.git",
-            "remoteRef": "refs/heads/backup",
+            "remoteRefs": ["refs/heads/main"],
         }
 
     def git(self, *args: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:
@@ -168,14 +168,20 @@ class ProspectivePrivacyTests(unittest.TestCase):
 
     def test_destinations_deletions_and_opaque_refs_fail(self) -> None:
         sha, zero = "1" * 40, "0" * 40
-        self.assertEqual([sha], guard.push_tips(f"local {sha} refs/heads/backup {zero}", "refs/heads/backup"))
+        self.assertEqual([sha], guard.push_tips(f"refs/heads/main {sha} refs/heads/main {zero}", ["refs/heads/main"]))
+        self.assertEqual(
+            [sha],
+            guard.push_tips(f"refs/heads/codex/test {sha} refs/heads/codex/test {zero}", self.policy["remoteRefs"]),
+        )
         for data in (
-            f"local {sha} refs/heads/main {zero}",
-            f"local {zero} refs/heads/backup {sha}",
+            f"refs/heads/main {sha} refs/heads/main-original {zero}",
+            f"refs/heads/main {zero} refs/heads/main {sha}",
+            f"refs/heads/unrelated {sha} refs/heads/unrelated {zero}",
+            f"refs/heads/codex/t03-unsplit-backup {sha} refs/heads/codex/t03-unsplit-backup {zero}",
             "bad",
         ):
             with self.assertRaises(ValueError):
-                guard.push_tips(data, "refs/heads/backup")
+                guard.push_tips(data, self.policy["remoteRefs"])
 
     def test_replacement_refs_fail(self) -> None:
         self.write("safe.txt", "Safe")
@@ -217,9 +223,11 @@ class ProspectivePrivacyTests(unittest.TestCase):
         self.git("config", "core.hooksPath", str(hooks))
         self.git("remote", "add", "origin", remote.as_posix())
         branch = self.git("branch", "--show-current").stdout.decode().strip()
-        self.git("config", "push.default", "upstream")
+        self.git("branch", "-m", "main")
+        branch = "main"
+        self.git("config", "push.default", "simple")
         self.git("config", f"branch.{branch}.remote", "origin")
-        self.git("config", f"branch.{branch}.merge", "refs/heads/backup")
+        self.git("config", f"branch.{branch}.merge", "refs/heads/main")
         self.git("push", "--dry-run")
         self.assertEqual(b"", self.git("ls-remote", "--heads", "origin").stdout)
         self.git("push")
