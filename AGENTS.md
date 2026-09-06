@@ -60,6 +60,9 @@ do not silently choose implementation convenience.
 Roadmap -> Wave campaign -> capability contribution -> ordered slice -> task ->
 Wave exit gate. The Wave owns execution, integration, qualification, and handoff;
 capabilities are cross-Wave outcome maps, not execution leases.
+Use rolling-wave planning: detail and solidify the upcoming Wave before approval;
+future Waves remain provisional outcomes, dependencies, and risks, refined from
+earlier delivery. Do not require premature decision-complete distant plans.
 
 Use full task designators in updates, with a short outcome description.
 Capability aliases and descriptive slice labels supplement immutable numeric
@@ -72,11 +75,18 @@ every Wave-binding decision and slice, interfaces/dependencies, risks,
 rollback/recovery, verification, and exit criteria. Inherited/future decisions
 and later Waves are not authorized. Never edit or reapprove the frozen packet.
 
-Before new planning approval, assess the implementation against Vision,
-architecture, and current best practice. Assessment-added refactoring must stay
-within 15% of pre-assessment implementation effort at both capability and Wave
-scope, with itemized atomic-task estimates and no major refactor. Apply the
-linked initiation calculation; do not backfill frozen approvals.
+Before new planning approval, reassess against Vision, architecture, current
+best practice, and earlier Wave changes. Unapproved scope may change substantially,
+including major redesign through the required architecture/approval routes;
+there is no 15% initiation cap. Approval freezes the selected work and estimates.
+During locked execution, supplemental refactoring shares one cumulative budget
+of 15% of the approved Wave implementation estimate. Capability, slice, task,
+amendment, and prior-Wave refactoring all draw from that same budget; they do not
+reset it. Explicitly approved redesign is planned scope, not a later addition.
+The next Wave's approval starts a fresh budget from its own locked estimate;
+unused allowance does not carry forward.
+Read [execution accounting](planning/README.md#locked-wave-refactoring-budget)
+before adding or reviewing refactoring; budget is not authority to change scope.
 
 Resume the same campaign after interruption. Claim only its next
 dependency-eligible READY task through `taskctl`; finish its evidence and review,

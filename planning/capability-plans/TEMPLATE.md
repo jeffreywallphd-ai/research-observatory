@@ -3,9 +3,9 @@ plan_schema_version: "1.1"
 document_type: capability-decision-plan
 baseline: "1.3"
 supplemental_release: "1.3.4"
-planning_policy_version: "initiation-assessment-1.0"
+planning_policy_version: "initiation-assessment-2.0"
 initiation_assessment:
-  policy_version: "1.0"
+  policy_version: "2.0"
   assessed_at: "YYYY-MM-DDTHH:MM:SSZ"
   estimation_unit: "one consistent effort unit"
   implementation_baseline: "Tested strengths, weaknesses, debt, and reusable boundaries"
@@ -49,28 +49,24 @@ approval:
   approved_commit: null
 ---
 
-## Version 1.3.4 — governed pre-research template and completed authored defaults
-
-Every authored capability packet now preselects its researched best-in-class recommendation for every material decision. These selections are treated as **completed decisions** by automation, but each decision must also be classified by its binding Wave before that Wave can be approved. The static planning site is a confirmation-and-override surface for the complete pre-Wave gate, not a mandatory decision-selection step. A non-recommended override requires rationale. Once the exact Wave-binding decisions and Wave slice plans are approved, execution proceeds continuously slice by slice and pauses only under the classified infeasibility/external-dependency/design-gate rules.
-
-All slices in `CAP-01` through `CAP-19` have individual implementation plans. If a future slice plan is missing, `planctl wave prepare` creates the governed template, but the planning agent must research candidates, replace placeholders, preselect the strongest recommendation, classify every decision, and pass decision-complete validation before requesting pre-Wave approval.
 # CAP-XX — Capability decision and execution plan
 
-> **Template state.** This blank template intentionally starts pending because its candidates are placeholders. It must not be treated as a completed capability packet. The planning agent researches all slices, replaces every placeholder with credible candidates and an explicit best-in-class recommendation, and runs `python tools/planctl.py --repo . adopt-recommendations CAP-XX`. That command records each researched recommendation as the selected accepted default, clears blockers, and makes the authored packet decision-complete. All shipped CAP-01 through CAP-19 packets are already in that completed-decision state; implementation approval remains separate.
+> **Template state.** Pending placeholders do not authorize implementation. Research and select credible recommendations for upcoming-Wave binding decisions; retain distant decisions as provisional. Do not run whole-capability recommendation adoption merely to clear future placeholders. Resolve all current blockers before requesting complete Wave approval.
 
-> **Static review page.** Generate with `python tools/planctl.py --repo . review CAP-XX`. The researched recommendation for every decision must already be selected, accepted, and classified by binding Wave. Reviewers confirm those defaults or override a selection with rationale, inspect every linked slice page, and then approve the complete active Wave packet. A feedback export is needed only when recording overrides or notes.
+> **Static review page.** Generate with `python tools/planctl.py --repo . wave review WN`. Reviewers confirm the upcoming Wave's selected binding decisions, inspect its contributing slices, and record overrides with rationale. Future context may remain unresolved. Feedback records changes, not execution approval.
 
 
-> **Wave-scoped planning gate.** Inspect the complete capability and resolve capability-wide material decisions once. Classify each decision by the Wave where it becomes binding. Create every missing slice plan, but approve only the decisions and ordered slices in the Wave being activated. Inherited and future decisions remain visible as nonbinding context until their own Wave approval.
+> **Wave-scoped planning gate.** Inspect the capability outcome and dependencies. Resolve decisions and missing slice plans binding in the upcoming Wave; future decisions and slice designs may remain provisional. Classify decisions by their binding Wave. Approval covers only the complete upcoming Wave; inherited and future context is not new authority.
 
 > **Initiation assessment.** While this plan is proposed, compare the tested
 > current implementation with the Vision, accepted architecture, current
 > best-practice sources, and the proposed outcome. Record a capability baseline
-> and each applicable Wave refresh in Section 0A. Identify assessment-added
-> technical-debt refactoring and prove that it is no more than 15% of the
-> pre-assessment planned implementation effort at both capability and Wave scope.
-> Route major refactoring outside initiation planning. Approval freezes the
-> adapted plan; this requirement does not reopen an earlier approved Wave.
+> and each applicable Wave refresh in Section 0A. Unapproved planning has no
+> 15% cap; major redesign is allowed through required architecture and approval
+> routes. Freeze the selected implementation estimate with the Wave. Later
+> supplemental refactoring shares its locked-Wave 15% budget, including changes
+> to past-Wave software. Future contributions remain provisional, not prematurely
+> decision-complete. This requirement does not reopen an earlier approved Wave.
 
 <div class="visual-flow"><span>Inventory every slice</span><b>→</b><span>Compare and classify decisions</span><b>→</b><span>Confirm Wave-binding decisions</span><b>→</b><span>Approve the complete Wave</span><b>→</b><span>Execute the Wave continuously</span></div>
 
@@ -79,12 +75,13 @@ All slices in `CAP-01` through `CAP-19` have individual implementation plans. If
 
 Record the tested implementation baseline, Vision/architecture/best-practice
 fit, plan adaptations, and necessary support improvements. The front matter
-records one common estimation unit, the itemized pre-assessment planned-work
-denominator, itemized refactoring allocations, and the major-refactor
-disposition. Existing validation recomputes `R <= 0.15 * P` at capability and
-Wave scope and deduplicates the Wave roll-up; reviewers assess whether the
-baseline and planning judgments are truthful. The approved Wave commit freezes
-the resulting packet without adding a separate planning controller.
+records one common estimation unit, the complete final upcoming-Wave atomic-task
+estimate, planned refactoring allocations, and major-redesign authority or
+disposition. Validation checks identities, coverage, units and duplicate
+allocations, not an initiation percentage cap. Independent review checks
+architecture and planning judgment. Approval freezes the selected scope and
+estimate; use [execution accounting](../README.md#locked-wave-refactoring-budget)
+for subsequent supplemental refactoring. Distant Wave details remain forecasts.
 
 ## 1. Capability outcome and production-ready exit
 ## 2. Slice map and end-to-end dependency logic
@@ -99,4 +96,9 @@ the resulting packet without adding a separate planning controller.
 ## 11. Research and technical basis
 ## 12. Approval record
 
-Every capability-wide decision section must be complete. Wave approval mode requires `decision_completion: complete`, an empty `open_blocking_decisions`, every decision classified by `binding_waves`, every binding decision `status: accepted` with a selected option, every active-Wave slice plan approved at the same immutable commit, required ADR/UI-reference approvals complete, and exact Wave approval inventory metadata.
+For the upcoming Wave, every binding decision must be accepted with a selected
+option, its blocker IDs resolved, each contributing slice plan approved at the
+same immutable commit, required ADR/reference approvals complete, and the Wave
+inventory exact. Decisions carry their `binding_waves` classification. Global
+`decision_completion` and blockers may remain pending for future decisions.
+Do not change inherited approved decision bytes to clear a planning checklist.

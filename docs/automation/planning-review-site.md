@@ -88,6 +88,19 @@ Other requires both `other_option` and rationale. The brief description is limit
 
 ## Applying feedback
 
+The current feedback importer and `adopt-recommendations` operate on the entire
+capability. Do not use them to clear pending future decisions in a rolling-wave
+(`initiation-assessment-2.0`) packet. For a current-Wave-only override while future
+decisions remain provisional, edit only the unapproved binding decisions in the
+canonical capability plan: record the selected candidate (or described Other),
+rationale and status, and remove only their resolved blocker IDs. Preserve future
+and already binding decision bytes; keep global completion pending if appropriate.
+Regenerate `wave review WN` and validate the complete upcoming Wave before approval.
+This supported planning-edit route adds no execution authority or approval gate.
+
+Use the whole-capability importer below only when intentionally resolving the
+complete still-mutable decision set; it is not a scoped rolling-wave editor.
+
 ```bash
 python tools/planctl.py --repo . apply-feedback CAP-XX <downloaded-json>
 ```
@@ -107,14 +120,15 @@ Feedback is never implicit approval.
 
 Before approval, reviewers confirm that the contributing capability plans show
 the applicable initiation assessment: current implementation baseline, Vision
-and best-practice fit, necessary support improvements, and a technical-debt
-refactoring share no greater than 15% at capability and Wave scope. Review the
-itemized atomic-task baseline, allocations, and deduplicated Wave roll-up rather
-than accepting an unexamined percentage. Deterministic validation checks
-structure and arithmetic; reviewers decide whether the baseline, product-fit
-assessment, and adaptations are sound. This is part of reviewing the existing
-packet, not a separate approval. The requirement is prospective and does not
-invalidate earlier immutable Wave approvals.
+and best-practice fit, earlier-Wave changes, and necessary redesign/support work.
+Unapproved planning has no 15% cap. Review the final upcoming-Wave atomic-task
+estimate and planned refactoring allocations; distant contributions remain
+provisional. Deterministic validation checks coverage, identities, units and
+duplicates; reviewers assess product fit and required architectural authority.
+Approval freezes the scope and estimate. Subsequent supplemental refactoring
+uses the shared [locked-Wave budget](../../planning/README.md#locked-wave-refactoring-budget),
+including earlier-Wave work. This is part of the existing packet/review workflow,
+not another approval; historical immutable approvals remain unchanged.
 
 After all capability feedback has been applied, approve the complete Wave packet:
 

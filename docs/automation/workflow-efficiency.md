@@ -59,6 +59,9 @@ approved authority:
 
 Reuse a concise maintenance/evidence note; this is not a new task state or human
 approval gate. Preserve historical records, adverse findings and safety rules.
+Any supplemental refactoring in a repair uses the current Wave's shared
+[refactoring budget](../../planning/README.md#locked-wave-refactoring-budget);
+the maintenance label does not exempt structural cleanup or debt repayment.
 Actual authority changes use the amendment route above. The generic kernel/store
 remain evidence-only; current W1 mutations use the taskctl compatibility adapter.
 Read [migration detail](governance-automation-simplification.md) only when the

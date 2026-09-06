@@ -77,23 +77,20 @@ point, not a reason to bend product direction around weak code. Within accepted
 architectural authority, Vision and best practice outrank implementation
 convenience.
 
-The assessment may add bounded enabling improvements required for safe new work,
-but it may not make a major refactoring decision about completed work. All
-assessment-added work affecting previously implemented structure or behavior is
-classified as technical-debt refactoring. Its forecast effort may
-not exceed 15% of the pre-assessment forecast effort of already planned work at
-either the capability or Wave level. The packet records the common estimation
-basis, itemized pre-assessment atomic-task denominator, refactoring allocations,
-deduplicated Wave roll-up, and disposition of excluded work. Existing planning
-validation recomputes the objective arithmetic; independent review evaluates
-whether the baseline and adaptations are credible. The immutable approved Wave
-commit preserves the accepted assessment without creating another controller or
-approval gate.
-Changing an accepted architectural decision, replacing a foundational runtime
-or data boundary, or restructuring multiple completed capability outcomes is a
-major refactor for this rule. Work beyond the budget or in one of those classes
-becomes separate future work or an explicit roadmap/architecture decision; if it
-is indispensable, readiness is denied.
+Unapproved Wave scope has no 15% change or refactoring limit. It may incorporate
+major redesign in response to current practice or earlier Wave changes, subject
+to the required architectural, migration, experience, and human approvals. Record
+the resulting itemized estimate and explicit redesign allocations before freezing
+the packet; never rewrite earlier approvals to accomplish the change.
+
+Once locked, supplemental refactoring beyond the selected scope shares a single
+15% budget against the original approved Wave implementation estimate. All child
+work and amendments use this budget; refactoring earlier-Wave software is charged
+to the current executing Wave. Approved planned redesign remains planned work;
+new refactoring and overruns are charged, without resetting or inflating the
+baseline. Follow [locked-Wave accounting](../../planning/README.md#locked-wave-refactoring-budget)
+for cumulative evidence, historical reconciliation, review, and over-budget
+handling. Available budget never substitutes for scope or architecture authority.
 
 Wave and capability plans remain deliberately changeable while proposed. The
 initiation assessment is incorporated into the existing complete Wave packet

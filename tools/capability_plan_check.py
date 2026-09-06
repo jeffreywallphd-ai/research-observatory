@@ -29,6 +29,7 @@ REQUIRED_HEADINGS = [
     "## 12. Approval record",
 ]
 INITIATION_POLICY = "initiation-assessment-1.0"
+CURRENT_INITIATION_POLICY = "initiation-assessment-2.0"
 FIFTEEN_PERCENT = Decimal("0.15")
 
 
@@ -119,16 +120,19 @@ def initiation_assessment_errors(
         return []
     capability_id = str(capability.get("id"))
     errors: list[str] = []
-    if meta.get("planning_policy_version") != INITIATION_POLICY:
-        errors.append(f"{capability_id}: planning_policy_version must be {INITIATION_POLICY}")
+    policy = meta.get("planning_policy_version")
+    current_policy = policy == CURRENT_INITIATION_POLICY
+    if policy not in (INITIATION_POLICY, CURRENT_INITIATION_POLICY):
+        errors.append(f"{capability_id}: planning_policy_version must be {CURRENT_INITIATION_POLICY}")
     if "## 0A. Initiation assessment and planning adaptation" not in body:
         errors.append(f"{capability_id}: missing heading ## 0A. Initiation assessment and planning adaptation")
     assessment = meta.get("initiation_assessment")
     if not isinstance(assessment, dict):
         errors.append(f"{capability_id}: initiation_assessment must be completed for {wave_id}")
         return errors
-    if assessment.get("policy_version") != "1.0":
-        errors.append(f"{capability_id}: initiation_assessment.policy_version must be 1.0")
+    expected_version = "2.0" if current_policy else "1.0"
+    if assessment.get("policy_version") != expected_version:
+        errors.append(f"{capability_id}: initiation_assessment.policy_version must be {expected_version}")
     assessment_label = f"{capability_id}.initiation_assessment"
     _required_text(assessment, "assessed_at", assessment_label, errors)
     _required_text(assessment, "estimation_unit", assessment_label, errors)
@@ -189,14 +193,14 @@ def initiation_assessment_errors(
             errors.append(f"{label}: major_refactor must be boolean")
         if disposition not in {"included", "future-enabler", "roadmap-architecture-decision"}:
             errors.append(f"{label}: disposition is invalid")
-        if item.get("major_refactor") is True and disposition == "included":
+        if not current_policy and item.get("major_refactor") is True and disposition == "included":
             errors.append(f"{label}: a major refactor cannot be included in initiation planning")
         _required_text(item, "description", label, errors)
         refactoring[allocation_id] = item
         if disposition == "included" and effort is not None:
             included_effort += effort
 
-    if included_effort > FIFTEEN_PERCENT * baseline_effort:
+    if not current_policy and included_effort > FIFTEEN_PERCENT * baseline_effort:
         errors.append(
             f"{capability_id}: capability refactoring budget exceeds 15% ({included_effort} > 0.15 * {baseline_effort})"
         )
@@ -206,7 +210,24 @@ def initiation_assessment_errors(
     if any(
         item.get("major_refactor") is True for item in refactoring.values()
     ) and major_disposition.lower().startswith("none"):
-        errors.append(f"{capability_id}: major_refactor_disposition must identify routed major work")
+        errors.append(
+            f"{capability_id}: major_refactor_disposition must identify major work and its authority/disposition"
+        )
+
+    if current_policy:
+        missing = sorted(
+            work_id for work_id, wave in work_waves.items() if wave == wave_id and work_id not in baseline_items
+        )
+        if missing:
+            errors.append(f"{capability_id}: final {wave_id} implementation estimate omits tasks: {missing}")
+        allocated: dict[str, Decimal] = {}
+        for item in refactoring.values():
+            if item.get("disposition") == "included":
+                work_id = str(item.get("work_id"))
+                allocated[work_id] = allocated.get(work_id, Decimal(0)) + (_effort(item.get("effort")) or Decimal(0))
+        for work_id, effort in allocated.items():
+            if work_id not in baseline_items or effort > baseline_items[work_id]:
+                errors.append(f"{capability_id}: planned refactoring exceeds final task estimate for {work_id}")
 
     refreshes = assessment.get("wave_refreshes")
     if not isinstance(refreshes, list):
@@ -251,8 +272,8 @@ def initiation_assessment_errors(
         Decimal(0),
     )
     if not wave_effort:
-        errors.append(f"{capability_id}: {wave_id} assessment has no itemized pre-assessment planned effort")
-    elif wave_refactoring_effort > FIFTEEN_PERCENT * wave_effort:
+        errors.append(f"{capability_id}: {wave_id} assessment has no itemized planned effort")
+    elif not current_policy and wave_refactoring_effort > FIFTEEN_PERCENT * wave_effort:
         errors.append(
             f"{capability_id}: {wave_id} refactoring budget exceeds 15% "
             f"({wave_refactoring_effort:g} > 0.15 * {wave_effort:g})"
@@ -260,12 +281,26 @@ def initiation_assessment_errors(
     return errors
 
 
-def wave_initiation_rollup_errors(entries: list[tuple[str, dict[str, Any], dict[str, Any]]], wave_id: str) -> list[str]:
-    """Recompute the deduplicated cross-capability Wave refactoring budget."""
+def wave_initiation_rollup_errors(
+    entries: list[tuple[str, dict[str, Any], dict[str, Any]]], wave_id: str, *, require_current_policy: bool = False
+) -> list[str]:
+    """Validate final Wave estimates; retain v1's caps only for historical packets."""
 
     if not wave_requires_initiation_assessment(wave_id):
         return []
     errors: list[str] = []
+    policies = {str(meta.get("planning_policy_version")) for _, meta, _ in entries}
+    current_policy = CURRENT_INITIATION_POLICY in policies
+    if (require_current_policy and policies != {CURRENT_INITIATION_POLICY}) or (current_policy and len(policies) != 1):
+        errors.append(f"{wave_id}: every new contribution must use {CURRENT_INITIATION_POLICY}")
+    if current_policy:
+        units = {
+            str((meta.get("initiation_assessment") or {}).get("estimation_unit", "")).strip()
+            for _, meta, _ in entries
+            if isinstance(meta.get("initiation_assessment"), (dict, type(None)))
+        }
+        if len(units) != 1 or "" in units:
+            errors.append(f"{wave_id}: final implementation estimates must share one nonempty estimation unit")
     planned_ids: set[str] = set()
     allocation_ids: set[str] = set()
     planned_effort = Decimal(0)
@@ -305,7 +340,7 @@ def wave_initiation_rollup_errors(entries: list[tuple[str, dict[str, Any], dict[
             refactoring_effort += _effort(item.get("effort")) or Decimal(0)
     if not planned_effort:
         errors.append(f"{wave_id}: initiation assessment Wave roll-up has no planned effort")
-    elif refactoring_effort > FIFTEEN_PERCENT * planned_effort:
+    elif not current_policy and refactoring_effort > FIFTEEN_PERCENT * planned_effort:
         errors.append(
             f"{wave_id}: deduplicated Wave refactoring budget exceeds 15% "
             f"({refactoring_effort:g} > 0.15 * {planned_effort:g})"
@@ -362,6 +397,12 @@ def main() -> int:
                 errors.append(f"{cid}: missing heading {heading}")
 
         decisions = meta.get("decisions") or []
+        scoped_planning = meta.get("planning_policy_version") == CURRENT_INITIATION_POLICY and bool(ns.wave)
+        planning_decisions = (
+            [d for d in decisions if ns.wave in (d.get("binding_waves") or [])] if scoped_planning else decisions
+        )
+        planning_ids = {d.get("id") for d in planning_decisions}
+        planning_blockers = set(meta.get("open_blocking_decisions") or []) & planning_ids
         ids = [d.get("id") for d in decisions]
         if len(ids) != len(set(ids)):
             errors.append(f"{cid}: duplicate decision IDs")
@@ -395,14 +436,21 @@ def main() -> int:
             if not binding_ids:
                 errors.append(f"{cid}: no decisions are binding in requested wave {ns.wave}")
             errors.extend(initiation_assessment_errors(meta, body, cap, ns.wave))
+            wave_state = next((item for item in backlog.get("waves", []) if item.get("id") == ns.wave), {})
+            if (
+                wave_requires_initiation_assessment(ns.wave)
+                and (wave_state.get("approval") or {}).get("status") != "APPROVED"
+                and not scoped_planning
+            ):
+                errors.append(f"{cid}: new Wave approvals require {CURRENT_INITIATION_POLICY}")
 
         # Authored packets may remain unapproved, but their researched best-in-class
         # defaults must already be completed decisions. Generated placeholder packets
         # are the only allowed pending state.
         if meta.get("supplemental_release") != "generated":
-            if meta.get("decision_completion") != "complete":
+            if not scoped_planning and meta.get("decision_completion") != "complete":
                 errors.append(f"{cid}: authored packet must have decision_completion complete")
-            if meta.get("open_blocking_decisions"):
+            if planning_blockers:
                 errors.append(f"{cid}: authored packet must not retain open blocking decisions")
             placeholder_markers = (
                 "to be researched",
@@ -412,7 +460,7 @@ def main() -> int:
                 "todo",
                 "recommended candidate",
             )
-            for d in decisions:
+            for d in planning_decisions:
                 if d.get("status") != "accepted" or not d.get("selected_option"):
                     errors.append(f"{cid}: authored decision {d.get('id')} must be selected and accepted")
                 searchable = " ".join(
@@ -423,9 +471,9 @@ def main() -> int:
 
         if ns.require_approved:
             approval = meta.get("approval") or {}
-            if meta.get("decision_completion") != "complete":
+            if not scoped_planning and meta.get("decision_completion") != "complete":
                 errors.append(f"{cid}: decision_completion must be complete")
-            if meta.get("open_blocking_decisions"):
+            if planning_blockers:
                 errors.append(f"{cid}: open_blocking_decisions must be empty")
             if ns.wave:
                 wave: dict[str, Any] = next(

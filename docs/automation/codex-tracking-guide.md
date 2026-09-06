@@ -22,6 +22,8 @@ require a claim or campaign mutation.
 5. After claim, read [task-start planning](task-start-planning.md). Map only
    material acceptance/failure boundaries to tests before product edits.
    This adds no approval or mandatory standalone document.
+   If adding refactoring, apply [locked-Wave accounting](../../planning/README.md#locked-wave-refactoring-budget)
+   before committing effort; include past-Wave work in the current Wave total.
 6. Stop only for an actual unmet authority, dependency, safety or feasibility
    gate; ordinary failed tests are work to resolve inside approved scope.
 

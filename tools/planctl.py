@@ -18,7 +18,11 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
-from capability_plan_check import wave_initiation_rollup_errors
+from capability_plan_check import (
+    CURRENT_INITIATION_POLICY,
+    wave_initiation_rollup_errors,
+    wave_requires_initiation_assessment,
+)
 from governance_kernel import (
     KernelValidationError,
     validate_paused_predecessor_record,
@@ -160,7 +164,7 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
         "document_type": "capability-decision-plan",
         "baseline": "1.3",
         "supplemental_release": "generated",
-        "planning_policy_version": "initiation-assessment-1.0",
+        "planning_policy_version": "initiation-assessment-2.0",
         "initiation_assessment": None,
         "capability_id": cap["id"],
         "title": cap["title"],
@@ -212,16 +216,18 @@ def scaffold_capability(root: Path, cap: dict[str, Any]) -> Path:
             sections.append(
                 heading + "\n\nRecord the tested implementation baseline, Vision/architecture/best-practice fit, "
                 "plan adaptations, and necessary support improvements. Complete the structured front-matter "
-                "assessment with its itemized atomic-task baseline, common estimation unit, refactoring "
-                "allocations, Wave refresh narrative, and major-refactor disposition. Existing validation "
-                "recomputes the capability and deduplicated Wave R <= 0.15 * P bounds; reviewers assess the "
-                "planning judgment. Route major or over-budget refactoring to a separate future disposition."
+                "assessment with its final upcoming-Wave atomic-task estimate, common estimation unit, planned "
+                "refactoring allocations, Wave refresh narrative, and major-redesign authority/disposition. "
+                "Unapproved planning has no 15% cap. Validation checks identities, coverage, units and duplicates; "
+                "reviewers assess architecture and product fit. Approval freezes the selected scope and estimate. "
+                "Later supplemental refactoring shares the locked Wave's cumulative 15% budget, including work "
+                "on earlier-Wave software. Future contributions remain provisional."
             )
         else:
             sections.append(heading + "\n\nComplete this section before approval.")
     body = (
         f"# {cap['id']} - Capability decision and execution plan\n\n"
-        "> **Generated proposed packet.** First assess the tested implementation against the Vision, accepted architecture, current best practice, and the proposed outcome. Keep assessment-added technical-debt refactoring within 15% of pre-assessment planned implementation effort at both capability and Wave scope, and route major refactoring outside initiation planning. Then resolve the capability-wide decision register and classify every decision by its binding Wave. Each pre-Wave approval binds only that Wave's exact decision inventory together with every slice plan assigned to it at one immutable commit; inherited and future decisions remain nonbinding context.\n\n"
+        "> **Generated proposed packet.** Use rolling-wave planning: reassess against Vision, architecture, current best practice and earlier delivery. Unapproved planning has no 15% cap; major redesign is allowed through required architecture and approval routes. Resolve the upcoming Wave's binding decisions and slices; distant contributions remain provisional. Each pre-Wave approval binds only that Wave's exact inventory at one immutable commit. Subsequent supplemental refactoring shares its cumulative 15% execution budget; inherited and future context does not authorize execution.\n\n"
         "> **Review surface.** Run `python tools/planctl.py --repo . review "
         + cap["id"]
         + "` and use the generated static pages to review all options and slice plans.\n\n"
@@ -291,7 +297,7 @@ def scaffold_slice(root: Path, cap: dict[str, Any], slice_: dict[str, Any]) -> P
         )
     body = (
         f"# {slice_['id']} - {slice_['title']}\n\n"
-        "> **Generated proposed plan.** Complete this plan using the Vision, Systems Design, authoritative backlog, approved experience reference, current primary research, and the applicable capability/Wave initiation assessment. Classify assessment-added changes to existing implementation as technical-debt refactoring under the recorded 15% limits; major refactoring is outside initiation planning. It authorizes only its ordered slice after its binding capability decisions and this slice's complete Wave packet are approved.\n\n"
+        "> **Generated proposed plan.** Refine this plan when its Wave approaches approval using Vision, accepted architecture, backlog, governed experience, current primary research, and the applicable capability/Wave initiation assessment. Unapproved planning has no 15% cap; major redesign requires the appropriate architecture/approval route. Later supplemental refactoring draws from the locked Wave's shared execution budget. Distant plans remain forecasts. Execution requires approval of the binding decisions and complete Wave packet.\n\n"
         f"> **Review surface.** Run `python tools/planctl.py --repo . wave review {slice_.get('wave', 'W?')}` and use the generated complete Wave packet.\n\n"
         + "\n\n".join(sections)
         + "\n"
@@ -485,6 +491,10 @@ def approve(
         if feedback_path:
             apply_feedback(root, capability, feedback_path, archive=True, regenerate=False)
         meta, body = frontmatter(plan_path)
+        if meta.get("planning_policy_version") == CURRENT_INITIATION_POLICY:
+            raise ValueError(
+                "Rolling-wave plans require complete Wave approval; use wave approve, not capability approve"
+            )
         unresolved = [
             item["id"]
             for item in meta.get("decisions", [])
@@ -560,7 +570,9 @@ def validate_wave(root: Path, wave_id: str, approved: bool) -> int:
         )
         failures += int(bool(run_validator(root, "capability_plan_check.py", capability_id, approved, wave_id)))
         failures += int(bool(run_validator(root, "slice_plan_check.py", capability_id, approved, wave_id)))
-    for error in wave_initiation_rollup_errors(assessment_entries, wave_id):
+    for error in wave_initiation_rollup_errors(
+        assessment_entries, wave_id, require_current_policy=(wave.get("approval") or {}).get("status") != "APPROVED"
+    ):
         print(f"ERROR: {error}", file=sys.stderr)
         failures += 1
     if approved:
@@ -2327,6 +2339,11 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
                 raise ValueError(f"Missing capability plan for {capability_id}")
             paths.append(cap_path)
             cap_meta, _ = frontmatter(cap_path)
+            if (
+                wave_requires_initiation_assessment(wave_id)
+                and cap_meta.get("planning_policy_version") != CURRENT_INITIATION_POLICY
+            ):
+                raise ValueError(f"{capability_id}: new Wave approvals require {CURRENT_INITIATION_POLICY}")
             unclassified = [item.get("id") for item in cap_meta.get("decisions", []) if not item.get("binding_waves")]
             if unclassified:
                 raise ValueError(f"{capability_id}: decisions lack explicit Wave classification: {unclassified}")
@@ -2359,12 +2376,21 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
                 continue
             cap_path = capability_plan_path(root, capability_id)
             meta, _ = frontmatter(cap_path)
+            scoped = meta.get("planning_policy_version") == CURRENT_INITIATION_POLICY
+            binding = [
+                item for item in meta.get("decisions", []) if not scoped or wave_id in (item.get("binding_waves") or [])
+            ]
+            binding_ids = {item.get("id") for item in binding}
             unresolved = [
                 item.get("id")
-                for item in meta.get("decisions", [])
+                for item in binding
                 if item.get("status") != "accepted" or not item.get("selected_option")
             ]
-            if meta.get("open_blocking_decisions") or unresolved or meta.get("decision_completion") != "complete":
+            if (
+                set(meta.get("open_blocking_decisions") or []) & binding_ids
+                or unresolved
+                or (not scoped and meta.get("decision_completion") != "complete")
+            ):
                 raise ValueError(f"{capability_id}: capability decisions are incomplete: {unresolved}")
             for path in slice_plan_paths(root, capability_id):
                 slice_meta, slice_body = frontmatter(path)

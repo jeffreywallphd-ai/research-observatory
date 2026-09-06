@@ -6,6 +6,7 @@ identity rules and lifecycle below, then only the section triggered by the actio
 | Action | Additional section |
 |---|---|
 | Prepare a new Wave/first capability or refresh a proposed contribution | Initiation assessment; templates and validation |
+| Add or review refactoring during an approved Wave | Locked-Wave refactoring budget; authority changes if scope changes |
 | Change approved authority or inspect an existing amendment | Authority changes |
 | Submit task evidence or operate a lease | [Task operations](../docs/automation/codex-tracking-guide.md); not historical recovery material |
 | Interpret an actual historical recovery record/hold | [Historical recovery](../docs/automation/project-automation-guide.md#23-governance-recovery-controller); do not use it for a new defect |
@@ -82,6 +83,15 @@ and the proposed Wave outcome. When a capability is first planned, record the
 same assessment at capability scope. A capability contributing to a later Wave
 needs only a concise refresh of facts that materially changed.
 
+Use rolling-wave planning: the current approved Wave is detailed and understood;
+distant Waves describe provisional outcomes, dependencies, assumptions, and risks.
+Their existing slice/task details are forecasts, not immutable commitments.
+Refine or replace those unapproved details as earlier Waves deliver evidence.
+Only the upcoming Wave's binding inventory must be decision-complete for its
+approval; do not force distant decisions or full slice designs prematurely.
+Preserve immutable IDs/history and distinguish inherited binding authority from
+unapproved future context.
+
 Record the assessment in the capability plan under **Initiation assessment and
 planning adaptation**. Include a capability baseline and a Wave-specific refresh
 for each Wave in which its decisions or slices become binding. The generated
@@ -97,7 +107,8 @@ Each assessment must state:
 - plan adaptations made for product fit rather than implementation convenience;
 - support improvements added because the current implementation is too weak for
   the planned work; and
-- the refactoring budget calculation and disposition of anything outside it.
+- the itemized implementation estimate, planned redesign/refactoring, and
+  disposition of deferred work, including changes inherited from earlier Waves.
 
 Tested code remains authoritative evidence of current behavior, but current
 behavior does not set the desired direction. Within accepted architectural
@@ -105,39 +116,76 @@ authority, Vision and best practice take precedence over adapting the plan to a
 weak implementation. A conflict with an accepted ADR or higher-authority source
 uses the repository mismatch/ADR process; it is not silently decided here.
 
-Initiation planning must not decide a major refactor of completed work. An item
-added by the assessment that alters previously implemented structure or behavior
-is technical-debt refactoring. Calculate, at both
-capability and Wave scope:
+There is no percentage limit on assessment, replanning, or refactoring selected
+while the upcoming Wave is unapproved. Major redesign may be included when
+needed for product fit, current practice, or earlier Wave changes. This includes
+replacement of a foundational runtime/data boundary or restructuring completed
+outcomes, provided the required ADR, migration/recovery, experience, and human
+approvals are resolved before implementation. A mutable plan is not permission
+to rewrite an earlier approval or execute later-Wave work early.
 
-```text
-refactoring share = assessment-added technical-debt refactoring effort
-                    / pre-assessment forecast effort of already planned implementation work
-```
-
-The share must be no greater than `0.15`. Record the common estimation unit and
-both values. Raw task count is acceptable only when the plan deliberately uses
-size-normalized tasks. Do not rename or split refactoring to evade the limit.
-Bind the pre-assessment baseline to its itemized atomic task IDs and estimates,
-a recorded assessment date. Never count both a slice and its child tasks. Mixed
-new/refactor items allocate the refactoring effort separately. The existing Wave
-calculation deduplicates task and allocation IDs across capability contributions
-and recomputes the arithmetic; independent reviewers determine whether the
-baseline and estimates are credible. The approved Wave commit, rather than a
-second planning-history controller, freezes the accepted record. Keep the core
-of the plan new or previously planned product work.
-
-For this rule, a major refactor includes changing an accepted architectural
-decision, replacing a foundational runtime or data boundary, or restructuring
-multiple completed capability outcomes. If necessary support exceeds the limit
-or entails such a refactor, record it as future enabler/capability work or raise
-an explicit roadmap/architecture decision. Do not conceal it in initiation
-planning. A Wave or capability that cannot safely deliver its outcome within
-the allowed support boundary is not ready for approval.
+Record one estimation unit and itemized atomic task estimates for the resulting
+plan, including explicit redesign/refactoring allocations. Mixed tasks identify
+their refactoring portion. Never count both a slice and its children or count a
+shared allocation twice. Reviewers assess product value, estimates, and
+architecture fit; the complete Wave approval freezes the selected scope and
+estimate. Future portions of a cross-Wave capability remain mutable; its already
+binding decisions require amendment or an approved architectural successor.
 
 Proposed plans may be freely improved during this assessment. Once the complete
 Wave packet is approved at its immutable commit, the assessment and resulting
 scope are frozen with it and the normal append-only amendment rules apply.
+
+## Locked-Wave refactoring budget
+
+After approval, supplemental technical-debt refactoring beyond the selected
+scope must satisfy `R <= 0.15 * P`. `P` is the itemized implementation effort
+frozen at the current Wave's original approval; `R` is cumulative supplemental
+refactoring performed plus committed remaining refactoring effort in that Wave.
+The budget protects delivery of the agreed features while allowing improvements.
+Approval of the next Wave resets the budget: its own locked estimate becomes
+`P` and supplemental consumption starts at zero. Neither unused allowance nor
+past spending carries forward. Refactoring deferred into that Wave is classified
+there as explicitly approved planned scope or a later supplemental allocation;
+the same work must not be charged twice or hidden between Waves.
+
+- Charge capability, slice, task, correction, maintenance, and amendment work to
+  this one Wave budget. Child allocations are subsets, not fresh 15% allowances.
+  Refactoring software delivered in a past Wave is charged to the executing
+  Wave, never to the past Wave's unused allowance or a future Wave.
+- Redesign/refactoring explicitly selected before the Wave was frozen is planned
+  scope and remains executable. Only additions or overruns beyond its approved
+  allocation enter `R`; otherwise allowing major redesign at initiation would
+  become an unusable approval. Do not retroactively relabel added work as planned.
+- Include structural cleanup and debt repayment wherever performed. Ordinary
+  implementation and defect restoration are not automatically refactoring, but
+  mixed work must charge its actual refactoring portion. Do not relabel cleanup
+  as debugging, split tasks, or exclude abandoned/spent work to evade the budget.
+- Keep the original `P`, unit, approval commit, atomic task IDs, and allocation
+  identities fixed. Amendments and estimate increases do not enlarge `P` or
+  reset `R`. Use estimates from one recorded basis, not raw task counts unless
+  deliberately size-normalized. Check forecast before commitment and reconcile
+  spent/remaining effort at review and checkpoints without double counting.
+- Record the cumulative calculation and prior allocation references in existing
+  task/amendment evidence; independent review checks completeness and arithmetic.
+  No new campaign, task state, or controller is required. The existing historical
+  ECR per-packet checks alone do not establish this cumulative budget.
+
+The budget is not a change allowance for immutable criteria or architecture.
+Even below 15%, scope/security/migration/experience/release changes still require
+the normal amendment and human approval. Above the limit, defer optional work
+to an unapproved future Wave for unrestricted replanning. If required work cannot
+fit, stop only that affected work and present an explicit owner decision about
+deferral or a separately authorized exception; never infer one from general
+permission to continue. New major redesign normally belongs in upcoming planning.
+
+Apply this rule prospectively without rewriting frozen assessments, amendments,
+or historical exceptions. For an active older Wave, append an evidence-based
+reconciliation of its original approved estimate and known prior supplemental
+allocations before claiming more refactoring capacity. Missing historical effort
+is unknown, not zero; do not invent precision or assume unused budget. Previously
+authorized work remains authorized under its exact recorded scope. This policy
+change itself neither approves a new product refactor nor reopens a released task.
 
 ## Authority changes
 
@@ -217,11 +265,13 @@ its validation failure:
 - Task-start worksheet: [task-start planning](../docs/automation/task-start-planning.md).
 
 Missing classification or planning must be resolved before the complete Wave
-approval. The prospective `planning_policy_version: initiation-assessment-1.0`
-requires structured assessments and applicable refreshes for W2 and later.
-Validation recomputes both 15% bounds and rejects invalid task identities and
-major-refactor allocations; independent reviewers judge the underlying estimates
-and product/architecture fit. It does not rewrite earlier approvals.
+approval. New W2-and-later packets use
+`planning_policy_version: initiation-assessment-2.0`: structured assessments,
+itemized estimates and applicable refreshes, without an initiation percentage
+cap or blanket ban on major redesign. Validation rejects invalid identities and
+duplicate allocations; reviewers check architectural authority and the locked
+execution budget. Version 1.0 validation remains for historical records, not new
+approvals. Neither version backfills earlier approved packets.
 
 Backlog validation identifies structural/type/status/timestamp errors, duplicate
 IDs, invalid parent namespaces/review metadata, missing dependencies and exact
