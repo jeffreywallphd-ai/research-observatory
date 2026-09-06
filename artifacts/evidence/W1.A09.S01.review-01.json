@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-contribution-independent-review",
+  "sliceId": "W1.A09.S01",
+  "amendmentId": "W1.A09",
+  "capabilityId": "CAP-01",
+  "title": "Native project UX and truthful presentation qualification",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "result": "approved",
+  "reviewedCompletionDeliveryCommit": "11f272be8268a67b18fc4bca6613c0f5da85daf8",
+  "bindingCheckedAt": "2026-09-06T00:06:18.640105+00:00",
+  "notes": "Independent integrated review approves the four-task W1.A09.S01 contribution at the exact four-task DONE delivery. All four immutable contribution criteria are satisfied at this review boundary, with no open contribution or task findings. The accumulated proof combines actual Windows/native/Core integration and failure/security/lifecycle evidence with separately labeled reference captures and renderer doubles; it does not pretend every observation came from one frozen production composition. The exact semantic/presentation authority and independent task/control checkpoints remain intact. Criterion 4 establishes the enforced independent exit/adoption and exact PAUSED-parent return contract; actual amendment exit/adoption and return have not occurred and are not approved by this document. The existing amendment completion/exit mechanism is the carrier of this contribution disposition; no new slice controller or state mutation is introduced.",
+  "independence": {
+    "implementationOwner": "codex",
+    "statement": "This reviewer authored the independent W1.A09.T03 and W1.A09.T04 ledgers, bounded advisory reviews and synthetic adversarial fixtures, but no product, fixture-runtime, evidence-helper or controller implementation. W1.A09.T01/T02 and the separate pre-rebind control/experience checkpoint were reviewed by other independent agents. This contribution review evaluates the integration and retained obligations beyond merely counting task approvals. Only this new contribution-review file is authored for this subtask."
+  },
+  "authority": {
+    "approvedPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "packetPath": "planning/enabler-change-requests/ECR-0008.packet.json",
+    "packetGitBytesSha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+    "executionPath": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+    "executionGitBytesSha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560",
+    "uxAddendumPath": "planning/enabler-change-requests/ECR-0008.ux-addendum-01.md",
+    "uxAddendumGitBytesSha256": "694872d27297d3a4f142356a06ce37f75d3142e0c30b290b103102018a775924",
+    "sliceDefinitionCanonicalSha256": "d9f0818a120102ddcd3e80727be5a6d19fc26c424811eff4188f5d2af2306a6a",
+    "sliceCriteriaCanonicalSha256": "a975cbad2b0feae38c7dbf6423ea86fdf51de5e5a0e715e6f99bc7f955a9e039",
+    "canonicalJsonConvention": "UTF-8 JSON with sorted keys and compact separators, using the repository controller's default ASCII escaping. Manifest and ledger digests below use the controller's CRLF/lone-CR to LF byte normalization.",
+    "semanticReference": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "presentationReference": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "tokenSourceIdentity": "1.4"
+  },
+  "taskBindings": [
+    {
+      "taskId": "W1.A09.T01",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:t01-r02-independent-reviewer",
+      "attemptId": "R01",
+      "candidateCommit": "7a46e91a4558d9286a94d21aa85b050f6323e286",
+      "submissionPacketSha256": "643b977c1b875f7b11edd5f1c70e36857fa9796e4d9cb3b980e3ee9535a3bc43",
+      "manifestPath": "artifacts/evidence/W1.A09.T01.json",
+      "manifestCanonicalSha256": "8fcdb044e699f83673998dd5f8f78763a10bf8c5397fd6f47d8b9328bcf5eb3d",
+      "reviewLedgerPath": "artifacts/evidence/W1.A09.T01.review-R01.json",
+      "reviewLedgerCanonicalSha256": "8609e02b527340c3da3efd4cd465c81c7cc136d083f6998bb9ff43a975f92e00",
+      "doneTaskRecordCanonicalSha256": "084f376f0b2116fd91e995e3df13308d0e724666b32b79bc01ae502d9f036c73",
+      "openFindings": []
+    },
+    {
+      "taskId": "W1.A09.T02",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/t01_publication_checkpoint",
+      "attemptId": "R01",
+      "candidateCommit": "a6a219ce0ec32bc96b151aad13c19c5646ec8db6",
+      "submissionPacketSha256": "6015c4c671b4a031d109130d2105f882ec73221b46272a7ee41752d0e6f2e415",
+      "manifestPath": "artifacts/evidence/W1.A09.T02.json",
+      "manifestCanonicalSha256": "22af4093b462a8f3d97642b36b5a3714f5fa9adc3d0982294a9e2ae3445b08a1",
+      "reviewLedgerPath": "artifacts/evidence/W1.A09.T02.review-R01.json",
+      "reviewLedgerCanonicalSha256": "38126680eb82121f0ccd13bf572060296c9250137bc755403af011a27b602dd0",
+      "doneTaskRecordCanonicalSha256": "833eaa976908757b7b4fcbea6332dd4011aa139acc913e826ff26a0138130177",
+      "openFindings": []
+    },
+    {
+      "taskId": "W1.A09.T03",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/t03_acceptance_review",
+      "attemptId": "R01",
+      "candidateCommit": "30357ec178cc1a57646b7fe64dca3ee7670756d2",
+      "submissionPacketSha256": "3a998b90f30a6118478f4e474c9100c3dee56e019e21bf19c51b64df9362f1d6",
+      "manifestPath": "artifacts/evidence/W1.A09.T03.json",
+      "manifestCanonicalSha256": "13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4",
+      "reviewLedgerPath": "artifacts/evidence/W1.A09.T03.review-R01.json",
+      "reviewLedgerCanonicalSha256": "04bbbd016f496e82b09c2245909cd70493d04c6cb2d4d37771efda57d92e8642",
+      "doneTaskRecordCanonicalSha256": "82362567525910f107c2c81418d61b6a04d2204647b6080627c31eaf5dcf9904",
+      "openFindings": []
+    },
+    {
+      "taskId": "W1.A09.T04",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/t03_acceptance_review",
+      "attemptId": "R02",
+      "candidateCommit": "6cb1514f2f2349e3e34e40e059986e635cd609cc",
+      "submissionPacketSha256": "0534f799ece7dcc1139a621bb93f756ffd0f4d46dde7b15074482c7571fe0ed1",
+      "manifestPath": "artifacts/evidence/W1.A09.T04.remediation-02.json",
+      "manifestCanonicalSha256": "e16fd7421b597c1c3a84078ec87feb34c27d1c92070566546d22efbbbf2167a5",
+      "reviewLedgerPath": "artifacts/evidence/W1.A09.T04.review-R02.json",
+      "reviewLedgerCanonicalSha256": "94c747ec3d0630687e2befe96a6f1fe041de8b04b12852c770dc543805b33f68",
+      "doneTaskRecordCanonicalSha256": "caa74ed0abac24c82b1389cef5be1af05417dad0da7262f535b248f530b0e540",
+      "retainedAdverseAttempt": "R01",
+      "closedFindingIds": ["W1.A09.T04.R01.F01", "W1.A09.T04.R01.F02"],
+      "openFindings": []
+    }
+  ],
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "criterion": "All reference, native transport/readiness and shared folder-selection task criteria pass together on actual Windows/native/Core boundaries including failure/denial/cancellation/lock/close/recovery.",
+      "result": "satisfied",
+      "basis": "The accumulated current-source union connects approved presentation and unchanged semantic catalog generation to generated requests, native admission/readiness, actual protected Core persistence and shared folder-selection behavior. W1.A09.T04 units-03/native-02/integration-02 pass all 21 affected commands, including actual generated-native-Core and frozen package failure/restoration. Actual embedded React/Tauri/Core fixture observations create from a friendly name/default parent without path typing, explicitly open, close the app, restart a fresh native/Core process, select the existing folder through Windows Shell, and explicitly reopen/close with saved objective preserved. W1.A09.T02's independently replayed real native/Core catalog, multiline narrative, lineage, denial and restart proofs and W1.A09.T03's real default/protected database and native modal evidence complement that lifecycle. Prior T03 Escape/focus/manual-lock/main-close observations are reused only for unchanged production mechanisms, not mislabeled as a new T04 GUI run. Current fixture publication, identity/resume, reparse, stale-generation and cleanup tests cover the changed composition. This is an integrated accumulated proof with declared principal/fixture boundaries, not merely four task-status assertions or a single fully frozen ordinary-profile run."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "Durable semantic1.5 and prior approvals/evidence remain unchanged; presentation1.6 gets truthful fresh baseline and independent control/experience checkpoint.",
+      "result": "satisfied",
+      "basis": "W1.A09.T01's approved review authenticates original semantic1.5 source pins, Git-independent generation, root-only presentation compatibility and real before/after persisted predecessor/history/support-return equality. Its separately authored control/experience checkpoint independently rerendered all 66 observations, inspected all six changed images and validated exact approved publication/baseline history before any consumer rebind. This review confirms the checkpoint is the immediate parent of rebind5e914322 and confirms workflow-profile sources/witness, active reference and visual baseline remain unchanged since approved T01 candidate7a46e91a. This reviewer's later T04 presentation checkpoint actually replayed all five reference conformance checks and the separate built-product frame, with 425 stable input hashes. Historical adverse captures/reports, approvals, token1.4 identity and semantic1.5 identity are not rewritten or promoted into new observations."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "Independent task and slice reviews close assigned findings without weakening tests; F02/UX01 remain for existing A08.T02 after return.",
+      "result": "satisfied",
+      "basis": "The committed delivery records all four tasks DONE with independent exact-candidate approval and no current submission. This reviewer recomputed every retained attempt packet and manifest/ledger binding, replayed closure order and confirmed no open task findings. The T04 R01 evidence-safety and candidate-binding defects remain adverse history and are explicitly closed by independently replayed R02 corrections, not deleted. Earlier measurement, fixture, publication and metadata corrections preserve valid assertions and real adverse results. This document supplies the distinct integrated contribution review; no additional acceptance-bound blocker was found. Assigned F01 and UX02-UX06 are supported within their named boundaries. F02/UX01 remain unchanged W1.A08.T02 obligations; unrelated usability IDs are not falsely closed or conflated with ECR UX IDs."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Independent exit/adoption returns to paused unchanged A08; W1 qualification and human G1 remain separate.",
+      "result": "satisfied-at-contribution-review-boundary",
+      "basis": "The immutable execution sequence requires this contribution review before independent amendment exit/adoption. Accordingly this disposition verifies the exact enforced return contract and prerequisite evidence, not a future state transition. At bound delivery11f272be, W1.A09 is ACTIVE, its completion remains PENDING and W1.A08 is PAUSED with frozen record hash3856a53b. Approved pausedPredecessor, live correction and return-preparation agree exactly. The supported completion/exit/adoption sequence must independently approve exit, commit that reviewed completion, then authenticate separate adoption evidence and verify unchanged PAUSED A08 with no live parent lease. No ordinary W1/CAP-07 resume is permitted until later A08 adoption. Full Windows/repository W1 qualification, independent Wave review and human G1 remain required. Actual exit, adoption and return are explicitly pending and are neither performed nor approved here."
+    }
+  ],
+  "checksPerformedForThisContributionReview": [
+    {
+      "name": "exact-authority-and-four-DONE-task-binding",
+      "kind": "read-only Git/JSON/YAML verification",
+      "result": "passed",
+      "detail": "Read immutable ECR-0008 sliceContributions from approved2160cc99 and all four task records from DONE delivery11f272be. Recomputed the exact four-criterion/definition digests, every attempt packet digest and criterion digest, attached manifest and review-ledger canonical hashes, and compared their bytes with the delivery Git blobs. Replayed all findings/closures in order: five task review attempts total, two retained T04 R01 findings, both closed by R02, none open. Current task records equal the delivery. Confirmed independent reviewers differ from the implementation owner."
+    },
+    {
+      "name": "semantic-reference-and-checkpoint-order",
+      "kind": "read-only scoped Git comparison",
+      "result": "passed",
+      "detail": "No diff since T01 candidate7a46e91a in packages/contracts/workflow-profile, design/ui-reference or verification/baselines/desktop-ui.json. Confirmed strict ordered ancestry reference0460b2af -> baseline607f6fd3 -> independent checkpoint893de39f -> consumer rebind5e914322 -> T01 candidate7a46e91a; checkpoint is rebind's immediate parent. Read the full T01/T02 independent ledgers and separate T01 control/experience checkpoint."
+    },
+    {
+      "name": "cross-boundary-evidence-and-return-review",
+      "kind": "read-only integrated assessment",
+      "result": "passed",
+      "detail": "Reviewed the four-criterion integration map against actual T04 native lifecycle fields, current 21-command affected union, earlier independent native/Core and protected dialog proofs, presentation/benchmark evidence and retained scope notes. Checked correctionReturn equality and recomputed unchanged PAUSED A08 record hash at DONE delivery. No new uncovered code change or failure path justified repeating a product suite."
+    }
+  ],
+  "reusedActualIndependentChecks": [
+    {
+      "performedBy": "agent:/root/t03_acceptance_review",
+      "binding": "artifacts/evidence/W1.A09.T03.review-R01.json",
+      "detail": "25 actually executed focused tests: ten build-binding negatives, four protected-source tests, five directory adapter/destination tests and six fixture/persistence safety tests. Real fixture storage and one bounded Core child are declared in the original review. These are earlier executions, not new contribution replays."
+    },
+    {
+      "performedBy": "agent:/root/t03_acceptance_review",
+      "binding": "artifacts/evidence/W1.A09.T04.review-R01.json",
+      "detail": "Actual five separate reference-conformance checks and built-frame check; 14 independent redactor cases; nine mocked path and three isolated real-Git adverse characterizations; exact source/evidence binding and all-sample performance arithmetic. Producer native/UI/package tests are not counted as reviewer executions."
+    },
+    {
+      "performedBy": "agent:/root/t03_acceptance_review",
+      "binding": "artifacts/evidence/W1.A09.T04.review-R02.json",
+      "detail": "11 actual focused remediation tests and lint in retained synthetic fixture binding-tests-yhmoetmw; actual corrected reader replay for seven distinct selected reports; 566 guarded current source hashes and 532 candidate blob identities. Original R01 failures and R02 explicit closures remain separate."
+    },
+    {
+      "performedBy": "other independent reviewers",
+      "binding": "W1.A09.T01/T02 ledgers and T01.control-experience-checkpoint-01.json",
+      "detail": "Reuse their authenticated, explicitly attributed semantic/witness/real-Git checks, fresh 66-case reference render, native library/generated contracts and actual build-bound native/protected Core replay. This reviewer read and bound these records but does not claim to have personally rerun those executions."
+    }
+  ],
+  "keyEvidenceBindingsRawSha256": {
+    "artifacts/evidence/W1.A09.T01.control-experience-checkpoint-01.json": "376e105cf6b4417f758e1afb8abbb46f135152e64b0061a1bc26602a606f6f6f",
+    "packages/contracts/workflow-profile/presentation-compatibility.json": "c87b314c080fe3f8f5c20be30258bfae60fdba2729c04903647fd4e8d0f20e06",
+    "artifacts/evidence/W1.A09.T04.review-bundle.md": "0582ebb1567bf14bd49bd491c7132064cd2206a22c4c4de66952f4452072de3c",
+    "artifacts/evidence/W1.A09.T04.return-preparation.json": "7817d1293d7e684abbded3f50aff4622a6b2a066d54c00d8825b2f6e36638517",
+    "artifacts/evidence/W1.A09.T04.native-ui-observations-01.json": "6dae910f41e88057e24b8a58240d6bd34583218c65a0174c4680b2bcb3980c64",
+    "artifacts/evidence/W1.A09.T04.final-binding-02.json": "0ee46e68944d831b335f6e9243d73f30c0263fd5880b270e26beedf5aa8f4936",
+    "artifacts/evidence/W1.A09.T04.presentation-check-01.json": "605c3723bea2659f3b86a756cae686a455faff5311e2c18ec5f5a50d04244928",
+    "artifacts/evidence/W1.A09.T04.performance-02.json": "6ed44782174c5ee008d8f3ea08f75df53f8f90d354b98c2681e4abd96050e6ad",
+    "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json": "5d0434b8d32724b1ec817ca7029905273823d14c9c2c1189d562b9e1cb82da10"
+  },
+  "findings": [],
+  "openFindingIds": [],
+  "retainedObligations": [
+    "W1.A08.T02 owns F02/UX01 effective paragraph spacing and full-height sidebar after exact PAUSED return, using required actual product geometry/themes/viewports/reduced-motion qualification. This contribution does not implement or close that work.",
+    "Existing usability U02/U03/U05/U06 and requested startup/test-window geometry require lawful W1 handling. The fresh blind study reports real creation/save/reopen success but partial downstream outcomes; no full nine-task success is claimed. Fixture-denied task-center/support behavior is not automatically a production defect.",
+    "Prior T03 modal observations remain prior-source evidence with current mechanism equivalence, not a fresh T04 protected-dialog GUI run. Fixture resume receipts and held-path checks are not malicious same-account isolation. Earlier diagnostic success does not establish the precise cause of prior launch-context failures.",
+    "The append-only packaging-scope review corrects the earlier over-specific single packaged lifecycle phrase without changing original records or approved requirements. Actual source-built React/Tauri/Core lifecycle plus frozen sidecar build/--check/failure recovery, production native release compilation and release resource/no-fallback checks satisfy their declared contribution boundaries. Fully frozen/unmodified ordinary-profile startup, authentication/installer and complete W1 release qualification remain unproved later obligations.",
+    "The earlier broad native Clippy failures are retained history; current T04 production/harness all-test-target lint passes after bounded assertion-preserving test corrections. Source identity, current passing report and prior failure are not conflated.",
+    "Independent amendment exit review and separate exact adoption evidence remain pending. Adoption must return unchanged PAUSED W1.A08, not ordinary Wave scope or an active parent lease. W1.A08 activation/recovery, completion and adoption precede ordinary W1/CAP-07 resume. Full repository/Windows cross-capability qualification, independent Wave review and human G1 remain mandatory.",
+    "No local-main integration through unmet ancestor gates, remote action, destructive researcher-data operation, new runtime/security authority or later-Wave work is authorized by this contribution approval."
+  ],
+  "returnStateAtReviewedCommit": {
+    "W1A09Lifecycle": "ACTIVE",
+    "W1A09Completion": "PENDING",
+    "W1A08Lifecycle": "PAUSED",
+    "W1A08RecordSha256": "3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506",
+    "actualExitReviewCompleted": false,
+    "actualAdoptionOrReturnCompleted": false
+  },
+  "reviewerSafety": "This contribution subtask was read-only except for this new review file. No new test fixtures, product/helper edits, real Git index/branch changes, controller/backlog mutation, native UI/build/Cargo/benchmark/production launch, ordinary policy/vault/credentials, remote or sibling-workspace access occurred. The protected W1.A04.B00.json was never opened, read, hashed, copied or changed. Earlier mock-only exclusion tests and synthetic fixtures remain attributed to their original task reviews; no actual protected alias/redirect target was exercised."
+}
