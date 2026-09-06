@@ -19,6 +19,7 @@ from desktop_app_check import (  # noqa: E402
 from product_layout_measurements import (  # noqa: E402
     PANEL_FLOW_GEOMETRY,
     SHELL_GEOMETRY,
+    exercise_workflow_context_keyboard,
     panel_flow_errors,
     shell_geometry_errors,
 )
@@ -61,6 +62,42 @@ def valid_shell(stacked=False):
 
 
 class ProductLayoutMeasurementsTests(unittest.TestCase):
+    def test_context_keyboard_skips_disabled_actions_and_keeps_long_labels_reachable(self):
+        styles = "\n".join((REPO / path).read_text(encoding="utf-8") for path in (
+            "design/ui-reference/assets/tokens.css",
+            "packages/ui-components/src/styles.css",
+            "apps/desktop/src/app.css",
+        ))
+        # Explicit shared-style consumer fixture; actual product is separately
+        # exercised by the qualification recorder with unchanged Core adapters.
+        document = f"""<html><head><style>{styles}</style></head><body>
+          <button class="ro-button">Preceding control</button><main>
+          <section class="workflow-context ro-card" data-workflow-context>
+            <button class="ro-button">Previous step · Research Intent</button>
+            <button class="ro-button" disabled>Next step · Unavailable</button>
+            <button class="ro-button">Return to current step · Review the detailed research objective,
+              evidence boundaries and researcher-authorized methods for this project</button>
+          </section></main></body></html>"""
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page(reduced_motion="reduce")
+                page.set_content(document)
+                for width, height in ((1440, 900), (1280, 720), (720, 450)):
+                    for theme in ("light", "dark"):
+                        with self.subTest(width=width, theme=theme):
+                            page.set_viewport_size({"width": width, "height": height})
+                            page.locator("html").evaluate("(node, theme) => node.dataset.theme = theme", theme)
+                            self.assertEqual(
+                                {"buttonCount": 3, "enabledCount": 2, "traversedCount": 2},
+                                exercise_workflow_context_keyboard(page),
+                            )
+                page.locator("[data-workflow-context] button").last.evaluate("node => node.tabIndex = -1")
+                with self.assertRaisesRegex(ValueError, "skipped"):
+                    exercise_workflow_context_keyboard(page)
+            finally:
+                browser.close()
+
     def test_layout_sampler_is_a_bound_capture_producer_input(self):
         from product_style_check import CAPTURE_SOURCE_FILES
 

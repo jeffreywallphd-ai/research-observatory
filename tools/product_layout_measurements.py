@@ -6,6 +6,37 @@ import math
 from itertools import pairwise
 from typing import Any
 
+
+def exercise_workflow_context_keyboard(page: Any) -> dict[str, int]:
+    """Traverse real context actions with Tab, starting at the preceding control."""
+    selector = "main > [data-workflow-context] button:visible"
+    actions = page.locator(selector + ":not(:disabled)")
+    result = {"buttonCount": page.locator(selector).count(), "enabledCount": actions.count(), "traversedCount": 0}
+    if not actions.count():
+        return result
+    anchor = actions.first.evaluate_handle(r"""node => {
+      const candidates = [...document.querySelectorAll('button,input,select,textarea,a[href],[tabindex],summary')]
+        .filter(item => item.tabIndex >= 0 && !item.disabled && item.getClientRects().length
+          && getComputedStyle(item).visibility === 'visible');
+      return candidates[candidates.indexOf(node) - 1];
+    }""")
+    try:
+        anchor.evaluate("node => node.focus()")
+        for index in range(actions.count()):
+            page.keyboard.press("Tab")
+            action = actions.nth(index)
+            if not action.evaluate("node => node === document.activeElement"):
+                raise ValueError("workflow context action was skipped or disabled control received Tab focus")
+            page.wait_for_function("parseFloat(getComputedStyle(document.activeElement).outlineWidth) >= 2")
+            if not action.evaluate("""node => { const r = node.getBoundingClientRect();
+              return r.top >= -.5 && r.bottom <= innerHeight + .5 && r.left >= -.5 && r.right <= innerWidth + .5;
+            }"""):
+                raise ValueError("workflow context keyboard target is not visible within the viewport")
+            result["traversedCount"] += 1
+    finally:
+        anchor.dispose()
+    return result
+
 PANEL_FLOW_GEOMETRY = r"""element => {
   const visible = node => node.getClientRects().length && getComputedStyle(node).visibility === 'visible';
   return [...element.querySelectorAll('.ro-panel > div')].filter(visible).map(node => {

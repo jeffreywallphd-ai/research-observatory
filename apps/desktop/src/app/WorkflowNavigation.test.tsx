@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import type { WorkflowProgressProjection } from "@research-observatory/contracts/core-api";
 
-import { WorkflowNavigation } from "./WorkflowNavigation";
+import { WorkflowContextBar, WorkflowNavigation } from "./WorkflowNavigation";
 import {
   createSupportingReturn,
   type WorkflowAuthoritySnapshot,
@@ -122,6 +122,33 @@ const supportingProgress: WorkflowProgressProjection & {
 };
 
 describe("WorkflowNavigation", () => {
+  it("uses shared controls for context actions while preserving unavailable and disabled states", () => {
+    const supportingReturn = createSupportingReturn(authority, "tasks", supportingProgress);
+    for (const disabled of [false, true]) {
+      const html = renderToStaticMarkup(
+        <WorkflowContextBar
+          authority={authority}
+          currentWorkspace="tasks"
+          supportingReturn={supportingReturn}
+          disabled={disabled}
+          onSelectStage={() => undefined}
+          onReturn={() => undefined}
+        />,
+      );
+      const buttons = [...html.matchAll(/<button\b[^>]*>[^<]*<\/button>/g)].map(([button]) => button);
+      expect(buttons).toHaveLength(2);
+      for (const button of buttons) expect(button).toContain('class="ro-button ro-button--secondary"');
+      expect(buttons[0]).toContain('disabled=""');
+      expect(buttons[1].includes('disabled=""')).toBe(disabled);
+    }
+    const lastStage = { ...authority, currentStageKey: "audit-lineage-1", currentPageContractId: "audit-lineage.html" };
+    const html = renderToStaticMarkup(
+      <WorkflowContextBar authority={lastStage} currentWorkspace="audit" onSelectStage={() => undefined} onReturn={() => undefined} />,
+    );
+    expect(html).toMatch(/<button[^>]*class="ro-button ro-button--secondary"[^>]*>Previous step/);
+    expect(html).toContain("Next step · None");
+  });
+
   it("renders an accessible ordered rail, context, unknown gate truth, outputs, and complete tool disclosure", () => {
     const html = renderToStaticMarkup(
       <WorkflowNavigation

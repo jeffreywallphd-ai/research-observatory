@@ -167,3 +167,13 @@ application or, for an intentional design change, complete the design-first
 reference approval workflow before changing implementation or baselines. If the
 browser is absent, install the pinned Chromium build with the command above; do
 not substitute another engine or version.
+
+## Workflow action coverage
+
+Workspace control measurements enumerate visible native button elements, not
+only elements already carrying the shared styling class. Include the shared
+workflow context above the workspace in main content. Bind that independently
+observed button count to the semantic measurement inventory so omitted controls
+cannot silently pass. Sidebar navigation retains its separate navigation
+contract. Previous, Next and Return use the shared action control; unavailable
+steps remain disabled and stale return authority remains denied.

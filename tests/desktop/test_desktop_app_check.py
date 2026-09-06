@@ -391,6 +391,8 @@ class DesktopAppCheckTests(unittest.TestCase):
             "geometry": {"mainPadding": 28},
             "panelFlow": [valid_flow()],
             "panelBodyCount": 1,
+            "controlCount": 1,
+            "workflowContextKeyboard": {"buttonCount": 2, "enabledCount": 1, "traversedCount": 1},
             "shell": valid_shell(),
             "semantic": [
                 {
@@ -441,6 +443,15 @@ class DesktopAppCheckTests(unittest.TestCase):
             lambda item: item.__setitem__("panelBodyCount", True),
             lambda item: item.__setitem__("panelBodyCount", 0),
             lambda item: item.__setitem__("panelBodyCount", 2),
+            lambda item: item.pop("controlCount"),
+            lambda item: item.__setitem__("controlCount", True),
+            lambda item: item.__setitem__("controlCount", 0),
+            lambda item: item.__setitem__("controlCount", 2),
+            lambda item: item["semantic"].pop(1),
+            lambda item: item.pop("workflowContextKeyboard"),
+            lambda item: item["workflowContextKeyboard"].__setitem__("traversedCount", 0),
+            lambda item: item["workflowContextKeyboard"].__setitem__("enabledCount", True),
+            lambda item: item["workflowContextKeyboard"].__setitem__("buttonCount", 0),
             lambda item: item.pop("shell"),
             lambda item: item["focus"].__setitem__("targetInViewport", False),
             lambda item: item["semantic"].pop(),
@@ -453,6 +464,38 @@ class DesktopAppCheckTests(unittest.TestCase):
             changed = copy.deepcopy(case)
             mutate(changed)
             self.assertTrue(qualification_measurement_errors(changed))
+
+        card = copy.deepcopy(case)
+        card["semantic"][1].update(cardControl=True, minHeight=0, height=100, display="grid")
+        self.assertEqual([], qualification_measurement_errors(card))
+        for changed_height, changed_display in ((20, "grid"), (100, "inline-block")):
+            card["semantic"][1].update(height=changed_height, display=changed_display)
+            self.assertTrue(qualification_measurement_errors(card))
+
+        # Actual browser-default context control cannot hide behind another
+        # passing shared button. This is a CSS consumer negative fixture.
+        styles = "\n".join((REPO / path).read_text(encoding="utf-8") for path in (
+            "design/ui-reference/assets/tokens.css", "packages/ui-components/src/styles.css",
+        ))
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page()
+                page.set_content(f'<style>{styles}</style><button>Return to current step</button>')
+                bare = page.locator("button").evaluate("""node => {
+                  const s = getComputedStyle(node), r = node.getBoundingClientRect();
+                  return {kind:'control', padding:parseFloat(s.paddingInlineStart), radius:parseFloat(s.borderRadius),
+                    minHeight:parseFloat(s.minHeight)||0, height:r.height, gap:0, display:s.display};
+                }""")
+                self.assertLess(bare["height"], 40)
+                changed = copy.deepcopy(case)
+                changed["controlCount"] = 2
+                changed["semantic"].append(bare)
+                errors = qualification_measurement_errors(changed)
+                self.assertTrue(any("control minimum geometry" in error for error in errors))
+                self.assertTrue(any("control padding or radius" in error for error in errors))
+            finally:
+                browser.close()
 
     def test_product_style_qualification_contract_is_exact_and_rejects_matrix_gaps(self) -> None:
         capture_contract = qualification_capture_contract(REPO)

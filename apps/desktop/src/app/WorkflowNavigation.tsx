@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { Button } from "@research-observatory/ui-components";
+
 import {
   IMPLEMENTED_WORKSPACES,
   deriveWorkflowStages,
@@ -200,23 +202,23 @@ export function WorkflowContextBar({
       </dl>
       <div className="workflow-context-actions ro-stack">
         {previous ? (
-          <button
+          <Button
             type="button"
             disabled={disabled || previous.implementedWorkspace === null}
             onClick={() => onSelectStage(previous.stageKey)}
           >
             Previous step · {previous.label}
-          </button>
+          </Button>
         ) : <span>Previous step · None</span>}
         {next ? (
           <span>
-            <button
+            <Button
               type="button"
               disabled={disabled || next.implementedWorkspace === null}
               onClick={() => onSelectStage(next.stageKey)}
             >
               Next step · {next.label}
-            </button>
+            </Button>
             {next.implementedWorkspace === null ? <small>Unavailable in this version</small> : null}
           </span>
         ) : <span>Next step · None</span>}
@@ -225,9 +227,9 @@ export function WorkflowContextBar({
         <div className="supporting-tool-context ro-stack" data-supporting-tool>
           <strong>Supporting tool · {workspace.label}</strong>
           {returnIsCurrent ? (
-            <button type="button" disabled={disabled} onClick={onReturn}>
+            <Button type="button" disabled={disabled} onClick={onReturn}>
               Return to current step · {current.label}
-            </button>
+            </Button>
           ) : (
             <span role="status">Supporting context expired. Reopen a primary workflow step before returning.</span>
           )}

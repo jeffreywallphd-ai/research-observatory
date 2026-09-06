@@ -1,0 +1,526 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-visual-disposition",
+  "taskId": "W1.A08.T02",
+  "reviewId": "W1.A08.T02.visual-review-02",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "reviewedAt": "2026-09-06T00:48:58Z",
+  "disposition": "changes-requested",
+  "formalTaskApproval": false,
+  "scope": "Distinct commit-bound visual disposition of authenticated capture03 and its source-bound control styling. Not a task-control review, slice approval, amendment approval or W1 release qualification.",
+  "bindings": {
+    "producerCommit": "1517b16aa1fab212c7c28163d3c98ed92fc0d9a5",
+    "captureDeliveryCommit": "5ff382e5f6ecae3953cdc5aae263e5cdd5e81a97",
+    "manifest": "artifacts/evidence/W1.A08.T02.captures-03/manifest.json",
+    "manifestSha256": "f10af9a42f3d5ad2ebc3536b20b87b0b38811a48496af1c8427913d7ff3f57ef",
+    "manifestSerialization": "Canonical capture JSON from tools/product_style_check.py::_json_bytes; digest is the exact published file-byte SHA-256, not a differently serialized compact JSON digest.",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "approvalPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "normativeSections": [
+      "design/ui-reference/STYLE_GUIDE.md sections 5, 6 and 9",
+      "W1.A08.T02 criteria 2, 3 and 4",
+      "ECR-0008.execution-01.md effective-reference overlay and retained F02/UX01"
+    ],
+    "producerInputCount": 503,
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app/WorkflowNavigation.tsx",
+        "gitBlob": "968eb708771c5aa0f9f78bb4723bb95f16bd453b",
+        "producerRawSha256": "e152d23c1c94c57388f34e6bce11b83b1e1019ae42abf54961145f47e1c7062d"
+      },
+      {
+        "path": "apps/desktop/src/app.css",
+        "gitBlob": "405c283c794598a1f27cc3501764d04c5879f645",
+        "producerRawSha256": "f674b20802f74d4f685faf9d66db84c265f393dd41e2002dbf595e6bde8b23c6"
+      },
+      {
+        "path": "packages/ui-components/src/styles.css",
+        "gitBlob": "7336f2ba28ef094b9e9f0e290e1f20e614d5e7de",
+        "producerRawSha256": "d502b754768242b4efcac717e1c9f77cc3c8fdef0176f640879f475a4f89db6c"
+      },
+      {
+        "path": "tools/desktop_app_check.py",
+        "gitBlob": "1dfca0cd7decf11257a2bacf932918165bb2ab79",
+        "producerRawSha256": "8a24772f7892fca4a62409d1499e185dbdc8959e90fb5015fe76d0e1413eb5b8"
+      },
+      {
+        "path": "tools/product_layout_measurements.py",
+        "gitBlob": "95d64f3abf4f5d0864adc6eb6e875ae955bf2e63",
+        "producerRawSha256": "35d1f8f7855310a37b2215f396694a277e118c28bb33efdb372be06b65f81224"
+      },
+      {
+        "path": "design/ui-reference/STYLE_GUIDE.md",
+        "gitBlob": "7f1ad75afbb1787768afd04e090bb74e4733ce21",
+        "producerRawSha256": "f84307f149c4b0e02aa24b8d3e18dec96a25719608ea75067b4cadd0dd499946"
+      }
+    ]
+  },
+  "verificationActuallyPerformed": {
+    "captureAuthentication": {
+      "operation": "Read-only call to product_style_check.verify_product_captures with the exact manifest and externally supplied capture delivery commit.",
+      "ok": true,
+      "captureCount": 108,
+      "coverage": "Complete manifest/PNG inventory and bytes, immutable delivery, current producer/source/build/reference/renderer identity and recorded measurement validator. No new renderer capture or browser execution.",
+      "renderer": {
+        "engine": "chromium",
+        "browserVersion": "145.0.7632.6",
+        "playwrightVersion": "1.58.0",
+        "platform": "windows-x64",
+        "deviceScaleFactor": 1,
+        "locale": "en-US",
+        "timezoneId": "UTC",
+        "reducedMotion": "reduce",
+        "requiredFonts": [
+          "Segoe UI",
+          "Georgia",
+          "Consolas"
+        ]
+      }
+    },
+    "imageInspection": {
+      "method": "Viewed exact local PNG files without editing, compositing, recapturing or native GUI actions.",
+      "imageCount": 28,
+      "pairCount": 14,
+      "selection": "All eight workspace product/reference pairs at light 1440x900; Task Center, Projects and Audit plus lock, service recovery and enlarged-text shortcut dialog pairs at dark 720x450."
+    },
+    "sourceInspection": "Read the candidate-bound WorkflowContextBar actions and CSS selectors after observing the Project settings defect; checked their immutable producer blobs and manifest source identities.",
+    "reusedPriorIndependentChecks": {
+      "candidate": "1517b16aa1fab212c7c28163d3c98ed92fc0d9a5",
+      "testsPassed": 6,
+      "description": "Previously executed the focused layout tests including genuine minimal short shared-shell CSS fixture, actual built-product long-page navigation/Tab/Shift+Tab and shared-flow negatives; replayed six missing/truncated/invalid Panel inventory probes. These were not rerun during visual/performance coordination."
+    }
+  },
+  "inspectedImages": [
+    {
+      "caseId": "workspace:projects:light:1440x900",
+      "file": "98aeaf6569719d6fa27f1e6e5ddd17b18f5d165173483ab08d7513334d8c0266.png",
+      "sha256": "8472bfdbf6c5ca3b665d5b9efa577b99b677dddb04c17653dddb69c1bf8d481c",
+      "role": "product",
+      "surfaceId": "projects",
+      "stateId": "populated-project-list",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "projects.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/98aeaf6569719d6fa27f1e6e5ddd17b18f5d165173483ab08d7513334d8c0266.png"
+    },
+    {
+      "caseId": "workspace:projects:light:1440x900",
+      "file": "5f42a6d74b20c16294f4d7309e9153758072de874504ff1ce62f6a37310c18af.png",
+      "sha256": "04a99ea92d9d375d1cf701dc6d15032e8543384ee597a4b643f1f89c2503b024",
+      "role": "reference",
+      "surfaceId": "projects",
+      "stateId": "populated-project-list",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "projects.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/5f42a6d74b20c16294f4d7309e9153758072de874504ff1ce62f6a37310c18af.png"
+    },
+    {
+      "caseId": "workspace:tasks:light:1440x900",
+      "file": "2512de22bebc7cc71986860b693bfe748a81f5df5a29fe08097b370b1e7a2eff.png",
+      "sha256": "b1dac06ca31fe31e72e2457367a9baf70f99b5c35443329f80cd8fc40d64de00",
+      "role": "product",
+      "surfaceId": "tasks",
+      "stateId": "populated-task-center",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "task-center.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/2512de22bebc7cc71986860b693bfe748a81f5df5a29fe08097b370b1e7a2eff.png"
+    },
+    {
+      "caseId": "workspace:tasks:light:1440x900",
+      "file": "021f101b988eed83cb3cbe63271209ca741370b825e6bfe36d473650599e22d9.png",
+      "sha256": "70efa1c7312e87c04e2ea34005986450d71906f52d30567ecff4f9c03124fccf",
+      "role": "reference",
+      "surfaceId": "tasks",
+      "stateId": "populated-task-center",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "task-center.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/021f101b988eed83cb3cbe63271209ca741370b825e6bfe36d473650599e22d9.png"
+    },
+    {
+      "caseId": "workspace:home:light:1440x900",
+      "file": "3084d92f99549a99d6ce1167d2f28cd7ebcfd06f6c79195acf4e3019cc8c0b07.png",
+      "sha256": "aea4436b4a06c7929f709f684d6cfd7343d0275a436b414c57cd00c33835597f",
+      "role": "product",
+      "surfaceId": "home",
+      "stateId": "project-ready",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "index.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/3084d92f99549a99d6ce1167d2f28cd7ebcfd06f6c79195acf4e3019cc8c0b07.png"
+    },
+    {
+      "caseId": "workspace:home:light:1440x900",
+      "file": "57f5cc47ddac3b3b2ef7018ce51ccfd5d7af6ae22d125db29c5b2f033479534b.png",
+      "sha256": "0574df161dd0b1c66053e0ddfe7105645aa08a0642e9eadd147ea1e522942f57",
+      "role": "reference",
+      "surfaceId": "home",
+      "stateId": "project-ready",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "index.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/57f5cc47ddac3b3b2ef7018ce51ccfd5d7af6ae22d125db29c5b2f033479534b.png"
+    },
+    {
+      "caseId": "workspace:intent:light:1440x900",
+      "file": "57dcf7bce6ec582bd82119cf70b64cab36883e7f5c8380a3173f0a1deb7c2fa1.png",
+      "sha256": "ec0253ab9737c8e357464e4f2b2e2ebf02a5e23467d702e5e248d1c540e64b10",
+      "role": "product",
+      "surfaceId": "intent",
+      "stateId": "accepted-intent",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "intent-contract.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/57dcf7bce6ec582bd82119cf70b64cab36883e7f5c8380a3173f0a1deb7c2fa1.png"
+    },
+    {
+      "caseId": "workspace:intent:light:1440x900",
+      "file": "02e90ffcaa5fb8caf66b34e0b8adc2edee9240f553342bbc4304e7c4524cab25.png",
+      "sha256": "ed215ffd56db32a2a1fa215aa61aace1a4bf2d74a7b601ed59778c3cbb92abd4",
+      "role": "reference",
+      "surfaceId": "intent",
+      "stateId": "accepted-intent",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "intent-contract.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/02e90ffcaa5fb8caf66b34e0b8adc2edee9240f553342bbc4304e7c4524cab25.png"
+    },
+    {
+      "caseId": "workspace:application-settings:light:1440x900",
+      "file": "248dd774f40ac252c4579cd029a0a7ea0f147c333f90902d8aef16227028a5fe.png",
+      "sha256": "0888ced2ed15b9310dc813f4af24e64275700b88d0a134467457158e341b7886",
+      "role": "product",
+      "surfaceId": "application-settings",
+      "stateId": "application-settings",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "application-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/248dd774f40ac252c4579cd029a0a7ea0f147c333f90902d8aef16227028a5fe.png"
+    },
+    {
+      "caseId": "workspace:application-settings:light:1440x900",
+      "file": "8d7b836e4408c549f131006b3bb69e095a8b0b937a03377fe8e8334b574779f5.png",
+      "sha256": "2f656d434bf485c4f15ca7129e5a4595348a43e766452bc9a7d287f05e530194",
+      "role": "reference",
+      "surfaceId": "application-settings",
+      "stateId": "application-settings",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "application-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/8d7b836e4408c549f131006b3bb69e095a8b0b937a03377fe8e8334b574779f5.png"
+    },
+    {
+      "caseId": "workspace:settings:light:1440x900",
+      "file": "76bd4825a846f0f720ec2eadf3744a0ecdd6e1587407aab0ec8799ecc58f092e.png",
+      "sha256": "8ad983853030e6e5909513e77716e2550df845aee77ca4b678560dfdd8083ff4",
+      "role": "product",
+      "surfaceId": "settings",
+      "stateId": "project-settings",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/76bd4825a846f0f720ec2eadf3744a0ecdd6e1587407aab0ec8799ecc58f092e.png"
+    },
+    {
+      "caseId": "workspace:settings:light:1440x900",
+      "file": "3931120dcb8ce8be33149c54d55e78363a647e913b184d712e8bcc67cad33f66.png",
+      "sha256": "479bda64fc07c205f8b598d044b4d7698e708de1fe649379c6e5195982f13d50",
+      "role": "reference",
+      "surfaceId": "settings",
+      "stateId": "project-settings",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "project-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/3931120dcb8ce8be33149c54d55e78363a647e913b184d712e8bcc67cad33f66.png"
+    },
+    {
+      "caseId": "workspace:audit:light:1440x900",
+      "file": "755bd722b73aed11a8bdeacb28e07f04b6316f04dd934345910b91880053b06c.png",
+      "sha256": "7a69afc7429e544029d43dc375e4fdfc947a3ab810abcf7a4457d4311d08ca06",
+      "role": "product",
+      "surfaceId": "audit",
+      "stateId": "populated-lineage",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "audit-lineage.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/755bd722b73aed11a8bdeacb28e07f04b6316f04dd934345910b91880053b06c.png"
+    },
+    {
+      "caseId": "workspace:audit:light:1440x900",
+      "file": "de1ec3b2f76959c4b2285651912b5e16fbb6bfc1fb4ca16f04849cbfaf4007e6.png",
+      "sha256": "016e03260dab4dfb45980811af5ff3b2fac32da2763f8140cdd756244bf51b89",
+      "role": "reference",
+      "surfaceId": "audit",
+      "stateId": "populated-lineage",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "audit-lineage.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/de1ec3b2f76959c4b2285651912b5e16fbb6bfc1fb4ca16f04849cbfaf4007e6.png"
+    },
+    {
+      "caseId": "workspace:diagnostics:light:1440x900",
+      "file": "17136933254ecc41bc4a82adc67a1ac83463f8715221ce15447253d713b58bea.png",
+      "sha256": "5f1795049e0bf5c079c9ffaf5e06b0c2e33d042fb88788b90b002b18df4ba9d6",
+      "role": "product",
+      "surfaceId": "diagnostics",
+      "stateId": "populated-diagnostics",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "help-onboarding.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/17136933254ecc41bc4a82adc67a1ac83463f8715221ce15447253d713b58bea.png"
+    },
+    {
+      "caseId": "workspace:diagnostics:light:1440x900",
+      "file": "8fd807eb0fb2d66a161e84831265b665e4ab2cc7ca93b62b545948e246df1093.png",
+      "sha256": "fde378f5fbd521c97ad3829ce7761d4065ab11a271d78a79e62df04344e53e17",
+      "role": "reference",
+      "surfaceId": "diagnostics",
+      "stateId": "populated-diagnostics",
+      "theme": "light",
+      "width": 1440,
+      "height": 900,
+      "referencePage": "help-onboarding.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/8fd807eb0fb2d66a161e84831265b665e4ab2cc7ca93b62b545948e246df1093.png"
+    },
+    {
+      "caseId": "workspace:audit:dark:720x450",
+      "file": "adc59218fa036d781116089540382248f5a384ced982ddc0e877fd223f6d2729.png",
+      "sha256": "fdb018a87a7959626b17db1b5bfd5cf4997ae6bc0226dc87ec806b309a046b6a",
+      "role": "product",
+      "surfaceId": "audit",
+      "stateId": "populated-lineage",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "audit-lineage.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/adc59218fa036d781116089540382248f5a384ced982ddc0e877fd223f6d2729.png"
+    },
+    {
+      "caseId": "workspace:audit:dark:720x450",
+      "file": "79216e80bd3953aa57054b79aec7e9213e28835f512e737b83c897b7f3f86352.png",
+      "sha256": "c96aa5a09d2865eb53617d4913143d71ff955cd33135fdcffd0dbc68e899b389",
+      "role": "reference",
+      "surfaceId": "audit",
+      "stateId": "populated-lineage",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "audit-lineage.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/79216e80bd3953aa57054b79aec7e9213e28835f512e737b83c897b7f3f86352.png"
+    },
+    {
+      "caseId": "workspace:projects:dark:720x450",
+      "file": "32b6c8d5bb2aaf8fa653b9fe631b2e5df744903680d2a413db08a8c419127afa.png",
+      "sha256": "25d29e37c9d75df3fd9118a31dc4b033033a95cef01ec17383483e6a377f453c",
+      "role": "product",
+      "surfaceId": "projects",
+      "stateId": "populated-project-list",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "projects.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/32b6c8d5bb2aaf8fa653b9fe631b2e5df744903680d2a413db08a8c419127afa.png"
+    },
+    {
+      "caseId": "workspace:projects:dark:720x450",
+      "file": "01cff0f816193d6744101b86e2a9c0a046bc0782b2fe44f10f86cd7f19e9f2dd.png",
+      "sha256": "81581e11c76547f3206358e881967db07f0c66e4d9ff6ffde7d7fabc99ae7091",
+      "role": "reference",
+      "surfaceId": "projects",
+      "stateId": "populated-project-list",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "projects.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/01cff0f816193d6744101b86e2a9c0a046bc0782b2fe44f10f86cd7f19e9f2dd.png"
+    },
+    {
+      "caseId": "workspace:tasks:dark:720x450",
+      "file": "9db919bc0f78c2f253815177b3adbe8cdf4f8aba3bcc9e78213a8d84415f6845.png",
+      "sha256": "51e7379039ca6e954066aa93e49481e900ee5c50f0f5f7d372fd8d09391bb3c6",
+      "role": "product",
+      "surfaceId": "tasks",
+      "stateId": "populated-task-center",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "task-center.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/9db919bc0f78c2f253815177b3adbe8cdf4f8aba3bcc9e78213a8d84415f6845.png"
+    },
+    {
+      "caseId": "workspace:tasks:dark:720x450",
+      "file": "e5bbeac9e8501f105409be9e1ead62bb79da49be1e0852325727794e3bd8a243.png",
+      "sha256": "4c6944f39f741453e44878f5d903384ff26419bfc58f5d147fb8b045b9dfa7bf",
+      "role": "reference",
+      "surfaceId": "tasks",
+      "stateId": "populated-task-center",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "task-center.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/e5bbeac9e8501f105409be9e1ead62bb79da49be1e0852325727794e3bd8a243.png"
+    },
+    {
+      "caseId": "boundary:locked:dark:720x450",
+      "file": "f59740b342fa287fd6a48932c73539a93fbd665434e69074c21b24393e9e0613.png",
+      "sha256": "cd3bc9ab4af650599ac8078ba23f995c0f45afd50de253fed9983bab1f243f70",
+      "role": "product",
+      "surfaceId": "application-lock",
+      "stateId": "locked",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "application-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/f59740b342fa287fd6a48932c73539a93fbd665434e69074c21b24393e9e0613.png"
+    },
+    {
+      "caseId": "boundary:locked:dark:720x450",
+      "file": "aafd99feb8d24960ae6210bc2eeeb48c0e0c53fcb470819121b7f598aa419fb9.png",
+      "sha256": "fca7f0abb93b9732b12d239c8c13619774c8c4d6725a202939b8f1d0c4d2f410",
+      "role": "reference",
+      "surfaceId": "application-lock",
+      "stateId": "locked",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "application-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/aafd99feb8d24960ae6210bc2eeeb48c0e0c53fcb470819121b7f598aa419fb9.png"
+    },
+    {
+      "caseId": "boundary:recovery-required:dark:720x450",
+      "file": "072130f01ad2f0355bff079fcbfc015d237fc85bbff62d1f0dec0321d185127e.png",
+      "sha256": "c7578eef71babb960d95963a567c116fd2521f8b172b9aceb41d6ec3f94259b7",
+      "role": "product",
+      "surfaceId": "local-service-boundary",
+      "stateId": "recovery-required",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "application-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/072130f01ad2f0355bff079fcbfc015d237fc85bbff62d1f0dec0321d185127e.png"
+    },
+    {
+      "caseId": "boundary:recovery-required:dark:720x450",
+      "file": "37839f0172481b55286ccf6afe1fbc90d4bf259143a1fca80701603b40f774e0.png",
+      "sha256": "fca7f0abb93b9732b12d239c8c13619774c8c4d6725a202939b8f1d0c4d2f410",
+      "role": "reference",
+      "surfaceId": "local-service-boundary",
+      "stateId": "recovery-required",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "application-settings.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/37839f0172481b55286ccf6afe1fbc90d4bf259143a1fca80701603b40f774e0.png"
+    },
+    {
+      "caseId": "boundary:shortcut-dialog:dark:720x450",
+      "file": "6f08dd4c1dcada1de3b652414f96ea0649579ef426f9898b3f53e35f692b925a.png",
+      "sha256": "f298fa509b8a40e2ff51be0bf420464ce38052cb27f5ab977dc0c6f5002e4dec",
+      "role": "product",
+      "surfaceId": "shortcut-dialog",
+      "stateId": "shortcut-dialog",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "help-onboarding.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/6f08dd4c1dcada1de3b652414f96ea0649579ef426f9898b3f53e35f692b925a.png"
+    },
+    {
+      "caseId": "boundary:shortcut-dialog:dark:720x450",
+      "file": "716e6468f4a3626ee1d386549ad918f3932ab8f3bbb37e3cf811ff9a7d21fbe8.png",
+      "sha256": "20ef1646892d422d5eff9180d7b62d1758b77b64e7da3d12500026b1efa12e43",
+      "role": "reference",
+      "surfaceId": "shortcut-dialog",
+      "stateId": "shortcut-dialog",
+      "theme": "dark",
+      "width": 720,
+      "height": 450,
+      "referencePage": "help-onboarding.html",
+      "path": "artifacts/evidence/W1.A08.T02.captures-03/716e6468f4a3626ee1d386549ad918f3932ab8f3bbb37e3cf811ff9a7d21fbe8.png"
+    }
+  ],
+  "visualAssessment": {
+    "hierarchy": "Serif page/section headings, compact sans-serif labels, subdued borders and clear panel grouping are coherent in the inspected workspaces. The shared context actions identified below are the material exception.",
+    "density": "Task Center paragraph rhythm is visibly compact and consistent after F02 correction; Projects, Intent, settings and diagnostics retain legible forms and grouped content. Data volume and page layout differ from illustrative reference examples.",
+    "alignment": "Inspected cards/forms/tables align to shared content padding. Task Center and Diagnostics show the sidebar surface meeting the visible footer; other long-page footer boundaries are supported by authenticated actual rectangle measurements, not inferred from off-frame pixels.",
+    "overflow": "Dark narrow product views reflow visible forms and task sections within their viewport. Top/bottom clipping is consistent with viewport captures at recorded vertical scroll positions. Reference narrow captures retain their illustrative fixed-width composition and are not proof of product reflow.",
+    "theme": "The inspected dark product surfaces, text, outlines and semantic warning/success treatments follow the approved palette. The raw context actions remain outside the shared themed-control boundary.",
+    "focus": "Visible focus rings are present on the selected actual product inputs/actions, including Task Center refresh, Projects name, Audit trace input, settings policy selector, lock/retry and dialog close. Still images do not establish keyboard traversal, accessibility names, focus restoration or full interaction correctness.",
+    "F02": "Visual restoration observed in the populated Task Center panels; authenticated effective-spacing measurements and prior independent negative replay support the observation. This does not constitute formal task finding closure.",
+    "UX01": "Visual restoration observed where the footer is in frame, plus authenticated shell-edge evidence and earlier independent short/long/stacked tests. The minimal short-shell fixture is explicitly a shared CSS consumer, not an invented short application state."
+  },
+  "acceptedVariance": [
+    "Different project names, research text, workflow counts, data values and currently implemented W1 composition are illustrative variance, not reasons to copy the reference or demand pixel identity.",
+    "Products use actual implemented project forms, command groups, task details and diagnostics; reference examples include broader dashboards and future illustrative controls. Larger equal-height form cards and ordinary vertical page length are acceptable when geometry and operability contracts hold.",
+    "The recorded product scroll position differs from the unscrolled reference: for example settings light/1440 y=184, Task Center y=60 and diagnostics y=633. A clipped off-frame heading/footer alone is not overflow or data loss.",
+    "Dark 720x450 reference pages are contextual visual comparisons, not matching modal/lock states and not a product responsive-layout oracle. Actual product lock, recovery and enlarged-text dialog states are judged against their semantic surface contracts and separate recorded interaction evidence.",
+    "Fixture-observed unavailable guidance or provider states are visibly identified rather than fabricated as successful authority. Their domain/native behavior is outside this still-image disposition."
+  ],
+  "findings": [
+    {
+      "id": "W1.A08.T02-visual-02-F01",
+      "priority": "P2",
+      "severity": "medium",
+      "blockingVisualAcceptance": true,
+      "criteria": [
+        "W1.A08.T02 criterion 2 shared production style reuse",
+        "W1.A08.T02 criterion 3 canonical control geometry and effective states",
+        "W1.A08.T02 criterion 4 independent live-product visual conformance"
+      ],
+      "title": "Shared workflow-context actions bypass governed button styling and measurement coverage",
+      "sourceLocations": [
+        {
+          "path": "apps/desktop/src/app/WorkflowNavigation.tsx",
+          "startLine": 201,
+          "endLine": 233
+        },
+        {
+          "path": "packages/ui-components/src/styles.css",
+          "startLine": 60
+        },
+        {
+          "path": "tools/desktop_app_check.py",
+          "startLine": 1996
+        }
+      ],
+      "evidenceImage": "artifacts/evidence/W1.A08.T02.captures-03/76bd4825a846f0f720ec2eadf3744a0ecdd6e1587407aab0ec8799ecc58f092e.png",
+      "evidenceImageSha256": "8ad983853030e6e5909513e77716e2550df845aee77ca4b678560dfdd8083ff4",
+      "observation": "In the authenticated Project settings light/1440 capture, Next step and enabled Return to current step render as thin browser-default gray rectangular controls above the styled workspace, visibly inconsistent with the governed standard controls. Their approximate screenshot height is about 21 pixels; this review did not run a browser to assert an exact live measurement.",
+      "sourceCause": "WorkflowContextBar renders Previous, Next and Return with bare button elements and no shared Button/.ro-button class. The app's broad button styling is limited to .sidebar; these actions are in main. The shared .ro-button geometry, typography, padding, radius and theme therefore do not apply.",
+      "proofGap": "Qualification samples .ro-button controls within the workspace node, while the shared workflow context is outside that workspace. A passing semantic measurement report therefore does not cover these visibly unstyled actions.",
+      "reproduction": "Open the exact evidence image and inspect the two context actions above Project settings; compare with the styled controls below and the paired reference. Inspect the producer's WorkflowNavigation.tsx Previous/Next/Return markup and the .ro-button/.sidebar button CSS. A focused future built-product replay should measure and keyboard-exercise actual context controls, including enabled Return, in wide/stacked and both-theme cases.",
+      "requiredCorrection": "Reuse the existing semantic Button boundary for shared workflow-context actions without changing navigation authority or behavior. Extend affected measurement/negative coverage to the actual shared context outside the workspace; prove canonical rendered height/style and enabled/disabled, long-label, theme and keyboard states. Retain this bundle and finding, then generate new commit-bound visual evidence.",
+      "boundary": "This is styling conformance of an existing shared product surface, not an authorization for a workflow redesign, new reference or native-policy change. It is not caused by the two F02/UX01 CSS edits; inherited implemented controls still fall within W1.A08.T02's conformance criteria."
+    }
+  ],
+  "historyAndLimits": {
+    "preserved": [
+      "artifacts/evidence/W1.A08.T02.pre-submission-review-01.md",
+      "artifacts/evidence/W1.A08.T02.layout-adverse-01.json",
+      "artifacts/evidence/W1.A08.T02.layout-adverse-02.json",
+      "artifacts/evidence/W1.A08.T02.layout-preflight-01.md",
+      "Original capture01 and capture02 bundles are unchanged; neither is relabelled as capture03 or new-check closure."
+    ],
+    "noWaivers": "No missing interaction, accessibility, state-authority, security, performance or packaging proof is waived by visual variance. Formal task/slice/amendment dispositions and full W1 release qualification remain separate.",
+    "noLaterCorrectionReviewed": true,
+    "safety": "Only named task sources/evidence and exact capture files were read. No browser execution, native GUI, ordinary profile/policy/vault/credentials, remote action, protected witness access or sibling-workspace access. Only this new review file is written; no controller, product, index or branch mutation."
+  }
+}

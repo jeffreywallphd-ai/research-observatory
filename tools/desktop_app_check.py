@@ -23,7 +23,13 @@ import yaml
 from bs4 import BeautifulSoup
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
-from product_layout_measurements import PANEL_FLOW_GEOMETRY, SHELL_GEOMETRY, panel_flow_errors, shell_geometry_errors
+from product_layout_measurements import (
+    PANEL_FLOW_GEOMETRY,
+    SHELL_GEOMETRY,
+    exercise_workflow_context_keyboard,
+    panel_flow_errors,
+    shell_geometry_errors,
+)
 from ui_conformance import (
     confined_path,
     file_inventory,
@@ -1047,9 +1053,27 @@ def qualification_measurement_errors(case: dict[str, Any]) -> list[str]:
             errors.append("required observed Panel-body inventory is missing or incomplete")
         errors.extend(panel_flow_errors(case.get("panelFlow"), require_paragraph_pair=surface == "tasks"))
         errors.extend(shell_geometry_errors(case.get("shell"), stacked=case.get("width") == 720))
+        keyboard = case.get("workflowContextKeyboard")
+        if (
+            not isinstance(keyboard, dict)
+            or any(type(keyboard.get(key)) is not int or keyboard[key] < 0
+                   for key in ("buttonCount", "enabledCount", "traversedCount"))
+            or keyboard["enabledCount"] > keyboard["buttonCount"]
+            or keyboard["enabledCount"] != keyboard["traversedCount"]
+            or (surface == "settings" and (keyboard["buttonCount"] < 2 or keyboard["enabledCount"] < 1))
+        ):
+            errors.append("workflow context button/keyboard coverage is missing or incomplete")
     semantic = case.get("semantic")
     if not isinstance(semantic, list) or any(not isinstance(item, dict) for item in semantic):
         return [*errors, "semantic primitive measurements are missing"]
+    if surface in {item[0] for item in QUALIFICATION_WORKSPACES}:
+        control_count = case.get("controlCount")
+        if (
+            type(control_count) is not int
+            or control_count < 1
+            or sum(item.get("kind") == "control" for item in semantic) != control_count
+        ):
+            errors.append("required observed workspace/context button inventory is missing or incomplete")
     if not QUALIFICATION_REQUIRED_PRIMITIVES.get(surface, set()).issubset({item.get("kind") for item in semantic}):
         errors.append("required semantic primitive coverage is missing")
     scale = 2 if surface == "shortcut-dialog" else 1
@@ -1067,8 +1091,12 @@ def qualification_measurement_errors(case: dict[str, Any]) -> list[str]:
             paddings = {16, 20, 28} if kind == "card" else {20} if kind == "dialog" else {16}
             if values["radius"] not in radii or values["padding"] not in paddings:
                 errors.append(f"{kind} padding or radius differs from semantic tokens")
-        if kind == "control" and (values["minHeight"] not in {40, 44} or values["height"] < values["minHeight"] - 0.05):
-            errors.append("control minimum geometry differs from standard/primary contract")
+        if kind == "control":
+            if item.get("cardControl") is True:
+                if values["height"] < 40 or item.get("display") != "grid":
+                    errors.append("interactive card control lost its target size or card layout")
+            elif values["minHeight"] not in {40, 44} or values["height"] < values["minHeight"] - 0.05:
+                errors.append("control minimum geometry differs from standard/primary contract")
         if kind in {"card", "form", "notice", "dialog", "stack", "grid"} and item.get("display") != "grid":
             errors.append(f"{kind} lost its content-flow layout")
         if kind in {"card", "form", "notice", "dialog", "stack", "grid", "action"} and values["gap"] not in {
@@ -1966,6 +1994,10 @@ class ProductStyleQualification:
                         f"{metadata['caseId']} did not reach its representative state: "
                         f"{node.evaluate(QUALIFICATION_STATE_WITNESS)}; {node.inner_text()[-1800:]}"
                     ) from exc
+                context_keyboard = (
+                    exercise_workflow_context_keyboard(page)
+                    if surface_id in {item[0] for item in QUALIFICATION_WORKSPACES} else None
+                )
                 node.evaluate("element => element.scrollIntoView({block:'start'})")
                 focus = node.locator(
                     "button:visible:not(:disabled), input:visible:not(:disabled), "
@@ -1994,14 +2026,19 @@ class ProductStyleQualification:
                   const semantic = [];
                   for (const [kind, selector] of Object.entries({
                     card: '.ro-card,.ro-panel', form: '.ro-form', notice: '.ro-notice',
-                    action: '.ro-action-row', control: '.ro-button', table: '.ro-table-region',
+                    action: '.ro-action-row', control: 'button', table: '.ro-table-region',
                     dialog: '.ro-dialog-surface', stack: '.ro-stack', grid: '.ro-grid'
                   })) {
                     const nodes = [...element.querySelectorAll(selector)];
                     if (element.matches(selector)) nodes.unshift(element);
-                    for (const node of nodes.filter(node => node.getClientRects().length)) {
+                    if (kind === 'control' && element.closest('main')) {
+                      nodes.push(...document.querySelectorAll('main > [data-workflow-context] button'));
+                    }
+                    for (const node of [...new Set(nodes)].filter(node => node.getClientRects().length
+                      && getComputedStyle(node).visibility === 'visible')) {
                       const s = getComputedStyle(node), r = node.getBoundingClientRect();
                       semantic.push({kind, padding: parseFloat(s.paddingInlineStart),
+                        cardControl: node.matches('button.ro-card'),
                         radius: parseFloat(s.borderRadius),
                         gap: parseFloat(s.rowGap) || 0, minHeight: parseFloat(s.minHeight) || 0,
                         height: r.height, display: s.display, wrap: s.flexWrap, overflowX: s.overflowX,
@@ -2054,6 +2091,10 @@ class ProductStyleQualification:
                   probe.remove(); return output;
                 }""")
                 if surface_id in {item[0] for item in QUALIFICATION_WORKSPACES}:
+                    observed["workflowContextKeyboard"] = context_keyboard
+                    observed["controlCount"] = page.locator(
+                        f"{selector} button:visible, main > [data-workflow-context] button:visible"
+                    ).count()
                     observed["panelBodyCount"] = node.locator(".ro-panel > div:visible").count()
                     observed["panelFlow"] = node.evaluate(PANEL_FLOW_GEOMETRY)
                     observed["shell"] = page.evaluate(SHELL_GEOMETRY)
