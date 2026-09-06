@@ -1,0 +1,245 @@
+{
+  "documentType": "wave-amendment-exit-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A08",
+  "changeRequestId": "ECR-0007",
+  "targetWave": "W1",
+  "branch": "codex/w1-windows-local-runtime",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "authority": {
+    "approvalRecord": {
+      "path": "planning/wave-amendment-approvals/W1.A08.json",
+      "sha256": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
+      "introduction_commit": "979486506a62b5dbf1b7a0af711079bdaa34cd44"
+    },
+    "packet": "planning/enabler-change-requests/ECR-0007.packet.json",
+    "packetCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
+    "packetRawSha256": "f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15",
+    "effectivePresentationReference": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "effectiveReferencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "semanticReference": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "correctionPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "correctionAdoptionCommit": "1a73207c4cc1c23ee7ffbdd33563821b5741bcb9",
+    "correctionScope": "Approved ECR-0008.execution-01 presentation overlay; no retrospective rewriting of ECR-0007/T01."
+  },
+  "scope": {
+    "bootstrap": {
+      "id": "W1.A08.B00",
+      "status": "APPROVED",
+      "evidence": [
+        {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A08.B00.json",
+          "sha256": "4fd936dc0dbb8743e5a49e9734a42cfd88fb7f402b328a65f72f4f4e0a5990d1",
+          "commit": "32ab69cc8836fd9ec2dcdaf2a25c581a1b0ca71b",
+          "recorded_at": "2026-09-04T20:39:50+00:00"
+        }
+      ],
+      "review": {
+        "reviewer": "w1a08-bootstrap-reviewer",
+        "result": "approved",
+        "reviewed_at": "2026-09-04T20:47:49+00:00"
+      },
+      "implementationCommit": "32ab69cc8836fd9ec2dcdaf2a25c581a1b0ca71b"
+    },
+    "authorizedContribution": [
+      {
+        "id": "W1.A08.S01",
+        "capabilityId": "CAP-01",
+        "title": "Production styling alignment and live-product conformance",
+        "objective": "Bring all currently implemented W1 desktop surfaces into coherent Academic Minimal 1.5 visual and interaction alignment through reusable styling primitives and a deterministic conformance boundary over the real React product.",
+        "workType": "mixed-refactor-and-new",
+        "refactorTaskIds": [
+          "W1.A08.T01"
+        ],
+        "taskIds": [
+          "W1.A08.T01",
+          "W1.A08.T02"
+        ],
+        "acceptanceCriteria": [
+          "Every currently implemented W1 desktop surface uses the approved token scale and a coherent hierarchy for shell, page, section, panel, form, table, dialog, notice, and action spacing at desktop, compact-desktop, and 200%-effective viewports.",
+          "Shared semantic primitives own common geometry once wherever reuse is effective; page-specific selectors express only genuine composition differences, and production sources contain no inline styling or undocumented duplicate/raw-geometry exception.",
+          "The functional React/Tauri frontend is checked directly for computed geometry, responsive behavior, light/dark themes, reduced motion, accessibility, interaction preservation, and representative visual composition; rendering copied reference HTML alone cannot satisfy the gate.",
+          "RO-UI-ACADEMIC-MINIMAL-1.5 remains byte-identical and conformance is semantic/tolerance-based rather than a pixel-identical requirement for illustrative copy or composition.",
+          "Both tasks and the accumulated slice receive independent commit-bound review with all blocking findings closed before amendment exit and the W1 experience/quality checkpoint."
+        ]
+      }
+    ],
+    "authorizedTasks": [
+      {
+        "taskId": "W1.A08.T01",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "455546efec1cf972dd0713664c4a130aba1478fb",
+        "finalEvidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A08.T01.remediation-01.json",
+          "sha256": "57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab",
+          "commit": "455546efec1cf972dd0713664c4a130aba1478fb",
+          "recorded_at": "2026-09-05T00:42:22+00:00"
+        },
+        "reviewLedger": {
+          "path": "artifacts/evidence/W1.A08.T01.review-R02.json",
+          "sha256": "792770c30e5ac7d5af02f36fa21742a9d936c30437a13a41c2d7240a62762101"
+        },
+        "reviewer": "agent:t01-r02-independent-reviewer",
+        "attemptId": "R02",
+        "openFindings": []
+      },
+      {
+        "taskId": "W1.A08.T02",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "b13113bf65630c70a7163fbd422194e2289b9db3",
+        "finalEvidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A08.T02.json",
+          "sha256": "54c456d6d472e791e1645636c0e6550feb971928130a69868a64caf5c402644d",
+          "commit": "b13113bf65630c70a7163fbd422194e2289b9db3",
+          "recorded_at": "2026-09-06T04:11:10+00:00"
+        },
+        "reviewLedger": {
+          "path": "artifacts/evidence/W1.A08.T02.review-R01.json",
+          "sha256": "088cdca4c1e0ad888a20367428178d6e5aa0e88e8589575e3f51930a46b14ec8"
+        },
+        "reviewer": "agent:window_launch_planning",
+        "attemptId": "R01",
+        "openFindings": []
+      }
+    ]
+  },
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "criterion": "The exact W1 base, adopted W1.A01-W1.A03 and W1.A05-W1.A07, terminal reserved W1.A04, GOV-MIG-0001, revision-12 MI-0001, and quiescent paused Wave boundary remain complete, ordered, hash-bound, ancestral, and unchanged.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Existing Wave, ordered adopted/reserved amendment, GOV-MIG-0001 and maintenance authority remain immutable. The approved bootstrap, adopted W1.A09 correction/return, independently reviewed task/controller records and successful supported task transitions authenticate the preserved chain; no historical reconstruction or release approval is supplied."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "W1.A08 remains non-executable before exact human approval; B00 is the sole lawful first mutation after approval and may append only the hash-bound S01/T01/T02 projection while W1 remains paused and CAP-07.S01.T02 remains blocked.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "W1.A08 bootstrap alone performed its approved materialization after exact owner approval. Its immutable independent disposition remains APPROVED. Both authorized tasks are now DONE and reviewed; ordinary W1 remains PAUSED and CAP-07.S01.T02 remains unimplemented/blocked pending amendment adoption and explicit resume."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "All currently implemented W1 desktop surfaces align generally with the approved Academic Minimal spacing, geometry, hierarchy, density, responsive, theme, focus, and reduced-motion contracts without imposing pixel identity on illustrative copy or composition.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Current actual-product matrix, semantic geometry, real shared-style consumer/keyboard checks and existing independent visual disposition establish approved hierarchy, spacing, responsive/theme/focus/reduced-motion conformance without pixel-copy requirements. The owner explicitly accepts the outcome and defers optional cosmetics."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Common production styling is consolidated into reusable token-driven semantic primitives wherever effective, with no inline styling, second token source, or unexplained materially duplicated declaration group.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "T01 reusable token-driven primitives and final T02 shared effective spacing/sidebar/Button/contrast corrections retain one canonical token source and ten exact reviewed composition/accessibility exceptions. Fresh accumulated style/negative checks reject materially duplicated, raw, inline or excessive-specificity escapes."
+    },
+    {
+      "criterionIndex": 5,
+      "criterion": "The actual functional React product receives deterministic style-reuse, computed-geometry, responsive, accessibility, interaction, and representative visual checks; copied reference HTML alone cannot satisfy live-product conformance.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Both task evidence and fresh accumulated 52-test union operate on the functional React product and actual product-dist, not copied reference pages alone. All 503 producer inputs and six test/helper hashes are unchanged before/after; candidate-only delivery movement was retained and reconciled without suppressing a product-test failure."
+    },
+    {
+      "criterionIndex": 6,
+      "criterion": "RO-UI-ACADEMIC-MINIMAL-1.5 and all accepted architecture, product semantics, security/privacy/data/service/model boundaries, later-Wave scope, and release criteria remain unchanged.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Original ECR-0007/semantic1.5/T01 authority is not rewritten. Independently approved and adopted ECR-0008/W1.A09 explicitly overlays current presentation1.6 for T02/S01/exit. Accepted architecture, product/domain/native/security/model/privacy boundaries and release criteria remain unchanged; current direct-text contrast uses existing tokens."
+    },
+    {
+      "criterionIndex": 7,
+      "criterion": "The sole refactor allocation is W1.A08.T01 at 5 of 194 approved-W1 points (2.6%), within the standard 15% cap; W1.A08.T02 is new verification/product-quality work and no major refactor enters by stealth.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "The original ECR-0007 allocation remains T01 at 5/194 points (2.6%), with T02 qualification not disguised as refactoring. Separately approved W1.A09 accounting remains its own ordered authority. No new product scope or major refactor is introduced by this exit."
+    },
+    {
+      "criterionIndex": 8,
+      "criterion": "Bootstrap, both tasks, the slice, and amendment exit receive independent commit-bound dispositions with append-only findings and closures; adoption records an experience/quality checkpoint and keeps W1 paused until explicit ordinary resume.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Bootstrap and both tasks have exact independent approvals with append-only adverse history/closures; both task finding sets are empty. The independently approved accumulated W1.A08.S01 disposition binds all five slice criteria and exact both-DONE state. This packet requests separate independent amendment-exit review; adoption will record the experience/quality checkpoint and keep W1 paused for explicit ordinary resume."
+    },
+    {
+      "criterionIndex": 9,
+      "criterion": "No W1 qualification, G1 approval, local-main integration, remote push, external effect, destructive action, or substantial spend occurs within packet approval.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "No W1/G1 approval, remote push, main integration, destructive action or new spend is granted here. Previously owner-authorized Git backup/privacy operations retain their independent scope; new state commits pass pinned checks preserving only exact historical metadata. W1 exit qualification remains pending."
+    }
+  ],
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "User directed an append-only W1 styling amendment before Wave exit to align production spacing, margins, padding, visual rhythm, and interaction treatment with the approved UI reference while consolidating reusable styles. Ordinary product execution is quiescent; CAP-07.S01.T02 has no product changes."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review",
+  "retainedWork": [
+    "Permanent development-launch correction: owner confirmed --no-dev-server restores native folder selection; implement separately as bounded W1 restoration without weakening native-origin or security controls.",
+    "Owner-requested maximized startup/right-side isolated test-window policy remains separate W1 planning. Optional cosmetic refinements are deferred per owner acceptance and are not amendment prerequisites.",
+    "Continue CAP-07.S01.T02 model registry/capability discovery and CAP-07.S01.T03 routing/fallback/timeout/circuit-breaker work after lawful ordinary W1 resume.",
+    "Complete cross-capability Windows-x64 full repository/profile, restart/recovery/security/migration/accessibility/performance/packaging qualification and independent Wave review before human G1; no later Wave execution or remote effect."
+  ],
+  "candidateCommit": "e3bdfe727257a895e82ae813f379180c09ea1e8a",
+  "contributionReview": {
+    "path": "artifacts/evidence/W1.A08.S01.review-01.json",
+    "rawSha256": "7a5e91b511bdd13c2ffefcd987e500e07a51d6c04d8199e4cfbce544d203d816",
+    "introductionCommit": "e3bdfe727257a895e82ae813f379180c09ea1e8a",
+    "reviewedCompletionDeliveryCommit": "040174ff174db7fa5f2912c0d8de61cc4aefef3f",
+    "result": "approved",
+    "openFindings": []
+  },
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_product_style_check tests.desktop.test_product_layout_measurements tests.desktop.test_desktop_app_check -v",
+      "result": "passed",
+      "summary": "Independent accumulated S01 execution:52/52 passed in103.922s with no skips/failures/errors. Exact loader/TextTestRunner inline harness, before/after503-input plus six helper/test-source binding; HEAD-only movement rejected then reconciled in18.660s. No new visual matrix or native proof.",
+      "producerQualification": "Actual product producer remains a7f39e43c77055dc1c115dbd3b3529bd90518ac2; independent run source binding and HEAD-only movement reconciliation are recorded in the contribution review."
+    },
+    {
+      "command": "Recorded complete original-base public UI gate at b13113bf65630c70a7163fbd422194e2289b9db3",
+      "result": "passed",
+      "summary": "Reuse root's actual full public entry point PASS errors[],nine UI files,five authenticated correction ranges,exact reference1.6. Independent maintenance adopted; not a narrowed-base/helper-only result or fresh exit replay."
+    },
+    {
+      "command": "Independent W1.A08.T02 formal R01 capture/style/provenance/performance checks",
+      "result": "passed",
+      "summary": "Independent108 matrix image authentication26.757s, static283rules/10exceptions1.041s, all13bindings and1172-pathinventory4.894s, twelve accent images and four performance distributions/budgets0.645s, exact submission delivery1.555s. Full visual/native/benchmark reruns not claimed."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml review W1.A08.T02 --reviewer agent:window_launch_planning --result approved --from artifacts/evidence/W1.A08.T02.review-R01.json",
+      "result": "passed",
+      "summary": "Supported atomic review transition independently approved T02 and retained exact original R01 packet; schema/authority/append-only checks passed. Both tasks DONE/approved, open findings recomputed as empty. Not amendment/Wave approval."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed",
+      "summary": "Both-DONE generated projections checked against authoritative backlog after transition."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "summary": "Exact bounded task-completion delivery has no whitespace errors."
+    }
+  ],
+  "evidenceMap": {
+    "taskManifest": "artifacts/evidence/W1.A08.T02.json",
+    "taskManifestRawSha256": "54c456d6d472e791e1645636c0e6550feb971928130a69868a64caf5c402644d",
+    "taskReview": "artifacts/evidence/W1.A08.T02.review-R01.json",
+    "taskReviewRawSha256": "088cdca4c1e0ad888a20367428178d6e5aa0e88e8589575e3f51930a46b14ec8",
+    "ownerAcceptance": "artifacts/evidence/W1.A08.T02.owner-styling-acceptance-01.md",
+    "ownerAcceptanceRawSha256": "00e62d7c0014b3f544914443ca2e7c7e662f882db59b8a3758922013a9356c4a",
+    "visualReview": "artifacts/evidence/W1.A08.T02.visual-review-06.json",
+    "classification": "artifacts/evidence/W1.A08.T02.ui-classification-R01.json",
+    "matrix": "artifacts/evidence/W1.A08.T02.captures-06/manifest.json",
+    "accent": "artifacts/evidence/W1.A08.T02.accent-captures-01/manifest.json",
+    "performance": "artifacts/evidence/W1.A08.T02.performance-04.json",
+    "accumulatedSliceReview": "artifacts/evidence/W1.A08.S01.review-01.json",
+    "accumulatedSliceReviewRawSha256": "7a5e91b511bdd13c2ffefcd987e500e07a51d6c04d8199e4cfbce544d203d816"
+  },
+  "verificationSelection": {
+    "riskAnalysis": "This exit changes no product, reference or controller source. Reuse the exact task and fresh accumulated slice union, source-bound clean product build/runtime, current visual disposition and independently recomputed performance evidence; check exact DONE/review state and generated projections. Retain source/line-ending/HEAD-movement and historical native/principal limits. No unrelated full-profile replay or optional cosmetic loop.",
+    "fullWaveMatrix": "Deferred to complete W1 release qualification under unchanged criteria, not waived."
+  }
+}
