@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0",
+  "taskId": "W1.A08.T02",
+  "kind": "preflight-inventory-negative",
+  "status": "EXPECTED_FAILURE",
+  "producerCommit": "3432d6cd305abd907c3f8c0457d5c097e7bc1f0c",
+  "testState": "New missing-inventory negatives were uncommitted; collector and validator still matched the producer. This is an adverse observation, not final commit-bound qualification.",
+  "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_qualification_measurements_bind_renderer_geometry_and_reachable_states -v",
+  "exitCode": 1,
+  "output": "test_qualification_measurements_bind_renderer_geometry_and_reachable_states (tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_qualification_measurements_bind_renderer_geometry_and_reachable_states) ... FAIL\r\n\r\n======================================================================\r\nFAIL: test_qualification_measurements_bind_renderer_geometry_and_reachable_states (tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_qualification_measurements_bind_renderer_geometry_and_reachable_states)\r\n----------------------------------------------------------------------\r\nTraceback (most recent call last):\r\n  File \"C:\\ai-projects\\research-observatory\\tests\\desktop\\test_desktop_app_check.py\", line 455, in test_qualification_measurements_bind_renderer_geometry_and_reachable_states\r\n    self.assertTrue(qualification_measurement_errors(changed))\r\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\nAssertionError: [] is not true\r\n\r\n----------------------------------------------------------------------\r\nRan 1 test in 0.005s\r\n\r\nFAILED (failures=1)\r\n"
+}

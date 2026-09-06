@@ -117,6 +117,47 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
         broken["scrollWidth"] = 1450
         self.assertTrue(shell_geometry_errors(broken, stacked=False))
 
+    def test_minimal_shared_shell_is_genuinely_short_and_fills_the_viewport(self):
+        # Explicit CSS consumer fixture, not an invented short application state.
+        styles = "\n".join(
+            (REPO / path).read_text(encoding="utf-8")
+            for path in (
+                "design/ui-reference/assets/tokens.css",
+                "packages/ui-components/src/styles.css",
+                "apps/desktop/src/app.css",
+            )
+        )
+        document = f"""<!doctype html><html><head><style>{styles}</style></head><body>
+          <div class="application-shell"><header class="topbar">Shared shell fixture</header>
+            <div class="shell-body"><aside class="sidebar"><nav><button>Home</button></nav></aside>
+              <main><section class="ro-page-region"><h1 class="ro-typography">Empty fixture</h1></section></main>
+            </div><footer class="trust-footer">Fixture only; no project</footer>
+          </div></body></html>"""
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page(reduced_motion="reduce")
+                page.set_content(document)
+                for width, height in ((1440, 900), (1280, 720), (720, 450)):
+                    for theme in ("light", "dark"):
+                        with self.subTest(width=width, theme=theme):
+                            page.set_viewport_size({"width": width, "height": height})
+                            page.locator("html").evaluate("(node, theme) => node.dataset.theme = theme", theme)
+                            page.evaluate(
+                                "() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))"
+                            )
+                            self.assertLessEqual(page.evaluate("document.documentElement.scrollHeight"), height)
+                            shell = page.evaluate(SHELL_GEOMETRY)
+                            self.assertAlmostEqual(height, shell["footer"]["bottom"], delta=0.5)
+                            self.assertEqual([], shell_geometry_errors(shell, stacked=width == 720))
+                # A shell that shrinks to its content must not receive a false
+                # short-page pass merely because its own three edges still meet.
+                page.set_viewport_size({"width": 1440, "height": 900})
+                page.add_style_tag(content=".application-shell { min-height: 0; }")
+                self.assertLess(page.evaluate(SHELL_GEOMETRY)["footer"]["bottom"], 700)
+            finally:
+                browser.close()
+
     def test_actual_product_flow_and_sidebar_with_keyboard_scrolling(self):
         document = inline_product_index(REPO)
         adapter = (REPO / "tests/desktop/fixtures/task_center_interactions.js").read_text(encoding="utf-8")
@@ -139,7 +180,7 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
                 page.wait_for_function("document.body.dataset.applicationReady === 'true'")
                 for width, height in ((1440, 900), (1280, 720), (720, 450)):
                     for theme in ("light", "dark"):
-                        with self.subTest(state="short-empty-home", width=width, theme=theme):
+                        with self.subTest(state="initial-empty-home", width=width, theme=theme):
                             page.set_viewport_size({"width": width, "height": height})
                             page.locator("html").evaluate("(node, theme) => node.dataset.theme = theme", theme)
                             self.assertEqual(

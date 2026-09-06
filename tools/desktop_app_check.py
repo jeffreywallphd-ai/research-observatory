@@ -1041,6 +1041,10 @@ def qualification_measurement_errors(case: dict[str, Any]) -> list[str]:
         padding = 28 if case.get("width") == 1440 else 20 if case.get("width") == 1280 else 16
         if not _style_number_matches(case.get("geometry", {}).get("mainPadding"), padding):
             errors.append("responsive page padding differs from reference tokens")
+        body_count = case.get("panelBodyCount")
+        flows = case.get("panelFlow")
+        if type(body_count) is not int or body_count < 1 or not isinstance(flows, list) or len(flows) != body_count:
+            errors.append("required observed Panel-body inventory is missing or incomplete")
         errors.extend(panel_flow_errors(case.get("panelFlow"), require_paragraph_pair=surface == "tasks"))
         errors.extend(shell_geometry_errors(case.get("shell"), stacked=case.get("width") == 720))
     semantic = case.get("semantic")
@@ -2050,6 +2054,7 @@ class ProductStyleQualification:
                   probe.remove(); return output;
                 }""")
                 if surface_id in {item[0] for item in QUALIFICATION_WORKSPACES}:
+                    observed["panelBodyCount"] = node.locator(".ro-panel > div:visible").count()
                     observed["panelFlow"] = node.evaluate(PANEL_FLOW_GEOMETRY)
                     observed["shell"] = page.evaluate(SHELL_GEOMETRY)
                 observed["fonts"] = {

@@ -390,6 +390,7 @@ class DesktopAppCheckTests(unittest.TestCase):
             "focus": {"targetInViewport": True},
             "geometry": {"mainPadding": 28},
             "panelFlow": [valid_flow()],
+            "panelBodyCount": 1,
             "shell": valid_shell(),
             "semantic": [
                 {
@@ -435,6 +436,11 @@ class DesktopAppCheckTests(unittest.TestCase):
             lambda item: item["observedEnvironment"].__setitem__("deviceScaleFactor", 2),
             lambda item: item["geometry"].__setitem__("mainPadding", 27),
             lambda item: item.pop("panelFlow"),
+            lambda item: item.__setitem__("panelFlow", []),
+            lambda item: item.pop("panelBodyCount"),
+            lambda item: item.__setitem__("panelBodyCount", True),
+            lambda item: item.__setitem__("panelBodyCount", 0),
+            lambda item: item.__setitem__("panelBodyCount", 2),
             lambda item: item.pop("shell"),
             lambda item: item["focus"].__setitem__("targetInViewport", False),
             lambda item: item["semantic"].pop(),
