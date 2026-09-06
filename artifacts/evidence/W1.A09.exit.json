@@ -1,0 +1,302 @@
+{
+  "documentType": "wave-amendment-exit-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A09",
+  "changeRequestId": "ECR-0008",
+  "targetWave": "W1",
+  "branch": "codex/w1-windows-local-runtime",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "authority": {
+    "approvalRecord": {
+      "path": "planning/wave-amendment-approvals/W1.A09.json",
+      "sha256": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+      "introduction_commit": "fcf627b4c83af81d0c3472526477bc7aa68d819c"
+    },
+    "packet": "planning/enabler-change-requests/ECR-0008.packet.json",
+    "packetCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "presentationReference": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "semanticReference": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "tokenSourceIdentity": "RO-UI-ACADEMIC-MINIMAL-1.4"
+  },
+  "scope": {
+    "bootstrap": {
+      "id": "W1.A09.B00",
+      "status": "APPROVED",
+      "implementationCommit": "d849d6699cbc0295e3b94f5efda9e338822d7c9e",
+      "evidence": [
+        {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A09.B00.json",
+          "sha256": "75222f0993c050df6a6579052f263c5e30b5fc175ea55b80f1bd32d5febdd6f4",
+          "commit": "d849d6699cbc0295e3b94f5efda9e338822d7c9e",
+          "recorded_at": "2026-09-05T03:21:27+00:00"
+        }
+      ],
+      "review": {
+        "reviewer": "agent:t01-r02-independent-reviewer",
+        "result": "approved",
+        "reviewed_at": "2026-09-05T03:28:14+00:00",
+        "notes": "Independent review artifacts/evidence/W1.A09.B00.review-R01.json approves exact candidate d849d669 and delivery 82488fbd: full predecessor/A08 equality, exact owner authority, pending-child freeze, materialization denial and generated-site checks pass; no findings. This approves only B00, not product/reference activation, task/slice/exit completion or G1."
+      }
+    },
+    "authorizedContribution": {
+      "id": "W1.A09.S01",
+      "capabilityId": "CAP-01",
+      "title": "Native project UX and truthful presentation qualification",
+      "objective": "Restore local project usability and truthful reference qualification while retaining semantic1.5 and returning safely to unfinished styling.",
+      "workType": "mixed-refactor-and-new",
+      "refactorTaskIds": [
+        "W1.A09.T01",
+        "W1.A09.T02",
+        "W1.A09.T03"
+      ],
+      "taskIds": [
+        "W1.A09.T01",
+        "W1.A09.T02",
+        "W1.A09.T03",
+        "W1.A09.T04"
+      ],
+      "acceptanceCriteria": [
+        "All reference, native transport/readiness and shared folder-selection task criteria pass together on actual Windows/native/Core boundaries including failure/denial/cancellation/lock/close/recovery.",
+        "Durable semantic1.5 and prior approvals/evidence remain unchanged; presentation1.6 gets truthful fresh baseline and independent control/experience checkpoint.",
+        "Independent task and slice reviews close assigned findings without weakening tests; F02/UX01 remain for existing A08.T02 after return.",
+        "Independent exit/adoption returns to paused unchanged A08; W1 qualification and human G1 remain separate."
+      ]
+    },
+    "authorizedTasks": [
+      {
+        "taskId": "W1.A09.T01",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "7a46e91a4558d9286a94d21aa85b050f6323e286",
+        "finalEvidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A09.T01.json",
+          "sha256": "8fcdb044e699f83673998dd5f8f78763a10bf8c5397fd6f47d8b9328bcf5eb3d",
+          "commit": "7a46e91a4558d9286a94d21aa85b050f6323e286",
+          "recorded_at": "2026-09-05T13:23:47+00:00"
+        },
+        "reviewLedger": {
+          "path": "artifacts/evidence/W1.A09.T01.review-R01.json",
+          "sha256": "8609e02b527340c3da3efd4cd465c81c7cc136d083f6998bb9ff43a975f92e00"
+        },
+        "reviewer": "agent:t01-r02-independent-reviewer",
+        "attemptId": "R01",
+        "openFindings": []
+      },
+      {
+        "taskId": "W1.A09.T02",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "a6a219ce0ec32bc96b151aad13c19c5646ec8db6",
+        "finalEvidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A09.T02.json",
+          "sha256": "22af4093b462a8f3d97642b36b5a3714f5fa9adc3d0982294a9e2ae3445b08a1",
+          "commit": "a6a219ce0ec32bc96b151aad13c19c5646ec8db6",
+          "recorded_at": "2026-09-05T14:11:49+00:00"
+        },
+        "reviewLedger": {
+          "path": "artifacts/evidence/W1.A09.T02.review-R01.json",
+          "sha256": "38126680eb82121f0ccd13bf572060296c9250137bc755403af011a27b602dd0"
+        },
+        "reviewer": "agent:/root/t01_publication_checkpoint",
+        "attemptId": "R01",
+        "openFindings": []
+      },
+      {
+        "taskId": "W1.A09.T03",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "30357ec178cc1a57646b7fe64dca3ee7670756d2",
+        "finalEvidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A09.T03.json",
+          "sha256": "13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4",
+          "commit": "30357ec178cc1a57646b7fe64dca3ee7670756d2",
+          "recorded_at": "2026-09-05T22:11:30+00:00"
+        },
+        "reviewLedger": {
+          "path": "artifacts/evidence/W1.A09.T03.review-R01.json",
+          "sha256": "04bbbd016f496e82b09c2245909cd70493d04c6cb2d4d37771efda57d92e8642"
+        },
+        "reviewer": "agent:/root/t03_acceptance_review",
+        "attemptId": "R01",
+        "openFindings": []
+      },
+      {
+        "taskId": "W1.A09.T04",
+        "status": "DONE",
+        "reviewResult": "approved",
+        "candidateCommit": "6cb1514f2f2349e3e34e40e059986e635cd609cc",
+        "finalEvidence": {
+          "type": "criterion-manifest",
+          "path": "artifacts/evidence/W1.A09.T04.remediation-02.json",
+          "sha256": "e16fd7421b597c1c3a84078ec87feb34c27d1c92070566546d22efbbbf2167a5",
+          "commit": "6cb1514f2f2349e3e34e40e059986e635cd609cc",
+          "recorded_at": "2026-09-05T23:56:21+00:00"
+        },
+        "reviewLedger": {
+          "path": "artifacts/evidence/W1.A09.T04.review-R02.json",
+          "sha256": "94c747ec3d0630687e2befe96a6f1fe041de8b04b12852c770dc543805b33f68"
+        },
+        "reviewer": "agent:/root/t03_acceptance_review",
+        "attemptId": "R02",
+        "openFindings": []
+      }
+    ]
+  },
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "criterion": "Exact immutable W1/A01-A08/migration authority and paused single-owner correction entry/return are authenticated; no historical rewrite or premature execution.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Exact approved packet, immutable predecessor chain and current paused-parent record are bound by the independently reviewed bootstrap, task/controller proofs and exact correctionReturn. Runtime amendment status validation passes. No historical rewrite or ordinary campaign execution is claimed."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "Bind the owner's explicit preapproval to this exact matching canonical packet/reference only after independent acceptance, before product edits; apply only enumerated publication metadata substitutions.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Original owner preapproval was bound to the exact independently accepted packet/reference at approval introduction fcf627b4c83af81d0c3472526477bc7aa68d819c before bootstrap/product work. W1.A09.T01 independently verified enumerated publication metadata mapping and strict approval/reference/baseline sequence."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "F01 and UX02-UX06 close through the four tasks and real Windows/native/Core proof, independent task/slice/exit dispositions and no valid-test weakening.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "All four tasks have independent exact-candidate approvals; T04 R01 findings are retained and explicitly closed only in R02. Their accumulated source-bound renderer/native/Core, real Windows folder/default/create/restart/reopen and failure/security/recovery proof closes assigned F01/UX02-UX06. The independent contribution disposition is separately bound below; independent amendment exit is requested, not self-approved."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Durable semantic1.5 and token source identity remain unchanged; all66 reference observations are truthful and publication follows independent control-checkpoint discipline.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Semantic1.5 catalog, persisted workflow and token1.4 source identity remain unchanged. W1.A09.T01 supplies exact compatibility witness, preserved history and all66 fresh presentation1.6 reference observations. Its separate independent control/experience checkpoint precedes downstream consumer rebinding. Actual product/native observations are distinct from reference captures and renderer doubles."
+    },
+    {
+      "criterionIndex": 5,
+      "criterion": "Shared folder selection eliminates implemented W1 directory/path-name typing, preserves researcher authority/input, native window/lock lifetime and Core data safeguards.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Implemented create/open directory and child-name inputs now use native folder selection, supplied default parent and friendly-name destination derivation. T03 real Shell/Tauri and protected Core tests plus T04 actual lifecycle and fresh blind creation/save/reopen support explicit selection versus Open, cancellation, collision/no-overwrite, protected generation and restart boundaries. No ordinary user project was used."
+    },
+    {
+      "criterionIndex": 6,
+      "criterion": "Adoption returns to PAUSED A08 whose T02 closes F02/UX01 using actual spacing/sidebar geometry; no false closure or premature ordinary Wave execution.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Exact correctionReturn below is the pending adoption contract, not a claim that adoption occurred. Supported independently reviewed adoption must restore unchanged PAUSED W1.A08; then explicit activation and W1.A08.T02 recovery close retained F02/UX01 spacing/sidebar findings. Ordinary W1/CAP-07 execution remains denied until W1.A08 adoption."
+    },
+    {
+      "criterionIndex": 7,
+      "criterion": "11/194 refactor points (5.7%) remain within15%; exact path inventory limits scope; no major refactor, wider permissions, later-Wave, external or destructive action.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Approved 11/194 points (5.7%) and exact bounded inventory are unchanged. New native/test/evidence maintenance preserves accepted runtime, security/permissions and researcher authority. No major refactor, second tokens, later-Wave implementation, remote push, ordinary profile/credential access, destructive action or spend is supplied by this exit."
+    },
+    {
+      "criterionIndex": 8,
+      "criterion": "Complete W1 repository/Windows qualification and independent Wave review precede human G1 approval; correction approval is not release approval.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "Complete W1 repository/Windows cross-capability qualification, independent Wave review and human G1 remain mandatory. Frozen/unmodified-production ordinary-profile startup and required installer/authentication qualification remain later proof, not waived by the reviewed accumulated native/Core union plus build/packaging smoke."
+    }
+  ],
+  "correctionReturn": {
+    "id": "W1.A08",
+    "changeRequestId": "ECR-0007",
+    "status": "PAUSED",
+    "packetCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
+    "approvalReference": {
+      "path": "planning/wave-amendment-approvals/W1.A08.json",
+      "sha256": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
+      "introductionCommit": "979486506a62b5dbf1b7a0af711079bdaa34cd44"
+    },
+    "effectiveStateCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+    "recordSha256": "3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506",
+    "returnPolicy": "paused-predecessor"
+  },
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "User directed an append-only W1 styling amendment before Wave exit to align production spacing, margins, padding, visual rhythm, and interaction treatment with the approved UI reference while consolidating reusable styles. Ordinary product execution is quiescent; CAP-07.S01.T02 has no product changes."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review",
+  "retainedWork": [
+    "W1.A08.T02: full-height sidebar and effective paragraph spacing; qualify actual product across both themes,1440x900/1280x720/720x450, long navigation and reduced motion, followed by independent W1.A08.S01/exit/adoption.",
+    "Usability U02/U03/U05/U06 need lawful W1 acceptance/design handling; fixture-denied Task Center/support flows are not ordinary-production endpoint failures. No full nine-task blind success is claimed.",
+    "Owner-requested maximized normal startup and narrower right-aligned isolated testing remain inert planning, to bind in a next lawful experience amendment after W1.A08 adoption.",
+    "Complete W1 platform/security/migration/recovery/accessibility/performance/packaging and cross-capability matrix, independent Wave review and human G1; no later Wave work.",
+    "No local-main integration through unmet W1.A08 ancestry gates and no remote effects."
+  ],
+  "candidateCommit": "232b9fe7408df486cd045460fb87efe377b8606f",
+  "contributionReview": {
+    "path": "artifacts/evidence/W1.A09.S01.review-01.json",
+    "rawSha256": "9b491c1363f75bfc8627a96d0b66fdf75dcb72edd37716cc2c2e03585ce5f026",
+    "introductionCommit": "232b9fe7408df486cd045460fb87efe377b8606f",
+    "reviewedCompletionDeliveryCommit": "11f272be8268a67b18fc4bca6613c0f5da85daf8",
+    "result": "approved",
+    "openFindings": []
+  },
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml amendment status W1.A09",
+      "result": "passed",
+      "summary": "Current runtime amendment authority validates with four DONE independently approved tasks, active A09 and exact PAUSED parent."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed",
+      "summary": "Completion projections match the canonical backlog."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "summary": "Bounded completion/evidence delivery has no whitespace errors."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json",
+      "result": "passed",
+      "summary": "Retained accumulated task execution, not a new exit replay. Exact current inputs are bound by T04 final-binding-02 and independently verified R02/S01; 15/4/2 commands respectively."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json",
+      "result": "passed",
+      "summary": "Retained accumulated task execution, not a new exit replay. Exact current inputs are bound by T04 final-binding-02 and independently verified R02/S01; 15/4/2 commands respectively."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json",
+      "result": "passed",
+      "summary": "Retained accumulated task execution, not a new exit replay. Exact current inputs are bound by T04 final-binding-02 and independently verified R02/S01; 15/4/2 commands respectively."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py",
+      "result": "passed",
+      "summary": "11 independent R02 tests pass. Retained regression executions and both explicit finding closures are bound in the task review."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json",
+      "result": "passed",
+      "summary": "Retained owner proof at tested494243d3, independently verified in R02: 566 source inputs,532 candidate blob identities,583 snapshots,49 declared generated/runtime inventory inputs. Not rerun against later DONE backlog."
+    }
+  ],
+  "evidenceMap": {
+    "integratedReview": "artifacts/evidence/W1.A09.T04.review-bundle.md",
+    "currentBinding": "artifacts/evidence/W1.A09.T04.final-binding-02.json",
+    "currentBindingRawSha256": "0ee46e68944d831b335f6e9243d73f30c0263fd5880b270e26beedf5aa8f4936",
+    "nativeLifecycle": "artifacts/evidence/W1.A09.T04.native-ui-observations-01.json",
+    "nativeBuilds": "artifacts/evidence/W1.A09.T04.native-builds-01.json",
+    "productionBuild": "artifacts/evidence/W1.A09.T04.production-native-build-01.json",
+    "productionPackageSmoke": "artifacts/evidence/W1.A09.T04.packaging-production-02.json",
+    "releaseResourceResolution": "artifacts/evidence/W1.A09.T04.resource-resolution-01.json",
+    "presentation": "artifacts/evidence/W1.A09.T04.presentation-check-01.json",
+    "performance": "artifacts/evidence/W1.A09.T04.performance-02.json",
+    "packagingScopeReconciliation": "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json",
+    "blindTranscript": "artifacts/evidence/W1.A09.T04.blind-usability-01.transcript.md",
+    "blindAssessment": "artifacts/evidence/W1.A09.T04.blind-usability-01.assessment.md",
+    "returnPreparation": "artifacts/evidence/W1.A09.T04.return-preparation.json"
+  },
+  "verificationSelection": {
+    "riskAnalysis": "This exit introduces no product or control change. W1.A09.T04 is the approved accumulated union/clean build smoke task, already independently reviewed, with separate W1.A09.S01 integrated disposition. Reuse that exact source/report-bound qualification and explicit principal/fixture limits. Check current authority/completion and generated projections; preserve all adverse history. Do not repeat unrelated profiles or count prior source/native/reference checks as newly executed exit tests.",
+    "fullWaveMatrix": "Deferred to complete W1 exit under the unchanged release contract, not waived."
+  }
+}
