@@ -184,6 +184,13 @@ authority.
 
 ### Historical controlled enabler change requests
 
+The mechanics below preserve existing amendment history and remain necessary
+for genuinely changed authority. They are not the default for ordinary defects
+that restore an approved contract. Use the bounded correction procedure in
+`../docs/automation/workflow-efficiency.md`; automation-control defects use the
+maintenance rule above. Never reopen an adopted amendment to avoid its frozen
+history or repurpose a correction to expand product scope.
+
 Never replace or repeat an `APPROVED` Wave approval. If consequential new
 evidence requires a bounded control/enabler change, pause the Wave with no
 ordinary task in `IN_PROGRESS` or `REVIEW`, create a hash-bound ECR packet, obtain

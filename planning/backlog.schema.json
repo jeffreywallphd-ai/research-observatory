@@ -1085,6 +1085,264 @@
       },
       "additionalProperties": false
     },
+    "correctiveTask": {
+      "type": "object",
+      "required": [
+        "id",
+        "wave",
+        "title",
+        "objective",
+        "dependencies",
+        "acceptance_criteria",
+        "verification_commands",
+        "verification_profiles",
+        "deployment_profiles",
+        "platform_targets",
+        "priority",
+        "status",
+        "owner",
+        "branch",
+        "base_sha",
+        "worktree",
+        "lease",
+        "started_at",
+        "updated_at",
+        "completed_at",
+        "blocker",
+        "implementation_notes",
+        "evidence",
+        "verification_state",
+        "review",
+        "review_control",
+        "correction"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])\\.C[0-9]{2,}\\.T01$"
+        },
+        "wave": {
+          "type": "string",
+          "pattern": "^W(?:[0-9]|1[01])$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "objective": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "verification_commands": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "verification_profiles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "deployment_profiles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "platform_targets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "priority": {
+          "type": "string",
+          "pattern": "^P[0-3]$"
+        },
+        "status": {
+          "enum": [
+            "IN_PROGRESS",
+            "REVIEW",
+            "BLOCKED",
+            "DONE"
+          ]
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch": {
+          "type": "string",
+          "pattern": "^codex/.+$"
+        },
+        "base_sha": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "worktree": {
+          "const": "."
+        },
+        "lease": {
+          "$ref": "#/$defs/nullableLease"
+        },
+        "started_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "completed_at": {
+          "$ref": "#/$defs/nullableTimestamp"
+        },
+        "blocker": {
+          "$ref": "#/$defs/nullableBlocker"
+        },
+        "implementation_notes": {
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/taskEvidence"
+        },
+        "verification_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "review": {
+          "$ref": "#/$defs/review"
+        },
+        "review_control": {
+          "$ref": "#/$defs/taskReviewControl"
+        },
+        "correction": {
+          "type": "object",
+          "required": [
+            "origin_task_id",
+            "origin_commit",
+            "origin_sha256",
+            "origin_contract_sha256",
+            "origin_history_sha256",
+            "paused_state_sha256",
+            "origin_amendment_id",
+            "authority_sha256",
+            "spec",
+            "reproduction",
+            "changed_paths",
+            "impact_analysis"
+          ],
+          "properties": {
+            "origin_task_id": {
+              "type": "string",
+              "pattern": "^(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2})$"
+            },
+            "origin_commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "origin_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "origin_contract_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "origin_history_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "paused_state_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "origin_amendment_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^W(?:[0-9]|1[01])\\.A[0-9]{2}$"
+            },
+            "authority_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "spec": {
+              "type": "object",
+              "required": [
+                "path",
+                "sha256",
+                "commit"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "pattern": "^artifacts/evidence/W(?:[0-9]|1[01])\\.C[0-9]{2,}\\.T01\\.spec\\.json$"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "commit": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                }
+              },
+              "additionalProperties": false
+            },
+            "reproduction": {
+              "type": "string",
+              "minLength": 1
+            },
+            "changed_paths": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true,
+              "minItems": 1
+            },
+            "impact_analysis": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "waveApprovalBase": {
       "type": "object",
       "required": ["wave_id", "packet_commit", "record_commit", "approval", "canonical_sha256"],
@@ -1381,6 +1639,11 @@
               "resume_records": {
                 "type": "array",
                 "items": {"$ref": "#/$defs/waveResumeRecord"}
+              },
+              "corrective_tasks": {
+                "type": "array",
+                "minItems": 1,
+                "items": {"$ref": "#/$defs/correctiveTask"}
               }
             },
             "additionalProperties": false

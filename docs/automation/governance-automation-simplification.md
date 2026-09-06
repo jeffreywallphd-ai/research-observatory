@@ -173,6 +173,17 @@ Wave execution or any release gate.
 
 ## Invariants retained
 
+The prospective operating simplification in `workflow-efficiency.md` applies
+these tiers without another journal cutover. Routine product restoration uses
+one linked corrective task in the existing compatibility adapter, retaining the
+completed origin unchanged. Automatic transition/test receipts report facts
+and remain non-authorizing. Sealed private-field preservation replaces repeated
+manual equality reviews only where exact typed-field and raw-byte invariants
+are mechanically established. Unknown evidence-input closure remains fresh-only.
+No new GRR/GCR, bootstrap or amendment is required merely to maintain these
+controls; independent review and human approval at expanded-authority/release
+boundaries remain mandatory.
+
 - Exact source hashes and compare-and-swap publication.
 - Append-only approvals, reviews, findings, closures, and adverse attempts.
 - Independent review at security, migration, public-contract, and release

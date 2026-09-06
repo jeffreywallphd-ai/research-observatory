@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import shlex
 import sys
+import sysconfig
 import uuid
+import zipfile
 from pathlib import Path
 
-from prospective_privacy import reviewed_artifacts
+from prospective_privacy import YAML_SOURCE_NAMES, reviewed_artifacts
 
 CONFIG = b'title = "Prospective credential checks"\n[extend]\nuseDefault = true\n'
 LAUNCHER = """import hashlib, json, runpy, sys
@@ -29,9 +32,31 @@ if mode == "message":
     extra = ["--message", sys.argv[2]]
 sys.argv = [str(base / "guard.py"), mode, "--repo", REPO,
             "--policy", str(base / "policy.json"), "--scanner", SCANNER,
-            "--config", str(base / "gitleaks.toml"), *REVIEW_ARGUMENTS, *extra]
+            "--config", str(base / "gitleaks.toml"), *REVIEW_ARGUMENTS, *PARSER_ARGUMENTS, *extra]
 runpy.run_path(str(base / "guard.py"), run_name="__main__")
 """
+
+
+def yaml_parser_archive() -> bytes:
+    """Snapshot only the existing locked dependency's pure Python sources, never live imports."""
+    package = Path(sysconfig.get_path("purelib")) / "yaml"
+    package.relative_to(Path(sys.prefix))
+    if package.is_symlink() or package.resolve() != package.absolute():
+        raise ValueError("Redirected YAML dependency")
+    output = io.BytesIO()
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_STORED) as archive:
+        for name in YAML_SOURCE_NAMES:
+            source = package / name
+            if source.is_symlink() or not source.is_file():
+                raise ValueError("Incomplete YAML dependency")
+            raw = source.read_bytes()
+            if name == "__init__.py" and b"__version__ = '6.0.3'" not in raw:
+                raise ValueError("The repository-locked YAML dependency is required")
+            info = zipfile.ZipInfo("yaml/" + source.name, date_time=(1980, 1, 1, 0, 0, 0))
+            info.create_system = 3
+            info.external_attr = 0o100644 << 16
+            archive.writestr(info, raw)
+    return output.getvalue()
 
 
 def prepare(repo: Path, scanner: Path, review: Path | None = None, review_sha256: str | None = None) -> Path:
@@ -68,12 +93,22 @@ def prepare(repo: Path, scanner: Path, review: Path | None = None, review_sha256
             stream.write(CONFIG)
         reviewed_artifacts(json.loads(review_raw), policy, target / "validation-config.toml")
         outputs["reviewed-artifacts.json"] = review_raw
+        preservation = json.loads(review_raw).get("preservation")
+        if preservation is not None:
+            if hashlib.sha256(outputs["guard.py"]).hexdigest() != preservation["workerSha256"]:
+                raise ValueError("Parser worker differs from independently reviewed preservation inputs")
+            parser = yaml_parser_archive()
+            if hashlib.sha256(parser).hexdigest() != preservation["parserSha256"]:
+                raise ValueError("YAML parser differs from independently reviewed preservation inputs")
+            outputs["yaml-parser.zip"] = parser
     pins = {path: hashlib.sha256(raw).hexdigest() for path, raw in outputs.items()}
     source = LAUNCHER.replace("PINS", repr(pins)).replace("SCANNER_HASH", repr(policy["scannerSha256"]))
     source = source.replace("SCANNER", repr(str(scanner)))
     source = source.replace("REPO", repr(str(repo)))
     review_args = ["--review-registry", str(target / "reviewed-artifacts.json")] if review_raw is not None else []
     source = source.replace("REVIEW_ARGUMENTS", repr(review_args))
+    parser_args = ["--yaml-parser", str(target / "yaml-parser.zip")] if "yaml-parser.zip" in outputs else []
+    source = source.replace("PARSER_ARGUMENTS", repr(parser_args))
     outputs["launcher.py"] = source.encode()
     python_arg = shlex.quote(runtime.as_posix())
     launcher_arg = shlex.quote((target / "launcher.py").as_posix())

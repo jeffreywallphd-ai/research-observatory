@@ -177,6 +177,13 @@ transition. Stop on branch divergence and never push without explicit authority.
 
 ## Independent review
 
+Apply `workflow-efficiency.md` before preparing another evidence packet or
+replaying prior tests. Review the new risk boundary and authenticate reusable
+proof; do not restart a closed styling discussion or expand acceptance into
+optional adjacent improvements. Keep shared HEAD and selected source inputs
+stable while verification runs. Automatic receipts assist evidence collection;
+they do not certify adequate coverage or replace the reviewer.
+
 Use a fresh agent context when possible. Every task receives a focused
 independent disposition of scope, evidence truth, changed contracts, and
 credible failure paths. Expand task review for security/credential boundaries,

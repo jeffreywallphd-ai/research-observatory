@@ -62,6 +62,76 @@ class BacklogSchemaTests(unittest.TestCase):
 
         self.assertEqual([], validate(data, capabilities, slices, tasks, gates))
 
+    def test_corrective_schema_is_strict_and_legacy_campaign_reader_denies_new_inventory(self) -> None:
+        data, task = self.corrective_document()
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+        old = json.loads(
+            subprocess.check_output(
+                ["git", "show", "637d3fce92e02c9d1ced47e24a43e21c543b8c65:planning/backlog.schema.json"], cwd=REPO
+            )
+        )
+        errors = list(Draft202012Validator(old).iter_errors(data))
+        self.assertTrue(any("corrective_tasks" in error.message for error in errors))
+        for field, value in (
+            ("id", "W1.C01"),
+            ("status", "CANCELLED"),
+            ("amendment_id", "W1.A02"),
+            ("worktree", "C:/dummy"),
+        ):
+            changed = copy.deepcopy(data)
+            next(w for w in changed["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"][0][field] = value
+            with self.subTest(field=field):
+                self.assertTrue(backlog_schema_errors(changed, schema_path=self.schema))
+        del task["correction"]["origin_history_sha256"]
+        self.assertTrue(backlog_schema_errors(data, schema_path=self.schema))
+
+    def corrective_document(self) -> tuple[dict[str, Any], dict[str, Any]]:
+        from argparse import Namespace
+
+        data = copy.deepcopy(self.canonical)
+        indexed = taskctl.index_backlog(data)
+        origin = indexed[3]["W1.A09.T03"]
+        spec = {
+            "schemaVersion": "1.0",
+            "kind": "authority-preserving-correction",
+            "origin": {
+                "taskId": origin["id"],
+                "commit": "a" * 40,
+                "sha256": taskctl.canonical_json_sha256(taskctl.corrective_origin_snapshot(origin)),
+            },
+            "reproduction": "Synthetic correction admission; no product operation.",
+            "changedPaths": ["apps/desktop/package.json"],
+            "impactAnalysis": "Preserve the inherited contract.",
+        }
+        args = Namespace(
+            agent="fixture-agent",
+            branch="codex/fixture",
+            base_sha="a" * 40,
+            worktree=".",
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+        )
+        task = taskctl.build_corrective_task(
+            data,
+            indexed[3],
+            origin,
+            spec,
+            {"path": "artifacts/evidence/W1.C01.T01.spec.json", "sha256": "b" * 64, "commit": "a" * 40},
+            args,
+        )
+        next(w for w in data["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"] = [task]
+        document = taskctl.serializable_backlog(data)
+        correction = next(w for w in document["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"][0]
+        return document, correction
+
+    def test_corrective_admission_preserves_complete_canonical_semantics_without_filesystem_evidence_reads(
+        self,
+    ) -> None:
+        data, _task = self.corrective_document()
+        self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
+        self.assertEqual([], validate(*taskctl.index_backlog(data), repo=None))
+
     def test_wave_resume_record_schema_is_exact_and_backward_compatible(self) -> None:
         data = copy.deepcopy(self.canonical)
         wave = next(item for item in data["waves"] if item["id"] == "W1")
@@ -74,7 +144,7 @@ class BacklogSchemaTests(unittest.TestCase):
                 "pre_resume_commit": "a" * 40,
                 "prior_campaign_sha256": "b" * 64,
                 "branch": "codex/w1-windows-local-runtime",
-                "worktree": "C:/ai-projects/research-observatory",
+                "worktree": "C:/fixture-workspace",
                 "profile": "LOC",
                 "platform": "windows-x64",
                 "actor": "codex",

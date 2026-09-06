@@ -103,6 +103,14 @@
     "full-affected-profile-and-repository-suite",
     "independent-wave-review"
   ],
+  "workflowEfficiency": {
+    "acceptanceScope": "frozen-criteria-and-material-defects-only",
+    "verificationSnapshot": "exact-inputs-stable-before-and-after",
+    "evidenceReuse": "explicit-trusted-receipt-and-identical-complete-inputs",
+    "waveExitReuse": false,
+    "duplicateReview": "prior-findings-and-new-risk-only",
+    "costReporting": "measured-durations-and-available-usage-only"
+  },
   "reviewPractice": {
     "taskReviewDefault": "focused-scope-evidence-and-credible-risk-disposition",
     "defaultDeepReviewUnit": "slice",

@@ -157,6 +157,306 @@ class ProspectivePrivacyTests(unittest.TestCase):
         ]
         return entry
 
+    def preservation_fixture(self, *, private_suffix: str = "") -> tuple[str, dict]:
+        text = (
+            "public: &shared\n  label: public\ncopy: *shared\nrecords:\n- id: KEEP\n  worktree: "
+            + UNSAFE_PATH
+            + private_suffix
+            + "\n  status: ready\n"
+        )
+        self.write("planning/fixture.yaml", text)
+        self.base = self.commit("Synthetic structured baseline")
+        self.policy["baselineCommit"] = self.base
+        raw = self.git("show", self.base + ":planning/fixture.yaml").stdout
+        self.approve_bytes("planning/fixture.yaml", raw)
+        archive = installer.yaml_parser_archive()
+        self.parser = self.repo / ".local/yaml-parser.zip"
+        self.parser.parent.mkdir(exist_ok=True)
+        self.parser.write_bytes(archive)
+        assert self.reviews is not None
+        document = {
+            "path": "planning/fixture.yaml",
+            "mode": "100644",
+            "baselineBlob": self.git("rev-parse", self.base + ":planning/fixture.yaml").stdout.decode().strip(),
+            "baselineSha256": hashlib.sha256(raw).hexdigest(),
+            "baselineSize": len(raw),
+            "seedCommit": self.base,
+            "seedBlob": self.git("rev-parse", self.base + ":planning/fixture.yaml").stdout.decode().strip(),
+            "seedSha256": hashlib.sha256(raw).hexdigest(),
+            "seedSize": len(raw),
+            "fields": [
+                {
+                    "selector": [{"key": "records"}, {"id": "KEEP"}, {"key": "worktree"}],
+                    "baselineLine": 6,
+                    "sha256": hashlib.sha256(raw.splitlines(keepends=True)[5]).hexdigest(),
+                }
+            ],
+        }
+        self.reviews["preservation"] = {
+            "schemaVersion": "1.0",
+            "parserSha256": hashlib.sha256(archive).hexdigest(),
+            "workerSha256": hashlib.sha256(
+                (
+                    self.repo / "tools/prospective_privacy.py"
+                    if (self.repo / "tools/prospective_privacy.py").exists()
+                    else ROOT / "tools/prospective_privacy.py"
+                ).read_bytes()
+            ).hexdigest(),
+            "documents": [document],
+        }
+        return text, document
+
+    def preservation_inspect(self, *, staged: bool = True, tip: str | None = None) -> dict:
+        with patch.dict(os.environ, self.env, clear=True):
+            return guard.inspect(
+                self.repo,
+                self.policy,
+                staged=staged,
+                tips=[tip] if tip else [],
+                scanner=SCANNER,
+                config=self.config,
+                reviews=self.reviews,
+                yaml_parser=self.parser,
+            )
+
+    def test_preservation_allows_multiple_real_transitions_without_new_receipts(self) -> None:
+        text, _ = self.preservation_fixture()
+        frozen = copy.deepcopy(self.reviews)
+        for status in ("review", "done"):
+            self.write("planning/fixture.yaml", "# harmless line shift\n" + text.replace("ready", status))
+            self.assertEqual("PASS", self.preservation_inspect()["status"])
+            (self.repo / "planning/fixture.yaml").write_text("Unstaged unrelated bytes")
+            self.assertEqual("PASS", self.preservation_inspect()["status"])
+            tip = self.commit("Public structured status change")
+            self.assertEqual("PASS", self.preservation_inspect(staged=False, tip=tip)["status"])
+        self.assertEqual(frozen, self.reviews)
+
+    def test_preservation_denies_new_moved_encoded_alias_and_ambiguous_fields(self) -> None:
+        text, _ = self.preservation_fixture()
+        candidates = {
+            "new-record": text + "- id: COPY\n  worktree: " + UNSAFE_PATH + "\n",
+            "new-field": text + "  other: " + UNSAFE_PATH + "\n",
+            "moved-field": text.replace("worktree:", "elsewhere:"),
+            "encoded": text.replace(UNSAFE_PATH, UNSAFE_PATH.replace("/", "%2f")),
+            "duplicate-key": text + "  status: other\n",
+            "duplicate-id": text + "- id: KEEP\n  status: other\n",
+            "private-alias": text.replace("worktree: ", "worktree: &private ") + "  other: *private\n",
+            "cycle": text + "loop: &loop [*loop]\n",
+            "merge": text + "merged:\n  <<: *shared\n",
+            "custom-tag": text + "tagged: !custom public\n",
+            "lookalike-tag": text + "tagged: !<str> public\n",
+            "multiline-private": text.replace("  worktree: " + UNSAFE_PATH, "  worktree: >\n    " + UNSAFE_PATH),
+        }
+        for name, candidate in candidates.items():
+            with self.subTest(name=name):
+                self.write("planning/fixture.yaml", candidate)
+                with self.assertRaises(ValueError):
+                    self.preservation_inspect()
+
+    def test_preservation_denies_stale_seed_mode_and_reintroduction(self) -> None:
+        text, document = self.preservation_fixture()
+        self.write("planning/fixture.yaml", text.replace("ready", "review"))
+        for field, value in (("seedCommit", "0" * 40), ("seedSha256", "0" * 64), ("baselineBlob", "0" * 40)):
+            with self.subTest(field=field):
+                original = document[field]
+                document[field] = value
+                with self.assertRaises(ValueError):
+                    self.preservation_inspect()
+                document[field] = original
+        self.git("update-index", "--chmod=+x", "planning/fixture.yaml")
+        with self.assertRaises(ValueError):
+            self.preservation_inspect()
+        self.git("update-index", "--chmod=-x", "planning/fixture.yaml")
+        self.commit("First preserved transition")
+        self.git("rm", "planning/fixture.yaml")
+        self.commit("Synthetic deletion")
+        self.write("planning/fixture.yaml", text.replace("ready", "done"))
+        with self.assertRaises(ValueError):
+            self.preservation_inspect()
+
+    def test_preservation_denies_decoded_private_mapping_keys(self) -> None:
+        text, _ = self.preservation_fixture()
+        for encoding in ("\\x40", "\\U00000040"):
+            with self.subTest(encoding=encoding):
+                escaped = UNSAFE_EMAIL.replace("@", encoding)
+                candidate = text + '"' + escaped + '": public\n'
+                self.assertFalse(guard.text_reasons(candidate.replace(UNSAFE_PATH, "placeholder"), set()))
+                self.write("planning/fixture.yaml", candidate)
+                with self.assertRaises(ValueError):
+                    self.preservation_inspect()
+
+    def test_preservation_parser_executes_held_authenticated_bytes_after_path_replacement(self) -> None:
+        text, _ = self.preservation_fixture()
+        script = """import hashlib, runpy, sys
+from pathlib import Path
+guard = runpy.run_path(sys.argv[1])
+path = Path(sys.argv[2])
+held = path.read_bytes()
+assert hashlib.sha256(held).hexdigest() == sys.argv[3]
+path.write_bytes(b'unreviewed replacement after authentication')
+guard['_load_sealed_yaml'](held)
+fields = guard['_yaml_private_fields'](sys.stdin.buffer.read(), set())
+print(len(fields))
+"""
+        outcome = subprocess.run(
+            [
+                sys.executable,
+                "-I",
+                "-S",
+                "-c",
+                script,
+                str(ROOT / "tools/prospective_privacy.py"),
+                str(self.parser),
+                hashlib.sha256(self.parser.read_bytes()).hexdigest(),
+            ],
+            input=text.encode(),
+            capture_output=True,
+            env=self.env,
+            check=False,
+        )
+        self.assertEqual(0, outcome.returncode, outcome.stderr.decode())
+        self.assertEqual(b"1", outcome.stdout.strip())
+        self.assertEqual(b"unreviewed replacement after authentication", self.parser.read_bytes())
+
+    def test_preservation_denies_substituted_worker_even_when_it_forges_expected_fields(self) -> None:
+        text, document = self.preservation_fixture()
+        escaped = UNSAFE_EMAIL.replace("@", "\\x40")
+        self.write("planning/fixture.yaml", text + '"' + escaped + '": public\n')
+        fake = self.repo / ".local/substituted-worker.py"
+        output = [{"selector": document["fields"][0]["selector"], "line": 6, "sha256": document["fields"][0]["sha256"]}]
+        fake.write_text("print(" + repr(json.dumps(output)) + ")\n")
+        with patch.object(guard, "__file__", str(fake)), self.assertRaises(ValueError):
+            self.preservation_inspect()
+
+    def test_preservation_worker_executes_held_authenticated_source_after_path_replacement(self) -> None:
+        text, _ = self.preservation_fixture()
+        worker = self.repo / ".local/worker.py"
+        worker.write_bytes((ROOT / "tools/prospective_privacy.py").read_bytes())
+        worker_sha = hashlib.sha256(worker.read_bytes()).hexdigest()
+        original_run = subprocess.run
+
+        def replace_then_run(*args, **kwargs):
+            worker.write_text("raise RuntimeError('replaced worker must not execute')")
+            return original_run(*args, **kwargs)
+
+        with (
+            patch.object(guard, "__file__", str(worker)),
+            patch.object(guard.subprocess, "run", side_effect=replace_then_run),
+        ):
+            fields = guard.yaml_private_fields(
+                text.encode(), self.parser, hashlib.sha256(self.parser.read_bytes()).hexdigest(), worker_sha, set()
+            )
+        self.assertEqual(1, len(fields))
+        self.assertIn("replaced worker", worker.read_text())
+
+    def test_preservation_is_opt_in_and_validates_sealed_selectors(self) -> None:
+        text, _ = self.preservation_fixture()
+        self.write("planning/fixture.yaml", text.replace("ready", "review"))
+        original = copy.deepcopy(self.reviews)
+        assert self.reviews is not None
+        self.reviews.pop("preservation")
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        for mutation in ("parser", "worker", "extra", "index", "bool-line", "duplicate", "new-location"):
+            with self.subTest(mutation=mutation):
+                self.reviews = copy.deepcopy(original)
+                assert self.reviews is not None
+                preservation = self.reviews["preservation"]
+                document = preservation["documents"][0]
+                if mutation == "parser":
+                    preservation["parserSha256"] = "0" * 64
+                elif mutation == "worker":
+                    preservation["workerSha256"] = "0" * 64
+                elif mutation == "extra":
+                    preservation["ignoreNewFields"] = True
+                elif mutation == "index":
+                    document["fields"][0]["selector"][1] = {"index": 0}
+                elif mutation == "bool-line":
+                    document["fields"][0]["baselineLine"] = True
+                elif mutation == "duplicate":
+                    document["fields"] *= 2
+                else:
+                    document["fields"][0]["selector"][1] = {"id": "NOT_THE_REVIEWED_RECORD"}
+                with self.assertRaises(ValueError):
+                    self.preservation_inspect()
+
+    def test_preservation_never_masks_credentials_or_new_raw_comments(self) -> None:
+        token = "gh" + "p_" + "7F3aBc9De2Gh5Jk8Lm1Np4Qr6St0UvXyZaBc"
+        text, _ = self.preservation_fixture(private_suffix=" " + token)
+        self.write("planning/fixture.yaml", text.replace("ready", "review"))
+        with self.assertRaisesRegex(ValueError, "Credential"):
+            self.preservation_inspect()
+        # Raw comments are not YAML fields, but still get the original privacy scan.
+        self.write("planning/fixture.yaml", text.replace("ready", "review") + "# " + UNSAFE_EMAIL + "\n")
+        self.assertEqual("FAIL", self.preservation_inspect()["status"])
+
+    def test_preservation_rejects_pending_and_committed_merge_edges(self) -> None:
+        text, _ = self.preservation_fixture()
+        branch = self.git("branch", "--show-current").stdout.decode().strip()
+        self.git("switch", "-c", "side")
+        self.write("side.txt", "Safe side branch")
+        self.commit("Fixture side")
+        self.git("switch", branch)
+        self.write("main.txt", "Safe main branch")
+        self.commit("Fixture main")
+        self.git("merge", "--no-ff", "--no-commit", "side")
+        self.write("planning/fixture.yaml", text.replace("ready", "review"))
+        with self.assertRaises(ValueError):
+            self.preservation_inspect()
+        tip = self.commit("Synthetic merge boundary")
+        with self.assertRaises(ValueError):
+            self.preservation_inspect(staged=False, tip=tip)
+
+    def test_installed_preservation_reuses_seal_and_blocks_tampering_and_new_disclosures(self) -> None:
+        remote = self.repo / "remote.git"
+        self.git("init", "--bare", str(remote))
+        self.policy["remoteUrl"] = remote.as_posix()
+        self.write("tools/prospective_privacy.py", (ROOT / "tools/prospective_privacy.py").read_text())
+        self.write(".privacy-baseline.json", json.dumps(self.policy))
+        text, _ = self.preservation_fixture()
+        (self.repo / ".privacy-baseline.json").write_text(json.dumps(self.policy))
+        review = self.repo / ".local/review.json"
+        wrong_worker = copy.deepcopy(self.reviews)
+        assert wrong_worker is not None
+        wrong_worker["preservation"]["workerSha256"] = "0" * 64
+        review.write_text(json.dumps(wrong_worker))
+        with self.assertRaisesRegex(ValueError, "Parser worker differs"):
+            installer.prepare(self.repo, SCANNER, review, hashlib.sha256(review.read_bytes()).hexdigest())
+        review.write_text(json.dumps(self.reviews))
+        pin = hashlib.sha256(review.read_bytes()).hexdigest()
+        with (
+            patch.object(installer, "yaml_parser_archive", return_value=b"unreviewed parser"),
+            self.assertRaisesRegex(ValueError, "YAML parser differs"),
+        ):
+            installer.prepare(self.repo, SCANNER, review, pin)
+        hooks = installer.prepare(self.repo, SCANNER, review, pin)
+        self.git("config", "core.hooksPath", str(hooks))
+        self.git("branch", "-m", "main")
+        self.git("remote", "add", "origin", remote.as_posix())
+        self.git("config", "push.default", "simple")
+        self.git("config", "branch.main.remote", "origin")
+        self.git("config", "branch.main.merge", "refs/heads/main")
+        review.write_text("{}")
+        (self.repo / "yaml.py").write_text("raise RuntimeError('untrusted shadow must not execute')")
+        (self.repo / "tools/prospective_privacy.py").write_text("raise RuntimeError('live source must not execute')")
+        for status in ("review", "done"):
+            self.write("planning/fixture.yaml", "# public line shift\n" + text.replace("ready", status))
+            self.commit("Routine preservation without new review")
+            self.git("push")
+        parser = hooks / "yaml-parser.zip"
+        original = parser.read_bytes()
+        self.write("planning/fixture.yaml", text.replace("ready", "complete"))
+        parser.write_bytes(original + b"tampered")
+        self.assertNotEqual(0, self.git("commit", "-m", "Parser tamper denied", check=False).returncode)
+        parser.write_bytes(original)
+        self.commit("Reviewed pinned parser restored")
+        self.git("push")
+        published = self.git("ls-remote", "--heads", "origin").stdout
+        self.write("planning/fixture.yaml", text + "  another: " + UNSAFE_EMAIL + "\n")
+        self.assertNotEqual(0, self.git("commit", "-m", "New disclosure denied", check=False).returncode)
+        self.git("-c", "core.hooksPath=" + str(self.repo / "no-hooks"), "commit", "-m", "Synthetic bypass")
+        self.assertNotEqual(0, self.git("push", check=False).returncode)
+        self.assertEqual(published, self.git("ls-remote", "--heads", "origin").stdout)
+
     def test_exact_retention_staged_index_and_push_preserve_unchanged_metadata(self) -> None:
         self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n")
         self.assertEqual("FAIL", self.inspect(staged=True)["status"])

@@ -235,5 +235,52 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
                 task_page_name(unsafe)
 
 
+class CorrectiveTaskProjectionTests(unittest.TestCase):
+    def test_unfinished_correction_prevents_completed_wave_badge(self) -> None:
+        from plan_review_site import wave_delivery_status
+
+        wave = {"campaign": {"corrective_tasks": [{"status": "REVIEW"}]}, "completion": {"status": "PENDING"}}
+        self.assertEqual("in-progress", wave_delivery_status(wave, [{"status": "DONE"}]))
+        self.assertEqual("completed", wave_delivery_status({}, [{"status": "DONE"}]))
+
+    def test_correction_is_visible_without_rewriting_original_or_inventing_slice(self) -> None:
+        from plan_review_check import corrective_task_errors
+        from plan_review_site import corrective_task_html, corrective_task_projection
+
+        task = {
+            "id": "W1.C01.T01",
+            "title": "Restore <approved> behavior",
+            "status": "REVIEW",
+            "acceptance_criteria": ["Original behavior works."],
+            "correction": {
+                "origin_task_id": "W1.A09.T03",
+                "reproduction": "Retry <button>",
+                "changed_paths": ["app.py"],
+            },
+            "review": {},
+            "review_control": {"version": "1.0", "attempts": [], "current_submission": None},
+        }
+        wave = {"id": "W1", "campaign": {"corrective_tasks": [task]}}
+        projection = corrective_task_projection(wave)
+        text = corrective_task_html(wave)
+        self.assertEqual([], corrective_task_errors(wave, projection, text))
+        self.assertIn("W1.C01.T01", text)
+        self.assertIn("W1.A09.T03", text)
+        self.assertIn("Restore &lt;approved&gt; behavior", text)
+        self.assertNotIn("data-wave-slice=", text)
+        self.assertTrue(corrective_task_errors(wave, [], text))
+        self.assertTrue(corrective_task_errors(wave, projection, text.replace("W1.C01.T01", "W1.C02.T01")))
+        self.assertTrue(corrective_task_errors(wave, projection, text + text))
+
+    def test_absent_correction_does_not_change_historical_wave_page(self) -> None:
+        from plan_review_check import corrective_task_errors
+        from plan_review_site import corrective_task_html, corrective_task_projection
+
+        wave = {"id": "W1", "campaign": {}}
+        self.assertEqual([], corrective_task_projection(wave))
+        self.assertEqual("", corrective_task_html(wave))
+        self.assertEqual([], corrective_task_errors(wave, [], ""))
+
+
 if __name__ == "__main__":
     unittest.main()

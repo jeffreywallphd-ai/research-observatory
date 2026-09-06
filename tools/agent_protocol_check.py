@@ -97,6 +97,18 @@ def validate_protocol(
     for field, expected in expected_verification.items():
         if verification.get(field) != expected:
             errors.append(f"verification.{field} must be {expected!r}")
+    efficiency = protocol.get("workflowEfficiency", {})
+    expected_efficiency = {
+        "acceptanceScope": "frozen-criteria-and-material-defects-only",
+        "verificationSnapshot": "exact-inputs-stable-before-and-after",
+        "evidenceReuse": "explicit-trusted-receipt-and-identical-complete-inputs",
+        "waveExitReuse": False,
+        "duplicateReview": "prior-findings-and-new-risk-only",
+        "costReporting": "measured-durations-and-available-usage-only",
+    }
+    for field, expected in expected_efficiency.items():
+        if efficiency.get(field) != expected:
+            errors.append(f"workflowEfficiency.{field} must be {expected!r}")
     if len(verification.get("earlyFullProfileConditions", [])) < 4:
         errors.append("verification must retain every governed early full-profile condition")
     if not verification.get("exactCommitRequired"):

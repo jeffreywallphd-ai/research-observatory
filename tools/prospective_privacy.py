@@ -5,12 +5,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import html
+import importlib.abc
+import importlib.util
+import io
 import json
 import os
 import re
 import subprocess
 import sys
+import zipfile
 from pathlib import Path, PurePosixPath
+from types import ModuleType
 from urllib.parse import unquote
 
 PROTECTED = "artifacts/evidence/W1.A04.B00.json"
@@ -28,6 +33,27 @@ RETIRED_REFS = {
     "refs/heads/codex/w1-t02-invalid-hardening-backup",
 }
 REDIRECT = {"GIT_DIR", "GIT_WORK_TREE", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_SHALLOW_FILE", "GIT_GRAFT_FILE"}
+YAML_SOURCE_NAMES = tuple(
+    name + ".py"
+    for name in (
+        "__init__",
+        "composer",
+        "constructor",
+        "dumper",
+        "emitter",
+        "error",
+        "events",
+        "loader",
+        "nodes",
+        "parser",
+        "reader",
+        "representer",
+        "resolver",
+        "scanner",
+        "serializer",
+        "tokens",
+    )
+)
 
 
 def git(repo: Path, *args: str, data: bytes | None = None) -> bytes:
@@ -136,7 +162,7 @@ def reviewed_artifacts(reviews: dict | None, policy: dict, config: Path) -> dict
         "rationale",
         "artifacts",
     }
-    if not isinstance(reviews, dict) or set(reviews) != required:
+    if not isinstance(reviews, dict) or set(reviews) not in (required, required | {"preservation"}):
         raise ValueError("Malformed artifact review")
     expected = {
         "schemaVersion": "1.0",
@@ -152,6 +178,8 @@ def reviewed_artifacts(reviews: dict | None, policy: dict, config: Path) -> dict
         raise ValueError("Missing independent artifact review")
     if reviews["reviewer"].strip().casefold() == reviews["implementer"].strip().casefold():
         raise ValueError("Artifact review is not independent")
+    if "preservation" in reviews:
+        preservation_documents(reviews["preservation"])
     artifacts = reviews["artifacts"]
     if not isinstance(artifacts, list) or not artifacts or len(artifacts) > 2000:
         raise ValueError("Invalid artifact review inventory")
@@ -206,6 +234,327 @@ def reviewed_artifacts(reviews: dict | None, policy: dict, config: Path) -> dict
             validate_retention_records(item)
         result[identity] = item
     return result
+
+
+def preservation_documents(value: dict) -> dict[str, dict]:
+    """Opt-in sealed seed authority; exact historical artifact admissions remain separate."""
+    if not isinstance(value, dict) or set(value) != {"schemaVersion", "parserSha256", "workerSha256", "documents"}:
+        raise ValueError("Malformed metadata preservation policy")
+    if (
+        value["schemaVersion"] != "1.0"
+        or not isinstance(value["parserSha256"], str)
+        or not SHA256.fullmatch(value["parserSha256"])
+        or not isinstance(value["workerSha256"], str)
+        or not SHA256.fullmatch(value["workerSha256"])
+    ):
+        raise ValueError("Invalid preservation parser binding")
+    documents = value["documents"]
+    if not isinstance(documents, list) or not 1 <= len(documents) <= 32:
+        raise ValueError("Invalid preservation document inventory")
+    result = {}
+    required = {
+        "path",
+        "mode",
+        "baselineBlob",
+        "baselineSha256",
+        "baselineSize",
+        "seedCommit",
+        "seedBlob",
+        "seedSha256",
+        "seedSize",
+        "fields",
+    }
+    for document in documents:
+        if not isinstance(document, dict) or set(document) != required:
+            raise ValueError("Malformed preservation document")
+        path = document["path"]
+        if not isinstance(path, str) or not path or "\\" in path or ":" in path:
+            raise ValueError("Invalid preservation path")
+        parsed = PurePosixPath(path)
+        if (
+            parsed.is_absolute()
+            or parsed.as_posix() != path
+            or ".." in parsed.parts
+            or parsed.suffix not in {".yaml", ".yml"}
+        ):
+            raise ValueError("Preservation requires one canonical YAML document")
+        validate_path(path)
+        if text_reasons(path, set()) or document["mode"] != "100644" or path in result:
+            raise ValueError("Private, nonregular or duplicate preservation path")
+        for key in ("baselineBlob", "seedCommit", "seedBlob"):
+            if not isinstance(document[key], str) or not SHA.fullmatch(document[key]):
+                raise ValueError("Invalid preservation Git binding")
+        for key in ("baselineSha256", "seedSha256"):
+            if not isinstance(document[key], str) or not SHA256.fullmatch(document[key]):
+                raise ValueError("Invalid preservation raw binding")
+        for key in ("baselineSize", "seedSize"):
+            if type(document[key]) is not int or not 0 < document[key] <= 16 * 1024 * 1024:
+                raise ValueError("Invalid preservation size")
+        fields = document["fields"]
+        if not isinstance(fields, list) or not 1 <= len(fields) <= 10000:
+            raise ValueError("Invalid preservation field inventory")
+        selectors, lines = set(), set()
+        for field in fields:
+            if not isinstance(field, dict) or set(field) != {"selector", "baselineLine", "sha256"}:
+                raise ValueError("Malformed preservation field")
+            selector = field["selector"]
+            if not isinstance(selector, list) or not 1 <= len(selector) <= 64:
+                raise ValueError("Invalid preservation selector")
+            for part in selector:
+                if not isinstance(part, dict) or len(part) != 1 or next(iter(part)) not in {"key", "id"}:
+                    raise ValueError("Preservation requires typed stable key/record-ID selectors")
+                item = next(iter(part.values()))
+                if not isinstance(item, str) or not item or text_reasons(item, set()):
+                    raise ValueError("Invalid preservation selector value")
+            identity = json.dumps(selector, sort_keys=True, separators=(",", ":"))
+            line = field["baselineLine"]
+            if identity in selectors or type(line) is not int or line < 1 or line in lines:
+                raise ValueError("Duplicate or invalid preservation field location")
+            if not isinstance(field["sha256"], str) or not SHA256.fullmatch(field["sha256"]):
+                raise ValueError("Invalid preservation line digest")
+            selectors.add(identity)
+            lines.add(line)
+        result[path] = document
+    return result
+
+
+def _load_sealed_yaml(parser_raw: bytes) -> None:
+    """Execute only source bytes from the already authenticated in-memory ZIP snapshot."""
+    if len(parser_raw) > 1024 * 1024 or any(name == "yaml" or name.startswith("yaml.") for name in sys.modules):
+        raise ValueError("Unexpected parser runtime state")
+    with zipfile.ZipFile(io.BytesIO(parser_raw)) as archive:
+        names = archive.namelist()
+        if len(names) != len(YAML_SOURCE_NAMES) or set(names) != {"yaml/" + name for name in YAML_SOURCE_NAMES}:
+            raise ValueError("Unexpected parser source inventory")
+        if sum(info.file_size for info in archive.infolist()) > 1024 * 1024:
+            raise ValueError("Oversized parser source inventory")
+        sources = {name: archive.read(name) for name in names}
+
+    class SealedYamlImporter(importlib.abc.MetaPathFinder, importlib.abc.Loader):
+        def find_spec(self, fullname: str, path: object = None, target: ModuleType | None = None):
+            if fullname != "yaml" and not fullname.startswith("yaml."):
+                return None
+            name = "yaml/__init__.py" if fullname == "yaml" else fullname.replace(".", "/") + ".py"
+            if name not in sources:
+                raise ModuleNotFoundError("Only authenticated pure-Python YAML modules are available")
+            return importlib.util.spec_from_loader(fullname, self, is_package=fullname == "yaml")
+
+        def create_module(self, spec):
+            return None
+
+        def exec_module(self, module: ModuleType) -> None:
+            name = "yaml/__init__.py" if module.__name__ == "yaml" else module.__name__.replace(".", "/") + ".py"
+            module.__file__ = "sealed-parser/" + name
+            exec(compile(sources[name], module.__file__, "exec"), module.__dict__)
+
+    sys.meta_path.insert(0, SealedYamlImporter())
+
+
+def _yaml_private_fields(raw: bytes, allowed: set[str]) -> list[dict]:
+    """Runs only inside the isolated pinned-parser worker; never constructs YAML objects."""
+    import yaml
+
+    if len(raw) > 16 * 1024 * 1024 or b"\0" in raw:
+        raise ValueError("Structured metadata must be bounded UTF-8 text")
+    try:
+        root = yaml.compose(raw.decode("utf-8"), Loader=yaml.SafeLoader)
+    except (yaml.YAMLError, UnicodeError, RecursionError) as exc:
+        raise ValueError("Structured metadata cannot be parsed safely") from exc
+    contents = raw.splitlines(keepends=True)
+    found: list[dict] = []
+    active: set[int] = set()
+    visits = 0
+    scalar_tags = {"tag:yaml.org,2002:" + name for name in ("str", "null", "bool", "int", "float", "timestamp")}
+
+    def walk(node: object, selector: list[dict], depth: int) -> None:
+        nonlocal visits
+        visits += 1
+        if depth > 64 or visits > 1000000 or id(node) in active:
+            raise ValueError("Cyclic or excessive YAML structure")
+        active.add(id(node))
+        if isinstance(node, yaml.MappingNode):
+            if node.tag != "tag:yaml.org,2002:map":
+                raise ValueError("Unsupported YAML mapping tag")
+            keys = []
+            for key, child in node.value:
+                if not isinstance(key, yaml.ScalarNode) or key.tag != "tag:yaml.org,2002:str" or key.value == "<<":
+                    raise ValueError("Ambiguous YAML mapping key")
+                if text_reasons(key.value, allowed):
+                    raise ValueError("Private decoded YAML mapping key")
+                keys.append(key.value)
+                walk(child, [*selector, {"key": key.value}], depth + 1)
+            if len(keys) != len(set(keys)):
+                raise ValueError("Duplicate YAML mapping keys")
+        elif isinstance(node, yaml.SequenceNode):
+            if node.tag != "tag:yaml.org,2002:seq":
+                raise ValueError("Unsupported YAML sequence tag")
+            identities = set()
+            for index, child in enumerate(node.value):
+                identity = None
+                if isinstance(child, yaml.MappingNode):
+                    ids = [v for k, v in child.value if isinstance(k, yaml.ScalarNode) and k.value == "id"]
+                    if ids:
+                        if (
+                            len(ids) != 1
+                            or not isinstance(ids[0], yaml.ScalarNode)
+                            or ids[0].tag != "tag:yaml.org,2002:str"
+                            or not ids[0].value
+                        ):
+                            raise ValueError("Ambiguous YAML record identity")
+                        identity = ids[0].value
+                        if identity in identities:
+                            raise ValueError("Duplicate YAML record identity")
+                        identities.add(identity)
+                walk(child, [*selector, {"id": identity} if identity is not None else {"index": index}], depth + 1)
+        elif isinstance(node, yaml.ScalarNode):
+            if node.tag not in scalar_tags:
+                raise ValueError("Unsupported YAML scalar tag")
+            if text_reasons(node.value, allowed):
+                if any("index" in part for part in selector) or node.start_mark.line != node.end_mark.line:
+                    raise ValueError("Private metadata lacks a stable single-line location")
+                line = node.start_mark.line
+                found.append(
+                    {"selector": selector, "line": line + 1, "sha256": hashlib.sha256(contents[line]).hexdigest()}
+                )
+        else:
+            raise ValueError("Unsupported YAML document")
+        active.remove(id(node))
+
+    walk(root, [], 0)
+    if len({item["line"] for item in found}) != len(found):
+        raise ValueError("Private YAML aliases do not have independent unchanged raw lines")
+    return found
+
+
+PRESERVATION_WORKER_BOOTSTRAP = """import io, json, sys
+packet = json.loads(sys.stdin.buffer.read())
+sys.stdin = io.TextIOWrapper(io.BytesIO(packet["request"].encode("utf-8")), encoding="utf-8")
+exec(compile(packet["source"], "<sealed-privacy-worker>", "exec"),
+     {"__name__": "__main__", "__file__": "<sealed-privacy-worker>"})
+"""
+
+
+def yaml_private_fields(raw: bytes, parser: Path, parser_sha: str, worker_sha: str, allowed: set[str]) -> list[dict]:
+    # A worker retains -I -S even when a library caller has already imported an
+    # unrelated mutable yaml module. No repository/site-package import can win.
+    if parser.is_symlink() or hashlib.sha256(parser.read_bytes()).hexdigest() != parser_sha:
+        raise ValueError("Preservation parser pin differs")
+    worker = Path(__file__)
+    worker_raw = worker.read_bytes()
+    if worker.is_symlink() or hashlib.sha256(worker_raw).hexdigest() != worker_sha:
+        raise ValueError("Preservation worker pin differs")
+    # Execute the held authenticated source, not its mutable pathname. The
+    # child likewise imports the parser only from its held authenticated bytes.
+    process = subprocess.run(
+        [
+            sys.executable,
+            "-I",
+            "-S",
+            "-c",
+            PRESERVATION_WORKER_BOOTSTRAP,
+            "yaml-fields",
+            str(parser.resolve()),
+            parser_sha,
+        ],
+        input=json.dumps(
+            {
+                "source": worker_raw.decode("utf-8"),
+                "request": json.dumps({"text": raw.decode("utf-8"), "allowed": sorted(allowed)}),
+            }
+        ).encode(),
+        capture_output=True,
+        check=False,
+        timeout=30,
+    )
+    if process.returncode:
+        raise ValueError("Structured metadata parsing was denied")
+    value = json.loads(process.stdout)
+    if not isinstance(value, list):
+        raise ValueError("Invalid structured metadata parser result")
+    return value
+
+
+def preservation_receipt(
+    repo: Path,
+    raw: bytes,
+    path: str,
+    mode: str,
+    document: dict,
+    parents: list[str],
+    prior: list[dict[str, tuple[str, str]]],
+    baseline_entries: dict[str, tuple[str, str]],
+    baseline: str,
+    parser: Path,
+    parser_sha: str,
+    worker_sha: str,
+    allowed: set[str],
+    cache: dict[str, list[dict]],
+) -> dict:
+    """Derive only exact unchanged-field receipts; no future bytes or new locations are trusted."""
+    if len(parents) != 1 or len(prior) != 1 or mode != document["mode"] or path not in prior[0]:
+        raise ValueError("Preservation requires one existing same-mode predecessor")
+    if prior[0][path][0] != mode or baseline_entries.get(path) != (mode, document["baselineBlob"]):
+        raise ValueError("Preservation path/mode/baseline differs")
+    git(repo, "merge-base", "--is-ancestor", baseline, document["seedCommit"])
+    git(repo, "merge-base", "--is-ancestor", document["seedCommit"], parents[0])
+    seed_tree = git(repo, "ls-tree", document["seedCommit"], "--", path).decode().split("\t", 1)[0].split()
+    if seed_tree != [mode, "blob", document["seedBlob"]]:
+        raise ValueError("Preservation seed path/blob differs")
+    snapshots = {"successor": raw}
+    for label, oid in (
+        ("baseline", document["baselineBlob"]),
+        ("seed", document["seedBlob"]),
+        ("predecessor", prior[0][path][1]),
+    ):
+        size = int(git(repo, "cat-file", "-s", oid))
+        if size > 16 * 1024 * 1024:
+            raise ValueError("Preservation source is oversized")
+        payload = git(repo, "cat-file", "blob", oid)
+        if label != "predecessor" and (
+            size != document[label + "Size"] or hashlib.sha256(payload).hexdigest() != document[label + "Sha256"]
+        ):
+            raise ValueError("Preservation source binding differs")
+        snapshots[label] = payload
+    expected = {
+        json.dumps(item["selector"], sort_keys=True, separators=(",", ":")): item for item in document["fields"]
+    }
+    maps = {}
+    for label, payload in snapshots.items():
+        digest = hashlib.sha256(payload).hexdigest()
+        if digest not in cache:
+            cache[digest] = yaml_private_fields(payload, parser, parser_sha, worker_sha, allowed)
+        fields = cache[digest]
+        mapping = {json.dumps(item["selector"], sort_keys=True, separators=(",", ":")): item for item in fields}
+        if len(mapping) != len(fields) or set(mapping) != set(expected):
+            raise ValueError("Preservation private-field inventory changed")
+        for selector, item in mapping.items():
+            if item["sha256"] != expected[selector]["sha256"] or (
+                label == "baseline" and item["line"] != expected[selector]["baselineLine"]
+            ):
+                raise ValueError("Preservation private field changed or was re-encoded")
+        maps[label] = mapping
+    return {
+        "retainedMetadata": [
+            {
+                "predecessorCommit": parents[0],
+                "baselineBlob": document["baselineBlob"],
+                "baselineSha256": document["baselineSha256"],
+                "baselineSize": document["baselineSize"],
+                "predecessorBlob": prior[0][path][1],
+                "predecessorSha256": hashlib.sha256(snapshots["predecessor"]).hexdigest(),
+                "predecessorSize": len(snapshots["predecessor"]),
+                "lines": [
+                    {
+                        "baselineLine": maps["baseline"][key]["line"],
+                        "predecessorLine": maps["predecessor"][key]["line"],
+                        "successorLine": maps["successor"][key]["line"],
+                        "sha256": item["sha256"],
+                    }
+                    for key, item in expected.items()
+                ],
+            }
+        ]
+    }
 
 
 def validate_retention_records(item: dict) -> None:
@@ -415,12 +764,24 @@ def inspect(
     scanner: Path,
     config: Path,
     reviews: dict | None = None,
+    yaml_parser: Path | None = None,
 ) -> dict:
     baseline = policy["baselineCommit"]
     validate_history(repo, baseline)
     admissions = reviewed_artifacts(reviews, policy, config)
+    preservation = reviews.get("preservation") if reviews else None
+    documents = preservation_documents(preservation) if preservation is not None else {}
+    if preservation is not None and (
+        yaml_parser is None
+        or yaml_parser.is_symlink()
+        or hashlib.sha256(yaml_parser.read_bytes()).hexdigest() != preservation["parserSha256"]
+    ):
+        raise ValueError("Sealed metadata preservation parser is required")
+    field_cache: dict[str, list[dict]] = {}
     baseline_entries = (
-        entries(repo, baseline) if any(item.get("retainedMetadata") for item in admissions.values()) else {}
+        entries(repo, baseline)
+        if documents or any(item.get("retainedMetadata") for item in admissions.values())
+        else {}
     )
     allowed = {value.casefold() for value in policy["allowedContentEmails"]}
     findings = []
@@ -453,9 +814,31 @@ def inspect(
                     raw = git(repo, "cat-file", "blob", oid)
                     admission = admissions.get((path, mode, hashlib.sha256(raw).hexdigest(), size), {})
                     non_emails = {value.casefold() for value in admission.get("nonEmailTokens", [])}
+                    retained = admission
+                    if path in documents and not any(
+                        len(parents) == 1 and record["predecessorCommit"] == parents[0]
+                        for record in admission.get("retainedMetadata", [])
+                    ):
+                        assert yaml_parser is not None and preservation is not None
+                        retained = preservation_receipt(
+                            repo,
+                            raw,
+                            path,
+                            mode,
+                            documents[path],
+                            parents,
+                            prior,
+                            baseline_entries,
+                            baseline,
+                            yaml_parser,
+                            preservation["parserSha256"],
+                            preservation["workerSha256"],
+                            allowed,
+                            field_cache,
+                        )
                     # Binary approval never suppresses readable private text or credential scanning.
                     inspected_text = retained_metadata_text(
-                        repo, raw, path, mode, admission, parents, prior, baseline_entries, allowed
+                        repo, raw, path, mode, retained, parents, prior, baseline_entries, allowed
                     )
                     reasons.update(text_reasons(inspected_text, allowed | non_emails))
                     payloads.append((raw, admission.get("credentialFindingFingerprints", [])))
@@ -534,6 +917,19 @@ def push_tips(data: str, destinations: list[str]) -> list[str]:
 
 
 def main() -> int:
+    if len(sys.argv) == 4 and sys.argv[1] == "yaml-fields":
+        try:
+            parser_path = Path(sys.argv[2])
+            parser_raw = parser_path.read_bytes()
+            if parser_path.is_symlink() or hashlib.sha256(parser_raw).hexdigest() != sys.argv[3]:
+                raise ValueError("Parser pin differs")
+            _load_sealed_yaml(parser_raw)
+            request = json.loads(sys.stdin.buffer.read(32 * 1024 * 1024))
+            print(json.dumps(_yaml_private_fields(request["text"].encode("utf-8"), set(request["allowed"]))))
+            return 0
+        except ValueError, OSError, KeyError, UnicodeError, RecursionError, ImportError, zipfile.BadZipFile:
+            print("Structured metadata parsing denied; values withheld.")
+            return 2
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=("staged", "push", "message"))
     parser.add_argument("--repo", type=Path, required=True)
@@ -543,6 +939,7 @@ def main() -> int:
     parser.add_argument("--remote-url")
     parser.add_argument("--message", type=Path)
     parser.add_argument("--review-registry", type=Path)
+    parser.add_argument("--yaml-parser", type=Path)
     args = parser.parse_args()
     try:
         policy = json.loads(args.policy.read_text(encoding="utf-8"))
@@ -578,6 +975,7 @@ def main() -> int:
             scanner=args.scanner.resolve(),
             config=args.config.resolve(),
             reviews=json.loads(args.review_registry.read_bytes()) if args.review_registry else None,
+            yaml_parser=args.yaml_parser,
         )
         print(json.dumps(result))
         return int(result["status"] != "PASS")

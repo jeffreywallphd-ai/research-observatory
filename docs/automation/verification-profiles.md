@@ -62,6 +62,21 @@ thresholds. Ordinary direct `--profile` execution retains the existing schema
 `1.0` report and behavior; its warning is advisory and does not add a
 confirmation or gate.
 
+## Local receipt pilot (not a profile replacement)
+
+`python tools/verification_receipt.py --repo .` runs only the three-file,
+pure-stdlib governance-receipt unit workload from an in-memory source snapshot.
+It writes unique attempts under ignored `artifacts/tmp/verification-receipts/`,
+including failed or incomplete attempts, safe output digests and measured timing.
+It does not launch Research Observatory or touch the live backlog.
+
+This initial pilot is producer-asserted diagnostic evidence. Installed stdlib/OS
+closure is not fully authenticated, so `--reuse-receipt` deliberately refuses
+reuse; it never treats a prior PASS as a current run. Require the receipt's
+matching delivery record and independent candidate/evidence review before citing
+it. Existing profile execution and the fresh full Wave-exit matrix are unchanged.
+See `workflow-efficiency.md` for the complete reuse/trust conditions.
+
 ## Wave-exit union
 
 The W1 exit matrix is a governed, deduplicated union of `ai`, `data`, `desktop`,

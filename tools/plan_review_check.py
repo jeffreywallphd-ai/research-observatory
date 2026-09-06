@@ -393,6 +393,35 @@ def task_review_manifest_errors(
     return [f"{label}: task review histories differ from authoritative backlog"]
 
 
+def corrective_task_errors(wave: dict[str, Any], projection: Any, text: str) -> list[str]:
+    tasks = (wave.get("campaign") or {}).get("corrective_tasks", [])
+    expected = [
+        {
+            "task_id": task["id"],
+            "title": task.get("title"),
+            "status": task.get("status"),
+            "acceptance_criteria": task.get("acceptance_criteria", []),
+            "correction": task.get("correction"),
+            "task_review": task_review_projection(task),
+        }
+        for task in tasks
+    ]
+    errors = [] if projection == expected else [f"{wave.get('id')}: corrective-task projection differs from backlog"]
+    if text.count('data-corrective-task="') != len(tasks):
+        errors.append(f"{wave.get('id')}: rendered corrective-task count differs from backlog")
+    for task in tasks:
+        origin = task.get("correction") or {}
+        marker = (
+            f'data-corrective-task="{html.escape(str(task["id"]), quote=True)}" '
+            f'data-correction-origin="{html.escape(str(origin.get("origin_task_id")), quote=True)}" '
+            f'data-correction-status="{html.escape(str(task.get("status")), quote=True)}"'
+        )
+        if text.count(marker) != 1:
+            errors.append(f"{task['id']}: correction origin/status identity missing, duplicated or substituted")
+        errors.extend(task_review_render_errors(text, task_review_projection(task)))
+    return errors
+
+
 def task_review_render_errors(text: str, projection: dict[str, Any]) -> list[str]:
     task_id = str(projection.get("task_id"))
     mode = str(projection.get("mode"))
@@ -980,6 +1009,9 @@ def main() -> int:
             if "Wave exit / successor activation" not in content:
                 errors.append(f"{rel}: missing wave gate-decision breakdown")
             wave_manifest = manifest_waves.get(wave_id) or {}
+            errors.extend(
+                corrective_task_errors(backlog_waves.get(wave_id, {}), wave_manifest.get("corrective_tasks", []), text)
+            )
             if parsed.wave_capability_ids != [str(value) for value in wave_manifest.get("capability_ids", [])]:
                 errors.append(f"{rel}: collapsible capability cards differ from Wave inventory")
             if parsed.wave_slice_ids != [str(value) for value in wave_manifest.get("slice_ids", [])]:

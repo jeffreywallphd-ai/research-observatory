@@ -126,6 +126,37 @@ def enabler_tasks(data: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+def corrective_tasks(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [task for wave in data.get("waves", []) for task in (wave.get("campaign") or {}).get("corrective_tasks", [])]
+
+
+def correction_markdown(tasks: list[dict[str, Any]], *, detailed: bool) -> list[str]:
+    if not tasks:
+        return []
+    lines = ["", "## Linked corrective tasks", "", "Original tasks and approvals remain unchanged.", ""]
+    for task in tasks:
+        correction = task.get("correction") or {}
+        lines.extend(
+            [
+                f"### {inline(task.get('id'))} — {inline(task.get('title'))}",
+                "",
+                f"**Status:** `{inline(task.get('status'))}`. "
+                f"**Original task:** `{inline(correction.get('origin_task_id'))}`. "
+                f"**Latest review:** `{inline((task.get('review') or {}).get('result'))}`.",
+                "",
+            ]
+        )
+        if detailed:
+            lines.extend(
+                [f"**Reproduction:** {inline(correction.get('reproduction'))}", "", "**Inherited criteria:**", ""]
+            )
+            bullets(lines, task.get("acceptance_criteria"))
+            lines.extend(["", "**Bounded changed paths:**", ""])
+            bullets(lines, correction.get("changed_paths"))
+            lines.extend(task_review_markdown(task, heading_level=4))
+    return lines
+
+
 def wave_authority_rows(data: dict[str, Any]) -> list[tuple[str, str, str, str, str]]:
     rows: list[tuple[str, str, str, str, str]] = []
     for base in data.get("wave_approval_bases", []):
@@ -542,7 +573,7 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
 
     review_tasks = [
         task
-        for task in tasks + amendment_tasks
+        for task in tasks + amendment_tasks + corrective_tasks(data)
         if isinstance(task.get("review_control"), dict)
         or any((task.get("review") or {}).get(key) is not None for key in ("result", "reviewer", "reviewed_at"))
     ]
@@ -589,6 +620,7 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         wave_id = wave.get("id")
         wave_slices = [slice_ for slice_ in slices if slice_.get("wave") == wave_id]
         wave_tasks = [task for slice_ in wave_slices for task in slice_.get("tasks", [])]
+        wave_tasks += (wave.get("campaign") or {}).get("corrective_tasks", [])
         gate: dict[str, Any] = next((item for item in gates if item.get("after_wave") == wave_id), {})
         approved_count = sum(item.get("completion", {}).get("status") == "APPROVED" for item in wave_slices)
         lines.append(
@@ -633,7 +665,9 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
         )
 
     active_tasks = [
-        task for task in tasks + amendment_tasks if task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}
+        task
+        for task in tasks + amendment_tasks + corrective_tasks(data)
+        if task.get("status") in {"IN_PROGRESS", "REVIEW", "BLOCKED"}
     ]
     lines.extend(["", "## Active work", ""])
     if not active_tasks:
@@ -645,6 +679,7 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
                 f"| `{task['id']}` {inline(task.get('title'))} | `{inline(task.get('status'))}` | "
                 f"{inline(task.get('owner'))} | `{inline(task.get('branch'))}` |"
             )
+    lines.extend(correction_markdown(corrective_tasks(data), detailed=False))
     lines.append("")
     return "\n".join(lines)
 
@@ -845,6 +880,7 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
             lines.append("")
             lines.extend(task_review_markdown(task, heading_level=4))
 
+    lines.extend(correction_markdown(corrective_tasks(data), detailed=True))
     lines.extend(["", "# Capability contributions, slices, and tasks", ""])
     for capability in capabilities:
         campaign = capability.get("campaign") or {}

@@ -21,7 +21,7 @@ import sys
 import tempfile
 from collections import Counter
 from collections.abc import Iterator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from functools import lru_cache
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
@@ -291,6 +291,7 @@ def task_review_history_snapshot(data: dict[str, Any]) -> dict[str, tuple[str, .
         for task in slice_.get("tasks", [])
     ]
     task_documents.extend(task for amendment in data.get("wave_amendments", []) for task in amendment.get("tasks", []))
+    task_documents.extend(corrective_tasks(data))
     for task in task_documents:
         control = task.get("review_control") or {}
         snapshot[str(task["id"])] = tuple(
@@ -395,7 +396,7 @@ def save_atomic(
     data: dict[str, Any],
     *,
     expected_sha256: str | None = None,
-) -> None:
+) -> str:
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
     document = serializable_backlog(data)
@@ -415,10 +416,12 @@ def save_atomic(
                 yaml.safe_dump(document, handle, sort_keys=False, allow_unicode=True, width=120)
                 handle.flush()
                 os.fsync(handle.fileno())
+            successor_sha256 = hashlib.sha256(Path(temp_name).read_bytes()).hexdigest()
             os.replace(temp_name, destination)
         finally:
             if os.path.exists(temp_name):
                 os.unlink(temp_name)
+    return successor_sha256
 
 
 def _json_path(parts: Any) -> str:
@@ -516,6 +519,10 @@ def index_backlog(
             task["_position"] = position
             task["_target_wave"] = amendment.get("target_wave")
             tasks[task_id] = task
+    for task in corrective_tasks(data):
+        if task["id"] in tasks:
+            raise SystemExit(f"Duplicate task ID: {task['id']}")
+        tasks[task["id"]] = task
     seen_wave_ids: set[str] = set()
     for wave in data.get("waves", []):
         if wave["id"] in seen_wave_ids:
@@ -548,10 +555,28 @@ def save_validated(
     expected_frozen_waves: dict[str, str] | None = None,
     expected_frozen_wave_bases: dict[str, str] | None = None,
     expected_frozen_amendments: dict[str, str] | None = None,
+    expected_corrective_history: dict[str, dict[str, Any]] | None = None,
+    authorized_corrective_append: str | None = None,
     schema_path: Path | None = None,
     repo: Path | None = None,
-) -> None:
+) -> str:
     document = serializable_backlog(data)
+    if expected_corrective_history is not None:
+        corrective_current = corrective_history_snapshot(document)
+        for task_id, corrective_prior in expected_corrective_history.items():
+            if (
+                task_id not in corrective_current
+                or corrective_current[task_id]["definition"] != corrective_prior["definition"]
+            ):
+                raise SystemExit("Immutable corrective task definition/history changed")
+            if (
+                corrective_prior["completed"] is not None
+                and corrective_current[task_id]["completed"] != corrective_prior["completed"]
+            ):
+                raise SystemExit("Completed corrective task history changed")
+        additions = set(corrective_current) - set(expected_corrective_history)
+        if additions != ({authorized_corrective_append} if authorized_corrective_append else set()):
+            raise SystemExit("Unauthorized corrective task inventory append")
     if expected_identity is not None and identity_snapshot(document) != expected_identity:
         raise SystemExit(
             "Stable backlog IDs or their hierarchy changed during a taskctl transition; no update was written"
@@ -636,11 +661,56 @@ def save_validated(
     semantic_errors = validate(*indexed, repo=repo)
     if semantic_errors:
         raise SystemExit("Refusing to save invalid backlog state:\n- " + "\n- ".join(semantic_errors))
-    save_atomic(path, document, expected_sha256=expected_sha256)
+    return save_atomic(path, document, expected_sha256=expected_sha256)
 
 
 def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
-    save_validated(
+    receipt_enabled = getattr(args, "receipt_enabled", False)
+    successor_document = serializable_backlog(data)
+    receipt = {
+        "documentType": "taskctl-transition-receipt",
+        "authority": "evidence-only",
+        "operation": str(getattr(args, "command", "transition")),
+        "predecessorSha256": getattr(args, "source_sha256", None),
+        "successorSha256": None,
+        "producerCommit": getattr(args, "receipt_producer_commit", None),
+        "producerCommitSemantics": "entry-HEAD observation; not runner authentication or a stable-HEAD assertion",
+        "changedFields": [
+            key
+            for key in ("waves", "capabilities", "wave_amendments", "release_gates", "control_plane")
+            if (getattr(args, "receipt_before", {}) or {}).get(key) != successor_document.get(key)
+        ],
+        "status": "NOT_COMMITTED",
+        "casOutcome": "not-attempted",
+    }
+    try:
+        successor = _persist_validated(args, data)
+    except BaseException as exc:
+        if receipt_enabled:
+            receipt["casOutcome"] = "rejected-or-publication-failed"
+            # Validation/CAS rejections occur before publication. An unexpected
+            # I/O/cleanup failure can occur after replace, so never assert rollback.
+            receipt["status"] = "NOT_COMMITTED" if isinstance(exc, SystemExit) else "COMMIT_STATUS_UNKNOWN"
+            # Preserve the original failed mutation if its diagnostic sink also fails.
+            with suppress(OSError):
+                print(json.dumps(receipt, sort_keys=True), file=sys.stderr)
+        raise
+    if receipt_enabled:
+        receipt.update(
+            successorSha256=successor,
+            status="COMMITTED",
+            casOutcome="matched-and-replaced" if receipt["predecessorSha256"] else "replaced-without-cas",
+        )
+        try:
+            print(json.dumps(receipt, sort_keys=True))
+        except OSError as exc:
+            raise SystemExit(
+                "Backlog was committed, but transition receipt output failed; do not repeat the mutation blindly"
+            ) from exc
+
+
+def _persist_validated(args: argparse.Namespace, data: dict[str, Any]) -> str:
+    return save_validated(
         args.file,
         data,
         expected_sha256=getattr(args, "source_sha256", None),
@@ -655,6 +725,8 @@ def persist(args: argparse.Namespace, data: dict[str, Any]) -> None:
         expected_recovery_history=getattr(args, "source_recovery_history", None),
         expected_released_recovery_holds=getattr(args, "source_released_recovery_holds", None),
         expected_task_recovery_history=getattr(args, "source_task_recovery_history", None),
+        expected_corrective_history=getattr(args, "source_corrective_history", None),
+        authorized_corrective_append=getattr(args, "authorized_corrective_append", None),
         repo=getattr(args, "repo_root", None),
     )
 
@@ -782,6 +854,238 @@ def active_wave_campaigns(data: dict[str, Any]) -> list[dict[str, Any]]:
     return [wave for wave in data.get("waves", []) if (wave.get("campaign") or {}).get("status") == "ACTIVE"]
 
 
+def corrective_tasks(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [task for wave in data.get("waves", []) for task in (wave.get("campaign") or {}).get("corrective_tasks", [])]
+
+
+def unfinished_corrective_tasks(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [task for task in corrective_tasks(data) if task.get("status") != "DONE"]
+
+
+def corrective_history_snapshot(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    runtime = {
+        "status",
+        "lease",
+        "updated_at",
+        "completed_at",
+        "blocker",
+        "implementation_notes",
+        "evidence",
+        "verification_state",
+        "review",
+        "review_control",
+    }
+    return {
+        task["id"]: {
+            "definition": canonical_json_sha256({k: v for k, v in task.items() if k not in runtime}),
+            "completed": canonical_json_sha256(task) if task.get("status") == "DONE" else None,
+        }
+        for task in corrective_tasks(data)
+    }
+
+
+def corrective_origin_snapshot(task: dict[str, Any]) -> dict[str, Any]:
+    return {key: copy.deepcopy(value) for key, value in task.items() if not key.startswith("_")}
+
+
+def corrective_paused_snapshot(data: dict[str, Any]) -> dict[str, Any]:
+    snapshot = serializable_backlog(data)
+    for wave in snapshot.get("waves", []):
+        (wave.get("campaign") or {}).pop("corrective_tasks", None)
+    return snapshot
+
+
+def corrective_contract(data: dict[str, Any], origin: dict[str, Any]) -> dict[str, Any]:
+    amendment = amendment_for_task(data, origin)
+    campaign = (amendment or {}).get("campaign") or {}
+    contract = {
+        field: copy.deepcopy(origin.get(field))
+        for field in ("title", "objective", "dependencies", "acceptance_criteria", "verification_commands")
+    }
+    contract["deployment_profiles"] = copy.deepcopy(origin.get("deployment_profiles", [campaign.get("profile")]))
+    contract["platform_targets"] = copy.deepcopy(origin.get("platform_targets", [campaign.get("platform")]))
+    contract["verification_profiles"] = copy.deepcopy(origin.get("verification_profiles", []))
+    return contract
+
+
+def corrective_authority(data: dict[str, Any], origin: dict[str, Any]) -> dict[str, Any]:
+    wave = wave_map(data).get(str(task_wave(origin))) or {}
+    amendment = amendment_for_task(data, origin)
+    return {
+        "wave_approval": copy.deepcopy(wave.get("approval")),
+        "amendment": corrective_origin_snapshot(amendment) if amendment else None,
+    }
+
+
+def corrective_path_allowed(value: Any) -> bool:
+    """Lexical policy before filesystem lookup; authority/evidence paths cannot be product scope."""
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+", value):
+        return False
+    parts = value.split("/")
+    if any(part in {".", ".."} or part.endswith(".") or "~" in part for part in parts):
+        return False
+    if parts[0] not in {"apps", "services", "tests", "packages"}:
+        return False
+    return not any(
+        part.casefold() in {"migrations", "capabilities", "permissions", "security-policy"} for part in parts
+    ) and not value.casefold().endswith(("/tauri.conf.json", "/cargo.lock"))
+
+
+def require_corrective_spec(spec: Any) -> None:
+    if not isinstance(spec, dict) or set(spec) != {
+        "schemaVersion",
+        "kind",
+        "origin",
+        "reproduction",
+        "changedPaths",
+        "impactAnalysis",
+    }:
+        raise SystemExit("Correction spec cannot introduce new authority, criteria or fields")
+    if spec["schemaVersion"] != "1.0" or spec["kind"] != "authority-preserving-correction":
+        raise SystemExit("Unsupported correction spec")
+    binding = spec["origin"]
+    if (
+        not isinstance(binding, dict)
+        or set(binding) != {"taskId", "commit", "sha256"}
+        or not isinstance(binding["taskId"], str)
+        or re.fullmatch(r"[0-9a-f]{40}", str(binding["commit"])) is None
+        or re.fullmatch(r"[0-9a-f]{64}", str(binding["sha256"])) is None
+    ):
+        raise SystemExit("Correction spec origin binding is malformed")
+    paths = spec["changedPaths"]
+    if (
+        not isinstance(paths, list)
+        or not paths
+        or not all(corrective_path_allowed(path) for path in paths)
+        or len({path.casefold() for path in paths}) != len(paths)
+    ):
+        raise SystemExit("Correction spec requires exact bounded product/test paths; authority paths are forbidden")
+    if any(not isinstance(spec[field], str) or not spec[field].strip() for field in ("reproduction", "impactAnalysis")):
+        raise SystemExit("Correction spec requires a reproduction and authority-preserving impact analysis")
+
+
+def require_corrective_origin(data: dict[str, Any], tasks: dict[str, dict[str, Any]], origin: dict[str, Any]) -> None:
+    if (
+        origin.get("correction")
+        or origin.get("status") != "DONE"
+        or origin.get("review", {}).get("result") != "approved"
+        or not origin.get("evidence")
+        or not origin.get("review", {}).get("reviewer")
+        or origin["review"]["reviewer"].strip() == str(origin.get("owner") or "").strip()
+    ):
+        raise SystemExit("Correction origin must remain a DONE independently approved original task")
+    amendment = amendment_for_task(data, origin)
+    if amendment and (
+        amendment.get("lifecycle", {}).get("status") != "ADOPTED"
+        or amendment.get("completion", {}).get("status") != "APPROVED"
+        or any(
+            t.get("status") != "DONE" or t.get("review", {}).get("result") != "approved"
+            for t in amendment.get("tasks", [])
+        )
+    ):
+        raise SystemExit("Origin amendment must be adopted with all predecessor tasks DONE and approved")
+    if not task_dependencies_done(origin, tasks):
+        raise SystemExit("Origin dependencies are not complete")
+
+
+def require_corrective_boundary(data: dict[str, Any], wave_id: str, *, task_id: str | None = None) -> None:
+    waves = wave_map(data)
+    wave = waves.get(wave_id) or {}
+    campaign = wave.get("campaign") or {}
+    next_wave = next(
+        (g.get("after_wave") for g in data.get("release_gates", []) if g.get("status") != "APPROVED"), None
+    )
+    if (
+        wave_id != next_wave
+        or wave.get("approval", {}).get("status") != "APPROVED"
+        or campaign.get("status") != "PAUSED"
+        or campaign.get("scope") != "wave"
+        or campaign.get("lease") is not None
+        or wave.get("completion", {}).get("status") in {"REVIEW", "APPROVED"}
+    ):
+        raise SystemExit("A corrective task requires the current unreleased, unfrozen Wave PAUSED ordinary boundary")
+    if active_recovery_holds(data) or blocking_wave_amendments(data, wave_id):
+        raise SystemExit("A corrective task cannot bypass a recovery hold or unfinished amendment")
+    if active_wave_campaigns(data) or active_capabilities({c["id"]: c for c in data.get("capabilities", [])}):
+        raise SystemExit("A corrective task cannot compete with an active campaign")
+    gates = {g["id"]: g for g in data.get("release_gates", [])}
+    if not gate_is_open(data, gates, wave_id):
+        raise SystemExit("A corrective task cannot cross an activation gate")
+    indexed = index_backlog(copy.deepcopy(data))[3]
+    if any(t["id"] != task_id and t.get("status") in {"IN_PROGRESS", "REVIEW"} for t in indexed.values()):
+        raise SystemExit("Resolve active/review work before starting a corrective task")
+    if any(t["id"] != task_id for t in unfinished_corrective_tasks(data)):
+        raise SystemExit("Only one unfinished corrective task is permitted")
+
+
+def build_corrective_task(
+    data: dict[str, Any],
+    tasks: dict[str, dict[str, Any]],
+    origin: dict[str, Any],
+    spec: dict[str, Any],
+    reference: dict[str, Any],
+    args: argparse.Namespace,
+) -> dict[str, Any]:
+    wave_id = str(task_wave(origin))
+    require_corrective_boundary(data, wave_id)
+    require_corrective_spec(spec)
+    binding = spec["origin"]
+    snapshot = corrective_origin_snapshot(origin)
+    if (
+        not isinstance(binding, dict)
+        or set(binding) != {"taskId", "commit", "sha256"}
+        or binding.get("taskId") != origin["id"]
+        or not re.fullmatch(r"[0-9a-f]{40}", str(binding.get("commit")))
+        or binding.get("sha256") != canonical_json_sha256(snapshot)
+    ):
+        raise SystemExit("Correction origin identity/history/hash is stale or substituted")
+    require_corrective_origin(data, tasks, origin)
+    amendment = amendment_for_task(data, origin)
+    paths = spec["changedPaths"]
+    contract = corrective_contract(data, origin)
+    if not profile_matches(contract, args.profile) or not platform_matches(contract, args.platform):
+        raise SystemExit("Correction cannot widen the inherited profile/platform")
+    require_execution_target(args.profile, args.platform)
+    require_positive_lease_hours(args.lease_hours)
+    number = 1 + len((wave_map(data)[wave_id].get("campaign") or {}).get("corrective_tasks", []))
+    now = utc_now()
+    return {
+        **contract,
+        "id": f"{wave_id}.C{number:02d}.T01",
+        "wave": wave_id,
+        "priority": origin.get("priority", "P0"),
+        "status": "IN_PROGRESS",
+        "owner": normalized_identity(args.agent, "Agent"),
+        "branch": args.branch,
+        "base_sha": args.base_sha,
+        "worktree": ".",
+        "lease": new_lease(args.agent, args.lease_hours),
+        "started_at": now,
+        "updated_at": now,
+        "completed_at": None,
+        "blocker": None,
+        "implementation_notes": "",
+        "evidence": [],
+        "verification_state": None,
+        "review": {"reviewer": None, "result": None, "reviewed_at": None, "notes": None},
+        "review_control": {"version": 1, "attempts": [], "current_submission": None},
+        "correction": {
+            "origin_task_id": origin["id"],
+            "origin_commit": binding["commit"],
+            "paused_state_sha256": canonical_json_sha256(corrective_paused_snapshot(data)),
+            "origin_sha256": binding["sha256"],
+            "origin_contract_sha256": canonical_json_sha256(contract),
+            "origin_history_sha256": canonical_json_sha256(origin.get("review_control", origin.get("review"))),
+            "origin_amendment_id": amendment["id"] if amendment else None,
+            "authority_sha256": canonical_json_sha256(corrective_authority(data, origin)),
+            "spec": copy.deepcopy(reference),
+            "reproduction": spec["reproduction"],
+            "changed_paths": sorted(paths),
+            "impact_analysis": spec["impactAnalysis"],
+        },
+    }
+
+
 def wave_complete(
     wave_id: str,
     slices: dict[str, dict[str, Any]],
@@ -808,6 +1112,175 @@ def wave_complete(
         and all(task.get("status") == "DONE" for task in wave_tasks)
         and all(slice_.get("completion", {}).get("status") == "APPROVED" for slice_ in wave_slices)
     )
+
+
+def corrective_task_errors(
+    data: dict[str, Any], tasks: dict[str, dict[str, Any]], repo: Path | None = None
+) -> list[str]:
+    errors: list[str] = []
+    for wave in data.get("waves", []):
+        for position, task in enumerate((wave.get("campaign") or {}).get("corrective_tasks", []), 1):
+            label = str(task.get("id"))
+            binding = task.get("correction") or {}
+            origin = tasks.get(str(binding.get("origin_task_id")))
+            if task.get("wave") != wave["id"] or label != f"{wave['id']}.C{position:02d}.T01":
+                errors.append(f"{label}: corrective identity/order differs")
+            if task.get("worktree") != ".":
+                errors.append(f"{label}: corrective worktree must be repository-relative")
+            if origin is None or origin.get("correction") is not None:
+                errors.append(f"{label}: corrective origin is absent or unsupported")
+                continue
+            try:
+                require_corrective_origin(data, tasks, origin)
+            except SystemExit as exc:
+                errors.append(f"{label}: {exc}")
+            contract = corrective_contract(data, origin)
+            origin_amendment = amendment_for_task(data, origin)
+            if binding.get("origin_amendment_id") != (origin_amendment["id"] if origin_amendment else None):
+                errors.append(f"{label}: corrective origin amendment identity differs")
+            if (
+                origin.get("status") != "DONE"
+                or origin.get("review", {}).get("result") != "approved"
+                or canonical_json_sha256(corrective_origin_snapshot(origin)) != binding.get("origin_sha256")
+                or canonical_json_sha256(contract) != binding.get("origin_contract_sha256")
+                or canonical_json_sha256(origin.get("review_control", origin.get("review")))
+                != binding.get("origin_history_sha256")
+                or canonical_json_sha256(corrective_authority(data, origin)) != binding.get("authority_sha256")
+                or any(task.get(field) != value for field, value in contract.items())
+            ):
+                errors.append(f"{label}: original authority/contract/DONE history or inherited fields changed")
+            if not all(corrective_path_allowed(path) for path in binding.get("changed_paths", [])):
+                errors.append(f"{label}: unsafe corrective path scope")
+            if task.get("status") != "DONE":
+                try:
+                    require_corrective_boundary(data, str(task["wave"]), task_id=label)
+                except SystemExit as exc:
+                    errors.append(f"{label}: {exc}")
+                if canonical_json_sha256(corrective_paused_snapshot(data)) != binding.get("paused_state_sha256"):
+                    errors.append(f"{label}: paused predecessor state changed during correction")
+            review = task.get("review") or {}
+            if review.get("reviewer") and str(review["reviewer"]).strip() == str(task.get("owner") or "").strip():
+                errors.append(f"{label}: corrective reviewer must be independent")
+            if task.get("status") in {"IN_PROGRESS", "REVIEW"} and (
+                not all(task.get(field) for field in ("owner", "branch", "base_sha", "worktree", "lease"))
+                or task["lease"].get("claimed_by") != task["owner"]
+            ):
+                errors.append(f"{label}: corrective task lacks its exact owner/lease/Git identity")
+            if task.get("status") == "REVIEW" and (
+                not task.get("evidence") or task.get("verification_state") != "passed"
+            ):
+                errors.append(f"{label}: corrective REVIEW lacks verified evidence")
+            if task.get("status") == "DONE" and (
+                review.get("result") != "approved"
+                or not task.get("evidence")
+                or not (task.get("review_control") or {}).get("attempts")
+                or task.get("lease") is not None
+            ):
+                errors.append(f"{label}: corrective DONE lacks controlled independent approval")
+            if task.get("status") == "BLOCKED" and (not task.get("blocker") or task.get("lease") is not None):
+                errors.append(f"{label}: corrective BLOCKED state is incomplete")
+            if repo is not None:
+                historical = historical_backlog_document(repo, str(binding.get("origin_commit")))
+                historical_origin = index_backlog(historical)[3].get(origin["id"]) if historical else None
+                if (
+                    not historical_origin
+                    or canonical_json_sha256(corrective_origin_snapshot(historical_origin))
+                    != binding.get("origin_sha256")
+                    or canonical_json_sha256(corrective_authority(historical or {}, historical_origin))
+                    != binding.get("authority_sha256")
+                    or not git_is_ancestor(repo, str(binding.get("origin_commit")), str(task.get("base_sha")))
+                ):
+                    errors.append(f"{label}: origin is not authenticated to ancestral adopted Git state")
+                ref = binding.get("spec") or {}
+                if ref.get("path") != f"artifacts/evidence/{label}.spec.json":
+                    errors.append(f"{label}: corrective spec path is not exact")
+                    continue
+                payload = git_blob(repo, str(ref.get("commit")), ref["path"])
+                if (
+                    payload is None
+                    or len(payload) > 65536
+                    or evidence_sha256(payload) != ref.get("sha256")
+                    or ref.get("commit") != task.get("base_sha")
+                    or not git_is_ancestor(repo, str(ref.get("commit")))
+                ):
+                    errors.append(f"{label}: corrective spec is not Git-bound")
+                else:
+                    try:
+                        spec = json.loads(payload)
+                        require_corrective_spec(spec)
+                        if (
+                            spec.get("origin")
+                            != {
+                                "taskId": origin["id"],
+                                "commit": binding["origin_commit"],
+                                "sha256": binding["origin_sha256"],
+                            }
+                            or sorted(spec.get("changedPaths", [])) != binding["changed_paths"]
+                            or spec.get("reproduction") != binding["reproduction"]
+                            or spec.get("impactAnalysis") != binding["impact_analysis"]
+                        ):
+                            errors.append(f"{label}: corrective spec content differs from admission")
+                    except ValueError, TypeError, SystemExit:
+                        errors.append(f"{label}: corrective spec is malformed")
+    return errors
+
+
+def command_correct(args, data, capabilities, slices, tasks, gates) -> None:
+    origin = get(tasks, args.task, "origin task")
+    identity = git_execution_identity(
+        args.file, agent=args.agent, branch=args.branch, base_sha=args.base_sha, worktree=args.worktree
+    )
+    args.agent, args.branch, args.base_sha, args.worktree = identity
+    repo = Path(args.worktree)
+    require_unmasked_corrective_index(repo)
+    predecessor = historical_backlog_document(repo, args.base_sha)
+    if predecessor is None or canonical_json_sha256(serializable_backlog(data)) != canonical_json_sha256(predecessor):
+        raise SystemExit("Corrective admission must match the exact committed predecessor backlog")
+    require_corrective_boundary(data, str(task_wave(origin)))
+    if approved_unbootstrapped_amendment(args.file, data, str(task_wave(origin))) is not None:
+        raise SystemExit("Corrective admission cannot bypass an approved pending amendment")
+    number = 1 + len((wave_map(data)[str(task_wave(origin))].get("campaign") or {}).get("corrective_tasks", []))
+    task_id = f"{task_wave(origin)}.C{number:02d}.T01"
+    path = Path(args.from_file)
+    path = path if path.is_absolute() else repo / path
+    try:
+        relative = path.relative_to(repo).as_posix()
+    except ValueError as exc:
+        raise SystemExit("Corrective spec must be inside the repository") from exc
+    if relative != f"artifacts/evidence/{task_id}.spec.json":
+        raise SystemExit("Corrective spec requires its exact new task-owned path")
+    try:
+        safe = safe_control_path(repo, relative, prefix="artifacts/evidence", label="Corrective spec")
+        if safe.stat().st_size > 65536:
+            raise ValueError("Corrective spec exceeds 64 KiB")
+        payload = safe.read_bytes()
+        committed = git_blob(repo, args.base_sha, relative)
+        if committed is None or evidence_sha256(committed) != evidence_sha256(payload):
+            raise ValueError("Corrective spec must match the current Git blob before parsing")
+        spec = json.loads(payload)
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"Invalid corrective spec: {exc}") from exc
+    require_clean_repository(repo, allowed_untracked=task_evidence_allowed_untracked(data, origin, repo))
+    reference = {"path": relative, "sha256": evidence_sha256(payload), "commit": args.base_sha}
+    task = build_corrective_task(data, tasks, origin, spec, reference, args)
+    candidate = copy.deepcopy(data)
+    wave_map(candidate)[str(task_wave(origin))]["campaign"].setdefault("corrective_tasks", []).append(task)
+    indexed = index_backlog(candidate)
+    errors = corrective_task_errors(candidate, indexed[3], repo)
+    if errors:
+        raise SystemExit("Invalid corrective admission: " + "; ".join(errors))
+    args.authorized_corrective_append = task_id
+    persist(args, candidate)
+    print(f"Claimed {task_id}; original {origin['id']} remains DONE and ordinary Wave remains PAUSED")
+
+
+def require_unmasked_corrective_index(repo: Path) -> None:
+    # Filename/status inventory only: never read tracked content to inspect flags.
+    result = subprocess.run(["git", "ls-files", "-v", "-z"], cwd=repo, capture_output=True, check=False)
+    if result.returncode or any(
+        entry[:1].islower() or entry[:1] == b"S" for entry in result.stdout.split(b"\0") if entry
+    ):
+        raise SystemExit("Corrective evidence cannot rely on masked or skip-worktree index flags")
 
 
 def ordered_wave_ids(data: dict[str, Any]) -> list[str]:
@@ -958,8 +1431,13 @@ def platform_matches(item: dict[str, Any], requested: str) -> bool:
 def dependency_graph_errors(tasks: dict[str, dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     for tid, task in tasks.items():
+        amendment_id = (
+            task.get("_amendment_id")
+            or task.get("amendment_id")
+            or (task.get("correction") or {}).get("origin_amendment_id")
+        )
         for dep in task.get("dependencies", []):
-            if dep.endswith(".B00") and dep == f"{task.get('_amendment_id') or task.get('amendment_id')}.B00":
+            if dep.endswith(".B00") and dep == f"{amendment_id}.B00":
                 continue
             if dep not in tasks:
                 errors.append(f"{tid}: missing dependency {dep}")
@@ -1010,9 +1488,13 @@ def previous_slices_approved(capability: dict[str, Any], slice_: dict[str, Any])
 
 
 def task_dependencies_done(task: dict[str, Any], tasks: dict[str, dict[str, Any]]) -> bool:
+    amendment_id = (
+        task.get("_amendment_id")
+        or task.get("amendment_id")
+        or (task.get("correction") or {}).get("origin_amendment_id")
+    )
     return all(
-        (dep.endswith(".B00") and dep == f"{task.get('_amendment_id') or task.get('amendment_id')}.B00")
-        or tasks.get(dep, {}).get("status") == "DONE"
+        (dep.endswith(".B00") and dep == f"{amendment_id}.B00") or tasks.get(dep, {}).get("status") == "DONE"
         for dep in task.get("dependencies", [])
     )
 
@@ -1082,6 +1564,8 @@ def refresh_derived_states(
     tasks: dict[str, dict[str, Any]],
     gates: dict[str, dict[str, Any]],
 ) -> int:
+    if unfinished_corrective_tasks(data):
+        return 0  # The ordinary PAUSED predecessor is frozen during this task-only lane.
     changed = 0
     frozen_parents = {relation["parentId"] for relation in correction_roles(data) if relation["parentFrozen"]}
     for task in tasks.values():
@@ -1307,6 +1791,40 @@ def normalized_identity(value: str, label: str) -> str:
     return normalized
 
 
+def worktree_binding_matches(value: Any, repo: Path) -> bool:
+    """Resolve new '.' bindings against the canonical backlog repository, never cwd."""
+    if not isinstance(value, str) or not value:
+        return False
+    if value == ".":
+        return True
+    try:
+        return Path(value).is_absolute() and Path(value).resolve() == repo.resolve()
+    except OSError:
+        return False
+
+
+def prospective_worktree_binding(existing: Any, repo: Path) -> str:
+    if existing is None:
+        return "."
+    if not worktree_binding_matches(existing, repo):
+        raise SystemExit("Existing worktree binding does not match the canonical repository")
+    return str(existing)  # Preserve every existing historical spelling byte-for-byte.
+
+
+def worktree_bindings_equal(left: Any, right: Any, repo: Path | None) -> bool:
+    if not isinstance(left, str) or not isinstance(right, str) or not left or not right:
+        return False
+    if "." in (left, right):
+        if repo is None:
+            # Physical binding is verified by repo-aware persistence, not cwd.
+            return all(value == "." or Path(value).is_absolute() for value in (left, right))
+        return worktree_binding_matches(left, repo) and worktree_binding_matches(right, repo)
+    try:
+        return Path(left).is_absolute() and Path(right).is_absolute() and Path(left).resolve() == Path(right).resolve()
+    except OSError:
+        return False
+
+
 def git_execution_identity(
     backlog_path: str,
     *,
@@ -1341,6 +1859,12 @@ def require_task_campaign_lease(
     actor: str,
     data: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    if task.get("correction") is not None:
+        if data is None:
+            raise SystemExit("Corrective task lease requires its Wave context")
+        require_corrective_boundary(data, str(task_wave(task)), task_id=task["id"])
+        require_active_lease(task, actor, f"Corrective task {task['id']}")
+        return task
     if data is not None:
         amendment = amendment_for_task(data, task)
         if amendment is not None:
@@ -1438,6 +1962,39 @@ def validate_task_evidence(
     allow_disclosed_unverified: bool = False,
 ) -> list[str]:
     errors: list[str] = []
+    if task.get("correction") is not None:
+        correction = task["correction"]
+        permitted = set(correction["changed_paths"])
+        # Controller projections and task-owned append-only evidence are normal
+        # delivery, not authority for additional product implementation.
+        delivery = {"planning/backlog.yaml", "docs/planning-implementation-plan.md", "planning/status-summary.md"}
+        for path in manifest.get("changedFiles", []):
+            owned_evidence = isinstance(path, str) and path.startswith(f"artifacts/evidence/{task['id']}.")
+            projections = {
+                "planning/review-site/index.html",
+                "planning/review-site/manifest.json",
+                f"planning/review-site/waves/{task['wave']}.html",
+            }
+            if path not in permitted and not owned_evidence and path not in delivery | projections:
+                errors.append("corrective changedFiles exceeds the exact admitted scope")
+        integration = manifest.get("correctiveIntegration")
+        commands = {c.get("command") for c in manifest.get("checks", []) if isinstance(c, dict)}
+        if (
+            not isinstance(integration, dict)
+            or set(integration)
+            != {"originSha256", "authorityPreserved", "affectedChecks", "reusedEvidence", "rationale"}
+            or integration.get("originSha256") != correction["origin_sha256"]
+            or integration.get("authorityPreserved") is not True
+            or not isinstance(integration.get("affectedChecks"), list)
+            or not integration["affectedChecks"]
+            or any(check not in commands for check in integration["affectedChecks"])
+            or not isinstance(integration.get("reusedEvidence"), list)
+            or not isinstance(integration.get("rationale"), str)
+            or not integration["rationale"].strip()
+        ):
+            errors.append(
+                "corrective integration evidence must bind the origin, actual affected checks and preserved authority"
+            )
     if manifest.get("taskId") != task["id"]:
         errors.append("taskId does not match")
     if expected_base_commit is not None and manifest.get("baseCommit") != expected_base_commit:
@@ -1772,6 +2329,26 @@ def task_review_telemetry_events(tasks: dict[str, dict[str, Any]]) -> list[dict[
     return events
 
 
+def corrective_review_errors(task: dict[str, Any], packet: dict[str, Any], document: dict[str, Any]) -> list[str]:
+    if task.get("correction") is None:
+        return []
+    review = document.get("corrective_integration")
+    if (
+        not isinstance(review, dict)
+        or set(review) != {"evidence_sha256", "authority_preserved", "affected_integration_reviewed", "notes"}
+        or review.get("evidence_sha256") != (packet.get("evidence_reference") or {}).get("sha256")
+        or type(review.get("authority_preserved")) is not bool
+        or (document.get("result") == "approved" and review.get("authority_preserved") is not True)
+        or review.get("affected_integration_reviewed") is not True
+        or not isinstance(review.get("notes"), str)
+        or not review["notes"].strip()
+    ):
+        return [
+            f"{task['id']}: corrective review must explicitly assess exact affected integration evidence and authority"
+        ]
+    return []
+
+
 def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[str]:
     control = task.get("review_control")
     if control is None:
@@ -1841,6 +2418,7 @@ def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[
                 except (OSError, UnicodeError, ValueError, json.JSONDecodeError, yaml.YAMLError) as exc:
                     errors.append(f"{task_id}: cannot load task review ledger: {exc}")
                 else:
+                    errors.extend(corrective_review_errors(task, packet, ledger_document))
                     if evidence_sha256(payload) != ledger.get("sha256"):
                         errors.append(f"{task_id}: task review ledger hash mismatch")
                     if (
@@ -1887,7 +2465,12 @@ def task_review_control_errors(task: dict[str, Any], repo: Path | None) -> list[
 
 def git_commit_exists(repo: Path, commit: str) -> bool:
     result = subprocess.run(
-        ["git", "cat-file", "-e", f"{commit}^{{commit}}"], cwd=repo, capture_output=True, text=True, check=False
+        ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+        env={**os.environ, "GIT_NO_REPLACE_OBJECTS": "1"},
     )
     return result.returncode == 0
 
@@ -1899,6 +2482,7 @@ def git_is_ancestor(repo: Path, ancestor: str, descendant: str = "HEAD") -> bool
         capture_output=True,
         text=True,
         check=False,
+        env={**os.environ, "GIT_NO_REPLACE_OBJECTS": "1"},
     )
     return result.returncode == 0
 
@@ -1946,7 +2530,13 @@ def git_commits_changing_path_after(repo: Path, ancestor: str, path: str) -> lis
 
 @lru_cache(maxsize=512)
 def git_blob(repo: Path, commit: str, path: str) -> bytes | None:
-    result = subprocess.run(["git", "show", f"{commit}:{path}"], cwd=repo, capture_output=True, check=False)
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{path}"],
+        cwd=repo,
+        capture_output=True,
+        check=False,
+        env={**os.environ, "GIT_NO_REPLACE_OBJECTS": "1"},
+    )
     return result.stdout if result.returncode == 0 else None
 
 
@@ -4864,7 +5454,7 @@ def committed_manifest_errors(
         if branch.returncode != 0 or branch.stdout.strip() != task.get("branch"):
             errors.append("task branch does not match the current Git branch")
         worktree = task.get("worktree")
-        if not worktree or Path(worktree).resolve() != repo:
+        if not worktree_binding_matches(worktree, repo):
             errors.append("task worktree does not match the canonical Git worktree")
         dirty = subprocess.run(
             ["git", "diff", "--quiet", "HEAD", "--"], cwd=repo, capture_output=True, text=True, check=False
@@ -5054,7 +5644,7 @@ def wave_resume_record_errors(
             if record.get(field) != prior.get(field):
                 errors.append(f"{record_id}: {field} differs from the bound PAUSED campaign")
         try:
-            if Path(str(record.get("worktree") or "")).resolve() != Path(str(prior.get("worktree") or "")).resolve():
+            if not worktree_bindings_equal(record.get("worktree"), prior.get("worktree"), repo):
                 errors.append(f"{record_id}: worktree differs from the bound PAUSED campaign")
         except OSError:
             errors.append(f"{record_id}: worktree cannot be resolved")
@@ -5078,6 +5668,8 @@ def wave_resume_record_errors(
             "owner": latest.get("actor"),
         }
         current = {field: campaign.get(field) for field in projection}
+        if worktree_bindings_equal(current.get("worktree"), projection.get("worktree"), repo):
+            current["worktree"] = projection["worktree"]
         if current != projection:
             errors.append(f"{wave_id}: latest Wave resume record is stale or has the wrong campaign identity")
         try:
@@ -5097,7 +5689,11 @@ def validate(
     *,
     repo: Path | None = None,
 ) -> list[str]:
-    errors = [*dependency_graph_errors(tasks), *slice_dependency_errors(slices, tasks)]
+    errors = [
+        *dependency_graph_errors(tasks),
+        *slice_dependency_errors(slices, tasks),
+        *corrective_task_errors(data, tasks, repo),
+    ]
     errors.extend(wave_authority_errors(data, repo))
     errors.extend(recovery_hold_errors(data, repo))
     if repo is not None:
@@ -5175,7 +5771,7 @@ def validate(
                 repo is not None
                 and campaign.get("status") == "ACTIVE"
                 and campaign.get("worktree")
-                and Path(campaign["worktree"]).resolve() != repo
+                and not worktree_binding_matches(campaign["worktree"], repo)
             ):
                 errors.append(f"{wave_id}: ACTIVE Wave campaign worktree does not match the repository")
             lease = campaign.get("lease")
@@ -5245,7 +5841,7 @@ def validate(
                 repo is not None
                 and campaign.get("status") == "ACTIVE"
                 and campaign.get("worktree")
-                and Path(campaign["worktree"]).resolve() != repo
+                and not worktree_binding_matches(campaign["worktree"], repo)
             ):
                 errors.append(f"{cid}: ACTIVE campaign worktree does not match the repository")
             lease = campaign.get("lease")
@@ -5335,7 +5931,7 @@ def validate(
                     repo is not None
                     and status in {"IN_PROGRESS", "REVIEW"}
                     and task.get("worktree")
-                    and Path(task["worktree"]).resolve() != repo
+                    and not worktree_binding_matches(task["worktree"], repo)
                 ):
                     errors.append(f"{tid}: active task worktree does not match the repository")
                 if lease and lease.get("claimed_by") != task.get("owner"):
@@ -5511,7 +6107,7 @@ def validate(
                 repo is not None
                 and campaign.get("status") in {"ACTIVE", "REVIEW"}
                 and campaign.get("worktree")
-                and Path(campaign["worktree"]).resolve() != repo
+                and not worktree_binding_matches(campaign["worktree"], repo)
             ):
                 errors.append(f"{amendment_id}: amendment worktree does not match the repository")
             lease = campaign.get("lease")
@@ -5646,6 +6242,9 @@ def command_validate(args: argparse.Namespace, data, capabilities, slices, tasks
 
 
 def command_status(args, data, capabilities, slices, tasks, gates) -> None:
+    if unfinished_corrective_tasks(data):
+        command_next(args, data, capabilities, slices, tasks, gates)
+        return
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     program = global_program_position(data, slices, tasks, gates)
     if program.get("state") == "RECOVERY_INTERRUPTED":
@@ -6058,6 +6657,19 @@ def global_gate_stop_handoff(
 
 
 def command_next(args, data, capabilities, slices, tasks, gates) -> None:
+    pending_corrections = unfinished_corrective_tasks(data)
+    if pending_corrections:
+        task = pending_corrections[0]
+        action = {
+            "IN_PROGRESS": "finish bounded checks and submit --from <manifest>",
+            "REVIEW": "obtain independent review --from <ledger>",
+            "BLOCKED": "resolve the recorded blocker and reopen with the same owner",
+        }[task["status"]]
+        print(
+            f"CORRECTIVE TASK {task['id']} ({task['status']}); origin {task['correction']['origin_task_id']}: "
+            f"{action}; ordinary Wave resume remains denied"
+        )
+        return
     refresh_derived_states(data, capabilities, slices, tasks, gates)
     program = global_program_position(data, slices, tasks, gates)
     if program.get("state") == "RECOVERY_INTERRUPTED":
@@ -8924,7 +9536,7 @@ def command_wave_start(args, data, capabilities, slices, tasks, gates) -> None:
         "scope": "wave",
         "owner": agent,
         "branch": branch,
-        "worktree": worktree,
+        "worktree": prospective_worktree_binding(prior.get("worktree"), Path(worktree)),
         "base_sha": base_sha,
         "profile": args.profile,
         "platform": args.platform,
@@ -8976,6 +9588,8 @@ def command_wave_renew(args, data, capabilities, slices, tasks, gates) -> None:
 
 
 def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
+    if unfinished_corrective_tasks(data):
+        raise SystemExit("Independent corrective task approval is required before ordinary Wave resume")
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
     wave = get(wave_map(data), args.wave, "wave")
@@ -9012,7 +9626,7 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit(f"Paused Wave is owned by {campaign.get('owner')}, not {agent}")
     if campaign.get("branch") and campaign.get("branch") != branch:
         raise SystemExit("Paused Wave must resume on its recorded branch")
-    if campaign.get("worktree") and Path(str(campaign["worktree"])).resolve() != Path(worktree).resolve():
+    if campaign.get("worktree") and not worktree_binding_matches(campaign["worktree"], repo):
         raise SystemExit("Paused Wave must resume in its recorded canonical worktree")
     if campaign.get("profile") != args.profile or campaign.get("platform") != args.platform:
         raise SystemExit("Paused Wave must resume with its recorded profile and platform")
@@ -9028,7 +9642,7 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
             "pre_resume_commit": base_sha,
             "prior_campaign_sha256": canonical_json_sha256(prior_campaign),
             "branch": branch,
-            "worktree": worktree,
+            "worktree": ".",
             "profile": args.profile,
             "platform": args.platform,
             "actor": agent,
@@ -9038,7 +9652,7 @@ def command_wave_resume(args, data, capabilities, slices, tasks, gates) -> None:
     campaign.update(
         status="ACTIVE",
         branch=branch,
-        worktree=worktree,
+        worktree=prospective_worktree_binding(campaign.get("worktree"), repo),
         base_sha=base_sha,
         profile=args.profile,
         platform=args.platform,
@@ -9261,7 +9875,7 @@ def command_capability_start(args, data, capabilities, slices, tasks, gates) -> 
         "increment_id": f"{capability.get('alias', capability['id'])}/{wave_id}",
         "owner": agent,
         "branch": branch,
-        "worktree": worktree,
+        "worktree": prospective_worktree_binding(prior_campaign.get("worktree"), Path(worktree)),
         "base_sha": base_sha,
         "profile": args.profile,
         "platform": args.platform,
@@ -9365,7 +9979,7 @@ def command_capability_resume(args, data, capabilities, slices, tasks, gates) ->
         status="ACTIVE",
         owner=agent,
         branch=branch,
-        worktree=worktree,
+        worktree=prospective_worktree_binding(campaign.get("worktree"), Path(worktree)),
         base_sha=base_sha,
         profile=args.profile,
         platform=args.platform,
@@ -9517,6 +10131,8 @@ def command_slice_review(args, data, capabilities, slices, tasks, gates) -> None
 
 
 def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
+    if unfinished_corrective_tasks(data):
+        raise SystemExit("Finish the corrective task through its existing review before ordinary claims")
     require_positive_lease_hours(args.lease_hours)
     require_execution_target(args.profile, args.platform)
     agent, branch, base_sha, worktree = git_execution_identity(
@@ -9549,7 +10165,7 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
             owner=agent,
             branch=branch,
             base_sha=base_sha,
-            worktree=worktree,
+            worktree=prospective_worktree_binding(task.get("worktree"), Path(worktree)),
             started_at=task.get("started_at") or now,
             updated_at=now,
             blocker=None,
@@ -9591,7 +10207,7 @@ def command_claim(args, data, capabilities, slices, tasks, gates) -> None:
         owner=agent,
         branch=branch,
         base_sha=base_sha,
-        worktree=worktree,
+        worktree=prospective_worktree_binding(task.get("worktree"), Path(worktree)),
         started_at=task.get("started_at") or now,
         updated_at=now,
         blocker=None,
@@ -9764,12 +10380,16 @@ def command_block(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_renew(args, data, capabilities, slices, tasks, gates) -> None:
     require_positive_lease_hours(args.lease_hours)
+    args.agent = normalized_identity(args.agent, "Agent")
     task = get(tasks, args.task, "task")
     if task["status"] not in {"IN_PROGRESS", "REVIEW"}:
         raise SystemExit("Only an IN_PROGRESS or REVIEW task lease may be renewed")
     if task.get("owner") != args.agent:
         raise SystemExit(f"Task {task['id']} is owned by {task.get('owner')}, not {args.agent}")
-    require_task_campaign_lease(task, capabilities, args.agent, data)
+    if task.get("correction") is not None:
+        require_corrective_boundary(data, str(task_wave(task)), task_id=task["id"])
+    else:
+        require_task_campaign_lease(task, capabilities, args.agent, data)
     if lease_is_active(task):
         require_active_lease(task, args.agent, f"Task {task['id']}")
     task["lease"] = new_lease(args.agent, args.lease_hours)
@@ -9979,6 +10599,8 @@ def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
     require_active_lease(task, args.agent, f"Task {task['id']}")
     if getattr(args, "from_file", None):
         repo = discover_repository(args.file)
+        if task.get("correction") is not None:
+            require_unmasked_corrective_index(repo)
         reference, manifest = prepare_task_evidence(
             task,
             repo,
@@ -9995,7 +10617,10 @@ def command_submit(args, data, capabilities, slices, tasks, gates) -> None:
         }
         task["review_control"]["current_submission"] = packet
     else:
-        if int((data.get("control_plane") or {}).get("minimum_tool_revision", 0)) >= 3:
+        if (
+            task.get("correction") is not None
+            or int((data.get("control_plane") or {}).get("minimum_tool_revision", 0)) >= 3
+        ):
             raise SystemExit("Controlled task submission requires --from for atomic evidence attachment")
         if task.get("verification_state") != "passed" or not task.get("evidence"):
             raise SystemExit("Verification must pass and evidence must be attached before REVIEW")
@@ -10037,6 +10662,9 @@ def prepare_task_review_attempt(
         raise SystemExit("Task review ledger candidate_commit does not match the frozen submission")
     if document.get("reviewer") != reviewer or document.get("result") != result:
         raise SystemExit("Task review ledger reviewer/result does not match the review command")
+    integration_errors = corrective_review_errors(task, submission, document)
+    if integration_errors:
+        raise SystemExit("; ".join(integration_errors))
     ledger_note = document.get("notes", "")
     if not isinstance(ledger_note, str) or (note and note != ledger_note):
         raise SystemExit("Task review ledger notes do not match the review command")
@@ -10108,6 +10736,8 @@ def command_review_telemetry(args, data, capabilities, slices, tasks, gates) -> 
 
 def command_review(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
+    if task.get("correction") is not None:
+        require_corrective_boundary(data, str(task_wave(task)), task_id=task["id"])
     amendment = amendment_for_task(data, task)
     if amendment is not None:
         require_runtime_amendment_integrity(args.file, amendment)
@@ -10155,7 +10785,8 @@ def command_review(args, data, capabilities, slices, tasks, gates) -> None:
             "owner": task.get("owner"),
         }
     task["updated_at"] = now
-    refresh_derived_states(data, capabilities, slices, tasks, gates)
+    if task.get("correction") is None:
+        refresh_derived_states(data, capabilities, slices, tasks, gates)
     persist(args, data)
 
 
@@ -10167,6 +10798,21 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
         raise SystemExit(f"Task cannot be reopened from {task['status']}")
     if task["status"] == "REVIEW" and task.get("review_control") is not None:
         raise SystemExit("A controlled REVIEW submission must receive an independent disposition before remediation")
+    if task.get("correction") is not None:
+        if task["status"] != "BLOCKED":
+            raise SystemExit("Completed corrective tasks are immutable; only a BLOCKED correction may reopen")
+        require_corrective_boundary(data, str(task_wave(task)), task_id=task["id"])
+        if task.get("owner") != agent:
+            raise SystemExit("Only the corrective task owner may reopen it")
+        task.update(
+            status="IN_PROGRESS",
+            blocker=None,
+            verification_state=None,
+            updated_at=utc_now(),
+            lease=new_lease(agent, args.lease_hours),
+        )
+        persist(args, data)
+        return
     holder = require_task_campaign_lease(task, capabilities, agent, data)
     amendment = amendment_for_task(data, task)
     if amendment is not None:
@@ -10291,6 +10937,8 @@ def command_reopen(args, data, capabilities, slices, tasks, gates) -> None:
 
 def command_cancel(args, data, capabilities, slices, tasks, gates) -> None:
     task = get(tasks, args.task, "task")
+    if task.get("correction") is not None:
+        raise SystemExit("Corrective tasks cannot disappear through cancellation; resolve the independent finding")
     if amendment_for_task(data, task) is not None:
         raise SystemExit("Approved amendment tasks cannot be cancelled; use an append-only amendment disposition")
     if task["status"] in {"DONE", "CANCELLED"}:
@@ -10463,6 +11111,18 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("validate")
     sub.add_parser("status")
     sub.add_parser("review-telemetry")
+    correct = sub.add_parser(
+        "correct", help="Atomically claim an in-scope correction without reopening prior DONE work"
+    )
+    correct.add_argument("task")
+    correct.add_argument("--from", dest="from_file", required=True)
+    correct.add_argument("--agent", required=True)
+    correct.add_argument("--branch", required=True)
+    correct.add_argument("--base-sha", required=True)
+    correct.add_argument("--worktree", required=True)
+    correct.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
+    correct.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
+    correct.add_argument("--lease-hours", type=int, default=8)
     n = sub.add_parser("next")
     n.add_argument("--profile", choices=sorted(ACTIVE_PROFILES), default="LOC")
     n.add_argument("--platform", choices=sorted(PLATFORMS), default="windows-x64")
@@ -10760,10 +11420,19 @@ def main() -> None:
     args.source_recovery_history = recovery_history_snapshot(data)
     args.source_released_recovery_holds = released_recovery_hold_snapshot(data)
     args.source_task_recovery_history = task_recovery_history_snapshot(data)
+    args.source_corrective_history = corrective_history_snapshot(data)
+    args.receipt_enabled = True
+    args.receipt_before = serializable_backlog(data)
     args.repo_root = discover_repository(args.file)
+    producer = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=args.repo_root, capture_output=True, text=True, check=False
+    )
+    args.receipt_producer_commit = producer.stdout.strip() if producer.returncode == 0 else None
     require_recovery_hold_permission(args, data, tasks, args.repo_root)
     if args.command == "validate":
         command_validate(args, data, capabilities, slices, tasks, gates)
+    elif args.command == "correct":
+        command_correct(args, data, capabilities, slices, tasks, gates)
     elif args.command == "status":
         command_status(args, data, capabilities, slices, tasks, gates)
     elif args.command == "review-telemetry":
@@ -10774,7 +11443,7 @@ def main() -> None:
         command_next_capability(args, data, capabilities, slices, tasks, gates)
     elif args.command == "show":
         task = dict(get(tasks, args.task, "task"))
-        if amendment_for_task(data, task) is None:
+        if amendment_for_task(data, task) is None and task.get("correction") is None:
             task["displayCapability"] = capability_display(capabilities[task["capability_id"]])
             task["displaySlice"] = slice_display(slices[task["slice_id"]])
         print_yaml(task)

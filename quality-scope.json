@@ -212,6 +212,8 @@
     "tests/desktop/test_product_layout_measurements.py",
     "tests/service/test_native_project_contract.py",
     "tests/service/test_project_probe_build.py",
-    "tools/product_layout_measurements.py"
+    "tools/product_layout_measurements.py",
+    "tools/verification_receipt.py",
+    "tests/foundation/test_verification_receipt.py"
   ]
 }

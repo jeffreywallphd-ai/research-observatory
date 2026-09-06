@@ -1418,6 +1418,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         with patch("taskctl.persist"):
             command_renew(Namespace(task=task["id"], agent="alice", lease_hours=8, file="unused"), *context)
         self.assertEqual("alice", task["lease"]["claimed_by"])
+        self.assertEqual(".", task["worktree"])
 
     def test_evidence_requires_current_head_and_records_canonical_repository_path(self) -> None:
         context = self.workflow()
@@ -6870,6 +6871,681 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     "--override-campaign",
                 ]
             )
+
+
+class CorrectiveTaskWorkflowTests(unittest.TestCase):
+    """Synthetic-only coverage of prospective corrective tasks, not live W1 replay."""
+
+    def fixture(self) -> tuple[tuple, dict, dict, dict, Namespace]:
+        context = TaskctlWorkflowTests().interrupted_workflow(
+            lifecycle_status="ADOPTED", amendment_campaign_status="COMPLETE"
+        )
+        data, _capabilities, _slices, tasks, gates = context
+        wave = data["waves"][0]
+        wave["campaign"].update(scope="wave", status="PAUSED", lease=None)
+        wave["completion"]["status"] = "IN_PROGRESS"
+        data["wave_amendments"][0]["completion"]["status"] = "APPROVED"
+        for task in tasks.values():
+            task.update(status="DONE", owner="prior-owner", lease=None)
+            task["review"] = {
+                "reviewer": "prior-reviewer",
+                "result": "approved",
+                "reviewed_at": "2026-09-01T00:00:00+00:00",
+                "notes": "retained",
+            }
+            task["evidence"] = [
+                {
+                    "type": "criterion-manifest",
+                    "path": "artifacts/evidence/fixture.json",
+                    "sha256": "1" * 64,
+                    "commit": "a" * 40,
+                    "recorded_at": "2026-09-01T00:00:00+00:00",
+                }
+            ]
+        gates["G1"] = {"id": "G1", "after_wave": "W1", "status": "PENDING"}
+        data["release_gates"] = list(gates.values())
+        origin = tasks["W1.A02.T01"]
+        spec = {
+            "schemaVersion": "1.0",
+            "kind": "authority-preserving-correction",
+            "origin": {
+                "taskId": origin["id"],
+                "commit": "a" * 40,
+                "sha256": canonical_json_sha256({k: v for k, v in origin.items() if not k.startswith("_")}),
+            },
+            "reproduction": "Approved embedded launch incorrectly selects a development server.",
+            "changedPaths": ["apps/desktop/package.json", "apps/desktop/README.md"],
+            "impactAnalysis": "Restore original behavior; preserve every original acceptance criterion and authority.",
+        }
+        reference = {"path": "artifacts/evidence/W1.C01.T01.spec.json", "sha256": "b" * 64, "commit": "a" * 40}
+        args = Namespace(
+            agent="alice",
+            branch="codex/test",
+            base_sha="a" * 40,
+            worktree=str(REPO),
+            profile="LOC",
+            platform="windows-x64",
+            lease_hours=8,
+        )
+        return context, origin, spec, reference, args
+
+    def build(self) -> tuple[tuple, dict, dict]:
+        context, origin, spec, reference, args = self.fixture()
+        task = taskctl_module.build_corrective_task(context[0], context[3], origin, spec, reference, args)
+        return context, origin, task
+
+    def test_corrective_inherits_contract_and_preserves_adopted_origin(self) -> None:
+        context, origin, spec, reference, args = self.fixture()
+        before = copy.deepcopy(taskctl_module.serializable_backlog(context[0]))
+        task = taskctl_module.build_corrective_task(context[0], context[3], origin, spec, reference, args)
+        self.assertEqual(before, taskctl_module.serializable_backlog(context[0]))
+        self.assertEqual("W1.C01.T01", task["id"])
+        self.assertEqual("IN_PROGRESS", task["status"])
+        self.assertNotIn("amendment_id", task)
+        for field in ("acceptance_criteria", "dependencies", "objective", "verification_commands"):
+            self.assertEqual(origin[field], task[field])
+        self.assertEqual(["LOC"], task["deployment_profiles"])
+        self.assertEqual(["windows-x64"], task["platform_targets"])
+        self.assertEqual("alice", task["lease"]["claimed_by"])
+
+    def test_corrective_rejects_quiescence_release_scope_and_identity_substitution(self) -> None:
+        for mutation in (
+            "released",
+            "frozen",
+            "active",
+            "hold",
+            "origin-open",
+            "origin-hash",
+            "criteria",
+            "unsafe",
+            "authority",
+        ):
+            context, origin, spec, reference, args = self.fixture()
+            data = context[0]
+            if mutation == "released":
+                context[4]["G1"]["status"] = "APPROVED"
+            elif mutation == "frozen":
+                data["waves"][0]["completion"]["status"] = "REVIEW"
+            elif mutation == "active":
+                next(iter(context[3].values()))["status"] = "IN_PROGRESS"
+            elif mutation == "hold":
+                data["control_plane"]["recovery_holds"] = [{"status": "ACTIVE"}]
+            elif mutation == "origin-open":
+                origin["status"] = "BLOCKED"
+            elif mutation == "origin-hash":
+                spec["origin"]["sha256"] = "0" * 64
+            elif mutation == "criteria":
+                spec["acceptanceCriteria"] = ["New scope"]
+            elif mutation == "unsafe":
+                spec["changedPaths"] = ["apps/../planning/backlog.yaml"]
+            else:
+                spec["changedPaths"] = ["design/ui-reference/STYLE_GUIDE.md"]
+            with self.subTest(mutation=mutation), self.assertRaises(SystemExit):
+                taskctl_module.build_corrective_task(data, context[3], origin, spec, reference, args)
+
+    def test_corrective_index_history_lease_and_one_at_a_time(self) -> None:
+        context, origin, task = self.build()
+        data = context[0]
+        data["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        indexed = taskctl_module.index_backlog(data)
+        self.assertIs(task, indexed[3][task["id"]])
+        self.assertIn(task["id"], taskctl_module.task_review_history_snapshot(data))
+        self.assertIs(task, taskctl_module.require_task_campaign_lease(task, indexed[1], "alice", data))
+        with self.assertRaises(SystemExit):
+            taskctl_module.require_task_campaign_lease(task, indexed[1], "bob", data)
+        _, _, spec, reference, args = self.fixture()
+        with self.assertRaises(SystemExit):
+            taskctl_module.build_corrective_task(data, indexed[3], origin, spec, reference, args)
+
+    def test_corrective_blocks_resume_and_release_even_when_origin_done(self) -> None:
+        context, _origin, task = self.build()
+        context[0]["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        indexed = taskctl_module.index_backlog(context[0])
+        self.assertFalse(taskctl_module.wave_complete("W1", indexed[2], indexed[3], indexed[0]))
+        args = Namespace(wave="W1", agent="alice", lease_hours=8, profile="LOC", platform="windows-x64", file="unused")
+        with (
+            patch("taskctl.approved_unbootstrapped_amendment", return_value=None),
+            self.assertRaisesRegex(SystemExit, "corrective"),
+        ):
+            command_wave_resume(args, *indexed)
+
+    def test_corrective_evidence_requires_scope_and_affected_integration(self) -> None:
+        _context, _origin, task = self.build()
+        manifest = {
+            "taskId": task["id"],
+            "branch": task["branch"],
+            "commit": "a" * 40,
+            "checks": [{"command": "fixture", "exitCode": 0}],
+            "acceptanceCriteria": [{"criterion_index": 1, "evidence": ["actual fixture"]}],
+            "unverifiedItems": [],
+            "changedFiles": ["apps/desktop/package.json"],
+        }
+        errors = taskctl_module.validate_task_evidence(task, manifest)
+        self.assertTrue(any("integration" in error for error in errors))
+        manifest["correctiveIntegration"] = {
+            "originSha256": task["correction"]["origin_sha256"],
+            "authorityPreserved": True,
+            "affectedChecks": ["fixture"],
+            "reusedEvidence": [],
+            "rationale": "Actual launch boundary tested; other authority unchanged.",
+        }
+        self.assertEqual([], taskctl_module.validate_task_evidence(task, manifest))
+        manifest["changedFiles"] = ["design/ui-reference/STYLE_GUIDE.md"]
+        self.assertTrue(taskctl_module.validate_task_evidence(task, manifest))
+
+    def test_corrective_spec_revalidation_rejects_wrong_kind_fields_and_types(self) -> None:
+        change: dict[str, Any]
+        for change in (
+            {"kind": "new-authority"},
+            {"schemaVersion": "2.0"},
+            {"newCriteria": []},
+            {"changedPaths": [{}]},
+            {"changedPaths": []},
+        ):
+            context, origin, spec, reference, args = self.fixture()
+            spec.update(change)
+            with self.subTest(change=change), self.assertRaises(SystemExit):
+                taskctl_module.build_corrective_task(context[0], context[3], origin, spec, reference, args)
+        context, origin, task = self.build()
+        context[0]["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        indexed = taskctl_module.index_backlog(context[0])
+        for field, value in (("kind", "new-authority"), ("schemaVersion", "2.0"), ("injected", True)):
+            spec = self.fixture()[2]
+            spec[field] = value
+            payload = json.dumps(spec).encode()
+            task["correction"]["spec"]["sha256"] = evidence_sha256(payload)
+            with (
+                self.subTest(field=field),
+                patch("taskctl.historical_backlog_document", return_value=context[0]),
+                patch("taskctl.git_is_ancestor", return_value=True),
+                patch("taskctl.git_blob", return_value=payload),
+            ):
+                self.assertTrue(
+                    any(
+                        "spec" in error for error in taskctl_module.corrective_task_errors(context[0], indexed[3], REPO)
+                    )
+                )
+
+    def test_corrective_origin_revalidation_rejects_fabricated_unadopted_binding(self) -> None:
+        context, origin, task = self.build()
+        context[0]["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        context[0]["wave_amendments"][0]["lifecycle"]["status"] = "SUPERSEDED"
+        # Even recomputing every digest cannot create an adopted origin.
+        task["correction"]["authority_sha256"] = canonical_json_sha256(
+            taskctl_module.corrective_authority(context[0], origin)
+        )
+        task["correction"]["paused_state_sha256"] = canonical_json_sha256(
+            taskctl_module.corrective_paused_snapshot(context[0])
+        )
+        self.assertTrue(taskctl_module.corrective_task_errors(context[0], taskctl_module.index_backlog(context[0])[3]))
+
+    def test_corrective_review_requires_exact_integration_disposition(self) -> None:
+        _context, _origin, task = self.build()
+        packet = {"evidence_reference": {"sha256": "a" * 64}}
+        document: dict[str, Any] = {"result": "approved"}
+        self.assertTrue(taskctl_module.corrective_review_errors(task, packet, document))
+        document["corrective_integration"] = {
+            "evidence_sha256": "a" * 64,
+            "authority_preserved": True,
+            "affected_integration_reviewed": True,
+            "notes": "Reviewed actual affected integration and unchanged inherited authority.",
+        }
+        self.assertEqual([], taskctl_module.corrective_review_errors(task, packet, document))
+        for field, value in (
+            ("evidence_sha256", "b" * 64),
+            ("authority_preserved", False),
+            ("affected_integration_reviewed", False),
+            ("notes", ""),
+        ):
+            changed = copy.deepcopy(document)
+            changed["corrective_integration"][field] = value
+            with self.subTest(field=field):
+                self.assertTrue(taskctl_module.corrective_review_errors(task, packet, changed))
+
+    def test_corrective_expired_owner_can_renew_and_done_identity_is_immutable(self) -> None:
+        context, _origin, task = self.build()
+        context[0]["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        indexed = taskctl_module.index_backlog(context[0])
+        task["lease"]["expires_at"] = "2020-01-01T00:00:00+00:00"
+        args = Namespace(task=task["id"], agent="alice", lease_hours=8)
+        with patch("taskctl.persist"), redirect_stdout(io.StringIO()):
+            taskctl_module.command_renew(args, *indexed)
+        self.assertTrue(taskctl_module.lease_is_active(task))
+        history = taskctl_module.corrective_history_snapshot(context[0])
+        task["base_sha"] = "b" * 40
+        with self.assertRaisesRegex(SystemExit, "Immutable corrective"):
+            save_validated("unused", context[0], expected_corrective_history=history)
+
+    def test_corrective_history_and_paused_predecessor_are_not_editable(self) -> None:
+        context, _origin, task = self.build()
+        data = context[0]
+        data["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        indexed = taskctl_module.index_backlog(data)
+        self.assertEqual([], taskctl_module.corrective_task_errors(data, indexed[3]))
+        history = taskctl_module.corrective_history_snapshot(data)
+        for mutation in ("origin", "criteria", "wave"):
+            candidate = copy.deepcopy(data)
+            if mutation == "origin":
+                candidate["wave_amendments"][0]["tasks"][0]["review"]["notes"] = "rewritten"
+            elif mutation == "criteria":
+                candidate["waves"][0]["campaign"]["corrective_tasks"][0]["acceptance_criteria"] = ["new"]
+            else:
+                candidate["waves"][0]["campaign"]["owner"] = "substituted"
+            with self.subTest(mutation=mutation):
+                self.assertTrue(
+                    taskctl_module.corrective_task_errors(candidate, taskctl_module.index_backlog(candidate)[3])
+                )
+        candidate = copy.deepcopy(data)
+        candidate["waves"][0]["campaign"]["corrective_tasks"][0]["correction"]["reproduction"] = "rewritten"
+        with self.assertRaisesRegex(SystemExit, "Immutable corrective"):
+            save_validated("unused", candidate, expected_corrective_history=history)
+
+    def test_corrective_actual_git_admission_and_real_cas_preserve_original(self) -> None:
+        # Independent dummy Git repository only. No source/research data is copied.
+        context, origin, spec, _reference, args = self.fixture()
+        with tempfile.TemporaryDirectory(prefix="ro-corrective-git-") as temporary:
+            root = Path(temporary)
+            env = {
+                **taskctl_module.os.environ,
+                "GIT_CONFIG_GLOBAL": taskctl_module.os.devnull,
+                "GIT_CONFIG_NOSYSTEM": "1",
+            }
+
+            def git(*arguments: str) -> str:
+                result = subprocess.run(
+                    [
+                        "git",
+                        "-c",
+                        "user.name=Fixture",
+                        "-c",
+                        "user.email=fixture@example.invalid",
+                        "-c",
+                        "core.hooksPath=" + str(root / "empty-hooks"),
+                        *arguments,
+                    ],
+                    cwd=root,
+                    env=env,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                return result.stdout.strip()
+
+            git("init", "--initial-branch=codex/test")
+            path = root / "planning/backlog.yaml"
+            path.parent.mkdir()
+            path.write_text(
+                taskctl_module.yaml.safe_dump(taskctl_module.serializable_backlog(context[0]), sort_keys=False),
+                encoding="utf-8",
+            )
+            git("add", "planning/backlog.yaml")
+            git("commit", "-m", "dummy adopted predecessor")
+            spec["origin"]["commit"] = git("rev-parse", "HEAD")
+            spec_path = root / "artifacts/evidence/W1.C01.T01.spec.json"
+            spec_path.parent.mkdir(parents=True)
+            spec_path.write_text(json.dumps(spec), encoding="utf-8")
+            git("add", "artifacts/evidence/W1.C01.T01.spec.json")
+            git("commit", "-m", "dummy correction spec")
+            args.base_sha = git("rev-parse", "HEAD")
+            args.task = origin["id"]
+            args.worktree = str(root)
+            args.file = str(path)
+            args.from_file = str(spec_path)
+            args.source_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+            args.command = "correct"
+            args.receipt_enabled = True
+            args.receipt_before = copy.deepcopy(context[0])
+            args.receipt_producer_commit = args.base_sha
+            before = copy.deepcopy(taskctl_module.serializable_backlog(context[0]))
+            git("update-index", "--assume-unchanged", "planning/backlog.yaml")
+            with self.assertRaisesRegex(SystemExit, "index flags"):
+                taskctl_module.command_correct(args, *context)
+            git("update-index", "--no-assume-unchanged", "planning/backlog.yaml")
+            substituted = copy.deepcopy(context)
+            substituted[0]["waves"][0]["campaign"]["pause_reason"] = "uncommitted logical substitution"
+            with self.assertRaisesRegex(SystemExit, "committed predecessor"):
+                taskctl_module.command_correct(copy.copy(args), *substituted)
+            wrong = copy.copy(args)
+            wrong.worktree = str(root / "wrong-checkout")
+            with self.assertRaisesRegex(SystemExit, "canonical repository"):
+                taskctl_module.command_correct(wrong, *context)
+
+            # Full schema/semantic checks are separate; this minimal synthetic
+            # fixture exercises real Git authentication and real atomic CAS.
+            def atomic(_args: Namespace, data: dict) -> str:
+                return save_atomic(str(path), data, expected_sha256=args.source_sha256)
+
+            output = io.StringIO()
+            with patch("taskctl._persist_validated", side_effect=atomic), redirect_stdout(output):
+                taskctl_module.command_correct(args, *context)
+            after = taskctl_module.yaml.safe_load(path.read_bytes())
+            self.assertEqual(before, taskctl_module.corrective_paused_snapshot(after))
+            self.assertEqual("W1.C01.T01", after["waves"][0]["campaign"]["corrective_tasks"][0]["id"])
+            self.assertEqual(".", after["waves"][0]["campaign"]["corrective_tasks"][0]["worktree"])
+            receipt = json.loads(output.getvalue().splitlines()[0])
+            self.assertEqual("COMMITTED", receipt["status"])
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), receipt["successorSha256"])
+            self.assertNotIn(str(root), json.dumps(receipt))
+            failure = io.StringIO()
+            with (
+                patch("taskctl._persist_validated", side_effect=atomic),
+                redirect_stderr(failure),
+                self.assertRaises(SystemExit),
+            ):
+                taskctl_module.persist(args, context[0])
+            self.assertEqual("NOT_COMMITTED", json.loads(failure.getvalue())["status"])
+
+    def test_corrective_controlled_rounds_reuse_normal_submission_and_preserve_adverse_history(self) -> None:
+        context, _origin, task = self.build()
+        context[0]["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        context = taskctl_module.index_backlog(context[0])
+        original = taskctl_module.corrective_paused_snapshot(context[0])
+        helper = TaskctlWorkflowTests()
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            evidence_dir = repo / "artifacts/evidence"
+            evidence_dir.mkdir(parents=True)
+            manifest = {
+                "taskId": task["id"],
+                "branch": task["branch"],
+                "commit": "b" * 40,
+                "baseCommit": task["base_sha"],
+                "changedFiles": ["apps/desktop/package.json"],
+                "checks": [{"command": "fixture", "exitCode": 0}],
+                "acceptanceCriteria": [{"criterion_index": 1, "evidence": ["fixture"]}],
+                "unverifiedItems": [],
+                "verificationSelection": {
+                    "riskAnalysis": "Actual affected integration",
+                    "selectedCommandIds": ["foundation:unit"],
+                },
+                "correctiveIntegration": {
+                    "originSha256": task["correction"]["origin_sha256"],
+                    "authorityPreserved": True,
+                    "affectedChecks": ["fixture"],
+                    "reusedEvidence": [],
+                    "rationale": "Bounded unchanged contract.",
+                },
+            }
+            args = Namespace(
+                task=task["id"],
+                agent="alice",
+                file=str(repo / "planning/backlog.yaml"),
+                from_file="fixture.json",
+                note="",
+                lease_hours=8,
+            )
+            first_attempt = None
+            for number, result in ((1, "changes-requested"), (2, "approved")):
+                manifest["commit"] = str(number + 1) * 40
+                if number == 2:
+                    manifest["reviewerDisposition"] = {"openFindingIds": ["COR-F01"]}
+                reference = {
+                    "path": f"artifacts/evidence/{task['id']}.round-{number}.json",
+                    "sha256": str(number) * 64,
+                    "commit": manifest["commit"],
+                    "recorded_at": taskctl_module.utc_now(),
+                    "type": "criterion-manifest",
+                }
+                self.assertEqual([], taskctl_module.validate_task_evidence(task, manifest))
+                with (
+                    patch("taskctl.discover_repository", return_value=repo),
+                    patch("taskctl.persist") as saved,
+                    patch("taskctl.prepare_task_evidence", return_value=(reference, manifest)),
+                    patch("taskctl.require_unmasked_corrective_index"),
+                    patch("taskctl.require_canonical_selected_command_ids"),
+                ):
+                    command_submit(args, *context)
+                    saved.assert_called_once()
+                packet = task["review_control"]["current_submission"]
+                self.assertEqual(f"R{number:02d}", packet["id"])
+                ledger = helper.write_task_review_ledger(
+                    repo,
+                    task,
+                    name=f"review-{number}.json",
+                    reviewer="bob",
+                    result=result,
+                    findings=[helper.review_finding("COR-F01")] if number == 1 else [],
+                    closures=[]
+                    if number == 1
+                    else [{"finding_id": "COR-F01", "evidence": ["incremental replay"], "notes": "closed"}],
+                )
+                review_args = Namespace(
+                    task=task["id"],
+                    reviewer="bob",
+                    result=result,
+                    from_file=str(ledger),
+                    file=args.file,
+                    note="",
+                    lease_hours=8,
+                )
+                with (
+                    patch("taskctl.discover_repository", return_value=repo),
+                    self.assertRaisesRegex(SystemExit, "integration"),
+                ):
+                    command_review(review_args, *context)
+                document = json.loads(ledger.read_bytes())
+                document["corrective_integration"] = {
+                    "evidence_sha256": reference["sha256"],
+                    "authority_preserved": True,
+                    "affected_integration_reviewed": True,
+                    "notes": "Independent bounded fixture integration assessment.",
+                }
+                ledger.write_text(json.dumps(document), encoding="utf-8")
+                with (
+                    patch("taskctl.discover_repository", return_value=repo),
+                    patch("taskctl.persist") as saved,
+                    patch("taskctl.require_canonical_selected_command_ids"),
+                ):
+                    command_review(review_args, *context)
+                    saved.assert_called_once()
+                if number == 1:
+                    first_attempt = copy.deepcopy(task["review_control"]["attempts"][0])
+                    self.assertEqual("IN_PROGRESS", task["status"])
+                else:
+                    self.assertEqual(first_attempt, task["review_control"]["attempts"][0])
+            self.assertEqual("DONE", task["status"])
+            self.assertEqual({}, taskctl_module.task_open_findings(task["review_control"]["attempts"]))
+            self.assertEqual(original, taskctl_module.corrective_paused_snapshot(context[0]))
+            with self.assertRaisesRegex(SystemExit, "immutable"):
+                command_reopen(Namespace(task=task["id"], agent="alice", lease_hours=8), *context)
+
+    def test_new_worktree_bindings_preserve_legacy_and_do_not_use_process_cwd(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary, chdir(temporary):
+            self.assertTrue(taskctl_module.worktree_binding_matches(".", REPO))
+            self.assertTrue(taskctl_module.worktree_binding_matches(REPO.as_posix(), REPO))
+            self.assertFalse(taskctl_module.worktree_binding_matches("planning", REPO))
+            self.assertFalse(taskctl_module.worktree_binding_matches(temporary, REPO))
+            self.assertEqual(".", taskctl_module.prospective_worktree_binding(None, REPO))
+            self.assertEqual(REPO.as_posix(), taskctl_module.prospective_worktree_binding(REPO.as_posix(), REPO))
+            with self.assertRaises(SystemExit):
+                taskctl_module.prospective_worktree_binding(temporary, REPO)
+
+    def test_transition_receipt_output_failure_cannot_undo_successful_atomic_write(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "backlog.yaml"
+            path.write_text("waves: []\n", encoding="utf-8")
+            before = hashlib.sha256(path.read_bytes()).hexdigest()
+            args = Namespace(
+                file=str(path),
+                command="correct",
+                source_sha256=before,
+                receipt_enabled=True,
+                receipt_before={"waves": []},
+            )
+
+            def atomic(_args: Namespace, data: dict) -> str:
+                return save_atomic(str(path), data, expected_sha256=before)
+
+            with (
+                patch("taskctl._persist_validated", side_effect=atomic),
+                patch("builtins.print", side_effect=OSError("closed sink")),
+                self.assertRaisesRegex(SystemExit, "was committed.*receipt output failed"),
+            ):
+                taskctl_module.persist(args, {"waves": [{"id": "W1"}]})
+            self.assertEqual({"waves": [{"id": "W1"}]}, taskctl_module.yaml.safe_load(path.read_bytes()))
+            failure = io.StringIO()
+            with (
+                patch("taskctl._persist_validated", side_effect=OSError("unclassified cleanup failure")),
+                redirect_stderr(failure),
+                self.assertRaises(OSError),
+            ):
+                taskctl_module.persist(args, {"waves": []})
+            self.assertEqual("COMMIT_STATUS_UNKNOWN", json.loads(failure.getvalue())["status"])
+
+    def test_git_provenance_reads_ignore_replacement_objects_in_dummy_repository(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="ro-replacement-git-") as temporary:
+            root = Path(temporary)
+            env = {
+                **taskctl_module.os.environ,
+                "GIT_CONFIG_GLOBAL": taskctl_module.os.devnull,
+                "GIT_CONFIG_NOSYSTEM": "1",
+            }
+            env.pop("GIT_NO_REPLACE_OBJECTS", None)
+
+            def git(*arguments: str) -> str:
+                return subprocess.check_output(
+                    [
+                        "git",
+                        "-c",
+                        "user.name=Fixture",
+                        "-c",
+                        "user.email=fixture@example.invalid",
+                        "-c",
+                        "core.hooksPath=" + str(root / "empty-hooks"),
+                        *arguments,
+                    ],
+                    cwd=root,
+                    env=env,
+                    text=True,
+                ).strip()
+
+            git("init", "--initial-branch=codex/test")
+            path = root / "dummy.txt"
+            path.write_text("original", encoding="utf-8")
+            git("add", "dummy.txt")
+            git("commit", "-m", "original")
+            original = git("rev-parse", "HEAD")
+            path.write_text("replacement", encoding="utf-8")
+            git("add", "dummy.txt")
+            git("commit", "-m", "replacement")
+            replacement = git("rev-parse", "HEAD")
+            git("replace", original, replacement)
+            self.assertEqual("replacement", git("show", original + ":dummy.txt"))
+            self.assertEqual(b"original", taskctl_module.git_blob(root, original, "dummy.txt"))
+            self.assertTrue(taskctl_module.git_is_ancestor(root, original, replacement))
+
+    def test_corrective_next_status_and_telemetry_discover_the_linked_task(self) -> None:
+        context, _origin, task = self.build()
+        context[0]["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        context = taskctl_module.index_backlog(context[0])
+        for command in (taskctl_module.command_next, taskctl_module.command_status):
+            output = io.StringIO()
+            with redirect_stdout(output):
+                command(Namespace(), *context)
+            self.assertIn(task["id"], output.getvalue())
+            self.assertIn(task["correction"]["origin_task_id"], output.getvalue())
+            self.assertIn("submit --from", output.getvalue())
+        self.assertIn("Task-scope guidance", "\n".join(task_check_guidance(task)))
+        self.assertEqual([], taskctl_module.task_review_telemetry_events(context[3]))
+
+    def test_new_claim_uses_dot_and_retains_existing_legacy_binding(self) -> None:
+        helper = TaskctlWorkflowTests()
+        for prior in (None, REPO.as_posix(), "."):
+            context = helper.workflow()
+            task = context[3]["CAP-00.S01.T01"]
+            task["worktree"] = prior
+            with (
+                patch("taskctl.persist"),
+                patch(
+                    "taskctl.git_execution_identity", return_value=("alice", "codex/test", "a" * 40, REPO.as_posix())
+                ),
+            ):
+                command_claim(helper.claim_args(), *context)
+            self.assertEqual(prior or ".", task["worktree"])
+
+    def test_new_resume_record_is_dot_but_retains_legacy_campaign_and_real_git_checks(self) -> None:
+        helper = TaskctlWorkflowTests()
+        with tempfile.TemporaryDirectory(prefix="ro-resume-git-") as temporary:
+            root = Path(temporary)
+            env = {
+                **taskctl_module.os.environ,
+                "GIT_CONFIG_GLOBAL": taskctl_module.os.devnull,
+                "GIT_CONFIG_NOSYSTEM": "1",
+            }
+
+            def git(*arguments: str) -> str:
+                return subprocess.check_output(
+                    [
+                        "git",
+                        "-c",
+                        "user.name=Fixture",
+                        "-c",
+                        "user.email=fixture@example.invalid",
+                        "-c",
+                        "core.hooksPath=" + str(root / "empty-hooks"),
+                        *arguments,
+                    ],
+                    cwd=root,
+                    env=env,
+                    text=True,
+                ).strip()
+
+            git("init", "--initial-branch=codex/test")
+            for prior_binding in (root.as_posix(), "."):
+                context = helper.workflow()
+                data, capabilities, _slices, _tasks, _gates = context
+                data["control_plane"] = {"revision": taskctl_module.CONTROL_TOOL_REVISION}
+                capabilities["CAP-00"]["campaign"] = None
+                wave = data["waves"][0]
+                wave["campaign"] = {
+                    "status": "PAUSED",
+                    "scope": "wave",
+                    "owner": "alice",
+                    "branch": "codex/test",
+                    "base_sha": "a" * 40,
+                    "worktree": prior_binding,
+                    "profile": "LOC",
+                    "platform": "windows-x64",
+                    "lease": None,
+                    "updated_at": "2026-09-01T00:00:00+00:00",
+                }
+                wave["completion"]["status"] = "PAUSED"
+                path = root / "planning/backlog.yaml"
+                path.parent.mkdir(exist_ok=True)
+                path.write_text(
+                    taskctl_module.yaml.safe_dump(taskctl_module.serializable_backlog(data)), encoding="utf-8"
+                )
+                git("add", "planning/backlog.yaml")
+                git("commit", "-m", "dummy paused fixture")
+                args = Namespace(
+                    wave=wave["id"],
+                    agent="alice",
+                    branch="codex/test",
+                    base_sha=git("rev-parse", "HEAD"),
+                    worktree=str(root),
+                    profile="LOC",
+                    platform="windows-x64",
+                    lease_hours=8,
+                    file=str(path),
+                )
+                with (
+                    patch("taskctl.approved_unbootstrapped_amendment", return_value=None),
+                    patch("taskctl.require_wave_planning_ready"),
+                    patch("taskctl.persist"),
+                    patch(
+                        "taskctl.global_program_position",
+                        return_value={"state": "ACTIVE_WAVE", "current_wave": wave["id"]},
+                    ),
+                ):
+                    wrong = copy.copy(args)
+                    wrong.worktree = str(root / "not-the-checkout")
+                    with self.assertRaisesRegex(SystemExit, "canonical repository"):
+                        command_wave_resume(wrong, *context)
+                    with chdir(root.parent):
+                        command_wave_resume(args, *context)
+                self.assertEqual(prior_binding, wave["campaign"]["worktree"])
+                self.assertEqual(".", wave["campaign"]["resume_records"][-1]["worktree"])
+                self.assertEqual([], wave_resume_record_errors(data, wave["id"], wave["campaign"], root))
 
 
 if __name__ == "__main__":

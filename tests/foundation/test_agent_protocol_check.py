@@ -53,6 +53,22 @@ class AgentProtocolTests(unittest.TestCase):
 
         self.assertIn("verification.taskDefault must be 'focused-affected-checks'", errors)
 
+    def test_efficiency_cannot_trade_away_evidence_or_acceptance_boundaries(self) -> None:
+        replacements = {
+            "acceptanceScope": "expand-on-every-review",
+            "verificationSnapshot": "mutable-head",
+            "evidenceReuse": "trust-any-pass-report",
+            "waveExitReuse": True,
+            "duplicateReview": "repeat-every-prior-check",
+            "costReporting": "estimate-missing-tokens",
+        }
+        for field, replacement in replacements.items():
+            with self.subTest(field=field):
+                protocol = copy.deepcopy(self.protocol)
+                protocol.setdefault("workflowEfficiency", {})[field] = replacement
+                errors = validate_protocol(REPO, protocol)
+                self.assertTrue(any(f"workflowEfficiency.{field}" in error for error in errors), errors)
+
     def test_unfamiliar_agent_can_state_scope_checks_and_completion_for_ready_task(self) -> None:
         task = {
             "id": "CAP-00.S99.T01",

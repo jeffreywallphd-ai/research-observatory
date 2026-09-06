@@ -13,6 +13,7 @@ This file is the repository's high-level document router. It delegates detailed 
 | Wave campaign, verification, evidence, CI, checkpoints, and stop rules | `automation/project-automation-guide.md` |
 | Coding-agent claims, task flow, and evidence | `automation/codex-tracking-guide.md` |
 | Risk-selected planning immediately after a task claim | `automation/task-start-planning.md` |
+| Bounded corrections, stable acceptance, receipts, evidence reuse and workflow cost | `automation/workflow-efficiency.md` |
 | Static decision-review behavior and feedback format | `automation/planning-review-site.md` |
 | Current work identity and plan lifecycle | `../planning/README.md` |
 | Approved visual/workflow reference (design input only; never the application runtime) | `../design/ui-reference/STYLE_GUIDE.md`, `WORKFLOW_CATALOG.md`, and `prototype-index.html` |

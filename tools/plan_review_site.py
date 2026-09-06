@@ -148,6 +148,11 @@ def delivery_status(tasks: list[dict[str, Any]], completion: dict[str, Any] | No
     return "not-started"
 
 
+def wave_delivery_status(wave: dict[str, Any], tasks: list[dict[str, Any]]) -> str:
+    corrections = (wave.get("campaign") or {}).get("corrective_tasks", [])
+    return delivery_status([*tasks, *corrections], wave.get("completion"))
+
+
 def status_stack(decision_status: str | None, execution_status: str) -> str:
     return (
         '<span class="status-stack" aria-label="Decision and completion status">'
@@ -165,6 +170,48 @@ def task_review_projection(task: dict[str, Any]) -> dict[str, Any]:
         "latest_review": task.get("review") or {},
         "review_control": control if isinstance(control, dict) else None,
     }
+
+
+def corrective_task_projection(wave: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "task_id": task["id"],
+            "title": task.get("title"),
+            "status": task.get("status"),
+            "acceptance_criteria": task.get("acceptance_criteria", []),
+            "correction": task.get("correction"),
+            "task_review": task_review_projection(task),
+        }
+        for task in (wave.get("campaign") or {}).get("corrective_tasks", [])
+    ]
+
+
+def corrective_task_html(wave: dict[str, Any]) -> str:
+    tasks = (wave.get("campaign") or {}).get("corrective_tasks", [])
+    if not tasks:
+        return ""
+    cards = []
+    for task in tasks:
+        origin = task.get("correction") or {}
+        cards.append(
+            f'<article class="plan-details" data-corrective-task="{esc(task["id"])}" '
+            f'data-correction-origin="{esc(origin.get("origin_task_id"))}" '
+            f'data-correction-status="{esc(task.get("status"))}">'
+            f"<h3>{esc(task['id'])} — {esc(task.get('title'))}</h3>"
+            f"<p>Original task: <code>{esc(origin.get('origin_task_id'))}</code>. "
+            f"Status: {esc(task.get('status'))}.</p>"
+            f"<p>Reproduction: {esc(origin.get('reproduction'))}</p>"
+            f"<h4>Inherited acceptance criteria</h4>{task_values_html(task.get('acceptance_criteria'))}"
+            f"<h4>Bounded changed paths</h4>{task_values_html(origin.get('changed_paths'))}"
+            f"{task_review_history_html(task)}</article>"
+        )
+    return (
+        '<section id="linked-corrective-tasks"><h2>Linked corrective tasks</h2>'
+        "<p>Original tasks and approvals remain unchanged. Every correction needs independent "
+        "regression and affected-integration review before ordinary execution or Wave exit.</p>"
+        + "".join(cards)
+        + "</section>"
+    )
 
 
 def amendment_exit_projection(amendment: dict[str, Any]) -> dict[str, Any]:
@@ -1063,7 +1110,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         wave_tasks = [task for slice_ in wave_slices for task in slice_.get("tasks", [])]
         wave_cards.append(f"""
 <a class="capability-card" href="waves/{esc(wave_id)}.html">
-  <div class="capability-card-top"><span class="eyebrow">{esc(wave_id)} · {esc(wave.get("track"))}</span>{status_stack((wave.get("approval") or {}).get("status"), delivery_status(wave_tasks, wave.get("completion")))}</div>
+  <div class="capability-card-top"><span class="eyebrow">{esc(wave_id)} · {esc(wave.get("track"))}</span>{status_stack((wave.get("approval") or {}).get("status"), wave_delivery_status(wave, wave_tasks))}</div>
   <h2>{esc(wave.get("title"))}</h2>
   <p>{esc(wave.get("goal"))}</p>
   <dl><div><dt>Capabilities</dt><dd>{len(wave_capability_ids)}</dd></div><div><dt>Slices</dt><dd>{approved_slices}/{len(wave_slices)}</dd></div><div><dt>Exit gate</dt><dd>{esc(gate.get("id"))}</dd></div></dl>
@@ -1768,7 +1815,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         approval = gate.get("approval") or {}
         wave_approval = wave.get("approval") or {}
         wave_completion = wave.get("completion") or {}
-        wave_execution_status = delivery_status(
+        wave_execution_status = wave_delivery_status(
+            wave,
             [
                 task
                 for capability in backlog_capabilities.values()
@@ -1776,7 +1824,6 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 if slice_.get("wave") == wave_id
                 for task in slice_.get("tasks", [])
             ],
-            wave_completion,
         )
         wave_enablers = [record for record in enabler_records if record.get("target_wave") == wave_id]
         interrupting_enablers = [record for record in wave_enablers if enabler_interrupts_wave(record, wave)]
@@ -1862,7 +1909,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <p>{esc(wave.get("goal"))}</p>
   <dl class="summary-grid"><div><dt>Capability contributions</dt><dd>{len(capability_ids)}</dd></div><div><dt>Slice plans present</dt><dd>{wave_plan_count}/{wave_slice_count}</dd></div><div><dt>Binding decisions resolved</dt><dd>{wave_accepted_decision_count}/{wave_decision_count}</dd></div><div><dt>Delivery</dt><dd>{wave_done_count}/{wave_task_count} tasks</dd></div></dl>
 </section>
-{interruption_html}
+{interruption_html}{corrective_task_html(wave)}
 <section class="review-toolbar">
   <div class="hero-top"><div><span class="eyebrow">One approval before execution</span><h2>Complete pre-Wave approval packet</h2></div>{status_badge(wave_approval.get("status"))}</div>
   <p>{esc(readiness)}. Approval covers exactly the decisions labeled <strong>Binding in this Wave</strong>, every {esc(wave_id)} slice plan, the cross-capability dependency order, risk register, verification obligations, and the exit-gate criteria at immutable commit <code>{esc(wave_approval.get("approved_commit") or "pending")}</code>. Inherited and future decisions are context only and are not authorized here.</p>
@@ -1928,6 +1975,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 "unlocks_waves": gate.get("unlocks_waves", []),
                 "interrupting_change_request_ids": [record["change_request_id"] for record in interrupting_enablers],
                 "interrupting_recovery_request_ids": [record["request_id"] for record in wave_recoveries],
+                **({"corrective_tasks": corrective_task_projection(wave)} if corrective_task_projection(wave) else {}),
             }
         )
 

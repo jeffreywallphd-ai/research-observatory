@@ -307,6 +307,17 @@ round, or replace its commit-bound review.
 
 ### Risk-based test selection
 
+Apply `docs/automation/workflow-efficiency.md`: freeze acceptance scope, use
+automatic receipts where supported, bind verification to stable inputs, and
+reuse only explicitly trusted evidence with unchanged complete inputs. Do not
+move shared HEAD or edit selected inputs during a verification run. Report
+measured time and available usage, never invented token/cost savings.
+Owner acceptance ends optional styling iteration, not material functional,
+accessibility, security, privacy, or integrity obligations. Each independent
+review covers its own changed/integration/release boundary rather than repeating
+the same audit. Routine corrections of approved behavior and bounded control
+maintenance do not require a fresh product amendment or bootstrap.
+
 At task implementation and task review, select checks according to the credible
 likelihood that the changed paths, contracts, dependencies, or platform behavior
 could cause them to fail. Run the narrowest deterministic unit, contract,

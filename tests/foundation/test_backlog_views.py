@@ -26,6 +26,29 @@ from backlog_views import (  # noqa: E402
 
 
 class BacklogViewTests(unittest.TestCase):
+    def test_linked_correction_is_visible_in_plan_summary_and_active_work(self) -> None:
+        from backlog_views import correction_markdown, corrective_tasks, render_plan
+
+        task = {
+            "id": "W1.C01.T01",
+            "title": "Restore approved behavior",
+            "status": "REVIEW",
+            "acceptance_criteria": ["Approved behavior restored."],
+            "correction": {
+                "origin_task_id": "W1.A09.T03",
+                "reproduction": "Observed regression.",
+                "changed_paths": ["app.py"],
+            },
+            "review_control": {"version": "1.0", "attempts": [], "current_submission": None},
+        }
+        data = {"waves": [{"id": "W1", "campaign": {"corrective_tasks": [task]}}]}
+        self.assertEqual([task], corrective_tasks(data))
+        self.assertEqual([], correction_markdown([], detailed=True))
+        for text in (render_summary(data, "a" * 64), render_plan(data, "a" * 64)):
+            self.assertIn("W1.C01.T01", text)
+            self.assertIn("W1.A09.T03", text)
+            self.assertIn("Original tasks and approvals remain unchanged.", text)
+
     def temporary_repo(self, temporary: str) -> Path:
         root = Path(temporary)
         (root / "planning").mkdir()

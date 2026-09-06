@@ -108,9 +108,12 @@ the exact current decision bytes without erasing the earlier approval.
 
 ### Append-only amendment authority
 
-An approved Wave cannot be reapproved or edited in place. A material control or
-enabler defect discovered during execution interrupts the Wave at a quiescent
-boundary and uses a hash-bound ECR plus ordered `WN.ANN` amendment record. The
+An approved Wave cannot be reapproved or edited in place. A consequential change
+to approved scope, security authority, migration guarantees, governed experience
+or release criteria uses a hash-bound ECR plus ordered `WN.ANN` amendment record
+at a quiescent boundary. Routine corrections restoring approved behavior do not
+create a new product decision. Automation/evidence-control maintenance follows
+GOV-MIG-0001, not a new ECR or numbered recovery controller. The
 base approval and all earlier amendments remain immutable. Human approval of the
 ECR authorizes only its named bootstrap and task inventory; task materialization
 requires independent bootstrap review, and ordinary Wave execution stays held.
@@ -145,7 +148,10 @@ without this prospective control remain readable without synthesized history.
 
 ### Governance recovery authority
 
-A Governance Recovery Request is permitted only when the ordinary ECR lane
+This section describes immutable pre-GOV-MIG-0001 history only. New recovery
+requests and supplements are retired; use bounded maintenance instead.
+
+Historically, a Governance Recovery Request was permitted when the ordinary ECR lane
 cannot represent or enforce its own next safe amendment. It is not a second
 delivery lane. The GRR freezes the Wave base, every ordered adopted amendment,
 the active hold, a bootstrap-only file/outcome boundary, and the exact later
@@ -219,6 +225,28 @@ findings plus the incremental risk boundary instead of restarting the entire
 audit. Required findings are severity-ranked, reproducible, and tied to approved
 acceptance criteria; useful adjacent improvements outside that boundary become
 backlog work unless they expose a material safety or correctness defect.
+
+### Stable acceptance and evidence reuse
+
+Freeze the acceptance surface at task start. Review findings must identify a
+violated criterion, invariant, or material safety/correctness contract. Owner
+acceptance of a styling outcome closes optional cosmetic iteration; it does not
+waive functional, accessibility, privacy, security, or integrity requirements.
+Unrequested polish is future backlog work, not a new condition of completion.
+
+Each level reviews its own boundary: task change, slice integration, checkpoint
+interface delta, then Wave qualification. Cite authenticated prior evidence
+instead of replaying it when inputs and coverage remain valid. A reviewer may
+require fresh proof for a concrete impact path, missing coverage, doubtful
+provenance, or an explicit fresh-run criterion, not simply because another
+review level has started. Independent dispositions are never cached.
+
+Verification runs bind a fixed candidate and input snapshot. Do not move shared
+HEAD or edit a run's input files during verification; independent agents may
+work outside that input boundary. Changed or unknown inputs invalidate reuse.
+Follow the practical receipt, reuse, and measurement rules in
+`../automation/workflow-efficiency.md`. Wave qualification remains a fresh,
+complete matrix and human release approval remains separate.
 
 ## Why this control model is retained
 

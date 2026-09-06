@@ -115,7 +115,13 @@ Pre-control amendments stay truthful and receive no fabricated rounds.
 
 ### 2.3 Governance recovery controller
 
-If the installed ECR schema/controller cannot represent the next required
+Historical only: GOV-MIG-0001 retires new GRR/GCR requests and supplements.
+For a new automation defect, use one bounded maintenance increment and
+independent control review as described in
+`governance-automation-simplification.md`. The following commands validate or
+explain retained pre-migration history; do not create another recovery layer.
+
+Before that migration, if the installed ECR schema/controller could not represent the next required
 amendment, stop at a quiescent Wave boundary and use the separately reviewed
 GRR workflow. Do not edit the approved Wave, reuse `wave approve`, or mutate the
 broken lane before GRR approval.
@@ -363,6 +369,11 @@ preview only when the claim has an exact base, and retains `--raw` for consumers
 that need the unchanged command inventory.
 
 ### 8.2 Review efficiency and depth
+
+Use `workflow-efficiency.md` for stable acceptance, fixed verification snapshots,
+automatic receipts, trusted input-bound reuse, and measured cost/time reporting.
+Its purpose is to apply this risk-based policy consistently, not to remove
+independent review or reduce the Wave-exit matrix.
 
 Every task receives a focused independent disposition of scope, evidence truth,
 changed contracts, and credible failure paths. Expand that task review for

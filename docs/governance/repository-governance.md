@@ -42,7 +42,14 @@ These files are mandatory and may not be replaced by external setup guides.
 | Material implementation decision | Capability/slice plan and required ADR | Review site, approval, implementation |
 | Intentional UI/UX change | Governed UI reference | Plans, implementation, conformance evidence |
 | Current behavior correction | Code/tests | Evidence and affected documentation |
-| ECR controller cannot represent/enforce its own next amendment | Inert GRR packet and recovery hold | Bootstrap-only controller repair, then separately approved ordinary ECR |
+| Automation/evidence-control defect preserving approved authority | Bounded maintenance increment under GOV-MIG-0001 | Risk-selected checks and independent control review; no new GRR/GCR |
+| Defect restoring already approved product behavior | Original task authority and bounded correction | Focused regression and integration evidence, independent disposition; no new product approval |
+
+The GRR/GCR descriptions retained in older documents are historical validation
+instructions, not a route for new work. The current maintenance rule in
+`../automation/governance-automation-simplification.md` supersedes that route.
+Material scope, security-authority, migration-guarantee, governed-reference and
+release changes still follow the append-only amendment and human-approval rules.
 
 ## Mismatch protocol
 

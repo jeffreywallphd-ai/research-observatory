@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0",
+  "scope": "governance-receipt-unit",
+  "kind": "deterministic-unit-pilot",
+  "files": [
+    "tools/governance_kernel.py",
+    "tools/governance_receipt.py",
+    "tests/foundation/test_governance_receipt.py"
+  ],
+  "testFile": "tests/foundation/test_governance_receipt.py",
+  "configFiles": [
+    ".python-version",
+    "runtime-versions.json",
+    "pyproject.toml",
+    "uv.lock"
+  ],
+  "pythonFlags": ["-I", "-S", "-B"],
+  "timeoutSeconds": 30,
+  "reusePolicy": "disabled-incomplete-runtime-closure"
+}
