@@ -185,7 +185,9 @@ class ModelGateway:
             ),
         )
 
-    def _same_authority(self, candidate: ModelEligibilityCandidate, task: ModelTaskSnapshot) -> bool:
+    def _same_authority(
+        self, candidate: ModelEligibilityCandidate, task: ModelTaskSnapshot, policy: RoutingPolicy, spent: int
+    ) -> bool:
         selected_catalog = ModelRegistryCatalog(
             project_id=self._catalog.project_id,
             revision=self._catalog.revision,
@@ -196,6 +198,7 @@ class ModelGateway:
         return self._current_catalog() and any(
             (item.manifest_hash, item.policy_revision, item.rights_revision)
             == (candidate.manifest_hash, candidate.policy_revision, candidate.rights_revision)
+            and spent <= policy.cost_limit(item.maximum_cost_microunits)
             for item in self._registry.resolve(selected_catalog, task).eligible
         )
 
@@ -238,7 +241,12 @@ class ModelGateway:
                 ),
                 None,
             )
-            if not self._current_catalog() or candidate is None:
+            spent = sum(event.reserved_cost_microunits for event in run.events)
+            if (
+                not self._current_catalog()
+                or candidate is None
+                or spent > run.policy.cost_limit(candidate.maximum_cost_microunits)
+            ):
                 return _failure(task, "model-permission-changed", elapsed_ms=0, denied=True)
         return result
 
@@ -365,7 +373,7 @@ class ModelGateway:
                     skipped_reason = "model-cost-unknown"
                     continue
                 reserved = (cost * (requirements["maxInputTokens"] + requirements["maxOutputTokens"]) + 999) // 1000
-                if spent + reserved > policy.maximum_cost_microunits:
+                if spent + reserved > policy.cost_limit(candidate.maximum_cost_microunits):
                     skipped_reason = "model-cost-budget-exhausted"
                     continue
                 circuit = self._repository.circuit(candidate.manifest_hash)
@@ -404,6 +412,7 @@ class ModelGateway:
                     policy_revision=candidate.policy_revision,
                     rights_revision=candidate.rights_revision,
                     reserved_cost_microunits=reserved,
+                    effective_cost_limit_microunits=policy.cost_limit(candidate.maximum_cost_microunits),
                 )
             reservation = _CircuitReservation(
                 self._repository, circuit, leased, policy, self._clock_ms, cast(str, task["traceId"])
@@ -417,7 +426,7 @@ class ModelGateway:
                     attempt_id,
                     cancel_token,
                     min(deadline, time.monotonic() + policy.attempt_timeout_ms / 1000),
-                    partial(self._same_authority, candidate, task),
+                    partial(self._same_authority, candidate, task, policy, spent),
                     candidate.manifest_hash,
                     reservation,
                 )
@@ -425,7 +434,7 @@ class ModelGateway:
                     raise _Interrupted("model-cancelled")
                 if time.monotonic() >= deadline:
                     raise _Interrupted("model-deadline-exhausted")
-                if not self._same_authority(candidate, task):
+                if not self._same_authority(candidate, task, policy, spent):
                     return fail("model-permission-changed", denied=True)
                 result = decode_model_result(task, raw)
                 if result is None or result["route"] != {"selection": "selected"} | manifest.identity.model_dump(
@@ -450,6 +459,8 @@ class ModelGateway:
                 validated = decode_model_result(task, owned)
                 if validated is None:
                     raise ModelAdapterFailure("output-invalid", retryable=False)
+                if time.monotonic() >= deadline:
+                    raise _Interrupted("model-deadline-exhausted")
                 return finish(validated)
             except _Interrupted as error:
                 return fail(error.code, denied=error.code == "model-permission-changed")
@@ -500,6 +511,10 @@ class ModelGateway:
                     raise ModelAdapterFailure("runtime-failed", retryable=False)
                 if token.is_cancelled():
                     raise _Interrupted("model-cancelled")
+                # Synchronous permission/description work can exhaust the
+                # deadline without yielding to the outer cancellation loop.
+                if time.monotonic() >= deadline:
+                    raise ModelAdapterFailure("provider-timeout", retryable=True)
                 return await adapter.execute(task, references, attempt_id=attempt_id, cancel_token=token)
             except ModelAdapterFailure, _Interrupted:
                 raise

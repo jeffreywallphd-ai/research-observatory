@@ -113,6 +113,7 @@ class ModelRegistry:
                             policy_revision=permission.policy_revision,
                             rights_revision=permission.rights_revision,
                             observation_expires_at_ms=min(observation.expires_at_ms, permission.expires_at_ms),
+                            maximum_cost_microunits=permission.maximum_cost_microunits,
                         ),
                     )
                 )

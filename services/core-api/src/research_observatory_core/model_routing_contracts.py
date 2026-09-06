@@ -95,6 +95,14 @@ class RoutingPolicy(RegistryModel):
             raise ValueError("routing preferences must be unique")
         return self
 
+    def cost_limit(self, permission_cap: int | None) -> int:
+        """Restrictions can narrow, never enlarge, the current witness cap."""
+        return (
+            self.maximum_cost_microunits
+            if permission_cap is None
+            else min(self.maximum_cost_microunits, permission_cap)
+        )
+
 
 class RoutingEvent(RegistryModel):
     event_id: RegistryUuid
@@ -109,6 +117,7 @@ class RoutingEvent(RegistryModel):
     reason_codes: Annotated[tuple[RegistryCode, ...], Field(max_length=64)] = ()
     elapsed_ms: Annotated[int, Field(strict=True, ge=0, le=86_400_000)] = 0
     reserved_cost_microunits: Annotated[int, Field(strict=True, ge=0, le=10**12)] = 0
+    effective_cost_limit_microunits: Annotated[int, Field(strict=True, ge=0, le=10**12)] | None = None
     resolution: ModelRegistryResolution | None = None
     result_json: Annotated[str, Field(max_length=8_000_000)] | None = None
 
@@ -119,6 +128,7 @@ class RoutingEvent(RegistryModel):
             or self.policy_revision is not None
             or self.rights_revision is not None
             or self.reserved_cost_microunits != 0
+            or self.effective_cost_limit_microunits is not None
         ):
             raise ValueError("only an attempt may carry dispatch authority")
         if self.kind not in {"attempt-started", "attempt-failed"} and (
@@ -189,6 +199,8 @@ class RoutingRun(RegistryModel):
                     or not any(
                         (item.manifest_hash, item.policy_revision, item.rights_revision)
                         == (event.manifest_hash, event.policy_revision, event.rights_revision)
+                        and event.effective_cost_limit_microunits
+                        == self.policy.cost_limit(item.maximum_cost_microunits)
                         for item in resolution.eligible
                     )
                 ):
@@ -203,6 +215,8 @@ class RoutingRun(RegistryModel):
                 ):
                     raise ValueError("routing cost reservation is invalid")
                 spent += event.reserved_cost_microunits
+                if event.effective_cost_limit_microunits is None or spent > event.effective_cost_limit_microunits:
+                    raise ValueError("routing cumulative cost exceeds current permission")
                 attempts_by_manifest[event.manifest_hash] = attempts_by_manifest.get(event.manifest_hash, 0) + 1
                 if event.manifest.deployment not in self.policy.permitted_deployments or (
                     attempts_by_manifest[event.manifest_hash] > self.policy.maximum_retries_per_route + 1

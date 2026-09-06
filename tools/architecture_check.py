@@ -70,6 +70,8 @@ def _bound_names(
             names.add(node.rest)
         elif isinstance(node, ast.Global | ast.Nonlocal):
             names.update(node.names)
+        elif isinstance(node, ast.TypeVar | ast.ParamSpec | ast.TypeVarTuple):
+            names.add(node.name)
     return names
 
 

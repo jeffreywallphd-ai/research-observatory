@@ -7,6 +7,8 @@ import sys
 import time
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "services/core-api/src"))
@@ -22,6 +24,7 @@ from research_observatory_core.model_routing import ModelGateway  # noqa: E402
 from research_observatory_core.model_routing_contracts import (  # noqa: E402
     CancellationToken,
     RoutingPolicy,
+    RoutingRun,
     input_references,
 )
 from research_observatory_core.ports.model_gateway import ModelAdapterFailure  # noqa: E402
@@ -204,6 +207,32 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual("denied", result["status"])
         self.assertEqual([0, 0], [adapter.calls for adapter in self.adapters])
 
+    async def test_deadline_elapsed_during_authorization_cannot_dispatch(self):
+        now = [100.0]
+        after_health = [False]
+        assess = self.authority.assess
+
+        async def health():
+            after_health[0] = True
+            return True
+
+        def delayed_authority(**kwargs):
+            result = assess(**kwargs)
+            if after_health[0]:
+                now[0] += 0.040
+            return result
+
+        self.request["requirements"]["deadlineMs"] = 20
+        self.adapters[0].health = health
+        self.authority.assess = delayed_authority
+        # Advance only the gateway clock at the actual synchronous boundary;
+        # real asyncio scheduling and protected I/O remain unaffected.
+        with patch("research_observatory_core.model_routing.time", SimpleNamespace(monotonic=lambda: now[0])):
+            result = await self.run_request()
+        self.assertEqual("failed", result["status"])
+        self.assertEqual("model-deadline-exhausted", result["diagnostics"][0]["code"])
+        self.assertEqual([0, 0], [adapter.calls for adapter in self.adapters])
+
     async def test_completed_output_is_not_replayed_after_permission_revocation(self):
         await self.run_request()
         previous = self.repository.read(self.request["taskId"])
@@ -270,6 +299,114 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.policy = self.policy.model_copy(update={"maximum_cost_microunits": one_attempt})
         result = await self.run_request()
         self.assertEqual("failed", result["status"])
+        self.assertEqual(1, self.adapters[0].calls)
+        self.assertEqual("model-cost-budget-exhausted", result["diagnostics"][0]["code"])
+
+    def charged_authority(self):
+        charged = self.manifest.model_copy(update={"cost_microunits_per_thousand_tokens": 1})
+        self.catalog = self.catalog.model_copy(update={"manifests": (charged,)})
+        self.inventory = FixtureInventory((charged,))
+        self.adapters = (FixtureAdapter(charged),)
+        limits = self.request["requirements"]
+        one_attempt = (limits["maxInputTokens"] + limits["maxOutputTokens"] + 999) // 1000
+        cap = [one_attempt]
+        assess = self.authority.assess
+        self.authority.assess = lambda **kwargs: assess(**kwargs).model_copy(update={"maximum_cost_microunits": cap[0]})
+        return cap, one_attempt
+
+    async def test_permission_budget_is_cumulative_across_retry(self):
+        _cap, one_attempt = self.charged_authority()
+        self.adapters[0].outcomes = [ModelAdapterFailure("rate-limited", retryable=True)]
+        result = await self.run_request()
+        self.assertEqual(1, self.adapters[0].calls)
+        self.assertEqual("model-cost-budget-exhausted", result["diagnostics"][0]["code"])
+        attempts = [e for e in self.repository.read(self.request["taskId"]).events if e.kind == "attempt-started"]
+        self.assertEqual([one_attempt], [e.effective_cost_limit_microunits for e in attempts])
+
+    async def test_shrinking_permission_after_health_cannot_dispatch(self):
+        cap, _cost = self.charged_authority()
+
+        async def shrink():
+            cap[0] = 0
+            return True
+
+        self.adapters[0].health = shrink
+        result = await self.run_request()
+        self.assertEqual("denied", result["status"])
+        self.assertEqual(0, self.adapters[0].calls)
+
+    async def test_permission_budget_is_cumulative_across_fallback(self):
+        self.charged_authority()
+        alternate = self.alternate.model_copy(update={"cost_microunits_per_thousand_tokens": 1})
+        self.catalog = self.catalog.model_copy(update={"manifests": (*self.catalog.manifests, alternate)})
+        self.inventory = FixtureInventory(self.catalog.manifests)
+        self.adapters = (*self.adapters, FixtureAdapter(alternate))
+        self.adapters[0].outcomes = [ModelAdapterFailure("rate-limited", retryable=True)]
+        self.policy = self.policy.model_copy(update={"maximum_retries_per_route": 0})
+        result = await self.run_request()
+        self.assertEqual([1, 0], [adapter.calls for adapter in self.adapters])
+        self.assertEqual("model-cost-budget-exhausted", result["diagnostics"][0]["code"])
+
+    async def test_second_health_cannot_reduce_budget_below_prior_reservations(self):
+        cap, cost = self.charged_authority()
+        cap[0] = 2 * cost
+        self.adapters[0].outcomes = [ModelAdapterFailure("rate-limited", retryable=True)]
+
+        async def shrink():
+            if self.adapters[0].calls:
+                cap[0] = cost
+            return True
+
+        self.adapters[0].health = shrink
+        result = await self.run_request()
+        self.assertEqual("denied", result["status"])
+        self.assertEqual(1, self.adapters[0].calls)
+
+    async def test_shrinking_permission_after_retry_output_is_not_promoted_or_replayed(self):
+        cap, cost = self.charged_authority()
+        cap[0] = 2 * cost
+        self.adapters[0].outcomes = [ModelAdapterFailure("rate-limited", retryable=True)]
+        execute = self.adapters[0].execute
+
+        async def shrink(*args, **kwargs):
+            result = await execute(*args, **kwargs)
+            cap[0] = cost  # Still enough per attempt, but not for both reservations.
+            return result
+
+        self.adapters[0].execute = shrink
+        result = await self.run_request()
+        self.assertEqual(2, self.adapters[0].calls)
+        self.assertEqual("denied", result["status"])
+        self.assertIsNone(result["output"])
+        self.assertEqual(result, await self.run_request())
+
+    async def test_successful_retry_replay_requires_current_total_budget(self):
+        cap, cost = self.charged_authority()
+        cap[0] = 2 * cost
+        self.adapters[0].outcomes = [ModelAdapterFailure("rate-limited", retryable=True)]
+        self.assertEqual("succeeded", (await self.run_request())["status"])
+        original = self.repository.read(self.request["taskId"])
+        tampered = original.model_dump(by_alias=True, mode="json")
+        # Even mutually consistent route/attempt caps cannot erase prior cost.
+        latest_routes = next(e for e in reversed(tampered["events"]) if e["kind"] == "routes")
+        latest_routes["resolution"]["eligible"][0]["maximumCostMicrounits"] = cost
+        latest_attempt = next(e for e in reversed(tampered["events"]) if e["kind"] == "attempt-started")
+        latest_attempt["effectiveCostLimitMicrounits"] = cost
+        with self.assertRaisesRegex(ValueError, "cumulative cost"):
+            RoutingRun.model_validate(tampered)
+        cap[0] = cost
+        result = await self.run_request()
+        self.assertEqual("denied", result["status"])
+        self.assertIsNone(result["output"])
+        self.assertEqual(2, self.adapters[0].calls)
+        self.assertEqual(original, self.repository.read(self.request["taskId"]))
+
+    async def test_null_permission_cap_does_not_waive_routing_limit(self):
+        cap, cost = self.charged_authority()
+        cap[0] = None
+        self.policy = self.policy.model_copy(update={"maximum_cost_microunits": cost})
+        self.adapters[0].outcomes = [ModelAdapterFailure("rate-limited", retryable=True)]
+        result = await self.run_request()
         self.assertEqual(1, self.adapters[0].calls)
         self.assertEqual("model-cost-budget-exhausted", result["diagnostics"][0]["code"])
 

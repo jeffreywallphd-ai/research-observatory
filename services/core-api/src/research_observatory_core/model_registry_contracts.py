@@ -148,6 +148,7 @@ class ModelEligibilityCandidate(RegistryModel):
     policy_revision: RegistryCode
     rights_revision: RegistryCode
     observation_expires_at_ms: RegistryTime
+    maximum_cost_microunits: ModelCost | None
 
 
 class ModelRegistryRejection(RegistryModel):

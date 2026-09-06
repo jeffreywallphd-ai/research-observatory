@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import platform
 import sys
 import tempfile
 import time
@@ -155,5 +156,25 @@ class ProtectedModelRoutingTests(routing_fixtures.ModelRoutingTests):
             f"protected-gateway-fixture: cold={measurements[0]:.3f}ms; "
             f"warm-p50={sorted(measurements[1:])[49]:.3f}ms; warm-p95={p95:.3f}ms; "
             f"samples={len(measurements) - 1}; protected-I/O included; synthetic zero-delay adapter"
+        )
+        print(
+            json.dumps(
+                {
+                    "benchmark": "protected-gateway-fixture",
+                    "unit": "milliseconds",
+                    "cold": measurements[0],
+                    "warmSamples": measurements[1:],
+                    "percentileMethod": "nearest-rank; all 100 warm samples retained",
+                    "python": platform.python_version(),
+                    "platform": platform.system(),
+                    "machine": platform.machine(),
+                    "processor": platform.processor(),
+                    "scope": (
+                        "Protected SQLCipher with in-memory fixture keys; zero-delay synthetic adapter; "
+                        "excludes production lifecycle factory, packaging and live inference."
+                    ),
+                },
+                sort_keys=True,
+            )
         )
         self.assertLess(p95, 25, f"protected gateway fixture p95={p95:.3f}ms; samples={len(measurements) - 1}")

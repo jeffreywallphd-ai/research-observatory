@@ -164,6 +164,9 @@ class ModelRoutingContractTests(unittest.TestCase):
             (2, {"manifestHash": "sha256:" + "0" * 64}),
             (2, {"policyRevision": "forged-policy"}),
             (2, {"reservedCostMicrounits": 1}),
+            (2, {"effectiveCostLimitMicrounits": 1}),
+            (2, {"effectiveCostLimitMicrounits": None}),
+            (1, {"effectiveCostLimitMicrounits": 0}),
             (2, {"attemptNumber": 2}),
             (3, {"kind": "interrupted"}),
         )

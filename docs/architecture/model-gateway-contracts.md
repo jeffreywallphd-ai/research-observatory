@@ -112,6 +112,14 @@ route produces an explicit degraded result. Unvalidated, late, cancelled or
 newly unauthorized output is not published. Persisted successful output also
 requires current permission before replay.
 
+Every attempt records its effective total cost cap: the intersection of the
+current permission witness and RoutingPolicy. Reservations accumulate across
+retries and fallback without refunds. Fresh checks before dispatch, output and
+successful replay deny a cap below the accumulated reservation. A null witness
+cap adds no numerical restriction; it never removes RoutingPolicy's bound or
+supplies missing production budget authority. Synchronous authorization and
+adapter-description work cannot bypass the final pre-dispatch deadline check.
+
 Protected settings hold a bounded append-only request/event journal and circuit
 history; this is evidence, not another workflow queue. Exact request bytes,
 evaluated alternatives, selected manifests, costs, failures and disposition bind

@@ -137,3 +137,30 @@ not an architectural permission change or a new controller.
 - The same preflight found a cross-thread memo cleanup/refill race. Restricting
   memo hits and writes to the creating thread prevents inherited worker contexts
   from sharing or reviving it; focused thread/scope-exit regressions cover this.
+
+## First candidate adverse review and missed acceptance rows
+
+Candidate `eda91ee61d035dc72bc8808bfeaa829b0b27bc35` passed its 13 selected
+checks, but independent pre-submission review identified three P2 defects.
+`CAP-07.S01.T03.preflight-01.json` preserves the findings; no formal submission
+round or approval is inferred. The original fresh-check logs remain local.
+
+| Finding / immediate cause | Added acceptance row and regression |
+|---|---|
+| F01: the outer async timeout could not preempt synchronous authorization/description work. | Advance only the gateway clock during authorization; no dispatch after the effective deadline. Recheck again before output publication. |
+| F02: registry permission checked one attempt while the router accumulated only its own restriction. | Persist the effective permission/policy intersection per attempt; retain total reservations across retry/fallback; reject cap shrinkage before dispatch, output and successful replay, and reject forged historical cumulative cost. Null permission caps never waive routing limits. |
+| F03: lexical binding inventory omitted Python generic parameters. | TypeVar, ParamSpec and TypeVarTuple function/class fixtures revoke the async Protocol exemption when shadowed. |
+
+Five focused tests failed before source changes (eight failures including generic
+parameter subcases), reproducing all three findings. Remediation remains inside
+the approved budget, deadline and architecture boundaries. T02 catalogs remain
+unchanged; eligibility is ephemeral, and T03 journal candidates are unreleased.
+Old incomplete T03 attempt-authority records fail closed, never gain a default
+budget. No migration or production grant is introduced.
+
+The first candidate's fresh protected fixture measured cold 19.296 ms, warm p50
+21.227 ms and p95 23.913 ms (100 retained warm observations). Its log retained
+aggregate metrics only, so it is not a reusable raw-sample baseline. The successor
+benchmark emits every cold/warm sample and runtime/platform metadata into the
+captured local log. It remains a fresh-only, isolated fixture measurement with
+the same 25 ms target and disclosed production/native/package exclusions.

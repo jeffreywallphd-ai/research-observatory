@@ -192,6 +192,14 @@ class ArchitectureContractTests(unittest.TestCase):
                 encoding="utf-8",
             )
             for consumer in (
+                "from .ports.compute import Compute as Port\n"
+                "async def run[Port](adapter: Port):\n    return await adapter.execute(task)\n",
+                "from .ports.compute import Compute as Port\n"
+                "async def run[*Port](adapter: Port):\n    return await adapter.execute(task)\n",
+                "from .ports.compute import Compute as Port\n"
+                "async def run[**Port](adapter: Port):\n    return await adapter.execute(task)\n",
+                "from .ports.compute import Compute as Port\nclass Outer[Port]:\n"
+                "    async def run(self, adapter: Port):\n        return await adapter.execute(task)\n",
                 "from .ports.compute import Compute as Port\ndef outer(Port):\n"
                 "    async def run(adapter: Port):\n        return await adapter.execute(task)\n",
                 "from .ports.compute import Compute as Port\nfrom typing import Any as Port\n"

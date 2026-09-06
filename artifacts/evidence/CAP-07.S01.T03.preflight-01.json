@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "read-only-pre-submission-findings",
+  "taskId": "CAP-07.S01.T03",
+  "candidate": "eda91ee61d035dc72bc8808bfeaa829b0b27bc35",
+  "reviewer": "agent:/root/model_registry_review",
+  "formalSubmissionRound": null,
+  "disposition": "changes-required",
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "P2",
+      "criterion": 2,
+      "boundary": "services/core-api/src/research_observatory_core/model_routing.py",
+      "finding": "Synchronous authorization and adapter-description work can exhaust the deadline after health but before execute; dispatch does not recheck it.",
+      "reproduction": "A 20 ms task deadline and 40 ms valid authority lookup activated by health still dispatch once, then return deadline-exhausted.",
+      "requiredClosure": "Check the effective deadline immediately before execute and cover deadline passage during authorization."
+    },
+    {
+      "id": "F02",
+      "severity": "P2",
+      "criterion": 1,
+      "boundary": "model registry permission, routing reservations and persisted attempt authority",
+      "finding": "Current permission cost is checked per attempt while cumulative reservations use only RoutingPolicy. A caller restriction cannot enlarge permission authority.",
+      "reproduction": "Permission cap 5, RoutingPolicy cap 100 and cost 5 per attempt allow two dispatches after one rate-limited failure, reserving 10.",
+      "requiredClosure": "Intersect cumulative reservations with current permission and policy caps before dispatch and output; retain reservations across retry/fallback and bind the effective cap in attempt evidence."
+    },
+    {
+      "id": "F03",
+      "severity": "P2",
+      "criterion": 3,
+      "boundary": "tools/architecture_check.py",
+      "finding": "Python type-parameter names are absent from lexical shadowing detection, allowing an unrelated generic annotation to inherit the async Protocol exemption.",
+      "reproduction": "Import Compute as Port, then define async def run[Port](adapter: Port) and await adapter.execute(task); the checker wrongly exempts the call.",
+      "requiredClosure": "Revoke ambiguous exemptions for TypeVar, ParamSpec and TypeVarTuple bindings and retain pinned-runtime regression fixtures."
+    }
+  ],
+  "existingChecks": "Independent focused suite: 48 tests passed. Those passes do not close these findings or approve the task."
+}
