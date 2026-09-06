@@ -23,7 +23,8 @@ from .config import CoreSettings
 from .logging import emit_log_record
 from .migrations.runner import migration_framework_projection
 from .model_catalog import ModelCatalogService
-from .model_registry_repository import sqlite_model_catalog_repository
+from .model_gateway_service import ProjectModelGatewayService
+from .model_registry_repository import SqliteModelRoutingRepository, sqlite_model_catalog_repository
 from .modules import default_module_registry
 from .object_store import upgrade_local_object_envelopes
 from .ports.credential_store import CredentialStoreProblem
@@ -124,12 +125,25 @@ def create_runtime_app(
     projects = ProjectLifecycleService(
         object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)
     )
+    privacy = ProjectPrivacyService(projects, sqlite_privacy_policy_repository)
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
         expected_authority=expected_authority,
         projects=projects,
-        privacy=ProjectPrivacyService(projects, sqlite_privacy_policy_repository),
+        privacy=privacy,
+        model_gateway=ProjectModelGatewayService(
+            projects,
+            privacy,
+            local_actor_id=resolved_actor_id,
+            routing_repository_factory=lambda path, identity, actor: SqliteModelRoutingRepository(
+                path / "state/project.sqlite3", identity, actor
+            ),
+            catalog_repository_factory=sqlite_model_catalog_repository,
+            unit_of_work_factory=lambda path, identity: create_sqlite_unit_of_work_factory(
+                path / "state/project.sqlite3", identity
+            ),
+        ),
         model_catalog=ModelCatalogService(
             projects,
             repository_factory=sqlite_model_catalog_repository,

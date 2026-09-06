@@ -40,6 +40,11 @@ confines paths to the repository, and atomically replaces changed outputs.
 Unchanged outputs keep their bytes and modification times. Check mode detects
 byte corruption without decoding; failures must be reported, not hand-repaired.
 
+These commands update Markdown, not `review-site/` HTML. After status, review,
+or task-start worksheet changes, also regenerate the HTML using the
+[task command sequence](../docs/automation/codex-tracking-guide.md#command-sequence).
+Validate the regenerated site before committing it.
+
 ## Default planning and execution lifecycle
 
 One pre-Wave approval binds the complete Wave packet at one immutable commit.

@@ -1941,11 +1941,15 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
     try:
         from research_observatory_core.contract import canonical_openapi_bytes
         from research_observatory_core.model_registry_contracts import ModelManifest
+        from research_observatory_core.model_routing_contracts import RoutingPolicy
         from research_observatory_core.research_intents import approved_workflow_catalog_projection
 
         openapi = canonical_openapi_bytes()
         manifest_schema = (
             json.dumps(ModelManifest.model_json_schema(by_alias=True), indent=2, sort_keys=True) + "\n"
+        ).encode()
+        routing_schema = (
+            json.dumps(RoutingPolicy.model_json_schema(by_alias=True), indent=2, sort_keys=True) + "\n"
         ).encode()
         workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)
         workflow_profile_projection_bytes = json.dumps(
@@ -1959,6 +1963,7 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
         sys.path.remove(str(source))
     return {
         repo / "packages" / "contracts" / "model-gateway" / "model-manifest.schema.json": manifest_schema,
+        repo / "packages" / "contracts" / "model-gateway" / "routing-policy.schema.json": routing_schema,
         repo / "packages" / "contracts" / "core-api" / "openapi.json": openapi,
         repo / "packages" / "contracts" / "core-api" / "generated.ts": render_typescript(
             openapi,

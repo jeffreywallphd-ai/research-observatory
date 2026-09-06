@@ -30,7 +30,7 @@ _MAX_COLLECTION_ITEMS = 4096
 
 
 def _record(value: object) -> Mapping[str, Any] | None:
-    if not isinstance(value, Mapping):
+    if type(value) not in (dict, MappingProxyType) and not isinstance(value, Mapping):
         return None
     candidate = cast(Mapping[object, Any], value)
     if any(not isinstance(key, str) or key in _DANGEROUS_KEYS for key in candidate):
@@ -52,6 +52,8 @@ def _stable_json(value: object) -> str:
 
 
 def _owned_frozen(value: object) -> object:
+    if value is None or type(value) in (str, int, float, bool):
+        return value
     if isinstance(value, Mapping):
         candidate = _record(value)
         if candidate is None:
@@ -78,6 +80,39 @@ def _resolve_reference(reference: object) -> dict[str, Any]:
         raise ValueError("unsupported model task schema reference")
     definitions = _schema_record(_MODEL_TASK_SCHEMA["$defs"])
     return _schema_record(definitions[reference[len(prefix) :]])
+
+
+def _discriminated_unions() -> dict[int, tuple[str, dict[str, dict[str, Any]]]]:
+    """Index only unions proved disjoint by required, distinct string constants."""
+    indexed: dict[int, tuple[str, dict[str, dict[str, Any]]]] = {}
+
+    def visit(node: object) -> None:
+        if isinstance(node, dict):
+            alternatives = node.get("oneOf")
+            if isinstance(alternatives, list) and alternatives:
+                branches = [_resolve_reference(item["$ref"]) if "$ref" in item else item for item in alternatives]
+                if all(branch.get("type") == "object" for branch in branches):
+                    first = branches[0]
+                    for key in first.get("required", []):
+                        constants = [branch.get("properties", {}).get(key, {}).get("const") for branch in branches]
+                        if (
+                            all(key in branch.get("required", []) for branch in branches)
+                            and all(isinstance(value, str) for value in constants)
+                            and len(set(constants)) == len(branches)
+                        ):
+                            indexed[id(alternatives)] = (key, dict(zip(constants, branches, strict=True)))
+                            break
+            for child in node.values():
+                visit(child)
+        elif isinstance(node, list):
+            for child in node:
+                visit(child)
+
+    visit(_MODEL_TASK_SCHEMA)
+    return indexed
+
+
+_DISCRIMINATED_UNIONS = _discriminated_unions()
 
 
 def _type_matches(value: object, kind: object) -> bool:
@@ -115,13 +150,26 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
         errors.append(f"{path}: enum")
     alternatives = node.get("oneOf")
     if isinstance(alternatives, list):
-        matches = sum(not _validation_errors(value, _schema_record(item), path) for item in alternatives)
+        discriminator = _DISCRIMINATED_UNIONS.get(id(alternatives))
+        if discriminator is None:
+            matches = sum(not _validation_errors(value, _schema_record(item), path) for item in alternatives)
+        else:
+            record = _record(value)
+            tag = None if record is None else record.get(discriminator[0])
+            branch = discriminator[1].get(tag) if isinstance(tag, str) else None
+            matches = int(branch is not None and not _validation_errors(value, branch, path))
         if matches != 1:
             errors.append(f"{path}: alternatives")
     raw_types = node.get("type")
     types = raw_types if isinstance(raw_types, list) else [] if raw_types is None else [raw_types]
-    if types and not any(_type_matches(value, kind) for kind in types):
+    object_schema = "object" in types or isinstance(node.get("properties"), dict)
+    candidate = _record(value) if object_schema else None
+    if types and not any((candidate is not None if kind == "object" else _type_matches(value, kind)) for kind in types):
         errors.append(f"{path}: type")
+    if errors:
+        # A rejected branch cannot become valid by visiting its descendants.
+        # In particular, do not deeply traverse every nonmatching oneOf branch.
+        return errors
     if isinstance(value, int | float) and not isinstance(value, bool) and math.isfinite(value):
         if isinstance(node.get("minimum"), int | float) and value < node["minimum"]:
             errors.append(f"{path}: minimum")
@@ -144,8 +192,7 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
         if isinstance(node.get("items"), dict):
             for index, item in enumerate(value):
                 errors.extend(_validation_errors(item, node["items"], f"{path}/{index}"))
-    candidate = _record(value)
-    if candidate is not None and ("object" in types or isinstance(node.get("properties"), dict)):
+    if candidate is not None and object_schema:
         required = node.get("required", [])
         if isinstance(required, list):
             for key in required:
@@ -158,9 +205,13 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
             for key in candidate:
                 if key not in properties:
                     errors.append(f"{path}/{key}: additional property")
+        if errors:
+            return errors
         for key, property_schema in properties.items():
             if key in candidate:
                 errors.extend(_validation_errors(candidate[key], _schema_record(property_schema), f"{path}/{key}"))
+                if errors:
+                    return errors
     return errors
 
 

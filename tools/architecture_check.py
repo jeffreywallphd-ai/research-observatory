@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -46,6 +47,119 @@ def load_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _bound_names(
+    tree: ast.AST,
+    *,
+    imports_excluded: set[ast.ImportFrom] | None = None,
+    declarations_excluded: set[ast.ClassDef] | None = None,
+) -> set[str]:
+    """Conservative lexical binding inventory, including non-Name AST targets."""
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store | ast.Del):
+            names.add(node.id)
+        elif isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef):
+            if declarations_excluded is None or node not in declarations_excluded:
+                names.add(node.name)
+        elif isinstance(node, ast.Import | ast.ImportFrom):
+            if imports_excluded is None or node not in imports_excluded:
+                names.update(alias.asname or alias.name.split(".")[0] for alias in node.names)
+        elif isinstance(node, ast.ExceptHandler | ast.MatchAs | ast.MatchStar) and node.name is not None:
+            names.add(node.name)
+        elif isinstance(node, ast.MatchMapping) and node.rest is not None:
+            names.add(node.rest)
+        elif isinstance(node, ast.Global | ast.Nonlocal):
+            names.update(node.names)
+    return names
+
+
+def _unshadowed_imports(tree: ast.Module, imports: set[ast.ImportFrom], names: set[str]) -> set[str]:
+    if any(
+        isinstance(node, ast.ImportFrom) and any(alias.name == "*" for alias in node.names) for node in ast.walk(tree)
+    ):
+        return set()
+    counts = Counter(
+        alias.asname or alias.name.split(".")[0]
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Import | ast.ImportFrom)
+        for alias in node.names
+    )
+    shadowed = _bound_names(tree, imports_excluded=imports) | {
+        node.arg for node in ast.walk(tree) if isinstance(node, ast.arg)
+    }
+    return {name for name in names if counts[name] == 1 and name not in shadowed}
+
+
+def _async_port_execution_calls(root: Path, tree: ast.Module) -> set[ast.Call]:
+    """Recognize unmodified parameters typed by a repository async Protocol.
+
+    This is a dependency lint distinction, not runtime authorization. Ordinary
+    SQL calls, untyped receivers, reassigned parameters and concrete imports
+    remain subject to the existing data-boundary rules.
+    """
+    port_types: set[str] = set()
+    port_imports: set[ast.ImportFrom] = set()
+    for node in tree.body:
+        if not isinstance(node, ast.ImportFrom) or node.module is None:
+            continue
+        module = node.module.removeprefix("research_observatory_core.")
+        parts = module.split(".")
+        if len(parts) != 2 or parts[0] != "ports" or not parts[1].isidentifier():
+            continue
+        source = root / "ports" / f"{parts[1]}.py"
+        if not source.is_file():
+            continue
+        declaration = ast.parse(source.read_text(encoding="utf-8"))
+        typing_imports = {
+            item
+            for item in declaration.body
+            if isinstance(item, ast.ImportFrom) and item.module == "typing" and item.level == 0
+        }
+        protocol_bases = _unshadowed_imports(
+            declaration,
+            typing_imports,
+            {alias.asname or alias.name for item in typing_imports for alias in item.names if alias.name == "Protocol"},
+        )
+        protocol_classes = {
+            item
+            for item in declaration.body
+            if isinstance(item, ast.ClassDef)
+            and any(isinstance(base, ast.Name) and base.id in protocol_bases for base in item.bases)
+            and any(isinstance(method, ast.AsyncFunctionDef) and method.name == "execute" for method in item.body)
+        }
+        protocol_names = {item.name for item in protocol_classes} - _bound_names(
+            declaration, declarations_excluded=protocol_classes
+        )
+        port_types.update(alias.asname or alias.name for alias in node.names if alias.name in protocol_names)
+        port_imports.add(node)
+    port_types = _unshadowed_imports(tree, port_imports, port_types)
+    allowed: set[ast.Call] = set()
+    for scope in ast.walk(tree):
+        if not isinstance(scope, ast.AsyncFunctionDef):
+            continue
+        parameters = {
+            argument.arg
+            for argument in (*scope.args.posonlyargs, *scope.args.args, *scope.args.kwonlyargs)
+            if isinstance(argument.annotation, ast.Name) and argument.annotation.id in port_types
+        }
+        rebound = _bound_names(scope)
+        for parameter in tuple(parameters):
+            if sum(isinstance(node, ast.arg) and node.arg == parameter for node in ast.walk(scope)) > 1:
+                rebound.add(parameter)
+        parameters -= rebound
+        for expression in ast.walk(scope):
+            if (
+                isinstance(expression, ast.Await)
+                and isinstance(expression.value, ast.Call)
+                and isinstance(expression.value.func, ast.Attribute)
+                and expression.value.func.attr == "execute"
+                and isinstance(expression.value.func.value, ast.Name)
+                and expression.value.func.value.id in parameters
+            ):
+                allowed.add(expression.value)
+    return allowed
+
+
 def core_data_boundary_errors(source_root: Path) -> list[str]:
     """Deny database dependencies and dynamic SQL outside Core data adapters."""
 
@@ -57,6 +171,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
         is_adapter = relative in _DATA_ADAPTER_FILES or "migrations" in parts
         is_port = "ports" in parts
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        port_execution = _async_port_execution_calls(root, tree)
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 for alias in node.names:
@@ -115,6 +230,7 @@ def core_data_boundary_errors(source_root: Path) -> list[str]:
                 and isinstance(node, ast.Call)
                 and isinstance(node.func, ast.Attribute)
                 and node.func.attr in _DATABASE_CALLS
+                and node not in port_execution
             ):
                 errors.append(f"{relative}:{node.lineno}: database call {node.func.attr} outside adapter")
     return errors

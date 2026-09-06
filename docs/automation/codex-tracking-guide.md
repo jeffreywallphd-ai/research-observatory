@@ -51,7 +51,15 @@ python tools/taskctl.py --file planning/backlog.yaml review CAP-XX.SXX.TXX --rev
 # After any successful ledger mutation:
 python tools/backlog_views.py --repo .
 python tools/backlog_views.py --repo . --check
+# After status, review, or task-start worksheet changes, also refresh the HTML site:
+python tools/planctl.py --repo . wave review WN
+# Before committing regenerated HTML:
+python tools/plan_review_check.py --repo .
 ```
+
+The backlog-view commands update Markdown only. Refresh the HTML site after each
+visible task/Wave/gate transition; do not wait until the next approval request.
+Check affected pages against the backlog before calling the review site current.
 
 Use the actual branch, full current HEAD, canonical worktree, concrete
 profile/platform and matching owner/lease. New supported bindings store

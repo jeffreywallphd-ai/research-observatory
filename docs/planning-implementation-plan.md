@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 73cfcd33f9d6784cc88d868ac051c9dd67b5b1761f55f45b63a99bdcd8cbd7c7
+source_sha256: 86ce612affc90768748738f975c25c359b1de0f0b55894c59540a9980d93efb1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9657,13 +9657,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-07.S01.T03 - Implement routing, fallback, timeout, and circuit-breaker policy
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-07.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex / - (`-`)
 
 **Objective:** Policy engine using task, privacy, rights, reproducibility, hardware, cost, and project preferences to select provider and fallback.
 

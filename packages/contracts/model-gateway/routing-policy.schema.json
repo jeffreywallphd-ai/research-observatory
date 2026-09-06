@@ -1,0 +1,113 @@
+{
+  "$defs": {
+    "ModelDeployment": {
+      "enum": [
+        "local",
+        "remote",
+        "institutional"
+      ],
+      "type": "string"
+    },
+    "RegistryCode": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Core-owned constraints; never a caller-supplied authorization grant.",
+  "properties": {
+    "attemptTimeoutMs": {
+      "default": 30000,
+      "maximum": 300000,
+      "minimum": 1,
+      "title": "Attempttimeoutms",
+      "type": "integer"
+    },
+    "circuitCooldownMs": {
+      "default": 1000,
+      "maximum": 60000,
+      "minimum": 100,
+      "title": "Circuitcooldownms",
+      "type": "integer"
+    },
+    "circuitFailureThreshold": {
+      "default": 3,
+      "maximum": 10,
+      "minimum": 1,
+      "title": "Circuitfailurethreshold",
+      "type": "integer"
+    },
+    "initialBackoffMs": {
+      "default": 10,
+      "maximum": 1000,
+      "minimum": 0,
+      "title": "Initialbackoffms",
+      "type": "integer"
+    },
+    "maximumAttempts": {
+      "default": 3,
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Maximumattempts",
+      "type": "integer"
+    },
+    "maximumCostMicrounits": {
+      "default": 0,
+      "maximum": 1000000000000,
+      "minimum": 0,
+      "title": "Maximumcostmicrounits",
+      "type": "integer"
+    },
+    "maximumRetriesPerRoute": {
+      "default": 1,
+      "maximum": 2,
+      "minimum": 0,
+      "title": "Maximumretriesperroute",
+      "type": "integer"
+    },
+    "permittedDeployments": {
+      "default": [
+        "local"
+      ],
+      "items": {
+        "$ref": "#/$defs/ModelDeployment"
+      },
+      "title": "Permitteddeployments",
+      "type": "array"
+    },
+    "preferredManifestIds": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RegistryCode"
+      },
+      "maxItems": 1000,
+      "title": "Preferredmanifestids",
+      "type": "array"
+    },
+    "projectId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Projectid",
+      "type": "string"
+    },
+    "revision": {
+      "maximum": 2147483647,
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "revision"
+  ],
+  "title": "RoutingPolicy",
+  "type": "object"
+}

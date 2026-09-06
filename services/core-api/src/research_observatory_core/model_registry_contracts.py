@@ -250,6 +250,8 @@ class ModelCatalogProjection(RegistryModel):
 
 def canonical_document(value: object) -> object:
     """Normalize only owned contract values and JSON-shaped task snapshots."""
+    if value is None or type(value) in (str, int, float, bool):
+        return value
     if isinstance(value, RegistryModel):
         return value.model_dump(mode="json", by_alias=True)
     if isinstance(value, Mapping):

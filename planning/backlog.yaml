@@ -22583,11 +22583,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile ai
       - python tools/verify.py --profile security-local
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-09-06T12:18:30+00:00'
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      started_at: '2026-09-06T12:21:43+00:00'
+      updated_at: '2026-09-06T12:21:43+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -22597,10 +22597,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 5b283d3b26f3a7f6b8deb57e4ce0dfcf2be314d3
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-06T12:21:43+00:00'
+        expires_at: '2026-09-06T20:21:43+00:00'
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
     platform_targets:

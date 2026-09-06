@@ -142,6 +142,79 @@ class ArchitectureContractTests(unittest.TestCase):
             rogue.write_text("import sqlite3\n", encoding="utf-8")
             self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
 
+    def test_typed_async_port_execution_is_not_a_database_call(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ports").mkdir()
+            (root / "ports/compute.py").write_text(
+                "from typing import Protocol\nclass Compute(Protocol):\n    async def execute(self, task): ...\n",
+                encoding="utf-8",
+            )
+            source = "from .ports.compute import Compute as Port\nasync def run(adapter: Port):\n"
+            cases = (
+                ("    return await adapter.execute(task)\n", False),
+                ("    return adapter.execute(task)\n", True),
+                ("    adapter = connection\n    return await adapter.execute(task)\n", True),
+                ("    return await connection.execute(task)\n", True),
+                ("    return await adapter.executemany(task)\n", True),
+                ("    from example import connection as adapter\n    return await adapter.execute(task)\n", True),
+                ("    import example as adapter\n    return await adapter.execute(task)\n", True),
+                (
+                    "    try:\n        operation()\n    except Exception as adapter:\n"
+                    "        return await adapter.execute(task)\n",
+                    True,
+                ),
+                (
+                    "    match task:\n        case {'connection': adapter}:\n"
+                    "            return await adapter.execute(task)\n",
+                    True,
+                ),
+                ("    class adapter:\n        pass\n    return await adapter.execute(task)\n", True),
+                ("    def adapter():\n        pass\n    return await adapter.execute(task)\n", True),
+            )
+            for body, denied in cases:
+                with self.subTest(body=body):
+                    (root / "business.py").write_text(source + body, encoding="utf-8")
+                    self.assertEqual(denied, bool(core_data_boundary_errors(root)))
+            (root / "business.py").write_text(
+                "async def run(adapter):\n    return await adapter.execute(task)\n",
+                encoding="utf-8",
+            )
+            self.assertTrue(core_data_boundary_errors(root))
+            (root / "ports/compute.py").write_text(
+                "Protocol = object\nclass Compute(Protocol):\n    async def execute(self, statement): ...\n",
+                encoding="utf-8",
+            )
+            (root / "business.py").write_text(source + "    return await adapter.execute(task)\n", encoding="utf-8")
+            self.assertTrue(core_data_boundary_errors(root))
+            (root / "ports/compute.py").write_text(
+                "from typing import Protocol\nclass Compute(Protocol):\n    async def execute(self, task): ...\n",
+                encoding="utf-8",
+            )
+            for consumer in (
+                "from .ports.compute import Compute as Port\ndef outer(Port):\n"
+                "    async def run(adapter: Port):\n        return await adapter.execute(task)\n",
+                "from .ports.compute import Compute as Port\nfrom typing import Any as Port\n"
+                "async def run(adapter: Port):\n    return await adapter.execute(task)\n",
+                "from .ports.compute import Compute as Port, Other as Port\n"
+                "async def run(adapter: Port):\n    return await adapter.execute(task)\n",
+                "from .ports.compute import Compute as Port\nfrom example import *\n"
+                "async def run(adapter: Port):\n    return await adapter.execute(task)\n",
+            ):
+                with self.subTest(consumer=consumer):
+                    (root / "business.py").write_text(consumer, encoding="utf-8")
+                    self.assertTrue(core_data_boundary_errors(root))
+            (root / "business.py").write_text(source + "    return await adapter.execute(task)\n", encoding="utf-8")
+            for replacement in (
+                "from typing import Protocol\nfrom example import *\n"
+                "class Compute(Protocol):\n    async def execute(self, task): ...\n",
+                "from typing import Protocol, Any\n"
+                "class Compute(Protocol):\n    async def execute(self, task): ...\nCompute = Any\n",
+            ):
+                with self.subTest(replacement=replacement):
+                    (root / "ports/compute.py").write_text(replacement, encoding="utf-8")
+                    self.assertTrue(core_data_boundary_errors(root))
+
 
 if __name__ == "__main__":
     unittest.main()

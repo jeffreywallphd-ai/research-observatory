@@ -18,6 +18,7 @@ from .authentication import LocalAuthenticationMiddleware
 from .config import CoreSettings
 from .logging import emit_log_record
 from .model_catalog import ModelCatalogProblem, ModelCatalogService
+from .model_gateway_service import ProjectModelGatewayService
 from .model_registry_contracts import ModelCatalogProjection, ModelCatalogReadRequest, ModelCatalogRefreshRequest
 from .models import (
     CacheClearPreview,
@@ -100,6 +101,7 @@ class RuntimeContext:
     projects: ProjectLifecycleService
     privacy: ProjectPrivacyService
     model_catalog: ModelCatalogService
+    model_gateway: ProjectModelGatewayService
     intents: ResearchIntentService
     workflow_progress: WorkflowProgressService
     provenance: ProvenanceService
@@ -116,6 +118,7 @@ def create_app(
     projects: ProjectLifecycleService | None = None,
     privacy: ProjectPrivacyService | None = None,
     model_catalog: ModelCatalogService | None = None,
+    model_gateway: ProjectModelGatewayService | None = None,
     intents: ResearchIntentService | None = None,
     workflow_progress: WorkflowProgressService | None = None,
     provenance: ProvenanceService | None = None,
@@ -153,6 +156,9 @@ def create_app(
             model_catalog=model_catalog
             if model_catalog is not None
             else ModelCatalogService.unavailable(resolved_projects),
+            model_gateway=model_gateway
+            if model_gateway is not None
+            else ProjectModelGatewayService(resolved_projects, resolved_privacy),
             intents=resolved_intents,
             workflow_progress=resolved_workflow_progress,
             provenance=resolved_provenance,

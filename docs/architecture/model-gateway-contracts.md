@@ -77,7 +77,7 @@ observations and a trusted, task/project/catalog/manifest-bound policy witness.
 That witness must resolve canonical source rights, classification, deployment
 and budget authority; model data-class declarations alone are insufficient.
 Missing witnesses deny eligibility. Results are deterministic candidate lists,
-not execution permits. CAP-07.S01.T03 must reauthorize at dispatch.
+not execution permits. CAP-07.S01.T03 reauthorizes at dispatch and output delivery.
 
 Catalog refresh reads only the trusted inventory port. An open compatible writable
 project and Core-owned actor are required; requests cannot supply manifests or
@@ -87,6 +87,59 @@ read/history projections omit private actor and command metadata. Read-only
 inspection never changes catalog history.
 
 W1 production defaults to an empty host inventory and unavailable eligibility
-policy, not synthetic models. Model/runtime adapters, installation and live
+policy authority, not synthetic models. Model/runtime adapters, installation and live
 execution are separate work. The Model & Privacy Center distinguishes empty,
 unavailable, stale and historical data without claiming an execution capability.
+
+## Routing, persistence and recovery
+
+CAP-07.S01.T03 binds `ModelGateway.execute(task_spec, input_refs, policy,
+cancel_token)` through `ProjectModelGatewayService` in Core composition. The
+factory derives the actor and project, checks the persisted catalog and guards
+every journal operation through the open-project lifecycle. It adds no HTTP
+execution endpoint, model installation or provider SDK. Caller task limits and
+manifest declarations cannot grant rights, classification, egress or spending.
+The canonical W1 policy reads real input revisions/current coarse rights and
+privacy, but explicitly denies missing model-use rights, source classification
+and project model-budget authority. Positive conformance tests use synthetic
+complete authority; they do not prove production execution permission.
+
+Routing intersects registry eligibility with Core-owned deployment/preference,
+attempt, retry, deadline and conservative shared cost limits. Only classified
+transient failures retry. Each attempt rechecks current policy, rights, host
+facts and manifest identity; a pinned task never substitutes. A different dynamic
+route produces an explicit degraded result. Unvalidated, late, cancelled or
+newly unauthorized output is not published. Persisted successful output also
+requires current permission before replay.
+
+Protected settings hold a bounded append-only request/event journal and circuit
+history; this is evidence, not another workflow queue. Exact request bytes,
+evaluated alternatives, selected manifests, costs, failures and disposition bind
+to atomic provenance/outbox facts. Expected revisions and admission actor checks
+fence competing or stale writers. One invocation can reuse a fully verified
+SQLCipher connection; task/thread ownership prevents inherited contexts from
+using it. Separate synchronous transaction groups never span provider execution.
+Request/alternatives/first-attempt admission and terminal/circuit release each
+commit together. A failed initial transaction leaves no partial admission or
+reservation and dispatches nothing. Pure decoding of one bounded, exact task
+string may be reused only inside that invocation; it is cleared on exit and
+never replaces history, identity, principal or current-permission checks.
+History already authenticated or written by the repository may be reused only
+inside the same exclusive write transaction. Commit/rollback discards that
+memo; subsequent transactions reconstruct and authenticate persistent bytes.
+
+An unfinished run is never silently redispatched after restart. Explicit
+Core-owner recovery appends an interrupted/no-output disposition against the
+exact predecessor, preserving uncertain prior execution and fencing late writes.
+It does not refund assumed cost or claim provider cancellation succeeded. A
+pending circuit is released only when the owning invocation observes the call
+has ended. If cancellation returns while the adapter remains active, the circuit
+stays reserved for later supervised runtime recovery, even if an ignored result
+arrives afterward. Scheduling, execution leases and human retry
+remain owned by the existing workflow fabric; a new gateway instance is not
+proof the previous worker died.
+
+Adapters must yield, provide bounded health/cancel behavior and pass the portable
+conformance suite. Blocking runtimes require supervised processes in later
+runtime work. W1 cancellation checks exercise cooperative and late async fixture
+behavior, not native inference or provider/network cancellation.
