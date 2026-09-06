@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dab3f29426e38dd5816dc9cb98032e8a440b33631d75b9b1ebd763f3abc1d6ee
+source_sha256: 8dc7fa07241417bec19aae1bfd99abff50fde0e7824e2afcba005f1c91e0b75a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -48,7 +48,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` |
-| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ACTIVE` |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `REVIEW` |
 
 ## Waves
 
@@ -1913,23 +1913,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A09.json` (`08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-09-05T03:15:45Z` by repository-owner: Record and bind the repository owner's existing explicit preapproval: 'You have preapproval for the project-UX/reference correct gate. Continue past that. Only seek approval for W1 passing.' The owner authorized continuation for the disclosed combined project-UX/reference correction before this exact binding; this record does not claim that the owner personally reviewed the later commit. Independent R02 accepted the matching bounded descendant, closing both R01 findings. Authorize only ECR-0008 at 2160cc9917282d80848189dc9669fe3827979246, its exact proposed Academic Minimal 1.6 package and enumerated activation metadata mapping, bootstrap W1.A09.B00, contribution W1.A09.S01 and tasks W1.A09.T01-T04. Native project contract/readiness repair, shared protected native folder selection, truthful fresh baseline and semantic1.5 preservation must satisfy their exact criteria. Preserve paused A08 and return to it only through independently reviewed correctionReturn; ordinary W1 resume remains after A08 adoption. This approval is not implementation completion, independent task/slice/exit review, G1/W1 passing, W2 authorization, remote/destructive action, spend or broader security authority. The timestamp records this exact binding of the standing owner authorization.
 - `E02` `MATERIALIZED` at `2026-09-05T11:48:05+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-09-05T11:51:21+00:00` by codex: Activated the bounded amendment campaign.
+- `E04` `REVIEW` at `2026-09-06T00:11:42+00:00` by codex: All four tasks and W1.A09.S01 independently approved; submit exact eight-criterion exit and PAUSED W1.A08 return contract.
 
 ### Amendment-exit review and adoption — W1.A09
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `a59db82ab1a5047d5e56f990aa15fc523cd5dbb2c8f57592d09ccaa5534e48e5`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `113024d2c3a9def65fdfa99afa1a5df2840f29a3` / `232b9fe7408df486cd045460fb87efe377b8606f` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-06T00:11:42+00:00`
+- Bound exit evidence: amendment `W1.A09` / `artifacts/evidence/W1.A09.exit.json` / `9e4d6fee3e405603ead3f52e40a8bcff2e337e25ea0934a7fd58992181cdb6aa` / `113024d2c3a9def65fdfa99afa1a5df2840f29a3`
+- Acceptance-criteria SHA-256: `dee6267c6ee0f9cccb131d03473e8df11b1d38c3369095584cfc7def81441463`
+- Selected-check SHA-256: `c8c38561f61fb4c71dcbf6ff70fb9414630709b4c8c5ec5fca81a918f640ed09`
+- Selected checks: `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml amendment status W1.A09`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `git diff --check`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json`
+- Prior round / replayed open findings: `-` / -
 
-**Latest completion notes:** -
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A09.exit.json`
+
+**Latest completion notes:** All four tasks and W1.A09.S01 independently approved; submit exact eight-criterion exit and PAUSED W1.A08 return contract.
 
 **Bound amendment-adoption checkpoints:**
 

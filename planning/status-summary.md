@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dab3f29426e38dd5816dc9cb98032e8a440b33631d75b9b1ebd763f3abc1d6ee
+source_sha256: 8dc7fa07241417bec19aae1bfd99abff50fde0e7824e2afcba005f1c91e0b75a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -60,9 +60,9 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ACTIVE` | 1 |
 | `ADOPTED` | 6 |
 | `PAUSED` | 1 |
+| `REVIEW` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -87,7 +87,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
-| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ACTIVE` | `APPROVED` | `ACTIVE` | 4 |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `REVIEW` | `APPROVED` | `REVIEW` | 4 |
 
 ## Amendment-exit review and adoption projections
 
@@ -476,13 +476,23 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W1.A09
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `a59db82ab1a5047d5e56f990aa15fc523cd5dbb2c8f57592d09ccaa5534e48e5`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `113024d2c3a9def65fdfa99afa1a5df2840f29a3` / `232b9fe7408df486cd045460fb87efe377b8606f` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-06T00:11:42+00:00`
+- Bound exit evidence: amendment `W1.A09` / `artifacts/evidence/W1.A09.exit.json` / `9e4d6fee3e405603ead3f52e40a8bcff2e337e25ea0934a7fd58992181cdb6aa` / `113024d2c3a9def65fdfa99afa1a5df2840f29a3`
+- Acceptance-criteria SHA-256: `dee6267c6ee0f9cccb131d03473e8df11b1d38c3369095584cfc7def81441463`
+- Selected-check SHA-256: `c8c38561f61fb4c71dcbf6ff70fb9414630709b4c8c5ec5fca81a918f640ed09`
+- Selected checks: `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml amendment status W1.A09`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `git diff --check`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json`
+- Prior round / replayed open findings: `-` / -
 
-**Latest completion notes:** -
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A09.exit.json`
+
+**Latest completion notes:** All four tasks and W1.A09.S01 independently approved; submit exact eight-criterion exit and PAUSED W1.A08 return contract.
 
 **Bound amendment-adoption checkpoints:**
 
