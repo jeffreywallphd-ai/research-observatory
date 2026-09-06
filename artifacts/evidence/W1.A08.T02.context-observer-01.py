@@ -65,7 +65,8 @@ def main() -> int:
     sys.path.insert(0, str(producer / "tools"))
     import desktop_app_check as desktop
     import product_style_check as style
-    from build_manifest import confined_path, stable_file_bytes, windows_path_locks
+    from build_manifest import windows_path_locks
+    from ui_conformance import confined_path, stable_file_bytes
 
     for module in (desktop, style):
         if Path(module.__file__).resolve(strict=True) != producer / "tools" / Path(module.__file__).name:
