@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-verification-checkpoint",
+  "taskId": "W1.A08.T02",
+  "producerCommit": "497cca81efff033449a9b794af76d60f2f13e0d7",
+  "formalTaskSubmission": false,
+  "originalClaimBase": "46e88d171795b76a2f1588d69756f4184c01a89b",
+  "authority": "Approved ECR-0007/W1.A08 task with separately approved/adopted W1.A09 presentation1.6 overlay. No new design, scope, task-base, reference or release approval.",
+  "checks": [
+    {
+      "name": "prior complete focused Python boundary",
+      "status": "PASS",
+      "observedHead": "52aa46f979a6246ebbae7d5df30aeba15b3d9d99",
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_product_style_check tests.desktop.test_product_layout_measurements tests.desktop.test_desktop_app_check -v",
+      "tests": 50,
+      "seconds": 97.3,
+      "scope": "Real capture persistence/Git/source/tamper negatives, style guard, layout/control and full built product frame. This baseline did not test the newly found dark current-navigation contrast."
+    },
+    {
+      "name": "current contrast/layout/keyboard regression",
+      "status": "PASS",
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_product_layout_measurements -v",
+      "tests": 7,
+      "seconds": 13.427,
+      "binding": "Run before producer commit with the exact CSS/test bytes subsequently committed in497cca81. New test independently rejects prior label and marker pairs; actual Task Center fixture covers current-page text only because it has no intent/progress reply. Complete-workflow observer supplies current-step proof separately."
+    },
+    {
+      "name": "current style reuse",
+      "status": "PASS",
+      "command": "tools.product_style_check.product_style_analysis(Path.cwd())",
+      "rules": 282,
+      "scope": "Existing ten reviewed exceptions unchanged; no new token source, repeated material group or specificity exception."
+    },
+    {
+      "name": "current product and reference build",
+      "status": "PASS",
+      "command": "Pinned Node24.19.0/pnpm11.20.0 --dir apps/desktop run build",
+      "scope": "Four actual product artifacts;42 separate reference fixture artifacts. Root and clean isolated producer checkout both rebuilt after497cca81 CSS correction."
+    },
+    {
+      "name": "current affected lint/types/format",
+      "status": "PASS",
+      "command": "Desktop lint/typecheck; Ruff check/format and isolated mypy with MYPYPATH=tools on tests/desktop/test_product_layout_measurements.py",
+      "scope": "No suppressions added."
+    },
+    {
+      "name": "full current capture matrix and immutable authentication",
+      "status": "PASS",
+      "producer": "497cca81efff033449a9b794af76d60f2f13e0d7",
+      "delivery": "ea962fbcbda5009c77a3df131c3a4d19e7598a29",
+      "path": "artifacts/evidence/W1.A08.T02.captures-05/manifest.json",
+      "sha256": "59de10510c2a2a896a0b8e97d2d4a12ad0a8f7d7f74fba15b19fff7d9bd62f8d",
+      "captureCount": 108,
+      "workspaceCases": 48,
+      "designatedCases": 6,
+      "scope": "Actual functional product and approved reference pairs, both themes at three viewports. Existing full runtime and measurement checks pass; independent visual acceptance remains separate."
+    },
+    {
+      "name": "GOV-MAINT-0018 adoption",
+      "status": "PASS",
+      "candidate": "5599a8671f618b0d990d70c27398bae888f87e8a",
+      "record": "planning/governance-migrations/GOV-MAINT-0018.json",
+      "scope": "Independently approved additive quality inventory correction; no task approval."
+    },
+    {
+      "name": "GOV-MAINT-0019 adoption",
+      "status": "PASS",
+      "candidate": "52aa46f979a6246ebbae7d5df30aeba15b3d9d99",
+      "adoption": "e37a6d504f19523d24e006d43ed7d2671c5566e1",
+      "independentLedger": "planning/governance-migrations/GOV-MAINT-0019.review-R01.json",
+      "independentTests": 43,
+      "scope": "Generic resumed-amendment original-base recognition; actual authority positive and current-parent-ADOPTED negative pass. Full activated UI contract awaits independent classification; no task approval."
+    },
+    {
+      "name": "focused current-navigation observation",
+      "status": "PASS",
+      "producerCommit": "497cca81efff033449a9b794af76d60f2f13e0d7",
+      "manifest": "artifacts/evidence/W1.A08.T02.navigation-captures-01/manifest.json",
+      "deliveryCommit": "63957d0b86ad6db291d8d57f73c6c53f3b3f2b7b",
+      "manifestSha256": "4fbeb3d18825b0a9796d8b8b035ff117c15c0c95833484a54d91b08bb919984a",
+      "observerCommit": "db6d896acbcee73a10b68efdbab4acb577743ec4",
+      "scope": "Reviewer-authored observer executed unchanged built-product settings workflow,12 current step/page viewport captures,6 original settings measurement validators and30 actual text samples. Root parsed result and actually viewed dark1440 step PNG; independent disposition is not claimed by this checkpoint."
+    },
+    {
+      "name": "fresh exact-producer performance",
+      "status": "PASS",
+      "command": "tools/desktop_performance_check.py --repo . --report artifacts/tmp/W1.A08.T02.performance-03.json",
+      "report": "artifacts/evidence/W1.A08.T02.performance-03.json",
+      "producerCommit": "497cca81efff033449a9b794af76d60f2f13e0d7",
+      "clean": true,
+      "browserSamples": 12,
+      "tableBatches": 20,
+      "p95Ms": {
+        "coldPaint": 44,
+        "routeSkeleton": 17.778,
+        "routeUsable": 19.985,
+        "tableBatch": 40.631
+      },
+      "scope": "Existing clean isolated checkout, unchanged budgets and every sample retained. No concurrent browser/test/build workload; read-only Git authentication/image inspection and evidence delivery overlapped. Stored JSON reserialization was checked for complete parsed equality with the original generated report; original raw hash78f8f8ff13c6552a290d6aa03b06285f9ac7bcb96f42bf9c0adb13640b33c376."
+    }
+  ],
+  "adverseHistory": [
+    "Independent visual03, delivered7fb773d1e5eb6cdca66274eaba035fc095c95ebf, closes raw context-button visual02-F01 and opens consolidated dark current-navigation visual03-F01. It remains adverse pending fresh independent disposition.",
+    "contrast-remediation-01.md retains test-first marker and label failures, transition-observation correction, specificity/lint/type failures, unavailable-step fixture mismatch and wrong host launcher attempt. None is relabeled PASS.",
+    "The original supplemental observer preflight source mismatch and all prior capture/review/performance records remain immutable.",
+    "A scoped process-status diagnostic was denied by the sandbox; it was not retried or escalated. Completed capture files and the original process result subsequently established completion."
+  ],
+  "pending": [
+    "Complete independent visual04 disposition and close visual03-F01 only on authenticated evidence.",
+    "Obtain independent restoration classification, commit the1.1 UI contract and validate the full original-base range.",
+    "Formal criterion-linked task evidence/review, accumulated W1.A08.S01 review and amendment exit/adoption.",
+    "Next lawful UX packet includes separately scoped maximized-startup request and assessed usability corrections; CAP-07.S01 and full W1 qualification/G1 remain separate."
+  ],
+  "safety": "No native GUI or ordinary profile/vault/credentials/projects, no protected witness content or sibling access, no main integration or remote/release action."
+}
