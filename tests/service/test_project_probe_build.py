@@ -64,7 +64,7 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
             )
             + "\n"
         )
-        self.run = patch.object(
+        self.run_process = patch.object(
             probe.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, self.build_output, "")
         ).start()
         self.pe = patch.object(probe, "assert_project_probe_manifest").start()
@@ -87,17 +87,17 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
         record = probe.build_project_probe()
         for name in ("apps/desktop/src/app.tsx", f"{PRODUCT_ROOT}/assets/app.js", PRODUCT_MANIFEST):
             self.assertEqual(hashlib.sha256((self.root / name).read_bytes()).hexdigest(), record["inputSha256"][name])
-        self.run.assert_called_once()
+        self.run_process.assert_called_once()
         self.pe.assert_called_once()
 
     def test_stale_renderer_source_is_rejected_before_compilation(self) -> None:
         (self.root / "apps/desktop/src/app.tsx").write_bytes(b"unbuilt change")
         with self.assertRaisesRegex(AssertionError, "product"):
             probe.build_project_probe()
-        self.run.assert_not_called()
+        self.run_process.assert_not_called()
 
     def test_missing_compiler_artifact_cannot_attest_a_stale_binary(self) -> None:
-        self.run.return_value = subprocess.CompletedProcess([], 0, "", "")
+        self.run_process.return_value = subprocess.CompletedProcess([], 0, "", "")
         with self.assertRaisesRegex(AssertionError, "Cargo.*executable"):
             probe.build_project_probe()
         self.pe.assert_not_called()
@@ -105,7 +105,7 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
     def test_different_cargo_output_cannot_attest_a_stale_expected_binary(self) -> None:
         event = json.loads(self.build_output)
         event["executable"] = str(self.root / "alternate-target/debug/examples/project_contract_probe.exe")
-        self.run.return_value = subprocess.CompletedProcess([], 0, json.dumps(event), "")
+        self.run_process.return_value = subprocess.CompletedProcess([], 0, json.dumps(event), "")
         with self.assertRaisesRegex(AssertionError, "Cargo.*executable"):
             probe.build_project_probe()
         self.pe.assert_not_called()
@@ -114,13 +114,13 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
         (self.root / PRODUCT_ROOT / "assets/app.js").write_bytes(b"unbound artifact")
         with self.assertRaisesRegex(AssertionError, "product"):
             probe.build_project_probe()
-        self.run.assert_not_called()
+        self.run_process.assert_not_called()
 
     def test_unlisted_artifact_is_rejected_before_compilation(self) -> None:
         (self.root / PRODUCT_ROOT / "extra.js").write_bytes(b"unlisted")
         with self.assertRaisesRegex(AssertionError, "product"):
             probe.build_project_probe()
-        self.run.assert_not_called()
+        self.run_process.assert_not_called()
 
     def test_source_change_after_validation_is_rejected_before_compilation(self) -> None:
         def validate_then_change(root):
@@ -133,7 +133,7 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
             self.assertRaisesRegex(AssertionError, "product inputs changed"),
         ):
             probe.build_project_probe()
-        self.run.assert_not_called()
+        self.run_process.assert_not_called()
 
     def test_manifest_swap_during_validation_is_rejected_before_using_its_paths(self) -> None:
         def validate_then_swap(root):
@@ -147,14 +147,14 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
             self.assertRaisesRegex(AssertionError, "product manifest changed during validation"),
         ):
             probe.build_project_probe()
-        self.run.assert_not_called()
+        self.run_process.assert_not_called()
 
     def test_artifact_change_during_compilation_cannot_receive_a_build_record(self) -> None:
         def compile_and_change(*_args, **_kwargs):
             (self.root / PRODUCT_ROOT / "assets/app.js").write_bytes(b"unbound during build")
             return subprocess.CompletedProcess([], 0, self.build_output, "")
 
-        self.run.side_effect = compile_and_change
+        self.run_process.side_effect = compile_and_change
         with self.assertRaisesRegex(AssertionError, "product"):
             probe.build_project_probe()
         self.pe.assert_not_called()
@@ -167,7 +167,7 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
             self.assertEqual([], product_build_errors(self.root))
             return subprocess.CompletedProcess([], 0, self.build_output, "")
 
-        self.run.side_effect = compile_and_rebuild
+        self.run_process.side_effect = compile_and_rebuild
         with self.assertRaisesRegex(AssertionError, "changed"):
             probe.build_project_probe()
         self.pe.assert_not_called()

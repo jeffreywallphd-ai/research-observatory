@@ -52,7 +52,7 @@ def project_probe_build_command(cargo: Path, *, release: bool = False) -> list[s
 
 def assert_project_probe_manifest(executable: Path) -> None:
     """Inspect the linked PE, not just the requested linker arguments."""
-    import pefile
+    import pefile  # type: ignore[import-untyped]  # Third-party PE reader has no published type stubs.
 
     with pefile.PE(str(executable)) as image:
         manifests = [
@@ -193,6 +193,9 @@ def seed_canonical_lineage(project_root: str, vault_root: str) -> None:
 
 @unittest.skipUnless(os.name == "nt", "Windows x64 native qualification")
 class NativeProjectContractTests(unittest.TestCase):
+    environment: dict[str, str]
+    build_binding: dict
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.environment, _, _ = tool_environment(REPO)
