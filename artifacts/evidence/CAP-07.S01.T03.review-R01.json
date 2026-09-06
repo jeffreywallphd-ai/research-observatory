@@ -1,0 +1,99 @@
+{
+  "task_id": "CAP-07.S01.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "25327cece02112c97492b0f28af9ac3df1e19c40",
+  "reviewer": "agent:/root/decoder_memo_review",
+  "result": "approved",
+  "evidence_sha256": "92f84bb9c2046a38835f8658deb709117117b48984a732d2757dfe7c8b40d0f6",
+  "submission_packet_sha256": "4e50706bff62d014970ad33355990577cfbb3e9e682e904d05270c4a05ac7777",
+  "notes": "Approved CAP-07.S01.T03 at the exact frozen R01 candidate. Expanded review covers routing, current authority, publication, protected persistence/principals, recovery, contracts and architecture controls. The 59-path inventory, packet/evidence identities and all 14 fresh nonperformance check logs authenticate. Independent replay passed 44 F01-F04, Core-principal and protected-repository tests; no blocking finding remains. All pre-submission findings are preserved and closed without inventing controlled rounds. The owner's task-only acceptance applies to the historical 25.383200030773878 ms observation, which remains a strict benchmark FAIL. Successor latency and added publication-check cost are unmeasured; no current p95 PASS is asserted. Fresh slice/Wave performance and full qualification, integrated review and separate human G1 approval remain required.",
+  "findings": [],
+  "closures": [],
+  "independent_checks": [
+    {
+      "candidate_commit": "25327cece02112c97492b0f28af9ac3df1e19c40",
+      "command": ".venv/Scripts/python.exe -B -c <inline_python>",
+      "inline_python": "import unittest\nmethods = (\n    'test_deadline_elapsed_during_authorization_cannot_dispatch',\n    'test_permission_budget_is_cumulative_across_retry',\n    'test_shrinking_permission_after_health_cannot_dispatch',\n    'test_permission_budget_is_cumulative_across_fallback',\n    'test_second_health_cannot_reduce_budget_below_prior_reservations',\n    'test_shrinking_permission_after_retry_output_is_not_promoted_or_replayed',\n    'test_successful_retry_replay_requires_current_total_budget',\n    'test_null_permission_cap_does_not_waive_routing_limit',\n    'test_cancel_during_result_ownership_does_not_publish_or_replay_output',\n    'test_permission_revocation_during_result_ownership_does_not_publish_or_replay_output',\n    'test_catalog_revocation_during_result_ownership_does_not_publish_or_replay_output',\n    'test_cost_cap_shrink_during_result_ownership_does_not_publish_or_replay_output',\n    'test_publication_authority_cancellation_does_not_publish_output',\n    'test_publication_authority_deadline_exhaustion_does_not_publish_output',\n)\nnames = [f'{owner}.{method}' for owner in ('tests.ai.test_model_routing.ModelRoutingTests', 'tests.service.test_model_routing_integration.ProtectedModelRoutingTests') for method in methods]\nnames += [\n    'tests.contracts.test_model_routing_contracts.ModelRoutingContractTests.test_audit_history_rejects_tampered_authority_cost_route_and_terminal_claims',\n    'tests.foundation.test_architecture_check.ArchitectureContractTests.test_typed_async_port_execution_is_not_a_database_call',\n    'tests.service.test_model_gateway_service',\n    'tests.service.test_model_routing_repository',\n]\nsuite = unittest.defaultTestLoader.loadTestsFromNames(names)\nassert suite.countTestCases() == 44, suite.countTestCases()\nprint('Independent exact-candidate replay: 44 F01-F04, Core-principal and protected-repository tests; no benchmark.', flush=True)\nresult = unittest.TextTestRunner(verbosity=1).run(suite)\nraise SystemExit(not result.wasSuccessful())",
+      "exit_code": 0,
+      "test_count": 44,
+      "runner_elapsed_seconds": 3.638,
+      "wall_elapsed_seconds": 5.498,
+      "result": "passed",
+      "provenance": "Fresh independent-agent execution at the fixed candidate after the implementation agent's functional checks completed. Tool stdout is retained in the review conversation; no filesystem output log or log digest is claimed. Synthetic temporary projects and explicit in-memory database/object keys only; no benchmark invocation."
+    },
+    {
+      "candidate_commit": "25327cece02112c97492b0f28af9ac3df1e19c40",
+      "check": "Authenticated actual backlog REVIEW state and frozen R01 candidate, original claim base, branch, submitter/owner, attached evidence, acceptance-criteria digest, verification-selection digest, selected commands/IDs, deferred coverage, changed paths and packet digest against the manifest. The evidence hash uses the repository's line-ending-canonical SHA-256 rule; the packet and selection hashes use its canonical JSON rule.",
+      "result": "passed",
+      "acceptance_criteria_sha256": "d62b4933fb6f2dc985268cbf87bd42dc28e26eb02c381505521ea39048f1e873",
+      "selection_sha256": "09ce602e1544ca814a9be61053d0f44da4b7a95ce33ce59e30ad95f671283279",
+      "prior_controlled_rounds": 0
+    },
+    {
+      "candidate_commit": "25327cece02112c97492b0f28af9ac3df1e19c40",
+      "check": "Compared the exact 59-path Git inventory and base ancestry to the manifest; all 14 manifest check records equal the final R06 report, every retained raw log SHA-256 and byte count matches, and the 109 unit, 40 protected integration, seven TypeScript and 32 planning test summaries agree. Source and HEAD remained fixed during independent replay; later controlled submission changed only its backlog state and generated projections.",
+      "result": "passed",
+      "qualifying_log_count": 14,
+      "claim_base_changed_path_count": 59,
+      "final_correction_changed_path_count": 6
+    },
+    {
+      "candidate_commit": "25327cece02112c97492b0f28af9ac3df1e19c40",
+      "check": "Authenticated the final six-path correction against 69c0bcdeb2c77f6ff66abd0a59fa525bcdf88060: seven added publication-guard source lines, six shared regression methods and their helpers, retained adverse evidence, task-start closure and generated review projections. The four decoder-memo source/test files are unchanged from the independent 281cc0c review. Previously approved rolling-wave maintenance source is unchanged; subsequent planning-implementation-plan differences are generated backlog identity/reopen text.",
+      "result": "passed"
+    }
+  ],
+  "pre_submission_observations": [
+    {
+      "record": "artifacts/evidence/CAP-07.S01.T03.preflight-01.json",
+      "finding_ids": ["F01", "F02", "F03"],
+      "prior_closure_record": "artifacts/evidence/CAP-07.S01.T03.preflight-02.json",
+      "disposition": "fixed-and-independently-replayed-at-final-candidate",
+      "evidence": "Fresh replay covers the final pre-dispatch deadline, seven cumulative/current-cap scenarios in both memory and protected repositories, persisted attempt-authority tampering, and TypeVar/ParamSpec/TypeVarTuple plus lexical-shadowing architecture regressions. Original adverse observations and their earlier independent closure remain unchanged. They preceded controlled submission and are not fabricated RNN findings."
+    },
+    {
+      "record": "artifacts/evidence/CAP-07.S01.T03.preflight-06.json",
+      "finding_id": "F04",
+      "disposition": "fixed-and-independently-replayed-at-final-candidate",
+      "evidence": "Six shared regressions run in both memory and protected SQLCipher repositories: ownership callbacks that cancel or revoke permission/catalog/cost cannot return or persist output, and cancellation/deadline changes during the final authority lookup are rejected afterward. Terminal no-output records preserve original request bytes and bounded adapter calls; ownership-change cases also prove no-output replay without another dispatch. This is closure of the retained pre-submission finding, not a controlled-round closure against nonexistent prior RNN history."
+    }
+  ],
+  "performance_acceptance": {
+    "record": "artifacts/evidence/CAP-07.S01.T03.performance-acceptance-01.json",
+    "owner_statement": "We will allow some rounding error and round down in this case. Please consider the task complete.",
+    "accepted_observation_commit": "281cc0c02df71bc140c2d79ef0cc84aa07f5c5d0",
+    "accepted_observation_record": "artifacts/evidence/CAP-07.S01.T03.preflight-05.json",
+    "warm_p95_ms": 25.383200030773878,
+    "original_strict_test_passed": false,
+    "raw_samples_preserved": true,
+    "warm_sample_count": 100,
+    "warm_samples_at_or_above_25_ms": 6,
+    "task_completion_exception_applied": true,
+    "successor_latency_measured": false,
+    "successor_added_publication_cost_quantified": false,
+    "benchmark_rerun_by_reviewer": false,
+    "strict_threshold_changed": false,
+    "current_p95_compliance_claimed": false,
+    "applicability": "The owner directed task completion after necessary functional correction and independent review without reopening optimization. Acceptance remains attached to the exact historical observation; it is not a measurement of this successor, a rounded PASS, a general rounding rule, new refactoring budget, or a waiver of fresh post-correction slice/Wave performance qualification."
+  },
+  "associated_review_applicability": [
+    {
+      "record": "artifacts/evidence/CAP-07.S01.T03.optimization-closeout-01.json",
+      "reviewed_candidate": "281cc0c02df71bc140c2d79ef0cc84aa07f5c5d0",
+      "scope": "The same independent reviewer previously passed 51 focused gateway/routing tests and generated-contract checks for the approved inclusive M3 memo increment. Its four implementation/test files are unchanged. Current R06 checks freshly exercise those contracts; old timings are not represented as fresh final-candidate evidence."
+    },
+    {
+      "record": "artifacts/evidence/rolling-wave-policy.verification-01.json",
+      "reviewed_candidate": "df0362a0dff4d2481bab5841af52d13338aef659",
+      "scope": "Separate independent approval remains bound to its 13-path policy-maintenance scope. Source is unchanged except generated backlog text; fresh final planning/protocol checks passed. This record does not turn that earlier maintenance review into product, slice or Wave approval."
+    }
+  ],
+  "scope_limits": [
+    "Task approval only. Integrated CAP-07.S01 review, affected checkpoints, fresh full W1 repository/deployment-profile qualification and the separate human G1 release decision remain incomplete.",
+    "The historical 25.383 ms p95 remains a strict failure accepted by the owner for task completion only. Final-successor performance is unmeasured; the original benchmark and fresh post-correction performance obligation remain unchanged for slice/Wave qualification.",
+    "W1 production has no installed runtime or live adapter and fails closed when canonical model-use rights, classification or budget authority is unavailable. Positive complete-authority and cancellation tests use synthetic cooperative/late async fixtures, not native inference or provider/network execution.",
+    "The existing protected storage/principal tests use temporary synthetic projects and explicit in-memory keys. No ordinary project, vault, credentials, remote action, security setting, excluded sibling worktree contents or protected witness contents were accessed by this reviewer.",
+    "No product or test files were authored or modified by this reviewer. This review ledger is the only reviewer-authored file.",
+    "The previously disclosed unrelated selective_recalculation.py typing failure remains a full-Wave quality obligation; this task approval does not waive it or claim it fixed."
+  ]
+}

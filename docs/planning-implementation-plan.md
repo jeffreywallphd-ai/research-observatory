@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0db95fa75a45c3716bd0c84b4fb0ad7b5c795c456c71d2c4067055c1fe64be98
+source_sha256: b86a6a8a4f10e11a255a2da43eeda5cd8c4acb1210a1aad293967ca7729f95d6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9655,15 +9655,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-07.S01.T03 - Implement routing, fallback, timeout, and circuit-breaker policy
+#### - [x] CAP-07.S01.T03 - Implement routing, fallback, timeout, and circuit-breaker policy
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-07.S01.T02`
 
-**Owner / review:** codex / - (`-`)
+**Owner / review:** codex / agent:/root/decoder_memo_review (`approved`)
 
 **Objective:** Policy engine using task, privacy, rights, reproducibility, hardware, cost, and project preferences to select provider and fallback.
 
@@ -9682,13 +9682,51 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile ai
 - python tools/verify.py --profile security-local
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-07.S01.T03.json` at `25327cece02112c97492b0f28af9ac3df1e19c40`
+
 ##### Review history — CAP-07.S01.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** Reopened: Owner approved the exact bounded M3 decoder optimization exception in artifacts/evidence/CAP-07.S01.T03.refactoring-decision-01.json; target and all authority boundaries unchanged.
+**Immutable submission packet:** `R01` / packet SHA-256 `4e50706bff62d014970ad33355990577cfbb3e9e682e904d05270c4a05ac7777`
+
+- Candidate / base / branch: `25327cece02112c97492b0f28af9ac3df1e19c40` / `5b283d3b26f3a7f6b8deb57e4ce0dfcf2be314d3` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-06T15:57:44+00:00`
+- Evidence: `artifacts/evidence/CAP-07.S01.T03.json` / `92f84bb9c2046a38835f8658deb709117117b48984a732d2757dfe7c8b40d0f6` / `25327cece02112c97492b0f28af9ac3df1e19c40`
+- Acceptance-criteria SHA-256: `d62b4933fb6f2dc985268cbf87bd42dc28e26eb02c381505521ea39048f1e873`
+- Verification-selection SHA-256: `09ce602e1544ca814a9be61053d0f44da4b7a95ce33ce59e30ad95f671283279`
+- Changed paths: `AGENTS.md`, `artifacts/evidence/CAP-07.S01.T03.optimization-closeout-01.json`, `artifacts/evidence/CAP-07.S01.T03.performance-acceptance-01.json`, `artifacts/evidence/CAP-07.S01.T03.preflight-01.json`, `artifacts/evidence/CAP-07.S01.T03.preflight-02.json`, `artifacts/evidence/CAP-07.S01.T03.preflight-03.json`, `artifacts/evidence/CAP-07.S01.T03.preflight-04.json`, `artifacts/evidence/CAP-07.S01.T03.preflight-05.json`, `artifacts/evidence/CAP-07.S01.T03.preflight-06.json`, `artifacts/evidence/CAP-07.S01.T03.refactoring-decision-01.json`, `artifacts/evidence/CAP-07.S01.T03.refactoring-proposal-01.md`, `artifacts/evidence/CAP-07.S01.T03.task-start.md`, `artifacts/evidence/rolling-wave-policy.maintenance-01.md`, `artifacts/evidence/rolling-wave-policy.verification-01.json`, `docs/architecture/model-gateway-contracts.md`, `docs/automation/codex-tracking-guide.md`, `docs/automation/planning-review-site.md`, `docs/automation/workflow-efficiency.md`, `docs/governance/delivery-control-model.md`, `docs/planning-implementation-plan.md`, `packages/contracts/model-gateway/README.md`, `packages/contracts/model-gateway/model-task.template.py.txt`, `packages/contracts/model-gateway/routing-policy.schema.json`, `packaging/build-inputs.json`, `planning/README.md`, `planning/backlog.yaml`, `planning/capability-plans/TEMPLATE.md`, `planning/capability-plans/capability-plan.schema.json`, `planning/review-site/CAP-07/CAP-07.S01.T02.html`, `planning/review-site/CAP-07/CAP-07.S01.T03.html`, `planning/review-site/CAP-07/CAP-07.S01.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/slice-plans/TEMPLATE.md`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/model_gateway_contracts.py`, `services/core-api/src/research_observatory_core/model_gateway_service.py`, `services/core-api/src/research_observatory_core/model_registry.py`, `services/core-api/src/research_observatory_core/model_registry_contracts.py`, `services/core-api/src/research_observatory_core/model_registry_repository.py`, `services/core-api/src/research_observatory_core/model_routing.py`, `services/core-api/src/research_observatory_core/model_routing_contracts.py`, `services/core-api/src/research_observatory_core/model_routing_policy.py`, `services/core-api/src/research_observatory_core/ports/model_gateway.py`, `tests/ai/test_model_routing.py`, `tests/contracts/test_model_routing_contracts.py`, `tests/foundation/test_architecture_check.py`, `tests/foundation/test_planctl_wave_approval.py`, `tests/model_routing_fixtures.py`, `tests/service/test_model_gateway_service.py`, `tests/service/test_model_routing_integration.py`, `tests/service/test_model_routing_repository.py`, `tools/architecture_check.py`, `tools/capability_plan_check.py`, `tools/core_api_contract.py`, `tools/planctl.py`
+- Selected checks: `python -m unittest tests.ai.test_model_gateway_contracts tests.ai.test_model_registry tests.ai.test_model_routing tests.contracts.test_model_registry_contracts tests.contracts.test_model_routing_contracts tests.service.test_model_registry_repository tests.service.test_model_registry_service tests.service.test_model_gateway_service tests.service.test_model_routing_repository tests.foundation.test_architecture_check tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current tests.service.test_core_api.CoreApiTests.test_local_transport_denies_missing_stale_remote_and_origin_requests`, `python -c "import unittest; loader=unittest.TestLoader(); suite=loader.loadTestsFromName('tests.service.test_model_routing_integration'); flatten=lambda s: [t for item in s for t in (flatten(item) if isinstance(item,unittest.TestSuite) else [item])]; all_tests=flatten(suite); accepted='tests.service.test_model_routing_integration.ProtectedModelRoutingTests.test_gateway_overhead_p95_excluding_model_execution'; selected=[t for t in all_tests if t.id()!=accepted]; assert len(all_tests)==41 and len(selected)==40; print('Owner accepted the exact prior benchmark observation; no new measurement or benchmark PASS is claimed. Running all 40 functional protected integration cases.'); result=unittest.TextTestRunner(verbosity=1).run(unittest.TestSuite(selected)); raise SystemExit(not result.wasSuccessful())"`, `python tools/core_api_contract.py --check`, `node packages/contracts/model-gateway/generate.mjs --check`, `node node_modules/vitest/vitest.mjs run model-gateway/model-task.test.ts`, `python -m ruff check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/model_gateway_contracts.py services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_registry_contracts.py services/core-api/src/research_observatory_core/model_registry_repository.py services/core-api/src/research_observatory_core/model_gateway_service.py services/core-api/src/research_observatory_core/model_routing.py services/core-api/src/research_observatory_core/model_routing_contracts.py services/core-api/src/research_observatory_core/model_routing_policy.py services/core-api/src/research_observatory_core/ports/model_gateway.py tests/ai/test_model_routing.py tests/contracts/test_model_routing_contracts.py tests/model_routing_fixtures.py tests/service/test_model_gateway_service.py tests/service/test_model_routing_integration.py tests/service/test_model_routing_repository.py tests/foundation/test_architecture_check.py tools/architecture_check.py tools/core_api_contract.py`, `python -m ruff format --check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/model_gateway_contracts.py services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_registry_contracts.py services/core-api/src/research_observatory_core/model_registry_repository.py services/core-api/src/research_observatory_core/model_gateway_service.py services/core-api/src/research_observatory_core/model_routing.py services/core-api/src/research_observatory_core/model_routing_contracts.py services/core-api/src/research_observatory_core/model_routing_policy.py services/core-api/src/research_observatory_core/ports/model_gateway.py tests/ai/test_model_routing.py tests/contracts/test_model_routing_contracts.py tests/model_routing_fixtures.py tests/service/test_model_gateway_service.py tests/service/test_model_routing_integration.py tests/service/test_model_routing_repository.py tests/foundation/test_architecture_check.py tools/architecture_check.py tools/core_api_contract.py`, `python -m mypy --follow-imports=silent services/core-api/src/research_observatory_core/model_gateway_contracts.py services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_registry_contracts.py services/core-api/src/research_observatory_core/model_registry_repository.py services/core-api/src/research_observatory_core/model_gateway_service.py services/core-api/src/research_observatory_core/model_routing.py services/core-api/src/research_observatory_core/model_routing_contracts.py services/core-api/src/research_observatory_core/model_routing_policy.py services/core-api/src/research_observatory_core/ports/model_gateway.py tools/architecture_check.py`, `python -c "import pathlib,sys,json; sys.path.insert(0,'tools'); from quality_check import load_scope; from build_manifest import repository_schema_paths; p=pathlib.Path('.').resolve(); print('Quality scope:',len(load_scope(p))); paths,errors=repository_schema_paths(p); expected=json.loads((p/'packaging/build-inputs.json').read_text())['schemaPaths']; assert not errors and set(paths)==set(expected); print('Schema inventory: PASS')"`, `python tools/architecture_check.py --repo .`, `python tools/backlog_views.py --repo . --check`, `git diff --check 5b283d3b26f3a7f6b8deb57e4ce0dfcf2be314d3 25327cece02112c97492b0f28af9ac3df1e19c40`, `python tools/plan_review_check.py --repo .`, `python -m unittest tests.foundation.test_planctl_wave_approval tests.foundation.test_agent_protocol_check`
+- Deferred checks: `Post-correction latency is unmeasured. The unchanged protected benchmark and broader performance/resource budgets remain slice/Wave qualification duties; neither owner acceptance nor this manifest establishes a new reviewed baseline or current p95 PASS.`, `Integrated CAP-07.S01 review/checkpoints and fresh complete W1 repository/deployment-profile, native Windows, packaging, accessibility, cross-capability restart/recovery/security and separate G1 approval remain outstanding.`, `Actual model/runtime installation, credentials and live provider/remote-consent execution remain later authorized slices, not W1 fixture evidence.`, `The previously disclosed unrelated selective_recalculation.py typing failure remains an explicit full-Wave quality obligation, not a waived or silently corrected result.`
+- Selection rationale: High-risk provider-neutral execution, public contracts and protected journal task. Select actual affected Core/policy, ownership, generated decoder, output promotion, cancellation, egress/cost, concurrency/recovery, architecture-control and persistence checks. Fresh command execution at a fixed commit; other agents kept source/HEAD immutable. No full deployment profile at task stage. The sole omitted benchmark is an explicit, conspicuous owner-accepted historical task-stage observation, not a concealed failure or generalized test exclusion.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/decoder_memo_review / `2026-09-06T16:03:33+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-07.S01.T03.review-R01.json` / `113a451d66b249cba1209949e76725b8f8a237a3f9acd5129d630d9deeba693e`
+
+**Review notes:** Approved CAP-07.S01.T03 at the exact frozen R01 candidate. Expanded review covers routing, current authority, publication, protected persistence/principals, recovery, contracts and architecture controls. The 59-path inventory, packet/evidence identities and all 14 fresh nonperformance check logs authenticate. Independent replay passed 44 F01-F04, Core-principal and protected-repository tests; no blocking finding remains. All pre-submission findings are preserved and closed without inventing controlled rounds. The owner's task-only acceptance applies to the historical 25.383200030773878 ms observation, which remains a strict benchmark FAIL. Successor latency and added publication-check cost are unmeasured; no current p95 PASS is asserted. Fresh slice/Wave performance and full qualification, integrated review and separate human G1 approval remain required.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/decoder_memo_review at `2026-09-06T16:03:33+00:00`
+
+**Latest notes:** Approved CAP-07.S01.T03 at the exact frozen R01 candidate. Expanded review covers routing, current authority, publication, protected persistence/principals, recovery, contracts and architecture controls. The 59-path inventory, packet/evidence identities and all 14 fresh nonperformance check logs authenticate. Independent replay passed 44 F01-F04, Core-principal and protected-repository tests; no blocking finding remains. All pre-submission findings are preserved and closed without inventing controlled rounds. The owner's task-only acceptance applies to the historical 25.383200030773878 ms observation, which remains a strict benchmark FAIL. Successor latency and added publication-check cost are unmeasured; no current p95 PASS is asserted. Fresh slice/Wave performance and full qualification, integrated review and separate human G1 approval remain required.
+
+**Currently open findings:** -
 
 ### SLICE-local-model-runtime-and-model-management (`CAP-07.S02`) - Local model runtime and model management
 

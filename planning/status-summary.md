@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 0db95fa75a45c3716bd0c84b4fb0ad7b5c795c456c71d2c4067055c1fe64be98
+source_sha256: b86a6a8a4f10e11a255a2da43eeda5cd8c4acb1210a1aad293967ca7729f95d6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,8 +52,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 253 |
-| `IN_PROGRESS` | 1 |
-| `DONE` | 66 |
+| `DONE` | 67 |
 | `DEFERRED` | 36 |
 
 ### Wave amendment lifecycle
@@ -620,6 +619,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S06.T05` | `append-only v1` | 1 | `-` | approved / agent:t05-r01-independent-reviewer | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
+| `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
 | `W1.A02.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A02.T02` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
 | `W1.A03.T01` | `append-only v1` | 2 | `-` | approved / b00-independent-reviewer | - |
@@ -641,7 +641,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 14/15 | 48/49 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 14/15 | 49/49 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -664,7 +664,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
-| CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 0/5 | 2/15 | `CAP-07.S01.T03` |
+| CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 0/5 | 3/15 | - |
 | CAP-evidence-verification (`CAP-08`) — Evidence schemas, extraction, verification, and adjudication | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-scholarly-graph-synthesis (`CAP-09`) — Scholarly graph, comparison sets, synthesis, and reproducibility | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-novelty-opportunities (`CAP-10`) — Novelty auditing, research opportunities, and plural research modes | `NONE` | `PENDING` | 0/7 | 0/21 | - |
@@ -697,9 +697,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-07.S01.T03` Implement routing, fallback, timeout, and circuit-breaker policy | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+No task is currently active.
 
 ## Linked corrective tasks
 

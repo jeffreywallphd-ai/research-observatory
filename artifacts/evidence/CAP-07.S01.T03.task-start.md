@@ -290,3 +290,17 @@ measurement of the corrected successor. Added publication-check cost remains
 unquantified, and post-correction performance qualification stays outstanding at
 slice/Wave scope under the unchanged benchmark. Independent route review by
 `agent:/root/registry_persistence_preflight` confirmed this limited applicability.
+
+## Task completion
+
+CAP-07.S01.T03 is now DONE following the controlled R01 approval at candidate
+`25327cece02112c97492b0f28af9ac3df1e19c40`. The
+[task evidence](CAP-07.S01.T03.json) records 14/14 fresh selected checks passing,
+including 109 unit and 40 protected functional integration cases. The
+[independent R01 review](CAP-07.S01.T03.review-R01.json) additionally replayed
+44 boundary cases and found no blocking findings.
+
+The owner's task-only acceptance preserves the historical strict benchmark
+failure and does not claim measured successor latency. Integrated slice review,
+fresh slice/Wave performance and full qualification, and the separate human G1
+approval remain outstanding; this task disposition does not complete W1.
