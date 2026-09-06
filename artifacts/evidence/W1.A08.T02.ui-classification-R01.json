@@ -1,0 +1,317 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-ui-restoration-disposition",
+  "taskId": "W1.A08.T02",
+  "baseCommit": "46e88d171795b76a2f1588d69756f4184c01a89b",
+  "candidateCommit": "a7f39e43c77055dc1c115dbd3b3529bd90518ac2",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "reviewedAt": "2026-09-06T03:34:02Z",
+  "disposition": "approved",
+  "taskDefinitionSha256": "673da8285a6b4d1d5a05664fd6d70708c84e6622af0e34dee5e8c21b870a7031",
+  "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+  "resumedUiFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "packages/ui-components/src/styles.css"
+  ],
+  "resumedUiCommits": [
+    "3432d6cd305abd907c3f8c0457d5c097e7bc1f0c",
+    "ddba5f5f21298f5f292a73eddee52ceff74f894f",
+    "497cca81efff033449a9b794af76d60f2f13e0d7",
+    "a7f39e43c77055dc1c115dbd3b3529bd90518ac2"
+  ],
+  "approvedTaskAllowsRestoration": true,
+  "authorityPreserved": true,
+  "formalTaskApproval": false,
+  "normativeRationale": "The immutable ECR-0007 definition of W1.A08.T02 is to qualify the actual functional product and prevent geometry drift, duplicated styling, responsive regressions and inaccessible visual states from satisfying W1 conformance. Its criteria 2 and 3 require shared, explained geometry and actual shell/panel/control measurements; criterion 4 requires independent live-product comparison and explicitly forbids visual variance from waiving accessibility or interaction contracts; criterion 5 requires affected checks and closure of blocking findings. The approved ECR-0008 execution contract explicitly returns F02 effective paragraph spacing and UX01 actual sidebar-to-footer geometry to this existing task after the exact paused-parent return, and changes only the task's effective presentation reference to approved 1.6. STYLE_GUIDE sections 1, 5, 6 and 9 permit defect restoration and require shared geometry, readable workflow controls, reachable navigation, visible focus and WCAG 2.2 AA. Against that authority, the four classified commits remove a viewport cap that violates actual footer alignment, remove additive browser paragraph margins at existing shared flow boundaries, apply the existing shared Button primitive to already-present Previous/Next/Return actions without changing their labels, conditions, targets or callbacks, and use existing approved theme tokens to repair proven contrast failures in current navigation, its numbered marker, the Application Settings eyebrow and the keyboard-visible skip link. These are bounded conformance corrections, not a new normative design: no reference, token definition, workflow order, route, domain state, security policy, native behavior, action authority, release rule or semantic 1.5 identity is introduced or changed. Where an illustrative reference accent would reproduce inaccessible normal text, the already-approved AA requirement and task criterion 4 govern; selecting an adequate existing palette token does not authorize a new theme system. Exact source-bound measurements, actual keyboard observations, adverse finding history and the separately delivered independent visual06 disposition support this classification. W1.A09's separately reviewed implementation remains inherited correction work, not retrospectively relabeled W1.A08.T02 implementation. The original task base and approved task definition remain unchanged, and this judgment neither adds forbidden experience_change/review_gate fields nor approves the task.",
+  "captures": {
+    "path": "artifacts/evidence/W1.A08.T02.captures-06/manifest.json",
+    "sha256": "0b0b4a573260d3a703ab6f1f6fdc4355fb52d405effe02edc5904bf5c6508b22",
+    "deliveryCommit": "9b96c7337c6cc26c02be2920b344857c2e018458"
+  },
+  "visualReview": {
+    "path": "artifacts/evidence/W1.A08.T02.visual-review-06.json",
+    "sha256": "bfcd82e9f5d5d03d4a35cab27a28d8c48058436e00a86ba57f6eb453232b5808",
+    "commit": "43a650043d87661982b6876e52c3246fb6aad77a"
+  },
+  "classificationBoundary": {
+    "checkedHead": "fb6e21c956bc01467a9fed7be0d382102a913fd4",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePublicationCommit": "0460b2af60643172504e1abe0f185e010f171700",
+    "sourceBlobs": {
+      "apps/desktop/src/app.css": "dfc3f9b92eec75f35f20899a6b1f141b004f46a0",
+      "apps/desktop/src/app/WorkflowNavigation.tsx": "4fcca745f0e765147f00a8ad56b14bb90ba72abe",
+      "packages/ui-components/src/styles.css": "7336f2ba28ef094b9e9f0e290e1f20e614d5e7de"
+    },
+    "originalBasePreserved": true,
+    "noExperienceChangeOrReviewGateAddedToTask": true,
+    "noSubsequentProductOrReferenceChangeObserved": true,
+    "changeKind": "defect-restoration",
+    "purpose": "Independent semantic classification for the existing opt-in resumed-amendment lane, not a substitute controller or an implementation-agent self-attestation.",
+    "postIntroductionControlCheck": "The complete restoration_classification_errors check requires this new record's real immutable introduction. It was not fabricated or claimed to pass before the record exists in Git; the root agent must run the supported gate after delivery."
+  },
+  "approvedAuthority": {
+    "taskTitle": "Qualify live-product styling conformance",
+    "taskObjective": "Add a deterministic verification boundary over the actual functional React desktop product that prevents copied-reference success, style duplication, geometry drift, responsive regressions, and inaccessible visual states from satisfying W1 styling conformance.",
+    "immutableTaskAcceptanceCriteria": [
+      "The conformance harness builds and exercises apps/desktop/product-dist with deterministic local adapters and representative states for every currently implemented W1 surface; it rejects a target that renders only copied design-reference HTML or lacks the functional product manifest.",
+      "A stable style-reuse check rejects inline styling, a second semantic-token source, unexplained raw spacing/control/card geometry, and materially repeated declaration groups while supporting a small reviewed allowlist for genuine page composition, visualization, and platform-specific needs.",
+      "Computed geometry checks cover application shell, page/section rhythm, panels/cards, forms/controls, tables, dialogs, notices, and action rows at 1440x900, 1280x720, and 720x450 effective viewports in light and dark themes with reduced motion, using documented semantic tolerances rather than screenshot hash equality.",
+      "Deterministic representative captures compare the live product's hierarchy, density, alignment, overflow, theme, focus, and state composition with the approved reference and receive independent visual disposition; accepted rendering variance is explicit and cannot waive accessibility or interaction contracts.",
+      "Affected shared-component, renderer, production-build, UI-reference, route/workflow, accessibility, visual, and performance checks pass; the independent task and W1.A08.S01 reviews close all blocking findings and retain full W1 qualification obligations."
+    ],
+    "authorityRecords": [
+      {
+        "amendmentId": "W1.A08",
+        "approval": {
+          "path": "planning/wave-amendment-approvals/W1.A08.json",
+          "sha256": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
+          "introductionCommit": "979486506a62b5dbf1b7a0af711079bdaa34cd44"
+        },
+        "packet": {
+          "commit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
+          "path": "planning/enabler-change-requests/ECR-0007.packet.json",
+          "sha256": "f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15",
+          "proposalPath": "planning/enabler-change-requests/ECR-0007.md",
+          "proposalSha256": "1225fbf8a06f937cd5fe8cf2e7f88d13e42c13aff7ce78ac27c4615173a78f5e"
+        },
+        "packetReview": {
+          "path": "planning/enabler-change-requests/ECR-0007.review-R02.json",
+          "sha256": "593eaea7e51134ba2482565dc4f8f0664b7633f9903bee91c9cb80cd2093a925",
+          "introductionCommit": "467f7baed641786d004b28ccd259538efc3f9952",
+          "result": "APPROVED"
+        }
+      },
+      {
+        "amendmentId": "W1.A09",
+        "approval": {
+          "path": "planning/wave-amendment-approvals/W1.A09.json",
+          "sha256": "08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c",
+          "introductionCommit": "fcf627b4c83af81d0c3472526477bc7aa68d819c"
+        },
+        "packet": {
+          "commit": "2160cc9917282d80848189dc9669fe3827979246",
+          "path": "planning/enabler-change-requests/ECR-0008.packet.json",
+          "sha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+          "proposalPath": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+          "proposalSha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560"
+        },
+        "packetReview": {
+          "path": "planning/enabler-change-requests/ECR-0008.review-R02.json",
+          "sha256": "8785f8a3b174e793d5080615ebe858d26fd10280db1f5d3163d8213b5925b2f5",
+          "introductionCommit": "56656807f9a051e6fd240950e2d0a45d2978caf2",
+          "result": "APPROVED"
+        }
+      }
+    ],
+    "effectiveReference": {
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+      "packageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+      "governedFileCount": 55,
+      "publicationCommit": "0460b2af60643172504e1abe0f185e010f171700",
+      "historicalParentReference": "RO-UI-ACADEMIC-MINIMAL-1.5",
+      "rationale": "The original reference remains authenticated at the ECR-0007 approval and original task base. Approved ECR-0008 publication replaces only the effective current presentation reference, through its specified publication metadata mapping. Original 1.5 packet strings, compatibility semantics and prior evidence are not rewritten.",
+      "clauses": [
+        {
+          "path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+          "lines": [
+            31,
+            57,
+            87,
+            97,
+            112
+          ],
+          "meaning": "Retains F02/UX01 for resumed W1.A08.T02; explicitly limits the effective reference overlay; requires actual short/long, theme, responsive and keyboard geometry proof."
+        },
+        {
+          "path": "design/ui-reference/STYLE_GUIDE.md",
+          "sections": [
+            "1",
+            "5",
+            "6",
+            "9"
+          ],
+          "meaning": "Permits restoration without redesign; defines shared geometry and workflow controls; requires actual sidebar/footer boundaries, effective child spacing, keyboard reachability and AA accessibility."
+        }
+      ]
+    },
+    "correctionReturn": {
+      "correctionId": "W1.A09",
+      "parentId": "W1.A08",
+      "pausedStateCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+      "adoptionCommit": "1a73207c4cc1c23ee7ffbdd33563821b5741bcb9",
+      "reactivationCommit": "0e21bddec5227539a1df64cf865acd629705f501",
+      "exactPausedParentReturnCompared": true,
+      "parentTaskOriginalBasePreserved": true,
+      "observedCorrectionStatus": "ADOPTED",
+      "observedParentTaskStatus": "IN_PROGRESS"
+    }
+  },
+  "perCommitDisposition": [
+    {
+      "commit": "3432d6cd305abd907c3f8c0457d5c097e7bc1f0c",
+      "paths": [
+        "apps/desktop/src/app.css",
+        "packages/ui-components/src/styles.css"
+      ],
+      "classification": "restoration",
+      "authority": [
+        "W1.A08.T02 criteria 2, 3 and 4",
+        "ECR-0008 retained F02/UX01 allocation",
+        "STYLE_GUIDE sections 5 and 6"
+      ],
+      "judgment": "Remove sidebar viewport max-height and its redundant narrow override so the actual shared surface reaches the content/footer boundary in side-by-side layout. Give existing shared paragraph flow containers zero default paragraph block margins so actual spacing follows the established gap. No duplicate surface, spacer, new token or new layout framework is added.",
+      "principalEvidence": "Retained failing geometry/flow characterization, corrected positive/count-sensitive measurements and genuinely short-shell fixture; current matrix06 and visual06 carry-forward rationale. Earlier checks are reused, not claimed as newly executed here."
+    },
+    {
+      "commit": "ddba5f5f21298f5f292a73eddee52ceff74f894f",
+      "paths": [
+        "apps/desktop/src/app/WorkflowNavigation.tsx"
+      ],
+      "classification": "restoration",
+      "authority": [
+        "W1.A08.T02 criteria 2, 3 and 4",
+        "STYLE_GUIDE sections 5, 6 and 9"
+      ],
+      "judgment": "Replace only already-present bare context buttons with the existing shared Button component. Labels, conditional rendering, type, disabled predicates, stage keys, return callback and supporting-tool authority remain unchanged. This restores canonical control geometry, density and focus rather than inventing navigation.",
+      "principalEvidence": "Visual02-F01 adverse record and visual03/04 contextual-control closure; six exact-source context captures and current matrix06 records of two context buttons, one enabled and one genuinely Tab-traversed per case. No claim that Previous is present in the first-step fixture."
+    },
+    {
+      "commit": "497cca81efff033449a9b794af76d60f2f13e0d7",
+      "paths": [
+        "apps/desktop/src/app.css"
+      ],
+      "classification": "restoration",
+      "authority": [
+        "W1.A08.T02 criteria 3 and 4",
+        "STYLE_GUIDE sections 6 and 9"
+      ],
+      "judgment": "Use existing brand-400 for enabled dark current-page/current-step labels and existing brand-600 for the numbered current marker. The selected-state predicates, workflow semantics, marker text and existing token values are unchanged. Proven sub-AA normal text is corrected under the existing accessibility requirement.",
+      "principalEvidence": "Visual03-F01 adverse ratios; navigation-captures-01 at this exact producer; visual04 independently inspected all twelve navigation PNGs and recomputed thirty direct text ratios. Visual06 retains the unchanged boundary without relabeling the accent fixture as new current-step proof."
+    },
+    {
+      "commit": "a7f39e43c77055dc1c115dbd3b3529bd90518ac2",
+      "paths": [
+        "apps/desktop/src/app.css"
+      ],
+      "classification": "restoration",
+      "authority": [
+        "W1.A08.T02 criteria 3 and 4",
+        "STYLE_GUIDE sections 1 and 9"
+      ],
+      "judgment": "Use existing brand-400 for the dark Application Settings eyebrow and brand-600 for the skip-link background. All labels, font sizes, geometry, target, reveal transform and actual keyboard behavior are preserved. This closes the two known accessible-text defects, not an intentional redesign of the settings page or application shell.",
+      "principalEvidence": "Visual05-F01 retained adverse disposition, actual pre-correction failing dark cases, exact-producer twelve accent captures and independently delivered visual06 closure. All twelve normal-text ratios exceed 4.5; dark eyebrow is 7.155254616:1 and dark skip is 5.060617222:1."
+    }
+  ],
+  "inheritedCorrectionDistinction": {
+    "inheritedCorrectionUiFiles": [
+      "apps/desktop/src/app/LocalServiceBoundary.tsx",
+      "apps/desktop/src/app/ProjectsWorkspace.tsx",
+      "apps/desktop/src/app/audit-lineage.conformance.json",
+      "apps/desktop/src/app/directoryPicker.ts",
+      "packages/ui-components/src/DirectoryPickerField.tsx",
+      "packages/ui-components/src/index.tsx",
+      "packages/ui-components/src/styles.css"
+    ],
+    "inheritedUiCommits": [
+      "5e91432244b6e3a458b14297e009d7c020790c7e",
+      "2327ab3788d829ae46fbc39a8b747d191047f1ed",
+      "3f4b2153a90eb29ee74c9f55f628eb3d15884922"
+    ],
+    "fullOriginalRangeUiFiles": [
+      "apps/desktop/src/app.css",
+      "apps/desktop/src/app/LocalServiceBoundary.tsx",
+      "apps/desktop/src/app/ProjectsWorkspace.tsx",
+      "apps/desktop/src/app/WorkflowNavigation.tsx",
+      "apps/desktop/src/app/audit-lineage.conformance.json",
+      "apps/desktop/src/app/directoryPicker.ts",
+      "packages/ui-components/src/DirectoryPickerField.tsx",
+      "packages/ui-components/src/index.tsx",
+      "packages/ui-components/src/styles.css"
+    ],
+    "reviewedCorrectionRanges": [
+      {
+        "baseCommit": "92175839dc92a736a6d5ad0330d13efb382701f1",
+        "candidateCommit": "7a46e91a4558d9286a94d21aa85b050f6323e286",
+        "changedPathCount": 165
+      },
+      {
+        "baseCommit": "cc1d0407e6882b724e628caa136dfe4b9569410c",
+        "candidateCommit": "a6a219ce0ec32bc96b151aad13c19c5646ec8db6",
+        "changedPathCount": 24
+      },
+      {
+        "baseCommit": "6730524c7fe19e2ba6f2500f367d8e6e5689bb2c",
+        "candidateCommit": "30357ec178cc1a57646b7fe64dca3ee7670756d2",
+        "changedPathCount": 75
+      },
+      {
+        "baseCommit": "cd4838e9c64fdbf3adb8f326781f95404a0c945d",
+        "candidateCommit": "6a078f982815e547a57f4b2c670e50661b2d0bf3",
+        "changedPathCount": 47
+      },
+      {
+        "baseCommit": "6a078f982815e547a57f4b2c670e50661b2d0bf3",
+        "candidateCommit": "6cb1514f2f2349e3e34e40e059986e635cd609cc",
+        "changedPathCount": 14
+      }
+    ],
+    "judgment": "Per-commit attribution covers the complete linear original-base range. Each inherited UI-changing commit is within exactly one authenticated W1.A09 task submission range before explicit W1.A08 reactivation. The T04 adverse and remediated ranges remain separate historical records; not every intermediate submission is called approved. Seven inherited UI paths and three resumed UI paths overlap at shared component styles, so the nine-path original-range union must not be replaced by the resumed three-file subset in the eventual UI-change contract. This classification grants no new authority to inherited W1.A09 implementation."
+  },
+  "verificationActuallyPerformed": [
+    {
+      "check": "Immutable task and approval binding",
+      "result": "PASS",
+      "details": "Authenticated the named W1.A08/W1.A09 approval records, unique introduction commits, exact packet/proposal bytes and separately bound independent packet-review ledgers. Recomputed the approved W1.A08.T02 definition hash with the existing materialization function and compared every immutable materialized field to the current task. Original base is unchanged; no experience_change or review_gate field was added."
+    },
+    {
+      "check": "Approved effective reference and retained historical reference",
+      "result": "PASS",
+      "details": "Ran the Git-bound reference_state check over all 55 governed current reference files, yielding exact package 8d7fdc7a. Verified one publication commit in the original-base range and used the existing narrow publication-content checker to authenticate proposal content plus permitted metadata substitutions. Compared original ECR-0007 reference bytes at approval and original task base. No aggregate historical validator or protected witness was read."
+    },
+    {
+      "check": "Return and complete UI attribution",
+      "result": "PASS",
+      "details": "Compared the full W1.A08 record at the packet-bound paused state and actual W1.A09 adoption: they are identical and PAUSED. Verified explicit subsequent activation with the original task base, current ADOPTED correction and IN_PROGRESS task. Reused the existing named correction-submission authenticator and restoration_segments checker to bind all historical UI commits, including intermediate/reverted paths, regular Git object types and exact linear ordering. The resulting resumed inventory is exactly the three listed paths and four listed commits."
+    },
+    {
+      "check": "Per-commit semantic inspection",
+      "result": "PASS",
+      "details": "Read all four exact product diffs and the approved normative clauses. Current product/reference bytes match the classified producer, with no later UI/reference-changing commit. Test, evidence and control-only changes are not relabeled as product implementation or a new reference approval."
+    },
+    {
+      "check": "Immutable visual and capture sequence",
+      "result": "PASS",
+      "details": "Authenticated the exact capture06 manifest to its sole introduction at 9b96c733 and visual06 to its sole later introduction at 43a65004. Visual06 is approved with findings [] and formalTaskApproval false, and binds this producer/reference/capture digest. Reused this reviewer's actual earlier verification of 108 matrix images, twelve accent images, 48 workspace plus six designated measurements, twelve independently recomputed accent ratios and direct twelve-PNG inspection. No new browser, screenshot, benchmark or test-suite run occurred for classification."
+    }
+  ],
+  "supportingEvidence": {
+    "accentCaptures": {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/manifest.json",
+      "sha256": "1c17871bb193be7499d7f1c2120d7bd28d0be9a25e09dbd142ba3964d40575c4",
+      "deliveryCommit": "9b96c7337c6cc26c02be2920b344857c2e018458",
+      "modality": "Actual compiled product with declared deterministic local adapters; owner-executed observer, independently authenticated/calculated/viewed in visual06. Not native/Core or ordinary-profile proof."
+    },
+    "priorVisualDispositions": [
+      {
+        "path": "artifacts/evidence/W1.A08.T02.visual-review-04.json",
+        "sha256": "66977f13c2991d0bfaeaf19e4afc504139ef21c9feb34333bd2f0df009e8b107",
+        "disposition": "bounded navigation approval, retained"
+      },
+      {
+        "path": "artifacts/evidence/W1.A08.T02.visual-review-05.json",
+        "sha256": "b4661a83f9c24fbd26e0312894c23dc08ffd47849f50f1f70bc1556d5549afe8",
+        "disposition": "changes-requested, retained; exact F01 closed append-only by visual06"
+      }
+    ]
+  },
+  "findings": [],
+  "retainedObligations": [
+    "This record classifies only these exact resumed UI changes as allowed restoration. It is not formal W1.A08.T02, slice, amendment-exit, adoption, release or W1 approval.",
+    "The root must deliver this new record separately and run the actual supported current-HEAD UI-change gate with the complete original-base contract. No introduction commit for this as-yet-uncommitted classification is invented.",
+    "Every task acceptance criterion still needs its own truthful commit-bound evidence, including affected test/build/accessibility/performance checks and formal independent task review. The existing independent slice, amendment-exit and complete W1 Windows qualification duties remain.",
+    "All prior captures, adverse visual/preflight findings and failed test/observation attempts remain immutable historical inputs. Known findings are closed through their exact follow-up evidence, not deleted or hidden by classification.",
+    "Any later UI or reference edit, even an edit later reverted, invalidates this producer-bound classification and requires a new independent record. Control-only source maintenance has its separate review obligation and receives no blanket exemption here.",
+    "No product, task definition, authority, existing evidence, privacy registry, Git/index/branch, remote or ordinary account state was changed. The excluded witness and sibling workspace were not accessed."
+  ]
+}
