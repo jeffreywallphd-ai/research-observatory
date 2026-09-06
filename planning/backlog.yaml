@@ -34053,7 +34053,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: W1.A08
+  active_amendment: null
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -39136,7 +39136,7 @@ wave_amendments:
     sha256: 9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960
     introduction_commit: 979486506a62b5dbf1b7a0af711079bdaa34cd44
   lifecycle:
-    status: ACTIVE
+    status: REVIEW
     history:
     - id: E01
       status: APPROVED
@@ -39169,6 +39169,12 @@ wave_amendments:
       actor: codex
       at: '2026-09-06T00:23:56+00:00'
       rationale: Activated the bounded amendment campaign.
+    - id: E06
+      status: REVIEW
+      actor: codex
+      at: '2026-09-06T04:30:20+00:00'
+      rationale: Both styling tasks and W1.A08.S01 independently approved; owner accepts outcome and defers optional cosmetics.
+        Request independent exit disposition only; W1 release remains pending.
   bootstrap:
     id: W1.A08.B00
     status: APPROVED
@@ -39194,7 +39200,7 @@ wave_amendments:
         is active. ECR authority, 491-page site, backlog views, UI reference, focused tests, hashes, ancestry, and diff hygiene
         pass; no product, reference, architecture, schema, or release change.
   campaign:
-    status: ACTIVE
+    status: REVIEW
     scope: wave-amendment
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -39203,12 +39209,9 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-04T20:53:50+00:00'
-    updated_at: '2026-09-06T00:23:56+00:00'
+    updated_at: '2026-09-06T04:30:20+00:00'
     pause_reason: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-06T00:23:56+00:00'
-      expires_at: '2026-09-07T00:23:56+00:00'
+    lease: null
   tasks:
   - id: W1.A08.T01
     amendment_id: W1.A08
@@ -41031,11 +41034,43 @@ wave_amendments:
             closed_finding_ids: []
       current_submission: null
   completion:
-    status: PENDING
+    status: REVIEW
     reviewer: null
     reviewed_at: null
-    evidence: []
-    notes: null
+    evidence:
+    - artifacts/evidence/W1.A08.exit.json
+    notes: Both styling tasks and W1.A08.S01 independently approved; owner accepts outcome and defers optional cosmetics.
+      Request independent exit disposition only; W1 release remains pending.
+    exit_review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex
+        submitted_at: '2026-09-06T04:30:20+00:00'
+        candidate_commit: 0fb59e8a751aff08046d7e149350d422acb0a94b
+        declared_candidate_commit: e3bdfe727257a895e82ae813f379180c09ea1e8a
+        branch: codex/w1-windows-local-runtime
+        evidence_reference:
+          type: amendment-exit-evidence
+          amendment_id: W1.A08
+          path: artifacts/evidence/W1.A08.exit.json
+          sha256: 8c80906905f6bde6d3b30e4f164ea2b6bfa236f6c7520f75d4a1c7cd90d44e6d
+          commit: 0fb59e8a751aff08046d7e149350d422acb0a94b
+        acceptance_criteria_sha256: f3920ef506cc977d12c7bff005467d127969ed83dbae4f074d4dfa75e6f17134
+        selected_checks:
+        - .venv/Scripts/python.exe -m unittest tests.desktop.test_product_style_check tests.desktop.test_product_layout_measurements
+          tests.desktop.test_desktop_app_check -v
+        - Recorded complete original-base public UI gate at b13113bf65630c70a7163fbd422194e2289b9db3
+        - Independent W1.A08.T02 formal R01 capture/style/provenance/performance checks
+        - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml review W1.A08.T02 --reviewer agent:window_launch_planning
+          --result approved --from artifacts/evidence/W1.A08.T02.review-R01.json
+        - .venv/Scripts/python.exe tools/backlog_views.py --repo . --check
+        - git diff --check
+        selected_checks_sha256: 6087756d962811ca42e40c3e86c4763413b4ba556038614062e6570aa7614fc3
+        prior_attempt_id: null
+        open_finding_ids: []
+        packet_sha256: a4f1f45c2b98a3a69e6fd7722a61baae14ab50b5ff2e9028d397dc851e73077c
 - id: W1.A09
   change_request_id: ECR-0008
   target_wave: W1

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 382701712b1763a25200839d1a91e3292f568f364d79385f62a30a4ab646590a
+source_sha256: f24f1e43adea180d7c88f9e26271602542c42017ccde0333664682c5b2216a5c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -47,7 +47,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
-| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ACTIVE` |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `REVIEW` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 
 ## Waves
@@ -1747,7 +1747,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A08.json` (`9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
@@ -1756,16 +1756,27 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E03` `ACTIVE` at `2026-09-04T20:53:50+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `PAUSED` at `2026-09-05T01:34:16+00:00` by codex: Preparing the user-requested inert correction packet for independently reproduced stale reference baseline. T02 remains BLOCKED; release the amendment lease without adopting A08, changing its authority, or restoring ordinary W1 scope.
 - `E05` `ACTIVE` at `2026-09-06T00:23:56+00:00` by codex: Activated the bounded amendment campaign.
+- `E06` `REVIEW` at `2026-09-06T04:30:20+00:00` by codex: Both styling tasks and W1.A08.S01 independently approved; owner accepts outcome and defers optional cosmetics. Request independent exit disposition only; W1 release remains pending.
 
 ### Amendment-exit review and adoption — W1.A08
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `a4f1f45c2b98a3a69e6fd7722a61baae14ab50b5ff2e9028d397dc851e73077c`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `0fb59e8a751aff08046d7e149350d422acb0a94b` / `e3bdfe727257a895e82ae813f379180c09ea1e8a` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-06T04:30:20+00:00`
+- Bound exit evidence: amendment `W1.A08` / `artifacts/evidence/W1.A08.exit.json` / `8c80906905f6bde6d3b30e4f164ea2b6bfa236f6c7520f75d4a1c7cd90d44e6d` / `0fb59e8a751aff08046d7e149350d422acb0a94b`
+- Acceptance-criteria SHA-256: `f3920ef506cc977d12c7bff005467d127969ed83dbae4f074d4dfa75e6f17134`
+- Selected-check SHA-256: `6087756d962811ca42e40c3e86c4763413b4ba556038614062e6570aa7614fc3`
+- Selected checks: `.venv/Scripts/python.exe -m unittest tests.desktop.test_product_style_check tests.desktop.test_product_layout_measurements tests.desktop.test_desktop_app_check -v`, `Recorded complete original-base public UI gate at b13113bf65630c70a7163fbd422194e2289b9db3`, `Independent W1.A08.T02 formal R01 capture/style/provenance/performance checks`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml review W1.A08.T02 --reviewer agent:window_launch_planning --result approved --from artifacts/evidence/W1.A08.T02.review-R01.json`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `git diff --check`
+- Prior round / replayed open findings: `-` / -
 
-**Latest completion notes:** -
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W1.A08.exit.json`
+
+**Latest completion notes:** Both styling tasks and W1.A08.S01 independently approved; owner accepts outcome and defers optional cosmetics. Request independent exit disposition only; W1 release remains pending.
 
 **Bound amendment-adoption checkpoints:**
 
