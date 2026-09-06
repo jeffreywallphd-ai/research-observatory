@@ -36,3 +36,7 @@ Desktop.ini
 
 # Repository-generated scratch output
 artifacts/tmp/
+
+# Raw machine reports can contain account and absolute-path information.
+/artifacts/bootstrap/bootstrap-report.json
+/artifacts/bootstrap/setup-verification.json
