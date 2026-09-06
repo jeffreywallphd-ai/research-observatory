@@ -253,27 +253,34 @@ def independent_review_hardening_errors(
 def additive_preimplementation_quality_scope_errors(repo: Path, commit: str, policy: dict[str, Any]) -> list[str]:
     """Allow only additive, non-UI Python inventory introduced with its source.
 
-    A quality inventory entry is not a UI gate implementation change when the
-    governed Python file is added in the same commit, lives under services or
-    tests, and the commit precedes every UI implementation commit.  Keep this
-    boundary deliberately narrower than ordinary reviewed gate hardening.
+    Retain the historical helper name, but apply this semantic boundary at every
+    commit position. Adding a new regular services/tests/tools Python file to
+    the inventory does not change UI authority. All other control changes still
+    require independently reviewed gate maintenance.
     """
 
     paths = commit_paths(repo, commit)
     if paths & GATE_CONTROL_PATHS != {"quality-scope.json"}:
-        return ["pre-UI quality inventory may change only quality-scope.json among UI gate controls"]
+        return ["additive quality inventory may change only quality-scope.json among UI gate controls"]
     if any(is_implementation_path(path, policy) for path in paths):
-        return ["pre-UI quality inventory cannot share a commit with UI implementation"]
+        return ["additive quality inventory cannot share a commit with UI implementation"]
     try:
+        if len(git(repo, "rev-list", "--parents", "-n", "1", commit).split()) != 2:
+            return ["additive quality inventory requires an unambiguous single-parent commit"]
         parent = resolve_commit(repo, f"{commit}^")
+        if tree_entry(repo, parent, "quality-scope.json") != tree_entry(repo, commit, "quality-scope.json"):
+            return ["additive quality inventory may not change the inventory file mode or type"]
+        for revision in (parent, commit):
+            if tree_entry(repo, revision, "quality-scope.json") not in {("100644", "blob"), ("100755", "blob")}:
+                return ["additive quality inventory requires regular quality-scope blobs"]
         before = json_object(blob(repo, parent, "quality-scope.json"), "parent quality scope")
         after = json_object(blob(repo, commit, "quality-scope.json"), "quality scope")
     except (UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
-        return [f"invalid pre-UI quality inventory: {exc}"]
+        return [f"invalid additive quality inventory: {exc}"]
     if {key: value for key, value in before.items() if key != "pythonFiles"} != {
         key: value for key, value in after.items() if key != "pythonFiles"
     }:
-        return ["pre-UI quality inventory may not change quality-scope metadata or governed roots"]
+        return ["additive quality inventory may not change quality-scope metadata or governed roots"]
     before_files = before.get("pythonFiles")
     after_files = after.get("pythonFiles")
     if (
@@ -283,27 +290,36 @@ def additive_preimplementation_quality_scope_errors(repo: Path, commit: str, pol
         or len(before_files) != len(set(before_files))
         or len(after_files) != len(set(after_files))
     ):
-        return ["pre-UI quality inventory requires unique non-empty Python file paths"]
+        return ["additive quality inventory requires unique non-empty Python file paths"]
     cursor = 0
     for path in after_files:
         if cursor < len(before_files) and path == before_files[cursor]:
             cursor += 1
     additions = set(after_files) - set(before_files)
     if cursor != len(before_files) or not additions or set(before_files) - set(after_files):
-        return ["pre-UI quality inventory must be strictly additive without reordering existing entries"]
+        return ["additive quality inventory must be strictly additive without reordering existing entries"]
     invalid = sorted(
         path
         for path in additions
         if path not in paths
         or not path.endswith(".py")
-        or not path.startswith(("services/", "tests/"))
+        or not path.startswith(("services/", "tests/", "tools/"))
+        or any(part in {"", ".", ".."} for part in path.split("/"))
+        or "\\" in path
         or path in GATE_CONTROL_PATHS
         or is_implementation_path(path, policy)
     )
     if invalid:
         return [
-            "pre-UI quality inventory additions must be same-commit non-UI services/tests Python files: " + invalid[0]
+            "additive quality inventory requires canonical same-commit non-UI services/tests/tools Python files: "
+            + invalid[0]
         ]
+    for path in sorted(additions):
+        if tree_entry(repo, parent, path) is not None or tree_entry(repo, commit, path) not in {
+            ("100644", "blob"),
+            ("100755", "blob"),
+        }:
+            return ["additive quality inventory source must be a newly added regular Git blob: " + path]
     return []
 
 
@@ -746,6 +762,8 @@ def application_activation_errors(
                 activation_errors.extend(maintenance_errors)
     if late_protected:
         for position in late_protected:
+            if not additive_preimplementation_quality_scope_errors(repo, commits[position], policy):
+                continue
             maintenance_errors = reviewed_preimplementation_maintenance_errors(
                 repo,
                 commits[position],

@@ -1,0 +1,53 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0020",
+  "title": "Recognize additive non-UI Python inventory independently of UI commit ordering",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "9b96c7337c6cc26c02be2920b344857c2e018458",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": "W1.A08.T02",
+    "taskStatus": "IN_PROGRESS",
+    "sourceSha256": {
+      "tools/ui_change_gate.py": "5faa9b74e826cce09d3de87e1aee6eee8c264a1a0d1377b6e2225092018e760e",
+      "tests/foundation/test_ui_change_gate.py": "0cd402df8f6770297f61351486129ea0411cece1b82dd5eaa45597c2a1cfd1df",
+      "docs/automation/design-first-ui-changes.md": "f731420d500be1e426c3b486732d8e824c98fbe0cf984a73d0c41e34ccf2d89b"
+    }
+  },
+  "trigger": {
+    "diagnosis": "The original-base W1.A08.T02 preflight finds that ecb76790937b00c35bc256418fffc457875b325d adds new privacy tools and their tests to Python inventory after earlier UI implementation. The guard only recognizes additive inventory before UI, and excludes tools. The change does not alter UI authority. No retroactive review or historical adoption may be invented.",
+    "atomicity": "No task submission or backlog, product, reference, amendment, Wave, gate, integration or remote mutation. Candidate changes only the existing guard, regression tests, its contract documentation and this maintenance record."
+  },
+  "authority": "GOV-MIG-0001 bounded Tier 2 maintenance. Recognize a narrow semantic non-control change, not an authority exemption. Preserve immutable task base, original approvals, all historical findings, and exact independent control review before adoption. Protected witness and excluded sibling remain untouched.",
+  "intendedDelta": {
+    "implementation": "Apply the existing additive-inventory predicate at each commit position, including after UI. Allow canonical newly introduced regular services/tests/tools Python sources only. Require a single-parent commit, unchanged inventory metadata/roots, unique entries and preserved existing order. No UI implementation or other UI gate control in the same commit. Preserve all other review requirements and examine intermediate commits even if later reverted.",
+    "failClosed": [
+      "No quality-scope metadata/root change, removal/reordering/duplication, pre-existing/missing/redirected source, noncanonical path, merge ambiguity, mixed UI/control change or net-only history validation.",
+      "No historical attestation, base reset, task/review/release approval, reference change or remote effect is introduced."
+    ],
+    "changedPaths": [
+      "docs/automation/design-first-ui-changes.md",
+      "planning/governance-migrations/GOV-MAINT-0020.json",
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "Evidence/control boundary. Run deterministic real-Git positive/negative inventory and ordering regressions, the affected UI guard module, scoped static checks, exact predecessor hashes and the actual additive historical commit. Renderer/platform/performance tests are unaffected and retained under their exact product producer; full W1.A08.T02 UI-contract validation follows independent adoption and visual classification.",
+    "testFirst": "Three new tests ran before implementation in 15.932 seconds: the late additive positive failed on tools/new_check.py; the negative matrix and add/revert rejection passed. After implementation all three passed in 21.499 seconds.",
+    "results": [
+      {"command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_ui_change_gate -v", "result": "passed", "detail": "46 tests passed in 138.885 seconds, including all prior ordinary, historical-maintenance, resumed-authority and real Git classification tests plus the three new inventory regressions."},
+      {"command": "Two new positive/negative inventory tests after the final inventory mode/type preservation check", "result": "passed", "detail": "2 tests passed in 20.223 seconds; 17 negative subcases remain denied. This final two-line restriction was added after the full module run."},
+      {"command": "Ruff check/format, scoped mypy and git diff --check", "result": "passed", "detail": "Guard/test lint, formatting and typing pass. All three frozen predecessor SHA-256 values match exact Git blobs."},
+      {"command": "Read-only additive inventory predicate over ecb76790937b00c35bc256418fffc457875b325d", "result": "passed", "detail": "Exact historical additive commit yields no inventory errors. This is not a full UI-contract or task approval claim; independent maintenance adoption and visual classification remain required."}
+    ]
+  },
+  "rollback": "Retain candidate and any adverse reviews append-only. Do not integrate or submit across an unmet maintenance review boundary. Correct only this generic predicate while preserving all existing authority.",
+  "reviewAttempts": [],
+  "review": null
+}

@@ -21,6 +21,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from ui_change_gate import (  # noqa: E402
     APPLICATION_INVENTORY_HARDENING_ENVELOPE,
     additive_preimplementation_quality_scope_errors,
+    application_activation_errors,
     automatic_base,
     immutable_record,
     independent_identity,
@@ -457,6 +458,136 @@ class UiChangeGateTests(unittest.TestCase):
             self.write_json(root / "quality-scope.json", scope)
             gate_addition = self.commit(root, "attempt gate inventory addition")
             self.assertTrue(additive_preimplementation_quality_scope_errors(root, gate_addition, policy))
+
+    def inventory_fixture(self, temporary: str) -> tuple[Path, str, dict[str, Any], dict[str, Any]]:
+        root, _, _ = self.prepare(temporary)
+        scope: dict[str, Any] = {
+            "schemaVersion": "1.0",
+            "documentType": "python-quality-scope",
+            "governedRoots": ["services", "tests", "tools"],
+            "pythonFiles": ["services/existing.py", "tests/existing.py"],
+        }
+        for path in [*scope["pythonFiles"], "tools/already_present.py"]:
+            source = root / path
+            source.parent.mkdir(parents=True, exist_ok=True)
+            source.write_text("EXISTING = True\n", encoding="utf-8")
+        self.write_json(root / "quality-scope.json", scope)
+        base = self.commit(root, "inventory baseline")
+        (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'UI';\n", encoding="utf-8")
+        self.commit(root, "earlier UI implementation")
+        policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+        return root, base, scope, policy
+
+    def test_late_additive_python_inventory_does_not_change_ui_authority(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, scope, policy = self.inventory_fixture(temporary)
+            for path in ["tools/new_check.py", "services/new.py", "tests/new.py"]:
+                (root / path).write_text("NEW = True\n", encoding="utf-8")
+                scope["pythonFiles"].append(path)
+            self.write_json(root / "quality-scope.json", scope)
+            head = self.commit(root, "add new non-UI Python inventory after UI")
+            self.assertEqual([], additive_preimplementation_quality_scope_errors(root, head, policy))
+            self.assertEqual(
+                [],
+                application_activation_errors(
+                    root,
+                    base,
+                    head,
+                    ["quality-scope.json"],
+                    {"changeKind": "approved-reference-implementation"},
+                    policy,
+                ),
+            )
+
+    def test_late_inventory_rejects_control_or_nonadditive_or_noncanonical_changes(self) -> None:
+        cases = (
+            "metadata",
+            "roots",
+            "removal",
+            "reorder",
+            "duplicate",
+            "missing-source",
+            "existing-source",
+            "gate-source",
+            "ui-source",
+            "mixed-gate",
+            "mixed-ui",
+            "non-python",
+            "outside-root",
+            "dot-segment",
+            "double-slash",
+            "symlink",
+            "merge",
+        )
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                root, _, scope, policy = self.inventory_fixture(temporary)
+                source_path = {
+                    "existing-source": "tools/already_present.py",
+                    "gate-source": "tools/ui_change_gate.py",
+                    "ui-source": "apps/desktop/src/extra.py",
+                    "non-python": "tools/new.txt",
+                    "outside-root": "other/new.py",
+                    "dot-segment": "tools/../tools/new.py",
+                    "double-slash": "tools//new.py",
+                }.get(case, "tools/new_check.py")
+                scope["pythonFiles"].append(source_path)
+                if case != "missing-source":
+                    source = root / source_path
+                    source.parent.mkdir(parents=True, exist_ok=True)
+                    source.write_text("NEW = True\n", encoding="utf-8")
+                if case == "metadata":
+                    scope["extra"] = True
+                elif case == "roots":
+                    scope["governedRoots"].append("other")
+                elif case == "removal":
+                    scope["pythonFiles"].pop(0)
+                elif case == "reorder":
+                    scope["pythonFiles"][:2] = reversed(scope["pythonFiles"][:2])
+                elif case == "duplicate":
+                    scope["pythonFiles"].append(source_path)
+                elif case == "mixed-gate":
+                    (root / "tools/ui_change_gate.py").write_text("GATE = True\n", encoding="utf-8")
+                elif case == "mixed-ui":
+                    (root / "apps/desktop/src/View.tsx").write_text(
+                        "export const View = () => 'more';\n", encoding="utf-8"
+                    )
+                self.write_json(root / "quality-scope.json", scope)
+                if case == "symlink":
+                    self.git(root, "add", "--all")
+                    oid = self.git(root, "hash-object", "-w", source_path)
+                    self.git(root, "update-index", "--add", "--cacheinfo", "120000", oid, source_path)
+                    self.git(root, "commit", "-m", "redirected inventory source")
+                    head = self.git(root, "rev-parse", "HEAD")
+                elif case == "merge":
+                    self.git(root, "switch", "-c", "side")
+                    self.commit(root, "side inventory")
+                    self.git(root, "switch", "main")
+                    self.git(root, "merge", "--no-ff", "side", "-m", "merge inventory")
+                    head = self.git(root, "rev-parse", "HEAD")
+                else:
+                    head = self.commit(root, "invalid inventory " + case)
+                self.assertTrue(additive_preimplementation_quality_scope_errors(root, head, policy))
+
+    def test_late_inventory_add_revert_cannot_hide_invalid_intermediate_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, scope, policy = self.inventory_fixture(temporary)
+            original = copy.deepcopy(scope)
+            scope["governedRoots"].append("ungoverned")
+            self.write_json(root / "quality-scope.json", scope)
+            self.commit(root, "invalid intermediate roots")
+            self.write_json(root / "quality-scope.json", original)
+            head = self.commit(root, "restore inventory net bytes")
+            self.assertTrue(
+                application_activation_errors(
+                    root,
+                    base,
+                    head,
+                    ["quality-scope.json"],
+                    {"changeKind": "approved-reference-implementation"},
+                    policy,
+                )
+            )
 
     def test_historical_quality_scope_hardening_requires_exact_immutable_approval(self) -> None:
         hardening = "1cd9deebe94fa2b667ad6b0030bd07ec45d1c6bb"

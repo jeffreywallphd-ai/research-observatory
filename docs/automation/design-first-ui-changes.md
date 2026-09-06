@@ -67,3 +67,13 @@ contract document. Active tasks in an adopted correction's returned parent selec
 their original base even before a UI contract exists, never an evidence-only
 `HEAD^` fallback. Git-bound approval records and the repository review process are
 the authority boundary, not cryptographic authentication of a person's identity.
+
+Strictly additive Python inventory is distinct from changing gate behavior. A
+single-parent commit may add canonical, newly introduced regular Python files
+under `services/`, `tests/` or `tools/` to `quality-scope.json`, before or after UI
+implementation. Existing entries retain their order; metadata and governed roots
+remain unchanged. The commit may not also change UI implementation or any other
+UI gate control. Every commit is checked, including intermediate changes later
+reverted. Missing, pre-existing or redirected sources, removal/reordering, and
+all other quality-scope changes still require the existing independent control
+maintenance process. This does not alter task or reference authority.
