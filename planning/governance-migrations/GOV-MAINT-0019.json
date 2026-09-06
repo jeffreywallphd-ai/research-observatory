@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0019",
+  "title": "Recognize an approved resumed amendment UI restoration range",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "3442794cea9ed1f3a29d86fb367c45060f45bdcf",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": "W1.A08.T02",
+    "taskStatus": "IN_PROGRESS",
+    "sourceSha256": {
+      "tools/ui_change_gate.py": "58f1c53a0f44520195dbd233bbf887ded6e4fef0b4389d154fbd3865d2434d2a",
+      "design/ui-change.schema.json": "4df0c2dcf432d048a98db1121611fe609a0e7711124c9edfa9a38b616ee6edb6",
+      "tests/foundation/test_ui_change_gate.py": "321c8a3ee8df0d3eefe8ddf9833476f15489d9003d9ee0ad3d049d9b42fcb128",
+      "docs/automation/design-first-ui-changes.md": "886997db394fc48e8f413407eff289f1fa36b62d9c6f482a146dc2e93f3c678a"
+    }
+  },
+  "trigger": {
+    "denial": "The flat UI evidence contract cannot represent a resumed immutable amendment task after its immediate, separately approved and adopted paused-parent correction. Original task base and full UI inventory must not be rewritten.",
+    "preflight": "artifacts/tmp/W1.A08.T02.ui-guard-preflight-01.md",
+    "atomicity": "No product, reference, task, amendment, Wave or gate mutation in this candidate. Preserve the pending visual and formal review boundaries. Supplemental observer artifacts may be authored concurrently but are not part of this candidate."
+  },
+  "authority": "Recognize existing Git-bound approvals and independent dispositions; grant no new product, security, experience, execution, release, integration or remote authority. Ordinary v1.0 rules remain unchanged. Do not traverse unrelated historical controllers, the protected witness, or the excluded sibling.",
+  "intendedDelta": {
+    "implementation": "Add one opt-in amendment-restoration evidence shape to the existing guard/schema. Authenticate immediate correction approval, publication, exact adoption/return/reactivation, immutable tasks and each UI commit. Retain full-range inventories, independent source-bound restorative classification and exact reviewed maintenance attestation.",
+    "failClosed": [
+      "No base reset, self-asserted approval, fabricated human review, immutable packet edit, or HEAD-parent fallback for an active resumed UI task.",
+      "Reject unsupported nested/competing corrections, ambiguous Git merges, incomplete attribution, changed authority and stale conformance inputs.",
+      "Retain independent review and real Git boundary tests before adoption."
+    ],
+    "changedPaths": [
+      "design/ui-change.schema.json",
+      "docs/automation/design-first-ui-changes.md",
+      "planning/governance-migrations/GOV-MAINT-0019.json",
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py"
+    ]
+  },
+  "verification": {
+    "status": "candidate checks; independent review and downstream full UI contract pending",
+    "riskAnalysis": "Evidence/control authority boundary: select existing ordinary guard tests unchanged, focused real Git ancestry/immutability/attribution negatives, exact live authority recognition, schema, lint, format and typing. Full product and Windows qualification are separate. The full activated UI contract cannot pass until this maintenance is independently adopted and the already performed visual observation has immutable delivery/classification records; do not treat that ordering as an exemption or fabricate a passing full guard.",
+    "results": [
+      {"command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_ui_change_gate -v", "result": "passed", "detail": "42 tests passed in 98.560 seconds. Includes all 36 prior ordinary tests unchanged, real Git segment/immutable-record/classification history checks, opt-in schema/automatic-base and strict boolean checks. The later current-hold-only remediation is separately tested below."},
+      {"command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_hold_rejects_inconsistent_current_authority -v", "result": "passed", "detail": "Pure current-state mutation table rejects terminal/paused lifecycle, wrong campaign state/scope/owner, missing/stolen lease, missing/duplicate/frozen/executing/unowned returned relation, wrong control-plane owner and competing active campaign. Valid current hold passes."},
+      {"command": "Ruff check/format and scoped mypy --follow-imports=skip for tools/ui_change_gate.py and tests/foundation/test_ui_change_gate.py", "result": "passed", "detail": "Both files pass with existing tools/Core/service-test module search paths. Initial test typing annotation issue was corrected before candidate commit."},
+      {"command": "Exact predecessor source SHA256 comparison and git diff --check", "result": "passed", "detail": "All four frozen source hashes match their immutable predecessor Git blobs; patch hygiene passes."}
+      ,{"command": "Read-only resumed_amendment_authority replay over original base46e88d17 through HEAD3442794c, followed by the preflight's one-field in-memory HEAD backlog substitution", "result": "passed", "detail": "Valid actual history passes: exact parent/correction packet approvals, five task submissions, exit/adoption/return/reactivation and immutable reference; inherited UI commits5e914322/2327ab37/3f4b2153 cover7paths and resumed3432d6cd/ddba5f5f cover3paths. The ADOPTED-current-parent mutation is now DENIED with current lifecycle/owner/lease/derived hold error. No file/Git mutation, task submission, full activated UI-contract PASS or platform proof is claimed."}
+    ],
+    "adversePreflight": {
+      "reviewer": "agent:/root/ui_guard_planning",
+      "draftPath": "artifacts/tmp/GOV-MAINT-0019.preflight-01.md",
+      "draftRawSha256": "af79552df19e606b06252f4f95690c308102f9005bed0b0f18f953981be6eb15",
+      "finding": "P2: the first working recognizer accepted a memory-only current W1.A08 lifecycle ADOPTED while its campaign/task stayed active; the returned kernel holdOwner was None but its result was discarded. The actual-history positive and invalid variant both passed. Historical/on-disk state was never mutated. This is not evidence of a successful task submission or unauthorized product edit.",
+      "correction": "Require current lifecycle/campaign ACTIVE, exact scope/owner/lease, sole active campaign, and the kernel's exact returned parent/correction/phase/holdOwner/parentFrozen relation. Preserve the independent adverse result; no controller or task state is added.",
+      "otherIncrementalNegatives": "Require literal boolean restoration judgments (not JSON 1/0); authenticate human publication actor, successor/supersedes and actual enabler-task schema; reject blocking/unclassified current visual findings. Git-backed classification tests mock only the separately tested full capture reader/measurement boundary, never claim renderer pixels from that fixture."
+    }
+  },
+  "rollback": "Keep candidate and adverse review history append-only. Do not submit W1.A08.T02 or integrate across this unmet review boundary; correct only the bounded recognizer without changing substantive authority.",
+  "reviewAttempts": [],
+  "review": null
+}

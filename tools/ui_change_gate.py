@@ -9,6 +9,7 @@ import json
 import os
 import re
 import subprocess
+from itertools import pairwise
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -93,6 +94,7 @@ GATE_CONTROL_PATHS = frozenset(
 )
 MAINTENANCE_CONTROL_PATHS = GATE_CONTROL_PATHS | frozenset(
     {
+        "docs/automation/design-first-ui-changes.md",
         "tests/desktop/test_ui_conformance.py",
         "tests/foundation/test_ui_change_gate.py",
     }
@@ -703,7 +705,11 @@ def application_activation_errors(
     policy: dict[str, Any],
 ) -> list[str]:
     errors: list[str] = []
-    if contract.get("changeKind") != "approved-reference-implementation":
+    if contract.get("changeKind") != "approved-reference-implementation" and not (
+        contract.get("schemaVersion") == "1.1"
+        and contract.get("changeKind") == "defect-restoration"
+        and isinstance(contract.get("amendmentAuthority"), dict)
+    ):
         return ["UI implementation cannot change its own design-first gate controls in the same range"]
     commits = git(repo, "rev-list", "--reverse", "--topo-order", f"{base}..{head}").decode("ascii").splitlines()
     protected_positions: list[int] = []
@@ -1052,10 +1058,16 @@ def automatic_base(repo: Path, head_ref: str) -> str:
         backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "planning/backlog.yaml")
     except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
         raise ValueError(f"cannot select UI change base from the authoritative backlog: {exc}") from exc
+    resumed_parents = {
+        str(item["correction"].get("id"))
+        for item in backlog.get("wave_amendments", [])
+        if isinstance(item.get("correction"), dict) and item.get("lifecycle", {}).get("status") == "ADOPTED"
+    }
     active = [
         task
         for task in backlog_tasks(backlog)
-        if task.get("status") in {"IN_PROGRESS", "REVIEW"} and isinstance(task.get("experience_change"), dict)
+        if task.get("status") in {"IN_PROGRESS", "REVIEW"}
+        and (isinstance(task.get("experience_change"), dict) or task.get("amendment_id") in resumed_parents)
     ]
     if len(active) > 1:
         identities = sorted(str(task.get("id")) for task in active)
@@ -1084,6 +1096,656 @@ def implementation_commits(repo: Path, base: str, head: str, policy: dict[str, A
 def commit_paths(repo: Path, commit: str) -> set[str]:
     raw = git(repo, "diff-tree", "--root", "--no-commit-id", "--name-only", "-z", "-r", "-m", commit, "--")
     return {canonical_path(item.decode("utf-8")) for item in raw.split(b"\0") if item}
+
+
+def restoration_segments(
+    repo: Path,
+    base: str,
+    head: str,
+    activation: str,
+    reviewed_ranges: list[dict[str, Any]],
+    policy: dict[str, Any],
+) -> dict[str, list[str]]:
+    """Attribute every UI-changing commit, never just the final path union.
+
+    Callers must authenticate the supplied correction submissions first. This
+    deliberately recognizes one linear correction/return, not a general DAG.
+    """
+    commits = git(repo, "rev-list", "--reverse", "--topo-order", "--parents", f"{base}..{head}").decode().splitlines()
+    previous = base
+    ordered: list[str] = []
+    for row in commits:
+        values = row.split()
+        if len(values) != 2 or values[1] != previous:
+            raise ValueError("resumed amendment UI history must be linear")
+        previous = values[0]
+        ordered.append(previous)
+    if not ordered or activation not in ordered or previous != head:
+        raise ValueError("resumed amendment lacks its exact activation in the original range")
+    positions = {commit: index for index, commit in enumerate([base, *ordered])}
+    for item in reviewed_ranges:
+        if not (
+            item["base"] in positions
+            and item["candidate"] in positions
+            and positions[item["base"]] < positions[item["candidate"]] < positions[activation]
+        ):
+            raise ValueError("correction UI submission range is outside its ordered segment")
+        if item["paths"] != sorted(changed_paths(repo, item["base"], item["candidate"])):
+            raise ValueError("correction submission changed paths differ from Git")
+    inherited: set[str] = set()
+    resumed: set[str] = set()
+    inherited_commits: list[str] = []
+    resumed_commits: list[str] = []
+    resumed_net = {path for path in changed_paths(repo, activation, head) if is_implementation_path(path, policy)}
+    for commit in ordered:
+        paths = {path for path in commit_paths(repo, commit) if is_implementation_path(path, policy)}
+        if not paths:
+            continue
+        parent = resolve_commit(repo, f"{commit}^")
+        object_errors = implementation_object_errors(repo, parent, commit, sorted(paths))
+        if object_errors:
+            raise ValueError(object_errors[0])
+        delta = git(repo, "diff", "--name-status", "--find-renames", parent, commit, "--", *sorted(paths))
+        if any(row[:1] in {b"R", b"C", b"T"} for row in delta.splitlines()):
+            raise ValueError("resumed amendment UI range does not support rename/copy/type changes")
+        if positions[commit] <= positions[activation]:
+            matches = [
+                item
+                for item in reviewed_ranges
+                if positions[item["base"]] < positions[commit] <= positions[item["candidate"]]
+            ]
+            if len(matches) != 1 or not paths.issubset(matches[0]["paths"]):
+                raise ValueError("UI commit has a gap, overlap or hidden path outside reviewed correction ranges")
+            inherited.update(paths)
+            inherited_commits.append(commit)
+        else:
+            if not paths.issubset(resumed_net):
+                raise ValueError("resumed UI commit contains a hidden add/revert outside its net inventory")
+            resumed.update(paths)
+            resumed_commits.append(commit)
+    if not inherited_commits or not resumed_commits:
+        raise ValueError("resumed amendment contract requires both correction and restoration UI segments")
+    return {
+        "inheritedCorrectionUiFiles": sorted(inherited),
+        "resumedUiFiles": sorted(resumed),
+        "inheritedUiCommits": inherited_commits,
+        "resumedUiCommits": resumed_commits,
+    }
+
+
+def immutable_record(
+    repo: Path, head: str, path: str, digest: str | None = None, *, evidence: bool = False
+) -> tuple[dict[str, Any], str]:
+    """Authenticate one named record; do not enumerate unrelated evidence."""
+    if tree_entry(repo, head, path) != ("100644", "blob"):
+        raise ValueError(f"authority record is not a regular Git file: {path}")
+    payload = blob(repo, head, path)
+    hash_payload = payload.replace(b"\r\n", b"\n").replace(b"\r", b"\n") if evidence else payload
+    if digest is not None and hashlib.sha256(hash_payload).hexdigest() != digest:
+        raise ValueError(f"authority record hash mismatch: {path}")
+    changes = git(repo, "log", "--format=%H", head, "--", path).decode().splitlines()
+    if len(changes) != 1 or tree_entry(repo, f"{changes[0]}^", path) is not None:
+        raise ValueError(f"authority record must have one immutable introduction: {path}")
+    return json_object(payload, path), changes[0]
+
+
+def amendment_record(backlog: dict[str, Any], identity: str) -> dict[str, Any]:
+    matches = [item for item in backlog.get("wave_amendments", []) if item.get("id") == identity]
+    if len(matches) != 1:
+        raise ValueError("amendment authority identity is absent or duplicated")
+    return matches[0]
+
+
+def approved_amendment_packet(repo: Path, head: str, amendment: dict[str, Any]) -> tuple[dict[str, Any], str, str]:
+    # This existing narrow helper checks only the named approval, packet,
+    # proposal/schema/review inputs. Never call aggregate historical validators.
+    from planctl import _approved_experience_packet_commit
+
+    identity = str(amendment["id"])
+    path = f"planning/wave-amendment-approvals/{identity}.json"
+    reference = amendment["approval_reference"]
+    if reference.get("path") != path:
+        raise ValueError("amendment approval selector differs from its canonical path")
+    approval, introduction = immutable_record(repo, head, path, reference.get("sha256"))
+    if reference.get("introduction_commit") != introduction or approval.get("status") != "APPROVED":
+        raise ValueError("amendment approval introduction/status differs")
+    packet_path = f"planning/enabler-change-requests/{amendment['change_request_id']}.packet.json"
+    packet = json_object(blob(repo, head, packet_path), packet_path)
+    packet_commit, errors = _approved_experience_packet_commit(repo, packet)
+    if errors or packet_commit is None:
+        raise ValueError("amendment packet authentication failed: " + "; ".join(errors))
+    if packet.get("proposedAmendmentId") != identity or packet.get("targetWave") != amendment.get("target_wave"):
+        raise ValueError("approved amendment packet identity differs")
+    from taskctl import materialized_amendment_task
+
+    approved_tasks = packet.get("taskInventory", [])
+    backlog_schema = json_object(blob(repo, head, "planning/backlog.schema.json"), "backlog schema")
+    task_validator = Draft202012Validator({"$ref": "#/$defs/enablerTask", "$defs": backlog_schema["$defs"]})
+    if [item.get("id") for item in approved_tasks] != [item.get("id") for item in amendment.get("tasks", [])]:
+        raise ValueError("approved amendment task inventory differs")
+    for approved, actual in zip(approved_tasks, amendment["tasks"], strict=True):
+        if list(task_validator.iter_errors(actual)):
+            raise ValueError("approved amendment task no longer satisfies the enabler task schema")
+        expected = materialized_amendment_task(identity, approved)
+        for field in (
+            "id",
+            "amendment_id",
+            "title",
+            "objective",
+            "dependencies",
+            "acceptance_criteria",
+            "verification_commands",
+            "packet_task_sha256",
+        ):
+            if actual.get(field) != expected[field]:
+                raise ValueError(f"immutable approved task field differs: {actual.get('id')}/{field}")
+    return packet, packet_commit, introduction
+
+
+def independent_identity(reviewer: object, owner: object) -> bool:
+    """Match supported local agent task names without claiming human identity proof."""
+    if not isinstance(reviewer, str) or re.fullmatch(r"agent:(?:/?[a-z0-9_-]+)(?:/[a-z0-9_-]+)*", reviewer) is None:
+        return False
+
+    def canonical(value: object) -> str:
+        return re.sub(r"[^a-z0-9]", "", str(value).removeprefix("agent:").casefold())
+
+    return canonical(reviewer) != canonical(owner)
+
+
+def correction_submission_ranges(repo: Path, head: str, correction: dict[str, Any]) -> list[dict[str, Any]]:
+    from taskctl import task_review_control_errors
+
+    ranges: list[dict[str, Any]] = []
+    for task in correction["tasks"]:
+        identity = str(task["id"])
+        attempts = (task.get("review_control") or {}).get("attempts") or []
+        if (
+            task.get("status") != "DONE"
+            or not attempts
+            or task_review_control_errors(task, None)
+            or task.get("review", {}).get("result") != "approved"
+        ):
+            raise ValueError("correction requires completed independently approved task submissions")
+        for index, attempt in enumerate(attempts, start=1):
+            packet, review = attempt["submission"], attempt["review"]
+            if not independent_identity(review.get("reviewer"), task.get("owner")):
+                raise ValueError("correction task review is not independent")
+            ledger_ref = attempt["ledger"]
+            ledger_path = f"artifacts/evidence/{identity}.review-R{index:02d}.json"
+            if ledger_ref.get("path") != ledger_path:
+                raise ValueError("correction task review path is not canonical")
+            ledger, introduction = immutable_record(repo, head, ledger_path, ledger_ref.get("sha256"), evidence=True)
+            expected = {
+                "task_id": identity,
+                "attempt_id": packet["id"],
+                "candidate_commit": packet["candidate_commit"],
+                "reviewer": review["reviewer"],
+                "result": review["result"],
+                "notes": review["notes"],
+                "findings": attempt["findings"],
+                "closures": attempt["closures"],
+            }
+            if any(ledger.get(key) != value for key, value in expected.items()):
+                raise ValueError("correction task ledger differs from its frozen review")
+            before = yaml_object(
+                blob(repo, resolve_commit(repo, f"{introduction}^"), "planning/backlog.yaml"), "review predecessor"
+            )
+            after = yaml_object(blob(repo, introduction, "planning/backlog.yaml"), "review projection")
+            prior_task = backlog_task(before, identity) or {}
+            reviewed_task = backlog_task(after, identity) or {}
+            if (
+                prior_task.get("status") != "REVIEW"
+                or (prior_task.get("review_control") or {}).get("current_submission") != packet
+                or (reviewed_task.get("review_control") or {}).get("attempts") != attempts[:index]
+                or not is_ancestor(repo, packet["candidate_commit"], introduction)
+            ):
+                raise ValueError("correction task review is not its actual frozen-submission transition")
+            reference = packet["evidence_reference"]
+            path = str(reference.get("path"))
+            if not re.fullmatch(re.escape(f"artifacts/evidence/{identity}") + r"(?:\.[A-Za-z0-9_-]+)*\.json", path):
+                raise ValueError("correction task evidence path is outside its exact namespace")
+            manifest, delivery = immutable_record(repo, head, path, reference.get("sha256"), evidence=True)
+            if (
+                not is_ancestor(repo, delivery, introduction)
+                or any(
+                    manifest.get(key) != packet.get(other)
+                    for key, other in (
+                        ("taskId", "task_id"),
+                        ("commit", "candidate_commit"),
+                        ("baseCommit", "base_commit"),
+                        ("changedFiles", "changed_paths"),
+                        ("branch", "branch"),
+                    )
+                    if key != "taskId"
+                )
+                or manifest.get("taskId") != identity
+            ):
+                raise ValueError("correction task evidence differs from its reviewed submission")
+            ranges.append(
+                {
+                    "base": packet["base_commit"],
+                    "candidate": packet["candidate_commit"],
+                    "paths": packet["changed_paths"],
+                }
+            )
+    return ranges
+
+
+def correction_exit_errors(repo: Path, head: str, correction: dict[str, Any], packet: dict[str, Any]) -> list[str]:
+    from taskctl import amendment_exit_submission_errors
+
+    identity = str(correction["id"])
+    completion = correction.get("completion") or {}
+    control = completion.get("exit_review_control") or {}
+    attempts = control.get("attempts") or []
+    if completion.get("status") != "APPROVED" or not attempts or control.get("current_submission") is not None:
+        return ["correction lacks completed independent exit qualification"]
+    errors: list[str] = []
+    open_findings: dict[str, dict[str, Any]] = {}
+    previous: dict[str, Any] | None = None
+    for index, attempt in enumerate(attempts, start=1):
+        submission, review = attempt["submission"], attempt["review"]
+        state_commit = review["reviewed_state_commit"]
+        state = yaml_object(blob(repo, state_commit, "planning/backlog.yaml"), "exit frozen state")
+        historical = amendment_record(state, identity)
+        if historical["completion"]["exit_review_control"][
+            "current_submission"
+        ] != submission or not independent_identity(review.get("reviewer"), correction["campaign"].get("owner")):
+            errors.append("correction exit does not bind an independently reviewed frozen state")
+        expected_path = f"artifacts/evidence/{identity}.exit-review-R{index:02d}.json"
+        if attempt["ledger"].get("path") != expected_path:
+            errors.append("correction exit ledger path is not canonical")
+            continue
+        ledger, introduction = immutable_record(
+            repo, head, expected_path, attempt["ledger"].get("sha256"), evidence=True
+        )
+        if not is_ancestor(repo, state_commit, introduction) or any(
+            ledger.get(key) != value
+            for key, value in {
+                "amendment_id": identity,
+                "attempt_id": submission["id"],
+                "reviewed_state_commit": state_commit,
+                "candidate_commit": submission["candidate_commit"],
+                "reviewer": review["reviewer"],
+                "result": review["result"],
+                "findings": attempt["findings"],
+                "closures": attempt["closures"],
+            }.items()
+        ):
+            errors.append("correction exit ledger identity, finding or candidate substitution")
+        introduced = amendment_record(
+            yaml_object(blob(repo, introduction, "planning/backlog.yaml"), "exit disposition"), identity
+        )
+        if introduced["completion"]["exit_review_control"]["attempts"] != attempts[:index]:
+            errors.append("correction exit review is not its actual introduced projection")
+        evidence_path = str(submission["evidence_reference"].get("path"))
+        if not evidence_path.startswith(f"artifacts/evidence/{identity}.exit") or not evidence_path.endswith(".json"):
+            errors.append("correction exit evidence is outside its namespace")
+            continue
+        immutable_record(repo, head, evidence_path, submission["evidence_reference"].get("sha256"), evidence=True)
+        errors.extend(
+            amendment_exit_submission_errors(
+                state,
+                historical,
+                packet,
+                submission,
+                expected_id=f"R{index:02d}",
+                expected_prior_id=previous["id"] if previous else None,
+                expected_prior_submission=previous,
+                expected_open_ids=sorted(open_findings),
+                repo=repo,
+                strict_state=True,
+            )
+        )
+        for closure in attempt["closures"]:
+            if closure["finding_id"] not in open_findings:
+                errors.append("correction exit closure does not name an open finding")
+            open_findings.pop(closure["finding_id"], None)
+        for finding in attempt["findings"]:
+            if finding["id"] in open_findings:
+                errors.append("correction exit finding identity is duplicated")
+            open_findings[finding["id"]] = finding
+        if review["result"] == "approved" and any(item.get("blocking") for item in open_findings.values()):
+            errors.append("correction exit approval retains a blocking finding")
+        previous = submission
+    if attempts[-1]["review"].get("result") != "approved":
+        errors.append("correction latest exit is not approved")
+    return errors
+
+
+def require_resumed_hold(
+    backlog: dict[str, Any],
+    parent: dict[str, Any],
+    correction_id: str,
+    owner: object,
+    projections: list[dict[str, Any]],
+) -> None:
+    """The current campaign and derived hold must agree, not just old anchors."""
+    identity = parent["id"]
+    campaign = parent.get("campaign") or {}
+    relation = [item for item in projections if item.get("correctionId") == correction_id]
+    expected_relation = {
+        "parentId": identity,
+        "correctionId": correction_id,
+        "phase": "returned",
+        "holdOwner": identity,
+        "parentFrozen": False,
+    }
+    active = [
+        item.get("id")
+        for item in backlog.get("wave_amendments", [])
+        if (item.get("campaign") or {}).get("status") in {"ACTIVE", "REVIEW"}
+    ]
+    if (
+        parent.get("lifecycle", {}).get("status") != "ACTIVE"
+        or campaign.get("status") != "ACTIVE"
+        or campaign.get("scope") != "wave-amendment"
+        or not isinstance(owner, str)
+        or not owner
+        or campaign.get("owner") != owner
+        or (campaign.get("lease") or {}).get("claimed_by") != owner
+        or backlog.get("control_plane", {}).get("active_amendment") != identity
+        or relation != [expected_relation]
+        or active != [identity]
+    ):
+        raise ValueError("resumed amendment current lifecycle, owner, lease and derived hold must agree")
+
+
+def resumed_amendment_authority(
+    repo: Path, base: str, head: str, contract: dict[str, Any], policy: dict[str, Any]
+) -> dict[str, Any]:
+    """Authenticate the bounded existing correction relation, without mutation.
+
+    Narrow planctl helpers currently resolve clean authority at HEAD, so this
+    opt-in lane intentionally requires HEAD. Legacy historical ranges do not.
+    """
+    from governance_kernel import project_paused_corrections, validate_returned_predecessor_history
+    from planctl import _adoption_transition_errors, _paused_predecessor_errors, _reference_publication_content_errors
+    from taskctl import amendment_adoption_checkpoints, amendment_adoption_reference_errors
+
+    if head != resolve_commit(repo, "HEAD") or contract.get("changeKind") != "defect-restoration":
+        raise ValueError("resumed amendment restoration requires current HEAD and defect-restoration")
+    authority = contract["amendmentAuthority"]
+    cache: dict[str, dict[str, Any]] = {}
+
+    def state(commit: str) -> dict[str, Any]:
+        if commit not in cache:
+            cache[commit] = yaml_object(blob(repo, commit, "planning/backlog.yaml"), "amendment state")
+        return cache[commit]
+
+    backlog = state(head)
+    task = backlog_task(backlog, contract["taskId"])
+    if task is None or not task.get("amendment_id") or task.get("base_sha") != base:
+        raise ValueError("resumed authority requires the original claimed amendment task/base")
+    parent = amendment_record(backlog, task["amendment_id"])
+    correction = amendment_record(backlog, authority["correctionId"])
+    projections = project_paused_corrections(backlog["wave_amendments"])
+    require_resumed_hold(backlog, parent, correction["id"], task.get("owner"), [dict(item) for item in projections])
+    wave_id = parent["target_wave"]
+    wave_amendments = [item for item in backlog["wave_amendments"] if item["target_wave"] == wave_id]
+    if wave_amendments[-2:] != [parent, correction] or "correction" in parent:
+        raise ValueError("resumed authority supports one immediate correction only")
+    parent_packet, parent_packet_commit, parent_approval = approved_amendment_packet(repo, head, parent)
+    packet, packet_commit, correction_approval = approved_amendment_packet(repo, head, correction)
+    binding = packet.get("authorityChain", {}).get("pausedPredecessor")
+    if (
+        not isinstance(binding, dict)
+        or binding != correction.get("correction")
+        or binding.get("id") != parent["id"]
+        or binding.get("packetCommit") != parent_packet_commit
+        or not is_ancestor(repo, parent_approval, base)
+    ):
+        raise ValueError("correction does not bind the existing approved paused parent")
+    pause = binding["effectiveStateCommit"]
+    adoption, activation = authority["adoptionCommit"], authority["reactivationCommit"]
+    anchors = [base, pause, packet_commit, correction_approval, adoption, activation, head]
+    if any(resolve_commit(repo, value) != value for value in anchors) or any(
+        left == right or not is_ancestor(repo, left, right) for left, right in pairwise(anchors)
+    ):
+        raise ValueError("resumed amendment anchors are not strictly ordered canonical ancestors")
+    paused = amendment_record(state(pause), parent["id"])
+    returned = amendment_record(state(adoption), parent["id"])
+    errors = _paused_predecessor_errors(repo, binding, correction["id"], returned_parent=returned)
+    errors.extend(_adoption_transition_errors(repo, correction["id"], adoption))
+    if errors:
+        raise ValueError("; ".join(errors))
+    if returned != paused or amendment_record(state(adoption), correction["id"]) != correction:
+        raise ValueError("correction adoption did not return the exact PAUSED parent or retained correction changed")
+    if correction["lifecycle"].get("status") != "ADOPTED":
+        raise ValueError("correction is not actually adopted")
+    active = amendment_record(state(activation), parent["id"])
+    prior_active = amendment_record(state(resolve_commit(repo, f"{activation}^")), parent["id"])
+    active_task = backlog_task(state(activation), task["id"]) or {}
+    if (
+        prior_active != returned
+        or active["lifecycle"].get("status") != "ACTIVE"
+        or active["campaign"].get("status") != "ACTIVE"
+        or active_task.get("status") != "IN_PROGRESS"
+        or active_task.get("base_sha") != base
+        or active_task.get("owner") != task.get("owner")
+        or active["campaign"].get("base_sha") != adoption
+    ):
+        raise ValueError("missing exact explicit parent activation and original task reopen")
+    for current in (active, parent):
+        validate_returned_predecessor_history(paused, current)
+        for field in ("id", "change_request_id", "target_wave", "kind", "approval_reference", "contributions"):
+            if current.get(field) != paused.get(field):
+                raise ValueError("resumed parent immutable authority/contribution changed")
+        current_task = next(item for item in current["tasks"] if item["id"] == task["id"])
+        paused_task = next(item for item in paused["tasks"] if item["id"] == task["id"])
+        for field in (
+            "packet_task_sha256",
+            "title",
+            "objective",
+            "dependencies",
+            "acceptance_criteria",
+            "verification_commands",
+            "base_sha",
+            "started_at",
+            "owner",
+            "branch",
+            "worktree",
+        ):
+            if current_task.get(field) != paused_task.get(field):
+                raise ValueError(f"resumed task immutable field changed: {field}")
+        prior_evidence = paused_task.get("evidence", [])
+        if current_task.get("evidence", [])[: len(prior_evidence)] != prior_evidence:
+            raise ValueError("resumed task removed prior evidence")
+    original_wave = next(item for item in state(pause)["waves"] if item["id"] == wave_id)
+    for commit in (adoption, activation, head):
+        document = state(commit)
+        wave = next(item for item in document["waves"] if item["id"] == wave_id)
+        if (
+            wave["campaign"] != original_wave["campaign"]
+            or document.get("gates") != state(pause).get("gates")
+            or document.get("capabilities") != state(pause).get("capabilities")
+        ):
+            raise ValueError("resumed amendment changed ordinary Wave/task/release authority")
+    adopted_wave = next(item for item in state(adoption)["waves"] if item["id"] == wave_id)
+    checkpoints = amendment_adoption_checkpoints(adopted_wave, correction["id"])
+    if len(checkpoints) != 1:
+        raise ValueError("correction adoption requires exactly one bound checkpoint")
+    references = [item for item in checkpoints[0]["evidence"] if item.get("amendment_id") == correction["id"]]
+    if len(references) != 1 or references[0].get("path") != f"artifacts/evidence/{correction['id']}.adoption.json":
+        raise ValueError("correction adoption evidence namespace differs")
+    _adoption_record, delivery = immutable_record(
+        repo, head, references[0]["path"], references[0].get("sha256"), evidence=True
+    )
+    if not is_ancestor(repo, delivery, adoption) or delivery == adoption:
+        raise ValueError("correction checkpoint evidence must precede adoption")
+    errors = amendment_adoption_reference_errors(repo, references[0], correction)
+    errors.extend(correction_exit_errors(repo, head, correction, packet))
+    if errors:
+        raise ValueError("; ".join(errors))
+    ranges = correction_submission_ranges(repo, head, correction)
+    segments = restoration_segments(repo, base, head, activation, ranges, policy)
+    for field in ("inheritedCorrectionUiFiles", "resumedUiFiles"):
+        if authority.get(field) != segments[field]:
+            raise ValueError(f"resumed authority {field} differs from per-commit attribution")
+
+    publication = contract["reference"]["approvalCommit"]
+    publication_state, errors = reference_state(repo, publication, policy)
+    errors.extend(_reference_publication_content_errors(repo, packet, packet_commit, publication))
+    current_reference, current_errors = reference_state(repo, head, policy)
+    errors.extend(current_errors)
+    reference_commits = (
+        git(repo, "log", "--format=%H", f"{base}..{head}", "--", policy["referenceRoot"]).decode().splitlines()
+    )
+    published_authority = publication_state.get("approval", {}).get("authority", {})
+    approval_record = json_object(blob(repo, head, correction["approval_reference"]["path"]), "correction approval")
+    publication_approval = publication_state.get("approval", {})
+    expected_approver = "human:" + str(approval_record.get("approvedBy")).removeprefix("human:")
+    expected_authority = {
+        "amendment_id": correction["id"],
+        "change_request_id": correction["change_request_id"],
+        "approval_record": correction["approval_reference"]["path"],
+        "approval_record_sha256": correction["approval_reference"]["sha256"],
+        "approval_record_introduction_commit": correction_approval,
+    }
+    if (
+        errors
+        or reference_commits != [publication]
+        or publication_state != current_reference
+        or published_authority != expected_authority
+        or publication_approval.get("approval_kind") != "human"
+        or publication_approval.get("approved_by") != expected_approver
+        or HUMAN_ID.fullmatch(expected_approver) is None
+        or publication_state.get("referenceId") != packet.get("governedExperience", {}).get("referenceId")
+        or publication_approval.get("supersedes") != parent_packet.get("governedExperience", {}).get("referenceId")
+        or not is_ancestor(repo, correction_approval, publication)
+        or any(
+            commit == publication or not is_ancestor(repo, publication, commit)
+            for commit in segments["inheritedUiCommits"] + segments["resumedUiCommits"]
+        )
+    ):
+        raise ValueError("correction reference publication/content/order is not authentic: " + "; ".join(errors))
+    # The superseded parent's package is read from its approved Git snapshot;
+    # it is never rewritten to make its old task look newly approved.
+    for reference in parent_packet.get("governedExperience", {}).get("files", []):
+        path = str(reference["path"])
+        if path.startswith(f"{policy['referenceRoot']}/"):
+            payload = blob(repo, parent_packet_commit, path)
+            if hashlib.sha256(payload).hexdigest() != reference["sha256"] or blob(repo, base, path) != payload:
+                raise ValueError("superseded parent reference no longer matches its approved original base")
+    return {
+        **segments,
+        "parentPacketCommit": parent_packet_commit,
+        "correctionPacketCommit": packet_commit,
+        "adoptionCommit": adoption,
+        "reactivationCommit": activation,
+        "taskDefinitionSha256": task["packet_task_sha256"],
+    }
+
+
+def restoration_classification_errors(
+    repo: Path, base: str, head: str, contract: dict[str, Any], scope: dict[str, Any], policy: dict[str, Any]
+) -> list[str]:
+    """Bind independent semantic judgment; hashes alone cannot classify a UX fix."""
+    reference = contract["amendmentAuthority"]["classification"]
+    identity = contract["taskId"]
+    path = str(reference["path"])
+    if not re.fullmatch(re.escape(f"artifacts/evidence/{identity}.ui-classification-R") + r"[0-9]{2}\.json", path):
+        return ["restoration classification must use the exact task namespace"]
+    record, introduction = immutable_record(repo, head, path, reference["sha256"])
+    candidate = str(record.get("candidateCommit"))
+    expected = {
+        "schemaVersion": "1.0",
+        "documentType": "independent-ui-restoration-disposition",
+        "taskId": identity,
+        "baseCommit": base,
+        "disposition": "approved",
+        "taskDefinitionSha256": scope["taskDefinitionSha256"],
+        "referencePackageSha256": contract["reference"]["packageSha256"],
+        "resumedUiFiles": scope["resumedUiFiles"],
+        "resumedUiCommits": scope["resumedUiCommits"],
+        "approvedTaskAllowsRestoration": True,
+        "authorityPreserved": True,
+        "formalTaskApproval": False,
+    }
+    if (
+        reference["commit"] != introduction
+        or not independent_identity(record.get("reviewer"), contract["implementationAgent"])
+        or any(record.get(key) != value for key, value in expected.items())
+        or record.get("approvedTaskAllowsRestoration") is not True
+        or record.get("authorityPreserved") is not True
+        or record.get("formalTaskApproval") is not False
+        or not str(record.get("normativeRationale") or "").strip()
+        or not is_ancestor(repo, scope["reactivationCommit"], candidate)
+        or candidate == introduction
+        or not is_ancestor(repo, candidate, introduction)
+    ):
+        return ["restoration lacks exact independent approved-task/source classification"]
+    # Reverted edits also invalidate an old classification. Later control-only
+    # commits are permitted, but any later UI or reference edit needs a new one.
+    for commit in git(repo, "rev-list", f"{candidate}..{head}").decode().splitlines():
+        if any(
+            is_implementation_path(item, policy) or item.startswith(f"{policy['referenceRoot']}/")
+            for item in commit_paths(repo, commit)
+        ):
+            return ["restoration classification is stale after a product/reference change"]
+    capture = record.get("captures") or {}
+    visual = record.get("visualReview") or {}
+    if not re.fullmatch(
+        re.escape(f"artifacts/evidence/{identity}.captures-") + r"[0-9]{2}/manifest\.json", str(capture.get("path"))
+    ) or not re.fullmatch(
+        re.escape(f"artifacts/evidence/{identity}.visual-review-") + r"[0-9]{2}\.json", str(visual.get("path"))
+    ):
+        return ["restoration classification capture/visual evidence namespace is invalid"]
+    manifest, capture_intro = immutable_record(repo, head, capture["path"], capture.get("sha256"))
+    disposition, visual_intro = immutable_record(repo, head, visual["path"], visual.get("sha256"))
+    visual_findings = disposition.get("findings")
+    if not isinstance(visual_findings, list) or any(
+        not isinstance(finding, dict) or finding.get("blockingVisualAcceptance") is not False
+        for finding in visual_findings
+    ):
+        return ["restoration visual disposition retains blocking or unclassified findings"]
+    producer = manifest.get("producer") or {}
+    bindings = disposition.get("bindings") or {}
+    if (
+        capture.get("deliveryCommit") != capture_intro
+        or visual.get("commit") != visual_intro
+        or not is_ancestor(repo, capture_intro, visual_intro)
+        or not is_ancestor(repo, visual_intro, introduction)
+        or producer.get("producerCommit") != candidate
+        or manifest.get("documentType") != "product-style-capture-bundle"
+        or manifest.get("schemaVersion") != "1.0"
+        or producer.get("referencePackageSha256") != expected["referencePackageSha256"]
+        or disposition.get("documentType") != "independent-product-visual-disposition"
+        or disposition.get("taskId") != identity
+        or disposition.get("disposition") != "approved"
+        or not independent_identity(disposition.get("reviewer"), contract["implementationAgent"])
+        or bindings.get("producerCommit") != candidate
+        or bindings.get("manifest") != capture["path"]
+        or bindings.get("manifestSha256") != capture["sha256"]
+        or bindings.get("captureDeliveryCommit") != capture_intro
+        or bindings.get("referencePackageSha256") != expected["referencePackageSha256"]
+    ):
+        return ["restoration visual/capture disposition is not bound to the classified producer/reference"]
+    for item in scope["resumedUiFiles"]:
+        entry = git(repo, "rev-parse", f"{candidate}:{item}").decode().strip()
+        if producer.get("inputGitBlobs", {}).get(item) != entry or blob(repo, candidate, item) != blob(
+            repo, head, item
+        ):
+            return ["restoration captures do not contain the classified current product inputs"]
+    from desktop_app_check import qualification_capture_contract, qualification_report_errors
+    from product_style_check import read_capture_bundle
+
+    # Reuse the existing confined, locked, delivery-bound PNG inventory reader;
+    # do not invent a weaker second capture validator in this authority guard.
+    authenticated = read_capture_bundle(
+        repo, repo / capture["path"], capture_intro, qualification_capture_contract(repo)
+    )
+    if authenticated != manifest:
+        return ["restoration capture snapshot differs from its immutable record"]
+    measurement_errors = qualification_report_errors(repo, authenticated["report"])
+    if measurement_errors:
+        return ["restoration capture measurements fail conformance: " + "; ".join(measurement_errors)]
+    if any(
+        is_implementation_path(item, policy) or item in GATE_CONTROL_PATHS for item in commit_paths(repo, introduction)
+    ):
+        return ["independent classification introduction must not implement product or gate changes"]
+    return []
 
 
 def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any]:
@@ -1222,7 +1884,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             "previous_reference_id": reference["previousReferenceId"],
             "implementation_agent": contract["implementationAgent"],
         }
-        if experience != expected_experience:
+        if ("amendmentAuthority" not in contract or experience is not None) and experience != expected_experience:
             errors.append("task experience_change must exactly match the UI evidence lineage")
         if task.get("status") not in {"IN_PROGRESS", "REVIEW"}:
             errors.append("UI evidence task must be active in IN_PROGRESS or REVIEW state")
@@ -1234,7 +1896,20 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
 
     reference_changed = sorted(path for path in changed if path.startswith(f"{policy['referenceRoot']}/"))
     kind = contract["changeKind"]
-    if kind == "intentional-design-change":
+    if "amendmentAuthority" in contract:
+        if task is not None and (
+            task.get("branch") != git(repo, "branch", "--show-current").decode().strip()
+            or (task.get("lease") or {}).get("claimed_by") != task.get("owner")
+        ):
+            errors.append("resumed UI task branch or lease owner differs from the current claim")
+        if not errors:
+            try:
+                scope = resumed_amendment_authority(repo, base, head, contract, policy)
+                report["rangeAuthority"] = scope
+                errors.extend(restoration_classification_errors(repo, base, head, contract, scope, policy))
+            except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+                errors.append(f"invalid resumed amendment UI authority: {exc}")
+    elif kind == "intentional-design-change":
         approval = state.get("approval", {})
         if base_state.get("referenceId") == state.get("referenceId"):
             errors.append("intentional UI change requires a newer approved reference than the base commit")

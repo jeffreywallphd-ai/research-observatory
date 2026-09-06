@@ -23,3 +23,47 @@ For a task branch, validate the whole task/PR range:
 The foundation profile uses `UI_CHANGE_BASE_SHA` when CI supplies the pull-request or push base. A manual dispatch requires an explicit immutable base SHA. Locally, the gate uses the sole active task's governed `base_sha` when that task carries `experience_change`, fails on ambiguous or invalid active-task state, and falls back to `HEAD^` only when no UI task is active. CI performs a full-history checkout so commit ordering and ancestry are verifiable. The pull-request template records the same lineage for reviewers, but prose or a checked box cannot replace the committed contract.
 
 The gate fails for a missing, extra, malformed, renamed, or stale contract; incomplete changed-file coverage; unknown or mismatched task metadata; forged reference hashes; a nonhuman or self approval; same-commit approval and implementation; intentional implementation without a newer approved reference; or restoration/conformance work that also modifies the reference.
+
+## Resumed amendment restoration (opt-in 1.1)
+
+An immutable amendment task may resume after one separately approved, executed,
+independently qualified and ADOPTED immediate paused-parent correction. It must
+not rewrite its original `base_sha` or add fields forbidden by its approved task
+schema. For this case only, a `schemaVersion: "1.1"` defect-restoration contract
+adds `amendmentAuthority`: the correction ID, exact adoption and explicit parent
+reactivation commits, separately attributed inherited/resumed UI file inventories,
+and a committed independent restoration-classification reference. Top-level
+`changedFiles` still covers the entire original-base range. A path may belong to
+both segments; the full inventory is not the resumed three-file-style subset.
+
+This lane authenticates the existing approval introductions, reviewed immutable
+packets/task definitions, exact paused parent, actual adoption checkpoint and
+independent task/exit ledgers. Every inherited UI-changing commit must occur in
+one reviewed correction submission range, after reference publication. The new
+reference must equal its reviewed proposal except enumerated publication metadata;
+the superseded reference is checked at its original Git snapshot. Return preserves
+the exact paused parent, and explicit activation preserves the original task base.
+Ordinary Wave work and release gates stay unchanged. Nested/competing corrections,
+unattributed edits, hidden add/revert paths, renames/type changes and merge ambiguity
+are not supported. Existing narrow authority helpers read clean current authority,
+so this opt-in contract requires `--head HEAD`; v1.0 historical validation is unchanged.
+
+The independent `independent-ui-restoration-disposition` record binds the task/base,
+immutable task-definition hash, classified producer commit, complete resumed UI
+commit/path lists, current reference package, paired product/reference capture
+manifest and independent visual disposition. It explicitly states whether the
+approved task allows the restoration and explains the normative basis; an agent's
+self-labelled fix or self-hashed manifest does not grant this judgment. A later UI
+or reference edit, even if reverted, requires fresh classification. Later control-only
+commits may retain it. Full capture validity and every task criterion remain the
+formal evidence/review responsibility; this record is not task approval.
+
+Only this authenticated lane substitutes approved amendment/conformance authority
+for the impossible amendment `experience_change`/`review_gate` fields. All ordinary
+v1.0 denials remain in force. Gate/schema/quality changes still require the existing
+exact control-only independent maintenance attestation, including late maintenance;
+there is no blanket exemption. The maintenance envelope includes this canonical
+contract document. Active tasks in an adopted correction's returned parent select
+their original base even before a UI contract exists, never an evidence-only
+`HEAD^` fallback. Git-bound approval records and the repository review process are
+the authority boundary, not cryptographic authentication of a person's identity.

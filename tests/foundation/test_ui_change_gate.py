@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import shutil
@@ -9,8 +10,10 @@ import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 import yaml
+from jsonschema import Draft202012Validator
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
@@ -19,14 +22,373 @@ from ui_change_gate import (  # noqa: E402
     APPLICATION_INVENTORY_HARDENING_ENVELOPE,
     additive_preimplementation_quality_scope_errors,
     automatic_base,
+    immutable_record,
+    independent_identity,
     independent_review_hardening_errors,
     provenance_reference_handoff_errors,
+    require_resumed_hold,
+    restoration_classification_errors,
+    restoration_segments,
     reviewed_historical_hardening_errors,
     validate,
 )
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def test_resumed_hold_rejects_inconsistent_current_authority(self) -> None:
+        parent: dict[str, Any] = {
+            "id": "W1.A08",
+            "lifecycle": {"status": "ACTIVE"},
+            "campaign": {
+                "status": "ACTIVE",
+                "scope": "wave-amendment",
+                "owner": "codex",
+                "lease": {"claimed_by": "codex"},
+            },
+        }
+        backlog: dict[str, Any] = {"control_plane": {"active_amendment": "W1.A08"}, "wave_amendments": [parent]}
+        projections = [
+            {
+                "parentId": "W1.A08",
+                "correctionId": "W1.A09",
+                "phase": "returned",
+                "holdOwner": "W1.A08",
+                "parentFrozen": False,
+            }
+        ]
+        require_resumed_hold(backlog, parent, "W1.A09", "codex", projections)
+        mutations: tuple[tuple[tuple[str, ...], object], ...] = (
+            (("lifecycle", "status"), "ADOPTED"),
+            (("lifecycle", "status"), "PAUSED"),
+            (("campaign", "status"), "REVIEW"),
+            (("campaign", "scope"), "wave"),
+            (("campaign", "owner"), "other"),
+            (("campaign", "lease", "claimed_by"), "other"),
+            (("campaign", "lease"), None),
+        )
+        for path, value in mutations:
+            with self.subTest(path=path, value=value):
+                mutated = copy.deepcopy(parent)
+                node = mutated
+                for part in path[:-1]:
+                    node = node[part]
+                node[path[-1]] = value
+                with self.assertRaisesRegex(ValueError, "current lifecycle"):
+                    require_resumed_hold(
+                        {**backlog, "wave_amendments": [mutated]}, mutated, "W1.A09", "codex", projections
+                    )
+        for relation in (
+            [],
+            projections * 2,
+            [{**projections[0], "holdOwner": None}],
+            [{**projections[0], "parentFrozen": True}],
+            [{**projections[0], "phase": "executing"}],
+        ):
+            with self.subTest(relation=relation), self.assertRaisesRegex(ValueError, "derived hold"):
+                require_resumed_hold(backlog, parent, "W1.A09", "codex", relation)
+        for document in (
+            {**backlog, "control_plane": {"active_amendment": "W1.A09"}},
+            {**backlog, "wave_amendments": [parent, {"id": "W1.A10", "campaign": {"status": "ACTIVE"}}]},
+        ):
+            with self.subTest(document=document), self.assertRaisesRegex(ValueError, "derived hold"):
+                require_resumed_hold(document, parent, "W1.A09", "codex", projections)
+
+    def test_classification_real_git_binding_and_stale_or_adverse_denials(self) -> None:
+        # The capture reader has its own real PNG/producer suite. Stub only that
+        # boundary here; this fixture tests actual Git records and classification,
+        # not pixels, renderer behavior, or a complete product qualification.
+        for finding in (None, {"blockingVisualAcceptance": True}, {"blockingVisualAcceptance": 0}, {}):
+            with self.subTest(finding=finding), tempfile.TemporaryDirectory() as temporary:
+                root, base, package = self.prepare(temporary)
+                policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+                identity = "W1.A08.T02"
+                source_path = "apps/desktop/src/View.tsx"
+                (root / source_path).write_text("export const View = () => 'restored';\n", encoding="utf-8")
+                candidate = self.commit(root, "restoration candidate")
+                capture_path = f"artifacts/evidence/{identity}.captures-01/manifest.json"
+                manifest = {
+                    "schemaVersion": "1.0",
+                    "documentType": "product-style-capture-bundle",
+                    "producer": {
+                        "producerCommit": candidate,
+                        "referencePackageSha256": package,
+                        "inputGitBlobs": {source_path: self.git(root, "rev-parse", f"{candidate}:{source_path}")},
+                    },
+                    "report": {"fixtureOnly": True},
+                }
+                self.write_json(root / capture_path, manifest)
+                capture_commit = self.commit(root, "synthetic capture boundary")
+                capture_sha = hashlib.sha256((root / capture_path).read_bytes()).hexdigest()
+                visual_path = f"artifacts/evidence/{identity}.visual-review-01.json"
+                self.write_json(
+                    root / visual_path,
+                    {
+                        "documentType": "independent-product-visual-disposition",
+                        "taskId": identity,
+                        "reviewer": "agent:/root/fixture_review",
+                        "disposition": "approved",
+                        "findings": [] if finding is None else [finding],
+                        "bindings": {
+                            "producerCommit": candidate,
+                            "manifest": capture_path,
+                            "manifestSha256": capture_sha,
+                            "captureDeliveryCommit": capture_commit,
+                            "referencePackageSha256": package,
+                        },
+                    },
+                )
+                visual_commit = self.commit(root, "synthetic independent visual record")
+                scope = {
+                    "taskDefinitionSha256": "d" * 64,
+                    "resumedUiFiles": [source_path],
+                    "resumedUiCommits": [candidate],
+                    "reactivationCommit": base,
+                }
+                classification_path = f"artifacts/evidence/{identity}.ui-classification-R01.json"
+                self.write_json(
+                    root / classification_path,
+                    {
+                        "schemaVersion": "1.0",
+                        "documentType": "independent-ui-restoration-disposition",
+                        "taskId": identity,
+                        "baseCommit": base,
+                        "candidateCommit": candidate,
+                        "reviewer": "agent:/root/fixture_review",
+                        "disposition": "approved",
+                        "taskDefinitionSha256": scope["taskDefinitionSha256"],
+                        "referencePackageSha256": package,
+                        "resumedUiFiles": [source_path],
+                        "resumedUiCommits": [candidate],
+                        "approvedTaskAllowsRestoration": True,
+                        "authorityPreserved": True,
+                        "formalTaskApproval": False,
+                        "normativeRationale": "Synthetic authority fixture, not an actual visual observation.",
+                        "captures": {"path": capture_path, "sha256": capture_sha, "deliveryCommit": capture_commit},
+                        "visualReview": {
+                            "path": visual_path,
+                            "commit": visual_commit,
+                            "sha256": hashlib.sha256((root / visual_path).read_bytes()).hexdigest(),
+                        },
+                    },
+                )
+                head = self.commit(root, "synthetic independent classification")
+                contract = {
+                    "taskId": identity,
+                    "implementationAgent": "agent:codex",
+                    "reference": {"packageSha256": package},
+                    "amendmentAuthority": {
+                        "classification": {
+                            "path": classification_path,
+                            "commit": head,
+                            "sha256": hashlib.sha256((root / classification_path).read_bytes()).hexdigest(),
+                        }
+                    },
+                }
+                with (
+                    patch("product_style_check.read_capture_bundle", return_value=manifest) as capture_reader,
+                    patch("desktop_app_check.qualification_capture_contract", return_value=[]),
+                    patch("desktop_app_check.qualification_report_errors", return_value=[]),
+                ):
+                    errors = restoration_classification_errors(root, base, head, contract, scope, policy)
+                    if finding is not None:
+                        self.assertTrue(any("findings" in error for error in errors), errors)
+                        capture_reader.assert_not_called()
+                    else:
+                        self.assertEqual([], errors)
+                        capture_reader.assert_called_once()
+                        original = (root / source_path).read_bytes()
+                        (root / source_path).write_text("export const View = () => 'unreviewed';\n", encoding="utf-8")
+                        self.commit(root, "unreviewed UI edit")
+                        (root / source_path).write_bytes(original)
+                        reverted = self.commit(root, "hide edit by restoring final bytes")
+                        errors = restoration_classification_errors(root, base, reverted, contract, scope, policy)
+                        self.assertTrue(any("stale" in error for error in errors), errors)
+
+    def test_restoration_judgment_requires_booleans_not_numeric_lookalikes(self) -> None:
+        base, candidate, introduction = "a" * 40, "b" * 40, "c" * 40
+        identity = "W1.A08.T02"
+        scope = {
+            "taskDefinitionSha256": "d" * 64,
+            "resumedUiFiles": ["apps/desktop/src/View.tsx"],
+            "resumedUiCommits": [candidate],
+            "reactivationCommit": base,
+        }
+        contract = {
+            "taskId": identity,
+            "implementationAgent": "agent:codex",
+            "reference": {"packageSha256": "e" * 64},
+            "amendmentAuthority": {
+                "classification": {
+                    "path": f"artifacts/evidence/{identity}.ui-classification-R01.json",
+                    "sha256": "f" * 64,
+                    "commit": introduction,
+                }
+            },
+        }
+        record = {
+            "schemaVersion": "1.0",
+            "documentType": "independent-ui-restoration-disposition",
+            "taskId": identity,
+            "baseCommit": base,
+            "candidateCommit": candidate,
+            "reviewer": "agent:/root/independent_review",
+            "disposition": "approved",
+            "taskDefinitionSha256": scope["taskDefinitionSha256"],
+            "referencePackageSha256": "e" * 64,
+            "resumedUiFiles": scope["resumedUiFiles"],
+            "resumedUiCommits": [candidate],
+            "approvedTaskAllowsRestoration": True,
+            "authorityPreserved": True,
+            "formalTaskApproval": False,
+            "normativeRationale": "Restore approved geometry.",
+        }
+        for field, value in (
+            ("approvedTaskAllowsRestoration", 1),
+            ("authorityPreserved", 1),
+            ("formalTaskApproval", 0),
+        ):
+            with (
+                self.subTest(field=field),
+                patch("ui_change_gate.immutable_record", return_value=({**record, field: value}, introduction)),
+                patch("ui_change_gate.is_ancestor", return_value=True),
+                patch("ui_change_gate.git") as git_read,
+            ):
+                errors = restoration_classification_errors(REPO, base, introduction, contract, scope, {})
+                self.assertTrue(any("independent approved-task/source classification" in error for error in errors))
+                git_read.assert_not_called()
+
+    def test_immutable_authority_record_rejects_rewrite_even_when_reverted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, _base, _package = self.prepare(temporary)
+            path = "artifacts/evidence/fixture-review.json"
+            record = {"disposition": "approved"}
+            self.write_json(root / path, record)
+            introduction = self.commit(root, "independent record")
+            self.assertEqual((record, introduction), immutable_record(root, introduction, path))
+            with self.assertRaisesRegex(ValueError, "hash mismatch"):
+                immutable_record(root, introduction, path, "0" * 64)
+            self.write_json(root / path, {"disposition": "changes-requested"})
+            self.commit(root, "rewrite record")
+            self.write_json(root / path, record)
+            reverted = self.commit(root, "restore bytes but not history")
+            with self.assertRaisesRegex(ValueError, "immutable introduction"):
+                immutable_record(root, reverted, path)
+
+    def test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks(self) -> None:
+        schema = json.loads((REPO / "design/ui-change.schema.json").read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        validator = Draft202012Validator(schema)
+        contract = self.contract("defect-restoration", "a" * 64, "b" * 40, task_id="W1.A08.T02")
+        contract.update(
+            {
+                "schemaVersion": "1.1",
+                "amendmentAuthority": {
+                    "correctionId": "W1.A09",
+                    "adoptionCommit": "c" * 40,
+                    "reactivationCommit": "d" * 40,
+                    "inheritedCorrectionUiFiles": ["apps/desktop/src/View.tsx"],
+                    "resumedUiFiles": ["apps/desktop/src/View.tsx"],
+                    "classification": {
+                        "path": "artifacts/evidence/W1.A08.T02.ui-classification-R01.json",
+                        "sha256": "e" * 64,
+                        "commit": "f" * 40,
+                    },
+                },
+            }
+        )
+        self.assertEqual([], list(validator.iter_errors(contract)))
+        invalid_fields: tuple[dict[str, Any], ...] = (
+            {"schemaVersion": "1.0"},
+            {"taskId": "CAP-01.S01.T01"},
+            {"changeKind": "approved-reference-implementation"},
+            {"amendmentAuthority": {}},
+            {"review_gate": "human-and-agent-review"},
+        )
+        for fields in invalid_fields:
+            with self.subTest(fields=fields):
+                self.assertTrue(list(validator.iter_errors({**contract, **fields})))
+        self.assertTrue(independent_identity("agent:/root/independent_review", "codex"))
+        for reviewer in ("codex", "agent:codex", "agent:co_dex", "human:owner", "agent:../../codex"):
+            self.assertFalse(independent_identity(reviewer, "codex"))
+
+    def test_resumed_amendment_selects_original_base_without_a_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _package = self.prepare(temporary)
+            self.write_yaml(
+                root / "planning/backlog.yaml",
+                {
+                    "capabilities": [],
+                    "wave_amendments": [
+                        {
+                            "id": "W1.A08",
+                            "tasks": [
+                                {
+                                    "id": "W1.A08.T02",
+                                    "amendment_id": "W1.A08",
+                                    "status": "IN_PROGRESS",
+                                    "base_sha": base,
+                                }
+                            ],
+                        },
+                        {"id": "W1.A09", "correction": {"id": "W1.A08"}, "lifecycle": {"status": "ADOPTED"}},
+                    ],
+                },
+            )
+            self.commit(root, "explicit resumed task")
+            (root / "only-evidence.txt").write_text("no product edit\n", encoding="utf-8")
+            head = self.commit(root, "later evidence")
+            self.assertEqual(base, automatic_base(root, head))
+
+    def test_restoration_segments_authenticate_each_real_git_commit(self) -> None:
+        policy = {
+            "implementationRoots": ["apps/desktop/src"],
+            "implementationExtensions": [".css"],
+            "ignoredImplementationSuffixes": [],
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.git(root, "init", "-b", "main")
+            self.git(root, "config", "user.name", "UI Gate Test")
+            self.git(root, "config", "user.email", "ui-gate@example.invalid")
+            self.git(root, "config", "core.autocrlf", "false")
+            source = root / "apps/desktop/src/app.css"
+            source.parent.mkdir(parents=True)
+            source.write_text("a { color: black; }\n", encoding="utf-8")
+            base = self.commit(root, "original claim")
+            source.write_text("a { color: blue; }\n", encoding="utf-8")
+            inherited = self.commit(root, "approved correction candidate")
+            (root / "activation.txt").write_text("explicit activation\n", encoding="utf-8")
+            activation = self.commit(root, "reactivation")
+            source.write_text("a { color: blue; margin: 0; }\n", encoding="utf-8")
+            head = self.commit(root, "resumed restoration")
+            path = "apps/desktop/src/app.css"
+            ranges = [{"base": base, "candidate": inherited, "paths": [path]}]
+            expected = {
+                "inheritedCorrectionUiFiles": [path],
+                "resumedUiFiles": [path],
+                "inheritedUiCommits": [inherited],
+                "resumedUiCommits": [head],
+            }
+            self.assertEqual(expected, restoration_segments(root, base, head, activation, ranges, policy))
+            for label, invalid in (("gap", []), ("overlap", ranges * 2), ("omission", [{**ranges[0], "paths": []}])):
+                with self.subTest(label=label), self.assertRaises(ValueError):
+                    restoration_segments(root, base, head, activation, invalid, policy)
+            hidden = source.with_name("hidden.css")
+            hidden.write_text(".hidden { color: red; }\n", encoding="utf-8")
+            self.commit(root, "unattributed add")
+            hidden.unlink()
+            reverted = self.commit(root, "hide addition in net diff")
+            with self.assertRaisesRegex(ValueError, "net inventory"):
+                restoration_segments(root, base, reverted, activation, ranges, policy)
+            self.git(root, "switch", "-c", "side", head)
+            (root / "side.txt").write_text("side\n", encoding="utf-8")
+            self.commit(root, "side history")
+            self.git(root, "switch", "main")
+            self.git(root, "merge", "--no-ff", "side", "-m", "ambiguous history")
+            merged = self.git(root, "rev-parse", "HEAD").strip()
+            with self.assertRaisesRegex(ValueError, "linear"):
+                restoration_segments(root, base, merged, activation, ranges, policy)
+
     def test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance(self) -> None:
         result = validate(
             REPO,
