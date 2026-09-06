@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0019",
   "title": "Recognize an approved resumed amendment UI restoration range",
-  "status": "candidate",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -61,6 +61,26 @@
     }
   },
   "rollback": "Keep candidate and adverse review history append-only. Do not submit W1.A08.T02 or integrate across this unmet review boundary; correct only the bounded recognizer without changing substantive authority.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0019.R01",
+      "reviewedCommit": "52aa46f979a6246ebbae7d5df30aeba15b3d9d99",
+      "reviewer": "agent:ui_guard_planning",
+      "reviewedAt": "2026-09-06T01:33:17Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0019.review-R01.json",
+      "sha256": "2f6a4954cece95dc96b18b3754ac82b0b2adb4a83a655bc1683543135c0f4398"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0019.R01",
+    "reviewedCommit": "52aa46f979a6246ebbae7d5df30aeba15b3d9d99",
+    "reviewer": "agent:ui_guard_planning",
+    "reviewedAt": "2026-09-06T01:33:17Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0019.review-R01.json",
+    "sha256": "2f6a4954cece95dc96b18b3754ac82b0b2adb4a83a655bc1683543135c0f4398"
+  }
 }
