@@ -1,0 +1,433 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-contribution-independent-review",
+  "sliceId": "W1.A08.S01",
+  "amendmentId": "W1.A08",
+  "capabilityId": "CAP-01",
+  "title": "Production styling alignment and live-product conformance",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "result": "approved",
+  "reviewedCompletionDeliveryCommit": "040174ff174db7fa5f2912c0d8de61cc4aefef3f",
+  "bindingCheckedAt": "2026-09-06T04:28:15Z",
+  "notes": "Independent commit-bound W1.A08.S01 accumulated review approves all five immutable slice criteria under the explicitly adopted presentation1.6 overlay. Both tasks are DONE and independently approved at the exact completion delivery. Fresh accumulated interaction/accessibility/style-reuse/responsive/geometry/adversarial tests pass 52/52 in 103.922 seconds, with complete 503-input and six-helper/test before/after equivalence. Existing exact-producer visual and performance evidence is reused with truthful source, modality, normalization and prior-history qualifications. No acceptance-bound finding remains. Owner cosmetic acceptance prevents optional design iteration from expanding scope, but is not used as a test waiver or substituted independent approval. This is slice contribution approval only, not amendment exit/checkpoint, adoption, ordinary Wave resume, W1/release qualification or human G1 approval.",
+  "independence": {
+    "implementationOwner": "codex",
+    "taskReviewers": [
+      {
+        "taskId": "W1.A08.T01",
+        "reviewer": "agent:t01-r02-independent-reviewer"
+      },
+      {
+        "taskId": "W1.A08.T02",
+        "reviewer": "agent:window_launch_planning"
+      }
+    ],
+    "statement": "This reviewer did not author product CSS/TS, production/native behavior, task definitions or controllers. It authored bounded independent visual/classification/control dispositions and supplemental observation instrumentation, and now runs independently selected unchanged tests. Observation scripts were separately inspected/delivered before use; their source-bound images are not a self-authored product implementation or task-owner approval. T01 and the final T02 formal task disposition were authored by other independent reviewers. Only this new canonical contribution review is authored for this completion subtask."
+  },
+  "authority": {
+    "slicePacketPath": "planning/enabler-change-requests/ECR-0007.packet.json",
+    "approvedPacketCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
+    "packetRawSha256": "f361be09e4d2d61f0ee4e0bb1236e06bfb1fa765e9ba8145bdb4b3a918d54d15",
+    "sliceCriterionCount": 5,
+    "overlayPacketPath": "planning/enabler-change-requests/ECR-0008.packet.json",
+    "overlayApprovedCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "overlayPacketRawSha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+    "overlayContract": "ECR-0008.execution-01 explicitly changes only the effective current presentation reference for A08.T02 criteria 1/3/4/5, A08.S01/exit and later W1 qualification; it does not rewrite ECR-0007, retrospectively relabel T01 or semantic1.5, close F02/UX01 by declaration, or waive existing checks.",
+    "effectiveReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "effectiveReferencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "executionOverlay": {
+      "path": "planning/enabler-change-requests/ECR-0008.execution-01.md",
+      "approvedCommit": "2160cc9917282d80848189dc9669fe3827979246",
+      "rawSha256": "f4c349d002d904d9de02007d25049880f2a94f86809b86c2787743cfff690560"
+    },
+    "approvedSliceAcceptanceCriteria": [
+      "Every currently implemented W1 desktop surface uses the approved token scale and a coherent hierarchy for shell, page, section, panel, form, table, dialog, notice, and action spacing at desktop, compact-desktop, and 200%-effective viewports.",
+      "Shared semantic primitives own common geometry once wherever reuse is effective; page-specific selectors express only genuine composition differences, and production sources contain no inline styling or undocumented duplicate/raw-geometry exception.",
+      "The functional React/Tauri frontend is checked directly for computed geometry, responsive behavior, light/dark themes, reduced motion, accessibility, interaction preservation, and representative visual composition; rendering copied reference HTML alone cannot satisfy the gate.",
+      "RO-UI-ACADEMIC-MINIMAL-1.5 remains byte-identical and conformance is semantic/tolerance-based rather than a pixel-identical requirement for illustrative copy or composition.",
+      "Both tasks and the accumulated slice receive independent commit-bound review with all blocking findings closed before amendment exit and the W1 experience/quality checkpoint."
+    ],
+    "applicableVerificationObligation": "At S01 review, run accumulated interaction, accessibility, maintainability, responsive, visual, performance, and adversarial checks for the credible experience risk surface; record an experience/quality integration checkpoint at amendment exit.",
+    "referenceOverlayQualification": "Original ECR-0007 text and T01's historical1.5 approval are not rewritten. The previously independently reviewed/adopted W1.A09 correction supplies the explicit effective1.6 overlay; it did not itself close F02/UX01. Those restoration findings are supported here by A08's current geometry/interaction/visual proof.",
+    "originalTaskDefinitionsUnchanged": true,
+    "historicalAuthorityScope": "Existing approved authority/reference/classification and own prior W1.A09 contribution/exit/return observations are reused; no protected historical-witness content validator or broad authority-chain reconstruction is rerun."
+  },
+  "completionStateBinding": {
+    "commit": "040174ff174db7fa5f2912c0d8de61cc4aefef3f",
+    "soleParent": "bbdceeb7f4ea17417db4b72ffd3e494652520fa7",
+    "exactChangedPaths": [
+      "artifacts/evidence/W1.A08.T02.review-R01.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/status-summary.md"
+    ],
+    "backlogGitBlob": "457382e35a2607e02054a88f2f70b1bd7f7687c6",
+    "backlogRawSha256": "382701712b1763a25200839d1a91e3292f568f364d79385f62a30a4ab646590a",
+    "task01UnchangedAcrossDelivery": true,
+    "bothTasksDone": true,
+    "bothLatestReviewsApproved": true,
+    "bothLeasesCleared": true,
+    "noProductOrTestReferenceCheckerChange": "The exact completion commit changes only the new T02 ledger, backlog and two generated views; the prior submission likewise changed only its manifest/backlog/views. The checked product and qualification sources remain those independently tested before submission delivery."
+  },
+  "taskBindings": [
+    {
+      "taskId": "W1.A08.T01",
+      "status": "DONE",
+      "review": {
+        "reviewer": "agent:t01-r02-independent-reviewer",
+        "result": "approved",
+        "reviewed_at": "2026-09-05T00:46:34+00:00"
+      },
+      "definitionSha256": "af5fcfca8f2c2302ede9ddbd334e7bb40af2fde351c4a640cddeb51e26825d7b",
+      "baseCommit": "98d6612d0eb64482d92ea9f754ddcee22b8b79b9",
+      "candidateCommit": "455546efec1cf972dd0713664c4a130aba1478fb",
+      "submissionId": "R02",
+      "submissionPacketSha256": "7b0a3ca8c4f328e466a3cccc321af47ba017f9b54860b1aa2191807870d6be6f",
+      "evidence": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W1.A08.T01.remediation-01.json",
+        "sha256": "57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab",
+        "commit": "455546efec1cf972dd0713664c4a130aba1478fb",
+        "recorded_at": "2026-09-05T00:42:22+00:00"
+      },
+      "ledger": {
+        "path": "artifacts/evidence/W1.A08.T01.review-R02.json",
+        "sha256": "792770c30e5ac7d5af02f36fa21742a9d936c30437a13a41c2d7240a62762101"
+      },
+      "closures": [
+        {
+          "finding_id": "W1.A08.T01-R01-F01",
+          "disposition": "fixed",
+          "evidence": "Independent source review and 13 style-analyzer tests verify normalized material declaration duplicates, selector specificity, raw semantic geometry, undefined/duplicate custom properties, canonical-token authority, physical direction, and renderer styling escapes are enforced. Generic repeated groups are consolidated; all ten remaining exact raw-geometry exceptions have bounded composition/accessibility rationale and stale/missing exceptions fail. The live analyzer passes without duplicate-group or specificity suppression."
+        },
+        {
+          "finding_id": "W1.A08.T01-R01-F02",
+          "disposition": "fixed",
+          "evidence": "The independently replayed built-product matrix covers every named T01 geometry category and required representative state, including actual both-theme token application, reduced motion, all three named/focused scrollable tables with padding and 38/44 px row minima, dense audit and long diagnostics, lock/recovery, errors/warnings/empty states, and dialog focus/contained scrolling at measured 200% text. Zoom-before-open and normal/enlarged valid 80-character profile fixtures directly prove the incremental header reflow correction without masking overlap. The independent report exactly matches final retained 07/08."
+        }
+      ]
+    },
+    {
+      "taskId": "W1.A08.T02",
+      "status": "DONE",
+      "review": {
+        "reviewer": "agent:window_launch_planning",
+        "result": "approved",
+        "reviewed_at": "2026-09-06T04:20:51+00:00"
+      },
+      "definitionSha256": "673da8285a6b4d1d5a05664fd6d70708c84e6622af0e34dee5e8c21b870a7031",
+      "baseCommit": "46e88d171795b76a2f1588d69756f4184c01a89b",
+      "candidateCommit": "b13113bf65630c70a7163fbd422194e2289b9db3",
+      "submissionId": "R01",
+      "submissionPacketSha256": "8b072feeff0a2d13a3cc5a49959684552bc395ca2762634d1d1151b0287e4d89",
+      "evidence": {
+        "type": "criterion-manifest",
+        "path": "artifacts/evidence/W1.A08.T02.json",
+        "sha256": "54c456d6d472e791e1645636c0e6550feb971928130a69868a64caf5c402644d",
+        "commit": "b13113bf65630c70a7163fbd422194e2289b9db3",
+        "recorded_at": "2026-09-06T04:11:10+00:00"
+      },
+      "ledger": {
+        "path": "artifacts/evidence/W1.A08.T02.review-R01.json",
+        "sha256": "088cdca4c1e0ad888a20367428178d6e5aa0e88e8589575e3f51930a46b14ec8"
+      },
+      "closures": []
+    }
+  ],
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "criterion": "Every currently implemented W1 desktop surface uses the approved token scale and a coherent hierarchy for shell, page, section, panel, form, table, dialog, notice, and action spacing at desktop, compact-desktop, and 200%-effective viewports.",
+      "result": "approved",
+      "rationale": "PASS. Approved T01's shared token-driven shell, page, section, panel/form/table/dialog/notice/action consolidation is exercised as an integrated current product. The independent 52-test accumulated union includes the full functional renderer, measured actual geometry and all three viewport/theme cases. Its complete 503-input producer snapshot and six test/helper hashes match before/after. Existing matrix06 contains 48 workspace and six designated product/reference cases; previously independently inspected source-bound visual evidence is reused, not recaptured. Effective child margins and actual sidebar/footer continuity are directly tested rather than inferred from declared gap or height."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "Shared semantic primitives own common geometry once wherever reuse is effective; page-specific selectors express only genuine composition differences, and production sources contain no inline styling or undocumented duplicate/raw-geometry exception.",
+      "result": "approved",
+      "rationale": "PASS. Fresh style-analysis and adversarial tests reject material normalized declaration duplication, excess specificity, alternate/raw geometry, inline/CSS-in-JS escapes, token defects and missing/stale exception records. Shared semantic primitives own paragraph flow and action controls, while exact reviewed exceptions represent composition/accessibility boundaries. The current analyzer's 283-rule/ten-exception passing state is supported by negative cases, not merely a passing stylesheet. No new style exemption or token source is authorized."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "The functional React/Tauri frontend is checked directly for computed geometry, responsive behavior, light/dark themes, reduced motion, accessibility, interaction preservation, and representative visual composition; rendering copied reference HTML alone cannot satisfy the gate.",
+      "result": "approved",
+      "rationale": "PASS. Fresh accumulated tests run the actual built React frontend with explicitly declared deterministic native/Core adapters; they test current-projection interactions, cancellation/late results/recovery distinctions, accessible names, focus/keyboard/scroll, effective geometry, themes, reduced motion and zoom/reflow. Prior real source-bound visual observations and independently authenticated/recomputed clean-producer performance establish the remaining integrated experience risk surface. Actual current-step observer evidence is kept separate from the Task Center fixture's current-page-only proof. Reference-only HTML and renderer doubles are not represented as native/ordinary-profile execution."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "RO-UI-ACADEMIC-MINIMAL-1.5 remains byte-identical and conformance is semantic/tolerance-based rather than a pixel-identical requirement for illustrative copy or composition.",
+      "result": "approved",
+      "rationale": "PASS under the explicit approved ECR-0008 overlay. This immutable original criterion is reproduced unchanged. ECR-0008.execution-01 authorizes effective presentation1.6 specifically for A08.T02, A08.S01/exit and later W1 qualification while preserving semantic1.5, original T01 approval/history and prior source records. Current source and capture bindings match the exact approved 1.6 package. The previously authenticated independent restoration classification distinguishes inherited A09 work from the four resumed restorative UI commits and preserves the original task base. Semantic/tolerance conformance governs; illustrative copy/composition may vary but interaction, accessibility, security and state authority may not."
+    },
+    {
+      "criterionIndex": 5,
+      "criterion": "Both tasks and the accumulated slice receive independent commit-bound review with all blocking findings closed before amendment exit and the W1 experience/quality checkpoint.",
+      "result": "approved",
+      "rationale": "PASS at the reviewed completion delivery. Both exact task definitions retain their approved criteria, both are DONE with cleared leases and no current submission, and their last formal reviews are independently approved. T01's R02 closes its actual prior two blocking findings; T02's first formal R01 has no new findings and does not fabricate formal closures for earlier visual advisories. This independently authored, criterion-linked accumulated disposition follows the passing integration/adversarial union and binds that exact two-task completion. Separate amendment-exit review and the experience/quality checkpoint remain required before adoption; this record does not perform them."
+    }
+  ],
+  "checksPerformedForThisContributionReview": [
+    {
+      "check": "Accumulated affected desktop integration/adversarial union",
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_product_style_check tests.desktop.test_product_layout_measurements tests.desktop.test_desktop_app_check -v",
+      "invocationQualification": "The exact unittest loader and TextTestRunner were invoked in an inline harness that set PYTHONDONTWRITEBYTECODE, confined disposable test directories below the named ignored scratch root, and took before/after producer and test/helper hashes. No product fixture or assertion was modified.",
+      "testsRun": 52,
+      "passed": 52,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "durationSeconds": 103.922,
+      "scratchRoot": "artifacts/tmp/W1.A08.S01-review-vocygc23",
+      "coverage": [
+        "Actual built-product functional renderer, all implemented workspaces, representative lock/recovery/enlarged-text states, measured semantic surfaces, responsive light/dark/reduced-motion behavior, focus, accessible names and keyboard interaction.",
+        "Effective panel child spacing and inventories; actual sidebar-to-footer edges, side-by-side and stacked layouts, explicit short CSS consumer and actual long/initial/product contexts, disclosure and natural forward/reverse keyboard scrolling.",
+        "Actual Settings eyebrow and keyboard-visible skip-link contrast; current-page product consumers; explicit current-step/page shared-style fixture and injected wrong-color negatives; long-label context actions and disabled/skipped control denial.",
+        "Shared style reuse, exact exceptions, canonical tokens, material duplicate/specificity/raw geometry/inline styling rejection and source discovery.",
+        "Capture producer and immutable delivery integrity, complete inventory, malformed PNGs, source/manifest co-tampering, interrupted/no-overwrite publication, masked Git index flags, canonical text normalization, late mutation and synthetic-only Windows junction/directory-replacement denial.",
+        "Current-projection Task Center commands/focus/failure/project switching, readiness/catalog retry versus mutation recovery, directory-selection cancellation/late results/explicit creation, and unchanged native/security command-plan source contracts. Native/Core are explicit test doubles for these headless renderer checks."
+      ]
+    },
+    {
+      "check": "Complete before/after source binding",
+      "beforeAndAfterProducerSnapshotSha256": "6aaeb7b2be05320a404f41f507cb271ca59d43054a82d2397e49e5b59c446116",
+      "digestMethod": "SHA256 of json.dumps(snapshot, sort_keys=True, separators=(',', ':')).encode()",
+      "authenticatedInputCount": 503,
+      "afterSnapshotSeconds": 18.66,
+      "result": "PASS: complete producer snapshot equals the pre-test snapshot, and six explicit test/helper raw hashes are unchanged.",
+      "testAndHelperRawSha256": {
+        "tests/desktop/test_product_style_check.py": "753913c76ad9305312ddbe37f141e9457432d765eff6948eb6383156b5176f7f",
+        "tests/desktop/test_product_layout_measurements.py": "eb9515ea4e0ae4db384281b6eb05ff930a4a861e45341dacc468b7429010822e",
+        "tests/desktop/test_desktop_app_check.py": "4b20e04907cfd0b4839a1bbf046f012be6ca189f188830407b600c852fc2fd3e",
+        "tools/product_style_check.py": "b682228ce0a1ae8ae7093490cfc3247c00843e3612a3476325ef46148ebc92c0",
+        "tools/product_layout_measurements.py": "dec5e00e2957614431ee425fa4bd9c757596a5c9ce953ad49abfed7ec7062baa",
+        "tools/desktop_app_check.py": "5bdce257d7e9dd497a88cd2bf4d753761481330a85281f767697120535d5beea"
+      },
+      "candidateMovementObservation": "After all 52 tests passed, the initial after-snapshot failed closed because HEAD moved during presentation compatibility verification. Root confirmed the submission-only four-path delivery. Only the after-snapshot was retried at stable bbdceeb7; exact source equality then passed. No test result was relabelled or failed product assertion suppressed."
+    },
+    {
+      "check": "Retained performance delivery/source/distribution verification",
+      "path": "artifacts/evidence/W1.A08.T02.performance-04.json",
+      "rawSha256": "b2dc9e516affc80cca774a32fe561fadecce17ddc3799f8a7ea651082c464189",
+      "deliveryCommit": "9b96c7337c6cc26c02be2920b344857c2e018458",
+      "producerCommit": "a7f39e43c77055dc1c115dbd3b3529bd90518ac2",
+      "newPerformanceRun": false,
+      "distributionAndBudgetRecomputation": "PASS: independently recomputed every min/p50/p95/max, all samples finite and retained, and existing absolute/regression thresholds for all four metrics.",
+      "metrics": [
+        {
+          "name": "coldShellFirstContentfulPaint",
+          "samples": 12,
+          "p95Ms": 48,
+          "absoluteBudgetMs": 2500,
+          "regressionLimitMs": 115.2
+        },
+        {
+          "name": "warmRouteVisibleSkeleton",
+          "samples": 12,
+          "p95Ms": 18.059,
+          "absoluteBudgetMs": 150,
+          "regressionLimitMs": 87.64
+        },
+        {
+          "name": "warmRouteUsable",
+          "samples": 12,
+          "p95Ms": 20.251,
+          "absoluteBudgetMs": 1000,
+          "regressionLimitMs": 93.146
+        },
+        {
+          "name": "warmPaginatedRenderBatch",
+          "samples": 20,
+          "p95Ms": 42.197,
+          "absoluteBudgetMs": 100,
+          "regressionLimitMs": 46.916
+        }
+      ],
+      "cleanProducerManifestRawSha256": "ade78c3bdd6b401364aea3e3fdc6387ba8af12f916d60918def607cc452301bc",
+      "currentRootManifestRawSha256": "bc78cf055b098ed5897b4f9055ea3e67842feb08bef9f5de4917f9d04c67f4c4",
+      "runtimeEquivalence": "Actual runtime CSS, JS and index bytes match between the clean producer and root. All 152 product source inputs independently match their respective manifests and are LF-equivalent; 35 differ only in checkout line endings. Source maps differ in sourcesContent. The two benchmark source hashes use the existing canonical_text_sha256 contract, not raw checkout hashes. Both baseline hashes authenticate. No whole raw checkout or all-output identity is claimed.",
+      "reviewProbeHistory": "Three overly strong reviewer assertions initially rejected raw checkout equality, whole output-map equality and raw benchmark hashes. Inspection established the existing canonical-text hash contract and the exact clean producer/root distinctions above. These were reviewer probe assumptions, not product-test failures or report amendments; no inputs or evidence were edited."
+    },
+    {
+      "check": "Immutable completion, task and evidence authentication",
+      "result": "PASS. Independently verified sole parent and exact four completion paths; T01 unchanged; both DONE/approved, cleared leases/current submissions; both immutable acceptance-criteria lists equal approved ECR-0007. Task manifests and review ledgers match committed/current bytes and recorded checksums. All 13 explicit T02 artifact bindings match raw current/committed/introduction bytes and ancestry. Six checked helper/test hashes remain unchanged after completion."
+    }
+  ],
+  "reusedActualIndependentChecks": [
+    "T01 independent approved R02 at 455546efec1cf972dd0713664c4a130aba1478fb, original adverse R01 and explicit F01/F02 closures; remediation manifest raw SHA57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab.",
+    "Own actual prior independent visual-review-06 and restoration classification remain exact bytes bfcd82e9f5d5d03d4a35cab27a28d8c48058436e00a86ba57f6eb453232b5808 and6fa63b05a29a688d56fbe03d24e38f29ea9130795c6296c9d408ce7c69fbdef7. No new image viewing or capture run is claimed for this accumulated preparation.",
+    "T02 retained126 renderer tests and shared component checks keep their actual producing commits. The product/shared source diff from ddba5f5f to a7f39e43 contains only app.css, supporting reuse of unchanged TS behavior with fresh actual-renderer CSS/interaction coverage.",
+    "Own GOV-MAINT-0021 review and focused eleven-test/two-carrier replays remain control evidence. Root's complete original-base public gate PASS is attributed to its b13113bf execution, not claimed as an independent slice rerun."
+  ],
+  "keyEvidenceBindingsRawSha256": [
+    {
+      "path": "artifacts/evidence/ui-change/W1.A08.T02.json",
+      "sha256": "a88d0eb97a0a168c32ae8eecafdf14fdd7c0ad008fda08d91654cec1c06db0a2",
+      "introductionCommit": "be3b7da5efa370e42849d1626d032dbc9d61fc66"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.ui-classification-R01.json",
+      "sha256": "6fa63b05a29a688d56fbe03d24e38f29ea9130795c6296c9d408ce7c69fbdef7",
+      "introductionCommit": "2e4efa8f9599289fbf67fcbccd679d9e2d77dfdd"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.captures-06/manifest.json",
+      "sha256": "0b0b4a573260d3a703ab6f1f6fdc4355fb52d405effe02edc5904bf5c6508b22",
+      "introductionCommit": "9b96c7337c6cc26c02be2920b344857c2e018458"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.accent-captures-01/manifest.json",
+      "sha256": "1c17871bb193be7499d7f1c2120d7bd28d0be9a25e09dbd142ba3964d40575c4",
+      "introductionCommit": "9b96c7337c6cc26c02be2920b344857c2e018458"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.visual-review-06.json",
+      "sha256": "bfcd82e9f5d5d03d4a35cab27a28d8c48058436e00a86ba57f6eb453232b5808",
+      "introductionCommit": "43a650043d87661982b6876e52c3246fb6aad77a"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.performance-04.json",
+      "sha256": "b2dc9e516affc80cca774a32fe561fadecce17ddc3799f8a7ea651082c464189",
+      "introductionCommit": "9b96c7337c6cc26c02be2920b344857c2e018458"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.checkpoint-02.json",
+      "sha256": "c900077713807f962fb8fa3022cccf8723a075f6297ac005b26f21a53568012b",
+      "introductionCommit": "f2b38f64a1330404921220adaff98b9dab926ab5"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.checkpoint-03.json",
+      "sha256": "e8e4f636d1d7e903e91ff9e000e0754e194d53c9d3d7963aa6d35054f70145dd",
+      "introductionCommit": "dd8803c0526edfaca53d3a5b25faf4bb0cdf8854"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.contrast-remediation-02.md",
+      "sha256": "57804e408e52620a041d703f0e10b6d7516ab411426454790e15f6bfa963e6b2",
+      "introductionCommit": "a7f39e43c77055dc1c115dbd3b3529bd90518ac2"
+    },
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0020.review-R01.json",
+      "sha256": "81b7ad394794726510dde5afecf7646021b050f87cb45ed86719b779ea59534f",
+      "introductionCommit": "9120ce3fb601e7e34b57f8e216dc292ff7ce3b02"
+    },
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0020.review-R02.json",
+      "sha256": "f481d3e0de1968634c32981999dfb7e270eaf0335062e64d7802da2b81c0e7d8",
+      "introductionCommit": "3ce3996faeee13714a679d995487894f99f45029"
+    },
+    {
+      "path": "planning/governance-migrations/GOV-MAINT-0021.review-R01.json",
+      "sha256": "5705d722a76769fa2ac7bc41406dd2401e38f2ba27353f6a88058073152c640d",
+      "introductionCommit": "bb3ac65feed8e122a351cd0006acf039e9c5eb74"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.owner-styling-acceptance-01.md",
+      "sha256": "00e62d7c0014b3f544914443ca2e7c7e662f882db59b8a3758922013a9356c4a",
+      "introductionCommit": "b13113bf65630c70a7163fbd422194e2289b9db3"
+    }
+  ],
+  "additionalTaskEvidenceBindings": [
+    {
+      "path": "artifacts/evidence/W1.A08.T01.remediation-01.json",
+      "rawSha256": "57413dca5922166e03d8b7b3b7e1266a85ac2ba9e20a7d09b32ec0905d216aab",
+      "gitBlob": "7259f865f6d55737a005e457b27260b59b46b2bf"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T01.review-R02.json",
+      "rawSha256": "792770c30e5ac7d5af02f36fa21742a9d936c30437a13a41c2d7240a62762101",
+      "gitBlob": "e54c5c6e1f53781b67300be4346293e8a48c353d"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.json",
+      "rawSha256": "54c456d6d472e791e1645636c0e6550feb971928130a69868a64caf5c402644d",
+      "gitBlob": "42e18d29917cc76dac350e43090d53fd69c5e731"
+    },
+    {
+      "path": "artifacts/evidence/W1.A08.T02.review-R01.json",
+      "rawSha256": "088cdca4c1e0ad888a20367428178d6e5aa0e88e8589575e3f51930a46b14ec8",
+      "gitBlob": "1b9fae66fea352e9aec0622dc4f0b20b350ffe2f"
+    }
+  ],
+  "visualAndHistory": {
+    "newImageViewingForThisSliceReview": false,
+    "newCapturesForThisSliceReview": false,
+    "reusedVisualDisposition": "Own exact previously delivered visual-review-06 authenticates matrix06 and accent01, directly inspected all twelve actual Settings/keyboard accent PNGs and explicitly retains earlier current-navigation/context/F02/UX01 observations. This slice review reuses those actual observations without implying new pixel viewing.",
+    "retainedVisualClosures": [
+      {
+        "findingId": "W1.A08.T02-visual-05-F01",
+        "priorPriority": "P2",
+        "disposition": "closed",
+        "blockingVisualAcceptance": false,
+        "criterionIds": [
+          "W1.A08.T02 acceptance criterion 3",
+          "W1.A08.T02 acceptance criterion 4"
+        ],
+        "closureEvidence": [
+          "a7f39e43c77055dc1c115dbd3b3529bd90518ac2",
+          "artifacts/evidence/W1.A08.T02.captures-06/manifest.json",
+          "artifacts/evidence/W1.A08.T02.accent-captures-01/manifest.json"
+        ],
+        "rationale": "The previous actual dark eyebrow pair (3.975814:1) and keyboard-visible skip-link pair (3.936220:1) are replaced by observed 7.155255:1 and 5.060617:1 pairs. Both light counterparts also pass. Twelve exact-producer observations and directly inspected immutable PNGs cover both consumers at all three viewports in both themes, including real keyboard focus, fully visible nonempty text and stable opaque colors. Source declarations or reference pixels alone are not used as closure."
+      },
+      {
+        "findingId": "W1.A08.T02-visual-03-F01",
+        "disposition": "previous closure retained",
+        "blockingVisualAcceptance": false,
+        "closureEvidence": [
+          "artifacts/evidence/W1.A08.T02.visual-review-04.json",
+          "artifacts/evidence/W1.A08.T02.navigation-captures-01/manifest.json"
+        ],
+        "rationale": "No change to current page/step/marker/metadata rules, tokens or semantic component behavior; the prior actual navigation-specific disposition remains valid and is not expanded by the accent observation."
+      },
+      {
+        "findingId": "W1.A08.T02-visual-02-F01",
+        "disposition": "previous closure retained",
+        "blockingVisualAcceptance": false,
+        "closureEvidence": [
+          "artifacts/evidence/W1.A08.T02.visual-review-03.json",
+          "artifacts/evidence/W1.A08.T02.visual-review-04.json",
+          "artifacts/evidence/W1.A08.T02.context-captures-01/manifest.json"
+        ],
+        "rationale": "Shared contextual Button implementation is unchanged, prior actual visual proof remains available, and current matrix06 retains all six context-action keyboard inventory results."
+      }
+    ],
+    "acceptedVariance": [
+      "Illustrative reference data/composition and sparse implemented fixture data need not pixel-match. This does not waive hierarchy, usable geometry, accessibility, keyboard behavior or truthful state authority.",
+      "Recorded viewport scrolling and focus may clip content outside the viewport. The two reviewed accent text targets themselves are nonempty and completely in viewport, with no horizontal document escape.",
+      "The visible skip link intentionally overlays part of the fixed top-left brand while focused; the existing positioning and target are unchanged, and the complete link text and focus indication are visible.",
+      "No further contrast exception is granted to enabled ordinary text. This approval closes the exact known two-consumer defect, not an unbounded audit of every possible product state."
+    ],
+    "retainedAdverseHistory": "T01 R01 and its two explicit R02 closures, original/provisional/stale build reports, A08 layout preflight findings, visual02/03/05 findings and later exact closures, earlier capture versions, performance reports and observer attempts remain immutable. Closed effective-spacing/sidebar/context/contrast findings are not erased or relabelled as never having failed. The concurrent-candidate after-check rejection and the reviewer's overly strong raw-equality probes are retained in the detailed check entries.",
+    "ownerAcceptance": {
+      "path": "artifacts/evidence/W1.A08.T02.owner-styling-acceptance-01.md",
+      "rawSha256": "00e62d7c0014b3f544914443ca2e7c7e662f882db59b8a3758922013a9356c4a",
+      "introductionCommit": "b13113bf65630c70a7163fbd422194e2289b9db3",
+      "scope": "The owner accepts the current styling and defers optional cosmetic changes. Existing substantive criteria are independently satisfied, not waived; this is not W1/release or external-action authority."
+    }
+  },
+  "findings": [],
+  "openFindingIds": [],
+  "retainedObligations": [
+    "Independent W1.A08 amendment-exit review, its experience/quality integration checkpoint and separately supported adoption remain mandatory. This slice review supplies accumulated evidence; it does not mutate amendment/Wave state or authorize ordinary resume.",
+    "Complete affected/full repository, cross-capability packaging/restart/recovery/security/accessibility/performance and release-authoritative Windows-x64 qualification, independent Wave review and human G1 remain W1-exit duties.",
+    "Unchanged native/Core source and prior W1.A09 real-platform evidence retain their original producing commits, modalities and limits. These headless tests use explicit adapters and do not newly prove ordinary-profile policy/vault startup, fully frozen packaged/native lifecycle or installer/authentication qualification.",
+    "Requested maximized startup/right-side test-window policy and permanent development-folder-origin correction remain separate lawful W1 work. Owner-confirmed --no-dev-server workaround is not new agent native proof. Optional cosmetics remain deferred at the owner's direction.",
+    "No local-main integration across unmet gates, remote action, destructive researcher-data operation, later-Wave scope or new runtime/security/reference authority is conferred by this slice approval."
+  ],
+  "reviewerSafety": {
+    "protectedWitnessContentAccess": false,
+    "excludedSiblingAccess": false,
+    "ordinaryProjectPolicyVaultCredentialAccess": false,
+    "nativeUiOrProductionLaunch": false,
+    "remoteOrHookMutation": false,
+    "realGitIndexBranchMutation": false,
+    "syntheticFixturesOnly": true,
+    "canonicalFilesAuthored": [
+      "artifacts/evidence/W1.A08.S01.review-01.json"
+    ],
+    "scratchPreparation": {
+      "path": "artifacts/tmp/W1.A08.S01.accumulated-review-01.json",
+      "rawSha256": "3d4c72d5e8d24077f4fc10049e595b13f8de7e9757b7b0324dd905db84032806",
+      "role": "Ignored pre-DONE preparation only; this final ledger is self-contained and does not require that scratch file as immutable acceptance authority."
+    }
+  }
+}
