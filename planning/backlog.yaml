@@ -129,7 +129,7 @@ waves:
       in Codex on 2026-08-18.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/ai-projects/research-observatory
@@ -310,6 +310,18 @@ waves:
       sha256: 5d1985cb17a03e2dd9b722cbf5e5c4d3bff8ac4118f68a28aea4c05bd1955e1e
       commit: bf963579873514ddd213acfa38f02dc5d006244d
     notes: Adopted W1.A09 control-plane amendment.
+  - id: W1.CP09
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-09-06T04:43:59+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W1.A08
+      path: artifacts/evidence/W1.A08.adoption.json
+      sha256: 6d183d1d91459f1eb57ff176992b7dc1de298828740bc6e2b2a297fd85fb3ee6
+      commit: 89b16f1c1311b79e534bdba3526d41849df36504
+    notes: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations
+      and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
   completion:
     status: PAUSED
     reviewer: null
@@ -39136,7 +39148,7 @@ wave_amendments:
     sha256: 9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960
     introduction_commit: 979486506a62b5dbf1b7a0af711079bdaa34cd44
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -39175,6 +39187,12 @@ wave_amendments:
       at: '2026-09-06T04:30:20+00:00'
       rationale: Both styling tasks and W1.A08.S01 independently approved; owner accepts outcome and defers optional cosmetics.
         Request independent exit disposition only; W1 release remains pending.
+    - id: E07
+      status: ADOPTED
+      actor: codex
+      at: '2026-09-06T04:43:59+00:00'
+      rationale: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations
+        and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
   bootstrap:
     id: W1.A08.B00
     status: APPROVED

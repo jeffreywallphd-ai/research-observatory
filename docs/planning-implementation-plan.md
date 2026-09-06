@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2aabc89f0770634cc0459d02d68e720335f261240fe3fdca41335af50581d6ac
+source_sha256: 4992d20a88e19ef50f5b830fc63fd941088ba8e0610e2b164b42950d41708549
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -47,7 +47,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
-| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `REVIEW` |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 
 ## Waves
@@ -1747,7 +1747,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A08.json` (`9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -1757,6 +1757,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E04` `PAUSED` at `2026-09-05T01:34:16+00:00` by codex: Preparing the user-requested inert correction packet for independently reproduced stale reference baseline. T02 remains BLOCKED; release the amendment lease without adopting A08, changing its authority, or restoring ordinary W1 scope.
 - `E05` `ACTIVE` at `2026-09-06T00:23:56+00:00` by codex: Activated the bounded amendment campaign.
 - `E06` `REVIEW` at `2026-09-06T04:30:20+00:00` by codex: Both styling tasks and W1.A08.S01 independently approved; owner accepts outcome and defers optional cosmetics. Request independent exit disposition only; W1 release remains pending.
+- `E07` `ADOPTED` at `2026-09-06T04:43:59+00:00` by codex: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
 
 ### Amendment-exit review and adoption — W1.A08
 
@@ -1800,7 +1801,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP09` `security` by codex at `2026-09-06T04:43:59+00:00` — Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
+  - amendment `W1.A08` / `artifacts/evidence/W1.A08.adoption.json` / `6d183d1d91459f1eb57ff176992b7dc1de298828740bc6e2b2a297fd85fb3ee6` / `89b16f1c1311b79e534bdba3526d41849df36504`
 
 **Bounded tasks:**
 

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2aabc89f0770634cc0459d02d68e720335f261240fe3fdca41335af50581d6ac
+source_sha256: 4992d20a88e19ef50f5b830fc63fd941088ba8e0610e2b164b42950d41708549
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -60,8 +60,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ADOPTED` | 7 |
-| `REVIEW` | 1 |
+| `ADOPTED` | 8 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -84,7 +83,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
-| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 2 |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 
 ## Amendment-exit review and adoption projections
@@ -500,7 +499,8 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP09` `security` by codex at `2026-09-06T04:43:59+00:00` — Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
+  - amendment `W1.A08` / `artifacts/evidence/W1.A08.adoption.json` / `6d183d1d91459f1eb57ff176992b7dc1de298828740bc6e2b2a297fd85fb3ee6` / `89b16f1c1311b79e534bdba3526d41849df36504`
 
 ### Amendment-exit review and adoption — W1.A09
 
