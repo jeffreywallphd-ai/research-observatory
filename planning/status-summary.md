@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 1997a26a3ea4bba4e3c478198b97156136652e1a42e68291eb7930851cb74626
+source_sha256: 382701712b1763a25200839d1a91e3292f568f364d79385f62a30a4ab646590a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -68,8 +68,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `REVIEW` | 1 |
-| `DONE` | 14 |
+| `DONE` | 15 |
 
 ## Wave authority and append-only amendments
 
@@ -600,7 +599,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A06.T01` | `append-only v1` | 1 | `-` | approved / ecr5-planning-authority-reviewer | - |
 | `W1.A07.T01` | `append-only v1` | 1 | `-` | approved / ecr6-planning-authority-reviewer | - |
 | `W1.A08.T01` | `append-only v1` | 2 | `-` | approved / agent:t01-r02-independent-reviewer | - |
-| `W1.A08.T02` | `append-only v1` | 0 | `R01` | - / - | - |
+| `W1.A08.T02` | `append-only v1` | 1 | `-` | approved / agent:window_launch_planning | - |
 | `W1.A09.T01` | `append-only v1` | 1 | `-` | approved / agent:t01-r02-independent-reviewer | - |
 | `W1.A09.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/t01_publication_checkpoint | - |
 | `W1.A09.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/t03_acceptance_review | - |
@@ -669,4 +668,3 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.A08.T02` Qualify live-product styling conformance | `REVIEW` | codex | `codex/w1-windows-local-runtime` |

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1997a26a3ea4bba4e3c478198b97156136652e1a42e68291eb7930851cb74626
+source_sha256: 382701712b1763a25200839d1a91e3292f568f364d79385f62a30a4ab646590a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1876,9 +1876,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W1.A08.T02 - Qualify live-product styling conformance
+### - [x] W1.A08.T02 - Qualify live-product styling conformance
 
-**Status / owner / review:** `REVIEW` / codex / - (`-`)
+**Status / owner / review:** `DONE` / codex / agent:window_launch_planning (`approved`)
 
 **Dependencies:** `W1.A08.B00`, `W1.A08.T01`
 
@@ -1906,9 +1906,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W1.A08.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `8b072feeff0a2d13a3cc5a49959684552bc395ca2762634d1d1151b0287e4d89`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `8b072feeff0a2d13a3cc5a49959684552bc395ca2762634d1d1151b0287e4d89`
 
 - Candidate / base / branch: `b13113bf65630c70a7163fbd422194e2289b9db3` / `46e88d171795b76a2f1588d69756f4184c01a89b` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-06T04:11:10+00:00`
@@ -1922,9 +1924,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:window_launch_planning / `2026-09-06T04:20:51+00:00`
 
-**Latest notes:** Reopened: W1.A09 independently approved and adopted with exact PAUSED W1.A08 return; resume original live styling qualification under the effective presentation 1.6 overlay and close retained F02 and UX01.
+**Immutable review ledger:** `artifacts/evidence/W1.A08.T02.review-R01.json` / `088cdca4c1e0ad888a20367428178d6e5aa0e88e8589575e3f51930a46b14ec8`
+
+**Review notes:** Independent, risk-selected formal review of W1.A08.T02. This reviewer authored only ignored future-work planning, not the current product, qualification code or submitted evidence. Authenticated submission delivery bbdceeb7f4ea17417db4b72ffd3e494652520fa7 as the sole-parent child of the candidate with exactly the task manifest, backlog and two generated planning views changed (1.555s). The delivered/current manifest canonical SHA256 is 54c456d6d472e791e1645636c0e6550feb971928130a69868a64caf5c402644d; the immutable R01 packet SHA256 is 8b072feeff0a2d13a3cc5a49959684552bc395ca2762634d1d1151b0287e4d89. Existing task_submission_packet_errors returns no errors. Independently checked all 13 artifact bindings against current bytes, candidate blobs, sole introduction commits and ancestry, and matched the complete 1172-path original-base inventory without opening the protected witness (4.894s). The original task base and acceptance criteria remain unchanged. AC1/AC3: read-only public capture verification independently passed for all 108 matrix images, exact a7f39e43c77055dc1c115dbd3b3529bd90518ac2 producer, delivery 9b96c7337c6cc26c02be2920b344857c2e018458, functional product/reference/source/renderer identity and current geometry reports (26.757s). AC2: independently ran current static style analysis: PASS, errors[], 283 rules and ten unchanged reviewed exceptions (1.041s). Inspected the complete resumed three-file product diff: shared paragraph-flow ownership, sidebar/footer continuity, existing shared Button substitution and existing-token contrast corrections; labels, callbacks, disabled predicates and domain/native/security authority remain unchanged. No subsequent product/reference delta exists through the candidate. AC3/AC4: separately authenticated all twelve accent images against an independently reconstructed twelve-case contract. Reused the exact committed independent visual-review-06 and restoration-classification-R01 approvals and their explicit prior navigation, contextual-action, effective-spacing and shell-geometry closures. These retained independent visual observations are not represented as fresh pixel or browser execution by this reviewer. AC5: independently recomputed all four retained performance distributions and checked the two unchanged baseline hashes, every 12-sample browser distribution, all 20 table batches, p50/p95/min/max and existing absolute/20-percent regression thresholds (accent authentication and performance arithmetic together 0.645s). Inspected checkpoint02/03 provenance and verified unchanged reference/checker inputs; only the incrementally replayed layout test differs from the retained 50-test baseline among the relevant Python harness boundaries. Reused the exact independently reviewed control-maintenance history and the manifest's recorded complete original-base public UI-gate PASS at this candidate; this review did not rerun that costly gate or relabel helper-only validation as the public result. No new full profile, browser matrix, native, packaging or benchmark execution was performed. The owner's committed styling acceptance closes optional cosmetic iteration, not substantive accessibility or correctness requirements. No new acceptance-bound finding remains. Existing visual findings are retained in their original ledgers; closures[] is empty because this is the first formal task round, not fabricated formal-review history. W1.A08.S01 accumulated review, amendment exit/checkpoint/adoption, complete Windows-x64 W1 qualification and human G1 remain separate required dispositions. The requested maximized/right-side launch behavior and permanent development-folder-origin correction remain separate W1 work; this styling approval does not claim to implement or natively qualify them. No product, canonical planning/controller, prior evidence, Git state or remote was mutated. No ordinary project/vault/policy, protected witness contents or sibling workspace was accessed; only this new ledger is authored.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:window_launch_planning at `2026-09-06T04:20:51+00:00`
+
+**Latest notes:** Independent, risk-selected formal review of W1.A08.T02. This reviewer authored only ignored future-work planning, not the current product, qualification code or submitted evidence. Authenticated submission delivery bbdceeb7f4ea17417db4b72ffd3e494652520fa7 as the sole-parent child of the candidate with exactly the task manifest, backlog and two generated planning views changed (1.555s). The delivered/current manifest canonical SHA256 is 54c456d6d472e791e1645636c0e6550feb971928130a69868a64caf5c402644d; the immutable R01 packet SHA256 is 8b072feeff0a2d13a3cc5a49959684552bc395ca2762634d1d1151b0287e4d89. Existing task_submission_packet_errors returns no errors. Independently checked all 13 artifact bindings against current bytes, candidate blobs, sole introduction commits and ancestry, and matched the complete 1172-path original-base inventory without opening the protected witness (4.894s). The original task base and acceptance criteria remain unchanged. AC1/AC3: read-only public capture verification independently passed for all 108 matrix images, exact a7f39e43c77055dc1c115dbd3b3529bd90518ac2 producer, delivery 9b96c7337c6cc26c02be2920b344857c2e018458, functional product/reference/source/renderer identity and current geometry reports (26.757s). AC2: independently ran current static style analysis: PASS, errors[], 283 rules and ten unchanged reviewed exceptions (1.041s). Inspected the complete resumed three-file product diff: shared paragraph-flow ownership, sidebar/footer continuity, existing shared Button substitution and existing-token contrast corrections; labels, callbacks, disabled predicates and domain/native/security authority remain unchanged. No subsequent product/reference delta exists through the candidate. AC3/AC4: separately authenticated all twelve accent images against an independently reconstructed twelve-case contract. Reused the exact committed independent visual-review-06 and restoration-classification-R01 approvals and their explicit prior navigation, contextual-action, effective-spacing and shell-geometry closures. These retained independent visual observations are not represented as fresh pixel or browser execution by this reviewer. AC5: independently recomputed all four retained performance distributions and checked the two unchanged baseline hashes, every 12-sample browser distribution, all 20 table batches, p50/p95/min/max and existing absolute/20-percent regression thresholds (accent authentication and performance arithmetic together 0.645s). Inspected checkpoint02/03 provenance and verified unchanged reference/checker inputs; only the incrementally replayed layout test differs from the retained 50-test baseline among the relevant Python harness boundaries. Reused the exact independently reviewed control-maintenance history and the manifest's recorded complete original-base public UI-gate PASS at this candidate; this review did not rerun that costly gate or relabel helper-only validation as the public result. No new full profile, browser matrix, native, packaging or benchmark execution was performed. The owner's committed styling acceptance closes optional cosmetic iteration, not substantive accessibility or correctness requirements. No new acceptance-bound finding remains. Existing visual findings are retained in their original ledgers; closures[] is empty because this is the first formal task round, not fabricated formal-review history. W1.A08.S01 accumulated review, amendment exit/checkpoint/adoption, complete Windows-x64 W1 qualification and human G1 remain separate required dispositions. The requested maximized/right-side launch behavior and permanent development-folder-origin correction remain separate W1 work; this styling approval does not claim to implement or natively qualify them. No product, canonical planning/controller, prior evidence, Git state or remote was mutated. No ordinary project/vault/policy, protected witness contents or sibling workspace was accessed; only this new ledger is authored.
 
 **Currently open findings:** -
 
