@@ -1,0 +1,66 @@
+{
+  "documentType": "wave-amendment-adoption-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A09",
+  "targetWave": "W1",
+  "candidateCommit": "676d0eaf9c0408ab308783179f0197b209c800df",
+  "branch": "codex/w1-windows-local-runtime",
+  "reviewedCompletionCommit": "676d0eaf9c0408ab308783179f0197b209c800df",
+  "approvedExitAttempt": "R01",
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W1.A09.exit-review-R01.json",
+    "sha256": "a9a6fbd106cbab10ad40d60867f54b65983df0bbe690208d9dd5b2feb414fc42"
+  },
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W1.A09.exit.json",
+    "sha256": "9e4d6fee3e405603ead3f52e40a8bcff2e337e25ea0934a7fd58992181cdb6aa"
+  },
+  "correctionReturn": {
+    "id": "W1.A08",
+    "changeRequestId": "ECR-0007",
+    "status": "PAUSED",
+    "packetCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
+    "approvalReference": {
+      "path": "planning/wave-amendment-approvals/W1.A08.json",
+      "sha256": "9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960",
+      "introductionCommit": "979486506a62b5dbf1b7a0af711079bdaa34cd44"
+    },
+    "effectiveStateCommit": "5329e538d853a36b46d123b9fc97caabb7d4735a",
+    "recordSha256": "3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506",
+    "returnPolicy": "paused-predecessor"
+  },
+  "waveDisposition": {
+    "status": "PAUSED",
+    "scopeAfterAdoption": "amendment-hold",
+    "parentAfterAdoption": "W1.A08",
+    "parentStatusAfterAdoption": "PAUSED",
+    "parentLeaseAfterAdoption": null,
+    "ordinaryResumeAuthorized": false,
+    "gateApprovalAuthorized": false
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "adopts": [
+      "Exact independently approved ECR-0008/W1.A09 correction and its four DONE tasks, separate W1.A09.S01 disposition and eight-criterion exit R01.",
+      "Approved presentation 1.6 with unchanged durable semantic 1.5 and canonical token source identity, through the authenticated publication/checkpoint/rebind sequence.",
+      "Shared Windows directory selection and supplied project parent with explicit Create/Open, researcher input preservation and unchanged Core data/security safeguards.",
+      "Exact correctionReturn to the unchanged PAUSED W1.A08 record, not ordinary Wave execution."
+    ],
+    "retains": [
+      "F02 effective content spacing and UX01 actual sidebar/footer geometry remain W1.A08.T02; this checkpoint does not close them.",
+      "All original adverse evidence, task findings and explicit closures remain append-only, including T04 R01 and independently approved R02.",
+      "Actual source-built native/Core and separately scoped renderer/reference/packaging proofs keep their stated limits. Frozen unmodified ordinary-profile startup, installer/authentication and complete W1 qualification are not claimed.",
+      "W1.A08 activation/reopen, qualification, independent task/contribution/exit review and adoption precede ordinary W1/CAP-07 resume.",
+      "Full W1 repository/Windows cross-capability qualification and independent Wave review precede human G1 approval.",
+      "Window-startup planning and residual blind-test observations remain inert or retained W1 work; no extra implementation authority, remote effect, destructive action or ordinary private-account access is added."
+    ]
+  },
+  "requiredNextTransitions": [
+    "Use supported amendment adopt W1.A09 with this separately committed record.",
+    "Verify actual ADOPTED W1.A09, exact unchanged PAUSED W1.A08 record and null parent lease; W1 remains PAUSED with amendment-hold scope.",
+    "Explicitly activate W1.A08 at the current branch/HEAD/worktree through taskctl.",
+    "Reopen BLOCKED W1.A08.T02 through supported taskctl reopen, preserving its original contract, base and history.",
+    "Complete retained styling findings, required evidence and independent reviews before W1.A08 adoption and ordinary W1 resume."
+  ],
+  "transitionTruth": "Prepared checkpoint binding the already committed approved completion. Actual adoption and parent return must be established by the supported transition and checked afterward; this pre-transition record alone does not assert they occurred."
+}

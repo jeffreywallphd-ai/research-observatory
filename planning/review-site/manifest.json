@@ -27226,7 +27226,7 @@
       "approval_status": "APPROVED",
       "lifecycle_status": "REVIEW",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "REVIEW",
+      "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -28718,47 +28718,64 @@
         "amendment_id": "W1.A09",
         "mode": "append-only",
         "latest_completion": {
-          "status": "REVIEW",
-          "reviewer": null,
-          "reviewed_at": null,
+          "status": "APPROVED",
+          "reviewer": "agent:/root/t03_acceptance_review",
+          "reviewed_at": "2026-09-06T00:17:10+00:00",
           "evidence": [
             "artifacts/evidence/W1.A09.exit.json"
           ],
-          "notes": "All four tasks and W1.A09.S01 independently approved; submit exact eight-criterion exit and PAUSED W1.A08 return contract."
+          "notes": "Independent review approves W1.A09 amendment exit R01 at the exact frozen REVIEW state and against all eight immutable ECR-0008 exit criteria. The four-task DONE records and independent contribution disposition are authenticated, all assigned findings are closed without historical rewrite, and the accumulated actual Windows/native/Core and separately scoped reference/product/packaging proofs retain their explicit limits. No product, test, tool, reference or authority input changed after the approved T04 candidate. Exact preapproval/publication/checkpoint order, predecessor authority, refactor arithmetic and the PAUSED-parent return contract pass bounded read-only verification. This is amendment exit approval only. It is not adoption, a claim that A08 return or styling work already occurred, ordinary W1 resume, full W1/release qualification, human G1 approval, local-main integration across unmet gates or remote authority. Separate committed adoption evidence and the supported transition must still bind this reviewed completion and exact correctionReturn."
         },
         "exit_review_control": {
           "version": 1,
-          "attempts": [],
-          "current_submission": {
-            "id": "R01",
-            "submitted_by": "codex",
-            "submitted_at": "2026-09-06T00:11:42+00:00",
-            "candidate_commit": "113024d2c3a9def65fdfa99afa1a5df2840f29a3",
-            "declared_candidate_commit": "232b9fe7408df486cd045460fb87efe377b8606f",
-            "branch": "codex/w1-windows-local-runtime",
-            "evidence_reference": {
-              "type": "amendment-exit-evidence",
-              "amendment_id": "W1.A09",
-              "path": "artifacts/evidence/W1.A09.exit.json",
-              "sha256": "9e4d6fee3e405603ead3f52e40a8bcff2e337e25ea0934a7fd58992181cdb6aa",
-              "commit": "113024d2c3a9def65fdfa99afa1a5df2840f29a3"
-            },
-            "acceptance_criteria_sha256": "dee6267c6ee0f9cccb131d03473e8df11b1d38c3369095584cfc7def81441463",
-            "selected_checks": [
-              ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml amendment status W1.A09",
-              ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
-              "git diff --check",
-              ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json",
-              ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json",
-              ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json",
-              ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py",
-              ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json"
-            ],
-            "selected_checks_sha256": "c8c38561f61fb4c71dcbf6ff70fb9414630709b4c8c5ec5fca81a918f640ed09",
-            "prior_attempt_id": null,
-            "open_finding_ids": [],
-            "packet_sha256": "a59db82ab1a5047d5e56f990aa15fc523cd5dbb2c8f57592d09ccaa5534e48e5"
-          }
+          "attempts": [
+            {
+              "submission": {
+                "id": "R01",
+                "submitted_by": "codex",
+                "submitted_at": "2026-09-06T00:11:42+00:00",
+                "candidate_commit": "113024d2c3a9def65fdfa99afa1a5df2840f29a3",
+                "declared_candidate_commit": "232b9fe7408df486cd045460fb87efe377b8606f",
+                "branch": "codex/w1-windows-local-runtime",
+                "evidence_reference": {
+                  "type": "amendment-exit-evidence",
+                  "amendment_id": "W1.A09",
+                  "path": "artifacts/evidence/W1.A09.exit.json",
+                  "sha256": "9e4d6fee3e405603ead3f52e40a8bcff2e337e25ea0934a7fd58992181cdb6aa",
+                  "commit": "113024d2c3a9def65fdfa99afa1a5df2840f29a3"
+                },
+                "acceptance_criteria_sha256": "dee6267c6ee0f9cccb131d03473e8df11b1d38c3369095584cfc7def81441463",
+                "selected_checks": [
+                  ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml amendment status W1.A09",
+                  ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+                  "git diff --check",
+                  ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json",
+                  ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json",
+                  ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json",
+                  ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py",
+                  ".venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json"
+                ],
+                "selected_checks_sha256": "c8c38561f61fb4c71dcbf6ff70fb9414630709b4c8c5ec5fca81a918f640ed09",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "packet_sha256": "a59db82ab1a5047d5e56f990aa15fc523cd5dbb2c8f57592d09ccaa5534e48e5"
+              },
+              "review": {
+                "reviewer": "agent:/root/t03_acceptance_review",
+                "result": "approved",
+                "reviewed_at": "2026-09-06T00:17:10+00:00",
+                "reviewed_state_commit": "25cb6a51726e8f8696e2e664a3e587f6cde1ecfd",
+                "notes": "Independent review approves W1.A09 amendment exit R01 at the exact frozen REVIEW state and against all eight immutable ECR-0008 exit criteria. The four-task DONE records and independent contribution disposition are authenticated, all assigned findings are closed without historical rewrite, and the accumulated actual Windows/native/Core and separately scoped reference/product/packaging proofs retain their explicit limits. No product, test, tool, reference or authority input changed after the approved T04 candidate. Exact preapproval/publication/checkpoint order, predecessor authority, refactor arithmetic and the PAUSED-parent return contract pass bounded read-only verification. This is amendment exit approval only. It is not adoption, a claim that A08 return or styling work already occurred, ordinary W1 resume, full W1/release qualification, human G1 approval, local-main integration across unmet gates or remote authority. Separate committed adoption evidence and the supported transition must still bind this reviewed completion and exact correctionReturn."
+              },
+              "ledger": {
+                "path": "artifacts/evidence/W1.A09.exit-review-R01.json",
+                "sha256": "a9a6fbd106cbab10ad40d60867f54b65983df0bbe690208d9dd5b2feb414fc42"
+              },
+              "findings": [],
+              "closures": []
+            }
+          ],
+          "current_submission": null
         }
       },
       "adoption_checkpoints": [],
