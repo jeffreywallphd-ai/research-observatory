@@ -48,6 +48,15 @@
     ]
   },
   "rollback": "Retain candidate and any adverse reviews append-only. Do not integrate or submit across an unmet maintenance review boundary. Correct only this generic predicate while preserving all existing authority.",
+  "remediation": {
+    "priorReviewId": "GOV-MAINT-0020.R01",
+    "priorReviewPath": "planning/governance-migrations/GOV-MAINT-0020.review-R01.json",
+    "priorReviewSha256": "81b7ad394794726510dde5afecf7646021b050f87cb45ed86719b779ea59534f",
+    "resolvedFindingIds": ["GOV-MAINT-0020-R01-F01"],
+    "rootCause": "The original public validate entry point used the final diff to decide whether to call the per-commit checker. The initial regression tested only the internal helper, so it did not prove the newly stated no-net-only invariant at the public boundary.",
+    "resolution": "After unchanged no-UI/contract handling, derive protected-control touches from every commit in the actual original-base range before invoking existing per-commit authority checks. No path, task-base, reference, approval or additive-inventory exemption is broadened.",
+    "recurrenceControl": "New real-Git public validate regression first proves a valid UI contract passes, then introduces an invalid roots change and byte-exact restoration. It failed before the fix in 3.234 seconds because public validate incorrectly returned ok:true/errors:[]. After the fix, eight selected public/additive/intermediate-history/independent-maintenance/self-review/weakening regressions passed in 38.425 seconds. Ruff check/format and scoped mypy also passed. Retain the earlier 46-test result at its actual candidate, both internal/public regressions and the independent adverse ledger; no full-profile replay or task approval is claimed."
+  },
   "reviewAttempts": [
     {
       "reviewId": "GOV-MAINT-0020.R01",

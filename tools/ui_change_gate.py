@@ -1819,9 +1819,16 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         return report
     try:
         errors.extend(implementation_object_errors(repo, base, head, ui_files))
+        # A later revert cannot erase an intermediate control-authority change.
+        # Keep no-UI handling above unchanged; the full history is relevant once
+        # this public entry point is validating an actual UI implementation.
+        protected_touches: set[str] = set()
+        for commit in git(repo, "rev-list", f"{base}..{head}").decode("ascii").splitlines():
+            protected_touches.update(commit_paths(repo, commit) & GATE_CONTROL_PATHS)
+        protected_changes = sorted(protected_touches)
     except ValueError as exc:
         errors.append(str(exc))
-    protected_changes = sorted(changed & GATE_CONTROL_PATHS)
+        return report
 
     contract_path = contract_paths[0]
     try:

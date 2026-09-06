@@ -589,6 +589,25 @@ class UiChangeGateTests(unittest.TestCase):
                 )
             )
 
+    def test_public_validation_rejects_inventory_control_change_even_after_exact_revert(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, scope, _ = self.inventory_fixture(temporary)
+            approval = self.git(root, "rev-parse", base + "^")
+            contract = self.contract("approved-reference-implementation", self.reference_package(root), approval)
+            self.install_contract(root, contract, base_sha=base)
+            valid = self.commit(root, "valid public UI contract")
+            result = validate(root, base, valid)
+            self.assertTrue(result["ok"], result["errors"])
+            original = copy.deepcopy(scope)
+            scope["governedRoots"].append("ungoverned")
+            self.write_json(root / "quality-scope.json", scope)
+            self.commit(root, "invalid intermediate public control change")
+            self.write_json(root / "quality-scope.json", original)
+            head = self.commit(root, "restore public control net bytes")
+            result = validate(root, base, head)
+            self.assertFalse(result["ok"], result["errors"])
+            self.assertTrue(any("gate" in error for error in result["errors"]), result)
+
     def test_historical_quality_scope_hardening_requires_exact_immutable_approval(self) -> None:
         hardening = "1cd9deebe94fa2b667ad6b0030bd07ec45d1c6bb"
         approval = "43bcdec4eba110f994a540f0a1e625a6d44aff4b"
