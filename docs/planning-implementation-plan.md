@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6b4b79967716f1deb2fdfb4de5e0fc952071d4cebc20b248f1f7f4c686b76fc3
+source_sha256: ef330e02043d0f5e044fc69f03210371fd6e991f095bad53a0e1e0c82ee4dd8e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -47,7 +47,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A05` | `ECR-0004` | `planning/wave-amendment-approvals/W1.A05.json` | `ADOPTED` |
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
-| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` |
+| `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ACTIVE` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 
 ## Waves
@@ -1747,7 +1747,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A08.json` (`9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960`)
 
-**Lifecycle / bootstrap / campaign / completion:** `PAUSED` / `APPROVED` / `PAUSED` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
@@ -1755,6 +1755,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-09-04T20:50:01+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-09-04T20:53:50+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `PAUSED` at `2026-09-05T01:34:16+00:00` by codex: Preparing the user-requested inert correction packet for independently reproduced stale reference baseline. T02 remains BLOCKED; release the amendment lease without adopting A08, changing its authority, or restoring ordinary W1 scope.
+- `E05` `ACTIVE` at `2026-09-06T00:23:56+00:00` by codex: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W1.A08
 
@@ -1877,7 +1878,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W1.A08.T02 - Qualify live-product styling conformance
 
-**Status / owner / review:** `BLOCKED` / codex / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex / - (`-`)
 
 **Dependencies:** `W1.A08.B00`, `W1.A08.T01`
 
@@ -1905,7 +1906,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: W1.A09 independently approved and adopted with exact PAUSED W1.A08 return; resume original live styling qualification under the effective presentation 1.6 overlay and close retained F02 and UX01.
 
 ## W1.A09 - ECR-0008
 
