@@ -10,12 +10,13 @@ import os
 import re
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from urllib.parse import unquote
 
 PROTECTED = "artifacts/evidence/W1.A04.B00.json"
 RAW_REPORTS = {"artifacts/bootstrap/bootstrap-report.json", "artifacts/bootstrap/setup-verification.json"}
 SHA = re.compile(r"[0-9a-f]{40}")
+SHA256 = re.compile(r"[0-9a-f]{64}")
 EMAIL_LOCAL = r"A-Za-z0-9.!#$%&'*+/=?^_`{|}~-"
 EMAIL = re.compile(rf"(?<![{EMAIL_LOCAL}])[{EMAIL_LOCAL}]+@[A-Za-z0-9.-]+\.[A-Za-z]{{2,}}")
 PROFILE = re.compile(r"(?i)(?:[a-z]:/|(?<![\w:])/)(?:users|home|documents and settings)/([^/\s\"'<>`]+)")
@@ -119,7 +120,93 @@ def changed_entries(
     }
 
 
-def secret_scan(raw: bytes, scanner: Path, scanner_sha: str, config: Path) -> None:
+def reviewed_artifacts(reviews: dict | None, policy: dict, config: Path) -> dict[tuple[str, str, str, int], dict]:
+    """Validate an externally reviewed, installer-sealed registry; never a live repo allowlist."""
+    if reviews is None:
+        return {}
+    required = {
+        "schemaVersion",
+        "documentType",
+        "baselineCommit",
+        "scannerSha256",
+        "configSha256",
+        "reviewer",
+        "implementer",
+        "disposition",
+        "rationale",
+        "artifacts",
+    }
+    if not isinstance(reviews, dict) or set(reviews) != required:
+        raise ValueError("Malformed artifact review")
+    expected = {
+        "schemaVersion": "1.0",
+        "documentType": "independent-artifact-privacy-review",
+        "baselineCommit": policy["baselineCommit"],
+        "scannerSha256": policy["scannerSha256"],
+        "configSha256": hashlib.sha256(config.read_bytes()).hexdigest(),
+        "disposition": "approved",
+    }
+    if any(reviews.get(key) != value for key, value in expected.items()):
+        raise ValueError("Artifact review authority differs")
+    if any(not isinstance(reviews[k], str) or not reviews[k].strip() for k in ("reviewer", "implementer", "rationale")):
+        raise ValueError("Missing independent artifact review")
+    if reviews["reviewer"].strip().casefold() == reviews["implementer"].strip().casefold():
+        raise ValueError("Artifact review is not independent")
+    artifacts = reviews["artifacts"]
+    if not isinstance(artifacts, list) or not artifacts or len(artifacts) > 2000:
+        raise ValueError("Invalid artifact review inventory")
+    result = {}
+    fields = {"path", "mode", "sha256", "size", "binaryReviewed", "nonEmailTokens", "credentialFindingFingerprints"}
+    for item in artifacts:
+        if not isinstance(item, dict) or set(item) != fields:
+            raise ValueError("Malformed artifact admission")
+        path = item["path"]
+        if not isinstance(path, str) or not path or "\\" in path or ":" in path:
+            raise ValueError("Invalid reviewed artifact path")
+        parsed = PurePosixPath(path)
+        if parsed.is_absolute() or parsed.as_posix() != path or ".." in parsed.parts:
+            raise ValueError("Noncanonical reviewed artifact path")
+        validate_path(path)
+        if path.casefold() in RAW_REPORTS or text_reasons(path, set()):
+            raise ValueError("Private reviewed artifact name")
+        if item["mode"] not in {"100644", "100755"} or type(item["binaryReviewed"]) is not bool:
+            raise ValueError("Invalid reviewed artifact mode")
+        if type(item["size"]) is not int or not 0 <= item["size"] <= 16 * 1024 * 1024:
+            raise ValueError("Invalid reviewed artifact size")
+        if not isinstance(item["sha256"], str) or not SHA256.fullmatch(item["sha256"]):
+            raise ValueError("Invalid reviewed artifact digest")
+        tokens, fingerprints = item["nonEmailTokens"], item["credentialFindingFingerprints"]
+        if not isinstance(tokens, list) or any(not isinstance(t, str) for t in tokens):
+            raise ValueError("Malformed non-email adjudication")
+        for token in tokens:
+            token_path = PurePosixPath(token)
+            if (
+                normalize(token) != token
+                or "/" not in token
+                or ":" in token
+                or token_path.is_absolute()
+                or ".." in token_path.parts
+                or token_path.as_posix() != token
+                or not EMAIL.fullmatch(token)
+                or token_path.suffix.lower() not in BINARY
+                or text_reasons(token, {token.casefold()})
+            ):
+                raise ValueError("Non-email review must identify an exact safe relative artifact filename")
+        if (
+            not isinstance(fingerprints, list)
+            or any(not isinstance(f, str) or not SHA256.fullmatch(f) for f in fingerprints)
+            or len(set(fingerprints)) != len(fingerprints)
+            or len(set(tokens)) != len(tokens)
+        ):
+            raise ValueError("Malformed finding adjudication")
+        identity = path, item["mode"], item["sha256"], item["size"]
+        if identity in result:
+            raise ValueError("Duplicate artifact admission")
+        result[identity] = item
+    return result
+
+
+def credential_report(raw: bytes, scanner: Path, scanner_sha: str, config: Path) -> list[dict]:
     if hashlib.sha256(scanner.read_bytes()).hexdigest() != scanner_sha:
         raise ValueError("Credential scanner identity changed")
     if (config.parent / "no-suppressions").exists():
@@ -150,7 +237,36 @@ def secret_scan(raw: bytes, scanner: Path, scanner_sha: str, config: Path) -> No
         check=False,
         timeout=120,
     )
-    if process.returncode:
+    if process.returncode not in {0, 1}:
+        raise ValueError("Credential scanner failed; review cannot waive errors")
+    try:
+        report = json.loads(process.stdout)
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError("Credential scanner returned malformed output") from exc
+    if not isinstance(report, list) or bool(report) != bool(process.returncode):
+        raise ValueError("Credential scanner outcome is inconsistent")
+    for finding in report:
+        if (
+            not isinstance(finding, dict)
+            or not isinstance(finding.get("RuleID"), str)
+            or not finding["RuleID"]
+            or any(
+                type(finding.get(k)) is not int or finding[k] < 1
+                for k in ("StartLine", "EndLine", "StartColumn", "EndColumn")
+            )
+        ):
+            raise ValueError("Credential scanner finding is malformed")
+    return report
+
+
+def secret_scan(
+    raw: bytes, scanner: Path, scanner_sha: str, config: Path, approved_findings: list[str] | None = None
+) -> None:
+    report = credential_report(raw, scanner, scanner_sha, config)
+    fingerprints = [
+        hashlib.sha256(json.dumps(f, sort_keys=True, separators=(",", ":")).encode()).hexdigest() for f in report
+    ]
+    if sorted(fingerprints) != sorted(approved_findings or []):
         raise ValueError("Credential scan failed or requires review; raw values withheld")
 
 
@@ -162,12 +278,14 @@ def inspect(
     tips: list[str],
     scanner: Path,
     config: Path,
+    reviews: dict | None = None,
 ) -> dict:
     baseline = policy["baselineCommit"]
     validate_history(repo, baseline)
+    admissions = reviewed_artifacts(reviews, policy, config)
     allowed = {value.casefold() for value in policy["allowedContentEmails"]}
     findings = []
-    payloads: list[bytes] = []
+    payloads: list[tuple[bytes, list[str]]] = []
     seen: set[tuple[str, str, str]] = set()
     count = 0
 
@@ -179,7 +297,7 @@ def inspect(
                 continue
             seen.add(identity)
             count += 1
-            payloads.extend((path.encode("utf-8"), normalize(path).encode("utf-8")))
+            payloads.extend(((path.encode("utf-8"), []), (normalize(path).encode("utf-8"), [])))
             reasons = text_reasons(path, allowed)
             if path.casefold() in RAW_REPORTS:
                 reasons.add("raw-machine-report")
@@ -191,16 +309,22 @@ def inspect(
                     reasons.add("oversized-file-needs-review")
                 else:
                     raw = git(repo, "cat-file", "blob", oid)
+                    admission = admissions.get((path, mode, hashlib.sha256(raw).hexdigest(), size), {})
+                    non_emails = {value.casefold() for value in admission.get("nonEmailTokens", [])}
+                    # Binary approval never suppresses readable private text or credential scanning.
+                    reasons.update(text_reasons(raw.decode("utf-8", errors="replace"), allowed | non_emails))
+                    payloads.append((raw, admission.get("credentialFindingFingerprints", [])))
                     if b"\0" in raw or Path(path).suffix.lower() in BINARY:
-                        reasons.add("binary-needs-privacy-review")
+                        if not admission.get("binaryReviewed"):
+                            reasons.add("binary-needs-privacy-review")
                     else:
                         try:
                             text = raw.decode("utf-8")
                         except UnicodeDecodeError:
-                            reasons.add("non-text-needs-privacy-review")
+                            if not admission.get("binaryReviewed"):
+                                reasons.add("non-text-needs-privacy-review")
                         else:
-                            reasons.update(text_reasons(text, allowed))
-                            payloads.append(raw)
+                            reasons.update(text_reasons(text, allowed | non_emails))
             if reasons:
                 findings.append({"pathSha256": hashlib.sha256(path.encode()).hexdigest(), "reasons": sorted(reasons)})
 
@@ -214,7 +338,7 @@ def inspect(
             reasons = text_reasons(identity, set(), metadata=True)
             if reasons:
                 findings.append({"field": role.lower(), "reasons": sorted(reasons)})
-            payloads.append(identity.encode())
+            payloads.append((identity.encode(), []))
     else:
         for tip in tips:
             if not SHA.fullmatch(tip):
@@ -232,12 +356,12 @@ def inspect(
             reasons = text_reasons(raw.decode("utf-8"), set(), metadata=True)
             if reasons:
                 findings.append({"commit": commit, "reasons": sorted(reasons)})
-            payloads.append(raw)
+            payloads.append((raw, []))
     if findings:
         return {"status": "FAIL", "commitsChecked": len(commits), "entriesChecked": count, "findings": findings}
     # Full new content plus metadata, not only added diff lines. No repository allowlists.
-    for raw in payloads:
-        secret_scan(raw, scanner, policy["scannerSha256"], config)
+    for raw, approved_findings in payloads:
+        secret_scan(raw, scanner, policy["scannerSha256"], config, approved_findings)
     return {"status": "PASS", "commitsChecked": len(commits), "entriesChecked": count, "findings": []}
 
 
@@ -269,6 +393,7 @@ def main() -> int:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--remote-url")
     parser.add_argument("--message", type=Path)
+    parser.add_argument("--review-registry", type=Path)
     args = parser.parse_args()
     try:
         policy = json.loads(args.policy.read_text(encoding="utf-8"))
@@ -303,6 +428,7 @@ def main() -> int:
             tips=tips,
             scanner=args.scanner.resolve(),
             config=args.config.resolve(),
+            reviews=json.loads(args.review_registry.read_bytes()) if args.review_registry else None,
         )
         print(json.dumps(result))
         return int(result["status"] != "PASS")

@@ -52,6 +52,7 @@ class ProspectivePrivacyTests(unittest.TestCase):
             "remoteUrl": "https://example.invalid/repo.git",
             "remoteRefs": ["refs/heads/main"],
         }
+        self.reviews: dict | None = None
 
     def git(self, *args: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:
         return subprocess.run(["git", "-C", str(self.repo), *args], env=self.env, capture_output=True, check=check)
@@ -75,7 +76,171 @@ class ProspectivePrivacyTests(unittest.TestCase):
                 tips=[tip or "0" * 40] if not staged else [],
                 scanner=SCANNER,
                 config=self.config,
+                reviews=self.reviews,
             )
+
+    def approve_bytes(self, path: str, raw: bytes, *, binary: bool = False) -> dict:
+        self.reviews = {
+            "schemaVersion": "1.0",
+            "documentType": "independent-artifact-privacy-review",
+            "baselineCommit": self.base,
+            "scannerSha256": self.policy["scannerSha256"],
+            "configSha256": hashlib.sha256(installer.CONFIG).hexdigest(),
+            "reviewer": "independent-fixture-reviewer",
+            "implementer": "fixture-owner",
+            "disposition": "approved",
+            "rationale": "Exact synthetic fixture only; no actual account or credentials.",
+            "artifacts": [
+                {
+                    "path": path,
+                    "mode": "100644",
+                    "sha256": hashlib.sha256(raw).hexdigest(),
+                    "size": len(raw),
+                    "binaryReviewed": binary,
+                    "nonEmailTokens": [],
+                    "credentialFindingFingerprints": [],
+                }
+            ],
+        }
+        return self.reviews["artifacts"][0]
+
+    def test_exact_reviewed_binary_only_accepts_indexed_bytes_path_and_mode(self) -> None:
+        raw = b"synthetic image payload\0"
+        self.write("capture.png", raw.decode())
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        self.approve_bytes("capture.png", raw, binary=True)
+        self.assertEqual("PASS", self.inspect(staged=True)["status"])
+        (self.repo / "capture.png").write_bytes(b"different unstaged bytes")
+        self.assertEqual("PASS", self.inspect(staged=True)["status"])
+        self.git("add", "capture.png")
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        self.write("capture.png", raw.decode())
+        self.write("copy.png", raw.decode())
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        self.git("rm", "--cached", "copy.png")
+        self.git("update-index", "--chmod=+x", "capture.png")
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+
+    def test_review_cannot_waive_private_text_or_identity(self) -> None:
+        self.write("capture.png", UNSAFE_PATH)
+        self.approve_bytes("capture.png", UNSAFE_PATH.encode(), binary=True)
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        self.write("capture.png", "safe")
+        self.approve_bytes("capture.png", b"safe", binary=True)
+        self.env["GIT_AUTHOR_EMAIL"] = UNSAFE_EMAIL
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+
+    def test_reviewed_icon_token_does_not_exempt_new_email(self) -> None:
+        icon = "icons/AppIcon-20x20" + "@" + "2x.png"
+        raw = json.dumps({"input": icon}).encode()
+        self.write("manifest.json", raw.decode())
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        entry = self.approve_bytes("manifest.json", raw)
+        entry["nonEmailTokens"] = [icon]
+        self.assertEqual("PASS", self.inspect(staged=True)["status"])
+        self.write("manifest.json", raw.decode() + UNSAFE_EMAIL)
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        entry["nonEmailTokens"] = [UNSAFE_EMAIL]
+        with self.assertRaises(ValueError):
+            self.inspect(staged=True)
+
+    def test_exact_scanner_findings_and_errors_remain_closed(self) -> None:
+        report = [
+            {
+                "RuleID": "generic-api-key",
+                "StartLine": 1,
+                "EndLine": 1,
+                "StartColumn": 1,
+                "EndColumn": 64,
+                "Match": "REDACTED",
+                "Secret": "REDACTED",
+            }
+        ]
+        fingerprint = hashlib.sha256(json.dumps(report[0], sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        result = subprocess.CompletedProcess([], 1, json.dumps(report).encode(), b"")
+        with patch.object(guard.subprocess, "run", return_value=result):
+            with self.assertRaises(ValueError):
+                guard.secret_scan(b"fixture", SCANNER, self.policy["scannerSha256"], self.config)
+            guard.secret_scan(b"fixture", SCANNER, self.policy["scannerSha256"], self.config, [fingerprint])
+            for code, output in (
+                (2, json.dumps(report).encode()),
+                (1, b"bad"),
+                (1, json.dumps(report + report).encode()),
+                (0, json.dumps(report).encode()),
+            ):
+                result.returncode, result.stdout = code, output
+                with self.assertRaises(ValueError):
+                    guard.secret_scan(b"fixture", SCANNER, self.policy["scannerSha256"], self.config, [fingerprint])
+
+    def test_real_digest_false_positive_needs_exact_review_and_rejects_added_secret(self) -> None:
+        raw = ('api_key="' + hashlib.sha256(b"non-secret source digest").hexdigest() + '"').encode()
+        self.write("digest.txt", raw.decode())
+        with self.assertRaises(ValueError):
+            self.inspect(staged=True)
+        report = guard.credential_report(raw, SCANNER, self.policy["scannerSha256"], self.config)
+        self.assertGreater(len(report), 0)
+        entry = self.approve_bytes("digest.txt", raw)
+        entry["credentialFindingFingerprints"] = [
+            hashlib.sha256(json.dumps(f, sort_keys=True, separators=(",", ":")).encode()).hexdigest() for f in report
+        ]
+        self.assertEqual("PASS", self.inspect(staged=True)["status"])
+        token = "gh" + "p_" + "7F3aBc9De2Gh5Jk8Lm1Np4Qr6St0UvXyZaBc"
+        extended = raw + b"\n" + token.encode()
+        self.write("digest.txt", extended.decode())
+        entry["sha256"], entry["size"] = hashlib.sha256(extended).hexdigest(), len(extended)
+        with self.assertRaises(ValueError):
+            self.inspect(staged=True)
+
+    def test_reviewed_binary_passes_real_commit_push_and_changed_image_is_denied(self) -> None:
+        remote = self.repo / "remote.git"
+        self.git("init", "--bare", str(remote))
+        self.policy["remoteUrl"] = remote.as_posix()
+        (self.repo / ".local").mkdir(exist_ok=True)
+        self.write("tools/prospective_privacy.py", (ROOT / "tools/prospective_privacy.py").read_text())
+        self.write(".privacy-baseline.json", json.dumps(self.policy))
+        self.base = self.commit("Fixture source before installation")
+        self.policy["baselineCommit"] = self.base
+        (self.repo / ".privacy-baseline.json").write_text(json.dumps(self.policy))
+        raw = b"synthetic image payload\0"
+        self.approve_bytes("capture.png", raw, binary=True)
+        review = self.repo / ".local/review.json"
+        review.write_text(json.dumps(self.reviews))
+        hooks = installer.prepare(self.repo, SCANNER, review, hashlib.sha256(review.read_bytes()).hexdigest())
+        self.git("config", "core.hooksPath", str(hooks))
+        self.git("branch", "-m", "main")
+        self.git("remote", "add", "origin", remote.as_posix())
+        self.git("config", "push.default", "simple")
+        self.git("config", "branch.main.remote", "origin")
+        self.git("config", "branch.main.merge", "refs/heads/main")
+        self.write("capture.png", raw.decode())
+        self.commit("Exact reviewed synthetic image")
+        self.git("push")
+        published = self.git("ls-remote", "--heads", "origin").stdout
+        self.write("capture.png", "Changed image")
+        self.git("-c", "core.hooksPath=" + str(self.repo / "no-hooks"), "commit", "-m", "Simulated bypass")
+        self.assertNotEqual(0, self.git("push", check=False).returncode)
+        self.assertEqual(published, self.git("ls-remote", "--heads", "origin").stdout)
+
+    def test_installed_review_is_pinned_and_does_not_trust_live_changes(self) -> None:
+        (self.repo / ".local").mkdir(exist_ok=True)
+        self.write("tools/prospective_privacy.py", (ROOT / "tools/prospective_privacy.py").read_text())
+        self.write(".privacy-baseline.json", json.dumps(self.policy))
+        self.commit("Guard fixture")
+        raw = b"synthetic image payload\0"
+        self.approve_bytes("capture.png", raw, binary=True)
+        review = self.repo / ".local/review.json"
+        review.write_text(json.dumps(self.reviews))
+        pin = hashlib.sha256(review.read_bytes()).hexdigest()
+        with self.assertRaises(ValueError):
+            installer.prepare(self.repo, SCANNER, review, "0" * 64)
+        hooks = installer.prepare(self.repo, SCANNER, review, pin)
+        self.git("config", "core.hooksPath", str(hooks))
+        review.write_text("{}")
+        self.write("capture.png", raw.decode())
+        self.assertEqual(0, self.git("commit", "-m", "Reviewed synthetic image", check=False).returncode)
+        (hooks / "reviewed-artifacts.json").write_text("{}")
+        self.write("safe.txt", "Safe")
+        self.assertNotEqual(0, self.git("commit", "-m", "Tampered review", check=False).returncode)
 
     def test_baseline_and_safe_descendant_pass(self) -> None:
         self.assertEqual("PASS", self.inspect(tip=self.base)["status"])

@@ -61,3 +61,30 @@ and each supported local branch's upstream to the same remote branch name.
 Use `git push --dry-run` to check routing and hooks before uploading.
 Do not disable hooks to get around a blocked finding; correct the content or
 independently review an exact false positive and deliberately reinstall controls.
+
+## Reviewed synthetic artifacts
+
+New screenshots and scanner false positives remain blocked until an independent
+reviewer approves their exact content. The optional registry uses document type
+`independent-artifact-privacy-review`; it binds the existing baseline, pinned
+scanner/configuration, independent reviewer, rationale, and each artifact's
+case-sensitive relative path, regular-file mode, raw Git-blob SHA-256 and length.
+Binary review requires inspecting the decoded content and metadata. Credential
+false positives bind the complete redacted finding fingerprints; unknown or
+changed findings and scanner errors remain denied. Exact relative icon filename
+tokens misidentified as email addresses can be adjudicated only for that blob.
+There is no global hash, file-extension, email/domain or scanner-rule exemption.
+
+Keep the independently authored registry and raw review diagnostics in ignored
+local state. Prepare with `--review <local-review-file> --review-sha256
+<independently-supplied-digest>` in addition to the normal installer arguments.
+Review the resulting snapshot before activating it. The installer copies and
+pins those exact reviewed bytes; editing either the live registry or repository
+source does not update installed admissions. Preserve previous snapshots and
+review receipts. A new or changed image needs a new explicit review and reinstall.
+
+Admissions never waive protected/private output names, real profile/workspace
+paths, raw reports, size/mode restrictions, filenames, refs, author/committer
+identity or commit messages. Every admitted artifact still receives the pinned
+credential scan. This is privacy admission only, not visual, task or release
+approval, and never changes the approved historical baseline or push routing.
