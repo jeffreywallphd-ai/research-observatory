@@ -1,0 +1,646 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-visual-disposition",
+  "taskId": "W1.A08.T02",
+  "reviewId": "W1.A08.T02.visual-review-03",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "reviewedAt": "2026-09-06T01:39:48Z",
+  "disposition": "changes-requested",
+  "formalTaskApproval": false,
+  "scope": "Commit-bound incremental W1.A08.T02 visual remediation disposition for visual02-F01 and retained F02/UX01, expanded to the acceptance-bound dark current-navigation contrast defect visible in the supplemental pixels. Covers exact ddba5f5f product/capture04 and six supplemental actual contexts. Not task, governance-maintenance, slice/amendment or W1 approval.",
+  "bindings": {
+    "producerCommit": "ddba5f5f21298f5f292a73eddee52ceff74f894f",
+    "captureDeliveryCommit": "66d4db58064f7332e8f1adb8ea7ced6bff991bc6",
+    "manifest": "artifacts/evidence/W1.A08.T02.captures-04/manifest.json",
+    "manifestSha256": "7f5b3f1938e5b48ce2f027e9037280f46b27638dd3c9459e9a45d8269cedfeeb",
+    "manifestSerialization": "Canonical capture JSON from tools/product_style_check.py::_json_bytes; digest is the exact published file-byte SHA-256, not a differently serialized compact JSON digest.",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "referencePackageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "approvalPacketCommit": "2160cc9917282d80848189dc9669fe3827979246",
+    "normativeSections": [
+      "design/ui-reference/STYLE_GUIDE.md sections 5, 6 and 9",
+      "W1.A08.T02 criteria 2, 3 and 4",
+      "ECR-0008.execution-01.md effective-reference overlay and retained F02/UX01"
+    ],
+    "producerInputCount": 503,
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app/WorkflowNavigation.tsx",
+        "rawSha256": "24eb46492844f121b90644a41bbb8dbfb6d10ea7a9985edb4c85d9ad4246c7fe",
+        "gitBlob": "4fcca745f0e765147f00a8ad56b14bb90ba72abe"
+      },
+      {
+        "path": "apps/desktop/src/app.css",
+        "rawSha256": "f674b20802f74d4f685faf9d66db84c265f393dd41e2002dbf595e6bde8b23c6",
+        "gitBlob": "405c283c794598a1f27cc3501764d04c5879f645"
+      },
+      {
+        "path": "packages/ui-components/src/index.tsx",
+        "rawSha256": "b69dba38dec1ff69c50076cedc9ffd94ddaa29b23f9762c4af9589d7b7d00a45",
+        "gitBlob": "57296476590722185176288ac4e09201fa2a9598"
+      },
+      {
+        "path": "packages/ui-components/src/styles.css",
+        "rawSha256": "d502b754768242b4efcac717e1c9f77cc3c8fdef0176f640879f475a4f89db6c",
+        "gitBlob": "7336f2ba28ef094b9e9f0e290e1f20e614d5e7de"
+      },
+      {
+        "path": "tools/desktop_app_check.py",
+        "rawSha256": "e6f665f5329c6c6ab93443596c10f2e9bd351680ed9bf9c345397f4f774971bf",
+        "gitBlob": "0323857dcf011f73c4a99df3a4cceb7882ae14b6"
+      },
+      {
+        "path": "tools/product_layout_measurements.py",
+        "rawSha256": "5b7bf4a3519c6d4f7dd73740c0f748a915fbcbb4260401bf30af59050f66e19e",
+        "gitBlob": "8493a68d8a6878a44684d790b7a100d068f22e37"
+      },
+      {
+        "path": "design/ui-reference/assets/tokens.css",
+        "gitBlob": "7adcd7c0577308763d07a81404067c3d4a3eee71",
+        "rawSha256": "475da960ade048a4a0989dfd42cbcae974b82aedc7b13e18af77e6216bdff230"
+      },
+      {
+        "path": "design/ui-reference/assets/app.css",
+        "gitBlob": "d5154e5a893372b03275deb82ae11b7216a96bfb",
+        "rawSha256": "4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee"
+      },
+      {
+        "path": "apps/desktop/src/app/ApplicationRuntime.tsx",
+        "gitBlob": "d66cba076f31d61a7d64c22fc4272db89d88e16d",
+        "rawSha256": "1bda1aa9dc6870728e6a8c1f7e9e085a379d2bed403e39b10c65682043e0ef83"
+      }
+    ],
+    "supplemental": {
+      "deliveryCommit": "6db0918c453a9d9b66321c934764f70e0aa162fe",
+      "manifest": "artifacts/evidence/W1.A08.T02.context-captures-01/manifest.json",
+      "manifestSha256": "bbf76f56d30e522326139e8bdaacaa1088591751db3cde5c56181311799b31c5",
+      "observer": {
+        "commit": "3442794cea9ed1f3a29d86fb367c45060f45bdcf",
+        "gitBlob": "1a48e1422af6818e9702a021c75537c5952c87e8",
+        "path": "artifacts/evidence/W1.A08.T02.context-observer-01.py",
+        "rawSha256": "acdb5b68275078de20194f1d295a5286b2db442b8695848ce998e13e1e31ceaf"
+      },
+      "producerCommit": "ddba5f5f21298f5f292a73eddee52ceff74f894f",
+      "producerCheckout": ".local/qualification-worktrees/w1-a08-t02",
+      "producerInputCount": 503
+    },
+    "priorVisualReview": {
+      "path": "artifacts/evidence/W1.A08.T02.visual-review-02.json",
+      "sha256": "0ed3ccc93827cc3eed746518148d26ebaa706b3150bc4fcd2546bf899b76f675",
+      "disposition": "changes-requested",
+      "preserved": true
+    }
+  },
+  "verificationActuallyPerformed": {
+    "capture04Authentication": {
+      "operation": "Read-only product_style_check.verify_product_captures with exact capture04 manifest and externally supplied delivery commit, before root formatted capture-source Python.",
+      "ok": true,
+      "captureCount": 108,
+      "coverage": "Exact manifest/PNG inventory and bytes, immutable delivery, producer/source/build/reference/renderer identity and recorded measurement validators. No browser execution for this authentication. No current-root source identity claim after later formatting."
+    },
+    "supplementalObservation": {
+      "command": ".venv/Scripts/python.exe artifacts/evidence/W1.A08.T02.context-observer-01.py --observer-commit 3442794cea9ed1f3a29d86fb367c45060f45bdcf",
+      "ok": true,
+      "exitCode": 0,
+      "actualCases": 6,
+      "existingSettingsMeasurementValidatorsPassed": 6,
+      "measurementErrors": [],
+      "renderer": {
+        "browserVersion": "145.0.7632.6",
+        "platform": "windows-x64",
+        "playwrightVersion": "1.58.0"
+      },
+      "observerRole": "Reviewer-authored, parent-inspected observer; product correction is independently reviewed. Script/source identity is distinct from the product producer identity.",
+      "mode": "Actual compiled product loaded through unchanged existing runtime_frame_errors fixture adapters; existing real Tab helper is observed immediately before ordinary workspace autofocus. No fake application markup or replacement service adapters.",
+      "boundedStop": "Other matrix sampling is skipped while upstream fixture state transitions remain unchanged. After original settings record produces six measurements, ObservationComplete exits through existing browser cleanup. This is not a full runtime-frame or native/Core PASS.",
+      "binding": "Observer bytes and qualification source/build input files were held during observation; independently derived producer snapshot equality was checked before and after. Existing write_capture_bundle created six exact PNGs exclusively and published the manifest last."
+    },
+    "supplementalDeliveryAuthentication": {
+      "operation": "Read-only producer-checkout product_style_check.read_capture_bundle with independently constructed exact six-case contract and externally supplied delivery; re-derived current unchanged qualification producer snapshot, reran existing settings measurement validators and bound observer bytes to its immutable Git blob.",
+      "ok": true,
+      "captureCount": 6,
+      "deliveryCommit": "6db0918c453a9d9b66321c934764f70e0aa162fe",
+      "manifestSha256": "bbf76f56d30e522326139e8bdaacaa1088591751db3cde5c56181311799b31c5",
+      "producerCommit": "ddba5f5f21298f5f292a73eddee52ceff74f894f",
+      "producerInputCount": 503,
+      "settingsMeasurementErrors": [],
+      "observerCommit": "3442794cea9ed1f3a29d86fb367c45060f45bdcf",
+      "qualification": "Authentication/structural geometry PASS does not waive the independently found current-navigation contrast failure; no full-frame replay or approval."
+    },
+    "sourceInspection": "Read the ddba5f5f WorkflowContextBar branches, shared Button usage and original geometry/keyboard recorder in the unchanged qualification checkout. Previous/Next/Return all use shared Button; disabled expressions and callbacks are unchanged. The actual button selector includes main workflow context outside the workspace, and its independently sampled controlCount is required to equal the semantic inventory.",
+    "imageInspection": {
+      "method": "Viewed exact local PNGs without editing, compositing or native GUI actions.",
+      "imageCount": 20,
+      "capture04Images": 14,
+      "supplementalImages": 6,
+      "selection": "All six settings product/reference pairs at 1440x900, 1280x720 and 720x450 in light/dark; Task Center light1440 product/reference pair; all six supplemental actual context PNGs."
+    },
+    "reusedPriorIndependentChecks": {
+      "candidate": "1517b16aa1fab212c7c28163d3c98ed92fc0d9a5",
+      "testsPassed": 6,
+      "description": "Previously executed the focused layout tests including genuine minimal short shared-shell CSS fixture, actual built-product long-page navigation/Tab/Shift+Tab and shared-flow negatives; replayed six missing/truncated/invalid Panel inventory probes. These were not rerun during visual/performance coordination."
+    },
+    "crossBundleBinding": {
+      "all503InputGitBlobsIdentical": true,
+      "rawInputHashMapsIdentical": false,
+      "completeBuildManifestsIdentical": false,
+      "productExecutableArtifactHashesIdentical": {
+        "assets/app.css": "31de5ae42122578b50daf16b8b04dd42bd51ae080ee7d6023e4c413bf3941f27",
+        "assets/app.js": "df2749dc1e0f28d245f2d93f8fde9a3412df0f562c8dbee7cdd2307da29e53dd",
+        "index.html": "d3499c13b59f8e03aec1235d8262ab6191f6418ed36029f2e6b3012ad04cd771"
+      },
+      "qualification": "Each checkout is separately authenticated. Raw checkout source maps differ, as do the derived app.js.map and three copied reference assets; the executed product HTML/JS/CSS are byte-identical. Do not relabel the supplemental run as execution of mutable root after formatting."
+    },
+    "privacyOutputCheck": {
+      "scope": "Only the new supplemental manifest bytes.",
+      "accountPathOrSidPatternsFound": false,
+      "qualification": "Bounded pattern check plus inspected generated content, not a repository-wide privacy certification."
+    },
+    "contrastReplay": {
+      "method": "Independent read-only source/pixel corroboration and pure sRGB luminance arithmetic; no browser or product mutation.",
+      "selector": ".sidebar button[aria-current]",
+      "foreground": "#2d58b3",
+      "background": "#0d2241",
+      "ratio": 2.388648267142677,
+      "result": "FAIL",
+      "acceptance": "WCAG AA enabled normal text: at least 4.5:1; this pair also fails the 3:1 large-text threshold.",
+      "marker": {
+        "foreground": "#071629",
+        "background": "#3d70dc",
+        "sourceFontSizePx": 12,
+        "ratio": 3.936219553124029,
+        "result": "FAIL"
+      }
+    }
+  },
+  "inspectedImages": [
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:dark:1440x900",
+      "role": "product",
+      "file": "166936d1a5aa909b04c5d3a28fe26a1bc81b1f1926e63239c120b0807c8c2e33.png",
+      "sha256": "a036f4d32d937ada4d112840a9521623446b46417c85cae224b47b220f6c7edb"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:light:1440x900",
+      "role": "product",
+      "file": "76bd4825a846f0f720ec2eadf3744a0ecdd6e1587407aab0ec8799ecc58f092e.png",
+      "sha256": "c3e10e1cdfd93775fe17051e0749237518a7681b544f1737760060a5706377b4"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:tasks:light:1440x900",
+      "role": "product",
+      "file": "2512de22bebc7cc71986860b693bfe748a81f5df5a29fe08097b370b1e7a2eff.png",
+      "sha256": "b1dac06ca31fe31e72e2457367a9baf70f99b5c35443329f80cd8fc40d64de00"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:tasks:light:1440x900",
+      "role": "reference",
+      "file": "021f101b988eed83cb3cbe63271209ca741370b825e6bfe36d473650599e22d9.png",
+      "sha256": "70efa1c7312e87c04e2ea34005986450d71906f52d30567ecff4f9c03124fccf"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:light:1440x900",
+      "role": "reference",
+      "file": "3931120dcb8ce8be33149c54d55e78363a647e913b184d712e8bcc67cad33f66.png",
+      "sha256": "479bda64fc07c205f8b598d044b4d7698e708de1fe649379c6e5195982f13d50"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:light:1280x720",
+      "role": "reference",
+      "file": "4890fc0a6347f8ab866e274755032ee90709f869e7ac175342ed2169e417737d.png",
+      "sha256": "05ea610cff99f2bf56255f0dc96e5b6daa5adbe907e6a641360fe31d03251342"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:dark:1280x720",
+      "role": "reference",
+      "file": "5565457e8815fb56f01e5c5cb8c8495c28606863862dc9cdbbf6d925bb39cdf4.png",
+      "sha256": "2a813d40a4a9332359717c53e411ad0969d9fdc9588e906ede1f1f2ea687f7a8"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:dark:720x450",
+      "role": "reference",
+      "file": "7af18ef92e4e8eecf90cd0882f94c186914e8b251aed6bbc1948c8e3216277d4.png",
+      "sha256": "57b45a5dddfa3cb64b8a41d4a7ee55925c7332cbcd2ca71abd93882cde23d778"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:dark:1440x900",
+      "role": "reference",
+      "file": "99b39822e21e5ba370f24f61fbe43b724923c7c92be95915d20299f7ef3def18.png",
+      "sha256": "10b1f9ce6b36ff4e12f5948bc61c2413a155e822c267a3e14d6960b3e8979d78"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:light:720x450",
+      "role": "reference",
+      "file": "de4f28a1e2145953df7da713d5ec8240d90bea30b3397750da1d50e5ca6981c9.png",
+      "sha256": "9488100b339349d6f14740ff855b43bdc231823f697ffdca4c47c3055730e5ed"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:light:1280x720",
+      "role": "product",
+      "file": "e73e50e326680e684c46d7013add73f07a7bd4627c99491797a42baed7323393.png",
+      "sha256": "7cfd76246f656ec22edbba5d8056dbd18729b8e86a79852478459d456e4ac292"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:dark:1280x720",
+      "role": "product",
+      "file": "e81e4de1ab4e355fb5f35329c9988393d4edc8ba7e0fa6010a4f373011ecebdd.png",
+      "sha256": "2d0fa5307eebe0d951518befdba17296bf2eea71e9f10450e634c333249102b5"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:dark:720x450",
+      "role": "product",
+      "file": "e8ee749c9ee2a45730ae0cdc5ef6aaf1fe6b4827abbe9b34d752152a11e91796.png",
+      "sha256": "7bf90ad61569312f9cdcc7f25078ceccb54cc705681f584fcabf6e586209b3d7"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.captures-04",
+      "caseId": "workspace:settings:light:720x450",
+      "role": "product",
+      "file": "f9f557757eab0cc99a4cdb082edcc7bc4100e3f1d36a8c331a658f319add41f3.png",
+      "sha256": "7bd27fc3bb4adc5fe203bcb0b2f774a1b44485c3df652a5053d7aaeaf0419040"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.context-captures-01",
+      "caseId": "workflow-context:settings:light:720x450",
+      "role": "product",
+      "file": "3ad34d8db48e834fbdf4a18eb36b486e947bde7e593cd76fcf128ad6d2eeee58.png",
+      "sha256": "68857cf8555c4a386be36d0f9d9a6f4390ca8ac59124744142f44790d466adcf"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.context-captures-01",
+      "caseId": "workflow-context:settings:light:1280x720",
+      "role": "product",
+      "file": "6a959ae049968bc99db2e34e718c4bdd95adce11ea12445e1cc780e0b7c967c6.png",
+      "sha256": "ef29e89706827879ac34fe06821ec96c5f5b3a2c53fda2858da3c1a7de25a576"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.context-captures-01",
+      "caseId": "workflow-context:settings:light:1440x900",
+      "role": "product",
+      "file": "a915b1f2f1148278656a66b4568410c22c3b684482057cd5b1da5ce46bc70280.png",
+      "sha256": "fe6ee709d76d963d82e3aa8ed28985be8e3a1d55c1723fe86d0ff295f6784db3"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.context-captures-01",
+      "caseId": "workflow-context:settings:dark:1440x900",
+      "role": "product",
+      "file": "a96b7a5f26f43d81921c950602114dc0533aabbe58b8332a3375a283c0f7317c.png",
+      "sha256": "8658ad2c6e697a928d25e6a5b44327ed9d1215287025ad9cc356aacddb3a59ed"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.context-captures-01",
+      "caseId": "workflow-context:settings:dark:720x450",
+      "role": "product",
+      "file": "b03faa144f58bba220c6954f4dca90764f182dae70257b0064f2cb142b3a4726.png",
+      "sha256": "57201d548f93cac2c46b07d9458edae02d59330af480a2a082f2421baf637b77"
+    },
+    {
+      "bundle": "artifacts/evidence/W1.A08.T02.context-captures-01",
+      "caseId": "workflow-context:settings:dark:1280x720",
+      "role": "product",
+      "file": "f3345a8cfa2cbfcdb5a8bd39c7d03cad5ecbeeab471ce7ec7d39fc392008e61a.png",
+      "sha256": "c6c7462a1dad229cd2bfe7d3f2092c3e84e60b794f70578f05a976d33a045ef3"
+    }
+  ],
+  "visualAssessment": {
+    "workflowContext": "The supplemental images actually show coherent 40px Next/Return controls, rounded shared borders, aligned content, legible hierarchy and no raw browser-button appearance in light/dark at all three sizes. Return has a clear visible focus ring. Next remains disabled with a textual unavailability explanation. The first-stage Previous action is absent (Previous step · None); its shared Button source branch was inspected, not represented as a captured enabled Previous state.",
+    "F02": "No incremental regression observed. Capture04 Task Center product PNG is byte-identical to the previously inspected capture03 Task Center image; effective paragraph rhythm remains coherent. Retained independent flow/edge/inventory negatives and capture04 measurement validation cover the shared boundary. Supplemental settings measurements also pass existing Panel-flow validation.",
+    "UX01": "Geometry remains restored: Task Center visibly joins sidebar to footer; authenticated side-by-side settings rectangles align sidebar/body/main bottoms with footer top, and narrow cases stack before main. Supplemental settings shell validation also passes. This does not waive the separate current-navigation text-contrast finding. Genuine short-shell and forward/reverse keyboard/scroll tests are prior independently executed proof, not newly rerun or inferred from tall-page PNGs.",
+    "modalityCorrection": "Capture04 settings PNGs scroll to the workspace (y504 wide, y496 medium, y1341 narrow), leaving the corrected context off-frame. Source and geometry alone were not accepted as visual closure. The separately authored and committed observer supplies the missing actual pixels before workspace autofocus; the old captures and adverse review remain unchanged.",
+    "darkCurrentNavigation": "Blocking drift: the enabled current Research Intent label is visibly dark blue against dark navy in supplemental dark1440/dark1280. Candidate .sidebar button[aria-current] resolves #2d58b3 foreground on #0d2241 background. Independently calculated contrast is 2.388648267142677:1, below the 4.5:1 normal-text requirement (and even 3:1). The approved reference explicitly uses light current-navigation text in dark theme. This inherited defect is inside the current visual/accessibility acceptance surface, not authority for a new design. The visible 12px current-step number also fails normal-text contrast: #071629 on #3d70dc calculates 3.936219553124029:1. Both defects are consolidated in visual03-F01."
+  },
+  "contextObservationSummary": [
+    {
+      "caseId": "workflow-context:settings:light:1440x900",
+      "scroll": {
+        "x": 0,
+        "y": 1
+      },
+      "keyboard": {
+        "buttonCount": 2,
+        "enabledCount": 1,
+        "traversedCount": 1
+      },
+      "controls": [
+        {
+          "name": "Next step · Search Studio",
+          "disabled": true,
+          "focused": false,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 0
+        },
+        {
+          "name": "Return to current step · Research Intent",
+          "disabled": false,
+          "focused": true,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 2
+        }
+      ],
+      "documentHorizontalOverflow": false
+    },
+    {
+      "caseId": "workflow-context:settings:dark:1440x900",
+      "scroll": {
+        "x": 0,
+        "y": 1
+      },
+      "keyboard": {
+        "buttonCount": 2,
+        "enabledCount": 1,
+        "traversedCount": 1
+      },
+      "controls": [
+        {
+          "name": "Next step · Search Studio",
+          "disabled": true,
+          "focused": false,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 0
+        },
+        {
+          "name": "Return to current step · Research Intent",
+          "disabled": false,
+          "focused": true,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 2
+        }
+      ],
+      "documentHorizontalOverflow": false
+    },
+    {
+      "caseId": "workflow-context:settings:light:1280x720",
+      "scroll": {
+        "x": 0,
+        "y": 83
+      },
+      "keyboard": {
+        "buttonCount": 2,
+        "enabledCount": 1,
+        "traversedCount": 1
+      },
+      "controls": [
+        {
+          "name": "Next step · Search Studio",
+          "disabled": true,
+          "focused": false,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 0
+        },
+        {
+          "name": "Return to current step · Research Intent",
+          "disabled": false,
+          "focused": true,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 2
+        }
+      ],
+      "documentHorizontalOverflow": false
+    },
+    {
+      "caseId": "workflow-context:settings:dark:1280x720",
+      "scroll": {
+        "x": 0,
+        "y": 83
+      },
+      "keyboard": {
+        "buttonCount": 2,
+        "enabledCount": 1,
+        "traversedCount": 1
+      },
+      "controls": [
+        {
+          "name": "Next step · Search Studio",
+          "disabled": true,
+          "focused": false,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 0
+        },
+        {
+          "name": "Return to current step · Research Intent",
+          "disabled": false,
+          "focused": true,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 2
+        }
+      ],
+      "documentHorizontalOverflow": false
+    },
+    {
+      "caseId": "workflow-context:settings:light:720x450",
+      "scroll": {
+        "x": 0,
+        "y": 1063
+      },
+      "keyboard": {
+        "buttonCount": 2,
+        "enabledCount": 1,
+        "traversedCount": 1
+      },
+      "controls": [
+        {
+          "name": "Next step · Search Studio",
+          "disabled": true,
+          "focused": false,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 0
+        },
+        {
+          "name": "Return to current step · Research Intent",
+          "disabled": false,
+          "focused": true,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 2
+        }
+      ],
+      "documentHorizontalOverflow": false
+    },
+    {
+      "caseId": "workflow-context:settings:dark:720x450",
+      "scroll": {
+        "x": 0,
+        "y": 1063
+      },
+      "keyboard": {
+        "buttonCount": 2,
+        "enabledCount": 1,
+        "traversedCount": 1
+      },
+      "controls": [
+        {
+          "name": "Next step · Search Studio",
+          "disabled": true,
+          "focused": false,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 0
+        },
+        {
+          "name": "Return to current step · Research Intent",
+          "disabled": false,
+          "focused": true,
+          "inViewport": true,
+          "height": 40,
+          "minHeight": 40,
+          "padding": 16,
+          "radius": 10,
+          "outlineWidth": 2
+        }
+      ],
+      "documentHorizontalOverflow": false
+    }
+  ],
+  "acceptedVariance": [
+    "Reference mock data and illustrative composition are not a pixel-equality requirement. Full-width shared context controls preserve the existing stack composition; the correction restores common control styling without changing navigation authority.",
+    "At 720x450, natural keyboard scrolling places the context heading above the viewport while both actions and the focused Return remain fully visible. This clipping is recorded, not waived as missing action reachability. Supporting settings capture04 and reference pages have their separately recorded viewport composition.",
+    "The visible RO-UI-ACADEMIC-MINIMAL-1.5 workflow text and unknown checkpoint state remain truthful semantic authority; adopted presentation1.6 does not silently rewrite domain/reference identity or invent stage completion authority.",
+    "No visual variance waives missing semantic, keyboard, interaction, accessibility, safety or privacy obligations. Supplemental checks establish the named context behavior only; broader existing task and W1 obligations remain."
+  ],
+  "closures": [
+    {
+      "findingId": "W1.A08.T02-visual-02-F01",
+      "priorPriority": "P2",
+      "disposition": "closed",
+      "criteria": [
+        "W1.A08.T02 criterion 2 shared production style reuse",
+        "W1.A08.T02 criterion 3 canonical control geometry and effective states",
+        "W1.A08.T02 criterion 4 independent live-product visual conformance"
+      ],
+      "reason": "Shared Button source correction plus actual button inventory/geometry and six real Tab-observed supplemental PNGs demonstrate the formerly bare workflow context actions now render with the shared control language in both themes at three viewports. For those context controls, inspection found no new clipping, alignment, theme or focus defect. The missing off-frame capture modality was remedied rather than waived. The separate sidebar-current contrast finding remains open."
+    }
+  ],
+  "findings": [
+    {
+      "findingId": "W1.A08.T02-visual-03-F01",
+      "priority": "P2",
+      "severity": "medium",
+      "blocking": true,
+      "status": "open",
+      "title": "Enabled current navigation label and step marker fail dark-theme contrast",
+      "criteria": [
+        "W1.A08.T02 criterion 3: light/dark geometry and effective states",
+        "W1.A08.T02 criterion 4: independent visual disposition cannot waive accessibility or interaction contracts",
+        "Approved STYLE_GUIDE section 9: WCAG 2.2 AA; section 6: distinguish current workflow state"
+      ],
+      "location": {
+        "path": "apps/desktop/src/app.css",
+        "line": 16,
+        "gitBlob": "405c283c794598a1f27cc3501764d04c5879f645",
+        "selector": ".sidebar button[aria-current=\"page\"], .sidebar button[aria-current=\"step\"]",
+        "relatedSourceLine": 28
+      },
+      "evidence": {
+        "observedImages": [
+          "artifacts/evidence/W1.A08.T02.context-captures-01/a96b7a5f26f43d81921c950602114dc0533aabbe58b8332a3375a283c0f7317c.png",
+          "artifacts/evidence/W1.A08.T02.context-captures-01/f3345a8cfa2cbfcdb5a8bd39c7d03cad5ecbeeab471ce7ec7d39fc392008e61a.png"
+        ],
+        "candidateForeground": "#2d58b3",
+        "candidateBackground": "#0d2241",
+        "contrastRatio": 2.388648267142677,
+        "normalTextMinimum": 4.5,
+        "calculation": "Linearize each sRGB channel c with c/12.92 for c<=0.04045, otherwise ((c+0.055)/1.055)^2.4; luminance=0.2126R+0.7152G+0.0722B; ratio=(max(L1,L2)+0.05)/(min(L1,L2)+0.05). Foreground luminance0.10792008797162483, background0.016112742568218416.",
+        "modality": "Colors are derived from exact authenticated candidate CSS/token cascade and corroborated by actual viewed pixels; no new DOM/computed-color measurement or browser run was performed for this finding.",
+        "disabledExemption": "Source-bound ApplicationRuntime passes the same disabled expression to sidebar WorkflowNavigation and main WorkflowContextBar. Captured Return is enabled, Research Intent is an implemented current stage, and the source adds disabled only for that global expression or an unimplemented stage. Thus this current label is not exempt disabled text; this conclusion is source/state inference, not a new captured sidebar-disabled field.",
+        "reference": "Bound design/ui-reference/assets/app.css dark .workflow-nav-step.current explicitly uses light #b9d1ff foreground; the product does not inherit that reference-only rule. Exact reference color duplication is not required, but sufficient contrast within the approved styling contract is.",
+        "coverageGap": "The current semantic samples cover workspace/context buttons, while sidebar samples cover shell rectangles. Their PASS does not establish contrast of enabled current-navigation text.",
+        "currentStepMarker": {
+          "selector": ".workflow-stage-list li:where([data-stage-state=\"current\"]) .workflow-stage-number",
+          "sourceLine": 28,
+          "foreground": "#071629",
+          "background": "#3d70dc",
+          "sourceFontSizePx": 12,
+          "contrastRatio": 3.936219553124029,
+          "normalTextMinimum": 4.5,
+          "qualification": "The visible ordered step number is text in an enabled control. aria-hidden avoids redundant speech and is not a visual contrast exemption."
+        }
+      },
+      "reproduction": [
+        "Inspect the immutable dark1440 or dark1280 supplemental PNG: Research Intent is the current sidebar step and its title is low-contrast dark blue.",
+        "Read ddba5f5f app.css current page/step selector and dark token values from design/ui-reference/assets/tokens.css; apply the stated luminance formula.",
+        "Follow the unchanged current/disabled conditions in WorkflowNavigation.tsx and shared disabled prop in ApplicationRuntime.tsx; compare the captured enabled Return state."
+      ],
+      "requiredRemediation": "Restore theme-aware current page/step text and current-step marker contrast using the existing approved semantic palette or established approved styling pattern, without changing navigation authority, labels, callbacks or tokens. Add focused actual-rendered contrast regressions for the direct text nodes of enabled current step/page controls, including label, marker and metadata, in both themes; retain these negative results and supply bounded fresh source-bound dark-current-navigation visual proof. Do not waive failures as inherited, decorative or disabled, or relabel passing geometry as contrast proof.",
+      "scopeQualification": "This is inherited production drift surfaced by current acceptance evidence, not a claim that the workflow Button correction introduced it. No unrelated redesign or full product audit is requested."
+    }
+  ],
+  "historyAndLimits": {
+    "adverseHistoryPreserved": "Original capture01/02/03/04, visual-review-02 and preflight adverse reports remain immutable. This ledger appends the narrow visual closure and does not rewrite the original finding.",
+    "observerPreflightHistory": [
+      {
+        "observerCommit": "d2479ac066311e380af8f1e2c24095b854515742",
+        "result": "failed-read-only-source-binding-preflight",
+        "exitCode": 1,
+        "errorType": "ValueError",
+        "suppliedCommitBlobSha256": "55114df59df35a7d353dea8a7530df617118f875578f464992ab18e783a0373f",
+        "currentObserverRawSha256": "acdb5b68275078de20194f1d295a5286b2db442b8695848ce998e13e1e31ceaf",
+        "outputDirectoryAbsentAfterFailure": true,
+        "explanation": "The corrected import source raced the parent's older commit notice. Direct read-only comparison confirmed different bytes and successful Git read, and the fixed output directory did not exist. No accepted observation or browser-launch claim is made for this failed attempt."
+      },
+      {
+        "observerCommit": "3442794cea9ed1f3a29d86fb367c45060f45bdcf",
+        "result": "completed-six-case-observation",
+        "exitCode": 0
+      }
+    ],
+    "separateOpenWork": "W1.A08.T02 visual03-F01 remains open; formal task submission/review and eventual independent UI-restoration classification remain unapproved. Quality-scope/UI-change maintenance has its separate workflow/review, which this visual ledger does not approve. W1.A08.S01, amendment exit/adoption and W1 release qualification remain required.",
+    "excluded": "No full product suite, performance sampling, native GUI, ordinary profile/vault/credentials/projects, remote changes, real repository/index/controller mutation, protected witness access or sibling workspace access. The protected witness was not opened, read, hashed, copied, staged, edited, deleted or ignored.",
+    "notClaimed": "Parent-reported renderer126/focused7/full-frame/performance results are not counted as independently executed checks here; performance-02 was not inspected. Root's later Python formatting and governance repair are outside this exact producer disposition.",
+    "prepublicationCorrection": "An initial narrow visual assessment favored closure of visual02-F01. Before any ledger publication, root flagged the visible dark current-navigation contrast; the reviewer independently corroborated the bound source, pixel appearance and numerical failure and added visual03-F01. The workflow-control finding is closed, but this round is adverse overall and cannot support an approved UI-restoration classification."
+  }
+}
