@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0018",
+  "reviewId": "GOV-MAINT-0018.R01",
+  "reviewedCommit": "5599a8671f618b0d990d70c27398bae888f87e8a",
+  "reviewer": "agent:ui_guard_planning",
+  "reviewedAt": "2026-09-06T01:07:08Z",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0018.json",
+    "quality-scope.json"
+  ],
+  "findings": []
+}
