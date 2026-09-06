@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "instruction-maintenance-review",
+  "candidateCommit": "d0185588a3789b26319206619c6986f50df3a2f2",
+  "baseCommit": "72664dc5045625fc5a6c316d286f5ee50bfb71b8",
+  "reviewer": "agent:/root/agents_md_review",
+  "disposition": "APPROVED",
+  "priorReview": "artifacts/evidence/instruction-routing.review-01.json",
+  "closures": [
+    {
+      "findingId": "IR-R01-F01",
+      "status": "CLOSED",
+      "evidence": "Canonical planning restores two credible candidates; task operations restore owner-authorized active-slice cancellation, immutable cancellation and denial of preceding-Wave task reopen after release approval."
+    },
+    {
+      "findingId": "IR-R01-F02",
+      "status": "CLOSED",
+      "evidence": "Correction is a sibling level-two section, outside bounded maintenance; the existing anchor is unchanged."
+    }
+  ],
+  "openFindings": [],
+  "assessment": "Five-file remediation reviewed. Saved adverse record and prior-candidate verification are faithful. Prior six-scenario/preservation assessment stands with both findings resolved. No additional findings within the delta.",
+  "independentActions": "Checked exact committed delta and stable HEAD. No file/Git changes or test reruns; no excluded material accessed.",
+  "source": "Actual independent agent disposition returned in this task, recorded by the root."
+}
