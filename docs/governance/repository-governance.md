@@ -29,7 +29,11 @@ architecture still require the normal mismatch and ADR route.
 - `docs/README.md` - document routing.
 - `planning/README.md` - planning lifecycle and delegation.
 
-These files are mandatory and may not be replaced by external setup guides.
+These are the repository entry authorities, not an unconditional reading list.
+Read AGENTS.md first; use docs/README.md to locate an unknown authority and
+planning/README.md before selecting or changing planned work. Follow their
+section-level triggers; do not recursively read every linked document. External
+setup guides cannot replace repository authority.
 
 ## Change routing
 
@@ -48,8 +52,12 @@ These files are mandatory and may not be replaced by external setup guides.
 The GRR/GCR descriptions retained in older documents are historical validation
 instructions, not a route for new work. The current maintenance rule in
 `../automation/governance-automation-simplification.md` supersedes that route.
-Material scope, security-authority, migration-guarantee, governed-reference and
-release changes still follow the append-only amendment and human-approval rules.
+Changes to approved scope, security authority, migration guarantees, governed
+references or release criteria require append-only amendment and explicit human
+approval, including reductions or replacements. Destructive/irreversible
+actions, external effects, substantial spend and release decisions also require
+human authority. Existing approval must actually cover the action; routine
+restoration or maintenance preserving that authority needs no new product gate.
 
 ## Mismatch protocol
 

@@ -1,6 +1,9 @@
 # Static Wave, capability, and slice planning review
 
-> **Repository destination:** `docs/automation/planning-review-site.md`. The generated site under `planning/review-site/` is a review surface; capability and slice Markdown plans remain canonical.
+Read only the section for the current review-site operation: navigation, feedback,
+approval, generation or change control. Ordinary implementation does not require
+this guide merely because a generated page exists. The site is a review surface;
+backlog and Markdown plans remain canonical.
 
 ## Entry points and navigation
 
@@ -28,6 +31,14 @@ navigation. Switching tabs changes only the navigation view; it never changes
 approval or backlog state.
 
 Use `python tools/planctl.py --repo . wave review WN` to regenerate and print the directly openable Wave link.
+
+In handoffs, present the exact generated destination as a directly openable link
+supported by the active client, plus its repository-relative path. In Codex,
+prefer absolute local Markdown links. Retain a literal browser `file://` URI
+only where useful and permitted; CLI URI output need not be copied into an
+unsupported link format. Link the relevant capability/slice/prerequisite packets,
+not every page. Gate decisions also require the
+[decision-complete handoff](project-automation-guide.md#31-decision-complete-stopped-gate-handoff).
 
 Capability aliases and descriptive slice labels are the default presentation.
 Canonical `CAP-XX` and `CAP-XX.SYY` values remain visible because they are

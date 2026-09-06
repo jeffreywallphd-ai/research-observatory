@@ -1,68 +1,39 @@
 # Documentation guide
 
-This file is the repository's high-level document router. It delegates detailed procedure; it does not duplicate every rule.
+AGENTS.md is the operating entry point. Use this router only when locating an
+authority or when a task triggers a row below. Read the applicable section and
+its stated prerequisites completely; do not read all linked documents.
+An unchanged section already available in context need not be re-read.
+Expand reading when scope changes, a material contradiction appears, or the
+current evidence cannot answer the task.
 
-## Authority map
+## Authority and reading routes
 
-| Need | Read |
+| Trigger or question | Read |
 |---|---|
-| Product purpose, users, workflows, principles, non-goals | `product/vision.md` |
-| Architecture, services, data, deployment, security, platform model | Accepted `adr/` records, then `architecture/README.md` and `architecture/source/systems-design.md` |
-| Source precedence, mismatch handling, document change control | `governance/repository-governance.md` |
-| Meaning and origin of waves, gates, capabilities, slices, aliases, and approval scope | `governance/delivery-control-model.md` |
-| Wave campaign, verification, evidence, CI, checkpoints, and stop rules | `automation/project-automation-guide.md` |
-| Coding-agent claims, task flow, and evidence | `automation/codex-tracking-guide.md` |
-| Risk-selected planning immediately after a task claim | `automation/task-start-planning.md` |
-| Bounded corrections, stable acceptance, receipts, evidence reuse and workflow cost | `automation/workflow-efficiency.md` |
-| Static decision-review behavior and feedback format | `automation/planning-review-site.md` |
-| Current work identity and plan lifecycle | `../planning/README.md` |
-| Approved visual/workflow reference (design input only; never the application runtime) | `../design/ui-reference/STYLE_GUIDE.md`, `WORKFLOW_CATALOG.md`, and `prototype-index.html` |
-| Desktop implementation conformance and visual baselines | `automation/ui-conformance-verification.md` |
+| Product purpose, users, workflows, or non-goals are being planned or changed | Relevant sections of [Vision](product/vision.md). |
+| Implementation touches an architectural boundary | Applicable accepted [ADRs](adr/) and affected [Systems Design](architecture/source/systems-design.md) sections; use the [architecture map](architecture/README.md) if ownership is unclear. |
+| A material source conflict or document-authority change is found | [Repository governance](governance/repository-governance.md); apply its mismatch protocol before dependent changes. |
+| Meaning/origin of Waves, gates, capabilities, slices, or approval scope is unclear | Relevant [delivery-control model](governance/delivery-control-model.md) sections. Historical sections are not current command recipes. |
+| Selecting/changing planned work or preparing a Wave | [Planning entry/lifecycle](../planning/README.md#default-planning-and-execution-lifecycle); follow its conditional section map. |
+| Claiming/resuming/submitting/reviewing a task | Matching [task-operation](automation/codex-tracking-guide.md) section; current backlog task and approved capability/slice scope. |
+| A task has just been claimed, or a finding exposes a missed risk | [Task-start planning](automation/task-start-planning.md); only the dimensions the change can affect. |
+| Correcting completed work, repairing controls, selecting/repeating checks, or considering evidence reuse | Matching section in the [efficiency reading map](automation/workflow-efficiency.md#reading-map). |
+| Closing a slice/checkpoint/Wave, choosing verification breadth, or integrating main | Matching [automation-guide](automation/project-automation-guide.md) section. |
+| Making a decision/approval request or stopping at a gate | [Decision-complete handoff](automation/project-automation-guide.md#31-decision-complete-stopped-gate-handoff). Read [review-site instructions](automation/planning-review-site.md) only for the operation involved: navigation, feedback, approval, or generation. |
+| Restoring or changing user-facing behavior | Affected approved [style](../design/ui-reference/STYLE_GUIDE.md), [workflow](../design/ui-reference/WORKFLOW_CATALOG.md), page contracts and linked HTML. For intentional change, also read [design-first governance](automation/project-automation-guide.md#6-design-first-experience-reference-governance); for implementation proof, [UI conformance](automation/ui-conformance-verification.md). |
+| Modifying a governance adapter/kernel or interpreting its historical evidence | Relevant [migration-design](automation/governance-automation-simplification.md) sections after its status paragraph; no live authority from a design or shadow receipt. |
 
-## Required reading by work type
-
-### Ordinary implementation task
-
-1. Root `AGENTS.md`.
-2. `../planning/README.md` and the active capability/slice/task.
-3. `automation/task-start-planning.md`; complete only the dimensions relevant
-   to the claimed task's credible risk.
-4. Accepted ADRs and affected architecture sections.
-5. Affected UI/workflow contracts when user-facing.
-6. The task-specific verification profile.
-
-### Capability planning or approval
-
-1. Root `AGENTS.md`.
-2. `../planning/README.md`.
-3. Vision, relevant accepted ADRs and Systems Design, and the tested current
-   implementation affected by the planned work.
-4. Current primary best-practice sources relevant to the core planned work.
-5. Complete capability decision packet and every ordered slice plan in the active wave.
-6. `automation/planning-review-site.md`.
-7. The generated capability review page.
-
-### Architecture change
-
-1. Vision and relevant workflows.
-2. Accepted ADRs and Systems Design.
-3. Affected capability/slice plans.
-4. Repository governance mismatch protocol.
-5. New or superseding ADR before implementation.
-
-### Experience change
-
-1. Vision and workflow catalog.
-2. Approved UI reference and style guide.
-3. Affected page/capability contracts.
-4. Design-first procedure in the automation guide.
-5. Approved new reference before product code.
+Read-only questions do not trigger task claims, Wave preparation, document
+generation, or edits. A user-facing change does not require reading unrelated
+reference pages. New Wave planning does require every contribution binding in
+that Wave, not only the first capability.
 
 ## Document rules
 
-- Do not use chat history as durable project memory.
-- Do not copy work status into prose; the backlog remains authoritative.
-- Do not use generated review HTML as a canonical plan; update Markdown and regenerate.
-- Do not silently make a package/bootstrap guide into repository authority.
-- Keep summaries brief and link to the canonical source.
-- When a change affects several documents, update the highest-authority source first, then derived guidance and validators.
+- Use the backlog for live identity/state; do not maintain competing prose status.
+- Preserve durable decisions in canonical records, not chat history alone.
+- Update the highest-authority affected source first, then derived guidance and
+  validators. Generated review HTML is not a canonical plan.
+- Keep one detailed procedure per subject; use conditional links elsewhere.
+- Repository instructions remain authoritative without an external setup pack.

@@ -1,5 +1,11 @@
 # Governance automation simplification
 
+Read Status and purpose when a control's authority is unclear. Read only the
+affected migration/verification section when changing that implementation or
+interpreting its history. Ordinary task work and documentation maintenance do
+not require the migration narrative; use
+[bounded maintenance](workflow-efficiency.md#bounded-maintenance).
+
 ## Status and purpose
 
 This is the migration design for replacing incident-specific deterministic
@@ -45,13 +51,15 @@ ceilings; a reader declares the event and invariant capabilities it understands.
 |---|---|---|
 | 0 | Read-only inspection, validation, projection, or diff | None |
 | 1 | Routine reversible mutation inside already approved scope | None; automatic receipt and independent review where currently required |
-| 2 | Scope, security, migration, or authority-bound change | Independent review; human approval only when authority expands |
+| 2 | Scope, security, migration, or authority-bound change | Independent review; human approval for the governed changes listed below |
 | 3 | Destructive, external, irreversible, costly, or release-authorizing action | Explicit human approval |
 
 Human approval is not required merely because a controller is repairing its own
-implementation. It remains required when product scope or execution authority
-expands, data may be lost, an external side effect occurs, or a release decision
-is made.
+implementation. Changes to approved scope, security authority, migration
+guarantees, governed experience or release criteria require append-only amendment
+and explicit human approval, including reductions/replacements. Destructive or
+irreversible actions, external effects, substantial spend and release decisions
+also require human authority. A risk tier never waives those requirements.
 
 ## Migration sequence
 
@@ -181,8 +189,8 @@ and remain non-authorizing. Sealed private-field preservation replaces repeated
 manual equality reviews only where exact typed-field and raw-byte invariants
 are mechanically established. Unknown evidence-input closure remains fresh-only.
 No new GRR/GCR, bootstrap or amendment is required merely to maintain these
-controls; independent review and human approval at expanded-authority/release
-boundaries remain mandatory.
+controls; independent review and human approval at the governed boundaries
+listed above remain mandatory.
 
 - Exact source hashes and compare-and-swap publication.
 - Append-only approvals, reviews, findings, closures, and adverse attempts.

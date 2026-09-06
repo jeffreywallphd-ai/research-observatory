@@ -5,6 +5,22 @@ or task state. It applies prospectively. Historical approvals, adverse findings,
 evidence and released work remain immutable. The aim is deterministic acceptance
 and traceability with less duplicate work, not a promise of zero defects.
 
+## Reading map
+
+Read only the sections triggered by the current action, completely and with
+their prerequisites; reuse unchanged guidance already available in context.
+
+| Action | Sections to read |
+|---|---|
+| Unsure which repair route applies | Choose the smallest lawful route |
+| Restore an approved completed task | Use the linked correction route |
+| Repair operating guidance or automation/evidence controls | Bounded maintenance; affected migration implementation only if needed |
+| Start/remediate/review a task | Freeze acceptance; Review each boundary once; Fast checks first |
+| Collect qualifying evidence | Stable snapshots and coordination; Automatic receipts and safe reuse |
+| Reuse prior results instead of executing checks | Automatic receipts and safe reuse in full; unknown input closure means fresh checks |
+| Touch privacy hooks, admitted historical metadata or prospective local bindings | Historical private metadata |
+| Report efficiency, time, tokens or cost | Measure before promising savings |
+
 ## Choose the smallest lawful route
 
 - Continue an open approved task for debugging and restoration inside its
@@ -16,13 +32,38 @@ and traceability with less duplicate work, not a promise of zero defects.
   exact predecessor, intended delta, invariant boundaries, selected tests, and
   independent control review. Reuse a concise evidence note; do not create a
   GRR, GCR, bootstrap or incident-specific controller.
-- An actual change to product scope, security authority, migration guarantees,
-  a governed reference, or release criteria still uses the append-only amendment
-  route and human approval where authority expands. A correction label cannot
-  confer that authority.
+- A change to approved product scope, security authority, migration guarantees,
+  a governed reference or release criteria requires append-only amendment and
+  human approval, including reductions/replacements. Destructive/irreversible
+  actions, external effects, substantial spend and release decisions also
+  require human authority. A correction label cannot confer it.
 
 Use full task designators in progress updates. State the outcome being proved
 and any genuine blocker, rather than narrating every command.
+
+## Bounded maintenance
+
+For an operating-guidance or automation/evidence-control defect that preserves
+approved authority:
+
+1. Stop the affected mutation at a quiescent, recoverable boundary.
+2. Bind the exact predecessor bytes, intended delta, risk tier and invariants.
+3. Make the smallest generic correction; no new GRR/GCR, bootstrap, control
+   revision or identity-specific controller to repair another controller.
+4. Run risk-selected checks, including real persistence/Git boundaries when
+   affected. Documentation-only changes need route/link and obligation review,
+   not unrelated product/platform suites.
+5. Obtain independent review before integration when security, migration,
+   evidence, public contracts or control authority are affected; then use the
+   [local integration procedure](project-automation-guide.md#11-local-main-integration).
+
+Reuse a concise maintenance/evidence note; this is not a new task state or human
+approval gate. Preserve historical records, adverse findings and safety rules.
+Actual authority changes use the amendment route above. The generic kernel/store
+remain evidence-only; current W1 mutations use the taskctl compatibility adapter.
+Read [migration detail](governance-automation-simplification.md) only when the
+affected adapter, kernel, store or historical boundary requires it, not for
+every maintenance increment.
 
 ### Use the linked correction route
 

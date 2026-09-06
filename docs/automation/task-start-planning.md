@@ -1,5 +1,11 @@
 # Task-start acceptance closure
 
+Read this pass after claiming an implementation task, or the affected step when
+remediation exposes a missed risk. Read-only inspection does not trigger it.
+Use only relevant contract/architecture/reference sections; links are not a
+requirement to inspect unrelated documents. The optional worksheet is a template,
+not extra required reading or output for every task.
+
 This is a lightweight implementation-planning pass performed after `taskctl
 claim` and before product code is changed. It closes the gap between an approved
 task description and the exact behaviors, boundaries, fixtures, and tests that
@@ -81,8 +87,8 @@ other deterministic proof that will close the row.
 
 ## Step 4: Optional read-only adversarial preflight
 
-When an independent agent is available, request a short design preflight before
-editing for work that touches migrations/destructive I/O, public or
+When the risk justifies it and an independent agent is available, consider a
+short design preflight before editing for migrations/destructive I/O, public or
 cross-process contracts, authentication/security/evidence controls, or
 multi-layer UI/export behavior. Give it the frozen task authority and
 acceptance-closure map. Ask for missing invariants, identity substitutions,

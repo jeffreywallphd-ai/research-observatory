@@ -1,48 +1,69 @@
 # Planning guide
 
-This file is the repository's high-level planning router. Planning state and identity live in the files referenced below, not in chat history or this summary.
+Use this entry before selecting, resuming, or changing planned work. Read the
+identity rules and lifecycle below, then only the section triggered by the action:
 
-## Roadmap and execution hierarchy
+| Action | Additional section |
+|---|---|
+| Prepare a new Wave/first capability or refresh a proposed contribution | Initiation assessment; templates and validation |
+| Change approved authority or inspect an existing amendment | Authority changes |
+| Submit task evidence or operate a lease | [Task operations](../docs/automation/codex-tracking-guide.md); not historical recovery material |
+| Interpret an actual historical recovery record/hold | [Historical recovery](../docs/automation/project-automation-guide.md#23-governance-recovery-controller); do not use it for a new defect |
+| Request feedback, approval, or handle a pending gate | Decision handoff |
+| Investigate ledger/schema/readiness failure | Relevant validation section and the exact reported contract |
 
-```text
-Roadmap
-  -> Durable Wave campaign
-      -> Capability contribution
-          -> Ordered slice
-              -> Task
-      -> Risk-cluster integration checkpoints
-      -> Wave exit / next-wave activation gate
-```
+A read-only code question does not require this guide unless planning identity
+or authority is involved. Linked references are conditional, not a reading list.
 
-- `backlog.yaml` is authoritative for IDs, dependencies, waves, gates, status, claims, leases, and evidence references.
-- Waves are the primary execution axis. Every wave has one sequential exit gate;
-  the same gate activates the next wave, except the final roadmap gate.
-- Capability aliases are the default human presentation. Numeric capability IDs
-  remain immutable dependency/evidence keys.
-- Slices are ordered within a capability. Descriptive slice labels are the
-  default presentation, while numeric slice IDs preserve sequence and history.
-- `backlog.schema.json` is its executable Draft 2020-12 structural contract; every `taskctl` command validates it before reading or mutating state.
-- `capability-plans/CAP-XX.md` resolves cross-slice and material implementation decisions.
-- `slice-plans/CAP-XX/*.md` expands the existing tasks into a coherent implementation and verification contract.
-- `review-site/` is generated from the backlog and Markdown plans. It includes
-  wave/gate breakdowns plus capability and slice views and is not a parallel authority.
-- `../docs/planning-implementation-plan.md` and `status-summary.md` are generated from `backlog.yaml`; every section is read-only and `foundation` rejects drift.
+## Identity and generated views
 
-Regenerate and verify the human-readable backlog views after every authoritative
-ledger mutation:
+`backlog.yaml` controls IDs, dependencies, Waves, gates, status, claims, leases,
+and evidence. `backlog.schema.json` is its executable Draft 2020-12 contract;
+taskctl also enforces semantic invariants. Do not hand-edit around transitions.
+
+Waves are the durable execution axis; each exit gate activates the next Wave
+except at the roadmap end. Capability aliases and descriptive slice labels
+supplement immutable numeric IDs. Use full task designators in progress updates.
+
+Capability plans resolve material/cross-slice decisions; slice plans expand
+their existing tasks. `review-site/` is generated, not another authority.
+`../docs/planning-implementation-plan.md` and `status-summary.md` are entirely
+generated from the backlog. After every successful ledger mutation:
 
 ```bash
 python tools/backlog_views.py --repo .
 python tools/backlog_views.py --repo . --check
 ```
 
-Generation writes only when content changes, so repeating it against unchanged
-YAML preserves the files byte-for-byte and does not change modification times.
-The renderer parses and hashes one immutable backlog byte snapshot, compares
-canonical UTF-8 output bytes (including line endings), and rejects source or
-output paths that resolve outside the canonical repository. Check mode detects
-corrupt bytes without decoding them; generation replaces them atomically or
-returns an actionable I/O failure. Edit `backlog.yaml`, never a generated view.
+Generation uses one immutable backlog snapshot, compares canonical UTF-8 bytes,
+confines paths to the repository, and atomically replaces changed outputs.
+Unchanged outputs keep their bytes and modification times. Check mode detects
+byte corruption without decoding; failures must be reported, not hand-repaired.
+
+## Default planning and execution lifecycle
+
+One pre-Wave approval binds the complete Wave packet at one immutable commit.
+
+1. Identify the earliest unfinished global Wave and its exit gate.
+2. **Only for a proposed Wave:** prepare missing plans; assess the current
+   implementation; resolve all binding capability decisions, ordered slices,
+   cross-capability interfaces/dependencies, risks, rollback/recovery,
+   verification, and exit criteria. Review and approve the entire packet once.
+   Inherited/future context is visible but not authorized.
+3. **For an approved Wave:** verify readiness and start or resume the same
+   campaign using [task operations](../docs/automation/codex-tracking-guide.md#before-editing).
+   Never reapprove or backfill its frozen planning packet.
+4. Claim only the next dependency-eligible READY task in that Wave. Perform
+   risk-selected task-start planning, implement, commit, verify, submit, obtain
+   independent disposition, and integrate tested work locally.
+5. Independently review each integrated slice; record affected risk-cluster
+   checkpoints. Capability/slice boundaries do not create human approval stops.
+6. After every Wave slice is approved, run fresh full affected/repository/profile
+   qualification and independent Wave review. Only an APPROVED completion can
+   proceed to the separate human exit/next-Wave activation gate.
+
+The campaign survives process/session interruptions. An expired lease may be
+renewed only by its recorded owner. Later-Wave work stays gated.
 
 ## Initiation assessment and controlled planning adaptation
 
@@ -110,325 +131,104 @@ Proposed plans may be freely improved during this assessment. Once the complete
 Wave packet is approved at its immutable commit, the assessment and resulting
 scope are frozen with it and the normal append-only amendment rules apply.
 
-## Default planning and execution lifecycle
+## Authority changes
 
-1. Determine the earliest unfinished global Wave and its exit gate.
-2. Run `planctl wave prepare WN`; create every missing contributing capability
-   and slice plan.
-3. Inspect the tested implementation and complete the Wave initiation
-   assessment plus the initial or refreshed assessment for every contributing
-   capability. Adapt the still-proposed plans and record the 15% calculations.
-4. Resolve every material capability and cross-capability decision, interface,
-   risk, rollback/recovery duty, and verification obligation for the Wave.
-5. Generate the static review site and review the complete Wave packet from its
-   Wave page, using capability/slice pages for full rationale or overrides.
-6. Classify every contributing capability decision by binding Wave, then
-   approve every decision binding in the active Wave and every Wave slice plan
-   together at one immutable commit. Inherited and future decisions remain
-   nonbinding context. A partial packet cannot start execution.
-7. Start `WN` as one durable Wave campaign.
-8. Claim only the next dependency-eligible READY task across the Wave. Before
-   product edits, perform the non-gating task-start acceptance-closure pass in
-   `../docs/automation/task-start-planning.md`; then use risk-selected task
-   checks and commit-bound evidence.
-9. Integrate and independently review each slice. Record accumulated
-   affected-profile checkpoints when a shared interface, migration, security
-   boundary, or coherent risk cluster closes.
-10. After all Wave slices are approved, run the complete affected/full suite and
-   cross-capability end-to-end qualification once.
-11. Submit the Wave for independent review. Only an APPROVED Wave completion may
-    proceed to the Wave exit / successor activation gate.
+Routine debugging/restoration stays in its approved open task. A completed-task
+regression uses the [bounded linked correction](../docs/automation/workflow-efficiency.md#use-the-linked-correction-route);
+automation/evidence defects use [bounded maintenance](../docs/automation/workflow-efficiency.md#bounded-maintenance).
+Neither route authorizes changed product scope or rewrites completed history.
 
-One pre-Wave approval binds the complete Wave packet. The campaign remains the
-same across ordinary process or session interruptions and across capability
-boundaries. Later-Wave plans remain reviewable but do not expand the active Wave.
+Changes to approved scope, security authority, migration guarantees, governed
+experience, or release criteria require append-only amendment and human approval,
+including reductions/replacements. Pause at a quiescent boundary; bind the
+predecessor and exact proposed scope, obtain independent packet review and human
+approval, then use the [amendment procedure](../docs/automation/project-automation-guide.md#22-controlled-enabler-amendment-lane).
+An approved Wave itself is never edited or approved again.
 
-### Bounded enabler and control maintenance
+GOV-MIG-0001 retires new incident-numbered GRR/GCR requests and supplements.
+Historical packets/controllers remain validation inputs, not a route for new
+repairs. The generic kernel/store remain evidence-only; current W1 mutations use
+the taskctl compatibility adapter. Do not infer activation from the migration
+design or a receipt.
 
-After `GOV-MIG-0001`, distinguish authority changes from controller
-maintenance. A change to approved product scope, security authority, migration
-guarantees, governed experience, or release criteria still requires an
-append-only Wave amendment and human approval. A correction to automation or
-evidence controls that preserves approved authority uses one bounded
-maintenance increment: freeze the predecessor, name the exact intended delta,
-run risk-selected checks, retain adverse history, and obtain independent review
-before integration when the change affects security, migration, evidence, or
-control authority.
+## Decision handoff
 
-Do not create another incident-numbered GRR/GCR or bespoke controller to repair
-a controller. The retained ECR/GRR/GCR files and commands below validate
-historical authority only. New transition behavior should be expressed through
-the typed event/projection/receipt contracts in
-`../docs/automation/governance-automation-simplification.md`; compatibility
-adapters may continue to project the backlog during migration.
+Before requesting a decision, override, approval, or readiness remedy, use the
+[decision-complete handoff](../docs/automation/project-automation-guide.md#31-decision-complete-stopped-gate-handoff).
+It includes supported openable packet links and repository-relative paths,
+criteria, incomplete prerequisites, alternatives, a recommendation and exact
+approval/resume condition. G1 means W1 exit/W2 activation.
 
-### Task-start planning without another gate
+If preceding work or evidence is incomplete, keep the gate PENDING and recommend
+the prerequisite sequence, deferral, or governed replanning. Ask how to handle
+the stop, not for premature release approval. Chat feedback, a feedback export,
+planning approval, and local integration are not release approval.
 
-The approved Wave and slice remain the implementation authority. After a task
-is claimed, translate its criteria into a concise, risk-selected
-acceptance-closure map before production edits. The map should expose the
-specific invariants, identity/authority fields, compatibility fixtures,
-failure/recovery cases, principal boundary, and governed experience states that
-could plausibly invalidate the task. Inspect the existing implementation and
-relevant prior findings, and derive the first failing or characterization tests
-from the material rows. Use
-`../docs/automation/task-start-planning.md` as the worksheet and tailoring rule.
+Read [review-site instructions](../docs/automation/planning-review-site.md) only
+for the needed operation. Decisions offer candidates plus Other. Other requires
+a brief description and detailed rationale; non-recommended choices require
+rationale. Applying feedback materializes the choice, never execution approval.
 
-This pass does not reopen the approved plan, change task scope, or add an
-approval/state transition. It may remain in working notes or the evidence draft;
-persist a separate worksheet only when it materially improves implementation or
-review. Irrelevant dimensions may be marked not applicable with brief rationale.
-If the pass reveals new consequential scope or an unmet mandatory gate, follow
-the existing amendment/replanning rule instead of treating the worksheet as
-authority.
+## Canonical planning commands
 
-### Historical controlled enabler change requests
-
-The mechanics below preserve existing amendment history and remain necessary
-for genuinely changed authority. They are not the default for ordinary defects
-that restore an approved contract. Use the bounded correction procedure in
-`../docs/automation/workflow-efficiency.md`; automation-control defects use the
-maintenance rule above. Never reopen an adopted amendment to avoid its frozen
-history or repurpose a correction to expand product scope.
-
-Never replace or repeat an `APPROVED` Wave approval. If consequential new
-evidence requires a bounded control/enabler change, pause the Wave with no
-ordinary task in `IN_PROGRESS` or `REVIEW`, create a hash-bound ECR packet, obtain
-independent packet review and explicit human approval, and record that approval
-in `wave-amendment-approvals/`. The original Wave approval plus ordered
-append-only amendments is the authority chain; the legacy effective projection
-remains readable but is not mutation authority.
-
-The one-time bootstrap is non-executable until independently approved. Only then
-may `taskctl amendment materialize` create the exact approved task IDs and change
-the paused campaign to `amendment-hold`; this marker also makes older taskctl
-schema/tool pairs fail closed. Activation leases only the amendment. Ordinary
-Wave work and its exit gate stay denied until every amendment task is `DONE` and
-independently approved, the amendment exit review is `APPROVED`, and adoption
-records a Wave control/security checkpoint. Adoption restores scope `wave` but
-leaves the campaign `PAUSED` for an explicit normal resume.
-Bootstrap `CHANGES_REQUESTED` or `BLOCKED` reviews are never overwritten. Commit
-the bounded remediation and its new evidence, then use `taskctl amendment
-bootstrap-resubmit` to append the prior attempt and freeze the strict-descendant
-candidate. Materialization, activation, claims, evidence, reviews, and adoption
-all revalidate the bootstrap packet and immutable task definitions.
-
-Amendment exit is also packetized. Commit the exit evidence, then use
-`taskctl amendment submit WN.ANN --agent <agent> --from <exit-evidence>`.
-The packet binds the codex branch, evidence Git blob, approved ECR exit
-criteria, and selected checks. Independent review uses `taskctl amendment
-review ... --from <review-ledger>`; adverse rounds, findings, and explicit later
-closures remain append-only. Adoption uses a separately committed checkpoint
-record through `taskctl amendment adopt ... --from <checkpoint-evidence>` and
-revalidates the exact approved review state. Missing, substituted, stale,
-forked, dirty, or unreviewed evidence fails closed. Legacy amendments remain
-readable without invented exit-review history.
-
-#### Historical governance recovery request fallback
-
-Before `GOV-MIG-0001`, a GRR was used when evidence demonstrated that the
-ordinary ECR controller or schema could not represent or safely enforce its own
-next append-only amendment. These records remain authoritative history, but this
-fallback is retired for new work.
-The GRR packet freezes the complete predecessor authority chain, recovery hold,
-bootstrap-only path/outcome boundary, and the identity of the later ECR that
-must be approved separately. Independent packet review and exact-commit human
-approval precede B00. `recoveryctl` then freezes criterion-linked evidence and
-append-only independent review rounds; adverse review requires a strict
-descendant `bootstrap-resubmit`.
-
-An approved B00 is immutable. If new evidence proves that the approved repair
-amendment still cannot cross its exact materialization boundary, create an
-inert sequential `GRR-NNNN.SNN` packet rather than reopening B00 or installing a
-second hold. After independent packet review and exact-commit human approval,
-`supplement-start` installs only `GRR-NNNN.BNN` under the existing hold and
-raises the control revision. Its evidence, adverse remediation, and independent
-review are append-only. Ordinary task/amendment/Wave/gate mutation remains
-denied until the latest supplemental bootstrap is APPROVED.
-
-An ACTIVE recovery hold is stronger than ordinary scheduling: every taskctl
-mutation fails closed except the exact later amendment lane after B00 is
-independently APPROVED and that ECR has its own immutable approval. The GRR does
-not approve that amendment. The hold is released only after the amendment is
-ADOPTED with an independently approved exit and bound security checkpoint, and
-release still leaves the Wave PAUSED for explicit ordinary resume.
+From the repository root; use the repository's configured Python environment.
+These are action-specific examples, not a sequence to run on every resume.
 
 ```bash
-python tools/recoveryctl.py --repo . validate GRR-NNNN --require-approved
-python tools/recoveryctl.py --repo . status GRR-NNNN
-python tools/recoveryctl.py --repo . bootstrap-start GRR-NNNN --agent <agent>
-python tools/recoveryctl.py --repo . bootstrap-submit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
-python tools/recoveryctl.py --repo . bootstrap-review GRR-NNNN --reviewer <independent-reviewer> --from <ledger>
-python tools/recoveryctl.py --repo . bootstrap-resubmit GRR-NNNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
-python tools/recoveryctl.py --repo . supplement-start GRR-NNNN.SNN --agent <agent>
-python tools/recoveryctl.py --repo . supplement-validate GRR-NNNN.SNN --require-approved
-python tools/recoveryctl.py --repo . supplement-status GRR-NNNN.SNN
-python tools/recoveryctl.py --repo . supplement-submit GRR-NNNN.SNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
-python tools/recoveryctl.py --repo . supplement-review GRR-NNNN.SNN --reviewer <independent-reviewer> --from <ledger>
-python tools/recoveryctl.py --repo . supplement-resubmit GRR-NNNN.SNN --agent <agent> --implementation-commit <HEAD> --evidence <manifest>
-python tools/recoveryctl.py --repo . release GRR-NNNN --agent <agent>
-```
-
-Task evidence attachment and submission are atomic: use `taskctl submit <task>
---agent <agent> --from <manifest>`. The resulting RNN packet freezes the exact
-candidate, criteria, changed paths, verification selection, and open finding
-IDs. Independent task reviews use `taskctl review ... --from <ledger>` and append
-severity-ranked findings and explicit closures without replacing older rounds.
-Legacy task records remain readable through their latest `review` projection;
-missing historical rounds are never synthesized.
-
-### Release-gate stop review
-
-When the global program position is a pending release gate, `taskctl next` must
-produce a decision-complete stopped-gate handoff rather than a generic "no READY
-task" message. The handoff identifies the gate criteria, incomplete preceding
-wave tasks and slice reviews, pending upstream gates, and prerequisite planning-review
-pages, alternatives, recommendation, and exact resume condition.
-
-Distinguish two decisions:
-
-1. If preceding-wave work or evidence is incomplete, the release gate is not
-   approvable. The reviewer chooses whether to follow the recommended prerequisite
-   sequence, defer the campaign, or authorize governed replanning. The gate stays
-   `PENDING`.
-2. Only after every preceding-wave task is `DONE`, every preceding-wave slice is
-   independently `APPROVED`, and criterion-linked evidence
-   exists may a human approve the gate with `taskctl gate approve`. That approval
-   is separate from capability-plan approval, feedback export, task/slice review,
-   and local Git integration.
-
-Every stopped-gate response must repeat the directly openable `file://` and
-repository-relative review links so the human can inspect the decision materials
-without reconstructing them from chat history.
-
-## Decision review and Other
-
-Every decision page displays the documented candidates, preselected recommendation, and an `Other` option.
-
-When `Other` is selected:
-
-- the reviewer must enter a brief description in the Other field;
-- the separate feedback/rationale textarea provides detailed reasoning, constraints, or acceptance conditions;
-- exported feedback uses schema `1.1` with `selected_option: "__OTHER__"` and `other_option`;
-- `planctl apply-feedback` adds `Other: <brief description>` to the canonical decision's candidate list and selects it;
-- detailed rationale remains preserved in the archived feedback record; and
-- implementation remains unapproved until the explicit complete Wave approval command.
-
-A non-recommended documented candidate also requires detailed rationale.
-
-## Canonical commands
-
-```bash
+# Proposed planning only:
 python tools/planctl.py --repo . wave prepare WN
-python tools/planctl.py --repo . wave review WN
 python tools/planctl.py --repo . wave validate WN
+# Review/approval request only:
+python tools/planctl.py --repo . wave review WN
 python tools/planctl.py --repo . apply-feedback CAP-XX <feedback.json>
 python tools/planctl.py --repo . wave approve WN --by "<reviewer>" --commit <git-sha>
+# Approved campaign readiness; never approve it again:
 python tools/planctl.py --repo . wave ready WN --require-approved
+# Existing or proposed authority-changing amendment only:
 python tools/planctl.py --repo . ecr review ECR-NNNN
 python tools/planctl.py --repo . ecr validate ECR-NNNN --require-approved
 python tools/taskctl.py --file planning/backlog.yaml amendment status WN.ANN
-python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
 ```
 
-Any command that requests decisions or approval must print the Wave page's `file://` URI and repository-relative path; capability detail links accompany it when relevant.
+Execution commands live in [task operations](../docs/automation/codex-tracking-guide.md#command-sequence);
+historical recovery mutation examples are intentionally absent here.
 
 ## Templates and validation
 
-- Backlog schema: `backlog.schema.json`
-- Backlog structural and semantic validator: `../tools/taskctl.py --file backlog.yaml validate`
-- Capability template: `capability-plans/TEMPLATE.md`
-- Capability schema: `capability-plans/capability-plan.schema.json`
-- Slice template: `slice-plans/TEMPLATE.md`
-- Slice schema: `slice-plans/slice-plan.schema.json`
-- Task-start planning worksheet: `../docs/automation/task-start-planning.md`
-- Capability validator: `../tools/capability_plan_check.py`
-- Slice validator: `../tools/slice_plan_check.py`
-- Site generator: `../tools/plan_review_site.py`
-- Site validator: `../tools/plan_review_check.py`
+Use these only when creating/changing the corresponding plan or investigating
+its validation failure:
 
-A missing classification for any contributing capability decision, binding
-decision packet, or Wave slice plan must be scaffolded, fully researched,
-validated, reviewed, and included in the one pre-Wave approval before the
-campaign starts.
+- Capability: `capability-plans/TEMPLATE.md`,
+  `capability-plans/capability-plan.schema.json`,
+  `../tools/capability_plan_check.py`.
+- Slice: `slice-plans/TEMPLATE.md`, `slice-plans/slice-plan.schema.json`,
+  `../tools/slice_plan_check.py`.
+- Site: `../tools/plan_review_site.py`, `../tools/plan_review_check.py`.
+- Ledger: `backlog.schema.json`, `../tools/taskctl.py --file planning/backlog.yaml validate`
+  (from repository root).
+- Task-start worksheet: [task-start planning](../docs/automation/task-start-planning.md).
 
-For a newly initiated capability, or a proposed capability plan being refreshed
-for a new binding Wave, the initiation-assessment section and its applicable
-15% calculation are part of that researched packet. This rule is prospective:
-it does not reopen or rewrite an already approved Wave merely to backfill an
-assessment that was not required when that Wave was frozen.
+Missing classification or planning must be resolved before the complete Wave
+approval. The prospective `planning_policy_version: initiation-assessment-1.0`
+requires structured assessments and applicable refreshes for W2 and later.
+Validation recomputes both 15% bounds and rejects invalid task identities and
+major-refactor allocations; independent reviewers judge the underlying estimates
+and product/architecture fit. It does not rewrite earlier approvals.
 
-The prospective executable marker is
-`planning_policy_version: initiation-assessment-1.0`. `planctl wave validate`
-requires its structured assessment and applicable Wave refresh for W2 and later,
-recomputes the capability and deduplicated Wave 15% bounds, and rejects invalid
-task identities or included major-refactor allocations. The validator does not
-attempt to automate the substantive product, architecture, or best-practice
-judgment. This extends the existing readiness check; it is not a new controller
-or approval.
+Backlog validation identifies structural/type/status/timestamp errors, duplicate
+IDs, invalid parent namespaces/review metadata, missing dependencies and exact
+dependency cycles. Mutations use exclusive-lock compare-and-swap publication;
+races, invalid states and failed replacements leave the predecessor intact.
+Schema-only validity is not authority for an illegal transition.
 
-Backlog validation reports JSON paths for structural/type/status/timestamp errors,
-rejects duplicate capability, slice, task, wave, and gate IDs while indexing,
-enforces slice/task parent namespaces and complete approved-review metadata,
-and names missing task or slice dependency targets and exact task dependency-cycle
-paths. Do not edit around these checks or treat schema-only validity as permission
-for an otherwise illegal workflow transition.
-
-`taskctl` mutations are compare-and-swap writes under an exclusive backlog
-lock. A command refuses to replace the ledger if another writer changed it,
-if IDs moved, or if the resulting schema/semantic state is invalid; a failed
-temporary write or replace leaves the previous ledger intact. The lock marker
-is ignored by Git.
-
-Execution commands require one concrete profile/platform and the matching
-active Wave lease. Task `block`, `renew`, `evidence`, and `submit` require
-`--agent` to match the task lease owner; Wave/slice mutations similarly require
-the campaign owner. Start, resume, and claim also require the actual
-current branch, full current `HEAD`, and canonical absolute Git worktree; stored
-identities are trimmed. An interrupted PAUSED Wave resumes through `resume`.
-An expired lease may be renewed only by its recorded owner:
-
-```bash
-python tools/taskctl.py wave renew WN --agent <agent>
-python tools/taskctl.py amendment renew WN.ANN --agent <agent>
-python tools/taskctl.py renew CAP-XX.SXX.TXX --agent <agent>
-```
-
-Commit the implementation and required verification before attaching evidence.
-The manifest must live under the repository, name the current full Git `HEAD`,
-descend from the claimed `base_sha`, map every acceptance criterion exactly,
-list the truthful base-to-commit changed-file scope, contain named passing checks,
-and declare no unverified items. The manifest is read once; that same immutable
-snapshot is validated and hashed. Dirty tracked source, unrelated untracked files,
-branch/worktree drift, and logically duplicate attachments are rejected. Stored
-evidence paths are repository-relative; complete manifest revalidation and
-line-ending-canonical hashes detect later content, task-ID, base, branch, check,
-criterion, commit, or verification drift.
-
-A follow-up manifest must identify a prior attachment with `supersedes.path`, use
-that attachment's commit as `baseCommit`, and list the exact incremental Git diff;
-partial file lists are invalid. DONE or approved status never relaxes the empty
-`unverifiedItems` rule. Four pre-policy CAP-00.S03 hosted-CI residuals carry the
-`pre-exact-evidence-hosted-ci-residual-v1` reference marker and are immutably
-pinned by task, path, commit, canonical digest, and exact residual text. The
-marker cannot be applied to new or modified evidence.
-
-Task reviewers must be independent from the task owner; slice and Wave reviewers
-must be independent from the Wave campaign owner. Cancellation is an owner-authorized transition
-inside the current active slice and cannot rewrite an existing cancellation.
-An approved release gate remains valid only while every task in its preceding
-wave is DONE; reopening such a task is denied because no implicit gate-reset
-transition exists.
+Evidence/lease checks and historical exceptions are documented once in
+[task evidence](../docs/automation/codex-tracking-guide.md#evidence).
+Read them before submission/review or when diagnosing that boundary.
 
 ## Replanning conditions
 
-Reopen planning only for:
-
-- demonstrated infeasibility of an approved choice;
-- materially new evidence creating a consequential decision;
-- unavailable required external service, credential, platform, or hardware;
-- conflict with a higher-authority source;
-- required governed experience-reference change; or
-- explicit user redirection.
-
-Update only the affected decision, ADR, plan, or reference; regenerate review pages; obtain approval when required; then resume the same Wave campaign.
+Reopen planning only for demonstrated infeasibility, consequential new evidence,
+unavailable required service/credential/platform/hardware, higher-authority
+conflict, required governed-reference change, or explicit user redirection.
+Update only affected authorities, regenerate derived views, obtain required
+approval, and resume the same campaign.

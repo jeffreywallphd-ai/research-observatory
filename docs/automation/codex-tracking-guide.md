@@ -1,104 +1,113 @@
-# Research Observatory coding-agent tracking guide
+# Coding-agent task operations
 
-> **Repository destination:** `docs/automation/codex-tracking-guide.md`. This becomes operational guidance only after it is installed in the target repository.
-
-## Default unit
-
-Work within one approved durable Wave campaign. Do not select work outside the
-Wave while it has an executable dependency-eligible slice/task. Capability
-boundaries do not end the campaign; complete Wave qualification does.
+Read this guide only when operating planned work. For selection/claim/resume,
+read Before editing and Command sequence; for submission, read Evidence; for
+review/remediation, also read Independent review. Decision and integration
+procedures are linked at the action that needs them. Read-only questions do not
+require a claim or campaign mutation.
 
 ## Before editing
 
-1. Read root `AGENTS.md`, `docs/README.md`, and `planning/README.md`.
-2. Confirm the complete pre-Wave packet is approved at one immutable commit and readiness passes.
-3. Read the Wave page, relevant capability packet, active slice plan, affected ADRs/architecture, and UI reference.
-4. Claim the task with branch, worktree, base SHA, and lease.
-5. Run the risk-selected task-start acceptance-closure pass in
-   `task-start-planning.md`. Inspect the current implementation and relevant
-   prior findings, then turn material rows into failing or characterization
-   tests where practical.
-6. Generate the task contract and changed-path verification set.
-7. Stop before editing only if a required authority or approved plan is missing
-   or the pass exposes another mandatory gate.
+1. Follow the current AGENTS.md route and planning lifecycle. Reuse unchanged
+   guidance already available; do not open every linked guide or reference page.
+2. At Wave start/resume, confirm complete immutable approval and readiness.
+   An approved Wave is not reapproved after an ordinary interruption.
+3. Read the current backlog task/dependencies and approved capability/slice scope.
+   Inspect affected ADR/architecture sections; read experience contracts only
+   when user-facing behavior is affected. Generated pages help navigation but
+   do not replace canonical plans.
+4. Claim only the next dependency-eligible READY task inside the active Wave.
+   An interrupted owned task uses its legal resume/reopen/renew transition,
+   not a second claim or invented base.
+5. After claim, read [task-start planning](task-start-planning.md). Map only
+   material acceptance/failure boundaries to tests before product edits.
+   This adds no approval or mandatory standalone document.
+6. Stop only for an actual unmet authority, dependency, safety or feasibility
+   gate; ordinary failed tests are work to resolve inside approved scope.
+
+Completed restorative tasks use [linked correction](workflow-efficiency.md#use-the-linked-correction-route).
+Control defects use [bounded maintenance](workflow-efficiency.md#bounded-maintenance).
+Do not apply the ordinary claim sequence to those routes blindly.
 
 ## Command sequence
 
+From repository root with the configured Python environment. Run only the
+command matching current state; inspect `--help` if its arguments are unclear.
+
 ```bash
+# Readiness at approved Wave start/resume:
 python tools/planctl.py --repo . wave ready WN --require-approved
-python tools/taskctl.py --file planning/backlog.yaml validate
-python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
-python tools/taskctl.py --file planning/backlog.yaml status
+# Start a new approved campaign OR resume its recorded PAUSED campaign:
+python tools/taskctl.py --file planning/backlog.yaml wave start WN --agent <agent> --branch <branch> --base-sha <full-sha> --worktree . --profile LOC --platform windows-x64
+python tools/taskctl.py --file planning/backlog.yaml wave resume WN --agent <agent> --branch <branch> --base-sha <full-sha> --worktree . --profile LOC --platform windows-x64
+# Choose, inspect, and claim only the eligible task:
+python tools/taskctl.py --file planning/backlog.yaml next --profile LOC --platform windows-x64
+python tools/taskctl.py --file planning/backlog.yaml show CAP-XX.SXX.TXX
+python tools/taskctl.py --file planning/backlog.yaml claim CAP-XX.SXX.TXX --agent <agent> --branch <branch> --base-sha <full-sha> --worktree . --profile LOC --platform windows-x64
+python tools/taskctl.py --file planning/backlog.yaml checks CAP-XX.SXX.TXX
+# After committing implementation and verifying that exact candidate:
+python tools/taskctl.py --file planning/backlog.yaml submit CAP-XX.SXX.TXX --agent <agent> --from artifacts/evidence/CAP-XX.SXX.TXX.json
+python tools/taskctl.py --file planning/backlog.yaml review CAP-XX.SXX.TXX --reviewer <independent-reviewer> --result approved --from artifacts/evidence/CAP-XX.SXX.TXX.review-R01.json
+# After any successful ledger mutation:
 python tools/backlog_views.py --repo .
 python tools/backlog_views.py --repo . --check
 ```
 
-Use repository-specific `taskctl` subcommands for claim, evidence, review, and transition as defined by the installed tool and `planning/README.md`.
-Every subcommand first applies the committed Draft 2020-12 schema; `validate`
-then applies identity, dependency, campaign, gate, lease, evidence, and legal
-state invariants that JSON Schema cannot express by itself.
-After any successful ledger mutation, regenerate the comprehensive plan and
-status summary. Both files are wholly generated; `foundation` fails if they are
-missing, stale, or hand-edited.
+Use the actual branch, full current HEAD, canonical worktree, concrete
+profile/platform and matching owner/lease. New supported bindings store
+`worktree: "."`; preserve existing non-null historical spelling.
+Task `block`, `renew`, `submit`, and campaign/slice mutations enforce ownership.
+Only the recorded owner may renew an expired lease. There is no override claim.
 
-If `status` reports `STOPPED AT WAVE AMENDMENT`, do not start, resume, or claim
-ordinary Wave work. Follow the exact `taskctl amendment` command in the handoff.
-The ECR proposal, immutable approval record, base/amendment authority chain,
-legal alternatives, and resume condition must remain visible. An approved Wave
-is never reapproved; only the append-only amendment lane may authorize the
-bounded task inventory.
+If an amendment hold is reported, read the exact approved packet and
+[amendment procedure](project-automation-guide.md#22-controlled-enabler-amendment-lane);
+do not resume ordinary work until its adoption. If an actual retained recovery
+hold is reported, read the [historical recovery section](project-automation-guide.md#23-governance-recovery-controller)
+and the named authority; a command printed in old evidence is not new authority.
+New control failures use bounded maintenance, never a new GRR/GCR/supplement.
 
-If `status` reports `STOPPED AT GOVERNANCE RECOVERY`, all ordinary mutations are
-denied. Follow only the exact `recoveryctl` B00 action in the handoff. The linked
-packet, proposal, approval, frozen predecessor chain, legal alternatives, and
-release conditions are mandatory context. B00 approval restores the ability to
-prepare the named ECR; it does not approve that ECR, materialize a task, resume
-the Wave, or approve a gate.
+## Continuous execution
 
-If the stopped handoff names an approved `GRR-NNNN.SNN`, follow only its
-`recoveryctl supplement-*` transition. It extends the existing hold and
-authorizes only BNN. Until BNN is independently approved, do not retry the
-repair amendment, claim work, resume the Wave, release the hold, or approve a
-gate.
+The resumable Wave campaign continues across capability and slice boundaries.
+After each task's evidence, required review and local integration, select the
+next eligible task or perform the required slice/checkpoint review. Finish fresh
+Wave qualification and independent Wave review before the human exit gate.
+Never claim a later locked Wave or turn ordinary debugging into a human stop.
 
-The normal task transition is:
+For verification breadth, use [stage-specific selection](project-automation-guide.md#81-verification-breadth-by-workflow-stage).
+For repeated checks or reuse, apply only the triggered sections in the
+[efficiency reading map](workflow-efficiency.md#reading-map).
+An unchanged full profile is not a routine task checklist.
 
-```bash
-python tools/taskctl.py next --profile LOC --platform windows-x64
-python tools/taskctl.py claim CAP-XX.SXX.TXX --agent <agent> --branch <branch> --base-sha <full-sha> --worktree <absolute-repository-path> --profile LOC --platform windows-x64
-python tools/taskctl.py checks CAP-XX.SXX.TXX
-# Commit the implementation and run the declared checks on that exact HEAD.
-python tools/taskctl.py submit CAP-XX.SXX.TXX --agent <agent> --from artifacts/evidence/CAP-XX.SXX.TXX.json --note "<summary>"
-python tools/taskctl.py review CAP-XX.SXX.TXX --reviewer <reviewer> --result approved --from artifacts/evidence/CAP-XX.SXX.TXX.review-R01.json
-python tools/taskctl.py review-telemetry
-```
+Before an actual decision request or gate stop, follow the
+[decision-complete handoff](project-automation-guide.md#31-decision-complete-stopped-gate-handoff).
+Do not ask for gate approval while prerequisites are incomplete.
 
-`block`, `renew`, atomic task `submit`, Wave pause/renew/checkpoint/submit, and slice
-submit verify lease ownership. There is no campaign-override claim flag. Release
-gates cannot be approved twice, out of sequence, or while their preceding wave
-contains an incomplete task or unapproved slice. Every mutation validates the prospective ledger before an
-atomic compare-and-swap replacement; stale writers and failed replacements do
-not overwrite the prior file.
+## Evidence
 
-Start/resume/claim metadata is bound to the actual current Git branch, full
-`HEAD`, and canonical worktree. Evidence is a single-read snapshot whose base,
-branch, commit ancestry, exact changed-file scope, named passing checks, complete
-criterion map, empty unverified list, clean tracked/untracked worktree, digest,
-and logical uniqueness are checked again on later validation. Task owners cannot
-review their own task; Wave campaign owners cannot review their own slice or Wave. Approved
-release gates remain semantically tied to a fully DONE and independently
-integrated preceding wave.
+Commit implementation, then verify the exact candidate with stable inputs.
+Evidence must map every acceptance criterion to named passing machine checks,
+reports/artifacts and exact commit. Narrative alone cannot complete work.
 
-The atomic task submit freezes the candidate, evidence, criteria, changed paths,
-check selection, and exact open-finding replay in one RNN packet. A task review
-ledger contains ordered structured findings and explicit closures; approval is
-denied while a blocking finding remains open. Follow-up evidence must use
-`supersedes.path`, set `baseCommit` to that prior attachment's commit, and
-declare the complete incremental diff. Completion does
-not excuse non-empty `unverifiedItems`. The only exception is the explicitly
-marked `pre-exact-evidence-hosted-ci-residual-v1` migration for four pinned
-CAP-00.S03 records; their paths, commits, hashes, task IDs, and exact hosted-CI
-residual text are fixed and the marker is invalid everywhere else.
+Taskctl's atomic submit reads one manifest snapshot and freezes candidate,
+criteria, changed paths, check selection and open-finding replay as an immutable
+RNN packet. The manifest must live under the repository and bind current HEAD,
+claimed base/ancestry, branch, exact base-to-commit changed files, complete
+criterion map, checks, and empty `unverifiedItems`. Dirty tracked source,
+unrelated untracked files, worktree/branch drift and duplicate attachments fail
+closed. Stored evidence paths are relative; validation rechecks the complete
+manifest with line-ending-canonical hashes.
+
+Follow-up evidence names `supersedes.path`, uses that attachment's commit as
+`baseCommit`, and lists the complete incremental diff. DONE status does not
+relax evidence requirements. The four pinned pre-policy CAP-00.S03 hosted-CI
+residuals alone retain `pre-exact-evidence-hosted-ci-residual-v1`; exact task,
+path, commit, digest and residual text are immutable. Never extend that exception.
+
+Every mutation validates schema and semantic identity/dependency/gate/evidence
+rules before atomic compare-and-swap publication. Stale writers or failed
+replacements cannot overwrite the predecessor. After successful mutation,
+regenerate backlog views; do not hand-edit generated output.
 
 Every new controlled atomic submission must declare a non-empty
 `verificationSelection.selectedCommandIds` list. IDs must be exact keys from
@@ -121,85 +130,32 @@ prints only stored events in deterministic order, without a generation
 timestamp. Pending submissions and pre-control or legacy review records produce
 no synthetic event or duration.
 
-## Decision requests
-
-When a decision or approval is required:
-
-1. regenerate the review site;
-2. print its `file://` and repository-relative Wave link plus relevant capability detail links;
-3. state whether recommendations are already decision-complete;
-4. identify only unresolved or changed items;
-5. explain that Other requires a brief description and detailed rationale; and
-6. do not treat exported feedback as implementation approval.
-
-At a stopped release/readiness/design gate, also include the gate criteria,
-current legal approval state, unfinished prerequisites, active/blocked/prerequisite
-review links, alternatives, recommendation, and exact approval/resume condition.
-If the gate is not currently approvable, ask the human to choose how to handle
-the stop; do not ask for premature gate approval. `taskctl next` prints the
-minimum release-gate handoff and must be included or faithfully summarized.
-
-## Continuous execution
-
-After approval, continue through tasks, slice integration, independent slice
-review, triggered integration checkpoints, and the next approved slice in the active Wave. Ordinary test failure,
-debugging, refinement inside the approved envelope, or a documented fallback is
-not a human stop point.
-
-One pre-Wave approval binds every contributing capability decision and slice
-plan. The Wave campaign is the resumable execution unit. Close it only after the
-last ordered Wave slice, full Wave suite, and independent Wave review; do not
-reinterpret a capability or slice boundary as a routine approval prompt.
-
-Before claiming, use `taskctl next` and `taskctl show` to identify the active
-Wave campaign's next `READY` task. Permitted scope is its objective, deliverables,
-criteria, dependencies, profile/platform, and governing sources. At task scope,
-complete the concise acceptance-closure pass described in
-`task-start-planning.md`; do not turn it into another approval request or an
-exhaustive matrix for risks the changed path cannot reach. Then
-select the narrowest checks from its declared verification coverage and the
-changed-path impact map that exercise credible failure paths. Defer accumulated
-affected-profile checks to risk-cluster checkpoints and complete profiles to Wave
-exit unless an explicit criterion or profile-wide impact requires earlier execution,
-and record the breadth rationale in evidence.
-Completion is commit-bound criterion evidence, submission, required review,
-clean tested local main integration, and continuation to the next eligible task
-or slice gate.
-
-## Evidence
-
-A completion claim must link every criterion to a named test, report, artifact, source commit, and reviewer outcome. If evidence is incomplete, keep the task or slice in progress/review; do not mark it done with persuasive prose.
-
-After required checks pass and the bounded work is committed, fast-forward the
-tested branch into local `main`. Keep any pending review or approval state
-pending in the backlog: local Git integration is not a substitute for a workflow
-transition. Stop on branch divergence and never push without explicit authority.
-
 ## Independent review
 
-Apply `workflow-efficiency.md` before preparing another evidence packet or
-replaying prior tests. Review the new risk boundary and authenticate reusable
-proof; do not restart a closed styling discussion or expand acceptance into
-optional adjacent improvements. Keep shared HEAD and selected source inputs
-stable while verification runs. Automatic receipts assist evidence collection;
-they do not certify adequate coverage or replace the reviewer.
+Use an independent agent, with fresh context when practical. Task reviewers
+cannot be task owners; slice/Wave reviewers cannot be campaign owners.
+Review the exact committed candidate and its evidence, not an unbound summary.
 
-Use a fresh agent context when possible. Every task receives a focused
-independent disposition of scope, evidence truth, changed contracts, and
-credible failure paths. Expand task review for security/credential boundaries,
-migrations or destructive I/O, automation/evidence controls, public or
-cross-process contracts, and explicit plan requirements. Deep/adversarial review
-defaults to the slice. The reviewer challenges scope, architecture,
-tests, denial/failure/recovery paths, privacy/security, rights, UI contracts,
-platform behavior, hidden TODOs, and whether evidence actually proves the
-acceptance criteria.
+Every task receives a focused disposition of scope, evidence truth, changed
+contracts and credible failure paths. Expand review for security/secrets,
+migrations/destructive I/O, evidence/automation controls, public/cross-process
+contracts or explicit criteria. Deep/adversarial review defaults to the slice.
 
-Maintain one consolidated finding ledger. Required findings are severity-ranked,
-reproducible, and criterion-bound. A remediation review replays every prior
-finding plus the incremental changed-path risk boundary; it does not restart the
-whole audit. Move nonmaterial adjacent improvements to the backlog, and escalate
-recurring findings after a second remediation to root-cause/control review.
+Use one severity-ranked, reproducible, criterion-bound finding ledger.
+Approval is denied while a blocking finding is open. Preserve adverse rounds
+and explicit closures; remediation replays prior findings plus incremental risk,
+not the entire speculative audit. A third submission with open findings requires
+root-cause analysis. Missing legacy rounds are not invented.
 
-## Experience work
+Before remediation, update the missed acceptance row and add the smallest
+regression that would have caught it. Optional adjacent improvements become
+backlog candidates unless they expose material safety/correctness defects.
+Owner styling acceptance does not remove substantive quality duties.
 
-Do not change the UI reference after implementation merely to make code appear conformant. Update and approve the reference first for intentional changes. Restoration to the approved reference may proceed without a new reference ID.
+## Integration
+
+After the required independent disposition and passing checks, use
+[local-main integration](project-automation-guide.md#11-local-main-integration).
+Advance the tested local ref without changing pending gate state or switching
+the campaign checkout prematurely. Divergence requires explicit reconciliation;
+no force, discarded history or remote push is authorized by task completion.

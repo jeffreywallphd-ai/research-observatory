@@ -1,5 +1,11 @@
 # Delivery control model
 
+Read this conceptual reference only when control identity or authority is
+unclear, or when changing that contract. Select the relevant section; the
+historical recovery section is not a current command recipe. Operational steps
+live in [planning](../../planning/README.md) and
+[task operations](../automation/codex-tracking-guide.md).
+
 ## Status and origin
 
 The repository's planning model is a project-specific control system, originally
@@ -179,6 +185,9 @@ before the already approved repair amendment can proceed. Competing holds,
 rewritten B00 attempts, and supplemental amendment/task/resume authority are
 invalid.
 
+### Task evidence and review authority
+
+The following is current task policy, distinct from historical recovery above.
 Task review control uses one atomic evidence-plus-submit transition and one
 immutable packet per RNN round. Each packet binds the candidate, evidence,
 criteria, changed paths, verification selection, and exact open-finding replay.

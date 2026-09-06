@@ -133,15 +133,14 @@ waves:
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/ai-projects/research-observatory
-    base_sha: 3c29cc5f57f3b91af76b9053197e924241c1b3fc
+    base_sha: 43ce0d8313a0aadcabdfd9c38023e1b29949eaca
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-04T19:04:22+00:00'
-    pause_reason: User directed an append-only W1 styling amendment before Wave exit to align production spacing, margins,
-      padding, visual rhythm, and interaction treatment with the approved UI reference while consolidating reusable styles.
-      Ordinary product execution is quiescent; CAP-07.S01.T02 has no product changes.
-    pause_category: approved-design-gate
+    updated_at: '2026-09-06T10:48:30+00:00'
+    pause_reason: Owner requested a bounded AGENTS.md and core-document clarity revision; preserve product authority while
+      independent instruction review completes.
+    pause_category: human-decision
     lease: null
     resume_records:
     - id: W1.R01
@@ -216,6 +215,18 @@ waves:
       platform: windows-x64
       actor: codex
       resumed_at: '2026-09-04T18:30:59+00:00'
+    - id: W1.R07
+      wave_id: W1
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 43ce0d8313a0aadcabdfd9c38023e1b29949eaca
+      prior_campaign_sha256: 204c7af3642ad003dda40a847860126f1f6c0de81f6716a0bf696b9be4a028e4
+      branch: codex/w1-windows-local-runtime
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex
+      resumed_at: '2026-09-06T10:40:58+00:00'
     corrective_tasks:
     - title: Choose project folders through one protected native dialog
       objective: Replace all implemented W1 directory-entry fields with shared native selection and stable read-only destinations.
