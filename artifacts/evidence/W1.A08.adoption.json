@@ -1,0 +1,63 @@
+{
+  "documentType": "wave-amendment-adoption-evidence",
+  "schemaVersion": "1.0",
+  "amendmentId": "W1.A08",
+  "targetWave": "W1",
+  "branch": "codex/w1-windows-local-runtime",
+  "approvedExitAttempt": "R01",
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W1.A08.exit.json",
+    "sha256": "8c80906905f6bde6d3b30e4f164ea2b6bfa236f6c7520f75d4a1c7cd90d44e6d"
+  },
+  "contributionReview": {
+    "path": "artifacts/evidence/W1.A08.S01.review-01.json",
+    "sha256": "7a5e91b511bdd13c2ffefcd987e500e07a51d6c04d8199e4cfbce544d203d816",
+    "commit": "e3bdfe727257a895e82ae813f379180c09ea1e8a"
+  },
+  "ownerStylingAcceptance": {
+    "path": "artifacts/evidence/W1.A08.T02.owner-styling-acceptance-01.md",
+    "sha256": "00e62d7c0014b3f544914443ca2e7c7e662f882db59b8a3758922013a9356c4a",
+    "commit": "b13113bf65630c70a7163fbd422194e2289b9db3"
+  },
+  "waveDisposition": {
+    "status": "PAUSED",
+    "scopeAfterAdoption": "wave",
+    "activeAmendmentAfterAdoption": null,
+    "ordinaryResumeRequiresExplicitCommand": true,
+    "gateApprovalAuthorized": false
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "actualScope": "Approved presentation and shared-style conformance adoption; no new security or product authority.",
+    "adopts": [
+      "Both exact independently approved W1.A08.T01 and W1.A08.T02 tasks, W1.A08.S01 contribution, and the nine-criterion amendment exit R01.",
+      "Approved presentation RO-UI-ACADEMIC-MINIMAL-1.6 through the already adopted W1.A09 correction; original semantic 1.5 and canonical token source 1.4 remain unchanged.",
+      "Production shared-style restoration, effective spacing/sidebar/footer geometry, accessible focus/contrast, and exact-source capture/performance/functional evidence within their stated principal boundaries.",
+      "The owner's acceptance of completed styling and direction to defer optional cosmetic iterations; actual independent approvals remain authentic and are not replaced by invented review results."
+    ],
+    "retains": [
+      "Original authority, adverse evidence, findings and explicit closures remain append-only; no historical attempt or failure is erased.",
+      "Existing functional usability work remains distinct from optional styling: U05 actual wording comparison under CAP-03.S02.T02; U03 Task Center unavailable versus empty under CAP-03.S04.T03; U02 supporting-tool return reproduction under CAP-03.S06.T03/T04; and separate Intent-error preflight. No closure of these is implied.",
+      "U06 P3 lifecycle/session wording ambiguity remains optional unless selected; this checkpoint does not add cosmetic work.",
+      "User-confirmed standard-development folder chooser origin defect remains a separately scoped W1 restoration, including truthful launcher-to-native proof and duplicate-flag compatibility handling.",
+      "Requested maximized normal startup and right-side isolated testing window remain separate bounded design/planning work, not implementation or approval by this checkpoint.",
+      "CAP-07.S01.T02 model registry/capability discovery and CAP-07.S01.T03 routing/fallback/timeout/circuit-breaker work remain ordinary W1 tasks.",
+      "Actual native/Core, renderer, filesystem, performance and packaging evidence retain their stated limitations. No ordinary private-profile startup, authentication, installer or full W1 release proof is asserted.",
+      "Complete Windows/cross-capability W1 qualification and independent Wave review precede human G1 approval; no main integration, remote push, destructive action, credential or ordinary private-data access is authorized."
+    ]
+  },
+  "requiredNextTransitions": [
+    "Use supported amendment adopt W1.A08 with this separately committed record.",
+    "Verify actual W1.A08 ADOPTED, all its tasks DONE, completion APPROVED, no active amendment, and W1 still PAUSED with ordinary wave scope.",
+    "Continue the bounded user-requested development-launch correction through its lawful task inventory; do not reopen an adopted amendment or fold it into styling.",
+    "Explicitly resume ordinary W1 through taskctl when no amendment hold remains, then recover CAP-07.S01.T02 using the existing original contract and history.",
+    "Complete remaining W1 work and qualification before requesting human release-gate approval."
+  ],
+  "transitionTruth": "Prepared checkpoint binding already committed approved completion. Actual adoption and Wave state restoration must be established by the supported transition and checked afterward; this pre-transition record alone does not assert they occurred.",
+  "candidateCommit": "98e896889409f62425fcc6c8460a3f7b65b2bab1",
+  "reviewedCompletionCommit": "98e896889409f62425fcc6c8460a3f7b65b2bab1",
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W1.A08.exit-review-R01.json",
+    "sha256": "013bac11f178f1f4f6047f5d43287825e896dbe3936710a6fcbaeff800beb471"
+  }
+}
