@@ -64,6 +64,15 @@ def valid_shell(stacked=False):
 
 
 class ProductLayoutMeasurementsTests(unittest.TestCase):
+    def assert_opaque_text_pair(self, sample):
+        colors = []
+        for key in ("color", "background"):
+            match = re.fullmatch(r"rgb\((\d+), (\d+), (\d+)\)", sample[key] or "")
+            self.assertIsNotNone(match, sample)
+            assert match is not None
+            colors.append("#" + "".join(f"{int(channel):02x}" for channel in match.groups()))
+        self.assertGreaterEqual(contrast_ratio(*colors), 4.5, sample)
+
     def assert_current_navigation_contrast(self, page, expected_states):
         # Sample rendered text, including nested metadata and numbered markers;
         # testing palette pairs alone missed the actual selected-control colors.
@@ -98,13 +107,98 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
         self.assertEqual(set(expected_states), {sample["state"] for sample in samples})
         self.assertGreater(len(samples), 0)
         for sample in samples:
-            colors = []
-            for key in ("color", "background"):
-                match = re.fullmatch(r"rgb\((\d+), (\d+), (\d+)\)", sample[key] or "")
-                self.assertIsNotNone(match, sample)
-                assert match is not None
-                colors.append("#" + "".join(f"{int(channel):02x}" for channel in match.groups()))
-            self.assertGreaterEqual(contrast_ratio(*colors), 4.5, sample)
+            self.assert_opaque_text_pair(sample)
+
+    def test_actual_application_settings_label_and_keyboard_skip_contrast(self):
+        document = inline_product_index(REPO)
+        adapter = (REPO / "tests/desktop/fixtures/task_center_interactions.js").read_text(encoding="utf-8")
+        adapter = adapter.replace("__WORKFLOW_CATALOG__", core_workflow_catalog_json(REPO)) + DIRECTORY_PICKER_FIXTURE
+        sample = r"""node => {
+          let surface=node;
+          while(surface && getComputedStyle(surface).backgroundColor==='rgba(0, 0, 0, 0)')
+            surface=surface.parentElement;
+          const style=getComputedStyle(node), rect=node.getBoundingClientRect();
+          let opacity=1, shown=true;
+          for(let parent=node;parent;parent=parent.parentElement) {
+            const s=getComputedStyle(parent);
+            opacity*=Number(s.opacity);
+            shown=shown && s.display!=='none' && s.visibility==='visible';
+          }
+          return {text:node.textContent,color:style.color,background:getComputedStyle(surface).backgroundColor,
+            visible:shown && rect.width>0 && rect.height>0 && rect.top>=0 && rect.bottom<=innerHeight
+              && rect.left>=0 && rect.right<=innerWidth, opacity,
+            focused:node===document.activeElement};
+        }"""
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                context = browser.new_context(reduced_motion="reduce")
+                context.add_init_script(adapter)
+                context.route(
+                    "**/*",
+                    lambda route: (
+                        route.fulfill(status=200, content_type="text/html", body=document)
+                        if route.request.url == "http://tauri.localhost/index.html"
+                        else route.abort()
+                    ),
+                )
+                page = context.new_page()
+                page.goto("http://tauri.localhost/index.html")
+                page.wait_for_function("document.body.dataset.applicationReady === 'true'")
+                page.get_by_role("button", name="Local profile", exact=True).click()
+                page.locator(".eyebrow").wait_for(state="visible")
+                for theme in ("light", "dark"):
+                    page.locator("html").evaluate("(node, theme) => node.dataset.theme=theme", theme)
+                    # Finish finite inherited color transitions before reading actual text.
+                    page.evaluate(r"""async () => {
+                      let stable=0, previous='';
+                      for(let frame=0; frame<60; frame++) {
+                        await new Promise(requestAnimationFrame);
+                        const colors=[...document.querySelectorAll('.eyebrow,.skip-link')]
+                          .map(n=>{const s=getComputedStyle(n);return s.color+s.backgroundColor;}).join();
+                        const active=document.getAnimations().some(a=>a.pending||a.playState==='running');
+                        stable=colors===previous && !active
+                          ? stable+1 : 0;
+                        if(stable>=3)return;
+                        previous=colors;
+                      }
+                      throw new Error('accent text did not settle');
+                    }""")
+                    eyebrow = page.locator(".eyebrow")
+                    eyebrow.scroll_into_view_if_needed()
+                    with self.subTest(theme=theme, consumer="eyebrow"):
+                        observed = eyebrow.evaluate(sample)
+                        self.assertTrue(observed["visible"])
+                        self.assertEqual(1, observed["opacity"])
+                        self.assert_opaque_text_pair(observed)
+                    for _ in range(60):
+                        page.keyboard.press("Shift+Tab")
+                        if page.locator(".skip-link").evaluate("node=>node===document.activeElement"):
+                            break
+                    else:
+                        self.fail("actual reverse Tab did not reach the skip link")
+                    # Keyboard focus starts a transform transition, even with
+                    # reduced motion. Observe settled geometry before visibility.
+                    page.locator(".skip-link").evaluate(r"""async node => {
+                      let stable=0, previous='';
+                      for(let frame=0; frame<60; frame++) {
+                        await new Promise(requestAnimationFrame);
+                        const r=node.getBoundingClientRect();
+                        const geometry=JSON.stringify([r.top,r.bottom,r.left,r.right]);
+                        stable=geometry===previous && !node.getAnimations().some(a=>a.pending||a.playState==='running')
+                          ? stable+1 : 0;
+                        if(stable>=3)return;
+                        previous=geometry;
+                      }
+                      throw new Error('keyboard skip link geometry did not settle');
+                    }""")
+                    with self.subTest(theme=theme, consumer="skip-link"):
+                        observed = page.locator(".skip-link").evaluate(sample)
+                        self.assertTrue(observed["visible"] and observed["focused"])
+                        self.assertEqual(1, observed["opacity"])
+                        self.assert_opaque_text_pair(observed)
+            finally:
+                browser.close()
 
     def test_enabled_current_navigation_text_meets_aa_in_both_themes(self):
         styles = "\n".join(
