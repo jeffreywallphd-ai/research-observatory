@@ -32,6 +32,27 @@ from tests.model_routing_fixtures import MemoryRoutingRepository
 
 
 class ModelRoutingContractTests(unittest.TestCase):
+    def test_type_and_array_keyword_applicability_match_json_schema(self):
+        schemas = (
+            {"type": "string", "minLength": 2},
+            {"type": "number", "minimum": 0},
+            {"type": ["string", "null"], "minLength": 2},
+            {"type": ["object", "null"], "properties": {"x": {"type": "string"}}},
+            {"type": ["array", "null"], "minItems": 1, "items": {"type": "integer"}},
+            {"minItems": 2},
+            {"maxItems": 1},
+            {"uniqueItems": True},
+            {"items": {"type": "integer"}},
+            {"type": "array"},
+            {},
+        )
+        values = (None, True, -1, 1.5, "a", "ab", {}, {"x": 1}, {"x": "a"}, [], [1], [1, 1], [1, "x"])
+        for schema in schemas:
+            validator = Draft202012Validator(schema)
+            for value in values:
+                with self.subTest(schema=schema, value=value):
+                    self.assertEqual(validator.is_valid(value), not decoder._validation_errors(value, schema, "$"))
+
     def test_task_decode_memo_is_exact_bounded_immutable_and_cleared_at_scope_exit(self):
         from contextvars import copy_context
 

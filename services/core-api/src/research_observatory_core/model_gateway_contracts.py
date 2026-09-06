@@ -1355,10 +1355,21 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
         if matches != 1:
             errors.append(f"{path}: alternatives")
     raw_types = node.get("type")
-    types = raw_types if isinstance(raw_types, list) else [] if raw_types is None else [raw_types]
-    object_schema = "object" in types or isinstance(node.get("properties"), dict)
+    object_schema = (
+        raw_types == "object"
+        or (isinstance(raw_types, list) and "object" in raw_types)
+        or isinstance(node.get("properties"), dict)
+    )
     candidate = _record(value) if object_schema else None
-    if types and not any((candidate is not None if kind == "object" else _type_matches(value, kind)) for kind in types):
+    if isinstance(raw_types, list):
+        type_failed = bool(raw_types) and not any(
+            candidate is not None if kind == "object" else _type_matches(value, kind) for kind in raw_types
+        )
+    else:
+        type_failed = raw_types is not None and not (
+            candidate is not None if raw_types == "object" else _type_matches(value, raw_types)
+        )
+    if type_failed:
         errors.append(f"{path}: type")
     if errors:
         # A rejected branch cannot become valid by visiting its descendants.
@@ -1376,7 +1387,8 @@ def _validation_errors(value: object, node: dict[str, Any], path: str) -> list[s
             errors.append(f"{path}: maxLength")
         if isinstance(node.get("pattern"), str) and re.search(node["pattern"], value) is None:
             errors.append(f"{path}: pattern")
-    if isinstance(value, Sequence) and not isinstance(value, str | bytes | bytearray):
+    array_keywords = "items" in node or "minItems" in node or "maxItems" in node or "uniqueItems" in node
+    if array_keywords and isinstance(value, Sequence) and not isinstance(value, str | bytes | bytearray):
         if isinstance(node.get("minItems"), int) and len(value) < node["minItems"]:
             errors.append(f"{path}: minItems")
         if isinstance(node.get("maxItems"), int) and len(value) > node["maxItems"]:

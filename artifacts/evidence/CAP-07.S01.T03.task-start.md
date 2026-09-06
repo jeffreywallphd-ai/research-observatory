@@ -164,3 +164,21 @@ aggregate metrics only, so it is not a reusable raw-sample baseline. The success
 benchmark emits every cold/warm sample and runtime/platform metadata into the
 captured local log. It remains a fresh-only, isolated fixture measurement with
 the same 25 ms target and disclosed production/native/package exclusions.
+
+The second candidate, `6da0dea6b8b28ba24e4d07af921a4af475d7365a`, closed F01–F03
+in independent replay (18 tests) but failed fresh performance: p95 25.789 ms,
+with 8 of 100 warm samples at or above 25 ms. The other 12 selected checks passed.
+`CAP-07.S01.T03.preflight-02.json` retains the exact check records, raw samples,
+hardware and adverse disposition. No baseline or task approval was established.
+
+A bounded independent decoder-only prototype saved 75.5 microseconds (14.67%)
+per task/result pair and matched 845 exact error-list comparisons. This is a CPU
+diagnostic, not gateway qualification. One protected-call profile also showed
+816 schema-node visits across 10 task decodes and 3 result decodes. The small
+successor removes per-node singleton-list/generator allocation and checks array
+keywords only when present, preserving even untyped array constraints. Its guard
+is more conservative than the prototype's schema-type guard; the prototype's
+timing is not claimed for the final implementation. Public schema and TypeScript
+bytes remain unchanged. A new 143-case schema-applicability characterization test
+joins the existing differential and all-task-kind checks; fresh committed-candidate
+measurement and independent review are still required, without target changes.

@@ -222,9 +222,9 @@ These sources support implementation choices, not universal truth claims. Produc
 8. Pause only with an allowed category from Section 3.4 and exact evidence/next action. Do not self-approve, weaken tests, alter approved UX after implementation, or declare production readiness from narrative evidence.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-07.S01.T03" data-worksheet-sha256="3a6339b18ffb77a272a06217078958113fabc70d347a786e94b446f4014410f8">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-07.S01.T03" data-worksheet-sha256="da2580d36b5d10530c281ba9167ac10294137ebbb722bccc85883062b4c73355">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-07.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>3a6339b18ffb77a272a06217078958113fabc70d347a786e94b446f4014410f8</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-07.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>da2580d36b5d10530c281ba9167ac10294137ebbb722bccc85883062b4c73355</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-07.S01.T03 acceptance closure
 
 Claim base: `5b283d3b26f3a7f6b8deb57e4ce0dfcf2be314d3`.
@@ -390,7 +390,25 @@ The first candidate&#x27;s fresh protected fixture measured cold 19.296 ms, warm
 aggregate metrics only, so it is not a reusable raw-sample baseline. The successor
 benchmark emits every cold/warm sample and runtime/platform metadata into the
 captured local log. It remains a fresh-only, isolated fixture measurement with
-the same 25 ms target and disclosed production/native/package exclusions.</pre></article>
+the same 25 ms target and disclosed production/native/package exclusions.
+
+The second candidate, `6da0dea6b8b28ba24e4d07af921a4af475d7365a`, closed F01–F03
+in independent replay (18 tests) but failed fresh performance: p95 25.789 ms,
+with 8 of 100 warm samples at or above 25 ms. The other 12 selected checks passed.
+`CAP-07.S01.T03.preflight-02.json` retains the exact check records, raw samples,
+hardware and adverse disposition. No baseline or task approval was established.
+
+A bounded independent decoder-only prototype saved 75.5 microseconds (14.67%)
+per task/result pair and matched 845 exact error-list comparisons. This is a CPU
+diagnostic, not gateway qualification. One protected-call profile also showed
+816 schema-node visits across 10 task decodes and 3 result decodes. The small
+successor removes per-node singleton-list/generator allocation and checks array
+keywords only when present, preserving even untyped array constraints. Its guard
+is more conservative than the prototype&#x27;s schema-type guard; the prototype&#x27;s
+timing is not claimed for the final implementation. Public schema and TypeScript
+bytes remain unchanged. A new 143-case schema-applicability characterization test
+joins the existing differential and all-task-kind checks; fresh committed-candidate
+measurement and independent review are still required, without target changes.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
