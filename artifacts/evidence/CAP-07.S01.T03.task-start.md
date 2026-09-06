@@ -182,3 +182,47 @@ timing is not claimed for the final implementation. Public schema and TypeScript
 bytes remain unchanged. A new 143-case schema-applicability characterization test
 joins the existing differential and all-task-kind checks; fresh committed-candidate
 measurement and independent review are still required, without target changes.
+
+## Supplemental-refactoring decision after policy update
+
+The successor's qualification still failed the unchanged 25 ms p95 target;
+12/13 selected checks passed. [Preflight 04](CAP-07.S01.T03.preflight-04.json)
+retains five subsequent diagnostics, not qualifying reruns. Protected open and
+commit variance remains; normal authorized host execution did not remove it.
+A single-thread prototype reused seven of ten task decodes, without establishing
+a qualified speedup or production-safe cacheability.
+
+Independent preflight identified scalar/key subclasses that can survive current
+decoding. A proposed invocation-local identity memo must separately prove deep
+cacheability, bounded retention and scope/thread cleanup while preserving full
+validation for other accepted inputs. No authority, history, result, storage or
+deadline check may be reused or removed. No memo or storage change was implemented.
+
+Adding lifecycle state to the completed generic decoder has a supplemental
+refactoring portion. W1's original estimate is 194 points, its ceiling 29.1,
+and named historical allocations total 21; missing older accounting makes total
+consumption and headroom unknown. The next Wave's approval resets its own budget,
+not this active Wave's. The [bounded M3 proposal](CAP-07.S01.T03.refactoring-proposal-01.md)
+requests an explicit owner exception or independently reviewed proof of capacity
+before this optimization. It does not request W1 passing or change the target.
+
+The owner subsequently approved the exact M3 exception in
+[decision 01](CAP-07.S01.T03.refactoring-decision-01.json). The single inclusive
+three-point allocation covers this diagnostic/preflight, implementation,
+verification, review and remediation; historical total R stays unknown.
+
+Additional acceptance rows before implementation:
+
+| Memo boundary | Required proof |
+|---|---|
+| Reuse identity | Only a returned validated snapshot can hit by `is`; original mutable dictionaries, equal externally backed proxies and changed input must revalidate. |
+| Deep immutability | Exact built-in scalar/key types and decoder-owned proxy/tuple trees only; accepted subclasses retain uncached public behavior. |
+| Retention | At most two strong references, each <=64,000 bytes under the existing canonical JSON encoding; oversized and third snapshots remain valid but uncached. |
+| Lifetime | Nested scopes isolate; success, exception and cancellation deactivate/clear references; copied contexts and foreign threads cannot hit or refill an expired/foreign scope. |
+| Authority/result freshness | Existing permission revocation, history tampering, changed output, cost and deadline tests still reject with task reuse active. |
+| Performance and compatibility | Exact schema/TypeScript bytes unchanged; fresh affected Python, generated-contract, quality and protected integration checks plus the unchanged benchmark and independent review. |
+
+Canonical-size eligibility will be measured without importing registry/routing
+back into the generic decoder. No arbitrary input is rejected merely because it
+is not eligible for reuse. The prior pure exact-text routing memo remains
+separate from permission/history and retains its existing lifetime bounds.

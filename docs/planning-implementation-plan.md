@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 86ce612affc90768748738f975c25c359b1de0f0b55894c59540a9980d93efb1
+source_sha256: 0db95fa75a45c3716bd0c84b4fb0ad7b5c795c456c71d2c4067055c1fe64be98
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9688,7 +9688,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: Owner approved the exact bounded M3 decoder optimization exception in artifacts/evidence/CAP-07.S01.T03.refactoring-decision-01.json; target and all authority boundaries unchanged.
 
 ### SLICE-local-model-runtime-and-model-management (`CAP-07.S02`) - Local model runtime and model management
 

@@ -5,7 +5,11 @@ from __future__ import annotations
 import json
 import math
 import re
-from collections.abc import Mapping, Sequence
+import threading
+from collections.abc import Iterator, Mapping, Sequence
+from contextlib import contextmanager
+from contextvars import ContextVar
+from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any, Literal, cast
 
@@ -1223,6 +1227,68 @@ _DANGEROUS_KEYS = frozenset({"__proto__", "constructor", "prototype"})
 _MAX_COLLECTION_ITEMS = 4096
 
 
+@dataclass
+class _TaskDecodeScope:
+    owner_thread: object = field(default_factory=threading.current_thread)
+    active: bool = True
+    snapshots: list[ModelTaskSnapshot] = field(default_factory=list)
+
+
+_MODEL_TASK_DECODE_SCOPE: ContextVar[_TaskDecodeScope | None] = ContextVar("model-task-decode", default=None)
+
+
+@contextmanager
+def _model_task_decode_scope() -> Iterator[None]:
+    """Bound pure validated-identity reuse to one caller-owned invocation.
+
+    Never retain authority, results or arbitrary caller objects. Shared state
+    is cleared as well as reset so copied contexts cannot revive an ended call.
+    """
+    memo = _TaskDecodeScope()
+    token = _MODEL_TASK_DECODE_SCOPE.set(memo)
+    try:
+        yield
+    finally:
+        memo.active = False
+        memo.snapshots.clear()
+        _MODEL_TASK_DECODE_SCOPE.reset(token)
+
+
+def _cacheable_task(value: object, *, maximum_bytes: int = 64_000) -> bool:
+    """Prove immutable builtins and bound their exact canonical JSON size.
+
+    Called only on freshly owned, validated snapshots. Scalar/key subclasses
+    retain their existing acceptance but are not reusable. Sizing matches the
+    canonical ASCII-escaped JSON encoding without allocating its whole tree.
+    """
+    remaining = maximum_bytes
+
+    def consume(size: int) -> bool:
+        nonlocal remaining
+        remaining -= size
+        return remaining >= 0
+
+    def visit(item: object) -> bool:
+        if item is None or type(item) in (bool, int, float, str):
+            if type(item) is str and len(item) > remaining:
+                return False
+            try:
+                return consume(len(json.dumps(item, ensure_ascii=True, allow_nan=False)))
+            except ValueError:
+                return False
+        if type(item) is MappingProxyType:
+            mapping = cast(Mapping[object, object], item)
+            return consume(2 + max(0, len(mapping) - 1) + len(mapping)) and all(
+                type(key) is str and visit(key) and visit(child) for key, child in mapping.items()
+            )
+        if type(item) is tuple:
+            sequence = cast(tuple[object, ...], item)
+            return consume(2 + max(0, len(sequence) - 1)) and all(visit(child) for child in sequence)
+        return False
+
+    return visit(value)
+
+
 def _record(value: object) -> Mapping[str, Any] | None:
     if type(value) not in (dict, MappingProxyType) and not isinstance(value, Mapping):
         return None
@@ -1463,13 +1529,30 @@ def model_task_errors(value: object) -> tuple[str, ...]:
 
 
 def decode_model_task(value: object) -> ModelTaskSnapshot | None:
+    memo = _MODEL_TASK_DECODE_SCOPE.get()
+    if memo is not None and (not memo.active or memo.owner_thread is not threading.current_thread()):
+        memo = None
+    if memo is not None:
+        for snapshot in memo.snapshots:
+            if value is snapshot:
+                return snapshot
     try:
         owned = _owned_frozen(value)
     except ValueError:
         return None
     if model_task_errors(owned):
         return None
-    return cast(ModelTaskSnapshot, owned)
+    snapshot = cast(ModelTaskSnapshot, owned)
+    if (
+        memo is not None
+        and memo.active
+        and _MODEL_TASK_DECODE_SCOPE.get() is memo
+        and memo.owner_thread is threading.current_thread()
+        and len(memo.snapshots) < 2
+        and _cacheable_task(snapshot)
+    ):
+        memo.snapshots.append(snapshot)
+    return snapshot
 
 
 def assess_model_task(value: object, supported_features: Sequence[str]) -> ModelTaskSnapshot:

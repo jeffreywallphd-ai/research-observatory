@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "owner-authorized-bounded-refactoring-budget-exception",
+  "taskId": "CAP-07.S01.T03",
+  "status": "APPROVED",
+  "recordedAt": "2026-09-06T15:04:45Z",
+  "authority": "repository-owner conversation approval",
+  "authorizingMessage": "Yes, just finish your optimizations",
+  "proposal": "artifacts/evidence/CAP-07.S01.T03.refactoring-proposal-01.md",
+  "proposalSha256": "649b9eb653f3c3b537da79392021674bda1f88800c2290ade2e89f3f0df8f6b8",
+  "proposalCandidate": "c8044e4371a6082cbb7cb402bd824aca770b7249",
+  "allocationId": "CAP-07.S01.T03.decoder-memo",
+  "wave": "W1",
+  "estimationBasis": "Existing S/M/L effort-point basis; M equals three points",
+  "maximumAllocationPoints": 3,
+  "initialTotalForecastPoints": 3,
+  "accounting": "One inclusive allocation covers the already performed scoped diagnostic/preflight and the proposed memo implementation, regression/generated-contract checks, performance verification, independent review and remediation. It is not three additional points at each stage. Product implementation has not started at this recording. Reconcile spent and remaining work at review; report before exceeding the bound.",
+  "historicalWaveBaselinePoints": 194,
+  "historicalNamedRefactoringPoints": 21,
+  "historicalTotalRefactoringPoints": null,
+  "historicalUncertainty": "The complete prior cumulative allocation/spent/overrun reconciliation remains unavailable; this exception does not assert unused capacity or rewrite prior records.",
+  "limits": [
+    "Only the exact private scoped decoder optimization, paths and tests in the bound proposal.",
+    "No Wave-budget reset, transferable allowance or general refactoring authority.",
+    "No change to the 25 ms p95 target, accepted task/result/schema semantics, fresh permission/catalog/principal/history/result checks, cost/deadline authority, storage/encryption/durability, UX, migration or release gates.",
+    "No task, slice, Wave or G1 completion is approved by this decision."
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "pre-submission-diagnostic-observation",
+  "taskId": "CAP-07.S01.T03",
+  "candidate": "c8044e4371a6082cbb7cb402bd824aca770b7249",
+  "disposition": "not-qualified-performance-and-proposed-refactoring-capacity-unresolved",
+  "formalSubmissionRound": null,
+  "priorObservation": "artifacts/evidence/CAP-07.S01.T03.preflight-03.json",
+  "scope": "Five fixed synthetic diagnostics with 101 successful calls each, real SQLCipher and explicit in-memory fixture keys. No ordinary project, vault, credentials, security settings, product code, or benchmark target changed. These runs are not qualification or evidence of a reviewed performance baseline.",
+  "diagnostics": [
+    {
+      "report": "artifacts/tmp/CAP-07.S01.T03.cpu-wall-diagnostic-01.json",
+      "sha256": "d35400ae3368b5594dae08f59225423931dd8b848bbaa8d0af55b4fb95a76ac3",
+      "observation": "Inclusive wall/thread-CPU attribution. Windows thread-CPU observations were quantized to 15.625 ms; per-call differences do not identify a waiting mechanism. Held-open and commit variance, not growing configuration cost, explained observed slow calls."
+    },
+    {
+      "report": "artifacts/tmp/CAP-07.S01.T03.held-open-diagnostic-01.json",
+      "sha256": "415b8c8764e5b21780a4a0d105518cbaace4778402ede17b771772f3997a37ca",
+      "observation": "Finer held-open attribution: descriptor-open median 3.2242 ms and p95 5.612 ms. Driver-connect median 0.1013 ms; key setup 0.0374 ms. Different access modes mean later metadata/driver opens do not establish that replacing the first open is safe or faster."
+    },
+    {
+      "report": "artifacts/tmp/CAP-07.S01.T03.held-open-host-diagnostic-01.json",
+      "sha256": "fb21b3286ddee68b098fae46a91d45cd27f9f950ad3e1c942a203f856887174f",
+      "observation": "Same diagnostic in separately authorized normal host execution: descriptor-open median 3.2821 ms/p95 8.6759 ms; invocation median 21.3292 ms/p95 26.8436 ms. This does not support attributing the overhead to the managed execution context. No protection was disabled or bypassed."
+    },
+    {
+      "report": "artifacts/tmp/CAP-07.S01.T03.cpu-profile-01.json",
+      "sha256": "a8925b1458a899851273e0bcc35cd70930281cbed72cec3dd240f5ed547d39d2",
+      "observation": "Instrumented cProfile: 1010 task decodes, 303 result decodes and 82416 schema-node visits across 101 calls. Schema validation inclusive time was 517.5958 ms under the profiler, not uninstrumented gateway cost."
+    },
+    {
+      "report": "artifacts/tmp/CAP-07.S01.T03.identity-memo-diagnostic-01.json",
+      "sha256": "3fd50140e4454fc9d5ef7527423a690ac2c4ccfc6aaf7841cc30b4e8cd0b4de1",
+      "observation": "Single-thread prototype reused the exact previously decoded task identity in 707 of 1010 decoder calls. Invocation median 20.2837 ms/p95 23.6875 ms is diagnostic only, not a controlled comparative speedup or qualifying PASS. The prototype lacks the complete prospective deep-cacheability and lifetime controls and is not a product implementation."
+    }
+  ],
+  "evidenceLimits": [
+    "All reported phase percentiles include one cold and 100 warm observations; do not compare them as the qualifying benchmark's warm-only percentiles.",
+    "Inclusive phase timings overlap and must not be summed.",
+    "Report digests bind retained bytes, not an independent assertion that a producer ran. Tool execution and independent review remain distinct evidence.",
+    "Each diagnostic retained its complete raw samples/profile and source hashes locally; before/after equality is not a proof against transient mutation.",
+    "Prior adverse qualification remains unchanged: 12 of 13 selected checks passed; the protected gateway benchmark failed its unchanged 25 ms p95 criterion.",
+    "No native descriptor replacement, persistent connection cache, deferred durability, or public acceptance relaxation was implemented."
+  ],
+  "independentPreflight": {
+    "reviewer": "agent:/root/registry_persistence_preflight",
+    "disposition": "advisory-only-not-task-approval",
+    "findings": [
+      "Cross-transaction circuit and history rereads establish fresh authority and cannot be removed as duplicates.",
+      "Successful task decoding alone does not prove cacheability: scalar subclasses and string-subclass keys can survive the current owning function. Non-cacheable values must retain full existing validation and acceptance.",
+      "A prospective pure-task memo must use exact returned snapshot identity, bounded strong references, deep exact-builtin cacheability, creator-thread checks and shared active-state invalidation at scope exit. No permission, history, result, deadline or principal reuse.",
+      "Adding lifecycle state to the completed generic decoder has a supplemental refactoring portion; diagnostic hits do not establish W1 budget capacity."
+    ]
+  },
+  "nextDecision": "artifacts/evidence/CAP-07.S01.T03.refactoring-proposal-01.md",
+  "integration": "No local main integration or formal task submission: the known failing/unreviewed T03 ancestry remains on the campaign branch."
+}

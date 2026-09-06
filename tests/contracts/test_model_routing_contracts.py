@@ -32,6 +32,163 @@ from tests.model_routing_fixtures import MemoryRoutingRepository
 
 
 class ModelRoutingContractTests(unittest.TestCase):
+    def test_decoder_identity_scope_reuses_only_owned_snapshots_not_mutable_inputs(self):
+        from types import MappingProxyType
+
+        document = task()
+        proxy = MappingProxyType(document)
+        with decoder._model_task_decode_scope():
+            first = decoder.decode_model_task(document)
+            self.assertIsNotNone(first)
+            self.assertIs(first, decoder.decode_model_task(first))
+            second = decoder.decode_model_task(proxy)
+            self.assertEqual(first, second)
+            self.assertIsNot(first, second)
+            self.assertIsNot(proxy, second)
+            document["requirements"]["deadlineMs"] = 0
+            self.assertIsNone(decoder.decode_model_task(document))
+            self.assertIsNone(decoder.decode_model_task(proxy))
+            self.assertEqual(30_000, first["requirements"]["deadlineMs"])
+            self.assertIs(first, decoder.decode_model_task(first))
+        self.assertIsNot(first, decoder.decode_model_task(first))
+
+    def test_decoder_identity_scope_is_two_entries_and_rejects_no_large_valid_tasks(self):
+        with decoder._model_task_decode_scope():
+            first = decoder.decode_model_task(task())
+            second = decoder.decode_model_task(task())
+            third = decoder.decode_model_task(task())
+            self.assertEqual(first, second)
+            self.assertIsNot(first, second)
+            self.assertEqual(2, len(decoder._MODEL_TASK_DECODE_SCOPE.get().snapshots))
+            self.assertIs(first, decoder.decode_model_task(first))
+            self.assertIs(second, decoder.decode_model_task(second))
+            self.assertIsNot(third, decoder.decode_model_task(third))
+        document = task()
+        document["taskKind"] = "embedding"
+        document["input"] = {"kind": "embedding", "items": [document["input"]["instruction"]] * 500}
+        self.assertGreater(len(canonical_bytes(document)), 64_000)
+        with decoder._model_task_decode_scope():
+            large = decoder.decode_model_task(document)
+            self.assertIsNotNone(large)
+            self.assertEqual([], decoder._MODEL_TASK_DECODE_SCOPE.get().snapshots)
+            self.assertEqual(large, decoder.decode_model_task(large))
+            self.assertIsNot(large, decoder.decode_model_task(large))
+
+    def test_decoder_cacheability_matches_canonical_byte_boundary_including_escaping(self):
+        from types import MappingProxyType
+
+        for character in ("x", "é", "\ud800", '"', "\\"):
+            # Ensure that byte sizing includes canonical ASCII escaping, keys,
+            # container delimiters and separators, not merely Python len(text).
+            value = MappingProxyType({"key": (character, None, True, 1, 1.5)})
+            size = len(canonical_bytes(value))
+            self.assertTrue(decoder._cacheable_task(value, maximum_bytes=size))
+            self.assertFalse(decoder._cacheable_task(value, maximum_bytes=size - 1))
+        value = MappingProxyType({"key": "x" * (64_000 - len(canonical_bytes({"key": ""})))})
+        self.assertEqual(64_000, len(canonical_bytes(value)))
+        self.assertTrue(decoder._cacheable_task(value))
+        self.assertFalse(decoder._cacheable_task(MappingProxyType({"key": value["key"] + "x"})))
+
+    def test_decoder_does_not_cache_scalar_or_key_subclasses_or_change_their_acceptance(self):
+        class Text(str):
+            pass
+
+        class Number(int):
+            pass
+
+        for change in ("value", "number", "key"):
+            document = task()
+            if change == "value":
+                document["taskId"] = Text(document["taskId"])
+            elif change == "number":
+                document["requirements"]["deadlineMs"] = Number(30_000)
+            else:
+                document = {Text(key): value for key, value in document.items()}
+            without_scope = decoder.decode_model_task(document)
+            self.assertIsNotNone(without_scope)
+            with decoder._model_task_decode_scope(), self.subTest(change=change):
+                snapshot = decoder.decode_model_task(document)
+                self.assertEqual(without_scope, snapshot)
+                self.assertIsNot(snapshot, decoder.decode_model_task(snapshot))
+                self.assertEqual([], decoder._MODEL_TASK_DECODE_SCOPE.get().snapshots)
+
+    def test_decoder_identity_scope_nested_exception_and_inherited_exit_clear_references(self):
+        from contextvars import copy_context
+
+        with decoder._model_task_decode_scope():
+            first = decoder.decode_model_task(task())
+            outer = decoder._MODEL_TASK_DECODE_SCOPE.get()
+            with self.assertRaisesRegex(RuntimeError, "synthetic"), decoder._model_task_decode_scope():
+                other = decoder.decode_model_task(first)
+                inner = decoder._MODEL_TASK_DECODE_SCOPE.get()
+                inherited = copy_context()
+                self.assertIsNot(first, other)
+                raise RuntimeError("synthetic")
+            self.assertFalse(inner.active)
+            self.assertEqual([], inner.snapshots)
+            self.assertIsNot(other, inherited.run(decoder.decode_model_task, other))
+            self.assertEqual([], inner.snapshots)
+            self.assertIs(outer, decoder._MODEL_TASK_DECODE_SCOPE.get())
+            self.assertIs(first, decoder.decode_model_task(first))
+        self.assertFalse(outer.active)
+        self.assertEqual([], outer.snapshots)
+
+    def test_decoder_identity_scope_foreign_thread_cannot_hit_or_refill(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from contextvars import copy_context
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            with decoder._model_task_decode_scope():
+                first = decoder.decode_model_task(task())
+                memo = decoder._MODEL_TASK_DECODE_SCOPE.get()
+                inherited = copy_context()
+                other = pool.submit(inherited.run, decoder.decode_model_task, first).result()
+                self.assertEqual(first, other)
+                self.assertIsNot(first, other)
+                self.assertEqual([first], memo.snapshots)
+            self.assertIsNot(other, pool.submit(inherited.run, decoder.decode_model_task, other).result())
+            self.assertEqual([], memo.snapshots)
+
+    def test_decoder_identity_scope_cancellation_clears_inherited_state(self):
+        from contextvars import copy_context
+
+        async def check():
+            entered = asyncio.Event()
+            captured = {}
+
+            async def pending():
+                with decoder._model_task_decode_scope():
+                    captured["task"] = decoder.decode_model_task(task())
+                    captured["memo"] = decoder._MODEL_TASK_DECODE_SCOPE.get()
+                    captured["context"] = copy_context()
+                    entered.set()
+                    await asyncio.Event().wait()
+
+            work = asyncio.create_task(pending())
+            await entered.wait()
+            work.cancel()
+            with self.assertRaises(asyncio.CancelledError):
+                await work
+            self.assertFalse(captured["memo"].active)
+            self.assertEqual([], captured["memo"].snapshots)
+            self.assertIsNot(captured["task"], captured["context"].run(decoder.decode_model_task, captured["task"]))
+            self.assertEqual([], captured["memo"].snapshots)
+
+        asyncio.run(check())
+
+    def test_decoder_identity_scope_never_reuses_result_validation(self):
+        result = json.loads(
+            (REPO / "packages/contracts/model-gateway/fixtures/valid-generation-result.v1.json").read_text("utf-8")
+        )
+        with decoder._model_task_decode_scope():
+            request = decoder.decode_model_task(task())
+            first = decoder.decode_model_result(request, result)
+            self.assertIsNotNone(first)
+            self.assertIs(request, decoder.decode_model_task(request))
+            result["requestHash"] = "sha256:" + "0" * 64
+            self.assertIsNone(decoder.decode_model_result(request, result))
+            self.assertIsNot(first, decoder.decode_model_result(request, first))
+
     def test_type_and_array_keyword_applicability_match_json_schema(self):
         schemas = (
             {"type": "string", "minLength": 2},

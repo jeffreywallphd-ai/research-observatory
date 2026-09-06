@@ -13,7 +13,12 @@ from typing import Annotated, Any, Literal, Self, cast
 
 from pydantic import Field, model_validator
 
-from .model_gateway_contracts import ModelTaskSnapshot, decode_model_result, decode_model_task
+from .model_gateway_contracts import (
+    ModelTaskSnapshot,
+    _model_task_decode_scope,
+    decode_model_result,
+    decode_model_task,
+)
 from .model_registry_contracts import (
     ModelDeployment,
     ModelManifest,
@@ -49,7 +54,8 @@ def routing_contract_scope():
     memo = _TaskDecodeMemo()
     token = _TASK_DECODE_MEMO.set(memo)
     try:
-        yield
+        with _model_task_decode_scope():
+            yield
     finally:
         memo.active = False
         memo.text = None
