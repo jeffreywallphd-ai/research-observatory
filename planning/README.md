@@ -44,6 +44,9 @@ byte corruption without decoding; failures must be reported, not hand-repaired.
 
 One pre-Wave approval binds the complete Wave packet at one immutable commit.
 
+Every decision must present at least two credible candidates, a recommendation
+and rationale; the reviewer records any override with its rationale.
+
 1. Identify the earliest unfinished global Wave and its exit gate.
 2. **Only for a proposed Wave:** prepare missing plans; assess the current
    implementation; resolve all binding capability decisions, ordered slices,

@@ -59,6 +59,11 @@ profile/platform and matching owner/lease. New supported bindings store
 Task `block`, `renew`, `submit`, and campaign/slice mutations enforce ownership.
 Only the recorded owner may renew an expired lease. There is no override claim.
 
+Cancellation requires owner authorization within the current active slice;
+never rewrite an existing cancellation. An approved release gate requires every
+preceding-Wave task to remain DONE; reopening those tasks is denied because no
+implicit gate-reset transition exists.
+
 If an amendment hold is reported, read the exact approved packet and
 [amendment procedure](project-automation-guide.md#22-controlled-enabler-amendment-lane);
 do not resume ordinary work until its adoption. If an actual retained recovery

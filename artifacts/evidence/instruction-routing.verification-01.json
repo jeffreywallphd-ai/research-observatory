@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "instruction-maintenance-verification",
+  "candidateCommit": "72664dc5045625fc5a6c316d286f5ee50bfb71b8",
+  "headUnchanged": true,
+  "executionScope": "Fresh read-only checks; no evidence reuse or product/platform qualification claimed.",
+  "checks": [
+    {
+      "id": "agent-protocol-tests",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_agent_protocol_check -v",
+      "exitCode": 0,
+      "wallSeconds": 0.1786143,
+      "output": "test_efficiency_cannot_trade_away_evidence_or_acceptance_boundaries (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_efficiency_cannot_trade_away_evidence_or_acceptance_boundaries) ... ok\r\ntest_missing_continuous_campaign_instruction_is_rejected (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_missing_continuous_campaign_instruction_is_rejected) ... ok\r\ntest_non_ready_task_has_no_claim_brief (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_non_ready_task_has_no_claim_brief) ... ok\r\ntest_partial_slice_approval_cannot_start_campaign (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_partial_slice_approval_cannot_start_campaign) ... ok\r\ntest_repository_agent_protocol_is_complete (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_repository_agent_protocol_is_complete) ... ok\r\ntest_task_verification_cannot_default_to_full_profiles (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_task_verification_cannot_default_to_full_profiles) ... ok\r\ntest_unfamiliar_agent_can_state_scope_checks_and_completion_for_ready_task (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_unfamiliar_agent_can_state_scope_checks_and_completion_for_ready_task) ... ok\r\ntest_wave_approval_cannot_authorize_inherited_or_future_decisions (tests.foundation.test_agent_protocol_check.AgentProtocolTests.test_wave_approval_cannot_authorize_inherited_or_future_decisions) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 8 tests in 0.005s\r\n\r\nOK\r\n"
+    },
+    {
+      "id": "agent-protocol-contract",
+      "command": ".venv/Scripts/python.exe tools/agent_protocol_check.py --repo .",
+      "exitCode": 0,
+      "wallSeconds": 0.2355653,
+      "output": "Agent protocol: pass - one pre-Wave approval and durable Wave execution\r\n"
+    },
+    {
+      "id": "documentation-links",
+      "command": "$docPaths = @('AGENTS.md','docs/README.md','planning/README.md','docs/governance/repository-governance.md','docs/automation/codex-tracking-guide.md','docs/automation/project-automation-guide.md','docs/automation/task-start-planning.md','docs/automation/workflow-efficiency.md','docs/automation/planning-review-site.md','docs/automation/governance-automation-simplification.md','docs/governance/delivery-control-model.md')\n$repoPath = (Get-Location).Path\n$linkErrors = [Collections.Generic.List[string]]::new()\n$linkCount = 0\nforeach ($docPath in $docPaths) {\n  $docText = Get-Content -Raw -LiteralPath $docPath\n  foreach ($link in [regex]::Matches($docText, '\\[[^\\]]+\\]\\(([^)]+)\\)')) {\n    $target = $link.Groups[1].Value\n    if ($target -match '^[a-z]+://') { continue }\n    $linkCount++\n    $parts = $target.Split('#',2)\n    $resolvedTarget = [IO.Path]::GetFullPath((Join-Path (Split-Path (Join-Path $repoPath $docPath)) $parts[0]))\n    if (-not $resolvedTarget.StartsWith($repoPath + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { $linkErrors.Add(\"$docPath : off-repository target $target\"); continue }\n    if (-not (Test-Path -LiteralPath $resolvedTarget)) { $linkErrors.Add(\"$docPath : missing target $target\"); continue }\n    if ($parts.Count -eq 2) {\n      if (-not $resolvedTarget.EndsWith('.md')) { $linkErrors.Add(\"$docPath : unchecked non-Markdown fragment $target\"); continue }\n      $headings = [regex]::Matches((Get-Content -Raw -LiteralPath $resolvedTarget), '(?m)^#{1,6} (.+)$') | ForEach-Object { $_.Groups[1].Value.Trim().ToLowerInvariant() -replace '[^\\p{L}\\p{Nd}\\s_-]','' -replace '\\s','-' }\n      if ($parts[1] -notin $headings) { $linkErrors.Add(\"$docPath : missing fragment $target\") }\n    }\n  }\n}\n[pscustomobject]@{documents=$docPaths.Count;localLinks=$linkCount;errors=@($linkErrors)} | ConvertTo-Json\nif ($linkErrors.Count) { exit 1 }",
+      "exitCode": 0,
+      "wallSeconds": 0.1793193,
+      "output": "{\r\n  \"documents\": 11,\r\n  \"localLinks\": 70,\r\n  \"errors\": []\r\n}\r\n"
+    },
+    {
+      "id": "generated-backlog-views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "wallSeconds": 2.5562476,
+      "output": "Generated backlog views: PASS - no changes\r\n"
+    },
+    {
+      "id": "documentation-diff-whitespace",
+      "command": "git diff --check 43ce0d8313a0aadcabdfd9c38023e1b29949eaca HEAD -- AGENTS.md docs/README.md planning/README.md docs/automation/codex-tracking-guide.md docs/automation/governance-automation-simplification.md docs/automation/planning-review-site.md docs/automation/project-automation-guide.md docs/automation/task-start-planning.md docs/automation/workflow-efficiency.md docs/governance/repository-governance.md docs/governance/delivery-control-model.md artifacts/evidence/instruction-routing.maintenance-01.md",
+      "exitCode": 0,
+      "wallSeconds": 0.0637923,
+      "output": ""
+    }
+  ]
+}

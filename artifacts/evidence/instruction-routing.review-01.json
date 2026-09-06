@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "instruction-maintenance-review",
+  "candidateCommit": "72664dc5045625fc5a6c316d286f5ee50bfb71b8",
+  "baseCommit": "43ce0d8313a0aadcabdfd9c38023e1b29949eaca",
+  "reviewer": "agent:/root/agents_md_review",
+  "disposition": "CHANGES_REQUESTED",
+  "scope": "Specified 15-file instruction/core-document and existing W1 resume/pause projection delta; no product or controller changes.",
+  "findings": [
+    {
+      "id": "IR-R01-F01",
+      "severity": "P2",
+      "status": "OPEN",
+      "criterion": "Preserve all explicit constraints while consolidating procedures.",
+      "description": "Planning lifecycle omitted at least two credible candidates per decision; task operations omitted owner-authorized current-active-slice cancellation, immutable recorded cancellation and denial of reopening preceding-Wave tasks after release-gate approval.",
+      "reproduction": "Compare predecessor automation Before start requirements and planning final validation paragraphs against candidate planning lifecycle and task operations.",
+      "closure": "Restore the candidate minimum once in canonical planning and the transition restrictions once in task operations."
+    },
+    {
+      "id": "IR-R01-F02",
+      "severity": "P3",
+      "status": "OPEN",
+      "criterion": "Conditional reading boundaries must avoid unrelated procedure loading.",
+      "description": "Use the linked correction route is a level-three heading inside Bounded maintenance, so reading maintenance completely includes the correction procedure.",
+      "reproduction": "Inspect workflow-efficiency.md heading hierarchy and its selected-section-complete rule.",
+      "closure": "Promote the correction heading to level two; keep its anchor unchanged."
+    }
+  ],
+  "scenarioOutcomes": {
+    "inspection": "PASS",
+    "ordinaryTaskFailure": "PASS",
+    "completedCorrection": "PASS for correction route; F01 identifies adjacent omitted transition constraints",
+    "controlMaintenance": "Authority and proof PASS; reading scope needs F02",
+    "governedExperience": "PASS",
+    "interruptedVerificationAndReleaseIntegration": "PASS for stable inputs and handoff/integration; explicit reopen restriction needs F01"
+  },
+  "preservationAssessment": "All eleven obligations reviewed. Source authority, immutable approvals/history, prospective itemized 15% arithmetic, privacy/research integrity, exact-commit evidence, independent reviews, adverse findings, real principal/native proof, fresh Wave qualification, taskctl current authority and no unauthorized remote/destructive effects retained apart from explicit constraints in F01. No additional material reading cycle found.",
+  "independentActions": "Inspected committed delta and confirmed stable HEAD. Did not replay root checks or change files/Git. Backlog delta only W1 resume/pause metadata plus W1.R07; product tasks unchanged.",
+  "source": "Actual independent agent disposition returned in this task; recorded by the root without changing its outcome."
+}

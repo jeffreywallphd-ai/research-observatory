@@ -65,7 +65,7 @@ Read [migration detail](governance-automation-simplification.md) only when the
 affected adapter, kernel, store or historical boundary requires it, not for
 every maintenance increment.
 
-### Use the linked correction route
+## Use the linked correction route
 
 The initial adapter supports an original DONE, independently approved task in
 the current unreleased Wave. Its amendment, if any, must already be adopted.
