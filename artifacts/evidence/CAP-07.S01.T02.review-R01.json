@@ -1,0 +1,51 @@
+{
+  "task_id": "CAP-07.S01.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "162745fc07585f33926baa54915846ba9048e1e8",
+  "reviewer": "agent:/root/model_registry_review",
+  "result": "approved",
+  "evidence_sha256": "e636bcd14cd7cb3b69c2437bfcf403853dc91a60a98bb4df6293f56b986d5ad8",
+  "submission_packet_sha256": "b25df6df141028d53aaa9702b8d53949333b92b2d2efe5782aa90c9a6c81cd40",
+  "notes": "Approved the exact CAP-07.S01.T02 candidate and authenticated frozen R01 packet. Expanded review covers the 42-path implementation increment from b643ecbd9670d9cc2e4ab2a88e8a6c8781e6c7a9, including persistence, public contracts, native allowlists, Model Center behavior and bounded architecture-check maintenance. The original claim base and complete 1,532-path inventory are truthful and unchanged; intervening independently reviewed work is not relabeled as this task's implementation. Core-owned fresh observations and policy witnesses remain distinct from immutable project declarations; capability, permission, identity, freshness and reproducibility failures deny eligibility, and production inventory/policy defaults confer no execution authority. Protected catalog revisions, compare-and-swap, idempotency, audit/outbox atomicity, lifecycle/principal checks, bounded public projections and visible history satisfy the task contract. All 20 qualifying command log hashes match the manifest, including fresh protected storage and real authenticated loopback generated-client proof at this candidate. Independent final-candidate replay passed 18 matcher, manifest-contract and architecture tests in 0.243 seconds. Retained pre-submission P2 CAP-07.S01.T02-R01-F01 is fixed: the original maximum-policy-plus-local-denial reproduction now returns all 33 reasons and no eligible model; the 64-code output bound preserves all 32 permitted policy reasons plus every currently named local denial. Its adverse record remains unchanged. That observation preceded any controlled submission, so this ledger does not invent a prior round or register a closure against a nonexistent controller finding. The root-specific adapter inventory also blocks its use by business modules/ports, with direct/package/alias and nested-path negative tests. No blocking finding remains. Browser fixtures and Rust unit tests are not native-window qualification; actual runtime installation/execution, T03 routing integration and fresh full Wave qualification remain at their approved later boundaries.",
+  "findings": [],
+  "closures": [],
+  "independent_checks": [
+    {
+      "candidate_commit": "162745fc07585f33926baa54915846ba9048e1e8",
+      "command": ".venv/Scripts/python.exe -m unittest tests.ai.test_model_registry tests.contracts.test_model_registry_contracts tests.foundation.test_architecture_check",
+      "exit_code": 0,
+      "test_count": 18,
+      "runner_elapsed_seconds": 0.243,
+      "result": "passed"
+    },
+    {
+      "candidate_commit": "162745fc07585f33926baa54915846ba9048e1e8",
+      "check": "Authenticated current R01 candidate, original claim base, branch, acceptance-criteria digest, evidence digest, verification-selection digest, selected command IDs, changed paths and packet digest against backlog and the manifest.",
+      "result": "passed",
+      "prior_controlled_rounds": 0
+    },
+    {
+      "candidate_commit": "162745fc07585f33926baa54915846ba9048e1e8",
+      "check": "Compared all 20 qualifying raw log SHA-256 values and exact Git changed-file inventories with the manifest; inspected test summaries and the retained earlier failed qualification.",
+      "result": "passed",
+      "qualifying_log_count": 20,
+      "claim_base_changed_path_count": 1532,
+      "implementation_increment_changed_path_count": 42
+    }
+  ],
+  "pre_submission_observations": [
+    {
+      "record": "artifacts/evidence/CAP-07.S01.T02.preflight-01.json",
+      "finding_id": "CAP-07.S01.T02-R01-F01",
+      "disposition": "fixed-and-independently-replayed",
+      "evidence": "The final-candidate regression retains all 32 policy denial codes plus availability-unknown, returns no-eligible-model, and issues no eligible candidate. Source review confirms the output bound of 64 exceeds the 32 policy codes plus all 23 currently named local codes. Policy input limits remain 32. The pre-submission record is preserved; this is not a controlled-round closure."
+    }
+  ],
+  "persistence_evidence_applicability": "The independent 24-test observation at 4538f1e6b93c2a115f89a1e7596d6b26e83bf9b7 remains applicable to its unchanged repository, service, lifecycle, generated client and their tests: the six-path successor changes only the rejection-result bound, its regression, architecture-check enumeration/negative tests, task-start notes and retained preflight record. The final qualifying first command freshly reruns protected SQLCipher persistence and the real loopback generated-client tests at 162745fc, so this approval does not substitute old durations or old candidate results for fresh qualifying evidence.",
+  "scope_limits": [
+    "Synthetic inventory and policy fixtures demonstrate matching boundaries; production inventory is empty and production eligibility policy unavailable. No installed production model, evaluation result, source-rights policy implementation, inference or egress authorization is claimed.",
+    "The actual loopback HTTP/generated-client and protected SQLCipher fixture proof is distinct from TestClient, browser transport fixtures and native Rust unit tests. No reviewer or manifest observation is represented as actual native-window behavior.",
+    "CAP-07.S01.T03 and slice integration retain execution dispatch, fresh canonical policy implementation, routing/fallback and integrated adversarial obligations. W1 exit retains the fresh complete platform, packaging, security, accessibility, performance and cross-capability qualification and separate human release decision.",
+    "The disclosed unchanged broader mypy issue at selective_recalculation.py:834 is not waived or declared fixed by this task. Only the stated affected typecheck result is approved."
+  ]
+}
