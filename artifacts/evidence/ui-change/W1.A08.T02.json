@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "1.1",
+  "documentType": "ui-change-evidence",
+  "taskId": "W1.A08.T02",
+  "changeKind": "defect-restoration",
+  "contractPath": "artifacts/evidence/ui-change/W1.A08.T02.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/LocalServiceBoundary.tsx",
+    "apps/desktop/src/app/ProjectsWorkspace.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "apps/desktop/src/app/audit-lineage.conformance.json",
+    "apps/desktop/src/app/directoryPicker.ts",
+    "packages/ui-components/src/DirectoryPickerField.tsx",
+    "packages/ui-components/src/index.tsx",
+    "packages/ui-components/src/styles.css"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "version": "1.6",
+    "packageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "approvalCommit": "0460b2af60643172504e1abe0f185e010f171700",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.5"
+  },
+  "restoration": {
+    "defect": "Live product had additive Panel paragraph margins, a sidebar surface capped before the footer, raw workflow context actions, and insufficient contrast on current-navigation and two accent text consumers.",
+    "expectedBehavior": "Restore approved shared spacing, full-height side-by-side shell and narrow stacking, shared operable context actions and WCAG AA actual text/focus in both themes. Preserve tokens, workflow and security authority, labels, callbacks and state rules."
+  },
+  "amendmentAuthority": {
+    "correctionId": "W1.A09",
+    "adoptionCommit": "1a73207c4cc1c23ee7ffbdd33563821b5741bcb9",
+    "reactivationCommit": "0e21bddec5227539a1df64cf865acd629705f501",
+    "inheritedCorrectionUiFiles": [
+      "apps/desktop/src/app/LocalServiceBoundary.tsx",
+      "apps/desktop/src/app/ProjectsWorkspace.tsx",
+      "apps/desktop/src/app/audit-lineage.conformance.json",
+      "apps/desktop/src/app/directoryPicker.ts",
+      "packages/ui-components/src/DirectoryPickerField.tsx",
+      "packages/ui-components/src/index.tsx",
+      "packages/ui-components/src/styles.css"
+    ],
+    "resumedUiFiles": [
+      "apps/desktop/src/app.css",
+      "apps/desktop/src/app/WorkflowNavigation.tsx",
+      "packages/ui-components/src/styles.css"
+    ],
+    "classification": {
+      "path": "artifacts/evidence/W1.A08.T02.ui-classification-R01.json",
+      "sha256": "6fa63b05a29a688d56fbe03d24e38f29ea9130795c6296c9d408ce7c69fbdef7",
+      "commit": "2e4efa8f9599289fbf67fcbccd679d9e2d77dfdd"
+    }
+  },
+  "focusedEvidence": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_product_layout_measurements -v",
+      "result": "passed",
+      "scope": "Eight actual product/layout/keyboard tests at the exact a7f39e43 product/test bytes; 15.260 seconds. Includes old current-label/marker adverse pairs, sidebar/full-height flow and settled visible accent tests."
+    },
+    {
+      "command": "Pinned Node 24.19.0/pnpm 11.20.0 --dir apps/desktop run build; desktop lint/typecheck; product_style_analysis",
+      "result": "passed",
+      "scope": "Actual build in root and clean producer checkout, 283 style rules and ten unchanged existing exceptions; no new token, geometry, specificity or style-reuse exemption."
+    },
+    {
+      "command": "tools/desktop_performance_check.py --repo . --report artifacts/tmp/W1.A08.T02.performance-04.json",
+      "result": "passed",
+      "scope": "Exact clean a7f39e43 producer, 12 browser samples and 20 table batches, unchanged absolute/regression limits, no overlapping browser/build/test workloads. Full raw data retained in performance-04."
+    }
+  ]
+}
