@@ -248,6 +248,8 @@ def push_tips(data: str, destinations: list[str]) -> list[str]:
         if len(fields) != 4:
             raise ValueError("Malformed push update")
         local_ref, local, remote_ref, remote = fields
+        if text_reasons(local_ref, set(), metadata=True) or text_reasons(remote_ref, set(), metadata=True):
+            raise ValueError("Branch name contains private metadata")
         if not SHA.fullmatch(local) or not SHA.fullmatch(remote) or local == "0" * 40:
             raise ValueError("Invalid push or deletion")
         if local_ref != remote_ref or remote_ref in RETIRED_REFS:
@@ -283,7 +285,14 @@ def main() -> int:
         if args.mode == "push":
             if args.remote_url != policy["remoteUrl"]:
                 raise ValueError("Unexpected remote URL")
-            tips = push_tips(sys.stdin.read(), policy["remoteRefs"])
+            updates = sys.stdin.read()
+            tips = push_tips(updates, policy["remoteRefs"])
+            # Ref names are new publication inputs even when the commit is old.
+            for line in updates.splitlines():
+                local_ref, _, remote_ref, _ = line.split()
+                for ref in {local_ref, remote_ref}:
+                    for raw in {ref.encode("utf-8"), normalize(ref).encode("utf-8")}:
+                        secret_scan(raw, args.scanner.resolve(), policy["scannerSha256"], args.config.resolve())
             if not tips:
                 print("Prospective privacy: no new push objects.")
                 return 0

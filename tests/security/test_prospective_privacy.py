@@ -190,6 +190,38 @@ class ProspectivePrivacyTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Replacement"):
             self.inspect(tip=tip)
 
+    def test_new_ref_privacy_and_credentials_are_checked_for_baseline_tip(self) -> None:
+        for name in (UNSAFE_EMAIL, UNSAFE_PATH.replace(":", "%3a").replace("/", "%2f")):
+            ref = "refs/heads/codex/" + name
+            with self.assertRaisesRegex(ValueError, "metadata"):
+                guard.push_tips(f"{ref} {self.base} {ref} {'0' * 40}", self.policy["remoteRefs"])
+        policy = self.repo / "policy.json"
+        policy.write_text(json.dumps(self.policy))
+        token = "gh" + "p_" + "7F3aBc9De2Gh5Jk8Lm1Np4Qr6St0UvXyZaBc"
+        ref = "refs/heads/codex/" + token
+        process = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "tools/prospective_privacy.py"),
+                "push",
+                "--repo",
+                str(self.repo),
+                "--policy",
+                str(policy),
+                "--scanner",
+                str(SCANNER),
+                "--config",
+                str(self.config),
+                "--remote-url",
+                self.policy["remoteUrl"],
+            ],
+            input=f"{ref} {self.base} {ref} {'0' * 40}\n".encode(),
+            env=self.env,
+            capture_output=True,
+            check=False,
+        )
+        self.assertNotEqual(0, process.returncode)
+
     def test_actual_installed_hooks_allow_safe_and_block_private_commit(self) -> None:
         (self.repo / ".local").mkdir(exist_ok=True)
         self.write("tools/prospective_privacy.py", (ROOT / "tools/prospective_privacy.py").read_text())
