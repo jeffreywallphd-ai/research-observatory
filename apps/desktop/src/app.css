@@ -15,6 +15,7 @@ a { color: var(--brand-700); }
 .sidebar { min-width: 0; padding: var(--space-5) var(--space-3); background: var(--surface-2); border-inline-end: 1px solid var(--border-subtle); }
 .sidebar button { width: 100%; min-height: var(--control-height-md); display: block; padding: var(--space-2) var(--space-3); color: var(--text-strong); background: transparent; border: 1px solid transparent; border-radius: var(--radius-md); text-align: start; font: inherit; cursor: pointer; }
 .sidebar button[aria-current="page"], .sidebar button[aria-current="step"] { color: var(--brand-800); background: var(--brand-50); font-weight: 700; }
+:where(html[data-theme="dark"]) .sidebar button:is([aria-current="page"], [aria-current="step"]) { color: var(--brand-400); }
 .sidebar button:disabled { cursor: not-allowed; opacity: .74; }
 .sidebar > p { margin-block-start: var(--space-5); color: var(--text-muted); font-size: var(--text-xs); }
 .workflow-navigation { --ro-stack-gap: var(--space-4); }
@@ -26,7 +27,7 @@ a { color: var(--brand-700); }
 .workflow-stage-copy { min-width: 0; display: grid; gap: var(--space-1); }
 .workflow-stage-copy strong, .workflow-stage-copy small { overflow-wrap: anywhere; }
 .workflow-stage-list li[data-stage-state="current"] button { border-color: var(--brand-600); }
-.workflow-stage-list li:where([data-stage-state="current"]) .workflow-stage-number { color: var(--text-inverse); background: var(--brand-700); border-color: var(--brand-700); }
+.workflow-stage-list li:where([data-stage-state="current"]) .workflow-stage-number { color: var(--text-inverse); background: var(--brand-600); border-color: var(--brand-600); }
 .workflow-stage-list li:where([data-stage-state="completed"]) .workflow-stage-number { color: var(--success); background: var(--success-soft); border-color: var(--success-border); }
 .workflow-stage-list li[data-stage-state="attention-required"] button, .workflow-stage-list li[data-stage-state="blocked"] button { border-color: var(--warning-border); }
 .workflow-stage-list li[data-stage-state="stale"] button { border-color: var(--danger-border); }

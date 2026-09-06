@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -13,6 +14,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from desktop_app_check import (  # noqa: E402
     DIRECTORY_PICKER_FIXTURE,
     choose_fixture_directory,
+    contrast_ratio,
     core_workflow_catalog_json,
     inline_product_index,
 )
@@ -62,6 +64,89 @@ def valid_shell(stacked=False):
 
 
 class ProductLayoutMeasurementsTests(unittest.TestCase):
+    def assert_current_navigation_contrast(self, page, expected_states):
+        # Sample rendered text, including nested metadata and numbered markers;
+        # testing palette pairs alone missed the actual selected-control colors.
+        # Reduced motion retains 0.01ms inherited transitions. Wait for two
+        # stable, animation-free frames, not an arbitrary wall-clock delay.
+        page.evaluate(r"""async () => {
+          let previous = '', stable = 0;
+          for (let frame = 0; frame < 60; frame++) {
+            await new Promise(requestAnimationFrame);
+            const selector = '.sidebar button[aria-current], .sidebar button[aria-current] *';
+            const colors = JSON.stringify([...document.querySelectorAll(selector)]
+              .map(node => { const s = getComputedStyle(node); return [s.color, s.backgroundColor]; }));
+            const running = document.getAnimations().some(animation => animation.playState === 'running');
+            stable = !running && colors === previous ? stable + 1 : 0;
+            if (stable >= 2) return;
+            previous = colors;
+          }
+          throw new Error('current navigation colors did not settle');
+        }""")
+        samples = page.locator(".sidebar button[aria-current]:visible:not(:disabled)").evaluate_all(r"""buttons =>
+          buttons.flatMap(button => [button, ...button.querySelectorAll('*')]
+            .filter(node => [...node.childNodes].some(child =>
+              child.nodeType === Node.TEXT_NODE && child.textContent.trim()))
+            .map(node => {
+              let surface = node;
+              while (surface && getComputedStyle(surface).backgroundColor === 'rgba(0, 0, 0, 0)') {
+                surface = surface.parentElement;
+              }
+              return {state: button.getAttribute('aria-current'), text: node.textContent.trim(),
+                color: getComputedStyle(node).color, background: surface && getComputedStyle(surface).backgroundColor};
+            }))""")
+        self.assertEqual(set(expected_states), {sample["state"] for sample in samples})
+        self.assertGreater(len(samples), 0)
+        for sample in samples:
+            colors = []
+            for key in ("color", "background"):
+                match = re.fullmatch(r"rgb\((\d+), (\d+), (\d+)\)", sample[key] or "")
+                self.assertIsNotNone(match, sample)
+                assert match is not None
+                colors.append("#" + "".join(f"{int(channel):02x}" for channel in match.groups()))
+            self.assertGreaterEqual(contrast_ratio(*colors), 4.5, sample)
+
+    def test_enabled_current_navigation_text_meets_aa_in_both_themes(self):
+        styles = "\n".join(
+            (REPO / path).read_text(encoding="utf-8")
+            for path in (
+                "design/ui-reference/assets/tokens.css",
+                "packages/ui-components/src/styles.css",
+                "apps/desktop/src/app.css",
+            )
+        )
+        document = f"""<html><head><style>{styles}</style></head><body><aside class="sidebar">
+          <ol class="workflow-stage-list"><li data-stage-state="current"><button aria-current="step">
+            <span class="workflow-stage-number" aria-hidden="true">1</span>
+            <span class="workflow-stage-copy"><strong>Research Intent</strong><small>Current step</small></span>
+          </button></li></ol><div class="all-tools"><button aria-current="page">
+            <span>Project settings</span><small>Supporting tool</small>
+          </button></div></aside></body></html>"""
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page(reduced_motion="reduce")
+                page.set_content(document)
+                for width, height in ((1440, 900), (1280, 720), (720, 450)):
+                    for theme in ("light", "dark"):
+                        with self.subTest(width=width, theme=theme):
+                            page.set_viewport_size({"width": width, "height": height})
+                            page.locator("html").evaluate("(node, theme) => node.dataset.theme = theme", theme)
+                            self.assert_current_navigation_contrast(page, {"page", "step"})
+                # Reproduce each inherited defect separately without changing tokens.
+                for defect in (
+                    ".sidebar button[aria-current] { color: var(--brand-800); }",
+                    ".workflow-stage-list li .workflow-stage-number { background: var(--brand-700); }",
+                ):
+                    override = page.add_style_tag(content='html[data-theme="dark"] ' + defect)
+                    try:
+                        with self.assertRaises(AssertionError):
+                            self.assert_current_navigation_contrast(page, {"page", "step"})
+                    finally:
+                        override.evaluate("node => node.remove()")
+            finally:
+                browser.close()
+
     def test_context_keyboard_skips_disabled_actions_and_keeps_long_labels_reachable(self):
         styles = "\n".join(
             (REPO / path).read_text(encoding="utf-8")
@@ -253,6 +338,10 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
                                 page.set_viewport_size({"width": width, "height": height})
                                 page.locator("html").evaluate("(node, theme) => node.dataset.theme = theme", theme)
                                 page.evaluate("document.fonts.ready")
+                                # This unchanged Task Center adapter has no intent/progress
+                                # response: only current-page text is present. Current-step
+                                # principal proof uses the complete workflow observer.
+                                self.assert_current_navigation_contrast(page, {"page"})
                                 flows = workspace.evaluate(PANEL_FLOW_GEOMETRY)
                                 errors = panel_flow_errors(flows, require_paragraph_pair=tool == "Task Center")
                                 errors += shell_geometry_errors(page.evaluate(SHELL_GEOMETRY), stacked=width == 720)
