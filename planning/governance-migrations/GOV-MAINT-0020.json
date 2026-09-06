@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0020",
   "title": "Recognize additive non-UI Python inventory independently of UI commit ordering",
-  "status": "candidate",
+  "status": "changes-requested",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -48,6 +48,17 @@
     ]
   },
   "rollback": "Retain candidate and any adverse reviews append-only. Do not integrate or submit across an unmet maintenance review boundary. Correct only this generic predicate while preserving all existing authority.",
-  "reviewAttempts": [],
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0020.R01",
+      "reviewedCommit": "2b525d7f2ad7b31239907aeba78f77f39cb808cb",
+      "reviewer": "agent:ui_guard_planning",
+      "reviewedAt": "2026-09-06T03:24:24Z",
+      "disposition": "CHANGES_REQUESTED",
+      "findings": ["GOV-MAINT-0020-R01-F01"],
+      "path": "planning/governance-migrations/GOV-MAINT-0020.review-R01.json",
+      "sha256": "81b7ad394794726510dde5afecf7646021b050f87cb45ed86719b779ea59534f"
+    }
+  ],
   "review": null
 }

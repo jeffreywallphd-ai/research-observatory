@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0020",
+  "reviewId": "GOV-MAINT-0020.R01",
+  "reviewedCommit": "2b525d7f2ad7b31239907aeba78f77f39cb808cb",
+  "reviewer": "agent:ui_guard_planning",
+  "reviewedAt": "2026-09-06T03:24:24Z",
+  "disposition": "CHANGES_REQUESTED",
+  "authorityPreserved": false,
+  "candidateChangedPaths": [
+    "docs/automation/design-first-ui-changes.md",
+    "planning/governance-migrations/GOV-MAINT-0020.json",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "findings": [
+    {
+      "id": "GOV-MAINT-0020-R01-F01",
+      "severity": "MEDIUM",
+      "status": "OPEN",
+      "summary": "The public UI guard skips invalid intermediate inventory changes when the final inventory bytes are restored.",
+      "evidence": "At the exact reviewed candidate, tools/ui_change_gate.py:1824 derives protected_changes from changed_paths(base, head), and line 1839 invokes application_activation_errors only when that final-diff set is nonempty. The new test_late_inventory_add_revert_cannot_hide_invalid_intermediate_commit instead calls the internal helper with a manually supplied quality-scope.json path. Independent real-Git reproduction used UiChangeGateTests.inventory_fixture, its unchanged reference package and reference approval at base^, then installed an approved-reference-implementation contract with base_sha=base. Public validate(root, base, valid_contract_commit) returned ok:true/errors:[]. A subsequent commit appended ungoverned to governedRoots, and a following commit restored the original quality-scope.json. Public validate(root, base, final_commit) again returned ok:true/errors:[], while application_activation_errors on that same range rejected both unreviewed intermediate control commits. This violates the maintenance record and updated documentation's explicit per-commit, no-net-only-history invariant. The reproduction used only a temporary synthetic repository and did not invoke the live aggregate guard. Separately, the three new candidate tests independently passed in 22.256 seconds; all three recorded predecessor hashes and current source Git blobs matched the exact candidate. Those passing checks do not establish public-entry add/revert rejection.",
+      "requiredRemediation": "Discover protected control touches from the actual per-commit range before deciding whether to invoke the existing history checker, rather than gating that invocation on the final base/head diff. Preserve the unchanged task base, ordinary no-UI behavior, existing review requirements and approved additive exception. Add a real-Git regression through public validate that first proves a valid UI contract passes, then proves an invalid inventory commit followed by byte-exact restoration fails; retain the internal helper test. Replay that public boundary and the affected additive/maintenance tests, and preserve this adverse review append-only."
+    }
+  ]
+}
