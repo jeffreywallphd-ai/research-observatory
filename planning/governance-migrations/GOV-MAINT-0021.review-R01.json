@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0021",
+  "reviewId": "GOV-MAINT-0021.R01",
+  "reviewedCommit": "f2300f497d884411fcd9b1f5402fe44a335651e9",
+  "reviewer": "agent:t03_acceptance_review",
+  "reviewedAt": "2026-09-06T04:07:43Z",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "docs/automation/design-first-ui-changes.md",
+    "planning/governance-migrations/GOV-MAINT-0021.json",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "findings": []
+}

@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0021",
   "title": "Authenticate inherited correction controls and earlier bounded maintenance at the public UI gate",
-  "status": "candidate",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -75,6 +75,26 @@
     "testFirst": "Before implementation, three selected new tests failed in 9.964 seconds: absent historical helper, unsupported inherited-scope input, and public control dispatch before authentication. After the correction, four new tests passed in 34.742 seconds (12 legacy negative cases and six inherited-range cases). Initial test-only formatting/loop-closure lint was corrected without suppression. Root preflight then identified missing/invalid implementer identities matching across legacy evidence/review. A new test with two subcases failed in 5.340 seconds; the correction now requires the same valid agent identity grammar for the implementer, without changing existing reviewer syntax."
   },
   "rollback": "Retain candidate and every adverse result/review append-only. Do not submit task evidence or integrate across a failed gate; correct only the existing recognition path without weakening substantive invariants or rewriting authority.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0021.R01",
+      "reviewedCommit": "f2300f497d884411fcd9b1f5402fe44a335651e9",
+      "reviewer": "agent:t03_acceptance_review",
+      "reviewedAt": "2026-09-06T04:07:43Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0021.review-R01.json",
+      "sha256": "5705d722a76769fa2ac7bc41406dd2401e38f2ba27353f6a88058073152c640d"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0021.R01",
+    "reviewedCommit": "f2300f497d884411fcd9b1f5402fe44a335651e9",
+    "reviewer": "agent:t03_acceptance_review",
+    "reviewedAt": "2026-09-06T04:07:43Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0021.review-R01.json",
+    "sha256": "5705d722a76769fa2ac7bc41406dd2401e38f2ba27353f6a88058073152c640d"
+  }
 }
