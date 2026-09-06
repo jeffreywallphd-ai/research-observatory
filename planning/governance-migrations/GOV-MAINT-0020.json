@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0020",
   "title": "Recognize additive non-UI Python inventory independently of UI commit ordering",
-  "status": "changes-requested",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "codex",
@@ -67,7 +67,26 @@
       "findings": ["GOV-MAINT-0020-R01-F01"],
       "path": "planning/governance-migrations/GOV-MAINT-0020.review-R01.json",
       "sha256": "81b7ad394794726510dde5afecf7646021b050f87cb45ed86719b779ea59534f"
+    },
+    {
+      "reviewId": "GOV-MAINT-0020.R02",
+      "reviewedCommit": "c761dfdd83ee164731b6a7c178c1b3519a6757eb",
+      "reviewer": "agent:ui_guard_planning",
+      "reviewedAt": "2026-09-06T03:28:34Z",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0020.review-R02.json",
+      "sha256": "f481d3e0de1968634c32981999dfb7e270eaf0335062e64d7802da2b81c0e7d8"
     }
   ],
-  "review": null
+  "review": {
+    "reviewId": "GOV-MAINT-0020.R02",
+    "reviewedCommit": "c761dfdd83ee164731b6a7c178c1b3519a6757eb",
+    "reviewer": "agent:ui_guard_planning",
+    "reviewedAt": "2026-09-06T03:28:34Z",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0020.review-R02.json",
+    "sha256": "f481d3e0de1968634c32981999dfb7e270eaf0335062e64d7802da2b81c0e7d8"
+  }
 }
