@@ -1,0 +1,179 @@
+{
+  "candidate": "df0362a0dff4d2481bab5841af52d13338aef659",
+  "headUnchanged": true,
+  "checks": [
+    {
+      "id": "planning-and-protocol",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-m",
+        "unittest",
+        "tests.foundation.test_planctl_wave_approval",
+        "tests.foundation.test_agent_protocol_check"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 1.259,
+      "outputBytes": 136,
+      "outputSha256": "f2d8119dacbe16f9d86904d80bce9759c578f23bd483d0e4f9bf89746d365fbd"
+    },
+    {
+      "id": "changed-lint",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "tools/capability_plan_check.py",
+        "tools/planctl.py",
+        "tests/foundation/test_planctl_wave_approval.py"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.094,
+      "outputBytes": 19,
+      "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "id": "changed-format",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "tools/capability_plan_check.py",
+        "tools/planctl.py",
+        "tests/foundation/test_planctl_wave_approval.py"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.108,
+      "outputBytes": 26,
+      "outputSha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd"
+    },
+    {
+      "id": "w1-capability-authority",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "tools/capability_plan_check.py",
+        "--repo",
+        ".",
+        "--wave",
+        "W1",
+        "--require-approved",
+        "--capability",
+        "CAP-01",
+        "--capability",
+        "CAP-02",
+        "--capability",
+        "CAP-03",
+        "--capability",
+        "CAP-07"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 2.188,
+      "outputBytes": 104,
+      "outputSha256": "bf74f6a0c10d73972db63aeb9fd1a96c13cac0e9885a759ed1bc3f88c9ec7fd3"
+    },
+    {
+      "id": "w1-slice-authority",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "tools/slice_plan_check.py",
+        "--repo",
+        ".",
+        "--wave",
+        "W1",
+        "--require-approved"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 2.257,
+      "outputBytes": 97,
+      "outputSha256": "341262a5d3673a134534bcdde3a0415e12876b88a0c1349813b24bf9042a59a2"
+    },
+    {
+      "id": "capability-schema",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "tools/capability_plan_check.py",
+        "--repo",
+        "."
+      ],
+      "exitCode": 0,
+      "durationSeconds": 2.366,
+      "outputBytes": 92,
+      "outputSha256": "9823cbb9a89d35e9a45ee56bdbcc9354e08c13558cf2e69f0dba773910dd766a"
+    },
+    {
+      "id": "backlog-views",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "tools/backlog_views.py",
+        "--repo",
+        ".",
+        "--check"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 2.529,
+      "outputBytes": 44,
+      "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+    },
+    {
+      "id": "diff-integrity",
+      "command": [
+        "git",
+        "-c",
+        "core.safecrlf=false",
+        "diff",
+        "--check",
+        "7f86ab2416c1186553f9315af4d6a75cc6bba991..df0362a0dff4d2481bab5841af52d13338aef659"
+      ],
+      "exitCode": 0,
+      "durationSeconds": 0.04,
+      "outputBytes": 0,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "review-site",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "tools/plan_review_check.py",
+        "--repo",
+        "."
+      ],
+      "exitCode": 0,
+      "durationSeconds": 127.471,
+      "outputBytes": 85,
+      "outputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7"
+    }
+  ],
+  "passed": true,
+  "schemaVersion": "1.0",
+  "kind": "owner-directed-workflow-maintenance-verification",
+  "predecessor": "7f86ab2416c1186553f9315af4d6a75cc6bba991",
+  "independentReview": {
+    "reviewer": "agent:/root/refactoring_policy_preflight",
+    "candidate": "df0362a0dff4d2481bab5841af52d13338aef659",
+    "disposition": "approved",
+    "scope": "13-path rolling-wave policy maintenance only, not CAP-07.S01.T03 or W1/release/main integration",
+    "freshChecks": [
+      "24 focused planning tests passed",
+      "Commit diff whitespace passed; HEAD and source stable"
+    ],
+    "findingsClosed": [
+      "Removed whole-capability/distant completion instructions from live templates, including final checklist",
+      "Documented v2 current-Wave-only canonical override route; whole-capability feedback/adoption is not a scoped editor"
+    ],
+    "conclusions": [
+      "Historical v1 unchanged; new approvals require v2",
+      "Final task coverage and common units checked",
+      "Current decisions still required; distant decisions may be provisional",
+      "15% cumulative supplemental execution budget is review-enforced; next Wave approval starts fresh against its own estimate",
+      "No blocking findings"
+    ]
+  },
+  "scopeLimits": [
+    "No product, lease/backlog state, historical approval, privacy baseline or remote mutation",
+    "Cumulative execution budget is review-enforced, not automatic per-packet ECR arithmetic",
+    "CAP-07.S01.T03 performance remains unclosed; main integration waits for passing reviewed ancestry",
+    "Full product/native/packaging/Wave qualification deferred; no claims from governance checks"
+  ]
+}
