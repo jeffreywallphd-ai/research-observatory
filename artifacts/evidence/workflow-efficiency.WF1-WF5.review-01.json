@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-workflow-component-review",
+  "reviewId": "workflow-efficiency.WF1-WF5.R01",
+  "candidateCommit": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+  "reviewer": "agent:window_launch_planning",
+  "result": "approved",
+  "reviewedAt": "2026-09-06T05:38:08+00:00",
+  "scope": {
+    "components": [
+      "WF1",
+      "WF5"
+    ],
+    "description": "Operating guidance, protocol invariants, and additive linked-correction projections. This reviewer did not author these changed files.",
+    "sourceSha256": {
+      "AGENTS.md": "00acc24fa5e158fbc4206a6b0f9ccf11bedd46921e79e238dcdef5ed7573aea6",
+      "agent-protocol.json": "72ab07a8b5675a0b27b46172ca8ec8b23f51621e58d9a6d22491f62ede570674",
+      "docs/README.md": "20c543fdab693667b3f91ab76b6bf5f0e51d41a1d083bb36796110f15a1ae983",
+      "docs/automation/codex-tracking-guide.md": "dd88ec8b5118db835e58f491dc16ab880e4b5632475b094d73f65e56f07675aa",
+      "docs/automation/governance-automation-simplification.md": "bbd5a091f9d552925e2d74595ca4be00617bff7c8c689d788246effcf1122cba",
+      "docs/automation/project-automation-guide.md": "c457e4b458f60cf9b663c114d668307e9efe9d4bfd628723282e6dffc8889094",
+      "docs/automation/verification-profiles.md": "9e8a1f6b5288e254bcc7932ef2ace8f689b10e8930a0de77b47f7abe51cc22ed",
+      "docs/automation/workflow-efficiency.md": "2a838aca3ab7fc5b77d1b9c42c843ca6ae9b69c0a24f880307f1bf0b69b37e9b",
+      "docs/governance/delivery-control-model.md": "28cddd39f305ef3fb9bd1a387cd07c4bf21f0e529cfbc4812024a4b9e0e7c7fb",
+      "docs/governance/repository-governance.md": "405fbb594c38a0aa520a5e4bb3f8c8e9814d2e15be499852ff12bcd75e0c35f5",
+      "planning/README.md": "9215a2324d423ce32c87731c4070259e1990009d34b9378607e78b5369c79cc0",
+      "tools/agent_protocol_check.py": "31f9b2738fc944ddc224800e47f07aadf7f22841f864e47e80347ed5a86b9adb",
+      "tools/backlog_views.py": "be4beda659db24751f294ff0f94fcff671e082985d9f48bb8583dddbc72f5776",
+      "tools/plan_review_site.py": "cb4e5efdda766a7ec8078c4c2a7677e6caaf54bff7106df2485ad4a5400a389e",
+      "tools/plan_review_check.py": "6ecad1a65380a3ca23956b772f945c72a63d9a9008fb145efde0f4253aa1ec5e",
+      "tests/foundation/test_agent_protocol_check.py": "f7897019412c222753cec577f991db748296a52dc08b02992e506d3dd0af4c19",
+      "tests/foundation/test_backlog_views.py": "18341240dffe401f30b1405e19facc37c78e6c4026834e292051da2b3b1037d5",
+      "tests/foundation/test_plan_review_task_drilldown.py": "da828b89ca0483b1c01f3c092f3df605d33b1ee5ea14692bc9b3f5bdaa6be80f"
+    },
+    "excluded": [
+      "Receipt-helper implementation authored by this reviewer.",
+      "Corrective controller/schema implementation, reviewed separately.",
+      "Privacy implementation and the preservation seed, reviewed separately.",
+      "Product behavior, native qualification, Wave approval and release."
+    ]
+  },
+  "criteria": [
+    {
+      "id": "WF1-authority",
+      "result": "PASS",
+      "evidence": "Routing preserves immutable original tasks, adopted amendments and historical GRR/GCR records; new authority expansion and release still require their existing approvals. The added correction guide matches the implemented spec, command, paused/current-unreleased boundary, and integration-review fields."
+    },
+    {
+      "id": "WF1-evidence",
+      "result": "PASS",
+      "evidence": "Guidance requires complete unchanged inputs and independently trusted provenance for reuse, marks incomplete runtime closure fresh-only, prohibits cached Wave/native/performance claims in the pilot, retains adverse attempts, and distinguishes measured time from unavailable cost."
+    },
+    {
+      "id": "WF5-projection",
+      "result": "PASS",
+      "evidence": "Correction identity, origin, status, inherited criteria, bounded paths and append-only review history are projected without changing the original task or inventing a slice. Absent corrections contribute no new output."
+    },
+    {
+      "id": "WF5-status-integrity",
+      "result": "PASS",
+      "evidence": "Pending corrections contribute to Wave delivery status and active-work summaries. The actual controller denies corrective admission when Wave completion is REVIEW or APPROVED, so the legacy approved-completion shortcut cannot supersede a legally pending correction."
+    },
+    {
+      "id": "WF5-render-integrity",
+      "result": "PASS",
+      "evidence": "Human-readable values are escaped; exact correction projections, counts and identity/origin/status markers are validated, and inherited deterministic regeneration detects altered visible content."
+    }
+  ],
+  "checks": [
+    {
+      "id": "reviewer-focused-tests",
+      "producer": "agent:window_launch_planning",
+      "command": ".venv/Scripts/python.exe -B -m unittest tests.foundation.test_agent_protocol_check tests.foundation.test_backlog_views tests.foundation.test_plan_review_task_drilldown.CorrectiveTaskProjectionTests",
+      "status": "PASS",
+      "tests": 18,
+      "durationSeconds": 29.263,
+      "provenance": "Reviewer executed before candidate commit. The 18 reviewed scope files were byte-identical before/after; the later guide-only addition was separately reviewed. All final reviewed bytes were rebound to the candidate. This is not a claim of a complete transitive runtime cache closure."
+    },
+    {
+      "id": "reviewer-projection-probes",
+      "producer": "agent:window_launch_planning",
+      "status": "PASS",
+      "assertions": 6,
+      "coverage": [
+        "Input object unchanged",
+        "Escaped synthetic markup",
+        "No invented slice marker",
+        "Pending correction delivery badge",
+        "Exact manifest projection",
+        "Duplicate correction denial"
+      ],
+      "provenance": "Read-only in-memory synthetic probes; no generated site or repository mutation."
+    },
+    {
+      "id": "candidate-byte-binding",
+      "producer": "agent:window_launch_planning",
+      "status": "PASS",
+      "durationSeconds": 0.789242,
+      "scope": "One combined binding check covered these 18 paths plus the three separately reviewed WF4 paths.",
+      "provenance": "Actual raw SHA-256 values equal the frozen review inputs; git --no-replace-objects show for each explicitly named candidate path equals the actual raw bytes. Candidate and HEAD were exact."
+    },
+    {
+      "id": "final-candidate-affected-unit-union",
+      "producer": "agent:root",
+      "status": "PASS",
+      "tests": 112,
+      "durationSeconds": 100.811,
+      "provenance": "Root reported its actual fresh combined affected-unit run at the fixed candidate with production inputs frozen. Supplemental to this reviewer's independently executed focused checks; not relabeled as reviewer execution."
+    }
+  ],
+  "notes": [
+    "The full task-drilldown generation suite was not redundantly replayed by this reviewer; root separately reported its earlier nine-test generation run, and this review covers the changed correction helpers and their integration call sites.",
+    "The final guide-only addition has SHA-256 2a838aca3ab7fc5b77d1b9c42c843ca6ae9b69c0a24f880307f1bf0b69b37e9b. It introduces no new approval or private-field exception.",
+    "No protected witness contents, sibling workspace, native application or ordinary user projects were accessed."
+  ],
+  "findings": [],
+  "closures": [],
+  "limitations": [
+    "This is an independent component disposition, not approval of the receipt helper, all maintenance components, a product task, W1, or G1.",
+    "No benchmark, full deployment profile, or native/platform proof is inferred from these tests."
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-maintenance-independent-component-review",
+  "maintenance": "workflow-efficiency",
+  "candidateCommit": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+  "reviewer": "/root",
+  "implementers": [
+    "/root/t03_acceptance_review",
+    "/root/window_launch_planning"
+  ],
+  "criteria": [
+    "WF2",
+    "WF3"
+  ],
+  "disposition": "approved-with-explicit-scope",
+  "openFindings": [],
+  "reviewedFiles": [
+    {
+      "path": "planning/backlog.schema.json",
+      "sha256": "ab859bca7484c37ec61416119ac4f3f1bd31d02310c98c64fd8724debcbed4b4",
+      "commitBlobSha256": "ab859bca7484c37ec61416119ac4f3f1bd31d02310c98c64fd8724debcbed4b4",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_taskctl_schema.py",
+      "sha256": "e2dfd6e05c3ce18cee4737c1619e2629e88052b76e8c1da0312aa591289e8e26",
+      "commitBlobSha256": "e2dfd6e05c3ce18cee4737c1619e2629e88052b76e8c1da0312aa591289e8e26",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "sha256": "c50827210040d532ddb6bc265ab0b60ab66ce713595ae5b569b74a6d1dc8fb09",
+      "commitBlobSha256": "c50827210040d532ddb6bc265ab0b60ab66ce713595ae5b569b74a6d1dc8fb09",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_verification_receipt.py",
+      "sha256": "0c5bd82c3e2a38c9c4202b92a8f0b8fdd3e9e16222b983a4bbadefbd4924c2e6",
+      "commitBlobSha256": "0c5bd82c3e2a38c9c4202b92a8f0b8fdd3e9e16222b983a4bbadefbd4924c2e6",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/taskctl.py",
+      "sha256": "3dfb04f0cce78801eb624d9d36c3bb06f4272bf398d845402a7ea1ab9d048863",
+      "commitBlobSha256": "3dfb04f0cce78801eb624d9d36c3bb06f4272bf398d845402a7ea1ab9d048863",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/verification_receipt.py",
+      "sha256": "bf25b5da1ec8b16d14b472cb92c43adf2d6969e777c601afce5f93dd8487c820",
+      "commitBlobSha256": "bf25b5da1ec8b16d14b472cb92c43adf2d6969e777c601afce5f93dd8487c820",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "verification/receipt-specs/governance-receipt-unit.json",
+      "sha256": "06d72d30c644fd1ff83492db3255419922126e25bbe7b4915052d878652cf1cf",
+      "commitBlobSha256": "06d72d30c644fd1ff83492db3255419922126e25bbe7b4915052d878652cf1cf",
+      "rawBytesMatchCommit": true
+    }
+  ],
+  "assessment": [
+    "Reviewed the linked corrective task admission, inherited contract, immutable original/history, paused predecessor, exact Git/spec bindings, normal controlled submission/review, and unfinished-correction release denial.",
+    "Reviewed new repository-relative worktree resolution against the backlog's canonical repository and preservation of existing absolute historical fields.",
+    "Reviewed transition receipt rejection/unknown/committed outcomes and explicit entry-HEAD-only semantics; output failure cannot roll back committed backlog bytes.",
+    "Reviewed isolated in-memory test sources, constrained arguments/environment, Git and executable provenance, no replacement objects, stable-input observations, adverse attempts, and complete-publication checks.",
+    "This reviewer did not implement these seven component files. Root-owned policy/projection work is independently reviewed in workflow-efficiency.WF1-WF5.review-01.json."
+  ],
+  "findingClosures": [
+    {
+      "id": "WF3-OBS-01",
+      "severity": "P1",
+      "criterion": "WF3",
+      "finding": "Git replacement objects could substitute observed receipt inputs without changing the named commit.",
+      "closure": "All receipt Git observations use --no-replace-objects; targeted test first failed, then passed. Taskctl provenance also ignores replacements and has a real dummy-repository counterexample.",
+      "status": "closed-before-candidate"
+    },
+    {
+      "id": "WF2-OBS-01",
+      "severity": "P2",
+      "criterion": "WF2",
+      "finding": "Combined repository-style type checking could not resolve a cross-test-package fixture import.",
+      "closure": "Schema tests share a local canonical fixture instead; no suppression. Final all-15-file mypy and fresh 112-test union pass.",
+      "status": "closed-before-candidate"
+    },
+    {
+      "id": "WF2-OBS-02",
+      "severity": "P2",
+      "criterion": "WF2",
+      "finding": "An existing synthetic schema fixture contained the concrete checkout path; the unchanged privacy hook denied the first commit attempt.",
+      "closure": "Only the synthetic value was changed to a neutral absolute fixture path. Historical backlog fields were untouched, no admission or bypass was added, and all 30 candidate entries passed the hook.",
+      "status": "closed-before-candidate"
+    }
+  ],
+  "verification": {
+    "candidateHeadStable": true,
+    "changedFileRawBytesAllMatchCommit": true,
+    "freshUnitUnion": {
+      "tests": 112,
+      "seconds": 100.811,
+      "exitCode": 0,
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_taskctl_workflow.CorrectiveTaskWorkflowTests tests.foundation.test_taskctl_schema tests.foundation.test_verification_receipt tests.foundation.test_verify_runner tests.foundation.test_governance_receipt tests.foundation.test_agent_protocol_check tests.foundation.test_backlog_views tests.foundation.test_plan_review_task_drilldown.CorrectiveTaskProjectionTests"
+    },
+    "static": {
+      "files": 15,
+      "ruff": "PASS",
+      "format": "PASS",
+      "mypy": "PASS"
+    },
+    "actualReceiptPilot": {
+      "tests": 6,
+      "exitCode": 0,
+      "receiptSha256": "4c766c352199513f734a8127bb567262bdb8e1a4fd11425e8456ca8f3195a885",
+      "validatedCompleteDelivery": true
+    }
+  },
+  "limitations": [
+    "The receipt pilot is diagnostic, local producer-asserted, and fresh-only. It is not an independent attestation or a reusable general cache.",
+    "The untouched .python-version differs from its Git blob only by line endings. The pilot reports raw inequality truthfully; no normalized equality is promoted to raw equality.",
+    "The Python completed-attempt reader validated the private local receipt; PowerShell Get-Content was denied. This is not authentication or cross-principal access proof.",
+    "Legacy bootstrap/recovery-specific absolute-path writers are not modernized. They have no new privacy exception.",
+    "No live corrective task, product behavior, ordinary user data, full Wave qualification, release approval, main integration, or remote push is covered.",
+    "Approval of root-owned WF1/WF5 and the separate WF4 implementation/real preservation seed belongs to the other independent reviewer."
+  ]
+}

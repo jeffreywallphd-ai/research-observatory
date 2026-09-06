@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-workflow-component-review",
+  "reviewId": "workflow-efficiency.WF4.R01",
+  "candidateCommit": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+  "reviewer": "agent:window_launch_planning",
+  "result": "approved",
+  "reviewedAt": "2026-09-06T05:38:08+00:00",
+  "scope": {
+    "components": [
+      "WF4"
+    ],
+    "description": "Opt-in sealed preservation of independently admitted private metadata at unchanged typed fields and unchanged raw lines, with existing credential and installed-hook boundaries retained.",
+    "sourceSha256": {
+      "tools/prospective_privacy.py": "0836f37f2b3c8137bee738823a8277d0bd73136b9db06ccced2e677f653b2a63",
+      "tools/install_privacy_hooks.py": "be5db4e8450d801795fb749f82047913cb15ffb4bd12f875fa6b8d27acfc4779",
+      "tests/security/test_prospective_privacy.py": "15b5e131bfc9189164584f1c5f2245c10fbcdfeb80c15b8510770b7bdf6fe6ce"
+    },
+    "excluded": [
+      "Approval or installation of any actual new preservation seed; that has a separate private digest-bound review.",
+      "Changing the fixed baseline, existing artifact admissions, scanner policy, remote policy or Git configuration.",
+      "Operating-system-account isolation or protection from an administrator replacing the trusted runtime."
+    ]
+  },
+  "criteria": [
+    {
+      "id": "WF4-exact-field-authority",
+      "result": "PASS",
+      "evidence": "Baseline/seed Git and raw-byte bindings, same-mode existing predecessor, exact private-field inventory and stable key/record-ID selectors are required. Duplicate keys/IDs, indexed private selectors, private aliases, cycles, merge keys, unsupported tags, decoded private mapping keys, multiline private values and new or moved fields fail closed."
+    },
+    {
+      "id": "WF4-raw-representation",
+      "result": "PASS",
+      "evidence": "Each admitted private field preserves the exact complete raw line, not merely a decoded value. Baseline, seed, predecessor and successor selectors and line digests must agree; harmless public line shifts can pass but value, encoding and line-ending changes cannot."
+    },
+    {
+      "id": "WF4-authenticated-execution",
+      "result": "PASS",
+      "evidence": "The isolated worker executes its authenticated held source. The parser imports only the exact authenticated pure-Python archive held in memory. Substituted workers and parsers are denied; mutable live repository modules cannot replace the sealed worker/parser sources."
+    },
+    {
+      "id": "WF4-credential-boundary",
+      "result": "PASS",
+      "evidence": "Only admitted unchanged metadata lines are removed from the private-path/email text check. The full original unmasked raw payload still reaches pinned gitleaks; preservation is not a new credential exception. Exact historical artifact admissions retain their own existing byte-bound authority."
+    },
+    {
+      "id": "WF4-history-and-installation",
+      "result": "PASS",
+      "evidence": "The same-mode predecessor and seed ancestry are checked; deletion/reintroduction and merge edges cannot silently receive future authority. Installed hook/pre-push fixtures reject parser tampering, new disclosure and commit-hook bypass on push. Protected inventory is rejected before protected blob reads."
+    }
+  ],
+  "checks": [
+    {
+      "id": "authenticated-implementer-boundary-replay",
+      "producer": "agent:ui_guard_planning",
+      "status": "PASS",
+      "tests": 14,
+      "durationSeconds": 91.303,
+      "selection": "All 11 methods containing preservation in tests/security/test_prospective_privacy.py, plus test_installed_retention_receipt_allows_commit_push_and_denies_new_disclosure, test_reviewed_binary_passes_real_commit_push_and_changed_image_is_denied, and test_protected_index_rejected_before_blob_reads.",
+      "provenance": "Actual synthetic Git/hook replay at fixed predecessor HEAD; producer reported exact before/after hashes matching this scope and unchanged HEAD. The reviewer inspected these tests and their changed implementation, then rebound the same bytes to the candidate."
+    },
+    {
+      "id": "reviewer-independent-held-parser-probes",
+      "producer": "agent:window_launch_planning",
+      "status": "PASS",
+      "assertions": 4,
+      "toolWallSeconds": 0.9485826,
+      "coverage": [
+        "Unchanged typed field/raw line across harmless line shift",
+        "Sequence-ID versus mapping-key selector distinction",
+        "Changed private value digest distinction",
+        "CRLF versus LF raw-line distinction"
+      ],
+      "provenance": "Fresh -I -S -B subprocess executed authenticated held worker and sealed parser bytes with synthetic values only; exit 0 and empty stderr. No Git mutation, real seed or ordinary data used."
+    },
+    {
+      "id": "candidate-byte-binding",
+      "producer": "agent:window_launch_planning",
+      "status": "PASS",
+      "provenance": "All three raw source hashes equal the frozen review hashes and each explicitly named git --no-replace-objects candidate blob. Performed in the 21-path combined component binding check."
+    },
+    {
+      "id": "final-candidate-privacy-replay",
+      "producer": "agent:root",
+      "status": "PASS",
+      "tests": 14,
+      "durationSeconds": 95.73,
+      "provenance": "Root reported a fresh selected 14-method privacy run at the fixed candidate with production inputs frozen and no Git changes. Not represented as an independently rerun full module."
+    }
+  ],
+  "notes": [
+    "Earlier forged-worker and lookalike-tag tests-first failures remain adverse development history; the current exact source and replay include their closures. This review does not rewrite those results.",
+    "The fixed baseline, actual prior 130-entry registry and proposed 98-field seed were not read during the initial code review. Approval of the new preservation digest is explicitly separate.",
+    "No whole privacy test module or broader repository audit was redundantly replayed by this reviewer; selected real boundaries and incremental independent probes address the changed risk surface."
+  ],
+  "findings": [],
+  "closures": [],
+  "limitations": [
+    "This disposition approves only the bounded implementation at this candidate, not an arbitrary registry or future metadata disclosure.",
+    "No protected witness content, sibling workspace, ordinary project/vault/policy runtime or remote repository was accessed by this reviewer.",
+    "No hooks were installed and no Git configuration or refs were changed by this review."
+  ]
+}

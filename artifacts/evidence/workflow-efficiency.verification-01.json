@@ -1,0 +1,372 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "criterion-linked-bounded-maintenance-evidence",
+  "maintenance": "workflow-efficiency",
+  "status": "IMPLEMENTED_VERIFIED_INDEPENDENTLY_REVIEWED",
+  "predecessorCommit": "637d3fce92e02c9d1ced47e24a43e21c543b8c65",
+  "candidateCommit": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+  "authority": "Owner-requested workflow changes, implemented as bounded GOV-MIG-0001 maintenance; not a Wave/product/release approval.",
+  "criteria": [
+    {
+      "id": "WF1",
+      "result": "PASS",
+      "evidence": [
+        "Operating guidance and enforced protocol invariants",
+        "final-affected-unit-union",
+        "changed-python-quality"
+      ],
+      "independentReview": "artifacts/evidence/workflow-efficiency.WF1-WF5.review-01.json"
+    },
+    {
+      "id": "WF2",
+      "result": "PASS",
+      "evidence": [
+        "Inherited correction authority and preserved original history",
+        "Actual synthetic Git/CAS and controlled review rounds",
+        "Repository-relative prospective worktrees",
+        "final-affected-unit-union"
+      ],
+      "independentReview": "artifacts/evidence/workflow-efficiency.WF2-WF3.review-01.json"
+    },
+    {
+      "id": "WF3",
+      "result": "PASS_WITH_DECLARED_PILOT_SCOPE",
+      "evidence": [
+        "Honest transition receipts",
+        "final-affected-unit-union",
+        "actual-fresh-receipt-pilot"
+      ],
+      "independentReview": "artifacts/evidence/workflow-efficiency.WF2-WF3.review-01.json"
+    },
+    {
+      "id": "WF4",
+      "result": "PASS",
+      "evidence": [
+        "final-privacy-boundary-replay",
+        "independent-preservation-seed-review",
+        "installed-sealed-hook-smoke"
+      ],
+      "independentReview": "artifacts/evidence/workflow-efficiency.WF4.review-01.json"
+    },
+    {
+      "id": "WF5",
+      "result": "PASS",
+      "evidence": [
+        "final-affected-unit-union",
+        "unchanged-existing-generated-views"
+      ],
+      "independentReview": "artifacts/evidence/workflow-efficiency.WF1-WF5.review-01.json"
+    }
+  ],
+  "riskSelection": {
+    "classification": "Tier 2 automation/evidence/privacy-control maintenance",
+    "selected": "Changed protocol, correction state machine/schema, receipt producer, generated projections, pinned privacy parser/worker/installer, real synthetic Git/index/hook and compare-and-swap boundaries. All 15 changed Python paths receive style/type checks.",
+    "deferred": "Full product/native/security/packaging/deployment qualification remains a fresh W1 exit obligation. No product or ordinary-user runtime boundary changed in this increment.",
+    "historicalTests": "Earlier tests-first failures and the pre-final 94-test replay are development evidence, not substituted for the fresh final-candidate runs below."
+  },
+  "checks": [
+    {
+      "id": "final-affected-unit-union",
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_taskctl_workflow.CorrectiveTaskWorkflowTests tests.foundation.test_taskctl_schema tests.foundation.test_verification_receipt tests.foundation.test_verify_runner tests.foundation.test_governance_receipt tests.foundation.test_agent_protocol_check tests.foundation.test_backlog_views tests.foundation.test_plan_review_task_drilldown.CorrectiveTaskProjectionTests",
+      "candidateCommit": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+      "exitCode": 0,
+      "tests": 112,
+      "durationSeconds": 100.811
+    },
+    {
+      "id": "final-privacy-boundary-replay",
+      "command": ".venv/Scripts/python.exe -m unittest tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_allows_multiple_real_transitions_without_new_receipts tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_denies_new_moved_encoded_alias_and_ambiguous_fields tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_denies_stale_seed_mode_and_reintroduction tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_denies_decoded_private_mapping_keys tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_parser_executes_held_authenticated_bytes_after_path_replacement tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_denies_substituted_worker_even_when_it_forges_expected_fields tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_worker_executes_held_authenticated_source_after_path_replacement tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_is_opt_in_and_validates_sealed_selectors tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_never_masks_credentials_or_new_raw_comments tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_preservation_rejects_pending_and_committed_merge_edges tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_installed_preservation_reuses_seal_and_blocks_tampering_and_new_disclosures tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_installed_retention_receipt_allows_commit_push_and_denies_new_disclosure tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_reviewed_binary_passes_real_commit_push_and_changed_image_is_denied tests.security.test_prospective_privacy.ProspectivePrivacyTests.test_protected_index_rejected_before_blob_reads",
+      "candidateCommit": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+      "exitCode": 0,
+      "tests": 14,
+      "durationSeconds": 95.73
+    },
+    {
+      "id": "changed-python-quality",
+      "files": [
+        "tests/foundation/test_agent_protocol_check.py",
+        "tests/foundation/test_backlog_views.py",
+        "tests/foundation/test_plan_review_task_drilldown.py",
+        "tests/foundation/test_taskctl_schema.py",
+        "tests/foundation/test_taskctl_workflow.py",
+        "tests/foundation/test_verification_receipt.py",
+        "tests/security/test_prospective_privacy.py",
+        "tools/agent_protocol_check.py",
+        "tools/backlog_views.py",
+        "tools/install_privacy_hooks.py",
+        "tools/plan_review_check.py",
+        "tools/plan_review_site.py",
+        "tools/prospective_privacy.py",
+        "tools/taskctl.py",
+        "tools/verification_receipt.py"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m ruff format --check <listed-files>",
+        ".venv/Scripts/python.exe -m ruff check <listed-files>",
+        ".venv/Scripts/python.exe -m mypy --no-namespace-packages <listed-files>"
+      ],
+      "exitCodes": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "unchanged-existing-generated-views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "No changes when the correction collection is absent."
+    },
+    {
+      "id": "quality-inventory",
+      "result": "PASS",
+      "governedPythonFiles": 205,
+      "detail": "Actual quality_check.load_scope validated the declared/discovered path inventory; this is not execution of all 205 files."
+    },
+    {
+      "id": "actual-fresh-receipt-pilot",
+      "command": ".venv/Scripts/python.exe tools/verification_receipt.py --repo .",
+      "exitCode": 0,
+      "tests": 6,
+      "retainedCopy": "artifacts/evidence/workflow-efficiency.receipt-pilot-01.json",
+      "originalReceiptSha256": "4c766c352199513f734a8127bb567262bdb8e1a4fd11425e8456ca8f3195a885",
+      "validatedCompleteDelivery": true,
+      "timing": {
+        "childSeconds": 0.515351,
+        "publicationTiming": "measured-separately-in-delivery.json",
+        "snapshotSeconds": 0.628594,
+        "totalBeforePublicationSeconds": 1.748568
+      }
+    },
+    {
+      "id": "independent-preservation-seed-review",
+      "reviewer": "agent:window_launch_planning",
+      "reviewPath": ".local/security-audit/workflow-efficiency-preservation-review-01.json",
+      "reviewSha256": "6ea46c1b003e9c53f1719dc8766357e818c774690bf0902e18573275fef75e9e",
+      "result": "approved",
+      "candidateSeedSha256": "f365ac34d17feb08b76a3fbde83710e6187094b0d8b6ca665b61dce05a8f16b9"
+    },
+    {
+      "id": "installed-sealed-hook-smoke",
+      "command": ".venv/Scripts/python.exe -I -S <installed-hooks>/launcher.py staged",
+      "exitCode": 0,
+      "entriesChecked": 0,
+      "findings": [],
+      "scope": "Verified prepared snapshot and then activated only core.hooksPath. The planned evidence commit will additionally exercise the active hook with newly staged evidence."
+    }
+  ],
+  "changedInputBindings": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "00acc24fa5e158fbc4206a6b0f9ccf11bedd46921e79e238dcdef5ed7573aea6",
+      "commitBlobSha256": "00acc24fa5e158fbc4206a6b0f9ccf11bedd46921e79e238dcdef5ed7573aea6",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "agent-protocol.json",
+      "sha256": "72ab07a8b5675a0b27b46172ca8ec8b23f51621e58d9a6d22491f62ede570674",
+      "commitBlobSha256": "72ab07a8b5675a0b27b46172ca8ec8b23f51621e58d9a6d22491f62ede570674",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "20c543fdab693667b3f91ab76b6bf5f0e51d41a1d083bb36796110f15a1ae983",
+      "commitBlobSha256": "20c543fdab693667b3f91ab76b6bf5f0e51d41a1d083bb36796110f15a1ae983",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/automation/codex-tracking-guide.md",
+      "sha256": "dd88ec8b5118db835e58f491dc16ab880e4b5632475b094d73f65e56f07675aa",
+      "commitBlobSha256": "dd88ec8b5118db835e58f491dc16ab880e4b5632475b094d73f65e56f07675aa",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/automation/governance-automation-simplification.md",
+      "sha256": "bbd5a091f9d552925e2d74595ca4be00617bff7c8c689d788246effcf1122cba",
+      "commitBlobSha256": "bbd5a091f9d552925e2d74595ca4be00617bff7c8c689d788246effcf1122cba",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/automation/project-automation-guide.md",
+      "sha256": "c457e4b458f60cf9b663c114d668307e9efe9d4bfd628723282e6dffc8889094",
+      "commitBlobSha256": "c457e4b458f60cf9b663c114d668307e9efe9d4bfd628723282e6dffc8889094",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/automation/verification-profiles.md",
+      "sha256": "9e8a1f6b5288e254bcc7932ef2ace8f689b10e8930a0de77b47f7abe51cc22ed",
+      "commitBlobSha256": "9e8a1f6b5288e254bcc7932ef2ace8f689b10e8930a0de77b47f7abe51cc22ed",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/automation/workflow-efficiency.md",
+      "sha256": "2a838aca3ab7fc5b77d1b9c42c843ca6ae9b69c0a24f880307f1bf0b69b37e9b",
+      "commitBlobSha256": "2a838aca3ab7fc5b77d1b9c42c843ca6ae9b69c0a24f880307f1bf0b69b37e9b",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/governance/delivery-control-model.md",
+      "sha256": "28cddd39f305ef3fb9bd1a387cd07c4bf21f0e529cfbc4812024a4b9e0e7c7fb",
+      "commitBlobSha256": "28cddd39f305ef3fb9bd1a387cd07c4bf21f0e529cfbc4812024a4b9e0e7c7fb",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "docs/governance/repository-governance.md",
+      "sha256": "405fbb594c38a0aa520a5e4bb3f8c8e9814d2e15be499852ff12bcd75e0c35f5",
+      "commitBlobSha256": "405fbb594c38a0aa520a5e4bb3f8c8e9814d2e15be499852ff12bcd75e0c35f5",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "planning/README.md",
+      "sha256": "9215a2324d423ce32c87731c4070259e1990009d34b9378607e78b5369c79cc0",
+      "commitBlobSha256": "9215a2324d423ce32c87731c4070259e1990009d34b9378607e78b5369c79cc0",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "planning/backlog.schema.json",
+      "sha256": "ab859bca7484c37ec61416119ac4f3f1bd31d02310c98c64fd8724debcbed4b4",
+      "commitBlobSha256": "ab859bca7484c37ec61416119ac4f3f1bd31d02310c98c64fd8724debcbed4b4",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "quality-scope.json",
+      "sha256": "62081eb29b402ff3331dd06e3a46d4bddf734053726b956d3aa1daaa51077ad3",
+      "commitBlobSha256": "62081eb29b402ff3331dd06e3a46d4bddf734053726b956d3aa1daaa51077ad3",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_agent_protocol_check.py",
+      "sha256": "f7897019412c222753cec577f991db748296a52dc08b02992e506d3dd0af4c19",
+      "commitBlobSha256": "f7897019412c222753cec577f991db748296a52dc08b02992e506d3dd0af4c19",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_backlog_views.py",
+      "sha256": "18341240dffe401f30b1405e19facc37c78e6c4026834e292051da2b3b1037d5",
+      "commitBlobSha256": "18341240dffe401f30b1405e19facc37c78e6c4026834e292051da2b3b1037d5",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_plan_review_task_drilldown.py",
+      "sha256": "da828b89ca0483b1c01f3c092f3df605d33b1ee5ea14692bc9b3f5bdaa6be80f",
+      "commitBlobSha256": "da828b89ca0483b1c01f3c092f3df605d33b1ee5ea14692bc9b3f5bdaa6be80f",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_taskctl_schema.py",
+      "sha256": "e2dfd6e05c3ce18cee4737c1619e2629e88052b76e8c1da0312aa591289e8e26",
+      "commitBlobSha256": "e2dfd6e05c3ce18cee4737c1619e2629e88052b76e8c1da0312aa591289e8e26",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_taskctl_workflow.py",
+      "sha256": "c50827210040d532ddb6bc265ab0b60ab66ce713595ae5b569b74a6d1dc8fb09",
+      "commitBlobSha256": "c50827210040d532ddb6bc265ab0b60ab66ce713595ae5b569b74a6d1dc8fb09",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/foundation/test_verification_receipt.py",
+      "sha256": "0c5bd82c3e2a38c9c4202b92a8f0b8fdd3e9e16222b983a4bbadefbd4924c2e6",
+      "commitBlobSha256": "0c5bd82c3e2a38c9c4202b92a8f0b8fdd3e9e16222b983a4bbadefbd4924c2e6",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tests/security/test_prospective_privacy.py",
+      "sha256": "15b5e131bfc9189164584f1c5f2245c10fbcdfeb80c15b8510770b7bdf6fe6ce",
+      "commitBlobSha256": "15b5e131bfc9189164584f1c5f2245c10fbcdfeb80c15b8510770b7bdf6fe6ce",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/agent_protocol_check.py",
+      "sha256": "31f9b2738fc944ddc224800e47f07aadf7f22841f864e47e80347ed5a86b9adb",
+      "commitBlobSha256": "31f9b2738fc944ddc224800e47f07aadf7f22841f864e47e80347ed5a86b9adb",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/backlog_views.py",
+      "sha256": "be4beda659db24751f294ff0f94fcff671e082985d9f48bb8583dddbc72f5776",
+      "commitBlobSha256": "be4beda659db24751f294ff0f94fcff671e082985d9f48bb8583dddbc72f5776",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/install_privacy_hooks.py",
+      "sha256": "be5db4e8450d801795fb749f82047913cb15ffb4bd12f875fa6b8d27acfc4779",
+      "commitBlobSha256": "be5db4e8450d801795fb749f82047913cb15ffb4bd12f875fa6b8d27acfc4779",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/plan_review_check.py",
+      "sha256": "6ecad1a65380a3ca23956b772f945c72a63d9a9008fb145efde0f4253aa1ec5e",
+      "commitBlobSha256": "6ecad1a65380a3ca23956b772f945c72a63d9a9008fb145efde0f4253aa1ec5e",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/plan_review_site.py",
+      "sha256": "cb4e5efdda766a7ec8078c4c2a7677e6caaf54bff7106df2485ad4a5400a389e",
+      "commitBlobSha256": "cb4e5efdda766a7ec8078c4c2a7677e6caaf54bff7106df2485ad4a5400a389e",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/prospective_privacy.py",
+      "sha256": "0836f37f2b3c8137bee738823a8277d0bd73136b9db06ccced2e677f653b2a63",
+      "commitBlobSha256": "0836f37f2b3c8137bee738823a8277d0bd73136b9db06ccced2e677f653b2a63",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/taskctl.py",
+      "sha256": "3dfb04f0cce78801eb624d9d36c3bb06f4272bf398d845402a7ea1ab9d048863",
+      "commitBlobSha256": "3dfb04f0cce78801eb624d9d36c3bb06f4272bf398d845402a7ea1ab9d048863",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "tools/verification_receipt.py",
+      "sha256": "bf25b5da1ec8b16d14b472cb92c43adf2d6969e777c601afce5f93dd8487c820",
+      "commitBlobSha256": "bf25b5da1ec8b16d14b472cb92c43adf2d6969e777c601afce5f93dd8487c820",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "verification/receipt-specs/governance-receipt-unit.json",
+      "sha256": "06d72d30c644fd1ff83492db3255419922126e25bbe7b4915052d878652cf1cf",
+      "commitBlobSha256": "06d72d30c644fd1ff83492db3255419922126e25bbe7b4915052d878652cf1cf",
+      "rawBytesMatchCommit": true
+    },
+    {
+      "path": "artifacts/evidence/workflow-efficiency.maintenance-01.md",
+      "sha256": "2a2b9d8639781ff5f72f32f0cbb8a0552d4afcc72375717a70584066f0ac27f8",
+      "commitBlobSha256": "2a2b9d8639781ff5f72f32f0cbb8a0552d4afcc72375717a70584066f0ac27f8",
+      "rawBytesMatchCommit": true
+    }
+  ],
+  "installation": {
+    "status": "ACTIVE",
+    "hooksPath": ".local/push-guard-7f0aa93708f54eff8eb23a08aad57550",
+    "priorSnapshotRetained": ".local/push-guard-a73f5befb7f9429bbb17fde2853516d6",
+    "reviewedSeedSha256": "f365ac34d17feb08b76a3fbde83710e6187094b0d8b6ca665b61dce05a8f16b9",
+    "fixedBaselineCommit": "dd8803c0526edfaca53d3a5b25faf4bb0cdf8854",
+    "baselineFileUnchanged": true,
+    "ignoreRulesUnchangedAndEffective": true,
+    "exactHistoricalArtifactAdmissionsPreserved": 130,
+    "exactHistoricalPrivateFieldsPreserved": 98,
+    "newPrivateFieldAuthority": false,
+    "fullUnmaskedCredentialScanning": true,
+    "pushRoutingKeysCompared": 8,
+    "pushRoutingBeforeAndAfterSha256": "ab224584efcbd7176278e2f63e10ee9eefde673839ca7c54cdcf7d8caa020937",
+    "remotePushPerformed": false,
+    "backlogChanged": false
+  },
+  "limitations": [
+    "Diagnostic receipts are not approval or attestation. Cross-run reuse is disabled because full runtime/dependency closure is not authenticated.",
+    "The actual receipt correctly reports raw .python-version/Git inequality (line endings only); all 30 changed maintenance files match their candidate Git blobs and reviewed raw hashes.",
+    "PowerShell could not read the private attempt directly; the documented Python completed-attempt reader validated it. No cross-principal or authentication proof is claimed.",
+    "Legacy bootstrap/recovery-specific writers remain unchanged and have no new private-field exception.",
+    "No live correction has been claimed yet. Pending product fixes, independent slice/Wave work, and G1 remain outstanding.",
+    "The unapproved W1.A10/ECR-0009 drafts were retained under ignored artifacts/tmp/workflow-efficiency-deferred-ECR-0009; required launcher work was not dropped or marked done.",
+    "No measured end-to-end savings baseline exists. Token, credit and monetary cost are unavailable, not inferred from timings."
+  ],
+  "preservation": {
+    "protectedWitness": "Filename/status only; no content read, hash, staging, copying, editing or deletion.",
+    "excludedWorkspace": "Not accessed.",
+    "ordinaryUserData": "Not accessed.",
+    "remoteState": "Unchanged."
+  }
+}

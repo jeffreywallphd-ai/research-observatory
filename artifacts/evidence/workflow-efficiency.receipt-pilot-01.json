@@ -1,0 +1,241 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "retained-diagnostic-receipt-copy",
+  "candidateCommit": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+  "source": "artifacts/tmp/verification-receipts/attempt-x4l4a7w7/receipt.json",
+  "originalReceiptSha256": "4c766c352199513f734a8127bb567262bdb8e1a4fd11425e8456ca8f3195a885",
+  "note": "Validated complete original attempt via read_completed_attempt; structured copy, not independent attestation, reuse or Wave qualification.",
+  "receipt": {
+    "attemptId": "attempt-x4l4a7w7",
+    "authority": "diagnostic-evidence-only",
+    "child": {
+      "errors": 0,
+      "expectedFailures": 0,
+      "failures": 0,
+      "flags": {
+        "isolated": 1,
+        "noBytecode": true,
+        "noSite": 1
+      },
+      "runtime": {
+        "baseExecutableSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "executableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+        "implementation": "cpython",
+        "platform": {
+          "machine": "AMD64",
+          "release": "11",
+          "system": "Windows",
+          "version": "10.0.26200"
+        },
+        "processImageSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "pythonDllSha256": "dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7",
+        "stdlibAndOsClosureAuthenticated": false,
+        "version": [
+          3,
+          14,
+          6
+        ],
+        "versionBuildSha256": "b74818dfc63aae5fe5aeb12a8db039a1c817ec6e6e783fa2d2c85b68c2feaea9"
+      },
+      "schemaVersion": "1.0",
+      "skipped": 0,
+      "snapshotDigestMatched": true,
+      "successful": true,
+      "testIdsSha256": "ae6ef6d6125f0135f454392f972d5bda1e41275af19fc4cd4e2489bd9523275a",
+      "testsRun": 6,
+      "transcriptSha256": "1e43b905e11ca028139fe5078016515111aaf7cebf8d6a3e224b7d03b9cb6ac9",
+      "unexpectedSuccesses": 0
+    },
+    "cost": {
+      "credits": null,
+      "money": null,
+      "source": "unavailable",
+      "tokenUsage": null
+    },
+    "documentType": "verification-execution-receipt",
+    "execution": "fresh",
+    "exitCode": 0,
+    "finishedAt": "2026-09-06T05:35:26.047272+00:00",
+    "inputs": {
+      "argv": [
+        "{bound-python}",
+        "-I",
+        "-S",
+        "-B",
+        "-c",
+        "{bound-worker}"
+      ],
+      "cwd": "{isolated-attempt}",
+      "environment": {
+        "TEMP": "{attempt}/temp",
+        "TMP": "{attempt}/temp",
+        "inheritedKeys": [
+          "SYSTEMROOT"
+        ],
+        "systemRootSha256": "c2bb903d586d19ec0d6eb6a2a659a882fd51244d6a137cee3595a385fda042f1"
+      },
+      "files": [
+        {
+          "path": "tools/governance_kernel.py",
+          "sha256": "61920893d26b65a79937e1d3dbb3f8c21fafdc5fe805be9b803acc30c980c7c7"
+        },
+        {
+          "path": "tools/governance_receipt.py",
+          "sha256": "f58ce333e7cee8a7277875c4208a993213072fd7b3018180efef4ca1039c0865"
+        },
+        {
+          "path": "tests/foundation/test_governance_receipt.py",
+          "sha256": "65d25f9db7840443ed8f7e4c817671a0fe25b8341fef0880861f0603337d4699"
+        },
+        {
+          "path": ".python-version",
+          "sha256": "48d0992617133b1e48ec7bbb2b7582a859e50bf1ec472b38611cf0cfee5d3fa5"
+        },
+        {
+          "path": "runtime-versions.json",
+          "sha256": "60bab93850f2f5aa5bb04bebda62619a206ed9b43caed5b2d9928e225bc77561"
+        },
+        {
+          "path": "pyproject.toml",
+          "sha256": "bb6d5c66a5b75dab7a0847c9af6a09865dec022328c7a899c111c6775eafb125"
+        },
+        {
+          "path": "uv.lock",
+          "sha256": "3d81e9e9db6ab7a78887b09d28e1d9e76228da175d14e98d56046e05db302ef0"
+        },
+        {
+          "path": "tools/build_manifest.py",
+          "sha256": "7aa71fb296c8b7e093bec3fe73c9de06f98ca47f3f761077bfe6ab423f7c6dcf"
+        },
+        {
+          "path": "verification/receipt-specs/governance-receipt-unit.json",
+          "sha256": "06d72d30c644fd1ff83492db3255419922126e25bbe7b4915052d878652cf1cf"
+        },
+        {
+          "path": "tools/verification_receipt.py",
+          "sha256": "bf25b5da1ec8b16d14b472cb92c43adf2d6969e777c601afce5f93dd8487c820"
+        }
+      ],
+      "fingerprint": "44d5b441211d09b6ac50f959adf5009de4f8d504154243115937023106736fae",
+      "producerGit": {
+        "allSelectedRawBytesMatchCommit": false,
+        "branch": "refs/heads/codex/w1-windows-local-runtime",
+        "executableSha256": "332883ea074abeabaa6b2ff4d744371da0fa00d259f7e49d3ab5c8fdfbe80920",
+        "head": "1d61b328780abfa6c385f6f0bf6f8c1636a3d048",
+        "observed": true,
+        "selectedInputs": [
+          {
+            "blob": "b780a5c616ab473afd9efc1016c55c9aeb14a3bc",
+            "path": "tools/governance_kernel.py",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "ec0c314940f707ffb35856036cb9d574457c8118",
+            "path": "tools/governance_receipt.py",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "33ea94cafeb6c120addfebcf3fcb7eb7e0e18c02",
+            "path": "tests/foundation/test_governance_receipt.py",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "3f0a10fda703c327eb329f869a19cc5cc05af521",
+            "path": ".python-version",
+            "rawBytesMatchCommit": false
+          },
+          {
+            "blob": "636d926c76c39c4994a69df58448374442652090",
+            "path": "runtime-versions.json",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "1fd1e58f84daf958a7022aab5992c3817674e5ca",
+            "path": "pyproject.toml",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "415666012c820232abc9a25b46f6b09fc8e4cdf0",
+            "path": "uv.lock",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "905da429cd9647189bb9cb3b426f0474c473340d",
+            "path": "tools/build_manifest.py",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "8e8b75f4c1e4c26d69dbf501cdba8bde6baaa56a",
+            "path": "verification/receipt-specs/governance-receipt-unit.json",
+            "rawBytesMatchCommit": true
+          },
+          {
+            "blob": "3531fb57978bc4dcde0f21d9674d456928394234",
+            "path": "tools/verification_receipt.py",
+            "rawBytesMatchCommit": true
+          }
+        ],
+        "trust": "local-producer-observation-not-independent-approval"
+      },
+      "runtime": {
+        "baseExecutableSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "executableSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+        "implementation": "cpython",
+        "platform": {
+          "machine": "AMD64",
+          "release": "11",
+          "system": "Windows",
+          "version": "10.0.26200"
+        },
+        "processImageSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+        "pythonDllSha256": "dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7",
+        "stdlibAndOsClosureAuthenticated": false,
+        "version": [
+          3,
+          14,
+          6
+        ],
+        "versionBuildSha256": "b74818dfc63aae5fe5aeb12a8db039a1c817ec6e6e783fa2d2c85b68c2feaea9"
+      },
+      "scope": "governance-receipt-unit",
+      "snapshotStorage": "captured-memory-passed-over-stdin",
+      "thirdPartyWorkerDependencies": [],
+      "workerSha256": "99cc6dc2b3b877fa4053be9d491153312037fb02f9fc776ac05f4417045f5097"
+    },
+    "limitations": [
+      "No authenticated complete stdlib/OS dependency closure or cross-run reuse.",
+      "No independently attested producer or implicit Git candidate binding.",
+      "No native, performance, full-profile, Wave, or release qualification.",
+      "Local isolated-source execution, not an operating-system security sandbox."
+    ],
+    "outputDigests": {
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSha256": "1268b508c9e8f9ad76756579b414a5971203eb0da48d363aab46a632a5a80a0f"
+    },
+    "producerTrust": "local-producer-asserted",
+    "requiresDelivery": true,
+    "reuse": {
+      "eligible": false,
+      "reason": "runtime-closure-incomplete"
+    },
+    "schemaVersion": "1.0",
+    "scope": "governance-receipt-unit",
+    "startedAt": "2026-09-06T05:35:24.300881+00:00",
+    "status": "PASS",
+    "timing": {
+      "childSeconds": 0.515351,
+      "publicationTiming": "measured-separately-in-delivery.json",
+      "snapshotSeconds": 0.628594,
+      "totalBeforePublicationSeconds": 1.748568
+    }
+  },
+  "delivery": {
+    "attemptId": "attempt-x4l4a7w7",
+    "documentType": "verification-receipt-delivery",
+    "excludes": "delivery-record-publication",
+    "receiptPublicationSeconds": 0.0114,
+    "receiptSha256": "4c766c352199513f734a8127bb567262bdb8e1a4fd11425e8456ca8f3195a885",
+    "schemaVersion": "1.0",
+    "totalThroughReceiptPublicationSeconds": 1.760077
+  }
+}
