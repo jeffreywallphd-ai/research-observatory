@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b60b7cb102f178306b489b34f6f45b22989fafef0bb3b31413b1bc54f0be0bbc
+source_sha256: 6b4b79967716f1deb2fdfb4de5e0fc952071d4cebc20b248f1f7f4c686b76fc3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -48,7 +48,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` |
-| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `REVIEW` |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 
 ## Waves
 
@@ -1913,7 +1913,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A09.json` (`08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -1921,6 +1921,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-09-05T11:48:05+00:00` by codex: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-09-05T11:51:21+00:00` by codex: Activated the bounded amendment campaign.
 - `E04` `REVIEW` at `2026-09-06T00:11:42+00:00` by codex: All four tasks and W1.A09.S01 independently approved; submit exact eight-criterion exit and PAUSED W1.A08 return contract.
+- `E05` `ADOPTED` at `2026-09-06T00:21:52+00:00` by codex: Adopted via W1.CP08.
 
 ### Amendment-exit review and adoption — W1.A09
 
@@ -1964,7 +1965,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP08` `security` by codex at `2026-09-06T00:21:52+00:00` — Adopted W1.A09 control-plane amendment.
+  - amendment `W1.A09` / `artifacts/evidence/W1.A09.adoption.json` / `5d1985cb17a03e2dd9b722cbf5e5c4d3bff8ac4118f68a28aea4c05bd1955e1e` / `bf963579873514ddd213acfa38f02dc5d006244d`
 
 **Bounded tasks:**
 

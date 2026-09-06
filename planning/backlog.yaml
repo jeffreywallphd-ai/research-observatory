@@ -299,6 +299,17 @@ waves:
       portable contracts, real Core/SQLite, native desktop transport and Academic Minimal 1.5. All five tasks and the slice
       are independently approved with no open finding; full W1 clean-clone performance, packaging, cross-capability and Windows-x64
       qualification remain due at exit.
+  - id: W1.CP08
+    kind: security
+    recorded_by: codex
+    recorded_at: '2026-09-06T00:21:52+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W1.A09
+      path: artifacts/evidence/W1.A09.adoption.json
+      sha256: 5d1985cb17a03e2dd9b722cbf5e5c4d3bff8ac4118f68a28aea4c05bd1955e1e
+      commit: bf963579873514ddd213acfa38f02dc5d006244d
+    notes: Adopted W1.A09 control-plane amendment.
   completion:
     status: PAUSED
     reviewer: null
@@ -39696,7 +39707,7 @@ wave_amendments:
     sha256: 08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c
     introduction_commit: fcf627b4c83af81d0c3472526477bc7aa68d819c
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -39729,6 +39740,11 @@ wave_amendments:
       at: '2026-09-06T00:11:42+00:00'
       rationale: All four tasks and W1.A09.S01 independently approved; submit exact eight-criterion exit and PAUSED W1.A08
         return contract.
+    - id: E05
+      status: ADOPTED
+      actor: codex
+      at: '2026-09-06T00:21:52+00:00'
+      rationale: Adopted via W1.CP08.
   bootstrap:
     id: W1.A09.B00
     status: APPROVED

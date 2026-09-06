@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: b60b7cb102f178306b489b34f6f45b22989fafef0bb3b31413b1bc54f0be0bbc
+source_sha256: 6b4b79967716f1deb2fdfb4de5e0fc952071d4cebc20b248f1f7f4c686b76fc3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -60,9 +60,8 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ADOPTED` | 6 |
+| `ADOPTED` | 7 |
 | `PAUSED` | 1 |
-| `REVIEW` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -87,7 +86,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
-| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 4 |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 
 ## Amendment-exit review and adoption projections
 
@@ -516,7 +515,8 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W1.CP08` `security` by codex at `2026-09-06T00:21:52+00:00` — Adopted W1.A09 control-plane amendment.
+  - amendment `W1.A09` / `artifacts/evidence/W1.A09.adoption.json` / `5d1985cb17a03e2dd9b722cbf5e5c4d3bff8ac4118f68a28aea4c05bd1955e1e` / `bf963579873514ddd213acfa38f02dc5d006244d`
 
 
 ## Task review history projections
