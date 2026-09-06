@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0018",
+  "title": "Register committed layout and native-probe verification sources",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "codex",
+  "predecessor": {
+    "commit": "8132445b0be483868b5585b60b8366ca28f50186",
+    "wave": "W1",
+    "waveStatus": "PAUSED",
+    "activeTask": "W1.A08.T02",
+    "taskStatus": "IN_PROGRESS",
+    "qualityScopePath": "quality-scope.json",
+    "qualityScopeSha256": "ad83dd1a5b58483560d1cfe863b3ae6682c64f80dc7440c3877612d154eb4d1b",
+    "qualityScopeGitBlob": "97c163aa1f3b2087efcf6d90b6c6a6307a8ee1ab"
+  },
+  "trigger": {
+    "denial": "quality_check.load_scope rejects four committed but unlisted layout/native-probe Python files.",
+    "atomicity": "Freeze all source work at the predecessor. This candidate changes only the inventory and this record; no task, amendment, Wave, reference or gate transition occurs.",
+    "diagnosis": "Explicit source discovery equality requires additive registration. The existing independently reviewed inventory-only maintenance mechanism applies; no executable checker correction is part of this increment. The separate UI range-recognizer mismatch remains open."
+  },
+  "authority": "Preserve every governed root, prior ordered entry, formatter/linter/typechecker command, source-discovery equality and product/reference/task/review/release invariant. Register four already committed Python sources only. No product scope, approval, transition, main integration or remote authority is granted. The protected W1.A04 witness and excluded sibling are not read, hashed, staged, modified or ignored.",
+  "intendedDelta": {
+    "implementation": "Append tests/desktop/test_product_layout_measurements.py, tests/service/test_native_project_contract.py, tests/service/test_project_probe_build.py and tools/product_layout_measurements.py to pythonFiles in that order.",
+    "failClosed": [
+      "All prior fields, governed roots and ordered inventory entries remain unchanged.",
+      "Every added path is an existing regular committed Python file under an unchanged governed root.",
+      "Missing, stale, duplicate, unsafe and unlisted sources remain errors.",
+      "Check commands and their failure propagation remain unchanged.",
+      "Independent exact-candidate Tier 2 review precedes adoption."
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0018.json",
+      "quality-scope.json"
+    ]
+  },
+  "verification": {
+    "riskAnalysis": "Inventory-only registration risks dropping existing coverage or adding nonexistent/unsafe sources. Run focused quality-check tests, exact predecessor/delta and Git source checks, scoped lint/format/types and patch hygiene. Product behavior and full repository/Windows qualification are not claimed by this increment.",
+    "results": [
+      {"command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_quality_check -v", "result": "passed", "detail": "Four focused tests pass, including unlisted-source denial and retained failure propagation."},
+      {"command": "Exact predecessor JSON comparison and git cat-file -e for each addition", "result": "passed", "detail": "Inventory now contains 200 sources. Exactly four existing committed paths were appended; every prior field/root/ordered entry is preserved."},
+      {"command": "Scoped Ruff lint/format and isolated mypy for the four registered files", "result": "passed", "detail": "All four files pass with existing tools/Core/service-test module search paths. Prior source typing cleanup is separately committed at the frozen predecessor; this candidate contains no Python edit."},
+      {"command": "git diff --check", "result": "passed", "detail": "No patch whitespace errors. No full repository or native execution is claimed."}
+    ]
+  },
+  "rollback": "Retain candidate and adverse reviews append-only if rejected; leave W1 paused and W1.A08.T02 in progress. Correct only the bounded inventory delta without weakening discovery or deleting source work.",
+  "reviewAttempts": [],
+  "review": null
+}

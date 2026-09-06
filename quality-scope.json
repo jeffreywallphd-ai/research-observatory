@@ -205,6 +205,10 @@
     "tests/workflows/test_task_center.py",
     "tests/desktop/test_product_style_check.py",
     "tests/e2e/test_workflow_profile_matrix.py",
-    "tools/product_style_check.py"
+    "tools/product_style_check.py",
+    "tests/desktop/test_product_layout_measurements.py",
+    "tests/service/test_native_project_contract.py",
+    "tests/service/test_project_probe_build.py",
+    "tools/product_layout_measurements.py"
   ]
 }
