@@ -27,6 +27,8 @@
 }
 .ro-card, .ro-panel { display: grid; align-content: start; gap: var(--ro-card-gap, var(--space-3)); }
 .ro-panel > div { min-width: 0; display: grid; gap: var(--space-3); }
+/* Flow gaps own paragraph rhythm; browser margins must not be additive. */
+:where(.ro-page-region, .ro-stack, .ro-card, .ro-panel > div, .ro-notice) > p { margin-block: 0; }
 .ro-form { min-width: 0; display: grid; gap: var(--space-5); }
 .ro-form :where(label, legend) { color: var(--text-strong); font-weight: 700; }
 .ro-form :where(input:not([type="checkbox"], [type="radio"]), select, textarea), .ro-field input {

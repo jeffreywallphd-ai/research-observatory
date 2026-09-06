@@ -57,6 +57,18 @@ geometry, pinned renderer/font witnesses, actual visible focus, and normal or
 contained scrolling remain the deciding contracts. Wait for the focus style to
 settle before measuring it; do not replace the focus assertion with a screenshot.
 
+Panel measurements include visible direct-child block margins, first/last edges
+and effective inter-child distances. Shared flow owns paragraph margins; a
+canonical declared grid gap cannot mask additive browser margins. Non-paragraph
+composition margins stay explicit, and multi-column layout is not compared as a
+single-column stack. The populated Task Center must supply a real paragraph pair.
+Every workspace also binds actual sidebar, shell-body, main and footer edges.
+In side-by-side layout the sidebar reaches the footer; in stacked layout it
+precedes content without overlap. Focused regressions exercise short/long pages,
+collapsed/expanded navigation, both themes and real forward/reverse Tab traversal
+with natural scrolling. Ordinary document scrolling is valid; a separate capped
+navigation scroller is not required to make the sidebar's surface fill its row.
+
 ## Retained product/reference captures
 
 Capture only from a committed, unchanged producer checkout with valid product

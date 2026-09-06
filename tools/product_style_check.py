@@ -1129,6 +1129,7 @@ CAPTURE_SOURCE_FILES = (
     ".gitattributes",
     "tools/product_style_check.py",
     "tools/desktop_app_check.py",
+    "tools/product_layout_measurements.py",
     "tools/ui_conformance.py",
     "tools/ui_reference_check.py",
     "tools/build_manifest.py",

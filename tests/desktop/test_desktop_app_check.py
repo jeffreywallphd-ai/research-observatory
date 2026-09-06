@@ -370,6 +370,8 @@ class DesktopAppCheckTests(unittest.TestCase):
                 browser.close()
 
     def test_qualification_measurements_bind_renderer_geometry_and_reachable_states(self) -> None:
+        from tests.desktop.test_product_layout_measurements import valid_flow, valid_shell
+
         case = {
             "surfaceId": "home",
             "stateId": "project-ready",
@@ -387,6 +389,8 @@ class DesktopAppCheckTests(unittest.TestCase):
             "stateWitness": {"home": True},
             "focus": {"targetInViewport": True},
             "geometry": {"mainPadding": 28},
+            "panelFlow": [valid_flow()],
+            "shell": valid_shell(),
             "semantic": [
                 {
                     "kind": "card",
@@ -430,6 +434,8 @@ class DesktopAppCheckTests(unittest.TestCase):
             lambda item: item["observedEnvironment"].__setitem__("now", 0),
             lambda item: item["observedEnvironment"].__setitem__("deviceScaleFactor", 2),
             lambda item: item["geometry"].__setitem__("mainPadding", 27),
+            lambda item: item.pop("panelFlow"),
+            lambda item: item.pop("shell"),
             lambda item: item["focus"].__setitem__("targetInViewport", False),
             lambda item: item["semantic"].pop(),
             lambda item: item["semantic"][0].__setitem__("padding", 17),

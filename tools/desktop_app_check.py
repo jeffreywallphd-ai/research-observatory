@@ -23,6 +23,7 @@ import yaml
 from bs4 import BeautifulSoup
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
+from product_layout_measurements import PANEL_FLOW_GEOMETRY, SHELL_GEOMETRY, panel_flow_errors, shell_geometry_errors
 from ui_conformance import (
     confined_path,
     file_inventory,
@@ -1040,6 +1041,8 @@ def qualification_measurement_errors(case: dict[str, Any]) -> list[str]:
         padding = 28 if case.get("width") == 1440 else 20 if case.get("width") == 1280 else 16
         if not _style_number_matches(case.get("geometry", {}).get("mainPadding"), padding):
             errors.append("responsive page padding differs from reference tokens")
+        errors.extend(panel_flow_errors(case.get("panelFlow"), require_paragraph_pair=surface == "tasks"))
+        errors.extend(shell_geometry_errors(case.get("shell"), stacked=case.get("width") == 720))
     semantic = case.get("semantic")
     if not isinstance(semantic, list) or any(not isinstance(item, dict) for item in semantic):
         return [*errors, "semantic primitive measurements are missing"]
@@ -2046,6 +2049,9 @@ class ProductStyleQualification:
                   }
                   probe.remove(); return output;
                 }""")
+                if surface_id in {item[0] for item in QUALIFICATION_WORKSPACES}:
+                    observed["panelFlow"] = node.evaluate(PANEL_FLOW_GEOMETRY)
+                    observed["shell"] = page.evaluate(SHELL_GEOMETRY)
                 observed["fonts"] = {
                     font: font_face_available(page, font) for font in self.context.config["visual"]["requiredFonts"]
                 }
