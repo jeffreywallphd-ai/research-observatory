@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-verification-checkpoint",
+  "taskId": "W1.A08.T02",
+  "producerCommit": "ddba5f5f21298f5f292a73eddee52ceff74f894f",
+  "formalTaskSubmission": false,
+  "checks": [
+    {
+      "name": "renderer lint, types, tests, build",
+      "status": "PASS",
+      "details": "126 tests passed; three existing opt-in native tests skipped. Product 4 artifacts, separate reference fixture 42 artifacts."
+    },
+    {
+      "name": "focused layout/control negatives and actual keyboard",
+      "status": "PASS",
+      "details": "Seven tests passed. Includes explicit shared CSS long-label keyboard fixture, disabled skip, actual built Projects/Task Center flow/sidebar, finite/inventory negatives and measured bare-button rejection."
+    },
+    {
+      "name": "built functional product frame",
+      "status": "PASS",
+      "report": "artifacts/tmp/W1.A08.T02.workflow-frame-01.json",
+      "details": "48 workspace and six designated cases. Settings context has two controls, one enabled and one traversed by real Tab in all six viewport/theme cases. Existing interactive Task Center cards retain their card grid and measured target size."
+    },
+    {
+      "name": "capture04 authentication",
+      "status": "PASS",
+      "manifest": "artifacts/evidence/W1.A08.T02.captures-04/manifest.json",
+      "deliveryCommit": "66d4db58064f7332e8f1adb8ea7ced6bff991bc6",
+      "manifestSha256": "7f5b3f1938e5b48ce2f027e9037280f46b27638dd3c9459e9a45d8269cedfeeb",
+      "captureCount": 108
+    },
+    {
+      "name": "performance",
+      "status": "PASS",
+      "report": "artifacts/evidence/W1.A08.T02.performance-02.json",
+      "details": "Separate clean task-owned checkout at producer commit; 12 browser samples and 20 shared-table batches, all retained. No concurrent browser qualification/build. A read-only Git capture authentication and agent source inspection overlapped; no samples or budgets adjusted."
+    },
+    {
+      "name": "reference tokens, routes, workflows, accessibility, visual",
+      "status": "PASS",
+      "producerCommit": "1517b16aa1fab212c7c28163d3c98ed92fc0d9a5",
+      "details": "Five reports under artifacts/tmp/W1.A08.T02.reference-<check>-01.json. Reference bytes unchanged by workflow-button correction."
+    },
+    {
+      "name": "format, lint, isolated types",
+      "status": "PASS",
+      "details": "Four capture-source/test files formatted after capture authentication. Ruff lint and isolated mypy passed; AST hashes prove formatting-only delta. Existing native service tests already formatted."
+    }
+  ],
+  "formatting": {
+    "before": {
+      "tools/desktop_app_check.py": {
+        "bytes": "e6f665f5329c6c6ab93443596c10f2e9bd351680ed9bf9c345397f4f774971bf",
+        "ast": "3cfa4362c0461b20b8eaefbb06eb68098a4d6b91f5d1ffade4707d124ba7ad41"
+      },
+      "tools/product_layout_measurements.py": {
+        "bytes": "5b7bf4a3519c6d4f7dd73740c0f748a915fbcbb4260401bf30af59050f66e19e",
+        "ast": "e569820f09e0e2d4e63316e2e96982661906cbba2509dfee566495b353bd9bd6"
+      },
+      "tests/desktop/test_desktop_app_check.py": {
+        "bytes": "8ca785d3ddd6f226c4de926e45d7951dc9c5028ca86600f6d1cb9812e151679c",
+        "ast": "1f3faad7ecdac06cfb6f43efa38b9f907029a865f4b2546e44e89705daab0e8c"
+      },
+      "tests/desktop/test_product_layout_measurements.py": {
+        "bytes": "dc1a56d2bb13b49324f9204af3ce21146a347a0e669c72f6b350bbf001db01aa",
+        "ast": "8ff306b4188349f45dd370fbe85c315b5216d8797d4713e65fe8c3850fff6c64"
+      }
+    },
+    "after": {
+      "tools/desktop_app_check.py": {
+        "bytes": "5bdce257d7e9dd497a88cd2bf4d753761481330a85281f767697120535d5beea",
+        "ast": "3cfa4362c0461b20b8eaefbb06eb68098a4d6b91f5d1ffade4707d124ba7ad41"
+      },
+      "tools/product_layout_measurements.py": {
+        "bytes": "dec5e00e2957614431ee425fa4bd9c757596a5c9ce953ad49abfed7ec7062baa",
+        "ast": "e569820f09e0e2d4e63316e2e96982661906cbba2509dfee566495b353bd9bd6"
+      },
+      "tests/desktop/test_desktop_app_check.py": {
+        "bytes": "4b20e04907cfd0b4839a1bbf046f012be6ca189f188830407b600c852fc2fd3e",
+        "ast": "1f3faad7ecdac06cfb6f43efa38b9f907029a865f4b2546e44e89705daab0e8c"
+      },
+      "tests/desktop/test_product_layout_measurements.py": {
+        "bytes": "c0f3f26fe1da3b81f02b65c7013621ba347bd3345abf907088a0957be00ed7b9",
+        "ast": "8ff306b4188349f45dd370fbe85c315b5216d8797d4713e65fe8c3850fff6c64"
+      }
+    }
+  },
+  "adverseHistory": [
+    "Independent visual-review-02 remains CHANGES REQUESTED. Its raw workflow actions were corrected with shared Button, with test-first unit failure retained in workflow-actions-01.md.",
+    "First expanded whole Python replay:49 tests, one full-frame failure on six Task Center interactive-card controls. Corrected standard-vs-card classification; full frame then passed. No Task Center source edit or excluded control.",
+    "Read-only quality discovery fails on four omitted existing source paths. Ruff format initially required four layout/checker files. These failures are not labelled passes.",
+    "Original-base UI range check fails missing UI contract, while the flat legacy model cannot represent adopted correction/reference lineage. Independent preflight recommends bounded generic maintenance; no task approval or base rewriting.",
+    "An initial delivery verification with HEAD was correctly denied because a full immutable SHA is required; retry with the exact delivery SHA passed.",
+    "During retaining the new performance report, existing performance-01 was briefly overwritten in the working tree. Before any commit it was restored from exact HEAD and git diff --exit-code confirmed no change. The new report is performance-02; historical performance-01 remains unchanged."
+  ],
+  "pending": [
+    "Register four quality-scope paths through independently reviewed additive maintenance.",
+    "Correct the existing UI range guard through bounded independently reviewed maintenance without expanding authority.",
+    "Actually inspect corrected context controls in source-bound supplemental images; current settings captures can scroll context above frame.",
+    "Finish final current-candidate verification, independent task/slice/amendment review and adoption; full W1 qualification and G1 remain separate."
+  ],
+  "safety": "No native GUI, ordinary policy/vault/projects/credentials, protected witness access, sibling access, remote write, main integration or release approval."
+}

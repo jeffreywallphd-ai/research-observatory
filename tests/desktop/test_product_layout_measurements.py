@@ -63,11 +63,14 @@ def valid_shell(stacked=False):
 
 class ProductLayoutMeasurementsTests(unittest.TestCase):
     def test_context_keyboard_skips_disabled_actions_and_keeps_long_labels_reachable(self):
-        styles = "\n".join((REPO / path).read_text(encoding="utf-8") for path in (
-            "design/ui-reference/assets/tokens.css",
-            "packages/ui-components/src/styles.css",
-            "apps/desktop/src/app.css",
-        ))
+        styles = "\n".join(
+            (REPO / path).read_text(encoding="utf-8")
+            for path in (
+                "design/ui-reference/assets/tokens.css",
+                "packages/ui-components/src/styles.css",
+                "apps/desktop/src/app.css",
+            )
+        )
         # Explicit shared-style consumer fixture; actual product is separately
         # exercised by the qualification recorder with unchanged Core adapters.
         document = f"""<html><head><style>{styles}</style></head><body>

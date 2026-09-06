@@ -340,7 +340,7 @@ class DesktopAppCheckTests(unittest.TestCase):
                         'style="background:rgb(0, 128, 0)">Ready</div>'
                         '<div class="ro-card" style="display:none;background:rgb(255,0,0)">Hidden</div>'
                         f'<div class="ro-panel" data-tone="neutral" style="background:{background}">'
-                        'Create a project</div></section>'
+                        "Create a project</div></section>"
                     )
                     workspace = page.locator("#workspace")
                     self.assertEqual(background, workspace.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND))
@@ -352,13 +352,18 @@ class DesktopAppCheckTests(unittest.TestCase):
                     self.assertNotEqual(background, measured)
                     for invalid in (measured, None):
                         matrix = valid_product_style_qualification_matrix()
-                        case = next(item for item in matrix["cases"]
-                                    if item["surfaceId"] == "projects" and item["theme"] == theme)
+                        case = next(
+                            item
+                            for item in matrix["cases"]
+                            if item["surfaceId"] == "projects" and item["theme"] == theme
+                        )
                         case["themeTokens"]["workspaceBackground"] = invalid
-                        self.assertTrue(any(
-                            f"apply {theme} workspace tokens" in error
-                            for error in product_style_qualification_errors(matrix)
-                        ))
+                        self.assertTrue(
+                            any(
+                                f"apply {theme} workspace tokens" in error
+                                for error in product_style_qualification_errors(matrix)
+                            )
+                        )
                     neutral.evaluate("node => node.style.visibility = 'hidden'")
                     self.assertIsNone(workspace.evaluate(QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND))
                     neutral.evaluate("node => node.style.visibility = 'visible'")
@@ -474,14 +479,18 @@ class DesktopAppCheckTests(unittest.TestCase):
 
         # Actual browser-default context control cannot hide behind another
         # passing shared button. This is a CSS consumer negative fixture.
-        styles = "\n".join((REPO / path).read_text(encoding="utf-8") for path in (
-            "design/ui-reference/assets/tokens.css", "packages/ui-components/src/styles.css",
-        ))
+        styles = "\n".join(
+            (REPO / path).read_text(encoding="utf-8")
+            for path in (
+                "design/ui-reference/assets/tokens.css",
+                "packages/ui-components/src/styles.css",
+            )
+        )
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
             try:
                 page = browser.new_page()
-                page.set_content(f'<style>{styles}</style><button>Return to current step</button>')
+                page.set_content(f"<style>{styles}</style><button>Return to current step</button>")
                 bare = page.locator("button").evaluate("""node => {
                   const s = getComputedStyle(node), r = node.getBoundingClientRect();
                   return {kind:'control', padding:parseFloat(s.paddingInlineStart), radius:parseFloat(s.borderRadius),
@@ -1192,9 +1201,14 @@ class ProjectRecoveryInteractionTests(unittest.TestCase):
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             context = browser.new_context()
-            context.route("**/*", lambda route: route.fulfill(
-                status=200, content_type="text/html; charset=utf-8", body=document
-            ) if route.request.url == "http://tauri.localhost/index.html" else route.abort())
+            context.route(
+                "**/*",
+                lambda route: (
+                    route.fulfill(status=200, content_type="text/html; charset=utf-8", body=document)
+                    if route.request.url == "http://tauri.localhost/index.html"
+                    else route.abort()
+                ),
+            )
             page = context.new_page()
             page.add_init_script(fixture + DIRECTORY_PICKER_FIXTURE)
             page_errors: list[str] = []
@@ -1317,9 +1331,14 @@ class DirectorySelectionInteractionTests(unittest.TestCase):
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             context = browser.new_context(viewport={"width": 720, "height": 450}, reduced_motion="reduce")
-            context.route("**/*", lambda route: route.fulfill(
-                status=200, content_type="text/html; charset=utf-8", body=document
-            ) if route.request.url == "http://tauri.localhost/index.html" else route.abort())
+            context.route(
+                "**/*",
+                lambda route: (
+                    route.fulfill(status=200, content_type="text/html; charset=utf-8", body=document)
+                    if route.request.url == "http://tauri.localhost/index.html"
+                    else route.abort()
+                ),
+            )
             page = context.new_page()
             page.add_init_script(fixture)
             page_errors: list[str] = []
@@ -1339,8 +1358,12 @@ class DirectorySelectionInteractionTests(unittest.TestCase):
                 # A choice attempt is not ownership of a folder. Both orderings
                 # must recover discovery after cancellation, without losing data.
                 for resolved_during_dialog, selection_status in (
-                    (True, "cancelled"), (False, "cancelled"), (True, "failed"), (False, "failed"),
-                    (True, "unavailable"), (False, "unavailable"),
+                    (True, "cancelled"),
+                    (False, "cancelled"),
+                    (True, "failed"),
+                    (False, "failed"),
+                    (True, "unavailable"),
+                    (False, "unavailable"),
                 ):
                     page.goto("http://tauri.localhost/index.html", wait_until="load")
                     page.wait_for_function("document.body.dataset.applicationReady === 'true'")
@@ -1357,7 +1380,9 @@ class DirectorySelectionInteractionTests(unittest.TestCase):
                     page.evaluate("window.__FOLDERS__.defaults[1]({status:'available',path:'C:/Recovered Default'})")
                     page.wait_for_function(
                         "document.getElementById('project-parent-directory-location')?.textContent"
-                        " === 'C:/Recovered Default'", timeout=5000)
+                        " === 'C:/Recovered Default'",
+                        timeout=5000,
+                    )
                     self.assertEqual("Keep my name", page.locator("#project-display-name").input_value())
                     self.assertEqual([], page.evaluate("window.__FOLDERS__.mutations"))
 
@@ -1404,16 +1429,20 @@ class DirectorySelectionInteractionTests(unittest.TestCase):
                     long_path = "C:/" + "研究 long folder " * 24
                     page.locator("#project-parent-directory-choose").click()
                     settle_selection({"status": "selected", "path": long_path.rstrip()})
-                    self.assertTrue(page.evaluate(
-                        "document.documentElement.scrollWidth <= document.documentElement.clientWidth"))
-                    self.assertEqual("text", page.locator("#project-destination").evaluate(
-                        "node => getComputedStyle(node).userSelect"))
+                    self.assertTrue(
+                        page.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
+                    )
+                    self.assertEqual(
+                        "text",
+                        page.locator("#project-destination").evaluate("node => getComputedStyle(node).userSelect"),
+                    )
                     page.locator("#project-parent-directory-choose").focus()
                     page.keyboard.press("Tab")
                     page.keyboard.press("Shift+Tab")
                     self.assertEqual("project-parent-directory-choose", page.locator(":focus").get_attribute("id"))
-                    self.assertNotEqual("none", page.locator(":focus").evaluate(
-                        "node => getComputedStyle(node).outlineStyle"))
+                    self.assertNotEqual(
+                        "none", page.locator(":focus").evaluate("node => getComputedStyle(node).outlineStyle")
+                    )
 
                 # A result belonging to an unmounted form cannot populate its replacement.
                 page.locator("#project-root-choose").click()
@@ -1426,7 +1455,8 @@ class DirectorySelectionInteractionTests(unittest.TestCase):
                 page.evaluate("window.__FOLDERS__.defaults[1]({status:'available',path:'C:/Default Projects'})")
                 page.wait_for_function(
                     "document.getElementById('project-parent-directory-location')?.textContent"
-                    " === 'C:/Default Projects'")
+                    " === 'C:/Default Projects'"
+                )
                 self.assertNotIn("Late Private", page.locator("body").inner_text())
                 selection_count = page.evaluate("window.__FOLDERS__.selections.length")
                 page.locator("#project-display-name").fill("Default Study")

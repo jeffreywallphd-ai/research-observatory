@@ -37,6 +37,7 @@ def exercise_workflow_context_keyboard(page: Any) -> dict[str, int]:
         anchor.dispose()
     return result
 
+
 PANEL_FLOW_GEOMETRY = r"""element => {
   const visible = node => node.getClientRects().length && getComputedStyle(node).visibility === 'visible';
   return [...element.querySelectorAll('.ro-panel > div')].filter(visible).map(node => {

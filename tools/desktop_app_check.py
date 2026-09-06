@@ -70,7 +70,8 @@ def choose_fixture_directory(page: Any, field_id: str, path: str) -> None:
     page.locator(f"#{field_id}-choose").click()
     page.wait_for_function(
         "([id, path]) => document.getElementById(id + '-location')?.textContent === path",
-        arg=[field_id, path], timeout=5_000,
+        arg=[field_id, path],
+        timeout=5_000,
     )
 
 
@@ -1056,8 +1057,10 @@ def qualification_measurement_errors(case: dict[str, Any]) -> list[str]:
         keyboard = case.get("workflowContextKeyboard")
         if (
             not isinstance(keyboard, dict)
-            or any(type(keyboard.get(key)) is not int or keyboard[key] < 0
-                   for key in ("buttonCount", "enabledCount", "traversedCount"))
+            or any(
+                type(keyboard.get(key)) is not int or keyboard[key] < 0
+                for key in ("buttonCount", "enabledCount", "traversedCount")
+            )
             or keyboard["enabledCount"] > keyboard["buttonCount"]
             or keyboard["enabledCount"] != keyboard["traversedCount"]
             or (surface == "settings" and (keyboard["buttonCount"] < 2 or keyboard["enabledCount"] < 1))
@@ -1996,7 +1999,8 @@ class ProductStyleQualification:
                     ) from exc
                 context_keyboard = (
                     exercise_workflow_context_keyboard(page)
-                    if surface_id in {item[0] for item in QUALIFICATION_WORKSPACES} else None
+                    if surface_id in {item[0] for item in QUALIFICATION_WORKSPACES}
+                    else None
                 )
                 node.evaluate("element => element.scrollIntoView({block:'start'})")
                 focus = node.locator(
@@ -2089,7 +2093,8 @@ class ProductStyleQualification:
                     scrollTo(position.x, position.y);
                   }
                   probe.remove(); return output;
-                }""")
+                }"""
+                )
                 if surface_id in {item[0] for item in QUALIFICATION_WORKSPACES}:
                     observed["workflowContextKeyboard"] = context_keyboard
                     observed["controlCount"] = page.locator(
@@ -3521,7 +3526,8 @@ def runtime_frame_errors(
                       return coreResponse(progress);
                     }
                   };
-                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json) + DIRECTORY_PICKER_FIXTURE
+                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
+                + DIRECTORY_PICKER_FIXTURE
             )
             revisit.goto("http://tauri.localhost/index.html", wait_until="load")
             revisit.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
@@ -4045,7 +4051,8 @@ def runtime_frame_errors(
                       throw new Error(`unsupported lock reconciliation command: ${command}`);
                     }
                   };
-                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json) + DIRECTORY_PICKER_FIXTURE
+                })()""".replace("__WORKFLOW_CATALOG__", workflow_catalog_json)
+                + DIRECTORY_PICKER_FIXTURE
             )
             lock_reconciliation.goto("http://tauri.localhost/index.html", wait_until="load")
             lock_reconciliation.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5_000)
