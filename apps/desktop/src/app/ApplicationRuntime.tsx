@@ -31,6 +31,7 @@ import {
   type IntentProjectIdentity,
 } from "./IntentWorkspace";
 import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
+import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
 import {
   WorkflowContextBar,
   WorkflowNavigation,
@@ -1002,6 +1003,15 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       },
     },
     {
+      id: "open-model-center",
+      label: "Open Model & Privacy Center",
+      description: "Inspect model capabilities, current availability, privacy boundaries and inventory versions.",
+      run: () => {
+        navigateWorkspaceState("models");
+        announce("Model and Privacy Center opened.");
+      },
+    },
+    {
       id: "open-project-settings",
       label: "Open project settings",
       description: "Review local privacy, egress, retention, and cache cleanup controls.",
@@ -1158,6 +1168,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             <TaskCenterWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (
             <AuditLineageWorkspace project={currentProject} announce={announce} />
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "models" ? (
+            <ModelCenterWorkspace project={currentProject} announce={announce} onOpenSettings={() => navigateWorkspaceState("settings")} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "home" ? <>
           <ProjectHomeWorkspace
             project={currentProject}

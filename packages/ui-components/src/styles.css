@@ -13,6 +13,8 @@
 .ro-page-region { gap: var(--space-6); }
 .ro-stack { gap: var(--ro-stack-gap, var(--space-4)); }
 .ro-stack--tight { --ro-stack-gap: var(--space-1); }
+/* Preserve complete identifiers without widening a responsive content region. */
+.ro-wrap-anywhere { overflow-wrap: anywhere; }
 .ro-cluster, .ro-action-row { min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ro-cluster-gap, var(--space-2)); }
 .ro-split-row { min-width: 0; display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
 .ro-grid { min-width: 0; display: grid; gap: var(--grid-gap); }

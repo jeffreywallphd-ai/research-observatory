@@ -220,6 +220,7 @@ def valid_product_style_qualification_matrix() -> dict[str, Any]:
         ("intent", "Research intent", ["intent-contract.html"], "accepted-intent"),
         ("tasks", "Task Center", ["task-center.html"], "populated-task-center"),
         ("audit", "Audit & lineage", ["audit-lineage.html"], "populated-lineage"),
+        ("models", "Model & Privacy Center", ["model-center.html"], "empty-model-catalog"),
         ("settings", "Project settings", ["project-settings.html"], "project-settings"),
         (
             "application-settings",
@@ -514,8 +515,8 @@ class DesktopAppCheckTests(unittest.TestCase):
 
     def test_product_style_qualification_contract_is_exact_and_rejects_matrix_gaps(self) -> None:
         capture_contract = qualification_capture_contract(REPO)
-        self.assertEqual(108, len(capture_contract))
-        self.assertEqual(54, len({item["caseId"] for item in capture_contract}))
+        self.assertEqual(120, len(capture_contract))
+        self.assertEqual(60, len({item["caseId"] for item in capture_contract}))
         self.assertEqual({"product", "reference"}, {item["role"] for item in capture_contract})
         self.assertTrue(
             all(
@@ -645,6 +646,7 @@ class DesktopAppCheckTests(unittest.TestCase):
                 "CAP-03.S06.T03",
                 "CAP-03.S06.T04",
                 "CAP-03.S06.T05",
+                "CAP-07.S01.T02",
             ],
             details["implementedCapabilities"],
         )

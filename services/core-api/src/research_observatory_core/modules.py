@@ -63,6 +63,7 @@ def default_module_registry() -> ModuleRegistry:
                     "intent.workflow-progress",
                 ),
             ),
+            ModuleDefinition(module_id="models", capabilities=("models.catalog.read", "models.catalog.refresh")),
             ModuleDefinition(
                 module_id="operations",
                 capabilities=("operations.cancel", "operations.events", "operations.read"),

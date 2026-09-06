@@ -12,6 +12,7 @@
     {"id": "uv", "path": "uv.lock"}
   ],
   "schemaPaths": [
+    "packages/contracts/model-gateway/model-manifest.schema.json",
     "design/ui-change.schema.json",
     "evaluation/baseline-approval.schema.json",
     "evaluation/contracts/normalized-record.schema.json",
@@ -52,6 +53,7 @@
     "planning/enabler-change-requests/enabler-change-request.v2.schema.json",
     "planning/enabler-change-requests/enabler-change-request.v3.schema.json",
     "planning/enabler-change-requests/enabler-change-request.v4.schema.json",
+    "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
     "planning/enabler-change-requests/task-recovery-manifest.schema.json",
     "planning/governance-control-recovery/GCR-0004.B00.gcr3-runtime.schema.json",
     "planning/governance-control-recovery/governance-control-recovery-request.schema.json",

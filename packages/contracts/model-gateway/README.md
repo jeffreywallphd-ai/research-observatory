@@ -9,6 +9,12 @@ Task envelopes carry immutable content identities instead of research text.
 Provider SDK objects, credentials, local paths, network details, and model
 weights are outside this package.
 
+`model-manifest.schema.json` is the portable inventory metadata contract generated
+from Core's `ModelManifest` by `tools/core_api_contract.py`. It is separate from
+the task/result generator. Regenerate/check it with that tool's `--write`/`--check`
+options. A manifest is a declaration, never proof of installation or permission;
+see `docs/architecture/model-gateway-contracts.md#registry-authority-and-history`.
+
 Check committed generation and run focused tests with:
 
 ```powershell

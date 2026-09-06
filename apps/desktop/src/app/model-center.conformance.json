@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "1.0",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+  "referencePage": "model-center.html",
+  "routeId": "model-center",
+  "component": "apps/desktop/src/app/ModelCenterWorkspace.tsx",
+  "regions": {
+    "provider-neutral-profiles": "[data-model-provider-profiles]",
+    "local-remote-deferred-status": "[data-model-center-workspace]",
+    "task-routing": "[data-model-routing-policy]",
+    "egress-preview": "[data-model-egress-budget]",
+    "budgets": "[data-model-egress-budget]",
+    "evaluation-and-offline-policy": "[data-model-center-workspace]"
+  },
+  "interactions": {
+    "read-current-inventory": "[data-model-inventory-actions] button",
+    "inspect-versioned-history": "[data-model-history] button",
+    "return-to-current-workflow": "[data-supporting-tool] button"
+  },
+  "states": ["closed-project", "loading", "empty", "unavailable", "read-only", "historical", "runtime-stale", "task-permission-not-evaluated"],
+  "tests": [
+    "apps/desktop/src/app/ModelCenterWorkspace.test.tsx",
+    "packages/contracts/core-api/model-registry.test.ts",
+    "tests/service/test_model_registry_service.py",
+    "tests/ai/test_model_registry.py"
+  ],
+  "scope": "CAP-07.S01.T02 metadata discovery and history only. Model installation, execution, evaluation runs, task egress preview and provider setup remain unavailable; illustrative reference models and results are not shipped. Shared shell owns workflow context, theme and trust footer."
+}

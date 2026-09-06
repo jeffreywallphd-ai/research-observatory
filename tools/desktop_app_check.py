@@ -120,6 +120,7 @@ IMPLEMENTED_PRODUCT_PAGE_CONTRACTS = frozenset(
         "help-onboarding.html",
         "index.html",
         "intent-contract.html",
+        "model-center.html",
         "new-project.html",
         "project-settings.html",
         "projects.html",
@@ -283,6 +284,7 @@ def product_build_errors(repo: Path) -> list[str]:
             "CAP-03.S06.T03",
             "CAP-03.S06.T04",
             "CAP-03.S06.T05",
+            "CAP-07.S01.T02",
         ],
         "routes": ["index.html"],
         "referenceUse": "design-contract-only",
@@ -977,6 +979,7 @@ QUALIFICATION_WORKSPACES = (
     ("intent", "Research intent", ("intent-contract.html",), "accepted-intent"),
     ("tasks", "Task Center", ("task-center.html",), "populated-task-center"),
     ("audit", "Audit & lineage", ("audit-lineage.html",), "populated-lineage"),
+    ("models", "Model & Privacy Center", ("model-center.html",), "empty-model-catalog"),
     ("settings", "Project settings", ("project-settings.html",), "project-settings"),
     (
         "application-settings",
@@ -998,6 +1001,7 @@ QUALIFICATION_REQUIRED_PRIMITIVES = {
     "intent": {"card", "form", "control", "action", "grid", "notice"},
     "tasks": {"card", "control", "action", "grid"},
     "audit": {"card", "form", "control", "table", "notice"},
+    "models": {"card", "control", "action", "notice"},
     "settings": {"card", "form", "control", "action", "notice"},
     "application-settings": {"card", "form", "control", "action", "grid", "notice"},
     "diagnostics": {"card", "control", "grid", "table"},
@@ -1012,6 +1016,9 @@ QUALIFICATION_STATE_WITNESS = r"""element => ({
     .some(node => /Revision \d+ · accepted/.test(node.textContent)),
   tasks: element.querySelectorAll('.task-center-list li').length > 0,
   audit: element.querySelectorAll('.lineage-results tbody tr').length >= 10,
+  models: Boolean(element.querySelector('[data-model-provider-profiles]'))
+    && element.textContent.includes('No models are recorded')
+    && element.textContent.includes('No model runtime adapter is configured'),
   settings: element.querySelector('#privacy-network-policy')?.value === 'offline',
   'application-settings': Boolean(element.querySelector('#application-profile-name')),
   diagnostics: element.querySelectorAll('.diagnostic-table-scroll tbody tr').length > 0,
@@ -1240,7 +1247,7 @@ def product_style_qualification_errors(matrix: dict[str, Any]) -> list[str]:
     }
     raw_workspaces = matrix.get("workspaces")
     if not isinstance(raw_workspaces, list):
-        errors.append("desktop qualification must report the eight implemented workspaces")
+        errors.append("desktop qualification must report every implemented workspace")
     else:
         observed_workspaces: dict[str, dict[str, Any]] = {}
         duplicate_workspaces: set[str] = set()
@@ -2029,7 +2036,7 @@ class ProductStyleQualification:
                   const resolve = name => { probe.style.color = `var(${name})`; return getComputedStyle(probe).color; };
                   const semantic = [];
                   for (const [kind, selector] of Object.entries({
-                    card: '.ro-card,.ro-panel', form: '.ro-form', notice: '.ro-notice',
+                    card: '.ro-card,.ro-panel', form: '.ro-form', notice: '.ro-notice,.ro-notification',
                     action: '.ro-action-row', control: 'button', table: '.ro-table-region',
                     dialog: '.ro-dialog-surface', stack: '.ro-stack', grid: '.ro-grid'
                   })) {
@@ -2177,6 +2184,7 @@ def runtime_frame_errors(
             "CAP-03.S06.T03",
             "CAP-03.S06.T04",
             "CAP-03.S06.T05",
+            "CAP-07.S01.T02",
         ],
         "referenceOnlyPages": 0,
         "commandFocus": False,
@@ -2979,7 +2987,7 @@ def runtime_frame_errors(
                           if (workflowStageState === null
                             || body.expectedStageStateRevisionId !== workflowStageState.stageStateRevisionId
                             || body.expectedStageStateRevisionContentHash !== workflowStageState.revisionContentHash
-                            || !['index.html', 'project-settings.html', 'projects.html']
+                            || !['index.html', 'project-settings.html', 'projects.html', 'model-center.html']
                               .includes(body.supportingPageContractId)) {
                             throw new Error('invalid supporting workflow command');
                           }
@@ -2995,6 +3003,15 @@ def runtime_frame_errors(
                           throw new Error('unexpected workflow action');
                         }
                         responseBody = workflowProgress();
+                      } else if (request.path === '/projects/models') {
+                        if (!open || body.root !== 'C:/Research/study-one') {
+                          throw new Error('model catalog requested without open project');
+                        }
+                        responseBody = {
+                          schemaVersion: '1.0', projectId, revision: 0, latestRevision: 0, catalogHash: null,
+                          modelCount: 0, inventoryState: 'not-configured', entries: [], nextManifestId: null,
+                          history: [], nextHistoryRevision: null, executionAvailable: false
+                        };
                       } else if (request.path === '/projects/privacy') {
                         if (!open || accessMode !== 'read-write' || body.root !== 'C:/Research/study-one') {
                           throw new Error('privacy policy requested without writable project');
@@ -3081,6 +3098,7 @@ def runtime_frame_errors(
                 "Research intent",
                 "Task Center",
                 "Audit & lineage",
+                "Model & Privacy Center",
                 "Project settings",
                 "Application settings",
                 "Diagnostics & support",
@@ -3280,6 +3298,10 @@ def runtime_frame_errors(
                 "intent-contract-1" in projects.locator("main").inner_text()
                 and "Continue the current stage" in projects.locator("main").inner_text()
             )
+            open_desktop_tool(projects, "Model & Privacy Center")
+            projects.get_by_text("No models are recorded", exact=True).wait_for(state="visible", timeout=5_000)
+            qualification.record(projects, "models", "[data-model-center-workspace]")
+            projects.evaluate("window.__PRIVACY_CALLS__ = []")
             open_desktop_tool(projects, "Project settings")
             projects.locator("#privacy-network-policy").wait_for(state="visible", timeout=5_000)
             qualification.record(projects, "settings", "[data-project-settings-workspace]")
@@ -3358,6 +3380,7 @@ def runtime_frame_errors(
                   === JSON.stringify(['/workflow-profiles/catalog','/projects','/projects/open',
                     '/workflow-profiles/catalog','/projects/intent','/projects/workflow-progress',
                     '/projects/workflow-progress/commands','/projects/workflow-progress/commands',
+                    '/projects/workflow-progress/commands','/projects/models',
                     '/projects/workflow-progress/commands','/projects/workflow-progress/commands',
                     '/workflow-profiles/catalog',
                     '/projects/close','/projects/archive',
@@ -4078,7 +4101,7 @@ def runtime_frame_errors(
                     && context.includes(profile.stages[0].rationale)
                     && profile.expectedOutputs.every((output) => context.includes(output))
                     && context.includes('Quality gate · Unknown')
-                    && document.querySelectorAll('[data-all-tools] li').length === 8
+                    && document.querySelectorAll('[data-all-tools] li').length === 9
                     && !document.querySelector('a[href$=".html"]');
                 }"""
             )

@@ -22,6 +22,8 @@ from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
 from .config import CoreSettings
 from .logging import emit_log_record
 from .migrations.runner import migration_framework_projection
+from .model_catalog import ModelCatalogService
+from .model_registry_repository import sqlite_model_catalog_repository
 from .modules import default_module_registry
 from .object_store import upgrade_local_object_envelopes
 from .ports.credential_store import CredentialStoreProblem
@@ -128,6 +130,11 @@ def create_runtime_app(
         expected_authority=expected_authority,
         projects=projects,
         privacy=ProjectPrivacyService(projects, sqlite_privacy_policy_repository),
+        model_catalog=ModelCatalogService(
+            projects,
+            repository_factory=sqlite_model_catalog_repository,
+            local_actor_id=resolved_actor_id,
+        ),
         intents=ResearchIntentService(
             projects,
             repository_factory=sqlite_intent_revision_repository,

@@ -3,6 +3,7 @@ from __future__ import annotations
 import http.client
 import json
 import os
+import secrets
 import socket
 import subprocess
 import sys
@@ -32,8 +33,8 @@ from research_observatory_core.models import OperationState, ProjectProjection  
 from research_observatory_core.modules import ModuleDefinition, ModuleRegistry  # noqa: E402
 from research_observatory_core.operations import OperationRecord, OperationRegistry  # noqa: E402
 
-TOKEN = "0123456789abcdef" * 4
-OTHER_TOKEN = "fedcba9876543210" * 4
+TOKEN = secrets.token_hex(32)
+OTHER_TOKEN = secrets.token_hex(32)
 AUTHORITY = "127.0.0.1:49152"
 AUTH_HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 
@@ -173,7 +174,7 @@ class CoreApiTests(unittest.TestCase):
         )
         self.assertEqual(
             [module["moduleId"] for module in modules.json()["modules"]],
-            ["intent", "operations", "privacy", "projects", "provenance", "runtime", "workflows"],
+            ["intent", "models", "operations", "privacy", "projects", "provenance", "runtime", "workflows"],
         )
         self.assertEqual(
             capabilities.json()["capabilities"],
@@ -185,6 +186,8 @@ class CoreApiTests(unittest.TestCase):
                 "intent.read",
                 "intent.workflow-profiles",
                 "intent.workflow-progress",
+                "models.catalog.read",
+                "models.catalog.refresh",
                 "operations.cancel",
                 "operations.events",
                 "operations.read",

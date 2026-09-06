@@ -17,6 +17,8 @@ from . import CORE_API_VERSION
 from .authentication import LocalAuthenticationMiddleware
 from .config import CoreSettings
 from .logging import emit_log_record
+from .model_catalog import ModelCatalogProblem, ModelCatalogService
+from .model_registry_contracts import ModelCatalogProjection, ModelCatalogReadRequest, ModelCatalogRefreshRequest
 from .models import (
     CacheClearPreview,
     CacheClearPreviewRequest,
@@ -97,6 +99,7 @@ class RuntimeContext:
     operations: OperationRegistry
     projects: ProjectLifecycleService
     privacy: ProjectPrivacyService
+    model_catalog: ModelCatalogService
     intents: ResearchIntentService
     workflow_progress: WorkflowProgressService
     provenance: ProvenanceService
@@ -112,6 +115,7 @@ def create_app(
     operations: OperationRegistry | None = None,
     projects: ProjectLifecycleService | None = None,
     privacy: ProjectPrivacyService | None = None,
+    model_catalog: ModelCatalogService | None = None,
     intents: ResearchIntentService | None = None,
     workflow_progress: WorkflowProgressService | None = None,
     provenance: ProvenanceService | None = None,
@@ -146,6 +150,9 @@ def create_app(
             operations=resolved_operations,
             projects=resolved_projects,
             privacy=resolved_privacy,
+            model_catalog=model_catalog
+            if model_catalog is not None
+            else ModelCatalogService.unavailable(resolved_projects),
             intents=resolved_intents,
             workflow_progress=resolved_workflow_progress,
             provenance=resolved_provenance,
@@ -283,6 +290,24 @@ def create_app(
             return action()
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
+
+    def run_model_catalog_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
+        try:
+            return action()
+        except ProjectLifecycleProblem as error:
+            raise project_problem(request, error) from error
+        except ModelCatalogProblem as error:
+            raise CoreProblem(
+                problem_detail(
+                    status=error.status,
+                    code=error.code,
+                    title=error.title,
+                    detail="No model was executed and no provider request was made.",
+                    trace_id=request.state.trace_id,
+                    retryable=False,
+                    remediation="Reload the inventory in the open project. Keep prior versions for comparison.",
+                )
+            ) from None
 
     def privacy_problem(request: Request, error: PrivacyPolicyProblem) -> CoreProblem:
         return CoreProblem(
@@ -617,6 +642,35 @@ def create_app(
             lambda: runtime(request).projects.delete(
                 root=command.root,
                 confirmation=command.confirmation,
+                trace_id=request.state.trace_id,
+            ),
+        )
+
+    @app.post(
+        "/projects/models",
+        response_model=ModelCatalogProjection,
+        responses={404: {"model": ProblemDetail}, 409: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["models"],
+    )
+    def project_model_catalog(request: Request, command: ModelCatalogReadRequest) -> ModelCatalogProjection:
+        return run_model_catalog_action(request, lambda: runtime(request).model_catalog.get(command))
+
+    @app.post(
+        "/projects/models/refresh",
+        response_model=ModelCatalogProjection,
+        responses={409: {"model": ProblemDetail}, 503: {"model": ProblemDetail}},
+        tags=["models"],
+    )
+    def refresh_model_catalog(
+        request: Request,
+        command: ModelCatalogRefreshRequest,
+        idempotency_key: str = Header(alias="Idempotency-Key", pattern=r"^[0-9a-f]{32}$"),
+    ) -> ModelCatalogProjection:
+        return run_model_catalog_action(
+            request,
+            lambda: runtime(request).model_catalog.refresh(
+                command,
+                idempotency_key=idempotency_key,
                 trace_id=request.state.trace_id,
             ),
         )

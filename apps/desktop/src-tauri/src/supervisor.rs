@@ -31,6 +31,8 @@ const EXPECTED_CORE_CAPABILITIES: &[&str] = &[
     "intent.read",
     "intent.workflow-profiles",
     "intent.workflow-progress",
+    "models.catalog.read",
+    "models.catalog.refresh",
     "operations.cancel",
     "operations.events",
     "operations.read",
@@ -1736,6 +1738,64 @@ fn validate_lineage_api_request(body: &str) -> bool {
         && (1..=16).contains(&command.max_depth)
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct ModelCatalogReadBody {
+    root: String,
+    revision: Option<u32>,
+    after_manifest_id: Option<String>,
+    before_history_revision: Option<u32>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct ModelCatalogRefreshBody {
+    root: String,
+    expected_revision: u32,
+}
+
+fn validate_model_catalog_api_request(path: &str, body: &str) -> bool {
+    let keys: &[&str] = match path {
+        "/projects/models" => &[
+            "root",
+            "revision",
+            "afterManifestId",
+            "beforeHistoryRevision",
+        ],
+        "/projects/models/refresh" => &["root", "expectedRevision"],
+        _ => return false,
+    };
+    if exact_json_object(body, keys, 32_768).is_none() {
+        return false;
+    }
+    if path.ends_with("/refresh") {
+        return serde_json::from_str::<ModelCatalogRefreshBody>(body).is_ok_and(|command| {
+            canonical_project_root(&command.root) && command.expected_revision < 2_147_483_647
+        });
+    }
+    let Ok(command) = serde_json::from_str::<ModelCatalogReadBody>(body) else {
+        return false;
+    };
+    if !canonical_project_root(&command.root)
+        || ![command.revision, command.before_history_revision]
+            .iter()
+            .all(|revision| revision.is_none_or(|value| (1..=2_147_483_647).contains(&value)))
+    {
+        return false;
+    }
+    command.after_manifest_id.as_deref().is_none_or(|value| {
+        !value.is_empty()
+            && value.len() <= 128
+            && value.as_bytes()[0].is_ascii_lowercase()
+            && value.split(['.', '-']).all(|part| {
+                !part.is_empty()
+                    && part
+                        .bytes()
+                        .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit())
+            })
+    })
+}
+
 fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
@@ -1799,6 +1859,22 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
         {
             return Ok(());
         }
+    }
+    if request.method == "POST"
+        && request.if_match.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_model_catalog_api_request(&request.path, body))
+        && match request.path.as_str() {
+            "/projects/models/refresh" => request
+                .idempotency_key
+                .as_deref()
+                .is_some_and(|value| canonical_lower_hex(value, 32)),
+            _ => request.idempotency_key.is_none(),
+        }
+    {
+        return Ok(());
     }
     if request.method == "POST"
         && request.path == "/projects/provenance/lineage"
@@ -2609,7 +2685,8 @@ mod tests {
     use super::{
         CapabilityToken, CoreApiRequest, RuntimeState, RuntimeSupervisor, SupervisorInner,
         authenticated_api_request_with_cancellation, parse_api_response, semantic_version,
-        validate_api_request, validate_handshake, version_response_is_compatible,
+        validate_api_request, validate_handshake, validate_model_catalog_api_request,
+        version_response_is_compatible,
     };
     use std::collections::VecDeque;
     use std::io::Read;
@@ -2623,7 +2700,7 @@ mod tests {
                 "{{\"protocolVersion\":\"1.0\",\"buildId\":\"0.1.0\",\"pid\":{},",
                 "\"host\":\"127.0.0.1\",\"port\":49152,",
                 "\"nonce\":\"0123456789abcdef0123456789abcdef\",",
-                "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"intent.workflow-profiles\",\"intent.workflow-progress\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\",\"workflows.cancel\",\"workflows.human-decisions\",\"workflows.read\",\"workflows.retry\"],",
+                "\"capabilities\":[\"intent.acceptance\",\"intent.drafts\",\"intent.impact-preview\",\"intent.policy-evaluation\",\"intent.read\",\"intent.workflow-profiles\",\"intent.workflow-progress\",\"models.catalog.read\",\"models.catalog.refresh\",\"operations.cancel\",\"operations.events\",\"operations.read\",\"privacy.cache-cleanup\",\"privacy.policy\",\"projects.lifecycle\",\"provenance.lineage.read\",\"runtime.contract\",\"runtime.status\",\"workflows.cancel\",\"workflows.human-decisions\",\"workflows.read\",\"workflows.retry\"],",
                 "\"databaseCompatibility\":{{\"minimum\":\"0.1.0\",",
                 "\"maximumExclusive\":\"0.2.0\"}},",
                 "\"diagnosticCode\":\"RO-CORE-STARTING\"}}\n"
@@ -2995,6 +3072,47 @@ mod tests {
                 .iter()
                 .all(|value| value.is_ascii_digit() || (b'a'..=b'f').contains(value))
         );
+    }
+
+    #[test]
+    fn model_catalog_transport_rejects_forged_authority_and_preserves_bounded_routes() {
+        let read = CoreApiRequest {
+            method: "POST".to_owned(), path: "/projects/models".to_owned(),
+            body: Some(r#"{"root":"C:/Research/fixture","revision":null,"afterManifestId":null,"beforeHistoryRevision":null}"#.to_owned()),
+            if_match: None, idempotency_key: None,
+        };
+        assert!(validate_api_request(&read).is_ok());
+        let refresh = CoreApiRequest {
+            method: "POST".to_owned(),
+            path: "/projects/models/refresh".to_owned(),
+            body: Some(r#"{"root":"C:/Research/fixture","expectedRevision":0}"#.to_owned()),
+            if_match: None,
+            idempotency_key: Some("a".repeat(32)),
+        };
+        assert!(validate_api_request(&refresh).is_ok());
+        for body in [
+            r#"{"root":"C:/Research/fixture","expectedRevision":0,"actorId":"forged"}"#,
+            r#"{"root":"C:/Research/fixture","expectedRevision":0,"available":true}"#,
+            r#"{"root":"C:/Research/fixture","expectedRevision":0,"manifests":[]}"#,
+            r#"{"root":"C:/Research/fixture","expectedRevision":true}"#,
+            r#"{"root":"C:/Research/fixture","expectedRevision":-1}"#,
+            r#"{"root":"C:/Research/fixture","expectedRevision":0,"expectedRevision":1}"#,
+        ] {
+            assert!(!validate_model_catalog_api_request(
+                "/projects/models/refresh",
+                body
+            ));
+        }
+        assert!(!validate_model_catalog_api_request(
+            "/projects/models/install",
+            "{}"
+        ));
+        let mut no_key = refresh;
+        no_key.idempotency_key = None;
+        assert!(validate_api_request(&no_key).is_err());
+        let mut wrong_method = read;
+        wrong_method.method = "GET".to_owned();
+        assert!(validate_api_request(&wrong_method).is_err());
     }
 
     #[test]

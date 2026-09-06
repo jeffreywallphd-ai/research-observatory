@@ -1590,6 +1590,544 @@
         "title": "IntentWorkspaceProjection",
         "type": "object"
       },
+      "ModelAccelerator": {
+        "enum": [
+          "none",
+          "gpu"
+        ],
+        "type": "string"
+      },
+      "ModelCatalogEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "availability": {
+            "enum": [
+              "ready",
+              "unavailable",
+              "unknown",
+              "stale"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "eligibility": {
+            "const": "not-evaluated",
+            "default": "not-evaluated",
+            "title": "Eligibility",
+            "type": "string"
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/ModelManifest"
+          },
+          "manifestHash": {
+            "$ref": "#/components/schemas/RegistryHash"
+          },
+          "qualifiedTaskKinds": {
+            "items": {
+              "$ref": "#/components/schemas/ModelTaskKind"
+            },
+            "maxItems": 8,
+            "title": "Qualifiedtaskkinds",
+            "type": "array"
+          },
+          "reasonCodes": {
+            "items": {
+              "$ref": "#/components/schemas/RegistryCode"
+            },
+            "maxItems": 32,
+            "title": "Reasoncodes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "manifest",
+          "manifestHash",
+          "availability",
+          "qualifiedTaskKinds",
+          "reasonCodes"
+        ],
+        "title": "ModelCatalogEntry",
+        "type": "object"
+      },
+      "ModelCatalogProjection": {
+        "additionalProperties": false,
+        "properties": {
+          "catalogHash": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryHash"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/ModelCatalogEntry"
+            },
+            "maxItems": 50,
+            "title": "Entries",
+            "type": "array"
+          },
+          "executionAvailable": {
+            "const": false,
+            "default": false,
+            "title": "Executionavailable",
+            "type": "boolean"
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/ModelCatalogSummary"
+            },
+            "maxItems": 20,
+            "title": "History",
+            "type": "array"
+          },
+          "inventoryState": {
+            "enum": [
+              "not-configured",
+              "available",
+              "unavailable"
+            ],
+            "title": "Inventorystate",
+            "type": "string"
+          },
+          "latestRevision": {
+            "$ref": "#/components/schemas/RegistryRevision"
+          },
+          "modelCount": {
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Modelcount",
+            "type": "integer"
+          },
+          "nextHistoryRevision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryRevision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextManifestId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryCode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "pattern": "^[0-9a-f-]{36}$",
+            "title": "Projectid",
+            "type": "string"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/RegistryRevision"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "revision",
+          "latestRevision",
+          "catalogHash",
+          "modelCount",
+          "inventoryState",
+          "entries",
+          "nextManifestId",
+          "history",
+          "nextHistoryRevision"
+        ],
+        "title": "ModelCatalogProjection",
+        "type": "object"
+      },
+      "ModelCatalogReadRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "afterManifestId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryCode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "beforeHistoryRevision": {
+            "anyOf": [
+              {
+                "maximum": 2147483647.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Beforehistoryrevision"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "maximum": 2147483647.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ],
+        "title": "ModelCatalogReadRequest",
+        "type": "object"
+      },
+      "ModelCatalogRefreshRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedRevision": {
+            "maximum": 2147483646.0,
+            "minimum": 0.0,
+            "title": "Expectedrevision",
+            "type": "integer"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "expectedRevision"
+        ],
+        "title": "ModelCatalogRefreshRequest",
+        "type": "object"
+      },
+      "ModelCatalogSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "catalogHash": {
+            "$ref": "#/components/schemas/RegistryHash"
+          },
+          "modelCount": {
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Modelcount",
+            "type": "integer"
+          },
+          "occurredAt": {
+            "$ref": "#/components/schemas/RegistryTimestamp"
+          },
+          "previousHash": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryHash"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recordHash": {
+            "$ref": "#/components/schemas/RegistryHash"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/RegistryRevision"
+          }
+        },
+        "required": [
+          "revision",
+          "catalogHash",
+          "recordHash",
+          "previousHash",
+          "occurredAt",
+          "modelCount"
+        ],
+        "title": "ModelCatalogSummary",
+        "type": "object"
+      },
+      "ModelCost": {
+        "maximum": 1000000000000.0,
+        "minimum": 0.0,
+        "type": "integer"
+      },
+      "ModelDeployment": {
+        "enum": [
+          "local",
+          "remote",
+          "institutional"
+        ],
+        "type": "string"
+      },
+      "ModelExecutionIdentity": {
+        "additionalProperties": false,
+        "properties": {
+          "configurationHash": {
+            "$ref": "#/components/schemas/RegistryHash"
+          },
+          "evaluationId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryCode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evaluationVersion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RegistryVersion"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "modelId": {
+            "$ref": "#/components/schemas/RegistryCode"
+          },
+          "modelVersion": {
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$",
+            "title": "Modelversion",
+            "type": "string"
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/RegistryCode"
+          },
+          "providerVersion": {
+            "$ref": "#/components/schemas/RegistryVersion"
+          },
+          "runtimeId": {
+            "$ref": "#/components/schemas/RegistryCode"
+          },
+          "runtimeVersion": {
+            "$ref": "#/components/schemas/RegistryVersion"
+          }
+        },
+        "required": [
+          "providerId",
+          "providerVersion",
+          "modelId",
+          "modelVersion",
+          "runtimeId",
+          "runtimeVersion",
+          "configurationHash",
+          "evaluationId",
+          "evaluationVersion"
+        ],
+        "title": "ModelExecutionIdentity",
+        "type": "object"
+      },
+      "ModelManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "accelerator": {
+            "$ref": "#/components/schemas/ModelAccelerator"
+          },
+          "allowedDataClasses": {
+            "items": {
+              "$ref": "#/components/schemas/RegistryDataClass"
+            },
+            "maxItems": 4,
+            "title": "Alloweddataclasses",
+            "type": "array"
+          },
+          "capabilities": {
+            "items": {
+              "$ref": "#/components/schemas/ModelTaskKind"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Capabilities",
+            "type": "array"
+          },
+          "contextTokens": {
+            "maximum": 11000000.0,
+            "minimum": 1.0,
+            "title": "Contexttokens",
+            "type": "integer"
+          },
+          "costMicrounitsPerThousandTokens": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ModelCost"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "declaredAvailability": {
+            "enum": [
+              "available",
+              "unavailable",
+              "unknown"
+            ],
+            "title": "Declaredavailability",
+            "type": "string"
+          },
+          "deployment": {
+            "$ref": "#/components/schemas/ModelDeployment"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/RegistryCode"
+            },
+            "maxItems": 32,
+            "title": "Features",
+            "type": "array"
+          },
+          "identity": {
+            "$ref": "#/components/schemas/ModelExecutionIdentity"
+          },
+          "licenseId": {
+            "$ref": "#/components/schemas/RegistryCode"
+          },
+          "manifestId": {
+            "$ref": "#/components/schemas/RegistryCode"
+          },
+          "maxOutputTokens": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Maxoutputtokens",
+            "type": "integer"
+          },
+          "minimumMemoryMiB": {
+            "maximum": 10000000.0,
+            "minimum": 0.0,
+            "title": "Minimummemorymib",
+            "type": "integer"
+          },
+          "modalities": {
+            "items": {
+              "$ref": "#/components/schemas/ModelModality"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Modalities",
+            "type": "array"
+          },
+          "platforms": {
+            "items": {
+              "$ref": "#/components/schemas/ModelPlatform"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Platforms",
+            "type": "array"
+          },
+          "qualityTier": {
+            "enum": [
+              "unrated",
+              "economy",
+              "balanced",
+              "quality"
+            ],
+            "title": "Qualitytier",
+            "type": "string"
+          },
+          "retired": {
+            "title": "Retired",
+            "type": "boolean"
+          },
+          "revision": {
+            "maximum": 2147483647.0,
+            "minimum": 1.0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "supportsCitations": {
+            "title": "Supportscitations",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "manifestId",
+          "revision",
+          "identity",
+          "deployment",
+          "licenseId",
+          "capabilities",
+          "features",
+          "modalities",
+          "contextTokens",
+          "maxOutputTokens",
+          "supportsCitations",
+          "platforms",
+          "minimumMemoryMiB",
+          "accelerator",
+          "qualityTier",
+          "allowedDataClasses",
+          "costMicrounitsPerThousandTokens",
+          "declaredAvailability",
+          "retired"
+        ],
+        "title": "ModelManifest",
+        "type": "object"
+      },
+      "ModelModality": {
+        "enum": [
+          "text",
+          "image",
+          "audio",
+          "video"
+        ],
+        "type": "string"
+      },
+      "ModelPlatform": {
+        "enum": [
+          "windows-x64",
+          "macos-arm64",
+          "linux-x64",
+          "linux-arm64"
+        ],
+        "type": "string"
+      },
+      "ModelTaskKind": {
+        "enum": [
+          "embedding",
+          "reranking",
+          "classification",
+          "nli",
+          "structured-extraction",
+          "generation",
+          "moderation",
+          "tool-call"
+        ],
+        "type": "string"
+      },
       "ModuleResponse": {
         "additionalProperties": false,
         "properties": {
@@ -3178,6 +3716,38 @@
         ],
         "title": "RecalculationScheduleRequest",
         "type": "object"
+      },
+      "RegistryCode": {
+        "maxLength": 128,
+        "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+        "type": "string"
+      },
+      "RegistryDataClass": {
+        "enum": [
+          "public",
+          "internal",
+          "confidential",
+          "restricted"
+        ],
+        "type": "string"
+      },
+      "RegistryHash": {
+        "pattern": "^sha256:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "RegistryRevision": {
+        "maximum": 2147483647.0,
+        "minimum": 0.0,
+        "type": "integer"
+      },
+      "RegistryTimestamp": {
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+        "type": "string"
+      },
+      "RegistryVersion": {
+        "maxLength": 128,
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$",
+        "type": "string"
       },
       "RemoteModelApproval": {
         "enum": [
@@ -5402,6 +5972,150 @@
         "summary": "Preview Intent",
         "tags": [
           "intent"
+        ]
+      }
+    },
+    "/projects/models": {
+      "post": {
+        "operationId": "project_model_catalog_projects_models_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelCatalogReadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelCatalogProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Project Model Catalog",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/projects/models/refresh": {
+      "post": {
+        "operationId": "refresh_model_catalog_projects_models_refresh_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{32}$",
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModelCatalogRefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelCatalogProjection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Refresh Model Catalog",
+        "tags": [
+          "models"
         ]
       }
     },

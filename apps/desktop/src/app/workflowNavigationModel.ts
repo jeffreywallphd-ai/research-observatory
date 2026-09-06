@@ -11,6 +11,7 @@ export const IMPLEMENTED_WORKSPACES = Object.freeze([
   { id: "intent", label: "Research intent", pageContractIds: ["intent-contract.html"] },
   { id: "tasks", label: "Task Center", pageContractIds: ["task-center.html"] },
   { id: "audit", label: "Audit & lineage", pageContractIds: ["audit-lineage.html"] },
+  { id: "models", label: "Model & Privacy Center", pageContractIds: ["model-center.html"] },
   { id: "settings", label: "Project settings", pageContractIds: ["project-settings.html"] },
   { id: "application-settings", label: "Application settings", pageContractIds: ["application-settings.html"] },
   { id: "diagnostics", label: "Diagnostics & support", pageContractIds: ["help-onboarding.html"] },

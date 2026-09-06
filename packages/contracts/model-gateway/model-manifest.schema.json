@@ -1,0 +1,290 @@
+{
+  "$defs": {
+    "ModelAccelerator": {
+      "enum": [
+        "none",
+        "gpu"
+      ],
+      "type": "string"
+    },
+    "ModelCost": {
+      "maximum": 1000000000000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "ModelDeployment": {
+      "enum": [
+        "local",
+        "remote",
+        "institutional"
+      ],
+      "type": "string"
+    },
+    "ModelExecutionIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "configurationHash": {
+          "$ref": "#/$defs/RegistryHash"
+        },
+        "evaluationId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RegistryCode"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evaluationVersion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RegistryVersion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "modelId": {
+          "$ref": "#/$defs/RegistryCode"
+        },
+        "modelVersion": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$",
+          "title": "Modelversion",
+          "type": "string"
+        },
+        "providerId": {
+          "$ref": "#/$defs/RegistryCode"
+        },
+        "providerVersion": {
+          "$ref": "#/$defs/RegistryVersion"
+        },
+        "runtimeId": {
+          "$ref": "#/$defs/RegistryCode"
+        },
+        "runtimeVersion": {
+          "$ref": "#/$defs/RegistryVersion"
+        }
+      },
+      "required": [
+        "providerId",
+        "providerVersion",
+        "modelId",
+        "modelVersion",
+        "runtimeId",
+        "runtimeVersion",
+        "configurationHash",
+        "evaluationId",
+        "evaluationVersion"
+      ],
+      "title": "ModelExecutionIdentity",
+      "type": "object"
+    },
+    "ModelModality": {
+      "enum": [
+        "text",
+        "image",
+        "audio",
+        "video"
+      ],
+      "type": "string"
+    },
+    "ModelPlatform": {
+      "enum": [
+        "windows-x64",
+        "macos-arm64",
+        "linux-x64",
+        "linux-arm64"
+      ],
+      "type": "string"
+    },
+    "ModelTaskKind": {
+      "enum": [
+        "embedding",
+        "reranking",
+        "classification",
+        "nli",
+        "structured-extraction",
+        "generation",
+        "moderation",
+        "tool-call"
+      ],
+      "type": "string"
+    },
+    "RegistryCode": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "RegistryDataClass": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ],
+      "type": "string"
+    },
+    "RegistryHash": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "RegistryVersion": {
+      "maxLength": 128,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "accelerator": {
+      "$ref": "#/$defs/ModelAccelerator"
+    },
+    "allowedDataClasses": {
+      "items": {
+        "$ref": "#/$defs/RegistryDataClass"
+      },
+      "maxItems": 4,
+      "title": "Alloweddataclasses",
+      "type": "array"
+    },
+    "capabilities": {
+      "items": {
+        "$ref": "#/$defs/ModelTaskKind"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Capabilities",
+      "type": "array"
+    },
+    "contextTokens": {
+      "maximum": 11000000,
+      "minimum": 1,
+      "title": "Contexttokens",
+      "type": "integer"
+    },
+    "costMicrounitsPerThousandTokens": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ModelCost"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "declaredAvailability": {
+      "enum": [
+        "available",
+        "unavailable",
+        "unknown"
+      ],
+      "title": "Declaredavailability",
+      "type": "string"
+    },
+    "deployment": {
+      "$ref": "#/$defs/ModelDeployment"
+    },
+    "features": {
+      "items": {
+        "$ref": "#/$defs/RegistryCode"
+      },
+      "maxItems": 32,
+      "title": "Features",
+      "type": "array"
+    },
+    "identity": {
+      "$ref": "#/$defs/ModelExecutionIdentity"
+    },
+    "licenseId": {
+      "$ref": "#/$defs/RegistryCode"
+    },
+    "manifestId": {
+      "$ref": "#/$defs/RegistryCode"
+    },
+    "maxOutputTokens": {
+      "maximum": 1000000,
+      "minimum": 0,
+      "title": "Maxoutputtokens",
+      "type": "integer"
+    },
+    "minimumMemoryMiB": {
+      "maximum": 10000000,
+      "minimum": 0,
+      "title": "Minimummemorymib",
+      "type": "integer"
+    },
+    "modalities": {
+      "items": {
+        "$ref": "#/$defs/ModelModality"
+      },
+      "maxItems": 4,
+      "minItems": 1,
+      "title": "Modalities",
+      "type": "array"
+    },
+    "platforms": {
+      "items": {
+        "$ref": "#/$defs/ModelPlatform"
+      },
+      "maxItems": 4,
+      "minItems": 1,
+      "title": "Platforms",
+      "type": "array"
+    },
+    "qualityTier": {
+      "enum": [
+        "unrated",
+        "economy",
+        "balanced",
+        "quality"
+      ],
+      "title": "Qualitytier",
+      "type": "string"
+    },
+    "retired": {
+      "title": "Retired",
+      "type": "boolean"
+    },
+    "revision": {
+      "maximum": 2147483647,
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "supportsCitations": {
+      "title": "Supportscitations",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "manifestId",
+    "revision",
+    "identity",
+    "deployment",
+    "licenseId",
+    "capabilities",
+    "features",
+    "modalities",
+    "contextTokens",
+    "maxOutputTokens",
+    "supportsCitations",
+    "platforms",
+    "minimumMemoryMiB",
+    "accelerator",
+    "qualityTier",
+    "allowedDataClasses",
+    "costMicrounitsPerThousandTokens",
+    "declaredAvailability",
+    "retired"
+  ],
+  "title": "ModelManifest",
+  "type": "object"
+}

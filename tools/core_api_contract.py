@@ -53,7 +53,7 @@ def _interfaces(openapi: dict[str, Any]) -> str:
         schema = schemas[name]
         if not isinstance(schema, dict):
             raise ValueError(f"OpenAPI schema {name} must be an object")
-        if "enum" in schema:
+        if "enum" in schema or schema.get("type") in {"string", "integer", "number", "boolean", "null", "array"}:
             blocks.append(f"export type {name} = {_schema_type(schema)};\n")
             continue
         properties = schema.get("properties")
@@ -961,6 +961,126 @@ function decodeDeletionDisclosure(value: unknown): DeletionDisclosure | null {
   return candidate as unknown as DeletionDisclosure;
 }
 
+function registryOwnedValue(value: unknown): unknown {
+  let remaining = 80000;
+  function own(item: unknown, depth: number): unknown {
+    if (--remaining < 0 || depth > 12) throw new Error("registry-value-bound");
+    if (item === null || typeof item === "string" || typeof item === "boolean") return item;
+    if (typeof item === "number" && Number.isSafeInteger(item)) return item;
+    if (typeof item !== "object" || item === null) throw new Error("registry-value-type");
+    const prototype = Object.getPrototypeOf(item);
+    if (Array.isArray(item)) {
+      if (prototype !== Array.prototype || item.length > 1000) throw new Error("registry-array-bound");
+      const descriptors = Object.getOwnPropertyDescriptors(item);
+      if (Reflect.ownKeys(item).length !== item.length + 1) throw new Error("registry-array-shape");
+      return Object.freeze(Array.from({ length: item.length }, (_, index) => {
+        const descriptor = descriptors[String(index)];
+        if (!descriptor || !("value" in descriptor)) throw new Error("registry-array-accessor");
+        return own(descriptor.value, depth + 1);
+      }));
+    }
+    if (prototype !== Object.prototype && prototype !== null) throw new Error("registry-object-prototype");
+    const owned: Record<string, unknown> = Object.create(null);
+    const descriptors = Object.getOwnPropertyDescriptors(item);
+    for (const key of Reflect.ownKeys(item)) {
+      if (typeof key !== "string" || ["__proto__", "prototype", "constructor"].includes(key)) throw new Error("registry-object-key");
+      const descriptor = descriptors[key];
+      if (!descriptor || !("value" in descriptor) || !descriptor.enumerable) throw new Error("registry-object-accessor");
+      owned[key] = own(descriptor.value, depth + 1);
+    }
+    return Object.freeze(owned);
+  }
+  return own(value, 0);
+}
+
+function registryCode(value: unknown): value is string {
+  return typeof value === "string" && value.length <= 128 && /^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/.test(value);
+}
+
+function registryEnum(value: unknown, choices: readonly string[]): boolean {
+  return typeof value === "string" && choices.includes(value);
+}
+
+function registrySet(value: unknown, choices: readonly string[] | null, maximum: number, minimum = 0): value is readonly string[] {
+  return Array.isArray(value) && value.length >= minimum && value.length <= maximum
+    && value.every((item, index) => registryCode(item) && (choices === null || choices.includes(item))
+      && (index === 0 || value[index - 1] < item));
+}
+
+const REGISTRY_TASK_KINDS = ["embedding", "reranking", "classification", "nli", "structured-extraction", "generation", "moderation", "tool-call"];
+const REGISTRY_MODALITIES = ["text", "image", "audio", "video"];
+
+function registryManifest(value: unknown): value is ModelManifest {
+  const item = record(value);
+  if (!item || !exactKeys(item, ["schemaVersion", "manifestId", "revision", "identity", "deployment", "licenseId",
+    "capabilities", "features", "modalities", "contextTokens", "maxOutputTokens", "supportsCitations", "platforms",
+    "minimumMemoryMiB", "accelerator", "qualityTier", "allowedDataClasses", "costMicrounitsPerThousandTokens",
+    "declaredAvailability", "retired"])) return false;
+  const identity = record(item.identity);
+  if (!identity || !exactKeys(identity, ["providerId", "providerVersion", "modelId", "modelVersion", "runtimeId",
+    "runtimeVersion", "configurationHash", "evaluationId", "evaluationVersion"])) return false;
+  const version = (value: unknown): boolean => typeof value === "string" && value.length <= 128
+    && /^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$/.test(value);
+  if (!registryCode(identity.providerId) || !registryCode(identity.modelId) || !registryCode(identity.runtimeId)
+    || !version(identity.providerVersion) || !version(identity.runtimeVersion) || !contentHash(identity.configurationHash)
+    || typeof identity.modelVersion !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$/.test(identity.modelVersion)
+    || !((identity.evaluationId === null && identity.evaluationVersion === null)
+      || (registryCode(identity.evaluationId) && version(identity.evaluationVersion)))) return false;
+  return item.schemaVersion === "1.0" && registryCode(item.manifestId) && integer(item.revision, 1, 2147483647)
+    && registryEnum(item.deployment, ["local", "remote", "institutional"]) && registryCode(item.licenseId)
+    && registrySet(item.capabilities, REGISTRY_TASK_KINDS, 8, 1) && registrySet(item.features, null, 32)
+    && registrySet(item.modalities, REGISTRY_MODALITIES, 4, 1)
+    && integer(item.contextTokens, 1, 11000000) && integer(item.maxOutputTokens, 0, 1000000)
+    && typeof item.supportsCitations === "boolean" && typeof item.retired === "boolean"
+    && registrySet(item.platforms, ["windows-x64", "macos-arm64", "linux-x64", "linux-arm64"], 4, 1)
+    && integer(item.minimumMemoryMiB, 0, 10000000) && registryEnum(item.accelerator, ["none", "gpu"])
+    && registryEnum(item.qualityTier, ["unrated", "economy", "balanced", "quality"])
+    && registrySet(item.allowedDataClasses, ["public", "internal", "confidential", "restricted"], 4)
+    && (item.costMicrounitsPerThousandTokens === null || integer(item.costMicrounitsPerThousandTokens, 0, 1000000000000))
+    && registryEnum(item.declaredAvailability, ["available", "unavailable", "unknown"]);
+}
+
+export function decodeModelCatalogProjection(value: unknown): ModelCatalogProjection | null {
+  let item: Readonly<Record<string, unknown>> | null;
+  try { item = record(registryOwnedValue(value)); } catch { return null; }
+  if (!item || !exactKeys(item, ["schemaVersion", "projectId", "revision", "latestRevision", "catalogHash", "modelCount",
+    "inventoryState", "entries", "nextManifestId", "history", "nextHistoryRevision", "executionAvailable"])) return null;
+  if (item.schemaVersion !== "1.0" || !canonicalProjectId(item.projectId) || !integer(item.revision, 0, 2147483647)
+    || !integer(item.latestRevision, item.revision as number, 2147483647) || !integer(item.modelCount, 0, 1000)
+    || (item.revision === 0 ? item.catalogHash !== null || item.latestRevision !== 0 || item.modelCount !== 0 : !contentHash(item.catalogHash))
+    || !registryEnum(item.inventoryState, ["not-configured", "available", "unavailable"]) || item.executionAvailable !== false
+    || !Array.isArray(item.entries) || item.entries.length > 50 || item.entries.length > Number(item.modelCount)
+    || !Array.isArray(item.history) || item.history.length > 20) return null;
+  let previousId = "";
+  for (const raw of item.entries) {
+    const entry = record(raw);
+    if (!entry || !exactKeys(entry, ["manifest", "manifestHash", "availability", "qualifiedTaskKinds", "reasonCodes", "eligibility"])
+      || !registryManifest(entry.manifest) || entry.manifest.manifestId <= previousId
+      || entry.manifestHash !== `sha256:${sha256Hex(canonicalContractJson(entry.manifest))}`
+      || !registryEnum(entry.availability, ["ready", "unavailable", "unknown", "stale"]) || entry.eligibility !== "not-evaluated"
+      || !registrySet(entry.qualifiedTaskKinds, REGISTRY_TASK_KINDS, 8)
+      || !registrySet(entry.reasonCodes, null, 32) || !entry.reasonCodes.includes("task-policy-check-required")
+      || entry.qualifiedTaskKinds.some((kind) => !(entry.manifest as ModelManifest).capabilities.includes(kind as ModelTaskKind))
+      || (entry.qualifiedTaskKinds.length > 0 && (entry.availability !== "ready" || entry.manifest.identity.evaluationId === null))) return null;
+    previousId = entry.manifest.manifestId;
+  }
+  if (item.nextManifestId !== null && (!registryCode(item.nextManifestId) || item.entries.length !== 50 || item.nextManifestId !== previousId)) return null;
+  let previousRevision = Number(item.latestRevision) + 1;
+  for (const raw of item.history) {
+    const summary = record(raw);
+    if (!summary || !exactKeys(summary, ["revision", "catalogHash", "recordHash", "previousHash", "occurredAt", "modelCount"])
+      || !integer(summary.revision, 1, previousRevision - 1) || !contentHash(summary.catalogHash) || !contentHash(summary.recordHash)
+      || (summary.revision === 1 ? summary.previousHash !== null : !contentHash(summary.previousHash))
+      || !integer(summary.modelCount, 0, 1000) || typeof summary.occurredAt !== "string"
+      || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(summary.occurredAt) || !Number.isFinite(Date.parse(summary.occurredAt))
+      || (summary.revision === item.revision && (summary.catalogHash !== item.catalogHash || summary.modelCount !== item.modelCount))) return null;
+    previousRevision = Number(summary.revision);
+  }
+  if (item.nextHistoryRevision !== null && (!integer(item.nextHistoryRevision, 2, Number(item.latestRevision))
+    || item.history.length === 0 || item.nextHistoryRevision !== previousRevision)) return null;
+  return item as unknown as ModelCatalogProjection;
+}
+
 export function decodePrivacyPolicyProjection(value: unknown): PrivacyPolicyProjection | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
@@ -1519,6 +1639,22 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         ifMatch: null, idempotencyKey,
       }, decodeWorkflowProgressProjection);
     },
+    async modelCatalog(command: ModelCatalogReadRequest): Promise<ModelCatalogProjection> {
+      if (!projectRoot(command.root) || (command.revision !== null && !integer(command.revision, 1, 2147483647))
+        || (command.afterManifestId !== null && !registryCode(command.afterManifestId))
+        || (command.beforeHistoryRevision !== null && !integer(command.beforeHistoryRevision, 1, 2147483647))) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, { method: "POST", path: "/projects/models", body: JSON.stringify({
+        root: command.root, revision: command.revision, afterManifestId: command.afterManifestId,
+        beforeHistoryRevision: command.beforeHistoryRevision,
+      }), ifMatch: null, idempotencyKey: null }, decodeModelCatalogProjection);
+    },
+    async refreshModelCatalog(command: ModelCatalogRefreshRequest, idempotencyKey: string): Promise<ModelCatalogProjection> {
+      if (!projectRoot(command.root) || !integer(command.expectedRevision, 0, 2147483646)
+        || !/^[0-9a-f]{32}$/.test(idempotencyKey)) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, { method: "POST", path: "/projects/models/refresh",
+        body: JSON.stringify({ root: command.root, expectedRevision: command.expectedRevision }),
+        ifMatch: null, idempotencyKey }, decodeModelCatalogProjection);
+    },
     async privacy(command: ProjectPrivacyRequest): Promise<PrivacyPolicyProjection> {
       return await requestJson(transport, {
         method: "POST", path: "/projects/privacy", body: projectBody(command),
@@ -1790,7 +1926,8 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
     header = (
         "// Generated by tools/core_api_contract.py; DO NOT EDIT.\n"
         f"export const CORE_API_GENERATOR_VERSION = {json.dumps(GENERATOR_VERSION)} as const;\n"
-        f"export const CORE_API_OPENAPI_SHA256 = {json.dumps(digest)} as const;\n"
+        f"const schemaDigest = {json.dumps(digest)} as const;\n"
+        "export const CORE_API_OPENAPI_SHA256 = schemaDigest;\n"
         f"export const CORE_API_WORKFLOW_PROFILE_PROJECTION_SHA256 = {json.dumps(workflow_profile_projection_sha256)} as const;\n"
         'export const CORE_API_CLIENT_VERSION = "1.0.0" as const;\n'
         f"export type CoreApiOperationId = {operation_union};\n\n"
@@ -1803,9 +1940,13 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
     sys.path.insert(0, str(source))
     try:
         from research_observatory_core.contract import canonical_openapi_bytes
+        from research_observatory_core.model_registry_contracts import ModelManifest
         from research_observatory_core.research_intents import approved_workflow_catalog_projection
 
         openapi = canonical_openapi_bytes()
+        manifest_schema = (
+            json.dumps(ModelManifest.model_json_schema(by_alias=True), indent=2, sort_keys=True) + "\n"
+        ).encode()
         workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)
         workflow_profile_projection_bytes = json.dumps(
             workflow_profile_projection,
@@ -1817,6 +1958,7 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
     finally:
         sys.path.remove(str(source))
     return {
+        repo / "packages" / "contracts" / "model-gateway" / "model-manifest.schema.json": manifest_schema,
         repo / "packages" / "contracts" / "core-api" / "openapi.json": openapi,
         repo / "packages" / "contracts" / "core-api" / "generated.ts": render_typescript(
             openapi,

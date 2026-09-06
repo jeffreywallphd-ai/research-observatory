@@ -9,8 +9,9 @@ generator version, exposes a deployment-neutral transport port, strictly decodes
 untrusted responses, and implements compatibility, problem-detail, pagination,
 cancellation, and bounded SSE replay calls.
 
-These contracts contain no OS paths, socket assignment, credentials, research
-content, provider types, or deployment-specific framework objects. Version or
+Portable health/readiness contracts contain no OS paths, socket assignment,
+credentials, research content or provider objects. Local project commands carry
+bounded root selectors; native transport details remain outside them. Version or
 semantic breaking changes require the compatibility and ADR controls declared
 in the repository architecture.
 
@@ -46,3 +47,13 @@ fact so an identical retry can replay across process restart without creating a
 second revision.
 The current in-memory operation registry is an integration seam only—CAP-03 owns
 durable workflow state and creation behavior.
+
+Model catalog calls are authenticated POST `/projects/models` (read) and
+`/projects/models/refresh` (write, mandatory 32-hex `Idempotency-Key`). They use
+the native route allowlist and existing lifecycle/compatibility boundary. Reads
+page at most 50 manifests and 20 history summaries; refresh accepts only project
+root and expected revision, never renderer-provided models or authority. The
+client owns and validates nested metadata, manifest hashes, revision/cursor
+consistency and explicit non-execution state. Core-owned actor and audit/idempotency
+identities remain in protected storage, not renderer projections. These local
+project commands contain a bounded root selector, unlike portable model tasks.

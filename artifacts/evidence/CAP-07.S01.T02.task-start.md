@@ -77,3 +77,34 @@ API/client, build/type/lint and focused UI paths. Slice review adds integrated
 routing/adversarial proof with CAP-07.S01.T03. Native application, packaging,
 cross-capability and full-profile qualification remain required at W1 exit;
 no mock or browser check will be relabeled as native proof.
+
+## Implementation closure notes
+
+The task adds an opt-in shared wrapping utility after a long-identifier reflow
+failure; it preserves complete metadata without new page-specific spacing.
+The existing desktop verifier now observes the shared Notification primitive,
+ninth tool, additional context-bound requests and honest empty catalog state.
+No previous required workspace/primitive or negative assertion is removed.
+Native/benchmark capability inventories and generated product identity include
+the two new catalog operations.
+
+Quality scope registers all ten new Python files. The existing build-input
+inventory gains the new manifest schema and the already-existing, previously
+omitted `enabler-change-request.v4.1.schema.json`. This is a mechanical inventory
+correction against predecessor `b643ecbd`, not a schema or approval change; its
+only intended delta is complete schema coverage, checked against discovery and
+included in the independent review.
+
+Draft checks exposed stale generated build inputs, outdated eight-tool/request
+expectations and omitted shared Notification measurement; these were corrected
+before commit-bound qualification. A broader exploratory mypy invocation also
+reported an unchanged typing error at `selective_recalculation.py:834`; this task
+does not alter it or claim full-service type qualification. Fresh affected checks
+and the later Wave matrix remain separate obligations.
+
+The unchanged commit guard rejected a new generated public schema digest and a
+literal synthetic test token as possible credentials. The digest was verified
+against exact OpenAPI bytes; generation now names the public digest explicitly
+and preserves the existing exported constant as an alias. The new and affected
+Core API tests use ephemeral tokens instead of committed token literals. Scanner rules,
+sealed admissions, hook inputs and the privacy baseline remain unchanged.
