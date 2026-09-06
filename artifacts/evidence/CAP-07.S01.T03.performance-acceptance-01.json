@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "owner-accepted-task-performance-exception",
+  "taskId": "CAP-07.S01.T03",
+  "recordedAt": "2026-09-06T15:42:05Z",
+  "ownerStatement": "We will allow some rounding error and round down in this case. Please consider the task complete.",
+  "decision": "ACCEPTED_FOR_TASK_COMPLETION",
+  "scope": "One-off owner acceptance of the exact retained protected-gateway measurement for CAP-07.S01.T03. This is an explicit exception, not a claim of measurement error or a passing strict comparison.",
+  "acceptedObservation": {
+    "implementationCommit": "281cc0c02df71bc140c2d79ef0cc84aa07f5c5d0",
+    "recordCommit": "b0d583f002e03e4520e4a17006e17207c65bc245",
+    "record": "artifacts/evidence/CAP-07.S01.T03.preflight-05.json",
+    "recordGitBlob": "ecf856ac870608f6add19667fba311e23ed0066f",
+    "measurement": "protected-gateway-fixture",
+    "warmP95Ms": 25.383200030773878,
+    "warmSamples": 100,
+    "warmSamplesAtOrAbove25ms": 6,
+    "originalCriterion": "p95 <25 ms excluding model/provider execution",
+    "originalTestPassed": false,
+    "rawSamplesPreserved": true
+  },
+  "effect": {
+    "taskPerformanceObservationAccepted": true,
+    "furtherOptimizationRequiredForThisObservation": false,
+    "rawMeasurementRoundedOrRewritten": false,
+    "historicalFailureReclassifiedAsPass": false,
+    "testOrThresholdChanged": false,
+    "generalRoundingRuleEstablished": false,
+    "newRefactoringBudgetGranted": false,
+    "functionalOrSafetyObligationsWaived": false,
+    "sliceOrWaveQualificationWaived": false,
+    "G1Approved": false
+  },
+  "completionProcedure": "Retain the original failed benchmark and all prior findings. Bind this owner acceptance in task evidence and the independent disposition; complete the remaining required functional/security checks and the supported taskctl submit/review transition. Never set DONE by hand or claim that the measured value satisfied the unchanged strict test.",
+  "futureMeasurements": "This acceptance does not authorize rounding future results or changing later-wave/release criteria. The unchanged benchmark remains available for fresh slice/Wave qualification; any later adverse result requires a truthful disposition within that later review."
+}
