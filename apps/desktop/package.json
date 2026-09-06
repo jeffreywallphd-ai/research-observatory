@@ -17,7 +17,7 @@
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test && pnpm run build",
     "tauri": "tauri",
     "sidecar:prepare": "python ../../tools/core_sidecar_build.py --repo ../.. --output artifacts/tmp/core-sidecar-package --report artifacts/tmp/core-sidecar-package.json",
-    "dev": "pnpm run sidecar:prepare && tauri dev"
+    "dev": "pnpm run sidecar:prepare && tauri dev --no-dev-server"
   },
   "dependencies": {
     "@research-observatory/contracts": "workspace:*",

@@ -2,13 +2,19 @@ from __future__ import annotations
 
 import copy
 import json
+import os
 import re
+import shlex
 import shutil
+import socket
+import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 from playwright.sync_api import sync_playwright
 
@@ -1595,6 +1601,229 @@ class TaskCenterInteractionTests(unittest.TestCase):
                 page.close()
                 context.close()
                 browser.close()
+
+
+@unittest.skipUnless(sys.platform == "win32", "Windows development entry boundary")
+class DevelopmentEntryTests(unittest.TestCase):
+    """Real command runners; substitutes never start Core or the desktop app."""
+
+    def setUp(self) -> None:
+        self.node = REPO / ".local/toolchains/node-v24.19.0-win-x64/node.exe"
+        self.pnpm = REPO / ".local/toolchains/corepack/v1/pnpm/11.20.0/bin/pnpm.cjs"
+        self.cli = REPO / "apps/desktop/node_modules/@tauri-apps/cli/tauri.js"
+        for required in (self.node, self.pnpm, self.cli):
+            self.assertTrue(required.is_file(), f"Required local test runtime missing: {required.name}")
+        parent = REPO / "artifacts/tmp"
+        parent.mkdir(parents=True, exist_ok=True)
+        self.temporary = tempfile.TemporaryDirectory(prefix="dev-entry-", dir=parent)
+        self.addCleanup(self.cleanup_fixture)
+        self.fixture = Path(self.temporary.name)
+        self.bin = self.fixture / "bin"
+        self.bin.mkdir()
+        for name in ("temporary", "cargo-home", "profile"):
+            (self.fixture / name).mkdir()
+        windows = Path(os.environ["SYSTEMROOT"])
+        rust = REPO / ".local/toolchains/rustup/toolchains/1.96.1-x86_64-pc-windows-msvc/bin"
+        self.environment = {
+            "SystemRoot": str(windows),
+            "WINDIR": str(windows),
+            "ComSpec": str(windows / "System32/cmd.exe"),
+            "PATH": os.pathsep.join(map(str, (self.bin, self.node.parent, rust, windows / "System32"))),
+            "PATHEXT": ".COM;.EXE;.BAT;.CMD",
+            "TEMP": str(self.fixture / "temporary"),
+            "TMP": str(self.fixture / "temporary"),
+            "USERPROFILE": str(self.fixture / "profile"),
+            "APPDATA": str(self.fixture / "profile"),
+            "LOCALAPPDATA": str(self.fixture / "profile"),
+            "CARGO_HOME": str(self.fixture / "cargo-home"),
+            "CARGO_NET_OFFLINE": "true",
+            "COREPACK_ENABLE_NETWORK": "0",
+            "COREPACK_ENABLE_PROJECT_SPEC": "0",
+            "CI": "true",
+        }
+        self.package = json.loads((REPO / "apps/desktop/package.json").read_text(encoding="utf-8"))
+
+    def write(self, relative: str, contents: str) -> None:
+        path = self.fixture / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(contents, encoding="utf-8")
+
+    def cleanup_fixture(self) -> None:
+        # The Windows CLI may exit just before its inert runner releases cwd.
+        # Retry only this TemporaryDirectory; persistent cleanup failure is fatal.
+        for attempt in range(20):
+            try:
+                self.temporary.cleanup()
+                return
+            except PermissionError:
+                if attempt == 19:
+                    raise
+                time.sleep(0.05)
+
+    def run_process(self, args: list[str], *, cwd: Path) -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            args,
+            cwd=cwd,
+            env=self.environment,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+            check=False,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        )
+
+    def prepare_entry_fixture(self) -> None:
+        # Execute the real pinned pnpm and actual checked-in scripts, but replace
+        # just their external sidecar/desktop commands with code-only observers.
+        self.write("package.json", (REPO / "package.json").read_text(encoding="utf-8"))
+        self.write("apps/desktop/package.json", json.dumps(self.package))
+        self.write("dev.cmd", (REPO / "dev.cmd").read_text(encoding="utf-8"))
+        self.write("bin/pnpm.cmd", f'@"{self.node}" "{self.pnpm}" %*\n')
+        self.write("bin/python.cmd", "@echo RO_ENTRY=prepare\n@exit /b %RO_PREPARE_EXIT%\n")
+        self.write("bin/tauri.cmd", "@echo RO_ENTRY=tauri %*\n@exit /b %RO_TAURI_EXIT%\n")
+        # dev.cmd checks these exact paths. Empty sentinels cannot launch an app;
+        # its corepack entry delegates only to the already pinned pnpm above.
+        local_node = ".local/toolchains/node-v24.19.0-win-x64"
+        self.write(f"{local_node}/node.exe", "")
+        # The fixture entry receives the explicit 'pnpm' prefix from dev.cmd.
+        self.write(f"{local_node}/corepack.cmd", "@call pnpm %2 %3 %4 %5 %6 %7 %8 %9\n")
+        self.write(".local/toolchains/cargo/bin/cargo.exe", "")
+        self.write(".venv/Scripts/python.exe", "")
+        # pnpm scripts prepend node_modules/.bin, ahead of the existence sentinels.
+        self.write("apps/desktop/node_modules/.bin/python.cmd", (self.bin / "python.cmd").read_text())
+        self.write("apps/desktop/node_modules/.bin/tauri.cmd", (self.bin / "tauri.cmd").read_text())
+        self.environment.update(RO_PREPARE_EXIT="0", RO_TAURI_EXIT="73")
+
+    def entry(self, kind: str, extra: list[str]) -> tuple[int, list[str]]:
+        if kind == "batch":
+            caller = self.fixture / "caller with spaces"
+            caller.mkdir(exist_ok=True)
+            arguments = subprocess.list2cmdline(extra)
+            self.write("caller with spaces/invoke.cmd", f'@call "{self.fixture / "dev.cmd"}" {arguments}\n')
+            result = self.run_process([self.environment["ComSpec"], "/d", "/c", "invoke.cmd"], cwd=caller)
+        else:
+            cwd = self.fixture if kind == "root" else self.fixture / "apps/desktop"
+            result = self.run_process([str(self.node), str(self.pnpm), "run", "dev", *extra], cwd=cwd)
+        records = [line.strip() for line in result.stdout.splitlines() if line.startswith("RO_ENTRY=")]
+        # Redact raw process diagnostics: no environment or absolute path is evidence.
+        self.assertTrue(records, f"No fixture observer: exit={result.returncode}, stderrBytes={len(result.stderr)}")
+        return result.returncode, records
+
+    def test_all_development_entries_forward_embedded_origin_and_arguments(self) -> None:
+        self.prepare_entry_fixture()
+        for kind in ("batch", "root", "desktop"):
+            with self.subTest(entry=kind):
+                code, records = self.entry(kind, ["--no-watch"])
+                self.assertEqual(code, 73)
+                self.assertEqual(records[0], "RO_ENTRY=prepare")
+                self.assertEqual(len(records), 2)
+                self.assertEqual(shlex.split(records[1]), ["RO_ENTRY=tauri", "dev", "--no-dev-server", "--no-watch"])
+
+    def test_preparation_failure_never_starts_tauri(self) -> None:
+        self.prepare_entry_fixture()
+        self.environment["RO_PREPARE_EXIT"] = "42"
+        for kind in ("batch", "root", "desktop"):
+            with self.subTest(entry=kind):
+                code, records = self.entry(kind, [])
+                self.assertEqual(code, 42)
+                self.assertEqual(records, ["RO_ENTRY=prepare"])
+
+    def test_success_and_quoted_arguments_survive_each_entry(self) -> None:
+        self.prepare_entry_fixture()
+        self.environment["RO_TAURI_EXIT"] = "0"
+        for kind in ("batch", "root", "desktop"):
+            with self.subTest(entry=kind):
+                code, records = self.entry(kind, ["--config", "fixture with spaces.json"])
+                self.assertEqual(code, 0)
+                self.assertEqual(len(records), 2)
+                self.assertEqual(records[0], "RO_ENTRY=prepare")
+                self.assertEqual(
+                    shlex.split(records[1]),
+                    ["RO_ENTRY=tauri", "dev", "--no-dev-server", "--config", "fixture with spaces.json"],
+                )
+
+    def cli_observation(self, extra: list[str]) -> tuple[subprocess.CompletedProcess[str], list[dict[str, Any]]]:
+        nonce = "ro-cli-origin-" + uuid4().hex
+        self.write(
+            "src-tauri/Cargo.toml",
+            '[package]\nname="ro-inert-cli-test"\nversion="0.0.0"\nedition="2021"\nbuild=false\n[workspace]\n[dependencies]\n',
+        )
+        self.write(
+            "src-tauri/src/main.rs", 'compile_error!("This fixture must never build or launch");\nfn main() {}\n'
+        )
+        self.write("product-dist/index.html", "<!doctype html><title>Inert origin fixture</title>")
+        config: dict[str, Any] = {
+            "productName": "Inert CLI Test",
+            "version": "0.0.0",
+            "identifier": "org.researchobservatory.test.inert-cli",
+            "build": {"frontendDist": "../product-dist", "beforeDevCommand": None, "beforeBuildCommand": None},
+            "app": {"windows": []},
+            "bundle": {"active": False},
+        }
+        self.write("src-tauri/tauri.conf.json", json.dumps(config))
+        self.write(
+            "run",
+            'const c=JSON.parse(process.env.TAURI_CONFIG||"{}");\n'
+            'const nonce=c.plugins?.["ro-origin-observer"]?.nonce;\n'
+            'if(!/^ro-cli-origin-[a-f0-9]+$/.test(nonce||""))process.exit(74);\n'
+            'console.log("RO_ORIGIN_OBSERVER="+JSON.stringify({nonce,devUrl:c.build?.devUrl??null,frontendDist:c.build?.frontendDist}));\n'
+            "process.exit(73);\n",
+        )
+        override = {
+            "build": {**config["build"], "runner": {"cmd": str(self.node), "cwd": str(self.fixture)}},
+            "plugins": {"ro-origin-observer": {"nonce": nonce}},
+        }
+        # A free ephemeral loopback port avoids a fixed-port prerequisite. The
+        # negative control's server serves only inert fixture HTML.
+        with socket.socket() as listener:
+            listener.bind(("127.0.0.1", 0))
+            port = listener.getsockname()[1]
+        result = self.run_process(
+            [
+                str(self.node),
+                str(self.cli),
+                "dev",
+                "--no-watch",
+                "--no-dev-server-wait",
+                "--port",
+                str(port),
+                "--config",
+                json.dumps(override),
+                *extra,
+            ],
+            cwd=self.fixture,
+        )
+        records = [
+            json.loads(line.split("=", 1)[1])
+            for line in result.stdout.splitlines()
+            if line.startswith("RO_ORIGIN_OBSERVER=")
+        ]
+        for record in records:
+            self.assertEqual(record["nonce"], nonce)
+            self.assertEqual(record["frontendDist"], "../product-dist")
+        return result, records
+
+    def test_actual_cli_processes_script_arguments_as_embedded_origin(self) -> None:
+        preparation, native = self.package["scripts"]["dev"].split("&&")
+        self.assertEqual(preparation.strip(), "pnpm run sidecar:prepare")
+        tokens = shlex.split(native)
+        self.assertEqual(tokens[:2], ["tauri", "dev"])
+        result, records = self.cli_observation(tokens[2:])
+        self.assertEqual(result.returncode, 73, f"runner missing; stderrBytes={len(result.stderr)}")
+        self.assertEqual(len(records), 1)
+        self.assertIsNone(records[0]["devUrl"])
+
+    def test_actual_cli_default_negative_control_and_duplicate_flag(self) -> None:
+        result, records = self.cli_observation([])
+        self.assertEqual(result.returncode, 73)
+        self.assertEqual(len(records), 1)
+        self.assertRegex(records[0]["devUrl"], r"^http://127\.0\.0\.1:\d+/?$")
+        duplicate, records = self.cli_observation(["--no-dev-server", "--no-dev-server"])
+        self.assertEqual(duplicate.returncode, 2)
+        self.assertEqual(records, [])
+        self.assertIn("cannot be used multiple times", duplicate.stderr)
 
 
 if __name__ == "__main__":

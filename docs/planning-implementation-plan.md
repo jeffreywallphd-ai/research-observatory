@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4992d20a88e19ef50f5b830fc63fd941088ba8e0610e2b164b42950d41708549
+source_sha256: e740a03bef33173c451dae8681b7a08f41cf9080db2779aecba7d212ec2d2d0d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2351,6 +2351,44 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Current latest-review projection:** `approved` by agent:/root/t03_acceptance_review at `2026-09-06T00:03:20+00:00`
 
 **Latest notes:** Independent incremental W1.A09.T04 review approves the frozen R02 candidate and closes both R01 findings as fixed. The 11 focused tests and lint pass in the reviewer's fresh retained synthetic fixture. Canonical exclusion is enforced before lookup, linked/redirecting entries are rejected before content reads, and bounded snapshots are authenticated directly to explicit candidate blobs before report parsing. Independent current-input/report and frozen-packet comparisons match. No additional acceptance-blocking defect was found in the changed helper/test/evidence boundary. The unchanged R01 product/native/Core, qualified packaging, presentation/performance and return dispositions carry forward without a redundant product audit. This approves W1.A09.T04 only: not contribution/exit/adoption, W1.A08 activation, ordinary-profile startup, Wave/release qualification, G1 or remote effects.
+
+**Currently open findings:** -
+
+
+## Linked corrective tasks
+
+Original tasks and approvals remain unchanged.
+
+### W1.C01.T01 — Choose project folders through one protected native dialog
+
+**Status:** `IN_PROGRESS`. **Original task:** `W1.A09.T03`. **Latest review:** `-`.
+
+**Reproduction:** The owner reports that plain dev.cmd makes Change Folder report the folder chooser unavailable, while the explicit --no-dev-server workaround works. The retained isolated Tauri CLI feasibility probe observes that the default CLI inserts a loopback devUrl even though the application has only frontendDist; the existing protected native picker correctly rejects that origin. This is a development-entry regression of W1.A09.T03, not permission to admit loopback origins.
+
+**Inherited criteria:**
+
+- Inventory every implemented W1 directory input, replacing absolute parent/open and child-directory-name typing with shared accessible DirectoryPickerField; no editable fallback, webkitdirectory, enumeration or imitation tree. Read-only diagnostics stay outputs.
+- Derive unchanged-Core-compatible 1-64 ASCII child name from friendly name, safe reserved-device prefix and stable short-ID fallback; preserve Unicode/spaces in selected parent, full destination preview and request/retry identity. No overwrite or silent numbering. Explicit Open follows selection.
+- Use one typed create-parent/open-project native command with optional validated prior location, main-window-owned pinned Windows COM/Shell dialog and selected/cancelled/unavailable/failed outcomes; only selected carries path. Reject invalid fields/purpose/nonfilesystem/unsafe selection without wider renderer privileges.
+- Selection/cancel performs no project operation; cancellation/failure preserve prior value/form and focus. Prevent overlapping dialogs/duplicate submission; discard unmounted/late results.
+- Do not hold Core mutex while waiting. Revalidate application-lock generation before/after; lock/close dismisses dialog and clears/discards protected data. Guard cleanup covers cancel/error/thread/lock/close/success; fresh unlock never restores paths/form/project.
+- Real Windows selection/cancel, keyboard/focus ownership and lock/close while pending pass. Core path/package/reparse/install exclusion, exclusive lock, atomic staging/recovery and no-overwrite protections remain effective.
+- Shared token-driven field/button/notice/location styling passes both themes, long paths, reduced motion and real product 720x450 effective layout without horizontal page overflow.
+
+**Bounded changed paths:**
+
+- apps/desktop/README.md
+- apps/desktop/package.json
+- tests/desktop/test_desktop_app_check.py
+#### Review history — W1.C01.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

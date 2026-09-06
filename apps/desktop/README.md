@@ -25,6 +25,16 @@ and the app's `pnpm dev` script rebuilds the ignored development sidecar before
 starting Tauri. No system Python or machine-wide Node selection is used by the
 launched application.
 
+`dev.cmd`, root `pnpm dev`, and desktop `pnpm dev` all select Tauri's embedded
+`product-dist/` assets automatically. The shared script disables Tauri's injected
+development server so protected native actions, including Change folder, retain
+the approved local application origin. Do not append the former
+`--no-dev-server` workaround: it is already included, and Tauri rejects duplicate
+flags. Other development arguments are forwarded as usual. There is no live
+renderer development server or hot reload; restart the development command to
+rebuild and load renderer changes. Production build and security settings are
+unchanged.
+
 ```powershell
 pnpm --dir apps/desktop lint
 pnpm --dir apps/desktop typecheck
