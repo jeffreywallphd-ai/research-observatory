@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-optimization-closeout-not-task-approval",
+  "taskId": "CAP-07.S01.T03",
+  "candidate": "281cc0c02df71bc140c2d79ef0cc84aa07f5c5d0",
+  "comparisonBase": "c8044e4371a6082cbb7cb402bd824aca770b7249",
+  "authorization": "artifacts/evidence/CAP-07.S01.T03.refactoring-decision-01.json",
+  "verificationObservation": "artifacts/evidence/CAP-07.S01.T03.preflight-05.json",
+  "disposition": "bounded-memo-implemented-and-reviewed-performance-unresolved",
+  "formalSubmissionRound": null,
+  "review": {
+    "reviewer": "agent:/root/decoder_memo_review",
+    "scope": "Independent exact-commit disposition of the approved decoder-memo increment only; not a full task, slice, Wave or release approval.",
+    "blockingSourceFindings": [],
+    "confirmedBoundaries": [
+      "Only exact returned validated snapshot identities are reusable; arbitrary caller objects and equal externally backed proxies are not.",
+      "Decoder-owned immutable containers with exact built-in scalar/key types; accepted subclasses retain full validation.",
+      "At most two retained snapshots, each at most 64000 canonical JSON bytes.",
+      "Current Thread object ownership; nested isolation; active-state invalidation and shared-reference clearing on normal, exceptional and cancelled exit, including copied and worker-thread contexts.",
+      "Result validation and permission, catalog, history, cost, deadline and persistence checks remain fresh."
+    ],
+    "checks": [
+      {
+        "command": ".venv/Scripts/python.exe -B -m unittest tests.ai.test_model_gateway_contracts tests.ai.test_model_routing tests.contracts.test_model_routing_contracts",
+        "exitCode": 0,
+        "testsPassed": 51,
+        "runnerSeconds": 1.761,
+        "wallSeconds": 2.881,
+        "provenance": "Fresh independent-agent execution at the unchanged candidate; includes all eight new memo tests."
+      },
+      {
+        "command": "node packages/contracts/model-gateway/generate.mjs --check",
+        "exitCode": 0,
+        "provenance": "Fresh independent-agent execution at the unchanged candidate."
+      },
+      {
+        "check": "Recorded verification output and percentile integrity",
+        "result": "All 14 output SHA-256 digests and byte counts matched retained logs; all 100 warm samples reproduce p95 25.383200030773878 ms and six samples >=25 ms.",
+        "provenance": "Independent readback, not benchmark re-execution."
+      }
+    ],
+    "sourceStable": true,
+    "filesChangedByReviewer": false
+  },
+  "performance": {
+    "criterion": "Protected gateway overhead p95 <25 ms excluding model/provider execution",
+    "status": "OPEN",
+    "latestQualifyingAttemptP95Ms": 25.383200030773878,
+    "latestAttemptPassed": false,
+    "criterionChanged": false,
+    "additionalQualifyingAttempt": false,
+    "reviewedBaselineEstablished": false,
+    "controlledSpeedupEstablished": false
+  },
+  "finalDiagnostics": [
+    {
+      "producer": "artifacts/tmp/CAP-07.S01.T03.cpu-profile-02.py",
+      "producerSha256": "cbefa40ddc68469ea7b96598473432b2c619ef4bed913ccf7039df40a54b73e6",
+      "report": "artifacts/tmp/CAP-07.S01.T03.cpu-profile-02.json",
+      "reportSha256": "ef773ae202b82bf7457e3c10932300fc90f9ec9d1532bb0adad8f85d9a500f7b",
+      "invocations": 101,
+      "allInvocationsSucceeded": true,
+      "candidateAndSelectedSourcesStable": true,
+      "observation": "1010 task-decode calls include 707 identity hits and 303 full task validations; all 303 result validations remain. Protected database execute/open/close are the largest instrumented costs. Six complete RoutingRun validations per invocation serve initial construction, admission, three appended states and next-transaction authenticated reconstruction.",
+      "limits": "One synthetic SQLCipher fixture with explicit in-memory keys; no ordinary project, vault or policy access. Instrumented timings overlap, are not qualifying latency, and do not establish uninstrumented savings. No production edits or additional benchmark runs."
+    },
+    {
+      "report": "artifacts/tmp/CAP-07.S01.T03.cacheability-micro-01.json",
+      "reportSha256": "7c015c49f316773055d9b3b2c67c4d4fcf3d95fce903ef73804bceddfb342c16",
+      "observation": "A reused JSONEncoder saved roughly 26 microseconds per cacheability helper in five alternating 1000-call pairs; two registrations represent roughly 52 microseconds per invocation. Too small alone to justify another production change or benchmark cycle; not implemented."
+    },
+    {
+      "producer": null,
+      "report": null,
+      "provenance": "Independent-agent synthetic SQL comparison retained in tool stdout only; no filesystem producer/report or corresponding digest exists.",
+      "observation": "Recursive distinct-key seeks with CROSS JOIN used the existing project/key/revision index, without an authorizer or schema change. Full read median block mean at 100 histories: 0.033904 to 0.032787 ms; at 1000: 0.125235 to 0.030363 ms. Thirteen exact-row/corruption-outcome comparisons matched. Negligible benefit at the current fixture size; added complexity is deferred, not implemented.",
+      "qualification": false
+    }
+  ],
+  "supplementalAllocation": {
+    "id": "CAP-07.S01.T03.decoder-memo",
+    "authorizedMaximumPoints": 3,
+    "completedEstimatePoints": 3,
+    "remainingMemoForecastPoints": 0,
+    "basis": "Inclusive M3 effort estimate for the approved diagnostic, implementation, verification and independent review increment; not measured tokens, money or elapsed hours.",
+    "historicalWaveTotalPoints": null,
+    "newHeadroomClaimed": false,
+    "additionalRefactoringAuthorized": false
+  },
+  "continuation": {
+    "taskState": "IN_PROGRESS",
+    "unresolvedCriterion": "Fresh protected gateway p95 <25 ms has not been established.",
+    "guardrails": "Do not rerun unchanged qualification until PASS, trim samples, relax the target, remove current-authority checks, defer durable writes or alter storage security. Further supplemental refactoring requires its own lawful budget/scope accounting; this completed allocation does not roll over.",
+    "nextRequiredOutcome": "A justified implementation correction within approved authority and fresh passing performance evidence, then formal task submission/independent disposition. A changed target or expanded authority instead requires its normal reviewed amendment and owner approval.",
+    "broaderCoverage": "Integrated CAP-07.S01 review, affected checkpoints, fresh full W1 qualification, independent Wave review and the separate human G1 decision remain incomplete.",
+    "localMainIntegration": false,
+    "remoteAction": false
+  }
+}

@@ -226,3 +226,29 @@ Canonical-size eligibility will be measured without importing registry/routing
 back into the generic decoder. No arbitrary input is rejected merely because it
 is not eligible for reuse. The prior pure exact-text routing memo remains
 separate from permission/history and retains its existing lifetime bounds.
+
+## Bounded optimization closeout
+
+The approved decoder memo is implemented at
+`281cc0c02df71bc140c2d79ef0cc84aa07f5c5d0`. Independent review found no blocking
+source defects and passed 51 focused tests plus the generated-contract check.
+[Preflight 05](CAP-07.S01.T03.preflight-05.json) preserves the complete fresh
+qualification: 13/14 checks passed, but protected gateway p95 was **25.383 ms**
+against **<25 ms**. All 100 warm samples remain recorded; six were >=25 ms.
+This closes the bounded memo implementation/review, not CAP-07.S01.T03 or W1.
+
+The final call-graph diagnostic confirmed 707 identity hits in 1,010 task-decode
+calls, leaving 303 full task validations and all 303 result validations intact.
+Protected database execution/open/close dominated the instrumented profile;
+profile timings are not qualifying latency or a controlled speedup claim.
+An existing-index SQL alternative improved reads at long circuit histories but
+was negligible at the current fixture size. It is deferred, not implemented.
+No durable write, current-authority check, storage guard, or target was relaxed.
+
+[Optimization closeout](CAP-07.S01.T03.optimization-closeout-01.json) records the
+exact independent disposition and diagnostic limits. The inclusive M3 memo
+allocation is complete at its three-point estimate, with no further memo work
+forecast. Historical total supplemental effort remains unknown; this is neither
+new budget headroom nor authority for another refactor. CAP-07.S01.T03 remains
+IN_PROGRESS, with performance unresolved; formal submission, local-main
+integration, slice review and W1 qualification have not occurred.
