@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: e740a03bef33173c451dae8681b7a08f41cf9080db2779aecba7d212ec2d2d0d
+source_sha256: 680416f526ff6506c1b08b1c6dcc6bd7d932b6432d34247254b9f5cb2cae47c3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -634,13 +634,13 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A09.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/t01_publication_checkpoint | - |
 | `W1.A09.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/t03_acceptance_review | - |
 | `W1.A09.T04` | `append-only v1` | 2 | `-` | approved / agent:/root/t03_acceptance_review | - |
-| `W1.C01.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 14/15 | 46/49 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 14/15 | 47/49 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -699,7 +699,6 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-07.S01.T02` Implement model registry and capability discovery | `BLOCKED` | codex | `codex/w1-windows-local-runtime` |
-| `W1.C01.T01` Choose project folders through one protected native dialog | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
 
 ## Linked corrective tasks
 
@@ -707,5 +706,5 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C01.T01 — Choose project folders through one protected native dialog
 
-**Status:** `IN_PROGRESS`. **Original task:** `W1.A09.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `W1.A09.T03`. **Latest review:** `approved`.
 

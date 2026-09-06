@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.C01.T01",
+  "commit": "1dfc03d8de16d13f9fea68be61713147c97c6678",
+  "baseCommit": "cfa7ec4492d13781128e01ad5795f2b48c5c9a26",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/README.md",
+    "apps/desktop/package.json",
+    "artifacts/evidence/W1.C01.T01.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/desktop/test_desktop_app_check.py"
+  ],
+  "checks": [
+    {
+      "command": "python -m unittest tests.desktop.test_desktop_app_check.DevelopmentEntryTests tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_security_boundary_and_complete_command_plan tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_external_development_url_and_privilege_fail_closed -v",
+      "exitCode": 0,
+      "durationSeconds": 11.277,
+      "outputSha256": "d57ca2cb87066a43c6292912bb2e8f8ae92d2d18f56cf3df1506267c804a19dd",
+      "outputBytes": 1367,
+      "provenance": "fresh"
+    },
+    {
+      "command": "python -m ruff check tests/desktop/test_desktop_app_check.py",
+      "exitCode": 0,
+      "durationSeconds": 0.096,
+      "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "outputBytes": 19,
+      "provenance": "fresh"
+    },
+    {
+      "command": "python -m ruff format --check tests/desktop/test_desktop_app_check.py",
+      "exitCode": 0,
+      "durationSeconds": 0.093,
+      "outputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "outputBytes": 25,
+      "provenance": "fresh"
+    },
+    {
+      "command": "python -m mypy tests/desktop/test_desktop_app_check.py",
+      "exitCode": 0,
+      "durationSeconds": 0.686,
+      "outputSha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff",
+      "outputBytes": 43,
+      "provenance": "fresh"
+    },
+    {
+      "command": "corepack pnpm --dir apps/desktop run build",
+      "exitCode": 0,
+      "durationSeconds": 2.535,
+      "outputSha256": "4d8cb053f335e5347e6785e123d633b0aa4a5f410196d26bb33004eeb323983e",
+      "outputBytes": 887,
+      "provenance": "fresh"
+    },
+    {
+      "command": "cargo test -p research-observatory-desktop --lib --locked --offline directory_commands_admit_only_the_local_main_window_origin",
+      "exitCode": 0,
+      "durationSeconds": 18.672,
+      "outputSha256": "174a70b1c94b42a0f5b82248a8db42edf77c0e4cb938f5e345820ac80a9c3421",
+      "outputBytes": 483,
+      "provenance": "fresh"
+    },
+    {
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "durationSeconds": 2.5,
+      "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "outputBytes": 44,
+      "provenance": "fresh"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The source-authenticated original W1.A09.T03 criterion manifest establishes the shared directory-input inventory. No component or input behavior changes here; all three standard development entries now select the embedded path where that protected picker is implemented. Fresh real cmd/pnpm entry tests prove script forwarding, not native UI interaction."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "ProjectsWorkspace.tsx and directoryPicker.ts are normalized-byte identical to the original reviewed candidate 30357ec178cc1a57646b7fe64dca3ee7670756d2. Slug/default/Unicode path/collision/explicit Open behavior is historical unchanged implementation evidence; the correction makes no project/storage call."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The actual installed Tauri CLI, using arguments derived from the candidate package script, hands the inert runner a null devUrl and ../product-dist. The no-flag negative control supplies loopback; duplicate switches are rejected. Fresh Rust test admits only main embedded origins and denies secondary, remote, lookalike, file, port and userinfo cases. Native guard, command, CSP and configuration are unchanged."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Fresh three-entry tests prove preparation order, failure preventing dispatch, CLI failure propagation, successful completion and quoted argument forwarding. Selection, cancellation, late-result and form/focus behavior remain the original unchanged component/native implementation, not newly simulated native proof."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The native production prefix and directory_picker.rs are identical to the original reviewed task. No lock, generation, Core mutex, dialog-lifetime or cleanup code changes. Historical approved native lifetime evidence remains identified as historical; this correction does not cache or replay it as a fresh result."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "Standard development now selects the already-qualified embedded route through actual CLI/pnpm boundaries. Fresh Rust origin denial and current product-manifest validation complement the original approved native/Core evidence. Actual Windows dialog/keyboard/lock/close and Core filesystem qualification are not rerun here because their implementation is untouched; full fresh cross-capability/native W1 qualification remains due."
+      ]
+    },
+    {
+      "criterion_index": 7,
+      "evidence": [
+        "No renderer, shared component, style or reference inputs changed. Original approved component/theme/reflow evidence remains historical context. Fresh authored product build and product_build_errors return no errors; package/docs manifest inputs are refreshed rather than presented as identical to an old build."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Bounded restoration of the standard development entry's processed Tauri origin, not a change to picker/security/experience authority. Credible regressions are missing/duplicate switch, wrong embedded source, sidecar ordering, arguments and exit propagation, or widened native origin. Five real command-boundary tests plus two static security/config checks and one actual Rust allow/deny test cover those seams; build refreshes changed manifest inputs. Lint/type checks cover the new test code. No full deployment profile or native interaction was run or claimed.",
+    "selectedCommandIds": [
+      "desktop:unit",
+      "desktop:application",
+      "foundation:backlog-views"
+    ],
+    "deferred": [
+      "Complete repository/Windows W1 matrix, fresh native dialogs/renderer/Core/packaging/restart/recovery/accessibility/performance and independent Wave review remain W1 qualification duties. No G1 approval or W2 execution is claimed.",
+      "Unchanged original picker component, slug, lock/cancellation, Core storage and layout implementation is supported by authenticated historical W1.A09.T03 evidence, not by receipt-cache reuse. Optional styling iteration remains closed by owner acceptance."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "82362567525910f107c2c81418d61b6a04d2204647b6080627c31eaf5dcf9904",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "python -m unittest tests.desktop.test_desktop_app_check.DevelopmentEntryTests tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_security_boundary_and_complete_command_plan tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_external_development_url_and_privilege_fail_closed -v",
+      "corepack pnpm --dir apps/desktop run build",
+      "cargo test -p research-observatory-desktop --lib --locked --offline directory_commands_admit_only_the_local_main_window_origin"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/W1.A09.T03.json",
+        "sha256": "13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4",
+        "commit": "30357ec178cc1a57646b7fe64dca3ee7670756d2",
+        "provenance": "authenticated historical approved evidence for unchanged implementation; not a fresh native run or cached check"
+      }
+    ],
+    "rationale": "Original task and adopted amendment remain immutable. Only admitted package/docs/test paths change product delivery. The shared default restores existing protected behavior without allowing localhost, altering CSP/permissions, changing governed styling, introducing a wrapper or new criteria. Independent review must assess this exact changed boundary and the stated evidence limits."
+  },
+  "observations": {
+    "producer": "Tool-observed local subprocess execution at stable candidate; not a signed attestation or complete runtime closure.",
+    "beforeHead": "1dfc03d8de16d13f9fea68be61713147c97c6678",
+    "afterHead": "1dfc03d8de16d13f9fea68be61713147c97c6678",
+    "environment": "Repository-pinned tool_environment plus .venv Python first, MYPYPATH=tools, CARGO_NET_OFFLINE=true. Test children receive a fixture-only allowlisted environment. No app/Core launched.",
+    "pythonTests": 7,
+    "nativeTests": 1,
+    "productBuildErrors": [],
+    "sourceNormalizedSha256": {
+      "dev.cmd": "309a8e441284b240f501ddf8ce2c1846309288f1da9d99a12e4e9de788847499",
+      "apps/desktop/package.json": "ec2e0a6c12e4f2cb183846b5c1ac5e617b9b9f778748f71f15ada373c38f7424",
+      "apps/desktop/README.md": "0efa889b305efcd1e302edefdafa4da5d2f4c6f0fe5705d172422672de3c349e",
+      "tests/desktop/test_desktop_app_check.py": "c6e2d67995a91b67c26fc2376e9a89899ac567cbcb1134d36ca14be35ca8fc1a"
+    },
+    "runtimeRawSha256": {
+      "node": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+      "pnpmEntry": "67b035e322203961795e8e34ca63a08c37a4386eda94107fb3d28f3246d882ad",
+      "cargo": "aaa2a484c6d5c1dc145e8fb965a8803b2489cd3c8d9157ef7cf0608fcff134c6",
+      "rustc": "16890077e256905165c66d49016eb318d6e5ca76a477e92007038cd259474697",
+      "pythonLauncher": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+      "tauriCliAddon": "37c4d79256120893f2c12c1385bce5f7510b5063afdeb09b40a9effec28d0208",
+      "nativeTestBinary": "0a4af976de38c576c5ed17d5b6de67fbf5767978f8c0d50f8e1c0912b102c243",
+      "productManifest": "223e774f09c670636a0b202a37def0ffb4d3fdf1ec7a89de7790635406e81081"
+    },
+    "historicalEquality": "Native configuration/build/Cargo/picker, ProjectsWorkspace and directoryPicker adapter are normalized-byte equal to W1.A09.T03. lib.rs whole file is NOT equal: later adopted W1.A09.T04 changes the integration harness; the production prefix is equal.",
+    "limits": "No native dialog, WebView, ordinary project/vault/policy access, authentication, packaging qualification, comprehensive runtime cache or measured token/cost saving claim. The owner's manual-flag success is diagnosis context only."
+  },
+  "retainedNonpassingAttempts": [
+    {
+      "path": "artifacts/evidence/W1.C01.T01.task-start.md",
+      "disposition": "Retains both pre-implementation failing runs and fixture corrections. Subsequent initial Ruff run reported three lint issues; formatting/case correction fixed them. Initial mypy lacked tools import path and one fixture dict annotation; MYPYPATH=tools and annotation produce final PASS. No valid check was weakened."
+    }
+  ]
+}

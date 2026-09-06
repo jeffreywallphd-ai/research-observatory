@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e740a03bef33173c451dae8681b7a08f41cf9080db2779aecba7d212ec2d2d0d
+source_sha256: 680416f526ff6506c1b08b1c6dcc6bd7d932b6432d34247254b9f5cb2cae47c3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2361,7 +2361,7 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C01.T01 — Choose project folders through one protected native dialog
 
-**Status:** `IN_PROGRESS`. **Original task:** `W1.A09.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `W1.A09.T03`. **Latest review:** `approved`.
 
 **Reproduction:** The owner reports that plain dev.cmd makes Change Folder report the folder chooser unavailable, while the explicit --no-dev-server workaround works. The retained isolated Tauri CLI feasibility probe observes that the default CLI inserts a loopback devUrl even though the application has only frontendDist; the existing protected native picker correctly rejects that origin. This is a development-entry regression of W1.A09.T03, not permission to admit loopback origins.
 
@@ -2382,13 +2382,43 @@ Original tasks and approvals remain unchanged.
 - tests/desktop/test_desktop_app_check.py
 #### Review history — W1.C01.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `10bb98f8337f5239ceb55c0f11cc1192efdf8acb86ad0499cb20a3e3a6f75a2c`
+
+- Candidate / base / branch: `1dfc03d8de16d13f9fea68be61713147c97c6678` / `cfa7ec4492d13781128e01ad5795f2b48c5c9a26` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-06T10:27:36+00:00`
+- Evidence: `artifacts/evidence/W1.C01.T01.json` / `a3ab17cc4f5c78ea1607aa05394e1ba0c4a4c5b111c457f41f12c59f32325cf3` / `1dfc03d8de16d13f9fea68be61713147c97c6678`
+- Acceptance-criteria SHA-256: `23439777a7754c6fce5855b7461c885ad7baee1820b6eb5c4a87e3ed678b9015`
+- Verification-selection SHA-256: `136f0d307e0d8d939513d2445d932cc11f1d91940bcfd1719fdf8065623bd5d9`
+- Changed paths: `apps/desktop/README.md`, `apps/desktop/package.json`, `artifacts/evidence/W1.C01.T01.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `tests/desktop/test_desktop_app_check.py`
+- Selected checks: `python -m unittest tests.desktop.test_desktop_app_check.DevelopmentEntryTests tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_security_boundary_and_complete_command_plan tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_external_development_url_and_privilege_fail_closed -v`, `python -m ruff check tests/desktop/test_desktop_app_check.py`, `python -m ruff format --check tests/desktop/test_desktop_app_check.py`, `python -m mypy tests/desktop/test_desktop_app_check.py`, `corepack pnpm --dir apps/desktop run build`, `cargo test -p research-observatory-desktop --lib --locked --offline directory_commands_admit_only_the_local_main_window_origin`, `python tools/backlog_views.py --repo . --check`
+- Deferred checks: `Complete repository/Windows W1 matrix, fresh native dialogs/renderer/Core/packaging/restart/recovery/accessibility/performance and independent Wave review remain W1 qualification duties. No G1 approval or W2 execution is claimed.`, `Unchanged original picker component, slug, lock/cancellation, Core storage and layout implementation is supported by authenticated historical W1.A09.T03 evidence, not by receipt-cache reuse. Optional styling iteration remains closed by owner acceptance.`
+- Selection rationale: Bounded restoration of the standard development entry's processed Tauri origin, not a change to picker/security/experience authority. Credible regressions are missing/duplicate switch, wrong embedded source, sidecar ordering, arguments and exit propagation, or widened native origin. Five real command-boundary tests plus two static security/config checks and one actual Rust allow/deny test cover those seams; build refreshes changed manifest inputs. Lint/type checks cover the new test code. No full deployment profile or native interaction was run or claimed.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/ui_guard_planning / `2026-09-06T10:30:59+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W1.C01.T01.review-R01.json` / `0a17846d08cc470a55807569ba9a4287cfa0f43e91443c7549f99186c9cec25a`
+
+**Review notes:** Independent risk-selected review of the W1.C01.T01 development-entry correction, not a new review of optional styling or the whole original picker implementation. The reviewer supplied read-only preflight advice and authored no implementation or submitted evidence. Inspected the complete claim-base cfa7ec4492d13781128e01ad5795f2b48c5c9a26 to candidate diff: exactly three admitted product/test files plus six task-evidence/controller/view projections, matching the manifest's complete nine-path inventory. The only product behavior change adds --no-dev-server to the shared desktop dev command; sidecar preparation remains first and production build, native configuration, CSP, capabilities and origin guard remain unchanged. Documentation explicitly retires the redundant manual switch rather than promising duplicate-flag compatibility. Independently ran python -m unittest tests.desktop.test_desktop_app_check.DevelopmentEntryTests -v: five tests PASS in 10.077s, using actual installed cmd/pnpm and Tauri CLI with isolated inert substitutes, no app/Core launch. This replay covers all three entry routes, preparation failure preventing dispatch, success/quoted ordinary arguments, CLI exit propagation, script-derived embedded devUrl selection, real uncorrected loopback control and duplicate-flag rejection. Current source was confirmed equal to the frozen candidate before/after review. Inspected the unchanged Rust origin allow/deny test and retained the manifest producer's fresh narrow Rust, static security/configuration, build, lint/type and generated-view results without relabeling them as independently rerun. Independently authenticated the original task snapshot digest 82362567525910f107c2c81418d61b6a04d2204647b6080627c31eaf5dcf9904 and all seven unchanged inherited criteria. Original W1.A09.T03 remains DONE/approved. Its canonical manifest digest 13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4 matches the candidate Git blob. Config/build/Cargo/picker, ProjectsWorkspace and directoryPicker adapter are normalized-byte identical to original producer 30357ec178cc1a57646b7fe64dca3ee7670756d2; lib.rs as a whole is not identical, but its production prefix before the integration harness is identical. AC1-2, AC4-5 and AC7 therefore retain their explicitly historical unchanged-implementation support; fresh correction proof addresses the AC3/AC6 origin-selection seam. No historical native result is treated as a cached or fresh run. Final read-only source/manifest/packet authentication PASS in 4.360s: manifest canonical/raw SHA256 a3ab17cc4f5c78ea1607aa05394e1ba0c4a4c5b111c457f41f12c59f32325cf3; frozen R01 packet SHA256 10bb98f8337f5239ceb55c0f11cc1192efdf8acb86ad0499cb20a3e3a6f75a2c; validate_task_evidence and task_submission_packet_errors both return no errors. No acceptance-bound finding remains. Approval means the standard development entry selects the already-qualified embedded route; it does not claim fresh Windows dialog, WebView, HWND/focus, lock/close, Core, packaging or full Wave qualification. Those fresh cross-capability/native duties and human G1 remain pending. No product, backlog, prior evidence, hooks, Git or remote was mutated; only this ledger is authored. The protected witness and excluded sibling were not accessed.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/ui_guard_planning at `2026-09-06T10:30:59+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independent risk-selected review of the W1.C01.T01 development-entry correction, not a new review of optional styling or the whole original picker implementation. The reviewer supplied read-only preflight advice and authored no implementation or submitted evidence. Inspected the complete claim-base cfa7ec4492d13781128e01ad5795f2b48c5c9a26 to candidate diff: exactly three admitted product/test files plus six task-evidence/controller/view projections, matching the manifest's complete nine-path inventory. The only product behavior change adds --no-dev-server to the shared desktop dev command; sidecar preparation remains first and production build, native configuration, CSP, capabilities and origin guard remain unchanged. Documentation explicitly retires the redundant manual switch rather than promising duplicate-flag compatibility. Independently ran python -m unittest tests.desktop.test_desktop_app_check.DevelopmentEntryTests -v: five tests PASS in 10.077s, using actual installed cmd/pnpm and Tauri CLI with isolated inert substitutes, no app/Core launch. This replay covers all three entry routes, preparation failure preventing dispatch, success/quoted ordinary arguments, CLI exit propagation, script-derived embedded devUrl selection, real uncorrected loopback control and duplicate-flag rejection. Current source was confirmed equal to the frozen candidate before/after review. Inspected the unchanged Rust origin allow/deny test and retained the manifest producer's fresh narrow Rust, static security/configuration, build, lint/type and generated-view results without relabeling them as independently rerun. Independently authenticated the original task snapshot digest 82362567525910f107c2c81418d61b6a04d2204647b6080627c31eaf5dcf9904 and all seven unchanged inherited criteria. Original W1.A09.T03 remains DONE/approved. Its canonical manifest digest 13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4 matches the candidate Git blob. Config/build/Cargo/picker, ProjectsWorkspace and directoryPicker adapter are normalized-byte identical to original producer 30357ec178cc1a57646b7fe64dca3ee7670756d2; lib.rs as a whole is not identical, but its production prefix before the integration harness is identical. AC1-2, AC4-5 and AC7 therefore retain their explicitly historical unchanged-implementation support; fresh correction proof addresses the AC3/AC6 origin-selection seam. No historical native result is treated as a cached or fresh run. Final read-only source/manifest/packet authentication PASS in 4.360s: manifest canonical/raw SHA256 a3ab17cc4f5c78ea1607aa05394e1ba0c4a4c5b111c457f41f12c59f32325cf3; frozen R01 packet SHA256 10bb98f8337f5239ceb55c0f11cc1192efdf8acb86ad0499cb20a3e3a6f75a2c; validate_task_evidence and task_submission_packet_errors both return no errors. No acceptance-bound finding remains. Approval means the standard development entry selects the already-qualified embedded route; it does not claim fresh Windows dialog, WebView, HWND/focus, lock/close, Core, packaging or full Wave qualification. Those fresh cross-capability/native duties and human G1 remain pending. No product, backlog, prior evidence, hooks, Git or remote was mutated; only this ledger is authored. The protected witness and excluded sibling were not accessed.
 
 **Currently open findings:** -
 
