@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f24f1e43adea180d7c88f9e26271602542c42017ccde0333664682c5b2216a5c
+source_sha256: 2aabc89f0770634cc0459d02d68e720335f261240fe3fdca41335af50581d6ac
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -1747,7 +1747,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W1.A08.json` (`9e8bf31644d16de7e38a37436cbdeca1e1390c6a466de01d0c937c76d6ebc960`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -1760,9 +1760,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### Amendment-exit review and adoption — W1.A08
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `a4f1f45c2b98a3a69e6fd7722a61baae14ab50b5ff2e9028d397dc851e73077c`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `a4f1f45c2b98a3a69e6fd7722a61baae14ab50b5ff2e9028d397dc851e73077c`
 
 - Candidate / declared candidate / branch: `0fb59e8a751aff08046d7e149350d422acb0a94b` / `e3bdfe727257a895e82ae813f379180c09ea1e8a` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-06T04:30:20+00:00`
@@ -1772,11 +1774,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Selected checks: `.venv/Scripts/python.exe -m unittest tests.desktop.test_product_style_check tests.desktop.test_product_layout_measurements tests.desktop.test_desktop_app_check -v`, `Recorded complete original-base public UI gate at b13113bf65630c70a7163fbd422194e2289b9db3`, `Independent W1.A08.T02 formal R01 capture/style/provenance/performance checks`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml review W1.A08.T02 --reviewer agent:window_launch_planning --result approved --from artifacts/evidence/W1.A08.T02.review-R01.json`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `git diff --check`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:window_launch_planning / `2026-09-06T04:38:36+00:00`
+
+**Reviewed state commit:** `55b2608f83ee4b369aa8ecb6d3d0623379996f88`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W1.A08.exit-review-R01.json` / `013bac11f178f1f4f6047f5d43287825e896dbe3936710a6fcbaeff800beb471`
+
+**Review notes:** Independent W1.A08 amendment-exit R01 disposition, not another visual review or W1 release approval. This reviewer did not implement the amendment product, qualification code or exit evidence; it previously independently reviewed W1.A08.T02 and authored only inert future-work planning. Fresh read-only checks authenticated the exit evidence at 0fb59e8a751aff08046d7e149350d422acb0a94b, its declared candidate and independently approved W1.A08.S01 ledger delivery e3bdfe727257a895e82ae813f379180c09ea1e8a, and the exact approved ECR-0007 packet. All nine exit criteria and five slice criteria match their immutable authorities. Both tasks are DONE and independently approved with cleared leases/current submissions and no open formal findings; final task manifests and ledgers authenticate. Original refactor accounting remains 5/194 points. The eight inherited amendment projections, including terminal reserved W1.A04 and adopted W1.A09, are unchanged from the previously reviewed task candidate. No apps/packages/design/tools/tests/verification delta exists since that review (2.923s). Separately authenticated the sole-parent four-path task-completion delivery 040174ff174db7fa5f2912c0d8de61cc4aefef3f, unchanged W1.A08.T01/bootstrap, preserved W1.A08.T02 original submission/criteria/base, and exact codex branch (2.647s). The frozen exit R01 passed amendment_exit_submission_errors with strict_state=True, six selected checks, candidate 0fb59e8a751aff08046d7e149350d422acb0a94b and declared candidate e3bdfe727257a895e82ae813f379180c09ea1e8a (1.334s). Final delivery 55b2608f83ee4b369aa8ecb6d3d0623379996f88 has that candidate as its sole parent and changes only backlog plus two generated views; all three current/committed byte bindings and backlog blob a46bfa43ecb1c8bbd731158eb01f32de23420476 authenticate. The committed REVIEW/REVIEW state and frozen packet SHA256 a4f1f45c2b98a3a69e6fd7722a61baae14ab50b5ff2e9028d397dc851e73077c pass the same exact validator (1.691s). Criteria 1/2/6/7 retain approved bootstrap, paused ordinary-Wave authority, immutable original task/history and the explicitly adopted presentation1.6 overlay with semantic1.5 preserved; no historical reconstruction, major refactor or new runtime/security authority is inferred. Criteria 3/4/5 reuse this reviewer's source-bound W1.A08.T02 style, 120-image authentication, performance arithmetic and exact prior visual/classification dispositions. The independently authored W1.A08.S01 review adds 52/52 accumulated tests in 103.922s, with all 503 producer inputs and six helper/test hashes equal before/after; its initial HEAD-movement rejection and subsequent stable after-binding remain truthful history. These are that reviewer's fresh executions, not new executions by this exit review. Headless deterministic adapters, unchanged-source reuse, clean/root line-ending and source-map distinctions, and prior native/principal limits remain explicit. Criteria 8/9 are satisfied for this independent exit disposition only: adoption must still record the experience/quality checkpoint and keep W1 paused until explicit ordinary resume. No full-profile, browser, visual, benchmark, native or packaging replay was required or performed here. Owner acceptance defers optional cosmetics only. It does not close or defer the separately retained acceptance-bound functional items: U05 real wording comparison, U03 Task Center unavailable-versus-empty exclusivity, U02 supporting-return reproduction, and the distinct Intent-error preflight. Those retain their own lawful disposition outside this styling amendment. Permanent development-folder-origin correction and requested maximized startup/right-side isolated-test geometry also remain separate W1 work; the owner-confirmed --no-dev-server workaround is not agent native proof. Full cross-capability Windows-x64 W1 qualification, independent Wave review and human G1 remain mandatory. This approval grants no ordinary resume, local-main integration across unmet gates, remote/destructive action, new spend or later-Wave authority. No product, prior evidence, canonical plans/controllers, Git state or hooks were mutated; no ordinary project/vault/policy, protected witness contents or excluded sibling was accessed. Only this new ledger is authored. No new acceptance-bound finding remains; the first exit round has no prior formal findings to close.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:window_launch_planning at `2026-09-06T04:38:36+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A08.exit.json`
 
-**Latest completion notes:** Both styling tasks and W1.A08.S01 independently approved; owner accepts outcome and defers optional cosmetics. Request independent exit disposition only; W1 release remains pending.
+**Latest completion notes:** Independent W1.A08 amendment-exit R01 disposition, not another visual review or W1 release approval. This reviewer did not implement the amendment product, qualification code or exit evidence; it previously independently reviewed W1.A08.T02 and authored only inert future-work planning. Fresh read-only checks authenticated the exit evidence at 0fb59e8a751aff08046d7e149350d422acb0a94b, its declared candidate and independently approved W1.A08.S01 ledger delivery e3bdfe727257a895e82ae813f379180c09ea1e8a, and the exact approved ECR-0007 packet. All nine exit criteria and five slice criteria match their immutable authorities. Both tasks are DONE and independently approved with cleared leases/current submissions and no open formal findings; final task manifests and ledgers authenticate. Original refactor accounting remains 5/194 points. The eight inherited amendment projections, including terminal reserved W1.A04 and adopted W1.A09, are unchanged from the previously reviewed task candidate. No apps/packages/design/tools/tests/verification delta exists since that review (2.923s). Separately authenticated the sole-parent four-path task-completion delivery 040174ff174db7fa5f2912c0d8de61cc4aefef3f, unchanged W1.A08.T01/bootstrap, preserved W1.A08.T02 original submission/criteria/base, and exact codex branch (2.647s). The frozen exit R01 passed amendment_exit_submission_errors with strict_state=True, six selected checks, candidate 0fb59e8a751aff08046d7e149350d422acb0a94b and declared candidate e3bdfe727257a895e82ae813f379180c09ea1e8a (1.334s). Final delivery 55b2608f83ee4b369aa8ecb6d3d0623379996f88 has that candidate as its sole parent and changes only backlog plus two generated views; all three current/committed byte bindings and backlog blob a46bfa43ecb1c8bbd731158eb01f32de23420476 authenticate. The committed REVIEW/REVIEW state and frozen packet SHA256 a4f1f45c2b98a3a69e6fd7722a61baae14ab50b5ff2e9028d397dc851e73077c pass the same exact validator (1.691s). Criteria 1/2/6/7 retain approved bootstrap, paused ordinary-Wave authority, immutable original task/history and the explicitly adopted presentation1.6 overlay with semantic1.5 preserved; no historical reconstruction, major refactor or new runtime/security authority is inferred. Criteria 3/4/5 reuse this reviewer's source-bound W1.A08.T02 style, 120-image authentication, performance arithmetic and exact prior visual/classification dispositions. The independently authored W1.A08.S01 review adds 52/52 accumulated tests in 103.922s, with all 503 producer inputs and six helper/test hashes equal before/after; its initial HEAD-movement rejection and subsequent stable after-binding remain truthful history. These are that reviewer's fresh executions, not new executions by this exit review. Headless deterministic adapters, unchanged-source reuse, clean/root line-ending and source-map distinctions, and prior native/principal limits remain explicit. Criteria 8/9 are satisfied for this independent exit disposition only: adoption must still record the experience/quality checkpoint and keep W1 paused until explicit ordinary resume. No full-profile, browser, visual, benchmark, native or packaging replay was required or performed here. Owner acceptance defers optional cosmetics only. It does not close or defer the separately retained acceptance-bound functional items: U05 real wording comparison, U03 Task Center unavailable-versus-empty exclusivity, U02 supporting-return reproduction, and the distinct Intent-error preflight. Those retain their own lawful disposition outside this styling amendment. Permanent development-folder-origin correction and requested maximized startup/right-side isolated-test geometry also remain separate W1 work; the owner-confirmed --no-dev-server workaround is not agent native proof. Full cross-capability Windows-x64 W1 qualification, independent Wave review and human G1 remain mandatory. This approval grants no ordinary resume, local-main integration across unmet gates, remote/destructive action, new spend or later-Wave authority. No product, prior evidence, canonical plans/controllers, Git state or hooks were mutated; no ordinary project/vault/policy, protected witness contents or excluded sibling was accessed. Only this new ledger is authored. No new acceptance-bound finding remains; the first exit round has no prior formal findings to close.
 
 **Bound amendment-adoption checkpoints:**
 
