@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 8dc7fa07241417bec19aae1bfd99abff50fde0e7824e2afcba005f1c91e0b75a
+source_sha256: b60b7cb102f178306b489b34f6f45b22989fafef0bb3b31413b1bc54f0be0bbc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -87,7 +87,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A06` | `ECR-0005` | `planning/wave-amendment-approvals/W1.A06.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `PAUSED` | `APPROVED` | `PAUSED` | 2 |
-| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `REVIEW` | `APPROVED` | `REVIEW` | 4 |
+| `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 4 |
 
 ## Amendment-exit review and adoption projections
 
@@ -476,9 +476,11 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W1.A09
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `a59db82ab1a5047d5e56f990aa15fc523cd5dbb2c8f57592d09ccaa5534e48e5`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `a59db82ab1a5047d5e56f990aa15fc523cd5dbb2c8f57592d09ccaa5534e48e5`
 
 - Candidate / declared candidate / branch: `113024d2c3a9def65fdfa99afa1a5df2840f29a3` / `232b9fe7408df486cd045460fb87efe377b8606f` / `codex/w1-windows-local-runtime`
 - Submitted by / at: codex / `2026-09-06T00:11:42+00:00`
@@ -488,11 +490,29 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 - Selected checks: `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml amendment status W1.A09`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `git diff --check`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group units --report W1.A09.T04.verification-units-03.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group native --report W1.A09.T04.verification-native-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.verify-01.py --group integration --report W1.A09.T04.verification-integration-02.json`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.binding-tests-01.py`, `.venv/Scripts/python.exe -I -B artifacts/evidence/W1.A09.T04.final-binding-01.py --report W1.A09.T04.final-binding-02.json`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/t03_acceptance_review / `2026-09-06T00:17:10+00:00`
+
+**Reviewed state commit:** `25cb6a51726e8f8696e2e664a3e587f6cde1ecfd`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W1.A09.exit-review-R01.json` / `a9a6fbd106cbab10ad40d60867f54b65983df0bbe690208d9dd5b2feb414fc42`
+
+**Review notes:** Independent review approves W1.A09 amendment exit R01 at the exact frozen REVIEW state and against all eight immutable ECR-0008 exit criteria. The four-task DONE records and independent contribution disposition are authenticated, all assigned findings are closed without historical rewrite, and the accumulated actual Windows/native/Core and separately scoped reference/product/packaging proofs retain their explicit limits. No product, test, tool, reference or authority input changed after the approved T04 candidate. Exact preapproval/publication/checkpoint order, predecessor authority, refactor arithmetic and the PAUSED-parent return contract pass bounded read-only verification. This is amendment exit approval only. It is not adoption, a claim that A08 return or styling work already occurred, ordinary W1 resume, full W1/release qualification, human G1 approval, local-main integration across unmet gates or remote authority. Separate committed adoption evidence and the supported transition must still bind this reviewed completion and exact correctionReturn.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:/root/t03_acceptance_review at `2026-09-06T00:17:10+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W1.A09.exit.json`
 
-**Latest completion notes:** All four tasks and W1.A09.S01 independently approved; submit exact eight-criterion exit and PAUSED W1.A08 return contract.
+**Latest completion notes:** Independent review approves W1.A09 amendment exit R01 at the exact frozen REVIEW state and against all eight immutable ECR-0008 exit criteria. The four-task DONE records and independent contribution disposition are authenticated, all assigned findings are closed without historical rewrite, and the accumulated actual Windows/native/Core and separately scoped reference/product/packaging proofs retain their explicit limits. No product, test, tool, reference or authority input changed after the approved T04 candidate. Exact preapproval/publication/checkpoint order, predecessor authority, refactor arithmetic and the PAUSED-parent return contract pass bounded read-only verification. This is amendment exit approval only. It is not adoption, a claim that A08 return or styling work already occurred, ordinary W1 resume, full W1/release qualification, human G1 approval, local-main integration across unmet gates or remote authority. Separate committed adoption evidence and the supported transition must still bind this reviewed completion and exact correctionReturn.
 
 **Bound amendment-adoption checkpoints:**
 

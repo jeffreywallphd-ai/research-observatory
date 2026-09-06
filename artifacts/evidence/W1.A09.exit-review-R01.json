@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-independent-review",
+  "amendment_id": "W1.A09",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/t03_acceptance_review",
+  "result": "approved",
+  "reviewed_state_commit": "25cb6a51726e8f8696e2e664a3e587f6cde1ecfd",
+  "candidate_commit": "113024d2c3a9def65fdfa99afa1a5df2840f29a3",
+  "declared_candidate_commit": "232b9fe7408df486cd045460fb87efe377b8606f",
+  "evidence": {
+    "path": "artifacts/evidence/W1.A09.exit.json",
+    "sha256": "9e4d6fee3e405603ead3f52e40a8bcff2e337e25ea0934a7fd58992181cdb6aa"
+  },
+  "notes": "Independent review approves W1.A09 amendment exit R01 at the exact frozen REVIEW state and against all eight immutable ECR-0008 exit criteria. The four-task DONE records and independent contribution disposition are authenticated, all assigned findings are closed without historical rewrite, and the accumulated actual Windows/native/Core and separately scoped reference/product/packaging proofs retain their explicit limits. No product, test, tool, reference or authority input changed after the approved T04 candidate. Exact preapproval/publication/checkpoint order, predecessor authority, refactor arithmetic and the PAUSED-parent return contract pass bounded read-only verification. This is amendment exit approval only. It is not adoption, a claim that A08 return or styling work already occurred, ordinary W1 resume, full W1/release qualification, human G1 approval, local-main integration across unmet gates or remote authority. Separate committed adoption evidence and the supported transition must still bind this reviewed completion and exact correctionReturn.",
+  "findings": [],
+  "closures": [],
+  "review_scope": {
+    "approved_packet_commit": "2160cc9917282d80848189dc9669fe3827979246",
+    "approved_packet_path": "planning/enabler-change-requests/ECR-0008.packet.json",
+    "approved_packet_git_bytes_sha256": "edfa9fd1919e223f5cbf6c1f89bcf8075193a1bdc643aba103a8674a16b7380b",
+    "exit_submission_packet_sha256": "a59db82ab1a5047d5e56f990aa15fc523cd5dbb2c8f57592d09ccaa5534e48e5",
+    "acceptance_criteria_sha256": "dee6267c6ee0f9cccb131d03473e8df11b1d38c3369095584cfc7def81441463",
+    "selected_checks_sha256": "c8c38561f61fb4c71dcbf6ff70fb9414630709b4c8c5ec5fca81a918f640ed09",
+    "acceptance_criterion_count": 8,
+    "selected_check_count": 8,
+    "prior_exit_attempts": 0,
+    "prior_open_exit_findings": [],
+    "four_task_done_delivery_commit": "11f272be8268a67b18fc4bca6613c0f5da85daf8",
+    "contribution_review_introduction_commit": "232b9fe7408df486cd045460fb87efe377b8606f",
+    "binding_checked_at": "2026-09-06T00:14:32.380410+00:00",
+    "hash_conventions": "Evidence and ledger hashes normalize CRLF and lone CR to LF as taskctl requires. Packet/criteria/check-list digests use sorted compact JSON with the controller's default ASCII escaping. Raw evidence hashes are separately labeled where applicable.",
+    "risk_selection": "This exit changes only evidence and review-state projections after the already independently approved task/contribution. Inspect all eight exit criteria, exact authority/preapproval/checkpoint sequencing, unchanged task/finding history, committed source/evidence identity, honest platform/packaging limits and deferred return/release duties. Reuse authenticated actual task and contribution executions. No new product, native, build, benchmark or full-W1 test run is justified by this unchanged implementation."
+  },
+  "independence": {
+    "campaign_owner": "codex",
+    "reviewer_is_campaign_owner": false,
+    "statement": "This reviewer authored independent T03/T04 task ledgers, bounded advisory reviews, synthetic test fixtures and the separate W1.A09.S01 contribution review, not the product/helper/controller implementation, exit evidence or workflow transitions. T01/T02, the pre-rebind control/experience checkpoint, bootstrap and approved packet have separately attributed independent reviewers. This review rechecks the exit authority/state/evidence and eight-criterion mapping rather than treating the owner's readiness assertion as approval. Only this new exit-review ledger is authored for this subtask."
+  },
+  "criterion_dispositions": [
+    {
+      "criterion_index": 1,
+      "criterion": "Exact immutable W1/A01-A08/migration authority and paused single-owner correction entry/return are authenticated; no historical rewrite or premature execution.",
+      "result": "satisfied",
+      "basis": "The exact approved packet and standing-preapproval record agree on the full authority chain. Independently matched all eight bound historical amendment approval records and GOV-MIG-0001 to their introduction/authority Git bytes. The independently approved B00 review establishes the actual append and original complete predecessor preservation. At this frozen exit state, all eight earlier amendment records remain identical to the bootstrap append, including the full PAUSED W1.A08 record. Ordinary capabilities, Waves, release gates, approval bases and architecture constraints are also unchanged since that boundary. Prepared correctionReturn equals live correction and approved pausedPredecessor; recomputed parent hash is3856a53b. No ordinary execution or actual return is inferred from exit submission."
+    },
+    {
+      "criterion_index": 2,
+      "criterion": "Bind the owner's explicit preapproval to this exact matching canonical packet/reference only after independent acceptance, before product edits; apply only enumerated publication metadata substitutions.",
+      "result": "satisfied",
+      "basis": "Authenticated preapproval record08cfedc4 at introductionfcf627b4 binds the actual standing owner authorization to exact packet2160cc99 and approved independent packet R02. Confirmed packet-review introduction56656807 precedes approval introductionfcf627b4, which precedes reference publication0460b2af. The record explicitly does not invent a personal owner review of a later commit or W1 approval. T01's independently reviewed exact-proposal comparator and publication negatives restrict substitutions to the enumerated approval metadata; its separate control/experience checkpoint and subsequent rebind sequence are authenticated. No new publication exception or authority expansion is supplied by this exit."
+    },
+    {
+      "criterion_index": 3,
+      "criterion": "F01 and UX02-UX06 close through the four tasks and real Windows/native/Core proof, independent task/slice/exit dispositions and no valid-test weakening.",
+      "result": "satisfied",
+      "basis": "All four tasks remain DONE with independent exact-candidate approval, and the separately committed W1.A09.S01 review approves all four contribution criteria. T04's adverse R01 is retained; both evidence-helper findings are explicitly closed only by independently replayed R02. The accumulated actual native/Core catalog, narrative, lineage, readiness/denial and protected project persistence, actual Windows picker/default/create/restart/reopen, and cancellation/lock/close/recovery proofs address assigned F01/UX02-UX06. Source-bound reference/renderer checks complement but do not substitute for those platform observations. Test/fixture/measurement corrections preserve valid assertions and adverse outcomes. This document provides the separate exit disposition, with no new open finding."
+    },
+    {
+      "criterion_index": 4,
+      "criterion": "Durable semantic1.5 and token source identity remain unchanged; all66 reference observations are truthful and publication follows independent control-checkpoint discipline.",
+      "result": "satisfied",
+      "basis": "Reuse T01's authenticated original semantic1.5 snapshots, strict root-only presentation bridge, unchanged generated semantics and actual persisted predecessor/history/support-return proof. The separate independent checkpoint freshly rerendered all66 reference observations, inspected all six changed captures and validated unchanged rendering settings and history. This reviewer verified publication/baseline/checkpoint/rebind ancestry and that the checkpoint is the rebind's immediate parent; workflow-profile source/witness, reference and visual baseline remain unchanged since approved T01. Later T04 reference and built-product checks are explicitly separate. Token-source1.4, semantic1.5 and original adverse evidence are not relabeled by presentation1.6."
+    },
+    {
+      "criterion_index": 5,
+      "criterion": "Shared folder selection eliminates implemented W1 directory/path-name typing, preserves researcher authority/input, native window/lock lifetime and Core data safeguards.",
+      "result": "satisfied",
+      "basis": "The reviewed inventory covers both implemented project location inputs and removes the separate child-directory-name input, without pulling in future screens or treating output paths as inputs. Friendly-name derivation, stable retry/collision identity, default parent and selectable preview retain explicit Create/Open authority. T03 real modal ownership/keyboard/cancel/lock/close, default parity, actual protected database/collision/restart evidence and T04 actual fixture lifecycle/independent blind creation complement renderer state/race tests. Selection alone creates or opens nothing. Core package/path/no-overwrite/exclusive-lock/staging/recovery safeguards remain separate and unchanged; neither a browser tree nor broader renderer filesystem permission is introduced."
+    },
+    {
+      "criterion_index": 6,
+      "criterion": "Adoption returns to PAUSED A08 whose T02 closes F02/UX01 using actual spacing/sidebar geometry; no false closure or premature ordinary Wave execution.",
+      "result": "satisfied-at-exit-review-boundary",
+      "basis": "This is the enforced future adoption/return contract, not a claim of a completed transition or completed parent work. At reviewed state25cb6a51, W1.A09 campaign/completion are REVIEW and lease-free; W1.A08 remains unchanged PAUSED. Separate adoption evidence must bind the subsequently committed approved completion, this exact exit history and correctionReturn, and supported adoption must verify PAUSED A08 with no live parent lease. F02/UX01 remain existing W1.A08.T02 duties requiring actual spacing/sidebar geometry and prescribed experience qualification after explicit activation/recovery. A08 completion/adoption precede ordinary W1/CAP-07 resume. No false closure or premature execution is approved."
+    },
+    {
+      "criterion_index": 7,
+      "criterion": "11/194 refactor points (5.7%) remain within15%; exact path inventory limits scope; no major refactor, wider permissions, later-Wave, external or destructive action.",
+      "result": "satisfied",
+      "basis": "Recomputed the immutable48 atomic baseline rows as194 points and the three conservative task allocations as3+3+5=11 points:5.6701 percent, rounded5.7, below15. The approved task path inventories and independent scoped reviews account for the bounded semantic/reference/native/folder work and acceptance-linked evidence maintenance. No product/test/tool/reference/approval/migration change occurs after the approved T04 candidate; exit delivery is evidence/projection only. No foundational replacement, second token system, expanded renderer/security authority, later-Wave implementation, ordinary private data access, remote or destructive action is part of this exit. Future window-geometry planning remains inert, not new implemented authority."
+    },
+    {
+      "criterion_index": 8,
+      "criterion": "Complete W1 repository/Windows qualification and independent Wave review precede human G1 approval; correction approval is not release approval.",
+      "result": "satisfied-as-retained-release-obligation",
+      "basis": "Exit evidence and this disposition retain the complete W1 repository/Windows cross-capability matrix, independent Wave review and human G1 approval as mandatory later gates. No complete W1 pass is claimed. Actual source-built native/Core lifecycle plus clean frozen-sidecar build/--check/failure recovery and release resource resolution support the approved A09 correction scope; frozen/unmodified ordinary-profile startup and required installer/authentication/full-release qualification remain unproved later duties. A09 exit approval is not a substitute for those checks or G1."
+    }
+  ],
+  "independent_checks_performed_for_exit": [
+    {
+      "name": "frozen-exit-packet-and-exact-evidence",
+      "result": "passed",
+      "detail": "Read committed state25cb6a51, confirmed first R01 with no prior/open exit findings, exact candidate113024d2 and declared candidate232b9fe7, campaign/completion REVIEW and cleared lease. Recomputed packet, eight-criterion, eight-command and canonical evidence hashes. Exit criteria equal the immutable packet text exactly. Working exit evidence equals candidate and frozen-state blobs; current amendment equals frozen state. Declared-to-candidate adds only W1.A09.exit.json, and candidate-to-frozen-state changes only backlog and two generated backlog views."
+    },
+    {
+      "name": "task-contribution-and-unchanged-source-bridge",
+      "result": "passed",
+      "detail": "All four DONE task records exactly equal reviewed completion11f272be. Contribution ledger raw hash9b491c13 matches current bytes and its introduction at declared candidate232b9fe7, binds11f272be, and records approval/no findings. Prior contribution/task reviews already authenticated every task packet, manifest, ledger and closure sequence. Independently checked no apps/services/packages/design/tools/tests/verification or approval/migration change from approved T04 candidate6cb1514f to this frozen exit state. Existing direct R02 binding establishes566 sources,532 candidate blob identities and the selected report snapshots; those are reused executions, not fresh exit tests."
+    },
+    {
+      "name": "authority-preapproval-budget-and-return",
+      "result": "passed",
+      "detail": "Authenticated standing-preapproval record and independent packet review Git bytes and ordering; checked eight historical approval references and migration record. Recomputed11/194 arithmetic. Compared all eight prior amendment records, ordinary capabilities/Waves/gates/approval bases/architecture constraints with bootstrap append82488fbd: unchanged. Recomputed PAUSED A08 record hash and exact prepared/live/approved correctionReturn equality. Read the full B00 independent review and approved execution sequence; no live transition or mutation was invoked."
+    },
+    {
+      "name": "eight-criterion-evidence-and-limit-review",
+      "result": "passed",
+      "detail": "Read all eight exit evidence rows, approved verification obligations, separate bootstrap/task/contribution/experience checkpoints and retained packaging/return qualifications. Reused this reviewer's actual T03/T04 focused tests, presentation checks, adversarial characterizations, source/report authentication and performance arithmetic; other independent reviewers' T01/T02/checkpoint executions and owner native/UI/package runs remain separately attributed. No full-W1, native GUI, build or benchmark execution occurred for this exit review."
+    }
+  ],
+  "evidence_and_review_bindings": {
+    "bootstrap_review": {
+      "path": "artifacts/evidence/W1.A09.B00.review-R01.json",
+      "raw_sha256": "dc592a047daf586ba66b795958a2c3038446ba100fa5ac8068ee7b4731fc31a6"
+    },
+    "contribution_review": {
+      "path": "artifacts/evidence/W1.A09.S01.review-01.json",
+      "raw_sha256": "9b491c1363f75bfc8627a96d0b66fdf75dcb72edd37716cc2c2e03585ce5f026",
+      "introduction_commit": "232b9fe7408df486cd045460fb87efe377b8606f",
+      "reviewed_completion_delivery_commit": "11f272be8268a67b18fc4bca6613c0f5da85daf8"
+    },
+    "task_review_ledgers": [
+      {"path": "artifacts/evidence/W1.A09.T01.review-R01.json", "canonical_sha256": "8609e02b527340c3da3efd4cd465c81c7cc136d083f6998bb9ff43a975f92e00"},
+      {"path": "artifacts/evidence/W1.A09.T02.review-R01.json", "canonical_sha256": "38126680eb82121f0ccd13bf572060296c9250137bc755403af011a27b602dd0"},
+      {"path": "artifacts/evidence/W1.A09.T03.review-R01.json", "canonical_sha256": "04bbbd016f496e82b09c2245909cd70493d04c6cb2d4d37771efda57d92e8642"},
+      {"path": "artifacts/evidence/W1.A09.T04.review-R01.json", "canonical_sha256": "0845069546686e2ebf9f8e60b147936bcb4ec3c3f1a9565a3c6270a282622389", "result": "changes-requested; retained"},
+      {"path": "artifacts/evidence/W1.A09.T04.review-R02.json", "canonical_sha256": "94c747ec3d0630687e2befe96a6f1fe041de8b04b12852c770dc543805b33f68", "result": "approved; both R01 findings explicitly closed"}
+    ],
+    "control_experience_checkpoint": {
+      "path": "artifacts/evidence/W1.A09.T01.control-experience-checkpoint-01.json",
+      "raw_sha256": "376e105cf6b4417f758e1afb8abbb46f135152e64b0061a1bc26602a606f6f6f"
+    },
+    "current_binding": {
+      "path": "artifacts/evidence/W1.A09.T04.final-binding-02.json",
+      "raw_sha256": "0ee46e68944d831b335f6e9243d73f30c0263fd5880b270e26beedf5aa8f4936"
+    },
+    "packaging_scope_reconciliation": {
+      "path": "artifacts/evidence/W1.A09.T04.packaging-scope-review-01.json",
+      "raw_sha256": "5d0434b8d32724b1ec817ca7029905273823d14c9c2c1189d562b9e1cb82da10"
+    }
+  },
+  "pending_adoption_contract": {
+    "actual_adoption_performed": false,
+    "required_parent": "W1.A08",
+    "required_parent_status": "PAUSED",
+    "required_parent_record_sha256": "3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506",
+    "required_parent_lease": null,
+    "condition": "After the supported exit-review transition and a commit of that exact approved completion, separate committed adoption evidence must name the reviewedCompletionCommit, frozen exit history/evidence and exact correctionReturn. Supported adoption must revalidate that binding and actual returned hold. This ledger is not that adoption evidence.",
+    "ordinary_wave_resume_authorized": false,
+    "parent_styling_findings_closed": false,
+    "W1_or_G1_approved": false
+  },
+  "retained_history_and_limits": [
+    "Original stale reference captures, producer/test/fixture/redaction failures, T04 R01 findings and R02 corrections remain append-only. Exit has no new prior finding to close; its empty closures array does not rewrite task history.",
+    "The original failing installed binary/action was not uniquely diagnosed. Actual later success does not invent a specific cause for prior launch-context failures. Scope is the reproduced approved correction, not every possible generic error.",
+    "Source-built real Tauri/Core fixtures, actual default/protected persistence and frozen package/resource checks are separate proofs. Earlier over-specific single-packaged-lifecycle prose is corrected append-only; neither ordinary-profile startup nor complete W1 qualification is falsely reported.",
+    "Prior-source native modal reuse is conditioned on unchanged production mechanisms. Renderer doubles and reference captures remain labeled. Same-account hostile isolation, atomic change-and-restore defense and rollback of already completed writes are not claimed.",
+    "F02/UX01 remain W1.A08.T02 after return. Usability U02/U03/U05/U06 and later requested startup/testing geometry need lawful W1 handling; fixture-denied task-center/support behavior is not automatically a production defect and no full nine-task blind success is claimed.",
+    "Independent approved A09 exit enables only the next supported adoption prerequisites. A08 remains to be activated/recovered, qualified, independently reviewed and adopted before ordinary W1/CAP-07 resume. Local-main integration through unmet ancestry gates and remote effects remain outside this approval."
+  ],
+  "reviewer_safety": "Only this new exit-review ledger was authored. All other work was read-only exact-path Git/JSON/YAML/source inspection; no live controller transition, real Git index/branch, product/helper/backlog or historical-evidence mutation occurred. No native UI, build, Cargo, benchmark, ordinary user policy/vault/projects/credentials, remote or sibling-workspace access occurred. Bound historical planning approval/migration records are distinct from the protected unrelated artifacts/evidence/W1.A04.B00.json, which was never opened, read, hashed, copied or changed. No actual protected alias or redirect target was tested."
+}
