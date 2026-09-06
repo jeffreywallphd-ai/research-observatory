@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "pre-submission-verification-and-findings",
+  "taskId": "CAP-07.S01.T03",
+  "candidate": "69c0bcdeb2c77f6ff66abd0a59fa525bcdf88060",
+  "formalSubmissionRound": null,
+  "performanceAcceptance": "artifacts/evidence/CAP-07.S01.T03.performance-acceptance-01.json",
+  "checks": [
+    {
+      "commandId": "ai:unit",
+      "command": "python -m unittest tests.ai.test_model_gateway_contracts tests.ai.test_model_registry tests.ai.test_model_routing tests.contracts.test_model_registry_contracts tests.contracts.test_model_routing_contracts tests.service.test_model_registry_repository tests.service.test_model_registry_service tests.service.test_model_gateway_service tests.service.test_model_routing_repository tests.foundation.test_architecture_check tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current tests.service.test_core_api.CoreApiTests.test_local_transport_denies_missing_stale_remote_and_origin_requests",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 11.55,
+      "outputSha256": "385d9fd6a03b7bc880d6c7d7ba399c075eeaaac43c14faddd97e7b376aa4cd42",
+      "outputBytes": 5053,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-01.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "service:unit",
+      "command": "python -c \"import unittest; loader=unittest.TestLoader(); suite=loader.loadTestsFromName('tests.service.test_model_routing_integration'); flatten=lambda s: [t for item in s for t in (flatten(item) if isinstance(item,unittest.TestSuite) else [item])]; all_tests=flatten(suite); accepted='tests.service.test_model_routing_integration.ProtectedModelRoutingTests.test_gateway_overhead_p95_excluding_model_execution'; selected=[t for t in all_tests if t.id()!=accepted]; assert len(all_tests)==35 and len(selected)==34; print('Owner accepted the exact prior benchmark observation; no new measurement or benchmark PASS is claimed. Running all 34 functional protected integration cases.'); result=unittest.TextTestRunner(verbosity=1).run(unittest.TestSuite(selected)); raise SystemExit(not result.wasSuccessful())\"",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 3.731,
+      "outputSha256": "6eabe42844bcfd6f1183611a100b0742e8557d8bde1fb571cefe2dcf1dd081a3",
+      "outputBytes": 297,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-02.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "contracts:unit",
+      "command": "python tools/core_api_contract.py --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 1.13,
+      "outputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "outputBytes": 25,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-03.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "contracts:unit",
+      "command": "node packages/contracts/model-gateway/generate.mjs --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.05,
+      "outputSha256": "76cc067cb22fae45c1773e1092cb58cbe9e1efc36b65fa4d694695f7d6eef5a0",
+      "outputBytes": 30,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-04.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "contracts:unit",
+      "command": "node node_modules/vitest/vitest.mjs run model-gateway/model-task.test.ts",
+      "cwd": "packages/contracts",
+      "exitCode": 0,
+      "durationSeconds": 0.516,
+      "outputSha256": "90bb035c2ed0c46709a709041e29a1b6e5106722af01c6693bfde95525d5730f",
+      "outputBytes": 236,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-05.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m ruff check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/model_gateway_contracts.py services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_registry_contracts.py services/core-api/src/research_observatory_core/model_registry_repository.py services/core-api/src/research_observatory_core/model_gateway_service.py services/core-api/src/research_observatory_core/model_routing.py services/core-api/src/research_observatory_core/model_routing_contracts.py services/core-api/src/research_observatory_core/model_routing_policy.py services/core-api/src/research_observatory_core/ports/model_gateway.py tests/ai/test_model_routing.py tests/contracts/test_model_routing_contracts.py tests/model_routing_fixtures.py tests/service/test_model_gateway_service.py tests/service/test_model_routing_integration.py tests/service/test_model_routing_repository.py tests/foundation/test_architecture_check.py tools/architecture_check.py tools/core_api_contract.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.099,
+      "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "outputBytes": 19,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-06.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m ruff format --check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/model_gateway_contracts.py services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_registry_contracts.py services/core-api/src/research_observatory_core/model_registry_repository.py services/core-api/src/research_observatory_core/model_gateway_service.py services/core-api/src/research_observatory_core/model_routing.py services/core-api/src/research_observatory_core/model_routing_contracts.py services/core-api/src/research_observatory_core/model_routing_policy.py services/core-api/src/research_observatory_core/ports/model_gateway.py tests/ai/test_model_routing.py tests/contracts/test_model_routing_contracts.py tests/model_routing_fixtures.py tests/service/test_model_gateway_service.py tests/service/test_model_routing_integration.py tests/service/test_model_routing_repository.py tests/foundation/test_architecture_check.py tools/architecture_check.py tools/core_api_contract.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.174,
+      "outputSha256": "793e2905062e677bc49a961cd9fd445b511f01c6196d6dfc46ac854a2639a903",
+      "outputBytes": 27,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-07.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m mypy --follow-imports=silent services/core-api/src/research_observatory_core/model_gateway_contracts.py services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_registry_contracts.py services/core-api/src/research_observatory_core/model_registry_repository.py services/core-api/src/research_observatory_core/model_gateway_service.py services/core-api/src/research_observatory_core/model_routing.py services/core-api/src/research_observatory_core/model_routing_contracts.py services/core-api/src/research_observatory_core/model_routing_policy.py services/core-api/src/research_observatory_core/ports/model_gateway.py tools/architecture_check.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.322,
+      "outputSha256": "e522fa370334927ac2ccb7106100045b572938dd238093267de825336e6704f2",
+      "outputBytes": 45,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-08.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:build-manifest",
+      "command": "python -c \"import pathlib,sys,json; sys.path.insert(0,'tools'); from quality_check import load_scope; from build_manifest import repository_schema_paths; p=pathlib.Path('.').resolve(); print('Quality scope:',len(load_scope(p))); paths,errors=repository_schema_paths(p); expected=json.loads((p/'packaging/build-inputs.json').read_text())['schemaPaths']; assert not errors and set(paths)==set(expected); print('Schema inventory: PASS')\"",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.973,
+      "outputSha256": "97b905fec2bf836283e1169b94e1b0366c8c66e01f0e4d94caf9ab26730a86bb",
+      "outputBytes": 44,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-09.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:architecture",
+      "command": "python tools/architecture_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 1.478,
+      "outputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "outputBytes": 100,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-10.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 2.526,
+      "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "outputBytes": 44,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-11.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "git diff --check 5b283d3b26f3a7f6b8deb57e4ce0dfcf2be314d3 69c0bcdeb2c77f6ff66abd0a59fa525bcdf88060",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.088,
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputBytes": 0,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-12.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:backlog",
+      "command": "python tools/plan_review_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 120.37,
+      "outputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "outputBytes": 85,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-13.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:backlog",
+      "command": "python -m unittest tests.foundation.test_planctl_wave_approval tests.foundation.test_agent_protocol_check",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 1.258,
+      "outputSha256": "08bdb43e4b622e05bea82c839391b65f025554aa9697be49c3f3a14b9ddcbdc1",
+      "outputBytes": 136,
+      "log": "artifacts/tmp/CAP-07.S01.T03.check-R05-14.log",
+      "provenance": "fresh"
+    }
+  ],
+  "producerSha256": "106e89b4ffd2ea6d301158b1094ddb45cbe4de3239c770e9ac7a809e5ecfd28f",
+  "benchmarkRerun": false,
+  "selectedScope": "103 fresh focused unit tests and all 34 protected functional integration cases, generated contracts, quality, architecture, inventory and planning checks passed. The unchanged benchmark was not rerun; the owner's acceptance applies to the retained historical observation, not a newly passing comparison.",
+  "disposition": "new-publication-boundary-finding-before-formal-submission",
+  "findings": [
+    {
+      "id": "F04",
+      "severity": "P2",
+      "criterion": 1,
+      "title": "Recheck publication authority after owning untrusted result values",
+      "boundary": "services/core-api/src/research_observatory_core/model_routing.py",
+      "reviewer": "agent:/root/registry_persistence_preflight",
+      "reproduction": "An accepted dict-subclass adapter result invokes token.cancel() or revokes fixture rights inside .items() during decode_model_result ownership, after the previous permission/cancellation checks. Memory and protected SQLCipher cases all returned and persisted completed/succeeded with output, with exactly one ownership callback and adapter calls [1,0]. No decoder patch, timing race, source edit or external service.",
+      "probe": {
+        "command": ".venv/Scripts/python.exe -B -c <inline synthetic four-case ownership probe>",
+        "exitCode": 0,
+        "wallSeconds": 0.8295,
+        "provenance": "Independent tool stdout only; no retained producer/report file or digest. Exit zero means successful reproduction, not product acceptance.",
+        "caseCount": 4,
+        "allCasesReproduced": true,
+        "headStable": true
+      },
+      "requiredClosure": "Final success publication observes current catalog/permission/cumulative budget after owning, normalizing and validating result values, followed by cancellation/deadline checks. Shared regressions must show no returned or persisted output for revoked/cancelled cases in memory and protected repositories."
+    }
+  ],
+  "priorFindings": "F01-F03 remain preserved and previously replayed; this finding predates any controlled RNN submission and does not invent a review round.",
+  "scopeLimits": "No owner waiver of functionality/security and no W1/G1 approval. No protected witness or excluded sibling contents accessed. No ordinary projects, vault, credentials or security settings used."
+}

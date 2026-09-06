@@ -271,6 +271,120 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result["output"])
         self.assertEqual(0, self.adapters[1].calls)
 
+    async def assert_result_ownership_change_is_not_published(self, change):
+        cap = self.charged_authority()[0] if change == "cost" else None
+        token = CancellationToken()
+        current = [True]
+        ownership_reads = []
+        authority = self.authority
+        execute = self.adapters[0].execute
+
+        class ActiveResult(dict):
+            def items(self):
+                # Accepted mapping access runs while the gateway owns the raw
+                # result, after adapter execution and its initial guards.
+                ownership_reads.append(True)
+                if change == "cancel":
+                    token.cancel()
+                elif change == "permission":
+                    authority.reason_codes = ("fixture-rights-revoked",)
+                elif change == "catalog":
+                    current[0] = False
+                elif change == "cost":
+                    cap[0] = 0
+                return super().items()
+
+        async def active_result(*args, **kwargs):
+            return ActiveResult(await execute(*args, **kwargs))
+
+        self.adapters[0].execute = active_result
+        gateway = self.gateway()
+        gateway._catalog_is_current = lambda _catalog: current[0]
+        result = await self.run_request(gateway, cancellation=token)
+        self.assertTrue(ownership_reads)
+        self.assertEqual("cancelled" if change == "cancel" else "denied", result["status"])
+        self.assertIsNone(result["output"])
+        self.assertEqual(
+            "model-cancelled" if change == "cancel" else "model-permission-changed",
+            result["diagnostics"][0]["code"],
+        )
+        terminal = self.repository.read(self.request["taskId"])
+        self.assertTrue(terminal.terminal)
+        self.assertEqual(self.original, self.request)
+        self.assertEqual(self.original, json.loads(terminal.task_json))
+        persisted = json.loads(terminal.events[-1].result_json)
+        self.assertEqual(result["status"], persisted["status"])
+        self.assertIsNone(persisted["output"])
+        self.assertEqual(result, await self.run_request(gateway))
+        self.assertEqual(terminal, self.repository.read(terminal.task_id))
+        self.assertEqual([1] + [0] * (len(self.adapters) - 1), [adapter.calls for adapter in self.adapters])
+
+    async def test_cancel_during_result_ownership_does_not_publish_or_replay_output(self):
+        await self.assert_result_ownership_change_is_not_published("cancel")
+
+    async def test_permission_revocation_during_result_ownership_does_not_publish_or_replay_output(self):
+        await self.assert_result_ownership_change_is_not_published("permission")
+
+    async def test_catalog_revocation_during_result_ownership_does_not_publish_or_replay_output(self):
+        await self.assert_result_ownership_change_is_not_published("catalog")
+
+    async def test_cost_cap_shrink_during_result_ownership_does_not_publish_or_replay_output(self):
+        await self.assert_result_ownership_change_is_not_published("cost")
+
+    async def assert_publication_authority_work_is_guarded(self, change):
+        token = CancellationToken()
+        now = [100.0]
+        armed = [False]
+        late_assessments = []
+        assess = self.authority.assess
+        execute = self.adapters[0].execute
+
+        class ActiveResult(dict):
+            def items(self):
+                armed[0] = True
+                return super().items()
+
+        async def active_result(*args, **kwargs):
+            return ActiveResult(await execute(*args, **kwargs))
+
+        def publication_authority(**kwargs):
+            permission = assess(**kwargs)
+            if armed[0]:
+                late_assessments.append(True)
+                if change == "cancel":
+                    token.cancel()
+                else:
+                    now[0] += self.request["requirements"]["deadlineMs"] / 1000 + 0.001
+            return permission
+
+        self.adapters[0].execute = active_result
+        self.authority.assess = publication_authority
+        # Replace only the gateway module's time reference. The event loop and
+        # protected persistence retain their real clocks and execution paths.
+        with patch("research_observatory_core.model_routing.time", SimpleNamespace(monotonic=lambda: now[0])):
+            result = await self.run_request(cancellation=token)
+        self.assertEqual([True], late_assessments)
+        self.assertEqual("cancelled" if change == "cancel" else "failed", result["status"])
+        self.assertEqual(
+            "model-cancelled" if change == "cancel" else "model-deadline-exhausted",
+            result["diagnostics"][0]["code"],
+        )
+        self.assertIsNone(result["output"])
+        terminal = self.repository.read(self.request["taskId"])
+        self.assertTrue(terminal.terminal)
+        self.assertEqual(self.original, self.request)
+        self.assertEqual(self.original, json.loads(terminal.task_json))
+        persisted = json.loads(terminal.events[-1].result_json)
+        self.assertEqual(result["status"], persisted["status"])
+        self.assertIsNone(persisted["output"])
+        self.assertEqual([1, 0], [adapter.calls for adapter in self.adapters])
+
+    async def test_publication_authority_cancellation_does_not_publish_output(self):
+        await self.assert_publication_authority_work_is_guarded("cancel")
+
+    async def test_publication_authority_deadline_exhaustion_does_not_publish_output(self):
+        await self.assert_publication_authority_work_is_guarded("deadline")
+
     async def test_per_attempt_timeout_can_fallback_within_global_deadline(self):
         self.adapters[0].wait = True
         self.policy = self.policy.model_copy(update={"attempt_timeout_ms": 15, "maximum_retries_per_route": 0})

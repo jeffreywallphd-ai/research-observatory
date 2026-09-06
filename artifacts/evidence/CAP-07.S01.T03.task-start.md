@@ -252,3 +252,41 @@ forecast. Historical total supplemental effort remains unknown; this is neither
 new budget headroom nor authority for another refactor. CAP-07.S01.T03 remains
 IN_PROGRESS, with performance unresolved; formal submission, local-main
 integration, slice review and W1 qualification have not occurred.
+
+## Owner acceptance and final output-publication closure
+
+The owner subsequently accepted the exact 25.383 ms observation for this task's
+completion in [performance acceptance 01](CAP-07.S01.T03.performance-acceptance-01.json).
+The strict benchmark remains a recorded failure, not a rounded passing test.
+Fresh selected nonperformance checks at
+`69c0bcdeb2c77f6ff66abd0a59fa525bcdf88060` passed 14/14 commands, including
+103 unit and 34 protected integration cases. No controlled submission occurred.
+
+Independent expanded review then reproduced a separate P2 publication defect:
+an accepted adapter-result mapping can cancel the token or revoke permission
+inside its ownership callback after the last output-authority check. Both the
+memory and protected repositories returned and persisted success with output.
+The latency acceptance does not waive this functional boundary.
+
+Additional acceptance row before correction: after all untrusted ownership,
+normalization and output validation, the final success-publication boundary must
+observe current catalog/permission/cumulative budget, cancellation and deadline.
+Authority evaluation itself may cancel or consume deadline, so cancellation and
+deadline are checked afterward. Keep early cancellation/deadline rejection and
+all input/result/history validation, provenance and durable write guarantees.
+Shared active-mapping regressions must fail before the correction and pass in
+both memory and protected fixtures afterward, without publishing output or
+rewriting the original request. This is restoration of the existing open-task
+contract, not another decoder refactor or scope/authority expansion.
+
+All eight new ownership-change cases (cancel, permission, catalog and cost cap,
+each in memory and protected SQLCipher) failed against unchanged production
+before the fix. The additive final check retains the earlier authorization and
+its denial precedence; it does not substitute or cache an authority result.
+The owner's direction permits task completion after this necessary safety
+correction and independent functional review without restarting optimization.
+The accepted measurement remains bound to `281cc0c0`; it is not a latency
+measurement of the corrected successor. Added publication-check cost remains
+unquantified, and post-correction performance qualification stays outstanding at
+slice/Wave scope under the unchanged benchmark. Independent route review by
+`agent:/root/registry_persistence_preflight` confirmed this limited applicability.

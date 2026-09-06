@@ -459,6 +459,13 @@ class ModelGateway:
                 validated = decode_model_result(task, owned)
                 if validated is None:
                     raise ModelAdapterFailure("output-invalid", retryable=False)
+                # Owning arbitrary adapter mappings can execute callbacks.
+                # Recheck publication authority after all untrusted values have
+                # been consumed, then check cancellation/time after that work.
+                if not self._same_authority(candidate, task, policy, spent):
+                    return fail("model-permission-changed", denied=True)
+                if cancel_token.is_cancelled():
+                    raise _Interrupted("model-cancelled")
                 if time.monotonic() >= deadline:
                     raise _Interrupted("model-deadline-exhausted")
                 return finish(validated)
