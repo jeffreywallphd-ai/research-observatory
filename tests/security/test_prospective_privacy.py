@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -120,6 +121,185 @@ class ProspectivePrivacyTests(unittest.TestCase):
         self.git("rm", "--cached", "copy.png")
         self.git("update-index", "--chmod=+x", "capture.png")
         self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+
+    def approve_retained_metadata(self, *, successor_line: int = 1) -> dict:
+        parent = self.git("rev-parse", "HEAD").stdout.decode().strip()
+        path = "legacy.txt"
+        baseline_oid = self.git("rev-parse", self.base + ":" + path).stdout.decode().strip()
+        prior_oid = self.git("rev-parse", parent + ":" + path).stdout.decode().strip()
+        baseline = self.git("cat-file", "blob", baseline_oid).stdout
+        prior = self.git("cat-file", "blob", prior_oid).stdout
+        raw = self.git("show", ":" + path).stdout
+        entry = self.approve_bytes(path, raw)
+        entry["retainedMetadata"] = [
+            {
+                "schemaVersion": "1.0",
+                "disposition": "unchanged-existing-metadata",
+                "rationale": "Synthetic existing field retained at the same logical location.",
+                "baselineBlob": baseline_oid,
+                "baselineSha256": hashlib.sha256(baseline).hexdigest(),
+                "baselineSize": len(baseline),
+                "predecessorCommit": parent,
+                "predecessorBlob": prior_oid,
+                "predecessorSha256": hashlib.sha256(prior).hexdigest(),
+                "predecessorSize": len(prior),
+                "lines": [
+                    {
+                        "baselineLine": 1,
+                        "predecessorLine": 1,
+                        "successorLine": successor_line,
+                        "sha256": hashlib.sha256(baseline.splitlines(keepends=True)[0]).hexdigest(),
+                        "logicalLocation": "fixture.existing.metadata",
+                        "unchangedLogicalLocation": True,
+                    }
+                ],
+            }
+        ]
+        return entry
+
+    def test_exact_retention_staged_index_and_push_preserve_unchanged_metadata(self) -> None:
+        self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n")
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        self.approve_retained_metadata()
+        self.assertEqual("PASS", self.inspect(staged=True)["status"])
+        (self.repo / "legacy.txt").write_text("Unstaged unrelated bytes")
+        self.assertEqual("PASS", self.inspect(staged=True)["status"])
+        tip = self.commit("Retain historical metadata")
+        self.assertEqual("PASS", self.inspect(tip=tip)["status"])
+
+    def test_retention_never_admits_changed_copied_moved_or_encoded_candidates(self) -> None:
+        original = UNSAFE_PATH + "\nstatus: updated\n"
+        self.write("legacy.txt", original)
+        self.approve_retained_metadata()
+        for changed in (
+            original.replace("private", "different"),
+            original + UNSAFE_PATH,
+            "new-field:\n" + original,
+            original.replace("/", "%2f"),
+        ):
+            with self.subTest(changed=changed):
+                self.write("legacy.txt", changed)
+                self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        self.write("legacy.txt", original)
+        self.write("copy.txt", original)
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+        self.git("rm", "--cached", "copy.txt")
+        self.git("update-index", "--chmod=+x", "legacy.txt")
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+
+    def test_retention_validates_full_provenance_and_unique_raw_line_mapping(self) -> None:
+        self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n")
+        self.approve_retained_metadata()
+        original = copy.deepcopy(self.reviews)
+        for field, value in (
+            ("baselineBlob", "0" * 40),
+            ("baselineSha256", "0" * 64),
+            ("baselineSize", 0),
+            ("predecessorCommit", "0" * 40),
+            ("predecessorBlob", "0" * 40),
+            ("predecessorSha256", "0" * 64),
+            ("predecessorSize", 0),
+            ("disposition", "new-disclosure"),
+            ("lines", []),
+        ):
+            with self.subTest(field=field):
+                self.reviews = copy.deepcopy(original)
+                assert self.reviews is not None
+                self.reviews["artifacts"][0]["retainedMetadata"][0][field] = value
+                with self.assertRaises(ValueError):
+                    self.inspect(staged=True)
+        for field, value in (
+            ("baselineLine", 2),
+            ("predecessorLine", 0),
+            ("successorLine", 2),
+            ("sha256", "0" * 64),
+            ("unchangedLogicalLocation", 1),
+            ("logicalLocation", ""),
+        ):
+            with self.subTest(field=field):
+                self.reviews = copy.deepcopy(original)
+                assert self.reviews is not None
+                self.reviews["artifacts"][0]["retainedMetadata"][0]["lines"][0][field] = value
+                with self.assertRaises(ValueError):
+                    self.inspect(staged=True)
+        self.reviews = copy.deepcopy(original)
+        assert self.reviews is not None
+        lines = self.reviews["artifacts"][0]["retainedMetadata"][0]["lines"]
+        lines.append(copy.deepcopy(lines[0]))
+        with self.assertRaises(ValueError):
+            self.inspect(staged=True)
+
+    def test_retention_authorization_is_parent_specific_even_for_identical_blob(self) -> None:
+        self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n")
+        self.approve_retained_metadata()
+        approved = self.commit("Reviewed retained transition")
+        self.assertEqual("PASS", self.inspect(tip=approved)["status"])
+        self.git("rm", "legacy.txt")
+        self.commit("Delete fixture field")
+        self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n")
+        tip = self.commit("Unreviewed reintroduction of identical bytes")
+        with self.assertRaises(ValueError):
+            self.inspect(tip=tip)
+
+    def test_retention_cannot_mask_credentials_or_private_identity(self) -> None:
+        token = "gh" + "p_" + "7F3aBc9De2Gh5Jk8Lm1Np4Qr6St0UvXyZaBc"
+        self.write("legacy.txt", UNSAFE_PATH + " " + token + "\n")
+        self.base = self.commit("Synthetic secret in legacy fixture")
+        self.policy["baselineCommit"] = self.base
+        self.write("legacy.txt", UNSAFE_PATH + " " + token + "\nstatus: updated\n")
+        self.approve_retained_metadata()
+        with self.assertRaisesRegex(ValueError, "Credential"):
+            self.inspect(staged=True)
+
+    def test_retention_rejects_staged_and_committed_merges(self) -> None:
+        branch = self.git("branch", "--show-current").stdout.decode().strip()
+        self.git("switch", "-c", "side")
+        self.write("side.txt", "Safe side content")
+        self.commit("Fixture side branch")
+        self.git("switch", branch)
+        self.write("main.txt", "Safe main content")
+        self.commit("Fixture main branch")
+        self.git("merge", "--no-commit", "--no-ff", "side")
+        self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n")
+        self.approve_retained_metadata()
+        with self.assertRaises(ValueError):
+            self.inspect(staged=True)
+        tip = self.commit("Fixture merge with retained metadata")
+        with self.assertRaises(ValueError):
+            self.inspect(tip=tip)
+
+    def test_retention_does_not_mask_unmapped_private_lines(self) -> None:
+        self.write("legacy.txt", UNSAFE_PATH + "\n" + UNSAFE_EMAIL + "\n")
+        self.approve_retained_metadata()
+        self.assertEqual("FAIL", self.inspect(staged=True)["status"])
+
+    def test_installed_retention_receipt_allows_commit_push_and_denies_new_disclosure(self) -> None:
+        remote = self.repo / "remote.git"
+        self.git("init", "--bare", str(remote))
+        self.policy["remoteUrl"] = remote.as_posix()
+        (self.repo / ".local").mkdir(exist_ok=True)
+        self.write("tools/prospective_privacy.py", (ROOT / "tools/prospective_privacy.py").read_text())
+        self.write(".privacy-baseline.json", json.dumps(self.policy))
+        self.base = self.commit("Fixture source before retention installation")
+        self.policy["baselineCommit"] = self.base
+        (self.repo / ".privacy-baseline.json").write_text(json.dumps(self.policy))
+        self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n")
+        self.approve_retained_metadata()
+        review = self.repo / ".local/review.json"
+        review.write_text(json.dumps(self.reviews))
+        hooks = installer.prepare(self.repo, SCANNER, review, hashlib.sha256(review.read_bytes()).hexdigest())
+        self.git("config", "core.hooksPath", str(hooks))
+        self.git("branch", "-m", "main")
+        self.git("remote", "add", "origin", remote.as_posix())
+        tip = self.commit("Exact independently reviewed retained field")
+        self.git("push", "origin", "main")
+        published = self.git("ls-remote", "--heads", "origin").stdout
+        self.assertIn(tip.encode(), published)
+        self.write("legacy.txt", UNSAFE_PATH + "\nstatus: updated\n" + UNSAFE_EMAIL)
+        self.assertNotEqual(0, self.git("commit", "-m", "New disclosure denied", check=False).returncode)
+        self.git("-c", "core.hooksPath=" + str(self.repo / "no-hooks"), "commit", "-m", "Simulated bypass")
+        self.assertNotEqual(0, self.git("push", "origin", "main", check=False).returncode)
+        self.assertEqual(published, self.git("ls-remote", "--heads", "origin").stdout)
 
     def test_review_cannot_waive_private_text_or_identity(self) -> None:
         self.write("capture.png", UNSAFE_PATH)

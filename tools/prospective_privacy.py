@@ -158,7 +158,7 @@ def reviewed_artifacts(reviews: dict | None, policy: dict, config: Path) -> dict
     result = {}
     fields = {"path", "mode", "sha256", "size", "binaryReviewed", "nonEmailTokens", "credentialFindingFingerprints"}
     for item in artifacts:
-        if not isinstance(item, dict) or set(item) != fields:
+        if not isinstance(item, dict) or set(item) not in (fields, fields | {"retainedMetadata"}):
             raise ValueError("Malformed artifact admission")
         path = item["path"]
         if not isinstance(path, str) or not path or "\\" in path or ":" in path:
@@ -202,8 +202,144 @@ def reviewed_artifacts(reviews: dict | None, policy: dict, config: Path) -> dict
         identity = path, item["mode"], item["sha256"], item["size"]
         if identity in result:
             raise ValueError("Duplicate artifact admission")
+        if "retainedMetadata" in item:
+            validate_retention_records(item)
         result[identity] = item
     return result
+
+
+def validate_retention_records(item: dict) -> None:
+    """Validate sealed review shape; logical field equality is independent review's duty."""
+    records = item["retainedMetadata"]
+    if (
+        item["binaryReviewed"]
+        or Path(item["path"]).suffix.lower() in BINARY
+        or not isinstance(records, list)
+        or not 1 <= len(records) <= 2000
+    ):
+        raise ValueError("Retention requires reviewed regular text transitions")
+    fields = {
+        "schemaVersion",
+        "disposition",
+        "rationale",
+        "baselineBlob",
+        "baselineSha256",
+        "baselineSize",
+        "predecessorCommit",
+        "predecessorBlob",
+        "predecessorSha256",
+        "predecessorSize",
+        "lines",
+    }
+    line_fields = {
+        "baselineLine",
+        "predecessorLine",
+        "successorLine",
+        "sha256",
+        "logicalLocation",
+        "unchangedLogicalLocation",
+    }
+    parents = set()
+    for record in records:
+        if not isinstance(record, dict) or set(record) != fields:
+            raise ValueError("Malformed retained metadata transition")
+        if record["schemaVersion"] != "1.0" or record["disposition"] != "unchanged-existing-metadata":
+            raise ValueError("Retention cannot authorize new disclosures")
+        if not isinstance(record["rationale"], str) or not record["rationale"].strip():
+            raise ValueError("Retention review rationale is required")
+        for key in ("baselineBlob", "predecessorCommit", "predecessorBlob"):
+            if not isinstance(record[key], str) or not SHA.fullmatch(record[key]):
+                raise ValueError("Invalid retention Git binding")
+        for key in ("baselineSha256", "predecessorSha256"):
+            if not isinstance(record[key], str) or not SHA256.fullmatch(record[key]):
+                raise ValueError("Invalid retention raw binding")
+        for key in ("baselineSize", "predecessorSize"):
+            if type(record[key]) is not int or not 0 <= record[key] <= 16 * 1024 * 1024:
+                raise ValueError("Invalid retention size")
+        parent = record["predecessorCommit"]
+        if parent in parents:
+            raise ValueError("Duplicate retention predecessor")
+        parents.add(parent)
+        lines = record["lines"]
+        if not isinstance(lines, list) or not 1 <= len(lines) <= 10000:
+            raise ValueError("Retention requires bounded one-to-one line evidence")
+        used: dict[str, set] = {key: set() for key in ("baselineLine", "predecessorLine", "successorLine")}
+        for line in lines:
+            if not isinstance(line, dict) or set(line) != line_fields:
+                raise ValueError("Malformed retention line binding")
+            if (
+                line["unchangedLogicalLocation"] is not True
+                or not isinstance(line["logicalLocation"], str)
+                or not line["logicalLocation"].strip()
+                or text_reasons(line["logicalLocation"], set())
+                or not isinstance(line["sha256"], str)
+                or not SHA256.fullmatch(line["sha256"])
+            ):
+                raise ValueError("Invalid independent logical-location disposition")
+            for key, indexes in used.items():
+                value = line[key]
+                if type(value) is not int or value < 1 or value in indexes:
+                    raise ValueError("Retention lines must be unique positive positions")
+                indexes.add(value)
+
+
+def retained_metadata_text(
+    repo: Path,
+    raw: bytes,
+    path: str,
+    mode: str,
+    admission: dict,
+    parents: list[str],
+    prior: list[dict[str, tuple[str, str]]],
+    baseline_entries: dict[str, tuple[str, str]],
+    allowed: set[str],
+) -> str:
+    """Authenticate exact reviewed raw lines; never mask credentials or metadata inputs."""
+    records = admission.get("retainedMetadata")
+    if not records:
+        return raw.decode("utf-8", errors="replace")
+    if len(parents) != 1 or len(prior) != 1:
+        raise ValueError("Retention requires one actual predecessor; merges are unsupported")
+    matches = [record for record in records if record["predecessorCommit"] == parents[0]]
+    if len(matches) != 1:
+        raise ValueError("Retention receipt is stale for this predecessor edge")
+    record = matches[0]
+    if baseline_entries.get(path) != (mode, record["baselineBlob"]) or prior[0].get(path) != (
+        mode,
+        record["predecessorBlob"],
+    ):
+        raise ValueError("Retention path, mode or baseline/predecessor blob differs")
+    snapshots = {"successor": raw}
+    for label in ("baseline", "predecessor"):
+        oid = record[label + "Blob"]
+        if int(git(repo, "cat-file", "-s", oid)) != record[label + "Size"]:
+            raise ValueError("Retention predecessor size differs")
+        payload = git(repo, "cat-file", "blob", oid)
+        if hashlib.sha256(payload).hexdigest() != record[label + "Sha256"]:
+            raise ValueError("Retention predecessor digest differs")
+        snapshots[label] = payload
+    for payload in snapshots.values():
+        payload.decode("utf-8")
+        if b"\0" in payload:
+            raise ValueError("Retention cannot mask binary content")
+    lines = {label: payload.splitlines(keepends=True) for label, payload in snapshots.items()}
+    approved_indexes = set()
+    for mapping in record["lines"]:
+        matched = []
+        for label, contents in lines.items():
+            index = mapping[label + "Line"] - 1
+            if index >= len(contents):
+                raise ValueError("Retention line is out of range")
+            value = contents[index]
+            if hashlib.sha256(value).hexdigest() != mapping["sha256"]:
+                raise ValueError("Retained metadata line changed or was re-encoded")
+            matched.append(value)
+        if len(set(matched)) != 1 or not text_reasons(matched[0].decode("utf-8"), allowed):
+            raise ValueError("Retention must identify unchanged existing private metadata")
+        approved_indexes.add(mapping["successorLine"] - 1)
+    return b"".join(
+        b"\n" if index in approved_indexes else line for index, line in enumerate(lines["successor"])
+    ).decode("utf-8")
 
 
 def credential_report(raw: bytes, scanner: Path, scanner_sha: str, config: Path) -> list[dict]:
@@ -283,16 +419,22 @@ def inspect(
     baseline = policy["baselineCommit"]
     validate_history(repo, baseline)
     admissions = reviewed_artifacts(reviews, policy, config)
+    baseline_entries = (
+        entries(repo, baseline) if any(item.get("retainedMetadata") for item in admissions.values()) else {}
+    )
     allowed = {value.casefold() for value in policy["allowedContentEmails"]}
     findings = []
     payloads: list[tuple[bytes, list[str]]] = []
-    seen: set[tuple[str, str, str]] = set()
+    seen: set[tuple[str, str, str, tuple[str, ...]]] = set()
     count = 0
 
-    def check_tree(current: dict[str, tuple[str, str]], prior: list[dict[str, tuple[str, str]]]) -> None:
+    def check_tree(
+        current: dict[str, tuple[str, str]], prior: list[dict[str, tuple[str, str]]], parents: list[str]
+    ) -> None:
         nonlocal count
         for path, (mode, oid) in changed_entries(current, prior).items():
-            identity = path, mode, oid
+            # The same successor blob on a different parent edge is new authority.
+            identity = path, mode, oid, tuple(parents)
             if identity in seen:
                 continue
             seen.add(identity)
@@ -312,19 +454,22 @@ def inspect(
                     admission = admissions.get((path, mode, hashlib.sha256(raw).hexdigest(), size), {})
                     non_emails = {value.casefold() for value in admission.get("nonEmailTokens", [])}
                     # Binary approval never suppresses readable private text or credential scanning.
-                    reasons.update(text_reasons(raw.decode("utf-8", errors="replace"), allowed | non_emails))
+                    inspected_text = retained_metadata_text(
+                        repo, raw, path, mode, admission, parents, prior, baseline_entries, allowed
+                    )
+                    reasons.update(text_reasons(inspected_text, allowed | non_emails))
                     payloads.append((raw, admission.get("credentialFindingFingerprints", [])))
                     if b"\0" in raw or Path(path).suffix.lower() in BINARY:
                         if not admission.get("binaryReviewed"):
                             reasons.add("binary-needs-privacy-review")
                     else:
                         try:
-                            text = raw.decode("utf-8")
+                            raw.decode("utf-8")
                         except UnicodeDecodeError:
                             if not admission.get("binaryReviewed"):
                                 reasons.add("non-text-needs-privacy-review")
                         else:
-                            reasons.update(text_reasons(text, allowed | non_emails))
+                            reasons.update(text_reasons(inspected_text, allowed | non_emails))
             if reasons:
                 findings.append({"pathSha256": hashlib.sha256(path.encode()).hexdigest(), "reasons": sorted(reasons)})
 
@@ -332,7 +477,11 @@ def inspect(
     if staged:
         tree = entries(repo, None)
         prior = entries(repo, "HEAD")
-        check_tree(tree, [prior])
+        merge_path = Path(git(repo, "rev-parse", "--git-path", "MERGE_HEAD").decode().strip())
+        if not merge_path.is_absolute():
+            merge_path = repo / merge_path
+        parents = [] if merge_path.exists() else [git(repo, "rev-parse", "HEAD").decode().strip()]
+        check_tree(tree, [prior], parents)
         for role in ("AUTHOR", "COMMITTER"):
             identity = git(repo, "var", f"GIT_{role}_IDENT").decode()
             reasons = text_reasons(identity, set(), metadata=True)
@@ -351,7 +500,7 @@ def inspect(
         trees = {commit: entries(repo, commit) for commit in commits}
         for commit in commits:
             line = git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()
-            check_tree(trees[commit], [entries(repo, parent) for parent in line[1:]])
+            check_tree(trees[commit], [entries(repo, parent) for parent in line[1:]], line[1:])
             raw = git(repo, "cat-file", "commit", commit)
             reasons = text_reasons(raw.decode("utf-8"), set(), metadata=True)
             if reasons:

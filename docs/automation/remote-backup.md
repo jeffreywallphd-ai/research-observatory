@@ -30,7 +30,8 @@ raw machine reports, private local output, unsupported modes and unreviewed
 binary content. Standard fictional example domains and public GitHub noreply
 identities remain usable. Credential matches require review; they are never
 automatically dismissed merely because a value resembles a hash or test token.
-Editing a legacy file may require removing its embedded local paths first.
+Editing a legacy file requires either removing its embedded local paths where
+governance permits, or an exact independently reviewed retention receipt below.
 
 The protected untracked witness must not be read, staged, or backed up. Filename
 inventory checks precede content reads. `.local` and scratch exclusions stay in
@@ -83,8 +84,32 @@ pins those exact reviewed bytes; editing either the live registry or repository
 source does not update installed admissions. Preserve previous snapshots and
 review receipts. A new or changed image needs a new explicit review and reinstall.
 
-Admissions never waive protected/private output names, real profile/workspace
+Ordinary artifact admissions never waive protected/private output names, real profile/workspace
 paths, raw reports, size/mode restrictions, filenames, refs, author/committer
 identity or commit messages. Every admitted artifact still receives the pinned
 credential scan. This is privacy admission only, not visual, task or release
 approval, and never changes the approved historical baseline or push routing.
+
+## Retaining owner-accepted historical metadata
+
+An optional `retainedMetadata` transition in the same sealed registry can retain
+an existing account/path/email field in an otherwise updated text file. It binds
+the fixed approved baseline blob, actual predecessor commit/blob, unchanged
+case-sensitive path and mode, exact successor bytes, and one-to-one identical
+raw-line positions across all three documents. It cannot admit an added or
+renamed file, re-encoded line, binary, merge, or an unmatched/stale parent edge.
+New or unapproved private lines remain blocked. Complete original bytes still
+receive credential scanning, including lines admitted for historical metadata.
+Names, refs, identities, messages, protected/private outputs and raw reports
+retain their unconditional checks.
+
+An independent reviewer must inspect the complete documents and certify that
+each line still belongs to the same logical field, using stable record identities
+where available. Line hashes authenticate exact bytes; they do not prove YAML
+semantics. The dependency-free hook checks the sealed judgment's exact inputs,
+parent edge and unchanged raw-line mapping. It does not accept a live repository
+allowlist or automatically extend retention. A changed candidate or predecessor
+needs a fresh independent receipt and deliberate reinstall. Retain earlier exact
+transition receipts in the registry for subsequent full-history push checks.
+This implements the owner's existing historical-retention decision, not authority
+for new disclosure, history rewriting, release approval or remote publication.
