@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "independent-slice-integration-review",
+  "reviewId": "CAP-07.S01.integration-01.review-R01",
+  "sliceId": "CAP-07.S01",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "result": "approved",
+  "sliceApproved": true,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "publicationCommit": "313887ccac0b752335457edb0bbad918ae4a64b6",
+  "freshExecutionCandidate": "78e1b49fa51795ce71cc04c412d435065a62d041",
+  "packet": {
+    "path": "artifacts/evidence/CAP-07.S01.integration-01.json",
+    "sha256": "097f8a04d5d9c27ae3ed9a9ac702016672fea9a1fddb454402cf4ba486da67a9"
+  },
+  "handoff": {
+    "path": "artifacts/evidence/CAP-07.S01.handoff-01.json",
+    "sha256": "15436b050798de71fbd4d0c3af93c642d5d0131170365ab5756e7e80d3cc091f",
+    "accepted": true,
+    "scope": "Accept the portable producer-to-consumer contract and protected metadata dependency/staleness seam for CAP-06, CAP-08 through CAP-10 and later CAP-14. This is not approval or execution of those later implementations. Their domain verification, actual artifact dependencies and human promotion decisions remain required."
+  },
+  "authority": {
+    "wave": "W1",
+    "approvedCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752",
+    "slicePlan": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+    "governingSections": ["5-8", "10-15", "17"],
+    "assessment": "The packet-commit backlog records the approved W1 packet including CAP-07.S01 and CAP-07-D01/D06/D07/D08. The capability plan is unchanged from that approval; the slice plan differs only in its approved_at and approved_commit recording fields. Its criteria are unchanged. Current Wave operating guidance governs execution; historical capability-campaign boilerplate does not authorize future slices or create another approval requirement.",
+    "originalTasksDone": ["CAP-07.S01.T01", "CAP-07.S01.T02", "CAP-07.S01.T03"],
+    "linkedCorrectionsDone": ["W1.C02.T01", "W1.C03.T01"]
+  },
+  "independenceAndMethod": {
+    "implementationAuthoredByReviewer": false,
+    "submittedEvidenceAuthoredByReviewer": false,
+    "campaignOwnedByReviewer": false,
+    "scope": "Cumulative independent slice integration review, including the original expired-authority finding, correction/source reviews, bounded independent regression replays and authenticated performance, process, handoff, renderer and native milestones. This final pass authenticates the committed criterion packet, its links and incremental impact; it does not repeat unchanged task audits.",
+    "finalPass": "Read-only checks of the exact committed packet and named references only. No tests, benchmarks, builds, native actions, fixture access, Git or controller mutation. Only this new review record is authored."
+  },
+  "authentication": {
+    "packetAndHandoffRawBytesEqualCommittedGitBlobs": true,
+    "uniqueNamedIndexDigestReferencesChecked": 63,
+    "digestMismatches": [],
+    "criterionRowsReviewed": 13,
+    "unresolvedCriterionReferences": [],
+    "handoffContractExampleAndFailureInputsChecked": 18,
+    "taskctlCanonicalEvidenceDigestsChecked": ["CAP-07.S01.T02", "W1.C02.T01"],
+    "digestSemantics": "Exact raw SHA-256 identities are kept separate from taskctl line-ending-canonical evidence identities. The two canonical bindings match the existing independent reviews. The index retains its earlier 59-record recheck statement; this reviewer checked all 63 unique references now present.",
+    "publicationImpact": "From the fresh execution candidate to the publication commit, changes are five evidence files and generated/planning state only. No application, package, service, tool, test, verification configuration or root dependency-manifest input changed.",
+    "historicalImpact": "Since the gateway/process milestone at b0a805f2c372b3f389f440b71bb7d0b5d59c0df6, the eight source/test changes are the four C03 frontend/desktop-test paths and four independently reviewed UI-gate control/test paths listed by the index. Since the handoff seam at 8dc40d41c7fa7d1044dcbceea00eb2965f9afc96, only the four C03 frontend/desktop-test paths changed. No gateway, registry, protected persistence, contract, benchmark, process-resource or metadata-seam implementation changed.",
+    "executionAttribution": "Historical campaign milestones retain their executing candidates and original durations. Fresh combined, renderer and native observations bind 78e1b49fa51795ce71cc04c412d435065a62d041. Publication commit313887cc is not represented as another execution. This is review of accumulated integration evidence, not an execution cache, exhaustive installed-runtime closure or fresh Wave proof."
+  },
+  "criterionDispositions": [
+    {
+      "id": "task-contract-provenance",
+      "result": "satisfied",
+      "basis": "Approved T01 semantic correction and fresh generated Python/TypeScript/OpenAPI checks cover versioned request/result identity, token/deadline bounds, output validation, citation closure and explicit unsupported-feature denial."
+    },
+    {
+      "id": "registry-current-authority",
+      "result": "satisfied",
+      "basis": "Reviewed T02 and C02 plus fresh registry/service/protected checks cover immutable catalog history, exact pins, deterministic filtering and current host/permission witnesses after lookup and at consumption. Recorded availability cannot confer execution authority."
+    },
+    {
+      "id": "routing-egress-original-state",
+      "result": "satisfied",
+      "basis": "Bounded retries and explicit degraded fallback preserve the original task, prohibit pinned substitution, and recheck cumulative/current authority at dispatch, publication and replay. Fresh protected functional cases cover the affected seams."
+    },
+    {
+      "id": "common-task-failure-contract-scope",
+      "result": "satisfied",
+      "basis": "Fresh contract, protected repository/service and architecture checks cover malformed/negative input, ownership, compare-and-swap, atomic provenance/outbox, corruption denial and rollback without canonical loss. No new storage migration is claimed."
+    },
+    {
+      "id": "end-to-end-native-lifecycle",
+      "result": "satisfied",
+      "basis": "Owned source-built native create/open, catalog/history/restart and close milestones, C03 explicit Start/Home/exact-return restoration, and fresh retained-fixture native replay collectively cover the delivered inventory workflow. Actual operator observations are distinguished from controller exit and synthetic adapter execution."
+    },
+    {
+      "id": "failure-cancellation-restart-recovery",
+      "result": "satisfied",
+      "basis": "Fresh memory/protected cases cover no route, transient failure, timeout, circuit cooldown, cooperative/unresponsive cancellation below100ms and no output promotion. The reviewed four-process fixture proves persisted success replay and owned crash17 recovery with original request/history retained and uncertain execution fenced against redispatch."
+    },
+    {
+      "id": "security-privacy-rights",
+      "result": "satisfied-for-slice-boundary",
+      "basis": "Fresh denial, malformed/content substitution, classification/rights/egress/budget and real authenticated Core loopback/lifecycle tests support the trust boundary. Fixture complete-authority success does not establish production model-use authority, ordinary-vault access or live-provider consent. The default-empty/no-adapter production state fails closed as designed."
+    },
+    {
+      "id": "native-accessibility-reference",
+      "result": "satisfied-for-approved-slice-method",
+      "basis": "Fresh actual-product interactions, effective viewports,320-CSS reflow and CSS-zoom2 layout checks, unchanged reference checks, and actual native UIA/keyboard/visible-focus/history/theme/compact-layout observations address the presentation boundary. Qualification03 corrects only the overstrong global-Display-Scale test interpretation. No physical native200 observation, screen-reader speech or blanket WCAG certification is claimed."
+    },
+    {
+      "id": "gateway-overhead-baseline",
+      "result": "satisfied-at-reviewed-campaign-milestone",
+      "basis": "The unchanged protected fixture at b0a805f2 retained101 total samples and met the strict p95 ceiling:22.406999953091145ms, all100 warm samples retained. Its separately reviewed first prospective baseline does not invent a prior comparison. No affected implementation changed afterward. Fresh W1 must bind baseline and approval, require p95<25ms and <=1.2 times the baseline, and preserve every attempt."
+    },
+    {
+      "id": "determinism-registry-capacity-resources",
+      "result": "satisfied",
+      "basis": "Fresh1000-manifest matching asserts deterministic order and <100ms. Reviewed process observations retain actual working-set/private-memory and project-disk values with zero synthetic model-weight bytes. No new numeric memory budget or live-model footprint is invented."
+    },
+    {
+      "id": "cross-capability-handoff-staleness",
+      "result": "satisfied-and-handoff-accepted",
+      "basis": "The published18-input handoff supplies portable schemas, positive/negative examples, failure fixtures, version/authority rules, baseline and evidence IDs. Actual protected CAP-03 metadata registration/propagation marks only the exact dependent candidate stale, preserves unrelated and original revisions/routing history, and reopens/replays without another adapter dispatch. Declared hashes are not content-byte verification or scholarly promotion."
+    },
+    {
+      "id": "migration-compatibility",
+      "result": "satisfied-for-slice-boundary",
+      "basis": "The slice uses existing versioned protected settings/provenance/outbox without a new migration. Fresh supported v6-to-v10 history/restart and current-database idempotence cases cover the affected compatibility path. Broader release migration/repair/platform qualification remains W1 scope."
+    },
+    {
+      "id": "independent-slice-disposition",
+      "result": "satisfied-by-this-review",
+      "basis": "The independently authenticated committed packet, cumulative affected-boundary review, preserved findings and accepted handoff support slice approval. No concrete unmet slice criterion or concealed production blocker was identified within the approved delivered scope."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "CAP-07.S01.T01-R01-F01",
+      "disposition": "prior-closure-confirmed",
+      "review": "artifacts/evidence/CAP-07.S01.T01.review-R02.json",
+      "basis": "Original semantic-validation finding remains preserved; approved strict-descendant correction and fresh contract tests retain token/deadline/output/citation/indexed-result closure."
+    },
+    {
+      "findingId": "CAP-07.S01.F01",
+      "disposition": "slice-preflight-closure-confirmed",
+      "review": "artifacts/evidence/W1.C02.T01.review-R01.json",
+      "basis": "Original expiry reproduction independently changed from unauthorized dispatch to zero adapters/denied/null output with unchanged request. Fresh final combined cases retain the lookup/consumption/publication/replay guards. No earlier controlled task round is invented."
+    },
+    {
+      "findingId": "CAP-07.S01.NATIVE-F01",
+      "disposition": "slice-native-finding-closure-confirmed",
+      "review": "artifacts/evidence/W1.C03.T01.review-R01.json",
+      "basis": "Truthful not-started/pending guidance, explicit user Start, exact return witness and stale success/error/finally ownership were independently reviewed and freshly exercised. Historical open-finding publications remain unchanged."
+    }
+  ],
+  "preservedHistory": [
+    "T02 and T03 pre-submission findings and their approved independent replays remain distinct from formal task rounds. Their histories are not rewritten or silently dropped by the slice index.",
+    "The historical25.383200030773878ms observation remains a strict failure accepted only for T03 completion. The134.0222000144422ms benchmark failure, nonqualifying26.077ms diagnostic, setup failures, all raw samples and original baseline-assembly failures remain adverse history. No causal I/O explanation, rounding extension, threshold change or retry-until-pass inference is approved.",
+    "Original quality/functional/environment-bound failures remain retained with their distinct reviewed corrections or exact successful replay; they are not retroactively PASS. Fresh full W1 quality remains mandatory.",
+    "Native startup attempt01 remains FAIL. Successful changed-boundary retry02 does not prove its exact cause. Interim permission/pending interpretation and the temporary campaign hold remain preserved; qualification03 corrects that interpretation without modifying an executed result."
+  ],
+  "limitsAndNextBoundary": [
+    "This approves CAP-07.S01 only at the identified packet and product identity. It supplies the pending independent slice disposition and handoff acceptance; applying the result through taskctl remains the campaign owner's operation.",
+    "Fresh full affected/repository/profile W1 qualification, cross-capability happy/failure/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance, Windows x64 packaging/platform proof, independent Wave review and the separate human G1 decision remain required.",
+    "No live inference, actual model weights, remote-provider egress/cancellation, ordinary user vault/project/policy, authentication settings, production packaging, later-platform or scholarly-output promotion is authorized or claimed by these fixture results.",
+    "No global display-setting action is required by this review. Approved effective-viewport and real-renderer methods retain their honest limits; a new demonstrated defect would still require criterion-bound disposition.",
+    "Protected witness content and excluded sibling contents were not accessed. No broad temporary-artifact inventory was performed. Raw machine-local metadata remains ignored, and all prior evidence and approvals remain immutable."
+  ]
+}
