@@ -255,7 +255,7 @@ async fn support_bundle_export(
     lock.commit_protected_action(ticket, || manager.publish_export(result))
 }
 
-#[tauri::command(async)]
+#[tauri::command]
 fn application_lock_status(
     _app: AppHandle,
     lock: State<'_, ApplicationLockManager>,
@@ -748,6 +748,165 @@ pub mod directory_integration_harness {
                 "spanElapsedMs":self.entered.elapsed().as_secs_f64() * 1000.0}),
             );
         }
+    }
+
+    // Fixture-only passive Win32 observation. This never posts, consumes, or
+    // changes a message. The clock is shared with status spans; the independent
+    // 128-span budget cannot exhaust status tracing. Logging may perturb timing
+    // and cannot prove WebView callback admission or decoded IPC delivery.
+    struct MenuDiagnostics {
+        clock: std::sync::Arc<StatusDiagnostics>,
+        spans: std::sync::atomic::AtomicUsize,
+    }
+
+    impl MenuDiagnostics {
+        fn new(clock: std::sync::Arc<StatusDiagnostics>) -> Self {
+            Self {
+                clock,
+                spans: std::sync::atomic::AtomicUsize::new(0),
+            }
+        }
+
+        fn observe(
+            &self,
+            message: Option<[u32; 2]>,
+            mut send_state: impl FnMut() -> u32,
+            forward: impl FnOnce() -> isize,
+            mut record: impl FnMut(Value),
+        ) -> isize {
+            use std::sync::atomic::Ordering;
+            let Some([event, detail]) = message else {
+                return forward();
+            };
+            let Ok(previous) =
+                self.spans
+                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |count| {
+                        (count < 128).then_some(count + 1)
+                    })
+            else {
+                return forward();
+            };
+            let span = previous + 1;
+            let entered = Instant::now();
+            record(json!({"kind":"fixture-menu-timing", "span":span,
+                "event":event, "detail":detail, "phase":0, "sendState":send_state(),
+                "spanLimit":128, "lastAdmittedSpan":span == 128,
+                "nativeElapsedMs":self.clock.origin.elapsed().as_secs_f64() * 1000.0}));
+            let result = forward();
+            record(json!({"kind":"fixture-menu-timing", "span":span,
+                "event":event, "detail":detail, "phase":1, "sendState":send_state(),
+                "nativeElapsedMs":self.clock.origin.elapsed().as_secs_f64() * 1000.0,
+                "spanElapsedMs":entered.elapsed().as_secs_f64() * 1000.0}));
+            result
+        }
+    }
+
+    fn menu_message(message: u32, wparam: usize, lparam: isize) -> Option<[u32; 2]> {
+        use windows_sys::Win32::UI::WindowsAndMessaging::{
+            SC_KEYMENU, WM_ENTERMENULOOP, WM_EXITMENULOOP, WM_SYSCOMMAND,
+        };
+        match message {
+            // Do not retain the character code: detail is only "space" or not.
+            WM_SYSCOMMAND if wparam & 0xfff0 == SC_KEYMENU as usize => {
+                Some([message, u32::from(lparam == 32)])
+            }
+            // Here detail is only the documented popup-menu boolean.
+            WM_ENTERMENULOOP | WM_EXITMENULOOP => Some([message, u32::from(wparam != 0)]),
+            _ => None,
+        }
+    }
+
+    fn menu_owner_matches(
+        thread: u32,
+        process: u32,
+        current_thread: u32,
+        current_process: u32,
+    ) -> bool {
+        thread != 0 && process != 0 && thread == current_thread && process == current_process
+    }
+
+    unsafe extern "system" fn menu_diagnostic_proc(
+        hwnd: windows_sys::Win32::Foundation::HWND,
+        message: u32,
+        wparam: usize,
+        lparam: isize,
+        subclass_id: usize,
+        data: usize,
+    ) -> isize {
+        use windows_sys::Win32::UI::{
+            Shell::{DefSubclassProc, RemoveWindowSubclass},
+            WindowsAndMessaging::{InSendMessageEx, WM_NCDESTROY},
+        };
+        if data == 0 || subclass_id != menu_diagnostic_proc as *const () as usize {
+            return unsafe { DefSubclassProc(hwnd, message, wparam, lparam) };
+        }
+        // Only install_menu_diagnostics creates this box, on the owning thread.
+        // Clone before forwarding: DefSubclassProc may destroy the window
+        // reentrantly and remove/free its boxed registration before returning.
+        let diagnostics = unsafe { &*(data as *const std::sync::Arc<MenuDiagnostics>) }.clone();
+        if message == WM_NCDESTROY {
+            let removed =
+                unsafe { RemoveWindowSubclass(hwnd, Some(menu_diagnostic_proc), subclass_id) } != 0;
+            if removed {
+                drop(unsafe { Box::from_raw(data as *mut std::sync::Arc<MenuDiagnostics>) });
+            }
+            // On removal failure retain the one allocation rather than leave a
+            // registered dangling pointer. The explicit failed row is adverse
+            // diagnostic evidence; process teardown reclaims the allocation.
+            emit(json!({"kind":"fixture-menu-subclass", "phase":1, "succeeded":removed}));
+        }
+        diagnostics.observe(
+            menu_message(message, wparam, lparam),
+            || unsafe { InSendMessageEx(std::ptr::null()) },
+            || unsafe { DefSubclassProc(hwnd, message, wparam, lparam) },
+            emit,
+        )
+    }
+
+    fn install_menu_diagnostics(
+        window: &tauri::WebviewWindow,
+        fixture: &Fixture,
+    ) -> Result<(), &'static str> {
+        use windows_sys::Win32::{
+            System::Threading::{GetCurrentProcessId, GetCurrentThreadId},
+            UI::{
+                Shell::{GetWindowSubclass, SetWindowSubclass},
+                WindowsAndMessaging::GetWindowThreadProcessId,
+            },
+        };
+        if window.label() != "main"
+            || window.try_state::<Fixture>().is_none_or(|owned| {
+                !std::sync::Arc::ptr_eq(&owned.status_diagnostics, &fixture.status_diagnostics)
+            })
+        {
+            return Err("probe-menu-owner-invalid");
+        }
+        let hwnd = window
+            .hwnd()
+            .map_err(|_| "probe-menu-window-unavailable")?
+            .0;
+        let mut process = 0;
+        let thread = unsafe { GetWindowThreadProcessId(hwnd, &mut process) };
+        if !menu_owner_matches(thread, process, unsafe { GetCurrentThreadId() }, unsafe {
+            GetCurrentProcessId()
+        }) {
+            return Err("probe-menu-thread-or-process-invalid");
+        }
+        let id = menu_diagnostic_proc as *const () as usize;
+        let mut previous = 0;
+        if unsafe { GetWindowSubclass(hwnd, Some(menu_diagnostic_proc), id, &mut previous) } != 0 {
+            return Err("probe-menu-observer-already-installed");
+        }
+        let diagnostics = Box::new(std::sync::Arc::new(MenuDiagnostics::new(
+            fixture.status_diagnostics.clone(),
+        )));
+        let data = Box::into_raw(diagnostics);
+        if unsafe { SetWindowSubclass(hwnd, Some(menu_diagnostic_proc), id, data as usize) } == 0 {
+            drop(unsafe { Box::from_raw(data) });
+            return Err("probe-menu-observer-install-failed");
+        }
+        emit(json!({"kind":"fixture-menu-subclass", "phase":0, "succeeded":true}));
+        Ok(())
     }
 
     const FIXTURE_DIRECTORIES: [&str; 6] = [
@@ -1291,6 +1450,10 @@ pub mod directory_integration_harness {
                 .initialization_script(LOCK_STATUS_DIAGNOSTIC_SCRIPT)
                 .title(format!("Research Observatory — SYNTHETIC {} {}", if mode.is_lifecycle() { "T04" } else { "T03" }, mode.name())).build())
                 .inspect_err(|_| { app.state::<RuntimeSupervisor>().stop(); })?;
+            install_menu_diagnostics(&main, &fixture).map_err(|error| {
+                app.state::<RuntimeSupervisor>().stop();
+                std::io::Error::other(error)
+            })?;
             emit(json!({"kind":"tauri-directory-start", "mode":mode.name(), "fixture":fixture.relative_root(),
                 "ownerHwnd":main.hwnd().ok().map(|handle| handle.0 as isize),
                 "fixtureSubstitutions":["policy-root", "Core-vault", "WebView-data-directory", "Core-temp", "default-project-parent"],
@@ -1363,6 +1526,87 @@ pub mod directory_integration_harness {
             assert_eq!(
                 diagnostics.spans.load(std::sync::atomic::Ordering::Relaxed),
                 512
+            );
+        }
+
+        #[test]
+        fn menu_diagnostics_select_only_menu_messages_without_recording_key_content() {
+            use windows_sys::Win32::UI::WindowsAndMessaging::*;
+            assert_eq!(
+                menu_message(WM_SYSCOMMAND, SC_KEYMENU as usize, 32),
+                Some([WM_SYSCOMMAND, 1])
+            );
+            assert_eq!(
+                menu_message(WM_SYSCOMMAND, (SC_KEYMENU | 15) as usize, 65),
+                Some([WM_SYSCOMMAND, 0])
+            );
+            assert_eq!(
+                menu_message(WM_ENTERMENULOOP, 1, 999),
+                Some([WM_ENTERMENULOOP, 1])
+            );
+            assert_eq!(
+                menu_message(WM_EXITMENULOOP, 0, 999),
+                Some([WM_EXITMENULOOP, 0])
+            );
+            for message in [WM_KEYDOWN, WM_SYSKEYDOWN, WM_CHAR, WM_NCDESTROY, WM_NULL] {
+                assert_eq!(menu_message(message, SC_KEYMENU as usize, 32), None);
+            }
+            assert_eq!(menu_message(WM_SYSCOMMAND, SC_CLOSE as usize, 32), None);
+        }
+
+        #[test]
+        fn menu_diagnostics_require_same_nonzero_process_and_thread() {
+            assert!(menu_owner_matches(11, 22, 11, 22));
+            assert!(!menu_owner_matches(12, 22, 11, 22));
+            assert!(!menu_owner_matches(11, 23, 11, 22));
+            assert!(!menu_owner_matches(0, 22, 0, 22));
+            assert!(!menu_owner_matches(11, 0, 11, 0));
+        }
+
+        #[test]
+        fn menu_diagnostics_forward_once_and_preserve_result_even_after_budget() {
+            use std::cell::Cell;
+            let diagnostics = MenuDiagnostics::new(std::sync::Arc::new(StatusDiagnostics::new()));
+            let forwarded = Cell::new(0);
+            let states = Cell::new(0);
+            let mut rows = Vec::new();
+            let mut forward = || {
+                forwarded.set(forwarded.get() + 1);
+                -73
+            };
+            let mut flags = || {
+                states.set(states.get() + 1);
+                states.get()
+            };
+            assert_eq!(
+                diagnostics.observe(None, &mut flags, &mut forward, |row| rows.push(row)),
+                -73
+            );
+            assert_eq!(forwarded.get(), 1);
+            assert_eq!(states.get(), 0);
+            assert!(rows.is_empty());
+            for _ in 0..129 {
+                assert_eq!(
+                    diagnostics.observe(Some([0x112, 1]), &mut flags, &mut forward, |row| rows
+                        .push(row)),
+                    -73
+                );
+            }
+            assert_eq!(forwarded.get(), 130);
+            assert_eq!(states.get(), 256);
+            assert_eq!(rows.len(), 256);
+            assert_eq!(rows[0]["phase"], 0);
+            assert_eq!(rows[1]["phase"], 1);
+            assert_eq!(rows[0]["sendState"], 1);
+            assert_eq!(rows[1]["sendState"], 2);
+            assert_eq!(rows[254]["span"], 128);
+            assert_eq!(rows[254]["lastAdmittedSpan"], true);
+            assert_eq!(
+                diagnostics
+                    .clock
+                    .spans
+                    .load(std::sync::atomic::Ordering::Relaxed),
+                0
             );
         }
 
@@ -1845,29 +2089,6 @@ mod tests {
     #[test]
     fn product_identity_is_stable() {
         assert_eq!(PRODUCT_NAME, "Research Observatory");
-    }
-
-    #[test]
-    fn application_lock_status_uses_async_dispatch_without_changing_its_contract() {
-        // Source guard only; the isolated Windows menu replay proves dispatch.
-        let source = include_str!("lib.rs");
-        let declaration = source.split_once("fn application_lock_status(").unwrap().0;
-        assert!(declaration.trim_end().ends_with("#[tauri::command(async)]"));
-        let body = source
-            .split_once("fn application_lock_status(")
-            .unwrap()
-            .1
-            .split_once("#[tauri::command]")
-            .unwrap()
-            .0;
-        assert!(body.contains("lock: State<'_, ApplicationLockManager>"));
-        assert!(body.contains(") -> ApplicationLockSnapshot"));
-        let lines: Vec<_> = body
-            .lines()
-            .map(str::trim)
-            .filter(|line| !line.is_empty())
-            .collect();
-        assert!(lines.ends_with(&["lock.status()", "}"]));
     }
 
     #[test]
