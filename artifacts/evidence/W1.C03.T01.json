@@ -1,0 +1,332 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.C03.T01",
+  "commit": "2f980af6b4031256ea35739ffd4d813cecd278eb",
+  "baseCommit": "79ac074c47ba680928770b94764a1a6b434d3432",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "artifacts/evidence/W1.C03.T01.task-start.md",
+    "artifacts/evidence/ui-change/W1.C03.T01.json",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/desktop/test_model_center_interactions.py"
+  ],
+  "checks": [
+    {
+      "commandId": "desktop:application",
+      "command": "npm run lint --prefix apps/desktop",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-01.log",
+      "provenance": "fresh",
+      "durationSeconds": 0.1953858002088964,
+      "logCreatedByAttempt": true,
+      "outputSha256": "ccb469da01c4988c32019822af873ce912d1869919fa0e2245cdba05dc76f56e",
+      "outputBytes": 88
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "npm run typecheck --prefix apps/desktop",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-02.log",
+      "provenance": "fresh",
+      "durationSeconds": 0.5725451000034809,
+      "logCreatedByAttempt": true,
+      "outputSha256": "81895da206fc5695f9403bd5ef6c9f12152fb9dd33b7128f2e1c4f304da92224",
+      "outputBytes": 65
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "npm run test --prefix apps/desktop",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-03.log",
+      "provenance": "fresh",
+      "durationSeconds": 1.294903699774295,
+      "logCreatedByAttempt": true,
+      "outputSha256": "0c399b3e07861c5e24dbd995b8f6c6e999dc716322e0227fb074d7b577312a7a",
+      "outputBytes": 321
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "npm run build --prefix apps/desktop",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-04.log",
+      "provenance": "fresh",
+      "durationSeconds": 1.0061816000379622,
+      "logCreatedByAttempt": true,
+      "outputSha256": "6eb511ef94f2e061054ccd6ec494325f2766c908cfb261d6b461576a1a9e1938",
+      "outputBytes": 933
+    },
+    {
+      "commandId": "desktop:unit",
+      "command": "python -m unittest -v tests.desktop.test_model_center_interactions",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-05.log",
+      "provenance": "fresh",
+      "durationSeconds": 9.164695699699223,
+      "logCreatedByAttempt": true,
+      "outputSha256": "3b9a36ce4180eb53015d02f9778d08a3d59f03dd4b4ea9a8d875d58d76ea5d16",
+      "outputBytes": 800
+    },
+    {
+      "commandId": "desktop:ui-workflow",
+      "command": "python tools/ui_conformance.py --repo . --check workflows",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-06.log",
+      "provenance": "fresh",
+      "durationSeconds": 33.10855620028451,
+      "logCreatedByAttempt": true,
+      "outputSha256": "0a81313f8ac02779fa8996d9a86454aa1268caa8782f755c347d1c2602205c86",
+      "outputBytes": 1122
+    },
+    {
+      "commandId": "desktop:ui-accessibility",
+      "command": "python tools/ui_conformance.py --repo . --check accessibility",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-07.log",
+      "provenance": "fresh",
+      "durationSeconds": 30.20339799998328,
+      "logCreatedByAttempt": true,
+      "outputSha256": "463580f5412bcf10fc28707a2b0501882dc244c0c4548bd37aec9effc10900b4",
+      "outputBytes": 1086
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m ruff check tests/desktop/test_model_center_interactions.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-08.log",
+      "provenance": "fresh",
+      "durationSeconds": 0.10117529984563589,
+      "logCreatedByAttempt": true,
+      "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "outputBytes": 19
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m ruff format --check tests/desktop/test_model_center_interactions.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.frontend-01-09.log",
+      "provenance": "fresh",
+      "durationSeconds": 0.09478589985519648,
+      "logCreatedByAttempt": true,
+      "outputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "outputBytes": 25
+    },
+    {
+      "commandId": "foundation:backlog",
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.ledger-01-01.log",
+      "provenance": "fresh",
+      "durationSeconds": 106.07362219970673,
+      "logCreatedByAttempt": true,
+      "outputSha256": "31b709ae456423c2fd5413401a3b2e6308a56b992989267075dfc52fb965d3b9",
+      "outputBytes": 73
+    },
+    {
+      "commandId": "foundation:backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.ledger-01-02.log",
+      "provenance": "fresh",
+      "durationSeconds": 2.9218069999478757,
+      "logCreatedByAttempt": true,
+      "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "outputBytes": 44
+    },
+    {
+      "commandId": "foundation:backlog-views",
+      "command": "python tools/plan_review_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.ledger-01-03.log",
+      "provenance": "fresh",
+      "durationSeconds": 114.7000028998591,
+      "logCreatedByAttempt": true,
+      "outputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "outputBytes": 85
+    },
+    {
+      "commandId": "foundation:ui-change",
+      "command": "python tools/ui_change_gate.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "log": "artifacts/tmp/W1.C03.T01.ledger-01-04.log",
+      "provenance": "fresh",
+      "durationSeconds": 26.14234480028972,
+      "logCreatedByAttempt": true,
+      "outputSha256": "174034088e67a6d573a029bd257171a84977e7c389802133ad7ebbff5bd2594e",
+      "outputBytes": 519
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh desktop application suite: 130 passed, three pre-existing skipped; focused assembled Model Center integration: three passed. Existing navigation/profile/status behavior remains covered. Added tests distinguish not-started and pending from expired context, require explicit Start, and assert that primary navigation/Home recovery do not create workflow progress or completion evidence. Native replay selected Rapid field orientation and observed its seven ordered preview stages; explicit Start alone reached Research Intent."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The fresh assembled application exercises authoritative fixture command responses through the actual renderer: not-started recovery, pending suppression, exact current-step return, old resolve/reject versus a newer request, navigation away, and same-project close/reopen fences. A current-request failure positive control still renders the error. Native React/Tauri/Core replay reproduced the former CAP-07.S01.NATIVE-F01 path: opening Research Intent before Start then Model Center now offers truthful Project Home recovery; after explicit Start, the supporting tool offers and executes Return to current step · Research Intent. No completion/checkpoint is fabricated."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Fresh desktop lint/typecheck/build, focused Python lint/format, public UI-change gate, and reference workflow/accessibility checks pass. Actual native keyboard activation, visible focus, announcements and both light/dark states were observed for Home recovery and current-step return. Shared Button/status components and unchanged approved Academic Minimal 1.6 reference are retained. The assembled Model Center suite retains its responsive, keyboard, failure and late-response coverage. Reference accessibility checks are reference-fixture evidence, not screen-reader speech or production packaging proof."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Four admitted source/test paths restore the existing supporting-navigation contract; no Core, authority, schema, migration, native dialog or approved reference change. Select renderer state/identity/race tests, assembled integration, affected quality/build, reference workflow/accessibility and ledger/UI-contract validation. The actual native replay closes the observed renderer/Core recovery defect. Full profiles remain a fresh Wave prerequisite; no result reuse is claimed.",
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:ui-change"
+    ],
+    "deferred": [
+      "CAP-07.S01 combined integration/handoff review and fresh full W1 repository/profile, security, packaging, performance, restart/recovery and cross-capability qualification remain separate prerequisites. No human G1 approval is requested.",
+      "No new actual screen-reader speech, complete zoom/reflow matrix, production artifact, authentication or live-provider claim; those wider release boundaries are not replaced by these focused checks."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "aa859902c04a12165d908b4e9844315136004cc1599cfc515f7b5ddc8cb32157",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "npm run lint --prefix apps/desktop",
+      "npm run typecheck --prefix apps/desktop",
+      "npm run test --prefix apps/desktop",
+      "npm run build --prefix apps/desktop",
+      "python -m unittest -v tests.desktop.test_model_center_interactions",
+      "python tools/ui_conformance.py --repo . --check workflows",
+      "python tools/ui_conformance.py --repo . --check accessibility",
+      "python tools/ui_change_gate.py --repo ."
+    ],
+    "reusedEvidence": [],
+    "rationale": "Inherit all three CAP-03.S06.T03 criteria and preserve its immutable DONE history. Restore explicit-start recovery and the existing exact-context handoff without bypassing project/session/source/profile/intent/current-stage guards or changing governed experience. Fresh regression/integration evidence plus actual native observations close the discovered CAP-07.S01.NATIVE-F01 behavior; independent correction disposition is required before ordinary W1 resume."
+  },
+  "observations": {
+    "verificationProducer": {
+      "path": "artifacts/tmp/W1.C03.T01.verify-01.py",
+      "sha256": "3fa4e441c1b9ca61229139bd3518f6df030c5de74dae701ea19a8df3f3787fb3"
+    },
+    "reports": [
+      {
+        "path": "artifacts/tmp/W1.C03.T01.frontend-01.json",
+        "sha256": "8e4721a200192cc0cf0532f3cf3bc8de82605a8a912f164c4554af7636ae4952",
+        "durationSeconds": 77.31475899973884
+      },
+      {
+        "path": "artifacts/tmp/W1.C03.T01.ledger-01.json",
+        "sha256": "fc1ee237a38e969a39779d927abecbcbe7b9df2638692aacf54499ff22a78123",
+        "durationSeconds": 250.78217089967802
+      }
+    ],
+    "pythonLauncherSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "nodeSha256": "3602f2bb1a10f2cbab4c36886218a33c1ab3db87290e73b033c46c77147d0237",
+    "candidateStable": true,
+    "executionBoundary": "Selected committed input files and producer/runtime launchers held with Windows read locks during execution; shared HEAD fixed. Runtime logs and synthetic fixtures remain ignored. No ordinary project, vault, policy or credentials accessed.",
+    "limits": "Tool-observed fresh execution with raw-log hashes, not signed attestation or a complete installed-dependency/OS closure. Reuse is disabled."
+  },
+  "nativeReplay": {
+    "candidate": "2f980af6b4031256ea35739ffd4d813cecd278eb",
+    "producer": {
+      "path": "artifacts/tmp/W1.C03.T01.native-01.py",
+      "sha256": "e5b3055a94dee3c1d641b384edd14798c270b7d9b9d6d67b0f1113b2091c0c20"
+    },
+    "build": {
+      "report": "artifacts/tmp/W1.C03.T01.native-01.build.json",
+      "sha256": "60dccade93296974c0652574bcec4980e394252dc66b6759da22c120ad8e049e",
+      "durationSeconds": 43.870718399994075,
+      "frontendExitCode": 0,
+      "log": "artifacts/tmp/W1.C03.T01.native-01.build.log",
+      "logSha256": "f3e6afa5bb7f68ab379ac2492a6989e0aa9deed74fea66f1c166a94b0f800959",
+      "nativeBuildLog": "artifacts/tmp/W1.C03.T01.native-01.build-native.log",
+      "nativeBuildLogSha256": "ad51490bd0fd2c2879bc01acd57808295a1590af231da3d21ee1858ba3c28c35"
+    },
+    "lifecycle": {
+      "report": "artifacts/tmp/W1.C03.T01.native-01.lifecycle.json",
+      "sha256": "dff5f170b282f0dab4701a63d3288bdd75c7fa8048a45551195c86c8490bb816",
+      "durationSeconds": 459.4128833003342,
+      "exitCode": 0,
+      "log": "artifacts/tmp/W1.C03.T01.native-01.lifecycle.log",
+      "logSha256": "a0e92caba2b6391a113e8ea862c2d7ed906338e80ab0530d9a77c14211a59900"
+    },
+    "executableSha256": "3162e5f583c388741c0fcf87231cd74031752aa2bf5ad6e4bbe955699e3a5920",
+    "pythonBaseSha256": "e739a813242c5dfd9143a23e5547899304cbd93af9663d080a5f12a9f08ff688",
+    "observationSource": "Direct computer-use screenshots/accessibility observations and keyboard/pointer actions in the source-built synthetic React/Tauri/Core window, recorded separately from helper process-exit results. No separate retained screenshot artifact is claimed.",
+    "observations": [
+      "Fresh startup: Core Ready, no project open and no credentials requested. Default parent was already selected in the isolated fixture. Created Supporting return qualification with Rapid field orientation; creation left it closed and did not auto-start.",
+      "Explicit Open created the project session. Opened primary Research Intent before Start, then All tools > Model & Privacy Center. Settled guidance said Guided workflow not started and offered Open Project Home; no expired-context error or misleading return.",
+      "Observed not-started recovery in light and dark. Empty inventory remained truthful (version zero/no adapter); refresh was disabled and Reload was read-only.",
+      "Reverse-Tab focused Open Project Home; Enter opened Home without starting. Home remained Not started, offered the existing Start guided workflow action and had no self-loop Home action.",
+      "Tab focused Start guided workflow; Enter explicitly started Research Intent. Announcement said no completion or checkpoint was recorded.",
+      "All tools > Model & Privacy Center then offered Return to current step · Research Intent in both themes. Read-only Reload retained it. Reverse-Tab focused Return; Enter returned to Research Intent, cleared supporting context and announced the exact current step.",
+      "Normal Alt+F4 closed the fixture window. Fresh window listing found no remaining fixture window; the helper exited zero with selected source inputs unchanged. Fixture retained."
+    ],
+    "toolingObservations": [
+      "A text-only indexed click first lacked coordinate geometry; a fresh activation/screenshot enabled the normal retry. A native HTML select index encountered its WebView-owned popup; the refreshed target accepted normal keyboard selection. No guard was bypassed or unrelated application controlled."
+    ],
+    "scope": "Existing fixture-only source-built React/Tauri/Core path; no ordinary vault/policy/project access. Fixture default parent, policy, Core vault/temp and WebView storage are substituted. No production packaging or authentication proof.",
+    "limits": "Selected committed sources, producer, Python launcher/base, native probe and generated frontend bytes are pinned. Installed Python dependencies/native extensions/pre-existing bytecode are not a closed authenticated inventory; no reusable native evidence or complete installed-runtime/packaging qualification is claimed. Fresh frozen full qualification remains separate. Pending/race delays are automated assembled-test evidence, not a claimed native delayed-response observation. No restart operation was executed in this replay; no actual screen-reader speech or full native accessibility matrix is claimed."
+  },
+  "developmentEvidence": {
+    "qualification": false,
+    "red": [
+      {
+        "log": "artifacts/tmp/W1.C03.T01-component-red-01.log",
+        "sha256": "6875cf157907979dbf4cca062d95f857de35f979d31ae26bf5efbba2cb9fe8a6",
+        "observation": "Two new failures and six existing passes against unchanged product."
+      },
+      {
+        "log": "artifacts/tmp/W1.C03.T01-assembled-red-01.log",
+        "sha256": "64b6840d1df155a4e72a66ce1e39d566078c1ade4716c63fb7e7250a7cfa8d98",
+        "observation": "Two failures: missing not-started and pending guidance."
+      }
+    ],
+    "retainedAdverseObservations": [
+      "Development typecheck caught optional callback forwarding; conditional forwarding repaired it.",
+      "An assembled development assertion ran before the existing context-reset effect; a bounded detached-state wait repaired synchronization without weakening the result assertion.",
+      "A single-file Python quality selection omitted known imports; the successful development invocation selected three explicit roots using the unchanged checker. These are development observations, not candidate-qualification PASS or formal prior review rounds."
+    ]
+  }
+}

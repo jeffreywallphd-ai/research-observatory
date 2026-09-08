@@ -1,0 +1,101 @@
+{
+  "task_id": "W1.C03.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "2f980af6b4031256ea35739ffd4d813cecd278eb",
+  "base_commit": "79ac074c47ba680928770b94764a1a6b434d3432",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "result": "approved",
+  "evidence_sha256": "e0bc63404bbb895239a73717a8443e53ed1e4db394d1f7fd9b71413662b0483c",
+  "submission_packet_sha256": "525a88ea613e1ce35a240bd965b85b4a5545705e0b0ffbe5b09d78a4902d317f",
+  "notes": "Approve the exact W1.C03.T01 candidate as a bounded restoration of the three inherited CAP-03.S06.T03 criteria. The reviewer supplied read-only preflight advice and independently reviewed source and evidence, but authored no implementation or submitted evidence. The complete base-to-candidate inventory contains exactly four admitted product/test paths, the task-owned unchanged-reference UI contract, worksheet and controller projections. Not-started guidance now leads to the existing Project Home explicit Start action without starting or completing workflow state. Pending supporting requests suppress premature return and false expiration. Existing project/root, request/context, intent, selection, profile and source-stage guards remain intact; exact ticket and workspace ownership also fence stale success, error and finally cleanup. Shared controls, status semantics, keyboard focus and approved reference 1.6 are preserved. Fresh frontend and ledger reports contain 13 passing checks; the desktop suite reports 130 passed and three existing skipped, and all three assembled integration cases pass. The actual native UI actions recorded by the main agent corroborate not-started recovery, no implicit start and exact keyboard return in both themes; clean process exit is assessed separately. No blocking finding remains within this correction. CAP-07.S01 completion, full W1 qualification and G1 are not approved by this record.",
+  "findings": [],
+  "closures": [],
+  "corrective_integration": {
+    "evidence_sha256": "e0bc63404bbb895239a73717a8443e53ed1e4db394d1f7fd9b71413662b0483c",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Reviewed the renderer navigation-to-workflow progress seam, pending/return ownership and exact-context denial, assembled current and obsolete response behavior, unchanged public whole-task-base UI gate, and fresh fixture-only React/Tauri/Core recovery and return observations. The original CAP-03.S06.T03 remains DONE and independently approved with an identical origin snapshot and history. The correction introduces no automatic start, accepted intent, completion/checkpoint, fabricated return witness, permission grant, schema, migration, storage, provider, governed-reference or release-criterion change. It restores the approved supporting-tool and distinct loading/empty/recovery behavior rather than broadening experience authority. No result reuse or full-profile substitution is claimed."
+  },
+  "authentication": {
+    "acceptance_criteria_sha256": "04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a",
+    "selection_sha256": "df3650f91634a73a01a5a974c7aeed7bf8d0cb76c2f0579a9023951726e1d2f6",
+    "origin_sha256": "aa859902c04a12165d908b4e9844315136004cc1599cfc515f7b5ddc8cb32157",
+    "current_state": "REVIEW",
+    "prior_controlled_rounds": 0,
+    "manifest_checks_equal_reports": true,
+    "manifest_validation_errors": [],
+    "changed_file_validation_errors": [],
+    "submission_packet_validation_errors": [],
+    "method": "Read-only exact-commit scope and contract inspection; authenticated frozen R01, original task snapshot, selected reports, producers and all 13 named check logs by SHA-256 and byte count. Native build and lifecycle report/log identities, executable hash, all 664 declared native source inputs and 164 build/frontend inputs match; build and lifecycle source lists agree. Original RED logs authenticate. No test, build, benchmark, native UI operation or ordinary fixture/vault inspection was performed by this reviewer."
+  },
+  "reviewed_evidence": [
+    {
+      "path": "artifacts/tmp/W1.C03.T01.verify-01.py",
+      "sha256": "3fa4e441c1b9ca61229139bd3518f6df030c5de74dae701ea19a8df3f3787fb3",
+      "role": "Previously preflighted fresh selected-check producer; actual bytes unchanged."
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.frontend-01.json",
+      "sha256": "8e4721a200192cc0cf0532f3cf3bc8de82605a8a912f164c4554af7636ae4952",
+      "role": "Nine passing frontend, assembled integration, reference-conformance and affected quality groups; all nine named logs authenticated."
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.ledger-01.json",
+      "sha256": "fc1ee237a38e969a39779d927abecbcbe7b9df2638692aacf54499ff22a78123",
+      "role": "Four passing backlog, projection/site and public UI-gate groups; all four named logs authenticated. UI gate uses the exact full claim base and reference 1.6."
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.native-01.py",
+      "sha256": "e5b3055a94dee3c1d641b384edd14798c270b7d9b9d6d67b0f1113b2091c0c20",
+      "role": "Previously preflighted isolated source-build/lifecycle producer; actual bytes unchanged. UI observations are separate from its exit result."
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.native-01.build.json",
+      "sha256": "60dccade93296974c0652574bcec4980e394252dc66b6759da22c120ad8e049e",
+      "role": "Fresh source-built integration-harness probe and frontend, PASS; actual native build log reports exit zero and build-finished success."
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.native-01.lifecycle.json",
+      "sha256": "dff5f170b282f0dab4701a63d3288bdd75c7fa8048a45551195c86c8490bb816",
+      "role": "Fresh owned fixture lifecycle, PASS and normal exit zero; binds the reviewed build report and executable."
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.native-01.build.log",
+      "sha256": "f3e6afa5bb7f68ab379ac2492a6989e0aa9deed74fea66f1c166a94b0f800959"
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.native-01.build-native.log",
+      "sha256": "ad51490bd0fd2c2879bc01acd57808295a1590af231da3d21ee1858ba3c28c35"
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01.native-01.lifecycle.log",
+      "sha256": "a0e92caba2b6391a113e8ea862c2d7ed906338e80ab0530d9a77c14211a59900"
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01-component-red-01.log",
+      "sha256": "6875cf157907979dbf4cca062d95f857de35f979d31ae26bf5efbba2cb9fe8a6",
+      "role": "Retained development characterization: two new failures, six existing passes; not a qualifying run or prior formal review round."
+    },
+    {
+      "path": "artifacts/tmp/W1.C03.T01-assembled-red-01.log",
+      "sha256": "64b6840d1df155a4e72a66ce1e39d566078c1ade4716c63fb7e7250a7cfa8d98",
+      "role": "Retained development characterization: both missing not-started/pending guidance cases failed before restoration."
+    }
+  ],
+  "pre_submission_observations": [
+    {
+      "finding_id": "CAP-07.S01.NATIVE-F01",
+      "record": "artifacts/evidence/CAP-07.S01.native-qualification-01.md",
+      "disposition": "closed-by-authority-preserving-correction",
+      "evidence": "The previously ineffective pre-bootstrap primary-reopen remedy is replaced with truthful not-started guidance and keyboard-accessible Project Home recovery; Home navigation leaves workflow unstarted. Fresh assembled regressions and the separately recorded actual native Research Intent to Model Center, explicit Start and exact Return sequence corroborate closure. Pending/newer-request and obsolete success/error/finally cases are assembled-test proof, not claimed native delay observations. This closes the slice-preflight finding through W1.C03.T01, not an invented prior controlled task round."
+    }
+  ],
+  "scope_limits": [
+    "Native evidence uses a source-built synthetic integration harness with substituted project parent, policy, Core vault/temp and WebView storage. It is not production packaging, authentication, live-provider, ordinary-project, permission or complete installed-runtime proof. Reuse remains disabled.",
+    "The main agent recorded direct native keyboard/pointer, focus, announcement and both-theme observations. This reviewer authenticated and assessed that evidence but did not independently operate or see the native window. No retained screenshot artifact, actual screen-reader speech, full native accessibility matrix or restart operation is claimed for this replay.",
+    "Reference workflow/accessibility conformance is approved-reference fixture evidence. Existing semantic controls and focused responsive/keyboard coverage support this bounded restoration; full fresh affected Wave qualification remains separate.",
+    "All prior findings, development failures and adverse performance observations remain preserved. This correction neither reclassifies the earlier 134.022 ms failed gateway run nor extends the historical 25.3832 ms owner acceptance beyond CAP-07.S01.T03. Separate reviewed gateway observations and baseline records are not a new performance run or slice/Wave approval here.",
+    "No optional styling, supplemental refactoring, product scope, security authority, migration guarantee, governed reference or release criterion changed. CAP-07.S01 integrated completion, fresh full W1 qualification, independent Wave review and human G1 remain separate obligations.",
+    "The reviewer authored only this new review record. No source, test, submitted evidence, backlog, Git history or remote was changed. The protected witness contents and excluded sibling contents were not accessed; no ordinary user vault, policy, credentials or project was inspected."
+  ]
+}

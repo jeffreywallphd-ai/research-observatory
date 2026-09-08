@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6b52acb6214a960373ef6901c39ec86b4705da89f58759df79697f88a64cf449
+source_sha256: 51f21878c183351b850478776aee94fc75059fdbaff9b616817d0b0bee71db8d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2484,7 +2484,7 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C03.T01 — Implement adaptive ordered navigation and workflow context
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-03.S06.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-03.S06.T03`. **Latest review:** `approved`.
 
 **Reproduction:** CAP-07.S01.NATIVE-F01: in a newly created synthetic project whose workflow has not been explicitly started, open Research Intent and then Model Center through All tools. The settled supporting context says it expired and instructs reopening a primary step; reopening Research Intent does not start the workflow and cannot restore the return. Explicit Start guided workflow from Project Home followed by opening Model Center does produce a valid one-action return. A missing bootstrap and a pending supporting handoff are incorrectly represented as expired context. See CAP-07.S01.native-qualification-01.md; the original task and its adverse and approved review rounds remain immutable.
 
@@ -2502,13 +2502,43 @@ Original tasks and approvals remain unchanged.
 - tests/desktop/test_model_center_interactions.py
 #### Review history — W1.C03.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `525a88ea613e1ce35a240bd965b85b4a5545705e0b0ffbe5b09d78a4902d317f`
+
+- Candidate / base / branch: `2f980af6b4031256ea35739ffd4d813cecd278eb` / `79ac074c47ba680928770b94764a1a6b434d3432` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-08T11:20:58+00:00`
+- Evidence: `artifacts/evidence/W1.C03.T01.json` / `e0bc63404bbb895239a73717a8443e53ed1e4db394d1f7fd9b71413662b0483c` / `2f980af6b4031256ea35739ffd4d813cecd278eb`
+- Acceptance-criteria SHA-256: `04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a`
+- Verification-selection SHA-256: `df3650f91634a73a01a5a974c7aeed7bf8d0cb76c2f0579a9023951726e1d2f6`
+- Changed paths: `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/WorkflowNavigation.test.tsx`, `apps/desktop/src/app/WorkflowNavigation.tsx`, `artifacts/evidence/W1.C03.T01.task-start.md`, `artifacts/evidence/ui-change/W1.C03.T01.json`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `tests/desktop/test_model_center_interactions.py`
+- Selected checks: `npm run lint --prefix apps/desktop`, `npm run typecheck --prefix apps/desktop`, `npm run test --prefix apps/desktop`, `npm run build --prefix apps/desktop`, `python -m unittest -v tests.desktop.test_model_center_interactions`, `python tools/ui_conformance.py --repo . --check workflows`, `python tools/ui_conformance.py --repo . --check accessibility`, `python -m ruff check tests/desktop/test_model_center_interactions.py`, `python -m ruff format --check tests/desktop/test_model_center_interactions.py`, `python tools/taskctl.py --file planning/backlog.yaml validate`, `python tools/backlog_views.py --repo . --check`, `python tools/plan_review_check.py --repo .`, `python tools/ui_change_gate.py --repo .`
+- Deferred checks: `CAP-07.S01 combined integration/handoff review and fresh full W1 repository/profile, security, packaging, performance, restart/recovery and cross-capability qualification remain separate prerequisites. No human G1 approval is requested.`, `No new actual screen-reader speech, complete zoom/reflow matrix, production artifact, authentication or live-provider claim; those wider release boundaries are not replaced by these focused checks.`
+- Selection rationale: Four admitted source/test paths restore the existing supporting-navigation contract; no Core, authority, schema, migration, native dialog or approved reference change. Select renderer state/identity/race tests, assembled integration, affected quality/build, reference workflow/accessibility and ledger/UI-contract validation. The actual native replay closes the observed renderer/Core recovery defect. Full profiles remain a fresh Wave prerequisite; no result reuse is claimed.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/cap07_slice_review / `2026-09-08T11:27:48+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W1.C03.T01.review-R01.json` / `d2e337909a3b21bd96c0b8fc7144d977a68e2f5be318aa76b63d20c8aa388880`
+
+**Review notes:** Approve the exact W1.C03.T01 candidate as a bounded restoration of the three inherited CAP-03.S06.T03 criteria. The reviewer supplied read-only preflight advice and independently reviewed source and evidence, but authored no implementation or submitted evidence. The complete base-to-candidate inventory contains exactly four admitted product/test paths, the task-owned unchanged-reference UI contract, worksheet and controller projections. Not-started guidance now leads to the existing Project Home explicit Start action without starting or completing workflow state. Pending supporting requests suppress premature return and false expiration. Existing project/root, request/context, intent, selection, profile and source-stage guards remain intact; exact ticket and workspace ownership also fence stale success, error and finally cleanup. Shared controls, status semantics, keyboard focus and approved reference 1.6 are preserved. Fresh frontend and ledger reports contain 13 passing checks; the desktop suite reports 130 passed and three existing skipped, and all three assembled integration cases pass. The actual native UI actions recorded by the main agent corroborate not-started recovery, no implicit start and exact keyboard return in both themes; clean process exit is assessed separately. No blocking finding remains within this correction. CAP-07.S01 completion, full W1 qualification and G1 are not approved by this record.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/cap07_slice_review at `2026-09-08T11:27:48+00:00`
 
-**Latest notes:** -
+**Latest notes:** Approve the exact W1.C03.T01 candidate as a bounded restoration of the three inherited CAP-03.S06.T03 criteria. The reviewer supplied read-only preflight advice and independently reviewed source and evidence, but authored no implementation or submitted evidence. The complete base-to-candidate inventory contains exactly four admitted product/test paths, the task-owned unchanged-reference UI contract, worksheet and controller projections. Not-started guidance now leads to the existing Project Home explicit Start action without starting or completing workflow state. Pending supporting requests suppress premature return and false expiration. Existing project/root, request/context, intent, selection, profile and source-stage guards remain intact; exact ticket and workspace ownership also fence stale success, error and finally cleanup. Shared controls, status semantics, keyboard focus and approved reference 1.6 are preserved. Fresh frontend and ledger reports contain 13 passing checks; the desktop suite reports 130 passed and three existing skipped, and all three assembled integration cases pass. The actual native UI actions recorded by the main agent corroborate not-started recovery, no implicit start and exact keyboard return in both themes; clean process exit is assessed separately. No blocking finding remains within this correction. CAP-07.S01 completion, full W1 qualification and G1 are not approved by this record.
 
 **Currently open findings:** -
 

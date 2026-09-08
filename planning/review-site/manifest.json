@@ -477,7 +477,7 @@
         {
           "task_id": "W1.C03.T01",
           "title": "Implement adaptive ordered navigation and workflow context",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "The primary navigation order changes to the selected use case and clearly distinguishes completed, current, upcoming, attention, optional, and cyclical states.",
             "Opening a tool outside the sequence labels it as supporting and provides a one-action return to the current primary step.",
@@ -509,17 +509,129 @@
           "task_review": {
             "task_id": "W1.C03.T01",
             "title": "Implement adaptive ordered navigation and workflow context",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/cap07_slice_review",
+              "result": "approved",
+              "reviewed_at": "2026-09-08T11:27:48+00:00",
+              "notes": "Approve the exact W1.C03.T01 candidate as a bounded restoration of the three inherited CAP-03.S06.T03 criteria. The reviewer supplied read-only preflight advice and independently reviewed source and evidence, but authored no implementation or submitted evidence. The complete base-to-candidate inventory contains exactly four admitted product/test paths, the task-owned unchanged-reference UI contract, worksheet and controller projections. Not-started guidance now leads to the existing Project Home explicit Start action without starting or completing workflow state. Pending supporting requests suppress premature return and false expiration. Existing project/root, request/context, intent, selection, profile and source-stage guards remain intact; exact ticket and workspace ownership also fence stale success, error and finally cleanup. Shared controls, status semantics, keyboard focus and approved reference 1.6 are preserved. Fresh frontend and ledger reports contain 13 passing checks; the desktop suite reports 130 passed and three existing skipped, and all three assembled integration cases pass. The actual native UI actions recorded by the main agent corroborate not-started recovery, no implicit start and exact keyboard return in both themes; clean process exit is assessed separately. No blocking finding remains within this correction. CAP-07.S01 completion, full W1 qualification and G1 are not approved by this record."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex",
+                    "submitted_at": "2026-09-08T11:20:58+00:00",
+                    "candidate_commit": "2f980af6b4031256ea35739ffd4d813cecd278eb",
+                    "base_commit": "79ac074c47ba680928770b94764a1a6b434d3432",
+                    "branch": "codex/w1-windows-local-runtime",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W1.C03.T01.json",
+                      "sha256": "e0bc63404bbb895239a73717a8443e53ed1e4db394d1f7fd9b71413662b0483c",
+                      "commit": "2f980af6b4031256ea35739ffd4d813cecd278eb",
+                      "recorded_at": "2026-09-08T11:20:58+00:00"
+                    },
+                    "acceptance_criteria_sha256": "04f54ecfcc5cf3cd4e9eba1074b3b34a3f5a08731c2ed20fe993c5da490ac68a",
+                    "changed_paths": [
+                      "apps/desktop/src/app/ApplicationRuntime.tsx",
+                      "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+                      "apps/desktop/src/app/WorkflowNavigation.tsx",
+                      "artifacts/evidence/W1.C03.T01.task-start.md",
+                      "artifacts/evidence/ui-change/W1.C03.T01.json",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/index.html",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W1.html",
+                      "planning/status-summary.md",
+                      "tests/desktop/test_model_center_interactions.py"
+                    ],
+                    "selected_checks": [
+                      "npm run lint --prefix apps/desktop",
+                      "npm run typecheck --prefix apps/desktop",
+                      "npm run test --prefix apps/desktop",
+                      "npm run build --prefix apps/desktop",
+                      "python -m unittest -v tests.desktop.test_model_center_interactions",
+                      "python tools/ui_conformance.py --repo . --check workflows",
+                      "python tools/ui_conformance.py --repo . --check accessibility",
+                      "python -m ruff check tests/desktop/test_model_center_interactions.py",
+                      "python -m ruff format --check tests/desktop/test_model_center_interactions.py",
+                      "python tools/taskctl.py --file planning/backlog.yaml validate",
+                      "python tools/backlog_views.py --repo . --check",
+                      "python tools/plan_review_check.py --repo .",
+                      "python tools/ui_change_gate.py --repo ."
+                    ],
+                    "deferred_checks": [
+                      "CAP-07.S01 combined integration/handoff review and fresh full W1 repository/profile, security, packaging, performance, restart/recovery and cross-capability qualification remain separate prerequisites. No human G1 approval is requested.",
+                      "No new actual screen-reader speech, complete zoom/reflow matrix, production artifact, authentication or live-provider claim; those wider release boundaries are not replaced by these focused checks."
+                    ],
+                    "selection_rationale": "Four admitted source/test paths restore the existing supporting-navigation contract; no Core, authority, schema, migration, native dialog or approved reference change. Select renderer state/identity/race tests, assembled integration, affected quality/build, reference workflow/accessibility and ledger/UI-contract validation. The actual native replay closes the observed renderer/Core recovery defect. Full profiles remain a fresh Wave prerequisite; no result reuse is claimed.",
+                    "selection_sha256": "df3650f91634a73a01a5a974c7aeed7bf8d0cb76c2f0579a9023951726e1d2f6",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "desktop:unit",
+                      "desktop:ui-workflow",
+                      "desktop:ui-accessibility",
+                      "foundation:quality",
+                      "foundation:backlog",
+                      "foundation:backlog-views",
+                      "foundation:ui-change"
+                    ],
+                    "packet_sha256": "525a88ea613e1ce35a240bd965b85b4a5545705e0b0ffbe5b09d78a4902d317f"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/cap07_slice_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-09-08T11:27:48+00:00",
+                    "notes": "Approve the exact W1.C03.T01 candidate as a bounded restoration of the three inherited CAP-03.S06.T03 criteria. The reviewer supplied read-only preflight advice and independently reviewed source and evidence, but authored no implementation or submitted evidence. The complete base-to-candidate inventory contains exactly four admitted product/test paths, the task-owned unchanged-reference UI contract, worksheet and controller projections. Not-started guidance now leads to the existing Project Home explicit Start action without starting or completing workflow state. Pending supporting requests suppress premature return and false expiration. Existing project/root, request/context, intent, selection, profile and source-stage guards remain intact; exact ticket and workspace ownership also fence stale success, error and finally cleanup. Shared controls, status semantics, keyboard focus and approved reference 1.6 are preserved. Fresh frontend and ledger reports contain 13 passing checks; the desktop suite reports 130 passed and three existing skipped, and all three assembled integration cases pass. The actual native UI actions recorded by the main agent corroborate not-started recovery, no implicit start and exact keyboard return in both themes; clean process exit is assessed separately. No blocking finding remains within this correction. CAP-07.S01 completion, full W1 qualification and G1 are not approved by this record."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W1.C03.T01.review-R01.json",
+                    "sha256": "d2e337909a3b21bd96c0b8fc7144d977a68e2f5be318aa76b63d20c8aa388880"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W1.C03.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-09-08T11:20:58+00:00",
+                    "reviewed_at": "2026-09-08T11:27:48+00:00",
+                    "duration_seconds": 410,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "desktop:unit",
+                      "desktop:ui-workflow",
+                      "desktop:ui-accessibility",
+                      "foundation:quality",
+                      "foundation:backlog",
+                      "foundation:backlog-views",
+                      "foundation:ui-change"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }
