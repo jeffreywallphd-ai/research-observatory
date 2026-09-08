@@ -136,6 +136,8 @@
       "type": "string"
     }
   },
+  "$id": "https://research-observatory.local/contracts/model-gateway/model-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
     "accelerator": {

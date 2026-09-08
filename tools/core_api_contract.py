@@ -1946,10 +1946,28 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
 
         openapi = canonical_openapi_bytes()
         manifest_schema = (
-            json.dumps(ModelManifest.model_json_schema(by_alias=True), indent=2, sort_keys=True) + "\n"
+            json.dumps(
+                ModelManifest.model_json_schema(by_alias=True)
+                | {
+                    "$id": "https://research-observatory.local/contracts/model-gateway/model-manifest.schema.json",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n"
         ).encode()
         routing_schema = (
-            json.dumps(RoutingPolicy.model_json_schema(by_alias=True), indent=2, sort_keys=True) + "\n"
+            json.dumps(
+                RoutingPolicy.model_json_schema(by_alias=True)
+                | {
+                    "$id": "https://research-observatory.local/contracts/model-gateway/routing-policy.schema.json",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n"
         ).encode()
         workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)
         workflow_profile_projection_bytes = json.dumps(

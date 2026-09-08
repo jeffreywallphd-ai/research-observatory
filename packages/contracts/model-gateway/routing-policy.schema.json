@@ -14,6 +14,8 @@
       "type": "string"
     }
   },
+  "$id": "https://research-observatory.local/contracts/model-gateway/routing-policy.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "Core-owned constraints; never a caller-supplied authorization grant.",
   "properties": {

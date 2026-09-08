@@ -360,13 +360,24 @@ class ModelRoutingContractTests(unittest.TestCase):
         committed = json.loads(
             (REPO / "packages/contracts/model-gateway/routing-policy.schema.json").read_text("utf-8")
         )
-        self.assertEqual(schema, committed)
+        self.assertEqual(
+            schema
+            | {
+                "$id": "https://research-observatory.local/contracts/model-gateway/routing-policy.schema.json",
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+            },
+            committed,
+        )
+        Draft202012Validator.check_schema(committed)
         policy = RoutingPolicy(project_id="fixture-project", revision=1).model_dump(by_alias=True, mode="json")
         validator = Draft202012Validator(schema)
+        published_validator = Draft202012Validator(committed)
         self.assertEqual([], list(validator.iter_errors(policy)))
+        self.assertEqual([], list(published_validator.iter_errors(policy)))
         for delta in ({"allowed": True}, {"maximumAttempts": 9}, {"revision": True}, {"maximumCostMicrounits": -1}):
             with self.subTest(delta=delta):
                 self.assertTrue(list(validator.iter_errors(policy | delta)))
+                self.assertTrue(list(published_validator.iter_errors(policy | delta)))
                 with self.assertRaises(ValidationError):
                     RoutingPolicy.model_validate(policy | delta)
 
