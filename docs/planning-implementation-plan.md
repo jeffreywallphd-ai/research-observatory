@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f50461456fce01c5f8ec01b2b9cc604bbc59b7f1b71a3dcff72943c45e5131ec
+source_sha256: 43b997e5a492935a57ebccd80f74d0f0bb7eb4769652f60976ba8fb2f2f89e8e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -275,7 +275,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 
@@ -9593,7 +9593,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** AI capabilities are invoked by scholarly task type rather than hard-coded vendor API.
 
-**Wave / priority / status / review:** `W1` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W1` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

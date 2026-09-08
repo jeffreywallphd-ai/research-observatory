@@ -128,23 +128,22 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/ai-projects/research-observatory
-    base_sha: e4f52d0971045966c17f4e381a9fc17cb4c57ecf
+    base_sha: c722dd3a950f58de39beb5f2e1219cc36b2350c7
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-08T12:05:32+00:00'
-    pause_reason: CAP-07.S01 native enlargement qualification requires permission for a brief Windows Display Scale change
-      and exact restoration. Permission is pending; existing computer-use scope covered isolated application and folder dialogs,
-      not desktop-wide sizing. Fifteen fresh combined/renderer groups and bounded native lifecycle are recorded in artifacts/evidence/CAP-07.S01.qualification-02.json.
-      No product defect is demonstrated, no slice criterion is waived, and G1 prerequisites remain incomplete. Resume the
-      same campaign after host-display permission, then finish native enlargement, independent slice review and fresh W1 qualification.
-    pause_category: external-dependency
-    lease: null
+    updated_at: '2026-09-08T12:28:57+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-08T12:28:57+00:00'
+      expires_at: '2026-09-09T12:28:57+00:00'
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -266,6 +265,18 @@ waves:
       platform: windows-x64
       actor: codex
       resumed_at: '2026-09-08T11:39:59+00:00'
+    - id: W1.R11
+      wave_id: W1
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: c722dd3a950f58de39beb5f2e1219cc36b2350c7
+      prior_campaign_sha256: 1bd3b1244dab9bcfec82a5aff17acdf5335dd6103bff4ce279fabfe84b8a2e3e
+      branch: codex/w1-windows-local-runtime
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex
+      resumed_at: '2026-09-08T12:28:57+00:00'
     corrective_tasks:
     - title: Choose project folders through one protected native dialog
       objective: Replace all implemented W1 directory-entry fields with shared native selection and stable read-only destinations.
@@ -989,7 +1000,7 @@ waves:
     notes: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations
       and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -20839,7 +20850,7 @@ capabilities:
     depends_on:
     - CAP-03.S01.T03
     - CAP-00.S03.T03
-    status: IN_PROGRESS
+    status: DONE
     tasks:
     - id: CAP-07.S01.T01
       capability_id: CAP-07
@@ -23244,11 +23255,16 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
-      reviewer: null
-      reviewed_at: null
-      evidence: []
-      notes: null
+      status: APPROVED
+      reviewer: agent:/root/cap07_slice_review
+      reviewed_at: '2026-09-08T12:45:08+00:00'
+      evidence:
+      - artifacts/evidence/CAP-07.S01.integration-01.json
+      notes: 'Independent CAP-07.S01 integration review approved all13 criteria and portable handoff at packet313887ccac0b752335457edb0bbad918ae4a64b6
+        with fresh execution78e1b49fa51795ce71cc04c412d435065a62d041. Ledger artifacts/evidence/CAP-07.S01.integration-01.review-R01.json
+        SHA256 da176c208acf0c8fbb94c42ea56582dc95a7905628559ea0318d4d2f6a84381d. Original findings explicitly closed; adverse
+        results and limits preserved. Slice only: fresh full W1 qualification, independent Wave review and human G1 remain
+        required.'
   - id: CAP-07.S02
     title: Local model runtime and model management
     outcome: PC/lab users can run supported models through llama.cpp-class runtimes without manually administering a model
