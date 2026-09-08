@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-review",
+  "reviewId": "W1-linked-ui.review-R01",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "reviewedAt": "2026-09-08T10:15:59Z",
+  "disposition": "CHANGES_REQUESTED",
+  "scope": "Independent commit-bound control review of linked completed-task UI-restoration compatibility only.",
+  "baseCommit": "6fbb0eae475f95902216ba93ad4b782e93c84e68",
+  "candidate": "90044e166ab3d7b04cd704c05b9016d73f67b245",
+  "evidence": {
+    "path": "artifacts/evidence/W1-linked-ui.maintenance-01.md",
+    "sha256": "bacc4edc12b78f1f956d2e5b80f80a266ec542bba2aab63abe34700aaf068411"
+  },
+  "route": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+  "riskAssessment": "Expanded evidence/control-authority review. The seven-path candidate preserves the original corrective contract, backlog/spec schemas, approved reference and product files, but the public gate can still skip authentication of a mutated active correction and hide its earlier UI implementation range.",
+  "reviewedPaths": [
+    "artifacts/evidence/W1-linked-ui.maintenance-01.md",
+    "design/ui-change.schema.json",
+    "docs/automation/design-first-ui-changes.md",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/taskctl.py",
+    "tools/ui_change_gate.py"
+  ],
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "P1",
+      "blocking": true,
+      "status": "OPEN",
+      "title": "Mutable scope can remove an admitted UI correction from public-gate discovery",
+      "path": "tools/ui_change_gate.py",
+      "lines": [1333, 2073],
+      "criterion": "The complete active correction base must remain selected before a UI contract exists and after evidence-only commits; invalid live admission cannot obtain a no-UI PASS. The bounded maintenance note and linked completed-task restoration guidance require authenticated original/spec/history authority before relying on current scope.",
+      "cause": "automatic_base and the no-UI validation branch filter through corrective_ui_paths on the current task before linked_correction_authority authenticates that scope against the committed spec. Empty or tests-only substituted changed_paths remove the task from both discovery paths.",
+      "reproduction": [
+        "Create an owned synthetic Git repository using UiChangeGateTests.linked_fixture, with a valid admitted correction whose committed spec includes apps/desktop/src/View.tsx.",
+        "Commit a real View.tsx change without the required UI contract.",
+        "In a later evidence-only commit, substitute the current correction.changed_paths with either an empty list or tests/desktop/test_view.py; do not change the admitted spec or full base.",
+        "Run the actual public tools/ui_change_gate.py --repo <owned-fixture> entry point without an explicit base."
+      ],
+      "observed": "Both variants selected HEAD^ and returned exit code 0, ok=true, no UI files and no contract. Validation against the original full admitted base returned ok=false for the missing contract. Existing taskctl admission validation separately rejected both variants because the committed spec content differed from admission.",
+      "expected": "The public gate rejects the inconsistent active correction before scope filtering or no-UI early return; it must not hide the earlier UI implementation behind HEAD^.",
+      "impact": "The public whole-task-base UI gate can report a false PASS for unreviewed UI implementation. This finding does not claim that taskctl submission/completion or independent review was bypassed; those are separate controls and taskctl detected the inconsistent admission in the same replay.",
+      "smallestClosure": "Authenticate active correction admission before using mutable current scope to classify or omit UI work. Apply the same protection to automatic-base and explicit no-UI validation paths. Add empty-scope and tests-only substitution regressions plus a legitimate admitted non-UI correction control; preserve ordinary and resumed-amendment behavior and all existing authority checks. Do not change corrective_contract or introduce new approval metadata.",
+      "proof": {
+        "command": ".venv/Scripts/python.exe -B artifacts/tmp/W1-linked-ui.discovery-probe-01.py",
+        "executionCount": 1,
+        "seconds": 6.57448359997943,
+        "exitCode": 0,
+        "result": "REPRODUCED",
+        "producer": {
+          "path": "artifacts/tmp/W1-linked-ui.discovery-probe-01.py",
+          "sha256": "797301bcef1c879247657d2a609411fce728562697cc0cdd9104e87540b87d9a"
+        },
+        "report": {
+          "path": "artifacts/tmp/W1-linked-ui.discovery-probe-01.json",
+          "sha256": "a74a5d8ffceaacb974008be6380c403013890e3103a5d9ee9b984c3d298b8440"
+        },
+        "log": {
+          "path": "artifacts/tmp/W1-linked-ui.discovery-probe-01.log",
+          "sha256": "3df4e0defc4c8dda847a8225e86002db70408c53196bfe5c8b166b6beb079ea5",
+          "bytes": 1152
+        },
+        "inputBinding": "The report binds the five executed source/schema/policy input hashes. Candidate HEAD and those inputs were checked before and after the probe. Owned synthetic fixture paths, exact public commands and outputs remain in ignored artifacts; no shared source or HEAD mutation occurred."
+      }
+    }
+  ],
+  "sourceCoverage": [
+    "Authenticated the exact seven-path base-to-candidate diff and inspected the complete affected public validation, discovery, taskctl admission, lease and scope helpers.",
+    "The v1.0 correction schema restricts IDs to the linked T01 lane and defect-restoration; ordinary and opt-in resumed-amendment schema rules remain present.",
+    "For corrections still discovered as UI work, the implementation checks current HEAD, branch/worktree, full pre-admission base, owner and unexpired lease, committed origin/spec/paused state and prior history, and the inherited human-and-agent-review obligation.",
+    "Per-commit checks retain admitted UI-path, intermediate object-type, spec and approved-reference boundaries, including reverted paths. Taskctl adds only the exact task-owned UI contract delivery path when governed UI scope is present.",
+    "Reviewed the added valid/invalid authority, scope, reference, lease, wrong-base, no-UI and compatibility tests. F01 identifies the missed discovery-disappearance case rather than reopening unchanged adjacent audits."
+  ],
+  "verificationDisposition": {
+    "freshMaintenanceRun": "Still in progress when this blocking disposition was requested. Main reported unit/quality completion with ledger checks remaining; this reviewer has not authenticated a final full-run report and makes no full-suite PASS claim.",
+    "independentReplay": "One authorized bounded owned-Git-fixture probe reproduced both F01 variants at the committed candidate. No competing full suite or benchmark was run.",
+    "developmentEvidence": "Previously reported development passes and RED attempts remain retained; they do not close this independently reproduced finding.",
+    "conclusion": "Do not integrate this control candidate or rely on it to start the linked product correction until F01 is remediated, focused regressions and selected fresh checks pass at a successor candidate, and independent review explicitly closes F01."
+  },
+  "limits": [
+    "This disposition is for control maintenance only; it is not W1.C03.T01 product acceptance, CAP-07.S01 slice approval, W1 qualification, G1 approval, release authorization or a push instruction.",
+    "Prior adverse correction, quality, provisioning, benchmark and native observations remain immutable. The earlier 134.022 ms latency failure and task-only 25.3832 ms owner acceptance are not rewritten or generalized by this review.",
+    "The independently reviewed later bounded gateway PASS and prospective baseline do not replace fresh full W1 qualification.",
+    "CAP-07.S01.NATIVE-F01 remains open until the separately claimed product restoration and its appropriate evidence are independently accepted."
+  ],
+  "safeguards": {
+    "protectedWitness": "artifacts/evidence/W1.A04.B00.json remained filename/status-only and was not read, hashed, copied, scanned, edited, staged, deleted or ignored.",
+    "excludedCheckout": "The excluded planning-initiation checkout contents were not accessed.",
+    "privateState": "No ordinary project, vault, credentials, policy, provider, native application or remote was accessed. Synthetic fixture-local Git identity configuration only; no shared Git or system configuration changed.",
+    "writes": "Only the authorized ignored probe producer, generated probe evidence and retained owned synthetic fixtures were created before this new append-only review record. No product/control source edits or commits were made by the reviewer."
+  }
+}

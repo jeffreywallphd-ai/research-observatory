@@ -46,3 +46,19 @@ never deletion of earlier evidence or bypass of the failing gate.
 Independent preflight: `agent:/root/cap07_slice_review` confirmed this route and
 the explicit lease-expiration and intermediate-path checks. Implementation:
 `agent:/root/quality_control_review`; main owns publication and no self-approval.
+
+## R01 remediation boundary
+
+Candidate `90044e166ab3d7b04cd704c05b9016d73f67b245` passed its seven selected
+checks, but independent `W1-linked-ui.review-R01.json` retains blocking F01:
+mutable scope was used to discover UI corrections before authenticating their
+admission. Empty or non-UI scope substitution hid a prior uncontracted UI commit
+behind an evidence-only HEAD. The existing tests covered scope substitution
+that remained visibly UI, missing this disappearance case.
+
+Add regression-first coverage for both substitutions at automatic/public and
+explicit no-UI boundaries. Authenticate active correction admission before
+scope can decide inclusion; genuinely admitted non-UI corrections must retain
+their existing behavior. Replay the finding and affected control tests at a
+new committed candidate. Preserve R01 and the passing-but-incomplete first
+verification report; neither authorizes integration or product work.

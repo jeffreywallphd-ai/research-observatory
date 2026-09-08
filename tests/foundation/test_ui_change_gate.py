@@ -40,7 +40,10 @@ from ui_change_gate import (  # noqa: E402
 
 class UiChangeGateTests(unittest.TestCase):
     def linked_fixture(
-        self, temporary: str, review_gate: str = "human-and-agent-review"
+        self,
+        temporary: str,
+        review_gate: str = "human-and-agent-review",
+        changed_paths: list[str] | None = None,
     ) -> tuple[Path, str, dict[str, Any], dict[str, Any]]:
         root, approval, package = self.prepare(temporary)
         origin = {
@@ -82,7 +85,7 @@ class UiChangeGateTests(unittest.TestCase):
                 "sha256": taskctl.canonical_json_sha256(origin),
             },
             "reproduction": "Approved route drifts",
-            "changedPaths": ["apps/desktop/src/View.tsx"],
+            "changedPaths": changed_paths if changed_paths is not None else ["apps/desktop/src/View.tsx"],
             "impactAnalysis": "Restore the unchanged approved route and retain all review obligations",
         }
         spec_path = "artifacts/evidence/W1.C01.T01.spec.json"
@@ -321,6 +324,88 @@ class UiChangeGateTests(unittest.TestCase):
             head = self.commit(root, "minimal repository without a task ledger")
             self.assertTrue(validate(root, base, historical)["ok"])
             self.assertTrue(validate(root, historical, head)["ok"])
+
+    def linked_hidden_scope_fixture(self, temporary: str, paths: list[str]) -> tuple[Path, str, str, str]:
+        root, base, data, _contract = self.linked_fixture(temporary)
+        (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'unreviewed';\n", encoding="utf-8")
+        ui_commit = self.commit(root, "real UI change without its required contract")
+        data["waves"][0]["campaign"]["corrective_tasks"][0]["correction"]["changed_paths"] = paths
+        self.write_yaml(root / "planning/backlog.yaml", taskctl.serializable_backlog(data))
+        self.write_json(root / "artifacts/evidence/W1.C01.T01.note.json", {"note": "substituted scope"})
+        head = self.commit(root, "evidence-only head with substituted current scope")
+        return root, base, ui_commit, head
+
+    def test_linked_discovery_authenticates_before_scope_filtering(self) -> None:
+        for paths in ([], ["tests/desktop/test_view.py"]):
+            with self.subTest(paths=paths), tempfile.TemporaryDirectory() as temporary:
+                root, _base, _ui_commit, _head = self.linked_hidden_scope_fixture(temporary, paths)
+                with self.assertRaisesRegex(ValueError, "corrective spec content differs from admission"):
+                    automatic_base(root, "HEAD")
+
+    def test_linked_explicit_no_ui_authenticates_before_scope_filtering(self) -> None:
+        for paths in ([], ["tests/desktop/test_view.py"]):
+            with self.subTest(paths=paths), tempfile.TemporaryDirectory() as temporary:
+                root, base, ui_commit, head = self.linked_hidden_scope_fixture(temporary, paths)
+                self.assertFalse(validate(root, base, head)["ok"])
+                result = validate(root, ui_commit, head)
+                self.assertFalse(result["ok"], result)
+                self.assertTrue(
+                    any("corrective spec content differs from admission" in error for error in result["errors"]), result
+                )
+
+    def test_linked_public_cli_rejects_scope_disappearance(self) -> None:
+        for paths in ([], ["tests/desktop/test_view.py"]):
+            with tempfile.TemporaryDirectory() as temporary:
+                root, _base, ui_commit, _head = self.linked_hidden_scope_fixture(temporary, paths)
+                for explicit_base in ([], ["--base", ui_commit]):
+                    with self.subTest(paths=paths, explicit_base=bool(explicit_base)):
+                        completed = subprocess.run(
+                            [
+                                sys.executable,
+                                "-B",
+                                str(REPO / "tools/ui_change_gate.py"),
+                                "--repo",
+                                str(root),
+                                *explicit_base,
+                            ],
+                            cwd=REPO,
+                            capture_output=True,
+                            text=True,
+                            timeout=45,
+                            check=False,
+                        )
+                        self.assertEqual(1, completed.returncode, completed.stdout + completed.stderr)
+                        result = json.loads(completed.stdout)
+                        self.assertFalse(result["ok"], result)
+                        self.assertTrue(
+                            any(
+                                "corrective spec content differs from admission" in error for error in result["errors"]
+                            ),
+                            result,
+                        )
+
+    def test_linked_genuinely_admitted_non_ui_correction_keeps_parent_fallback(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _data, _contract = self.linked_fixture(
+                temporary, review_gate="agent-review", changed_paths=["tests/desktop/test_view.py"]
+            )
+            target = root / "tests/desktop/test_view.py"
+            target.parent.mkdir(parents=True)
+            target.write_text("# admitted non-UI correction fixture\n", encoding="utf-8")
+            head = self.commit(root, "genuinely admitted non-UI correction")
+            self.assertEqual("HEAD^", automatic_base(root, "HEAD"))
+            self.assertTrue(validate(root, base, head)["ok"])
+            self.assertTrue(validate(root, "HEAD^", head)["ok"])
+            completed = subprocess.run(
+                [sys.executable, "-B", str(REPO / "tools/ui_change_gate.py"), "--repo", str(root)],
+                cwd=REPO,
+                capture_output=True,
+                text=True,
+                timeout=45,
+                check=False,
+            )
+            self.assertEqual(0, completed.returncode, completed.stdout + completed.stderr)
+            self.assertTrue(json.loads(completed.stdout)["ok"])
 
     def legacy_control_fixture(self, temporary: str, mutation: str = "") -> tuple[Path, str, str, str]:
         root, predecessor, _ = self.prepare(temporary)

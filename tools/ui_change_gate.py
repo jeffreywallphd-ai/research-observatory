@@ -1158,7 +1158,7 @@ def corrective_ui_paths(task: dict[str, Any]) -> set[str]:
     return {path for path in paths if isinstance(path, str) and is_implementation_path(path, policy)}
 
 
-def linked_correction_authority(
+def linked_correction_admission(
     repo: Path, base: str, head: str, backlog: dict[str, Any], task: dict[str, Any]
 ) -> dict[str, Any]:
     """Consume taskctl's existing admission, never synthesize experience authority."""
@@ -1166,8 +1166,8 @@ def linked_correction_authority(
 
     if head != resolve_commit(repo, "HEAD"):
         raise ValueError("linked correction UI authority requires current HEAD")
-    if not any(task is item for item in taskctl.corrective_tasks(backlog)) or not corrective_ui_paths(task):
-        raise ValueError("linked UI correction must be an admitted campaign corrective task")
+    if not any(task is item for item in taskctl.corrective_tasks(backlog)):
+        raise ValueError("linked correction must be an admitted campaign corrective task")
     if "experience_change" in task or "review_gate" in task:
         raise ValueError("linked correction cannot introduce or borrow experience/review metadata")
     if task.get("status") not in {"IN_PROGRESS", "REVIEW"} or task.get("base_sha") != base:
@@ -1196,10 +1196,34 @@ def linked_correction_authority(
     retained = [item for item in taskctl.corrective_tasks(backlog) if item["id"] != task["id"]]
     if prior != retained:
         raise ValueError("linked correction must preserve prior corrective history")
-    origin = indexed[3][task["correction"]["origin_task_id"]]
+    return indexed[3][task["correction"]["origin_task_id"]]
+
+
+def linked_correction_authority(
+    repo: Path, base: str, head: str, backlog: dict[str, Any], task: dict[str, Any]
+) -> dict[str, Any]:
+    origin = linked_correction_admission(repo, base, head, backlog, task)
+    if not corrective_ui_paths(task):
+        raise ValueError("linked UI correction must have admitted governed UI scope")
     if origin.get("review_gate") != "human-and-agent-review":
         raise ValueError("linked UI correction origin lacks the inherited human-and-agent-review obligation")
     return origin
+
+
+def authenticated_active_corrections(repo: Path, head: str, backlog: dict[str, Any]) -> list[dict[str, Any]]:
+    """Authenticate live admissions before mutable scope can select or omit UI work."""
+    import taskctl
+
+    active = [task for task in taskctl.corrective_tasks(backlog) if task.get("status") in {"IN_PROGRESS", "REVIEW"}]
+    for task in active:
+        raw_base = task.get("base_sha")
+        if not isinstance(raw_base, str) or not re.fullmatch(r"[0-9a-f]{40}", raw_base):
+            raise ValueError(f"active correction {task.get('id')} lacks a canonical base_sha")
+        base = resolve_commit(repo, raw_base)
+        if base == head or not is_ancestor(repo, base, head):
+            raise ValueError(f"active correction {task.get('id')} has an invalid base_sha range")
+        linked_correction_admission(repo.resolve(), base, head, backlog, task)
+    return active
 
 
 def linked_correction_range_errors(
@@ -1318,6 +1342,7 @@ def automatic_base(repo: Path, head_ref: str) -> str:
         backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "planning/backlog.yaml")
     except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
         raise ValueError(f"cannot select UI change base from the authoritative backlog: {exc}") from exc
+    authenticated_active_corrections(repo, head, backlog)
     resumed_parents = {
         str(item["correction"].get("id"))
         for item in backlog.get("wave_amendments", [])
@@ -2069,8 +2094,8 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             )
             linked_active = [
                 task
-                for task in backlog_tasks(no_ui_backlog)
-                if task.get("status") in {"IN_PROGRESS", "REVIEW"} and corrective_ui_paths(task)
+                for task in authenticated_active_corrections(repo, head, no_ui_backlog)
+                if corrective_ui_paths(task)
             ]
             if len(linked_active) > 1:
                 raise ValueError("ambiguous active linked UI corrections")
