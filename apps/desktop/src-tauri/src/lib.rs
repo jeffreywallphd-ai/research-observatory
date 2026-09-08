@@ -750,13 +750,15 @@ pub mod directory_integration_harness {
         }
     }
 
-    // Fixture-only passive Win32 observation. This never posts, consumes, or
-    // changes a message. The clock is shared with status spans; the independent
-    // 128-span budget cannot exhaust status tracing. Logging may perturb timing
-    // and cannot prove WebView callback admission or decoded IPC delivery.
+    // Passive timing remains separate from the fixture-only C scheduling
+    // experiment below. The shared status clock has independent bounded menu
+    // spans/events. Logging may perturb timing and cannot prove the identity of
+    // the synchronous sender or decoded IPC delivery. No production activation.
     struct MenuDiagnostics {
         clock: std::sync::Arc<StatusDiagnostics>,
         spans: std::sync::atomic::AtomicUsize,
+        deferral_events: std::sync::atomic::AtomicUsize,
+        replay: MenuReplay,
     }
 
     impl MenuDiagnostics {
@@ -764,6 +766,34 @@ pub mod directory_integration_harness {
             Self {
                 clock,
                 spans: std::sync::atomic::AtomicUsize::new(0),
+                deferral_events: std::sync::atomic::AtomicUsize::new(0),
+                replay: MenuReplay::default(),
+            }
+        }
+
+        fn record_dispatch(&self, decision: MenuDispatch) {
+            use std::sync::atomic::Ordering;
+            let (phase, token) = match decision {
+                MenuDispatch::Forward => return,
+                MenuDispatch::Posted(token) => (0, token),
+                MenuDispatch::Replay(pending) => (1, pending.token),
+                MenuDispatch::PostFailed => (2, 0),
+                MenuDispatch::Busy => (3, 0),
+                MenuDispatch::Rejected => (4, 0),
+                MenuDispatch::Abandoned => (5, 0),
+                MenuDispatch::Exhausted => (6, 0),
+            };
+            if let Ok(previous) =
+                self.deferral_events
+                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |count| {
+                        (count < 128).then_some(count + 1)
+                    })
+            {
+                emit(
+                    json!({"kind":"fixture-menu-deferral", "phase":phase, "token":token,
+                    "eventLimit":128, "lastAdmittedEvent":previous == 127,
+                    "nativeElapsedMs":self.clock.origin.elapsed().as_secs_f64() * 1000.0}),
+                );
             }
         }
 
@@ -825,6 +855,145 @@ pub mod directory_integration_harness {
         thread != 0 && process != 0 && thread == current_thread && process == current_process
     }
 
+    // Private to our installed main-window subclass, not a Tauri IPC command.
+    // Avoid the directory picker's WM_APP + 91/92/93 and pinned Tao/Wry IDs.
+    const MENU_REPLAY_MESSAGE: u32 = windows_sys::Win32::UI::WindowsAndMessaging::WM_APP + 94;
+    static MENU_REPLAY_TOKEN: std::sync::atomic::AtomicUsize =
+        std::sync::atomic::AtomicUsize::new(1);
+
+    fn next_menu_token(counter: &std::sync::atomic::AtomicUsize) -> Option<usize> {
+        use std::sync::atomic::Ordering;
+        counter
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
+                next.checked_add(1)
+            })
+            .ok()
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct MenuCommand {
+        message: u32,
+        wparam: usize,
+        lparam: isize,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct PendingMenu {
+        token: usize,
+        command: MenuCommand,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    enum MenuDispatch {
+        Forward,
+        Posted(usize),
+        Replay(PendingMenu),
+        PostFailed,
+        Busy,
+        Rejected,
+        Abandoned,
+        Exhausted,
+    }
+
+    impl MenuDispatch {
+        fn finish(
+            self,
+            original: MenuCommand,
+            forward: impl FnOnce(MenuCommand) -> isize,
+        ) -> isize {
+            match self {
+                Self::Forward | Self::PostFailed | Self::Busy | Self::Exhausted => {
+                    forward(original)
+                }
+                Self::Replay(pending) => forward(pending.command),
+                Self::Posted(_) | Self::Rejected | Self::Abandoned => 0,
+            }
+        }
+    }
+
+    #[derive(Default)]
+    struct MenuReplayState {
+        pending: Option<PendingMenu>,
+        destroyed: bool,
+    }
+
+    #[derive(Default)]
+    struct MenuReplay {
+        state: std::sync::Mutex<MenuReplayState>,
+    }
+
+    impl MenuReplay {
+        fn route(
+            &self,
+            command: MenuCommand,
+            send_state: u32,
+            post: impl FnOnce(usize) -> bool,
+        ) -> MenuDispatch {
+            use windows_sys::Win32::UI::WindowsAndMessaging::{
+                ISMEX_REPLIED, ISMEX_SEND, WM_SYSCOMMAND,
+            };
+            let mut state = self
+                .state
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
+            if command.message == MENU_REPLAY_MESSAGE {
+                if !state.destroyed
+                    && command.lparam == 0
+                    && let Some(pending) = state.pending
+                    && pending.token == command.wparam
+                {
+                    state.pending = None;
+                    return MenuDispatch::Replay(pending);
+                }
+                return MenuDispatch::Rejected;
+            }
+            if menu_message(command.message, command.wparam, command.lparam)
+                != Some([WM_SYSCOMMAND, 1])
+                || send_state & (ISMEX_REPLIED | ISMEX_SEND) != ISMEX_SEND
+            {
+                return MenuDispatch::Forward;
+            }
+            if state.destroyed {
+                return MenuDispatch::Abandoned;
+            }
+            if state.pending.is_some() {
+                // Preserve the second input via baseline forwarding; do not
+                // coalesce, overwrite, or grow a queue. This overlap can still
+                // exhibit the baseline stall and is not a complete repair.
+                return MenuDispatch::Busy;
+            }
+            let Some(token) = next_menu_token(&MENU_REPLAY_TOKEN) else {
+                return MenuDispatch::Exhausted;
+            };
+            state.pending = Some(PendingMenu { token, command });
+            drop(state); // Never hold state through a native call or nested delivery.
+            if post(token) {
+                return MenuDispatch::Posted(token);
+            }
+            let mut state = self
+                .state
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
+            if !state.destroyed && state.pending.is_some_and(|pending| pending.token == token) {
+                state.pending = None;
+                MenuDispatch::PostFailed
+            } else {
+                // Nested consumption/destruction cannot duplicate the original
+                // or clear/resurrect a different, newer reservation.
+                MenuDispatch::Abandoned
+            }
+        }
+
+        fn destroy(&self) -> bool {
+            let mut state = self
+                .state
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
+            state.destroyed = true;
+            state.pending.take().is_some()
+        }
+    }
+
     unsafe extern "system" fn menu_diagnostic_proc(
         hwnd: windows_sys::Win32::Foundation::HWND,
         message: u32,
@@ -835,7 +1004,7 @@ pub mod directory_integration_harness {
     ) -> isize {
         use windows_sys::Win32::UI::{
             Shell::{DefSubclassProc, RemoveWindowSubclass},
-            WindowsAndMessaging::{InSendMessageEx, WM_NCDESTROY},
+            WindowsAndMessaging::{InSendMessageEx, PostMessageW, WM_NCDESTROY},
         };
         if data == 0 || subclass_id != menu_diagnostic_proc as *const () as usize {
             return unsafe { DefSubclassProc(hwnd, message, wparam, lparam) };
@@ -845,6 +1014,7 @@ pub mod directory_integration_harness {
         // reentrantly and remove/free its boxed registration before returning.
         let diagnostics = unsafe { &*(data as *const std::sync::Arc<MenuDiagnostics>) }.clone();
         if message == WM_NCDESTROY {
+            let pending_cancelled = diagnostics.replay.destroy();
             let removed =
                 unsafe { RemoveWindowSubclass(hwnd, Some(menu_diagnostic_proc), subclass_id) } != 0;
             if removed {
@@ -853,12 +1023,45 @@ pub mod directory_integration_harness {
             // On removal failure retain the one allocation rather than leave a
             // registered dangling pointer. The explicit failed row is adverse
             // diagnostic evidence; process teardown reclaims the allocation.
-            emit(json!({"kind":"fixture-menu-subclass", "phase":1, "succeeded":removed}));
+            emit(
+                json!({"kind":"fixture-menu-subclass", "phase":1, "succeeded":removed,
+                "pendingCancelled":pending_cancelled}),
+            );
         }
         diagnostics.observe(
             menu_message(message, wparam, lparam),
             || unsafe { InSendMessageEx(std::ptr::null()) },
-            || unsafe { DefSubclassProc(hwnd, message, wparam, lparam) },
+            || {
+                let original = MenuCommand {
+                    message,
+                    wparam,
+                    lparam,
+                };
+                let decision = diagnostics.replay.route(
+                    original,
+                    unsafe { InSendMessageEx(std::ptr::null()) },
+                    |token| unsafe { PostMessageW(hwnd, MENU_REPLAY_MESSAGE, token, 0) } != 0,
+                );
+                diagnostics.record_dispatch(decision);
+                decision.finish(original, |actual| {
+                    let forward = || unsafe {
+                        DefSubclassProc(hwnd, actual.message, actual.wparam, actual.lparam)
+                    };
+                    if matches!(decision, MenuDispatch::Replay(_)) {
+                        // Do not route the original command again: nested send
+                        // flags are not replay identity. The tuple came only
+                        // from the consumed owned reservation, never the post.
+                        diagnostics.observe(
+                            menu_message(actual.message, actual.wparam, actual.lparam),
+                            || unsafe { InSendMessageEx(std::ptr::null()) },
+                            forward,
+                            emit,
+                        )
+                    } else {
+                        forward()
+                    }
+                })
+            },
             emit,
         )
     }
@@ -1561,6 +1764,280 @@ pub mod directory_integration_harness {
             assert!(!menu_owner_matches(11, 23, 11, 22));
             assert!(!menu_owner_matches(0, 22, 0, 22));
             assert!(!menu_owner_matches(11, 0, 11, 0));
+        }
+
+        fn alt_space() -> MenuCommand {
+            MenuCommand {
+                message: 0x112,
+                wparam: 0xf107,
+                lparam: 32,
+            }
+        }
+
+        fn replay_message(token: usize) -> MenuCommand {
+            MenuCommand {
+                message: MENU_REPLAY_MESSAGE,
+                wparam: token,
+                lparam: 0,
+            }
+        }
+
+        #[test]
+        fn menu_deferral_preserves_nontarget_messages_and_replied_or_queued_delivery() {
+            let replay = MenuReplay::default();
+            for command in [
+                MenuCommand {
+                    message: 0x112,
+                    wparam: 0xf060,
+                    lparam: 32,
+                },
+                MenuCommand {
+                    message: 0x112,
+                    wparam: 0xf010,
+                    lparam: 32,
+                },
+                MenuCommand {
+                    message: 0x112,
+                    wparam: 0xf000,
+                    lparam: 32,
+                },
+                MenuCommand {
+                    lparam: 65,
+                    ..alt_space()
+                },
+                MenuCommand {
+                    message: 0x104,
+                    ..alt_space()
+                },
+                MenuCommand {
+                    message: 0x100,
+                    wparam: 27,
+                    lparam: 0,
+                },
+            ] {
+                let decision = replay.route(command, 1, |_| panic!("nontarget must not post"));
+                assert_eq!(decision, MenuDispatch::Forward);
+                assert_eq!(
+                    decision.finish(command, |actual| {
+                        assert_eq!(actual, command);
+                        -73
+                    }),
+                    -73
+                );
+            }
+            for flags in [0, 2, 4, 8, 9] {
+                assert_eq!(
+                    replay.route(alt_space(), flags, |_| panic!("no blocked sender")),
+                    MenuDispatch::Forward
+                );
+            }
+        }
+
+        #[test]
+        fn menu_deferral_replay_consumes_exact_owned_payload_once_even_in_nested_send() {
+            let replay = MenuReplay::default();
+            assert_eq!(
+                replay.route(replay_message(19), 1, |_| panic!("unsolicited replay")),
+                MenuDispatch::Rejected
+            );
+            let mut posted = 0;
+            let MenuDispatch::Posted(token) = replay.route(alt_space(), 1, |value| {
+                posted = value;
+                true
+            }) else {
+                panic!("expected owned post")
+            };
+            assert_eq!(posted, token);
+            assert_eq!(
+                MenuDispatch::Posted(token).finish(alt_space(), |_| panic!("already deferred")),
+                0
+            );
+            assert_eq!(
+                replay.route(replay_message(token + 1), 1, |_| panic!("stale replay")),
+                MenuDispatch::Rejected
+            );
+            assert_eq!(
+                replay.route(
+                    MenuCommand {
+                        lparam: 1,
+                        ..replay_message(token)
+                    },
+                    1,
+                    |_| panic!("malformed replay")
+                ),
+                MenuDispatch::Rejected
+            );
+            let decision = replay.route(replay_message(token), 1, |_| {
+                panic!("nested replay must not repost")
+            });
+            assert_eq!(
+                decision,
+                MenuDispatch::Replay(PendingMenu {
+                    token,
+                    command: alt_space()
+                })
+            );
+            assert_eq!(
+                decision.finish(replay_message(token), |actual| {
+                    assert_eq!(actual, alt_space());
+                    // Consumption precedes DefSubclassProc, including nested delivery.
+                    assert_eq!(
+                        replay.route(replay_message(token), 1, |_| panic!("duplicate replay")),
+                        MenuDispatch::Rejected
+                    );
+                    -81
+                }),
+                -81
+            );
+            let MenuDispatch::Posted(new_token) = replay.route(alt_space(), 1, |_| true) else {
+                panic!("new reservation")
+            };
+            assert_ne!(token, new_token);
+            assert_eq!(
+                replay.route(replay_message(token), 0, |_| panic!("old replay")),
+                MenuDispatch::Rejected
+            );
+            assert!(matches!(
+                replay.route(replay_message(new_token), 0, |_| false),
+                MenuDispatch::Replay(_)
+            ));
+        }
+
+        #[test]
+        fn menu_deferral_busy_fallback_does_not_lose_or_overwrite_either_command() {
+            let replay = MenuReplay::default();
+            let MenuDispatch::Posted(token) = replay.route(alt_space(), 1, |_| true) else {
+                panic!("first reservation")
+            };
+            let second = MenuCommand {
+                wparam: 0xf10a,
+                ..alt_space()
+            };
+            let decision = replay.route(second, 1, |_| panic!("only one queued reservation"));
+            assert_eq!(decision, MenuDispatch::Busy);
+            let mut forwarded = Vec::new();
+            assert_eq!(
+                decision.finish(second, |actual| {
+                    forwarded.push(actual);
+                    17
+                }),
+                17
+            );
+            let decision =
+                replay.route(replay_message(token), 1, |_| panic!("replay cannot repost"));
+            assert_eq!(
+                decision.finish(replay_message(token), |actual| {
+                    forwarded.push(actual);
+                    18
+                }),
+                18
+            );
+            assert_eq!(forwarded, [second, alt_space()]);
+        }
+
+        #[test]
+        fn menu_deferral_post_failure_clears_only_its_owned_reservation() {
+            let replay = MenuReplay::default();
+            let mut failed_token = 0;
+            let decision = replay.route(alt_space(), 1, |token| {
+                failed_token = token;
+                false
+            });
+            assert_eq!(decision, MenuDispatch::PostFailed);
+            let mut forwards = 0;
+            assert_eq!(
+                decision.finish(alt_space(), |actual| {
+                    assert_eq!(actual, alt_space());
+                    forwards += 1;
+                    -9
+                }),
+                -9
+            );
+            assert_eq!(forwards, 1);
+            assert_eq!(
+                replay.route(replay_message(failed_token), 0, |_| false),
+                MenuDispatch::Rejected
+            );
+
+            let mut replacement = 0;
+            let decision = replay.route(alt_space(), 1, |token| {
+                let consumed =
+                    replay.route(replay_message(token), 1, |_| panic!("reentrant replay"));
+                assert!(matches!(consumed, MenuDispatch::Replay(_)));
+                let MenuDispatch::Posted(new_token) = replay.route(alt_space(), 1, |_| true) else {
+                    panic!("new reservation")
+                };
+                replacement = new_token;
+                false
+            });
+            assert_eq!(decision, MenuDispatch::Abandoned);
+            assert_eq!(
+                decision.finish(alt_space(), |_| panic!("do not duplicate consumed command")),
+                0
+            );
+            assert!(matches!(
+                replay.route(replay_message(replacement), 0, |_| false),
+                MenuDispatch::Replay(_)
+            ));
+        }
+
+        #[test]
+        fn menu_deferral_destruction_invalidates_pending_and_post_failure_cannot_resurrect() {
+            let replay = MenuReplay::default();
+            let MenuDispatch::Posted(token) = replay.route(alt_space(), 1, |_| true) else {
+                panic!("reservation")
+            };
+            assert!(replay.destroy());
+            assert!(!replay.destroy());
+            assert_eq!(
+                replay.route(replay_message(token), 1, |_| false),
+                MenuDispatch::Rejected
+            );
+            assert_eq!(
+                replay.route(alt_space(), 1, |_| panic!("destroyed owner")),
+                MenuDispatch::Abandoned
+            );
+            let command = MenuCommand {
+                message: 0x82,
+                wparam: 0,
+                lparam: 0,
+            };
+            assert_eq!(
+                replay
+                    .route(command, 1, |_| false)
+                    .finish(command, |actual| {
+                        assert_eq!(actual, command);
+                        31
+                    }),
+                31
+            );
+
+            let interrupted = MenuReplay::default();
+            let decision = interrupted.route(alt_space(), 1, |_| {
+                assert!(interrupted.destroy());
+                false
+            });
+            assert_eq!(decision, MenuDispatch::Abandoned);
+            assert_eq!(
+                decision.finish(alt_space(), |_| panic!("destroyed during post")),
+                0
+            );
+        }
+
+        #[test]
+        fn menu_deferral_tokens_never_wrap_or_reuse() {
+            let counter = std::sync::atomic::AtomicUsize::new(usize::MAX - 1);
+            assert_eq!(next_menu_token(&counter), Some(usize::MAX - 1));
+            assert_eq!(next_menu_token(&counter), None);
+            assert_eq!(next_menu_token(&counter), None);
+            assert_eq!(
+                counter.load(std::sync::atomic::Ordering::Relaxed),
+                usize::MAX
+            );
+            assert_ne!(MENU_REPLAY_MESSAGE, 0x8000 + 91);
+            assert_ne!(MENU_REPLAY_MESSAGE, 0x8000 + 92);
+            assert_ne!(MENU_REPLAY_MESSAGE, 0x8000 + 93);
+            assert!((0x8000..0xc000).contains(&MENU_REPLAY_MESSAGE));
         }
 
         #[test]
