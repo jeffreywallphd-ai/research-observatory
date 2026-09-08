@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "W1.A05.T04",
+    "commit": "4a698f61ae83e99aae4329af3db87e97af7dd378",
+    "sha256": "1b6fc9b07a5a1a4b37330bc321d03beee447594c9370a3b0ec4926b3041a6992"
+  },
+  "reproduction": "On the actual fixture-isolated React/Tauri/Core candidate, Alt+Space from healthy No-login mode opens the Windows system menu and yields application-lock status unavailable. The cleared renderer then incorrectly claims manual lock, names Windows as provider and offers Windows unlock. Escape dismisses the menu but correctly does not clear the fail-closed latch. Two native observations reproduce the failure; the controlled second attempt used Alt+Space alone after successful create/open/workflow/model-center/close and native folder cancellation. Native process exit and owned-tree drain passed, not UI acceptance. Full qualification attempt 02 was deliberately cancelled after this disqualifying product failure; retain its partial passes, interruption and unexecuted checks, not a full PASS.",
+  "changedPaths": [
+    "apps/desktop/src/app/applicationLock.ts",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "tests/desktop/test_application_lock_recovery.py"
+  ],
+  "impactAnalysis": "Restore W1.A05.T04 criteria 2-4 and the approved current reference lineage: truthful current/default mode, provider-specific recovery, unchanged policy on failure and no sensitive content or silent provider fallback. Distinguish native invalid policy from renderer status uncertainty. For last-confirmed No login, do not invent a manual lock, protected provider or authentication/reset action; explain closing and restarting the entire application to revalidate persisted policy without reopening a project. Unknown initial status must not claim a confirmed No-login policy. Preserve the 1500 ms status timeout, fail-closed cleared tree, audit ordering, refusal of passive status/event recovery, same-user proof, protected-provider recovery, persisted bytes and native policy authority. Diagnose the system-menu status delivery failure with bounded fixture-only timing and an async-dispatch A/B if indicated; scheduling changes may not bypass admission, change the response or mask timeout failure. Add failing unit/assembled regressions before product changes, replay all three mode recovery/denial paths, then actual native menu/restart checks. Select desktop application/unit/type/lint, affected native tests and reference/accessibility checks; full fresh W1 qualification follows independently reviewed correction. No schema, permission, migration, governed-reference, release-criterion or supplemental refactoring changes. No ordinary user policy, research data, credential or security-setting access. Preserve original task and adverse history."
+}

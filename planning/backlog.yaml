@@ -128,7 +128,7 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -137,13 +137,12 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-08T12:28:57+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-08T12:28:57+00:00'
-      expires_at: '2026-09-09T12:28:57+00:00'
+    updated_at: '2026-09-08T14:29:09+00:00'
+    pause_reason: Fresh native qualification reproduced status unavailability and a false Windows unlock affordance for persisted
+      No login. Qualification attempt 02 was deliberately stopped; owned processes are drained. Pause for linked authority-preserving
+      correction of W1.A05.T04 before fresh W1 qualification.
+    pause_category: infeasible
+    lease: null
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -1000,7 +999,7 @@ waves:
     notes: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations
       and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
