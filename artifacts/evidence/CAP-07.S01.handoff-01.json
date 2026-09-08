@@ -1,0 +1,224 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "model-gateway-adjacent-slice-handoff",
+  "status": "READY_FOR_INDEPENDENT_SLICE_REVIEW",
+  "sliceId": "CAP-07.S01",
+  "consumers": [
+    "CAP-06",
+    "CAP-08",
+    "CAP-09",
+    "CAP-10",
+    "CAP-14"
+  ],
+  "consumedContracts": [
+    "CAP-03 workflow/cancellation/provenance",
+    "CAP-02 policy/secrets"
+  ],
+  "contractPaths": [
+    "packages/contracts/model-gateway/model-task.schema.json",
+    "packages/contracts/model-gateway/model-manifest.schema.json",
+    "packages/contracts/model-gateway/routing-policy.schema.json",
+    "packages/contracts/model-gateway/generated.ts",
+    "services/core-api/src/research_observatory_core/model_gateway_contracts.py",
+    "services/core-api/src/research_observatory_core/model_registry_contracts.py",
+    "services/core-api/src/research_observatory_core/model_routing_contracts.py",
+    "services/core-api/src/research_observatory_core/ports/model_gateway.py",
+    "docs/architecture/model-gateway-contracts.md"
+  ],
+  "examples": [
+    {
+      "kind": "accepted-task-and-result",
+      "paths": [
+        "packages/contracts/model-gateway/fixtures/valid-generation-task.v1.json",
+        "packages/contracts/model-gateway/fixtures/valid-generation-result.v1.json"
+      ],
+      "validation": "tests.ai.test_model_gateway_contracts.ModelGatewayContractTests.test_draft_schema_and_generated_python_accept_complete_task_and_result"
+    },
+    {
+      "kind": "accepted-and-rejected-manifest",
+      "paths": [
+        "tests/contracts/test_model_registry_contracts.py",
+        "tests/ai/test_model_registry.py"
+      ],
+      "validation": "tests.contracts.test_model_registry_contracts.ModelRegistryContractTests.test_portable_manifest_schema_matches_owned_core_contract",
+      "fixtureFactory": "tests.ai.test_model_registry.manifest_document"
+    },
+    {
+      "kind": "accepted-and-rejected-routing-policy",
+      "paths": [
+        "tests/contracts/test_model_routing_contracts.py",
+        "tests/ai/test_model_routing.py"
+      ],
+      "validation": "tests.contracts.test_model_routing_contracts.ModelRoutingContractTests.test_portable_policy_matches_core_and_never_accepts_authorization_flags"
+    },
+    {
+      "kind": "rejected-task-and-result",
+      "paths": [
+        "tests/ai/test_model_gateway_contracts.py"
+      ],
+      "validation": "tests.ai.test_model_gateway_contracts.ModelGatewayContractTests.test_contract_fails_closed_on_content_injection_and_material_result_mismatches"
+    }
+  ],
+  "failureFixtures": [
+    {
+      "path": "tests/ai/test_model_routing.py",
+      "cases": [
+        "test_transient_failure_has_explicit_degraded_fallback_and_original_request",
+        "test_fallback_reauthorizes_and_cannot_cross_changed_egress_or_permission",
+        "test_pinned_failure_never_substitutes_and_nonretryable_failure_does_not_fallback",
+        "test_cancel_propagates_promptly_and_never_promotes_output",
+        "test_timeout_has_bounded_attempts_and_retains_original",
+        "test_circuit_open_survives_new_gateway_and_resets_after_cooldown"
+      ]
+    },
+    {
+      "path": "tests/service/test_model_routing_repository.py",
+      "cases": [
+        "test_atomic_failure_retains_predecessor_and_cas_rejects_stale_append",
+        "test_corrupt_latest_journal_cannot_look_empty_or_replay_old_state"
+      ]
+    },
+    {
+      "path": "tests/service/test_model_routing_integration.py",
+      "cases": [
+        "test_interrupted_run_restart_never_redispatches_and_terminal_recovery_fences_late_result",
+        "test_persisted_success_replay_after_gateway_restart_has_zero_new_adapter_calls"
+      ]
+    }
+  ],
+  "versionAndAuthorityRules": [
+    "Task/result schema version and exact generated decoder identity are portable authority; verify generation before consuming changed schemas.",
+    "Registry catalog revisions, manifest hashes, runtime/configuration/evaluation identities and original request bytes remain immutable; host readiness is transient, exact-manifest-bound and not restored from catalog history.",
+    "Dynamic fallback is explicitly degraded and bounded. Pinned requests never substitute provider/model/runtime/configuration/evaluation identities.",
+    "The Core-owned project, actor, rights, classification, deployment and budget witness is rechecked before dispatch, publication and persisted-success replay. Portable policy fields can restrict but never grant permission.",
+    "Protected append-only journals and catalog facts use existing versioned protected settings with atomic provenance/outbox, compare-and-swap and corruption denial; this slice adds no storage migration.",
+    "Late, cancelled, unauthorized or unvalidated output cannot be published. Uncertain interrupted execution is retained and requires explicit owner recovery, never automatic redispatch."
+  ],
+  "dependencyAndPromotionBoundary": {
+    "current": "Task inputs and result citations/output carry immutable revision/hash identities; routing history binds the exact task, policy and selected manifest. This slice records journal/catalog provenance and outbox facts, not domain-specific research-output promotion.",
+    "downstreamObligation": "A consuming research workflow must validate and obtain its required human disposition before promoting an output, register the actual artifact/model/intent dependencies with CAP-03, and use the existing staleness machinery when those identities change. A routing success or catalog refresh is not scholarly acceptance and does not silently regenerate a research artifact.",
+    "qualificationLimit": "The separate handoff seam may prove protected metadata dependency registration and precise staleness propagation with declared fixture hashes. It does not prove content bytes, live-model output promotion, provider-specific payload consent, arbitrary provider-version translation or a process restart."
+  },
+  "baseline": {
+    "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-01.json",
+    "sha256": "e79ba7cb82fa40111f4d8ccb047dbb2cd20b863f0838600147716182933e4fee",
+    "approval": "artifacts/evidence/CAP-07.S01.qualification-01.review-R02.json",
+    "rule": "Prospective comparison only: all raw warm samples, unchanged fixture/method and comparable hardware; strict p95 below25ms and no greater than1.2 times22.406999953091145ms. Never rewrite the baseline automatically."
+  },
+  "evidenceIds": {
+    "taskContracts": "artifacts/evidence/CAP-07.S01.T01.review-fix.json",
+    "registry": "artifacts/evidence/CAP-07.S01.T02.json",
+    "routing": "artifacts/evidence/CAP-07.S01.T03.json",
+    "freshnessCorrection": "artifacts/evidence/W1.C02.T01.json",
+    "baselineAndNativeObservationReview": "artifacts/evidence/CAP-07.S01.qualification-01.review-R02.json",
+    "processRecoveryReview": "artifacts/evidence/CAP-07.S01.qualification-01.review-R01.json",
+    "supportingReturnCorrection": "artifacts/evidence/W1.C03.T01.json",
+    "supportingReturnReview": "artifacts/evidence/W1.C03.T01.review-R01.json",
+    "freshCombinedRendererNative": "artifacts/evidence/CAP-07.S01.qualification-02.json",
+    "verificationMethodDisposition": "artifacts/evidence/CAP-07.S01.qualification-03.json",
+    "freshEvidenceAuthentication": "artifacts/evidence/CAP-07.S01.qualification-02.review-R01.json"
+  },
+  "metadataHandoffObservation": {
+    "status": "PASS_WITHIN_METADATA_SEAM_SCOPE",
+    "independentAuthentication": "agent:/root/cap07_slice_review authenticated the exact producer/report and all 82 declared source inputs at the executing candidate, and reviewed the asserted identities, protected persistence, precise staleness and no-redispatch behavior. Formal slice acceptance remains separate.",
+    "candidate": "8dc40d41c7fa7d1044dcbceea00eb2965f9afc96",
+    "producer": "artifacts/tmp/CAP-07.S01.handoff-qualification-01.py",
+    "producerSha256": "79675373bdbf95d2facc32906300ff609a8653a4019a02281db8416b3ea02612",
+    "report": "artifacts/tmp/CAP-07.S01.handoff-qualification-01.json",
+    "reportSha256": "0bab92969d4473ce34920bbf0506a9558499cd5c13bb80c2cd751bd68e96548e",
+    "seconds": 1.017188100144267,
+    "outcomes": [
+      "Protected metadata registration binds exact input revisions and model manifest",
+      "Appending a replacement source marks only the dependent candidate output stale",
+      "Repository reopening and idempotent replay preserve the stale projection",
+      "Original source/output revisions and routing history remain unchanged",
+      "Successful gateway replay dispatches no additional adapter"
+    ],
+    "limits": "Synthetic declared hashes and a complete fixture policy; no content-byte verification, scholarly promotion, provider execution or process restart. The fixture model version is exactly 1.0.0, not an arbitrary provider-version translation. Installed dependency closure is not exhaustive and reuse is disabled."
+  },
+  "productionLimits": [
+    "Production W1 has empty host inventory and no installed model adapter or model-specific permission/budget authority. Missing authority fails closed.",
+    "Positive dispatch uses synthetic complete-authority adapters. Actual weights, native inference and provider/network cancellation remain later authorized work.",
+    "Model Center is inventory/history and availability disclosure, not an inference or installation endpoint.",
+    "Windows x64 is the current platform. Later platforms consume the same portable contracts through platform adapters."
+  ],
+  "publicationPrerequisites": [
+    "Independent commit-bound CAP-07.S01 slice acceptance remains pending; this handoff is not a release or later-Wave authorization."
+  ],
+  "candidateCommit": "78e1b49fa51795ce71cc04c412d435065a62d041",
+  "contractInputs": [
+    {
+      "path": "docs/architecture/model-gateway-contracts.md",
+      "sha256": "a026288c16eea408e5bd2d037dbdbcfadbb4d8f8917d3b99d0492d446db54fda"
+    },
+    {
+      "path": "packages/contracts/model-gateway/fixtures/valid-generation-result.v1.json",
+      "sha256": "f5421f96e0f3cecb767d6b7f667ebdb046385577ba8b7ccc994b9a57ec8231fe"
+    },
+    {
+      "path": "packages/contracts/model-gateway/fixtures/valid-generation-task.v1.json",
+      "sha256": "9761347502fad6f54fc1960074ebda97a5c6caf996c2f1c18b84c270d8793e74"
+    },
+    {
+      "path": "packages/contracts/model-gateway/generated.ts",
+      "sha256": "33d9d249bc34fbab3b1688d6d7a1d877c746754e8ef707f64d57347c9ccd065c"
+    },
+    {
+      "path": "packages/contracts/model-gateway/model-manifest.schema.json",
+      "sha256": "1b1e423e6f2dc7040c28803dcba2bc77088ed1344b858ca7870fb876bde5316a"
+    },
+    {
+      "path": "packages/contracts/model-gateway/model-task.schema.json",
+      "sha256": "1e93f194b21a118011912436a96a948d4f746c95ef0cb5adc0f4f4140e998a72"
+    },
+    {
+      "path": "packages/contracts/model-gateway/routing-policy.schema.json",
+      "sha256": "6f0feb0d0fdc23fd5298e92c36b6efeb06a669e3689393de68cf7570f3ed973e"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/model_gateway_contracts.py",
+      "sha256": "30d4b8e30a6c0f617eac83a490f3301fd71c7c480c6bb04f1b877302b0bef67f"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/model_registry_contracts.py",
+      "sha256": "ec985f09ab715e64bc494546f54e3693c2897b27096fde7648e5a624365ff6b4"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/model_routing_contracts.py",
+      "sha256": "83ab7c1a4170cccc6038be258d1c9b935a9653a1b68c84080977d6eeb94a4cc1"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/ports/model_gateway.py",
+      "sha256": "8e2d90aa2c53e5f204e6df54222d84eab67b11e17c067317aa47f632df75c1da"
+    },
+    {
+      "path": "tests/ai/test_model_gateway_contracts.py",
+      "sha256": "d9a3fd2a2f62656691d1e5eaf06d11a7f4520927a44974313a2ce0883be9f29c"
+    },
+    {
+      "path": "tests/ai/test_model_registry.py",
+      "sha256": "5e598a8496803dde3b3720f989fff6df4ddad31a42a1fa2e711b5541532ac641"
+    },
+    {
+      "path": "tests/ai/test_model_routing.py",
+      "sha256": "ded95552507f56067bdc48e8f3fd6f9bd0923936e43f02bf2311d8bbba5f10c1"
+    },
+    {
+      "path": "tests/contracts/test_model_registry_contracts.py",
+      "sha256": "b9a1812c344220ad5a326b3c09aa9b6f9db3272488739ba7be9bca72554fce9a"
+    },
+    {
+      "path": "tests/contracts/test_model_routing_contracts.py",
+      "sha256": "6b210264854636c00cc967f0d7181bd07484e8aabc335f5f039f29ea43a5f87d"
+    },
+    {
+      "path": "tests/service/test_model_routing_integration.py",
+      "sha256": "b28f636a0949920213ba52ebbb30e1d6aaa902690d6b7f3058b6511b77cb0877"
+    },
+    {
+      "path": "tests/service/test_model_routing_repository.py",
+      "sha256": "cb3bf131c7382dd642380adc6f15f3f5cda630c872cf2799c0c92e859cbb980d"
+    }
+  ],
+  "finalSourceAssessment": "All 18 named portable contract/example/failure inputs match the declared candidate. The earlier metadata seam remains an authenticated campaign milestone at its original candidate, not a fresh or cached execution. Later changed product paths are the independently approved W1.C03.T01 supporting-return correction, covered by fresh actual renderer/native evidence. Fresh full W1 qualification remains required."
+}

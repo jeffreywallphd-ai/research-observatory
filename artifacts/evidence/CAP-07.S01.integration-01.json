@@ -1,0 +1,789 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "slice-evidence-index",
+  "sliceId": "CAP-07.S01",
+  "status": "READY_FOR_INDEPENDENT_REVIEW",
+  "publicationReady": true,
+  "sliceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "candidateCommit": "78e1b49fa51795ce71cc04c412d435065a62d041",
+  "preparationReadHead": "78e1b49fa51795ce71cc04c412d435065a62d041",
+  "purpose": "Final CAP-07.S01 criterion index and adjacent handoff. Fresh checks bind candidateCommit; authenticated campaign milestones retain their original candidates. Independent slice disposition and fresh W1 qualification are separate.",
+  "authentication": {
+    "method": "Read the named milestone records and governing criteria; directly SHA-256 hash the explicitly listed files. Confirmed the selected tracked milestone paths are tracked and have no diff from preparationReadHead. Compared declared predecessor/report/review links where supplied. No recursive artifact inventory, execution replay, fixture-project/vault access, or new installed-runtime authentication.",
+    "digestSemantics": "sha256 is the exact current raw file-byte digest. Where supplied, taskctlEvidenceSha256 separately hashes CRLF-to-LF then CR-to-LF canonical bytes per tools/taskctl.py evidence_sha256. These distinct identities are not interchangeable.",
+    "taskctlCanonicalBindings": "The CAP-07.S01.T02 and W1.C02.T01 canonical digests below independently recompute to their existing review bindings; their raw-byte digests differ only because of line endings. W1.C03.T01 raw and review-bound digest match.",
+    "executionAttribution": "Recorded outcomes belong to their original producers and independent reviews at the declared milestone candidates. This preparation did not execute tests, benchmarks, builds, native actions or scanners, and does not present historical proof as a fresh run.",
+    "reviewIndependence": "The preparer previously implemented W1.C03.T01 and authored quality-maintenance work/reviews; this is an index, not an independent product or slice review. Existing independent dispositions remain attributed to their actual records.",
+    "finalRecheckRequired": false,
+    "finalRecheck": {
+      "namedRecords": 59,
+      "mismatches": [],
+      "sourceAndTestDiffSinceFreshCandidate": [],
+      "method": "Root rehashed exactly 59 declared authority, milestone, raw-record and handoff inputs. Subsequent bounded publication adds evidence/planning state only; no product/test/verification inputs changed. Independent reviewer authenticates the committed publication separately.",
+      "installedClosure": "Not exhaustively authenticated. No execution cache/reuse claimed; historic campaign milestones retain their original candidates under Review each boundary once."
+    }
+  },
+  "authorities": [
+    {
+      "path": "planning/capability-plans/CAP-07.md",
+      "sha256": "b95fdb594bd4bbe52f66cdedae7f5642e15b5f0b300fa17498ae7e551cd0e80f",
+      "role": "Capability intent; authenticate its immutable approval when assembling the final packet."
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+      "sha256": "5c997b950032b2ebd66a6bb4823f150c7908adf656692dba05e32c12843b16e4",
+      "section": "6-17, especially 10 verification matrix, 11 budgets, 13 handoffs and 15 evidence bundle",
+      "declaredApprovedCommit": "c5bbd97c0cdc665eecb973f5862478ef7be97752"
+    },
+    {
+      "path": "docs/automation/project-automation-guide.md",
+      "section": "8.1 verification breadth; 8.3 immutable prospective benchmarks"
+    },
+    {
+      "path": "docs/automation/workflow-efficiency.md",
+      "section": "Review each boundary once; Automatic receipts and safe reuse; Stable snapshots and coordination"
+    },
+    {
+      "path": "docs/automation/codex-tracking-guide.md",
+      "section": "Evidence; Independent review"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "handoff-draft",
+      "path": "artifacts/tmp/CAP-07.S01.handoff-draft-01.json",
+      "sha256": "f3b2873e5d7524ba1bfb5cd6d2fa8e3772e88a57f88ba9506a58bbb62f90e19a",
+      "status": "PREPARED_NOT_QUALIFIED",
+      "role": "Portable contracts/examples/failure fixtures/version rules and downstream obligations; not published acceptance."
+    },
+    {
+      "id": "task-contracts",
+      "path": "artifacts/evidence/CAP-07.S01.T01.review-fix.json",
+      "sha256": "28967a00f413267c2ccb82efb098e35d13350472db0a0885daba93ceb2c64c44",
+      "candidate": "e4f70e7c87d06f0b09ac8da46465bf957968ba79",
+      "role": "Approved successor task criterion evidence."
+    },
+    {
+      "id": "task-contracts-adverse-review",
+      "path": "artifacts/evidence/CAP-07.S01.T01.review-R01.json",
+      "sha256": "034c5b7ce70e4790c3a6db58aca85a01b666b496c922ec1fb67120ea65bf475c",
+      "candidate": "f0f47b58b87d3e72c3cfaca6960dd7f60ea8befa",
+      "status": "changes-requested"
+    },
+    {
+      "id": "task-contracts-review",
+      "path": "artifacts/evidence/CAP-07.S01.T01.review-R02.json",
+      "sha256": "2e081c3e8402f7fb610dad62feeb63e7c436ee754e916d09f2a45f2c75da2349",
+      "candidate": "e4f70e7c87d06f0b09ac8da46465bf957968ba79",
+      "status": "approved"
+    },
+    {
+      "id": "registry",
+      "path": "artifacts/evidence/CAP-07.S01.T02.json",
+      "sha256": "6606173bab7b4097670646928b1d54cf274089f240505493e7324d770ef528d7",
+      "taskctlEvidenceSha256": "e636bcd14cd7cb3b69c2437bfcf403853dc91a60a98bb4df6293f56b986d5ad8",
+      "candidate": "162745fc07585f33926baa54915846ba9048e1e8"
+    },
+    {
+      "id": "registry-review",
+      "path": "artifacts/evidence/CAP-07.S01.T02.review-R01.json",
+      "sha256": "c0c0a293e38b009c99788c3e52fc34886e432c9ead7134ac0fa4eaaaaa56cd6d",
+      "candidate": "162745fc07585f33926baa54915846ba9048e1e8",
+      "status": "approved"
+    },
+    {
+      "id": "routing",
+      "path": "artifacts/evidence/CAP-07.S01.T03.json",
+      "sha256": "92f84bb9c2046a38835f8658deb709117117b48984a732d2757dfe7c8b40d0f6",
+      "candidate": "25327cece02112c97492b0f28af9ac3df1e19c40"
+    },
+    {
+      "id": "routing-review",
+      "path": "artifacts/evidence/CAP-07.S01.T03.review-R01.json",
+      "sha256": "113a451d66b249cba1209949e76725b8f8a237a3f9acd5129d630d9deeba693e",
+      "candidate": "25327cece02112c97492b0f28af9ac3df1e19c40",
+      "status": "approved",
+      "limit": "Task-only owner latency exception, not a strict benchmark PASS or slice/Wave waiver."
+    },
+    {
+      "id": "task-only-latency-exception",
+      "path": "artifacts/evidence/CAP-07.S01.T03.performance-acceptance-01.json",
+      "sha256": "9701558f355b15baf8b059a7b3d60a25960c1f4d7b0a6f2d4b66b61065e3ce05",
+      "status": "ACCEPTED_FOR_TASK_COMPLETION"
+    },
+    {
+      "id": "optimization-closeout",
+      "path": "artifacts/evidence/CAP-07.S01.T03.optimization-closeout-01.json",
+      "sha256": "b464696fd6627d5f11121424d29b43694b10642342b63103ea1a7e822081e971",
+      "role": "Historical scoped memo disposition, unchanged adverse latency and refactoring allocation; no new allowance."
+    },
+    {
+      "id": "original-slice-preflight",
+      "path": "artifacts/evidence/CAP-07.S01.preflight-01.json",
+      "sha256": "53215ce0b1a000df5d0ffc7a3ac56d2d72eb8f2804e1400dff62a3107cc0623d",
+      "role": "Retained CAP-07.S01.F01 and original failed contract group."
+    },
+    {
+      "id": "freshness-correction",
+      "path": "artifacts/evidence/W1.C02.T01.json",
+      "sha256": "843f64d0b3b24a45fe7e5c4e6c029a2b98a3b0cd96701bf821d51fd1da5cd53a",
+      "taskctlEvidenceSha256": "14efd4781f990713c14e03191bfcd9d5c0f41b9c620aea03f7415d05b307f107",
+      "candidate": "4313def69702c2fc948b7ed8920a8412ca0f1dd3"
+    },
+    {
+      "id": "freshness-correction-review",
+      "path": "artifacts/evidence/W1.C02.T01.review-R01.json",
+      "sha256": "e17573bca92eff98903df86e8707f0afd6b46a9156c961cdbbfbcc1057255df1",
+      "candidate": "4313def69702c2fc948b7ed8920a8412ca0f1dd3",
+      "status": "approved"
+    },
+    {
+      "id": "adverse-gateway-134ms",
+      "path": "artifacts/evidence/W1.C02.T01.preflight-02.json",
+      "sha256": "795a44c59b744bb0bf686ae5ea38230f2983bcb08fcd0c97479659a8ed9a7f7a",
+      "role": "Retains 134.0222000144422 ms p95 failure, all samples and adverse quality/functional observations."
+    },
+    {
+      "id": "freshness-development-errors",
+      "path": "artifacts/evidence/W1.C02.T01.preflight-03.json",
+      "sha256": "323c1fa53527b6169624384cdf440026123831bd769716b526becd248e4d18c1"
+    },
+    {
+      "id": "quality-restoration",
+      "path": "artifacts/evidence/W1.quality-restoration-02.json",
+      "sha256": "6aede599e12f8b87c1f1ceb39d3ab43d7aff8444b7dd3498b695f61d8c345288",
+      "candidate": "ae75b3a18ea16d20d260b6ddd6d3b699d21deed5"
+    },
+    {
+      "id": "quality-review-original",
+      "path": "artifacts/evidence/W1.quality-restoration-01.review-R01.json",
+      "sha256": "92021001bb065f340784757af741c510d050dc62136b15fe3fba0f765cb94180",
+      "status": "APPROVED",
+      "role": "Original binding/history retained; R02 explicitly resolves unpublished evidence relocation."
+    },
+    {
+      "id": "quality-review-publication",
+      "path": "artifacts/evidence/W1.quality-restoration-01.review-R02.json",
+      "sha256": "17feaf38e08c924abef593a70aad5993c43961afcbb61eff0b1c9420988e48b8",
+      "status": "APPROVED",
+      "role": "Serialization/relocation-only approval; no guard relaxation or new product run."
+    },
+    {
+      "id": "gateway-baseline",
+      "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-01.json",
+      "sha256": "e79ba7cb82fa40111f4d8ccb047dbb2cd20b863f0838600147716182933e4fee",
+      "candidate": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+      "role": "First immutable prospective calibration; all 100 warm samples, cold observation, source/runtime/hardware/producer identities and failures retained in original bytes."
+    },
+    {
+      "id": "gateway-process-review",
+      "path": "artifacts/evidence/CAP-07.S01.qualification-01.review-R01.json",
+      "sha256": "bd17b5b087f61cffe0cb4c4fe02db55bdf6345dd56e398317e723933c9dae23a",
+      "candidate": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+      "status": "authenticated-bounded-pass",
+      "limit": "Gateway and process/resource observations only; no slice/Wave/baseline approval in R01."
+    },
+    {
+      "id": "baseline-native-review",
+      "path": "artifacts/evidence/CAP-07.S01.qualification-01.review-R02.json",
+      "sha256": "ec855dd1b6ab2fdbb4b5c0d82bdd1be942c9fee9773fb9371ef413101d865d3e",
+      "candidate": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+      "status": "approved-prospective-baseline-only",
+      "limit": "NATIVE-F01 open historically; append-only closure is W1.C03.T01 review, not a rewrite."
+    },
+    {
+      "id": "native-original-summary",
+      "path": "artifacts/evidence/CAP-07.S01.native-qualification-01.md",
+      "sha256": "ae86865c759ee816e02d3dbdef7e7a6f0a6d2af042e2c4d63051a3593d35abff",
+      "candidate": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6"
+    },
+    {
+      "id": "supporting-return-spec",
+      "path": "artifacts/evidence/W1.C03.T01.spec.json",
+      "sha256": "3363d72c1479580af63737837cbbc53aa6ca239c674c3f3dcc4db790c0b5ee59"
+    },
+    {
+      "id": "supporting-return-correction",
+      "path": "artifacts/evidence/W1.C03.T01.json",
+      "sha256": "e0bc63404bbb895239a73717a8443e53ed1e4db394d1f7fd9b71413662b0483c",
+      "candidate": "2f980af6b4031256ea35739ffd4d813cecd278eb"
+    },
+    {
+      "id": "supporting-return-review",
+      "path": "artifacts/evidence/W1.C03.T01.review-R01.json",
+      "sha256": "d2e337909a3b21bd96c0b8fc7144d977a68e2f5be318aa76b63d20c8aa388880",
+      "candidate": "2f980af6b4031256ea35739ffd4d813cecd278eb",
+      "status": "approved",
+      "role": "Independent NATIVE-F01 closure within the three inherited CAP-03.S06.T03 criteria; not a slice/Wave approval."
+    },
+    {
+      "id": "published-handoff",
+      "path": "artifacts/evidence/CAP-07.S01.handoff-01.json",
+      "sha256": "15436b050798de71fbd4d0c3af93c642d5d0131170365ab5756e7e80d3cc091f"
+    },
+    {
+      "id": "fresh-qualification",
+      "path": "artifacts/evidence/CAP-07.S01.qualification-02.json",
+      "sha256": "48eef06535d24ea8ee78ac72d6b03b584929a3789f640c9542f6f185342c3e60",
+      "role": "Fifteen passing combined/renderer groups and successful native retry; adverse attempt and interim interpretation retained, corrected by qualification03."
+    },
+    {
+      "id": "verification-method-disposition",
+      "path": "artifacts/evidence/CAP-07.S01.qualification-03.json",
+      "sha256": "a814b401a70f4fc3be985f3eaf577ad8f2718d9b725f95765e4f3bc1faae77a4"
+    },
+    {
+      "id": "fresh-qualification-review",
+      "path": "artifacts/evidence/CAP-07.S01.qualification-02.review-R01.json",
+      "sha256": "3c29a84d92f07fd28a0d0252213bddc8e28aaae34560d9aef036ea45effe27d6",
+      "role": "Independent authentication of exact executions and method disposition; not complete slice approval."
+    }
+  ],
+  "authenticatedRawRecords": [
+    {
+      "id": "gateway03",
+      "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-03.json",
+      "sha256": "86e3b998a5eb3c9cd852fed37705eb6da9c85debe47c21c8f3ca4e0d3169fb08",
+      "review": "gateway-process-review"
+    },
+    {
+      "id": "process-resource01",
+      "path": "artifacts/tmp/CAP-07.S01.process-resource-qualification-01.json",
+      "sha256": "0a62c29e73f2dc551b08133597aee9b77001fb51ce7994e1ee7cf6c00994a158",
+      "review": "gateway-process-review"
+    },
+    {
+      "id": "gateway02-setup-failure",
+      "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-02.json",
+      "sha256": "765b19bdfd9766233eede89d14abd918e6dcd31d30e7634ca8bcfa77c3531b25",
+      "review": "gateway-process-review"
+    },
+    {
+      "id": "handoff-producer",
+      "path": "artifacts/tmp/CAP-07.S01.handoff-qualification-01.py",
+      "sha256": "79675373bdbf95d2facc32906300ff609a8653a4019a02281db8416b3ea02612"
+    },
+    {
+      "id": "handoff-report",
+      "path": "artifacts/tmp/CAP-07.S01.handoff-qualification-01.json",
+      "sha256": "0bab92969d4473ce34920bbf0506a9558499cd5c13bb80c2cd751bd68e96548e",
+      "candidate": "8dc40d41c7fa7d1044dcbceea00eb2965f9afc96",
+      "status": "PASS",
+      "limit": "Metadata seam only; independent source/report authentication is attributed by handoff-draft, not a formal slice review."
+    },
+    {
+      "id": "native-original-lifecycle",
+      "path": "artifacts/tmp/CAP-07.S01.native-qualification-01.lifecycle.json",
+      "sha256": "62f2a7036dcabf21d56299bee5d83467681973fa4c08d7245fe848511b818e2b",
+      "review": "baseline-native-review"
+    },
+    {
+      "id": "native-original-resume",
+      "path": "artifacts/tmp/CAP-07.S01.native-qualification-01.lifecycle-resume.json",
+      "sha256": "b775c3b1bff58d0d5e5f4a44aefe35c264e517320c9d6031f1b8224144bcbcdb",
+      "review": "baseline-native-review"
+    },
+    {
+      "id": "native-seed",
+      "path": "artifacts/tmp/CAP-07.S01.native-catalog-seed-01.json",
+      "sha256": "d97b340b19487dbd86bf682b5ca02bbb751c759d28e3e4b1b20663b9c244f88b",
+      "review": "baseline-native-review"
+    },
+    {
+      "id": "native-observations01",
+      "path": "artifacts/tmp/CAP-07.S01.native-observations-01.json",
+      "sha256": "43b282eb855508cccc70424a3bcd9da5f43ba2a73d39d7902bc5b6d631eacf58",
+      "review": "baseline-native-review"
+    },
+    {
+      "id": "native-observations02",
+      "path": "artifacts/tmp/CAP-07.S01.native-observations-02.json",
+      "sha256": "0f9167b5f7a59ee4886943e077f3da019f2f5e1833f62bd8cf4f8b9f13d1c12d",
+      "review": "baseline-native-review"
+    },
+    {
+      "id": "c03-frontend",
+      "path": "artifacts/tmp/W1.C03.T01.frontend-01.json",
+      "sha256": "8e4721a200192cc0cf0532f3cf3bc8de82605a8a912f164c4554af7636ae4952",
+      "review": "supporting-return-review"
+    },
+    {
+      "id": "c03-ledger",
+      "path": "artifacts/tmp/W1.C03.T01.ledger-01.json",
+      "sha256": "fc1ee237a38e969a39779d927abecbcbe7b9df2638692aacf54499ff22a78123",
+      "review": "supporting-return-review"
+    },
+    {
+      "id": "c03-native-build",
+      "path": "artifacts/tmp/W1.C03.T01.native-01.build.json",
+      "sha256": "60dccade93296974c0652574bcec4980e394252dc66b6759da22c120ad8e049e",
+      "review": "supporting-return-review"
+    },
+    {
+      "id": "c03-native-lifecycle",
+      "path": "artifacts/tmp/W1.C03.T01.native-01.lifecycle.json",
+      "sha256": "dff5f170b282f0dab4701a63d3288bdd75c7fa8048a45551195c86c8490bb816",
+      "review": "supporting-return-review"
+    }
+  ],
+  "handoffContractInputs": {
+    "candidate": "78e1b49fa51795ce71cc04c412d435065a62d041",
+    "scope": "Eighteen explicit contract/example/failure-fixture inputs reauthenticated at the fresh execution candidate; raw hashes, not complete installed execution-input closure.",
+    "files": [
+      {
+        "path": "docs/architecture/model-gateway-contracts.md",
+        "sha256": "a026288c16eea408e5bd2d037dbdbcfadbb4d8f8917d3b99d0492d446db54fda"
+      },
+      {
+        "path": "packages/contracts/model-gateway/fixtures/valid-generation-result.v1.json",
+        "sha256": "f5421f96e0f3cecb767d6b7f667ebdb046385577ba8b7ccc994b9a57ec8231fe"
+      },
+      {
+        "path": "packages/contracts/model-gateway/fixtures/valid-generation-task.v1.json",
+        "sha256": "9761347502fad6f54fc1960074ebda97a5c6caf996c2f1c18b84c270d8793e74"
+      },
+      {
+        "path": "packages/contracts/model-gateway/generated.ts",
+        "sha256": "33d9d249bc34fbab3b1688d6d7a1d877c746754e8ef707f64d57347c9ccd065c"
+      },
+      {
+        "path": "packages/contracts/model-gateway/model-manifest.schema.json",
+        "sha256": "1b1e423e6f2dc7040c28803dcba2bc77088ed1344b858ca7870fb876bde5316a"
+      },
+      {
+        "path": "packages/contracts/model-gateway/model-task.schema.json",
+        "sha256": "1e93f194b21a118011912436a96a948d4f746c95ef0cb5adc0f4f4140e998a72"
+      },
+      {
+        "path": "packages/contracts/model-gateway/routing-policy.schema.json",
+        "sha256": "6f0feb0d0fdc23fd5298e92c36b6efeb06a669e3689393de68cf7570f3ed973e"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/model_gateway_contracts.py",
+        "sha256": "30d4b8e30a6c0f617eac83a490f3301fd71c7c480c6bb04f1b877302b0bef67f"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/model_registry_contracts.py",
+        "sha256": "ec985f09ab715e64bc494546f54e3693c2897b27096fde7648e5a624365ff6b4"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/model_routing_contracts.py",
+        "sha256": "83ab7c1a4170cccc6038be258d1c9b935a9653a1b68c84080977d6eeb94a4cc1"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/model_gateway.py",
+        "sha256": "8e2d90aa2c53e5f204e6df54222d84eab67b11e17c067317aa47f632df75c1da"
+      },
+      {
+        "path": "tests/ai/test_model_gateway_contracts.py",
+        "sha256": "d9a3fd2a2f62656691d1e5eaf06d11a7f4520927a44974313a2ce0883be9f29c"
+      },
+      {
+        "path": "tests/ai/test_model_registry.py",
+        "sha256": "5e598a8496803dde3b3720f989fff6df4ddad31a42a1fa2e711b5541532ac641"
+      },
+      {
+        "path": "tests/ai/test_model_routing.py",
+        "sha256": "ded95552507f56067bdc48e8f3fd6f9bd0923936e43f02bf2311d8bbba5f10c1"
+      },
+      {
+        "path": "tests/contracts/test_model_registry_contracts.py",
+        "sha256": "b9a1812c344220ad5a326b3c09aa9b6f9db3272488739ba7be9bca72554fce9a"
+      },
+      {
+        "path": "tests/contracts/test_model_routing_contracts.py",
+        "sha256": "6b210264854636c00cc967f0d7181bd07484e8aabc335f5f039f29ea43a5f87d"
+      },
+      {
+        "path": "tests/service/test_model_routing_integration.py",
+        "sha256": "b28f636a0949920213ba52ebbb30e1d6aaa902690d6b7f3058b6511b77cb0877"
+      },
+      {
+        "path": "tests/service/test_model_routing_repository.py",
+        "sha256": "cb3bf131c7382dd642380adc6f15f3f5cda630c872cf2799c0c92e859cbb980d"
+      }
+    ]
+  },
+  "criterionMap": [
+    {
+      "id": "task-contract-provenance",
+      "authority": "CAP-07.S01.T01 AC1; slice sections 5, 7, 10, 12",
+      "milestones": [
+        "task-contracts",
+        "task-contracts-review",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "proof": "Typed task/result version, request, provider/model/configuration, usage/deadline, validation/output identity, citation closure and explicit unsupported-feature failure.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "registry-current-authority",
+      "authority": "CAP-07.S01.T02 AC1; slice sections 5, 7, 11",
+      "milestones": [
+        "registry",
+        "registry-review",
+        "freshness-correction",
+        "freshness-correction-review",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "proof": "Versioned immutable catalog, capability matching, current permission/host expiry, projection/history, exact pins and default denial; eligibility itself grants no execution authority.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "routing-egress-original-state",
+      "authority": "CAP-07.S01.T03 AC1; slice sections 7, 8, 10, 12",
+      "milestones": [
+        "routing",
+        "routing-review",
+        "freshness-correction",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "proof": "Bounded explicit degraded fallback, no pinned substitution, reauthorization across dispatch/publication/replay, immutable original request and auditable alternatives.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "common-task-failure-contract-scope",
+      "authority": "All three tasks AC2-AC3; slice sections 5, 7, 10, 14",
+      "milestones": [
+        "task-contracts",
+        "registry",
+        "routing",
+        "freshness-correction",
+        "quality-restoration",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "proof": "Negative/denial fixtures, generated TS/Python/OpenAPI contracts, protected SQLCipher admission/CAS/outbox/corruption/rollback and architecture boundaries. No new storage migration is asserted.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "end-to-end-native-lifecycle",
+      "authority": "Slice sections 6, 8, 10 end-to-end, 15",
+      "milestones": [
+        "native-original-summary",
+        "baseline-native-review",
+        "supporting-return-correction",
+        "supporting-return-review",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "proof": "Original source-built native create/open, populated/history/restart/close observations and correction-specific explicit Start/Project Home/exact return closure. Actual UI observations and clean controller exits are distinct proof.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-native-accessibility",
+        "final-source-impact-binding"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "failure-cancellation-restart-recovery",
+      "authority": "Slice sections 8, 10, 11 cancellation",
+      "milestones": [
+        "routing",
+        "freshness-correction",
+        "gateway-process-review",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "rawRecords": [
+        "process-resource01"
+      ],
+      "proof": "Owned four-process create/restart/crash/recover retained success identity and uncertain execution without redispatch; crash exit17 intentional. Fresh shared test_cancel_propagates_promptly_and_never_promotes_output asserts acknowledgement <0.1s, adapter cancellation and no output, including protected inherited cases. Corrupt latest/CAS/rollback tests remain selected.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "security-privacy-rights",
+      "authority": "Slice sections 7, 10 security, 12",
+      "milestones": [
+        "task-contracts",
+        "registry",
+        "routing",
+        "freshness-correction",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "proof": "Content/authority substitution, malformed envelopes, classification/rights/egress/budget denial, authenticated loopback/native public contract boundaries and no unauthorized dispatch/publication. Synthetic complete-authority success is not ordinary-principal/provider approval.",
+      "pending": [],
+      "broaderGate": "Fresh full W1 security/privacy/packaging qualification remains separate, not waived.",
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "native-accessibility-reference",
+      "authority": "Slice sections 6, 10 accessibility/UI",
+      "milestones": [
+        "native-original-summary",
+        "baseline-native-review",
+        "supporting-return-correction",
+        "supporting-return-review",
+        "fresh-qualification",
+        "fresh-qualification-review",
+        "verification-method-disposition"
+      ],
+      "proof": "Fresh real-renderer populated/empty/failure/late-response interactions, 320-CSS reflow, root-CSS-zoom2 layout stimulus, 66 unchanged baseline captures and 66 responsive/reference cases; actual native keyboard/visible focus/UIA roles-status, historical catalog selection, both themes and 720-client-width layout. Native identity, selected inputs and normal shutdown authenticated. Approved effective-viewport method addresses the slice requirement; no additional global OS scaling test is imposed.",
+      "pending": [],
+      "requiredFreshMapping": [
+        "Exact source-built fixture identity and lifecycle",
+        "keyboard and focus",
+        "screen-reader/accessible semantics with truthful speech-vs-tree distinction",
+        "zoom/reflow",
+        "light/dark",
+        "reference/visual conformance"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION",
+      "evidenceResolution": [
+        "fresh-native-accessibility"
+      ],
+      "limit": "No physical native200% observation, screen-reader speech or blanket WCAG certification. CSS zoom is a test stimulus, not a newly supplied user control."
+    },
+    {
+      "id": "gateway-overhead-baseline",
+      "authority": "Slice section11; benchmark evidence section8.3",
+      "milestones": [
+        "gateway-baseline",
+        "gateway-process-review",
+        "baseline-native-review",
+        "task-only-latency-exception",
+        "adverse-gateway-134ms"
+      ],
+      "rawRecords": [
+        "gateway03",
+        "gateway02-setup-failure"
+      ],
+      "proof": "First calibration: cold20.9860997274518ms, warm p50=19.563999958336353ms, p95=22.406999953091145ms, all100 warm samples retained. Original run met strict <25ms; no comparison to a prior baseline existed.",
+      "futureRule": "Bind baseline AND approval hashes before a fresh comparable measurement. Require unrounded p95<25ms AND p95<=1.2*22.406999953091145ms. No retry-until-pass, trimming, automatic rewrite or task-exception extension.",
+      "pending": [],
+      "broaderGate": "Fresh full W1 prospective benchmark comparison remains mandatory.",
+      "evidenceResolution": [
+        "final-source-impact-binding"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "determinism-registry-capacity-resources",
+      "authority": "Slice section11 and section10 performance/capacity",
+      "milestones": [
+        "registry",
+        "gateway-process-review",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "rawRecords": [
+        "process-resource01"
+      ],
+      "proof": "test_thousand_manifest_matching_is_bounded_and_deterministic constructs1000 manifests and asserts exact eligible order and <0.1s. Process resource review retains measured working set/private memory/project disk growth and zero fixture model-weight bytes; no invented numeric memory budget or live-model footprint.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "cross-capability-handoff-staleness",
+      "authority": "Slice sections5.4, 10 cross-capability, 12, 13",
+      "milestones": [
+        "handoff-draft",
+        "fresh-qualification",
+        "fresh-qualification-review",
+        "published-handoff"
+      ],
+      "rawRecords": [
+        "handoff-producer",
+        "handoff-report"
+      ],
+      "proof": "CAP-06/08/09/10 and later CAP-14 receive portable schemas, accepted/rejected examples, failure fixtures, version rules, baseline and evidence IDs. Protected dependency seam marks only exact dependent output stale, preserves unrelated output and original revisions/routing history, reopens/replays, and dispatches no additional adapter.",
+      "limit": "Synthetic declared hashes and complete fixture policy; no content-byte proof, scholarly promotion, arbitrary provider-version translation, live-model execution or process restart in this seam.",
+      "pending": [
+        "independent-slice-review"
+      ],
+      "evidenceResolution": [
+        "fresh-combined",
+        "final-source-impact-binding"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "migration-compatibility",
+      "authority": "Slice sections10, 14, 15",
+      "milestones": [
+        "registry",
+        "routing",
+        "fresh-qualification",
+        "fresh-qualification-review"
+      ],
+      "proof": "Reuse existing protected settings/provenance/outbox schema; no CAP07-specific migration introduced. Fresh selected public migration cases prove current database idempotence and supported v6 history through v10 upgrade/restart; wider release migration matrix remains W1 scope.",
+      "pending": [],
+      "evidenceResolution": [
+        "fresh-combined"
+      ],
+      "status": "EVIDENCE_COMPLETE_PENDING_INDEPENDENT_DISPOSITION"
+    },
+    {
+      "id": "independent-slice-disposition",
+      "authority": "Slice sections10, 15, 17; AGENTS Evidence and completion",
+      "milestones": [
+        "task-contracts-review",
+        "registry-review",
+        "routing-review",
+        "freshness-correction-review",
+        "supporting-return-review",
+        "baseline-native-review"
+      ],
+      "proof": "Prior task/correction/milestone dispositions do not substitute for independent review of the final combined slice packet.",
+      "pending": [
+        "independent-slice-review"
+      ],
+      "status": "NOT_REQUESTED_OR_APPROVED_BY_THIS_DRAFT",
+      "evidenceResolution": []
+    }
+  ],
+  "preservedFindingsAndLimits": [
+    {
+      "finding": "CAP-07.S01.T01-R01-F01",
+      "original": "task-contracts-adverse-review",
+      "closure": "task-contracts-review",
+      "disposition": "Original semantic validation failure preserved; successor approval closes declared token/deadline/output/citation/indexed-result gaps."
+    },
+    {
+      "finding": "CAP-07.S01.F01",
+      "original": "original-slice-preflight",
+      "closure": "freshness-correction-review",
+      "disposition": "Expired authority dispatch restored through W1.C02.T01; original evidence/approval/task remain unchanged."
+    },
+    {
+      "finding": "CAP-07.S01.NATIVE-F01",
+      "original": "baseline-native-review",
+      "closure": "supporting-return-review",
+      "disposition": "Closed at W1.C03.T01 candidate2f980af6b4031256ea35739ffd4d813cecd278eb; inherited explicit-start/exact-return/stale-denial authority preserved. Old R02/native summary remain historically open and immutable, not silently rewritten."
+    },
+    {
+      "finding": "gateway-adverse-history",
+      "records": [
+        "task-only-latency-exception",
+        "optimization-closeout",
+        "adverse-gateway-134ms",
+        "gateway-process-review",
+        "baseline-native-review"
+      ],
+      "disposition": "25.383200030773878ms remains strict FAIL despite task-only owner acceptance;134.0222000144422ms remains FAIL. Nonqualifying26.077ms diagnostic, all raw samples, attempt02 PowerShell collector setup failure before benchmark, omitted host instrumentation, initial pin typo and assembler01 identity failure remain retained in predecessor lineage. No causal I/O/load explanation or new benchmark run is inferred."
+    },
+    {
+      "finding": "quality-and-publication-history",
+      "records": [
+        "quality-restoration",
+        "quality-review-original",
+        "quality-review-publication"
+      ],
+      "disposition": "Original144 mypy errors/16files and3 formatting failures retained. Exact unchanged governed quality later passed229files; original UI groupFAIL due sandbox Git ownership remains distinct from the fresh normal-principal singlecasePASS. Original unpublished evidence bytes relocated explicitly, R01 binding retained, typed-row successor and R02 do not suppress scanner policy. This is not a new current quality run."
+    },
+    {
+      "finding": "production-and-platform-boundaries",
+      "disposition": "Production W1 has default-empty model inventory, no installed model adapter or model-specific permission/budget authority. Positive dispatch uses synthetic complete-authority adapters. No actual weights, live inference, provider egress/cancellation, ordinary project/vault/policy, authentication settings or release packaging claim. Windows x64 only."
+    },
+    {
+      "finding": "release-boundary",
+      "disposition": "CAP-07.S01 execution evidence assembled; independent slice disposition pending. Full fresh W1 repository/profile/security/privacy/rights/accessibility/performance/packaging/migration/restart/recovery checks, independent Wave review and human G1 remain separate. No later-Wave activation or release approval."
+    },
+    {
+      "finding": "native-startup-and-method-interpretation",
+      "records": [
+        "fresh-qualification",
+        "verification-method-disposition",
+        "fresh-qualification-review"
+      ],
+      "disposition": "Native attempt01 FAIL and interim physical200 permission interpretation retained. Native02 changed-boundary retry completed normally without proving the earlier startup cause. Qualification03 and independent review correct the overstrong mandatory-global-scaling interpretation, not a test result. The brief campaign pause is retained in Git; same-campaign resume needs no OS-setting permission."
+    }
+  ],
+  "publicationInstructions": [
+    "Independent slice review binds the committed packet, authenticated evidence and candidate product identity before taskctl slice approval.",
+    "Historical executions, owner exceptions, fixture success and bounded publication reviews do not substitute for fresh full W1 qualification and separate human G1."
+  ],
+  "publicationBaseCommit": "f642749851aa4f96f8f056cbf000fe37898dce98",
+  "proofDispositions": [
+    {
+      "id": "fresh-combined",
+      "candidate": "78e1b49fa51795ce71cc04c412d435065a62d041",
+      "status": "PASS",
+      "publication": "fresh-qualification",
+      "report": {
+        "path": "artifacts/tmp/CAP-07.S01.combined-01.json",
+        "sha256": "45799c6b844e49b9f2dd339a7e28a9dc4c79743fa28e4ec36626c612abaf7a86"
+      },
+      "groups": 10
+    },
+    {
+      "id": "fresh-renderer",
+      "candidate": "78e1b49fa51795ce71cc04c412d435065a62d041",
+      "status": "PASS",
+      "publication": "fresh-qualification",
+      "report": {
+        "path": "artifacts/tmp/CAP-07.S01.renderer-01.json",
+        "sha256": "deb8fc5168f7211f71ebfdce4baf49891de2ed5250f78315de3ac86e130b8cf2"
+      },
+      "groups": 5
+    },
+    {
+      "id": "fresh-native-accessibility",
+      "candidate": "78e1b49fa51795ce71cc04c412d435065a62d041",
+      "status": "PASS_WITHIN_APPROVED_METHOD",
+      "publication": "fresh-qualification",
+      "method": "verification-method-disposition",
+      "independentAuthentication": "fresh-qualification-review",
+      "report": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-02.lifecycle-resume.json",
+        "sha256": "459c66230de36ad55b4020ed4c54a0622d2995797085ca2b7ecf3c94a55dfe9e"
+      },
+      "limits": "Actual UIA/keyboard/theme/layout observations and lifecycle are distinct; no speech, physical200 or blanket conformance assertion."
+    },
+    {
+      "id": "final-source-impact-binding",
+      "candidate": "78e1b49fa51795ce71cc04c412d435065a62d041",
+      "status": "AUTHENTICATED_CAMPAIGN_MILESTONES_AND_FRESH_AFFECTED_PROOF",
+      "details": "No model gateway, policy, protected persistence, contracts, benchmark fixture/method, resource/process or handoff-seam implementation changed since their reviewed milestones. Subsequent C03 frontend integration independently approved and freshly verified. Full source/test changes since the gateway milestone listed below; all eight outside the benchmark/process/seam implementation. No cache reuse or new measurement.",
+      "changesSinceGatewayMilestone": [
+        "apps/desktop/src/app/ApplicationRuntime.tsx",
+        "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+        "apps/desktop/src/app/WorkflowNavigation.tsx",
+        "tests/desktop/test_model_center_interactions.py",
+        "tests/foundation/test_taskctl_workflow.py",
+        "tests/foundation/test_ui_change_gate.py",
+        "tools/taskctl.py",
+        "tools/ui_change_gate.py"
+      ],
+      "gatewayMilestoneCandidate": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+      "handoffMilestoneCandidate": "8dc40d41c7fa7d1044dcbceea00eb2965f9afc96"
+    },
+    {
+      "id": "independent-slice-review",
+      "status": "PENDING_COMMITTED_PACKET_REVIEW",
+      "required": "Independent commit-bound criterion disposition, preserved finding closures and handoff acceptance. No approval supplied by this index."
+    }
+  ]
+}
