@@ -53,6 +53,28 @@ CONTRACT_PATH = Path("services/core-api/packaging/sidecar-build.json")
 TOOL_PATH = Path("tools/core_sidecar_performance_check.py")
 PACKAGE_EVIDENCE_PATH = Path("artifacts/evidence/CAP-02.S02.T03.review-fix-2.json")
 PACKAGE_EVIDENCE_SHA256 = "89da43c32339f6360710a03d86f13b83cb2ce4fdd3e61084947485d8bda7c6f4"
+CURRENT_INPUT_ROOTS = (
+    "services/core-api",
+    "packages/contracts",
+    "packaging",
+    ".gitattributes",
+    "pyproject.toml",
+    "uv.lock",
+    TOOL_PATH.as_posix(),
+    "tools/core_sidecar_build.py",
+    "tools/build_manifest.py",
+)
+CURRENT_REQUIRED_INPUTS = {
+    TOOL_PATH,
+    CONTRACT_PATH,
+    SCHEMA_PATH,
+    Path("services/core-api/sidecar_entry.py"),
+    Path("tools/core_sidecar_build.py"),
+    Path("tools/build_manifest.py"),
+    Path(".gitattributes"),
+    Path("pyproject.toml"),
+    Path("uv.lock"),
+}
 
 
 class ProcessMemoryCountersEx(ctypes.Structure):
@@ -395,6 +417,265 @@ def git_blob(repo: Path, commit: str, path: Path) -> bytes:
     return result.stdout
 
 
+def git_output(repo: Path, *args: str) -> bytes:
+    result = subprocess.run(["git", *args], cwd=repo, capture_output=True, check=False, timeout=30)
+    if result.returncode:
+        raise ValueError("Current package Git authority could not be authenticated")
+    return result.stdout
+
+
+def require_object(value: Any, keys: set[str], label: str) -> dict[str, Any]:
+    if not isinstance(value, dict) or set(value) != keys:
+        raise ValueError(f"Current package {label} has unexpected or missing fields")
+    return value
+
+
+def require_hex(value: Any, length: int, label: str) -> str:
+    if not isinstance(value, str) or len(value) != length or any(char not in "0123456789abcdef" for char in value):
+        raise ValueError(f"Current package {label} is invalid")
+    return value
+
+
+def current_evidence_path(path: Path) -> Path:
+    # Reject before filesystem access, including the excluded witness. Paths are
+    # locators for committed authority, never permission to read arbitrary data.
+    name = path.as_posix()
+    if (
+        path.is_absolute()
+        or path.drive
+        or any(part in {".", ".."} for part in path.parts)
+        or len(path.parts) != 3
+        or path.parts[:2] != ("artifacts", "evidence")
+        or path.suffix != ".json"
+        or name.casefold() == "artifacts/evidence/w1.a04.b00.json"
+    ):
+        raise ValueError("Current package authority must be a canonical task-owned evidence JSON path")
+    return path
+
+
+def current_package_input_paths(repo: Path, commit: str) -> tuple[Path, ...]:
+    require_hex(commit, 40, "build candidate")
+    raw = git_output(repo, "ls-tree", "-rz", "--name-only", commit, "--", *CURRENT_INPUT_ROOTS)
+    paths = tuple(sorted((Path(item.decode("utf-8")) for item in raw.split(b"\0") if item), key=Path.as_posix))
+    if not CURRENT_REQUIRED_INPUTS.issubset(paths):
+        raise ValueError("Current package required build/execution input inventory is incomplete")
+    return paths
+
+
+def committed_source_bytes_match(path: Path, raw: bytes, blob: bytes) -> bool:
+    if raw == blob:
+        return True
+    # Preserve both digests; only the repository's text checkout line-ending
+    # representation can differ. This is not an arbitrary raw/blob substitution.
+    if path.name != ".gitattributes" and path.suffix not in {
+        ".py",
+        ".json",
+        ".toml",
+        ".lock",
+        ".txt",
+        ".md",
+        ".ini",
+        ".cfg",
+        ".yaml",
+        ".yml",
+    }:
+        return False
+    try:
+        raw.decode("utf-8")
+        blob.decode("utf-8")
+    except UnicodeError:
+        return False
+    return b"\0" not in raw and raw.replace(b"\r\n", b"\n") == blob
+
+
+def metadata_path(name: str) -> bool:
+    return name.startswith(("artifacts/evidence/", "planning/review-site/")) or name in {
+        "planning/backlog.yaml",
+        "planning/status-summary.md",
+        "docs/planning-implementation-plan.md",
+    }
+
+
+def current_package_fixture(admission: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: value
+        for key, value in admission["evidence"]["package"]["identity"].items()
+        if key not in {"packageReportSha256", "artifactManifestSha256"}
+    }
+
+
+def current_package_provenance(admission: dict[str, Any], commit: str) -> dict[str, Any]:
+    evidence = admission["evidence"]
+    return {
+        "measurementStateCommit": commit,
+        "measurementToolPath": TOOL_PATH.as_posix(),
+        "measurementToolSha256": evidence["measurementTool"]["sha256"],
+        "packageEvidencePath": admission["references"]["evidence"]["path"],
+        "packageEvidenceSha256": admission["references"]["evidence"]["sha256"],
+        **{key: evidence["package"]["identity"][key] for key in ("packageReportSha256", "artifactManifestSha256")},
+    }
+
+
+def assert_current_package_identity(identity: dict[str, Any], admission: dict[str, Any]) -> None:
+    if identity != admission["evidence"]["package"]["identity"]:
+        raise ValueError("Core package differs from the independently approved current candidate artifact")
+
+
+def load_current_package_approval(
+    repo: Path, evidence_path: Path, review_path: Path, baseline_hash: str
+) -> dict[str, Any]:
+    evidence_path = current_evidence_path(evidence_path)
+    review_path = current_evidence_path(review_path)
+    if evidence_path == review_path:
+        raise ValueError("Current package evidence and independent review must be separate records")
+    head, tool_hash = current_measurement_state(repo)
+    evidence, evidence_bytes = load_json(exact_file(repo, evidence_path))
+    review, review_bytes = load_json(exact_file(repo, review_path))
+    require_object(
+        evidence,
+        {
+            "schemaVersion",
+            "documentType",
+            "producer",
+            "buildCandidateCommit",
+            "profile",
+            "baseline",
+            "methodology",
+            "measurementTool",
+            "package",
+            "committedInputs",
+        },
+        "evidence",
+    )
+    require_object(
+        review,
+        {
+            "schemaVersion",
+            "documentType",
+            "reviewer",
+            "candidateCommit",
+            "disposition",
+            "evidence",
+            "blockingFindings",
+        },
+        "review",
+    )
+    candidate = require_hex(evidence["buildCandidateCommit"], 40, "build candidate")
+    if (
+        evidence["schemaVersion"] != "1.0"
+        or evidence["documentType"] != "core-sidecar-current-package-evidence"
+        or review["schemaVersion"] != "1.0"
+        or review["documentType"] != "core-sidecar-current-package-review"
+        or evidence["profile"] != "windows-x64"
+        or evidence["methodology"] != expected_methodology()
+        or evidence["baseline"] != {"path": BASELINE_PATH.as_posix(), "sha256": baseline_hash}
+        or review["candidateCommit"] != candidate
+        or review["disposition"] != "APPROVED"
+        or review["blockingFindings"] != []
+    ):
+        raise ValueError("Current package approval, candidate, comparison baseline or method is invalid")
+    people = [evidence["producer"], review["reviewer"]]
+    if any(not isinstance(person, str) or not person.strip() or person != person.strip() for person in people):
+        raise ValueError("Current package producer and reviewer identities are required")
+    if people[0].casefold() == people[1].casefold():
+        raise ValueError("Current package approval requires an independent reviewer")
+    evidence_hash = hashlib.sha256(evidence_bytes).hexdigest()
+    if review["evidence"] != {"path": evidence_path.as_posix(), "sha256": evidence_hash}:
+        raise ValueError("Current package review does not bind these exact evidence bytes")
+
+    introductions: list[str] = []
+    for path, payload in ((evidence_path, evidence_bytes), (review_path, review_bytes)):
+        if git_blob(repo, head, path) != payload:
+            raise ValueError("Current package approval record is not unchanged committed bytes")
+        history = (
+            git_output(repo, "log", "--full-history", "--format=%H", head, "--", path.as_posix()).decode().splitlines()
+        )
+        if len(history) != 1 or history[0] == candidate:
+            raise ValueError("Current package approval must be append-only and follow the build candidate")
+        introductions.append(history[0])
+    for earlier, later in (
+        (candidate, introductions[0]),
+        (introductions[0], introductions[1]),
+        (introductions[1], head),
+    ):
+        git_output(repo, "merge-base", "--is-ancestor", earlier, later)
+    # Inspect each intervening commit, not merely the net diff: an add/revert of
+    # execution inputs cannot hide behind a metadata-only measurement HEAD.
+    commits = git_output(repo, "rev-list", f"{candidate}..{head}").decode().splitlines()
+    for commit in commits:
+        names = git_output(repo, "diff-tree", "--root", "-m", "--no-commit-id", "--name-only", "-r", "-z", commit)
+        if any(not metadata_path(name.decode("utf-8")) for name in names.split(b"\0") if name):
+            raise ValueError("Current package measurement descendant includes a non-metadata commit")
+
+    paths = current_package_input_paths(repo, candidate)
+    if paths != current_package_input_paths(repo, head):
+        raise ValueError("Current package build/execution inventory changed")
+    rows = evidence["committedInputs"]
+    if not isinstance(rows, list) or [row.get("path") if isinstance(row, dict) else None for row in rows] != [
+        path.as_posix() for path in paths
+    ]:
+        raise ValueError("Current package committed input rows must be the exact complete sorted inventory")
+    captured: dict[Path, bytes] = {evidence_path: evidence_bytes, review_path: review_bytes}
+    for path, row in zip(paths, rows, strict=True):
+        require_object(row, {"path", "sha256", "gitBlobSha256"}, "input row")
+        raw = exact_file(repo, path).read_bytes()
+        blob = git_blob(repo, candidate, path)
+        if (
+            hashlib.sha256(raw).hexdigest() != row["sha256"]
+            or hashlib.sha256(blob).hexdigest() != row["gitBlobSha256"]
+            or git_blob(repo, head, path) != blob
+            or not committed_source_bytes_match(path, raw, blob)
+        ):
+            raise ValueError(f"Current package committed input identity differs: {path.as_posix()}")
+        captured[path] = raw
+    tool_row = rows[paths.index(TOOL_PATH)]
+    if evidence["measurementTool"] != tool_row or tool_row["sha256"] != tool_hash:
+        raise ValueError("Current package executing measurement tool is not independently approved")
+    package = require_object(evidence["package"], {"artifactRoot", "report", "identity"}, "artifact")
+    identity = require_object(
+        package["identity"],
+        {
+            "packageReportSha256",
+            "artifactManifestSha256",
+            "buildContractSha256",
+            "entrypointSha256",
+            "targetTriple",
+            "componentVersion",
+            "fileCount",
+            "totalBytes",
+        },
+        "artifact identity",
+    )
+    for key in ("packageReportSha256", "artifactManifestSha256", "buildContractSha256", "entrypointSha256"):
+        require_hex(identity[key], 64, key)
+    if (
+        package["artifactRoot"] != ARTIFACT_ROOT_PATH.as_posix()
+        or package["report"] != {"path": PACKAGE_REPORT_PATH.as_posix(), "sha256": identity["packageReportSha256"]}
+        or identity["targetTriple"] != TARGET_TRIPLE
+        or identity["componentVersion"] != "0.1.0"
+        or identity["buildContractSha256"] != hashlib.sha256(captured[CONTRACT_PATH]).hexdigest()
+        or any(type(identity[key]) is not int or identity[key] <= 0 for key in ("fileCount", "totalBytes"))
+    ):
+        raise ValueError("Current package artifact/build contract identity is invalid")
+    return {
+        "evidence": evidence,
+        "trackedInputs": captured,
+        "references": {
+            "buildCandidateCommit": candidate,
+            "evidence": {
+                "path": evidence_path.as_posix(),
+                "sha256": evidence_hash,
+                "introducedCommit": introductions[0],
+            },
+            "review": {
+                "path": review_path.as_posix(),
+                "sha256": hashlib.sha256(review_bytes).hexdigest(),
+                "introducedCommit": introductions[1],
+            },
+        },
+    }
+
+
 def qualification_paths() -> tuple[Path, ...]:
     return (
         TOOL_PATH,
@@ -423,7 +704,19 @@ def assert_qualification_inputs(repo: Path, snapshot: dict[str, Any]) -> None:
     baseline, baseline_hash = load_baseline(repo)
     if baseline != snapshot["baseline"] or baseline_hash != snapshot["baselineSha256"]:
         raise ValueError("Core performance baseline changed during qualification")
+    current_package = snapshot.get("currentPackage")
+    if current_package is not None:
+        references = current_package["references"]
+        if (
+            load_current_package_approval(
+                repo, Path(references["evidence"]["path"]), Path(references["review"]["path"]), baseline_hash
+            )
+            != current_package
+        ):
+            raise ValueError("Current package approval changed during qualification")
     artifact_root, manifest, identity, report_payload = load_verified_package(repo)
+    if current_package is not None:
+        assert_current_package_identity(identity, current_package)
     if (
         artifact_root != snapshot["artifactRoot"]
         or manifest != snapshot["manifest"]
@@ -437,7 +730,9 @@ def assert_qualification_inputs(repo: Path, snapshot: dict[str, Any]) -> None:
 
 
 @contextmanager
-def qualification_snapshot(repo: Path) -> Iterator[dict[str, Any]]:
+def qualification_snapshot(
+    repo: Path, current_package_evidence: Path | None = None, current_package_review: Path | None = None
+) -> Iterator[dict[str, Any]]:
     """Hold every qualification authority through the final PASS replacement."""
     canonical_tool = (repo / TOOL_PATH).resolve(strict=True)
     if Path(__file__).resolve(strict=True) != canonical_tool:
@@ -445,15 +740,40 @@ def qualification_snapshot(repo: Path) -> Iterator[dict[str, Any]]:
 
     # The first read discovers the exact package inventory. Everything is then
     # locked and reread before it becomes qualification authority.
-    initial_root, initial_manifest, _initial_identity, _initial_report = load_verified_package(repo)
+    _initial_baseline, initial_hash = load_baseline(repo)
+    initial_approval = None
+    if (current_package_evidence is None) != (current_package_review is None):
+        raise ValueError("Current package evidence and review must be supplied together")
+    if current_package_evidence is not None and current_package_review is not None:
+        initial_approval = load_current_package_approval(
+            repo, current_package_evidence, current_package_review, initial_hash
+        )
+    initial_root, initial_manifest, initial_identity, _initial_report = load_verified_package(repo)
+    if initial_approval is not None:
+        assert_current_package_identity(initial_identity, initial_approval)
     artifact_files = [initial_root / str(item["path"]) for item in initial_manifest["files"]]
     governed_files = [repo / path for path in (*qualification_paths(), PACKAGE_REPORT_PATH)]
+    if initial_approval is not None:
+        governed_files.extend(
+            repo / path for path in initial_approval["trackedInputs"] if repo / path not in governed_files
+        )
     with windows_path_locks([*governed_files, *artifact_files], directories=False):
         baseline, baseline_hash = load_baseline(repo)
+        current_package = None
+        if current_package_evidence is not None and current_package_review is not None:
+            current_package = load_current_package_approval(
+                repo, current_package_evidence, current_package_review, baseline_hash
+            )
+            if current_package != initial_approval:
+                raise ValueError("Current package approval changed before qualification locking")
         artifact_root, manifest, identity, report_payload = load_verified_package(repo)
         if artifact_root != initial_root:
             raise ValueError("Core package root changed before qualification locking")
-        commit, tool_hash = clean_measurement_state(repo, baseline)
+        if current_package is None:
+            commit, tool_hash = clean_measurement_state(repo, baseline)
+        else:
+            assert_current_package_identity(identity, current_package)
+            commit, tool_hash = current_measurement_state(repo)
         captured = {path: exact_file(repo, path).read_bytes() for path in qualification_paths()}
         for path, payload in captured.items():
             if git_blob(repo, commit, path) != payload:
@@ -471,6 +791,7 @@ def qualification_snapshot(repo: Path) -> Iterator[dict[str, Any]]:
             "manifest": manifest,
             "identity": identity,
             "packageReportBytes": report_payload,
+            "currentPackage": current_package,
         }
         try:
             assert_qualification_inputs(repo, snapshot)
@@ -946,10 +1267,14 @@ def measured_report(
         manifest = qualification["manifest"]
         identity = qualification["identity"]
         report_payload = qualification["packageReportBytes"]
+    current_package = qualification.get("currentPackage") if qualification is not None else None
     if approved_baseline is None:
         measurement_commit, measurement_tool_hash = current_measurement_state(repo)
     elif qualification is not None:
-        assert_approved_package_identity(identity, approved_baseline)
+        if current_package is None:
+            assert_approved_package_identity(identity, approved_baseline)
+        else:
+            assert_current_package_identity(identity, current_package)
         measurement_commit = str(qualification["stateCommit"])
         measurement_tool_hash = str(qualification["toolSha256"])
     else:
@@ -981,7 +1306,7 @@ def measured_report(
             raise ValueError("Core performance measurement Git state changed during execution")
     else:
         assert_qualification_inputs(repo, qualification)
-    return {
+    report = {
         "schemaVersion": "1.0",
         "documentType": "core-sidecar-performance-report",
         "profile": "windows-x64",
@@ -1006,14 +1331,23 @@ def measured_report(
         "methodology": expected_methodology(),
         "rawMeasurements": raw,
     }
+    if current_package is not None:
+        report["provenance"] = current_package_provenance(current_package, measurement_commit)
+        report["currentPackageApproval"] = current_package["references"]
+    return report
 
 
 def evaluate(
-    report: dict[str, Any], baseline: dict[str, Any], baseline_hash: str, measurement_state_commit: str
+    report: dict[str, Any],
+    baseline: dict[str, Any],
+    baseline_hash: str,
+    measurement_state_commit: str,
+    current_package: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if report.get("hardware") != baseline["hardware"]:
         raise ValueError("Core benchmark hardware differs from the approved baseline hardware")
-    if report.get("fixture") != baseline["fixture"]:
+    expected_fixture = baseline["fixture"] if current_package is None else current_package_fixture(current_package)
+    if report.get("fixture") != expected_fixture:
         raise ValueError("Core benchmark package fixture differs from the approved baseline")
     provenance = report.get("provenance")
     if not isinstance(provenance, dict) or set(provenance) != {
@@ -1028,6 +1362,27 @@ def evaluate(
         raise ValueError("Core benchmark provenance shape is invalid")
     if provenance.get("measurementStateCommit") != measurement_state_commit:
         raise ValueError("Core benchmark measurement state does not match the qualifying Git HEAD")
+    expected_provenance = (
+        baseline["provenance"]
+        if current_package is None
+        else current_package_provenance(current_package, measurement_state_commit)
+    )
+    if current_package is not None:
+        if (
+            report.get("currentPackageApproval") != current_package["references"]
+            or report.get("methodology") != expected_methodology()
+            or current_package["evidence"]["baseline"] != {"path": BASELINE_PATH.as_posix(), "sha256": baseline_hash}
+        ):
+            raise ValueError("Core benchmark current approval or methodology differs")
+        raw = report.get("rawMeasurements")
+        if not isinstance(raw, dict) or set(raw) != {"readinessMs", "shutdownMs", "idleWorkingSetBytes"}:
+            raise ValueError("Core benchmark raw measurement inventory is invalid")
+        for item in raw.values():
+            if not isinstance(item, dict) or not isinstance(item.get("samples"), list):
+                raise ValueError("Core benchmark must retain every measured sample")
+            samples = item["samples"]
+            if any(type(sample) not in {int, float} for sample in samples) or item != distribution(samples):
+                raise ValueError("Core benchmark raw samples and aggregates differ")
     for field in (
         "measurementToolPath",
         "measurementToolSha256",
@@ -1036,7 +1391,7 @@ def evaluate(
         "packageReportSha256",
         "artifactManifestSha256",
     ):
-        if provenance.get(field) != baseline["provenance"][field]:
+        if provenance.get(field) != expected_provenance[field]:
             raise ValueError(f"Core benchmark {field} differs from the approved baseline")
     rules = {
         "readinessMs": ("p50", "baselineP50"),
@@ -1085,10 +1440,21 @@ def nonqualifying_report(
 
 
 def run(
-    repo: Path, destination: Path, *, measure_only: bool = False, proposal: bool = False
+    repo: Path,
+    destination: Path,
+    *,
+    measure_only: bool = False,
+    proposal: bool = False,
+    current_package_evidence: Path | None = None,
+    current_package_review: Path | None = None,
 ) -> tuple[dict[str, Any], int]:
     if measure_only and proposal:
         raise ValueError("--measure-only and --proposal are mutually exclusive")
+    has_current = current_package_evidence is not None or current_package_review is not None
+    if has_current and (current_package_evidence is None or current_package_review is None or measure_only or proposal):
+        report = nonqualifying_report("Paired current package approval references require qualifying mode")
+        guarded_atomic_write_json(repo, destination, report, repo / "artifacts" / "tmp")
+        return report, 1
     if measure_only:
         report = nonqualifying_report(
             "--measure-only cannot produce qualification evidence; use the reviewed baseline gate",
@@ -1124,12 +1490,12 @@ def run(
     )
     guarded_atomic_write_json(repo, destination, tombstone, repo / "artifacts" / "tmp")
     try:
-        with qualification_snapshot(repo) as qualification:
+        with qualification_snapshot(repo, current_package_evidence, current_package_review) as qualification:
             baseline = qualification["baseline"]
             baseline_hash = str(qualification["baselineSha256"])
             state_commit = str(qualification["stateCommit"])
             measured = measured_report(repo, REPETITIONS, baseline, qualification)
-            report = evaluate(measured, baseline, baseline_hash, state_commit)
+            report = evaluate(measured, baseline, baseline_hash, state_commit, qualification.get("currentPackage"))
             if report.get("ok") is True:
                 guarded_final_publication(
                     repo,
@@ -1155,6 +1521,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path("."))
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--current-package-evidence", type=Path)
+    parser.add_argument("--current-package-review", type=Path)
     modes = parser.add_mutually_exclusive_group()
     modes.add_argument("--measure-only", action="store_true")
     modes.add_argument("--proposal", action="store_true")
@@ -1163,7 +1531,14 @@ def main() -> int:
     try:
         repo = args.repo.resolve(strict=True)
         destination = safe_output_path(repo, args.report)
-        report, return_code = run(repo, destination, measure_only=args.measure_only, proposal=args.proposal)
+        report, return_code = run(
+            repo,
+            destination,
+            measure_only=args.measure_only,
+            proposal=args.proposal,
+            current_package_evidence=args.current_package_evidence,
+            current_package_review=args.current_package_review,
+        )
     except (OSError, UnicodeError, ValueError, RuntimeError, json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
         report = nonqualifying_report(str(exc), measurement_only=args.measure_only)
         return_code = 1

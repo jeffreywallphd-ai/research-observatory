@@ -182,6 +182,7 @@
     "tests/desktop/test_desktop_app_check.py",
     "tests/desktop/test_desktop_performance_check.py",
     "tests/desktop/test_core_sidecar_performance_check.py",
+    "tests/desktop/test_supervision_fixture_contract.py",
     "tests/contracts/test_foundation_contracts.py",
     "tests/contracts/test_credential_store_contract.py",
     "tests/contracts/test_object_store_contract.py",

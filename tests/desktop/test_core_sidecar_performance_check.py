@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import math
+import subprocess
 import sys
 import tempfile
 import threading
@@ -62,6 +64,363 @@ def sample_baseline() -> dict[str, Any]:
             },
         },
     }
+
+
+class CurrentPackageApprovalTests(unittest.TestCase):
+    """Temporary Git authority fixtures only; never launch the packaged Core."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory(dir=ROOT / "artifacts" / "tmp")
+        self.addCleanup(self.temporary.cleanup)
+        self.repo = Path(self.temporary.name).resolve()
+        self.evidence_path = Path("artifacts/evidence/current-package.json")
+        self.review_path = Path("artifacts/evidence/current-package.review.json")
+        self.git("init", "-q")
+        self.git("config", "user.name", "Fixture producer")
+        self.git("config", "user.email", "fixture@example.invalid")
+        self.git("config", "core.autocrlf", "false")
+        for path in (
+            benchmark.TOOL_PATH,
+            benchmark.CONTRACT_PATH,
+            benchmark.SCHEMA_PATH,
+            Path("tools/core_sidecar_build.py"),
+            Path("tools/build_manifest.py"),
+            Path("services/core-api/sidecar_entry.py"),
+            Path("services/core-api/src/fixture.py"),
+            Path("pyproject.toml"),
+            Path("uv.lock"),
+            Path(".gitattributes"),
+        ):
+            self.write(path, b"{}\n" if path.suffix == ".json" else b"# fixture input\n")
+        self.candidate = self.commit()
+        self.baseline = sample_baseline()
+        self.baseline_hash = "9" * 64
+        identity = {
+            **self.baseline["fixture"],
+            "entrypointSha256": "0" * 64,
+            "packageReportSha256": "1" * 64,
+            "artifactManifestSha256": "2" * 64,
+            "buildContractSha256": benchmark.sha256(self.repo / benchmark.CONTRACT_PATH),
+        }
+        rows = [
+            {
+                "path": path.as_posix(),
+                "sha256": benchmark.sha256(self.repo / path),
+                "gitBlobSha256": hashlib.sha256(benchmark.git_blob(self.repo, self.candidate, path)).hexdigest(),
+            }
+            for path in benchmark.current_package_input_paths(self.repo, self.candidate)
+        ]
+        self.evidence: dict[str, Any] = {
+            "schemaVersion": "1.0",
+            "documentType": "core-sidecar-current-package-evidence",
+            "producer": "fixture-producer",
+            "buildCandidateCommit": self.candidate,
+            "profile": "windows-x64",
+            "baseline": {"path": benchmark.BASELINE_PATH.as_posix(), "sha256": self.baseline_hash},
+            "methodology": benchmark.expected_methodology(),
+            "measurementTool": next(row for row in rows if row["path"] == benchmark.TOOL_PATH.as_posix()),
+            "package": {
+                "artifactRoot": benchmark.ARTIFACT_ROOT_PATH.as_posix(),
+                "report": {"path": benchmark.PACKAGE_REPORT_PATH.as_posix(), "sha256": identity["packageReportSha256"]},
+                "identity": identity,
+            },
+            "committedInputs": rows,
+        }
+        self.review: dict[str, Any] = {
+            "schemaVersion": "1.0",
+            "documentType": "core-sidecar-current-package-review",
+            "reviewer": "fixture-independent-reviewer",
+            "candidateCommit": self.candidate,
+            "disposition": "APPROVED",
+            "evidence": {"path": self.evidence_path.as_posix(), "sha256": "pending"},
+            "blockingFindings": [],
+        }
+
+    def git(self, *args: str) -> str:
+        return (
+            subprocess.run(["git", *args], cwd=self.repo, capture_output=True, check=True, timeout=30)
+            .stdout.decode("utf-8")
+            .strip()
+        )
+
+    def write(self, path: Path, payload: bytes) -> None:
+        destination = self.repo / path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(payload)
+
+    def commit(self) -> str:
+        self.git("add", ".")
+        self.git("commit", "-qm", "Synthetic test authority")
+        return self.git("rev-parse", "HEAD")
+
+    def publish(self) -> None:
+        self.write(self.evidence_path, (json.dumps(self.evidence, indent=2) + "\n").encode())
+        self.commit()
+        self.review["evidence"]["sha256"] = benchmark.sha256(self.repo / self.evidence_path)
+        self.write(self.review_path, (json.dumps(self.review, indent=2) + "\n").encode())
+        self.commit()
+
+    def admit(self) -> dict[str, Any]:
+        return benchmark.load_current_package_approval(
+            self.repo, self.evidence_path, self.review_path, self.baseline_hash
+        )
+
+    def test_current_candidate_and_metadata_descendant_are_admitted_without_old_identity_substitution(self) -> None:
+        self.publish()
+        self.write(Path("planning/status-summary.md"), b"fixture metadata\n")
+        self.commit()
+        admitted = self.admit()
+        self.assertEqual(self.candidate, admitted["evidence"]["buildCandidateCommit"])
+        self.assertNotEqual(self.baseline["fixture"], benchmark.current_package_fixture(admitted))
+        report = {
+            "hardware": self.baseline["hardware"],
+            "fixture": benchmark.current_package_fixture(admitted),
+            "provenance": benchmark.current_package_provenance(admitted, self.git("rev-parse", "HEAD")),
+            "currentPackageApproval": admitted["references"],
+            "methodology": benchmark.expected_methodology(),
+            "rawMeasurements": self.baseline["rawMeasurements"],
+        }
+        evaluated = benchmark.evaluate(
+            report, self.baseline, self.baseline_hash, self.git("rev-parse", "HEAD"), admitted
+        )
+        self.assertTrue(evaluated["ok"])
+        self.assertEqual(self.baseline["rawMeasurements"], evaluated["rawMeasurements"])
+        with self.assertRaises(ValueError):
+            benchmark.evaluate(report, self.baseline, self.baseline_hash, self.git("rev-parse", "HEAD"))
+        for field in self.evidence["package"]["identity"]:
+            with self.subTest(field=field):
+                identity = copy.deepcopy(self.evidence["package"]["identity"])
+                identity[field] = "substitute"
+                with self.assertRaises(ValueError):
+                    benchmark.assert_current_package_identity(identity, admitted)
+        for section, field in (
+            ("hardware", "processor"),
+            ("fixture", "entrypointSha256"),
+            ("methodology", "repetitions"),
+        ):
+            invalid = copy.deepcopy(report)
+            invalid[section][field] = "substitute"
+            with self.assertRaises(ValueError):
+                benchmark.evaluate(invalid, self.baseline, self.baseline_hash, self.git("rev-parse", "HEAD"), admitted)
+        invalid = copy.deepcopy(report)
+        invalid["rawMeasurements"]["readinessMs"]["p50"] = 1
+        with self.assertRaises(ValueError):
+            benchmark.evaluate(invalid, self.baseline, self.baseline_hash, self.git("rev-parse", "HEAD"), admitted)
+
+    def test_review_denials_precede_measurement(self) -> None:
+        for field, invalid in (
+            ("reviewer", "fixture-producer"),
+            ("disposition", "CHANGES_REQUIRED"),
+            ("candidateCommit", "0" * 40),
+            ("blockingFindings", ["open"]),
+        ):
+            with self.subTest(field=field):
+                self.review[field] = invalid
+                self.publish()
+                with self.assertRaises(ValueError):
+                    self.admit()
+                self.git("switch", "--detach", self.candidate)
+                self.review.update(
+                    reviewer="fixture-independent-reviewer",
+                    disposition="APPROVED",
+                    candidateCommit=self.candidate,
+                    blockingFindings=[],
+                )
+
+    def test_missing_extra_or_substituted_inventory_is_denied(self) -> None:
+        original = copy.deepcopy(self.evidence)
+        for mutation in ("omit", "extra", "raw", "blob", "tool", "baseline", "method"):
+            with self.subTest(mutation=mutation):
+                self.evidence = copy.deepcopy(original)
+                if mutation == "omit":
+                    self.evidence["committedInputs"].pop()
+                elif mutation == "extra":
+                    self.evidence["committedInputs"].append(self.evidence["committedInputs"][0])
+                elif mutation in {"raw", "blob"}:
+                    self.evidence["committedInputs"][0]["sha256" if mutation == "raw" else "gitBlobSha256"] = "0" * 64
+                elif mutation == "tool":
+                    self.evidence["measurementTool"]["sha256"] = "0" * 64
+                elif mutation == "baseline":
+                    self.evidence["baseline"]["sha256"] = "0" * 64
+                else:
+                    self.evidence["methodology"]["repetitions"] = 1
+                self.publish()
+                with self.assertRaises(ValueError):
+                    self.admit()
+                self.git("switch", "--detach", self.candidate)
+
+    def test_source_add_revert_and_record_rewrite_are_not_metadata_only(self) -> None:
+        self.publish()
+        approved = self.git("rev-parse", "HEAD")
+        path = Path("services/core-api/src/fixture.py")
+        self.write(path, b"# changed\n")
+        self.commit()
+        self.write(path, b"# fixture input\n")
+        self.commit()
+        with self.assertRaises(ValueError):
+            self.admit()
+        self.git("switch", "--detach", approved)
+        self.write(self.evidence_path, (self.repo / self.evidence_path).read_bytes() + b"\n")
+        self.commit()
+        with self.assertRaises(ValueError):
+            self.admit()
+
+    def test_uncommitted_dirty_wrong_digest_and_unsafe_references_are_denied(self) -> None:
+        self.publish()
+        approved = self.git("rev-parse", "HEAD")
+        for path in (self.evidence_path, self.review_path, benchmark.TOOL_PATH):
+            payload = (self.repo / path).read_bytes()
+            self.write(path, payload + b"\n")
+            with self.assertRaises(ValueError):
+                self.admit()
+            self.write(path, payload)
+        self.review["evidence"]["sha256"] = "0" * 64
+        self.write(self.review_path, (json.dumps(self.review) + "\n").encode())
+        self.commit()
+        with self.assertRaises(ValueError):
+            self.admit()
+        self.git("switch", "--detach", approved)
+        for unsafe in (
+            Path("../outside.json"),
+            Path("artifacts/tmp/not-authority.json"),
+            Path("artifacts/evidence/W1.A04.B00.json"),
+        ):
+            with self.assertRaises(ValueError):
+                benchmark.load_current_package_approval(self.repo, unsafe, self.review_path, self.baseline_hash)
+
+    def test_untracked_review_and_nonancestor_candidate_are_denied(self) -> None:
+        self.write(self.evidence_path, (json.dumps(self.evidence) + "\n").encode())
+        self.commit()
+        self.review["evidence"]["sha256"] = benchmark.sha256(self.repo / self.evidence_path)
+        self.write(self.review_path, (json.dumps(self.review) + "\n").encode())
+        with self.assertRaises(ValueError):
+            self.admit()
+        self.commit()
+        self.git("switch", "--detach", self.candidate)
+        self.evidence["buildCandidateCommit"] = "0" * 40
+        self.review["candidateCommit"] = "0" * 40
+        self.publish()
+        with self.assertRaises(ValueError):
+            self.admit()
+
+    def test_authority_is_recaptured_under_lock_and_again_before_publication(self) -> None:
+        self.publish()
+        admission = self.admit()
+        root = self.repo / benchmark.ARTIFACT_ROOT_PATH
+        root.mkdir(parents=True)
+        identity = self.evidence["package"]["identity"]
+        package: tuple[Path, dict[str, Any], dict[str, Any], bytes] = (root, {"files": []}, identity, b"fixture report")
+        changed = copy.deepcopy(admission)
+        changed["references"]["review"]["sha256"] = "0" * 64
+        with (
+            mock.patch.object(benchmark, "__file__", str(self.repo / benchmark.TOOL_PATH)),
+            mock.patch.object(benchmark, "load_baseline", return_value=(self.baseline, self.baseline_hash)),
+            mock.patch.object(benchmark, "load_verified_package", return_value=package),
+            mock.patch.object(benchmark, "load_current_package_approval", side_effect=[admission, changed]),
+            mock.patch.object(benchmark, "windows_path_locks", return_value=nullcontext()),
+            mock.patch.object(benchmark, "measure_once") as measurement,
+            self.assertRaisesRegex(ValueError, "before qualification locking"),
+            benchmark.qualification_snapshot(self.repo, self.evidence_path, self.review_path),
+        ):
+            self.fail("substituted approval cannot reach a measurement")
+        measurement.assert_not_called()
+        snapshot = {
+            "stateCommit": self.git("rev-parse", "HEAD"),
+            "toolSha256": benchmark.sha256(self.repo / benchmark.TOOL_PATH),
+            "trackedInputs": {},
+            "baseline": self.baseline,
+            "baselineSha256": self.baseline_hash,
+            "currentPackage": admission,
+        }
+        with (
+            mock.patch.object(benchmark, "load_baseline", return_value=(self.baseline, self.baseline_hash)),
+            mock.patch.object(benchmark, "load_current_package_approval", return_value=changed),
+            self.assertRaisesRegex(ValueError, "approval changed during qualification"),
+        ):
+            benchmark.assert_qualification_inputs(self.repo, snapshot)
+
+    def test_partial_or_nonqualifying_modes_invalidate_stale_pass_without_measurement(self) -> None:
+        destination = self.repo / "artifacts/tmp/result.json"
+        destination.parent.mkdir(parents=True)
+        for options in (
+            {"current_package_evidence": self.evidence_path},
+            {"current_package_review": self.review_path},
+            {
+                "current_package_evidence": self.evidence_path,
+                "current_package_review": self.review_path,
+                "proposal": True,
+            },
+            {
+                "current_package_evidence": self.evidence_path,
+                "current_package_review": self.review_path,
+                "measure_only": True,
+            },
+        ):
+            with self.subTest(options=options):
+                destination.write_text('{"ok":true}\n', encoding="utf-8")
+                with mock.patch.object(benchmark, "measured_report") as measurement:
+                    report, code = benchmark.run(self.repo, destination, **options)
+                measurement.assert_not_called()
+                self.assertEqual(1, code)
+                self.assertFalse(report["ok"])
+                self.assertFalse(json.loads(destination.read_bytes())["ok"])
+
+    def test_only_honest_text_checkout_representation_can_differ_from_git(self) -> None:
+        self.assertTrue(benchmark.committed_source_bytes_match(Path("input.py"), b"# text\r\n", b"# text\n"))
+        for path, raw in (("input.bin", b"# text\r\n"), ("input.py", b"# changed\r\n"), ("input.py", b"\xff\r\n")):
+            self.assertFalse(benchmark.committed_source_bytes_match(Path(path), raw, b"# text\n"))
+
+    def test_current_qualified_run_routes_through_locked_approval_and_final_guard(self) -> None:
+        self.publish()
+        admission = self.admit()
+        root = self.repo / benchmark.ARTIFACT_ROOT_PATH
+        root.mkdir(parents=True)
+        self.write(benchmark.PACKAGE_REPORT_PATH, b"fixture report")
+        destination = self.repo / "artifacts/tmp/result.json"
+        state = self.git("rev-parse", "HEAD")
+        measured = {
+            "hardware": self.baseline["hardware"],
+            "fixture": benchmark.current_package_fixture(admission),
+            "provenance": benchmark.current_package_provenance(admission, state),
+            "currentPackageApproval": admission["references"],
+            "methodology": benchmark.expected_methodology(),
+            "rawMeasurements": self.baseline["rawMeasurements"],
+        }
+        with (
+            mock.patch.object(benchmark, "__file__", str(self.repo / benchmark.TOOL_PATH)),
+            mock.patch.object(
+                benchmark,
+                "qualification_paths",
+                return_value=(benchmark.TOOL_PATH, benchmark.CONTRACT_PATH, benchmark.SCHEMA_PATH),
+            ),
+            mock.patch.object(benchmark, "load_baseline", return_value=(self.baseline, self.baseline_hash)),
+            mock.patch.object(
+                benchmark,
+                "load_verified_package",
+                return_value=(root, {"files": []}, self.evidence["package"]["identity"], b"fixture report"),
+            ),
+            mock.patch.object(benchmark, "load_build_contract", return_value={}),
+            mock.patch.object(benchmark, "assert_package_snapshot"),
+            mock.patch.object(benchmark, "immutable_package_snapshot", return_value=nullcontext()),
+            mock.patch.object(benchmark, "measured_report", return_value=measured) as measurement,
+            mock.patch.object(benchmark, "measure_once") as lifecycle,
+            mock.patch.object(
+                benchmark, "assert_qualification_inputs", wraps=benchmark.assert_qualification_inputs
+            ) as guard,
+        ):
+            report, code = benchmark.run(
+                self.repo,
+                destination,
+                current_package_evidence=self.evidence_path,
+                current_package_review=self.review_path,
+            )
+        self.assertEqual(0, code, report)
+        self.assertTrue(report["ok"])
+        self.assertEqual(2, guard.call_count)
+        measurement.assert_called_once()
+        lifecycle.assert_not_called()
+        self.assertEqual(admission, measurement.call_args.args[3]["currentPackage"])
+        self.assertEqual(admission["references"], json.loads(destination.read_bytes())["currentPackageApproval"])
 
 
 class CoreSidecarPerformanceContractTests(unittest.TestCase):
@@ -129,6 +488,21 @@ class CoreSidecarPerformanceContractTests(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "snapshot changed"):
                 benchmark.benchmark_snapshot(executable, benchmark.REPETITIONS, guard, measure)
+
+    def test_unchanged_method_has_one_warmup_seven_retained_samples(self) -> None:
+        calls = 0
+
+        def measure(_path: Path) -> tuple[float, float, float]:
+            nonlocal calls
+            calls += 1
+            return (float(calls), float(calls), float(calls))
+
+        raw = benchmark.benchmark_snapshot(
+            Path("synthetic-not-executed.exe"), benchmark.REPETITIONS, lambda: None, measure
+        )
+        self.assertEqual(8, calls)
+        for item in raw.values():
+            self.assertEqual([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], item["samples"])
 
     def test_handshake_requires_the_complete_supervisor_contract(self) -> None:
         value = {
