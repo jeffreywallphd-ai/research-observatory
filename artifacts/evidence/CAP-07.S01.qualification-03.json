@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "slice-verification-method-disposition",
+  "sliceId": "CAP-07.S01",
+  "candidateCommit": "78e1b49fa51795ce71cc04c412d435065a62d041",
+  "status": "NO_ADDITIONAL_GLOBAL_DISPLAY_PERMISSION_REQUIRED",
+  "supersedesRequiredProofInterpretation": {
+    "path": "artifacts/evidence/CAP-07.S01.qualification-02.json",
+    "sha256": "48eef06535d24ea8ee78ac72d6b03b584929a3789f640c9542f6f185342c3e60",
+    "fields": [
+      "status",
+      "native.enlargement.status",
+      "native.enlargement.required",
+      "pending[0]"
+    ],
+    "reason": "The prior partial publication and temporary campaign hold overinterpreted the absence of an actual global Display Scale exercise as an unmet mandatory method. Preserve that record and interim observation; this disposition corrects the interpretation, not any executed result."
+  },
+  "authority": [
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+      "section": "6 and 10; zoom/reflow and accessibility outcomes, no prescribed global OS-setting operation"
+    },
+    {
+      "path": "verification/extensions/desktop-ui.json",
+      "section": "visual.responsiveViewports",
+      "method": "Approved 720x450 windows-200-percent-effective viewport, alongside 1280x720 and1440x900; deviceScaleFactor1"
+    },
+    {
+      "path": "verification/baselines/desktop-ui.json",
+      "section": "settings; same approved responsive method"
+    },
+    {
+      "path": "docs/automation/workflow-efficiency.md",
+      "section": "Freeze acceptance, not learning; Review each boundary once; Fast checks first"
+    }
+  ],
+  "disposition": "Fresh actual-product viewport,320CSS reflow and200%CSS-layout interaction tests plus actual native keyboard/UIA/theme/720-wide observations address the CAP-07.S01 presentation boundary. Existing Windows Display Scale through retained Tao/Wry per-monitor DPI/WebView2 support provides a supported enlargement mechanism. No DPI/zoom adapter changed and no scaling failure was demonstrated. An additional global OS-setting test is not required to close this slice criterion.",
+  "independentMethodAssessment": {
+    "reviewer": "agent:/root/cap07_slice_review",
+    "scope": "Read-only criterion-method triage of the frozen slice authority, approved activation/baseline and fresh combined/native evidence. Reviewer explicitly corrected the earlier stronger inference: missing native physical200 observation alone does not block closure.",
+    "nativeImplementationAssessment": "agent:/root/quality_control_review traced pinned Tao0.35.3 DPI-awareness defaults, runtime-wry2.11.4 and Wry0.55.1 monitor-rasterization behavior to the documented Windows Display Scale mechanism. No settings or source changes were made."
+  },
+  "preservedLimits": [
+    "No actual native physical200%PASS, screen-reader speech or blanket WCAG certification is claimed.",
+    "CSSzoom2 and effective viewports remain honestly labelled stimulus tests. Original native startup FAIL, recovered source-built lifecycle, raw reports, observations, all prior findings and benchmark failures remain unchanged.",
+    "The optional Windows Display Scale request is no longer a prerequisite; do not change desktop settings on account of this request.",
+    "This method disposition is not complete slice/Wave/release approval. Complete the handoff/evidence index, independent slice disposition, fresh full W1 qualification and separate human G1."
+  ],
+  "resume": "Resume the same W1 campaign after recording the temporary hold and this independent method disposition. No new product amendment, refactoring allocation or human design approval is needed."
+}

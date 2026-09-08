@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-slice-qualification-publication-review",
+  "reviewId": "CAP-07.S01.qualification-02.review-R01",
+  "sliceId": "CAP-07.S01",
+  "candidateCommit": "78e1b49fa51795ce71cc04c412d435065a62d041",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "disposition": "approved-bounded-publication-only",
+  "sliceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "publications": [
+    {
+      "path": "artifacts/evidence/CAP-07.S01.qualification-02.json",
+      "sha256": "48eef06535d24ea8ee78ac72d6b03b584929a3789f640c9542f6f185342c3e60"
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.qualification-03.json",
+      "sha256": "a814b401a70f4fc3be985f3eaf577ad8f2718d9b725f95765e4f3bc1faae77a4"
+    }
+  ],
+  "scope": "Independent authentication of the two publications together, the already reviewed fresh combined/renderer executions and the completed native retry. No product edits, test/build reruns, native interaction, fixture inspection, campaign mutation or complete slice disposition was performed by this reviewer.",
+  "freshChecks": {
+    "combined": {
+      "report": {
+        "path": "artifacts/tmp/CAP-07.S01.combined-01.json",
+        "sha256": "45799c6b844e49b9f2dd339a7e28a9dc4c79743fa28e4ec36626c612abaf7a86"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-07.S01.combined-01.py",
+        "sha256": "1109ba467af5e7ce1f001e7bac88979e618639b3b27f35130b10e25542dd4ae6"
+      },
+      "passingGroups": 10,
+      "authenticatedDeclaredSourceInputs": 555
+    },
+    "renderer": {
+      "report": {
+        "path": "artifacts/tmp/CAP-07.S01.renderer-01.json",
+        "sha256": "deb8fc5168f7211f71ebfdce4baf49891de2ed5250f78315de3ac86e130b8cf2"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-07.S01.renderer-01.py",
+        "sha256": "f78cef892a280db27a728e330b011b62a7241df02baa9a1975dffb41a6b95b5a"
+      },
+      "passingGroups": 5,
+      "authenticatedDeclaredSourceInputs": 720,
+      "authenticatedGeneratedProductFiles": 5
+    },
+    "authentication": "The earlier bounded authentication checked both producers, the functional/layout helpers and all fifteen exact log digests and byte lengths. Publication review independently compared all fifteen sourceCheckIndex mappings and every remaining raw check field: no mismatch. The original informal desktop labels remain disclosed; their canonical mapping does not claim full execution of a broader profile command. Raw reports and outcomes remain unchanged."
+  },
+  "native": {
+    "build": {
+      "report": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-01.build.json",
+        "sha256": "dbe43f1bcacd63934681490296e476e0885ed3d5c846a2665edf317129622b8a"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-01.py",
+        "sha256": "9a0e118929fd0583aeb9be5a28cf113d3172a89a0d8374ea193cb815d2597617"
+      },
+      "frontendLog": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-01.build.log",
+        "sha256": "07b43df34da77995f0f696a1170acb695a1778ce2ced15a93b14b1d2f9a90b16"
+      },
+      "nativeBuildLog": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-01.build-native.log",
+        "sha256": "8f86d663065f74f346b7cea09d6d54820f10a4762082e582d334a151324dad8b"
+      },
+      "executable": {
+        "path": "target/debug/examples/project_contract_probe.exe",
+        "sha256": "b82b953192276f73168f8945f5bd3f21627ba7d5f14bbf1aa6801b5033a843ed"
+      }
+    },
+    "lifecycle": {
+      "report": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-02.lifecycle-resume.json",
+        "sha256": "459c66230de36ad55b4020ed4c54a0622d2995797085ca2b7ecf3c94a55dfe9e"
+      },
+      "producer": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-02.py",
+        "sha256": "e10a8a91aeefd16438b32d68d42ee5d37f7e9e73e1368c8a0eee110ec998dc35"
+      },
+      "log": {
+        "path": "artifacts/tmp/CAP-07.S01.accessibility-02.lifecycle-resume.log",
+        "sha256": "adad56aa9b00dae71ac8d23b153c90297c47dd137fdd9251d291d7de90551c81"
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "durationSeconds": 611.4257666999474,
+      "durationMeaning": "Includes operator interaction; not a performance measurement."
+    },
+    "observation": {
+      "path": "artifacts/tmp/CAP-07.S01.accessibility-observations-01.json",
+      "sha256": "6f18c91a6f263b3f7ed9b2ea077325dee677c36ec3038d3bd57800666f194e0e"
+    },
+    "authentication": "Independently matched the reports, both producer hashes, executable and exact logs, all 664 declared inputs in each native/build report and 164 frontend/build input hashes. No mismatch. Cargo output records a freshly compiled probe and successful build. The lifecycle log records fixture resume, Core readiness, actual directory selection and clean exit with admission closed and no pending operation. Selected source identity remained the stated candidate.",
+    "observationBoundary": "Sanitized UI claims match the main agent's recorded actual interaction and interim observation; the separate closure records Alt+F4, disappearance and successful helper completion. UIA names/roles/status, visible keyboard focus, historical catalog inspection and both-theme compact layout are operator observations, not conclusions inferred from exit0. The interim record remains unchanged and is not itself retroactively marked complete."
+  },
+  "methodDisposition": {
+    "authority": [
+      "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md sections 6 and 10",
+      "verification/extensions/desktop-ui.json visual.responsiveViewports",
+      "verification/baselines/desktop-ui.json settings",
+      "docs/automation/workflow-efficiency.md Freeze acceptance, not learning; Review each boundary once; Fast checks first"
+    ],
+    "decision": "Approve qualification-03's explicit correction of the earlier required-global-scaling inference. The frozen slice requires zoom/reflow outcomes, not an OS-setting operation. The approved method includes 720x450 windows-200-percent-effective at deviceScaleFactor1. Fresh real-renderer effective-viewport, 320-CSS reflow and CSS-zoom-2 interaction evidence, together with actual native keyboard/UIA/theme/compact-layout observations and the separately attributed existing Tao/Wry DPI-support assessment, adequately address this slice presentation boundary. No changed DPI adapter or demonstrated scaling failure establishes a need for an additional global-setting test.",
+    "preservation": "Qualification-02 and the raw interim observation retain the prior overstrong interpretation. Qualification-03 supersedes only its identified mandatory-method/pending statements; no test result is changed. No global display permission or new approval gate is required on that basis.",
+    "limit": "No physical native200% observation, screen-reader speech or blanket WCAG certification is asserted. Injected CSS zoom remains a layout stimulus, not a newly supplied user control."
+  },
+  "adverseAndPriorLineage": {
+    "nativeStartupFailure": {
+      "path": "artifacts/tmp/CAP-07.S01.accessibility-01.lifecycle-resume.json",
+      "sha256": "349dd7b46a028d8193ec07c5d8471ddede39bd122efd1d67cf39af33429f50aa"
+    },
+    "startupDisposition": "FAIL is preserved, including helper exit1, native exit4294967295 and empty startup output. The changed-boundary retry succeeded; it does not prove the exact startup cause or erase the failure.",
+    "supportingReturnCorrection": {
+      "path": "artifacts/evidence/W1.C03.T01.review-R01.json",
+      "sha256": "d2e337909a3b21bd96c0b8fc7144d977a68e2f5be318aa76b63d20c8aa388880"
+    },
+    "performance": "All prior adverse benchmark attempts remain adverse, including 134.0222000144422 ms. The historical 25.383200030773878 ms owner acceptance remains CAP-07.S01.T03-only. The separately reviewed prospective baseline and prior qualification reviews are unchanged; this publication executes no new benchmark and supplies no performance waiver."
+  },
+  "findings": [],
+  "limits": [
+    "Approve these exact publications together only. Complete slice handoff/evidence-index assessment and independent slice disposition remain separate; this review is not an additional approval stage.",
+    "Fresh full W1 affected/repository/profile qualification, independent Wave review and the separate human G1 decision remain required.",
+    "No live provider, model execution, ordinary user project/vault/policy, authentication, installed dependency closure, evidence-cache reuse or production packaging proof is supplied by these fixture observations.",
+    "Protected witness content and excluded sibling contents were not accessed. Only named evidence/source inputs were read; no broad temporary-artifact scan or fixture-content inspection was performed. Raw machine-local metadata remains ignored."
+  ]
+}

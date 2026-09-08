@@ -1,0 +1,357 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-slice-qualification-progress",
+  "sliceId": "CAP-07.S01",
+  "candidateCommit": "78e1b49fa51795ce71cc04c412d435065a62d041",
+  "status": "PARTIAL_NATIVE_ENLARGEMENT_PENDING",
+  "sliceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "purpose": "Preserve fresh combined, renderer/reference and bounded native qualification at the committed candidate. This partial record does not submit or approve the slice and does not replace prior findings, reviews or baseline.",
+  "verificationSelection": {
+    "stage": "slice",
+    "selectedCommandIds": [
+      "ai:unit",
+      "contracts:unit",
+      "service:unit",
+      "data:unit",
+      "foundation:architecture",
+      "desktop:unit",
+      "desktop:ui-accessibility",
+      "desktop:ui-visual-regression"
+    ],
+    "rationale": "Clean-state combined model contracts/registry/routing/protected persistence/Core boundary/migration and architecture checks, plus actual assembled Model Center and governed reference checks. Full W1 union remains after all slice approvals.",
+    "freshGroups": 15
+  },
+  "freshExecutions": [
+    {
+      "path": "artifacts/tmp/CAP-07.S01.combined-01.json",
+      "sha256": "45799c6b844e49b9f2dd339a7e28a9dc4c79743fa28e4ec36626c612abaf7a86",
+      "producerSha256": "1109ba467af5e7ce1f001e7bac88979e618639b3b27f35130b10e25542dd4ae6",
+      "status": "PASS",
+      "durationSeconds": 27.009133900050074,
+      "checks": [
+        {
+          "sourceCheckIndex": 0,
+          "originalCommandId": "ai:unit",
+          "canonicalCommandId": "ai:unit",
+          "command": "python -m unittest -v tests.ai.test_model_gateway_contracts tests.ai.test_model_registry tests.ai.test_model_routing",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-01.log",
+          "provenance": "fresh",
+          "durationSeconds": 2.6638638000003994,
+          "logCreatedByAttempt": true,
+          "outputSha256": "508c6160e35707cd89b65da58798f083e368dcb0733ab20b3e7192778c3180d5",
+          "outputBytes": 11498
+        },
+        {
+          "sourceCheckIndex": 1,
+          "originalCommandId": "contracts:unit",
+          "canonicalCommandId": "contracts:unit",
+          "command": "python -m unittest -v tests.contracts.test_model_registry_contracts tests.contracts.test_model_routing_contracts",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-02.log",
+          "provenance": "fresh",
+          "durationSeconds": 1.748542900197208,
+          "logCreatedByAttempt": true,
+          "outputSha256": "5cce6bb00f53ab6e9b3d368d913f89068b67e35317a787969f12a5908584bbe5",
+          "outputBytes": 3869
+        },
+        {
+          "sourceCheckIndex": 2,
+          "originalCommandId": "service:unit",
+          "canonicalCommandId": "service:unit",
+          "command": "python -m unittest -v tests.service.test_model_registry_repository tests.service.test_model_registry_service tests.service.test_model_gateway_service tests.service.test_model_routing_repository",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-03.log",
+          "provenance": "fresh",
+          "durationSeconds": 7.083351999986917,
+          "logCreatedByAttempt": true,
+          "outputSha256": "5c975da5c8b8a55cbaffcd1c4c723101ffe51e3cdfd6e07a396d1d222bad70a2",
+          "outputBytes": 10181
+        },
+        {
+          "sourceCheckIndex": 3,
+          "originalCommandId": "service:unit",
+          "canonicalCommandId": "service:unit",
+          "command": "python artifacts/tmp/W1.C02.T01.submission-producer-01.py --functional",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-04.log",
+          "provenance": "fresh",
+          "durationSeconds": 5.432425099890679,
+          "logCreatedByAttempt": true,
+          "outputSha256": "ceec3f6d1a26309b482951132dacaa31ee1e29c14394debe53992a921c98a07e",
+          "outputBytes": 10034
+        },
+        {
+          "sourceCheckIndex": 4,
+          "originalCommandId": "service:unit",
+          "canonicalCommandId": "service:unit",
+          "command": "python -m unittest -v tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current tests.service.test_core_api.CoreApiTests.test_local_transport_denies_missing_stale_remote_and_origin_requests",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-05.log",
+          "provenance": "fresh",
+          "durationSeconds": 3.6710486002266407,
+          "logCreatedByAttempt": true,
+          "outputSha256": "6f145b25b2e6a51a29d996b38633adce02f01482ab5cb05610e22a02ab5bdaf0",
+          "outputBytes": 1689
+        },
+        {
+          "sourceCheckIndex": 5,
+          "originalCommandId": "data:unit",
+          "canonicalCommandId": "data:unit",
+          "command": "python -m unittest -v tests.data.test_sqlite_migrations.SqliteMigrationTests.test_fresh_current_database_is_idempotent_without_migration_authority_leak tests.data.test_sqlite_migrations.SqliteMigrationTests.test_fresh_v6_history_remains_current_after_v10_upgrade_and_restart",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-06.log",
+          "provenance": "fresh",
+          "durationSeconds": 1.4136932999826968,
+          "logCreatedByAttempt": true,
+          "outputSha256": "5cde98bf65cc283db1ee2a0915f8bcdd5790a410078a75510e85b129f85465e2",
+          "outputBytes": 519
+        },
+        {
+          "sourceCheckIndex": 6,
+          "originalCommandId": "contracts:unit",
+          "canonicalCommandId": "contracts:unit",
+          "command": "python tools/core_api_contract.py --check",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-07.log",
+          "provenance": "fresh",
+          "durationSeconds": 1.1241390001960099,
+          "logCreatedByAttempt": true,
+          "outputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+          "outputBytes": 25
+        },
+        {
+          "sourceCheckIndex": 7,
+          "originalCommandId": "contracts:unit",
+          "canonicalCommandId": "contracts:unit",
+          "command": "node packages/contracts/model-gateway/generate.mjs --check",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-08.log",
+          "provenance": "fresh",
+          "durationSeconds": 0.052473099902272224,
+          "logCreatedByAttempt": true,
+          "outputSha256": "76cc067cb22fae45c1773e1092cb58cbe9e1efc36b65fa4d694695f7d6eef5a0",
+          "outputBytes": 30
+        },
+        {
+          "sourceCheckIndex": 8,
+          "originalCommandId": "contracts:unit",
+          "canonicalCommandId": "contracts:unit",
+          "command": "node node_modules/vitest/vitest.mjs run model-gateway/model-task.test.ts",
+          "cwd": "packages/contracts",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-09.log",
+          "provenance": "fresh",
+          "durationSeconds": 0.543987600132823,
+          "logCreatedByAttempt": true,
+          "outputSha256": "a925a6229e98cbafee9c064fe1fd1c36a99a7bfe40984c03fb6fd384ca6edb11",
+          "outputBytes": 236
+        },
+        {
+          "sourceCheckIndex": 9,
+          "originalCommandId": "foundation:architecture",
+          "canonicalCommandId": "foundation:architecture",
+          "command": "python tools/architecture_check.py --repo .",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.combined-01-10.log",
+          "provenance": "fresh",
+          "durationSeconds": 1.4519289997406304,
+          "logCreatedByAttempt": true,
+          "outputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+          "outputBytes": 100
+        }
+      ]
+    },
+    {
+      "path": "artifacts/tmp/CAP-07.S01.renderer-01.json",
+      "sha256": "deb8fc5168f7211f71ebfdce4baf49891de2ed5250f78315de3ac86e130b8cf2",
+      "producerSha256": "f78cef892a280db27a728e330b011b62a7241df02baa9a1975dffb41a6b95b5a",
+      "status": "PASS",
+      "durationSeconds": 215.77759520011023,
+      "checks": [
+        {
+          "sourceCheckIndex": 0,
+          "originalCommandId": "desktop:app",
+          "canonicalCommandId": "desktop:unit",
+          "command": "python -m unittest -v tests.desktop.test_model_center_interactions",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.renderer-01-01.log",
+          "provenance": "fresh",
+          "durationSeconds": 9.548484100028872,
+          "logCreatedByAttempt": true,
+          "outputSha256": "51ca70a25beed63c74bc1d76075ca2750029d1c20784901c871366e325a7dc00",
+          "outputBytes": 800
+        },
+        {
+          "sourceCheckIndex": 1,
+          "originalCommandId": "desktop:accessibility",
+          "canonicalCommandId": "desktop:ui-accessibility",
+          "command": "python artifacts/tmp/CAP-07.S01.reflow-01.py",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.renderer-01-02.log",
+          "provenance": "fresh",
+          "durationSeconds": 3.557068399619311,
+          "logCreatedByAttempt": true,
+          "outputSha256": "9f8034665806f28b827d41f6a002bbbf4c2f14ba8c202e9a4cd13d9e30cfef81",
+          "outputBytes": 563
+        },
+        {
+          "sourceCheckIndex": 2,
+          "originalCommandId": "desktop:accessibility",
+          "canonicalCommandId": "desktop:ui-accessibility",
+          "command": "python artifacts/tmp/CAP-07.S01.zoom-layout-01.py",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.renderer-01-03.log",
+          "provenance": "fresh",
+          "durationSeconds": 3.604073299560696,
+          "logCreatedByAttempt": true,
+          "outputSha256": "8cc359358178abafce5150437f8ae97759b12d837d40887272a509bb6000e51b",
+          "outputBytes": 636
+        },
+        {
+          "sourceCheckIndex": 3,
+          "originalCommandId": "desktop:visual",
+          "canonicalCommandId": "desktop:ui-visual-regression",
+          "command": "python tools/ui_conformance.py --repo . --check visual",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.renderer-01-04.log",
+          "provenance": "fresh",
+          "durationSeconds": 166.09595979982987,
+          "logCreatedByAttempt": true,
+          "outputSha256": "53ab0d0e3b62423a6977b78572912f8866b922e57c2dd651476ac448ba414b1c",
+          "outputBytes": 1852
+        },
+        {
+          "sourceCheckIndex": 4,
+          "originalCommandId": "desktop:accessibility",
+          "canonicalCommandId": "desktop:ui-accessibility",
+          "command": "python tools/ui_conformance.py --repo . --check accessibility",
+          "cwd": ".",
+          "exitCode": 0,
+          "status": "PASS",
+          "log": "artifacts/tmp/CAP-07.S01.renderer-01-05.log",
+          "provenance": "fresh",
+          "durationSeconds": 31.43959129974246,
+          "logCreatedByAttempt": true,
+          "outputSha256": "463580f5412bcf10fc28707a2b0501882dc244c0c4548bd37aec9effc10900b4",
+          "outputBytes": 1086
+        }
+      ]
+    }
+  ],
+  "labelCorrection": {
+    "method": "Append-only publication mapping of sourceCheckIndex and original label to canonical verification inventory ID. Raw reports, producer bytes, commands, test outcomes and output hashes are unchanged. This does not represent full execution of the broader canonical profile command.",
+    "independentAssessment": "agent:/root/cap07_slice_review authenticated both reports, all fifteen logs, producers, 555 combined and 720 renderer source inputs, five generated files and the layout drivers at this candidate; approved this metadata-only mapping without a rerun."
+  },
+  "native": {
+    "build": {
+      "path": "artifacts/tmp/CAP-07.S01.accessibility-01.build.json",
+      "sha256": "dbe43f1bcacd63934681490296e476e0885ed3d5c846a2665edf317129622b8a",
+      "producerSha256": "9a0e118929fd0583aeb9be5a28cf113d3172a89a0d8374ea193cb815d2597617",
+      "seconds": 13.847370299976319,
+      "status": "PASS"
+    },
+    "failedAttempt": {
+      "report": "artifacts/tmp/CAP-07.S01.accessibility-01.lifecycle-resume.json",
+      "sha256": "349dd7b46a028d8193ec07c5d8471ddede39bd122efd1d67cf39af33429f50aa",
+      "status": "FAIL",
+      "helperExitCode": 1,
+      "nativeExitCode": 4294967295,
+      "explanation": "Sandbox execution created a titled process but no discoverable window or startup log. Only that exact owned process was stopped after image/title verification. Fixture bytes were not repaired or deleted. Retry02 used the same build and fixture at a changed execution boundary and became visible; this bounds the recovery observation but does not establish the exact WebView/desktop cause."
+    },
+    "successfulLifecycle": {
+      "path": "artifacts/tmp/CAP-07.S01.accessibility-02.lifecycle-resume.json",
+      "sha256": "459c66230de36ad55b4020ed4c54a0622d2995797085ca2b7ecf3c94a55dfe9e",
+      "producerSha256": "e10a8a91aeefd16438b32d68d42ee5d37f7e9e73e1368c8a0eee110ec998dc35",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 611.4257666999474,
+      "log": "artifacts/tmp/CAP-07.S01.accessibility-02.lifecycle-resume.log",
+      "logSha256": "adad56aa9b00dae71ac8d23b153c90297c47dd137fdd9251d291d7de90551c81",
+      "limit": "Lifecycle/source identity and cleanup only; duration includes interaction and is not a performance measurement."
+    },
+    "observation": {
+      "path": "artifacts/tmp/CAP-07.S01.accessibility-observations-01.json",
+      "sha256": "6f18c91a6f263b3f7ed9b2ea077325dee677c36ec3038d3bd57800666f194e0e",
+      "status": "PARTIAL",
+      "operator": "main-agent actual computer use",
+      "observed": [
+        "Retry02 outside the sandbox produced a visible responsive window, Core ready, signInMode none, and no project automatically open.",
+        "Choose folder opened an owned Windows dialog initially at the fixture projects parent; the existing model-center-qualification folder was selected by name without typing its path. Selection alone did not open it; the separate Open project action did.",
+        "The already-started Research Intent workflow position survived reopening. Supporting tools retained the exact Return to current step Research Intent action; no stage completion was inferred.",
+        "Model Center loaded catalog version2 with two named synthetic entries, exact model/runtime/configuration metadata, explicit runtime unknown and no configured adapter. Refresh recorded inventory remained disabled; availability/recorded metadata did not grant permission.",
+        "Native accessibility exposed named application/navigation/main landmarks, headings, buttons, disabled states and status regions. Structured focused_element often reported RootWebArea; actual keyboard focus was judged from the visible focus ring, not invented from that field.",
+        "Click Reload inventory then Tab moved to Inspect version2, skipping disabled Refresh. A further Tab moved to Inspect version1 with visible focus; Enter loaded version1, labelled Historical latest2, with one recorded model and the status text Model inventory version1 loaded; no model was executed.",
+        "The actual native client was narrowed to720 pixels. Navigation changed to the compact layout; ordinary content wrapped without an observed document-wide horizontal scrollbar. The ordered workflow retains its own horizontal strip. Compact Model Center was inspected in both themes; retained catalog and supporting-return meaning remained visible.",
+        "Ctrl+plus and Ctrl+KP_Add produced no visible enlargement. This is not treated as a WCAG failure by itself because supported Windows Display Scale is independent of disabled browser zoom.",
+        "One coordinate action after scrolling opened Project settings instead of Model Center; no settings were changed. A fresh observation and named Model Center button corrected navigation. One unavailable modal element index and one out-of-window drag endpoint were rejected by the automation tool; fresh observations were used before retrying."
+      ],
+      "closure": "After this interim observation, the operator closed the synthetic window with Alt+F4. It disappeared from computer-use window discovery and the lifecycle helper returned PASS/exit0 with unchanged source/build checks. No ordinary project or settings were changed."
+    },
+    "enlargement": {
+      "status": "PENDING_REQUIRED_NATIVE_OBSERVATION",
+      "analysis": "Native zoom shortcuts did not enlarge the page. Independent read-only assessment found supported Windows Display Scale through retained per-monitor-DPI awareness and WebView2 rasterization; therefore disabled browser zoom alone does not demonstrate a defect. Text-size-only support was not established.",
+      "required": "With separate permission for a temporary global display change, record current Display Scale, select the authorized enlargement, observe actual native text size and loss-free interaction, then restore the exact prior value. Do not operate security/privacy settings.",
+      "layoutEvidence": "Fresh assembled tests exercise 320 CSS pixels and injected CSS zoom2 with unchanged populated, keyboard, error, empty and late-response assertions. They prove bounded layout tolerance, not the actual native platform enlargement mechanism.",
+      "sources": [
+        "https://www.w3.org/TR/wcag2ict-22/#applying-sc-1-4-4-resize-text-to-non-web-software",
+        "https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2controller3?view=webview2-1.0.2849.39"
+      ]
+    }
+  },
+  "priorClosure": {
+    "finding": "CAP-07.S01.NATIVE-F01",
+    "correction": "W1.C03.T01",
+    "evidence": {
+      "path": "artifacts/evidence/W1.C03.T01.json",
+      "sha256": "e0bc63404bbb895239a73717a8443e53ed1e4db394d1f7fd9b71413662b0483c"
+    },
+    "review": {
+      "path": "artifacts/evidence/W1.C03.T01.review-R01.json",
+      "sha256": "d2e337909a3b21bd96c0b8fc7144d977a68e2f5be318aa76b63d20c8aa388880"
+    },
+    "scope": "Approved supporting-return restoration only; prior findings and separate slice review remain intact."
+  },
+  "pending": [
+    "Native enlargement and final accessibility disposition",
+    "Publish and independently accept the complete CAP-07.S01 handoff/evidence index",
+    "Fresh full affected/repository/profile W1 qualification and required cross-capability/platform/packaging/performance proof",
+    "Independent Wave review",
+    "Separate human G1 release/W2 activation approval"
+  ],
+  "limits": [
+    "No screen-reader speech, native200%PASS, exhaustive no-clipping, installed dependency closure or evidence-cache reuse claim.",
+    "No live model/provider, ordinary vault/project/policy, authentication or production packaging qualification is supplied by these fixture checks.",
+    "Existing benchmark failures, task-only rounding exception and prospective baseline remain unchanged; no new benchmark was run for this record.",
+    "Protected witness content and excluded sibling contents were not accessed; raw local runtime metadata remains ignored."
+  ]
+}

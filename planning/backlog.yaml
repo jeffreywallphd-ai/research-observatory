@@ -128,7 +128,7 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
@@ -137,13 +137,14 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-08T11:39:59+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex
-      claimed_at: '2026-09-08T11:39:59+00:00'
-      expires_at: '2026-09-09T11:39:59+00:00'
+    updated_at: '2026-09-08T12:05:32+00:00'
+    pause_reason: CAP-07.S01 native enlargement qualification requires permission for a brief Windows Display Scale change
+      and exact restoration. Permission is pending; existing computer-use scope covered isolated application and folder dialogs,
+      not desktop-wide sizing. Fifteen fresh combined/renderer groups and bounded native lifecycle are recorded in artifacts/evidence/CAP-07.S01.qualification-02.json.
+      No product defect is demonstrated, no slice criterion is waived, and G1 prerequisites remain incomplete. Resume the
+      same campaign after host-display permission, then finish native enlargement, independent slice review and fresh W1 qualification.
+    pause_category: external-dependency
+    lease: null
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -988,7 +989,7 @@ waves:
     notes: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations
       and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
