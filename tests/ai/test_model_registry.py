@@ -6,6 +6,7 @@ import time
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 from pydantic import ValidationError
 
@@ -234,6 +235,82 @@ class ModelRegistryTests(unittest.TestCase):
         candidate = task()
         candidate["requirements"]["dataClass"] = "public"
         self.assertIn("classification-mismatch", self.resolve(candidate).rejected[0].reason_codes)
+
+    def test_witness_expiry_during_lookup_is_not_eligible(self) -> None:
+        for witness in ("permission", "inventory"):
+            for completed_at in (1999, 2000):
+                with self.subTest(witness=witness, completed_at=completed_at):
+                    now = [1500]
+                    inventory = FixtureInventory(self.catalog.manifests)
+                    policy = FixturePolicy()
+                    lookup: Any
+
+                    def clock_ms(current: list[int] = now) -> int:
+                        return current[0]
+
+                    if witness == "permission":
+                        inventory.observations = tuple(
+                            item.model_copy(update={"expires_at_ms": 3000}) for item in inventory.observations
+                        )
+                        assess = policy.assess
+
+                        def delayed_assess(_assess=assess, _now=now, _completed_at=completed_at, **kwargs):
+                            result = _assess(**kwargs)
+                            _now[0] = _completed_at
+                            return result
+
+                        lookup = patch.object(policy, "assess", delayed_assess)
+                    else:
+                        policy.expires_at_ms = 3000
+                        observe = inventory.observe
+
+                        def delayed_observe(_observe=observe, _now=now, _completed_at=completed_at):
+                            result = _observe()
+                            _now[0] = _completed_at
+                            return result
+
+                        lookup = patch.object(inventory, "observe", delayed_observe)
+                    with lookup:
+                        result = ModelRegistry(inventory, policy, clock_ms=clock_ms).resolve(self.catalog, task())
+                    self.assertEqual(completed_at < 2000, bool(result.eligible))
+                    if completed_at == 2000:
+                        reason = "permission-stale" if witness == "permission" else "availability-stale"
+                        self.assertEqual((reason,), result.rejected[0].reason_codes)
+
+    def test_later_manifest_lookup_cannot_return_an_expired_earlier_candidate(self) -> None:
+        alternate = self.manifest.model_copy(update={"manifest_id": "fixture-second"})
+        catalog = self.catalog.model_copy(update={"manifests": (self.manifest, alternate)})
+        for witness in ("permission", "inventory"):
+            with self.subTest(witness=witness):
+                now = [1500]
+                calls = [0]
+                inventory = FixtureInventory(catalog.manifests)
+                inventory.observations = tuple(
+                    item.model_copy(update={"expires_at_ms": 2000 if witness == "inventory" and index == 0 else 3000})
+                    for index, item in enumerate(inventory.observations)
+                )
+                policy = FixturePolicy()
+                policy.expires_at_ms = 3000
+                assess = policy.assess
+
+                def clock_ms(current: list[int] = now) -> int:
+                    return current[0]
+
+                def delayed_assess(_assess=assess, _calls=calls, _witness=witness, _now=now, **kwargs):
+                    result = _assess(**kwargs)
+                    _calls[0] += 1
+                    if _witness == "permission" and kwargs["manifest"].manifest_id == self.manifest.manifest_id:
+                        result = result.model_copy(update={"expires_at_ms": 2000})
+                    if _calls[0] == 2:
+                        _now[0] = 2000
+                    return result
+
+                with patch.object(policy, "assess", delayed_assess):
+                    result = ModelRegistry(inventory, policy, clock_ms=clock_ms).resolve(catalog, task())
+                self.assertEqual((alternate.manifest_id,), tuple(item.manifest_id for item in result.eligible))
+                self.assertEqual(self.manifest.manifest_id, result.rejected[0].manifest_id)
+                reason = "permission-stale" if witness == "permission" else "availability-stale"
+                self.assertEqual((reason,), result.rejected[0].reason_codes)
 
     def test_invalid_task_does_not_call_policy_or_inventory(self) -> None:
         class ForbiddenInventory(FixtureInventory):

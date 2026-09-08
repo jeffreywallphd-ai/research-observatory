@@ -448,6 +448,89 @@ waves:
           that historical proof from fresh launcher/configuration proof. Native OS interaction and complete cross-capability
           qualification remain required at W1 exit. No governed styling, security authority, migration guarantee, dependency
           or release criterion changes.
+    - title: Implement model registry and capability discovery
+      objective: Registry of installed/available models, licenses, context limits, modalities, hardware requirements, quality
+        tiers, and allowed data classes.
+      dependencies:
+      - CAP-07.S01.T01
+      acceptance_criteria:
+      - Routing never selects a model lacking required capability or permission; registry changes are versioned and visible
+        to users/admins.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile ai
+      - python tools/verify.py --profile service
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - ai
+      - service
+      id: W1.C02.T01
+      wave: W1
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      base_sha: 34d100a61c0d70643e92343d0a8b2496496313ea
+      worktree: .
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-08T03:09:28+00:00'
+        expires_at: '2026-09-08T11:09:28+00:00'
+      started_at: '2026-09-08T03:09:28+00:00'
+      updated_at: '2026-09-08T03:09:28+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-07.S01.T02
+        origin_commit: 04142f8bfd8a53af2a3b8fdd705081cae56c2679
+        paused_state_sha256: 6fa83010438e74d29ff5567b45ccd7c34210f031043cb5329f143acb7003bb97
+        origin_sha256: d8c2698c0181efe0d5aa3d84b3f4ffebad6586d640b31e4030a72e2a6aa3a3a9
+        origin_contract_sha256: 28a77891f9a4610f2f062ab8a1584bad56895778e50a807b6db3327b9b16c444
+        origin_history_sha256: c71efee0ff6c4697d5a6cf54b64b7a0c3239e9f8986051364231cc8268d43cb1
+        origin_amendment_id: null
+        authority_sha256: 8758285b0701e6d27158023aae317086b97ecb3c2ec7077a0885c6fd761d80bf
+        spec:
+          path: artifacts/evidence/W1.C02.T01.spec.json
+          sha256: 916c464c5fd413404b6261af9fe2e4abd9dda1e8baa34122ceada5e72372706d
+          commit: 34d100a61c0d70643e92343d0a8b2496496313ea
+        reproduction: 'CAP-07.S01 preflight F01: with existing synthetic routing fixtures, advance the injected wall clock
+          from 1500 to 2001 ms during policy assessment 3, after permission and host-observation witnesses expiring at 2000
+          ms are returned. At predecessor 04142f8b, the gateway dispatches once and only denies after output. Expected: no
+          adapter dispatch under expired authority. A single early time snapshot in registry resolution is reused after fact/policy
+          lookup; routing consumption also omits witness expiry. The original task remains DONE and its evidence/history are
+          preserved.'
+        changed_paths:
+        - services/core-api/src/research_observatory_core/model_registry.py
+        - services/core-api/src/research_observatory_core/model_routing.py
+        - tests/ai/test_model_registry.py
+        - tests/ai/test_model_routing.py
+        impact_analysis: Restore the existing current-permission eligibility contract by validating fact freshness after lookups
+          and when routing consumes a candidate for dispatch, publication or successful replay. Add advancing-clock regressions
+          for permission and host-observation expiry, including expiry while later manifests are assessed; retain unexpired
+          controls, exact request bytes, denied/no-output outcomes and immutable prior history. Shared routing regressions
+          run against memory and protected SQLCipher fixtures. No new permission authority, schema, migration, provider/network
+          access, UX, budget or performance threshold; no decoder optimization/refactor. Select registry/routing contracts,
+          service/principal/persistence integration, relevant quality and unchanged performance checks; full W1 release qualification
+          remains separate. This ordinary defect restoration adds no supplemental structural refactoring allocation. The task-only
+          acceptance of the historical CAP-07.S01.T03 latency observation is neither changed nor broadened.
   checkpoints:
   - id: W1.CP01
     kind: security

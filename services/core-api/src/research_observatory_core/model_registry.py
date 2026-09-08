@@ -50,7 +50,6 @@ class ModelRegistry:
                 reason_codes=("model-task-invalid",),
             )
         task_hash = canonical_hash(task)
-        now = self._clock_ms()
         by_hash: dict[str, list[HostModelObservation]] = defaultdict(list)
         try:
             observed = self._inventory.observe()
@@ -61,7 +60,7 @@ class ModelRegistry:
                 by_hash[checked.manifest_hash].append(checked)
         except OSError, ValueError, TypeError:
             by_hash.clear()
-        eligible: list[tuple[ModelManifest, ModelEligibilityCandidate]] = []
+        eligible: list[tuple[ModelManifest, ModelEligibilityCandidate, HostModelObservation, RegistryPermission]] = []
         rejected: list[ModelRegistryRejection] = []
         for manifest in catalog.manifests:
             digest = canonical_hash(manifest)
@@ -73,6 +72,8 @@ class ModelRegistry:
             elif len(observations) != 1:
                 reasons.add("observation-ambiguous")
             permission = self._permission(catalog, task, manifest)
+            # Inventory and policy lookup may outlive either witness.
+            now = self._clock_ms()
             if permission is None:
                 reasons.add("permission-unavailable")
             else:
@@ -115,6 +116,8 @@ class ModelRegistry:
                             observation_expires_at_ms=min(observation.expires_at_ms, permission.expires_at_ms),
                             maximum_cost_microunits=permission.maximum_cost_microunits,
                         ),
+                        observation,
+                        permission,
                     )
                 )
         eligible.sort(
@@ -126,13 +129,33 @@ class ModelRegistry:
                 entry[0].manifest_id,
             )
         )
+        # Later manifest lookups must not return an expired earlier candidate.
+        now = self._clock_ms()
+        fresh: list[ModelEligibilityCandidate] = []
+        for manifest, candidate, observation, permission in eligible:
+            stale = []
+            if not observation.observed_at_ms <= now < observation.expires_at_ms:
+                stale.append("availability-stale")
+            if not permission.observed_at_ms <= now < permission.expires_at_ms:
+                stale.append("permission-stale")
+            if stale:
+                rejected.append(
+                    ModelRegistryRejection(
+                        manifest_id=manifest.manifest_id,
+                        manifest_revision=manifest.revision,
+                        manifest_hash=candidate.manifest_hash,
+                        reason_codes=tuple(stale),
+                    )
+                )
+            else:
+                fresh.append(candidate)
         return ModelRegistryResolution(
             project_id=catalog.project_id,
             catalog_revision=catalog.revision,
             task_hash=task_hash,
-            eligible=tuple(item for _manifest, item in eligible),
+            eligible=tuple(fresh),
             rejected=tuple(rejected),
-            reason_codes=() if eligible else ("no-eligible-model",),
+            reason_codes=() if fresh else ("no-eligible-model",),
         )
 
     def _permission(

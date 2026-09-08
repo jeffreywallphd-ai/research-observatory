@@ -199,6 +199,7 @@ class ModelGateway:
             (item.manifest_hash, item.policy_revision, item.rights_revision)
             == (candidate.manifest_hash, candidate.policy_revision, candidate.rights_revision)
             and spent <= policy.cost_limit(item.maximum_cost_microunits)
+            and self._clock_ms() < item.observation_expires_at_ms
             for item in self._registry.resolve(selected_catalog, task).eligible
         )
 
@@ -246,6 +247,7 @@ class ModelGateway:
                 not self._current_catalog()
                 or candidate is None
                 or spent > run.policy.cost_limit(candidate.maximum_cost_microunits)
+                or self._clock_ms() >= candidate.observation_expires_at_ms
             ):
                 return _failure(task, "model-permission-changed", elapsed_ms=0, denied=True)
         return result

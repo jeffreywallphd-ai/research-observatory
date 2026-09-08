@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "corrective-precommit-characterization",
+  "taskId": "W1.C02.T01",
+  "productPredecessor": "34d100a61c0d70643e92343d0a8b2496496313ea",
+  "qualifyingEvidence": false,
+  "scope": "New uncommitted advancing-clock tests against unchanged predecessor product code, followed by focused implementation checks. Tool stdout is the execution record; this is not a committed-candidate qualification claim.",
+  "redRun": {
+    "command": "python -m unittest tests.ai.test_model_registry tests.ai.test_model_routing tests.service.test_model_routing_integration",
+    "exitCode": 1,
+    "testsRun": 102,
+    "durationSeconds": 9.006,
+    "failures": 17,
+    "expiryFailures": 16,
+    "benchmarkFailures": 1,
+    "expiryObservations": "Four registry subcases retained an expired candidate; twelve shared memory/protected cases dispatched or returned output after permission/host expiry. The unexpired controls passed.",
+    "benchmark": {
+      "coldMs": 18.713800236582756,
+      "warmP95Ms": 26.077300310134888,
+      "target": "p95 <25 ms",
+      "passed": false,
+      "percentileMethod": "nearest-rank; all 100 warm samples retained",
+      "warmSamples": [20.62450023368001,20.532900001853704,19.94829997420311,21.40909992158413,20.69450030103326,22.401599679142237,20.013900008052588,20.08899999782443,22.9156999848783,20.975499879568815,22.920700255781412,21.413199603557587,22.741999942809343,20.39089985191822,23.494699969887733,21.547699812799692,21.9352999702096,21.344299893826246,24.215699639171362,22.71739998832345,23.491700179874897,21.905899979174137,22.716999985277653,26.109700091183186,23.68360012769699,24.594899732619524,23.179800249636173,25.191299617290497,22.66150014474988,23.20790011435747,23.187600076198578,25.85839992389083,25.233699940145016,23.059200029820204,24.908300023525953,22.412799764424562,24.37860006466508,22.677399683743715,24.363999720662832,24.908400140702724,22.7055000141263,25.564900133758783,22.70379988476634,24.307100102305412,22.185400128364563,24.02399992570281,24.58969969302416,23.956299759447575,24.017800111323595,23.257899563759565,24.244199972599745,22.925499826669693,24.54750007018447,25.55110026150942,22.075199987739325,24.05479969456792,23.15729996189475,25.183199904859066,24.975699838250875,27.956500183790922,24.466400034725666,24.884500075131655,22.52580039203167,24.356099776923656,23.890999611467123,25.129499845206738,21.926499903202057,23.952499963343143,25.115800090134144,24.06320022419095,24.345300160348415,24.26229976117611,25.397100020200014,23.312199860811234,23.165800143033266,21.92889992147684,21.38079982250929,26.28100011497736,22.58909959346056,24.004800245165825,23.537300061434507,23.47070025280118,24.07790021970868,24.55339999869466,26.2278001755476,25.692999828606844,24.52960005030036,23.598399944603443,25.691899936646223,26.029900182038546,25.311600416898727,27.0775998942554,24.795299861580133,25.646400172263384,26.077300310134888,23.021399974822998,23.765699937939644,25.330600328743458,23.323700297623873,25.14269994571805]
+    }
+  },
+  "intermediateFindings": [
+    "After the timing correction, 53/54 focused cases passed. The existing cooldown fixture used divergent clocks and expired witnesses; it was strengthened to deny until witness renewal while retaining circuit-reset success.",
+    "Ruff identified late-bound loop closures in new synchronous test callbacks; explicit bound defaults corrected them. A transient Windows mapped-file formatting denial was resolved by an apply_patch edit and successful formatter recheck.",
+    "An isolated Mypy invocation for routing tests reported existing unresolved test-package imports, optional repository reads, method replacement and tuple-inference errors. It was not claimed as passing. New registry-test callback typing was corrected; the targeted production and registry-test check passes. Full governed typing remains a W1 qualification obligation."
+  ],
+  "finalPrecommitChecks": [
+    {"command": "python -m unittest tests.ai.test_model_registry tests.ai.test_model_routing", "exitCode": 0, "testsRun": 54, "durationSeconds": 1.406},
+    {"command": "All tests.service.test_model_routing_integration functional cases, excluding only test_gateway_overhead_p95_excluding_model_execution", "exitCode": 0, "testsRun": 47, "durationSeconds": 4.614, "scope": "Functional development check only; benchmark is included in fresh committed-candidate qualification."},
+    {"command": "python -m mypy --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py", "exitCode": 0, "filesChecked": 3}
+  ],
+  "independentPreflight": "agent:/root/cap07_slice_review confirmed the four-path correction and stronger cooldown fixture preserve the original authority; no additional blocking finding. Final disposition awaits committed-candidate evidence.",
+  "disposition": "Retain all adverse observations. Do not round or reuse measurements or treat development checks as qualification. No source/test/threshold waiver was applied."
+}

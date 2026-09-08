@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 464d109e4bb014b9cbc16afbb56748040fcea04ad9a334e50bbd66a4a9e5319a
+source_sha256: 7ead092d64c6a0ace5f623a92be02cbd5e58a8f9d7fd3ca7631576c2f989cc05
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2419,6 +2419,36 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/ui_guard_planning at `2026-09-06T10:30:59+00:00`
 
 **Latest notes:** Independent risk-selected review of the W1.C01.T01 development-entry correction, not a new review of optional styling or the whole original picker implementation. The reviewer supplied read-only preflight advice and authored no implementation or submitted evidence. Inspected the complete claim-base cfa7ec4492d13781128e01ad5795f2b48c5c9a26 to candidate diff: exactly three admitted product/test files plus six task-evidence/controller/view projections, matching the manifest's complete nine-path inventory. The only product behavior change adds --no-dev-server to the shared desktop dev command; sidecar preparation remains first and production build, native configuration, CSP, capabilities and origin guard remain unchanged. Documentation explicitly retires the redundant manual switch rather than promising duplicate-flag compatibility. Independently ran python -m unittest tests.desktop.test_desktop_app_check.DevelopmentEntryTests -v: five tests PASS in 10.077s, using actual installed cmd/pnpm and Tauri CLI with isolated inert substitutes, no app/Core launch. This replay covers all three entry routes, preparation failure preventing dispatch, success/quoted ordinary arguments, CLI exit propagation, script-derived embedded devUrl selection, real uncorrected loopback control and duplicate-flag rejection. Current source was confirmed equal to the frozen candidate before/after review. Inspected the unchanged Rust origin allow/deny test and retained the manifest producer's fresh narrow Rust, static security/configuration, build, lint/type and generated-view results without relabeling them as independently rerun. Independently authenticated the original task snapshot digest 82362567525910f107c2c81418d61b6a04d2204647b6080627c31eaf5dcf9904 and all seven unchanged inherited criteria. Original W1.A09.T03 remains DONE/approved. Its canonical manifest digest 13faada732ed172580c33728d0141d15e557fd34f876ea0f0c0ec91dbda6c8e4 matches the candidate Git blob. Config/build/Cargo/picker, ProjectsWorkspace and directoryPicker adapter are normalized-byte identical to original producer 30357ec178cc1a57646b7fe64dca3ee7670756d2; lib.rs as a whole is not identical, but its production prefix before the integration harness is identical. AC1-2, AC4-5 and AC7 therefore retain their explicitly historical unchanged-implementation support; fresh correction proof addresses the AC3/AC6 origin-selection seam. No historical native result is treated as a cached or fresh run. Final read-only source/manifest/packet authentication PASS in 4.360s: manifest canonical/raw SHA256 a3ab17cc4f5c78ea1607aa05394e1ba0c4a4c5b111c457f41f12c59f32325cf3; frozen R01 packet SHA256 10bb98f8337f5239ceb55c0f11cc1192efdf8acb86ad0499cb20a3e3a6f75a2c; validate_task_evidence and task_submission_packet_errors both return no errors. No acceptance-bound finding remains. Approval means the standard development entry selects the already-qualified embedded route; it does not claim fresh Windows dialog, WebView, HWND/focus, lock/close, Core, packaging or full Wave qualification. Those fresh cross-capability/native duties and human G1 remain pending. No product, backlog, prior evidence, hooks, Git or remote was mutated; only this ledger is authored. The protected witness and excluded sibling were not accessed.
+
+**Currently open findings:** -
+
+### W1.C02.T01 — Implement model registry and capability discovery
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-07.S01.T02`. **Latest review:** `-`.
+
+**Reproduction:** CAP-07.S01 preflight F01: with existing synthetic routing fixtures, advance the injected wall clock from 1500 to 2001 ms during policy assessment 3, after permission and host-observation witnesses expiring at 2000 ms are returned. At predecessor 04142f8b, the gateway dispatches once and only denies after output. Expected: no adapter dispatch under expired authority. A single early time snapshot in registry resolution is reused after fact/policy lookup; routing consumption also omits witness expiry. The original task remains DONE and its evidence/history are preserved.
+
+**Inherited criteria:**
+
+- Routing never selects a model lacking required capability or permission; registry changes are versioned and visible to users/admins.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/model_registry.py
+- services/core-api/src/research_observatory_core/model_routing.py
+- tests/ai/test_model_registry.py
+- tests/ai/test_model_routing.py
+#### Review history — W1.C02.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 464d109e4bb014b9cbc16afbb56748040fcea04ad9a334e50bbd66a4a9e5319a
+source_sha256: 7ead092d64c6a0ace5f623a92be02cbd5e58a8f9d7fd3ca7631576c2f989cc05
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -636,12 +636,13 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A09.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/t03_acceptance_review | - |
 | `W1.A09.T04` | `append-only v1` | 2 | `-` | approved / agent:/root/t03_acceptance_review | - |
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
+| `W1.C02.T01` | `append-only v1` | 0 | `-` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 14/15 | 49/49 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 14/15 | 49/50 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -697,7 +698,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W1.C02.T01` Implement model registry and capability discovery | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
 
 ## Linked corrective tasks
 
@@ -706,4 +709,8 @@ Original tasks and approvals remain unchanged.
 ### W1.C01.T01 — Choose project folders through one protected native dialog
 
 **Status:** `DONE`. **Original task:** `W1.A09.T03`. **Latest review:** `approved`.
+
+### W1.C02.T01 — Implement model registry and capability discovery
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-07.S01.T02`. **Latest review:** `-`.
 

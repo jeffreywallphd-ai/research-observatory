@@ -385,6 +385,127 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
     async def test_publication_authority_deadline_exhaustion_does_not_publish_output(self):
         await self.assert_publication_authority_work_is_guarded("deadline")
 
+    async def assert_expiry_during_authority_lookup_is_denied(self, witness, stage):
+        now = [1500]
+        calls = [0]
+        owned = [False]
+        if witness == "permission":
+            self.inventory.observations = tuple(
+                item.model_copy(update={"expires_at_ms": 3000}) for item in self.inventory.observations
+            )
+        else:
+            self.authority.expires_at_ms = 3000
+        assess = self.authority.assess
+        execute = self.adapters[0].execute
+
+        class ActiveResult(dict):
+            def items(self):
+                owned[0] = True
+                return super().items()
+
+        async def active_result(*args, **kwargs):
+            return ActiveResult(await execute(*args, **kwargs))
+
+        def delayed_authority(**kwargs):
+            permission = assess(**kwargs)
+            calls[0] += 1
+            if (stage == "dispatch" and calls[0] == 3) or (stage == "publication" and owned[0]):
+                now[0] = 2000
+            return permission
+
+        gateway = ModelGateway(
+            catalog=self.catalog,
+            inventory=self.inventory,
+            authority=self.authority,
+            adapters=self.adapters,
+            repository=self.repository,
+            clock_ms=lambda: now[0],
+        )
+        with (
+            patch.object(self.authority, "assess", delayed_authority),
+            patch.object(self.adapters[0], "execute", active_result),
+        ):
+            result = await self.run_request(gateway)
+        self.assertEqual("denied", result["status"])
+        self.assertEqual("model-permission-changed", result["diagnostics"][0]["code"])
+        self.assertIsNone(result["output"])
+        terminal = self.repository.read(self.request["taskId"])
+        assert terminal is not None and terminal.events[-1].result_json is not None
+        self.assertEqual(self.original, self.request)
+        self.assertEqual(self.original, json.loads(terminal.task_json))
+        self.assertTrue(terminal.terminal)
+        persisted = json.loads(terminal.events[-1].result_json)
+        self.assertEqual("denied", persisted["status"])
+        self.assertIsNone(persisted["output"])
+        self.assertEqual([0 if stage == "dispatch" else 1, 0], [adapter.calls for adapter in self.adapters])
+        self.assertEqual(result, await self.run_request(gateway))
+        self.assertEqual(terminal, self.repository.read(terminal.task_id))
+
+    async def test_permission_expiry_during_dispatch_lookup_prevents_adapter_call(self):
+        await self.assert_expiry_during_authority_lookup_is_denied("permission", "dispatch")
+
+    async def test_host_expiry_during_dispatch_lookup_prevents_adapter_call(self):
+        await self.assert_expiry_during_authority_lookup_is_denied("inventory", "dispatch")
+
+    async def test_permission_expiry_during_publication_lookup_prevents_output(self):
+        await self.assert_expiry_during_authority_lookup_is_denied("permission", "publication")
+
+    async def test_host_expiry_during_publication_lookup_prevents_output(self):
+        await self.assert_expiry_during_authority_lookup_is_denied("inventory", "publication")
+
+    async def assert_replay_consumes_unexpired_candidate(self, witness, completed_at):
+        now = [1500]
+        armed = [False]
+        catalog_checks = [0]
+        if witness == "permission":
+            self.inventory.observations = tuple(
+                item.model_copy(update={"expires_at_ms": 3000}) for item in self.inventory.observations
+            )
+        else:
+            self.authority.expires_at_ms = 3000
+
+        def current_catalog(_catalog):
+            if armed[0]:
+                catalog_checks[0] += 1
+                if catalog_checks[0] == 2:
+                    now[0] = completed_at
+            return True
+
+        gateway = ModelGateway(
+            catalog=self.catalog,
+            inventory=self.inventory,
+            authority=self.authority,
+            adapters=self.adapters,
+            repository=self.repository,
+            clock_ms=lambda: now[0],
+            catalog_is_current=current_catalog,
+        )
+        result = await self.run_request(gateway)
+        self.assertEqual("succeeded", result["status"])
+        terminal = self.repository.read(self.request["taskId"])
+        assert terminal is not None
+        armed[0] = True
+        replay = await self.run_request(gateway)
+        self.assertEqual(2, catalog_checks[0])
+        if completed_at < 2000:
+            self.assertEqual(result, replay)
+        else:
+            self.assertEqual("denied", replay["status"])
+            self.assertEqual("model-permission-changed", replay["diagnostics"][0]["code"])
+            self.assertIsNone(replay["output"])
+        self.assertEqual([1, 0], [adapter.calls for adapter in self.adapters])
+        self.assertEqual(terminal, self.repository.read(terminal.task_id))
+        self.assertEqual(self.original, self.request)
+
+    async def test_permission_expiry_during_replay_catalog_check_denies_without_rewriting_history(self):
+        await self.assert_replay_consumes_unexpired_candidate("permission", 2000)
+
+    async def test_host_expiry_during_replay_catalog_check_denies_without_rewriting_history(self):
+        await self.assert_replay_consumes_unexpired_candidate("inventory", 2000)
+
+    async def test_unexpired_replay_after_catalog_check_still_succeeds(self):
+        await self.assert_replay_consumes_unexpired_candidate("permission", 1999)
+
     async def test_per_attempt_timeout_can_fallback_within_global_deadline(self):
         self.adapters[0].wait = True
         self.policy = self.policy.model_copy(update={"attempt_timeout_ms": 15, "maximum_retries_per_route": 0})
@@ -604,8 +725,23 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual("model-circuit-open", result["diagnostics"][0]["code"])
         self.assertEqual(1, self.adapters[0].calls)
         self.request["taskId"] = new_uuid_v7()
-        gateway = self.gateway()
-        gateway._clock_ms = lambda: 2600
+        gateway = ModelGateway(
+            catalog=self.catalog,
+            inventory=self.inventory,
+            authority=self.authority,
+            adapters=self.adapters,
+            repository=self.repository,
+            clock_ms=lambda: 2600,
+        )
+        # Cooldown expiry does not renew the permission or host witnesses.
+        self.assertEqual("denied", (await self.run_request(gateway))["status"])
+        self.assertEqual(1, self.adapters[0].calls)
+        self.authority.expires_at_ms = 4000
+        self.inventory.observations = tuple(
+            item.model_copy(update={"observed_at_ms": 2500, "expires_at_ms": 4000})
+            for item in self.inventory.observations
+        )
+        self.request["taskId"] = new_uuid_v7()
         result = await self.run_request(gateway)
         self.assertEqual("succeeded", result["status"])
         self.assertEqual(0, self.repository.circuit(canonical_hash(self.manifest)).failures)
