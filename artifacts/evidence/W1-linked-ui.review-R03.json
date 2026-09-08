@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-review",
+  "reviewId": "W1-linked-ui.review-R03",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "reviewedAt": "2026-09-08T10:45:27Z",
+  "disposition": "APPROVED",
+  "scope": "Linked UI-restoration control maintenance only, including the full initial scope and focused F01/F02 remediation.",
+  "baseCommit": "6fbb0eae475f95902216ba93ad4b782e93c84e68",
+  "previousCandidate": "258bc0b5f9812d9c7ae814d00aa1786fc823be33",
+  "candidate": "8dc40d41c7fa7d1044dcbceea00eb2965f9afc96",
+  "priorReviews": [
+    {"path": "artifacts/evidence/W1-linked-ui.review-R01.json", "sha256": "b88294409e0ae961a4276700a772755d1a5d4f2b0c066ad34b0de0d3b3a6e2be"},
+    {"path": "artifacts/evidence/W1-linked-ui.review-R02.json", "sha256": "8f7d2fb28c26c6c7be2de9fab021a23430408f0b66b421bae182547a35c2fc6a"}
+  ],
+  "authorityPreserved": true,
+  "route": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+  "scopeAssessment": "Authenticated the nine-path full base-to-candidate scope and four-path incremental commit. R03 changes only the gate's correction-shaped inventory, its existing tests, the missed-acceptance/root-cause note and preserved R02. Earlier reviewed schema/taskctl/documentation changes remain bounded. Original corrective_contract, backlog/spec schemas, frozen approvals/history, product/reference behavior and release criteria remain unchanged. The third-submission analysis identifies both missed discovery predicates; the new tests cover record placement and either correction identity marker without adding authority metadata.",
+  "findings": [],
+  "closedFindings": [
+    {"id": "F01", "status": "CLOSED", "closure": "Retained empty and tests-only scope substitutions still deny in actual public automatic and explicit-short-base modes; admission authentication precedes scope filtering."},
+    {"id": "F02", "status": "CLOSED", "closure": "Retained misplaced-correction fixture now denies in actual public automatic and explicit-short-base modes. Active correction-shaped records are found across the full task inventory and must prove campaign membership before omission. Genuine admitted non-UI behavior remains passing."}
+  ],
+  "independentReplay": {
+    "command": ".venv/Scripts/python.exe -B artifacts/tmp/W1-linked-ui.finding-replay-03.py",
+    "executionCount": 1,
+    "result": "PASS",
+    "observations": "Six exact public denial checks returned exit 1 with their expected authority errors; one existing legitimate non-UI compatibility test returned exit 0. Original adverse fixtures/reports were retained.",
+    "seconds": 16.13194050034508,
+    "producer": {"path": "artifacts/tmp/W1-linked-ui.finding-replay-03.py", "sha256": "29671cad882a9c0a138ba6cead25f6b312577ccdb5efccc3a7bdefecab678193"},
+    "report": {"path": "artifacts/tmp/W1-linked-ui.finding-replay-03.json", "sha256": "d39e861b0f4bcb6802d674af8a00ac12875ced7436cebbcc058838b3f6647c46"},
+    "log": {"path": "artifacts/tmp/W1-linked-ui.finding-replay-03.log", "sha256": "4baba6c1e705fb7b301a32ba998339d22499af27ec3732eb81afcab63025de66", "bytes": 4462}
+  },
+  "freshVerification": {
+    "report": {"path": "artifacts/tmp/W1-linked-ui.verification-03.json", "sha256": "cde84290b8e87049ffb69a3fdbc1aa18be3e080391d4e4713d4811555efab666"},
+    "producer": {"path": "artifacts/tmp/W1.C03.T01.verify-01.py", "sha256": "3fa4e441c1b9ca61229139bd3518f6df030c5de74dae701ea19a8df3f3787fb3"},
+    "result": "PASS",
+    "groupsPassed": 7,
+    "groupsTotal": 7,
+    "durationSeconds": 363.8027517995797,
+    "unitTests": 88,
+    "unitTestSeconds": 250.914,
+    "coverage": "Selected UI-gate and corrective task tests; four-file Ruff lint, format and Mypy; backlog validation; generated backlog views; current public UI gate.",
+    "logs": [
+      {"path": "artifacts/tmp/W1-linked-ui.verification-03-01.log", "sha256": "0f5a9ca9e9462532cea0f32f0d4c282089e0c048aa294cd0deac9c63260c5b04", "bytes": 18037},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-03-02.log", "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18", "bytes": 19},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-03-03.log", "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de", "bytes": 26},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-03-04.log", "sha256": "d9a5631f7d87a741fbecc3236286d1792d22d349ff13846d71cdc9217307bb76", "bytes": 44},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-03-05.log", "sha256": "670f5d9f0743fac5748c8a761fd81b2486c9a3c46dd10f6b9b41e47bdfd20bea", "bytes": 73},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-03-06.log", "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa", "bytes": 44},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-03-07.log", "sha256": "a4c94c2fd1be388063be3f4f5ee5852046f4c0f57a845de06b223317a2fa3819", "bytes": 268}
+    ],
+    "authentication": "Report/producer and all seven log hashes, byte lengths and outcomes authenticated. Prior review and independent replay artifacts authenticated. Five replay input hashes remain equal to current clean candidate inputs; the three shared source entries equal the verifier's hashes. HEAD remained the candidate through verification/replay and at disposition. The reviewed verifier records/checks 551 selected inputs; this review makes no independent exhaustive installed-runtime closure or reuse claim."
+  },
+  "limits": [
+    "Approval permits this bounded control-maintenance increment to proceed through normal local integration; it is not W1.C03.T01 product acceptance, CAP-07.S01 slice/W1 qualification, G1 or human release approval.",
+    "The product restoration still requires an actual supported taskctl claim, unchanged-reference UI contract, fresh selected/native proof and independent task disposition.",
+    "R01/R02 and every adverse/green attempt remain immutable. No benchmark was run or reclassified; historical latency failures, task-only owner acceptance and later bounded baseline evidence retain their separate limits.",
+    "Fresh full affected/repository/profile, platform, packaging, security, accessibility and remaining cross-capability qualification remain required at their applicable stage."
+  ],
+  "safeguards": {
+    "protectedWitness": "artifacts/evidence/W1.A04.B00.json remained filename/status-only; never read, hashed, copied, scanned, edited, staged, deleted or ignored.",
+    "excludedAndPrivateState": "No excluded sibling contents, ordinary projects/vaults/policy/credentials, providers, native applications, remote or system settings were accessed or changed.",
+    "reviewerWrites": "Only the authorized ignored focused replay producer/evidence and owned synthetic compatibility fixture, followed by this new append-only review. No product/control source edits or commits."
+  }
+}
