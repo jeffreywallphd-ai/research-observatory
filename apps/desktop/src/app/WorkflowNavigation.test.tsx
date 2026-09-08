@@ -122,6 +122,53 @@ const supportingProgress: WorkflowProgressProjection & {
 };
 
 describe("WorkflowNavigation", () => {
+  it("distinguishes an unstarted workflow and directs supporting tools to the existing Project Home action", () => {
+    for (const currentWorkspace of ["models", "home"] as const) {
+      for (const disabled of [false, true]) {
+        const html = renderToStaticMarkup(
+          <WorkflowContextBar
+            authority={authority}
+            currentWorkspace={currentWorkspace}
+            bootstrapRequired
+            disabled={disabled}
+            onSelectStage={() => undefined}
+            onReturn={() => undefined}
+            onOpenProjectHome={() => undefined}
+          />,
+        );
+        expect(html).toContain("Guided workflow not started");
+        expect(html).toContain("Start guided workflow");
+        expect(html).toContain('role="status"');
+        expect(html).not.toContain("Supporting context expired");
+        expect(html).not.toContain("Return to current step ·");
+        const homeAction = html.match(/<button\b[^>]*>Open Project Home<\/button>/)?.[0];
+        if (currentWorkspace === "home") expect(homeAction).toBeUndefined();
+        else {
+          expect(homeAction).toContain('class="ro-button ro-button--secondary"');
+          expect(homeAction?.includes('disabled=""')).toBe(disabled);
+        }
+      }
+    }
+  });
+
+  it("labels a pending handoff without exposing an expired or premature return", () => {
+    const supportingReturn = createSupportingReturn(authority, "tasks", supportingProgress);
+    const html = renderToStaticMarkup(
+      <WorkflowContextBar
+        authority={authority}
+        currentWorkspace="tasks"
+        supportingReturn={supportingReturn}
+        supportingHandoffPending
+        onSelectStage={() => undefined}
+        onReturn={() => undefined}
+      />,
+    );
+    expect(html).toContain("Preparing supporting-tool return");
+    expect(html).toContain('role="status"');
+    expect(html).not.toContain("Supporting context expired");
+    expect(html).not.toContain("Return to current step ·");
+  });
+
   it("uses shared controls for context actions while preserving unavailable and disabled states", () => {
     const supportingReturn = createSupportingReturn(authority, "tasks", supportingProgress);
     for (const disabled of [false, true]) {

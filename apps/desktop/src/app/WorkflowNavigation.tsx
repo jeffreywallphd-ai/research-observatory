@@ -23,11 +23,14 @@ interface WorkflowNavigationProps {
   readonly failure?: string | null;
   readonly authoritativeStates?: Readonly<Partial<Record<string, WorkflowStageAuthorityState>>>;
   readonly supportingReturn?: SupportingReturnContext | null;
+  readonly bootstrapRequired?: boolean;
+  readonly supportingHandoffPending?: boolean;
   readonly disabled?: boolean;
   readonly showContext?: boolean;
   readonly onSelectStage: (stageKey: string) => void;
   readonly onSelectWorkspace: (workspace: ApplicationWorkspace) => void;
   readonly onReturn: () => void;
+  readonly onOpenProjectHome?: () => void;
 }
 
 function checkpointLabel(state: WorkflowAuthoritySnapshot["profile"]["stages"][number]["checkpointState"]): string {
@@ -79,11 +82,14 @@ export function WorkflowNavigation({
   failure = null,
   authoritativeStates = {},
   supportingReturn = null,
+  bootstrapRequired = false,
+  supportingHandoffPending = false,
   disabled = false,
   showContext = true,
   onSelectStage,
   onSelectWorkspace,
   onReturn,
+  onOpenProjectHome,
 }: WorkflowNavigationProps): ReactNode {
   if (!authority) {
     return (
@@ -158,9 +164,12 @@ export function WorkflowNavigation({
           currentWorkspace={currentWorkspace}
           authoritativeStates={authoritativeStates}
           supportingReturn={supportingReturn}
+          bootstrapRequired={bootstrapRequired}
+          supportingHandoffPending={supportingHandoffPending}
           disabled={disabled}
           onSelectStage={onSelectStage}
           onReturn={onReturn}
+          {...(onOpenProjectHome ? { onOpenProjectHome } : {})}
         />
       ) : null}
     </nav>
@@ -172,12 +181,16 @@ export function WorkflowContextBar({
   currentWorkspace,
   authoritativeStates = {},
   supportingReturn = null,
+  bootstrapRequired = false,
+  supportingHandoffPending = false,
   disabled = false,
   onSelectStage,
   onReturn,
+  onOpenProjectHome,
 }: Pick<
   WorkflowNavigationProps,
-  "authority" | "currentWorkspace" | "authoritativeStates" | "supportingReturn" | "disabled" | "onSelectStage" | "onReturn"
+  "authority" | "currentWorkspace" | "authoritativeStates" | "supportingReturn" | "bootstrapRequired"
+  | "supportingHandoffPending" | "disabled" | "onSelectStage" | "onReturn" | "onOpenProjectHome"
 >): ReactNode {
   if (!authority) return null;
   const stages = deriveWorkflowStages(authority, authoritativeStates);
@@ -226,7 +239,22 @@ export function WorkflowContextBar({
       {showingSupportingTool ? (
         <div className="supporting-tool-context ro-stack" data-supporting-tool>
           <strong>Supporting tool · {workspace.label}</strong>
-          {returnIsCurrent ? (
+          {bootstrapRequired ? (
+            <>
+              <span role="status">
+                Guided workflow not started. {currentWorkspace === "home"
+                  ? "Use Start guided workflow below to begin explicitly."
+                  : "Open Project Home and choose Start guided workflow to begin explicitly."}
+              </span>
+              {currentWorkspace !== "home" ? (
+                <Button type="button" disabled={disabled || !onOpenProjectHome} onClick={onOpenProjectHome}>
+                  Open Project Home
+                </Button>
+              ) : null}
+            </>
+          ) : supportingHandoffPending ? (
+            <span role="status">Preparing supporting-tool return…</span>
+          ) : returnIsCurrent ? (
             <Button type="button" disabled={disabled} onClick={onReturn}>
               Return to current step · {current.label}
             </Button>
