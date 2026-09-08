@@ -1,0 +1,328 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-slice-qualification-authentication-review",
+  "reviewId": "CAP-07.S01.qualification-01.review-R01",
+  "sliceId": "CAP-07.S01",
+  "candidateCommit": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "disposition": "authenticated-bounded-pass",
+  "sliceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "baselineApproved": false,
+  "reviewScope": "Independent authentication of gateway-qualification-03 and process-resource-qualification-01 observations only. This is not a controlled task round, completed slice disposition, Wave qualification, baseline approval or release decision.",
+  "authorities": [
+    {
+      "path": "AGENTS.md",
+      "section": "Evidence and completion"
+    },
+    {
+      "path": "docs/automation/project-automation-guide.md",
+      "section": "8.1 Verification breadth by workflow stage; 8.3 Benchmark evidence"
+    },
+    {
+      "path": "docs/automation/workflow-efficiency.md",
+      "section": "Review each boundary once; Automatic receipts and safe reuse; Stable snapshots and coordination"
+    },
+    {
+      "path": "docs/automation/codex-tracking-guide.md",
+      "section": "Independent review"
+    },
+    {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+      "section": "10 Slice-wide verification matrix; 11 Performance and resource budgets; 13 Adjacent-slice handoffs"
+    }
+  ],
+  "independence": {
+    "implementationAuthoredByReviewer": false,
+    "reportsOrProducersAuthoredByReviewer": false,
+    "testsOrBenchmarksRerunForThisReview": false,
+    "mutationScope": "Only this new review record is authored; no product, test, producer, prior evidence, backlog, Git history, system configuration or remote changes.",
+    "method": "Read the actual producers, reports, setup and phase logs; recompute reported statistics and compare observations; independently hash named artifacts and the 336 explicitly bound source files. Scoped normal-account read-only access authenticated the owned fixture inputs and four phase logs after sandbox access was denied. No permissions or settings were changed."
+  },
+  "inputAuthentication": {
+    "candidateCheckedBeforeAndAfter": true,
+    "trackedDiffCleanAtAuthentication": true,
+    "sourceInputsChecked": 336,
+    "sourceHashMismatches": [],
+    "gatewaySourceInputsCoveredByThoseChecks": 231,
+    "gatewaySourceHashMismatches": [],
+    "runtimeProbeEntriesMatchingReport": 885,
+    "directlyRehashedRuntimeRoles": [
+      "pythonLauncher",
+      "pythonBase",
+      "pythonImage",
+      "pythonDll",
+      "sqlcipher3._sqlite3"
+    ],
+    "directlyRehashedRuntimeMismatches": [],
+    "lockHelperSourceAndExistingCacheAuthenticated": true,
+    "boundary": "Producer-held Windows file handles deny writes, replacement and deletion of selected existing inputs during measurement. Gateway runtime binding covers discovered import-time files, not every possible future dynamic library. This review does not create reusable benchmark or native/principal evidence."
+  },
+  "gateway": {
+    "result": "PASS-for-declared-fixture-hard-ceiling",
+    "report": {
+      "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-03.json",
+      "sha256": "86e3b998a5eb3c9cd852fed37705eb6da9c85debe47c21c8f3ca4e0d3169fb08"
+    },
+    "producer": {
+      "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-03.py",
+      "sha256": "492143f4491c3a189cdfedb22f5740285d262a167d662f98eefc22acb73f30d8"
+    },
+    "log": {
+      "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-03.log",
+      "sha256": "2258ff319d951e347e01629b82e14dec178ad8ba2be3b425ba7d4dc6112c9ea3"
+    },
+    "setupLog": {
+      "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-03.setup.log",
+      "sha256": "438cb3b9c0d79289312e165b06731f58d8fe7647b53bf53296bb493825c22249"
+    },
+    "command": "python -m unittest tests.service.test_model_routing_integration.ProtectedModelRoutingTests.test_gateway_overhead_p95_excluding_model_execution",
+    "exitCode": 0,
+    "unchangedTest": true,
+    "logMeasurementExactlyMatchesReport": true,
+    "setupPhasesSucceeded": [
+      "runtime-probe",
+      "hardware-query",
+      "tracked-inventory"
+    ],
+    "observations": {
+      "totalSamples": 101,
+      "warmSampleCount": 100,
+      "allWarmSamplesFiniteAndNonnegative": true,
+      "coldMilliseconds": 20.9860997274518,
+      "p50Milliseconds": 19.563999958336353,
+      "p95Milliseconds": 22.406999953091145,
+      "minimumWarmMilliseconds": 17.930000089108944,
+      "maximumWarmMilliseconds": 30.013300012797117,
+      "retainedWarmSamplesAtOrAbove25Milliseconds": 3,
+      "percentileMethod": "Nearest rank: sorted warm sample 50 for p50 and 95 for p95; all 100 retained.",
+      "hardCriterion": "p95 < 25 milliseconds",
+      "hardCriterionPassed": true,
+      "trimmingOrRoundingForAcceptance": false,
+      "measuredBenchmarkSeconds": 2.729350100271404
+    },
+    "referenceHardware": {
+      "cpu": "Intel(R) Core(TM) i5-14600KF",
+      "cores": 14,
+      "logicalProcessors": 20,
+      "memoryBytes": 16984227840,
+      "os": "Microsoft Windows 11 Home",
+      "version": "10.0.26200",
+      "driveLetter": "C",
+      "diskNumber": 0,
+      "partitionNumber": 3
+    },
+    "scope": "Protected SQLCipher journal I/O with in-memory fixture keys and a synthetic zero-delay adapter; includes fixture dispatch/result construction, validation and routing. Excludes production lifecycle factory, native UI, packaging and live model/provider execution.",
+    "executionContext": "Reported fresh normal Windows principal invocation at the fixed candidate with no concurrent agent tests or builds.",
+    "instrumentationLimit": "Optional aggregate host counters were omitted after attempt-02 collector startup was denied by Windows. No benchmark ran in that attempt. No simultaneous utilization, load-correlation or I/O-causality claim is supported."
+  },
+  "processResource": {
+    "result": "PASS-for-declared-owned-fixture-process-and-resource-observations",
+    "report": {
+      "path": "artifacts/tmp/CAP-07.S01.process-resource-qualification-01.json",
+      "sha256": "0a62c29e73f2dc551b08133597aee9b77001fb51ce7994e1ee7cf6c00994a158"
+    },
+    "producer": {
+      "path": "artifacts/tmp/CAP-07.S01.process-resource-qualification-01.py",
+      "sha256": "954b5abcd55a9e6e776f499436484995a93ad6e24c7e852fff11026822b02646"
+    },
+    "fixtureInputs": {
+      "path": "artifacts/tmp/cap07-process-resource-ieri6f_w/inputs.json",
+      "sha256": "3c83ccdaabd037c8ab16cce892d662a62929c06975823f4d1e5506859e990de6"
+    },
+    "phaseLogs": [
+      {
+        "path": "artifacts/tmp/cap07-process-resource-ieri6f_w/create.log",
+        "sha256": "6ed1e8b51b13512a90d3eba281827ba0e07cf2bc45b6f06d0910d65af8714fa2",
+        "phase": "create",
+        "exitCode": 0,
+        "observationExactlyMatchesReport": true
+      },
+      {
+        "path": "artifacts/tmp/cap07-process-resource-ieri6f_w/restart.log",
+        "sha256": "11cc52502beffe25c45d40070fc946cafeff838959fd1521daef6947c8036a34",
+        "phase": "restart",
+        "exitCode": 0,
+        "observationExactlyMatchesReport": true
+      },
+      {
+        "path": "artifacts/tmp/cap07-process-resource-ieri6f_w/crash.log",
+        "sha256": "60351c6138a248d330b020d0d1b9ee97fd088db172365f28954142842de07abf",
+        "phase": "crash",
+        "exitCode": 17,
+        "observationExactlyMatchesReport": true
+      },
+      {
+        "path": "artifacts/tmp/cap07-process-resource-ieri6f_w/recover.log",
+        "sha256": "f12d5cb00b761f215123df08aefa0e59d15eb98f18a0bb0df89af7f93c89560d",
+        "phase": "recover",
+        "exitCode": 0,
+        "observationExactlyMatchesReport": true
+      }
+    ],
+    "observations": {
+      "distinctChildProcesses": 4,
+      "fixtureActorAndTaskIdsAreValidUuidV7": true,
+      "successfulCreateDispatchCalls": [
+        1,
+        0
+      ],
+      "successfulRestartDispatchCalls": [
+        0,
+        0
+      ],
+      "successfulResultAndRunHashesEqualAcrossProcesses": true,
+      "successfulOriginalRequestPreserved": true,
+      "intentionalOwnedCrashExitCode": 17,
+      "crashAfterDurableAttemptAndAdapterEntry": true,
+      "crashDispatchCalls": [
+        1,
+        0
+      ],
+      "interruptedOriginalRequestPreserved": true,
+      "recoveryDispatchCalls": [
+        0,
+        0
+      ],
+      "interruptedRunHashEqualsRecoveredPredecessorHash": true,
+      "predecessorEventsAndOriginalRequestPreserved": true,
+      "recoveredOutput": null,
+      "recoveryDiagnostic": "model-prior-execution-uncertain",
+      "uncertainAttemptFenceRetained": true,
+      "protectedDatabaseHeaderCheckPassed": true,
+      "resourceSamples": [
+        {
+          "phase": "create",
+          "memoryBeforeBytes": {
+            "PeakWorkingSetSize": 85356544,
+            "WorkingSetSize": 81973248,
+            "PrivateUsage": 63070208
+          },
+          "memoryAfterBytes": {
+            "PeakWorkingSetSize": 85356544,
+            "WorkingSetSize": 83849216,
+            "PrivateUsage": 64430080
+          },
+          "projectDiskBytes": {
+            "state/project.sqlite3": 745472
+          },
+          "modelWeightsBytes": 0
+        },
+        {
+          "phase": "restart",
+          "memoryBeforeBytes": {
+            "PeakWorkingSetSize": 77930496,
+            "WorkingSetSize": 77930496,
+            "PrivateUsage": 59875328
+          },
+          "memoryAfterBytes": {
+            "PeakWorkingSetSize": 84271104,
+            "WorkingSetSize": 82558976,
+            "PrivateUsage": 63565824
+          },
+          "projectDiskBytes": {
+            "state/project.sqlite3": 745472
+          },
+          "modelWeightsBytes": 0
+        },
+        {
+          "phase": "recover",
+          "memoryBeforeBytes": {
+            "PeakWorkingSetSize": 77766656,
+            "WorkingSetSize": 77766656,
+            "PrivateUsage": 59564032
+          },
+          "memoryAfterBytes": {
+            "PeakWorkingSetSize": 84889600,
+            "WorkingSetSize": 83169280,
+            "PrivateUsage": 63971328
+          },
+          "projectDiskBytes": {
+            "state/project.sqlite3": 757760
+          },
+          "modelWeightsBytes": 0
+        }
+      ],
+      "projectDatabaseGrowthBytes": 12288,
+      "crashPhaseResourceSampleCollected": false
+    },
+    "scope": "Fresh sequential subprocess success replay and intentional abrupt exit of an owned child, then recovery through the routing gateway and repository using a newly owned explicit Windows DPAPI fixture vault plus SQLCipher. Policies and adapters are synthetic. Resource values describe these processes and project files, not a new numeric acceptance budget.",
+    "exclusions": [
+      "Native window and accessibility behavior",
+      "Packaged application lifecycle",
+      "Core API positive execution boundary",
+      "Actual model weights or live inference",
+      "Ordinary user vaults, policies, credentials or projects",
+      "Host power loss or physical storage failure",
+      "Global disk footprint or whole-application memory budget"
+    ],
+    "fixturesRetained": true,
+    "rawRuntimeIdentifiersKeptOnlyInIgnoredArtifacts": true
+  },
+  "priorAdverseLineage": [
+    {
+      "path": "artifacts/evidence/W1.C02.T01.preflight-02.json",
+      "sha256": "795a44c59b744bb0bf686ae5ea38230f2983bcb08fcd0c97479659a8ed9a7f7a",
+      "disposition": "preserved-not-reclassified",
+      "note": "Retains the unchanged benchmark failure at candidate 064d24a99c7f867a9beadd594b3dbb72f369bf53, p95 134.0222000144422 ms against <25 ms, with all samples and associated adverse functional/quality evidence and nonqualifying diagnostics. Gateway03 does not erase this history or prove its cause."
+    },
+    {
+      "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-02.json",
+      "sha256": "765b19bdfd9766233eede89d14abd918e6dcd31d30e7634ca8bcfa77c3531b25",
+      "disposition": "preserved-setup-failure-before-benchmark",
+      "candidateCommit": "d97b1c1bf4d5fea16a84e85806f20d5882c8090e",
+      "benchmarkStarted": false,
+      "collectorExitCode": 1,
+      "log": {
+        "path": "artifacts/tmp/CAP-07.S01.gateway-qualification-02.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "collectorLog": {
+        "path": "artifacts/tmp/CAP-07.S01.gateway-counter-02.log",
+        "sha256": "53c65e3bb837426ca2f548938258ee739674bba1f1661ce271a6be2c5405dd0a"
+      },
+      "logHashesAuthenticated": true,
+      "note": "Collector script execution was denied before the benchmark. The empty benchmark log and collector failure remain retained; no execution-policy change, hidden benchmark run or retry-until-pass is claimed."
+    },
+    {
+      "path": "artifacts/evidence/CAP-07.S01.preflight-01.json",
+      "sha256": "53215ce0b1a000df5d0ffc7a3ac56d2d72eb8f2804e1400dff62a3107cc0623d",
+      "disposition": "historical-preflight-and-F01-preserved",
+      "note": "The original expired-authority dispatch finding and earlier measurements are not replaced by this bounded review."
+    },
+    {
+      "path": "artifacts/evidence/W1.C02.T01.preflight-03.json",
+      "sha256": "323c1fa53527b6169624384cdf440026123831bd769716b526becd248e4d18c1",
+      "disposition": "historical-development-errors-preserved",
+      "note": "Incremental fixture development errors remain part of the predecessor lineage, not hidden or relabeled qualification."
+    },
+    {
+      "path": "artifacts/evidence/W1.C02.T01.review-R01.json",
+      "sha256": "e17573bca92eff98903df86e8707f0afd6b46a9156c961cdbbfbcc1057255df1",
+      "disposition": "historical-correction-only-disposition-preserved",
+      "note": "Retains independent F01 correction closure and the distinct history of the nonqualifying 26.077 ms diagnostic, timeout-fixture development errors and then-open broader obligations. Historical quality statements are not reissued as current quality status. Owner acceptance of the historical 25.383200030773878 ms observation applies only to CAP-07.S01.T03 and is not generalized."
+    }
+  ],
+  "baseline": {
+    "status": "not-established-or-reviewed-by-this-record",
+    "currentRunClaim": "Hard-ceiling PASS and an authenticated candidate calibration observation only; not a comparison against an already reviewed gateway baseline.",
+    "prospectiveRoute": "A separate criterion-linked baseline record may be established from the exact retained observation with independent review, immutable identity, raw samples, method, hardware, source/runtime and producer bindings and adverse lineage. Bind its reviewed hash before any future qualifying comparison. No such record is authored or approved here.",
+    "unchangedHardCeiling": "p95 < 25 milliseconds",
+    "proposedComparison": "Future p95 must also be no more than 1.2 times the exact reviewed baseline p95. Using this observation would yield approximately 26.888399943709373 ms, so the unchanged <25 ms ceiling remains stricter.",
+    "noOwnerExceptionExtension": true,
+    "noRetrospectiveBaselineOrCauseClaim": true
+  },
+  "remainingQualificationLimits": [
+    "This evidence increment does not approve the CAP-07.S01 slice, complete W1 qualification, satisfy independent Wave review, activate a later Wave or authorize release.",
+    "Fresh full affected/repository/deployment-profile qualification and the clean-state combined slice evidence remain separate obligations; prior selected checks and these two reports do not replace them.",
+    "Cancellation acknowledgement, 1000-manifest timing, native Model Center/accessibility, handoff and supported migration/lifecycle coverage must remain explicitly mapped to their own authenticated evidence; no additional checks are invented here.",
+    "Native catalog read uses confined-root POST /projects/models. The earlier GET-based harness allowance concern is retracted; this review does not justify a fixture allowlist extension. Actual native proof remains separate.",
+    "No model-use permission, rights, classification, budget, egress or security authority is granted by fixture success.",
+    "The protected witness remained filename/status-only and was not read, hashed, copied, scanned, edited, staged, deleted or ignored. Excluded sibling contents were not accessed.",
+    "No actual user research, ordinary vault/policy/credentials, native UI, remote service, provider or account settings were accessed by this authentication.",
+    "No output of this review replaces prior evidence, findings, approvals or failed attempts. No reusable-evidence or full dynamically loaded runtime closure claim is made."
+  ],
+  "findings": [],
+  "conclusion": "No blocking discrepancy was found in the two declared bounded observations. Their report, producer, source and log bindings support the stated fixture outcomes, with all limitations and adverse history retained."
+}

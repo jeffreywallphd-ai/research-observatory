@@ -1,0 +1,162 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "prospective-gateway-baseline-and-bounded-publication-review",
+  "reviewId": "CAP-07.S01.qualification-01.review-R02",
+  "sliceId": "CAP-07.S01",
+  "candidateCommit": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "disposition": "approved-prospective-baseline-only",
+  "priorReview": {
+    "path": "artifacts/evidence/CAP-07.S01.qualification-01.review-R01.json",
+    "sha256": "bd17b5b087f61cffe0cb4c4fe02db55bdf6345dd56e398317e723933c9dae23a"
+  },
+  "baselineApproved": true,
+  "sliceApproved": false,
+  "waveApproved": false,
+  "releaseApproved": false,
+  "baseline": {
+    "record": {
+      "path": "artifacts/evidence/CAP-07.S01.gateway-baseline-01.json",
+      "sha256": "e79ba7cb82fa40111f4d8ccb047dbb2cd20b863f0838600147716182933e4fee"
+    },
+    "assembler": {
+      "path": "artifacts/tmp/CAP-07.S01.gateway-baseline-02.assemble.py",
+      "sha256": "1c8ba47f9ad8fe78934f9080c1dfe4bcbb719a3e5cdbd33c19b604a04b07506b"
+    },
+    "authority": {
+      "path": "docs/automation/project-automation-guide.md",
+      "section": "8.3 Benchmark evidence"
+    },
+    "criterionAuthority": {
+      "path": "planning/slice-plans/CAP-07/CAP-07.S01-model-task-provider-and-routing-contracts.md",
+      "section": "11 Performance and resource budgets"
+    },
+    "decision": "Approve this exact immutable record as the first prospective baseline for its declared protected source-built gateway fixture and documented reference hardware. Its original proposed status remains unchanged; this separate review supplies approval. No prior-baseline comparison or retrospective nonregression is asserted.",
+    "authenticated": {
+      "evidenceReferences": 17,
+      "evidenceDigestMismatches": [],
+      "warmSamplesExactlyEqualGateway03": true,
+      "totalSampleCount": 101,
+      "warmSampleCount": 100,
+      "coldMilliseconds": 20.9860997274518,
+      "p50Milliseconds": 19.563999958336353,
+      "p95Milliseconds": 22.406999953091145,
+      "percentileMethod": "Independently recomputed nearest ranks 50 and 95 of all 100 retained warm samples.",
+      "hardCriterionPassed": true,
+      "runtimeEntriesEqualGateway03": 885,
+      "executedSourceInputsEqualGateway03": 231,
+      "independentlyCheckedSourceAndHelperBindings": 232,
+      "exactByteBindings": 222,
+      "crlfToLfOnlyBindings": 10,
+      "sourceBindingMismatches": [],
+      "sourceMethod": "Read each named current raw source and exact candidate Git blob as bytes; independently hash both. For the ten differing UTF-8 text files, verify only CRLF-to-LF normalization produces the Git-blob digest. Distinct raw and blob hashes remain distinct.",
+      "candidateFixedDuringReview": true
+    },
+    "futureUseRequirements": [
+      "Publish this baseline and separate approval immutably. Bind both exact digests before a fresh qualifying invocation.",
+      "Retain the unchanged method, fixture, all raw samples and comparable reference hardware; review any methodological or hardware recalibration separately.",
+      "Require BOTH unrounded p95 <25 ms and p95 <=1.2 times 22.406999953091145 ms. The derived regression ceiling is 26.888399943709373 ms; the unchanged hard ceiling is stricter.",
+      "No trimming, retry-until-pass, automatic baseline rewrite, task-exception extension, evidence-cache reuse or inferred latency cause.",
+      "Fresh full affected/repository/deployment-profile W1 qualification and independent Wave/release decisions remain required."
+    ],
+    "adverseLineagePreserved": {
+      "failedAssembler": {
+        "path": "artifacts/tmp/CAP-07.S01.gateway-baseline-01.assemble.py",
+        "sha256": "bccf3f6f7f51c75183fda17dec420a0b6228611f9d358ae22742805210476bd5"
+      },
+      "assemblyFailureObservation": {
+        "path": "artifacts/tmp/CAP-07.S01.gateway-baseline-01.failure.json",
+        "sha256": "0c7dfc9d38e257d195b07356c8025563abe37c7b982b63fd86ae70a36252d870"
+      },
+      "assemblyFailureDisposition": "Original execution failed before output publication due to raw-worktree/Git-blob representation conflation. Its recorded observation is not represented as a raw captured traceback. The successor closes the binding defect without rewriting predecessor bytes or rerunning the benchmark.",
+      "initialPinTypo": "The separately retained 65-character historical acceptance-pin typo was corrected before assembler01's first execution.",
+      "previousBenchmarkFailure": {
+        "path": "artifacts/evidence/W1.C02.T01.preflight-02.json",
+        "sha256": "795a44c59b744bb0bf686ae5ea38230f2983bcb08fcd0c97479659a8ed9a7f7a"
+      },
+      "previousFailedP95Milliseconds": 134.0222000144422,
+      "historicalTaskOnlyP95Milliseconds": 25.383200030773878,
+      "note": "The historical strict test failed despite task-only owner acceptance. Neither it nor the 134 ms failure is erased, made the baseline, or generalized into a waiver. Attempt02 collector startup failed before any benchmark, with its empty benchmark log and adverse collector log retained."
+    },
+    "limits": "This calibration is source-built SQLCipher plus in-memory fixture keys and a synthetic zero-delay adapter. It is not native/Core lifecycle factory, packaged artifact, live inference, actual model footprint or authentication qualification. Import-time runtime binding is not exhaustive future dynamic-library closure."
+  },
+  "nativePublication": {
+    "record": {
+      "path": "artifacts/evidence/CAP-07.S01.native-qualification-01.md",
+      "sha256": "ae86865c759ee816e02d3dbdef7e7a6f0a6d2af042e2c4d63051a3593d35abff"
+    },
+    "disposition": "bounded-summary-accurate-with-open-functional-finding",
+    "authenticatedArtifacts": [
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-qualification-01.lifecycle.json",
+        "sha256": "62f2a7036dcabf21d56299bee5d83467681973fa4c08d7245fe848511b818e2b"
+      },
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-qualification-01.lifecycle-resume.json",
+        "sha256": "b775c3b1bff58d0d5e5f4a44aefe35c264e517320c9d6031f1b8224144bcbcdb"
+      },
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-catalog-seed-01.json",
+        "sha256": "d97b340b19487dbd86bf682b5ca02bbb751c759d28e3e4b1b20663b9c244f88b"
+      },
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-observations-01.json",
+        "sha256": "43b282eb855508cccc70424a3bcd9da5f43ba2a73d39d7902bc5b6d631eacf58"
+      },
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-observations-02.json",
+        "sha256": "0f9167b5f7a59ee4886943e077f3da019f2f5e1833f62bd8cf4f8b9f13d1c12d"
+      },
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-qualification-01.lifecycle.log",
+        "sha256": "6c1e6484bef952fe0c8191726d02806c7dcc19ab2fc6857eb8b09d3a6d7a3e30"
+      },
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-qualification-01.lifecycle-resume.log",
+        "sha256": "e0f4aa4bb5e2de43a88a4966dc00990551e3eaf9a49bea64b2b0ccd9bb9d963c"
+      },
+      {
+        "path": "artifacts/tmp/CAP-07.S01.native-catalog-seed-01.py",
+        "sha256": "6342f9c08a623ed536e1153636a9a5fd484feef596b98c9aeaa296d699dac446"
+      }
+    ],
+    "reviewMethod": "Read the actual publication, two lifecycle reports/logs, seed report and both observation records; authenticate their named byte identities and cross-links. UI outcomes are attributed to the main agent's actual computer-use observations, not a new native execution or direct screenshot observation by this reviewer.",
+    "supportedScope": "Fresh source-built startup, explicit fixture create/open, empty inventory, fixture-only two-version catalog seed, restart/reopen, populated and historical inventory, keyboard history selection, observed theme parity, explicit workflow start and exact return, and inventory clearing after project close.",
+    "lifecycleChecks": "Both reports bind the same candidate and owned fixture. Each log has one matching lifecycle start and clean exit with exitCode 0 and pending false. Lifetimes 440.6553226998076 and 507.76939699985087 seconds include interaction time and are not performance measurements.",
+    "seedChecks": "The independently preflighted producer matches its recorded digest. It reports two confirmed committed appends at revisions 1 and 2 with model counts 1 and 2, no unconfirmed append, and no partial failure. Native observations distinguish declared inventory from runtime readiness and model-use permission.",
+    "exclusions": "No complete native acceptance, screen-reader speech, measured contrast, full zoom/reflow, production authentication, ordinary vault/project/settings, installed-runtime closure, release packaging, actual weights or live provider execution is established. Clean process exit and artifact hashes alone are not UI proof."
+  },
+  "findings": [
+    {
+      "id": "CAP-07.S01.NATIVE-F01",
+      "relatedHistoricalItem": "U02 supporting-return",
+      "status": "open",
+      "blockingForProspectiveBaseline": false,
+      "blockingForAffectedSliceWaveClosure": true,
+      "originalDoneTask": "CAP-03.S06.T03",
+      "finding": "For the confirmed unstarted workflow, settled supporting context is incorrectly labeled expired and instructs reopening a primary page, which cannot bootstrap a current stage.",
+      "authority": [
+        {
+          "path": "design/ui-reference/STYLE_GUIDE.md",
+          "section": "6 Application shell and guided workflows"
+        },
+        {
+          "path": "planning/slice-plans/CAP-03/CAP-03.S06-use-case-profiles-and-adaptive-guided-navigation.md",
+          "section": "9.3 explicit loading, empty, denied, error and recovery states"
+        },
+        {
+          "path": "packages/contracts/workflow-profile/README.md",
+          "section": "Exact current-primary supporting-return authority"
+        }
+      ],
+      "evidence": "Main-agent native observation confirms Project Home Not started. Independent source review confirms page navigation does not start a stage and missing current state suppresses a server-issued return witness. The separate explicitly started-stage return succeeded; transient immediate snapshots are not treated as settled failures.",
+      "smallestClosure": "Use the linked correction route to distinguish not-started and pending states from stale/failed return context and direct the not-started case to existing Project Home start. Preserve explicit researcher start, exact server-issued return witnesses and stale-response denial. Do not fabricate context or auto-start on navigation."
+    }
+  ],
+  "reviewLimits": [
+    "Only this append-only R02 record is authored. Prior R01, baseline, native summary, failures and approvals remain unchanged.",
+    "No tests, benchmarks, native actions, builds, product edits, commits, controller or campaign mutations were performed by this review.",
+    "No protected-witness content or excluded sibling contents were accessed. No ordinary user project, vault, credential, provider, account or security settings were inspected.",
+    "Baseline approval is criterion-bound and prospective only. The open native finding prevents this record from implying completed slice/Wave qualification or release."
+  ]
+}

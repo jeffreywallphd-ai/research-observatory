@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-03.S06.T03",
+    "commit": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+    "sha256": "aa859902c04a12165d908b4e9844315136004cc1599cfc515f7b5ddc8cb32157"
+  },
+  "reproduction": "CAP-07.S01.NATIVE-F01: in a newly created synthetic project whose workflow has not been explicitly started, open Research Intent and then Model Center through All tools. The settled supporting context says it expired and instructs reopening a primary step; reopening Research Intent does not start the workflow and cannot restore the return. Explicit Start guided workflow from Project Home followed by opening Model Center does produce a valid one-action return. A missing bootstrap and a pending supporting handoff are incorrectly represented as expired context. See CAP-07.S01.native-qualification-01.md; the original task and its adverse and approved review rounds remain immutable.",
+  "changedPaths": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.tsx",
+    "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+    "tests/desktop/test_model_center_interactions.py"
+  ],
+  "impactAnalysis": "Restore the existing supporting-tool context and distinct loading/empty/recovery contract in CAP-03.S06 task section 9.3 and approved shell style section 6. Before bootstrap, provide actionable guidance to the existing Project Home Start guided workflow action; while a supporting handoff is pending, show pending status instead of expiration. Preserve exact project/selection/intent/profile/stage/reference-bound return validation, stale-response denial, and the explicit human start action. No automatic workflow start, fabricated witness, accepted intent, completion, permission, schema, migration, storage, governed-reference or release-criterion changes. Add failing component and assembled-application regressions first for not-started guidance, ineffective primary reopening, delayed handoff, explicit start and exact return; retain stale/substituted witness denial, keyboard and both-theme coverage. Run selected desktop application/build/type/lint, assembled interaction, workflow/accessibility conformance and ledger checks; fresh native replay and broader slice/Wave qualification remain separate. This bounded defect restoration adds no supplemental refactoring or optional styling scope."
+}
