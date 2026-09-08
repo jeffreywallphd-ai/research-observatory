@@ -32,6 +32,7 @@ from research_observatory_core.ports.workflow_executor import (
 from research_observatory_core.recalculation_contracts import (
     RecalculationAuthority,
     RecalculationCandidateCommit,
+    RestoreRevisionCommit,
     SelectiveRecalculationRepository,
 )
 from research_observatory_core.repositories import (
@@ -149,6 +150,9 @@ class InjectBeforeEnqueue(SelectiveRecalculationRepository):
     def commit_candidate(self, command: RecalculationCandidateCommit) -> AggregateRevision:
         return self._delegate.commit_candidate(command)
 
+    def restore_revision(self, command: RestoreRevisionCommit) -> AggregateRevision:
+        return self._delegate.restore_revision(command)
+
 
 class SelectiveRecalculationE2ETests(unittest.TestCase):
     def setUp(self) -> None:
@@ -190,20 +194,16 @@ class SelectiveRecalculationE2ETests(unittest.TestCase):
             return revision
 
     def _append_privacy_policy(self) -> None:
-        settings = tuple(
-            PrivacySetting(key, value)
-            for key, value in sorted(
-                {
-                    "privacy.cache-retention-days": 30,
-                    "privacy.document-retention": "project-lifetime",
-                    "privacy.egress-consent-version": "none",
-                    "privacy.log-retention-days": 14,
-                    "privacy.network-policy": "offline",
-                    "privacy.remote-model-approval": "preview-every-task",
-                    "privacy.telemetry-mode": "off",
-                }.items()
-            )
-        )
+        values: dict[str, str | int] = {
+            "privacy.cache-retention-days": 30,
+            "privacy.document-retention": "project-lifetime",
+            "privacy.egress-consent-version": "none",
+            "privacy.log-retention-days": 14,
+            "privacy.network-policy": "offline",
+            "privacy.remote-model-approval": "preview-every-task",
+            "privacy.telemetry-mode": "off",
+        }
+        settings = tuple(PrivacySetting(key, value) for key, value in sorted(values.items()))
         sqlite_privacy_policy_repository(self.root, PROJECT_ID).append(
             expected_revision=0,
             revision=1,

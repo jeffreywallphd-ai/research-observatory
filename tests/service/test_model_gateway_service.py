@@ -38,16 +38,15 @@ class ProjectModelGatewayTests(unittest.IsolatedAsyncioTestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix="ro-gateway-core-fixture-")
         self.actor = new_uuid_v7()
         self.keys = MemoryKeyProvider({"fixture-key-v1": bytes.fromhex("41" * 32)}, "fixture-key-v1")
-        self.client = TestClient(
-            create_runtime_app(
-                settings=CoreSettings(),
-                object_key_provider=self.keys,
-                database_key_provider=InMemoryDatabaseKeyProvider(),
-                local_actor_id=self.actor,
-            )
+        self.application = create_runtime_app(
+            settings=CoreSettings(),
+            object_key_provider=self.keys,
+            database_key_provider=InMemoryDatabaseKeyProvider(),
+            local_actor_id=self.actor,
         )
+        self.client = TestClient(self.application)
         self.client.__enter__()
-        self.runtime = self.client.app.state.runtime
+        self.runtime = self.application.state.runtime
         self.project = self.runtime.projects.create(
             parent_directory=self.temporary.name,
             directory_name="fixture-project",
@@ -116,9 +115,11 @@ class ProjectModelGatewayTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual({}, gateway._adapters)
         self.assertEqual(("local",), policy.permitted_deployments)
         self.assertEqual(0, policy.maximum_cost_microunits)
-        self.assertNotIn("model/execute", json.dumps(self.client.app.openapi()))
+        self.assertNotIn("model/execute", json.dumps(self.application.openapi()))
         restarted = SqliteModelRoutingRepository(self.database, self.project.project_id, self.actor)
-        self.assertTrue(restarted.read(request["taskId"]).terminal)
+        persisted = restarted.read(request["taskId"])
+        assert persisted is not None
+        self.assertTrue(persisted.terminal)
         self.assertNotEqual(b"SQLite format 3\0", self.database.read_bytes()[:16])
         self.runtime.projects.close(root=self.project.root, trace_id="a" * 32)
         with self.assertRaises(ProjectLifecycleProblem):

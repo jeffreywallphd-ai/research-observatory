@@ -436,7 +436,9 @@ def main() -> int:
             if not binding_ids:
                 errors.append(f"{cid}: no decisions are binding in requested wave {ns.wave}")
             errors.extend(initiation_assessment_errors(meta, body, cap, ns.wave))
-            wave_state = next((item for item in backlog.get("waves", []) if item.get("id") == ns.wave), {})
+            wave_state: dict[str, Any] = next(
+                (item for item in backlog.get("waves", []) if item.get("id") == ns.wave), {}
+            )
             if (
                 wave_requires_initiation_assessment(ns.wave)
                 and (wave_state.get("approval") or {}).get("status") != "APPROVED"

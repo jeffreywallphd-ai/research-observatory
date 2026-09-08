@@ -5,7 +5,10 @@ import copy
 import json
 import sys
 import unittest
+from collections.abc import Mapping, MutableMapping
+from contextvars import Context
 from pathlib import Path
+from typing import Any, TypedDict, cast
 from unittest.mock import patch
 
 from jsonschema import Draft202012Validator
@@ -31,6 +34,12 @@ from tests.ai.test_model_routing import FixtureAdapter
 from tests.model_routing_fixtures import MemoryRoutingRepository
 
 
+class CapturedDecodeScope(TypedDict):
+    task: decoder.ModelTaskSnapshot
+    memo: decoder._TaskDecodeScope
+    context: Context
+
+
 class ModelRoutingContractTests(unittest.TestCase):
     def test_decoder_identity_scope_reuses_only_owned_snapshots_not_mutable_inputs(self):
         from types import MappingProxyType
@@ -40,6 +49,7 @@ class ModelRoutingContractTests(unittest.TestCase):
         with decoder._model_task_decode_scope():
             first = decoder.decode_model_task(document)
             self.assertIsNotNone(first)
+            assert first is not None
             self.assertIs(first, decoder.decode_model_task(first))
             second = decoder.decode_model_task(proxy)
             self.assertEqual(first, second)
@@ -48,7 +58,9 @@ class ModelRoutingContractTests(unittest.TestCase):
             document["requirements"]["deadlineMs"] = 0
             self.assertIsNone(decoder.decode_model_task(document))
             self.assertIsNone(decoder.decode_model_task(proxy))
-            self.assertEqual(30_000, first["requirements"]["deadlineMs"])
+            requirements = first["requirements"]
+            assert isinstance(requirements, Mapping)
+            self.assertEqual(30_000, requirements["deadlineMs"])
             self.assertIs(first, decoder.decode_model_task(first))
         self.assertIsNot(first, decoder.decode_model_task(first))
 
@@ -59,7 +71,9 @@ class ModelRoutingContractTests(unittest.TestCase):
             third = decoder.decode_model_task(task())
             self.assertEqual(first, second)
             self.assertIsNot(first, second)
-            self.assertEqual(2, len(decoder._MODEL_TASK_DECODE_SCOPE.get().snapshots))
+            memo = decoder._MODEL_TASK_DECODE_SCOPE.get()
+            assert memo is not None
+            self.assertEqual(2, len(memo.snapshots))
             self.assertIs(first, decoder.decode_model_task(first))
             self.assertIs(second, decoder.decode_model_task(second))
             self.assertIsNot(third, decoder.decode_model_task(third))
@@ -70,7 +84,9 @@ class ModelRoutingContractTests(unittest.TestCase):
         with decoder._model_task_decode_scope():
             large = decoder.decode_model_task(document)
             self.assertIsNotNone(large)
-            self.assertEqual([], decoder._MODEL_TASK_DECODE_SCOPE.get().snapshots)
+            memo = decoder._MODEL_TASK_DECODE_SCOPE.get()
+            assert memo is not None
+            self.assertEqual([], memo.snapshots)
             self.assertEqual(large, decoder.decode_model_task(large))
             self.assertIsNot(large, decoder.decode_model_task(large))
 
@@ -84,10 +100,10 @@ class ModelRoutingContractTests(unittest.TestCase):
             size = len(canonical_bytes(value))
             self.assertTrue(decoder._cacheable_task(value, maximum_bytes=size))
             self.assertFalse(decoder._cacheable_task(value, maximum_bytes=size - 1))
-        value = MappingProxyType({"key": "x" * (64_000 - len(canonical_bytes({"key": ""})))})
-        self.assertEqual(64_000, len(canonical_bytes(value)))
-        self.assertTrue(decoder._cacheable_task(value))
-        self.assertFalse(decoder._cacheable_task(MappingProxyType({"key": value["key"] + "x"})))
+        boundary_value = MappingProxyType({"key": "x" * (64_000 - len(canonical_bytes({"key": ""})))})
+        self.assertEqual(64_000, len(canonical_bytes(boundary_value)))
+        self.assertTrue(decoder._cacheable_task(boundary_value))
+        self.assertFalse(decoder._cacheable_task(MappingProxyType({"key": boundary_value["key"] + "x"})))
 
     def test_decoder_does_not_cache_scalar_or_key_subclasses_or_change_their_acceptance(self):
         class Text(str):
@@ -110,7 +126,9 @@ class ModelRoutingContractTests(unittest.TestCase):
                 snapshot = decoder.decode_model_task(document)
                 self.assertEqual(without_scope, snapshot)
                 self.assertIsNot(snapshot, decoder.decode_model_task(snapshot))
-                self.assertEqual([], decoder._MODEL_TASK_DECODE_SCOPE.get().snapshots)
+                memo = decoder._MODEL_TASK_DECODE_SCOPE.get()
+                assert memo is not None
+                self.assertEqual([], memo.snapshots)
 
     def test_decoder_identity_scope_nested_exception_and_inherited_exit_clear_references(self):
         from contextvars import copy_context
@@ -118,12 +136,15 @@ class ModelRoutingContractTests(unittest.TestCase):
         with decoder._model_task_decode_scope():
             first = decoder.decode_model_task(task())
             outer = decoder._MODEL_TASK_DECODE_SCOPE.get()
+            assert outer is not None
             with self.assertRaisesRegex(RuntimeError, "synthetic"), decoder._model_task_decode_scope():
                 other = decoder.decode_model_task(first)
                 inner = decoder._MODEL_TASK_DECODE_SCOPE.get()
+                assert inner is not None
                 inherited = copy_context()
                 self.assertIsNot(first, other)
                 raise RuntimeError("synthetic")
+            assert inner is not None
             self.assertFalse(inner.active)
             self.assertEqual([], inner.snapshots)
             self.assertIsNot(other, inherited.run(decoder.decode_model_task, other))
@@ -141,6 +162,7 @@ class ModelRoutingContractTests(unittest.TestCase):
             with decoder._model_task_decode_scope():
                 first = decoder.decode_model_task(task())
                 memo = decoder._MODEL_TASK_DECODE_SCOPE.get()
+                assert memo is not None
                 inherited = copy_context()
                 other = pool.submit(inherited.run, decoder.decode_model_task, first).result()
                 self.assertEqual(first, other)
@@ -154,21 +176,33 @@ class ModelRoutingContractTests(unittest.TestCase):
 
         async def check():
             entered = asyncio.Event()
-            captured = {}
+            captured: CapturedDecodeScope | None = None
 
             async def pending():
+                nonlocal captured
                 with decoder._model_task_decode_scope():
-                    captured["task"] = decoder.decode_model_task(task())
-                    captured["memo"] = decoder._MODEL_TASK_DECODE_SCOPE.get()
-                    captured["context"] = copy_context()
-                    entered.set()
+                    try:
+                        snapshot = decoder.decode_model_task(task())
+                        memo = decoder._MODEL_TASK_DECODE_SCOPE.get()
+                        assert snapshot is not None and memo is not None
+                        captured = {"task": snapshot, "memo": memo, "context": copy_context()}
+                    finally:
+                        entered.set()
                     await asyncio.Event().wait()
 
             work = asyncio.create_task(pending())
-            await entered.wait()
-            work.cancel()
-            with self.assertRaises(asyncio.CancelledError):
-                await work
+            try:
+                await asyncio.wait_for(entered.wait(), 2)
+                if work.done():
+                    await work  # Surface initialization failure before cancellation.
+                work.cancel()
+                with self.assertRaises(asyncio.CancelledError):
+                    await work
+            finally:
+                if not work.done():
+                    work.cancel()
+                await asyncio.gather(work, return_exceptions=True)
+            assert captured is not None
             self.assertFalse(captured["memo"].active)
             self.assertEqual([], captured["memo"].snapshots)
             self.assertIsNot(captured["task"], captured["context"].run(decoder.decode_model_task, captured["task"]))
@@ -190,7 +224,7 @@ class ModelRoutingContractTests(unittest.TestCase):
             self.assertIsNot(first, decoder.decode_model_result(request, first))
 
     def test_type_and_array_keyword_applicability_match_json_schema(self):
-        schemas = (
+        schemas: tuple[dict[str, Any], ...] = (
             {"type": "string", "minLength": 2},
             {"type": "number", "minimum": 0},
             {"type": ["string", "null"], "minLength": 2},
@@ -203,7 +237,21 @@ class ModelRoutingContractTests(unittest.TestCase):
             {"type": "array"},
             {},
         )
-        values = (None, True, -1, 1.5, "a", "ab", {}, {"x": 1}, {"x": "a"}, [], [1], [1, 1], [1, "x"])
+        values: tuple[object, ...] = (
+            None,
+            True,
+            -1,
+            1.5,
+            "a",
+            "ab",
+            {},
+            {"x": 1},
+            {"x": "a"},
+            [],
+            [1],
+            [1, 1],
+            [1, "x"],
+        )
         for schema in schemas:
             validator = Draft202012Validator(schema)
             for value in values:
@@ -220,12 +268,16 @@ class ModelRoutingContractTests(unittest.TestCase):
                 first = routing_contracts._canonical_task(text)
                 self.assertIs(first, routing_contracts._canonical_task(text))
                 self.assertEqual(1, decode.call_count)
+                requirements = first["requirements"]
+                assert isinstance(requirements, Mapping)
                 with self.assertRaises(TypeError):
-                    first["requirements"]["dataClass"] = "public"
+                    # Deliberately attempt an invalid mutation of the immutable snapshot.
+                    cast(MutableMapping[str, decoder.FrozenJsonValue], requirements)["dataClass"] = "public"
                 with self.assertRaises(ValueError):
                     routing_contracts._canonical_task(text.replace('"schemaVersion":"1.0"', '"schemaVersion":"bad"'))
                 inherited = copy_context()
                 memo = routing_contracts._TASK_DECODE_MEMO.get()
+                assert memo is not None
             self.assertFalse(memo.active)
             self.assertIsNone(memo.text)
             self.assertIsNone(memo.snapshot)
@@ -240,7 +292,9 @@ class ModelRoutingContractTests(unittest.TestCase):
         self.assertGreater(len(large), 64_000)
         with routing_contracts.routing_contract_scope():
             self.assertIsNotNone(routing_contracts._canonical_task(large))
-            self.assertIsNone(routing_contracts._TASK_DECODE_MEMO.get().text)
+            memo = routing_contracts._TASK_DECODE_MEMO.get()
+            assert memo is not None
+            self.assertIsNone(memo.text)
 
     def test_thread_inherited_decode_context_neither_hits_nor_refills_parent_memo(self):
         from concurrent.futures import ThreadPoolExecutor
@@ -255,6 +309,7 @@ class ModelRoutingContractTests(unittest.TestCase):
                 first = routing_contracts._canonical_task(text)
                 inherited = copy_context()
                 memo = routing_contracts._TASK_DECODE_MEMO.get()
+                assert memo is not None
                 other = pool.submit(inherited.run, routing_contracts._canonical_task, text).result()
                 self.assertEqual(first, other)
                 self.assertIsNot(first, other)
@@ -335,7 +390,9 @@ class ModelRoutingContractTests(unittest.TestCase):
                 CancellationToken(),
             )
         )
-        original = repository.read(request["taskId"]).model_dump(by_alias=True, mode="json")
+        run = repository.read(request["taskId"])
+        assert run is not None
+        original = run.model_dump(by_alias=True, mode="json")
         changes = (
             (0, {"attemptNumber": 1}),
             (1, {"manifest": manifest.model_dump(by_alias=True, mode="json")}),
@@ -361,7 +418,7 @@ class ModelRoutingContractTests(unittest.TestCase):
         comparisons = 0
         for name in ("valid-generation-task.v1.json", "valid-generation-result.v1.json"):
             original = json.loads((root / "fixtures" / name).read_text("utf-8"))
-            paths = []
+            paths: list[tuple[str | int, ...]] = []
 
             def visit(value, path=(), *, found=paths):
                 if isinstance(value, dict):
@@ -374,8 +431,9 @@ class ModelRoutingContractTests(unittest.TestCase):
                         visit(child, (*path, key), found=found)
 
             visit(original)
+            replacements: tuple[object, ...] = (None, True, -1, {}, [], "unexpected")
             for path in paths:
-                for replacement in (None, True, -1, {}, [], "unexpected"):
+                for replacement in replacements:
                     document = copy.deepcopy(original)
                     parent = document
                     for key in path[:-1]:

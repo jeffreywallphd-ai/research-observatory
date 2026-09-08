@@ -6,6 +6,7 @@ import hashlib
 import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from datetime import datetime
 from pathlib import Path
 from uuid import UUID
 
@@ -830,8 +831,8 @@ def _derived_uuid_v7(reference_id: str, idempotency_key: str, label: str) -> str
     return str(UUID(bytes=bytes(value)))
 
 
-def _api_time(value: object) -> str:
-    return value.isoformat(timespec="milliseconds").replace("+00:00", "Z")  # type: ignore[union-attr]
+def _api_time(value: datetime) -> str:
+    return value.isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
 class RecalculationControlService:
@@ -969,9 +970,7 @@ class RecalculationControlService:
                     raise RepositoryConflict("recalculation preview is stale or substituted")
                 change = next(item for item in authority.changes if item.change_id == command.change_id)
                 identity = RecalculationWorkflowIdentity(
-                    workflow_definition_id=_derived_uuid_v7(
-                        command.target_revision_id, idempotency_key, "definition"
-                    ),
+                    workflow_definition_id=_derived_uuid_v7(command.target_revision_id, idempotency_key, "definition"),
                     definition_revision_id=_derived_uuid_v7(
                         command.target_revision_id,
                         idempotency_key,
@@ -1099,9 +1098,7 @@ class RecalculationControlService:
             service, _, dependencies = self._service(path, project_id)
             timestamp = _api_time(command.modified_at)
             try:
-                dependency_count = len(
-                    dependencies.registration(command.prior_adjudicated_revision_id).dependencies
-                )
+                dependency_count = len(dependencies.registration(command.prior_adjudicated_revision_id).dependencies)
                 restored = service.restore(
                     RestoreRevisionCommand(
                         prior_adjudicated_revision_id=command.prior_adjudicated_revision_id,

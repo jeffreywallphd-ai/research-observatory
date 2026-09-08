@@ -5,14 +5,49 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-import test_native_project_contract as probe
-from desktop_app_check import PRODUCT_EXTERNAL_INPUTS, PRODUCT_MANIFEST, PRODUCT_ROOT, product_build_errors
-from ui_conformance import file_inventory
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "tools"))
+
+from desktop_app_check import (  # noqa: E402
+    PRODUCT_EXTERNAL_INPUTS,
+    PRODUCT_MANIFEST,
+    PRODUCT_ROOT,
+    product_build_errors,
+)
+from ui_conformance import file_inventory  # noqa: E402
+
+from tests.service import test_native_project_contract as probe  # noqa: E402
+
+
+class ProjectProbeSeedImportTests(unittest.TestCase):
+    def test_direct_seed_entry_resolves_fixtures_without_repository_on_pythonpath(self) -> None:
+        # Stop at nonexistent fixture paths after imports, before any project,
+        # vault or Windows credential-provider access. Exercise the actual CLI.
+        with tempfile.TemporaryDirectory(prefix="ro-seed-import-fixture-") as directory:
+            root = Path(directory)
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-I",
+                    str(Path(__file__).with_name("test_native_project_contract.py")),
+                    "--seed-lineage",
+                    str(root / "absent-project"),
+                    str(root / "absent-vault"),
+                ],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("FileNotFoundError", result.stderr)
+        self.assertNotIn("ModuleNotFoundError", result.stderr)
 
 
 class ProjectProbeBuildBindingTests(unittest.TestCase):
@@ -72,7 +107,9 @@ class ProjectProbeBuildBindingTests(unittest.TestCase):
     def publish_manifest(self) -> None:
         sources = {}
         for name in ("apps/desktop", "packages/ui-components", "packages/ui-tokens"):
-            sources.update(file_inventory(self.root, self.root / name, excluded_directories={"product-dist"}))
+            sources.update(
+                file_inventory(self.root, self.root / name, excluded_directories=frozenset({"product-dist"}))
+            )
         for name in PRODUCT_EXTERNAL_INPUTS:
             sources[name] = hashlib.sha256((self.root / name).read_bytes()).hexdigest()
         self.manifest["sourceFiles"] = dict(sorted(sources.items()))

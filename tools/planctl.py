@@ -2380,14 +2380,14 @@ def approve_wave(root: Path, wave_id: str, approver: str, commit: str, note: str
             binding = [
                 item for item in meta.get("decisions", []) if not scoped or wave_id in (item.get("binding_waves") or [])
             ]
-            binding_ids = {item.get("id") for item in binding}
+            binding_id_set = {item.get("id") for item in binding}
             unresolved = [
                 item.get("id")
                 for item in binding
                 if item.get("status") != "accepted" or not item.get("selected_option")
             ]
             if (
-                set(meta.get("open_blocking_decisions") or []) & binding_ids
+                set(meta.get("open_blocking_decisions") or []) & binding_id_set
                 or unresolved
                 or (not scoped and meta.get("decision_completion") != "complete")
             ):

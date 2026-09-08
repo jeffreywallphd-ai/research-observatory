@@ -45,7 +45,7 @@ class ModelRoutingRepositoryTests(unittest.TestCase):
         self.actor = new_uuid_v7()
         self.repository = SqliteModelRoutingRepository(self.database, PROJECT, self.actor)
         document = task()
-        self.run = RoutingRun(
+        self.routing_run = RoutingRun(
             project_id=PROJECT,
             task_id=document["taskId"],
             task_hash=canonical_hash(document),
@@ -59,14 +59,14 @@ class ModelRoutingRepositoryTests(unittest.TestCase):
         self.temporary.cleanup()
 
     def test_protected_admission_and_history_survive_restart_without_rewriting_request(self):
-        stored, admitted = self.repository.admit(self.run)
+        stored, admitted = self.repository.admit(self.routing_run)
         self.assertTrue(admitted)
         event = RoutingEvent(event_id=new_uuid_v7(), kind="routes", occurred_at_ms=1501)
         updated = self.repository.append(stored.task_id, expected_revision=1, event=event)
         restarted = SqliteModelRoutingRepository(self.database, PROJECT, self.actor)
         self.assertEqual(updated, restarted.read(stored.task_id))
-        self.assertEqual((updated, False), restarted.admit(self.run))
-        self.assertEqual(self.run.task_json, updated.task_json)
+        self.assertEqual((updated, False), restarted.admit(self.routing_run))
+        self.assertEqual(self.routing_run.task_json, updated.task_json)
         self.assertNotEqual(b"SQLite format 3\0", self.database.read_bytes()[:16])
         connection = open_canonical_database(self.database, expected_project_id=PROJECT)
         try:
@@ -80,26 +80,26 @@ class ModelRoutingRepositoryTests(unittest.TestCase):
 
     def test_duplicate_and_concurrent_admission_have_one_owner_and_changed_request_conflicts(self):
         with ThreadPoolExecutor(max_workers=2) as pool:
-            outcomes = list(pool.map(lambda _: self.repository.admit(self.run), range(2)))
+            outcomes = list(pool.map(lambda _: self.repository.admit(self.routing_run), range(2)))
         self.assertEqual(1, sum(admitted for _, admitted in outcomes))
-        changed = self.run.model_copy(update={"policy": RoutingPolicy(project_id=PROJECT, revision=2)})
+        changed = self.routing_run.model_copy(update={"policy": RoutingPolicy(project_id=PROJECT, revision=2)})
         with self.assertRaises(RepositoryConflict):
             self.repository.admit(changed)
         with self.assertRaises(RepositoryConflict):
-            SqliteModelRoutingRepository(self.database, PROJECT, new_uuid_v7()).admit(self.run)
+            SqliteModelRoutingRepository(self.database, PROJECT, new_uuid_v7()).admit(self.routing_run)
 
     def test_atomic_failure_retains_predecessor_and_cas_rejects_stale_append(self):
-        self.repository.admit(self.run)
+        self.repository.admit(self.routing_run)
         event = RoutingEvent(event_id=new_uuid_v7(), kind="routes", occurred_at_ms=1501)
         with (
             patch.object(self.repository, "_append_audit", side_effect=OSError("synthetic fault")),
             self.assertRaises(RepositoryTransactionFailed),
         ):
-            self.repository.append(self.run.task_id, expected_revision=1, event=event)
-        self.assertEqual(self.run, self.repository.read(self.run.task_id))
-        self.repository.append(self.run.task_id, expected_revision=1, event=event)
+            self.repository.append(self.routing_run.task_id, expected_revision=1, event=event)
+        self.assertEqual(self.routing_run, self.repository.read(self.routing_run.task_id))
+        self.repository.append(self.routing_run.task_id, expected_revision=1, event=event)
         with self.assertRaises(RepositoryConflict):
-            self.repository.append(self.run.task_id, expected_revision=1, event=event)
+            self.repository.append(self.routing_run.task_id, expected_revision=1, event=event)
 
     def test_session_open_and_atomic_commit_failures_are_redacted_and_recoverable(self):
         with (
@@ -124,12 +124,12 @@ class ModelRoutingRepositoryTests(unittest.TestCase):
                 self.assertRaisesRegex(RepositoryTransactionFailed, "model routing persistence failed"),
                 self.repository.atomic(),
             ):
-                self.repository.admit(self.run)
-            self.assertIsNone(self.repository.read(self.run.task_id))
+                self.repository.admit(self.routing_run)
+            self.assertIsNone(self.repository.read(self.routing_run.task_id))
             # A failed transaction must not leak its atomic/session state.
             with self.repository.atomic():
-                self.repository.admit(self.run)
-        self.assertEqual(self.run, self.repository.read(self.run.task_id))
+                self.repository.admit(self.routing_run)
+        self.assertEqual(self.routing_run, self.repository.read(self.routing_run.task_id))
 
     def test_circuit_cas_and_pending_attempt_survive_restart(self):
         digest = "sha256:" + "1" * 64
@@ -180,7 +180,7 @@ class ModelRoutingRepositoryTests(unittest.TestCase):
         self.assertIn(self.repository.circuit(digest), states)
 
     def test_large_valid_request_roundtrips_all_chunks(self):
-        document = json.loads(self.run.task_json)
+        document = json.loads(self.routing_run.task_json)
         reference = document["input"]["context"][0]
         document["taskKind"] = "embedding"
         document["input"] = {
@@ -188,7 +188,7 @@ class ModelRoutingRepositoryTests(unittest.TestCase):
             "items": [reference | {"revisionId": new_uuid_v7()} for _ in range(500)],
         }
         large = RoutingRun.model_validate(
-            self.run.model_dump()
+            self.routing_run.model_dump()
             | {
                 "task_json": canonical_bytes(document).decode(),
                 "task_hash": canonical_hash(document),
@@ -199,57 +199,57 @@ class ModelRoutingRepositoryTests(unittest.TestCase):
         self.assertEqual(large, self.repository.read(large.task_id))
 
     def test_corrupt_latest_journal_cannot_look_empty_or_replay_old_state(self):
-        self.repository.admit(self.run)
+        self.repository.admit(self.routing_run)
         connection = open_canonical_database(self.database, expected_project_id=PROJECT)
         try:
             connection.execute(
                 "INSERT INTO settings (setting_id, project_id, setting_key, revision, value_type, "
                 "text_value, created_at, modified_at) VALUES (?, ?, ?, 2, 'text', '{}', ?, ?)",
-                (new_uuid_v7(), PROJECT, f"routing.{self.run.task_id}.events.head", STAMP, STAMP),
+                (new_uuid_v7(), PROJECT, f"routing.{self.routing_run.task_id}.events.head", STAMP, STAMP),
             )
             connection.commit()
         finally:
             connection.close()
         with self.assertRaises(RepositoryTransactionFailed):
-            self.repository.read(self.run.task_id)
+            self.repository.read(self.routing_run.task_id)
         with self.assertRaises(RepositoryTransactionFailed):
-            self.repository.admit(self.run)
+            self.repository.admit(self.routing_run)
 
     def test_verified_run_reuse_stops_at_commit_and_rollback(self):
         event = RoutingEvent(event_id=new_uuid_v7(), kind="routes", occurred_at_ms=1501)
         with self.repository.session():
             with patch.object(self.repository, "_read_document", wraps=self.repository._read_document) as read:
                 with self.repository.atomic():
-                    self.repository.admit(self.run)
-                    stored = self.repository.append(self.run.task_id, expected_revision=1, event=event)
-                    self.assertEqual(stored, self.repository.read(self.run.task_id))
+                    self.repository.admit(self.routing_run)
+                    stored = self.repository.append(self.routing_run.task_id, expected_revision=1, event=event)
+                    self.assertEqual(stored, self.repository.read(self.routing_run.task_id))
                     self.assertEqual(0, read.call_count)
                 self.assertIsNone(self.repository._transaction_runs.get())
-                self.assertEqual(stored, self.repository.read(self.run.task_id))
+                self.assertEqual(stored, self.repository.read(self.routing_run.task_id))
                 self.assertGreater(read.call_count, 0)
             # A failed later operation cannot leave its uncommitted revision in
             # the memo consulted by the following transaction.
             with self.assertRaisesRegex(ValueError, "synthetic caller failure"), self.repository.atomic():
                 self.repository.append(
-                    self.run.task_id,
+                    self.routing_run.task_id,
                     expected_revision=2,
                     event=RoutingEvent(event_id=new_uuid_v7(), kind="routes", occurred_at_ms=1502),
                 )
                 raise ValueError("synthetic caller failure")
             self.assertIsNone(self.repository._transaction_runs.get())
-            self.assertEqual(stored, self.repository.read(self.run.task_id))
+            self.assertEqual(stored, self.repository.read(self.routing_run.task_id))
             connection = open_canonical_database(self.database, expected_project_id=PROJECT)
             try:
                 connection.execute(
                     "INSERT INTO settings (setting_id, project_id, setting_key, revision, value_type, "
                     "text_value, created_at, modified_at) VALUES (?, ?, ?, 3, 'text', '{}', ?, ?)",
-                    (new_uuid_v7(), PROJECT, f"routing.{self.run.task_id}.events.head", STAMP, STAMP),
+                    (new_uuid_v7(), PROJECT, f"routing.{self.routing_run.task_id}.events.head", STAMP, STAMP),
                 )
                 connection.commit()
             finally:
                 connection.close()
             with self.assertRaises(RepositoryTransactionFailed), self.repository.atomic():
-                self.repository.read(self.run.task_id)
+                self.repository.read(self.routing_run.task_id)
 
 
 if __name__ == "__main__":

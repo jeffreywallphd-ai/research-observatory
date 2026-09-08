@@ -21,7 +21,8 @@ from research_observatory_core.models import (  # noqa: E402
     RecalculationScheduleProjection,
 )
 
-TOKEN = "0123456789abcdef" * 4
+# Synthetic 64-character bearer token, never an external credential.
+TOKEN = "a" * 64
 AUTHORITY = "127.0.0.1:49152"
 ROOT = "C:/Research/study-one"
 TARGET_ID = "018f47a2-4d6b-7f78-9f2e-7fb76c86d101"
@@ -74,9 +75,7 @@ class FakeRecalculationControl:
             changed_fields=("display-label-observed",),
         )
 
-    def request_restore_review(
-        self, command: object, *, idempotency_key: str
-    ) -> RecalculationRestoreReviewProjection:
+    def request_restore_review(self, command: object, *, idempotency_key: str) -> RecalculationRestoreReviewProjection:
         self.calls.append(("restore-review", (command, idempotency_key)))
         return RecalculationRestoreReviewProjection(
             workflow_run_id=RUN_ID,

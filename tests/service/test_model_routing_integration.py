@@ -38,7 +38,7 @@ class ProtectedModelRoutingTests(routing_fixtures.ModelRoutingTests):
         configure_protected_database_provider(InMemoryDatabaseKeyProvider())
         self.assertTrue(initialize_database(self.database, project_id=PROJECT, project_created_at=STAMP).ok)
         self.actor = new_uuid_v7()
-        self.repository = SqliteModelRoutingRepository(self.database, PROJECT, self.actor)
+        self.repository: SqliteModelRoutingRepository = SqliteModelRoutingRepository(self.database, PROJECT, self.actor)
         self.catalog = self.catalog.model_copy(update={"project_id": PROJECT})
         self.policy = self.policy.model_copy(update={"project_id": PROJECT})
 
@@ -50,6 +50,7 @@ class ProtectedModelRoutingTests(routing_fixtures.ModelRoutingTests):
         pending = asyncio.create_task(self.run_request())
         await self.adapters[0].entered.wait()
         prior = self.repository.read(self.request["taskId"])
+        assert prior is not None
         self.repository = SqliteModelRoutingRepository(self.database, PROJECT, self.actor)
         restarted = self.gateway()
         with self.assertRaisesRegex(ValueError, "recovery is required"):
@@ -60,7 +61,9 @@ class ProtectedModelRoutingTests(routing_fixtures.ModelRoutingTests):
         self.assertEqual(prior.events, recovered.events[:-1])
         self.assertEqual(prior.task_json, recovered.task_json)
         self.assertEqual("interrupted", recovered.events[-1].kind)
-        self.assertIsNone(json.loads(recovered.events[-1].result_json)["output"])
+        result_json = recovered.events[-1].result_json
+        assert result_json is not None
+        self.assertIsNone(json.loads(result_json)["output"])
         self.assertIsNotNone(self.repository.circuit(canonical_hash(self.manifest)).active_attempt_id)
         replay = await self.run_request(restarted)
         self.assertEqual("model-prior-execution-uncertain", replay["diagnostics"][0]["code"])
@@ -76,6 +79,7 @@ class ProtectedModelRoutingTests(routing_fixtures.ModelRoutingTests):
         pending = asyncio.create_task(self.run_request(cancellation=token))
         await self.adapters[0].entered.wait()
         prior = self.repository.read(self.request["taskId"])
+        assert prior is not None
         repository = self.repository
         self.repository = SqliteModelRoutingRepository(self.database, PROJECT, new_uuid_v7())
         with self.assertRaises(RepositoryConflict):

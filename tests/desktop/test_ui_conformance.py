@@ -186,7 +186,7 @@ class UiConformanceTests(unittest.TestCase):
             "approved_wave_commit": packet,
             "slice_plan": slice_relative,
         }
-        proposal = {
+        proposal: dict[str, Any] = {
             "reference_id": "REF-2",
             "version": "2",
             "status": "proposed",
@@ -1227,7 +1227,7 @@ class UiConformanceTests(unittest.TestCase):
             schema_path.parent.mkdir(parents=True)
             shutil.copy2(REPO / "verification" / "desktop-ui-baseline.schema.json", schema_path)
             approval_path = reference / "APPROVAL.yaml"
-            approval = {
+            approval: dict[str, Any] = {
                 "reference_id": "REF-1.3",
                 "version": "1.3",
                 "status": "approved",

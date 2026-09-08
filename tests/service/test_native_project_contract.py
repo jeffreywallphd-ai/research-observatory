@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "tools"))
 
 from desktop_app_check import PRODUCT_MANIFEST, PRODUCT_ROOT, product_build_errors, tool_environment  # noqa: E402
@@ -165,7 +166,8 @@ def seed_canonical_lineage(project_root: str, vault_root: str) -> None:
     from research_observatory_core.repositories import create_sqlite_unit_of_work_factory
     from research_observatory_core.storage import configure_protected_database_provider
     from research_observatory_core.windows_credentials import create_windows_database_key_provider
-    from test_provenance import draft, event
+
+    from tests.service.test_provenance import draft, event
 
     root = Path(project_root).resolve(strict=True)
     vault = Path(vault_root).resolve(strict=True)

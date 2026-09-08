@@ -4,16 +4,18 @@ import json
 import sys
 import unittest
 from pathlib import Path
+from typing import Any
 
 from jsonschema import Draft202012Validator
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "services/core-api/src"))
+sys.path.insert(0, str(REPO / "tools"))
 
+from core_api_contract import _interfaces  # noqa: E402
 from research_observatory_core.model_registry_contracts import ModelManifest  # noqa: E402
 
 from tests.ai.test_model_registry import manifest_document  # noqa: E402
-from tools.core_api_contract import _interfaces  # noqa: E402
 
 
 class ModelRegistryContractTests(unittest.TestCase):
@@ -38,6 +40,7 @@ class ModelRegistryContractTests(unittest.TestCase):
         Draft202012Validator.check_schema(schema)
         validator = Draft202012Validator(schema)
         self.assertEqual([], list(validator.iter_errors(manifest_document())))
+        changes: dict[str, Any]
         for changes in ({"revision": True}, {"allowed": True}, {"identity": {}}, {"contextTokens": -1}):
             self.assertTrue(list(validator.iter_errors(manifest_document() | changes)))
         committed = json.loads(

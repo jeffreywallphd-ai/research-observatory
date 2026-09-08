@@ -340,9 +340,7 @@ class DependencyImpactPlannerTests(unittest.TestCase):
             DependencyGraphEdge(uid(302), a, b, "evidence", "direct", fingerprint("b"), "p", "1.0.0"),
         )
 
-        non_material = DependencyGraphEdge(
-            uid(303), b, a, "evidence", "non-material", fingerprint("c"), "p", "1.0.0"
-        )
+        non_material = DependencyGraphEdge(uid(303), b, a, "evidence", "non-material", fingerprint("c"), "p", "1.0.0")
         non_material_preview = plan_dependency_impact(PROJECT_ID, change, (*leading_edges, non_material))
         self.assertEqual((), non_material_preview.cycle_groups)
         self.assertTrue(all(item.cycle_group_id is None for item in non_material_preview.impacts))

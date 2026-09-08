@@ -27,7 +27,7 @@ from research_observatory_core.model_routing_contracts import (  # noqa: E402
     RoutingRun,
     input_references,
 )
-from research_observatory_core.ports.model_gateway import ModelAdapterFailure  # noqa: E402
+from research_observatory_core.ports.model_gateway import ModelAdapterFailure, ModelRoutingRepository  # noqa: E402
 from research_observatory_core.ports.repositories import RepositoryConflict  # noqa: E402
 
 from tests.ai.test_model_registry import FixtureInventory, FixturePolicy, manifest_document, task  # noqa: E402
@@ -89,8 +89,8 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         )
         self.authority = FixturePolicy()
         self.inventory = FixtureInventory(self.catalog.manifests)
-        self.adapters = (FixtureAdapter(self.manifest), FixtureAdapter(self.alternate))
-        self.repository = MemoryRoutingRepository("fixture-project")
+        self.adapters: tuple[FixtureAdapter, ...] = (FixtureAdapter(self.manifest), FixtureAdapter(self.alternate))
+        self.repository: ModelRoutingRepository = MemoryRoutingRepository("fixture-project")
         self.policy = RoutingPolicy(project_id="fixture-project", revision=1, maximum_cost_microunits=100)
 
     def gateway(self, adapters=None):
@@ -120,6 +120,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result, await self.run_request(gateway))
         self.assertEqual(1, self.adapters[0].calls)
         run = self.repository.read(self.request["taskId"])
+        assert run is not None
         self.assertEqual(canonical_hash(self.request), run.task_hash)
         self.assertEqual(["admitted", "routes", "attempt-started", "completed"], [event.kind for event in run.events])
 
@@ -131,9 +132,9 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual("scholar-alternate", result["route"]["modelId"])
         self.assertEqual(self.original, self.request)
         self.assertIn("model-route-fallback", [item["code"] for item in result["diagnostics"]])
-        self.assertTrue(
-            any(event.kind == "attempt-failed" for event in self.repository.read(self.request["taskId"]).events)
-        )
+        run = self.repository.read(self.request["taskId"])
+        assert run is not None
+        self.assertTrue(any(event.kind == "attempt-failed" for event in run.events))
 
     async def test_fallback_reauthorizes_and_cannot_cross_changed_egress_or_permission(self):
         def revoke(_task):
@@ -224,7 +225,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             self.authority.reason_codes = ("fixture-rights-revoked",)
             return True
 
-        self.adapters[0].health = revoke
+        self.enterContext(patch.object(self.adapters[0], "health", new=revoke))
         result = await self.run_request()
         self.assertEqual("denied", result["status"])
         self.assertEqual([0, 0], [adapter.calls for adapter in self.adapters])
@@ -245,8 +246,8 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             return result
 
         self.request["requirements"]["deadlineMs"] = 20
-        self.adapters[0].health = health
-        self.authority.assess = delayed_authority
+        self.enterContext(patch.object(self.adapters[0], "health", new=health))
+        self.enterContext(patch.object(self.authority, "assess", new=delayed_authority))
         # Advance only the gateway clock at the actual synchronous boundary;
         # real asyncio scheduling and protected I/O remain unaffected.
         with patch("research_observatory_core.model_routing.time", SimpleNamespace(monotonic=lambda: now[0])):
@@ -258,6 +259,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
     async def test_completed_output_is_not_replayed_after_permission_revocation(self):
         await self.run_request()
         previous = self.repository.read(self.request["taskId"])
+        assert previous is not None
         self.authority.reason_codes = ("fixture-rights-revoked",)
         result = await self.run_request()
         self.assertEqual("denied", result["status"])
@@ -272,7 +274,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             current[0] = False
             return True
 
-        self.adapters[0].health = revoke
+        self.enterContext(patch.object(self.adapters[0], "health", new=revoke))
         gateway = self.gateway()
         gateway._catalog_is_current = lambda _catalog: current[0]
         result = await self.run_request(gateway)
@@ -287,7 +289,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             self.authority.reason_codes = ("fixture-rights-revoked",)
             return result
 
-        self.adapters[0].execute = revoke
+        self.enterContext(patch.object(self.adapters[0], "execute", new=revoke))
         result = await self.run_request()
         self.assertEqual("denied", result["status"])
         self.assertIsNone(result["output"])
@@ -313,13 +315,14 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
                 elif change == "catalog":
                     current[0] = False
                 elif change == "cost":
+                    assert cap is not None
                     cap[0] = 0
                 return super().items()
 
         async def active_result(*args, **kwargs):
             return ActiveResult(await execute(*args, **kwargs))
 
-        self.adapters[0].execute = active_result
+        self.enterContext(patch.object(self.adapters[0], "execute", new=active_result))
         gateway = self.gateway()
         gateway._catalog_is_current = lambda _catalog: current[0]
         result = await self.run_request(gateway, cancellation=token)
@@ -331,10 +334,13 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             result["diagnostics"][0]["code"],
         )
         terminal = self.repository.read(self.request["taskId"])
+        assert terminal is not None
         self.assertTrue(terminal.terminal)
         self.assertEqual(self.original, self.request)
         self.assertEqual(self.original, json.loads(terminal.task_json))
-        persisted = json.loads(terminal.events[-1].result_json)
+        result_json = terminal.events[-1].result_json
+        assert result_json is not None
+        persisted = json.loads(result_json)
         self.assertEqual(result["status"], persisted["status"])
         self.assertIsNone(persisted["output"])
         self.assertEqual(result, await self.run_request(gateway))
@@ -379,8 +385,8 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
                     now[0] += self.request["requirements"]["deadlineMs"] / 1000 + 0.001
             return permission
 
-        self.adapters[0].execute = active_result
-        self.authority.assess = publication_authority
+        self.enterContext(patch.object(self.adapters[0], "execute", new=active_result))
+        self.enterContext(patch.object(self.authority, "assess", new=publication_authority))
         # Replace only the gateway module's time reference. The event loop and
         # protected persistence retain their real clocks and execution paths.
         with patch("research_observatory_core.model_routing.time", SimpleNamespace(monotonic=lambda: now[0])):
@@ -393,10 +399,13 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertIsNone(result["output"])
         terminal = self.repository.read(self.request["taskId"])
+        assert terminal is not None
         self.assertTrue(terminal.terminal)
         self.assertEqual(self.original, self.request)
         self.assertEqual(self.original, json.loads(terminal.task_json))
-        persisted = json.loads(terminal.events[-1].result_json)
+        result_json = terminal.events[-1].result_json
+        assert result_json is not None
+        persisted = json.loads(result_json)
         self.assertEqual(result["status"], persisted["status"])
         self.assertIsNone(persisted["output"])
         self.assertEqual([1, 0], [adapter.calls for adapter in self.adapters])
@@ -456,7 +465,9 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.original, self.request)
         self.assertEqual(self.original, json.loads(terminal.task_json))
         self.assertTrue(terminal.terminal)
-        persisted = json.loads(terminal.events[-1].result_json)
+        result_json = terminal.events[-1].result_json
+        assert result_json is not None
+        persisted = json.loads(result_json)
         self.assertEqual("denied", persisted["status"])
         self.assertIsNone(persisted["output"])
         self.assertEqual([0 if stage == "dispatch" else 1, 0], [adapter.calls for adapter in self.adapters])
@@ -544,6 +555,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual("failed", result["status"])
         self.assertEqual([2, 1], [adapter.calls for adapter in self.adapters])
         run = self.repository.read(self.request["taskId"])
+        assert run is not None
         self.assertEqual(3, sum(event.kind == "attempt-started" for event in run.events))
 
     async def test_shared_cost_budget_cannot_be_reset_by_retry(self):
@@ -568,7 +580,13 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         one_attempt = (limits["maxInputTokens"] + limits["maxOutputTokens"] + 999) // 1000
         cap = [one_attempt]
         assess = self.authority.assess
-        self.authority.assess = lambda **kwargs: assess(**kwargs).model_copy(update={"maximum_cost_microunits": cap[0]})
+        self.enterContext(
+            patch.object(
+                self.authority,
+                "assess",
+                new=lambda **kwargs: assess(**kwargs).model_copy(update={"maximum_cost_microunits": cap[0]}),
+            )
+        )
         return cap, one_attempt
 
     async def test_permission_budget_is_cumulative_across_retry(self):
@@ -577,7 +595,9 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         result = await self.run_request()
         self.assertEqual(1, self.adapters[0].calls)
         self.assertEqual("model-cost-budget-exhausted", result["diagnostics"][0]["code"])
-        attempts = [e for e in self.repository.read(self.request["taskId"]).events if e.kind == "attempt-started"]
+        run = self.repository.read(self.request["taskId"])
+        assert run is not None
+        attempts = [e for e in run.events if e.kind == "attempt-started"]
         self.assertEqual([one_attempt], [e.effective_cost_limit_microunits for e in attempts])
 
     async def test_shrinking_permission_after_health_cannot_dispatch(self):
@@ -587,7 +607,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             cap[0] = 0
             return True
 
-        self.adapters[0].health = shrink
+        self.enterContext(patch.object(self.adapters[0], "health", new=shrink))
         result = await self.run_request()
         self.assertEqual("denied", result["status"])
         self.assertEqual(0, self.adapters[0].calls)
@@ -614,7 +634,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
                 cap[0] = cost
             return True
 
-        self.adapters[0].health = shrink
+        self.enterContext(patch.object(self.adapters[0], "health", new=shrink))
         result = await self.run_request()
         self.assertEqual("denied", result["status"])
         self.assertEqual(1, self.adapters[0].calls)
@@ -630,7 +650,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             cap[0] = cost  # Still enough per attempt, but not for both reservations.
             return result
 
-        self.adapters[0].execute = shrink
+        self.enterContext(patch.object(self.adapters[0], "execute", new=shrink))
         result = await self.run_request()
         self.assertEqual(2, self.adapters[0].calls)
         self.assertEqual("denied", result["status"])
@@ -643,6 +663,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.adapters[0].outcomes = [ModelAdapterFailure("rate-limited", retryable=True)]
         self.assertEqual("succeeded", (await self.run_request())["status"])
         original = self.repository.read(self.request["taskId"])
+        assert original is not None
         tampered = original.model_dump(by_alias=True, mode="json")
         # Even mutually consistent route/attempt caps cannot erase prior cost.
         latest_routes = next(e for e in reversed(tampered["events"]) if e["kind"] == "routes")
@@ -694,6 +715,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual("failed", result["status"])
         self.assertEqual([1, 0], [adapter.calls for adapter in self.adapters])
         run = self.repository.read(self.request["taskId"])
+        assert run is not None
         rejected = [item for event in run.events if event.resolution for item in event.resolution.rejected]
         self.assertTrue(
             any(
@@ -717,7 +739,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
             finished.set()
             return result
 
-        self.adapters[0].execute = stubborn
+        self.enterContext(patch.object(self.adapters[0], "execute", new=stubborn))
         token = CancellationToken()
         pending = asyncio.create_task(self.run_request(cancellation=token))
         await self.adapters[0].entered.wait()
@@ -725,6 +747,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         result = await asyncio.wait_for(pending, 0.1)
         self.assertEqual("cancelled", result["status"])
         terminal = self.repository.read(self.request["taskId"])
+        assert terminal is not None
         await interrupted.wait()
         # Acknowledging cancellation is not proof the adapter has stopped. Its
         # circuit must remain reserved rather than admitting overlapping work.
@@ -783,7 +806,7 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         async def slow_cancel(_id):
             await asyncio.Event().wait()
 
-        self.adapters[0].cancel = slow_cancel
+        self.enterContext(patch.object(self.adapters[0], "cancel", new=slow_cancel))
         token = CancellationToken()
         pending = asyncio.create_task(self.run_request(cancellation=token))
         await self.adapters[0].entered.wait()

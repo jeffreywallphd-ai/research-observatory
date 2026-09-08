@@ -235,6 +235,9 @@
     "tests/service/test_project_probe_build.py",
     "tools/product_layout_measurements.py",
     "tools/verification_receipt.py",
-    "tests/foundation/test_verification_receipt.py"
+    "tests/foundation/test_verification_receipt.py",
+    "tests/ai/__init__.py",
+    "tests/service/__init__.py",
+    "tests/desktop/__init__.py"
   ]
 }
