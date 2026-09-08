@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "documentType": "bounded-control-maintenance-review",
+  "reviewId": "W1.schema-publication.review-R01",
+  "reviewer": "independent agent /root/cap07_slice_review",
+  "independence": "The reviewer did not implement the schema publication change or produce its verification executions.",
+  "baseCommit": "5d67af864d52244d5d4b929079bf383c50f7077c",
+  "candidateCommit": "09b648554b2731fa0ec65d2db63f0dfe86c5ce74",
+  "disposition": "APPROVED",
+  "scope": "Six-path bounded restoration of standalone model-manifest and routing-policy schema publication metadata. Not Wave, packaging, runtime or release approval.",
+  "blockingFindings": [],
+  "authorityPreserved": true,
+  "affectedIntegrationReviewed": true,
+  "changedInputs": [
+    {
+      "path": "artifacts/evidence/W1.schema-publication.maintenance-01.md",
+      "sha256": "a206fd8e556b32561323f77470402484d31db859707f3ae83b556e9dd5d33e55"
+    },
+    {
+      "path": "packages/contracts/model-gateway/model-manifest.schema.json",
+      "sha256": "e3dc0694c0484fdb6653dad1c42157bd9bb17d72ca57edf59f8184d35cdc7587"
+    },
+    {
+      "path": "packages/contracts/model-gateway/routing-policy.schema.json",
+      "sha256": "b648f9cb26043e13ecac8c781dcb2f147e8ec6c4a87c7f0956bdf336cec8466a"
+    },
+    {
+      "path": "tests/contracts/test_model_registry_contracts.py",
+      "sha256": "2beb529614ae0965c27e57b0d84ab1fcda2ac17bd7fef243c01be9ae1b2cedc1"
+    },
+    {
+      "path": "tests/contracts/test_model_routing_contracts.py",
+      "sha256": "0e65f4a71bb9485aa3d903644c6889c43f61a95688caf6aaa8d3491bb9f757be"
+    },
+    {
+      "path": "tools/core_api_contract.py",
+      "sha256": "0ba2436979686fe7b271aec1206be45d7c2a55c59a21fed462d252086b312905"
+    }
+  ],
+  "sourceAssessment": [
+    "The change restores the stable canonical identity and Draft 2020-12 publication declaration required by the existing portable-contract decisions, CAP-07.S01 stable-ID/schema/handoff obligations and unchanged build-manifest consumer. It changes no approved task, policy, version or acceptance threshold.",
+    "Removing only the added root $id and $schema yields exactly the predecessor validation schema for each document. All existing references remain local #/$defs references. Core-owned models, constraints, aliases, defaults and authorization semantics are unchanged.",
+    "The exporter retains deterministic sorted JSON and final newline. Strengthened tests compare the complete exported schema and exact serialized bytes, validate published documents, accept valid fixtures, and reject malformed fields and caller-supplied authorization flags. Existing Core/Pydantic rejection checks remain.",
+    "The four-artifact generator check includes unchanged OpenAPI and TypeScript outputs. Schema inventory, build-manifest validation, Core runtime and policy code are outside the six-path delta and unchanged. The existing manifest inventory-drift denial still passes."
+  ],
+  "verification": {
+    "report": {
+      "path": "artifacts/tmp/W1.schema-publication.verify-02.json",
+      "sha256": "01f1452503ef475d834a62d4b2bb2fec570892c574d3efa18cd3973b5abf9f7b"
+    },
+    "producer": {
+      "path": "artifacts/tmp/W1.schema-publication.verify-02.py",
+      "sha256": "86926ad39822cdf1207b7c215ce34985ea7f79e9dd2335a1a42387f46b4fc1f4"
+    },
+    "containmentHelper": {
+      "path": "artifacts/tmp/w1_owned_job_01.py",
+      "sha256": "32eea1c170a2a07b42d9657fd5c4404c53d0d7b19285cb726adc148927bebc0c"
+    },
+    "status": "PASS",
+    "durationSeconds": 8.726838099770248,
+    "checks": [
+      {
+        "id": "schema-publication-regressions",
+        "status": "PASS",
+        "testsPassed": 6,
+        "testRunnerSeconds": 1.582,
+        "log": {
+          "path": "artifacts/tmp/W1.schema-publication.verify-02-01.log",
+          "sha256": "c0ad153d46d70aaaa76f58dbb0e881c014a48c92aa8f865dcd9537c90006d506"
+        }
+      },
+      {
+        "id": "generator-currency",
+        "status": "PASS",
+        "log": {
+          "path": "artifacts/tmp/W1.schema-publication.verify-02-02.log",
+          "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+        }
+      },
+      {
+        "id": "actual-committed-build-manifest",
+        "status": "PASS",
+        "scopeClarification": "Original command label retained. This is an actual candidate-bound dirty-state manifest PASS, not a clean-checkout manifest PASS; see the explicit qualification below.",
+        "log": {
+          "path": "artifacts/tmp/W1.schema-publication.verify-02-03.log",
+          "sha256": "8bfd5df773c77af319769ee1080b60bf34c99b615087edd43222b1f4ac9d5f81"
+        }
+      },
+      {
+        "id": "scoped-quality",
+        "status": "PASS",
+        "scope": "Unchanged quality-scope validation and four-file format/lint/type selection, including the unchanged Core package entry point for correct import discovery.",
+        "log": {
+          "path": "artifacts/tmp/W1.schema-publication.verify-02-04.log",
+          "sha256": "882c3e390855644eecfe3b9a06f56108ffc73cf6b14b4076eef687109c79ebb3"
+        }
+      }
+    ],
+    "processBoundary": "All four check roots exited zero and all four owned trees reached activeProcesses=0 / EMPTY_CONFIRMED with the original containment helper before selected input locks were released.",
+    "authentication": "Named producer/helper/report/log hashes were checked. All six changed raw files match both the receipt inputs and exact candidate Git blobs. The reviewer inspected the producer and source deltas without executing tests, builds or the generator. No exhaustive installed-runtime or evidence-reuse claim is made."
+  },
+  "realManifestQualification": {
+    "manifest": {
+      "path": "artifacts/tmp/W1.schema-publication.real-manifest-02.json",
+      "sha256": "f3cee824d688188f65d615899d53b82934300b2d21f8d23d7e546b61004aa56b"
+    },
+    "sourceCommit": "09b648554b2731fa0ec65d2db63f0dfe86c5ce74",
+    "sourceDirty": true,
+    "buildIdentity": "0.1.0+g09b6485.dirty",
+    "observation": "The sole dirty-status entry is the protected witness filename; only that status metadata was inspected. The manifest therefore uses the existing dirty-state path, not the clean Git-blob publication path. Both changed schema rows nevertheless match exact committed payload bytes. This qualification corrects any clean-publication inference from the original command label without altering the raw report.",
+    "dispositionImpact": "No source defect is demonstrated. The raw dirty-state result remains unchanged and is not promoted to clean proof. The separate authenticated clean-publication confirmation below closes the compact maintenance proof gap without repeating tests; full W1 qualification remains separate."
+  },
+  "cleanPublicationConfirmation": {
+    "report": {
+      "path": "artifacts/tmp/W1.schema-publication.clean-01.json",
+      "sha256": "3d1ea1233ee67f26b8e69dac94e555c95d878b10c7872781f130e0babb02f2f5"
+    },
+    "producer": {
+      "path": "artifacts/tmp/W1.schema-publication.clean-01.py",
+      "sha256": "1f6b30d0d2ecfd372d3477550fa6668a8a28301efff018dce6901bfb6c19e742"
+    },
+    "log": {
+      "path": "artifacts/tmp/W1.schema-publication.clean-01-01.log",
+      "sha256": "f7c93b27194a233ee35b96db8005e1274d668a8a75b2fde79c529f6842e85d4c"
+    },
+    "manifest": {
+      "path": ".local/q/w1-final-01/artifacts/tmp/W1.schema-publication.clean-manifest-01.json",
+      "sha256": "f1ec812644198a962f376ecbdcb7eea4c4737d8e33755ceabb24c88f73bad85a"
+    },
+    "status": "PASS",
+    "candidateCommit": "09b648554b2731fa0ec65d2db63f0dfe86c5ce74",
+    "checkDurationSeconds": 17.897728400304914,
+    "sourceDirty": false,
+    "buildIdentity": "0.1.0+g09b6485",
+    "observation": "One unchanged build-manifest command ran in the clean isolated checkout under full tracked-input and selected-runtime locks, with the original containment helper. Root exit was zero and the owned job was confirmed empty before lock release. Producer, receipt, log and manifest hashes authenticate; all six affected isolated payloads match the receipt and exact canonical candidate bytes. The clean manifest contains both canonical schema IDs and matching committed payload hashes. No tests, generator check or quality checks were repeated, and this is not a full-profile PASS."
+  },
+  "preservedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W1.full-qualification-01.json",
+      "sha256": "568628af507be5b3e67f63d289f816f5111a2daf7d4df17e8c2d6d983c05dc53",
+      "status": "FAIL",
+      "observation": "Predecessor full union: seven commands passed, foundation:build-manifest failed for the two missing stable schema IDs, and 29 selected commands were not run. No full-W1 PASS is claimed."
+    },
+    {
+      "path": ".local/q/w1-final-01/artifacts/tmp/W1.full-qualification-01.execution.json",
+      "sha256": "f0399340bd0a29ca496b26f0a22cbf9e91f951fcd74dd416fe00e9c9635cd01e"
+    },
+    {
+      "path": "artifacts/tmp/W1.full-qualification-01.log",
+      "sha256": "06d001a2ea6520c457b498764e470b35f57597d62c725555ddf3427e23a26437"
+    },
+    {
+      "path": "artifacts/tmp/W1.schema-publication.red-01.log",
+      "sha256": "38a61f708a091b095db15f457cabfd44a0b0a1813eba9662eefde3829544c94e",
+      "observation": "Regression-first generator/publication and manifest-consumer failures are retained."
+    },
+    {
+      "path": "artifacts/tmp/W1.schema-publication.quality-01.log",
+      "sha256": "7b322442145cfa54d7f3fc45c82ae04c291e94fb36b87dc47d85492f69fdcca3",
+      "observation": "Initial three-file typing selection failed with 22 import-discovery errors. Correcting package-root selection did not change source, configuration or quality rules."
+    },
+    {
+      "path": "artifacts/tmp/W1.schema-publication.verify-01.json",
+      "sha256": "71122702476a910aeecd95d54573405a961e85794365f1948137252dd1175e37",
+      "status": "FAIL",
+      "observation": "Abbreviated candidate argument 09b64855 was rejected as Committed candidate drift before any selected check ran. The successor producer changes only fresh output names and was invoked with the full commit."
+    },
+    {
+      "path": "artifacts/tmp/W1.schema-publication.verify-01.py",
+      "sha256": "16829a91e0e7b2039b8b55334cde139dadecb93cd21725bfba6e45462b96b1d1"
+    }
+  ],
+  "limits": [
+    "This approves only the six-path metadata/exporter/test maintenance. Fresh full W1, performance, native/principal, security, packaging, signing and independent Wave/release obligations remain separate.",
+    "No benchmark threshold, validation rule, schema inventory, Core authorization, migration guarantee or approved experience is reduced or replaced. Historical slice evidence and all failed attempts retain their original scope.",
+    "No protected witness content, excluded sibling contents, ordinary project/vault/policy/credentials or native UI were accessed. Raw logs and local runtime details remain ignored. Only this append-only review file was authored; no Git, source, gate or planning mutation was performed."
+  ]
+}
