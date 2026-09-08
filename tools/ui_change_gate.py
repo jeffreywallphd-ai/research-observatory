@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -24,6 +25,7 @@ REFERENCE_EXCLUSIONS = frozenset(
 )
 HUMAN_ID = re.compile(r"^human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$")
 AGENT_ID = re.compile(r"agent:(?:/?[a-z0-9_-]+)(?:/[a-z0-9_-]+)*")
+LINKED_CORRECTION_ID = re.compile(r"W(?:[0-9]|1[01])\.C[0-9]{2,}\.T01")
 EXPECTED_POLICY_SCALARS = {
     "schemaVersion": "1.0",
     "documentType": "ui-change-policy",
@@ -213,6 +215,13 @@ def backlog_tasks(backlog: dict[str, Any]) -> list[dict[str, Any]]:
         for amendment in backlog.get("wave_amendments", [])
         if isinstance(amendment, dict)
         for task in amendment.get("tasks", [])
+        if isinstance(task, dict)
+    )
+    tasks.extend(
+        task
+        for wave in backlog.get("waves", [])
+        if isinstance(wave, dict)
+        for task in (wave.get("campaign") or {}).get("corrective_tasks", [])
         if isinstance(task, dict)
     )
     return tasks
@@ -1133,6 +1142,86 @@ def is_implementation_path(path: str, policy: dict[str, Any]) -> bool:
     )
 
 
+def corrective_ui_paths(task: dict[str, Any]) -> set[str]:
+    """Classify admitted paths using the same non-configurable UI gate policy."""
+    correction = task.get("correction")
+    if not isinstance(correction, dict) or LINKED_CORRECTION_ID.fullmatch(str(task.get("id"))) is None:
+        return set()
+    paths = correction.get("changed_paths")
+    if not isinstance(paths, list):
+        return set()
+    policy = {
+        "implementationRoots": sorted(EXPECTED_IMPLEMENTATION_ROOTS),
+        "implementationExtensions": sorted(EXPECTED_IMPLEMENTATION_EXTENSIONS),
+        "ignoredImplementationSuffixes": sorted(EXPECTED_IGNORED_SUFFIXES),
+    }
+    return {path for path in paths if isinstance(path, str) and is_implementation_path(path, policy)}
+
+
+def linked_correction_authority(
+    repo: Path, base: str, head: str, backlog: dict[str, Any], task: dict[str, Any]
+) -> dict[str, Any]:
+    """Consume taskctl's existing admission, never synthesize experience authority."""
+    import taskctl
+
+    if head != resolve_commit(repo, "HEAD"):
+        raise ValueError("linked correction UI authority requires current HEAD")
+    if not any(task is item for item in taskctl.corrective_tasks(backlog)) or not corrective_ui_paths(task):
+        raise ValueError("linked UI correction must be an admitted campaign corrective task")
+    if "experience_change" in task or "review_gate" in task:
+        raise ValueError("linked correction cannot introduce or borrow experience/review metadata")
+    if task.get("status") not in {"IN_PROGRESS", "REVIEW"} or task.get("base_sha") != base:
+        raise ValueError("linked UI correction must retain its active full claim base")
+    if task.get("branch") != git(repo, "branch", "--show-current").decode().strip() or task.get("worktree") != ".":
+        raise ValueError("linked UI correction branch/worktree differs from the current claim")
+    if Path(git(repo, "rev-parse", "--show-toplevel").decode().strip()).resolve() != repo:
+        raise ValueError("linked UI correction requires the canonical claimed repository root")
+    try:
+        taskctl.require_active_lease(task, str(task.get("owner") or ""), "Linked UI correction")
+        indexed = taskctl.index_backlog(copy.deepcopy(backlog))
+        errors = taskctl.corrective_task_errors(indexed[0], indexed[3], repo)
+    except (SystemExit, KeyError, TypeError) as exc:
+        raise ValueError(f"invalid linked correction admission: {exc}") from exc
+    if errors:
+        raise ValueError("invalid linked correction admission: " + "; ".join(errors))
+    predecessor = yaml_object(blob(repo, base, "planning/backlog.yaml"), "correction predecessor backlog")
+    if find_task(predecessor, str(task["id"])) is not None:
+        raise ValueError("linked correction base must precede its admission")
+    if (
+        taskctl.canonical_json_sha256(taskctl.corrective_paused_snapshot(predecessor))
+        != task["correction"]["paused_state_sha256"]
+    ):
+        raise ValueError("linked correction paused predecessor differs from admission")
+    prior = taskctl.corrective_tasks(predecessor)
+    retained = [item for item in taskctl.corrective_tasks(backlog) if item["id"] != task["id"]]
+    if prior != retained:
+        raise ValueError("linked correction must preserve prior corrective history")
+    origin = indexed[3][task["correction"]["origin_task_id"]]
+    if origin.get("review_gate") != "human-and-agent-review":
+        raise ValueError("linked UI correction origin lacks the inherited human-and-agent-review obligation")
+    return origin
+
+
+def linked_correction_range_errors(
+    repo: Path, base: str, head: str, task: dict[str, Any], policy: dict[str, Any]
+) -> list[str]:
+    errors: list[str] = []
+    permitted = corrective_ui_paths(task)
+    spec_path = task["correction"]["spec"]["path"]
+    for commit in git(repo, "rev-list", f"{base}..{head}").decode().splitlines():
+        paths = commit_paths(repo, commit)
+        ui_paths = {path for path in paths if is_implementation_path(path, policy)}
+        if ui_paths - permitted:
+            errors.append(
+                f"linked correction commit {commit} exceeds admitted UI paths: {sorted(ui_paths - permitted)}"
+            )
+        if spec_path in paths or any(path.startswith(f"{policy['referenceRoot']}/") for path in paths):
+            errors.append(f"linked correction commit {commit} touches immutable spec or approved UI reference")
+        for parent in git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()[1:]:
+            errors.extend(implementation_object_errors(repo, parent, commit, sorted(ui_paths)))
+    return errors
+
+
 def tree_files(repo: Path, commit: str, root: str) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     files: list[str] = []
@@ -1223,7 +1312,7 @@ def find_task(backlog: dict[str, Any], task_id: str) -> dict[str, Any] | None:
 
 
 def automatic_base(repo: Path, head_ref: str) -> str:
-    """Use the sole active experience task base, otherwise the immediate parent."""
+    """Use the sole active UI task's full base, including admitted corrections."""
     head = resolve_commit(repo, head_ref)
     try:
         backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "planning/backlog.yaml")
@@ -1238,7 +1327,11 @@ def automatic_base(repo: Path, head_ref: str) -> str:
         task
         for task in backlog_tasks(backlog)
         if task.get("status") in {"IN_PROGRESS", "REVIEW"}
-        and (isinstance(task.get("experience_change"), dict) or task.get("amendment_id") in resumed_parents)
+        and (
+            isinstance(task.get("experience_change"), dict)
+            or task.get("amendment_id") in resumed_parents
+            or bool(corrective_ui_paths(task))
+        )
     ]
     if len(active) > 1:
         identities = sorted(str(task.get("id")) for task in active)
@@ -1250,6 +1343,8 @@ def automatic_base(repo: Path, head_ref: str) -> str:
         candidate = resolve_commit(repo, raw_base)
         if candidate == head or not is_ancestor(repo, candidate, head):
             raise ValueError(f"active UI experience task {active[0].get('id')} has an invalid base_sha range")
+        if corrective_ui_paths(active[0]):
+            linked_correction_authority(repo.resolve(), candidate, head, backlog, active[0])
         return candidate
     return f"{head_ref}^"
 
@@ -1964,6 +2059,28 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         "errors": errors,
     }
     if not ui_files:
+        # Authenticate a live linked range even on an evidence-only head. An
+        # explicit short base or a reverted net diff cannot erase its authority.
+        try:
+            no_ui_backlog = (
+                yaml_object(blob(repo, head, "planning/backlog.yaml"), "planning/backlog.yaml")
+                if tree_entry(repo, head, "planning/backlog.yaml") is not None
+                else {}
+            )
+            linked_active = [
+                task
+                for task in backlog_tasks(no_ui_backlog)
+                if task.get("status") in {"IN_PROGRESS", "REVIEW"} and corrective_ui_paths(task)
+            ]
+            if len(linked_active) > 1:
+                raise ValueError("ambiguous active linked UI corrections")
+            if linked_active:
+                linked_correction_authority(repo, base, head, no_ui_backlog, linked_active[0])
+                errors.extend(linked_correction_range_errors(repo, base, head, linked_active[0], policy))
+                if implementation_commits(repo, base, head, policy):
+                    errors.append("linked correction has reverted UI history but no net governed implementation change")
+        except (KeyError, TypeError, UnicodeError, ValueError, yaml.YAMLError) as exc:
+            errors.append(str(exc))
         if contract_paths:
             errors.append("UI change evidence is present but no governed UI implementation file changed")
         report["ok"] = not errors
@@ -1974,8 +2091,8 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
     try:
         errors.extend(implementation_object_errors(repo, base, head, ui_files))
         # A later revert cannot erase an intermediate control-authority change.
-        # Keep no-UI handling above unchanged; the full history is relevant once
-        # this public entry point is validating an actual UI implementation.
+        # Control-maintenance authority remains required for actual UI work;
+        # the linked no-UI range is authenticated separately above.
         protected_touches: set[str] = set()
         for commit in git(repo, "rev-list", f"{base}..{head}").decode("ascii").splitlines():
             protected_touches.update(commit_paths(repo, commit) & GATE_CONTROL_PATHS)
@@ -2061,9 +2178,19 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
     except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
         errors.append(str(exc))
         task = None
+    linked_origin: dict[str, Any] | None = None
     if task is None:
         errors.append(f"UI evidence task does not exist in the authoritative backlog: {task_id}")
     else:
+        if task.get("correction") is not None or LINKED_CORRECTION_ID.fullmatch(task_id):
+            try:
+                if contract["schemaVersion"] != "1.0" or contract["changeKind"] != "defect-restoration":
+                    raise ValueError("linked UI correction requires the existing v1.0 defect-restoration contract")
+                linked_origin = linked_correction_authority(repo, base, head, backlog, task)
+                errors.extend(linked_correction_range_errors(repo, base, head, task, policy))
+            except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+                errors.append(f"invalid linked correction UI authority: {exc}")
+                return report
         experience = task.get("experience_change")
         expected_experience = {
             "kind": contract["changeKind"],
@@ -2075,7 +2202,11 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             "previous_reference_id": reference["previousReferenceId"],
             "implementation_agent": contract["implementationAgent"],
         }
-        if ("amendmentAuthority" not in contract or experience is not None) and experience != expected_experience:
+        if (
+            linked_origin is None
+            and ("amendmentAuthority" not in contract or experience is not None)
+            and experience != expected_experience
+        ):
             errors.append("task experience_change must exactly match the UI evidence lineage")
         if task.get("status") not in {"IN_PROGRESS", "REVIEW"}:
             errors.append("UI evidence task must be active in IN_PROGRESS or REVIEW state")
@@ -2143,7 +2274,12 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             errors.append(f"{kind} must use the unchanged approved reference from the base commit")
         if reference_changed:
             errors.append(f"{kind} cannot modify the governed UI reference")
-        if kind == "defect-restoration" and task is not None and task.get("review_gate") != "human-and-agent-review":
+        review_task = linked_origin if linked_origin is not None else task
+        if (
+            kind == "defect-restoration"
+            and review_task is not None
+            and review_task.get("review_gate") != "human-and-agent-review"
+        ):
             errors.append(
                 "defect restoration requires human-and-agent-review to classify the change until governed "
                 "implementation-conformance evidence is installed"

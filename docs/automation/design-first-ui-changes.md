@@ -2,7 +2,7 @@
 
 `tools/ui_change_gate.py` is the pull-request and foundation guard for researcher-facing implementation. It compares an immutable Git base and head, rather than trusting the working tree, and activates when renderer files under the governed UI roots in `ui-change-policy.json` change.
 
-Every activated change must add exactly one contract at `artifacts/evidence/ui-change/<task-id>.json`. The contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml`. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
+Every activated change must add exactly one contract at `artifacts/evidence/ui-change/<task-id>.json`. The contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml` or the authenticated restoration authority described below. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
 
 ## Change kinds
 
@@ -23,6 +23,37 @@ For a task branch, validate the whole task/PR range:
 The foundation profile uses `UI_CHANGE_BASE_SHA` when CI supplies the pull-request or push base. A manual dispatch requires an explicit immutable base SHA. Locally, the gate uses the sole active task's governed `base_sha` when that task carries `experience_change`, fails on ambiguous or invalid active-task state, and falls back to `HEAD^` only when no UI task is active. CI performs a full-history checkout so commit ordering and ancestry are verifiable. The pull-request template records the same lineage for reviewers, but prose or a checked box cannot replace the committed contract.
 
 The gate fails for a missing, extra, malformed, renamed, or stale contract; incomplete changed-file coverage; unknown or mismatched task metadata; forged reference hashes; a nonhuman or self approval; same-commit approval and implementation; intentional implementation without a newer approved reference; or restoration/conformance work that also modifies the reference.
+
+## Linked completed-task restoration (existing 1.0)
+
+An admitted `Wn.Cnn.T01` linked correction uses the existing v1.0
+`defect-restoration` contract at exactly
+`artifacts/evidence/ui-change/<correction-id>.json`. The gate consumes taskctl's
+existing committed origin, spec, paused predecessor, inherited contract, approval
+and review-history checks. It does not add `experience_change` or `review_gate`
+to the correction or borrow the DONE origin's owner or base. The authenticated
+origin must retain its `human-and-agent-review` obligation; an unsupported origin
+fails closed. Focused conformance evidence and the existing independent,
+commit-bound corrective integration review remain required. No new approval,
+classification record, schema version or workflow layer is introduced.
+
+This live authority lane requires current `HEAD`, the current branch and
+repository-relative worktree, the correction's full admission base, claimed owner,
+and an unexpired matching lease. Its base must precede admission and authenticate
+the unchanged paused predecessor and prior corrective history. Automatic base
+selection includes the sole active admitted UI correction even before its UI
+contract exists and after evidence-only commits; competing or invalid live claims
+fail closed. Ordinary v1.0 and resumed-amendment historical behavior is unchanged.
+
+Only the exact admitted governed UI paths may be touched. Every commit is checked,
+including paths later reverted and intermediate redirected Git objects. The spec
+and current approved reference must remain untouched throughout the correction;
+restoration uses the reference at the correction base, not a superseded origin
+reference. Reverting all UI changes cannot erase the evidence requirement. Taskctl
+admits only this exact task-owned UI evidence path as additional delivery when the
+correction has governed UI scope, not a general evidence-directory allowance.
+All existing reference, scope, control-maintenance and independent review denials
+remain in force; gate success is not task completion or human release approval.
 
 ## Resumed amendment restoration (opt-in 1.1)
 
@@ -58,7 +89,7 @@ or reference edit, even if reverted, requires fresh classification. Later contro
 commits may retain it. Full capture validity and every task criterion remain the
 formal evidence/review responsibility; this record is not task approval.
 
-Only this authenticated lane substitutes approved amendment/conformance authority
+This authenticated amendment lane substitutes approved amendment/conformance authority
 for the impossible amendment `experience_change`/`review_gate` fields. All ordinary
 v1.0 denials remain in force. Gate/schema/quality changes still require the existing
 exact control-only independent maintenance attestation, including late maintenance;

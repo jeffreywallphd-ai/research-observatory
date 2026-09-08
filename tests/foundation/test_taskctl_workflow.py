@@ -7033,6 +7033,42 @@ class CorrectiveTaskWorkflowTests(unittest.TestCase):
         manifest["changedFiles"] = ["design/ui-reference/STYLE_GUIDE.md"]
         self.assertTrue(taskctl_module.validate_task_evidence(task, manifest))
 
+    def test_corrective_ui_evidence_delivery_is_exact_and_ui_only(self) -> None:
+        _context, _origin, task = self.build()
+        task["correction"]["changed_paths"] = ["apps/desktop/src/View.tsx"]
+        owned = f"artifacts/evidence/ui-change/{task['id']}.json"
+        manifest = {
+            "taskId": task["id"],
+            "branch": task["branch"],
+            "commit": "a" * 40,
+            "checks": [{"command": "fixture", "exitCode": 0}],
+            "acceptanceCriteria": [{"criterion_index": 1, "evidence": ["actual fixture"]}],
+            "unverifiedItems": [],
+            "changedFiles": [owned],
+            "correctiveIntegration": {
+                "originSha256": task["correction"]["origin_sha256"],
+                "authorityPreserved": True,
+                "affectedChecks": ["fixture"],
+                "reusedEvidence": [],
+                "rationale": "Affected UI checks passed",
+            },
+        }
+        self.assertEqual([], taskctl_module.validate_task_evidence(task, manifest))
+        for path in (
+            "artifacts/evidence/ui-change/W1.C02.T01.json",
+            owned + ".extra.json",
+            "artifacts/evidence/ui-change/nested/" + task["id"] + ".json",
+            "artifacts/evidence/ui-change/../" + task["id"] + ".json",
+        ):
+            with self.subTest(path=path):
+                manifest["changedFiles"] = [path]
+                self.assertTrue(taskctl_module.validate_task_evidence(task, manifest))
+        manifest["changedFiles"] = [owned]
+        for path in ("apps/desktop/package.json", "tests/desktop/test_view.py", "apps/desktop/src/View.test.tsx"):
+            with self.subTest(non_ui_path=path):
+                task["correction"]["changed_paths"] = [path]
+                self.assertTrue(taskctl_module.validate_task_evidence(task, manifest))
+
     def test_corrective_spec_revalidation_rejects_wrong_kind_fields_and_types(self) -> None:
         change: dict[str, Any]
         for change in (

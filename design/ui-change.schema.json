@@ -19,14 +19,14 @@
     "documentType": {"const": "ui-change-evidence"},
     "taskId": {
       "type": "string",
-      "pattern": "^(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2})$"
+      "pattern": "^(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.C[0-9]{2,}\\.T01)$"
     },
     "changeKind": {
       "enum": ["intentional-design-change", "approved-reference-implementation", "defect-restoration"]
     },
     "contractPath": {
       "type": "string",
-      "pattern": "^artifacts/evidence/ui-change/(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2})\\.json$"
+      "pattern": "^artifacts/evidence/ui-change/(?:CAP-[0-9]{2}\\.S[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.A[0-9]{2}\\.T[0-9]{2}|W(?:[0-9]|1[01])\\.C[0-9]{2,}\\.T01)\\.json$"
     },
     "implementationAgent": {
       "type": "string",
@@ -107,6 +107,10 @@
   },
   "$defs": {"commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
   "allOf": [
+    {
+      "if": {"properties": {"taskId": {"pattern": "^W(?:[0-9]|1[01])\\.C[0-9]{2,}\\.T01$"}}},
+      "then": {"properties": {"schemaVersion": {"const": "1.0"}, "changeKind": {"const": "defect-restoration"}}}
+    },
     {
       "if": {"properties": {"schemaVersion": {"const": "1.1"}}},
       "then": {

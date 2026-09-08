@@ -1963,11 +1963,15 @@ def validate_task_evidence(
 ) -> list[str]:
     errors: list[str] = []
     if task.get("correction") is not None:
+        from ui_change_gate import corrective_ui_paths
+
         correction = task["correction"]
         permitted = set(correction["changed_paths"])
         # Controller projections and task-owned append-only evidence are normal
         # delivery, not authority for additional product implementation.
         delivery = {"planning/backlog.yaml", "docs/planning-implementation-plan.md", "planning/status-summary.md"}
+        if corrective_ui_paths(task):
+            delivery.add(f"artifacts/evidence/ui-change/{task['id']}.json")
         for path in manifest.get("changedFiles", []):
             owned_evidence = isinstance(path, str) and path.startswith(f"artifacts/evidence/{task['id']}.")
             projections = {

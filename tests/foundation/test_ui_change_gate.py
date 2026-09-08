@@ -8,6 +8,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from argparse import Namespace
 from pathlib import Path
 from typing import Any
 from unittest.mock import patch
@@ -18,6 +19,7 @@ from jsonschema import Draft202012Validator
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+import taskctl  # noqa: E402
 import ui_change_gate as ui_gate  # noqa: E402
 from ui_change_gate import (  # noqa: E402
     APPLICATION_INVENTORY_HARDENING_ENVELOPE,
@@ -37,6 +39,289 @@ from ui_change_gate import (  # noqa: E402
 
 
 class UiChangeGateTests(unittest.TestCase):
+    def linked_fixture(
+        self, temporary: str, review_gate: str = "human-and-agent-review"
+    ) -> tuple[Path, str, dict[str, Any], dict[str, Any]]:
+        root, approval, package = self.prepare(temporary)
+        origin = {
+            "id": "CAP-01.S01.T01",
+            "wave": "W1",
+            "title": "Approved route",
+            "objective": "Preserve the approved route",
+            "dependencies": [],
+            "acceptance_criteria": ["Approved route works"],
+            "verification_commands": ["test View"],
+            "deployment_profiles": ["LOC"],
+            "platform_targets": ["windows-x64"],
+            "status": "DONE",
+            "owner": "prior-owner",
+            "review_gate": review_gate,
+            "review": {"reviewer": "prior-reviewer", "result": "approved"},
+            "evidence": [{"path": "artifacts/evidence/origin.json"}],
+        }
+        data: dict[str, Any] = {
+            "capabilities": [{"id": "CAP-01", "slices": [{"id": "CAP-01.S01", "tasks": [origin]}]}],
+            "waves": [
+                {
+                    "id": "W1",
+                    "approval": {"status": "APPROVED", "commit": approval},
+                    "campaign": {"status": "PAUSED", "scope": "wave", "lease": None},
+                    "completion": {"status": "IN_PROGRESS"},
+                }
+            ],
+            "release_gates": [{"id": "G1", "after_wave": "W1", "status": "PENDING"}],
+        }
+        self.write_yaml(root / "planning/backlog.yaml", data)
+        origin_commit = self.commit(root, "completed independently reviewed origin")
+        spec = {
+            "schemaVersion": "1.0",
+            "kind": "authority-preserving-correction",
+            "origin": {
+                "taskId": origin["id"],
+                "commit": origin_commit,
+                "sha256": taskctl.canonical_json_sha256(origin),
+            },
+            "reproduction": "Approved route drifts",
+            "changedPaths": ["apps/desktop/src/View.tsx"],
+            "impactAnalysis": "Restore the unchanged approved route and retain all review obligations",
+        }
+        spec_path = "artifacts/evidence/W1.C01.T01.spec.json"
+        self.write_json(root / spec_path, spec)
+        base = self.commit(root, "publish bounded correction spec")
+        reference = {
+            "path": spec_path,
+            "commit": base,
+            "sha256": taskctl.evidence_sha256((root / spec_path).read_bytes()),
+        }
+        indexed = taskctl.index_backlog(data)
+        task = taskctl.build_corrective_task(
+            data,
+            indexed[3],
+            origin,
+            spec,
+            reference,
+            Namespace(
+                agent="codex", branch="main", base_sha=base, profile="LOC", platform="windows-x64", lease_hours=8
+            ),
+        )
+        data["waves"][0]["campaign"]["corrective_tasks"] = [task]
+        contract = self.contract("defect-restoration", package, approval, task_id=task["id"])
+        self.write_yaml(root / "planning/backlog.yaml", taskctl.serializable_backlog(data))
+        self.commit(root, "claim linked correction without experience metadata")
+        return root, base, data, contract
+
+    def linked_candidate(self, root: Path, data: dict[str, Any], contract: dict[str, Any]) -> str:
+        self.write_yaml(root / "planning/backlog.yaml", taskctl.serializable_backlog(data))
+        self.write_json(root / str(contract["contractPath"]), contract)
+        (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'restored';\n", encoding="utf-8")
+        return self.commit(root, "restore approved route with focused evidence")
+
+    def test_linked_correction_authenticates_without_mutating_origin_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, data, contract = self.linked_fixture(temporary)
+            original = copy.deepcopy(data["capabilities"])
+            head = self.linked_candidate(root, data, contract)
+            result = validate(root, base, head)
+            self.assertTrue(result["ok"], result["errors"])
+            self.assertEqual(original, data["capabilities"])
+            self.assertNotIn("experience_change", data["waves"][0]["campaign"]["corrective_tasks"][0])
+            self.assertNotIn("review_gate", data["waves"][0]["campaign"]["corrective_tasks"][0])
+
+    def test_linked_automatic_base_precedes_missing_contract_and_evidence_only_head(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, data, contract = self.linked_fixture(temporary)
+            self.assertEqual(base, automatic_base(root, "HEAD"))
+            (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'restored';\n", encoding="utf-8")
+            self.commit(root, "UI implementation before missing evidence")
+            self.write_json(root / "artifacts/evidence/W1.C01.T01.note.json", {"note": "evidence only"})
+            self.commit(root, "later evidence-only commit")
+            self.assertEqual(base, automatic_base(root, "HEAD"))
+            self.assertFalse(validate(root, automatic_base(root, "HEAD"))["ok"])
+            self.linked_candidate(root, data, contract)
+            self.assertTrue(validate(root, automatic_base(root, "HEAD"))["ok"])
+
+    def test_linked_rejects_authority_and_live_claim_substitutions(self) -> None:
+        for mutation in (
+            "origin",
+            "history",
+            "authority",
+            "spec-hash",
+            "spec-content",
+            "scope",
+            "expired",
+            "lease-owner",
+            "owner",
+            "branch",
+            "worktree",
+            "base",
+            "experience",
+            "review-gate",
+            "ordinary-masquerade",
+            "duplicate",
+            "historical",
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, base, data, contract = self.linked_fixture(temporary)
+                task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+                origin = data["capabilities"][0]["slices"][0]["tasks"][0]
+                if mutation == "origin":
+                    origin["objective"] = "Substituted purpose"
+                elif mutation == "history":
+                    task["correction"]["origin_history_sha256"] = "0" * 64
+                elif mutation == "authority":
+                    task["correction"]["authority_sha256"] = "0" * 64
+                elif mutation == "spec-hash":
+                    task["correction"]["spec"]["sha256"] = "0" * 64
+                elif mutation == "spec-content":
+                    task["correction"]["reproduction"] = "Substituted reproduction"
+                elif mutation == "scope":
+                    task["correction"]["changed_paths"] = ["apps/desktop/src/Other.tsx"]
+                elif mutation == "expired":
+                    task["lease"]["expires_at"] = "2000-01-01T00:00:00+00:00"
+                elif mutation == "lease-owner":
+                    task["lease"]["claimed_by"] = "other"
+                elif mutation == "owner":
+                    task["owner"] = "other"
+                elif mutation == "branch":
+                    task["branch"] = "codex/other"
+                elif mutation == "worktree":
+                    task["worktree"] = "other"
+                elif mutation == "base":
+                    task["base_sha"] = self.git(root, "rev-parse", "HEAD")
+                elif mutation == "experience":
+                    task["experience_change"] = {"kind": "defect-restoration"}
+                elif mutation == "review-gate":
+                    origin["review_gate"] = "agent-review"
+                elif mutation == "ordinary-masquerade":
+                    data["waves"][0]["campaign"]["corrective_tasks"] = []
+                    data["capabilities"][0]["slices"][0]["tasks"].append(task)
+                elif mutation == "duplicate":
+                    data["waves"][0]["campaign"]["corrective_tasks"].append(copy.deepcopy(task))
+                head = self.linked_candidate(root, data, contract)
+                if mutation == "historical":
+                    self.write_json(root / "artifacts/evidence/W1.C01.T01.note.json", {"note": "later"})
+                    self.commit(root, "later live head")
+                self.assertFalse(validate(root, base, head)["ok"])
+
+    def test_linked_rejects_ambiguous_and_invalid_automatic_bases(self) -> None:
+        for mutation in ("duplicate", "missing", "abbreviated", "nonancestor", "expired"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, _base, data, _contract = self.linked_fixture(temporary)
+                task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+                if mutation == "duplicate":
+                    data["waves"][0]["campaign"]["corrective_tasks"].append(copy.deepcopy(task))
+                elif mutation == "expired":
+                    task["lease"]["expires_at"] = "2000-01-01T00:00:00+00:00"
+                else:
+                    task["base_sha"] = {"missing": None, "abbreviated": "abc123", "nonancestor": "0" * 40}[mutation]
+                self.write_yaml(root / "planning/backlog.yaml", taskctl.serializable_backlog(data))
+                self.commit(root, "invalid claim")
+                with self.assertRaises(ValueError):
+                    automatic_base(root, "HEAD")
+
+    def test_linked_rejects_reverted_ui_reference_and_spec_touches(self) -> None:
+        for path in (
+            "apps/desktop/src/Extra.tsx",
+            "design/ui-reference/assets/tokens.css",
+            "artifacts/evidence/W1.C01.T01.spec.json",
+        ):
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
+                root, base, data, contract = self.linked_fixture(temporary)
+                target = root / path
+                original = target.read_bytes() if target.exists() else None
+                target.write_text("unadmitted intermediate content\n", encoding="utf-8")
+                self.commit(root, "unadmitted intermediate touch")
+                if original is None:
+                    target.unlink()
+                else:
+                    target.write_bytes(original)
+                self.commit(root, "revert intermediate touch")
+                head = self.linked_candidate(root, data, contract)
+                self.assertFalse(validate(root, base, head)["ok"])
+
+    def test_linked_schema_limits_correction_ids_to_v1_restoration(self) -> None:
+        schema = json.loads((REPO / "design/ui-change.schema.json").read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema)
+        contract = self.contract("defect-restoration", "a" * 64, "b" * 40, task_id="W1.C03.T01")
+        self.assertEqual([], list(validator.iter_errors(contract)))
+        for mutation in ("kind", "version", "task-number", "id"):
+            candidate = copy.deepcopy(contract)
+            if mutation == "kind":
+                candidate.update(
+                    changeKind="approved-reference-implementation", implementationScope="not a restoration"
+                )
+            elif mutation == "version":
+                candidate["schemaVersion"] = "1.1"
+            else:
+                candidate["taskId"] = "W1.C03.T02" if mutation == "task-number" else "W1.C3.T01"
+                candidate["contractPath"] = f"artifacts/evidence/ui-change/{candidate['taskId']}.json"
+            with self.subTest(mutation=mutation):
+                self.assertTrue(list(validator.iter_errors(candidate)))
+
+    def test_linked_explicit_short_base_cannot_hide_evidence_only_head(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, data, contract = self.linked_fixture(temporary)
+            candidate = self.linked_candidate(root, data, contract)
+            self.write_json(root / "artifacts/evidence/W1.C01.T01.note.json", {"note": "later evidence"})
+            head = self.commit(root, "evidence-only head")
+            self.assertTrue(validate(root, base, head)["ok"])
+            result = validate(root, candidate, head)
+            self.assertFalse(result["ok"], result)
+            self.assertTrue(any("full claim base" in error for error in result["errors"]), result)
+
+    def test_linked_no_ui_range_still_authenticates_claim(self) -> None:
+        for mutation in ("none", "expired", "duplicate", "reverted-ui", "reference"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, base, data, _contract = self.linked_fixture(temporary)
+                task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+                if mutation == "expired":
+                    task["lease"]["expires_at"] = "2000-01-01T00:00:00+00:00"
+                elif mutation == "duplicate":
+                    data["waves"][0]["campaign"]["corrective_tasks"].append(copy.deepcopy(task))
+                elif mutation == "reverted-ui":
+                    target = root / "apps/desktop/src/View.tsx"
+                    original = target.read_bytes()
+                    target.write_text("unreviewed intermediate UI\n", encoding="utf-8")
+                    self.commit(root, "intermediate UI")
+                    target.write_bytes(original)
+                elif mutation == "reference":
+                    (root / "design/ui-reference/assets/tokens.css").write_text("unapproved tokens\n", encoding="utf-8")
+                self.write_yaml(root / "planning/backlog.yaml", taskctl.serializable_backlog(data))
+                self.write_json(root / "artifacts/evidence/W1.C01.T01.note.json", {"note": mutation})
+                head = self.commit(root, "no net UI implementation")
+                result = validate(root, base, head)
+                self.assertEqual(mutation == "none", result["ok"], result)
+
+    def test_linked_rejects_rebinding_base_after_admission(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, _base, data, contract = self.linked_fixture(temporary)
+            rebased = self.git(root, "rev-parse", "HEAD")
+            task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+            task["base_sha"] = rebased
+            task["correction"]["spec"]["commit"] = rebased
+            head = self.linked_candidate(root, data, contract)
+            result = validate(root, rebased, head)
+            self.assertFalse(result["ok"])
+            self.assertTrue(any("precede its admission" in error for error in result["errors"]), result)
+
+    def test_linked_rejects_authenticated_origin_without_required_review_obligation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, data, contract = self.linked_fixture(temporary, review_gate="agent-review")
+            head = self.linked_candidate(root, data, contract)
+            result = validate(root, base, head)
+            self.assertFalse(result["ok"])
+            self.assertTrue(any("inherited human-and-agent-review" in error for error in result["errors"]), result)
+
+    def test_ordinary_no_ui_historical_range_still_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _package = self.prepare(temporary)
+            self.write_json(root / "artifacts/evidence/ordinary.json", {"note": "non-UI evidence"})
+            historical = self.commit(root, "ordinary evidence-only candidate")
+            (root / "planning/backlog.yaml").unlink()
+            head = self.commit(root, "minimal repository without a task ledger")
+            self.assertTrue(validate(root, base, historical)["ok"])
+            self.assertTrue(validate(root, historical, head)["ok"])
+
     def legacy_control_fixture(self, temporary: str, mutation: str = "") -> tuple[Path, str, str, str]:
         root, predecessor, _ = self.prepare(temporary)
         stem = "artifacts/evidence/fixture-control"
