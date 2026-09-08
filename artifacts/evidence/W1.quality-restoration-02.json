@@ -1,0 +1,411 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-evidence",
+  "status": "PASS_WITHIN_MAINTENANCE_SCOPE",
+  "candidate": "ae75b3a18ea16d20d260b6ddd6d3b699d21deed5",
+  "baseCommit": "cb1c256f59ac7f3b42eab664980b9ed442b4981b",
+  "note": "artifacts/evidence/W1.quality-restoration-01.md",
+  "scope": "Fresh bounded quality restoration; synthetic protected routing and local test fixtures only. No native UI, live inference, ordinary projects/vault/policy or full Wave qualification. Gateway latency benchmark remains separately failing and is not retried here.",
+  "verificationProducer": "artifacts/tmp/W1.quality-restoration-verify-01.py",
+  "verificationProducerSha256": "fd52837012862c4dd779849329bd9aee6b30befc5c21500127dc7a3eefdbf9ee",
+  "verificationReport": "artifacts/tmp/W1.quality-restoration-verification-01.json",
+  "verificationReportSha256": "9a7e1ae294ff68bd68ec2937ff5fa1c7e89b375f4d33d7d8c1181fc99090a2b2",
+  "evidenceProducerSha256": "20193c520f3c42593ff76a01db1f6471c15298c03fe37a96aff6732de586e6a3",
+  "pythonLauncherSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+  "changedPaths": [
+    "artifacts/evidence/W1.quality-restoration-01.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/selective_recalculation.py",
+    "tests/ai/__init__.py",
+    "tests/ai/test_model_routing.py",
+    "tests/contracts/test_model_registry_contracts.py",
+    "tests/contracts/test_model_routing_contracts.py",
+    "tests/desktop/__init__.py",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/e2e/test_selective_recalculation.py",
+    "tests/graph/test_dependency_impacts.py",
+    "tests/service/__init__.py",
+    "tests/service/test_model_gateway_service.py",
+    "tests/service/test_model_routing_integration.py",
+    "tests/service/test_model_routing_repository.py",
+    "tests/service/test_native_project_contract.py",
+    "tests/service/test_project_probe_build.py",
+    "tests/service/test_recalculation_api.py",
+    "tools/capability_plan_check.py",
+    "tools/planctl.py"
+  ],
+  "checks": [
+    {
+      "label": "governed-quality",
+      "command": [
+        "python",
+        "tools/quality_check.py",
+        "--repo",
+        ".",
+        "--report",
+        "artifacts/tmp/W1.quality-restoration-candidate-quality-01.json"
+      ],
+      "exitCode": 0,
+      "seconds": 0.923,
+      "outputSha256": "afb80b72f775d9c2dce877e1caf0228a381bf0d721cbc7a8f98a89815ff9995c",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-01.log",
+      "provenance": "fresh",
+      "testRuns": []
+    },
+    {
+      "label": "ai",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/ai",
+        "-p",
+        "test_*.py"
+      ],
+      "exitCode": 0,
+      "seconds": 2.54,
+      "outputSha256": "6efd4ee2d650fa78200226abfdbf45f1403c34f736b95ec8303c08768938050d",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-02.log",
+      "provenance": "fresh",
+      "testRuns": [
+        {
+          "count": 61,
+          "runnerSeconds": 1.454
+        }
+      ]
+    },
+    {
+      "label": "routing-contracts",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "tests.contracts.test_model_registry_contracts",
+        "tests.contracts.test_model_routing_contracts"
+      ],
+      "exitCode": 0,
+      "seconds": 1.744,
+      "outputSha256": "fb1f55e8bcd5eb161384e17a88ebad8b43bd06905e496ed0cc7ff7b0338bc196",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-03.log",
+      "provenance": "fresh",
+      "testRuns": [
+        {
+          "count": 17,
+          "runnerSeconds": 0.675
+        }
+      ]
+    },
+    {
+      "label": "adverse-decoder-initialization",
+      "command": [
+        "python",
+        "artifacts/tmp/W1.quality-restoration-verify-01.py",
+        "--adverse-decoder"
+      ],
+      "exitCode": 0,
+      "seconds": 1.063,
+      "outputSha256": "af65530da946804024fda9999eb3f61dbe30672ce6a6706502c1f2c38a6e48ec",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-04.log",
+      "provenance": "fresh",
+      "testRuns": []
+    },
+    {
+      "label": "protected-routing-functional",
+      "command": [
+        "python",
+        "artifacts/tmp/W1.quality-restoration-verify-01.py",
+        "--functional"
+      ],
+      "exitCode": 0,
+      "seconds": 4.855,
+      "outputSha256": "7a11f89bc95196cfe24b620da5a123c15b07c83bf88994bbf7ce44c0b12a2103",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-05.log",
+      "provenance": "fresh",
+      "testRuns": [
+        {
+          "count": 47,
+          "runnerSeconds": 4.227
+        }
+      ]
+    },
+    {
+      "label": "service-boundaries",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "tests.service.test_model_registry_repository",
+        "tests.service.test_model_registry_service",
+        "tests.service.test_model_gateway_service",
+        "tests.service.test_model_routing_repository",
+        "tests.service.test_project_probe_build"
+      ],
+      "exitCode": 0,
+      "seconds": 10.47,
+      "outputSha256": "34e6d6e993e901e2d7c1688b9dea4884303424c76973556af50dc9757a593fea",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-06.log",
+      "provenance": "fresh",
+      "testRuns": [
+        {
+          "count": 40,
+          "runnerSeconds": 8.542
+        }
+      ]
+    },
+    {
+      "label": "recalculation",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "tests.graph.test_dependency_impacts",
+        "tests.e2e.test_selective_recalculation",
+        "tests.service.test_recalculation_api"
+      ],
+      "exitCode": 0,
+      "seconds": 5.639,
+      "outputSha256": "1a356f9384e009e9a66dc47533cb564e4044ffa9025135b7ef15d61776b1672e",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-07.log",
+      "provenance": "fresh",
+      "testRuns": [
+        {
+          "count": 30,
+          "runnerSeconds": 4.665
+        }
+      ]
+    },
+    {
+      "label": "control-boundaries",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "tests.foundation.test_quality_check",
+        "tests.foundation.test_planctl_wave_approval",
+        "tests.foundation.test_ui_change_gate"
+      ],
+      "exitCode": 0,
+      "seconds": 198.873,
+      "outputSha256": "535833ffdda735855b463db4fe18d8dfa3d31be1ba568265c44372bcf3306183",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-08.log",
+      "provenance": "fresh",
+      "testRuns": [
+        {
+          "count": 80,
+          "runnerSeconds": 197.895
+        }
+      ]
+    },
+    {
+      "label": "ui-conformance-fixtures",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "tests.desktop.test_ui_conformance"
+      ],
+      "exitCode": 1,
+      "seconds": 279.913,
+      "outputSha256": "edf847138088c3cdcfff53f6ad68c652fa64056e0250a024ff947bd4a74a570a",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-09.log",
+      "provenance": "fresh",
+      "testRuns": [
+        {
+          "count": 40,
+          "runnerSeconds": 278.889
+        }
+      ]
+    },
+    {
+      "label": "desktop-imports",
+      "command": [
+        "python",
+        "-c",
+        "import unittest; s=unittest.defaultTestLoader.loadTestsFromNames(['tests.desktop.test_desktop_app_check','tests.desktop.test_model_center_interactions']); print('Discovered',s.countTestCases(),'desktop cases'); assert not unittest.defaultTestLoader.errors, unittest.defaultTestLoader.errors"
+      ],
+      "exitCode": 0,
+      "seconds": 1.137,
+      "outputSha256": "291a149f91e5c4ddb19835d3cfb0aac56e3f14b66c842285e209328e7e6b5ec7",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-10.log",
+      "provenance": "fresh",
+      "testRuns": []
+    },
+    {
+      "label": "core-openapi",
+      "command": [
+        "python",
+        "tools/core_api_contract.py",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 1.213,
+      "outputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-11.log",
+      "provenance": "fresh",
+      "testRuns": []
+    },
+    {
+      "label": "architecture",
+      "command": [
+        "python",
+        "tools/architecture_check.py",
+        "--repo",
+        "."
+      ],
+      "exitCode": 0,
+      "seconds": 1.541,
+      "outputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "log": "artifacts/tmp/W1.quality-restoration-check-01-12.log",
+      "provenance": "fresh",
+      "testRuns": []
+    }
+  ],
+  "targetedFreshReplay": {
+    "candidate": "ae75b3a18ea16d20d260b6ddd6d3b699d21deed5",
+    "provenance": "fresh normal-Windows-principal replay after sandbox Git ownership denial; no safe.directory/config/hook changes",
+    "producerSha256": "cb108f20361149cb907ce7ebb1f04befabcc1594e4c8ef682a7fed6657f4e8d9",
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "tests.desktop.test_ui_conformance.UiConformanceTests.test_adopted_maintenance_makes_exact_rejected_candidate_history_non_authoritative"
+    ],
+    "exitCode": 0,
+    "seconds": 164.95811570016667,
+    "outputSha256": "7ba25df38ca17b910c101cfe958a144a6caeed98792ba799eb757eff4779b0f3",
+    "log": "artifacts/tmp/W1.quality-restoration-ui-replay-01.log"
+  },
+  "targetedFreshReplayReportSha256": "7db851ac69ad7e52243b399b4b0e78a11fce83ccb5f06db443b7402e83f08025",
+  "retainedFailureDisposition": "Original UI group retained as FAIL (39 other tests passed, one setup error): sandbox Git rejected temporary shared clone ownership before test assertions. Exact unchanged case replayed under normal Windows principal. No safe.directory, Git configuration, hook or test change. Other passing groups are fresh results from the same fixed candidate, not a rewritten full-group PASS.",
+  "declarationInventory": {
+    "beforeCount": 316,
+    "afterCount": 317,
+    "removed": [],
+    "added": [
+      "tests/service/test_project_probe_build.py:ProjectProbeSeedImportTests.test_direct_seed_entry_resolves_fixtures_without_repository_on_pythonpath"
+    ]
+  },
+  "preservedDevelopmentReports": [
+    "artifacts/tmp/W1.quality-restoration-predecessor-01.json",
+    "artifacts/tmp/W1.quality-restoration-development-01.json",
+    "artifacts/tmp/W1.quality-restoration-development-02.json",
+    "artifacts/tmp/W1.quality-restoration-development-03.json"
+  ],
+  "findingsClosed": [
+    "Reported formatting, import and typing failures; unchanged 229-file quality check now passes.",
+    "Cancellation-test initialization assertion now fails promptly with unconditional child cleanup; exact null-decoder injection exercised.",
+    "Direct native-helper CLI resolves canonical fixture imports before reaching absent-path denial, without provider construction or project/vault access.",
+    "Synthetic recalculation API fixture token clarified; full prospective privacy guard passed 20 committed entries without policy/hook changes."
+  ],
+  "unchangedAuthorities": [
+    "Approved product scope and behavior",
+    "Quality checker and pyproject rules",
+    "Governed roots and all existing file entries",
+    "Benchmark methods and thresholds",
+    "Security/privacy controls and original approvals",
+    "All original test assertions"
+  ],
+  "remaining": [
+    "Independent control review before local integration",
+    "CAP-07.S01 slice qualification/review",
+    "Gateway p95 failure 134.022 ms retained; no latency waiver or retry claimed",
+    "Fresh full W1/profile/native/packaging qualification and independent Wave review",
+    "Separate human G1 release decision"
+  ],
+  "committedInputs": [
+    {
+      "path": "artifacts/evidence/W1.quality-restoration-01.md",
+      "sha256": "83c2ad07fa883535746f67832597dc54674551b1912aa362913ebec7acf52a83"
+    },
+    {
+      "path": "quality-scope.json",
+      "sha256": "6a8a6ab7369a3e2b35425a918ecc2908fca4228299afe4efe79a5305782bb717"
+    },
+    {
+      "path": "services/core-api/src/research_observatory_core/selective_recalculation.py",
+      "sha256": "9d3ebaf7a884671e6f7ae9dcf7554e1cd75affc77204551ea9cd772ba4c01dc8"
+    },
+    {
+      "path": "tests/ai/__init__.py",
+      "sha256": "95e201db88c77b99cf2326503d0c17adaf210935686bf54c8695b93fbd6a327b"
+    },
+    {
+      "path": "tests/ai/test_model_routing.py",
+      "sha256": "ded95552507f56067bdc48e8f3fd6f9bd0923936e43f02bf2311d8bbba5f10c1"
+    },
+    {
+      "path": "tests/contracts/test_model_registry_contracts.py",
+      "sha256": "b9a1812c344220ad5a326b3c09aa9b6f9db3272488739ba7be9bca72554fce9a"
+    },
+    {
+      "path": "tests/contracts/test_model_routing_contracts.py",
+      "sha256": "6b210264854636c00cc967f0d7181bd07484e8aabc335f5f039f29ea43a5f87d"
+    },
+    {
+      "path": "tests/desktop/__init__.py",
+      "sha256": "b0dc787b8d7e491cca93c7f24932fccf972ccce87e20b6331202e666d5c838a0"
+    },
+    {
+      "path": "tests/desktop/test_ui_conformance.py",
+      "sha256": "a29a53ea519b110fe10ecd81baa08f767aeba6a4ca6ce7d4f84bb7c4cea9504a"
+    },
+    {
+      "path": "tests/e2e/test_selective_recalculation.py",
+      "sha256": "916827e13544e053db1f67e06c344c553d17bef97c55f0e35f0d94b007360059"
+    },
+    {
+      "path": "tests/graph/test_dependency_impacts.py",
+      "sha256": "f24d061bb1a0d21edaadd6396a6c8004045c54d6f6bcdd2c8e24eb23186204cc"
+    },
+    {
+      "path": "tests/service/__init__.py",
+      "sha256": "04ab88d9012be9906c4a05714ca84fd88e6a3e6406bed413dd77f19552827171"
+    },
+    {
+      "path": "tests/service/test_model_gateway_service.py",
+      "sha256": "0133d1a5eaa83bd8fa07790bc9ddf35eed8eb4ba78447235cda307254510ca2e"
+    },
+    {
+      "path": "tests/service/test_model_routing_integration.py",
+      "sha256": "b28f636a0949920213ba52ebbb30e1d6aaa902690d6b7f3058b6511b77cb0877"
+    },
+    {
+      "path": "tests/service/test_model_routing_repository.py",
+      "sha256": "cb3bf131c7382dd642380adc6f15f3f5cda630c872cf2799c0c92e859cbb980d"
+    },
+    {
+      "path": "tests/service/test_native_project_contract.py",
+      "sha256": "31fee1171678ce435fb61c1dba21f4cdf8ec9391bcac595c30ca07c12067ae87"
+    },
+    {
+      "path": "tests/service/test_project_probe_build.py",
+      "sha256": "b510a6c8af796acc35df514ec9070d1bd10e6c1dfed03640eaf7aff3f58563fd"
+    },
+    {
+      "path": "tests/service/test_recalculation_api.py",
+      "sha256": "a216c9d30aed60dac1d6d3563fa50b83abf2f232691a10e9897c5328084ccd16"
+    },
+    {
+      "path": "tools/capability_plan_check.py",
+      "sha256": "d41cb686eec89a255f7f788126503e9c9b616ad98c985c6a2ed0db45aecf6deb"
+    },
+    {
+      "path": "tools/planctl.py",
+      "sha256": "99c0407bc8c00a77126588eaf394dd198c7df5b7ba4359582ef8e38e05042ee4"
+    }
+  ],
+  "publicationLineage": {
+    "originalPublicationPath": "artifacts/evidence/W1.quality-restoration-01.json",
+    "originalArchivePath": "artifacts/tmp/W1.quality-restoration-prepublication-01.json",
+    "originalSha256": "385351641bd64994301029bb7c92432e9fea5f22b88cf360b7574b0b658a8b2a",
+    "originalReviewPath": "artifacts/evidence/W1.quality-restoration-01.review-R01.json",
+    "originalReviewSha256": "92021001bb065f340784757af741c510d050dc62136b15fe3fba0f765cb94180",
+    "reason": "Prospective publication scanner classified a committed blob checksum next to a filename ending in api.py as a generic API key. The independently authenticated value is a Git blob SHA-256 digest, not a credential. No policy, hook, suppression or baseline changed.",
+    "representationChange": "Replace the path-keyed checksum map with standard typed path/sha256 rows. All 20 pairs and every other original evidence fact are unchanged; no value is removed, hidden or encoded.",
+    "locatorDisposition": "R01 remains byte-for-byte unchanged. Its unpublished original evidence locator has been explicitly relocated to the ignored archive above; R02 binds this current successor. Original bytes remain recoverable in that archive.",
+    "equivalence": "PASS: unique 20-row reconstruction equals the original map, and every digest still matches the same committed candidate.",
+    "producerSha256": "794dc8ae3f6fa9dd459783dba1d19283abd7d510d15f3f7a217abd12648d23e1"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-review",
+  "reviewId": "W1.quality-restoration-01.review-R01",
+  "reviewer": "agent:/root/quality_control_review",
+  "reviewedAt": "2026-09-08T04:24:22Z",
+  "disposition": "APPROVED",
+  "scope": "Independent commit-bound control review of the W1 governed-quality restoration only.",
+  "baseCommit": "cb1c256f59ac7f3b42eab664980b9ed442b4981b",
+  "candidate": "ae75b3a18ea16d20d260b6ddd6d3b699d21deed5",
+  "evidence": {
+    "path": "artifacts/evidence/W1.quality-restoration-01.json",
+    "sha256": "385351641bd64994301029bb7c92432e9fea5f22b88cf360b7574b0b658a8b2a"
+  },
+  "authorityPreserved": true,
+  "route": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+  "riskAssessment": "Expanded evidence/control review: changes repair governed quality, package/import identity and test fixtures. The production edit is an accurate datetime annotation plus formatting; planning-control edits are a dictionary annotation and a distinct set variable. No approved scope, runtime authority, protocol, threshold or release criterion changes were found.",
+  "findings": [],
+  "closedFindings": [
+    {
+      "finding": "Pre-commit decoder initialization assertion could fail before signaling entered, leaving the cancellation test waiting indefinitely.",
+      "path": "tests/contracts/test_model_routing_contracts.py",
+      "status": "CLOSED",
+      "closure": "The committed test signals initialization in finally, bounds startup, propagates completed-child failure before cancellation, and unconditionally cancels/gathers the child. Existing successful cancellation and inherited-state cleanup assertions remain.",
+      "proof": [
+        "Exact committed source review",
+        "routing-contracts: 17 tests passed",
+        "adverse-decoder-initialization: deliberately injected null decoder raised AssertionError in 0.001361 seconds"
+      ]
+    }
+  ],
+  "independentChecks": [
+    {
+      "check": "Evidence and committed-input identity",
+      "result": "PASS",
+      "detail": "Evidence SHA256 matches the supplied binding. The exact base-to-candidate changed-path list matches all 20 listed paths; all 20 committed Git blob SHA256 values match the evidence. The original verification report and targeted replay report digests match. All 12 original output-log digests, the replay output digest, and both verification producer digests were independently checked. HEAD remained the candidate and tracked inputs were clean."
+    },
+    {
+      "check": "additive_preimplementation_quality_scope_errors",
+      "candidate": "ae75b3a18ea16d20d260b6ddd6d3b699d21deed5",
+      "policySource": "ui-change-policy.json at the exact candidate",
+      "result": "PASS",
+      "errors": [],
+      "detail": "Executed the existing helper after producer completion. The inventory adds only the three newly committed regular test-package marker files, preserves all prior entries and their order, and changes no governed roots or UI implementation. No full UI-gate or privacy scanner was invoked by this reviewer."
+    },
+    {
+      "check": "Assertions, patch lifetimes and boundary preservation",
+      "result": "PASS",
+      "detail": "Existing assertions and malformed inputs remain. Test-lifetime enterContext patches retain original bound callables and asynchronous behavior, including helper-installed authority patches. The immutable-mapping mutation attempt remains an actual runtime mutation attempt. Optional output values are narrowed with assertions. The repository fake delegates restore_revision without weakening its protocol."
+    },
+    {
+      "check": "Imports and declaration inventory",
+      "result": "PASS",
+      "detail": "The three package markers and canonical bare-tool/service imports resolve the observed quality failures. The direct seed-import regression uses an isolated real subprocess in a separate test class, reaching absent-path rejection before provider construction or project/vault access. Declaration inventory increased from 316 to 317, with no removals; the only addition is that regression. Relevant runtime discovery and imported fixture consumers passed."
+    }
+  ],
+  "verificationDisposition": {
+    "originalGroups": {
+      "passed": 11,
+      "failed": 1,
+      "total": 12
+    },
+    "retainedFailure": "The original UI-conformance group remains FAIL: 39 tests passed and one temporary shared-clone setup failed with sandbox Git dubious-ownership denial before its assertions. The diagnostic confirms the principal-specific setup cause. This result has not been rewritten as a full-group PASS.",
+    "targetedFreshReplay": {
+      "test": "tests.desktop.test_ui_conformance.UiConformanceTests.test_adopted_maintenance_makes_exact_rejected_candidate_history_non_authoritative",
+      "candidate": "ae75b3a18ea16d20d260b6ddd6d3b699d21deed5",
+      "result": "PASS",
+      "testCount": 1,
+      "seconds": 164.95811570016667,
+      "report": "artifacts/tmp/W1.quality-restoration-ui-replay-01.json",
+      "reportSha256": "7db851ac69ad7e52243b399b4b0e78a11fce83ccb5f06db443b7402e83f08025",
+      "detail": "Fresh unchanged-case replay under the normal Windows principal; log reports one test and OK. No safe.directory, Git configuration, hook or test change was used to obtain the pass."
+    },
+    "conclusion": "All selected maintenance boundaries have passing evidence at the exact candidate. The original setup failure and fresh targeted replay are preserved as distinct observations."
+  },
+  "selectedCoverage": [
+    "Unchanged complete quality runner: formatting, lint and typing pass all 229 governed files.",
+    "AI discovery: 61 tests; registry/routing contracts: 17 tests; deliberate decoder-initialization failure injection.",
+    "Protected routing functional cases: 47 tests; service repository, registry, gateway and probe-build/import cases: 40 tests.",
+    "Dependency graph, selective-recalculation end-to-end and API cases: 30 tests.",
+    "Quality, Wave-approval and UI inventory controls: 80 tests, including temporary-Git and negative controls.",
+    "UI-conformance fixtures: 39 original passes plus the exact fresh replay of the setup-failed case; 23 additional desktop cases imported/discovered without loader errors.",
+    "Core OpenAPI and architecture checks; independent exact-commit additive inventory validation."
+  ],
+  "deferredCoverageAndExclusions": [
+    "The unchanged gateway latency benchmark remains separately failing at the retained 134.022 ms p95 observation. It was excluded by its exact test name from the 48-case protected suite, with 47 functional cases executed. No benchmark method, threshold, retry, waiver or latency approval is established by this review.",
+    "CAP-07.S01 integrated slice qualification and independent slice review remain separate.",
+    "Fresh full W1/repository/profile qualification, native UI, packaging, security, accessibility, performance and remaining platform/principal boundaries remain required at their applicable stage.",
+    "No W1 exit, W2 activation, G1 approval, human release decision, publication or push is authorized by this disposition.",
+    "Supplemental refactoring capacity remains unknown; this review claims no new allowance or optional cleanup allocation."
+  ],
+  "safeguards": {
+    "protectedWitness": "artifacts/evidence/W1.A04.B00.json was treated as filename/status only; this reviewer did not read, hash, copy, edit, stage, delete or ignore it.",
+    "excludedCheckout": "The excluded planning-initiation checkout was not accessed.",
+    "reviewerExecution": "Read-only inspection, report/log authentication and the narrow additive-inventory helper only. No independent heavy test, native execution or benchmark was run. The only authored file is this new review record.",
+    "historicalEvidence": "Original approvals, adverse observations and development reports remain intact."
+  }
+}

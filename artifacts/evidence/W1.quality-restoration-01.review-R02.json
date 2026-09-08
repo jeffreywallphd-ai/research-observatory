@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-review",
+  "reviewId": "W1.quality-restoration-01.review-R02",
+  "reviewer": "agent:/root/quality_control_review",
+  "reviewedAt": "2026-09-08T04:30:23Z",
+  "disposition": "APPROVED",
+  "scope": "Incremental review of the unpublished maintenance evidence serialization and explicit original-evidence relocation only. R01's exact-candidate product/control review remains unchanged.",
+  "baseCommit": "cb1c256f59ac7f3b42eab664980b9ed442b4981b",
+  "candidate": "ae75b3a18ea16d20d260b6ddd6d3b699d21deed5",
+  "evidence": {
+    "path": "artifacts/evidence/W1.quality-restoration-02.json",
+    "sha256": "6aede599e12f8b87c1f1ceb39d3ab43d7aff8444b7dd3498b695f61d8c345288"
+  },
+  "priorReview": {
+    "path": "artifacts/evidence/W1.quality-restoration-01.review-R01.json",
+    "sha256": "92021001bb065f340784757af741c510d050dc62136b15fe3fba0f765cb94180",
+    "disposition": "APPROVED",
+    "bytesUnchanged": true,
+    "relationship": "Preserved original pre-publication review observation; not overwritten or silently retargeted."
+  },
+  "originalEvidence": {
+    "originalPublicationPath": "artifacts/evidence/W1.quality-restoration-01.json",
+    "archivePath": "artifacts/tmp/W1.quality-restoration-prepublication-01.json",
+    "sha256": "385351641bd64994301029bb7c92432e9fea5f22b88cf360b7574b0b658a8b2a",
+    "bytesPreserved": true,
+    "originalPublicationPathExists": false,
+    "locatorDisposition": "R01 continues to identify the original publication locator and original digest. The exact unpublished bytes now reside at the explicitly recorded ignored archive path. The successor publicationLineage and this R02 record resolve that relocation; current publication evidence is the successor bound above."
+  },
+  "authorityPreserved": true,
+  "route": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+  "publicationHistory": {
+    "adverseObservation": "The unchanged prospective publication guard rejected the original evidence representation after interpreting a committed source-blob checksum beside a filename key as a generic API key. No evidence publication commit was made for that attempt.",
+    "boundedCorrection": "The successor replaces committedInputSha256's path-keyed map with committedInputs rows containing explicit path and sha256 fields. It adds publicationLineage describing the original locator, archived original bytes, unchanged R01 and serialization change.",
+    "preservation": "All original checksum values remain visible and unencoded. Original evidence bytes and R01 remain recoverable with their original digests. No guard policy, hook, suppression, baseline or Git configuration change is part of this correction."
+  },
+  "findings": [],
+  "independentChecks": [
+    {
+      "check": "Original, R01 and successor byte identities",
+      "result": "PASS",
+      "detail": "Independently hashed all three records and matched each exact SHA256 binding above. Confirmed the original publication locator is absent and the archived original retains its previously reviewed bytes."
+    },
+    {
+      "check": "Complete evidence-fact equivalence",
+      "result": "PASS",
+      "detail": "Removed only the successor publicationLineage, reconstructed committedInputSha256 from the typed rows, and compared deterministic JSON serializations of the complete reconstructed and original documents. They are equal; every other original field and value is unchanged."
+    },
+    {
+      "check": "Typed inventory uniqueness and exact candidate blobs",
+      "result": "PASS",
+      "rowCount": 20,
+      "uniquePathCount": 20,
+      "committedBlobMismatches": [],
+      "detail": "Every row contains exactly path and sha256. Independently recomputed all 20 digests from the exact candidate's Git blobs, using only the already reviewed bounded path set."
+    },
+    {
+      "check": "Publication producer identity",
+      "result": "PASS",
+      "path": "artifacts/tmp/W1.quality-restoration-publication-02.py",
+      "sha256": "794dc8ae3f6fa9dd459783dba1d19283abd7d510d15f3f7a217abd12648d23e1",
+      "detail": "Read the producer and independently matched its current digest to successor publicationLineage."
+    },
+    {
+      "check": "Prior adverse evidence and review closure remain intact",
+      "result": "PASS",
+      "detail": "The original UI-conformance group still records exit 1; its separate fresh normal-principal replay still records exit 0. Original development observations, R01's decoder-startup-hang closure, selected coverage and exclusions are unchanged. No original result is relabeled as a new full-group pass."
+    }
+  ],
+  "verificationSelection": {
+    "selected": "Fresh byte-identity, full-document equivalence, row uniqueness, exact committed-input digest and producer-identity checks.",
+    "productRetests": "Not repeated: this successor changes evidence serialization and relocation metadata only. Source candidate, acceptance assertions, test inputs, recorded checks and output bindings remain unchanged. R01's completed review and original fresh execution provenance remain the applicable product/control evidence.",
+    "nextPublicationBoundary": "The unchanged prospective publication guard must run normally on the selected records. This approval does not claim that the guard has already passed or waive any rejection."
+  },
+  "deferredCoverageAndExclusions": [
+    "All R01 scope limits remain: the retained gateway latency failure, CAP-07.S01 qualification/review, full W1 and deployment/native/platform qualification, independent Wave review and the separate human G1 decision are not approved or waived.",
+    "No new supplemental refactoring allowance, product authority, release criterion, policy, hook, admission mechanism or controller is introduced.",
+    "This review does not authorize a push, publication outside the local repository or release."
+  ],
+  "safeguards": {
+    "protectedWitness": "The protected witness remained outside all content reads, hashes, copies, edits, staging, deletion and ignore changes by this reviewer.",
+    "excludedCheckout": "The excluded planning-initiation checkout was not accessed.",
+    "reviewerChanges": "Only this new R02 review record was authored. No other file, Git index/configuration or process was changed; no product test or benchmark was executed."
+  }
+}
