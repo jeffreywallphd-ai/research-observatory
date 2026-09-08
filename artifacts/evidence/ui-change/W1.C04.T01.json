@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "W1.C04.T01",
+  "changeKind": "defect-restoration",
+  "contractPath": "artifacts/evidence/ui-change/W1.C04.T01.json",
+  "implementationAgent": "agent:codex",
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/applicationLock.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.6",
+    "version": "1.6",
+    "packageSha256": "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+    "approvalCommit": "0460b2af60643172504e1abe0f185e010f171700",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.5"
+  },
+  "restoration": {
+    "defect": "Renderer status uncertainty invented manual lock and Windows authentication for No login, or presented synthetic invalidity as native policy corruption. An intervening locked observation could also clear the failure latch before a passive unlocked reply.",
+    "expectedBehavior": "Distinguish pending status, unavailable monitoring with the first confirmed mode, and accepted native policy evidence. Keep sensitive content cleared and the failure latch intact. No-login and unknown monitoring failures explain full application restart without an authentication/reset action. Preserve explicit protected-provider unlock and genuine invalid-policy same-user recovery, shared styles, keyboard focus and announcements. No timeout, policy, permission or governed-reference change."
+  },
+  "focusedEvidence": [
+    {
+      "command": "pnpm --dir apps/desktop exec vitest run src/app/applicationLock.test.ts src/app/ApplicationRuntime.test.tsx src/app/applicationSettings.test.ts src/app/ApplicationSettingsWorkspace.test.tsx",
+      "result": "passed",
+      "scope": "Development check only: 44 tests passed, including seven new predecessor-failing regressions. Fresh commit-bound evidence and actual native replay remain required. Simulated/static component checks are not authentication or native transport proof."
+    }
+  ]
+}

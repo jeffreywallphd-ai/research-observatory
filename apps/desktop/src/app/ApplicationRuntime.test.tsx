@@ -8,7 +8,7 @@ import {
   SHORTCUTS,
   storedTheme,
 } from "./ApplicationRuntime";
-import { DEFAULT_APPLICATION_LOCK_SNAPSHOT } from "./applicationLock";
+import { DEFAULT_APPLICATION_LOCK_SNAPSHOT, failClosedApplicationLockSnapshot } from "./applicationLock";
 
 describe("functional desktop application", () => {
   it("renders implemented shell behavior and only functional workspace navigation", () => {
@@ -132,6 +132,50 @@ describe("functional desktop application", () => {
     expect(html).toContain("Use Windows password recovery");
     expect(html).toContain("Set up Windows Hello in Windows before selecting it here");
     expect(html).not.toContain("Local projects");
+  });
+
+  it.each(["none", null] as const)("offers only truthful restart guidance for unverified %s mode", (mode) => {
+    const html = renderToStaticMarkup(<ApplicationLockedView
+      snapshot={failClosedApplicationLockSnapshot(DEFAULT_APPLICATION_LOCK_SNAPSHOT)}
+      monitoring={{ state: "unavailable", lastConfirmedMode: mode }}
+      busy={false} error="Application-lock status is unavailable."
+      onUnlock={() => undefined} onRecovery={() => undefined}
+    />);
+    expect(html).toContain("Recovery required");
+    expect(html).toContain("Close Research Observatory completely");
+    expect(html).toContain("persisted sign-in policy");
+    expect(html).toContain(mode === "none" ? "Last confirmed sign-in mode:</strong> No login" : "Sign-in mode has not been confirmed");
+    expect(html).not.toContain("locked manually");
+    expect(html).not.toContain("configuration could not be validated");
+    expect(html).not.toContain("Use the current Windows user credentials");
+    expect(html).not.toContain("Unlock with");
+    expect(html).not.toContain("Recover with");
+    expect(html).not.toContain("<button");
+  });
+
+  it("does not present the unconfirmed initial default as a configured provider", () => {
+    const html = renderToStaticMarkup(<ApplicationLockedView
+      snapshot={failClosedApplicationLockSnapshot(DEFAULT_APPLICATION_LOCK_SNAPSHOT)}
+      monitoring={{ state: "checking" }} busy={false} error={null} onUnlock={() => undefined}
+    />);
+    expect(html).toContain("Checking the application sign-in policy");
+    expect(html).not.toContain("Configured provider");
+    expect(html).not.toContain("No login");
+    expect(html).not.toContain("<button");
+  });
+
+  it.each(["windows-password", "windows-hello"] as const)("preserves explicit %s unlock during status uncertainty", (mode) => {
+    const native = { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, signInMode: mode };
+    const html = renderToStaticMarkup(<ApplicationLockedView
+      snapshot={failClosedApplicationLockSnapshot(native, native)}
+      monitoring={{ state: "unavailable", lastConfirmedMode: mode }}
+      busy={false} error="Application-lock status is unavailable."
+      onUnlock={() => undefined} onRecovery={() => undefined}
+    />);
+    expect(html).toContain(`Unlock with ${mode === "windows-hello" ? "Windows Hello" : "Windows password"}`);
+    expect(html).toContain("Last confirmed sign-in mode");
+    expect(html).not.toContain("locked manually");
+    expect(html).not.toContain("Recover with Windows password");
   });
 
   it("publishes a unique bounded shortcut registry and deterministic theme behavior", () => {

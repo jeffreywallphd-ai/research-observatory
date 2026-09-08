@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3f15ef9f11f4f02e63c0b582020b8c7a098d2a52881af0ebcf21247d2a1dfb88
+source_sha256: d216900b1720df7e8e458fab95a431f5071d1ecfb1451de8fd1fc6fd5f41aea8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2539,6 +2539,40 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/cap07_slice_review at `2026-09-08T11:27:48+00:00`
 
 **Latest notes:** Approve the exact W1.C03.T01 candidate as a bounded restoration of the three inherited CAP-03.S06.T03 criteria. The reviewer supplied read-only preflight advice and independently reviewed source and evidence, but authored no implementation or submitted evidence. The complete base-to-candidate inventory contains exactly four admitted product/test paths, the task-owned unchanged-reference UI contract, worksheet and controller projections. Not-started guidance now leads to the existing Project Home explicit Start action without starting or completing workflow state. Pending supporting requests suppress premature return and false expiration. Existing project/root, request/context, intent, selection, profile and source-stage guards remain intact; exact ticket and workspace ownership also fence stale success, error and finally cleanup. Shared controls, status semantics, keyboard focus and approved reference 1.6 are preserved. Fresh frontend and ledger reports contain 13 passing checks; the desktop suite reports 130 passed and three existing skipped, and all three assembled integration cases pass. The actual native UI actions recorded by the main agent corroborate not-started recovery, no implicit start and exact keyboard return in both themes; clean process exit is assessed separately. No blocking finding remains within this correction. CAP-07.S01 completion, full W1 qualification and G1 are not approved by this record.
+
+**Currently open findings:** -
+
+### W1.C04.T01 — Implement Application Settings Security & sign-in
+
+**Status:** `IN_PROGRESS`. **Original task:** `W1.A05.T04`. **Latest review:** `-`.
+
+**Reproduction:** On the actual fixture-isolated React/Tauri/Core candidate, Alt+Space from healthy No-login mode opens the Windows system menu and yields application-lock status unavailable. The cleared renderer then incorrectly claims manual lock, names Windows as provider and offers Windows unlock. Escape dismisses the menu but correctly does not clear the fail-closed latch. Two native observations reproduce the failure; the controlled second attempt used Alt+Space alone after successful create/open/workflow/model-center/close and native folder cancellation. Native process exit and owned-tree drain passed, not UI acceptance. Full qualification attempt 02 was deliberately cancelled after this disqualifying product failure; retain its partial passes, interruption and unexecuted checks, not a full PASS.
+
+**Inherited criteria:**
+
+- The application shell exposes Application Settings separately from Project Settings and labels the Security & sign-in scope as this application on the current Windows account.
+- The page displays current and default mode, prerequisites, Hello availability, startup/manual/idle/restart preview, provider-specific recovery, and the unchanged protection boundaries in plain language.
+- Enabling/changing protected modes and reducing protection use the approved verification and confirmation flows; cancellation, denial, busy, unavailable, or failure restores focus and changes nothing.
+- Locked and recovery views disclose no project name, path, command, research content, credential, PIN, or biometric and never offer a silent provider fallback.
+- The experience conforms to RO-UI-ACADEMIC-MINIMAL-1.4 for keyboard, focus, announcements, zoom/reflow, responsive layout, themes, reduced motion, WCAG AA, and preserved project/workflow position.
+
+**Bounded changed paths:**
+
+- apps/desktop/src-tauri/src/lib.rs
+- apps/desktop/src/app/ApplicationRuntime.test.tsx
+- apps/desktop/src/app/ApplicationRuntime.tsx
+- apps/desktop/src/app/applicationLock.test.ts
+- apps/desktop/src/app/applicationLock.ts
+- tests/desktop/test_application_lock_recovery.py
+#### Review history — W1.C04.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

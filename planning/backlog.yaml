@@ -892,6 +892,108 @@ waves:
           selected desktop application/build/type/lint, assembled interaction, workflow/accessibility conformance and ledger
           checks; fresh native replay and broader slice/Wave qualification remain separate. This bounded defect restoration
           adds no supplemental refactoring or optional styling scope.
+    - title: Implement Application Settings Security & sign-in
+      objective: Implement the approved application-wide settings destination and Security & sign-in experience for the three
+        modes, truthful provider status, lock preview, confirmation, and recovery while preserving project/workflow position
+        and credential secrecy.
+      dependencies:
+      - W1.A05.B00
+      - W1.A05.T03
+      acceptance_criteria:
+      - The application shell exposes Application Settings separately from Project Settings and labels the Security & sign-in
+        scope as this application on the current Windows account.
+      - The page displays current and default mode, prerequisites, Hello availability, startup/manual/idle/restart preview,
+        provider-specific recovery, and the unchanged protection boundaries in plain language.
+      - Enabling/changing protected modes and reducing protection use the approved verification and confirmation flows; cancellation,
+        denial, busy, unavailable, or failure restores focus and changes nothing.
+      - Locked and recovery views disclose no project name, path, command, research content, credential, PIN, or biometric
+        and never offer a silent provider fallback.
+      - The experience conforms to RO-UI-ACADEMIC-MINIMAL-1.4 for keyboard, focus, announcements, zoom/reflow, responsive
+        layout, themes, reduced motion, WCAG AA, and preserved project/workflow position.
+      verification_commands:
+      - Run renderer unit and interaction tests for all three modes, provider status classes, confirmations, recovery choices,
+        cancellation/denial/failure, and focus restoration.
+      - Run design-reference conformance, accessibility, keyboard, screen-reader announcement, zoom/reflow, theme, reduced-motion,
+        and responsive checks against RO-UI-ACADEMIC-MINIMAL-1.4.
+      - Run desktop/native end-to-end tests for first run, mode enable/switch/disable, manual and idle lock, restart, Hello
+        unavailable, explicit password recovery, deliberate reset, corruption, and no-silent-downgrade behavior.
+      - Complete W1.A05.S02 security/experience integration review and the amendment-exit affected build/smoke/security/accessibility
+        matrix.
+      - Obtain independent commit-bound task and slice review with all blocking findings closed.
+      deployment_profiles:
+      - LOC
+      platform_targets:
+      - windows-x64
+      verification_profiles: []
+      id: W1.C04.T01
+      wave: W1
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex
+      branch: codex/w1-windows-local-runtime
+      base_sha: 7c48c6d9f64459b849519829d91b3f9290addef6
+      worktree: .
+      lease:
+        claimed_by: codex
+        claimed_at: '2026-09-08T14:38:36+00:00'
+        expires_at: '2026-09-08T22:38:36+00:00'
+      started_at: '2026-09-08T14:38:36+00:00'
+      updated_at: '2026-09-08T14:38:36+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: W1.A05.T04
+        origin_commit: 4a698f61ae83e99aae4329af3db87e97af7dd378
+        paused_state_sha256: c54ab01808884cb5f56ac5683060777512ca523b901e349feb1858f5892205b9
+        origin_sha256: 1b6fc9b07a5a1a4b37330bc321d03beee447594c9370a3b0ec4926b3041a6992
+        origin_contract_sha256: cac42c21ab76e4b5500aff4ce4b2689392f87c9c915114795b10cc92d26ad45c
+        origin_history_sha256: 8dff6dd3ba03e458b945679bfe8bed1f1c94558a8c859e3193c6118f94e943e4
+        origin_amendment_id: W1.A05
+        authority_sha256: d0bfc405bf95c226206afce91fba53c58499bc3366ba1f0120f295662ac90dca
+        spec:
+          path: artifacts/evidence/W1.C04.T01.spec.json
+          sha256: 07d3d406ff135eb77b57fec2d5ed3794a857efd5352f83db75f9f019adbfd841
+          commit: 7c48c6d9f64459b849519829d91b3f9290addef6
+        reproduction: On the actual fixture-isolated React/Tauri/Core candidate, Alt+Space from healthy No-login mode opens
+          the Windows system menu and yields application-lock status unavailable. The cleared renderer then incorrectly claims
+          manual lock, names Windows as provider and offers Windows unlock. Escape dismisses the menu but correctly does not
+          clear the fail-closed latch. Two native observations reproduce the failure; the controlled second attempt used Alt+Space
+          alone after successful create/open/workflow/model-center/close and native folder cancellation. Native process exit
+          and owned-tree drain passed, not UI acceptance. Full qualification attempt 02 was deliberately cancelled after this
+          disqualifying product failure; retain its partial passes, interruption and unexecuted checks, not a full PASS.
+        changed_paths:
+        - apps/desktop/src-tauri/src/lib.rs
+        - apps/desktop/src/app/ApplicationRuntime.test.tsx
+        - apps/desktop/src/app/ApplicationRuntime.tsx
+        - apps/desktop/src/app/applicationLock.test.ts
+        - apps/desktop/src/app/applicationLock.ts
+        - tests/desktop/test_application_lock_recovery.py
+        impact_analysis: 'Restore W1.A05.T04 criteria 2-4 and the approved current reference lineage: truthful current/default
+          mode, provider-specific recovery, unchanged policy on failure and no sensitive content or silent provider fallback.
+          Distinguish native invalid policy from renderer status uncertainty. For last-confirmed No login, do not invent a
+          manual lock, protected provider or authentication/reset action; explain closing and restarting the entire application
+          to revalidate persisted policy without reopening a project. Unknown initial status must not claim a confirmed No-login
+          policy. Preserve the 1500 ms status timeout, fail-closed cleared tree, audit ordering, refusal of passive status/event
+          recovery, same-user proof, protected-provider recovery, persisted bytes and native policy authority. Diagnose the
+          system-menu status delivery failure with bounded fixture-only timing and an async-dispatch A/B if indicated; scheduling
+          changes may not bypass admission, change the response or mask timeout failure. Add failing unit/assembled regressions
+          before product changes, replay all three mode recovery/denial paths, then actual native menu/restart checks. Select
+          desktop application/unit/type/lint, affected native tests and reference/accessibility checks; full fresh W1 qualification
+          follows independently reviewed correction. No schema, permission, migration, governed-reference, release-criterion
+          or supplemental refactoring changes. No ordinary user policy, research data, credential or security-setting access.
+          Preserve original task and adverse history.'
   checkpoints:
   - id: W1.CP01
     kind: security

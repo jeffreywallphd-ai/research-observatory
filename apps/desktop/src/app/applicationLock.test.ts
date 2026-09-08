@@ -342,6 +342,37 @@ describe("application-lock contract", () => {
     });
   });
 
+  it("keeps No-login transport failure synthetic rather than inventing a manual protected lock", () => {
+    const failed = failClosedApplicationLockSnapshot(
+      DEFAULT_APPLICATION_LOCK_SNAPSHOT, DEFAULT_APPLICATION_LOCK_SNAPSHOT,
+    );
+    expect(failed).toMatchObject({ state: "locked", signInMode: "none",
+      configurationState: "invalid", reason: "configuration-invalid", profileName: null });
+    expect(decodeApplicationLockSnapshot(failed)).toEqual(failed);
+  });
+
+  it("does not clear the failure latch through an intervening genuine locked snapshot", () => {
+    const failed = failClosedApplicationLockSnapshot(DEFAULT_APPLICATION_LOCK_SNAPSHOT);
+    const invalid = { ...failed, auditSequence: 1 };
+    const observed = reconcileApplicationLockSnapshot(
+      failed, DEFAULT_APPLICATION_LOCK_SNAPSHOT, invalid, true, "status",
+    );
+    expect(observed.displaySnapshot).toEqual(invalid);
+    expect(observed.failClosed).toBe(true);
+    for (const source of ["status", "event"] as const) {
+      const later = reconcileApplicationLockSnapshot(
+        observed.displaySnapshot, observed.nativeSnapshot,
+        { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, auditSequence: 2 }, observed.failClosed, source,
+      );
+      expect(later.displaySnapshot.state).toBe("locked");
+      expect(later.failClosed).toBe(true);
+    }
+    expect(reconcileApplicationLockSnapshot(
+      observed.displaySnapshot, observed.nativeSnapshot,
+      { ...DEFAULT_APPLICATION_LOCK_SNAPSHOT, auditSequence: 2 }, true, "explicit-unlock",
+    ).failClosed).toBe(false);
+  });
+
   it("rejects forged transition handles, outcomes, reason codes, and target receipts", () => {
     const base = {
       schemaVersion: "1.0",

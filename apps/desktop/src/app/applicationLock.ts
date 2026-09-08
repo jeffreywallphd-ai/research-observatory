@@ -213,7 +213,7 @@ export function failClosedApplicationLockSnapshot(
   current: ApplicationLockSnapshot,
   lastKnownNative: ApplicationLockSnapshot | null = null,
 ): ApplicationLockSnapshot {
-  if (lastKnownNative?.configurationState === "valid") {
+  if (lastKnownNative?.configurationState === "valid" && lastKnownNative.signInMode !== "none") {
     return {
       ...lastKnownNative,
       state: "locked",
@@ -302,7 +302,8 @@ export function reconcileApplicationLockSnapshot(
   return {
     displaySnapshot: incoming,
     nativeSnapshot: incoming,
-    failClosed: false,
+    // A locked observation is not explicit-unlock proof for a later reply.
+    failClosed: failClosed && !(source === "explicit-unlock" && incoming.state === "unlocked"),
     applied: true,
   };
 }

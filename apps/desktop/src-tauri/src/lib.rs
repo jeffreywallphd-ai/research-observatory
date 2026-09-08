@@ -256,7 +256,14 @@ async fn support_bundle_export(
 }
 
 #[tauri::command]
-fn application_lock_status(lock: State<'_, ApplicationLockManager>) -> ApplicationLockSnapshot {
+fn application_lock_status(
+    _app: AppHandle,
+    lock: State<'_, ApplicationLockManager>,
+) -> ApplicationLockSnapshot {
+    #[cfg(all(feature = "integration-harness", windows))]
+    let _trace = _app
+        .try_state::<directory_integration_harness::Fixture>()
+        .and_then(|fixture| fixture.status_trace("body"));
     lock.status()
 }
 
@@ -505,6 +512,16 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
                 invoke.resolver.reject("RO-FIXTURE-ACTION-DENIED");
                 return true;
             }
+            #[cfg(all(feature = "integration-harness", windows))]
+            let _trace = (invoke.message.command() == "application_lock_status")
+                .then(|| {
+                    invoke
+                        .message
+                        .webview()
+                        .try_state::<directory_integration_harness::Fixture>()
+                        .and_then(|fixture| fixture.status_trace("router"))
+                })
+                .flatten();
             handler(invoke)
         })
         .on_window_event(|window, event| {
@@ -612,6 +629,127 @@ pub mod directory_integration_harness {
     }
 
     const LIFECYCLE_RECEIPT: &str = "t04-lifecycle-fixture.json";
+
+    // Tauri installs its non-writable invoke function before user initialization
+    // scripts. Observe only its exact Windows custom-protocol fetch instead.
+    // This cannot observe postMessage fallback, decoded invoke settlement, or
+    // establish a shared clock/request identity with the native trace below.
+    const LOCK_STATUS_DIAGNOSTIC_SCRIPT: &str = r#"
+(() => {
+  const statusUrl = window.__TAURI_INTERNALS__.convertFileSrc('application_lock_status', 'ipc');
+  const originalFetch = window.fetch;
+  const rows = [];
+  let sequence = 0, issued = 0, fulfilled = 0, rejected = 0, omitted = 0, locked = -1;
+  let output;
+  function render() {
+    if (output) output.textContent = JSON.stringify({
+      issued, fulfilled, rejected, omitted, locked, rows,
+      // Rows: event ordinal, renderer monotonic ms, fetch ordinal (or lock boolean), phase.
+      // Phases: 0 fetch start, 1 fetch fulfilled, 2 fetch rejected, 3 locked DOM marker.
+    });
+  }
+  function record(id, phase) {
+    try {
+      if (phase === 1) fulfilled++;
+      if (phase === 2) rejected++;
+      rows.push([++sequence, performance.now(), id, phase]);
+      if (rows.length > 96) rows.shift();
+      render();
+    } catch (_) { /* Diagnostic failure must not affect the application. */ }
+  }
+  window.fetch = function (...args) {
+    let id = 0;
+    if (args[0] === statusUrl) {
+      if (issued < 512) { id = ++issued; record(id, 0); }
+      else {
+        omitted = Math.min(omitted + 1, Number.MAX_SAFE_INTEGER);
+        try { render(); } catch (_) { /* Observation remains optional. */ }
+      }
+    }
+    let pending;
+    try { pending = Reflect.apply(originalFetch, this, args); }
+    catch (error) { if (id) record(id, 2); throw error; }
+    if (id) {
+      try { void pending.then(() => record(id, 1), () => record(id, 2)); }
+      catch (_) { /* Preserve the original return even if observation fails. */ }
+    }
+    // Neither the request nor the response is read or replaced.
+    return pending;
+  };
+  function mount() {
+    try {
+      const section = document.createElement('details');
+      section.setAttribute('data-fixture-lock-status-diagnostic', 'true');
+      const summary = document.createElement('summary');
+      summary.textContent = 'Synthetic fixture diagnostics (fetch only; not invoke success)';
+      output = document.createElement('pre');
+      section.append(summary, output);
+      document.body.append(section);
+      function observeLock() {
+        const current = Number(document.querySelector('[data-application-locked="true"]') !== null);
+        if (current !== locked) { locked = current; record(current, 3); }
+      }
+      const observer = new MutationObserver(observeLock);
+      observer.observe(document.body, {
+        subtree: true, childList: true, attributes: true,
+        attributeFilter: ['data-application-locked'],
+      });
+      window.addEventListener('pagehide', () => observer.disconnect(), { once: true });
+      observeLock();
+    } catch (_) { /* No product UI, state, or recovery depends on this view. */ }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mount, { once: true });
+  } else { mount(); }
+})();
+"#;
+
+    // At most 512 spans (two records each); no worker, timer, or policy data.
+    // Router return is not response delivery. Body timing encloses status() but
+    // emits only before/after its internal mutex is held. Logging can perturb
+    // timing, so these are diagnostic observations, never latency qualification.
+    struct StatusDiagnostics {
+        origin: Instant,
+        spans: std::sync::atomic::AtomicUsize,
+    }
+
+    impl StatusDiagnostics {
+        fn new() -> Self {
+            Self {
+                origin: Instant::now(),
+                spans: std::sync::atomic::AtomicUsize::new(0),
+            }
+        }
+
+        fn reserve(&self) -> Option<usize> {
+            use std::sync::atomic::Ordering;
+            self.spans
+                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |count| {
+                    (count < 512).then_some(count + 1)
+                })
+                .ok()
+                .map(|previous| previous + 1)
+        }
+    }
+
+    pub(crate) struct StatusTrace {
+        diagnostics: std::sync::Arc<StatusDiagnostics>,
+        span: usize,
+        phase: &'static str,
+        entered: Instant,
+    }
+
+    impl Drop for StatusTrace {
+        fn drop(&mut self) {
+            emit(
+                json!({"kind":"fixture-lock-status-timing", "span":self.span,
+                "phase":self.phase, "boundary":"returned",
+                "nativeElapsedMs":self.diagnostics.origin.elapsed().as_secs_f64() * 1000.0,
+                "spanElapsedMs":self.entered.elapsed().as_secs_f64() * 1000.0}),
+            );
+        }
+    }
+
     const FIXTURE_DIRECTORIES: [&str; 6] = [
         "application-data",
         "projects",
@@ -641,6 +779,7 @@ pub mod directory_integration_harness {
         webview: PathBuf,
         temporary: PathBuf,
         pins: std::sync::Arc<Vec<PinnedDirectory>>,
+        status_diagnostics: std::sync::Arc<StatusDiagnostics>,
     }
 
     struct PinnedDirectory {
@@ -796,6 +935,21 @@ pub mod directory_integration_harness {
     }
 
     impl Fixture {
+        pub(crate) fn status_trace(&self, phase: &'static str) -> Option<StatusTrace> {
+            let span = self.status_diagnostics.reserve()?;
+            let entered = Instant::now();
+            emit(json!({"kind":"fixture-lock-status-timing", "span":span,
+                "phase":phase, "boundary":"entered", "spanLimit":512,
+                "lastAdmittedSpan":span == 512,
+                "nativeElapsedMs":self.status_diagnostics.origin.elapsed().as_secs_f64() * 1000.0}));
+            Some(StatusTrace {
+                diagnostics: self.status_diagnostics.clone(),
+                span,
+                phase,
+                entered,
+            })
+        }
+
         fn relative_root(&self) -> String {
             format!(
                 "artifacts/tmp/{}",
@@ -820,6 +974,7 @@ pub mod directory_integration_harness {
                 temporary: root.join("temporary"),
                 root,
                 pins: std::sync::Arc::new(Vec::new()),
+                status_diagnostics: std::sync::Arc::new(StatusDiagnostics::new()),
             }
         }
 
@@ -1133,6 +1288,7 @@ pub mod directory_integration_harness {
             let main = tauri::WebviewWindowBuilder::from_config(app, &window_config)
                 .and_then(|builder| builder
                 .data_directory(fixture.webview.clone())
+                .initialization_script(LOCK_STATUS_DIAGNOSTIC_SCRIPT)
                 .title(format!("Research Observatory — SYNTHETIC {} {}", if mode.is_lifecycle() { "T04" } else { "T03" }, mode.name())).build())
                 .inspect_err(|_| { app.state::<RuntimeSupervisor>().stop(); })?;
             emit(json!({"kind":"tauri-directory-start", "mode":mode.name(), "fixture":fixture.relative_root(),
@@ -1194,6 +1350,20 @@ pub mod directory_integration_harness {
 
         fn nonce() -> String {
             format!("unit-{}", secure_random_hex::<16>().unwrap())
+        }
+
+        #[test]
+        fn status_diagnostic_budget_saturates_without_fixture_io() {
+            let diagnostics = StatusDiagnostics::new();
+            for expected in 1..=512 {
+                assert_eq!(diagnostics.reserve(), Some(expected));
+            }
+            assert_eq!(diagnostics.reserve(), None);
+            assert_eq!(diagnostics.reserve(), None);
+            assert_eq!(
+                diagnostics.spans.load(std::sync::atomic::Ordering::Relaxed),
+                512
+            );
         }
 
         #[test]
@@ -1678,6 +1848,56 @@ mod tests {
     }
 
     #[test]
+    fn status_diagnostics_are_fixture_only_without_new_ipc_or_scheduling() {
+        let source = include_str!("lib.rs");
+        let status = source
+            .split_once("fn application_lock_status(")
+            .unwrap()
+            .1
+            .split_once("#[tauri::command]")
+            .unwrap()
+            .0;
+        assert!(status.contains("try_state::<directory_integration_harness::Fixture>()"));
+        assert!(status.contains("lock.status()"));
+        assert!(status.contains("#[cfg(all(feature = \"integration-harness\", windows))]"));
+        assert!(!status.contains("spawn"));
+        let harness = source
+            .split_once("pub mod directory_integration_harness {")
+            .unwrap()
+            .1
+            .split_once("#[cfg(test)]")
+            .unwrap()
+            .0;
+        assert!(harness.contains(".initialization_script(LOCK_STATUS_DIAGNOSTIC_SCRIPT)"));
+        let script = harness
+            .split_once("const LOCK_STATUS_DIAGNOSTIC_SCRIPT: &str = r#\"")
+            .unwrap()
+            .1
+            .split_once("\"#;")
+            .unwrap()
+            .0;
+        for forbidden in [
+            "setInterval",
+            "setTimeout",
+            "console.",
+            "headers",
+            "payload",
+            "localStorage",
+            "sessionStorage",
+            "eval(",
+            "__TAURI_INTERNALS__.invoke =",
+        ] {
+            assert!(
+                !script.contains(forbidden),
+                "unexpected diagnostic access: {forbidden}"
+            );
+        }
+        assert!(script.contains("return pending;"));
+        assert!(script.contains("data-application-locked"));
+        assert!(script.contains("rows.length > 96"));
+    }
+
+    #[test]
     fn production_entrypoint_has_no_fixture_switch_or_fixture_ipc() {
         let source = include_str!("lib.rs");
         let production = source
@@ -1735,13 +1955,25 @@ mod tests {
             "http://localhost:1420",
             "file:///C:/index.html",
             "http://tauri.localhost:1234",
-            "https://user@tauri.localhost",
         ] {
             assert!(!directory_origin_allowed(
                 "main",
                 &tauri::Url::parse(url).unwrap()
             ));
         }
+    }
+
+    #[test]
+    fn userinfo_alone_denies_the_otherwise_allowed_directory_origin() {
+        let mut url = tauri::Url::parse("https://tauri.localhost").unwrap();
+        assert!(directory_origin_allowed("main", &url));
+        url.set_username("user").unwrap();
+        assert_eq!(url.scheme(), "https");
+        assert_eq!(url.host_str(), Some("tauri.localhost"));
+        assert_eq!(url.port(), None);
+        assert_eq!(url.password(), None);
+        assert_eq!(url.username(), "user");
+        assert!(!directory_origin_allowed("main", &url));
     }
 
     #[test]

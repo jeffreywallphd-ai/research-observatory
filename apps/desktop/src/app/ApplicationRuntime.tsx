@@ -63,6 +63,7 @@ import {
   reconcileApplicationLockSnapshot,
   type ApplicationLockSnapshot,
   type ApplicationLockSnapshotSource,
+  type SignInMode,
   type VerificationAvailability,
 } from "./applicationLock";
 
@@ -147,8 +148,22 @@ function registerApplicationLockListener(
   });
 }
 
+type LockMonitoring =
+  | { readonly state: "checking" }
+  | { readonly state: "unavailable"; readonly lastConfirmedMode: SignInMode | null }
+  | null;
+
+function unavailableLockMonitoring(previous: LockMonitoring, native: ApplicationLockSnapshot | null): LockMonitoring {
+  if (previous?.state === "unavailable") return previous;
+  return {
+    state: "unavailable",
+    lastConfirmedMode: native && native.configurationState !== "invalid" ? native.signInMode : null,
+  };
+}
+
 interface ApplicationLockedViewProps {
   readonly snapshot: ApplicationLockSnapshot;
+  readonly monitoring?: LockMonitoring;
   readonly busy: boolean;
   readonly error: string | null;
   readonly onUnlock: () => void;
@@ -160,6 +175,7 @@ interface ApplicationLockedViewProps {
 
 export function ApplicationLockedView({
   snapshot,
+  monitoring = null,
   busy,
   error,
   onUnlock,
@@ -172,21 +188,30 @@ export function ApplicationLockedView({
   const recoveryConfirmRef = useRef<HTMLButtonElement>(null);
   const recoveryTriggerRef = useRef<HTMLButtonElement>(null);
   const previousRecoveryConfirmation = useRef(recoveryConfirmation);
-  const reason = snapshot.reason === "inactivity"
-    ? "The inactivity interval elapsed."
-    : snapshot.reason === "application-restart"
-      ? "The configured lock was restored when the application started."
-      : snapshot.reason === "configuration-invalid"
-        ? "The local lock configuration could not be validated."
-        : "The application was locked manually.";
-  const provider = snapshot.signInMode === "windows-hello"
+  const monitoringStatusRef = useRef<HTMLParagraphElement>(null);
+  const checking = monitoring?.state === "checking";
+  const mode = monitoring?.state === "unavailable" ? monitoring.lastConfirmedMode : snapshot.signInMode;
+  const restartRequired = monitoring?.state === "unavailable" && (mode === null || mode === "none");
+  const authenticationOffered = !checking && !restartRequired;
+  const reason = checking
+    ? "Checking the application sign-in policy."
+    : monitoring
+      ? "The application sign-in status cannot currently be verified."
+      : snapshot.reason === "inactivity"
+        ? "The inactivity interval elapsed."
+        : snapshot.reason === "application-restart"
+          ? "The configured lock was restored when the application started."
+          : snapshot.reason === "configuration-invalid"
+            ? "The local lock configuration could not be validated."
+            : "The application was locked manually.";
+  const provider = mode === "windows-hello"
     ? "Windows Hello"
-    : snapshot.signInMode === "windows-password"
+    : mode === "windows-password"
       ? "Windows password"
-      : "Windows";
+      : "No login";
   const hello = helloAvailabilityPresentation(helloAvailability);
-  const recoveryRequired = snapshot.configurationState === "invalid";
-  const helloRecoveryOffered = snapshot.signInMode === "windows-hello"
+  const recoveryRequired = !monitoring && snapshot.configurationState === "invalid";
+  const helloRecoveryOffered = mode === "windows-hello"
     && new Set<VerificationAvailability>([
       "not-present",
       "not-configured",
@@ -194,6 +219,9 @@ export function ApplicationLockedView({
       "unavailable",
       "failed",
     ]).has(helloAvailability);
+  useEffect(() => {
+    if (checking || restartRequired) monitoringStatusRef.current?.focus();
+  }, [checking, restartRequired]);
   useEffect(() => {
     if (busy) return;
     if (recoveryConfirmation) recoveryCancelRef.current?.focus();
@@ -210,22 +238,24 @@ export function ApplicationLockedView({
         >
         <span className="brand-mark" aria-hidden="true">RO</span>
         <Typography id="locked-title" as="h1" variant="page-title">Research Observatory is locked</Typography>
-        <p>{reason}</p>
+        <p ref={monitoringStatusRef} id="lock-monitoring-status" tabIndex={monitoring ? -1 : undefined} role={monitoring ? "status" : undefined}>{reason}</p>
         <p>
-          Protected work was stopped and cleared from this view. Unlocking starts a fresh local
-          service session and does not reopen a project.
+          {monitoring
+            ? "Protected work is unavailable and has been cleared from this view. No sign-in setting was changed."
+            : "Protected work was stopped and cleared from this view. Unlocking starts a fresh local service session and does not reopen a project."}
         </p>
+        {restartRequired ? <p><strong>Recovery required:</strong> Close Research Observatory completely, then open it again to validate the persisted sign-in policy and start a fresh local service session. A restart does not reopen a project. Reloading this page or waiting for another status reply is not recovery.</p> : null}
         <Panel title="Protection boundary">
           <p>{snapshot.threatDisclosure}</p>
-          <p>Use the current Windows user credentials. No Research Observatory or cloud account is required.</p>
+          {authenticationOffered ? <p>Use the current Windows user credentials. No Research Observatory or cloud account is required.</p> : <p>Windows account access and project protection remain unchanged.</p>}
         </Panel>
-        <p><strong>Configured provider:</strong> {recoveryRequired ? "Recovery required" : provider}</p>
-        {snapshot.signInMode === "windows-hello" ? <p role="status"><strong>Windows Hello:</strong> {hello.detail}</p> : null}
+        {!checking ? (mode === null ? <p>Sign-in mode has not been confirmed.</p> : <p><strong>{monitoring ? "Last confirmed sign-in mode:" : "Configured provider:"}</strong> {recoveryRequired ? "Recovery required" : provider}</p>) : null}
+        {authenticationOffered && mode === "windows-hello" ? <p role="status"><strong>Windows Hello:</strong> {hello.detail}</p> : null}
         {error ? <p className="locked-error" role="alert">{error}</p> : null}
         {snapshot.retryAfterSeconds > 0 ? (
           <p role="status">Try again in about {snapshot.retryAfterSeconds} seconds.</p>
         ) : null}
-        {recoveryRequired ? (
+        {!authenticationOffered ? null : recoveryRequired ? (
           <Button ref={recoveryTriggerRef} tone="primary" autoFocus disabled={busy || recoveryConfirmation || !onRecovery} onClick={onRecovery}>
             {busy ? "Preparing Windows recovery…" : "Recover with Windows password"}
           </Button>
@@ -334,6 +364,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     : DEFAULT_APPLICATION_LOCK_SNAPSHOT);
   const [unlockBusy, setUnlockBusy] = useState(false);
   const [unlockError, setUnlockError] = useState<string | null>(null);
+  const [lockMonitoring, setLockMonitoring] = useState<LockMonitoring>(() => hasNativeRuntime() ? { state: "checking" } : null);
   const [lockedHelloAvailability, setLockedHelloAvailability] = useState<VerificationAvailability>("checking");
   const [lockedRecoveryConfirmation, setLockedRecoveryConfirmation] = useState(false);
   const [applicationSettingsBlocked, setApplicationSettingsBlocked] = useState(false);
@@ -390,6 +421,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   }, [clearPendingSupportingRequest]);
 
   const failClosedApplicationLock = useCallback((message: string) => {
+    const native = nativeLockSnapshotRef.current;
+    setLockMonitoring((previous) => unavailableLockMonitoring(previous, native));
     lockFailClosedRef.current = true;
     applyLockSnapshot(failClosedApplicationLockSnapshot(
       applicationLockRef.current,
@@ -409,6 +442,14 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
       lockFailClosedRef.current,
       source,
     );
+    if (!lockFailClosedRef.current && reconciliation.failClosed) {
+      const native = nativeLockSnapshotRef.current;
+      setLockMonitoring((previous) => unavailableLockMonitoring(previous, native));
+    } else if (reconciliation.applied && reconciliation.displaySnapshot === snapshot) {
+      // Accepted native policy may correct the display without clearing the
+      // security latch; only explicit-unlock proof can clear that latch.
+      setLockMonitoring(null);
+    }
     nativeLockSnapshotRef.current = reconciliation.nativeSnapshot;
     lockFailClosedRef.current = reconciliation.failClosed;
     if (reconciliation.applied) applyLockSnapshot(reconciliation.displaySnapshot);
@@ -1108,6 +1149,7 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     return (
       <ApplicationLockedView
         snapshot={applicationLock}
+        monitoring={lockMonitoring}
         busy={unlockBusy}
         error={unlockError}
         onUnlock={unlock}
