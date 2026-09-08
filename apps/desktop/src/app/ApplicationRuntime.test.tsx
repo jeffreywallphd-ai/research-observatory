@@ -174,6 +174,9 @@ describe("functional desktop application", () => {
     />);
     expect(html).toContain(`Unlock with ${mode === "windows-hello" ? "Windows Hello" : "Windows password"}`);
     expect(html).toContain("Last confirmed sign-in mode");
+    expect(html).toContain("Close Research Observatory completely");
+    expect(html).toContain("configured sign-in requirements still apply");
+    expect(html).toContain("If unlocking does not restore access");
     expect(html).not.toContain("locked manually");
     expect(html).not.toContain("Recover with Windows password");
   });

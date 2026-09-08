@@ -19,7 +19,7 @@
   },
   "restoration": {
     "defect": "Renderer status uncertainty invented manual lock and Windows authentication for No login, or presented synthetic invalidity as native policy corruption. An intervening locked observation could also clear the failure latch before a passive unlocked reply.",
-    "expectedBehavior": "Distinguish pending status, unavailable monitoring with the first confirmed mode, and accepted native policy evidence. Keep sensitive content cleared and the failure latch intact. No-login and unknown monitoring failures explain full application restart without an authentication/reset action. Preserve explicit protected-provider unlock and genuine invalid-policy same-user recovery, shared styles, keyboard focus and announcements. No timeout, policy, permission or governed-reference change."
+    "expectedBehavior": "Distinguish pending status, unavailable monitoring with the first confirmed mode, and accepted native policy evidence. Keep sensitive content cleared and the failure latch intact. No-login and unknown monitoring failures explain full application restart without an authentication/reset action. Protected monitoring failures also explain restart if explicit unlock cannot restore access, retaining configured sign-in requirements. Preserve explicit protected-provider unlock, initiating focus after denial, genuine invalid-policy same-user recovery, shared styles and announcements. No timeout, policy, permission or governed-reference change."
   },
   "focusedEvidence": [
     {

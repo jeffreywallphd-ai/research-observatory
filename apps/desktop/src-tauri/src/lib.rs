@@ -255,7 +255,7 @@ async fn support_bundle_export(
     lock.commit_protected_action(ticket, || manager.publish_export(result))
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn application_lock_status(
     _app: AppHandle,
     lock: State<'_, ApplicationLockManager>,
@@ -1848,7 +1848,30 @@ mod tests {
     }
 
     #[test]
-    fn status_diagnostics_are_fixture_only_without_new_ipc_or_scheduling() {
+    fn application_lock_status_uses_async_dispatch_without_changing_its_contract() {
+        // Source guard only; the isolated Windows menu replay proves dispatch.
+        let source = include_str!("lib.rs");
+        let declaration = source.split_once("fn application_lock_status(").unwrap().0;
+        assert!(declaration.trim_end().ends_with("#[tauri::command(async)]"));
+        let body = source
+            .split_once("fn application_lock_status(")
+            .unwrap()
+            .1
+            .split_once("#[tauri::command]")
+            .unwrap()
+            .0;
+        assert!(body.contains("lock: State<'_, ApplicationLockManager>"));
+        assert!(body.contains(") -> ApplicationLockSnapshot"));
+        let lines: Vec<_> = body
+            .lines()
+            .map(str::trim)
+            .filter(|line| !line.is_empty())
+            .collect();
+        assert!(lines.ends_with(&["lock.status()", "}"]));
+    }
+
+    #[test]
+    fn status_diagnostics_are_fixture_only_without_new_ipc_or_workers() {
         let source = include_str!("lib.rs");
         let status = source
             .split_once("fn application_lock_status(")

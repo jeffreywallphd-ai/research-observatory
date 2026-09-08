@@ -48,6 +48,7 @@ ADAPTER = r"""(() => {
       if (command === 'application_lock_hello_availability') return {
         schemaVersion: '1.0', provider: 'windows-hello', availability: 'available'
       };
+      if (command === 'application_lock_unlock') throw Error('RO-LOCK-AUTH-NOT-LOCKED');
       if (['plugin:event|unlisten', 'application_lock_activity', 'core_runtime_stop'].includes(command)) return;
       if (['core_runtime_start', 'core_runtime_status'].includes(command)) return {
         state: 'ready', attempt: 1, retryAvailable: false, diagnosticReference: null
@@ -110,6 +111,8 @@ class ApplicationLockRecoveryTests(unittest.TestCase):
                             self.assertEqual(original, page.evaluate("JSON.stringify(window.__LOCK_TEST__.snapshot)"))
                             body = page.locator("body").inner_text()
                             self.assertIn("Last confirmed sign-in mode:", body)
+                            self.assertIn("Close Research Observatory completely", body)
+                            self.assertIn("configured sign-in requirements still apply", body)
                             if mode == "none":
                                 self.assertIn("No login", body)
                                 self.assertIn("Close Research Observatory completely", body)
@@ -133,6 +136,46 @@ class ApplicationLockRecoveryTests(unittest.TestCase):
                                     1, page.get_by_role("button", name=f"Unlock with {label}", exact=True).count()
                                 )
                             page.context.close()
+            finally:
+                browser.close()
+
+    def test_unlocked_native_protected_mode_retains_restart_recovery_after_unlock_denial(self) -> None:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            try:
+                for mode in ("windows-password", "windows-hello"):
+                    with self.subTest(mode=mode):
+                        page = self.page(browser, mode)
+                        original = page.evaluate("JSON.stringify(window.__LOCK_TEST__.snapshot)")
+                        page.evaluate("window.__LOCK_TEST__.failure = 'reject'")
+                        page.get_by_role("alert").filter(has_text="status is unavailable").wait_for(timeout=5000)
+                        self.assert_cleared(page)
+                        page.evaluate("window.__LOCK_TEST__.failure = ''")
+                        label = "Windows Hello" if mode == "windows-hello" else "Windows password"
+                        unlock = page.get_by_role("button", name=f"Unlock with {label}", exact=True)
+                        unlock.click()
+                        page.get_by_role("alert").filter(has_text="application remains locked").wait_for(timeout=5000)
+                        page.wait_for_timeout(1200)
+                        self.assertEqual([], self.page_errors)
+                        self.assertEqual(original, page.evaluate("JSON.stringify(window.__LOCK_TEST__.snapshot)"))
+                        self.assertEqual(1, page.locator("[data-application-locked]").count())
+                        self.assertEqual(0, page.locator("#shell-command, nav, footer").count())
+                        self.assertEqual(
+                            1,
+                            page.evaluate(
+                                "window.__LOCK_TEST__.calls.filter(c => c === 'application_lock_unlock').length"
+                            ),
+                        )
+                        self.assertFalse(
+                            page.evaluate("window.__LOCK_TEST__.calls.some(c => /recovery|transition/.test(c))")
+                        )
+                        body = page.locator("body").inner_text()
+                        self.assertNotIn("Synthetic private", body)
+                        self.assertIn("If unlocking does not restore access", body)
+                        self.assertIn("Close Research Observatory completely", body)
+                        self.assertIn("configured sign-in requirements still apply", body)
+                        self.assertTrue(unlock.evaluate("element => element === document.activeElement"))
+                        page.context.close()
             finally:
                 browser.close()
 

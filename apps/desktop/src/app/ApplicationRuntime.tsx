@@ -189,6 +189,8 @@ export function ApplicationLockedView({
   const recoveryTriggerRef = useRef<HTMLButtonElement>(null);
   const previousRecoveryConfirmation = useRef(recoveryConfirmation);
   const monitoringStatusRef = useRef<HTMLParagraphElement>(null);
+  const unlockTriggerRef = useRef<HTMLButtonElement>(null);
+  const restoreUnlockFocusRef = useRef(false);
   const checking = monitoring?.state === "checking";
   const mode = monitoring?.state === "unavailable" ? monitoring.lastConfirmedMode : snapshot.signInMode;
   const restartRequired = monitoring?.state === "unavailable" && (mode === null || mode === "none");
@@ -228,6 +230,11 @@ export function ApplicationLockedView({
     else if (previousRecoveryConfirmation.current) recoveryTriggerRef.current?.focus();
     previousRecoveryConfirmation.current = recoveryConfirmation;
   }, [busy, recoveryConfirmation]);
+  useEffect(() => {
+    if (busy || recoveryConfirmation || !restoreUnlockFocusRef.current) return;
+    restoreUnlockFocusRef.current = false;
+    (unlockTriggerRef.current ?? recoveryTriggerRef.current ?? monitoringStatusRef.current)?.focus();
+  }, [busy, recoveryConfirmation]);
   return (
     <div className="locked-application" data-application-locked="true">
       <main className="locked-card ro-card ro-stack" aria-labelledby="locked-title">
@@ -244,7 +251,7 @@ export function ApplicationLockedView({
             ? "Protected work is unavailable and has been cleared from this view. No sign-in setting was changed."
             : "Protected work was stopped and cleared from this view. Unlocking starts a fresh local service session and does not reopen a project."}
         </p>
-        {restartRequired ? <p><strong>Recovery required:</strong> Close Research Observatory completely, then open it again to validate the persisted sign-in policy and start a fresh local service session. A restart does not reopen a project. Reloading this page or waiting for another status reply is not recovery.</p> : null}
+        {monitoring?.state === "unavailable" ? <p><strong>{restartRequired ? "Recovery required:" : "Restart recovery:"}</strong> {!restartRequired ? "If unlocking does not restore access, use this recovery: " : null}Close Research Observatory completely, then open it again to validate the persisted sign-in policy. The configured sign-in requirements still apply, and a restart does not reopen a project. Reloading this page or waiting for another status reply is not recovery.</p> : null}
         <Panel title="Protection boundary">
           <p>{snapshot.threatDisclosure}</p>
           {authenticationOffered ? <p>Use the current Windows user credentials. No Research Observatory or cloud account is required.</p> : <p>Windows account access and project protection remain unchanged.</p>}
@@ -261,7 +268,10 @@ export function ApplicationLockedView({
           </Button>
         ) : (
           <>
-            <Button tone="primary" autoFocus disabled={busy || recoveryConfirmation} onClick={onUnlock}>
+            <Button ref={unlockTriggerRef} tone="primary" autoFocus disabled={busy || recoveryConfirmation} onClick={() => {
+              restoreUnlockFocusRef.current = true;
+              onUnlock();
+            }}>
               {busy ? `Checking ${provider}…` : `Unlock with ${provider}`}
             </Button>
             {helloRecoveryOffered ? (
