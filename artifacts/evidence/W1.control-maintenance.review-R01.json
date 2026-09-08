@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "documentType": "bounded-control-maintenance-review",
+  "reviewId": "W1.control-maintenance.review-R01",
+  "reviewer": "independent agent /root/cap07_slice_review",
+  "independence": "The reviewer did not implement the eight-path increment or produce its submitted verification executions. This review authenticates the committed source, named evidence and bounded replay; it does not replace the preserved raw receipts.",
+  "baseCommit": "c0bb3a6b5e7e21531b0634fd1c3030596fd10717",
+  "candidateCommit": "2781af7a05baf856a0ce76c847cd4ed0c28f981b",
+  "disposition": "APPROVED",
+  "scope": "Bounded maintenance of current-candidate packaged-Core performance admission and native supervision fixture capability parity only.",
+  "blockingFindings": [],
+  "authorityPreserved": true,
+  "affectedIntegrationReviewed": true,
+  "changedInputs": [
+    {
+      "path": "apps/desktop/src-tauri/examples/supervision_check.rs",
+      "sha256": "14ac656e13e0ce7cfb9f7887f41bedbdb53837a14d66aa0aee0cbfddb5108061"
+    },
+    {
+      "path": "apps/desktop/src-tauri/examples/supervisor_fixture.rs",
+      "sha256": "d194f45ebb81ed5887f289ddc614ef8552437e20004ea24093be11fdfd25d36e"
+    },
+    {
+      "path": "artifacts/evidence/W1.core-performance-current-candidate.maintenance-01.md",
+      "sha256": "c5b4dafd56c4e191cee85b69bcef697ae0456a9a7b74cc7ccac83d45a2272642"
+    },
+    {
+      "path": "artifacts/evidence/W1.supervision-fixture-contract.maintenance-01.md",
+      "sha256": "6946a6c76da4249f5f91aac526eebd16a92727ec743929a6fc24ca107de24912"
+    },
+    {
+      "path": "quality-scope.json",
+      "sha256": "468ac29172d21fc4f8e9bc3ee3599761623e0262fb7f5d5ff26bc347a2ef8dc7"
+    },
+    {
+      "path": "tests/desktop/test_core_sidecar_performance_check.py",
+      "sha256": "d04b420890dc52a661b75b616679b0aacc01f60f90391ed5f7136ea4b3156dd5"
+    },
+    {
+      "path": "tests/desktop/test_supervision_fixture_contract.py",
+      "sha256": "10b23472e77d738ded8168ac86064d50511054db23a11742c0648509b8810f2a"
+    },
+    {
+      "path": "tools/core_sidecar_performance_check.py",
+      "sha256": "0451b65427e65b66e9b6c2bc2b6abe7edd6fae4a4b88aac0bb184952bbe13db5"
+    }
+  ],
+  "sourceFindings": [
+    "The optional paired current-package evidence/review route distinguishes an authenticated current package and measurement-tool identity from immutable historical baseline provenance. Omitting the pair retains the legacy equality denials; partial pairs and use outside qualifying mode fail closed.",
+    "Admission validates strict evidence/review shapes, distinct producer/reviewer identities, exact canonical evidence paths, committed bytes, single-introduction history and ancestry, and every intervening publication-only commit. It binds the required current source inventory and current package identity. The bounded text CRLF/LF representation relation is explicit, not arbitrary source equivalence.",
+    "Current approval, source and package identities are reauthenticated under existing immutable-package protection and again around measurement and final publication. The historical evidence pin, complete package inventory, fixed package locations, hardware comparison, seven retained measurement cycles, sample validation, hard limits and 20-percent regression limits remain intact.",
+    "Native changes add only models.catalog.read and models.catalog.refresh to the three stale fixture expectations in their production-defined order. The new regression compares exact ordered parity with the actual Core capability registry and production native contract; production authority and denial behavior are unchanged. Quality registration adds the new test without removing coverage."
+  ],
+  "unchangedBaseline": {
+    "path": "verification/baselines/core-sidecar-performance.json",
+    "sha256": "599ca300100627ae517ebd60cfdca2a4b3045dec9f7e2d2c6e22aa76b17471f8",
+    "authorityFile": {
+      "path": "verification/baselines/core-sidecar-performance.sha256",
+      "sha256": "f48ace224750cb243923245c61eb9f398660becef7b634dbab645622bcf19680"
+    },
+    "observation": "The baseline and its authority file are unchanged. One unmeasured warmup and seven retained cycles remain; readiness median <=3000 ms, shutdown p95 <=5000 ms and idle working-set p95 <=268435456 bytes also remain subject to the historical 1.2 regression multiplier. No rounding exception or baseline replacement is granted."
+  },
+  "verification": {
+    "attempt01": {
+      "report": {
+        "path": "artifacts/tmp/W1.control-maintenance-checks-01.json",
+        "sha256": "8fc61dd575629ba0ef7cd2c4a2a7e06c0ac55a244e3d0e491ed6b89294132388"
+      },
+      "producer": {
+        "path": "artifacts/tmp/W1.control-maintenance-checks-01.py",
+        "sha256": "a6b02115267ca3766fc2f74749782545fee83ae8893a45afd5ddecd6f4f99408"
+      },
+      "ownedJobHelper": {
+        "path": "artifacts/tmp/w1_owned_job_01.py",
+        "sha256": "32eea1c170a2a07b42d9657fd5c4404c53d0d7b19285cb726adc148927bebc0c"
+      },
+      "overallStatus": "FAIL",
+      "durationSeconds": 88.70067030005157,
+      "selectedChecks": [
+        {
+          "scope": "Both affected Python contract/admission test modules",
+          "status": "PASS",
+          "testsPassed": 26,
+          "testRunnerSeconds": 33.609,
+          "exitCode": 0,
+          "drained": true,
+          "log": {
+            "path": "artifacts/tmp/W1.control-maintenance-checks-01-01.log",
+            "sha256": "a7a517828eb08c75448b39c6b57fa4a8d19eceef206a47211a050db5031765d1"
+          }
+        },
+        {
+          "scope": "Governed quality-scope registration and affected four-file format/lint/type checks",
+          "status": "PASS",
+          "exitCode": 0,
+          "drained": true,
+          "log": {
+            "path": "artifacts/tmp/W1.control-maintenance-checks-01-02.log",
+            "sha256": "882c3e390855644eecfe3b9a06f56108ffc73cf6b14b4076eef687109c79ebb3"
+          }
+        },
+        {
+          "scope": "Offline locked Cargo check of supervisor_fixture and supervision_check examples",
+          "originalRowStatus": "RUNNING",
+          "reportedRootExitCode": 0,
+          "cargoLogFinishedSeconds": 37.53,
+          "qualificationStatus": "NOT_PASSED_BY_THIS_ATTEMPT",
+          "log": {
+            "path": "artifacts/tmp/W1.control-maintenance-checks-01-03.log",
+            "sha256": "123eb372f7063ed399fc1d94cd34c06ffce1ff6196d242a0a878be22eaa4bbae"
+          }
+        }
+      ],
+      "preservedFailure": "RuntimeError: Owned descendants remained after root exit. Cargo exited zero, but an owned descendant outlived the unchanged five-second grace. The helper requested termination and confirmed activeProcesses=0 / EMPTY_CONFIRMED before releasing locks. The exception bypassed normal compile-row finalization, so the raw row remains RUNNING and the overall receipt remains FAIL. The residual process identity and cause are UNKNOWN."
+    },
+    "compileReplay02": {
+      "report": {
+        "path": "artifacts/tmp/W1.native-compile-replay-02.json",
+        "sha256": "91ae9b1158c45ad2da776f1959104ee80f23820b332a34294b6ad0c9bd296d9b"
+      },
+      "producer": {
+        "path": "artifacts/tmp/W1.native-compile-replay-02.py",
+        "sha256": "0b3d26b201fdadcaa2dc91c9dee0b3c2130b80469c57ad11e5dd4bef03a8183f"
+      },
+      "ownedJobHelper": {
+        "path": "artifacts/tmp/w1_owned_job_diagnostic_01.py",
+        "sha256": "2943e4664fa35553b5888ebc2a91640f624fb37f1c4dc42c192d7d232612e5d7"
+      },
+      "log": {
+        "path": "artifacts/tmp/W1.native-compile-replay-02-01.log",
+        "sha256": "e999d84a19bf7e1019059eb263ff7e8e17439ee31d9e63cbe284496bbd7dfe39"
+      },
+      "command": [
+        "cargo",
+        "check",
+        "--locked",
+        "--offline",
+        "-p",
+        "research-observatory-desktop",
+        "--example",
+        "supervisor_fixture",
+        "--example",
+        "supervision_check"
+      ],
+      "status": "PASS",
+      "checkDurationSeconds": 1.1604549000039697,
+      "reportDurationSeconds": 3.3305219002068043,
+      "rootExitCode": 0,
+      "activeProcesses": 0,
+      "drained": true,
+      "forcedTerminationRequired": false,
+      "observation": "Same committed candidate and exact same reported 3397 tracked-input and runtime inventories as attempt 01. The bounded producer adds per-step finally reporting; the helper derivative adds passive observation of only its own job's processes. The five-second grace, termination and drainage rules are unchanged. A process-image query returned error 31 without identifying an image; the job emptied normally. No persistent residual recurred, and this does not identify the first attempt's cause. This is an incremental Cargo check, not a clean full build."
+    },
+    "authentication": "The reviewer read the bounded source and producer deltas; authenticated the named report, producer, helper and log bytes; matched the eight changed raw inputs to both identical receipt inventories; and checked the unchanged baseline authority. The protected witness is absent from those inventories. This does not claim a new exhaustive installed-runtime audit or a reviewer rerun of the tests."
+  },
+  "retainedDevelopmentLineage": [
+    {
+      "path": "artifacts/tmp/W1.core-performance-current-candidate.characterization-red-01.log",
+      "sha256": "ac79af4cefe05dedf1bdcc421f42c681a477ccf24a15a3764b75babb452a0b43"
+    },
+    {
+      "path": "artifacts/tmp/W1.core-performance-current-candidate.tests-red-01.log",
+      "sha256": "49862526acd7db178155a185c83b91c17cfb801570383e9a45f3c1eea9022c8c"
+    },
+    {
+      "path": "artifacts/tmp/W1.supervision-fixture-contract.red-01.json",
+      "sha256": "663da28a96a5497cf5639e7e5417f4074f5fc9d437176df9205a4b53118682ba"
+    }
+  ],
+  "dispositionBasis": "The committed tests and scoped quality pass, exact source review finds no blocking authority or package-protection regression, and the same-candidate compile-only replay completes with an empty owned job. This supports the eight-path bounded maintenance increment without requiring an unrelated clean full build at this stage. The first failed receipt is retained rather than converted to PASS; its unresolved cleanup cause remains a limitation for future executions.",
+  "limits": [
+    "This approves neither a current package evidence/review pair nor an actual signed artifact, benchmark measurement, normal-profile startup, native lifecycle, installer, platform release or Wave exit.",
+    "Fresh full W1 checks, required builds and runtime/platform qualification remain separate. The 26 selected tests and scoped quality were not rerun during compile replay and are attributed only to their authenticated same-candidate attempt-01 rows.",
+    "No hard budget, historical baseline, package inventory protection, security authority, ordinary-profile permission or signing permission is changed or waived. Prior performance failures and task-only owner exceptions retain their original scope.",
+    "All raw logs and process/runtime details remain ignored local evidence. This publication includes only relative evidence paths, digests and bounded observations; it contains no account or absolute local runtime paths.",
+    "The reviewer made no source, Git, fixture, vault, policy, credential, certificate-store, native-UI or process mutation. The protected witness was not read, hashed or copied, and the excluded sibling's contents were not accessed. Only this append-only review file was authored."
+  ]
+}
