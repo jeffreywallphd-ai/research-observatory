@@ -1,0 +1,909 @@
+{
+  "schemaVersion": "1.0",
+  "taskId": "W1.C02.T01",
+  "kind": "retained-adverse-candidate-evidence",
+  "candidate": "064d24a99c7f867a9beadd594b3dbb72f369bf53",
+  "status": "FAIL",
+  "verification": {
+    "candidate": "064d24a99c7f867a9beadd594b3dbb72f369bf53",
+    "baseCommit": "34d100a61c0d70643e92343d0a8b2496496313ea",
+    "producerSha256": "e2e46b78a6146ee54bbe15e59bb8255429415e05b900c458cfc7ab41150a9208",
+    "pythonLauncherSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "benchmarkSourceSha256": "033868af704bf3ef1e696eb1f949f867160808ec30b5454bc9b834d477c07766",
+    "referenceHardware": {
+      "source": "Current read-only CIM observation before this run; no account/machine identifiers collected",
+      "cpu": "Intel(R) Core(TM) i5-14600KF",
+      "cores": 14,
+      "logicalProcessors": 20,
+      "memoryBytes": 16984227840,
+      "os": "Microsoft Windows 11 Home",
+      "osVersion": "10.0.26200",
+      "osBuild": "26200"
+    },
+    "scope": "Fresh correction and slice-boundary checks using synthetic protected SQLCipher fixtures with in-memory keys; no ordinary project/vault/policy or native UI/live inference/packaging claim. Full routing benchmark included unchanged. Full repository/profile qualification remains separate.",
+    "checks": [
+      {
+        "commandId": "service:unit",
+        "command": "python -m unittest tests.service.test_model_routing_integration",
+        "cwd": ".",
+        "exitCode": 1,
+        "durationSeconds": 21.089,
+        "outputSha256": "eb5ebe85055f1e20f214125b45f17d98f8f63872398bd9896bfea713ae5ce1a1",
+        "outputBytes": 4964,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-01.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "ai:unit",
+        "command": "python -m unittest discover -s tests/ai -p test_*.py",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 2.582,
+        "outputSha256": "b0d1a49694f6e74a70b12dc15ae4fee1ef526b2c2d1c238c6cba8eee4e82c99d",
+        "outputBytes": 165,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-02.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "contracts:unit",
+        "command": "python -m unittest tests.contracts.test_model_registry_contracts tests.contracts.test_model_routing_contracts",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 1.757,
+        "outputSha256": "14618a9c1f8854908cfa2a2e67e0a853364b7c9218326264e740d292b58a1937",
+        "outputBytes": 121,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-03.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "service:unit",
+        "command": "python -m unittest tests.service.test_model_registry_repository tests.service.test_model_registry_service tests.service.test_model_gateway_service tests.service.test_model_routing_repository tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current tests.service.test_core_api.CoreApiTests.test_local_transport_denies_missing_stale_remote_and_origin_requests",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 10.629,
+        "outputSha256": "65873c897ad6a31a41d94ace85414ff4ecb303030505553023dc6d019befd49a",
+        "outputBytes": 4979,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-04.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "contracts:unit",
+        "command": "python tools/core_api_contract.py --check",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 1.166,
+        "outputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+        "outputBytes": 25,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-05.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "contracts:unit",
+        "command": "node packages/contracts/model-gateway/generate.mjs --check",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.083,
+        "outputSha256": "76cc067cb22fae45c1773e1092cb58cbe9e1efc36b65fa4d694695f7d6eef5a0",
+        "outputBytes": 30,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-06.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "contracts:unit",
+        "command": "node node_modules/vitest/vitest.mjs run model-gateway/model-task.test.ts",
+        "cwd": "packages/contracts",
+        "exitCode": 0,
+        "durationSeconds": 2.659,
+        "outputSha256": "3cad8dbf2cce72a00c28fff7df916907e8f5b00919c0dcf2e3f7fa53e082de20",
+        "outputBytes": 236,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-07.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "foundation:quality",
+        "command": "python -m ruff format --check services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py tests/ai/test_model_routing.py",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.097,
+        "outputSha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de",
+        "outputBytes": 26,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-08.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "foundation:quality",
+        "command": "python -m ruff check services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py tests/ai/test_model_routing.py",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.091,
+        "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+        "outputBytes": 19,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-09.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "foundation:quality",
+        "command": "python -m mypy --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 0.26,
+        "outputSha256": "281a094c39385b4d7b53e5db635f52158036861433c2a4975b9039e77a627a24",
+        "outputBytes": 44,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-10.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "foundation:architecture",
+        "command": "python tools/architecture_check.py --repo .",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 1.898,
+        "outputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+        "outputBytes": 100,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-11.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "foundation:backlog-views",
+        "command": "python tools/backlog_views.py --repo . --check",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 2.511,
+        "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+        "outputBytes": 44,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-12.log",
+        "provenance": "fresh"
+      },
+      {
+        "commandId": "foundation:backlog",
+        "command": "python tools/plan_review_check.py --repo .",
+        "cwd": ".",
+        "exitCode": 0,
+        "durationSeconds": 114.84,
+        "outputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+        "outputBytes": 85,
+        "log": "artifacts/tmp/W1.C02.T01.check-01-13.log",
+        "provenance": "fresh"
+      }
+    ],
+    "benchmark": {
+      "benchmark": "protected-gateway-fixture",
+      "cold": 125.8712001144886,
+      "machine": "AMD64",
+      "percentileMethod": "nearest-rank; all 100 warm samples retained",
+      "platform": "Windows",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.14.6",
+      "scope": "Protected SQLCipher with in-memory fixture keys; zero-delay synthetic adapter; excludes production lifecycle factory, packaging and live inference.",
+      "unit": "milliseconds",
+      "warmSamples": [
+        83.34970008581877,
+        81.71520009636879,
+        44.32039987295866,
+        79.83849989250302,
+        259.52710025012493,
+        91.81560017168522,
+        53.872100077569485,
+        85.48719994723797,
+        50.984099972993135,
+        82.25480001419783,
+        42.11140004917979,
+        81.60879975184798,
+        41.000899858772755,
+        72.2214998677373,
+        121.42919981852174,
+        73.54319980368018,
+        98.75180013477802,
+        88.71759986504912,
+        77.0833003334701,
+        91.92949999123812,
+        51.403199788182974,
+        76.78879983723164,
+        43.16050000488758,
+        43.322399724274874,
+        134.0222000144422,
+        81.37489994987845,
+        42.801300063729286,
+        77.42900028824806,
+        39.89070001989603,
+        76.60300005227327,
+        39.18910026550293,
+        83.41009961441159,
+        44.26349978893995,
+        99.13629991933703,
+        41.368499863892794,
+        130.4175998084247,
+        83.9778003282845,
+        44.89539982751012,
+        80.4055999033153,
+        44.10200007259846,
+        78.28300027176738,
+        78.18000018596649,
+        82.79730007052422,
+        69.22460021451116,
+        83.1822999753058,
+        87.38710032775998,
+        42.633899953216314,
+        23.10150023549795,
+        24.45679996162653,
+        55.64429983496666,
+        24.450600147247314,
+        63.720500096678734,
+        42.72340005263686,
+        79.04329989105463,
+        82.25979981943965,
+        81.1251001432538,
+        79.27520014345646,
+        83.769999910146,
+        118.97729989141226,
+        79.69179982319474,
+        160.49699997529387,
+        86.31369983777404,
+        78.91019992530346,
+        82.95599976554513,
+        77.29570008814335,
+        73.50690010935068,
+        65.87010016664863,
+        83.28900020569563,
+        153.12100015580654,
+        77.48650014400482,
+        51.51159968227148,
+        74.63980000466108,
+        48.95119974389672,
+        83.02609995007515,
+        83.97619985044003,
+        81.52949996292591,
+        46.83279991149902,
+        77.86779990419745,
+        57.73419979959726,
+        79.56420024856925,
+        79.12210002541542,
+        89.8037999868393,
+        87.82069990411401,
+        96.19870036840439,
+        70.64950000494719,
+        192.46829999610782,
+        123.38030012324452,
+        61.79889990016818,
+        82.03040016815066,
+        73.77190003171563,
+        52.93169990181923,
+        103.6527999676764,
+        57.18280002474785,
+        106.94620013237,
+        80.19839972257614,
+        94.9222999624908,
+        98.41640014201403,
+        95.13099957257509,
+        141.52439963072538,
+        91.98040002956986
+      ]
+    }
+  },
+  "verificationReportSha256": "0a1fa2eae3a41f42bf3d581c6e115095b93649636af2309c96983b19e4134cd1",
+  "performance": {
+    "p95Ms": 134.0222000144422,
+    "status": "FAIL",
+    "criterion": "p95 <25 ms",
+    "all100WarmSamplesRetained": true,
+    "waiver": null
+  },
+  "functionalAttempt": {
+    "command": "python artifacts/tmp/W1.C02.T01.submission-producer-01.py --functional",
+    "producerSha256": "dfc3b6a12e996d640bb4b09ef88436e1440c27231c5596ec17839f88fb8b24b1",
+    "log": "artifacts/tmp/W1.C02.T01.functional-01.log",
+    "sha256": "0139a99c56bc2835a2b0426a2310b0e9d662284117178d1f9053d3de8aa013e2",
+    "exitCode": 1,
+    "tests": 47,
+    "passed": 46,
+    "runnerSeconds": 16.12,
+    "wallSeconds": 16.831,
+    "failure": "test_timeout_has_bounded_attempts_and_retains_original expected one adapter cancellation but observed zero; its real20ms deadline can expire before dispatch. No manifest was generated. A subsequent submit rejected the missing manifest without mutation."
+  },
+  "diagnostics": [
+    {
+      "path": "artifacts/tmp/W1.C02.T01.phase-normal-01.json",
+      "sha256": "2ce662aa5c6206b50ff317e7e1a566a1e9e9b3808c51d63865850964bb680b5d",
+      "scope": "21 instrumented synthetic protected invocations using fixture in-memory keys; NOT qualification or a latency target retry. Phase times overlap, CPU clock is quantized, sequential contexts are time-confounded; no ordinary user project/vault/policy access.",
+      "candidate": "064d24a99c7f867a9beadd594b3dbb72f369bf53",
+      "sourceStable": true,
+      "producerSha256": "fcbb2ed49bb3a1c0d421e480dbbb1ce4f99f548ee6fb1ff03785d9cc126f0408",
+      "driverSha256": "25a45f08b287b3371ed45813b63269dd658d4bf787ca11130d4ba57e9b270941",
+      "summary": {
+        "close": {
+          "samples": 21,
+          "calls": 42,
+          "wallMs": {
+            "total": 397.24830000000003,
+            "mean": 18.916585714285713,
+            "median": 8.0389,
+            "p95": 58.4057,
+            "maximum": 60.9086
+          },
+          "threadCpuMs": {
+            "total": 46.875,
+            "mean": 2.232142857142857,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 18,
+          "cpuExceedsWallSamples": 3,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              18
+            ],
+            [
+              15.625,
+              3
+            ]
+          ]
+        },
+        "commit": {
+          "samples": 21,
+          "calls": 63,
+          "wallMs": {
+            "total": 1614.6132,
+            "mean": 76.88634285714285,
+            "median": 88.877,
+            "p95": 99.2018,
+            "maximum": 125.5482
+          },
+          "threadCpuMs": {
+            "total": 125.0,
+            "mean": 5.9523809523809526,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 31.25
+          },
+          "zeroCpuSamples": 14,
+          "cpuExceedsWallSamples": 0,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              14
+            ],
+            [
+              15.625,
+              6
+            ],
+            [
+              31.25,
+              1
+            ]
+          ]
+        },
+        "configure": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 78.2083,
+            "mean": 3.724204761904762,
+            "median": 3.3504,
+            "p95": 4.6967,
+            "maximum": 7.4994
+          },
+          "threadCpuMs": {
+            "total": 62.5,
+            "mean": 2.9761904761904763,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 17,
+          "cpuExceedsWallSamples": 4,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              17
+            ],
+            [
+              15.625,
+              4
+            ]
+          ]
+        },
+        "fingerprint": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 16.6731,
+            "mean": 0.7939571428571428,
+            "median": 0.7662,
+            "p95": 0.9599,
+            "maximum": 1.0882
+          },
+          "threadCpuMs": {
+            "total": 31.25,
+            "mean": 1.4880952380952381,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 19,
+          "cpuExceedsWallSamples": 2,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              19
+            ],
+            [
+              15.625,
+              2
+            ]
+          ]
+        },
+        "held": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 143.9052,
+            "mean": 6.852628571428571,
+            "median": 6.3082,
+            "p95": 10.5506,
+            "maximum": 18.7564
+          },
+          "threadCpuMs": {
+            "total": 62.5,
+            "mean": 2.9761904761904763,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 17,
+          "cpuExceedsWallSamples": 4,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              17
+            ],
+            [
+              15.625,
+              4
+            ]
+          ]
+        },
+        "invoke": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 2476.5751999999998,
+            "mean": 117.93215238095237,
+            "median": 117.9404,
+            "p95": 173.214,
+            "maximum": 173.2335
+          },
+          "threadCpuMs": {
+            "total": 562.5,
+            "mean": 26.785714285714285,
+            "median": 31.25,
+            "p95": 46.875,
+            "maximum": 46.875
+          },
+          "zeroCpuSamples": 3,
+          "cpuExceedsWallSamples": 0,
+          "commonCpuDurationsMsRounded": [
+            [
+              31.25,
+              10
+            ],
+            [
+              46.875,
+              4
+            ],
+            [
+              15.625,
+              4
+            ],
+            [
+              0.0,
+              3
+            ]
+          ]
+        },
+        "journalRead": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 75.8166,
+            "mean": 3.610314285714286,
+            "median": 3.2371,
+            "p95": 4.5513,
+            "maximum": 7.2485
+          },
+          "threadCpuMs": {
+            "total": 62.5,
+            "mean": 2.9761904761904763,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 17,
+          "cpuExceedsWallSamples": 4,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              17
+            ],
+            [
+              15.625,
+              4
+            ]
+          ]
+        },
+        "open": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 255.2395,
+            "mean": 12.154261904761904,
+            "median": 10.8615,
+            "p95": 16.9008,
+            "maximum": 28.5455
+          },
+          "threadCpuMs": {
+            "total": 218.75,
+            "mean": 10.416666666666666,
+            "median": 15.625,
+            "p95": 15.625,
+            "maximum": 31.25
+          },
+          "zeroCpuSamples": 8,
+          "cpuExceedsWallSamples": 12,
+          "commonCpuDurationsMsRounded": [
+            [
+              15.625,
+              12
+            ],
+            [
+              0.0,
+              8
+            ],
+            [
+              31.25,
+              1
+            ]
+          ]
+        },
+        "schema": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 18.9649,
+            "mean": 0.9030904761904762,
+            "median": 0.8658,
+            "p95": 1.1521,
+            "maximum": 1.2038
+          },
+          "threadCpuMs": {
+            "total": 46.875,
+            "mean": 2.232142857142857,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 18,
+          "cpuExceedsWallSamples": 3,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              18
+            ],
+            [
+              15.625,
+              3
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "path": "artifacts/tmp/W1.C02.T01.phase-sandbox-01.json",
+      "sha256": "0f85aca8f141cc5e4c268f43375a9ce2ca5206f796efef60b90e7a073455c458",
+      "scope": "21 instrumented synthetic protected invocations using fixture in-memory keys; NOT qualification or a latency target retry. Phase times overlap, CPU clock is quantized, sequential contexts are time-confounded; no ordinary user project/vault/policy access.",
+      "candidate": "064d24a99c7f867a9beadd594b3dbb72f369bf53",
+      "sourceStable": true,
+      "producerSha256": "fcbb2ed49bb3a1c0d421e480dbbb1ce4f99f548ee6fb1ff03785d9cc126f0408",
+      "driverSha256": "25a45f08b287b3371ed45813b63269dd658d4bf787ca11130d4ba57e9b270941",
+      "summary": {
+        "close": {
+          "samples": 21,
+          "calls": 42,
+          "wallMs": {
+            "total": 515.6886,
+            "mean": 24.5566,
+            "median": 8.4232,
+            "p95": 57.1046,
+            "maximum": 59.9384
+          },
+          "threadCpuMs": {
+            "total": 78.125,
+            "mean": 3.7202380952380953,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 16,
+          "cpuExceedsWallSamples": 4,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              16
+            ],
+            [
+              15.625,
+              5
+            ]
+          ]
+        },
+        "commit": {
+          "samples": 21,
+          "calls": 63,
+          "wallMs": {
+            "total": 1585.7486,
+            "mean": 75.51183809523809,
+            "median": 85.42,
+            "p95": 98.5814,
+            "maximum": 111.0923
+          },
+          "threadCpuMs": {
+            "total": 62.5,
+            "mean": 2.9761904761904763,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 17,
+          "cpuExceedsWallSamples": 0,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              17
+            ],
+            [
+              15.625,
+              4
+            ]
+          ]
+        },
+        "configure": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 69.108,
+            "mean": 3.290857142857143,
+            "median": 3.1656,
+            "p95": 4.1507,
+            "maximum": 4.2243
+          },
+          "threadCpuMs": {
+            "total": 62.5,
+            "mean": 2.9761904761904763,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 17,
+          "cpuExceedsWallSamples": 4,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              17
+            ],
+            [
+              15.625,
+              4
+            ]
+          ]
+        },
+        "fingerprint": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 15.5782,
+            "mean": 0.7418190476190476,
+            "median": 0.736,
+            "p95": 0.8166,
+            "maximum": 0.8419
+          },
+          "threadCpuMs": {
+            "total": 15.625,
+            "mean": 0.7440476190476191,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 20,
+          "cpuExceedsWallSamples": 1,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              20
+            ],
+            [
+              15.625,
+              1
+            ]
+          ]
+        },
+        "held": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 167.033,
+            "mean": 7.953952380952381,
+            "median": 5.4087,
+            "p95": 12.7935,
+            "maximum": 49.4644
+          },
+          "threadCpuMs": {
+            "total": 15.625,
+            "mean": 0.7440476190476191,
+            "median": 0.0,
+            "p95": 0.0,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 20,
+          "cpuExceedsWallSamples": 1,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              20
+            ],
+            [
+              15.625,
+              1
+            ]
+          ]
+        },
+        "invoke": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 2575.6942,
+            "mean": 122.65210476190477,
+            "median": 120.1229,
+            "p95": 182.5078,
+            "maximum": 193.195
+          },
+          "threadCpuMs": {
+            "total": 437.5,
+            "mean": 20.833333333333332,
+            "median": 15.625,
+            "p95": 31.25,
+            "maximum": 46.875
+          },
+          "zeroCpuSamples": 3,
+          "cpuExceedsWallSamples": 0,
+          "commonCpuDurationsMsRounded": [
+            [
+              15.625,
+              9
+            ],
+            [
+              31.25,
+              8
+            ],
+            [
+              0.0,
+              3
+            ],
+            [
+              46.875,
+              1
+            ]
+          ]
+        },
+        "journalRead": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 67.1138,
+            "mean": 3.195895238095238,
+            "median": 3.0499,
+            "p95": 4.0448,
+            "maximum": 4.1217
+          },
+          "threadCpuMs": {
+            "total": 62.5,
+            "mean": 2.9761904761904763,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 17,
+          "cpuExceedsWallSamples": 4,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              17
+            ],
+            [
+              15.625,
+              4
+            ]
+          ]
+        },
+        "open": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 268.4401,
+            "mean": 12.782861904761905,
+            "median": 9.9352,
+            "p95": 18.4349,
+            "maximum": 55.0328
+          },
+          "threadCpuMs": {
+            "total": 125.0,
+            "mean": 5.9523809523809526,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 13,
+          "cpuExceedsWallSamples": 7,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              13
+            ],
+            [
+              15.625,
+              8
+            ]
+          ]
+        },
+        "schema": {
+          "samples": 21,
+          "calls": 21,
+          "wallMs": {
+            "total": 17.6638,
+            "mean": 0.8411333333333333,
+            "median": 0.8281,
+            "p95": 0.9112,
+            "maximum": 0.9469
+          },
+          "threadCpuMs": {
+            "total": 31.25,
+            "mean": 1.4880952380952381,
+            "median": 0.0,
+            "p95": 15.625,
+            "maximum": 15.625
+          },
+          "zeroCpuSamples": 19,
+          "cpuExceedsWallSamples": 2,
+          "commonCpuDurationsMsRounded": [
+            [
+              0.0,
+              19
+            ],
+            [
+              15.625,
+              2
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "subsequentHostObservation": {
+    "provenance": "Aggregate read-only CIM tool stdout after the benchmark and phase diagnostics, not simultaneous telemetry.",
+    "diskActivityPercent": 92,
+    "diskQueueLength": 1,
+    "cpuPercent": 12,
+    "freePhysicalMemoryKiB": 4673972,
+    "totalVisibleMemoryKiB": 16586160,
+    "limits": "Contention plausible but unproven. No process or system settings changed."
+  },
+  "governedQuality": {
+    "report": "artifacts/tmp/W1.C02.T01.governed-quality-diagnostic-01.json",
+    "sha256": "0e74a31774fc816c59b78e5f7b2f607a467ce23d532d0fbc497ef426e49cbf6f",
+    "status": "FAIL",
+    "format": "3 unchanged selective-recalculation files require formatting",
+    "lint": "226 files PASS",
+    "types": "144 errors in16 files; module mapping and actual typing require diagnosis. No broad PASS claimed; raw local-argv report remains ignored."
+  },
+  "continuation": "Restore deterministic post-dispatch timeout characterization within the admitted test path, preserving real asyncio, deadline20ms, exact cancellation/output/history assertions and separate real-time checks. F01 is functionally closed per independent18-test replay. Gateway performance and broad quality remain unresolved CAP-07.S01/W1 obligations. No owner exception is broadened, no latency nonregression or slice/Wave/G1 approval is inferred."
+}

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "taskId": "W1.C02.T01",
+  "kind": "nonqualifying-timeout-fixture-development-observation",
+  "baseCandidate": "064d24a99c7f867a9beadd594b3dbb72f369bf53",
+  "scope": "Uncommitted deterministic timeout fixture repair; production and benchmark code unchanged. Tool-observed development output, not commit-bound qualification.",
+  "attempts": [
+    {
+      "tests": 4,
+      "errors": 2,
+      "cause": "The new persisted-output assertion mistakenly indexed RoutingRun.terminal, which is a boolean. Both memory and protected timeout cases errored; the two pre-dispatch deadline cases passed.",
+      "remedy": "Assert terminal state, then decode the final event's non-null result_json for the no-output assertion. Do not alter product behavior or remove the assertion."
+    },
+    {
+      "tests": 4,
+      "passed": 4,
+      "runnerSeconds": 0.620,
+      "scope": "Memory and protected post-dispatch timeout plus pre-dispatch deadline exhaustion. Additional explicit non-null narrowing was subsequently added before final committed verification."
+    }
+  ],
+  "independentPreflight": {
+    "reviewer": "agent:/root/cap07_slice_review",
+    "disposition": "Test-only repair is valid and stronger; no new functional blocker. Final approval requires successor-commit evidence.",
+    "limits": "Does not approve latency, full governed quality, slice completion, W1 or G1. Earlier failures and the unchanged performance target remain preserved."
+  }
+}

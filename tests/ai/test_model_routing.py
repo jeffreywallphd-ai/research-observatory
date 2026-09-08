@@ -174,11 +174,33 @@ class ModelRoutingTests(unittest.IsolatedAsyncioTestCase):
         self.request["requirements"]["deadlineMs"] = 20
         before = copy.deepcopy(self.request)
         self.adapters[0].wait = True
-        result = await self.run_request()
+        now = [100.0]
+        # Isolate expiry of an already dispatched call. Real protected admission
+        # may take longer than 20 ms; pre-dispatch expiry has a separate test.
+        # Only routing time is controlled, never asyncio or the storage clock.
+        with patch("research_observatory_core.model_routing.time", SimpleNamespace(monotonic=lambda: now[0])):
+            pending = asyncio.create_task(self.run_request())
+            try:
+                await asyncio.wait_for(self.adapters[0].entered.wait(), 2)
+                now[0] = 100.020
+                result = await asyncio.wait_for(pending, 2)
+            finally:
+                if not pending.done():
+                    pending.cancel()
+                await asyncio.gather(pending, return_exceptions=True)
         self.assertEqual("failed", result["status"])
         self.assertIn("model-deadline-exhausted", [item["code"] for item in result["diagnostics"]])
         self.assertEqual(1, self.adapters[0].cancelled)
+        self.assertEqual([1, 0], [adapter.calls for adapter in self.adapters])
+        self.assertIsNone(result["output"])
         self.assertEqual(before, self.request)
+        run = self.repository.read(self.request["taskId"])
+        assert run is not None
+        self.assertTrue(run.terminal)
+        terminal_json = run.events[-1].result_json
+        assert terminal_json is not None
+        self.assertIsNone(json.loads(terminal_json)["output"])
+        self.assertEqual(before, json.loads(run.task_json))
 
     async def test_bad_references_and_same_id_changed_request_do_not_dispatch(self):
         with self.assertRaises(ValueError):
