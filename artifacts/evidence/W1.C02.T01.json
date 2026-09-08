@@ -1,0 +1,259 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.C02.T01",
+  "commit": "4313def69702c2fc948b7ed8920a8412ca0f1dd3",
+  "baseCommit": "34d100a61c0d70643e92343d0a8b2496496313ea",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/W1.C02.T01.preflight-01.json",
+    "artifacts/evidence/W1.C02.T01.preflight-02.json",
+    "artifacts/evidence/W1.C02.T01.preflight-03.json",
+    "artifacts/evidence/W1.C02.T01.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/model_registry.py",
+    "services/core-api/src/research_observatory_core/model_routing.py",
+    "tests/ai/test_model_registry.py",
+    "tests/ai/test_model_routing.py"
+  ],
+  "checks": [
+    {
+      "commandId": "service:unit",
+      "command": "python artifacts/tmp/W1.C02.T01.submission-producer-01.py --functional",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 10.187,
+      "outputSha256": "da27d4d090454458dc510e824e9d87c42516f1d851d0534373d8a9202dd233dc",
+      "outputBytes": 12366,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-01.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "ai:unit",
+      "command": "python -m unittest discover -s tests/ai -p test_*.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 2.514,
+      "outputSha256": "e02010be861ecb8702c46021ed7b9ed5c3483a708adc1652e8283bc802873a8b",
+      "outputBytes": 165,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-02.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "contracts:unit",
+      "command": "python -m unittest tests.contracts.test_model_registry_contracts tests.contracts.test_model_routing_contracts",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 1.738,
+      "outputSha256": "2767aa714593547b21d68814d806fe441abaa7c09efd5a32e41baa483cf7cb74",
+      "outputBytes": 121,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-03.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "service:unit",
+      "command": "python -m unittest tests.service.test_model_registry_repository tests.service.test_model_registry_service tests.service.test_model_gateway_service tests.service.test_model_routing_repository tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current tests.service.test_core_api.CoreApiTests.test_local_transport_denies_missing_stale_remote_and_origin_requests",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 11.738,
+      "outputSha256": "8315e278fdcafc7953d3bc7641274e772f46d7cf2b53eff2fc9352462e529745",
+      "outputBytes": 4979,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-04.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "contracts:unit",
+      "command": "python tools/core_api_contract.py --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 1.124,
+      "outputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "outputBytes": 25,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-05.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "contracts:unit",
+      "command": "node packages/contracts/model-gateway/generate.mjs --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.061,
+      "outputSha256": "76cc067cb22fae45c1773e1092cb58cbe9e1efc36b65fa4d694695f7d6eef5a0",
+      "outputBytes": 30,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-06.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "contracts:unit",
+      "command": "node node_modules/vitest/vitest.mjs run model-gateway/model-task.test.ts",
+      "cwd": "packages/contracts",
+      "exitCode": 0,
+      "durationSeconds": 0.509,
+      "outputSha256": "4306c9f4b1519b8a78432ce4b0fd7216c86767e100ad76988ccc81375fd5e5b2",
+      "outputBytes": 236,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-07.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m ruff format --check services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py tests/ai/test_model_routing.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.091,
+      "outputSha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de",
+      "outputBytes": 26,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-08.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m ruff check services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py tests/ai/test_model_routing.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.089,
+      "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "outputBytes": 19,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-09.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "python -m mypy --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 2.022,
+      "outputSha256": "281a094c39385b4d7b53e5db635f52158036861433c2a4975b9039e77a627a24",
+      "outputBytes": 44,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-10.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:architecture",
+      "command": "python tools/architecture_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 1.435,
+      "outputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "outputBytes": 100,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-11.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 2.546,
+      "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "outputBytes": 44,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-12.log",
+      "provenance": "fresh"
+    },
+    {
+      "commandId": "foundation:backlog",
+      "command": "python tools/plan_review_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 119.4,
+      "outputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "outputBytes": 85,
+      "log": "artifacts/tmp/W1.C02.T01.check-02-13.log",
+      "provenance": "fresh"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh 61 AI tests and 17 contract tests cover capability/policy matching, versioned immutable catalog and deterministic ordering. Exact-expiry tests remove candidates after authority lookup and later-manifest assessment and prevent expired-authority dispatch, publication and replay. Fresh 47 protected SQLCipher functional tests and 33 focused service/principal/repository tests cover real encrypted storage with fixture keys. OpenAPI and generated Python/TypeScript remain current. No ordinary project, vault, policy, native UI or live provider is used."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Preflight-01 preserves the RED 16-expiry failures against unchanged product. Successor checks include all shared happy/failure/denial/cancellation/restart/recovery paths. The 20 ms post-dispatch timeout test now advances only routing time after real adapter entry, retains cancellation/deadline/request assertions and checks exact dispatch count and returned/persisted no-output. Real asyncio watchdogs and cleanup remain; separate pre-dispatch and real cancellation-latency checks are unchanged. Independent review must authenticate this exact successor and replay F01 plus the incremental timeout fixture."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The four admitted product/test paths restore existing authority timing. Other candidate changes are owned evidence/worksheet and controller projections. Fresh affected lint/format, production plus registry-test typing, architecture, public contract/generation and planning checks pass. No schema, migration, provider/network access, permissions grant, UX, benchmark threshold, decoder optimization or refactoring authority changes. Disclosed whole-governed typing/formatting and gateway latency failures remain open CAP-07.S01/W1 prerequisites, not passing correction checks."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "Fresh successor checks cover lookup/consumption freshness, deterministic eligibility, zero-dispatch/no-output denial, immutable replay and protected journal integration. The separately named 47-case functional command is a new actual passing invocation, not a relabeled failed 48-case benchmark-inclusive run. The unchanged 1,000-manifest discovery check runs in the AI suite. No fresh gateway benchmark was repeated after the test-only timeout repair: the retained failing performance evidence remains unresolved, with no cached PASS or performance-nonregression claim.",
+    "selectedCommandIds": [
+      "service:unit",
+      "ai:unit",
+      "contracts:unit",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:backlog-views",
+      "foundation:backlog"
+    ],
+    "deferred": [
+      "CAP-07.S01 performance qualification remains unmet: retained 134.022 ms p95 versus <25 ms. Diagnosis must establish a lawful remedy/controlled execution and fresh evidence; no owner exception or target change is inferred.",
+      "Whole-governed formatting/typing failures require restoration. Fresh full W1 profile/repository/native/packaging/security/privacy/rights/accessibility/performance/cross-capability/restart/recovery qualification and independent Wave review remain incomplete. Human G1 is not requested."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "d8c2698c0181efe0d5aa3d84b3f4ffebad6586d640b31e4030a72e2a6aa3a3a9",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "python artifacts/tmp/W1.C02.T01.submission-producer-01.py --functional",
+      "python -m unittest discover -s tests/ai -p test_*.py",
+      "python -m unittest tests.contracts.test_model_registry_contracts tests.contracts.test_model_routing_contracts",
+      "python -m unittest tests.service.test_model_registry_repository tests.service.test_model_registry_service tests.service.test_model_gateway_service tests.service.test_model_routing_repository tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current tests.service.test_core_api.CoreApiTests.test_local_transport_denies_missing_stale_remote_and_origin_requests",
+      "python tools/core_api_contract.py --check",
+      "node packages/contracts/model-gateway/generate.mjs --check",
+      "node node_modules/vitest/vitest.mjs run model-gateway/model-task.test.ts"
+    ],
+    "reusedEvidence": [],
+    "rationale": "Inherit the three original CAP-07.S01.T02 criteria without editing its DONE history or approved scope. Actual successor checks prove the correction boundary; the worksheet creates no new gate. Selected prior fresh performance execution failed and remains binding against slice/W1 qualification. This correction review cannot approve gateway latency, broaden historical rounding acceptance, or approve the slice, Wave or release."
+  },
+  "observations": {
+    "report": "artifacts/tmp/W1.C02.T01.verification-02.json",
+    "reportSha256": "3a04e062b6a7d85057f38b11b749253b5e4c91ea92e275445d8c233e9f102364",
+    "verificationProducerSha256": "0525a8cddb79a4604d2014d269707fb7384b1655c74b75b316ea1c47104a4fb5",
+    "assemblyProducerSha256": "ec432684b85927b0305dbf2febe07b940cecd95cf288617f455319a8cd2f0150",
+    "functionalDriverSha256": "dfc3b6a12e996d640bb4b09ef88436e1440c27231c5596ec17839f88fb8b24b1",
+    "pythonLauncherSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "referenceHardware": {
+      "source": "Read-only CIM observation earlier in this session; no account/machine identifiers collected",
+      "cpu": "Intel(R) Core(TM) i5-14600KF",
+      "cores": 14,
+      "logicalProcessors": 20,
+      "memoryBytes": 16984227840,
+      "os": "Microsoft Windows 11 Home",
+      "osVersion": "10.0.26200",
+      "osBuild": "26200"
+    },
+    "candidateStable": true,
+    "executionBoundary": "Normal Windows account. Synthetic SQLCipher fixtures and explicit in-memory keys; no ordinary user project/vault/policy or native/UI/live model access.",
+    "limits": "Fresh tool-observed execution and raw-log digests, not complete installed-runtime closure or a signed attestation. No receipt reuse, cost saving or broader qualification claim."
+  },
+  "retainedNonpassingAttempts": [
+    {
+      "path": "artifacts/evidence/W1.C02.T01.preflight-01.json",
+      "sha256": "4690d9267179c8b5d8eb0ed75b1abb3e00087eded4e970a96950949a0937f7f8",
+      "scope": "RED expiry and development observations"
+    },
+    {
+      "path": "artifacts/evidence/W1.C02.T01.preflight-02.json",
+      "sha256": "795a44c59b744bb0bf686ae5ea38230f2983bcb08fcd0c97479659a8ed9a7f7a",
+      "scope": "Complete 13-group candidate run with unchanged benchmark FAIL and all 100 samples, failed functional attempt, phase diagnostics and full quality FAIL"
+    },
+    {
+      "path": "artifacts/evidence/W1.C02.T01.preflight-03.json",
+      "sha256": "323c1fa53527b6169624384cdf440026123831bd769716b526becd248e4d18c1",
+      "scope": "Intermediate timeout assertion errors and successful development repair"
+    }
+  ]
+}

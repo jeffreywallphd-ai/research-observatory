@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7ead092d64c6a0ace5f623a92be02cbd5e58a8f9d7fd3ca7631576c2f989cc05
+source_sha256: 8d11259cd5501feaac2de63d8ed459bff95c7ac3f5f76826e287bae9d7ae74ef
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2424,7 +2424,7 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C02.T01 — Implement model registry and capability discovery
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-07.S01.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-07.S01.T02`. **Latest review:** `approved`.
 
 **Reproduction:** CAP-07.S01 preflight F01: with existing synthetic routing fixtures, advance the injected wall clock from 1500 to 2001 ms during policy assessment 3, after permission and host-observation witnesses expiring at 2000 ms are returned. At predecessor 04142f8b, the gateway dispatches once and only denies after output. Expected: no adapter dispatch under expired authority. A single early time snapshot in registry resolution is reused after fact/policy lookup; routing consumption also omits witness expiry. The original task remains DONE and its evidence/history are preserved.
 
@@ -2442,13 +2442,43 @@ Original tasks and approvals remain unchanged.
 - tests/ai/test_model_routing.py
 #### Review history — W1.C02.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `349fbb61a2176a5230017c13ee95a2c28897516c5871020b584d1f9b4eee9d4d`
+
+- Candidate / base / branch: `4313def69702c2fc948b7ed8920a8412ca0f1dd3` / `34d100a61c0d70643e92343d0a8b2496496313ea` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-08T03:42:20+00:00`
+- Evidence: `artifacts/evidence/W1.C02.T01.json` / `14efd4781f990713c14e03191bfcd9d5c0f41b9c620aea03f7415d05b307f107` / `4313def69702c2fc948b7ed8920a8412ca0f1dd3`
+- Acceptance-criteria SHA-256: `8a1c06bae8fc15b8d2f54792d0a1730609f523d393c44c4c0221a848d9592401`
+- Verification-selection SHA-256: `0aa377bf5ee2fc900622b5e180b703ff6c173cacffa5314bbb7ced84d23e5c35`
+- Changed paths: `artifacts/evidence/W1.C02.T01.preflight-01.json`, `artifacts/evidence/W1.C02.T01.preflight-02.json`, `artifacts/evidence/W1.C02.T01.preflight-03.json`, `artifacts/evidence/W1.C02.T01.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/model_registry.py`, `services/core-api/src/research_observatory_core/model_routing.py`, `tests/ai/test_model_registry.py`, `tests/ai/test_model_routing.py`
+- Selected checks: `python artifacts/tmp/W1.C02.T01.submission-producer-01.py --functional`, `python -m unittest discover -s tests/ai -p test_*.py`, `python -m unittest tests.contracts.test_model_registry_contracts tests.contracts.test_model_routing_contracts`, `python -m unittest tests.service.test_model_registry_repository tests.service.test_model_registry_service tests.service.test_model_gateway_service tests.service.test_model_routing_repository tests.service.test_core_api.CoreApiTests.test_lifespan_exposes_typed_runtime_endpoints_and_openapi tests.service.test_core_api.CoreApiTests.test_runtime_contract_accepts_served_health_and_readiness_and_denies_drift tests.service.test_core_api.CoreApiTests.test_generated_openapi_and_component_version_are_current tests.service.test_core_api.CoreApiTests.test_local_transport_denies_missing_stale_remote_and_origin_requests`, `python tools/core_api_contract.py --check`, `node packages/contracts/model-gateway/generate.mjs --check`, `node node_modules/vitest/vitest.mjs run model-gateway/model-task.test.ts`, `python -m ruff format --check services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py tests/ai/test_model_routing.py`, `python -m ruff check services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py tests/ai/test_model_routing.py`, `python -m mypy --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/model_registry.py services/core-api/src/research_observatory_core/model_routing.py tests/ai/test_model_registry.py`, `python tools/architecture_check.py --repo .`, `python tools/backlog_views.py --repo . --check`, `python tools/plan_review_check.py --repo .`
+- Deferred checks: `CAP-07.S01 performance qualification remains unmet: retained 134.022 ms p95 versus <25 ms. Diagnosis must establish a lawful remedy/controlled execution and fresh evidence; no owner exception or target change is inferred.`, `Whole-governed formatting/typing failures require restoration. Fresh full W1 profile/repository/native/packaging/security/privacy/rights/accessibility/performance/cross-capability/restart/recovery qualification and independent Wave review remain incomplete. Human G1 is not requested.`
+- Selection rationale: Fresh successor checks cover lookup/consumption freshness, deterministic eligibility, zero-dispatch/no-output denial, immutable replay and protected journal integration. The separately named 47-case functional command is a new actual passing invocation, not a relabeled failed 48-case benchmark-inclusive run. The unchanged 1,000-manifest discovery check runs in the AI suite. No fresh gateway benchmark was repeated after the test-only timeout repair: the retained failing performance evidence remains unresolved, with no cached PASS or performance-nonregression claim.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/cap07_slice_review / `2026-09-08T03:46:48+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W1.C02.T01.review-R01.json` / `e17573bca92eff98903df86e8707f0afd6b46a9156c961cdbbfbcc1057255df1`
+
+**Review notes:** Approved the exact W1.C02.T01 correction candidate on the three unchanged CAP-07.S01.T02 criteria. The reviewer found the original slice-preflight F01, supplied read-only preflight advice, and authored no implementation or submitted evidence. Authenticated the full 14-path claim-base-to-candidate inventory: exactly four admitted product/test paths plus task-owned adverse evidence, worksheet and controller projections. Registry freshness is checked after fact/permission lookup and after later manifests; routing and successful replay check refreshed candidate expiry when consumed. Separate permission/host, exact-expiry/unexpired, dispatch/publication/replay and immutable-history tests cover the correction. The cooldown fixture retains denial with expired witnesses and its original successful reset after renewal. The incremental timeout fixture controls only routing monotonic time after real adapter entry, preserves real asyncio watchdogs and cleanup, and strengthens dispatch, cancellation, returned/persisted no-output and original-request assertions. Independent successor replay passed 22 focused memory/protected SQLCipher tests in 1.928 seconds, and the original F01 probe now dispatches zero adapters and returns denied/null output with the request unchanged. All 13 fresh selected check records equal verification-02; raw log hashes and byte counts, report/verification-producer/functional-driver digests, three retained adverse records, origin snapshot, criterion and selection hashes and frozen R01 packet authenticate. validate_task_evidence and task_submission_packet_errors return no errors. The original T02 remains DONE/approved with unchanged history. No blocking finding remains within the inherited correction acceptance. This disposition does not approve gateway latency, full governed quality, CAP-07.S01 completion, W1 qualification or G1.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/cap07_slice_review at `2026-09-08T03:46:48+00:00`
 
-**Latest notes:** -
+**Latest notes:** Approved the exact W1.C02.T01 correction candidate on the three unchanged CAP-07.S01.T02 criteria. The reviewer found the original slice-preflight F01, supplied read-only preflight advice, and authored no implementation or submitted evidence. Authenticated the full 14-path claim-base-to-candidate inventory: exactly four admitted product/test paths plus task-owned adverse evidence, worksheet and controller projections. Registry freshness is checked after fact/permission lookup and after later manifests; routing and successful replay check refreshed candidate expiry when consumed. Separate permission/host, exact-expiry/unexpired, dispatch/publication/replay and immutable-history tests cover the correction. The cooldown fixture retains denial with expired witnesses and its original successful reset after renewal. The incremental timeout fixture controls only routing monotonic time after real adapter entry, preserves real asyncio watchdogs and cleanup, and strengthens dispatch, cancellation, returned/persisted no-output and original-request assertions. Independent successor replay passed 22 focused memory/protected SQLCipher tests in 1.928 seconds, and the original F01 probe now dispatches zero adapters and returns denied/null output with the request unchanged. All 13 fresh selected check records equal verification-02; raw log hashes and byte counts, report/verification-producer/functional-driver digests, three retained adverse records, origin snapshot, criterion and selection hashes and frozen R01 packet authenticate. validate_task_evidence and task_submission_packet_errors return no errors. The original T02 remains DONE/approved with unchanged history. No blocking finding remains within the inherited correction acceptance. This disposition does not approve gateway latency, full governed quality, CAP-07.S01 completion, W1 qualification or G1.
 
 **Currently open findings:** -
 

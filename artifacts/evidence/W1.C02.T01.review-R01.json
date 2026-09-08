@@ -1,0 +1,61 @@
+{
+  "task_id": "W1.C02.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "4313def69702c2fc948b7ed8920a8412ca0f1dd3",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "result": "approved",
+  "evidence_sha256": "14efd4781f990713c14e03191bfcd9d5c0f41b9c620aea03f7415d05b307f107",
+  "submission_packet_sha256": "349fbb61a2176a5230017c13ee95a2c28897516c5871020b584d1f9b4eee9d4d",
+  "notes": "Approved the exact W1.C02.T01 correction candidate on the three unchanged CAP-07.S01.T02 criteria. The reviewer found the original slice-preflight F01, supplied read-only preflight advice, and authored no implementation or submitted evidence. Authenticated the full 14-path claim-base-to-candidate inventory: exactly four admitted product/test paths plus task-owned adverse evidence, worksheet and controller projections. Registry freshness is checked after fact/permission lookup and after later manifests; routing and successful replay check refreshed candidate expiry when consumed. Separate permission/host, exact-expiry/unexpired, dispatch/publication/replay and immutable-history tests cover the correction. The cooldown fixture retains denial with expired witnesses and its original successful reset after renewal. The incremental timeout fixture controls only routing monotonic time after real adapter entry, preserves real asyncio watchdogs and cleanup, and strengthens dispatch, cancellation, returned/persisted no-output and original-request assertions. Independent successor replay passed 22 focused memory/protected SQLCipher tests in 1.928 seconds, and the original F01 probe now dispatches zero adapters and returns denied/null output with the request unchanged. All 13 fresh selected check records equal verification-02; raw log hashes and byte counts, report/verification-producer/functional-driver digests, three retained adverse records, origin snapshot, criterion and selection hashes and frozen R01 packet authenticate. validate_task_evidence and task_submission_packet_errors return no errors. The original T02 remains DONE/approved with unchanged history. No blocking finding remains within the inherited correction acceptance. This disposition does not approve gateway latency, full governed quality, CAP-07.S01 completion, W1 qualification or G1.",
+  "findings": [],
+  "closures": [],
+  "corrective_integration": {
+    "evidence_sha256": "14efd4781f990713c14e03191bfcd9d5c0f41b9c620aea03f7415d05b307f107",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Reviewed task contracts through registry/current authority, routing consumption, protected journal persistence and Core principal/lifecycle seams. Fresh successor proof includes 61 AI tests, 17 registry/routing contract tests, a separately named 47-case protected functional invocation, 33 focused service/principal/repository tests, seven TypeScript gateway tests and affected quality/generation/architecture/planning checks. The independent 22-case replay plus original F01 probe authenticates correction behavior without another benchmark. No new permission grant, schema, migration, provider/network access, governed experience, decoder optimization or refactoring authority was introduced. The complete failed benchmark-inclusive invocation is preserved, not relabeled as passing functional evidence. Correction acceptance inherits T02 criteria under the linked-correction route; it neither changes nor satisfies the remaining slice/Wave performance and broader-quality gates."
+  },
+  "independent_checks": [
+    {
+      "candidate_commit": "4313def69702c2fc948b7ed8920a8412ca0f1dd3",
+      "command": ".venv/Scripts/python.exe -B - with the reviewer stdin script recorded in the review conversation",
+      "scope": "Two registry expiry cases and ten shared routing cases in each of memory and protected SQLCipher: permission/host expiry during dispatch, publication and replay; unexpired replay; circuit cooldown/renewal; deterministic post-dispatch timeout; pre-dispatch deadline denial. Followed by the original advancing-clock F01 reproduction.",
+      "exit_code": 0,
+      "test_count": 22,
+      "runner_elapsed_seconds": 1.928,
+      "original_f01_result": {
+        "adapter_calls": [0, 0],
+        "policy_assess_calls": 3,
+        "status": "denied",
+        "output": null,
+        "request_preserved": true
+      },
+      "provenance": "Fresh independent tool execution with exact HEAD checked before and after; stdout retained in the review conversation. No separate reviewer log file or benchmark run is claimed. Temporary synthetic projects and explicit in-memory fixture keys only."
+    },
+    {
+      "candidate_commit": "4313def69702c2fc948b7ed8920a8412ca0f1dd3",
+      "check": "Authenticated current REVIEW state, R01 identity and owner, exact evidence and packet hashes, complete Git path inventory, original DONE task snapshot and inherited criteria, all 13 check records/logs, producer/helper/report digests and all three retained adverse records. Selected manifest and packet validators both return no errors.",
+      "result": "passed",
+      "acceptance_criteria_sha256": "8a1c06bae8fc15b8d2f54792d0a1730609f523d393c44c4c0221a848d9592401",
+      "selection_sha256": "0aa377bf5ee2fc900622b5e180b703ff6c173cacffa5314bbb7ced84d23e5c35",
+      "origin_sha256": "d8c2698c0181efe0d5aa3d84b3f4ffebad6586d640b31e4030a72e2a6aa3a3a9",
+      "prior_controlled_rounds": 0
+    }
+  ],
+  "pre_submission_observations": [
+    {
+      "record": "artifacts/evidence/CAP-07.S01.preflight-01.json",
+      "finding_id": "CAP-07.S01.F01",
+      "disposition": "fixed-and-independently-replayed-at-correction-candidate",
+      "evidence": "The original expired-authority dispatch reproduction and independent permission/host expiry tests now deny before dispatch or publication, while replay preserves prior history. This is a slice-preflight closure through the linked correction, not a fabricated closure against an earlier controlled task round."
+    }
+  ],
+  "scope_limits": [
+    "The unchanged gateway benchmark at predecessor 064d24a99c7f867a9beadd594b3dbb72f369bf53 failed at p95 134.0222000144422 ms against the strict <25 ms target. All 100 samples and failed invocations remain in preflight-02. No successor gateway performance measurement, nonregression, rounded PASS, target revision or waiver is claimed.",
+    "Historical CAP-07.S01.T03 owner acceptance applies only to its prior 25.383200030773878 ms observation and is not used for this correction, slice or Wave approval. The nonqualifying 26.077 ms development failure and timeout-fixture development errors remain preserved.",
+    "Full governed quality remains failed: three formatting failures and 144 typing errors in 16 files were disclosed separately. The scoped passing format/lint/type checks are not full-profile approval. Diagnosis and restoration, fresh full W1 qualification, independent Wave review and human G1 remain incomplete.",
+    "Instrumented phase diagnostics show slow unchanged commit operations in both execution contexts but do not prove the cause of the benchmark failure. Aggregate host observations were not simultaneous benchmark measurements.",
+    "Synthetic authority and adapter fixtures do not establish production model permission, live inference, provider/network behavior or native-window qualification. Production remains fail-closed for unavailable model-use rights, classification and budget authority.",
+    "No implementation, prior evidence, backlog, Git or remote was changed by this reviewer. Only this review ledger was authored. The protected witness was limited to filename/status observation; its contents and the excluded sibling were not accessed."
+  ]
+}
