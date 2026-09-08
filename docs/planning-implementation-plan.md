@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1e9f37e601b79579f29e50c286705aeaea0288d4c97b5b6e2fa307a93fbe9128
+source_sha256: 6b52acb6214a960373ef6901c39ec86b4705da89f58759df79697f88a64cf449
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2479,6 +2479,36 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/cap07_slice_review at `2026-09-08T03:46:48+00:00`
 
 **Latest notes:** Approved the exact W1.C02.T01 correction candidate on the three unchanged CAP-07.S01.T02 criteria. The reviewer found the original slice-preflight F01, supplied read-only preflight advice, and authored no implementation or submitted evidence. Authenticated the full 14-path claim-base-to-candidate inventory: exactly four admitted product/test paths plus task-owned adverse evidence, worksheet and controller projections. Registry freshness is checked after fact/permission lookup and after later manifests; routing and successful replay check refreshed candidate expiry when consumed. Separate permission/host, exact-expiry/unexpired, dispatch/publication/replay and immutable-history tests cover the correction. The cooldown fixture retains denial with expired witnesses and its original successful reset after renewal. The incremental timeout fixture controls only routing monotonic time after real adapter entry, preserves real asyncio watchdogs and cleanup, and strengthens dispatch, cancellation, returned/persisted no-output and original-request assertions. Independent successor replay passed 22 focused memory/protected SQLCipher tests in 1.928 seconds, and the original F01 probe now dispatches zero adapters and returns denied/null output with the request unchanged. All 13 fresh selected check records equal verification-02; raw log hashes and byte counts, report/verification-producer/functional-driver digests, three retained adverse records, origin snapshot, criterion and selection hashes and frozen R01 packet authenticate. validate_task_evidence and task_submission_packet_errors return no errors. The original T02 remains DONE/approved with unchanged history. No blocking finding remains within the inherited correction acceptance. This disposition does not approve gateway latency, full governed quality, CAP-07.S01 completion, W1 qualification or G1.
+
+**Currently open findings:** -
+
+### W1.C03.T01 — Implement adaptive ordered navigation and workflow context
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-03.S06.T03`. **Latest review:** `-`.
+
+**Reproduction:** CAP-07.S01.NATIVE-F01: in a newly created synthetic project whose workflow has not been explicitly started, open Research Intent and then Model Center through All tools. The settled supporting context says it expired and instructs reopening a primary step; reopening Research Intent does not start the workflow and cannot restore the return. Explicit Start guided workflow from Project Home followed by opening Model Center does produce a valid one-action return. A missing bootstrap and a pending supporting handoff are incorrectly represented as expired context. See CAP-07.S01.native-qualification-01.md; the original task and its adverse and approved review rounds remain immutable.
+
+**Inherited criteria:**
+
+- The primary navigation order changes to the selected use case and clearly distinguishes completed, current, upcoming, attention, optional, and cyclical states.
+- Opening a tool outside the sequence labels it as supporting and provides a one-action return to the current primary step.
+- Navigation is keyboard and screen-reader operable, responsive, and faithful to the approved Academic Minimal reference in both themes.
+
+**Bounded changed paths:**
+
+- apps/desktop/src/app/ApplicationRuntime.tsx
+- apps/desktop/src/app/WorkflowNavigation.test.tsx
+- apps/desktop/src/app/WorkflowNavigation.tsx
+- tests/desktop/test_model_center_interactions.py
+#### Review history — W1.C03.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

@@ -473,6 +473,56 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W1.C03.T01",
+          "title": "Implement adaptive ordered navigation and workflow context",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "The primary navigation order changes to the selected use case and clearly distinguishes completed, current, upcoming, attention, optional, and cyclical states.",
+            "Opening a tool outside the sequence labels it as supporting and provides a one-action return to the current primary step.",
+            "Navigation is keyboard and screen-reader operable, responsive, and faithful to the approved Academic Minimal reference in both themes."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-03.S06.T03",
+            "origin_commit": "b0a805f2c372b3f389f440b71bb7d0b5d59c0df6",
+            "paused_state_sha256": "04c48337d2c15b4be1486b3a737c5bfc0d2438654a3309555236591e1761cc86",
+            "origin_sha256": "aa859902c04a12165d908b4e9844315136004cc1599cfc515f7b5ddc8cb32157",
+            "origin_contract_sha256": "af2d65c16c58a2fa4684a21fd328552bf520cf1c34ae04e4d9a762c72c335bfc",
+            "origin_history_sha256": "5ce2d9f91ef781d632a2727775edd285dc43e85265b679ed63360ae5d00bd82d",
+            "origin_amendment_id": null,
+            "authority_sha256": "8758285b0701e6d27158023aae317086b97ecb3c2ec7077a0885c6fd761d80bf",
+            "spec": {
+              "path": "artifacts/evidence/W1.C03.T01.spec.json",
+              "sha256": "3363d72c1479580af63737837cbbc53aa6ca239c674c3f3dcc4db790c0b5ee59",
+              "commit": "79ac074c47ba680928770b94764a1a6b434d3432"
+            },
+            "reproduction": "CAP-07.S01.NATIVE-F01: in a newly created synthetic project whose workflow has not been explicitly started, open Research Intent and then Model Center through All tools. The settled supporting context says it expired and instructs reopening a primary step; reopening Research Intent does not start the workflow and cannot restore the return. Explicit Start guided workflow from Project Home followed by opening Model Center does produce a valid one-action return. A missing bootstrap and a pending supporting handoff are incorrectly represented as expired context. See CAP-07.S01.native-qualification-01.md; the original task and its adverse and approved review rounds remain immutable.",
+            "changed_paths": [
+              "apps/desktop/src/app/ApplicationRuntime.tsx",
+              "apps/desktop/src/app/WorkflowNavigation.test.tsx",
+              "apps/desktop/src/app/WorkflowNavigation.tsx",
+              "tests/desktop/test_model_center_interactions.py"
+            ],
+            "impact_analysis": "Restore the existing supporting-tool context and distinct loading/empty/recovery contract in CAP-03.S06 task section 9.3 and approved shell style section 6. Before bootstrap, provide actionable guidance to the existing Project Home Start guided workflow action; while a supporting handoff is pending, show pending status instead of expiration. Preserve exact project/selection/intent/profile/stage/reference-bound return validation, stale-response denial, and the explicit human start action. No automatic workflow start, fabricated witness, accepted intent, completion, permission, schema, migration, storage, governed-reference or release-criterion changes. Add failing component and assembled-application regressions first for not-started guidance, ineffective primary reopening, delayed handoff, explicit start and exact return; retain stale/substituted witness denial, keyboard and both-theme coverage. Run selected desktop application/build/type/lint, assembled interaction, workflow/accessibility conformance and ledger checks; fresh native replay and broader slice/Wave qualification remain separate. This bounded defect restoration adds no supplemental refactoring or optional styling scope."
+          },
+          "task_review": {
+            "task_id": "W1.C03.T01",
+            "title": "Implement adaptive ordered navigation and workflow context",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 1e9f37e601b79579f29e50c286705aeaea0288d4c97b5b6e2fa307a93fbe9128
+source_sha256: 6b52acb6214a960373ef6901c39ec86b4705da89f58759df79697f88a64cf449
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -637,12 +637,13 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.A09.T04` | `append-only v1` | 2 | `-` | approved / agent:/root/t03_acceptance_review | - |
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
+| `W1.C03.T01` | `append-only v1` | 0 | `-` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 14/15 | 50/50 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 14/15 | 50/51 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -698,7 +699,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W1.C03.T01` Implement adaptive ordered navigation and workflow context | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
 
 ## Linked corrective tasks
 
@@ -711,4 +714,8 @@ Original tasks and approvals remain unchanged.
 ### W1.C02.T01 — Implement model registry and capability discovery
 
 **Status:** `DONE`. **Original task:** `CAP-07.S01.T02`. **Latest review:** `approved`.
+
+### W1.C03.T01 — Implement adaptive ordered navigation and workflow context
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-03.S06.T03`. **Latest review:** `-`.
 
