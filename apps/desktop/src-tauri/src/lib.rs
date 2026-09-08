@@ -453,6 +453,12 @@ pub async fn dispatch_core_api_request(
 pub fn run() {
     application_builder()
         .setup(|app| {
+            #[cfg(windows)]
+            main_menu::install(
+                &app.get_webview_window("main")
+                    .ok_or_else(|| std::io::Error::other("RO-MENU-MAIN-UNAVAILABLE"))?,
+            )
+            .map_err(std::io::Error::other)?;
             let application_data = app
                 .path()
                 .app_local_data_dir()
@@ -571,6 +577,368 @@ fn setup_runtime(
     }
     start_lock_monitor(app.handle().clone(), lock, supervisor, support, picker);
     Ok(())
+}
+
+#[cfg(windows)]
+mod main_menu {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        ISMEX_REPLIED, ISMEX_SEND, SC_KEYMENU, WM_APP, WM_NCDESTROY, WM_SYSCOMMAND,
+    };
+
+    // This scalar alias only represents the existing standard Alt+Space menu
+    // action. It is not authenticated input or a new protected IPC command.
+    // Avoid directory-picker WM_APP + 91/92/93 and pinned Tao/Wry message IDs.
+    pub(super) const REPLAY_MESSAGE: u32 = WM_APP + 94;
+    type Message = (u32, usize, isize);
+
+    pub(super) fn valid_payload(wparam: usize, lparam: isize) -> bool {
+        wparam & !0xf == SC_KEYMENU as usize && lparam == 32
+    }
+
+    fn dispatch(
+        original: Message,
+        send_state: u32,
+        remove: impl FnOnce(),
+        post: impl FnOnce(Message) -> bool,
+        forward: impl FnOnce(Message) -> isize,
+    ) -> isize {
+        let (message, wparam, lparam) = original;
+        if message == WM_NCDESTROY {
+            remove();
+            return forward(original);
+        }
+        if message == REPLAY_MESSAGE {
+            return if valid_payload(wparam, lparam) {
+                // Direct forwarding, never re-admission under nested send flags.
+                forward((WM_SYSCOMMAND, wparam, lparam))
+            } else {
+                0
+            };
+        }
+        if message == WM_SYSCOMMAND
+            && valid_payload(wparam, lparam)
+            && send_state & (ISMEX_REPLIED | ISMEX_SEND) == ISMEX_SEND
+            && post((REPLAY_MESSAGE, wparam, lparam))
+        {
+            return 0;
+        }
+        // Post failure preserves the native command; no retry, coalescing,
+        // application queue, or busy fallback for overlapping successful posts.
+        forward(original)
+    }
+
+    pub(super) fn owner_matches(
+        thread: u32,
+        process: u32,
+        current_thread: u32,
+        current_process: u32,
+    ) -> bool {
+        thread != 0 && process != 0 && thread == current_thread && process == current_process
+    }
+
+    unsafe extern "system" fn menu_proc(
+        hwnd: windows_sys::Win32::Foundation::HWND,
+        message: u32,
+        wparam: usize,
+        lparam: isize,
+        subclass_id: usize,
+        data: usize,
+    ) -> isize {
+        use windows_sys::Win32::UI::{
+            Shell::{DefSubclassProc, RemoveWindowSubclass},
+            WindowsAndMessaging::{InSendMessageEx, PostMessageW},
+        };
+        if data != 0 || subclass_id != menu_proc as *const () as usize {
+            return unsafe { DefSubclassProc(hwnd, message, wparam, lparam) };
+        }
+        // No allocated registration/payload state or retained native pointers.
+        dispatch(
+            (message, wparam, lparam),
+            unsafe { InSendMessageEx(std::ptr::null()) },
+            || {
+                let _ = unsafe { RemoveWindowSubclass(hwnd, Some(menu_proc), subclass_id) };
+            },
+            |(message, wparam, lparam)| unsafe { PostMessageW(hwnd, message, wparam, lparam) } != 0,
+            |(message, wparam, lparam)| unsafe { DefSubclassProc(hwnd, message, wparam, lparam) },
+        )
+    }
+
+    pub(super) fn install(window: &tauri::WebviewWindow) -> Result<(), &'static str> {
+        use windows_sys::Win32::{
+            System::Threading::{GetCurrentProcessId, GetCurrentThreadId},
+            UI::{
+                Shell::{GetWindowSubclass, SetWindowSubclass},
+                WindowsAndMessaging::GetWindowThreadProcessId,
+            },
+        };
+        if window.label() != "main" {
+            return Err("RO-MENU-WINDOW-INVALID");
+        }
+        let hwnd = window.hwnd().map_err(|_| "RO-MENU-HWND-UNAVAILABLE")?.0;
+        let mut process = 0;
+        let thread = unsafe { GetWindowThreadProcessId(hwnd, &mut process) };
+        if !owner_matches(thread, process, unsafe { GetCurrentThreadId() }, unsafe {
+            GetCurrentProcessId()
+        }) {
+            return Err("RO-MENU-OWNER-INVALID");
+        }
+        let id = menu_proc as *const () as usize;
+        let mut previous = 0;
+        if unsafe { GetWindowSubclass(hwnd, Some(menu_proc), id, &mut previous) } != 0 {
+            return Err("RO-MENU-ALREADY-INSTALLED");
+        }
+        if unsafe { SetWindowSubclass(hwnd, Some(menu_proc), id, 0) } == 0 {
+            return Err("RO-MENU-INSTALL-FAILED");
+        }
+        Ok(())
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use std::cell::RefCell;
+        use windows_sys::Win32::UI::WindowsAndMessaging::*;
+
+        fn original() -> Message {
+            (WM_SYSCOMMAND, SC_KEYMENU as usize | 7, 32)
+        }
+
+        fn route(
+            command: Message,
+            flags: u32,
+            post: impl FnOnce(Message) -> bool,
+            forward: impl FnOnce(Message) -> isize,
+        ) -> isize {
+            dispatch(
+                command,
+                flags,
+                || panic!("unexpected removal"),
+                post,
+                forward,
+            )
+        }
+
+        #[test]
+        fn main_menu_shared_payload_checks_every_bit_and_preserves_original_scalars() {
+            for low_flags in 0..16 {
+                assert!(valid_payload(SC_KEYMENU as usize | low_flags, 32));
+            }
+            for wparam in [
+                SC_CLOSE as usize,
+                SC_MOVE as usize,
+                SC_SIZE as usize,
+                SC_KEYMENU as usize | 0x10000,
+                usize::MAX,
+            ] {
+                assert!(!valid_payload(wparam, 32));
+            }
+            for lparam in [0, 31, 33, -1, isize::MAX] {
+                assert!(!valid_payload(SC_KEYMENU as usize, lparam));
+            }
+            let mut posted = Vec::new();
+            assert_eq!(
+                route(
+                    original(),
+                    ISMEX_SEND,
+                    |message| {
+                        posted.push(message);
+                        true
+                    },
+                    |_| panic!("deferred original")
+                ),
+                0
+            );
+            assert_eq!(posted, [(REPLAY_MESSAGE, original().1, original().2)]);
+        }
+
+        #[test]
+        fn main_menu_shared_nontarget_and_nonblocked_messages_forward_unchanged_once() {
+            for command in [
+                (WM_SYSCOMMAND, SC_CLOSE as usize, 32),
+                (WM_SYSCOMMAND, SC_MOVE as usize, 32),
+                (WM_SYSCOMMAND, SC_SIZE as usize, 32),
+                (WM_SYSCOMMAND, SC_KEYMENU as usize | 0x10000, 32),
+                (WM_SYSCOMMAND, SC_KEYMENU as usize, 65),
+                (WM_SYSKEYDOWN, 32, 0),
+                (WM_KEYDOWN, 27, 0),
+            ] {
+                let mut count = 0;
+                assert_eq!(
+                    route(
+                        command,
+                        ISMEX_SEND,
+                        |_| panic!("nontarget post"),
+                        |actual| {
+                            assert_eq!(actual, command);
+                            count += 1;
+                            -73
+                        }
+                    ),
+                    -73
+                );
+                assert_eq!(count, 1);
+            }
+            for flags in [
+                0,
+                ISMEX_NOTIFY,
+                ISMEX_CALLBACK,
+                ISMEX_REPLIED,
+                ISMEX_SEND | ISMEX_REPLIED,
+            ] {
+                assert_eq!(
+                    route(
+                        original(),
+                        flags,
+                        |_| panic!("no blocked sender"),
+                        |actual| {
+                            assert_eq!(actual, original());
+                            17
+                        }
+                    ),
+                    17
+                );
+            }
+        }
+
+        #[test]
+        fn main_menu_shared_private_alias_has_no_provenance_or_arbitrary_command_authority() {
+            // A valid unsolicited alias requests only the same public menu
+            // action. This deliberately does not claim C's retired token proof.
+            for flags in [0, ISMEX_SEND, ISMEX_SEND | ISMEX_REPLIED] {
+                let mut forwarded = Vec::new();
+                assert_eq!(
+                    route(
+                        (REPLAY_MESSAGE, original().1, 32),
+                        flags,
+                        |_| panic!("replay cannot requeue"),
+                        |actual| {
+                            forwarded.push(actual);
+                            -81
+                        }
+                    ),
+                    -81
+                );
+                assert_eq!(forwarded, [original()]);
+            }
+            for command in [
+                (REPLAY_MESSAGE, SC_CLOSE as usize, 32),
+                (REPLAY_MESSAGE, SC_KEYMENU as usize | 0x10000, 32),
+                (REPLAY_MESSAGE, SC_KEYMENU as usize, 0),
+                (REPLAY_MESSAGE, 1, 0),
+            ] {
+                assert_eq!(
+                    route(
+                        command,
+                        ISMEX_SEND,
+                        |_| panic!("invalid post"),
+                        |_| panic!("invalid alias action")
+                    ),
+                    0
+                );
+            }
+        }
+
+        #[test]
+        fn main_menu_shared_overlapping_and_nested_inputs_each_forward_once_without_busy_state() {
+            let originals = [original(), (WM_SYSCOMMAND, SC_KEYMENU as usize | 10, 32)];
+            let mut posted = Vec::new();
+            for command in originals {
+                assert_eq!(
+                    route(
+                        command,
+                        ISMEX_SEND,
+                        |actual| {
+                            posted.push(actual);
+                            true
+                        },
+                        |_| panic!("no busy fallback")
+                    ),
+                    0
+                );
+            }
+            assert_eq!(posted.len(), 2);
+            let forwarded = RefCell::new(Vec::new());
+            assert_eq!(
+                route(
+                    posted[0],
+                    ISMEX_SEND,
+                    |_| panic!("nested replay requeued"),
+                    |actual| {
+                        forwarded.borrow_mut().push(actual);
+                        assert_eq!(
+                            route(
+                                posted[1],
+                                ISMEX_SEND,
+                                |_| panic!("nested replay requeued"),
+                                |nested| {
+                                    forwarded.borrow_mut().push(nested);
+                                    18
+                                }
+                            ),
+                            18
+                        );
+                        19
+                    }
+                ),
+                19
+            );
+            assert_eq!(*forwarded.borrow(), originals);
+        }
+
+        #[test]
+        fn main_menu_shared_post_failure_preserves_original_result_without_retry() {
+            let mut posts = 0;
+            let mut forwards = 0;
+            assert_eq!(
+                route(
+                    original(),
+                    ISMEX_SEND,
+                    |posted| {
+                        assert_eq!(posted, (REPLAY_MESSAGE, original().1, 32));
+                        posts += 1;
+                        false
+                    },
+                    |actual| {
+                        assert_eq!(actual, original());
+                        forwards += 1;
+                        -9
+                    }
+                ),
+                -9
+            );
+            assert_eq!((posts, forwards), (1, 1));
+        }
+
+        #[test]
+        fn main_menu_shared_teardown_removes_before_forwarding_and_ownership_is_exact() {
+            let order = RefCell::new(Vec::new());
+            let command = (WM_NCDESTROY, 123, 456);
+            assert_eq!(
+                dispatch(
+                    command,
+                    ISMEX_SEND,
+                    || order.borrow_mut().push(0),
+                    |_| panic!("destroy post"),
+                    |actual| {
+                        assert_eq!(actual, command);
+                        order.borrow_mut().push(1);
+                        31
+                    }
+                ),
+                31
+            );
+            assert_eq!(*order.borrow(), [0, 1]);
+            assert!(owner_matches(11, 22, 11, 22));
+            assert!(!owner_matches(12, 22, 11, 22));
+            assert!(!owner_matches(11, 23, 11, 22));
+            assert!(!owner_matches(0, 22, 0, 22));
+            assert!(!owner_matches(11, 0, 11, 0));
+            assert!((WM_APP..0xc000).contains(&REPLAY_MESSAGE));
+            for used in [WM_APP + 91, WM_APP + 92, WM_APP + 93] {
+                assert_ne!(REPLAY_MESSAGE, used);
+            }
+        }
+    }
 }
 
 /// Disposable composition only: no command, environment switch, or production
@@ -750,15 +1118,14 @@ pub mod directory_integration_harness {
         }
     }
 
-    // Passive timing remains separate from the fixture-only C scheduling
-    // experiment below. The shared status clock has independent bounded menu
-    // spans/events. Logging may perturb timing and cannot prove the identity of
-    // the synchronous sender or decoded IPC delivery. No production activation.
+    // Fixture-only passive timing above the same shared main_menu callback
+    // used in production. This observer never changes/posts a message. Private
+    // alias spans enclose native replay; the clock is shared with status spans.
+    // Logging may perturb timing and proves neither sender identity nor decoded
+    // IPC delivery. C's pending/token experiment is retired, not relabeled.
     struct MenuDiagnostics {
         clock: std::sync::Arc<StatusDiagnostics>,
         spans: std::sync::atomic::AtomicUsize,
-        deferral_events: std::sync::atomic::AtomicUsize,
-        replay: MenuReplay,
     }
 
     impl MenuDiagnostics {
@@ -766,34 +1133,6 @@ pub mod directory_integration_harness {
             Self {
                 clock,
                 spans: std::sync::atomic::AtomicUsize::new(0),
-                deferral_events: std::sync::atomic::AtomicUsize::new(0),
-                replay: MenuReplay::default(),
-            }
-        }
-
-        fn record_dispatch(&self, decision: MenuDispatch) {
-            use std::sync::atomic::Ordering;
-            let (phase, token) = match decision {
-                MenuDispatch::Forward => return,
-                MenuDispatch::Posted(token) => (0, token),
-                MenuDispatch::Replay(pending) => (1, pending.token),
-                MenuDispatch::PostFailed => (2, 0),
-                MenuDispatch::Busy => (3, 0),
-                MenuDispatch::Rejected => (4, 0),
-                MenuDispatch::Abandoned => (5, 0),
-                MenuDispatch::Exhausted => (6, 0),
-            };
-            if let Ok(previous) =
-                self.deferral_events
-                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |count| {
-                        (count < 128).then_some(count + 1)
-                    })
-            {
-                emit(
-                    json!({"kind":"fixture-menu-deferral", "phase":phase, "token":token,
-                    "eventLimit":128, "lastAdmittedEvent":previous == 127,
-                    "nativeElapsedMs":self.clock.origin.elapsed().as_secs_f64() * 1000.0}),
-                );
             }
         }
 
@@ -840,6 +1179,9 @@ pub mod directory_integration_harness {
             WM_SYSCOMMAND if wparam & 0xfff0 == SC_KEYMENU as usize => {
                 Some([message, u32::from(lparam == 32)])
             }
+            main_menu::REPLAY_MESSAGE if main_menu::valid_payload(wparam, lparam) => {
+                Some([message, 1])
+            }
             // Here detail is only the documented popup-menu boolean.
             WM_ENTERMENULOOP | WM_EXITMENULOOP => Some([message, u32::from(wparam != 0)]),
             _ => None,
@@ -852,146 +1194,7 @@ pub mod directory_integration_harness {
         current_thread: u32,
         current_process: u32,
     ) -> bool {
-        thread != 0 && process != 0 && thread == current_thread && process == current_process
-    }
-
-    // Private to our installed main-window subclass, not a Tauri IPC command.
-    // Avoid the directory picker's WM_APP + 91/92/93 and pinned Tao/Wry IDs.
-    const MENU_REPLAY_MESSAGE: u32 = windows_sys::Win32::UI::WindowsAndMessaging::WM_APP + 94;
-    static MENU_REPLAY_TOKEN: std::sync::atomic::AtomicUsize =
-        std::sync::atomic::AtomicUsize::new(1);
-
-    fn next_menu_token(counter: &std::sync::atomic::AtomicUsize) -> Option<usize> {
-        use std::sync::atomic::Ordering;
-        counter
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |next| {
-                next.checked_add(1)
-            })
-            .ok()
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    struct MenuCommand {
-        message: u32,
-        wparam: usize,
-        lparam: isize,
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    struct PendingMenu {
-        token: usize,
-        command: MenuCommand,
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    enum MenuDispatch {
-        Forward,
-        Posted(usize),
-        Replay(PendingMenu),
-        PostFailed,
-        Busy,
-        Rejected,
-        Abandoned,
-        Exhausted,
-    }
-
-    impl MenuDispatch {
-        fn finish(
-            self,
-            original: MenuCommand,
-            forward: impl FnOnce(MenuCommand) -> isize,
-        ) -> isize {
-            match self {
-                Self::Forward | Self::PostFailed | Self::Busy | Self::Exhausted => {
-                    forward(original)
-                }
-                Self::Replay(pending) => forward(pending.command),
-                Self::Posted(_) | Self::Rejected | Self::Abandoned => 0,
-            }
-        }
-    }
-
-    #[derive(Default)]
-    struct MenuReplayState {
-        pending: Option<PendingMenu>,
-        destroyed: bool,
-    }
-
-    #[derive(Default)]
-    struct MenuReplay {
-        state: std::sync::Mutex<MenuReplayState>,
-    }
-
-    impl MenuReplay {
-        fn route(
-            &self,
-            command: MenuCommand,
-            send_state: u32,
-            post: impl FnOnce(usize) -> bool,
-        ) -> MenuDispatch {
-            use windows_sys::Win32::UI::WindowsAndMessaging::{
-                ISMEX_REPLIED, ISMEX_SEND, WM_SYSCOMMAND,
-            };
-            let mut state = self
-                .state
-                .lock()
-                .unwrap_or_else(|poisoned| poisoned.into_inner());
-            if command.message == MENU_REPLAY_MESSAGE {
-                if !state.destroyed
-                    && command.lparam == 0
-                    && let Some(pending) = state.pending
-                    && pending.token == command.wparam
-                {
-                    state.pending = None;
-                    return MenuDispatch::Replay(pending);
-                }
-                return MenuDispatch::Rejected;
-            }
-            if menu_message(command.message, command.wparam, command.lparam)
-                != Some([WM_SYSCOMMAND, 1])
-                || send_state & (ISMEX_REPLIED | ISMEX_SEND) != ISMEX_SEND
-            {
-                return MenuDispatch::Forward;
-            }
-            if state.destroyed {
-                return MenuDispatch::Abandoned;
-            }
-            if state.pending.is_some() {
-                // Preserve the second input via baseline forwarding; do not
-                // coalesce, overwrite, or grow a queue. This overlap can still
-                // exhibit the baseline stall and is not a complete repair.
-                return MenuDispatch::Busy;
-            }
-            let Some(token) = next_menu_token(&MENU_REPLAY_TOKEN) else {
-                return MenuDispatch::Exhausted;
-            };
-            state.pending = Some(PendingMenu { token, command });
-            drop(state); // Never hold state through a native call or nested delivery.
-            if post(token) {
-                return MenuDispatch::Posted(token);
-            }
-            let mut state = self
-                .state
-                .lock()
-                .unwrap_or_else(|poisoned| poisoned.into_inner());
-            if !state.destroyed && state.pending.is_some_and(|pending| pending.token == token) {
-                state.pending = None;
-                MenuDispatch::PostFailed
-            } else {
-                // Nested consumption/destruction cannot duplicate the original
-                // or clear/resurrect a different, newer reservation.
-                MenuDispatch::Abandoned
-            }
-        }
-
-        fn destroy(&self) -> bool {
-            let mut state = self
-                .state
-                .lock()
-                .unwrap_or_else(|poisoned| poisoned.into_inner());
-            state.destroyed = true;
-            state.pending.take().is_some()
-        }
+        main_menu::owner_matches(thread, process, current_thread, current_process)
     }
 
     unsafe extern "system" fn menu_diagnostic_proc(
@@ -1004,7 +1207,7 @@ pub mod directory_integration_harness {
     ) -> isize {
         use windows_sys::Win32::UI::{
             Shell::{DefSubclassProc, RemoveWindowSubclass},
-            WindowsAndMessaging::{InSendMessageEx, PostMessageW, WM_NCDESTROY},
+            WindowsAndMessaging::{InSendMessageEx, WM_NCDESTROY},
         };
         if data == 0 || subclass_id != menu_diagnostic_proc as *const () as usize {
             return unsafe { DefSubclassProc(hwnd, message, wparam, lparam) };
@@ -1014,7 +1217,6 @@ pub mod directory_integration_harness {
         // reentrantly and remove/free its boxed registration before returning.
         let diagnostics = unsafe { &*(data as *const std::sync::Arc<MenuDiagnostics>) }.clone();
         if message == WM_NCDESTROY {
-            let pending_cancelled = diagnostics.replay.destroy();
             let removed =
                 unsafe { RemoveWindowSubclass(hwnd, Some(menu_diagnostic_proc), subclass_id) } != 0;
             if removed {
@@ -1023,45 +1225,12 @@ pub mod directory_integration_harness {
             // On removal failure retain the one allocation rather than leave a
             // registered dangling pointer. The explicit failed row is adverse
             // diagnostic evidence; process teardown reclaims the allocation.
-            emit(
-                json!({"kind":"fixture-menu-subclass", "phase":1, "succeeded":removed,
-                "pendingCancelled":pending_cancelled}),
-            );
+            emit(json!({"kind":"fixture-menu-subclass", "phase":1, "succeeded":removed}));
         }
         diagnostics.observe(
             menu_message(message, wparam, lparam),
             || unsafe { InSendMessageEx(std::ptr::null()) },
-            || {
-                let original = MenuCommand {
-                    message,
-                    wparam,
-                    lparam,
-                };
-                let decision = diagnostics.replay.route(
-                    original,
-                    unsafe { InSendMessageEx(std::ptr::null()) },
-                    |token| unsafe { PostMessageW(hwnd, MENU_REPLAY_MESSAGE, token, 0) } != 0,
-                );
-                diagnostics.record_dispatch(decision);
-                decision.finish(original, |actual| {
-                    let forward = || unsafe {
-                        DefSubclassProc(hwnd, actual.message, actual.wparam, actual.lparam)
-                    };
-                    if matches!(decision, MenuDispatch::Replay(_)) {
-                        // Do not route the original command again: nested send
-                        // flags are not replay identity. The tuple came only
-                        // from the consumed owned reservation, never the post.
-                        diagnostics.observe(
-                            menu_message(actual.message, actual.wparam, actual.lparam),
-                            || unsafe { InSendMessageEx(std::ptr::null()) },
-                            forward,
-                            emit,
-                        )
-                    } else {
-                        forward()
-                    }
-                })
-            },
+            || unsafe { DefSubclassProc(hwnd, message, wparam, lparam) },
             emit,
         )
     }
@@ -1653,7 +1822,7 @@ pub mod directory_integration_harness {
                 .initialization_script(LOCK_STATUS_DIAGNOSTIC_SCRIPT)
                 .title(format!("Research Observatory — SYNTHETIC {} {}", if mode.is_lifecycle() { "T04" } else { "T03" }, mode.name())).build())
                 .inspect_err(|_| { app.state::<RuntimeSupervisor>().stop(); })?;
-            install_menu_diagnostics(&main, &fixture).map_err(|error| {
+            main_menu::install(&main).and_then(|()| install_menu_diagnostics(&main, &fixture)).map_err(|error| {
                 app.state::<RuntimeSupervisor>().stop();
                 std::io::Error::other(error)
             })?;
@@ -1755,6 +1924,15 @@ pub mod directory_integration_harness {
                 assert_eq!(menu_message(message, SC_KEYMENU as usize, 32), None);
             }
             assert_eq!(menu_message(WM_SYSCOMMAND, SC_CLOSE as usize, 32), None);
+            assert_eq!(
+                menu_message(main_menu::REPLAY_MESSAGE, SC_KEYMENU as usize | 15, 32),
+                Some([main_menu::REPLAY_MESSAGE, 1])
+            );
+            assert_eq!(
+                menu_message(main_menu::REPLAY_MESSAGE, SC_KEYMENU as usize | 0x10000, 32),
+                None
+            );
+            assert_eq!(menu_message(main_menu::REPLAY_MESSAGE, 1, 0), None);
         }
 
         #[test]
@@ -1764,280 +1942,6 @@ pub mod directory_integration_harness {
             assert!(!menu_owner_matches(11, 23, 11, 22));
             assert!(!menu_owner_matches(0, 22, 0, 22));
             assert!(!menu_owner_matches(11, 0, 11, 0));
-        }
-
-        fn alt_space() -> MenuCommand {
-            MenuCommand {
-                message: 0x112,
-                wparam: 0xf107,
-                lparam: 32,
-            }
-        }
-
-        fn replay_message(token: usize) -> MenuCommand {
-            MenuCommand {
-                message: MENU_REPLAY_MESSAGE,
-                wparam: token,
-                lparam: 0,
-            }
-        }
-
-        #[test]
-        fn menu_deferral_preserves_nontarget_messages_and_replied_or_queued_delivery() {
-            let replay = MenuReplay::default();
-            for command in [
-                MenuCommand {
-                    message: 0x112,
-                    wparam: 0xf060,
-                    lparam: 32,
-                },
-                MenuCommand {
-                    message: 0x112,
-                    wparam: 0xf010,
-                    lparam: 32,
-                },
-                MenuCommand {
-                    message: 0x112,
-                    wparam: 0xf000,
-                    lparam: 32,
-                },
-                MenuCommand {
-                    lparam: 65,
-                    ..alt_space()
-                },
-                MenuCommand {
-                    message: 0x104,
-                    ..alt_space()
-                },
-                MenuCommand {
-                    message: 0x100,
-                    wparam: 27,
-                    lparam: 0,
-                },
-            ] {
-                let decision = replay.route(command, 1, |_| panic!("nontarget must not post"));
-                assert_eq!(decision, MenuDispatch::Forward);
-                assert_eq!(
-                    decision.finish(command, |actual| {
-                        assert_eq!(actual, command);
-                        -73
-                    }),
-                    -73
-                );
-            }
-            for flags in [0, 2, 4, 8, 9] {
-                assert_eq!(
-                    replay.route(alt_space(), flags, |_| panic!("no blocked sender")),
-                    MenuDispatch::Forward
-                );
-            }
-        }
-
-        #[test]
-        fn menu_deferral_replay_consumes_exact_owned_payload_once_even_in_nested_send() {
-            let replay = MenuReplay::default();
-            assert_eq!(
-                replay.route(replay_message(19), 1, |_| panic!("unsolicited replay")),
-                MenuDispatch::Rejected
-            );
-            let mut posted = 0;
-            let MenuDispatch::Posted(token) = replay.route(alt_space(), 1, |value| {
-                posted = value;
-                true
-            }) else {
-                panic!("expected owned post")
-            };
-            assert_eq!(posted, token);
-            assert_eq!(
-                MenuDispatch::Posted(token).finish(alt_space(), |_| panic!("already deferred")),
-                0
-            );
-            assert_eq!(
-                replay.route(replay_message(token + 1), 1, |_| panic!("stale replay")),
-                MenuDispatch::Rejected
-            );
-            assert_eq!(
-                replay.route(
-                    MenuCommand {
-                        lparam: 1,
-                        ..replay_message(token)
-                    },
-                    1,
-                    |_| panic!("malformed replay")
-                ),
-                MenuDispatch::Rejected
-            );
-            let decision = replay.route(replay_message(token), 1, |_| {
-                panic!("nested replay must not repost")
-            });
-            assert_eq!(
-                decision,
-                MenuDispatch::Replay(PendingMenu {
-                    token,
-                    command: alt_space()
-                })
-            );
-            assert_eq!(
-                decision.finish(replay_message(token), |actual| {
-                    assert_eq!(actual, alt_space());
-                    // Consumption precedes DefSubclassProc, including nested delivery.
-                    assert_eq!(
-                        replay.route(replay_message(token), 1, |_| panic!("duplicate replay")),
-                        MenuDispatch::Rejected
-                    );
-                    -81
-                }),
-                -81
-            );
-            let MenuDispatch::Posted(new_token) = replay.route(alt_space(), 1, |_| true) else {
-                panic!("new reservation")
-            };
-            assert_ne!(token, new_token);
-            assert_eq!(
-                replay.route(replay_message(token), 0, |_| panic!("old replay")),
-                MenuDispatch::Rejected
-            );
-            assert!(matches!(
-                replay.route(replay_message(new_token), 0, |_| false),
-                MenuDispatch::Replay(_)
-            ));
-        }
-
-        #[test]
-        fn menu_deferral_busy_fallback_does_not_lose_or_overwrite_either_command() {
-            let replay = MenuReplay::default();
-            let MenuDispatch::Posted(token) = replay.route(alt_space(), 1, |_| true) else {
-                panic!("first reservation")
-            };
-            let second = MenuCommand {
-                wparam: 0xf10a,
-                ..alt_space()
-            };
-            let decision = replay.route(second, 1, |_| panic!("only one queued reservation"));
-            assert_eq!(decision, MenuDispatch::Busy);
-            let mut forwarded = Vec::new();
-            assert_eq!(
-                decision.finish(second, |actual| {
-                    forwarded.push(actual);
-                    17
-                }),
-                17
-            );
-            let decision =
-                replay.route(replay_message(token), 1, |_| panic!("replay cannot repost"));
-            assert_eq!(
-                decision.finish(replay_message(token), |actual| {
-                    forwarded.push(actual);
-                    18
-                }),
-                18
-            );
-            assert_eq!(forwarded, [second, alt_space()]);
-        }
-
-        #[test]
-        fn menu_deferral_post_failure_clears_only_its_owned_reservation() {
-            let replay = MenuReplay::default();
-            let mut failed_token = 0;
-            let decision = replay.route(alt_space(), 1, |token| {
-                failed_token = token;
-                false
-            });
-            assert_eq!(decision, MenuDispatch::PostFailed);
-            let mut forwards = 0;
-            assert_eq!(
-                decision.finish(alt_space(), |actual| {
-                    assert_eq!(actual, alt_space());
-                    forwards += 1;
-                    -9
-                }),
-                -9
-            );
-            assert_eq!(forwards, 1);
-            assert_eq!(
-                replay.route(replay_message(failed_token), 0, |_| false),
-                MenuDispatch::Rejected
-            );
-
-            let mut replacement = 0;
-            let decision = replay.route(alt_space(), 1, |token| {
-                let consumed =
-                    replay.route(replay_message(token), 1, |_| panic!("reentrant replay"));
-                assert!(matches!(consumed, MenuDispatch::Replay(_)));
-                let MenuDispatch::Posted(new_token) = replay.route(alt_space(), 1, |_| true) else {
-                    panic!("new reservation")
-                };
-                replacement = new_token;
-                false
-            });
-            assert_eq!(decision, MenuDispatch::Abandoned);
-            assert_eq!(
-                decision.finish(alt_space(), |_| panic!("do not duplicate consumed command")),
-                0
-            );
-            assert!(matches!(
-                replay.route(replay_message(replacement), 0, |_| false),
-                MenuDispatch::Replay(_)
-            ));
-        }
-
-        #[test]
-        fn menu_deferral_destruction_invalidates_pending_and_post_failure_cannot_resurrect() {
-            let replay = MenuReplay::default();
-            let MenuDispatch::Posted(token) = replay.route(alt_space(), 1, |_| true) else {
-                panic!("reservation")
-            };
-            assert!(replay.destroy());
-            assert!(!replay.destroy());
-            assert_eq!(
-                replay.route(replay_message(token), 1, |_| false),
-                MenuDispatch::Rejected
-            );
-            assert_eq!(
-                replay.route(alt_space(), 1, |_| panic!("destroyed owner")),
-                MenuDispatch::Abandoned
-            );
-            let command = MenuCommand {
-                message: 0x82,
-                wparam: 0,
-                lparam: 0,
-            };
-            assert_eq!(
-                replay
-                    .route(command, 1, |_| false)
-                    .finish(command, |actual| {
-                        assert_eq!(actual, command);
-                        31
-                    }),
-                31
-            );
-
-            let interrupted = MenuReplay::default();
-            let decision = interrupted.route(alt_space(), 1, |_| {
-                assert!(interrupted.destroy());
-                false
-            });
-            assert_eq!(decision, MenuDispatch::Abandoned);
-            assert_eq!(
-                decision.finish(alt_space(), |_| panic!("destroyed during post")),
-                0
-            );
-        }
-
-        #[test]
-        fn menu_deferral_tokens_never_wrap_or_reuse() {
-            let counter = std::sync::atomic::AtomicUsize::new(usize::MAX - 1);
-            assert_eq!(next_menu_token(&counter), Some(usize::MAX - 1));
-            assert_eq!(next_menu_token(&counter), None);
-            assert_eq!(next_menu_token(&counter), None);
-            assert_eq!(
-                counter.load(std::sync::atomic::Ordering::Relaxed),
-                usize::MAX
-            );
-            assert_ne!(MENU_REPLAY_MESSAGE, 0x8000 + 91);
-            assert_ne!(MENU_REPLAY_MESSAGE, 0x8000 + 92);
-            assert_ne!(MENU_REPLAY_MESSAGE, 0x8000 + 93);
-            assert!((0x8000..0xc000).contains(&MENU_REPLAY_MESSAGE));
         }
 
         #[test]
@@ -2098,6 +2002,10 @@ pub mod directory_integration_harness {
                 .unwrap()
                 .0;
             let (before_run, after_run) = run.split_once("application.run_return(").unwrap();
+            assert!(
+                before_run.find("main_menu::install(&main)").unwrap()
+                    < before_run.find("install_menu_diagnostics(&main").unwrap()
+            );
             let after_build = before_run
                 .rsplit_once("probe-tauri-build-failed")
                 .unwrap()
@@ -2631,6 +2539,10 @@ mod tests {
         assert!(production.contains("runtime_config(app)"));
         assert!(production.contains("app_local_data_dir()"));
         assert!(production.contains("DirectoryPickerManager::default()"));
+        assert!(
+            production.find("main_menu::install(").unwrap()
+                < production.find("app_local_data_dir()").unwrap()
+        );
         for forbidden in [
             "fixture",
             "args_os",
