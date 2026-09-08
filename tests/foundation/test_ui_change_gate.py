@@ -407,6 +407,59 @@ class UiChangeGateTests(unittest.TestCase):
             self.assertEqual(0, completed.returncode, completed.stdout + completed.stderr)
             self.assertTrue(json.loads(completed.stdout)["ok"])
 
+    def linked_relocated_correction_fixture(self, temporary: str, shape: str = "both") -> tuple[Path, str, str, str]:
+        root, base, data, contract = self.linked_fixture(temporary)
+        ui_commit = self.linked_candidate(root, data, contract)
+        task = data["waves"][0]["campaign"]["corrective_tasks"].pop()
+        if shape == "id-only":
+            task.pop("correction")
+        elif shape == "binding-only":
+            task["id"] = "CAP-01.S01.T99"
+        data["capabilities"][0]["slices"][0]["tasks"].append(task)
+        self.write_yaml(root / "planning/backlog.yaml", taskctl.serializable_backlog(data))
+        self.write_json(root / "artifacts/evidence/W1.C01.T01.note.json", {"note": "relocated correction"})
+        head = self.commit(root, "relocate correction into ordinary inventory after UI work")
+        return root, base, ui_commit, head
+
+    def test_linked_public_cli_rejects_relocated_correction_on_short_no_ui_range(self) -> None:
+        for shape in ("both", "id-only", "binding-only"):
+            with self.subTest(shape=shape), tempfile.TemporaryDirectory() as temporary:
+                root, _base, ui_commit, _head = self.linked_relocated_correction_fixture(temporary, shape)
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        "-B",
+                        str(REPO / "tools/ui_change_gate.py"),
+                        "--repo",
+                        str(root),
+                        "--base",
+                        ui_commit,
+                    ],
+                    cwd=REPO,
+                    capture_output=True,
+                    text=True,
+                    timeout=45,
+                    check=False,
+                )
+                self.assertEqual(1, completed.returncode, completed.stdout + completed.stderr)
+                result = json.loads(completed.stdout)
+                self.assertFalse(result["ok"], result)
+                self.assertTrue(
+                    any("must be an admitted campaign corrective task" in error for error in result["errors"]), result
+                )
+
+    def test_linked_relocated_correction_is_denied_before_all_range_selection(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, ui_commit, head = self.linked_relocated_correction_fixture(temporary)
+            with self.assertRaisesRegex(ValueError, "must be an admitted campaign corrective task"):
+                automatic_base(root, "HEAD")
+            self.assertFalse(validate(root, base, head)["ok"])
+            result = validate(root, ui_commit, head)
+            self.assertFalse(result["ok"], result)
+            self.assertTrue(
+                any("must be an admitted campaign corrective task" in error for error in result["errors"]), result
+            )
+
     def legacy_control_fixture(self, temporary: str, mutation: str = "") -> tuple[Path, str, str, str]:
         root, predecessor, _ = self.prepare(temporary)
         stem = "artifacts/evidence/fixture-control"

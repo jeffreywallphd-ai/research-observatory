@@ -62,3 +62,25 @@ scope can decide inclusion; genuinely admitted non-UI corrections must retain
 their existing behavior. Replay the finding and affected control tests at a
 new committed candidate. Preserve R01 and the passing-but-incomplete first
 verification report; neither authorizes integration or product work.
+
+## R02 remediation and third-submission root cause
+
+Candidate `258bc0b5f9812d9c7ae814d00aa1786fc823be33` passed seven fresh
+selected checks and independent F01 replay. R02 nevertheless retains F02:
+the new no-UI admission inventory omitted a correction-shaped record moved
+from the campaign into ordinary tasks. An explicit shortened range returned
+success; automatic and full-range validation correctly denied it.
+
+Both findings arise from deciding which records require authentication using
+untrusted discovery fields. The first repair authenticated scope but narrowed
+inventory to the purported correct container. Earlier tests covered ordinary
+masquerade with a net UI diff, not the changed no-UI early return. The missed
+acceptance row is now: every active correction-shaped record must prove its
+campaign admission before scope or range can exclude it, regardless of container.
+
+Add a public-CLI regression for the demonstrated misplaced record and shortened
+range before changing the gate. Preserve genuine admitted non-UI behavior and
+F01 denials. Change only the gate and its existing test module; retain both
+adverse reviews and all earlier attempts. The third submission must replay F01
+and F02 plus the incremental discovery boundary. Do not expand product scope,
+weaken acceptance, rewrite history, or treat passing test counts as disposition.

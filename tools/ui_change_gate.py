@@ -1211,10 +1211,20 @@ def linked_correction_authority(
 
 
 def authenticated_active_corrections(repo: Path, head: str, backlog: dict[str, Any]) -> list[dict[str, Any]]:
-    """Authenticate live admissions before mutable scope can select or omit UI work."""
+    """Authenticate correction-shaped records before inventory or scope can omit UI work."""
     import taskctl
 
-    active = [task for task in taskctl.corrective_tasks(backlog) if task.get("status") in {"IN_PROGRESS", "REVIEW"}]
+    campaign_tasks = taskctl.corrective_tasks(backlog)
+    active = [
+        task
+        for task in backlog_tasks(backlog)
+        if task.get("status") in {"IN_PROGRESS", "REVIEW"}
+        and (
+            "correction" in task
+            or LINKED_CORRECTION_ID.fullmatch(str(task.get("id"))) is not None
+            or any(task is admitted for admitted in campaign_tasks)
+        )
+    ]
     for task in active:
         raw_base = task.get("base_sha")
         if not isinstance(raw_base, str) or not re.fullmatch(r"[0-9a-f]{40}", raw_base):

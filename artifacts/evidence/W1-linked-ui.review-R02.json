@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-review",
+  "reviewId": "W1-linked-ui.review-R02",
+  "reviewer": "agent:/root/cap07_slice_review",
+  "reviewedAt": "2026-09-08T10:35:32Z",
+  "disposition": "CHANGES_REQUESTED",
+  "scope": "Independent incremental F01 closure and affected public-gate compatibility review, binding the full initial control-maintenance scope.",
+  "baseCommit": "6fbb0eae475f95902216ba93ad4b782e93c84e68",
+  "previousCandidate": "90044e166ab3d7b04cd704c05b9016d73f67b245",
+  "candidate": "258bc0b5f9812d9c7ae814d00aa1786fc823be33",
+  "priorReview": {
+    "path": "artifacts/evidence/W1-linked-ui.review-R01.json",
+    "sha256": "b88294409e0ae961a4276700a772755d1a5d4f2b0c066ad34b0de0d3b3a6e2be"
+  },
+  "route": "docs/automation/workflow-efficiency.md#bounded-maintenance",
+  "fullScopePaths": [
+    "artifacts/evidence/W1-linked-ui.maintenance-01.md",
+    "artifacts/evidence/W1-linked-ui.review-R01.json",
+    "design/ui-change.schema.json",
+    "docs/automation/design-first-ui-changes.md",
+    "tests/foundation/test_taskctl_workflow.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/taskctl.py",
+    "tools/ui_change_gate.py"
+  ],
+  "scopeAssessment": "The incremental commit changes only the gate, its existing test module, the missed-acceptance note and preserved R01. Original corrective_contract, backlog/spec schemas, product/reference behavior, ordinary/amendment authority and release criteria were not changed. R01's unchanged scope and source review are carried by its authenticated record; this round examined the new admission/discovery split and its directly affected no-UI path.",
+  "closedFindings": [
+    {
+      "id": "F01",
+      "status": "CLOSED",
+      "closureCandidate": "258bc0b5f9812d9c7ae814d00aa1786fc823be33",
+      "closure": "Active campaign correction admissions are authenticated against their committed specs before mutable scope is used for inclusion. Both retained original fixtures now fail closed for empty and tests-only substituted scope, through the actual public automatic and explicit-short-base entry points. A genuinely admitted non-UI correction retains its parent fallback and passes without acquiring an unsupported UI review obligation.",
+      "proof": {
+        "command": ".venv/Scripts/python.exe -B artifacts/tmp/W1-linked-ui.discovery-replay-02.py",
+        "executionCount": 1,
+        "seconds": 13.167927899863571,
+        "result": "PASS",
+        "observations": "Four public denial checks returned exit 1 with the exact spec-mismatch error; one existing legitimate non-UI compatibility test returned exit 0. Retained adverse fixtures and prior report remained unchanged.",
+        "producer": {"path": "artifacts/tmp/W1-linked-ui.discovery-replay-02.py", "sha256": "bd745fc0363549ac67a6ccc5ea8aec5b63e455b92d32384c8f5f398848d9cd58"},
+        "report": {"path": "artifacts/tmp/W1-linked-ui.discovery-replay-02.json", "sha256": "f1f2716d89c41d1bda9a5cc97821f6d109287f147570c17115219aad5c7acf97"},
+        "log": {"path": "artifacts/tmp/W1-linked-ui.discovery-replay-02.log", "sha256": "bf842c98d557fb04ff61e00994fc9ba7a0e3c8fabf631600d507abfb5cad65b1", "bytes": 3127}
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "F02",
+      "severity": "P1",
+      "blocking": true,
+      "status": "OPEN",
+      "title": "Narrowed no-UI inventory hides a correction-shaped record moved outside the campaign",
+      "path": "tools/ui_change_gate.py",
+      "candidateLines": [1217, 2097],
+      "criterion": "The full public gate must reject a substituted correction identity/admission and cannot let an explicit shortened range conceal uncontracted UI. Existing ordinary-masquerade denials and whole-task-base authority must survive the F01 remedy.",
+      "incrementalReason": "R02 replaces the no-UI branch's backlog_tasks inventory with authenticated_active_corrections, which enumerates only campaign.corrective_tasks. This drops the earlier detection of correction-shaped records placed among ordinary tasks. It is a direct compatibility consequence of the F01 change, not a reopened speculative product audit.",
+      "reproduction": [
+        "Create one owned synthetic linked UI correction fixture with its immutable spec and full admission base.",
+        "Commit a real governed UI change without its required UI contract.",
+        "Move the unchanged active correction record from campaign.corrective_tasks into the ordinary task list in a later evidence-only commit.",
+        "Run the actual public gate with an explicit base equal to the UI commit, making the selected range evidence-only."
+      ],
+      "observed": "Explicit shortened no-UI validation returned exit 0 and ok=true with no contract. Automatic public validation rejected the same fixture with 'linked correction must be an admitted campaign corrective task'; the full admitted-base public command rejected its missing UI contract.",
+      "expected": "The explicit public no-UI path rejects the unsupported correction placement before the early return, consistently with automatic mode and the prior broader inventory check.",
+      "impact": "A public whole-task-base UI check can report a false PASS despite an earlier uncontracted UI implementation. This finding does not claim that taskctl submission, independent review or release authority was bypassed.",
+      "smallestClosure": "Preserve detection of active correction-shaped records in the broader task inventory while authenticating genuine campaign admissions before scope filtering. Require actual campaign membership for any candidate correction record. Add the exact explicit-public-no-UI masquerade regression; retain automatic denial, original F01 denials and genuinely admitted non-UI compatibility. No new controller, approval metadata, corrective-contract mutation or unrelated audit is required.",
+      "proof": {
+        "command": ".venv/Scripts/python.exe -B artifacts/tmp/W1-linked-ui.inventory-probe-02.py",
+        "executionCount": 1,
+        "seconds": 6.237453700043261,
+        "result": "REPRODUCED",
+        "producer": {"path": "artifacts/tmp/W1-linked-ui.inventory-probe-02.py", "sha256": "01e6d8e80775256307f632730c412331c1a0e50f3e046001238e4b4062fac1ce"},
+        "report": {"path": "artifacts/tmp/W1-linked-ui.inventory-probe-02.json", "sha256": "01ff6c5adc5a0f2d0935d1a44b7c2af2bb0d9bfdd20eaf2e386f31c4fe74dfe4"},
+        "log": {"path": "artifacts/tmp/W1-linked-ui.inventory-probe-02.log", "sha256": "8afe8272dad8a999530017a95a3eaca7b813a1aaa4b9e9acdb8ff0a335267e0e", "bytes": 1835}
+      }
+    }
+  ],
+  "freshVerification": {
+    "report": {"path": "artifacts/tmp/W1-linked-ui.verification-02.json", "sha256": "0b5d81834f241f3b659fc0a49133fae1c52dcfc344a0d72bfa49e569b9a88336"},
+    "producer": {"path": "artifacts/tmp/W1.C03.T01.verify-01.py", "sha256": "3fa4e441c1b9ca61229139bd3518f6df030c5de74dae701ea19a8df3f3787fb3"},
+    "status": "PASS",
+    "groupsPassed": 7,
+    "groupsTotal": 7,
+    "durationSeconds": 352.7021484002471,
+    "unitTests": 86,
+    "unitTestSeconds": 239.736,
+    "coverage": "Complete selected UI-gate and corrective task tests; four affected Python files for Ruff lint, format and Mypy; backlog validation; generated backlog views; current public UI gate.",
+    "logs": [
+      {"path": "artifacts/tmp/W1-linked-ui.verification-02-01.log", "sha256": "5cc753606d98bc8b604e48ec4b55d3a38e937a1e97dcaab12b2a9c1995d65994", "bytes": 17621},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-02-02.log", "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18", "bytes": 19},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-02-03.log", "sha256": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de", "bytes": 26},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-02-04.log", "sha256": "d9a5631f7d87a741fbecc3236286d1792d22d349ff13846d71cdc9217307bb76", "bytes": 44},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-02-05.log", "sha256": "670f5d9f0743fac5748c8a761fd81b2486c9a3c46dd10f6b9b41e47bdfd20bea", "bytes": 73},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-02-06.log", "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa", "bytes": 44},
+      {"path": "artifacts/tmp/W1-linked-ui.verification-02-07.log", "sha256": "3657110104b672d68daebe2cc26d1f4fe320316872a77b54c544230fb390a7ce", "bytes": 268}
+    ],
+    "authentication": "Authenticated report/producer, all seven log hashes and byte lengths, and reported outcomes. Three shared probe/source input hashes match the verifier and exact candidate Git blobs; the probe's additional schema/policy hashes also match exact candidate blobs. The verifier records 551 selected inputs and enforces its reviewed freeze/check logic; this reviewer did not independently rehash all 551 or claim exhaustive installed-runtime closure. Both independent probes checked HEAD and their selected source bytes before/after execution at the candidate.",
+    "interpretation": "The seven PASS groups remain genuine but do not close the newly demonstrated missing case. Their results are not erased or represented as integration approval. Remediation began only after main released the verification source freeze; this review binds committed candidate bytes, not subsequent working-tree edits."
+  },
+  "nextReviewBoundary": "Preserve R01, R02 and every adverse/green report. Update the missed acceptance row and root-cause analysis before the next submission: correction discovery must not trust mutable scope or inventory placement before admission validation. Replay F01, F02 and the directly affected compatibility cases at the next committed candidate, then obtain independent disposition before integration or W1.C03.T01 product work.",
+  "limits": [
+    "Control-maintenance disposition only; no product correction, CAP-07.S01 slice, W1, G1, release, publication or push approval.",
+    "No benchmark was executed or reclassified. Prior latency failures, the task-only owner exception, later bounded PASS and prospective baseline retain their separately documented scope.",
+    "CAP-07.S01.NATIVE-F01 remains open until separately claimed product restoration and its evidence are accepted."
+  ],
+  "safeguards": {
+    "protectedWitness": "artifacts/evidence/W1.A04.B00.json remained filename/status-only; no content read, hash, copy, scan, edit, stage, delete or ignore.",
+    "excludedCheckout": "No excluded sibling contents were accessed.",
+    "privateState": "No ordinary project, vault, policy, credentials, provider, native application, remote or system settings were accessed or changed.",
+    "reviewerWrites": "Only authorized ignored replay/probe producers, their generated evidence and owned synthetic fixtures, followed by this new append-only review record. No shared product/control source edits or commits."
+  }
+}
