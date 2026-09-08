@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-07.S01.T02",
+    "commit": "04142f8bfd8a53af2a3b8fdd705081cae56c2679",
+    "sha256": "d8c2698c0181efe0d5aa3d84b3f4ffebad6586d640b31e4030a72e2a6aa3a3a9"
+  },
+  "reproduction": "CAP-07.S01 preflight F01: with existing synthetic routing fixtures, advance the injected wall clock from 1500 to 2001 ms during policy assessment 3, after permission and host-observation witnesses expiring at 2000 ms are returned. At predecessor 04142f8b, the gateway dispatches once and only denies after output. Expected: no adapter dispatch under expired authority. A single early time snapshot in registry resolution is reused after fact/policy lookup; routing consumption also omits witness expiry. The original task remains DONE and its evidence/history are preserved.",
+  "changedPaths": [
+    "services/core-api/src/research_observatory_core/model_registry.py",
+    "services/core-api/src/research_observatory_core/model_routing.py",
+    "tests/ai/test_model_registry.py",
+    "tests/ai/test_model_routing.py"
+  ],
+  "impactAnalysis": "Restore the existing current-permission eligibility contract by validating fact freshness after lookups and when routing consumes a candidate for dispatch, publication or successful replay. Add advancing-clock regressions for permission and host-observation expiry, including expiry while later manifests are assessed; retain unexpired controls, exact request bytes, denied/no-output outcomes and immutable prior history. Shared routing regressions run against memory and protected SQLCipher fixtures. No new permission authority, schema, migration, provider/network access, UX, budget or performance threshold; no decoder optimization/refactor. Select registry/routing contracts, service/principal/persistence integration, relevant quality and unchanged performance checks; full W1 release qualification remains separate. This ordinary defect restoration adds no supplemental structural refactoring allocation. The task-only acceptance of the historical CAP-07.S01.T03 latency observation is neither changed nor broadened."
+}

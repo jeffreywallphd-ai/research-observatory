@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b86a6a8a4f10e11a255a2da43eeda5cd8c4acb1210a1aad293967ca7729f95d6
+source_sha256: 464d109e4bb014b9cbc16afbb56748040fcea04ad9a334e50bbd66a4a9e5319a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -275,7 +275,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 
