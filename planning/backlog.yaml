@@ -128,20 +128,22 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/ai-projects/research-observatory
-    base_sha: d449f9081e04b924f666e92200407941f7cb1e18
+    base_sha: ad8f4f2ad71d104c94ac9da0bea8b36e3f067a8e
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-12T15:23:15+00:00'
-    pause_reason: Current candidate cannot satisfy approved CAP-03.S04.T02 resource-derived admission. Ordinary execution
-      pauses solely for its authority-preserving linked correction; all prior approvals and evidence remain unchanged.
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-09-12T16:10:14+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-12T16:10:14+00:00'
+      expires_at: '2026-09-13T16:10:14+00:00'
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -287,6 +289,18 @@ waves:
       platform: windows-x64
       actor: codex
       resumed_at: '2026-09-12T13:51:36+00:00'
+    - id: W1.R13
+      wave_id: W1
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: ad8f4f2ad71d104c94ac9da0bea8b36e3f067a8e
+      prior_campaign_sha256: bbc6285c3f6282b5ae88031deb35d6ed7169a104edb31fc9a9388bad74815e25
+      branch: codex/w1-windows-local-runtime
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex
+      resumed_at: '2026-09-12T16:10:14+00:00'
     corrective_tasks:
     - title: Choose project folders through one protected native dialog
       objective: Replace all implemented W1 directory-entry fields with shared native selection and stable read-only destinations.
@@ -1435,7 +1449,7 @@ waves:
     notes: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations
       and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
