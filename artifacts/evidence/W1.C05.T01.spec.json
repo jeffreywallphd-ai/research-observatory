@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-03.S04.T02",
+    "commit": "b7206c4309bf4febf628f04af0ab731fc859e06f",
+    "sha256": "95c806856539b2ec53e3306778015fced6ef797896609a409df2582613cc27ba"
+  },
+  "reproduction": "LocalWorkerSupervisor.run_available at the origin candidate claims work using only fixed concurrency-class integers. There are no CPU, memory, GPU, disk or project-quota inputs and no shared resource reservations. Independent W1 exit review confirmed this cannot satisfy approved CAP-03.S04 section 11 resource-derived admission or Systems Design sections 13.1, 13.2, 18.4 and 18.5. The existing worker-resource-qualification-04 proves queue/class-limit behavior only. Full qualification attempt04 was deliberately interrupted after six completed checks because the corrected candidate requires fresh final qualification; preserve its raw interruption and partial results.",
+  "changedPaths": [
+    "services/core-api/src/research_observatory_core/workflow_executor.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "tests/workflows/test_local_workflow_executor.py"
+  ],
+  "impactAnalysis": "Restore inherited CAP-03.S04.T02 admission/read-responsiveness and failure/integration criteria. Use trusted explicit per-class demands, project-bound concurrent allocation ceilings and reserved interactive capacity, with shared in-process reservations before queue claims. Unknown required capacity, demand or quota backpressures without consuming attempts, retry allowance, leases or history transitions. A SQLite-adapter-issued local binding validates the actual canonical database project identity, exact repository object and owned storage location before recovery or claim; no caller-substituted project/quota/path authority and no protected-port or portable-schema edits. Acquire Windows CPU/memory/disk capacity at the local adapter boundary and distinguish unavailable GPU information from explicit zero capacity. Release reservations on no-claim, exceptions, cancellation and execution completion; retain existing fencing, bounded recovery, short transactions and immutable outputs/history. Add failing real-SQLite admission tests first, then resource isolation, concurrent reservation, refreshed-capacity, cleanup, cancellation, WAL/restart regressions and actual Windows input-provider proof. Select affected workflow, task-center, contract, SQLite, packaging, quality and architecture checks; independently review regression/integration evidence before fresh Wave qualification. This is admission based on declared envelopes, not an OS enforcement sandbox, cumulative spend policy or new scientific-compute scheduler. No user quota defaults, new dependency, migration, permission, governed UX/reference, release criterion, hosted infrastructure or supplemental refactoring is introduced. Preserve the original DONE task and all adverse evidence."
+}
