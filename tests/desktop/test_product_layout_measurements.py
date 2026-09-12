@@ -280,6 +280,58 @@ class ProductLayoutMeasurementsTests(unittest.TestCase):
             finally:
                 browser.close()
 
+    def test_context_keyboard_ignores_unavailable_anchors(self):
+        predecessors = {
+            "closed-details": '<details><summary id="anchor">All tools</summary>'
+            "<button>Hidden Diagnostics</button></details>",
+            "inert": '<button id="anchor">Available</button><div inert><button>Inert Diagnostics</button></div>',
+            "disabled-fieldset": '<fieldset disabled><legend><button id="anchor">Available legend</button></legend>'
+            "<button>Disabled Diagnostics</button></fieldset>",
+        }
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page()
+                for kind, predecessor in predecessors.items():
+                    with self.subTest(kind=kind):
+                        page.set_content(f"""<style>button:focus-visible {{outline:2px solid blue}}</style>
+                          {predecessor}<main><section data-workflow-context>
+                          <button>Previous step</button><button disabled>Unavailable</button>
+                          <button>Return to current step</button></section></main>""")
+                        page.evaluate("""() => {
+                          window.focused = [];
+                          document.addEventListener('focusin', event => window.focused.push(event.target.id));
+                        }""")
+                        self.assertEqual(
+                            {"buttonCount": 3, "enabledCount": 2, "traversedCount": 2},
+                            exercise_workflow_context_keyboard(page),
+                        )
+                        self.assertEqual("anchor", page.evaluate("window.focused[0]"))
+                        self.assertEqual(0, page.locator("details[open]").count())
+            finally:
+                browser.close()
+
+    def test_context_keyboard_requires_successful_anchor_focus(self):
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page()
+                for predecessor in ('<button onfocus="this.blur()">Refuses focus</button>', ""):
+                    with self.subTest(predecessor=predecessor):
+                        page.set_content(f"""<style>button:focus-visible {{outline:2px solid blue}}</style>
+                          {predecessor}<main><section data-workflow-context><button>Return</button></section></main>""")
+                        page.evaluate("""() => {
+                          window.tabCount = 0;
+                          document.addEventListener('keydown', event => {
+                            if (event.key === 'Tab') window.tabCount++;
+                          });
+                        }""")
+                        with self.assertRaisesRegex(ValueError, "preceding control"):
+                            exercise_workflow_context_keyboard(page)
+                        self.assertEqual(0, page.evaluate("window.tabCount"))
+            finally:
+                browser.close()
+
     def test_layout_sampler_is_a_bound_capture_producer_input(self):
         from product_style_check import CAPTURE_SOURCE_FILES
 

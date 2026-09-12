@@ -16,12 +16,17 @@ def exercise_workflow_context_keyboard(page: Any) -> dict[str, int]:
         return result
     anchor = actions.first.evaluate_handle(r"""node => {
       const candidates = [...document.querySelectorAll('button,input,select,textarea,a[href],[tabindex],summary')]
-        .filter(item => item.tabIndex >= 0 && !item.disabled && item.getClientRects().length
-          && getComputedStyle(item).visibility === 'visible');
+        .filter(item => item.tabIndex >= 0 && !item.matches(':disabled') && !item.closest('[inert]')
+          && item.getClientRects().length && item.checkVisibility({visibilityProperty: true}));
       return candidates[candidates.indexOf(node) - 1];
     }""")
     try:
-        anchor.evaluate("node => node.focus()")
+        if not anchor.evaluate("""node => {
+          if (!node) return false;
+          node.focus();
+          return node === document.activeElement;
+        }"""):
+            raise ValueError("workflow context preceding control could not receive focus")
         for index in range(actions.count()):
             page.keyboard.press("Tab")
             action = actions.nth(index)
