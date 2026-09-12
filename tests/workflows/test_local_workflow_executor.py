@@ -11,6 +11,7 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
@@ -29,9 +30,11 @@ from research_observatory_core.ports.workflow_executor import (
 from research_observatory_core.repositories import (
     create_sqlite_unit_of_work_factory,
     sqlite_material_dependency_repository,
+    sqlite_workflow_admission_binding,
     sqlite_workflow_queue_repository,
 )
 from research_observatory_core.storage import (
+    StorageProblem,
     development_plaintext_database_fixture,
     initialize_database,
     open_canonical_database,
@@ -42,7 +45,11 @@ from research_observatory_core.workflow_contracts import (
     workflow_transition_allowed,
 )
 from research_observatory_core.workflow_executor import (
+    LocalAdmissionController,
     LocalWorkerSupervisor,
+    ProjectWorkerPolicy,
+    WorkerCapacity,
+    WorkerResources,
     WorkflowActivityError,
     prepare_workflow_job,
 )
@@ -237,6 +244,8 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
         self.protection.__enter__()
         initialize_database(self.database, project_id=PROJECT_ID, project_created_at=CREATED_AT)
         self.repository = sqlite_workflow_queue_repository(self.root, PROJECT_ID)
+        self._output_index = 100
+        self._output_lock = threading.Lock()
 
     def tearDown(self) -> None:
         self.protection.__exit__(None, None, None)
@@ -255,6 +264,339 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
 
     def canonical_output(self, index: int, *, dependency_coverage: str = "complete") -> WorkflowOutputReference:
         return _canonical_artifact(self.root, index, dependency_coverage=dependency_coverage)
+
+    def admission(self, *, repository=None, controller=None, policy=None, capacity=None):
+        repository = self.repository if repository is None else repository
+        controller = controller or LocalAdmissionController(interactive_reserve=WorkerResources(1, 10, 0, 10))
+        policy = policy or ProjectWorkerPolicy(
+            PROJECT_ID,
+            WorkerResources(8, 1000, 1000, 1000),
+            {kind: WorkerResources(1, 10, 0, 10) for kind in ("interactive", "document", "ai", "maintenance")},
+            {kind: 4 for kind in ("interactive", "document", "ai", "maintenance")},
+        )
+        binding = sqlite_workflow_admission_binding(repository, controller=controller, policy=policy)
+        # Deterministic injected observations only. Actual Windows acquisition
+        # has a separate explicitly platform-scoped test below.
+        return replace(binding, capacity=capacity or (lambda: WorkerCapacity(8, 1000, 1000, 1000)))
+
+    def supervisor(self, admission, *, handlers=None, limits=None, repository=None):
+        return LocalWorkerSupervisor(
+            self.repository if repository is None else repository,
+            handlers or {"source-acquisition": lambda _context, claim: self.activity_output(claim)},
+            concurrency_limits=limits or {"document": 1},
+            now=lambda: "2026-08-30T12:02:00.000Z",
+            recovery_actor=SYSTEM,
+            admission=admission,
+        )
+
+    def activity_output(self, claim):
+        with self._output_lock:
+            index = self._output_index
+            self._output_index += 1
+        return (_canonical_artifact(self.root, index, actor_id=claim.worker_id),)
+
+    def queue_state(self):
+        connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
+        try:
+            return tuple(
+                tuple(connection.execute(f"SELECT * FROM {table} ORDER BY rowid").fetchall())
+                for table in ("workflow_queue_jobs", "workflow_job_attempts", "workflow_history_events")
+            )
+        finally:
+            connection.close()
+
+    def test_supervisor_requires_explicit_resource_admission(self) -> None:
+        job = self.repository.enqueue(self.submission(), actor=SYSTEM)
+        with self.assertRaisesRegex(ValueError, "admission"):
+            LocalWorkerSupervisor(
+                self.repository,
+                {"source-acquisition": lambda _context, _claim: ()},
+                concurrency_limits={"document": 1},
+                now=lambda: "2026-08-30T12:02:00.000Z",
+                recovery_actor=SYSTEM,
+            ).run_available()
+        self.assertEqual(0, self.repository.get(job.job_id).attempt_count)
+
+    def test_admission_each_capacity_dimension_and_project_quota_backpressure_without_history(self) -> None:
+        job = self.repository.enqueue(self.submission(), actor=SYSTEM)
+        demand = WorkerResources(1, 10, 10, 10)
+        policy = ProjectWorkerPolicy(PROJECT_ID, demand, {"document": demand}, {"document": 1})
+        observations = [2, 20, 10, 20]  # Exact demand plus interactive reserve.
+        current = WorkerCapacity(*observations)
+        admission = self.admission(policy=policy, capacity=lambda: current)
+        supervisor = self.supervisor(admission)
+        before = self.queue_state()
+        for dimension in range(4):
+            with self.subTest(capacity_dimension=dimension):
+                insufficient = list(observations)
+                insufficient[dimension] -= 1
+                current = WorkerCapacity(*insufficient)
+                self.assertEqual((), supervisor.run_available())
+                self.assertEqual(before, self.queue_state())
+        current = WorkerCapacity(*observations)
+        for dimension in range(4):
+            with self.subTest(quota_dimension=dimension):
+                insufficient = list(demand.values())
+                insufficient[dimension] -= 1
+                limited = replace(policy, quota=WorkerResources(*insufficient))
+                self.assertEqual((), self.supervisor(self.admission(policy=limited)).run_available())
+                self.assertEqual(before, self.queue_state())
+        self.assertEqual("succeeded", supervisor.run_available()[0].state)
+        self.assertEqual(1, self.repository.get(job.job_id).attempt_count)
+
+    def test_admission_unknown_invalid_and_missing_inputs_do_not_claim(self) -> None:
+        self.repository.enqueue(self.submission(), actor=SYSTEM)
+        before = self.queue_state()
+        for dimension in range(4):
+            for value in (None, -1, True, float("nan"), "100"):
+                with self.subTest(dimension=dimension, value=value):
+                    observations: list[Any] = [8, 1000, 1000, 1000]
+                    observations[dimension] = value
+                    demand = WorkerResources(1, 10, 10, 10)
+                    policy = ProjectWorkerPolicy(
+                        PROJECT_ID, WorkerResources(8, 1000, 1000, 1000), {"document": demand}, {"document": 1}
+                    )
+                    observed = WorkerCapacity(*observations)
+                    admission = self.admission(policy=policy, capacity=lambda observed=observed: observed)
+                    self.assertEqual((), self.supervisor(admission).run_available())
+                    self.assertEqual(before, self.queue_state())
+        for policy in (
+            ProjectWorkerPolicy(PROJECT_ID, None, {"document": WorkerResources(1, 10, 0, 10)}, {"document": 1}),
+            ProjectWorkerPolicy(PROJECT_ID, WorkerResources(8, 1000, 0, 1000), {}, {"document": 1}),
+        ):
+            self.assertEqual((), self.supervisor(self.admission(policy=policy)).run_available())
+            self.assertEqual(before, self.queue_state())
+        with self.assertRaises(ValueError):
+            WorkerResources(True, 1, 0, 1)
+        with self.assertRaises(ValueError):
+            ProjectWorkerPolicy(PROJECT_ID, None, {"document": WorkerResources(0, 10, 0, 10)}, {"document": 1})
+
+    def test_zero_gpu_work_can_run_with_unknown_or_zero_gpu_capacity(self) -> None:
+        for gpu, variant in ((None, False), (0, True)):
+            with self.subTest(gpu=gpu):
+                self.repository.enqueue(self.submission(identity_variant=variant), actor=SYSTEM)
+                admission = self.admission(capacity=lambda gpu=gpu: WorkerCapacity(8, 1000, gpu, 1000))
+                self.assertEqual("succeeded", self.supervisor(admission).run_available()[0].state)
+
+    def test_binding_rejects_repository_policy_and_database_substitution_before_recovery(self) -> None:
+        self.repository.enqueue(self.submission(), actor=SYSTEM)
+        admission = self.admission()
+        other_repository = sqlite_workflow_queue_repository(self.root, PROJECT_ID)
+        before = self.queue_state()
+        with patch.object(other_repository, "recover_expired", wraps=other_repository.recover_expired) as recovery:
+            with self.assertRaisesRegex(ValueError, "repository identity"):
+                self.supervisor(admission, repository=other_repository)
+            recovery.assert_not_called()
+        wrong_id = new_uuid_v7()
+        with self.assertRaisesRegex(ValueError, "policy mismatch"):
+            sqlite_workflow_admission_binding(
+                self.repository, controller=admission.controller, policy=replace(admission.policy, project_id=wrong_id)
+            )
+        wrong_repository = sqlite_workflow_queue_repository(self.root, wrong_id)
+        with self.assertRaises(StorageProblem):
+            sqlite_workflow_admission_binding(
+                wrong_repository, controller=admission.controller, policy=replace(admission.policy, project_id=wrong_id)
+            )
+        with self.assertRaisesRegex(ValueError, "policy or volume conflict"):
+            self.admission(
+                controller=admission.controller, policy=replace(admission.policy, quota=WorkerResources(1, 1, 0, 1))
+            )
+        for substituted in (
+            replace(admission, policy=replace(admission.policy, project_id=wrong_id)),
+            replace(admission, volume_id=admission.volume_id + 1),
+            replace(admission, repository=other_repository),
+            replace(admission, controller=LocalAdmissionController(interactive_reserve=WorkerResources(1, 10, 0, 10))),
+        ):
+            with (
+                self.subTest(binding=substituted.policy.project_id),
+                self.assertRaisesRegex(ValueError, "identity changed"),
+            ):
+                self.supervisor(substituted, repository=substituted.repository)
+        self.assertEqual(before, self.queue_state())
+
+    def test_concurrent_supervisors_share_reservations_and_preserve_interactive_capacity(self) -> None:
+        first = self.repository.enqueue(self.submission(), actor=SYSTEM)
+        second = self.repository.enqueue(self.submission(identity_variant=True), actor=SYSTEM)
+        entered, release = threading.Event(), threading.Event()
+
+        def blocking(_context, claim):
+            entered.set()
+            self.assertTrue(release.wait(5))
+            return self.activity_output(claim)
+
+        admission = self.admission(capacity=lambda: WorkerCapacity(2, 20, 0, 20))
+        other_repository = sqlite_workflow_queue_repository(self.root, PROJECT_ID)
+        other = self.admission(
+            repository=other_repository,
+            controller=admission.controller,
+            policy=admission.policy,
+            capacity=admission.capacity,
+        )
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(self.supervisor(admission, handlers={"source-acquisition": blocking}).run_available)
+            try:
+                self.assertTrue(entered.wait(5))
+                self.assertEqual((), self.supervisor(other, repository=other_repository).run_available())
+                self.assertEqual(0, self.repository.get(second.job_id).attempt_count)
+                # The reserve is available to interactive work, not double-held.
+                token = admission.controller.reserve(admission, "interactive", local_limit=1)
+                self.assertIsNotNone(token)
+                assert token is not None
+                admission.controller.release(token)
+                self.assertEqual("running", self.repository.get(first.job_id).state)
+            finally:
+                release.set()
+            self.assertEqual("succeeded", future.result(timeout=5)[0].state)
+        self.assertEqual("succeeded", self.supervisor(other, repository=other_repository).run_available()[0].state)
+
+    def test_reservations_release_on_no_claim_claim_error_scheduling_error_and_handler_failure(self) -> None:
+        admission = self.admission(capacity=lambda: WorkerCapacity(2, 20, 0, 20))
+        self.assertEqual((), self.supervisor(admission).run_available())
+        self.repository.enqueue(self.submission(), actor=SYSTEM)
+        with (
+            patch.object(self.repository, "claim_next", side_effect=RuntimeError("injected claim failure")),
+            self.assertRaisesRegex(RuntimeError, "injected claim"),
+        ):
+            self.supervisor(admission).run_available()
+        with (
+            patch(
+                "research_observatory_core.workflow_executor.ThreadPoolExecutor",
+                side_effect=RuntimeError("injected scheduling failure"),
+            ),
+            self.assertRaisesRegex(RuntimeError, "injected scheduling"),
+        ):
+            self.supervisor(admission).run_available()
+        # Scheduling failure consumed a valid lease, but did not execute work.
+        # Its reservation is free and the lease remains for normal recovery.
+        self.repository.enqueue(self.submission(identity_variant=True), actor=SYSTEM)
+
+        def fail(_context, _claim):
+            raise WorkflowActivityError("activity-unregistered")
+
+        result = self.supervisor(admission, handlers={"source-acquisition": fail}).run_available()
+        self.assertEqual("failed", result[0].state)
+        token = admission.controller.reserve(admission, "document", local_limit=1)
+        self.assertIsNotNone(token)
+        assert token is not None
+        admission.controller.release(token)
+
+    def test_shared_volume_and_project_quota_cannot_be_substituted(self) -> None:
+        admission = self.admission(capacity=lambda: WorkerCapacity(8, 1000, 1000, 20))
+        other_id = new_uuid_v7()
+        other_root = self.root.parent / "other-project"
+        (other_root / "state").mkdir(parents=True)
+        other_database = other_root / "state/project.sqlite3"
+        initialize_database(other_database, project_id=other_id, project_created_at=CREATED_AT)
+        other_repository = sqlite_workflow_queue_repository(other_root, other_id)
+        other_policy = replace(admission.policy, project_id=other_id)
+        other = self.admission(
+            repository=other_repository,
+            controller=admission.controller,
+            policy=other_policy,
+            capacity=admission.capacity,
+        )
+        self.assertEqual(admission.volume_id, other.volume_id)
+        self.repository.enqueue(self.submission(), actor=SYSTEM)
+        before = self.queue_state()
+        with patch.object(self.repository, "recover_expired", wraps=self.repository.recover_expired) as recovery:
+            with self.assertRaisesRegex(ValueError, "repository identity"):
+                self.supervisor(other)
+            recovery.assert_not_called()
+        self.assertEqual(before, self.queue_state())
+        connection = open_canonical_database(other_database, expected_project_id=other_id)
+        try:
+            self.assertEqual(0, connection.execute("SELECT COUNT(*) FROM workflow_history_events").fetchone()[0])
+        finally:
+            connection.close()
+        token = admission.controller.reserve(admission, "document", local_limit=1)
+        self.assertIsNotNone(token)
+        assert token is not None
+        try:
+            self.assertIsNone(admission.controller.reserve(other, "document", local_limit=1))
+        finally:
+            admission.controller.release(token)
+        other_token = admission.controller.reserve(other, "document", local_limit=1)
+        self.assertIsNotNone(other_token)
+        assert other_token is not None
+        admission.controller.release(other_token)
+        foreign = LocalAdmissionController(interactive_reserve=WorkerResources(1, 10, 0, 10))
+        with self.assertRaisesRegex(ValueError, "controller identity"):
+            foreign.reserve(admission, "document", local_limit=1)
+
+    def test_cancellation_does_not_release_capacity_until_handler_reaches_safe_point(self) -> None:
+        job = self.repository.enqueue(self.submission(), actor=SYSTEM)
+        other_job = self.repository.enqueue(self.submission(identity_variant=True), actor=SYSTEM)
+        admission = self.admission(capacity=lambda: WorkerCapacity(2, 20, 0, 20))
+        entered, release = threading.Event(), threading.Event()
+
+        def cancel_later(context, _claim):
+            entered.set()
+            self.assertTrue(release.wait(5))
+            context.cancellation_safe_point()
+            self.fail("Cancellation must be observed before output")
+
+        supervisor = self.supervisor(admission, handlers={"source-acquisition": cancel_later})
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            running = pool.submit(supervisor.run_available)
+            try:
+                self.assertTrue(entered.wait(5))
+                self.repository.request_cancellation(
+                    job.job_id,
+                    actor=SYSTEM,
+                    now="2026-08-30T12:02:00.000Z",
+                    reason_code="resource-test",
+                    interruption_kind="user-cancel",
+                )
+                self.assertEqual((), self.supervisor(admission).run_available())
+                self.assertEqual(0, self.repository.get(other_job.job_id).attempt_count)
+            finally:
+                release.set()
+            self.assertEqual("cancelled", running.result(timeout=5)[0].state)
+        self.assertEqual("succeeded", self.supervisor(admission).run_available()[0].state)
+
+    def test_provider_failure_and_changed_binding_leave_queue_unchanged(self) -> None:
+        self.repository.enqueue(self.submission(), actor=SYSTEM)
+        before = self.queue_state()
+        for capacity in (lambda: None, lambda: WorkerCapacity(8, 1000, 0, 1000)):
+            admission = self.admission(capacity=capacity)
+            if capacity() is not None:
+                with patch(
+                    "research_observatory_core.repositories._windows_worker_capacity",
+                    side_effect=OSError("injected unavailable observation"),
+                ):
+                    actual = sqlite_workflow_admission_binding(
+                        self.repository, controller=admission.controller, policy=admission.policy
+                    )
+                    self.assertEqual((), self.supervisor(actual).run_available())
+            else:
+                self.assertEqual((), self.supervisor(admission).run_available())
+            self.assertEqual(before, self.queue_state())
+        admission = self.admission()
+        supervisor = self.supervisor(admission)
+        with (
+            patch.object(self.repository, "_project_id", new_uuid_v7()),
+            patch.object(self.repository, "recover_expired", wraps=self.repository.recover_expired) as recovery,
+        ):
+            with self.assertRaisesRegex(ValueError, "identity changed"):
+                supervisor.run_available()
+            recovery.assert_not_called()
+        self.assertEqual(before, self.queue_state())
+
+    @unittest.skipUnless(os.name == "nt", "actual Windows capacity observation")
+    def test_actual_windows_capacity_is_bound_to_owned_project_and_gpu_stays_unknown(self) -> None:
+        fixture = self.admission()
+        admission = sqlite_workflow_admission_binding(
+            self.repository, controller=fixture.controller, policy=fixture.policy
+        )
+        observed = admission.capacity()
+        if observed.cpu_slots is None or observed.memory_bytes is None or observed.disk_bytes is None:
+            self.fail("Required Windows capacity observation is unavailable")
+        self.assertGreater(observed.cpu_slots, 0)
+        self.assertGreater(observed.memory_bytes, 0)
+        self.assertGreater(observed.disk_bytes, 0)
+        self.assertIsNone(observed.gpu_bytes)
+        self.repository.enqueue(self.submission(), actor=SYSTEM)
+        self.assertEqual("succeeded", self.supervisor(admission).run_available()[0].state)
 
     def test_exact_t01_authority_persists_and_reopens_with_runnable_projection(self) -> None:
         submission = self.submission()
@@ -838,14 +1180,16 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
             )
             raise WorkflowActivityError("dependency-unavailable")
 
+        reopened = sqlite_workflow_queue_repository(self.root, PROJECT_ID)
         supervisor = LocalWorkerSupervisor(
-            sqlite_workflow_queue_repository(self.root, PROJECT_ID),
+            reopened,
             {"source-acquisition": resume_handler},
             concurrency_limits={"document": 1},
             now=lambda: "2026-08-30T12:02:01.001Z",
             recovery_actor=SYSTEM,
             worker_id_factory=lambda: WORKER_B,
             lease_duration_ms=30_000,
+            admission=self.admission(repository=reopened),
         )
         results = supervisor.run_available()
         self.assertEqual(1, len(results))
@@ -1039,63 +1383,58 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
     def test_supervisor_converges_cancellation_at_claim_and_completion_races(self) -> None:
         self.repository.enqueue(self.submission(), actor=SYSTEM)
 
-        class CancelAfterClaim:
-            def __init__(self, repository):
-                self.repository = repository
+        original_claim = self.repository.claim_next
 
-            def __getattr__(self, name):
-                return getattr(self.repository, name)
+        def cancel_after_claim(**kwargs):
+            claim = original_claim(**kwargs)
+            assert claim is not None
+            self.repository.request_cancellation(
+                claim.job_id,
+                actor=SYSTEM,
+                now="2026-08-30T12:02:00.000Z",
+                reason_code="claim-race",
+                interruption_kind="user-cancel",
+            )
+            return claim
 
-            def claim_next(self, **kwargs):
-                claim = self.repository.claim_next(**kwargs)
-                assert claim is not None
-                self.repository.request_cancellation(
-                    claim.job_id,
-                    actor=SYSTEM,
-                    now="2026-08-30T12:02:00.000Z",
-                    reason_code="claim-race",
-                    interruption_kind="user-cancel",
-                )
-                return claim
-
-        first = LocalWorkerSupervisor(
-            CancelAfterClaim(self.repository),
-            {"source-acquisition": lambda _context, _claim: ()},
-            concurrency_limits={"document": 1},
-            now=lambda: "2026-08-30T12:02:00.000Z",
-            recovery_actor=SYSTEM,
-            worker_id_factory=lambda: WORKER_A,
-        ).run_available()
+        admission = self.admission()
+        with patch.object(self.repository, "claim_next", side_effect=cancel_after_claim):
+            first = LocalWorkerSupervisor(
+                self.repository,
+                {"source-acquisition": lambda _context, _claim: ()},
+                concurrency_limits={"document": 1},
+                now=lambda: "2026-08-30T12:02:00.000Z",
+                recovery_actor=SYSTEM,
+                worker_id_factory=lambda: WORKER_A,
+                admission=admission,
+            ).run_available()
         self.assertEqual("cancelled", first[0].state)
 
         second_job = self.repository.enqueue(self.submission(identity_variant=True), actor=SYSTEM)
         artifact = self.canonical_output(42)
 
-        class CancelBeforeComplete:
-            def __init__(self, repository):
-                self.repository = repository
+        original_complete = self.repository.complete
 
-            def __getattr__(self, name):
-                return getattr(self.repository, name)
+        def cancel_before_complete(claim, **kwargs):
+            self.repository.request_cancellation(
+                claim.job_id,
+                actor=SYSTEM,
+                now="2026-08-30T12:02:00.000Z",
+                reason_code="completion-race",
+                interruption_kind="user-cancel",
+            )
+            return original_complete(claim, **kwargs)
 
-            def complete(self, claim, **kwargs):
-                self.repository.request_cancellation(
-                    claim.job_id,
-                    actor=SYSTEM,
-                    now="2026-08-30T12:02:00.000Z",
-                    reason_code="completion-race",
-                    interruption_kind="user-cancel",
-                )
-                return self.repository.complete(claim, **kwargs)
-
-        second = LocalWorkerSupervisor(
-            CancelBeforeComplete(self.repository),
-            {"source-acquisition": lambda _context, _claim: (artifact,)},
-            concurrency_limits={"document": 1},
-            now=lambda: "2026-08-30T12:02:00.000Z",
-            recovery_actor=SYSTEM,
-            worker_id_factory=lambda: WORKER_B,
-        ).run_available()
+        with patch.object(self.repository, "complete", side_effect=cancel_before_complete):
+            second = LocalWorkerSupervisor(
+                self.repository,
+                {"source-acquisition": lambda _context, _claim: (artifact,)},
+                concurrency_limits={"document": 1},
+                now=lambda: "2026-08-30T12:02:00.000Z",
+                recovery_actor=SYSTEM,
+                worker_id_factory=lambda: WORKER_B,
+                admission=admission,
+            ).run_available()
         self.assertEqual("cancelled", second[0].state)
         self.assertEqual("cancelled", self.repository.get(second_job.job_id).state)
         connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)
@@ -1119,6 +1458,7 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
             now=lambda: "2026-08-30T12:02:00.000Z",
             recovery_actor=SYSTEM,
             worker_id_factory=lambda: WORKER_A,
+            admission=self.admission(),
         )
 
         results = supervisor.run_available()

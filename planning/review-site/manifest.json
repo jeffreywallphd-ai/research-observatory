@@ -824,6 +824,55 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W1.C05.T01",
+          "title": "Implement the local durable queue and worker supervisor",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Killed workers release or recover leases without duplicate committed output; restart resumes resumable work; queue load cannot block interactive reads.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-03.S04.T02",
+            "origin_commit": "b7206c4309bf4febf628f04af0ab731fc859e06f",
+            "paused_state_sha256": "928d02d7fbc3660212faf44c345dba0b346d09b1b600d9751bf0f05abd9119be",
+            "origin_sha256": "95c806856539b2ec53e3306778015fced6ef797896609a409df2582613cc27ba",
+            "origin_contract_sha256": "dd226c136c60e7650fe30da60dc77f5cf4283a8417ccaa59a8362e8ad1e49676",
+            "origin_history_sha256": "18b4e555563b9e79b4d1d15b7df23c927b62b4b475dee885504e85c06e673a9b",
+            "origin_amendment_id": null,
+            "authority_sha256": "8758285b0701e6d27158023aae317086b97ecb3c2ec7077a0885c6fd761d80bf",
+            "spec": {
+              "path": "artifacts/evidence/W1.C05.T01.spec.json",
+              "sha256": "35186531fad0d951fcdb4e9227fc7cdfa3e599c9cf84e263e95f2b2b5ea77f9f",
+              "commit": "4be86669f792e10989e4048d0096d40298055cec"
+            },
+            "reproduction": "LocalWorkerSupervisor.run_available at the origin candidate claims work using only fixed concurrency-class integers. There are no CPU, memory, GPU, disk or project-quota inputs and no shared resource reservations. Independent W1 exit review confirmed this cannot satisfy approved CAP-03.S04 section 11 resource-derived admission or Systems Design sections 13.1, 13.2, 18.4 and 18.5. The existing worker-resource-qualification-04 proves queue/class-limit behavior only. Full qualification attempt04 was deliberately interrupted after six completed checks because the corrected candidate requires fresh final qualification; preserve its raw interruption and partial results.",
+            "changed_paths": [
+              "services/core-api/src/research_observatory_core/repositories.py",
+              "services/core-api/src/research_observatory_core/workflow_executor.py",
+              "tests/workflows/test_local_workflow_executor.py"
+            ],
+            "impact_analysis": "Restore inherited CAP-03.S04.T02 admission/read-responsiveness and failure/integration criteria. Use trusted explicit per-class demands, project-bound concurrent allocation ceilings and reserved interactive capacity, with shared in-process reservations before queue claims. Unknown required capacity, demand or quota backpressures without consuming attempts, retry allowance, leases or history transitions. A SQLite-adapter-issued local binding validates the actual canonical database project identity, exact repository object and owned storage location before recovery or claim; no caller-substituted project/quota/path authority and no protected-port or portable-schema edits. Acquire Windows CPU/memory/disk capacity at the local adapter boundary and distinguish unavailable GPU information from explicit zero capacity. Release reservations on no-claim, exceptions, cancellation and execution completion; retain existing fencing, bounded recovery, short transactions and immutable outputs/history. Add failing real-SQLite admission tests first, then resource isolation, concurrent reservation, refreshed-capacity, cleanup, cancellation, WAL/restart regressions and actual Windows input-provider proof. Select affected workflow, task-center, contract, SQLite, packaging, quality and architecture checks; independently review regression/integration evidence before fresh Wave qualification. This is admission based on declared envelopes, not an OS enforcement sandbox, cumulative spend policy or new scientific-compute scheduler. No user quota defaults, new dependency, migration, permission, governed UX/reference, release criterion, hosted infrastructure or supplemental refactoring is introduced. Preserve the original DONE task and all adverse evidence."
+          },
+          "task_review": {
+            "task_id": "W1.C05.T01",
+            "title": "Implement the local durable queue and worker supervisor",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

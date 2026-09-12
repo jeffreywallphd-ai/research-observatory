@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e7d7b462537a137af72977f06724119f1c071f741c7a1fba2b11a4d50bc14aaf
+source_sha256: 53ff4beb109a9466646b1b8a336963cc2751a923313e336f77713b82d3c502b9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2603,6 +2603,35 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c04_evidence_review at `2026-09-12T13:31:47+00:00`
 
 **Latest notes:** Independently reviewed the exact six-path product/test restoration and its committed successors; those product bytes remain unchanged from c74da480971004230a33db57893caafe5a55b7fe at this final candidate. Authenticated the final 27-path Git delta, exact frozen R01 packet, criterion and selection bindings, final manifest, selected reports/logs, producer succession and native build/lifecycle identities. The correction preserves the original DONE W1.A05.T04, its authenticated amendment authority and current approved reference lineage. No material open finding remains within the admitted correction. Approval is not full Wave qualification, production packaging, real Windows authentication, complete native accessibility, integration or release approval. The separate frame-verifier defect and wider Wave obligations remain explicitly deferred, not passed. Findings and closures are empty because R01 has no prior formal task findings; retained development, native and maintenance adverse history is assessed below, not rewritten as invented review rounds.
+
+**Currently open findings:** -
+
+### W1.C05.T01 — Implement the local durable queue and worker supervisor
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-03.S04.T02`. **Latest review:** `-`.
+
+**Reproduction:** LocalWorkerSupervisor.run_available at the origin candidate claims work using only fixed concurrency-class integers. There are no CPU, memory, GPU, disk or project-quota inputs and no shared resource reservations. Independent W1 exit review confirmed this cannot satisfy approved CAP-03.S04 section 11 resource-derived admission or Systems Design sections 13.1, 13.2, 18.4 and 18.5. The existing worker-resource-qualification-04 proves queue/class-limit behavior only. Full qualification attempt04 was deliberately interrupted after six completed checks because the corrected candidate requires fresh final qualification; preserve its raw interruption and partial results.
+
+**Inherited criteria:**
+
+- Killed workers release or recover leases without duplicate committed output; restart resumes resumable work; queue load cannot block interactive reads.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/repositories.py
+- services/core-api/src/research_observatory_core/workflow_executor.py
+- tests/workflows/test_local_workflow_executor.py
+#### Review history — W1.C05.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

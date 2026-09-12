@@ -4,17 +4,18 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import secrets
 import sqlite3
 import threading
-from collections.abc import Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager, suppress
 from copy import deepcopy
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Literal, cast
+from typing import Any, ClassVar, Literal, cast
 
 from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, select
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
@@ -122,6 +123,12 @@ from .recalculation_contracts import (
 )
 from .storage import MAX_SAFE_INTEGER, CanonicalConnection, StorageProblem, open_canonical_database
 from .workflow_contracts import workflow_record_sha256, workflow_snapshot_errors
+from .workflow_executor import (
+    LocalAdmissionController,
+    LocalWorkerAdmission,
+    ProjectWorkerPolicy,
+    WorkerCapacity,
+)
 
 _METADATA = MetaData()
 _IDENTITIES = Table(
@@ -7493,6 +7500,130 @@ class _SqliteSelectiveRecalculationRepository(
                 )
             finally:
                 _UNIT_OF_WORKS.unregister(token)
+
+
+def _windows_worker_capacity(project_root: Path, gpu_probe: Callable[[], int | None] | None) -> WorkerCapacity:
+    """Observe only current-process capacity and the bound project volume.
+
+    Native affinity avoids Python CPU-count overrides. GPU enumeration belongs
+    to a trusted accelerator adapter; its absence is unknown, never fake zero.
+    No paths, account identities or resource observations are persisted here.
+    """
+    if os.name != "nt":
+        return WorkerCapacity(None, None, None, None)
+    import ctypes
+    from ctypes import wintypes
+
+    class MemoryStatus(ctypes.Structure):
+        _fields_: ClassVar[list[tuple[str, Any]]] = [
+            ("length", wintypes.DWORD),
+            ("load", wintypes.DWORD),
+            ("total_physical", ctypes.c_uint64),
+            ("available_physical", ctypes.c_uint64),
+            ("total_commit", ctypes.c_uint64),
+            ("available_commit", ctypes.c_uint64),
+            ("total_virtual", ctypes.c_uint64),
+            ("available_virtual", ctypes.c_uint64),
+            ("extended_virtual", ctypes.c_uint64),
+        ]
+
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    current_process = kernel.GetCurrentProcess
+    current_process.argtypes, current_process.restype = [], wintypes.HANDLE
+    affinity = kernel.GetProcessAffinityMask
+    affinity.argtypes = [wintypes.HANDLE, ctypes.POINTER(ctypes.c_size_t), ctypes.POINTER(ctypes.c_size_t)]
+    affinity.restype = wintypes.BOOL
+    process_mask, system_mask = ctypes.c_size_t(), ctypes.c_size_t()
+    cpu = None
+    if affinity(current_process(), ctypes.byref(process_mask), ctypes.byref(system_mask)):
+        # On large multi-group hosts this is a conservative primary-group count.
+        cpu = int(process_mask.value & system_mask.value).bit_count() or None
+    memory_status = kernel.GlobalMemoryStatusEx
+    memory_status.argtypes, memory_status.restype = [ctypes.POINTER(MemoryStatus)], wintypes.BOOL
+    memory = MemoryStatus()
+    memory.length = ctypes.sizeof(memory)
+    available_memory = None
+    if memory_status(ctypes.byref(memory)):
+        available_memory = min(
+            int(memory.available_physical), int(memory.available_commit), int(memory.available_virtual)
+        )
+    disk_free = kernel.GetDiskFreeSpaceExW
+    disk_free.argtypes = [wintypes.LPCWSTR, *([ctypes.POINTER(ctypes.c_uint64)] * 3)]
+    disk_free.restype = wintypes.BOOL
+    available_disk = ctypes.c_uint64()
+    disk = None
+    if disk_free(str(project_root), ctypes.byref(available_disk), None, None):
+        disk = int(available_disk.value)
+    gpu = None
+    if gpu_probe is not None:
+        try:
+            gpu = gpu_probe()
+        except Exception:
+            gpu = None
+    return WorkerCapacity(cpu, available_memory, gpu, disk)
+
+
+def sqlite_workflow_admission_binding(
+    repository: WorkflowQueueRepository,
+    *,
+    controller: LocalAdmissionController,
+    policy: ProjectWorkerPolicy,
+    gpu_probe: Callable[[], int | None] | None = None,
+) -> LocalWorkerAdmission:
+    """Bind local admission to an existing canonical SQLite project, not caller paths.
+
+    Construct this in trusted runtime composition, alongside the project queue.
+    Reopen/relocation requires a new binding; never retarget a live binding.
+    The portable repository port and serialized workflow contracts stay unchanged.
+    """
+    if (
+        not isinstance(repository, _SqliteWorkflowQueueRepository)
+        or not isinstance(policy, ProjectWorkerPolicy)
+        or not isinstance(controller, LocalAdmissionController)
+        or repository._project_id != policy.project_id
+    ):
+        raise ValueError("worker admission project/repository policy mismatch")
+    database, project_id = repository._database, repository._project_id
+    project_root = database.parent.parent
+
+    def identity(path: Path) -> tuple[int, int]:
+        # Do not let an admitted local location silently retarget its volume.
+        if path.resolve(strict=True) != path or any(
+            part.is_symlink() or part.is_junction() for part in (path, *path.parents)
+        ):
+            raise ValueError("worker admission storage identity changed")
+        status = path.stat()
+        return status.st_dev, status.st_ino
+
+    database_identity, root_identity = identity(database), identity(project_root)
+    connection = repository._open()
+    connection.close()
+
+    def validate_identity(
+        bound_repository: WorkflowQueueRepository,
+        bound_policy: ProjectWorkerPolicy,
+        bound_volume: int,
+        bound_controller: LocalAdmissionController,
+    ) -> None:
+        if (
+            bound_repository is not repository
+            or bound_controller is not controller
+            or bound_policy != policy
+            or bound_volume != root_identity[0]
+            or repository._database != database
+            or repository._project_id != project_id
+            or identity(database) != database_identity
+            or identity(project_root) != root_identity
+        ):
+            raise ValueError("worker admission project/storage identity changed")
+
+    def capacity() -> WorkerCapacity:
+        validate_identity(repository, policy, root_identity[0], controller)
+        return _windows_worker_capacity(project_root, gpu_probe)
+
+    binding = LocalWorkerAdmission(repository, policy, controller, root_identity[0], capacity, validate_identity)
+    binding.validate(repository)
+    return binding
 
 
 def sqlite_workflow_queue_repository(path: Path, project_id: str) -> WorkflowQueueRepository:

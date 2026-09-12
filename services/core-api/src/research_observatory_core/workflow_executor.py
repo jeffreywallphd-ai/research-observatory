@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import json
 import re
+import threading
 from collections.abc import Callable, Mapping
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from types import MappingProxyType
 from typing import Any, Protocol, cast
 
 from .domain_contracts import is_uuid_v7, new_uuid_v7
@@ -49,6 +51,171 @@ class WorkflowActivityError(RuntimeError):
 
 class WorkflowCancellationRequested(RuntimeError):
     """Cooperative activity cancellation reached a safe point."""
+
+
+@dataclass(frozen=True, slots=True)
+class WorkerResources:
+    """Concurrent upper bounds, not cumulative spend or an OS enforcement limit."""
+
+    cpu_slots: int
+    memory_bytes: int
+    gpu_bytes: int
+    disk_bytes: int
+
+    def values(self) -> tuple[int, int, int, int]:
+        return self.cpu_slots, self.memory_bytes, self.gpu_bytes, self.disk_bytes
+
+    def __post_init__(self) -> None:
+        if any(type(value) is not int or value < 0 for value in self.values()):
+            raise ValueError("worker resource amounts must be nonnegative integers")
+
+
+@dataclass(frozen=True, slots=True)
+class WorkerCapacity:
+    """Fresh observations: None is unknown; zero is verified zero available capacity."""
+
+    cpu_slots: int | None
+    memory_bytes: int | None
+    gpu_bytes: int | None
+    disk_bytes: int | None
+
+    def values(self) -> tuple[int | None, int | None, int | None, int | None]:
+        return self.cpu_slots, self.memory_bytes, self.gpu_bytes, self.disk_bytes
+
+
+@dataclass(frozen=True, slots=True)
+class ProjectWorkerPolicy:
+    """Trusted local composition; no job payload can choose its own allowance."""
+
+    project_id: str
+    quota: WorkerResources | None
+    demands: Mapping[ConcurrencyClass, WorkerResources]
+    concurrency_limits: Mapping[ConcurrencyClass, int]
+
+    def __post_init__(self) -> None:
+        demands, limits = dict(self.demands), dict(self.concurrency_limits)
+        if (
+            not is_uuid_v7(self.project_id)
+            or (self.quota is not None and not isinstance(self.quota, WorkerResources))
+            or any(kind not in _CONCURRENCY_CLASSES for kind in {*demands, *limits})
+            or any(type(limit) is not int or limit < 0 for limit in limits.values())
+            or any(
+                not isinstance(demand, WorkerResources)
+                or demand.cpu_slots < 1
+                or demand.memory_bytes < 1
+                or demand.disk_bytes < 1
+                for demand in demands.values()
+            )
+        ):
+            raise ValueError("worker project admission policy is invalid")
+        object.__setattr__(self, "demands", MappingProxyType(demands))
+        object.__setattr__(self, "concurrency_limits", MappingProxyType(limits))
+
+
+@dataclass(frozen=True, slots=True)
+class LocalWorkerAdmission:
+    """Adapter-issued local binding, not a portable contract or untrusted capability.
+
+    The SQLite factory owns identity validation and volume-root composition.
+    Trusted Python code must share one controller for one local resource authority.
+    """
+
+    repository: WorkflowQueueRepository
+    policy: ProjectWorkerPolicy
+    controller: LocalAdmissionController
+    volume_id: int
+    capacity: Callable[[], WorkerCapacity]
+    validate_identity: Callable[[WorkflowQueueRepository, ProjectWorkerPolicy, int, LocalAdmissionController], None]
+
+    def validate(self, repository: WorkflowQueueRepository) -> None:
+        if repository is not self.repository:
+            raise ValueError("worker admission repository identity mismatch")
+        self.validate_identity(self.repository, self.policy, self.volume_id, self.controller)
+        self.controller.register(self)
+
+
+@dataclass(frozen=True, slots=True)
+class _WorkerReservation:
+    project_id: str
+    volume_id: int
+    concurrency_class: ConcurrencyClass
+    demand: WorkerResources
+
+
+class LocalAdmissionController:
+    """One cooperative in-process ledger across project supervisors and calls.
+
+    Reservations precede claims. Shortage is a no-op on durable job history.
+    Fresh OS observations can conservatively double-count already resident work;
+    they never justify dropping a live reservation. This is not multi-process
+    enforcement, and it does not meter cumulative CPU time, tokens or spend.
+    """
+
+    def __init__(self, *, interactive_reserve: WorkerResources) -> None:
+        if interactive_reserve.cpu_slots < 1 or interactive_reserve.memory_bytes < 1:
+            raise ValueError("worker admission requires explicit interactive capacity")
+        self._interactive_reserve = interactive_reserve
+        self._lock = threading.RLock()
+        self._policies: dict[str, tuple[ProjectWorkerPolicy, int]] = {}
+        self._reservations: dict[object, _WorkerReservation] = {}
+
+    def register(self, binding: LocalWorkerAdmission) -> None:
+        with self._lock:
+            if binding.controller is not self:
+                raise ValueError("worker admission controller identity mismatch")
+            identity = binding.policy.project_id
+            registered = (binding.policy, binding.volume_id)
+            previous = self._policies.get(identity)
+            if previous is not None and previous != registered:
+                raise ValueError("worker admission project policy or volume conflict")
+            self._policies[identity] = registered
+
+    def reserve(self, binding: LocalWorkerAdmission, kind: ConcurrencyClass, *, local_limit: int) -> object | None:
+        with self._lock:
+            if binding.controller is not self:
+                raise ValueError("worker admission controller identity mismatch")
+            binding.validate(binding.repository)
+            policy = binding.policy
+            demand = policy.demands.get(kind)
+            if demand is None or policy.quota is None:
+                return None
+            reservations = tuple(self._reservations.values())
+            project = tuple(row for row in reservations if row.project_id == policy.project_id)
+            count = sum(row.concurrency_class == kind for row in project)
+            if count >= min(local_limit, policy.concurrency_limits.get(kind, 0)):
+                return None
+            try:
+                capacity = binding.capacity()
+                if not isinstance(capacity, WorkerCapacity):
+                    return None
+                values = capacity.values()
+            except Exception:
+                return None
+            if any(value is not None and (type(value) is not int or value < 0) for value in values):
+                return None
+            for index, amount in enumerate(demand.values()):
+                relevant = tuple(row for row in reservations if index != 3 or row.volume_id == binding.volume_id)
+                used = sum(row.demand.values()[index] for row in relevant)
+                project_used = sum(row.demand.values()[index] for row in project)
+                if project_used + amount > policy.quota.values()[index]:
+                    return None
+                # Existing interactive work already occupies part of its reserve.
+                interactive_used = sum(
+                    row.demand.values()[index] for row in relevant if row.concurrency_class == "interactive"
+                )
+                held = (
+                    max(0, self._interactive_reserve.values()[index] - interactive_used) if kind != "interactive" else 0
+                )
+                available = values[index]
+                if amount and (available is None or used + amount + held > available):
+                    return None
+            token = object()
+            self._reservations[token] = _WorkerReservation(policy.project_id, binding.volume_id, kind, demand)
+            return token
+
+    def release(self, token: object) -> None:
+        with self._lock:
+            self._reservations.pop(token, None)
 
 
 def _stable_code(value: object) -> bool:
@@ -227,7 +394,11 @@ class LocalWorkerSupervisor:
         worker_id_factory: Callable[[], str] = new_uuid_v7,
         lease_duration_ms: int = 30_000,
         recovery_batch_size: int = 100,
+        admission: LocalWorkerAdmission | None = None,
     ) -> None:
+        if not isinstance(admission, LocalWorkerAdmission):
+            raise ValueError("worker supervisor requires explicit resource admission")
+        admission.validate(repository)
         if (
             not handlers
             or not concurrency_limits
@@ -250,6 +421,7 @@ class LocalWorkerSupervisor:
         self._worker_id_factory = worker_id_factory
         self._lease_duration_ms = lease_duration_ms
         self._recovery_batch_size = recovery_batch_size
+        self._admission = admission
 
     def _execute(self, claim: WorkflowJobClaim) -> WorkflowJobRecord:
         context = WorkflowActivityContext(self._repository, claim, self._now, self._lease_duration_ms)
@@ -293,34 +465,63 @@ class LocalWorkerSupervisor:
                 raise
 
     def run_available(self) -> tuple[WorkflowJobRecord, ...]:
+        self._admission.validate(self._repository)
         self._repository.recover_expired(
             now=self._now(),
             actor=self._recovery_actor,
             limit=self._recovery_batch_size,
         )
-        claims: list[WorkflowJobClaim] = []
-        for concurrency_class, limit in self._limits.items():
-            for _ in range(limit):
-                worker_id = self._worker_id_factory()
-                if not is_uuid_v7(worker_id):
-                    raise ValueError("worker identity factory returned an invalid UUIDv7")
-                claim = self._repository.claim_next(
-                    worker_id=worker_id,
-                    concurrency_classes=(concurrency_class,),
-                    now=self._now(),
-                    lease_duration_ms=self._lease_duration_ms,
-                )
-                if claim is None:
-                    break
-                claims.append(claim)
-        if not claims:
-            return ()
-        with ThreadPoolExecutor(max_workers=len(claims), thread_name_prefix="ro-workflow") as pool:
-            return tuple(pool.map(self._execute, claims))
+        claims: list[tuple[WorkflowJobClaim, object]] = []
+        controller = self._admission.controller
+        try:
+            for concurrency_class, limit in self._limits.items():
+                for _ in range(limit):
+                    token = controller.reserve(self._admission, concurrency_class, local_limit=limit)
+                    if token is None:
+                        break
+                    try:
+                        worker_id = self._worker_id_factory()
+                        if not is_uuid_v7(worker_id):
+                            raise ValueError("worker identity factory returned an invalid UUIDv7")
+                        self._admission.validate(self._repository)
+                        claim = self._repository.claim_next(
+                            worker_id=worker_id,
+                            concurrency_classes=(concurrency_class,),
+                            now=self._now(),
+                            lease_duration_ms=self._lease_duration_ms,
+                        )
+                    except BaseException:
+                        controller.release(token)
+                        raise
+                    if claim is None:
+                        controller.release(token)
+                        break
+                    claims.append((claim, token))
+            if not claims:
+                return ()
+            with ThreadPoolExecutor(max_workers=len(claims), thread_name_prefix="ro-workflow") as pool:
+                return tuple(pool.map(self._execute_reserved, claims))
+        finally:
+            # The pool waits for running handlers before this cleanup; unstarted
+            # claimed work remains lease-fenced for existing bounded recovery.
+            for _, token in claims:
+                controller.release(token)
+
+    def _execute_reserved(self, work: tuple[WorkflowJobClaim, object]) -> WorkflowJobRecord:
+        claim, token = work
+        try:
+            return self._execute(claim)
+        finally:
+            self._admission.controller.release(token)
 
 
 __all__ = [
+    "LocalAdmissionController",
+    "LocalWorkerAdmission",
     "LocalWorkerSupervisor",
+    "ProjectWorkerPolicy",
+    "WorkerCapacity",
+    "WorkerResources",
     "WorkflowActivity",
     "WorkflowActivityContext",
     "WorkflowActivityError",
