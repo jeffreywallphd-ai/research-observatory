@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-evidence",
+  "candidateCommit": "09906e52b054eabbe4c02b4a3d67f50915086214",
+  "baseCommit": "545a5643b3de74a8e8e82b5dedb3fc56da4c6c0c",
+  "scope": "Workflow-context keyboard verifier only; completed W1.C04.T01 and approved product/reference/acceptance authority remain unchanged.",
+  "sourceFiles": [
+    {
+      "path": "artifacts/evidence/workflow-context-keyboard.maintenance-01.md",
+      "sha256": "bba16fd4d1ad7e7cc32108138f0c138bbe56d5bb4af422f246d88cf97f4879fb"
+    },
+    {
+      "path": "tests/desktop/test_product_layout_measurements.py",
+      "sha256": "1e27b877da180a9ec7c6ebfd312b54330bedda44dcafbb3dc0cddc92f9f432e6"
+    },
+    {
+      "path": "tools/product_layout_measurements.py",
+      "sha256": "f11e65b73166166c37bf8ba1947e53314a78fedad1ebd0436d0fa6679bd9a2a1"
+    }
+  ],
+  "producer": {
+    "path": "artifacts/tmp/W1.frame-helper-02.py",
+    "sha256": "80cd0cef43f5c97c36e11a5d7d20accfdab14ea2b46340a3f36bd6d4bd2bedcd",
+    "preflightReviewer": "agent:/root/c04_evidence_review"
+  },
+  "containmentHelper": {
+    "path": "artifacts/tmp/w1_owned_build_01.py",
+    "sha256": "9f004fdc97b7711f44918015dc0afac5cd73b5623bb132fc8888e2d701b06803",
+    "buildAuxiliaryExceptionUsed": false
+  },
+  "verification": {
+    "path": "artifacts/tmp/W1.frame-helper-03.json",
+    "sha256": "996680ae5804577056dda276c9fce3437a222fceecf4b90f6174c0719b631861",
+    "fresh": true,
+    "developmentOnly": false,
+    "status": "PASS",
+    "seconds": 90.12806730001466
+  },
+  "checks": [
+    {
+      "id": "unit",
+      "command": [
+        "{checkout}\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.desktop.test_product_layout_measurements"
+      ],
+      "cwd": ".",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 16.60541869996814,
+      "log": "artifacts/tmp/W1.frame-helper-03.unit.log",
+      "logSha256": "2f17ca761707a0dfc5f57622b8177f886041008a2e96ce38ce86dfca38160305",
+      "containment": {
+        "rootExitCode": 0,
+        "totalProcesses": 42,
+        "activeProcesses": 0,
+        "drained": true,
+        "timedOut": false,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "quality",
+      "command": [
+        "{checkout}\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "ruff",
+        "check",
+        "tools/product_layout_measurements.py",
+        "tests/desktop/test_product_layout_measurements.py"
+      ],
+      "cwd": ".",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 0.1645709000295028,
+      "log": "artifacts/tmp/W1.frame-helper-03.quality.log",
+      "logSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "containment": {
+        "rootExitCode": 0,
+        "totalProcesses": 4,
+        "activeProcesses": 0,
+        "drained": true,
+        "timedOut": false,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "format",
+      "command": [
+        "{checkout}\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "tools/product_layout_measurements.py",
+        "tests/desktop/test_product_layout_measurements.py"
+      ],
+      "cwd": ".",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 0.16015349997906014,
+      "log": "artifacts/tmp/W1.frame-helper-03.format.log",
+      "logSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+      "containment": {
+        "rootExitCode": 0,
+        "totalProcesses": 4,
+        "activeProcesses": 0,
+        "drained": true,
+        "timedOut": false,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    },
+    {
+      "id": "frame",
+      "command": [
+        "{checkout}\\.venv\\Scripts\\python.exe",
+        "-B",
+        "tools/desktop_app_check.py",
+        "--repo",
+        ".",
+        "--built-frame-only"
+      ],
+      "cwd": ".",
+      "status": "PASS",
+      "exitCode": 0,
+      "seconds": 72.07112320000306,
+      "log": "artifacts/tmp/W1.frame-helper-03.frame.log",
+      "logSha256": "1f45f997e5880cd1497fae00f1d132acbcbc578e07b4e48ad62159d9a4819d1c",
+      "containment": {
+        "rootExitCode": 0,
+        "totalProcesses": 1634,
+        "activeProcesses": 0,
+        "drained": true,
+        "timedOut": false,
+        "cleanupState": "EMPTY_CONFIRMED"
+      }
+    }
+  ],
+  "acceptanceClosure": [
+    {
+      "boundary": "Available predecessor without hiding required actions",
+      "proof": "10-test affected module passed, including collapsed details, inert ancestor, disabled fieldset with allowed first legend, refused/missing focus before Tab, both themes and three viewports, and preserved untabbable-action negative."
+    },
+    {
+      "boundary": "Actual assembled application",
+      "proof": "Existing built-frame checker returned ok=true with errors=[]; actual browser-rendered workflow traversal and remaining frame checks completed. Source, tests and generated renderer inputs were held immutable; no product/style change."
+    },
+    {
+      "boundary": "Control quality",
+      "proof": "Affected Ruff check and format --check passed. Exact three-path source delta; no acceptance thresholds or action inventory changed."
+    }
+  ],
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W1.C04.T01.frame-development-01.json",
+      "sha256": "d35813284273940f727efbdd49ebf9db302f4e09981203c7c7a95cbe3be568b5",
+      "disposition": "Original built-frame failure; later unexecuted checks are not separate failures."
+    },
+    {
+      "path": "artifacts/tmp/W1.frame-helper-01.json",
+      "sha256": "79d6745b115bb33f58228a6bfe9d36be17d1644af6ff9d609f443f35d719f2d6",
+      "disposition": "Development RED only; original producer preflight limitations preserved in maintenance note. No frame command selected; the actual RED log was exclusively created."
+    },
+    {
+      "disposition": "An initial attempt-03 invocation used an incorrect candidate argument and failed fixed() before report creation, locks or child execution. Correct full candidate was then supplied; no earlier PASS or execution is attributed."
+    }
+  ],
+  "limits": "Fresh affected maintenance verification, not reuse, complete installed-runtime closure, native OS focus/authentication, signed production packaging, performance qualification or full W1 acceptance. Built browser transport is simulated. No ordinary account/project/policy, credentials, protected witness or excluded sibling contents inspected.",
+  "unverifiedItemsWithinMaintenanceScope": []
+}

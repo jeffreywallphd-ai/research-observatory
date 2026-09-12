@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-independent-review",
+  "reviewId": "workflow-context-keyboard.review-01",
+  "baseCommit": "545a5643b3de74a8e8e82b5dedb3fc56da4c6c0c",
+  "candidateCommit": "09906e52b054eabbe4c02b4a3d67f50915086214",
+  "reviewedAt": "2026-09-12T13:44:58Z",
+  "reviewer": "agent:/root/c04_evidence_review",
+  "independence": {
+    "implementer": "agent:codex",
+    "implementationAuthoredByReviewer": false
+  },
+  "result": "ACCEPTED",
+  "findings": [],
+  "scope": "Independent acceptance of the three-path workflow-context keyboard verifier maintenance increment only. No product, style, reference, acceptance-authority or completed W1.C04.T01 change is authorized or implied.",
+  "evidence": {
+    "path": "artifacts/evidence/workflow-context-keyboard.evidence-01.json",
+    "gitBlob": "ee31d2ce00f43ba85ef8a3165c1880b478ffeb2e",
+    "sha256": "d9944bc5668ad6ee3e37006042a71f5065f55aefaeff97ca03809e1333fdb86a",
+    "deliveryStatusAtReview": "Uncommitted evidence delivery; no delivery commit is asserted."
+  },
+  "reviewedArtifacts": [
+    {
+      "path": "artifacts/evidence/workflow-context-keyboard.maintenance-01.md",
+      "gitBlob": "976fcc3b7100f5175df583fc5534e45717cd716d",
+      "sha256": "bba16fd4d1ad7e7cc32108138f0c138bbe56d5bb4af422f246d88cf97f4879fb"
+    },
+    {
+      "path": "tests/desktop/test_product_layout_measurements.py",
+      "gitBlob": "0e5e7a956e496974ef1cb1d9ddc008a3790f6ec3",
+      "sha256": "1e27b877da180a9ec7c6ebfd312b54330bedda44dcafbb3dc0cddc92f9f432e6"
+    },
+    {
+      "path": "tools/product_layout_measurements.py",
+      "gitBlob": "6007ce1b10ea58692b315a493ec809342cb18d23",
+      "sha256": "f11e65b73166166c37bf8ba1947e53314a78fedad1ebd0436d0fa6679bd9a2a1"
+    }
+  ],
+  "verification": {
+    "path": "artifacts/tmp/W1.frame-helper-03.json",
+    "sha256": "996680ae5804577056dda276c9fce3437a222fceecf4b90f6174c0719b631861",
+    "producer": {
+      "path": "artifacts/tmp/W1.frame-helper-02.py",
+      "sha256": "80cd0cef43f5c97c36e11a5d7d20accfdab14ea2b46340a3f36bd6d4bd2bedcd"
+    },
+    "containmentHelperSha256": "9f004fdc97b7711f44918015dc0afac5cd73b5623bb132fc8888e2d701b06803",
+    "developmentOnly": false,
+    "status": "PASS",
+    "selectedInputCount": 3422,
+    "selectedInputHashMismatches": 0,
+    "checkGroups": 4,
+    "unitTests": 10,
+    "unitTestSeconds": 15.522,
+    "unitOwnedWrapperSeconds": 16.60541869996814,
+    "qualitySeconds": 0.1645709000295028,
+    "formatSeconds": 0.16015349997906014,
+    "builtFrameSeconds": 72.07112320000306,
+    "totalSeconds": 90.12806730001466,
+    "ownedProcesses": 1684,
+    "allGroupsRootExitZeroAndDrained": true,
+    "buildAuxiliaryExceptionUsed": false,
+    "builtFrame": {
+      "log": "artifacts/tmp/W1.frame-helper-03.frame.log",
+      "sha256": "1f45f997e5880cd1497fae00f1d132acbcbc578e07b4e48ad62159d9a4819d1c",
+      "ok": true,
+      "errors": [],
+      "styleMatrixCases": 54,
+      "casesWithEnabledWorkflowActions": 24,
+      "enabledWorkflowActionsTraversed": 24,
+      "allExpectedWorkflowActionsTraversed": true
+    }
+  },
+  "closedPreflightFindings": [
+    {
+      "producer": "artifacts/tmp/W1.frame-helper-01.py",
+      "producerSha256": "d76d64ca901ec63a5862b6f1def89ccfff06e077af3faae28099c9ad5075a77e",
+      "priorDisposition": "NOT_CLEARED",
+      "finding": "Cleanup could hash an unowned existing log or frame file after failure; the child report writer could overwrite a file after the runner's initial absence check.",
+      "closure": "Independently inspected successor 02: child --report and frame-file access are removed, frame JSON remains in exclusive stdout, and only a successfully created log is hashed. Original 01 is retained."
+    },
+    {
+      "producer": "artifacts/tmp/W1.frame-helper-01.py",
+      "priorDisposition": "NOT_CLEARED",
+      "finding": "The recorded producer digest was not compared after acquiring the input lock.",
+      "closure": "Successor 02 compares its locked digest to the recorded producer digest before any child launch. Its exact cleared digest matches the fresh qualification receipt."
+    }
+  ],
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W1.C04.T01.frame-development-01.json",
+      "sha256": "d35813284273940f727efbdd49ebf9db302f4e09981203c7c7a95cbe3be568b5",
+      "disposition": "Authenticated original built-frame workflow-keyboard failure. Later unexecuted checks are not counted as independent product failures. The simple initially closed-details unit fixture already passed the old helper; it is not represented as a failing regression."
+    },
+    {
+      "path": "artifacts/tmp/W1.frame-helper-01.json",
+      "sha256": "79d6745b115bb33f58228a6bfe9d36be17d1644af6ff9d609f443f35d719f2d6",
+      "log": "artifacts/tmp/W1.frame-helper-01.regression.log",
+      "logSha256": "cd63daf03ed7475464ce87f5b3608c69aa098840d9fc527d47c0d90f7ebc0d24",
+      "disposition": "Authenticated development-only RED: two tests, one failed and three errored subcases; 13 owned processes drained. Inert and inherited-disabled predecessors failed traversal, focus refusal exposed a false pass, and absent predecessor produced an opaque script error. This does not retroactively clear producer 01 or qualify its results."
+    }
+  ],
+  "notes": [
+    "Independently reviewed the exact direct predecessor-to-candidate edge and all three changed files. Source Git blobs and working bytes match the evidence. No material source finding remains.",
+    "Eligibility filtering changes only possible predecessor anchors: browser visibility, inert ancestry and effective disabled semantics. The full required action inventory remains unchanged. Real Tab traversal and active-element equality, disabled skipping, at least two-pixel outline, viewport bounds and the existing untabbable-action negative remain enforced. Missing or focus-refusing anchors now fail explicitly before Tab. Valid summary and first-legend controls remain eligible.",
+    "Read the actual fresh report and all four logs. Evidence commands, working directories, exit codes, times, log hashes and containment fields match the receipt. Its inventory exactly matches the candidate's tracked paths plus the five selected generated renderer files, and all 3422 current input hashes match. The three selected runtime hashes and exact producer/helper hashes also match. The protected witness is absent from that inventory and was not opened or hashed.",
+    "The affected unit module reports 10 passing tests in 15.522 seconds; 16.60541869996814 seconds is its owned wrapper duration. Ruff lint and format checks pass. The actual built-frame JSON has ok=true and errors=[], with all enabled workflow actions traversed in its recorded cases. Every group has root exit zero, zero active processes, no timeout and EMPTY_CONFIRMED drainage; no VCTIP exception was used.",
+    "Development attempt 02 remains development-only. The recorded wrong-candidate invocation stopped before report creation or child execution and contributes no qualifying result. Original failure receipts and producer preflight limitations remain preserved rather than relabeled as acceptance.",
+    "This is fresh affected control-maintenance acceptance, not evidence reuse, complete installed-runtime closure, native OS focus or authentication proof, production packaging, performance qualification, W1 approval, local-main integration or release approval. Built browser transport is simulated. No ordinary account/project/policy data, credentials, protected witness or excluded sibling contents were inspected. The reviewer authored only this new review file and ran no tests, builds or native UI actions."
+  ]
+}
