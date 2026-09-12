@@ -32,8 +32,12 @@ An admitted `Wn.Cnn.T01` linked correction uses the existing v1.0
 existing committed origin, spec, paused predecessor, inherited contract, approval
 and review-history checks. It does not add `experience_change` or `review_gate`
 to the correction or borrow the DONE origin's owner or base. The authenticated
-origin must retain its `human-and-agent-review` obligation; an unsupported origin
-fails closed. Focused conformance evidence and the existing independent,
+origin must retain its `human-and-agent-review` obligation, or be the exact
+completed approved-reference implementation of an authenticated, adopted
+human-approved amendment. That alternative authenticates the immutable packet,
+original UI contract at its reviewed candidate/base, and independent review
+history; it never synthesizes an amendment task's forbidden `review_gate`.
+Unsupported origins fail closed. Focused conformance evidence and the existing independent,
 commit-bound corrective integration review remain required. No new approval,
 classification record, schema version or workflow layer is introduced.
 
@@ -54,6 +58,15 @@ admits only this exact task-owned UI evidence path as additional delivery when t
 correction has governed UI scope, not a general evidence-directory allowance.
 All existing reference, scope, control-maintenance and independent review denials
 remain in force; gate success is not task completion or human release approval.
+
+Separately reviewed control maintenance may occur while a linked correction is
+quiescent. Use the existing bounded-maintenance candidate → evidence → independent
+review chain, with exact source hashes and control-only scope. Every otherwise
+inadmissible path-changing commit in the correction's full range must belong to
+exactly one such chain; a reviewed filename never admits later edits, add/revert
+history, mixed product changes or extra delivery. The UI gate and task submission
+both enforce this attribution. Historical callers retain their earlier cutoff.
+This does not change the correction spec, original base, criteria or approvals.
 
 ## Resumed amendment restoration (opt-in 1.1)
 

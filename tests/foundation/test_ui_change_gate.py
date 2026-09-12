@@ -460,8 +460,13 @@ class UiChangeGateTests(unittest.TestCase):
                 any("must be an admitted campaign corrective task" in error for error in result["errors"]), result
             )
 
-    def legacy_control_fixture(self, temporary: str, mutation: str = "") -> tuple[Path, str, str, str]:
-        root, predecessor, _ = self.prepare(temporary)
+    def legacy_control_fixture(
+        self, temporary: str, mutation: str = "", *, existing_root: Path | None = None
+    ) -> tuple[Path, str, str, str]:
+        if existing_root is None:
+            root, predecessor, _ = self.prepare(temporary)
+        else:
+            root, predecessor = existing_root, self.git(existing_root, "rev-parse", "HEAD")
         stem = "artifacts/evidence/fixture-control"
         contract_path, evidence_path, review_path = (
             stem + ".maintenance-01.md",
@@ -552,9 +557,64 @@ class UiChangeGateTests(unittest.TestCase):
             self.commit(root, "rewrite historical review")
             self.write_json(root / review_path, review)
             self.commit(root, "restore historical review bytes")
-        (root / "claim-marker.txt").write_text("later correction start\n", encoding="utf-8")
-        cutoff = self.commit(root, "correction task start")
+        if existing_root is None:
+            (root / "claim-marker.txt").write_text("later correction start\n", encoding="utf-8")
+            cutoff = self.commit(root, "correction task start")
+        else:
+            cutoff = self.git(root, "rev-parse", "HEAD")
         return root, candidate, cutoff, review_path
+
+    def test_linked_control_maintenance_requires_exact_reviewed_commit_attribution(self) -> None:
+        for mutation in ("", "self-review", "product", "mixed-evidence", "adverse", "later", "later-revert"):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, base, data, contract = self.linked_fixture(temporary)
+                self.linked_candidate(root, data, contract)
+                _, _, head, _ = self.legacy_control_fixture(temporary, mutation, existing_root=root)
+                if mutation.startswith("later"):
+                    source = root / "tools/ui_conformance.py"
+                    original = source.read_bytes()
+                    source.write_text("# unreviewed later change\n", encoding="utf-8")
+                    head = self.commit(root, "later unreviewed same control path")
+                    if mutation == "later-revert":
+                        source.write_bytes(original)
+                        head = self.commit(root, "hide unreviewed control change")
+                result = validate(root, base, head)
+                self.assertEqual(not mutation, result["ok"], result["errors"])
+                task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+                manifest = {
+                    "commit": head,
+                    "baseCommit": base,
+                    "changedFiles": sorted(ui_gate.changed_paths(root, base, head)),
+                }
+                errors = taskctl.validate_task_evidence(task, manifest, repo=root)
+                scope_errors = [error for error in errors if "scope" in error or "maintenance" in error]
+                self.assertEqual(bool(mutation), bool(scope_errors), errors)
+
+    def test_linked_amendment_origin_uses_existing_approved_contract_not_a_new_review_field(self) -> None:
+        # Read only the existing named approval/packet/UI contract and Git origin.
+        # This is authority proof, not fresh product or native qualification.
+        head = self.git(REPO, "rev-parse", "HEAD")
+        data = yaml.safe_load(ui_gate.blob(REPO, head, "planning/backlog.yaml"))
+        indexed = taskctl.index_backlog(data)
+        origin = indexed[3]["W1.A05.T04"]
+        correction = indexed[3]["W1.C04.T01"]
+        self.assertNotIn("review_gate", origin)
+        self.assertEqual([], ui_gate.linked_amendment_origin_errors(REPO, head, data, correction, origin))
+        for mutation in ("origin-id", "kind", "contract", "amendment", "candidate"):
+            altered = copy.deepcopy(origin)
+            bound = copy.deepcopy(correction)
+            if mutation == "origin-id":
+                altered["id"] = "W1.A05.T03"
+            elif mutation == "kind":
+                altered["experience_change"]["kind"] = "defect-restoration"
+            elif mutation == "contract":
+                altered["experience_change"]["contract_path"] = "artifacts/evidence/ui-change/other.json"
+            elif mutation == "amendment":
+                bound["correction"]["origin_amendment_id"] = "W1.A04"
+            else:
+                altered["review_control"]["attempts"][-1]["submission"]["candidate_commit"] = head
+            with self.subTest(mutation=mutation):
+                self.assertTrue(ui_gate.linked_amendment_origin_errors(REPO, head, data, bound, altered))
 
     def test_legacy_control_maintenance_authenticates_existing_protocol(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

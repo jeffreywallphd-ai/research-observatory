@@ -1960,6 +1960,7 @@ def validate_task_evidence(
     expected_commit: str | None = None,
     expected_base_commit: str | None = None,
     allow_disclosed_unverified: bool = False,
+    repo: Path | None = None,
 ) -> list[str]:
     errors: list[str] = []
     if task.get("correction") is not None:
@@ -1972,15 +1973,33 @@ def validate_task_evidence(
         delivery = {"planning/backlog.yaml", "docs/planning-implementation-plan.md", "planning/status-summary.md"}
         if corrective_ui_paths(task):
             delivery.add(f"artifacts/evidence/ui-change/{task['id']}.json")
-        for path in manifest.get("changedFiles", []):
-            owned_evidence = isinstance(path, str) and path.startswith(f"artifacts/evidence/{task['id']}.")
-            projections = {
-                "planning/review-site/index.html",
-                "planning/review-site/manifest.json",
-                f"planning/review-site/waves/{task['wave']}.html",
-            }
-            if path not in permitted and not owned_evidence and path not in delivery | projections:
-                errors.append("corrective changedFiles exceeds the exact admitted scope")
+        projections = {
+            "planning/review-site/index.html",
+            "planning/review-site/manifest.json",
+            f"planning/review-site/waves/{task['wave']}.html",
+        }
+
+        def admitted(path: str) -> bool:
+            return path in permitted | delivery | projections or path.startswith(f"artifacts/evidence/{task['id']}.")
+
+        extra = [path for path in manifest.get("changedFiles", []) if not isinstance(path, str) or not admitted(path)]
+        if extra or repo is not None:
+            try:
+                if repo is None:
+                    raise ValueError("Git provenance is required")
+                from ui_change_gate import commit_paths, git, reviewed_control_maintenance_commits
+
+                base, candidate = task["base_sha"], manifest["commit"]
+                maintenance = reviewed_control_maintenance_commits(repo, base, candidate)
+                for commit in git(repo, "rev-list", f"{base}..{candidate}").decode().splitlines():
+                    paths = commit_paths(repo, commit)
+                    if any(not admitted(path) for path in paths) and maintenance.get(commit) != paths:
+                        raise ValueError("out-of-scope commit lacks exact independent control-only review")
+                covered = {path for paths in maintenance.values() for path in paths}
+                if any(not isinstance(path, str) or path not in covered for path in extra):
+                    raise ValueError("extra changedFiles are not reviewed maintenance delivery")
+            except (KeyError, TypeError, ValueError, UnicodeError) as exc:
+                errors.append(f"corrective changedFiles exceeds the exact admitted scope: {exc}")
         integration = manifest.get("correctiveIntegration")
         commands = {c.get("command") for c in manifest.get("checks", []) if isinstance(c, dict)}
         if (
@@ -5409,6 +5428,7 @@ def committed_manifest_errors(
         expected_commit=expected_commit,
         expected_base_commit=expected_base_commit,
         allow_disclosed_unverified=allow_disclosed_unverified,
+        repo=repo,
     )
     errors.extend(changed_file_errors(task, manifest, repo))
     commit = manifest.get("commit")

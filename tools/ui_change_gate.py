@@ -735,7 +735,9 @@ def reviewed_preimplementation_maintenance_errors(
     return errors
 
 
-def legacy_control_maintenance_errors(repo: Path, commit: str, head: str, cutoff: str) -> list[str]:
+def legacy_control_maintenance_errors(
+    repo: Path, commit: str, head: str, cutoff: str, *, authenticated: dict[str, set[str]] | None = None
+) -> list[str]:
     """Read the existing pre-correction maintenance protocol, without inventing adoption.
 
     Only filename-qualified review records are discovered. Their immutable
@@ -824,9 +826,31 @@ def legacy_control_maintenance_errors(repo: Path, commit: str, head: str, cutoff
                     payload
                 ).hexdigest() != row.get("sha256"):
                     return ["historical control maintenance source binding differs"]
+        if authenticated is not None:
+            authenticated.update({commit: paths, delivery: {evidence_path}, introduction: {review_path}})
         return []
     except (KeyError, TypeError, ValueError, UnicodeError, json.JSONDecodeError) as exc:
         return [f"invalid historical control maintenance: {exc}"]
+
+
+def reviewed_control_maintenance_commits(repo: Path, base: str, head: str) -> dict[str, set[str]]:
+    """Exact reviewed control-only chains; never a reusable filename allowance.
+
+    The caller authenticates correction authority separately. Historical callers
+    of the legacy validator retain their original pre-correction cutoff.
+    """
+    commits = git(repo, "rev-list", f"{base}..{head}").decode().splitlines()
+    admitted: dict[str, set[str]] = {}
+    for commit in commits:
+        if not commit_paths(repo, commit) & LEGACY_GOVERNANCE_CONTROL_PATHS:
+            continue
+        chain: dict[str, set[str]] = {}
+        if legacy_control_maintenance_errors(repo, commit, head, head, authenticated=chain):
+            continue
+        if set(chain) - set(commits) or set(chain) & set(admitted):
+            raise ValueError("control maintenance chain is outside the correction range or overlaps another chain")
+        admitted.update(chain)
+    return admitted
 
 
 def inherited_control_commits(
@@ -1206,8 +1230,45 @@ def linked_correction_authority(
     if not corrective_ui_paths(task):
         raise ValueError("linked UI correction must have admitted governed UI scope")
     if origin.get("review_gate") != "human-and-agent-review":
-        raise ValueError("linked UI correction origin lacks the inherited human-and-agent-review obligation")
+        errors = linked_amendment_origin_errors(repo, head, backlog, task, origin)
+        if errors:
+            raise ValueError("linked UI correction origin lacks inherited review authority: " + "; ".join(errors))
     return origin
+
+
+def linked_amendment_origin_errors(
+    repo: Path, head: str, backlog: dict[str, Any], task: dict[str, Any], origin: dict[str, Any]
+) -> list[str]:
+    """Consume approved amendment authority without adding forbidden task fields."""
+    import taskctl
+
+    try:
+        binding = task["correction"]
+        identity = binding["origin_amendment_id"]
+        experience = origin.get("experience_change") or {}
+        if (
+            not identity
+            or origin.get("amendment_id") != identity
+            or origin.get("id") != binding["origin_task_id"]
+            or taskctl.canonical_json_sha256(taskctl.corrective_origin_snapshot(origin)) != binding["origin_sha256"]
+            or experience.get("kind") != "approved-reference-implementation"
+            or experience.get("contract_path") != f"artifacts/evidence/ui-change/{origin['id']}.json"
+        ):
+            raise ValueError("origin is not the exact bound amendment approved-reference implementation")
+        amendment = amendment_record(taskctl.serializable_backlog(backlog), identity)
+        if amendment.get("lifecycle", {}).get("status") != "ADOPTED":
+            raise ValueError("origin amendment is not adopted")
+        approved_amendment_packet(repo, head, amendment)
+        ranges = correction_submission_ranges(repo, head, {"tasks": [origin]})
+        candidate = ranges[-1]["candidate"]
+        if not is_ancestor(repo, candidate, binding["origin_commit"]):
+            raise ValueError("reviewed origin candidate is outside the admitted origin history")
+        original = validate(repo, origin["base_sha"], candidate)
+        if not original["ok"] or original["changeKind"] != "approved-reference-implementation":
+            raise ValueError("reviewed origin UI contract does not authenticate: " + "; ".join(original["errors"]))
+        return []
+    except (KeyError, IndexError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+        return [str(exc)]
 
 
 def authenticated_active_corrections(repo: Path, head: str, backlog: dict[str, Any]) -> list[dict[str, Any]]:
@@ -2150,6 +2211,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         return report
 
     resumed_scope: dict[str, Any] | None = None
+    linked_origin: dict[str, Any] | None = None
     if "amendmentAuthority" in contract:
         try:
             resumed_scope = resumed_amendment_authority(repo, base, head, contract, policy)
@@ -2157,7 +2219,29 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
             errors.append(f"invalid resumed amendment UI authority: {exc}")
             return report
-    if protected_changes:
+    if protected_changes and LINKED_CORRECTION_ID.fullmatch(str(contract.get("taskId"))):
+        try:
+            backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "planning/backlog.yaml")
+            linked_task = find_task(backlog, str(contract["taskId"]))
+            if (
+                linked_task is None
+                or contract["schemaVersion"] != "1.0"
+                or contract["changeKind"] != "defect-restoration"
+            ):
+                raise ValueError("control maintenance requires an admitted v1.0 linked restoration")
+            linked_origin = linked_correction_authority(repo, base, head, backlog, linked_task)
+            maintenance = reviewed_control_maintenance_commits(repo, base, head)
+            for commit in git(repo, "rev-list", f"{base}..{head}").decode().splitlines():
+                paths = commit_paths(repo, commit)
+                if paths & LEGACY_GOVERNANCE_CONTROL_PATHS and maintenance.get(commit) != paths:
+                    errors.append(
+                        f"linked correction control change {commit} lacks exact independent maintenance review"
+                    )
+        except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+            errors.append(f"invalid linked correction control maintenance: {exc}")
+        if errors:
+            return report
+    elif protected_changes:
         errors.extend(
             application_activation_errors(
                 repo, base, head, protected_changes, contract, policy, resumed_scope=resumed_scope
@@ -2213,7 +2297,6 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
     except (UnicodeDecodeError, ValueError, yaml.YAMLError) as exc:
         errors.append(str(exc))
         task = None
-    linked_origin: dict[str, Any] | None = None
     if task is None:
         errors.append(f"UI evidence task does not exist in the authoritative backlog: {task_id}")
     else:
@@ -2221,7 +2304,8 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             try:
                 if contract["schemaVersion"] != "1.0" or contract["changeKind"] != "defect-restoration":
                     raise ValueError("linked UI correction requires the existing v1.0 defect-restoration contract")
-                linked_origin = linked_correction_authority(repo, base, head, backlog, task)
+                if linked_origin is None:
+                    linked_origin = linked_correction_authority(repo, base, head, backlog, task)
                 errors.extend(linked_correction_range_errors(repo, base, head, task, policy))
             except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
                 errors.append(f"invalid linked correction UI authority: {exc}")
@@ -2312,6 +2396,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         review_task = linked_origin if linked_origin is not None else task
         if (
             kind == "defect-restoration"
+            and linked_origin is None
             and review_task is not None
             and review_task.get("review_gate") != "human-and-agent-review"
         ):
