@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "core-sidecar-current-package-review",
+  "reviewer": "agent:/root/w1_exit_review",
+  "candidateCommit": "ac1d3bd6b9bd3555c1f6e0dc89a8097fcd69a74a",
+  "disposition": "APPROVED",
+  "evidence": {
+    "path": "artifacts/evidence/W1.current-package-01.json",
+    "sha256": "4609ce4f88f298cb627bdeecb2baeedbf054d78b8257d4372340b09013a91d55"
+  },
+  "blockingFindings": []
+}
