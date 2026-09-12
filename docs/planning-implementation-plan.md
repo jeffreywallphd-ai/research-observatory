@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 53ff4beb109a9466646b1b8a336963cc2751a923313e336f77713b82d3c502b9
+source_sha256: 7cda43e70c2acdd5b1a5d95521244bc6cc2767e25446ea67ce69b58a089822a0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2608,7 +2608,7 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C05.T01 — Implement the local durable queue and worker supervisor
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-03.S04.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-03.S04.T02`. **Latest review:** `approved`.
 
 **Reproduction:** LocalWorkerSupervisor.run_available at the origin candidate claims work using only fixed concurrency-class integers. There are no CPU, memory, GPU, disk or project-quota inputs and no shared resource reservations. Independent W1 exit review confirmed this cannot satisfy approved CAP-03.S04 section 11 resource-derived admission or Systems Design sections 13.1, 13.2, 18.4 and 18.5. The existing worker-resource-qualification-04 proves queue/class-limit behavior only. Full qualification attempt04 was deliberately interrupted after six completed checks because the corrected candidate requires fresh final qualification; preserve its raw interruption and partial results.
 
@@ -2625,13 +2625,43 @@ Original tasks and approvals remain unchanged.
 - tests/workflows/test_local_workflow_executor.py
 #### Review history — W1.C05.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `674e8521673380d984a2e430b051c6bff10e07d98cd5eec00186b199429440e9`
+
+- Candidate / base / branch: `265488b0d6fa6fe787eedd681453888debb61f4a` / `4be86669f792e10989e4048d0096d40298055cec` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-12T15:51:26+00:00`
+- Evidence: `artifacts/evidence/W1.C05.T01.json` / `e294945b01528ccbf7d5db87f00f53e667d4cdd8d09103e940688d4f603f1ba3` / `265488b0d6fa6fe787eedd681453888debb61f4a`
+- Acceptance-criteria SHA-256: `d101a2479fb0ca48eb19f12c8a7e5726decf839babf422196a5bf8b07307325d`
+- Verification-selection SHA-256: `2f146f433e5e566faaa28440bc077d461ce9cc6debab7797fc8b3a4b898f2f7d`
+- Changed paths: `artifacts/evidence/W1.C05.T01.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/workflow_executor.py`, `tests/workflows/test_local_workflow_executor.py`
+- Selected checks: `python -B -X utf8 -m unittest tests.workflows.test_local_workflow_executor tests.workflows.test_task_center tests.contracts.test_workflow_contracts tests.data.test_sqlite_schema tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound`, `python -B -X utf8 tools/quality_check.py --repo .`, `python -B -X utf8 tools/architecture_check.py --repo .`, `python -B -X utf8 tools/repository_structure_check.py --repo .`, `python -B -X utf8 tools/backlog_views.py --repo . --check`
+- Deferred checks: `Fresh complete W1 repository/profile matrix and resource-load measurements on the corrected candidate remain Wave qualification, followed by current production packaging, required principal/platform checks, independent Wave review and separate human G1. Task approval is not Wave qualification.`, `No installed-runtime input closure is claimed and no previous results are reused. Historical Q-native, performance and package results remain tied to Q, not promoted to this candidate.`
+- Selection rationale: The exact executor/adapter/test delta affects pre-claim resource/identity authority, concurrent accounting, cancellation/recovery and packaging imports. Run focused real-SQLite workflow/task-center/contract/schema/packaging-contract coverage and current quality/architecture/structure/view checks. The custom 57-test command is recorded as an additional exact check, not misrepresented as a complete catalog profile.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/c04_evidence_review / `2026-09-12T15:57:51+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W1.C05.T01.review-R01.json` / `54561cacba0b1213a9feaa8c7e07e5e4cb6655374395c6aa0363d2ae150c16df`
+
+**Review notes:** Independently reviewed the exact three-path product/test correction and ten-path base-to-candidate Git delta against the frozen correction specification, original CAP-03.S04.T02 contract, approved slice Section 11, ADR-0025 and affected architecture. Authenticated the frozen R01 packet, criterion/selection bindings, manifest, qualifying producer, report, all five logs and selected input identities. The original completed task object and its origin snapshot remain unchanged. No material open finding remains within the admitted correction. This is task-scoped approval, not integration, full Wave qualification, production packaging, platform/principal qualification or release approval. R01 has no prior formal attempts or open findings; development and predecessor failures remain adverse history, not invented review rounds.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/c04_evidence_review at `2026-09-12T15:57:51+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independently reviewed the exact three-path product/test correction and ten-path base-to-candidate Git delta against the frozen correction specification, original CAP-03.S04.T02 contract, approved slice Section 11, ADR-0025 and affected architecture. Authenticated the frozen R01 packet, criterion/selection bindings, manifest, qualifying producer, report, all five logs and selected input identities. The original completed task object and its origin snapshot remain unchanged. No material open finding remains within the admitted correction. This is task-scoped approval, not integration, full Wave qualification, production packaging, platform/principal qualification or release approval. R01 has no prior formal attempts or open findings; development and predecessor failures remain adverse history, not invented review rounds.
 
 **Currently open findings:** -
 

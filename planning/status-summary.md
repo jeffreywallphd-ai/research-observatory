@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 53ff4beb109a9466646b1b8a336963cc2751a923313e336f77713b82d3c502b9
+source_sha256: 7cda43e70c2acdd5b1a5d95521244bc6cc2767e25446ea67ce69b58a089822a0
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -639,13 +639,13 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C04.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c04_evidence_review | - |
-| `W1.C05.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W1.C05.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c04_evidence_review | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 15/15 | 52/53 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 15/15 | 53/53 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -701,9 +701,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `W1.C05.T01` Implement the local durable queue and worker supervisor | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+No task is currently active.
 
 ## Linked corrective tasks
 
@@ -727,5 +725,5 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C05.T01 — Implement the local durable queue and worker supervisor
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-03.S04.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-03.S04.T02`. **Latest review:** `approved`.
 

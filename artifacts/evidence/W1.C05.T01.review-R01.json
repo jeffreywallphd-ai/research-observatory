@@ -1,0 +1,88 @@
+{
+  "task_id": "W1.C05.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "265488b0d6fa6fe787eedd681453888debb61f4a",
+  "base_commit": "4be86669f792e10989e4048d0096d40298055cec",
+  "submission_packet_sha256": "674e8521673380d984a2e430b051c6bff10e07d98cd5eec00186b199429440e9",
+  "acceptance_criteria_sha256": "d101a2479fb0ca48eb19f12c8a7e5726decf839babf422196a5bf8b07307325d",
+  "selection_sha256": "2f146f433e5e566faaa28440bc077d461ce9cc6debab7797fc8b3a4b898f2f7d",
+  "reviewer": "agent:/root/c04_evidence_review",
+  "reviewed_at": "2026-09-12T15:55:31Z",
+  "result": "approved",
+  "findings": [],
+  "closures": [],
+  "notes": "Independently reviewed the exact three-path product/test correction and ten-path base-to-candidate Git delta against the frozen correction specification, original CAP-03.S04.T02 contract, approved slice Section 11, ADR-0025 and affected architecture. Authenticated the frozen R01 packet, criterion/selection bindings, manifest, qualifying producer, report, all five logs and selected input identities. The original completed task object and its origin snapshot remain unchanged. No material open finding remains within the admitted correction. This is task-scoped approval, not integration, full Wave qualification, production packaging, platform/principal qualification or release approval. R01 has no prior formal attempts or open findings; development and predecessor failures remain adverse history, not invented review rounds.",
+  "corrective_integration": {
+    "evidence_sha256": "e294945b01528ccbf7d5db87f00f53e667d4cdd8d09103e940688d4f603f1ba3",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The correction restores resource-derived admission under the inherited contract without changing portable ports, schemas, migrations, default quotas, dependencies, UX or security authority. The SQLite adapter binds actual repository/project/database/root/volume identity; the supervisor validates that binding before recovery or claim. Shared local reservations account for CPU, memory, GPU, same-volume disk, explicit project ceilings and class limits while retaining interactive capacity. Missing or invalid required inputs deny claims without consuming attempts. Owned reservations survive cancellation until handler settlement and release on no-claim, claim failure, scheduling failure and handler completion. Existing lease fencing, bounded recovery, canonical-output transactions and interactive SQLite reads remain covered. Admission is a cooperative in-process declared-envelope boundary requiring trusted composition to share one controller for one resource authority; it is not OS enforcement, a multi-process quota service or cumulative-spend policy."
+  },
+  "criterion_assessments": [
+    {
+      "criterion_index": 1,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "Fresh current-candidate tests retain abrupt worker-process exit/restart, checkpoint resumption, expired-worker fencing and one canonical output, bounded recovery and nonblocking existing interactive-reader snapshots. Added cases establish independently insufficient CPU, memory, GPU, disk and project allocations, later sufficient capacity, concurrent shared reservations and interactive reserve. Identity substitutions are rejected before recovery; resource denial does not consume a claim attempt. Cancellation retains reservations until actual handler completion."
+    },
+    {
+      "criterion_index": 2,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "The qualifying integration log records 57 tests without skips, including all 32 local workflow tests plus affected task-center, portable-workflow contract, SQLite and one exact packaging-build-contract test. Material negative coverage includes missing quota/demand, unknown or malformed capacity, unavailable providers, zero-GPU work, repository/project/volume/controller/policy substitutions, shared-resource contention, no-claim and claim/scheduling failures, cancellation, stale leases and canonical-output rollback. Deterministic injected vectors prove admission arithmetic and denial. A separate owned-project Windows test obtains actual process-affinity CPU, available memory and caller-available disk inputs, leaves unprobed GPU capacity unknown and executes admitted work; it does not prove general GPU availability or OS resource enforcement."
+    },
+    {
+      "criterion_index": 3,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "The product/test delta is restricted to workflow_executor.py, repositories.py and test_local_workflow_executor.py. Other changed paths are the task-start worksheet and task/planning projections. Existing public contracts, schema and migration behavior are retained and affected contract/SQLite/packaging checks pass. Quality passes 231 files; architecture, repository structure and backlog-view checks pass. No unrelated product authority, approval, default quota, dependency or supplemental refactoring was introduced."
+    }
+  ],
+  "evidence_assessment": {
+    "evidence_path": "artifacts/evidence/W1.C05.T01.json",
+    "evidence_sha256": "e294945b01528ccbf7d5db87f00f53e667d4cdd8d09103e940688d4f603f1ba3",
+    "report_path": "artifacts/tmp/W1.C05.T01.verification-01.json",
+    "report_sha256": "016bf3a0af268285f3dc468bff7e002ec310bd7958d48b5df8e1df1b68a9da28",
+    "producer_path": "artifacts/tmp/W1.C05.T01.verify-01.py",
+    "producer_sha256": "18f40b05ae83894d1a22c82029139c87b0718d304f66f561ecb4997488cd0029",
+    "process_helper_path": "artifacts/tmp/w1_owned_job_01.py",
+    "process_helper_sha256": "32eea1c170a2a07b42d9657fd5c4404c53d0d7b19285cb726adc148927bebc0c",
+    "logs": [
+      {
+        "path": "artifacts/tmp/W1.C05.T01.verification-01-01.log",
+        "sha256": "af46b3e8157495bc8a6e011f4cfa18c098f79816e247be7337216473c1e9e712",
+        "coverage": "57 tests, no skips; unittest duration 6.269 seconds"
+      },
+      {
+        "path": "artifacts/tmp/W1.C05.T01.verification-01-02.log",
+        "sha256": "4734d8c4e4a3acf1045a042c5bda702ea792a907da01876a6b7f4e5be69a4050",
+        "coverage": "231-file quality checks"
+      },
+      {
+        "path": "artifacts/tmp/W1.C05.T01.verification-01-03.log",
+        "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+        "coverage": "architecture check"
+      },
+      {
+        "path": "artifacts/tmp/W1.C05.T01.verification-01-04.log",
+        "sha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d",
+        "coverage": "repository-structure check"
+      },
+      {
+        "path": "artifacts/tmp/W1.C05.T01.verification-01-05.log",
+        "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+        "coverage": "backlog-view check"
+      }
+    ],
+    "tracked_input_count": 3427,
+    "passing_groups": 5,
+    "owned_process_count": 28,
+    "active_process_count": 0,
+    "duration_seconds": 13.928844200039748,
+    "disposition": "All five exact manifest commands, working directories, exit codes, durations and output hashes match the fresh report and actual logs. The candidate was tracked-clean with an unmasked index during qualification; its 3427 recorded tracked input bytes and exact Git inventory independently matched before task submission. The producer locks and rechecks selected inputs, its own bytes, helper and launcher, uses exclusive outputs and strict Windows owned-process jobs, and records natural EMPTY_CONFIRMED drainage for every group without timeouts or a compiler-telemetry exception. The protected witness is excluded lexically before input access. Later submission/projection changes are not asserted clean or covered by the earlier source snapshot. Installed-dependency and OS closure remain unknown; there is no reuse entitlement or signed-attestation claim."
+  },
+  "retained_history_assessment": [
+    "The implementer's retained development history distinguishes the initial import-path setup error from the later missing-admission behavioral RED. This reviewer did not independently rerun those development invocations.",
+    "Five initial new success-fixture failures under the existing canonical-output contract and initial lint/type diagnostics remain documented. The final diff supplies valid canonical outputs in those fixtures and preserves the underlying product assertions; no valid test or acceptance condition was weakened to obtain the qualifying pass.",
+    "The broader development packaging run's 62 tests and existing Windows symlink-privilege skip remain separate from the qualifying 57-test, no-skip run. Its unsigned fixture package is not current production or signing qualification.",
+    "Predecessor b7206c4309bf4febf628f04af0ab731fc859e06f full-Wave attempt04 was interrupted after discovery of the admission gap; its six partial checks and termination/error remain adverse, not a full pass. Earlier worker measurements established queue/class-limit behavior only, not the resource-derived admission now restored. Earlier Q-native, performance and package observations are not promoted to this candidate."
+  ],
+  "review_limits": "Independent read-only source and evidence review until creation of this ledger. The reviewer did not author implementation, execute tests/builds or native UI, change HEAD/task state or access ordinary profiles, credentials or project data. The protected W1.A04.B00 witness was not read, hashed, copied, staged, scanned or modified. Fresh full affected/repository/profile checks, resource-load measurements on the corrected candidate, current production/principal/platform evidence, independent Wave review and the separate human G1 remain outstanding Wave obligations. This ledger alone does not record backlog approval, authorize integration or approve release."
+}

@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.C05.T01",
+  "commit": "265488b0d6fa6fe787eedd681453888debb61f4a",
+  "baseCommit": "4be86669f792e10989e4048d0096d40298055cec",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "artifacts/evidence/W1.C05.T01.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/workflow_executor.py",
+    "tests/workflows/test_local_workflow_executor.py"
+  ],
+  "checks": [
+    {
+      "checkId": "workflow-and-affected-integration",
+      "command": "python -B -X utf8 -m unittest tests.workflows.test_local_workflow_executor tests.workflows.test_task_center tests.contracts.test_workflow_contracts tests.data.test_sqlite_schema tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 7.74243539996678,
+      "log": "artifacts/tmp/W1.C05.T01.verification-01-01.log",
+      "outputSha256": "af46b3e8157495bc8a6e011f4cfa18c098f79816e247be7337216473c1e9e712",
+      "report": "artifacts/tmp/W1.C05.T01.verification-01.json",
+      "scope": "Focused 57-test workflow, task-center, contract, SQLite and packaging-contract subset, including all 32 workflow tests; not the complete service/data/e2e-local profiles."
+    },
+    {
+      "commandId": "foundation:quality",
+      "checkId": "foundation:quality",
+      "command": "python -B -X utf8 tools/quality_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 0.8335951000335626,
+      "log": "artifacts/tmp/W1.C05.T01.verification-01-02.log",
+      "outputSha256": "4734d8c4e4a3acf1045a042c5bda702ea792a907da01876a6b7f4e5be69a4050",
+      "report": "artifacts/tmp/W1.C05.T01.verification-01.json"
+    },
+    {
+      "commandId": "foundation:architecture",
+      "checkId": "foundation:architecture",
+      "command": "python -B -X utf8 tools/architecture_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.5439574999618344,
+      "log": "artifacts/tmp/W1.C05.T01.verification-01-03.log",
+      "outputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "report": "artifacts/tmp/W1.C05.T01.verification-01.json"
+    },
+    {
+      "commandId": "foundation:repository-structure",
+      "checkId": "foundation:repository-structure",
+      "command": "python -B -X utf8 tools/repository_structure_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 0.2441054000519216,
+      "log": "artifacts/tmp/W1.C05.T01.verification-01-04.log",
+      "outputSha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d",
+      "report": "artifacts/tmp/W1.C05.T01.verification-01.json"
+    },
+    {
+      "commandId": "foundation:backlog-views",
+      "checkId": "foundation:backlog-views",
+      "command": "python -B -X utf8 tools/backlog_views.py --repo . --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 2.6425294000073336,
+      "log": "artifacts/tmp/W1.C05.T01.verification-01-05.log",
+      "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "report": "artifacts/tmp/W1.C05.T01.verification-01.json"
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "workflow-and-affected-integration passes all 32 tests in tests.workflows.test_local_workflow_executor, including test_abrupt_worker_exit_recovers_and_resumes_from_latest_checkpoint, test_expired_worker_is_fenced_and_recovery_commits_one_output, test_queue_writes_do_not_block_existing_interactive_reader_snapshot, test_recovery_is_bounded_and_does_not_block_an_existing_reader_snapshot and test_supervisor_executes_registered_activity_without_holding_database_lock.",
+        "New resource-admission tests deny insufficient CPU, memory, GPU, disk and project allocations before claims without changed history/attempts; a later fresh sufficient capacity permits execution. Concurrent supervisors share reservations and protect explicit interactive capacity; project/repository/database/volume substitution is denied before recovery. Cancellation holds reservations until the handler actually ends, while no-claim, claim/scheduling errors and handler failure release only owned reservations.",
+        "test_actual_windows_capacity_is_bound_to_owned_project_and_gpu_stays_unknown uses the real Windows affinity, memory and caller-available disk probe on an owned synthetic project and executes admitted work. Deterministic injected capacity vectors in other tests establish arithmetic/denial, not measured hardware capacity."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "workflow-and-affected-integration executes 57 tests without skips: all 32 local workflow tests plus affected task-center, portable-workflow contract, SQLite and packaging-build-contract integration. Material failures include missing/invalid/unknown admission inputs, absent quota/demand, zero-GPU work with unknown GPU, provider exceptions, exact binding substitution, concurrent reservations, cancellation, stale leases, abrupt worker exit and canonical-output rollback. Actual log: artifacts/tmp/W1.C05.T01.verification-01-01.log.",
+        "Development first established the missing-admission regression failing because the old supervisor did not raise ValueError. Existing valid-output and restart/fencing assertions were retained; no test or acceptance condition was weakened."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Only the three admitted product/test paths change: local executor admission/controller, SQLite-adapter binding/Windows probe, and workflow integration tests. The worksheet documents the material boundaries and declared-envelope/in-process scope. No portable port/schema, migration, permissions, new dependency, governed UX, release criteria or default user quota is changed.",
+        "foundation:quality passes 231 files; foundation:architecture, foundation:repository-structure and foundation:backlog-views pass. Existing contract, SQLite and strict version-bound packaging-contract tests pass in the focused integration group. Original CAP-03.S04.T02 and all prior approvals/evidence remain immutable; generated planning files reflect only the appended correction claim."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:repository-structure",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "The exact executor/adapter/test delta affects pre-claim resource/identity authority, concurrent accounting, cancellation/recovery and packaging imports. Run focused real-SQLite workflow/task-center/contract/schema/packaging-contract coverage and current quality/architecture/structure/view checks. The custom 57-test command is recorded as an additional exact check, not misrepresented as a complete catalog profile.",
+    "deferred": [
+      "Fresh complete W1 repository/profile matrix and resource-load measurements on the corrected candidate remain Wave qualification, followed by current production packaging, required principal/platform checks, independent Wave review and separate human G1. Task approval is not Wave qualification.",
+      "No installed-runtime input closure is claimed and no previous results are reused. Historical Q-native, performance and package results remain tied to Q, not promoted to this candidate."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "95c806856539b2ec53e3306778015fced6ef797896609a409df2582613cc27ba",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "python -B -X utf8 -m unittest tests.workflows.test_local_workflow_executor tests.workflows.test_task_center tests.contracts.test_workflow_contracts tests.data.test_sqlite_schema tests.packaging.test_core_sidecar_package.CoreSidecarPackageTests.test_build_contract_is_strict_and_version_bound",
+      "python -B -X utf8 tools/quality_check.py --repo .",
+      "python -B -X utf8 tools/architecture_check.py --repo .",
+      "python -B -X utf8 tools/repository_structure_check.py --repo .",
+      "python -B -X utf8 tools/backlog_views.py --repo . --check"
+    ],
+    "reusedEvidence": [],
+    "rationale": "Restore CAP-03.S04.T02 resource-derived admission under the inherited approved contract. The trusted SQLite adapter binds canonical project/repository/storage identity; a shared local controller admits declared concurrent envelopes against real capacity, explicit project ceilings and an interactive reserve. Missing required inputs fail closed before claim. This is cooperative in-process admission, not OS enforcement, multi-process or cumulative-spend policy. No new product authority, quota defaults or supplemental refactoring."
+  },
+  "observations": {
+    "report": {
+      "path": "artifacts/tmp/W1.C05.T01.verification-01.json",
+      "sha256": "016bf3a0af268285f3dc468bff7e002ec310bd7958d48b5df8e1df1b68a9da28",
+      "producer": {
+        "path": "artifacts/tmp/W1.C05.T01.verify-01.py",
+        "sha256": "18f40b05ae83894d1a22c82029139c87b0718d304f66f561ecb4997488cd0029"
+      },
+      "processHelper": {
+        "path": "artifacts/tmp/w1_owned_job_01.py",
+        "sha256": "32eea1c170a2a07b42d9657fd5c4404c53d0d7b19285cb726adc148927bebc0c"
+      },
+      "durationSeconds": 13.928844200039748,
+      "trackedInputCount": 3427,
+      "ownedProcesses": 28,
+      "activeProcesses": 0,
+      "drained": true
+    },
+    "method": "Exact committed candidate, clean tracked state and unmasked index; all tracked input bytes locked for verification and compared before/after. Producer/helper/launcher bound. Protected witness lexically excluded before lookup/hash. Five checks use Windows owned-process jobs and naturally drain before releasing inputs. Tool-observed execution, not signed attestation or complete installed-runtime/OS closure. Reuse disabled."
+  },
+  "retainedHistory": {
+    "notes": [
+      "Initial development invocation lacked the local core import path; its import error is not behavioral RED. The subsequent missing-admission test failed with ValueError not raised before implementation.",
+      "Initial new success fixtures returned no canonical output and five assertions failed under the existing output contract. Fixtures were corrected to produce valid canonical output; production acceptance was not relaxed. Initial lint/type findings were corrected before the committed candidate.",
+      "Development packaging-module run passed 62 tests with one existing Windows symlink-privilege skip and an unsigned fixture package. It is not current signed production qualification. The qualifying candidate run recorded here passes 57 tests with no skips.",
+      "Full W1 qualification attempt04 on predecessor b7206c4309bf4febf628f04af0ab731fc859e06f was deliberately interrupted after discovery of the admission gap; six partial checks and the drained termination/error remain retained, not a full PASS. Prior worker-resource-qualification-04 remains queue/class-limit evidence only."
+    ]
+  }
+}
