@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import sys
+import tempfile
 import unittest
 from collections.abc import Mapping
 from pathlib import Path
@@ -79,6 +81,31 @@ class RecordingRepository:
 
 class DomainLifecycleContractTests(unittest.TestCase):
     profile_root = REPO / "packages" / "contracts" / "domain"
+
+    def test_fresh_windows_checkout_preserves_generated_contract_bytes(self) -> None:
+        relative = "packages/contracts/domain/lifecycle.generated.ts"
+        expected = subprocess.check_output(["git", "show", f"HEAD:{relative}"], cwd=REPO)
+        with tempfile.TemporaryDirectory(prefix="lifecycle-contract-checkout-") as temporary:
+            output = Path(temporary)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "core.autocrlf=true",
+                    "-c",
+                    "core.safecrlf=false",
+                    "checkout-index",
+                    f"--prefix={output.as_posix()}/",
+                    "--",
+                    relative,
+                ],
+                cwd=REPO,
+                check=True,
+                capture_output=True,
+            )
+            actual = (output / relative).read_bytes()
+        self.assertNotIn(b"\r", actual)
+        self.assertEqual(expected, actual)
 
     def test_exact_profile_is_schema_valid_hash_bound_and_semantically_deterministic(self) -> None:
         schema_bytes = (self.profile_root / "domain-lifecycle.schema.json").read_bytes()
