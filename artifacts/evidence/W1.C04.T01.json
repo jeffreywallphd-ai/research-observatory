@@ -1,0 +1,569 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W1.C04.T01",
+  "commit": "0271a76f6c17bdcce3a7e10f931c8ebb44513999",
+  "baseCommit": "7c48c6d9f64459b849519829d91b3f9290addef6",
+  "branch": "codex/w1-windows-local-runtime",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src/app/ApplicationRuntime.test.tsx",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/applicationLock.test.ts",
+    "apps/desktop/src/app/applicationLock.ts",
+    "artifacts/evidence/W1.C04.T01.native-09.md",
+    "artifacts/evidence/W1.C04.T01.native-A.md",
+    "artifacts/evidence/W1.C04.T01.native-B.md",
+    "artifacts/evidence/W1.C04.T01.native-C.md",
+    "artifacts/evidence/W1.C04.T01.native-menu.md",
+    "artifacts/evidence/W1.C04.T01.native-production.md",
+    "artifacts/evidence/W1.C04.T01.task-start.md",
+    "artifacts/evidence/linked-ui-authority.evidence-01.json",
+    "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+    "artifacts/evidence/linked-ui-authority.review-01.json",
+    "artifacts/evidence/ui-change/W1.C04.T01.json",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W1.html",
+    "planning/status-summary.md",
+    "tests/desktop/test_application_lock_recovery.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/taskctl.py",
+    "tools/ui_change_gate.py"
+  ],
+  "checks": [
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.local\\toolchains\\cargo\\bin\\cargo.exe test -p research-observatory-desktop --lib --features integration-harness --locked --no-run --message-format=json",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.4860385000356473,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.native-unit-prepare.log",
+      "outputSha256": "a6bf5e040e0ebebd837c4defc92e0427e96b78c73ae166043e254c7933f2b6a9",
+      "outputBytes": 317227,
+      "checkId": "native-unit-prepare",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.local\\toolchains\\cargo\\bin\\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests::renderer_contract_witness --no-run --message-format=json",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 11.788938699988648,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.native-contract-prepare.log",
+      "outputSha256": "e3a1d98cac1e4ca5b363999b69edc07b086803744f0194cff33f18ad04adebf4",
+      "outputBytes": 319562,
+      "checkId": "native-contract-prepare",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run test",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 2.475285900000017,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.renderer-unit.log",
+      "outputSha256": "88421ba852b0781ed0cb1b910ec38bd64602218dff6e43089091cae1e2f0bc57",
+      "outputBytes": 276,
+      "checkId": "renderer-unit",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run typecheck",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.8014087000046857,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.renderer-type.log",
+      "outputSha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+      "outputBytes": 15,
+      "checkId": "renderer-type",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run lint",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.455785800004378,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.renderer-lint.log",
+      "outputSha256": "f78ede1982f71d1f223b387397a8ac36d4e569cb5133d0d9e5e7c5292c13513d",
+      "outputBytes": 43,
+      "checkId": "renderer-lint",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "desktop:unit",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B -m unittest tests.desktop.test_application_lock_recovery",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 33.60214759997325,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.built-recovery.log",
+      "outputSha256": "f39efd756c5fe3306dd663ecfe2087cd0e1b6afee130a9320aed333e790c371b",
+      "outputBytes": 108,
+      "checkId": "built-recovery",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-87920ad6b8bab1d3.exe",
+      "cwd": "apps/desktop/src-tauri",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.336122200009413,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.native-unit.log",
+      "outputSha256": "fe1ffa67d9fefc3e9429197735425ccf2ecbfe8dbf327d02b4a10e83a4d90bdd",
+      "outputBytes": 12333,
+      "checkId": "native-unit",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture then {checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node.exe {checkout}\\apps\\desktop\\node_modules\\vitest\\vitest.mjs run apps/desktop/src/app/applicationSettings.native.integration.test.ts",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 2.1758574999985285,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.native-renderer-contract.log",
+      "outputSha256": "b2e2974dafeb1dc2ba0a47451947bf7c1c3e6512336e5041d23231d65949917e",
+      "outputBytes": 496,
+      "checkId": "native-renderer-contract",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json",
+      "commandKind": "ordered-stage-description",
+      "executionStages": [
+        {
+          "command": "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture",
+          "cwd": "apps/desktop/src-tauri"
+        },
+        {
+          "command": "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node.exe {checkout}\\apps\\desktop\\node_modules\\vitest\\vitest.mjs run apps/desktop/src/app/applicationSettings.native.integration.test.ts",
+          "cwd": "."
+        }
+      ],
+      "scope": "Two directly executed ordered stages, not a single shell command; exact working directories are in executionStages."
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.local\\toolchains\\cargo\\bin\\cargo.exe fmt --all --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.3455833999905735,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.native-format.log",
+      "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "outputBytes": 0,
+      "checkId": "native-format",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B -m ruff check tests/desktop/test_application_lock_recovery.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.1502142999670468,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.python-quality.log",
+      "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "outputBytes": 19,
+      "checkId": "python-quality",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "foundation:ui-change",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B tools/ui_change_gate.py --repo . --base 7c48c6d9f64459b849519829d91b3f9290addef6",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 54.99381380004343,
+      "log": "artifacts/tmp/W1.C04.T01.verify-05.ui-change.log",
+      "outputSha256": "8e81eb88b229c0f59fbd86bba67c35d032952a24622e07af3a40a59cd1479ee0",
+      "outputBytes": 515,
+      "checkId": "ui-change",
+      "report": "artifacts/tmp/W1.C04.T01.verify-05.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture then {checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node.exe {checkout}\\apps\\desktop\\node_modules\\vitest\\vitest.mjs run --root apps/desktop --reporter=verbose src/app/applicationSettings.native.integration.test.ts",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.8724284000345506,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.native-renderer-contract.log",
+      "outputSha256": "b892807c3022131fd4c493fdae96eb2e19a70a89dfeb160d69fd7102593d1ab8",
+      "outputBytes": 1160,
+      "checkId": "native-renderer-contract",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json",
+      "commandKind": "ordered-stage-description",
+      "executionStages": [
+        {
+          "command": "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture",
+          "cwd": "apps/desktop/src-tauri"
+        },
+        {
+          "command": "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node.exe {checkout}\\apps\\desktop\\node_modules\\vitest\\vitest.mjs run --root apps/desktop --reporter=verbose src/app/applicationSettings.native.integration.test.ts",
+          "cwd": "."
+        }
+      ],
+      "scope": "Two directly executed ordered stages, not a single shell command; exact working directories are in executionStages."
+    },
+    {
+      "commandId": "desktop:ui-workflow",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B tools/ui_conformance.py --repo . --check workflows",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 32.06698509998387,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.reference-workflows.log",
+      "outputSha256": "0a81313f8ac02779fa8996d9a86454aa1268caa8782f755c347d1c2602205c86",
+      "outputBytes": 1122,
+      "checkId": "reference-workflows",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json"
+    },
+    {
+      "commandId": "desktop:ui-accessibility",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B tools/ui_conformance.py --repo . --check accessibility",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 27.943031799979508,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.reference-accessibility.log",
+      "outputSha256": "463580f5412bcf10fc28707a2b0501882dc244c0c4548bd37aec9effc10900b4",
+      "outputBytes": 1086,
+      "checkId": "reference-accessibility",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json"
+    },
+    {
+      "commandId": "foundation:quality",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B -m ruff format --check tests/desktop/test_application_lock_recovery.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 1.170378000009805,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.python-format.log",
+      "outputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "outputBytes": 25,
+      "checkId": "python-format",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json"
+    },
+    {
+      "commandId": "foundation:backlog",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 102.7745723000262,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.backlog.log",
+      "outputSha256": "7a8a9ef0557089efc8aedd1a18b2287367fa8b6924b0799db80d88e30fb39400",
+      "outputBytes": 73,
+      "checkId": "backlog",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json"
+    },
+    {
+      "commandId": "foundation:backlog-views",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B tools/backlog_views.py --repo . --check",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 3.970861900015734,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.backlog-views.log",
+      "outputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "outputBytes": 44,
+      "checkId": "backlog-views",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json"
+    },
+    {
+      "commandId": "foundation:backlog-views",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B tools/plan_review_check.py --repo .",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 105.66103449999355,
+      "log": "artifacts/tmp/W1.C04.T01.supplement-01.review-site.log",
+      "outputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "outputBytes": 85,
+      "checkId": "review-site",
+      "report": "artifacts/tmp/W1.C04.T01.supplement-01.json"
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B -X utf8 {checkout}\\artifacts\\tmp\\W1.native-boundary-10.py build 0271a76f6c17bdcce3a7e10f931c8ebb44513999",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 20.72032379999291,
+      "log": "artifacts/tmp/W1.native-contained-10.build-01.log",
+      "outputSha256": "e1b20e24042991be0be79cd1b2b885b51ce30edd8e5f15535dd6c5071a85ef7a",
+      "report": "artifacts/tmp/W1.native-contained-10.build.json",
+      "scope": "Build/process receipt only; actual native observations are assessed separately."
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B -X utf8 {checkout}\\artifacts\\tmp\\W1.native-boundary-10.py lifecycle 0271a76f6c17bdcce3a7e10f931c8ebb44513999 20260912-w1-final-10",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 726.4802104999544,
+      "log": "artifacts/tmp/W1.native-contained-10.lifecycle-01.log",
+      "outputSha256": "7c4080a4534106aaccd8bf1cfecd3690f9c83a905e8d33f92b7aaa121fa346f9",
+      "report": "artifacts/tmp/W1.native-contained-10.lifecycle.json",
+      "scope": "Build/process receipt only; actual native observations are assessed separately."
+    },
+    {
+      "commandId": "desktop:application",
+      "command": "{checkout}\\.venv\\Scripts\\python.exe -B -X utf8 {checkout}\\artifacts\\tmp\\W1.native-boundary-10.py lifecycle-resume 0271a76f6c17bdcce3a7e10f931c8ebb44513999 20260912-w1-final-10",
+      "cwd": ".",
+      "exitCode": 0,
+      "status": "PASS",
+      "provenance": "fresh",
+      "durationSeconds": 24.227648600004613,
+      "log": "artifacts/tmp/W1.native-contained-10.lifecycle-resume-01.log",
+      "outputSha256": "1bcd89413f1121e2c2fa2e4a2a2f2a52bebff348e4de5c33b3b57202be749fd1",
+      "report": "artifacts/tmp/W1.native-contained-10.lifecycle-resume.json",
+      "scope": "Build/process receipt only; actual native observations are assessed separately."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "verify-05 renderer-unit: 137 passed, three pre-existing skipped; existing separate Application Settings and Project Settings, current-account scope and settings controller/UI coverage remain intact. The correction changes only truthful monitoring-failure presentation and the bounded shared native system-menu dispatch; no settings destination or authority change."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "verify-05 renderer-unit and four built-recovery cases cover first-confirmed No login, Windows password and Windows Hello, unconfirmed initial status, timeout/malformed response, and accepted native invalid policy. No invented manual lock or Windows authentication/reset for No-login/unknown monitoring failure. Whole-application restart guidance retains configured requirements. Fresh native10 observes healthy No-login menu behavior and whole-session restart with no project reopened; process success alone is not its UI proof."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "verify-05 state/interaction tests and built-recovery protected denial cases preserve the 1500 ms timeout, audit ordering, passive-recovery latch and exact explicit-unlock authority. Denial restores the initiating focus, retains cleared content and provider requirements; confirmation retains its own focus. Native unit: 117 passed/one ignored. Supplement native witness: one passed; exactly three named current renderer contract tests consume its real serialized shapes through simulated transport. No actual Windows authentication or settings mutation is claimed."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Fresh unit and built-recovery tests assert the protected shell/command/navigation/footer remain cleared, private synthetic strings absent, original native snapshot unchanged, no silent provider fallback and no unexpected transition/recovery calls. A later accepted locked observation followed by passive unlocked status does not clear the failure latch. Fresh native10 synthetic policy hash remains unchanged; ordinary user policy, vault, project and credentials are excluded."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Fresh built-recovery exercises both light/dark themes at 720 by 450 with reduced motion, focus and status/alert semantics; renderer interaction coverage preserves confirmation/denial ownership. Native10 separately records actual Windows menu dismissal, physical first-Tab focus, standard menu actions and restart. Fresh reference workflows/accessibility and public UI-change gate pass against approved Academic Minimal 1.6. Reference-fixture checks are not native screen-reader speech or complete native accessibility/zoom qualification; wider unchanged Wave boundaries remain deferred."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "desktop:unit",
+      "foundation:quality",
+      "foundation:ui-change",
+      "desktop:ui-workflow",
+      "desktop:ui-accessibility",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Exact six admitted product/test paths restore truthful fail-closed recovery and same-window system-menu liveness. Select state/identity/ordering/denial/focus, built renderer, native units and serialized contract, actual menu/restart, affected quality/reference/UI-authority and ledger checks. Separately reviewed bounded UI-authority maintenance authenticates the adopted amendment origin and all control-only source commits; it does not expand product scope.",
+    "deferred": [
+      "Fresh full W1 repository/profile and cross-capability matrix, security/privacy/rights, performance, production packaging, required real-principal authentication and full native accessibility remain Wave qualification obligations; neither task completion nor source-built synthetic startup substitutes for them.",
+      "The separately identified product frame-verifier closed-details anchor defect remains bounded control maintenance after this correction; its adverse frame run is not a passing task or Wave result."
+    ]
+  },
+  "correctiveIntegration": {
+    "originSha256": "1b6fc9b07a5a1a4b37330bc321d03beee447594c9370a3b0ec4926b3041a6992",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "{checkout}\\.local\\toolchains\\cargo\\bin\\cargo.exe test -p research-observatory-desktop --lib --features integration-harness --locked --no-run --message-format=json",
+      "{checkout}\\.local\\toolchains\\cargo\\bin\\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests::renderer_contract_witness --no-run --message-format=json",
+      "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run test",
+      "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run typecheck",
+      "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run lint",
+      "{checkout}\\.venv\\Scripts\\python.exe -B -m unittest tests.desktop.test_application_lock_recovery",
+      "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-87920ad6b8bab1d3.exe",
+      "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture then {checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node.exe {checkout}\\apps\\desktop\\node_modules\\vitest\\vitest.mjs run apps/desktop/src/app/applicationSettings.native.integration.test.ts",
+      "{checkout}\\.local\\toolchains\\cargo\\bin\\cargo.exe fmt --all --check",
+      "{checkout}\\.venv\\Scripts\\python.exe -B -m ruff check tests/desktop/test_application_lock_recovery.py",
+      "{checkout}\\.venv\\Scripts\\python.exe -B tools/ui_change_gate.py --repo . --base 7c48c6d9f64459b849519829d91b3f9290addef6",
+      "{checkout}\\target\\debug\\deps\\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture then {checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node.exe {checkout}\\apps\\desktop\\node_modules\\vitest\\vitest.mjs run --root apps/desktop --reporter=verbose src/app/applicationSettings.native.integration.test.ts",
+      "{checkout}\\.venv\\Scripts\\python.exe -B tools/ui_conformance.py --repo . --check workflows",
+      "{checkout}\\.venv\\Scripts\\python.exe -B tools/ui_conformance.py --repo . --check accessibility",
+      "{checkout}\\.venv\\Scripts\\python.exe -B -m ruff format --check tests/desktop/test_application_lock_recovery.py",
+      "{checkout}\\.venv\\Scripts\\python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "{checkout}\\.venv\\Scripts\\python.exe -B tools/backlog_views.py --repo . --check",
+      "{checkout}\\.venv\\Scripts\\python.exe -B tools/plan_review_check.py --repo .",
+      "{checkout}\\.venv\\Scripts\\python.exe -B -X utf8 {checkout}\\artifacts\\tmp\\W1.native-boundary-10.py build 0271a76f6c17bdcce3a7e10f931c8ebb44513999",
+      "{checkout}\\.venv\\Scripts\\python.exe -B -X utf8 {checkout}\\artifacts\\tmp\\W1.native-boundary-10.py lifecycle 0271a76f6c17bdcce3a7e10f931c8ebb44513999 20260912-w1-final-10",
+      "{checkout}\\.venv\\Scripts\\python.exe -B -X utf8 {checkout}\\artifacts\\tmp\\W1.native-boundary-10.py lifecycle-resume 0271a76f6c17bdcce3a7e10f931c8ebb44513999 20260912-w1-final-10"
+    ],
+    "reusedEvidence": [],
+    "rationale": "Preserve the original DONE W1.A05.T04 and adopted immutable approval. Restore its truthful current-mode/recovery and keyboard contract without changing policy, authentication, permission, timeout, failure latch, migration, governed reference or release criteria. Current-candidate checks and actual native observations are fresh; retained historical/adverse observations are not promoted to qualification."
+  },
+  "observations": {
+    "reports": [
+      {
+        "path": "artifacts/tmp/W1.C04.T01.verify-05.json",
+        "sha256": "e1c41bc7cf6572871282cb9c003f9a7a62cc7399ee699919ceb0aa0cd722c3d5",
+        "producer": {
+          "path": "artifacts/tmp/W1.C04.T01.verify-05.py",
+          "sha256": "62403d9cbd240287f47b5184335259adbb3be722e691d9f00722e811b90b2076"
+        },
+        "durationSeconds": 116.28764669998782
+      },
+      {
+        "path": "artifacts/tmp/W1.C04.T01.supplement-01.json",
+        "sha256": "27fc853b2534ed2d6f997169b8757490bbcaf4b193dcd7e3f7df7279c0f57f35",
+        "producer": {
+          "path": "artifacts/tmp/W1.C04.T01.supplement-01.py",
+          "sha256": "9df951ba8804ff3ef84044ac79bec42034b964c5b3899e83bcf98762dd66b62a"
+        },
+        "durationSeconds": 289.59101669996744
+      }
+    ],
+    "nativeReports": [
+      {
+        "path": "artifacts/tmp/W1.native-contained-10.build.json",
+        "sha256": "872faa6ed3310ed74daa00cc04c8937f4622ccf432ff7d6c6296cd6970771076",
+        "child": {
+          "path": "artifacts/tmp/W1.native-boundary-10.build.json",
+          "sha256": "130b4fab62f2c2babdc1f9c2aafd341c29f6db3f40c6cabcf8183a7aeb83a8af"
+        },
+        "log": {
+          "path": "artifacts/tmp/W1.native-boundary-10.build.log",
+          "sha256": "e28e86b0b49cefaa4933af103c97cae9666c62bd142d524b8d162c26cdfc129f"
+        },
+        "durationSeconds": 23.322066199965775,
+        "containment": {
+          "rootExitCode": 0,
+          "totalProcesses": 46,
+          "activeProcesses": 0,
+          "drained": true,
+          "cleanupState": "EMPTY_CONFIRMED",
+          "buildAuxiliaryDisposition": "BUILD_SUCCESS_WITH_OWNED_TELEMETRY_CLEANUP"
+        }
+      },
+      {
+        "path": "artifacts/tmp/W1.native-contained-10.lifecycle.json",
+        "sha256": "df7e3450c768d7b2c658cf37e28353f85f204fb9068c6bf36225cfac7342bc21",
+        "child": {
+          "path": "artifacts/tmp/W1.native-boundary-10.lifecycle.json",
+          "sha256": "d844ebd46b9b94c64733ee365d15d373494adad7c5e8006b478caa6bdbb5724f"
+        },
+        "log": {
+          "path": "artifacts/tmp/W1.native-boundary-10.lifecycle.log",
+          "sha256": "daff5926b8e3aa521cce92fae7c3e516638e51f99e761934b5176e03d5658502"
+        },
+        "durationSeconds": 729.054263100028,
+        "containment": {
+          "rootExitCode": 0,
+          "totalProcesses": 40,
+          "activeProcesses": 0,
+          "drained": true,
+          "cleanupState": "EMPTY_CONFIRMED",
+          "buildAuxiliaryDisposition": null
+        }
+      },
+      {
+        "path": "artifacts/tmp/W1.native-contained-10.lifecycle-resume.json",
+        "sha256": "da4d2c5a0ec2b0907597bf17d1b844c1efd99ae29e77522916d99c007af3fe4b",
+        "child": {
+          "path": "artifacts/tmp/W1.native-boundary-10.lifecycle-resume.json",
+          "sha256": "335fa988941f2c93f2b0a70eabebff8f0213a9cfed2b89fc3ddc6305863e5fdb"
+        },
+        "log": {
+          "path": "artifacts/tmp/W1.native-boundary-10.lifecycle-resume.log",
+          "sha256": "4f6272e37c5ddecc29d9f24232535603e9b177c1fd7f0d52f2fe1bfaee9a45d5"
+        },
+        "durationSeconds": 26.78510360000655,
+        "containment": {
+          "rootExitCode": 0,
+          "totalProcesses": 30,
+          "activeProcesses": 0,
+          "drained": true,
+          "cleanupState": "EMPTY_CONFIRMED",
+          "buildAuxiliaryDisposition": null
+        }
+      }
+    ],
+    "native": {
+      "schemaVersion": "1.0",
+      "candidate": "0271a76f6c17bdcce3a7e10f931c8ebb44513999",
+      "taskId": "W1.C04.T01",
+      "status": "PASS",
+      "physicalFirstTab": "OWNER_CONFIRMED_PASS",
+      "date": "2026-09-12",
+      "observationSource": "Actual computer-use screenshots/accessibility and Windows keyboard actions, plus the repository owner's uninterrupted physical-keyboard observation. No retained screenshot artifact or independent UIA button-focus proof is claimed.",
+      "observations": [
+        "Fresh native10 startup showed Project Home, no project open, Core ready and no credential prompt. Ctrl+K focused the command input; Alt+Space displayed the standard Windows menu. A later snapshot while the menu remained open still showed healthy Core, not the former false lock/recovery screen.",
+        "Automated Escape visually dismissed the menu, but the following automated Tab did not visibly advance focus. This adverse automation observation is retained. The supported input method activates its target window; its precise contribution to the discrepancy is not proved.",
+        "The owner was asked to click the synthetic app then perform Ctrl+K, Alt+Space, Escape, a two-second pause and exactly one Tab without switching windows. The owner answered Yes, please continue to the direct question whether Open local projects received the blue outline. No agent UI input was sent during that requested sequence.",
+        "The first later inactive/transitional capture did not prove focus. After supported target activation and fresh window selection, the settled native screenshot showed the blue outline around Open local projects. UIA reported RootWebArea rather than the button, so the physical reply and visible screenshot are the focus evidence, not UIA button attribution. Enter then opened Local Projects; a settled observation showed Core Ready and the preselected synthetic default parent. No project was created or opened.",
+        "Standard menu Move, Right moved the observed window origin from 137 to 148; Escape restored 137. Standard menu Size, Right-edge selection, Left changed captured window width 1442 to 1431; Escape restored 1442, with the same left origin. Both outer horizontal window edges were visible in these captures. Core remained healthy.",
+        "Standard menu Close exited the original lifecycle normally with root zero; all 40 owned processes drained to EMPTY_CONFIRMED without a runtime cleanup exception.",
+        "A fresh whole-application lifecycle-resume session using the same synthetic fixture showed Project Home, no project open and Core Ready without credentials. Alt+F4 closed it normally; all 30 owned processes drained to EMPTY_CONFIRMED with root zero and no runtime cleanup exception."
+      ],
+      "policy": {
+        "path": "artifacts/tmp/directory-dialog-20260912-w1-final-10/application-data/security/application-sign-in-policy.v1.json",
+        "sha256BeforePhysicalTest": "8422e626fa8869924616b5679bdb89afcfda4ea89bf8f2608b0f4bdc5f19c4c2",
+        "sha256AfterClose": "8422e626fa8869924616b5679bdb89afcfda4ea89bf8f2608b0f4bdc5f19c4c2",
+        "sha256AfterRestartClose": "8422e626fa8869924616b5679bdb89afcfda4ea89bf8f2608b0f4bdc5f19c4c2",
+        "ordinaryPolicyAccessed": false
+      },
+      "timingLimits": "The physical sequence's private menu replay recorded native EXIT and returned after 6569.0559 ms with sender state zero. No raw physical key-down timestamps were collected; this is not exact Escape/Tab latency proof. The status trace has a fixed admission limit and cannot establish completeness after its cap. Lifecycle elapsed time includes waiting for the owner and observation; no benchmark or performance-budget claim.",
+      "scope": "Fresh source-built React/Tauri/Core with shared production menu handler and substituted synthetic policy, default parent, Core vault/temp and WebView storage. No ordinary project, vault, policy, credential or security setting accessed. No authentication, production signing/packaging, complete installed-runtime closure, full native accessibility, screen-reader speech, result reuse or full W1 qualification claim."
+    },
+    "limits": "Tool-observed receipts with immutable selected inputs and owned process drainage, not signed attestations or complete installed-runtime/dependency closure. Reuse disabled. The native build alone needed exact owned compiler-telemetry cleanup; runtime receipts distinguish natural drainage. No production signing or G1 approval.",
+    "manifestAssembly": {
+      "priorManifest": "artifacts/tmp/W1.C04.T01.submission-preflight-01.json",
+      "priorSha256": "d4bf3c8188493ff8c407cf924ac49bec481f952a054ca597de9b83d1bf3bdc40",
+      "disposition": "Pre-submission rejection: duplicate selected command. No task or review round mutation. Identical preparation command is represented by the later supplement receipt; both executed reports retained. Independent preflight also corrected native-unit cwd and explicitly records both contract-stage cwd values."
+    }
+  },
+  "retainedHistory": {
+    "nativeNotes": [
+      "artifacts/evidence/W1.C04.T01.native-A.md",
+      "artifacts/evidence/W1.C04.T01.native-B.md",
+      "artifacts/evidence/W1.C04.T01.native-C.md",
+      "artifacts/evidence/W1.C04.T01.native-production.md",
+      "artifacts/evidence/W1.C04.T01.native-09.md"
+    ],
+    "notes": "Preserve unsuccessful async dispatch A/B, experimental pending-slot C limits, automated first-Tab adverse observations, verify02 pre-report launcher failure, verify03 lost-output failure, verify04 final UI-gate failure, and adverse first maintenance candidate. verify05 passed but its root Vitest invocation reported 24 passes/eight files; only supplement01's one named current file/three tests establishes precise renderer-contract attribution. Native09 physical success is historical, not native10 proof.",
+    "maintenanceEvidence": {
+      "path": "artifacts/evidence/linked-ui-authority.evidence-01.json",
+      "sha256": "1bd7a8301e0d6f65db1a6692201ed8851d93fb6f57e7e0a368382324be88168b"
+    },
+    "maintenanceReview": {
+      "path": "artifacts/evidence/linked-ui-authority.review-01.json",
+      "sha256": "0bd168da795ad13109d4c196d1dd7625cbb575ae4ffd515923249ca76c9f217d"
+    }
+  }
+}

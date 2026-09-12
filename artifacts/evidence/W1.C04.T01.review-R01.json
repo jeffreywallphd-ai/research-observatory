@@ -1,0 +1,68 @@
+{
+  "task_id": "W1.C04.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "0271a76f6c17bdcce3a7e10f931c8ebb44513999",
+  "base_commit": "7c48c6d9f64459b849519829d91b3f9290addef6",
+  "submission_packet_sha256": "3baf9a20ecbc77d8fd234eeda45b5fa903517a4fbc2dc232852f5ea005d8650e",
+  "acceptance_criteria_sha256": "9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896",
+  "selection_sha256": "ad6376284774e36881216ed3fd884aa3c6c58dbde756538c4407e52062d7f840",
+  "reviewer": "agent:/root/c04_evidence_review",
+  "reviewed_at": "2026-09-12T13:25:51Z",
+  "result": "approved",
+  "findings": [],
+  "closures": [],
+  "notes": "Independently reviewed the exact six-path product/test restoration and its committed successors; those product bytes remain unchanged from c74da480971004230a33db57893caafe5a55b7fe at this final candidate. Authenticated the final 27-path Git delta, exact frozen R01 packet, criterion and selection bindings, final manifest, selected reports/logs, producer succession and native build/lifecycle identities. The correction preserves the original DONE W1.A05.T04, its authenticated amendment authority and current approved reference lineage. No material open finding remains within the admitted correction. Approval is not full Wave qualification, production packaging, real Windows authentication, complete native accessibility, integration or release approval. The separate frame-verifier defect and wider Wave obligations remain explicitly deferred, not passed. Findings and closures are empty because R01 has no prior formal task findings; retained development, native and maintenance adverse history is assessed below, not rewritten as invented review rounds.",
+  "corrective_integration": {
+    "evidence_sha256": "d55bb68a8f2d16a9e95b2a4f6c1498034ebbe60effe3095918e985488d14f091",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The exact manifest maps all five inherited criteria to affected current-candidate proof. State/interaction and assembled-renderer regressions cover truthful confirmed/unknown modes, real invalid-policy distinction, all three mode recovery/denial paths, cleared sensitive UI, retained 1500 ms timeout, audit ordering, first-failure latch, refusal of passive recovery and explicit-unlock/focus ownership. The shared native menu handler remains an exact same-window scalar alias for the existing space-triggered system-menu action, with other messages and policy authority unchanged. Native10 binds a fresh source-built fixture-isolated React/Tauri/Core executable to the same candidate for original and resumed lifecycles. Owner-confirmed physical first-Tab focus and the implementer's subsequent settled screenshot/action observations support keyboard recovery; they are not independently collected key timestamps or UIA button-focus proof. Standard menu Move/Size cancellation, menu Close, whole-session restart and Alt+F4 observations are consistent with native logs and natural owned-tree drainage. Accepted control-only maintenance is authenticated separately through its preserved two-source-commit and immediate evidence/review chain; it does not enlarge the product scope."
+  },
+  "criterion_assessments": [
+    {
+      "criterion_index": 1,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "Application Settings and Project Settings separation, current-account scope and settings authority are unchanged. The fresh renderer suite passes 137 tests with three native-fixture tests skipped there; those three are executed explicitly by the focused supplement."
+    },
+    {
+      "criterion_index": 2,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "New state/view and four built-recovery cases establish truthful No-login, Windows-password, Windows-Hello and initially unconfirmed monitoring failure, without fabricated manual/provider/reset authority. Genuine invalid-policy recovery is preserved. Restart guidance retains configured requirements; native10 observes healthy No-login startup/menu/restart with no project reopened."
+    },
+    {
+      "criterion_index": 3,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "Failure, denial and passive-event regressions retain native policy authority and the failure latch; explicit action settlement restores focus without stealing confirmation ownership. Fresh native units pass 117 with one intentionally ignored witness. The supplement explicitly runs that native witness and exactly three named current renderer-contract tests through disclosed simulated transport. Actual credential verification is not claimed."
+    },
+    {
+      "criterion_index": 4,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "Changed-path tests verify the cleared protected shell, absent synthetic private strings, unchanged accepted native snapshot and no silent provider fallback or unintended recovery calls. A later native locked observation followed by passive unlocked status does not clear the failure latch. The exact owned synthetic policy's current hash matches the three recorded observation hashes; no ordinary research policy or vault was read by this review."
+    },
+    {
+      "criterion_index": 5,
+      "disposition": "satisfied-within-correction-scope",
+      "assessment": "Affected built-renderer evidence covers both themes, 720-by-450 layout, reduced motion and focus/status/alert semantics. Physical first-Tab and standard menu/restart observations are separately qualified. Fresh reference checks pass 14 workflow profiles, 139 browser cases and 390 keyboard cases; accessibility passes 33 pages and 66 responsive plus 66 responsive-visual cases. The live public UI gate passes the exact base/candidate against approved Academic Minimal 1.6 lineage. These checks do not claim native screen-reader speech or complete Wave-wide zoom/accessibility qualification."
+    }
+  ],
+  "evidence_assessment": {
+    "evidence_path": "artifacts/evidence/W1.C04.T01.json",
+    "evidence_sha256": "d55bb68a8f2d16a9e95b2a4f6c1498034ebbe60effe3095918e985488d14f091",
+    "verify05_report_sha256": "e1c41bc7cf6572871282cb9c003f9a7a62cc7399ee699919ceb0aa0cd722c3d5",
+    "supplement01_report_sha256": "27fc853b2534ed2d6f997169b8757490bbcaf4b193dcd7e3f7df7279c0f57f35",
+    "native10_observations_sha256": "95ab062ab3a771aeba9169ddf1ab38b0470b6b0a1011e05fef21a7cc53c91fa5",
+    "native10_build_report_sha256": "872faa6ed3310ed74daa00cc04c8937f4622ccf432ff7d6c6296cd6970771076",
+    "native10_lifecycle_report_sha256": "df7e3450c768d7b2c658cf37e28353f85f204fb9068c6bf36225cfac7342bc21",
+    "native10_resume_report_sha256": "da4d2c5a0ec2b0907597bf17d1b844c1efd99ae29e77522916d99c007af3fe4b",
+    "native10_executable_sha256": "7eea66669b8828fdb7bd11e6dfa9673b8232ce1629c043a8ae9956f36d28baeb",
+    "disposition": "All declared check log hashes and lengths, report/child identities and exact candidate bindings authenticate. Twenty-one unique manifest command descriptions represent 22 completed groups across the retained reports; the repeated identical preparation remains preserved in both reports. verify05 and supplement01 have 11 and eight passing/drained groups respectively. Native10 build drains 46 owned processes with the admitted exact build-only compiler-telemetry cleanup; original/resumed runtime trees drain 40/30 naturally with no runtime exception. Ordered libtest/Vitest stages now record their exact distinct working directories. Fresh evidence only; no installed-runtime closure or reuse entitlement."
+  },
+  "retained_history_assessment": [
+    "Unsuccessful A/B dispatch hypotheses and experimental C limitations remain adverse/historical. Source-only guards, closed windows and elapsed process time are not substituted for native UI correctness.",
+    "Automated first-Tab adverse observations remain recorded. The uninterrupted physical-keyboard owner confirmation and subsequent settled visual/action evidence support the corrected behavior without proving the precise automation discrepancy or exact Escape-to-Tab latency. The bounded status trace cannot prove completeness after its cap.",
+    "verify02 pre-report launcher failure, verify03 lost output and verify04 UI-authority failure are retained. verify05's root Vitest result of 24 tests/eight files is not treated as 24 distinct intended production tests; supplement01 closes attribution with one explicitly named current file and three tests.",
+    "The first control-maintenance candidate 1a0c61ed9ca79dc304f42d74be2536bf3a01ebe6 remains not accepted. Its independent P2 and failed diagnostic-wording run are preserved; final maintenance review authenticates closure at 6aafd85ca206452488b764cea396488fb1a32543. Evidence/review delivery at 99ca202442345bdc2e1676048fc03fde5ec42864 and c2d8355373acd47bc1fda1b374b0ee74295636f6 remains exact.",
+    "The unsubmitted manifest d4bf3c8188493ff8c407cf924ac49bec481f952a054ca597de9b83d1bf3bdc40 was rejected before mutation for duplicate command declarations. The native working-directory metadata discrepancy was corrected before R01. The replacement retains both reports, qualifying results and adverse history; no test was weakened or result invented."
+  ],
+  "review_limits": "Read-only independent source/evidence review until creation of this ledger. The reviewer did not author implementation, run builds/tests, send native input or personally collect the owner's physical observation. Human and implementer observations are attributed as such and assessed alongside authenticated machine evidence. The protected W1.A04.B00 witness was not opened, hashed, copied, staged or modified. This ledger alone does not mutate backlog state or authorize integration, external effects or release."
+}

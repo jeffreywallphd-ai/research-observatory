@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 529cb9dc932d01c852a10650fc6174bea63a1125dbe7f1eaae3c8ec82a72f736
+source_sha256: 6ae06e9cbd962359e8f3b1c0ca01d340d2f8fdc6f25abf9adf0ca56278b2b157
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -638,13 +638,13 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/ui_guard_planning | - |
 | `W1.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
-| `W1.C04.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W1.C04.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c04_evidence_review | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` | 6/6 | 19/19 | `G0` / `APPROVED` |
-| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 15/15 | 51/52 | `G1` / `PENDING` |
+| `W1` - Windows local runtime and durable core | `APPROVED` | `PAUSED` | `PAUSED` | 15/15 | 52/52 | `G1` / `PENDING` |
 | `W2` - Windows local evidence foundation | `PENDING` | `NONE` | `PENDING` | 0/11 | 0/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
@@ -700,9 +700,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `W1.C04.T01` Implement Application Settings Security & sign-in | `IN_PROGRESS` | codex | `codex/w1-windows-local-runtime` |
+No task is currently active.
 
 ## Linked corrective tasks
 
@@ -722,5 +720,5 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C04.T01 — Implement Application Settings Security & sign-in
 
-**Status:** `IN_PROGRESS`. **Original task:** `W1.A05.T04`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `W1.A05.T04`. **Latest review:** `approved`.
 

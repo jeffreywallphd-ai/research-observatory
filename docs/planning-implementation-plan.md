@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 529cb9dc932d01c852a10650fc6174bea63a1125dbe7f1eaae3c8ec82a72f736
+source_sha256: 6ae06e9cbd962359e8f3b1c0ca01d340d2f8fdc6f25abf9adf0ca56278b2b157
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2544,7 +2544,7 @@ Original tasks and approvals remain unchanged.
 
 ### W1.C04.T01 — Implement Application Settings Security & sign-in
 
-**Status:** `IN_PROGRESS`. **Original task:** `W1.A05.T04`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `W1.A05.T04`. **Latest review:** `approved`.
 
 **Reproduction:** On the actual fixture-isolated React/Tauri/Core candidate, Alt+Space from healthy No-login mode opens the Windows system menu and yields application-lock status unavailable. The cleared renderer then incorrectly claims manual lock, names Windows as provider and offers Windows unlock. Escape dismisses the menu but correctly does not clear the fail-closed latch. Two native observations reproduce the failure; the controlled second attempt used Alt+Space alone after successful create/open/workflow/model-center/close and native folder cancellation. Native process exit and owned-tree drain passed, not UI acceptance. Full qualification attempt 02 was deliberately cancelled after this disqualifying product failure; retain its partial passes, interruption and unexecuted checks, not a full PASS.
 
@@ -2566,13 +2566,43 @@ Original tasks and approvals remain unchanged.
 - tests/desktop/test_application_lock_recovery.py
 #### Review history — W1.C04.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `3baf9a20ecbc77d8fd234eeda45b5fa903517a4fbc2dc232852f5ea005d8650e`
+
+- Candidate / base / branch: `0271a76f6c17bdcce3a7e10f931c8ebb44513999` / `7c48c6d9f64459b849519829d91b3f9290addef6` / `codex/w1-windows-local-runtime`
+- Submitted by / at: codex / `2026-09-12T13:21:54+00:00`
+- Evidence: `artifacts/evidence/W1.C04.T01.json` / `d55bb68a8f2d16a9e95b2a4f6c1498034ebbe60effe3095918e985488d14f091` / `0271a76f6c17bdcce3a7e10f931c8ebb44513999`
+- Acceptance-criteria SHA-256: `9d3d111626d2de7c0d92bec87560d180b687b61b6af49cbcdd5f807984dfb896`
+- Verification-selection SHA-256: `ad6376284774e36881216ed3fd884aa3c6c58dbde756538c4407e52062d7f840`
+- Changed paths: `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src/app/ApplicationRuntime.test.tsx`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/applicationLock.test.ts`, `apps/desktop/src/app/applicationLock.ts`, `artifacts/evidence/W1.C04.T01.native-09.md`, `artifacts/evidence/W1.C04.T01.native-A.md`, `artifacts/evidence/W1.C04.T01.native-B.md`, `artifacts/evidence/W1.C04.T01.native-C.md`, `artifacts/evidence/W1.C04.T01.native-menu.md`, `artifacts/evidence/W1.C04.T01.native-production.md`, `artifacts/evidence/W1.C04.T01.task-start.md`, `artifacts/evidence/linked-ui-authority.evidence-01.json`, `artifacts/evidence/linked-ui-authority.maintenance-01.md`, `artifacts/evidence/linked-ui-authority.review-01.json`, `artifacts/evidence/ui-change/W1.C04.T01.json`, `docs/automation/design-first-ui-changes.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W1.html`, `planning/status-summary.md`, `tests/desktop/test_application_lock_recovery.py`, `tests/foundation/test_ui_change_gate.py`, `tools/taskctl.py`, `tools/ui_change_gate.py`
+- Selected checks: `{checkout}\.local\toolchains\cargo\bin\cargo.exe test -p research-observatory-desktop --lib --features integration-harness --locked --no-run --message-format=json`, `{checkout}\.local\toolchains\cargo\bin\cargo.exe test --manifest-path apps/desktop/src-tauri/Cargo.toml application_lock::tests::renderer_contract_witness --no-run --message-format=json`, `{checkout}\.local\toolchains\node-v24.19.0-win-x64\corepack.cmd pnpm --dir apps/desktop run test`, `{checkout}\.local\toolchains\node-v24.19.0-win-x64\corepack.cmd pnpm --dir apps/desktop run typecheck`, `{checkout}\.local\toolchains\node-v24.19.0-win-x64\corepack.cmd pnpm --dir apps/desktop run lint`, `{checkout}\.venv\Scripts\python.exe -B -m unittest tests.desktop.test_application_lock_recovery`, `{checkout}\target\debug\deps\research_observatory_desktop_lib-87920ad6b8bab1d3.exe`, `{checkout}\target\debug\deps\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture then {checkout}\.local\toolchains\node-v24.19.0-win-x64\node.exe {checkout}\apps\desktop\node_modules\vitest\vitest.mjs run apps/desktop/src/app/applicationSettings.native.integration.test.ts`, `{checkout}\.local\toolchains\cargo\bin\cargo.exe fmt --all --check`, `{checkout}\.venv\Scripts\python.exe -B -m ruff check tests/desktop/test_application_lock_recovery.py`, `{checkout}\.venv\Scripts\python.exe -B tools/ui_change_gate.py --repo . --base 7c48c6d9f64459b849519829d91b3f9290addef6`, `{checkout}\target\debug\deps\research_observatory_desktop_lib-aacf52fc21d40264.exe application_lock::tests::renderer_contract_witness --ignored --exact --nocapture then {checkout}\.local\toolchains\node-v24.19.0-win-x64\node.exe {checkout}\apps\desktop\node_modules\vitest\vitest.mjs run --root apps/desktop --reporter=verbose src/app/applicationSettings.native.integration.test.ts`, `{checkout}\.venv\Scripts\python.exe -B tools/ui_conformance.py --repo . --check workflows`, `{checkout}\.venv\Scripts\python.exe -B tools/ui_conformance.py --repo . --check accessibility`, `{checkout}\.venv\Scripts\python.exe -B -m ruff format --check tests/desktop/test_application_lock_recovery.py`, `{checkout}\.venv\Scripts\python.exe -B tools/taskctl.py --file planning/backlog.yaml validate`, `{checkout}\.venv\Scripts\python.exe -B tools/backlog_views.py --repo . --check`, `{checkout}\.venv\Scripts\python.exe -B tools/plan_review_check.py --repo .`, `{checkout}\.venv\Scripts\python.exe -B -X utf8 {checkout}\artifacts\tmp\W1.native-boundary-10.py build 0271a76f6c17bdcce3a7e10f931c8ebb44513999`, `{checkout}\.venv\Scripts\python.exe -B -X utf8 {checkout}\artifacts\tmp\W1.native-boundary-10.py lifecycle 0271a76f6c17bdcce3a7e10f931c8ebb44513999 20260912-w1-final-10`, `{checkout}\.venv\Scripts\python.exe -B -X utf8 {checkout}\artifacts\tmp\W1.native-boundary-10.py lifecycle-resume 0271a76f6c17bdcce3a7e10f931c8ebb44513999 20260912-w1-final-10`
+- Deferred checks: `Fresh full W1 repository/profile and cross-capability matrix, security/privacy/rights, performance, production packaging, required real-principal authentication and full native accessibility remain Wave qualification obligations; neither task completion nor source-built synthetic startup substitutes for them.`, `The separately identified product frame-verifier closed-details anchor defect remains bounded control maintenance after this correction; its adverse frame run is not a passing task or Wave result.`
+- Selection rationale: Exact six admitted product/test paths restore truthful fail-closed recovery and same-window system-menu liveness. Select state/identity/ordering/denial/focus, built renderer, native units and serialized contract, actual menu/restart, affected quality/reference/UI-authority and ledger checks. Separately reviewed bounded UI-authority maintenance authenticates the adopted amendment origin and all control-only source commits; it does not expand product scope.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/c04_evidence_review / `2026-09-12T13:31:47+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W1.C04.T01.review-R01.json` / `e9a92803e4ff5698fea65735f4a392d443f7642d43d7e219b65cf73d61c202db`
+
+**Review notes:** Independently reviewed the exact six-path product/test restoration and its committed successors; those product bytes remain unchanged from c74da480971004230a33db57893caafe5a55b7fe at this final candidate. Authenticated the final 27-path Git delta, exact frozen R01 packet, criterion and selection bindings, final manifest, selected reports/logs, producer succession and native build/lifecycle identities. The correction preserves the original DONE W1.A05.T04, its authenticated amendment authority and current approved reference lineage. No material open finding remains within the admitted correction. Approval is not full Wave qualification, production packaging, real Windows authentication, complete native accessibility, integration or release approval. The separate frame-verifier defect and wider Wave obligations remain explicitly deferred, not passed. Findings and closures are empty because R01 has no prior formal task findings; retained development, native and maintenance adverse history is assessed below, not rewritten as invented review rounds.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/c04_evidence_review at `2026-09-12T13:31:47+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independently reviewed the exact six-path product/test restoration and its committed successors; those product bytes remain unchanged from c74da480971004230a33db57893caafe5a55b7fe at this final candidate. Authenticated the final 27-path Git delta, exact frozen R01 packet, criterion and selection bindings, final manifest, selected reports/logs, producer succession and native build/lifecycle identities. The correction preserves the original DONE W1.A05.T04, its authenticated amendment authority and current approved reference lineage. No material open finding remains within the admitted correction. Approval is not full Wave qualification, production packaging, real Windows authentication, complete native accessibility, integration or release approval. The separate frame-verifier defect and wider Wave obligations remain explicitly deferred, not passed. Findings and closures are empty because R01 has no prior formal task findings; retained development, native and maintenance adverse history is assessed below, not rewritten as invented review rounds.
 
 **Currently open findings:** -
 
