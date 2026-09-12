@@ -68,6 +68,18 @@ history, mixed product changes or extra delivery. The UI gate and task submissio
 both enforce this attribution. Historical callers retain their earlier cutoff.
 This does not change the correction spec, original base, criteria or approvals.
 
+For source remediation within that same maintenance increment, optional identical
+`sourceCommits` arrays in its evidence and final independent review bind the
+complete ordered predecessor-to-candidate sequence. Every sole-parent source
+commit includes its exact changed paths and regular-file blob/SHA-256 bindings;
+all stay inside the existing control envelope plus the exact maintenance note.
+Final inventories cover the union of touched paths at the final candidate.
+Omissions, merges, forged intermediate content, deletions and mixed product work
+fail closed. Evidence-only and review-only deliveries remain immediate and
+immutable. Preserve adverse findings and their closures; final acceptance does
+not claim an earlier candidate passed. Without the optional arrays, the original
+single-source-commit rule is unchanged.
+
 ## Resumed amendment restoration (opt-in 1.1)
 
 An immutable amendment task may resume after one separately approved, executed,

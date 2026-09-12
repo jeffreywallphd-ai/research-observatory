@@ -44,3 +44,33 @@ bytes. No new controller, amendment, schema version, scope or refactoring.
 No product edits, broader frame-verifier repair, new human decision, credential
 access, protected witness access, reference change, historical rewrite or push.
 The original task base and all six admitted product/test paths remain fixed.
+
+## First candidate disposition and bounded closure
+
+Candidate `1a0c61ed9ca79dc304f42d74be2536bf3a01ebe6` is not accepted. Its fresh
+selected run executed 43 tests: 42 passed; the existing missing-review-authority
+test rejected the changed diagnostic wording. Restore its useful inherited
+review-obligation wording; do not weaken that assertion. All 12,245 owned
+processes drained naturally, root exit one, no timeout. Later lint/format groups
+were unexecuted by this failed attempt (development lint/format had passed).
+Report SHA-256 `624f8be91670af7c466f94971d7a96773290ee0039dda53fd11434b65081b4b9`;
+log SHA-256 `e8627e3a46ea93cc33104348c8b5b5133a7e26a2504496a9ad9fd7645b5ac5d6`.
+
+Independent reviewer `agent:/root/c04_evidence_review` identified blocking P2:
+the public UI gate activated complete maintenance attribution only after a
+gate-control path changed. It missed unreviewed taskctl-only controls, later
+maintenance-note changes and unrelated delivery, although task submission
+rejected them. Three new public-gate cases reproduced these false acceptances.
+Use the same full-history scope validator at both boundaries, including the
+no-net-UI branch. Final review must explicitly assess this closure.
+
+The existing single-source-commit maintenance carrier cannot truthfully claim
+the first candidate passed. Within this same increment, opt-in identical
+`sourceCommits` arrays in evidence/review bind every linear source commit and
+each exact path/blob/hash. Retain the original strict rule without that field,
+the control-only envelope, final union inventory, immediate evidence/review
+deliveries, and independent accepted final disposition. A positive two-source
+fixture failed before this change; omission, reorder, forged intermediate hash,
+incomplete inventories, mismatched arrays and later unattributed changes remain
+negative cases. This preserves the adverse candidate without resetting history
+or inventing an accepted earlier review.

@@ -786,7 +786,7 @@ def legacy_control_maintenance_errors(
             return ["historical control maintenance evidence namespace differs"]
         evidence, delivery = immutable_record(repo, head, evidence_path, reference["sha256"])
         predecessor = review["predecessorCommit"]
-        for child, parent in ((commit, predecessor), (delivery, commit), (introduction, delivery)):
+        for child, parent in ((delivery, commit), (introduction, delivery)):
             if git(repo, "rev-list", "--parents", "-n", "1", child).decode().split() != [child, parent]:
                 return ["historical control maintenance requires sole-parent candidate/evidence/review delivery"]
         if (
@@ -807,7 +807,52 @@ def legacy_control_maintenance_errors(
         contract_path = str(evidence.get("contract"))
         if not re.fullmatch(re.escape(stem) + r"\.maintenance-[0-9]{2}\.md", contract_path):
             return ["historical control maintenance contract namespace differs"]
-        paths = commit_paths(repo, commit)
+        source_paths = {commit: commit_paths(repo, commit)}
+        if "sourceCommits" in evidence or "sourceCommits" in review:
+            rows = evidence.get("sourceCommits")
+            sequence = git(repo, "rev-list", "--reverse", f"{predecessor}..{commit}").decode().splitlines()
+            if (
+                not isinstance(rows, list)
+                or not rows
+                or len(rows) > 64
+                or rows != review.get("sourceCommits")
+                or [row.get("commit") for row in rows if isinstance(row, dict)] != sequence
+                or len(rows) != len(sequence)
+                or sequence[-1] != commit
+            ):
+                return ["maintenance source sequence differs from the exact reviewed Git range"]
+            source_paths = {}
+            parent = predecessor
+            for row in rows:
+                source = row["commit"]
+                paths = commit_paths(repo, source)
+                if (
+                    set(row) != {"commit", "changedFiles"}
+                    or git(repo, "rev-list", "--parents", "-n", "1", source).decode().split() != [source, parent]
+                    or paths - (LEGACY_GOVERNANCE_CONTROL_PATHS | {contract_path})
+                ):
+                    return ["maintenance source sequence is not linear and control-only"]
+                bindings = row["changedFiles"]
+                if (
+                    not isinstance(bindings, list)
+                    or [item.get("path") for item in bindings if isinstance(item, dict)] != sorted(paths)
+                    or len(bindings) != len(paths)
+                ):
+                    return ["maintenance intermediate source inventory differs"]
+                for item in bindings:
+                    path = item["path"]
+                    if (
+                        set(item) != {"path", "gitBlob", "sha256"}
+                        or tree_entry(repo, source, path) not in {("100644", "blob"), ("100755", "blob")}
+                        or git(repo, "rev-parse", f"{source}:{path}").decode().strip() != item["gitBlob"]
+                        or hashlib.sha256(blob(repo, source, path)).hexdigest() != item["sha256"]
+                    ):
+                        return ["maintenance intermediate source binding differs"]
+                source_paths[source] = paths
+                parent = source
+        elif git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split() != [commit, predecessor]:
+            return ["historical control maintenance requires sole-parent candidate/evidence/review delivery"]
+        paths = set().union(*source_paths.values())
         if contract_path not in paths or paths - (LEGACY_GOVERNANCE_CONTROL_PATHS | {contract_path}):
             return ["historical control maintenance must remain control-only"]
         artifacts, declared = review.get("reviewedArtifacts"), evidence.get("changedFiles")
@@ -827,7 +872,7 @@ def legacy_control_maintenance_errors(
                 ).hexdigest() != row.get("sha256"):
                     return ["historical control maintenance source binding differs"]
         if authenticated is not None:
-            authenticated.update({commit: paths, delivery: {evidence_path}, introduction: {review_path}})
+            authenticated.update({**source_paths, delivery: {evidence_path}, introduction: {review_path}})
         return []
     except (KeyError, TypeError, ValueError, UnicodeError, json.JSONDecodeError) as exc:
         return [f"invalid historical control maintenance: {exc}"]
@@ -851,6 +896,53 @@ def reviewed_control_maintenance_commits(repo: Path, base: str, head: str) -> di
             raise ValueError("control maintenance chain is outside the correction range or overlaps another chain")
         admitted.update(chain)
     return admitted
+
+
+def corrective_path_admitted(task: dict[str, Any], path: object) -> bool:
+    if not isinstance(path, str):
+        return False
+    delivery = {
+        "planning/backlog.yaml",
+        "docs/planning-implementation-plan.md",
+        "planning/status-summary.md",
+        "planning/review-site/index.html",
+        "planning/review-site/manifest.json",
+        f"planning/review-site/waves/{task['wave']}.html",
+    }
+    if corrective_ui_paths(task):
+        delivery.add(f"artifacts/evidence/ui-change/{task['id']}.json")
+    return path in set(task["correction"]["changed_paths"]) | delivery or path.startswith(
+        f"artifacts/evidence/{task['id']}."
+    )
+
+
+def corrective_scope_errors(
+    repo: Path, task: dict[str, Any], candidate: str, declared: list[object] | None = None
+) -> list[str]:
+    """Shared UI/submission boundary: full history, not just net filenames."""
+    try:
+        base = task["base_sha"]
+        paths_by_commit = {
+            commit: commit_paths(repo, commit)
+            for commit in git(repo, "rev-list", f"{base}..{candidate}").decode().splitlines()
+        }
+        extra_commits = {
+            commit: paths
+            for commit, paths in paths_by_commit.items()
+            if any(not corrective_path_admitted(task, path) for path in paths)
+        }
+        extra = [path for path in (declared or []) if not corrective_path_admitted(task, path)]
+        if not extra_commits and not extra:
+            return []
+        maintenance = reviewed_control_maintenance_commits(repo, base, candidate)
+        if any(maintenance.get(commit) != paths for commit, paths in extra_commits.items()):
+            raise ValueError("out-of-scope commit lacks exact independent control-only review")
+        covered = {path for paths in maintenance.values() for path in paths}
+        if any(not isinstance(path, str) or path not in covered for path in extra):
+            raise ValueError("extra changedFiles are not reviewed maintenance delivery")
+        return []
+    except (KeyError, TypeError, ValueError, UnicodeError) as exc:
+        return [f"corrective changedFiles exceeds the exact admitted scope: {exc}"]
 
 
 def inherited_control_commits(
@@ -1232,7 +1324,10 @@ def linked_correction_authority(
     if origin.get("review_gate") != "human-and-agent-review":
         errors = linked_amendment_origin_errors(repo, head, backlog, task, origin)
         if errors:
-            raise ValueError("linked UI correction origin lacks inherited review authority: " + "; ".join(errors))
+            raise ValueError(
+                "linked UI correction origin lacks inherited human-and-agent-review "
+                "or authenticated amendment authority: " + "; ".join(errors)
+            )
     return origin
 
 
@@ -2172,6 +2267,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
                 raise ValueError("ambiguous active linked UI corrections")
             if linked_active:
                 linked_correction_authority(repo, base, head, no_ui_backlog, linked_active[0])
+                errors.extend(corrective_scope_errors(repo, linked_active[0], head))
                 errors.extend(linked_correction_range_errors(repo, base, head, linked_active[0], policy))
                 if implementation_commits(repo, base, head, policy):
                     errors.append("linked correction has reverted UI history but no net governed implementation change")
@@ -2219,7 +2315,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
             errors.append(f"invalid resumed amendment UI authority: {exc}")
             return report
-    if protected_changes and LINKED_CORRECTION_ID.fullmatch(str(contract.get("taskId"))):
+    if LINKED_CORRECTION_ID.fullmatch(str(contract.get("taskId"))):
         try:
             backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "planning/backlog.yaml")
             linked_task = find_task(backlog, str(contract["taskId"]))
@@ -2230,13 +2326,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             ):
                 raise ValueError("control maintenance requires an admitted v1.0 linked restoration")
             linked_origin = linked_correction_authority(repo, base, head, backlog, linked_task)
-            maintenance = reviewed_control_maintenance_commits(repo, base, head)
-            for commit in git(repo, "rev-list", f"{base}..{head}").decode().splitlines():
-                paths = commit_paths(repo, commit)
-                if paths & LEGACY_GOVERNANCE_CONTROL_PATHS and maintenance.get(commit) != paths:
-                    errors.append(
-                        f"linked correction control change {commit} lacks exact independent maintenance review"
-                    )
+            errors.extend(corrective_scope_errors(repo, linked_task, head))
         except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
             errors.append(f"invalid linked correction control maintenance: {exc}")
         if errors:

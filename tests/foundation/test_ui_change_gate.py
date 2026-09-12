@@ -483,6 +483,50 @@ class UiChangeGateTests(unittest.TestCase):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text("# Bounded synthetic control fixture\n", encoding="utf-8")
         candidate = self.commit(root, "legacy control candidate")
+
+        def source_binding(commit: str) -> dict[str, Any]:
+            return {
+                "commit": commit,
+                "changedFiles": [
+                    {
+                        "path": path,
+                        "gitBlob": self.git(root, "rev-parse", f"{commit}:{path}"),
+                        "sha256": hashlib.sha256(ui_gate.blob(root, commit, path)).hexdigest(),
+                    }
+                    for path in sorted(ui_gate.commit_paths(root, commit))
+                ],
+            }
+
+        source_commits = None
+        if mutation.startswith("source-"):
+            source_commits = [source_binding(candidate)]
+            if mutation == "source-hidden-product":
+                product = root / "apps/desktop/src/View.tsx"
+                original = product.read_bytes()
+                product.write_text("export const View = () => 'hidden product edit';\n", encoding="utf-8")
+                source_commits.append(source_binding(self.commit(root, "hidden intermediate product")))
+                product.write_bytes(original)
+            (root / "tools/ui_conformance.py").write_text("# Remediated control fixture\n", encoding="utf-8")
+            candidate = self.commit(root, "correct bounded source candidate")
+            source_commits.append(source_binding(candidate))
+            if mutation == "source-merge":
+                self.git(root, "switch", "-c", "source-side", source_commits[0]["commit"])
+                (root / contract_path).write_text("# Side control note\n", encoding="utf-8")
+                self.commit(root, "side source history")
+                self.git(root, "switch", "main")
+                self.git(root, "merge", "--no-ff", "source-side", "-m", "merged source history")
+                candidate = self.git(root, "rev-parse", "HEAD")
+                sequence = self.git(root, "rev-list", "--reverse", f"{predecessor}..{candidate}").splitlines()
+                source_commits = [source_binding(item) for item in sequence[:-1]]
+                source_commits.append({"commit": candidate, "changedFiles": []})
+            if mutation == "source-omitted":
+                source_commits = source_commits[1:]
+            elif mutation == "source-reordered":
+                source_commits.reverse()
+            elif mutation == "source-hash":
+                source_commits[0]["changedFiles"][0]["sha256"] = "0" * 64
+            elif mutation == "source-inventory":
+                source_commits[0]["changedFiles"] = []
         bindings = [
             {
                 "path": path,
@@ -507,6 +551,10 @@ class UiChangeGateTests(unittest.TestCase):
             evidence.pop("implementer")
         elif mutation == "invalid-implementer":
             evidence["implementer"] = "not an agent"
+        if source_commits is not None:
+            evidence["sourceCommits"] = source_commits
+        if mutation == "source-union":
+            evidence["changedFiles"] = bindings[:-1]
         self.write_json(root / evidence_path, evidence)
         if mutation == "mixed-evidence":
             (root / "extra.txt").write_text("extra delivery\n", encoding="utf-8")
@@ -548,6 +596,10 @@ class UiChangeGateTests(unittest.TestCase):
             review["reviewedArtifacts"][0]["sha256"] = "0" * 64
         elif mutation == "adverse":
             review["findings"] = [{"id": "OPEN"}]
+        if source_commits is not None:
+            review["sourceCommits"] = copy.deepcopy(source_commits)
+        if mutation == "source-mismatch":
+            review["sourceCommits"] = []
         self.write_json(root / review_path, review)
         if mutation == "mixed-review":
             (root / "extra-review.txt").write_text("extra delivery\n", encoding="utf-8")
@@ -564,8 +616,52 @@ class UiChangeGateTests(unittest.TestCase):
             cutoff = self.git(root, "rev-parse", "HEAD")
         return root, candidate, cutoff, review_path
 
+    def test_linked_source_remediation_preserves_exact_intermediate_control_history(self) -> None:
+        for mutation in (
+            "source-valid",
+            "source-omitted",
+            "source-reordered",
+            "source-hash",
+            "source-inventory",
+            "source-union",
+            "source-mismatch",
+            "source-hidden-product",
+            "source-merge",
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, candidate, head, _ = self.legacy_control_fixture(temporary, mutation)
+                errors = ui_gate.legacy_control_maintenance_errors(root, candidate, head, head)
+                self.assertEqual(mutation != "source-valid", bool(errors), errors)
+
+    def test_linked_public_scope_rejects_unattributed_control_contract_and_delivery(self) -> None:
+        for path in (
+            "tools/taskctl.py",
+            "artifacts/evidence/fixture-control.maintenance-01.md",
+            "artifacts/evidence/unrelated.json",
+        ):
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as temporary:
+                root, base, data, contract = self.linked_fixture(temporary)
+                self.linked_candidate(root, data, contract)
+                if path != "tools/taskctl.py":
+                    self.legacy_control_fixture(temporary, existing_root=root)
+                target = root / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text("unreviewed change\n", encoding="utf-8")
+                head = self.commit(root, "unattributed out-of-scope change")
+                result = validate(root, base, head)
+                self.assertFalse(result["ok"], result)
+
     def test_linked_control_maintenance_requires_exact_reviewed_commit_attribution(self) -> None:
-        for mutation in ("", "self-review", "product", "mixed-evidence", "adverse", "later", "later-revert"):
+        for mutation in (
+            "",
+            "source-valid",
+            "self-review",
+            "product",
+            "mixed-evidence",
+            "adverse",
+            "later",
+            "later-revert",
+        ):
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
                 root, base, data, contract = self.linked_fixture(temporary)
                 self.linked_candidate(root, data, contract)
@@ -579,7 +675,7 @@ class UiChangeGateTests(unittest.TestCase):
                         source.write_bytes(original)
                         head = self.commit(root, "hide unreviewed control change")
                 result = validate(root, base, head)
-                self.assertEqual(not mutation, result["ok"], result["errors"])
+                self.assertEqual(mutation in {"", "source-valid"}, result["ok"], result["errors"])
                 task = data["waves"][0]["campaign"]["corrective_tasks"][0]
                 manifest = {
                     "commit": head,
@@ -588,7 +684,7 @@ class UiChangeGateTests(unittest.TestCase):
                 }
                 errors = taskctl.validate_task_evidence(task, manifest, repo=root)
                 scope_errors = [error for error in errors if "scope" in error or "maintenance" in error]
-                self.assertEqual(bool(mutation), bool(scope_errors), errors)
+                self.assertEqual(mutation not in {"", "source-valid"}, bool(scope_errors), errors)
 
     def test_linked_amendment_origin_uses_existing_approved_contract_not_a_new_review_field(self) -> None:
         # Read only the existing named approval/packet/UI contract and Git origin.
