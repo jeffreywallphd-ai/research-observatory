@@ -20,6 +20,11 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import gcr5ctl  # noqa: E402
+from historical_witness_fixture import (  # noqa: E402
+    checkout_historical_repository,
+    historical_bytes,
+    install_synthetic_witness,
+)
 
 
 class Gcr5ctlTests(unittest.TestCase):
@@ -222,24 +227,10 @@ class Gcr5ctlTests(unittest.TestCase):
 
     def approved_application_fixture(self, temporary: str) -> tuple[Path, str, str, dict[str, bytes]]:
         repo = Path(temporary) / "repo"
-        bundle = Path(temporary) / "fixture.bundle"
-        subprocess.run(
-            ["git", "bundle", "create", str(bundle), "--all"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "clone", str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        checkout_historical_repository(repo, REPO, gcr5ctl.APPROVAL_COMMIT, gcr5ctl.BRANCH)
         self.git(repo, "config", "user.email", "gcr5@example.test")
         self.git(repo, "config", "user.name", "GCR5 Test")
         self.git(repo, "config", "core.autocrlf", "false")
-        self.git(repo, "checkout", "-B", gcr5ctl.BRANCH, gcr5ctl.APPROVAL_COMMIT)
         shutil.copy2(REPO / "tools/gcr5ctl.py", repo / "tools/gcr5ctl.py")
         candidate = self.commit_paths(repo, "candidate", "tools/gcr5ctl.py")
         packet = json.loads((repo / gcr5ctl.PACKET_PATH).read_bytes())
@@ -391,12 +382,14 @@ class Gcr5ctlTests(unittest.TestCase):
         )
         predecessor: dict[str, bytes] = {}
         for relative in gcr5ctl.FINAL_PATHS:
-            payload = (REPO / relative).read_bytes()
+            payload = historical_bytes(
+                REPO, gcr5ctl.APPROVAL_COMMIT, relative, gcr5ctl.PREDECESSOR_RAW_SHA256[relative]
+            )
             (repo / relative).write_bytes(payload)
             predecessor[relative] = payload
         witness = repo / gcr5ctl.TRIGGER_PATH
         witness.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / gcr5ctl.TRIGGER_PATH, witness)
+        install_synthetic_witness(self, repo, REPO)
         self.assertEqual(
             [gcr5ctl.TRIGGER_PATH], self.git(repo, "ls-files", "--others", "--exclude-standard").splitlines()
         )
@@ -404,19 +397,29 @@ class Gcr5ctlTests(unittest.TestCase):
         return repo, approved, application_commit, predecessor
 
     def test_exact_approved_packet_authority_and_frozen_boundary_are_valid(self) -> None:
-        approval, packet, introduction = gcr5ctl.load_authority(REPO)
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, gcr5ctl.APPROVAL_COMMIT, gcr5ctl.BRANCH)
+        install_synthetic_witness(self, repo, REPO)
+        (repo / gcr5ctl.BACKLOG_PATH).write_bytes(
+            historical_bytes(REPO, gcr5ctl.APPROVAL_COMMIT, gcr5ctl.BACKLOG_PATH, gcr5ctl.BACKLOG_BEFORE_RAW)
+        )
+        approval, packet, introduction = gcr5ctl.load_authority(repo)
         self.assertEqual(gcr5ctl.APPROVAL_COMMIT, introduction)
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual(gcr5ctl.BOOTSTRAP_ID, packet["bootstrapUnit"]["id"])
 
     def test_exact_ledger_derived_successor_is_reproducible(self) -> None:
-        successor = gcr5ctl.derive_successor_backlog(REPO)
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, gcr5ctl.APPROVAL_COMMIT, gcr5ctl.BRANCH)
+        successor = gcr5ctl.derive_successor_backlog(repo)
         self.assertEqual(gcr5ctl.BACKLOG_AFTER, hashlib.sha256(successor).hexdigest())
         self.assertEqual("CHANGES_REQUESTED", gcr5ctl._b02(__import__("yaml").safe_load(successor))["status"])
 
     def test_real_generator_stages_exactly_the_seven_authorized_successors(self) -> None:
-        backlog = gcr5ctl.derive_successor_backlog(REPO)
-        staged = gcr5ctl.stage_successor_files(REPO, self.git(REPO, "rev-parse", "HEAD"), backlog)
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, gcr5ctl.APPROVAL_COMMIT, gcr5ctl.BRANCH)
+        backlog = gcr5ctl.derive_successor_backlog(repo)
+        staged = gcr5ctl.stage_successor_files(repo, gcr5ctl.APPROVAL_COMMIT, backlog)
         self.assertEqual(set(gcr5ctl.FINAL_PATHS), set(staged))
         self.assertEqual(gcr5ctl.BACKLOG_AFTER, hashlib.sha256(staged[gcr5ctl.BACKLOG_PATH]).hexdigest())
         self.assertIn(
@@ -825,6 +828,11 @@ class Gcr5ctlTests(unittest.TestCase):
                             f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                             "import gcr5ctl",
                             "repo = pathlib.Path(sys.argv[1])",
+                            f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                            "from historical_witness_fixture import FixtureWitnesses",
+                            f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                            "adapter.__enter__()",
+                            "adapter.register(repo)",
                             "approved = sys.argv[2]",
                             "boundary = sys.argv[3]",
                             "cached = json.loads((repo / '.git/gcr5-successor.json').read_text())",
@@ -884,6 +892,11 @@ class Gcr5ctlTests(unittest.TestCase):
                     f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                     "import gcr5ctl",
                     "repo = pathlib.Path(sys.argv[1])",
+                    f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                    "from historical_witness_fixture import FixtureWitnesses",
+                    f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                    "adapter.__enter__()",
+                    "adapter.register(repo)",
                     "approved = sys.argv[2]",
                     "cached = json.loads((repo / '.git/gcr5-successor.json').read_text())",
                     "successor = {key: base64.b64decode(value) for key, value in cached.items()}",
@@ -906,6 +919,11 @@ class Gcr5ctlTests(unittest.TestCase):
                     f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                     "import gcr5ctl",
                     "repo = pathlib.Path(sys.argv[1])",
+                    f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                    "from historical_witness_fixture import FixtureWitnesses",
+                    f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                    "adapter.__enter__()",
+                    "adapter.register(repo)",
                     "boundary = sys.argv[2]",
                     "cached = json.loads((repo / '.git/gcr5-successor.json').read_text())",
                     "successor = {key: base64.b64decode(value) for key, value in cached.items()}",

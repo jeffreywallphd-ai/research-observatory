@@ -35,22 +35,12 @@ class PlanctlAmendmentTests(unittest.TestCase):
     def test_historical_experience_requires_authentic_clean_successor(self) -> None:
         """Real retained authority plus a disposable, explicitly synthetic publication."""
         import planctl
+        from historical_witness_fixture import init_shared_repository
         from ui_reference_check import canonical_payload
 
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "repo"
-            subprocess.run(
-                [
-                    "git",
-                    "clone",
-                    "--quiet",
-                    "--shared",
-                    "--no-checkout",
-                    str(REPO),
-                    str(root),
-                ],
-                check=True,
-            )
+            init_shared_repository(root, REPO)
             predecessor = "63d916a56359742a863241c7521d1b7703f24bc7"
             subprocess.run(["git", "update-ref", "--no-deref", "HEAD", predecessor], cwd=root, check=True)
             subprocess.run(["git", "read-tree", "HEAD"], cwd=root, check=True)

@@ -17,6 +17,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import taskctl  # noqa: E402
+from historical_witness_fixture import checkout_historical_repository, install_synthetic_witness  # noqa: E402
 from taskctl import backlog_schema_errors, load, validate  # noqa: E402
 
 LoadedBacklog = tuple[
@@ -79,7 +80,7 @@ class BacklogSchemaTests(unittest.TestCase):
             ("worktree", "C:/dummy"),
         ):
             changed = copy.deepcopy(data)
-            next(w for w in changed["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"][0][field] = value
+            next(w for w in changed["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"][-1][field] = value
             with self.subTest(field=field):
                 self.assertTrue(backlog_schema_errors(changed, schema_path=self.schema))
         del task["correction"]["origin_history_sha256"]
@@ -89,6 +90,10 @@ class BacklogSchemaTests(unittest.TestCase):
         from argparse import Namespace
 
         data = copy.deepcopy(self.canonical)
+        campaign = next(w for w in data["waves"] if w["id"] == "W1")["campaign"]
+        campaign.update(status="PAUSED", lease=None)
+        corrections = campaign.setdefault("corrective_tasks", [])
+        correction_id = f"W1.C{len(corrections) + 1:02d}.T01"
         indexed = taskctl.index_backlog(data)
         origin = indexed[3]["W1.A09.T03"]
         spec = {
@@ -117,12 +122,12 @@ class BacklogSchemaTests(unittest.TestCase):
             indexed[3],
             origin,
             spec,
-            {"path": "artifacts/evidence/W1.C01.T01.spec.json", "sha256": "b" * 64, "commit": "a" * 40},
+            {"path": f"artifacts/evidence/{correction_id}.spec.json", "sha256": "b" * 64, "commit": "a" * 40},
             args,
         )
-        next(w for w in data["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"] = [task]
+        corrections.append(task)
         document = taskctl.serializable_backlog(data)
-        correction = next(w for w in document["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"][0]
+        correction = next(w for w in document["waves"] if w["id"] == "W1")["campaign"]["corrective_tasks"][-1]
         return document, correction
 
     def test_corrective_admission_preserves_complete_canonical_semantics_without_filesystem_evidence_reads(
@@ -396,8 +401,7 @@ class BacklogSchemaTests(unittest.TestCase):
     def test_amendment_hold_is_a_current_schema_marker_that_legacy_tools_reject(self) -> None:
         data = copy.deepcopy(self.canonical)
         wave = next(item for item in data["waves"] if item["id"] == "W1")
-        self.assertEqual("PAUSED", wave["campaign"]["status"])
-        wave["campaign"]["scope"] = "amendment-hold"
+        wave["campaign"].update(status="PAUSED", lease=None, scope="amendment-hold")
 
         self.assertEqual([], backlog_schema_errors(data, schema_path=self.schema))
 
@@ -1042,7 +1046,13 @@ class BacklogSchemaTests(unittest.TestCase):
             )
 
     def test_neutral_gcr7_does_not_change_the_w1_a04_postappend_denial(self) -> None:
-        before = copy.deepcopy(self.canonical)
+        revision = "2eea1d0c67eb57d53e88f6717de3cfcd96fcf282"
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, revision, "codex/w1-windows-local-runtime")
+        install_synthetic_witness(self, repo, REPO)
+        before = taskctl.historical_backlog_document(repo, revision)
+        self.assertIsNotNone(before)
+        assert before is not None
         before.setdefault("wave_amendments", []).append({"id": "W1.A04"})
         before_hold = next(
             item for item in before["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002"
@@ -1050,7 +1060,7 @@ class BacklogSchemaTests(unittest.TestCase):
         before_s02 = next(item for item in before_hold["supplements"] if item["id"] == "GRR-0002.S02")
         before_errors, _packet = taskctl.recovery_supplement_authority_errors(
             before,
-            REPO,
+            repo,
             before_hold,
             before_s02,
         )
@@ -1084,7 +1094,7 @@ class BacklogSchemaTests(unittest.TestCase):
         after_s02 = next(item for item in after_hold["supplements"] if item["id"] == "GRR-0002.S02")
         after_errors, _packet = taskctl.recovery_supplement_authority_errors(
             after,
-            REPO,
+            repo,
             after_hold,
             after_s02,
         )

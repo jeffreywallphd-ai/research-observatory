@@ -19,6 +19,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import taskctl as taskctl_module  # noqa: E402
+from historical_witness_fixture import checkout_historical_repository, install_synthetic_witness  # noqa: E402
 from taskctl import (  # noqa: E402
     amendment_history_snapshot,
     amendment_identity_snapshot,
@@ -93,6 +94,12 @@ def sha256_with_synthetic_witness(payload: bytes, *args: Any, **kwargs: Any) -> 
 
 
 class TaskctlWorkflowTests(unittest.TestCase):
+    def historical_workflow(self, revision: str) -> tuple[dict, dict, dict, dict, dict]:
+        document = taskctl_module.historical_backlog_document(REPO, revision)
+        self.assertIsNotNone(document, "The exact historical fixture must be available")
+        assert document is not None
+        return taskctl_module.index_backlog(document)
+
     def paused_correction_workflow(self) -> tuple[tuple[dict, dict, dict, dict, dict], dict, dict, dict]:
         # Stable quiescent predecessor fixture, not the evolving live campaign.
         source = subprocess.check_output(
@@ -754,7 +761,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
     def packet_bound_active_amendment_workflow(
         self,
     ) -> tuple[tuple[dict, dict, dict, dict, dict], dict[str, Any]]:
-        data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
+        data, *_ = self.historical_workflow("badf4c0ec7ff1f5e121806b9fc3f9d87b0edf43c")
         data["wave_amendments"] = [
             amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02"}
         ]
@@ -814,8 +821,14 @@ class TaskctlWorkflowTests(unittest.TestCase):
         }
         data["control_plane"]["active_amendment"] = "W1.A02"
         wave = next(item for item in data["waves"] if item["id"] == "W1")
-        wave["campaign"]["status"] = "PAUSED"
-        wave["campaign"]["scope"] = "amendment-hold"
+        wave["campaign"].update(
+            status="PAUSED",
+            scope="amendment-hold",
+            lease=None,
+            owner="codex",
+            branch=branch,
+            worktree=str(REPO),
+        )
         indexed = taskctl_module.index_backlog(data)
         taskctl_module.refresh_derived_states(*indexed)
         return indexed, packet
@@ -894,7 +907,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         self,
         bootstrap: dict[str, Any],
     ) -> tuple[dict, dict, dict, dict, dict]:
-        context = load(str(REPO / "planning" / "backlog.yaml"))
+        context = self.historical_workflow("1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b")
         context[0]["wave_amendments"] = [
             amendment
             for amendment in context[0]["wave_amendments"]
@@ -1418,7 +1431,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         with patch("taskctl.persist"):
             command_renew(Namespace(task=task["id"], agent="alice", lease_hours=8, file="unused"), *context)
         self.assertEqual("alice", task["lease"]["claimed_by"])
-        self.assertEqual(".", task["worktree"])
+        self.assertEqual(str(REPO), task["worktree"])
 
     def test_evidence_requires_current_head_and_records_canonical_repository_path(self) -> None:
         context = self.workflow()
@@ -2966,14 +2979,14 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
     def test_wave_resume_records_validate_historical_binding_and_fail_closed(self) -> None:
         data, *_ = load(str(REPO / "planning" / "backlog.yaml"))
-        head = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
-        ).stdout.strip()
+        live_campaign = next(item for item in data["waves"] if item["id"] == "W1")["campaign"]
+        head = live_campaign["resume_records"][0]["pre_resume_commit"]
         historical = taskctl_module.historical_backlog_document(REPO, head)
         self.assertIsNotNone(historical)
         assert historical is not None
         wave = next(item for item in historical["waves"] if item["id"] == "W1")
         prior = copy.deepcopy(wave["campaign"])
+        self.assertEqual("PAUSED", prior["status"])
         resumed_at = prior["updated_at"]
         record = {
             "id": "W1.R01",
@@ -3554,10 +3567,22 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
     def test_canonical_cascade_passes_real_semantic_persistence(self) -> None:
         predecessor = "e5f80b52b4148506362abe989221a00fa5adbb51"
-        payload = taskctl_module.git_blob(REPO, predecessor, "planning/backlog.yaml")
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, predecessor, "codex/w1-windows-local-runtime")
+        install_synthetic_witness(self, repo, REPO)
+        payload = taskctl_module.git_blob(repo, predecessor, "planning/backlog.yaml")
         self.assertIsNotNone(payload)
         assert payload is not None
-        with tempfile.NamedTemporaryFile(dir=REPO / "planning", suffix=".yaml", delete=False) as temporary:
+        # Relocate only the active execution bindings into the owned test root;
+        # retained task evidence and historical approvals are not rewritten.
+        document = taskctl_module.yaml.safe_load(payload)
+        context = taskctl_module.index_backlog(document)
+        taskctl_module.wave_map(document)["W1"]["campaign"]["worktree"] = repo.as_posix()
+        context[3]["CAP-03.S02.T02"]["worktree"] = repo.as_posix()
+        payload = taskctl_module.yaml.safe_dump(
+            taskctl_module.serializable_backlog(document), sort_keys=False, allow_unicode=True, width=120
+        ).encode()
+        with tempfile.NamedTemporaryFile(dir=repo / "planning", suffix=".yaml", delete=False) as temporary:
             temporary.write(payload)
             backlog_path = Path(temporary.name)
         try:
@@ -3570,7 +3595,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 lease_hours=8,
                 cascade_dependents=True,
                 file=str(backlog_path),
-                repo_root=REPO,
+                repo_root=repo,
                 source_sha256=hashlib.sha256(payload).hexdigest(),
                 source_identity=identity_snapshot(data),
                 source_amendment_identity=amendment_identity_snapshot(data),
@@ -3596,7 +3621,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
             dependent["base_sha"] = subprocess.run(
                 ["git", "rev-parse", "HEAD"],
-                cwd=REPO,
+                cwd=repo,
                 capture_output=True,
                 text=True,
                 check=True,
@@ -3607,7 +3632,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 expected_sha256=hashlib.sha256(backlog_path.read_bytes()).hexdigest(),
                 expected_identity=identity_snapshot(persisted[0]),
                 expected_task_review_history=taskctl_module.task_review_history_snapshot(persisted[0]),
-                repo=REPO,
+                repo=repo,
             )
         finally:
             backlog_path.unlink(missing_ok=True)
@@ -4681,14 +4706,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
                     )
 
     def test_post_migration_v4_append_records_reserved_history_and_bounded_maintenance(self) -> None:
-        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
-        data = copy.deepcopy(data)
-        data["wave_amendments"] = [
-            amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03"}
-        ]
-        data["control_plane"].pop("maintenance_increments", None)
-        data["control_plane"]["revision"] = 11
-        data["control_plane"]["minimum_tool_revision"] = 11
+        data, capabilities, slices, tasks, gates = self.historical_workflow("1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b")
         before = copy.deepcopy(data["wave_amendments"])
         approval_path = REPO / "planning/wave-amendment-approvals/W1.A05.json"
         approval_payload = approval_path.read_bytes()
@@ -4772,14 +4790,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         save.assert_called_once()
 
     def test_post_migration_v4_append_denies_an_active_recovery_hold(self) -> None:
-        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
-        data = copy.deepcopy(data)
-        data["wave_amendments"] = [
-            amendment for amendment in data["wave_amendments"] if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03"}
-        ]
-        data["control_plane"].pop("maintenance_increments", None)
-        data["control_plane"]["revision"] = 11
-        data["control_plane"]["minimum_tool_revision"] = 11
+        data, capabilities, slices, tasks, gates = self.historical_workflow("1764e7fad327d7e7a79297f02ac43ecbb9a4ef5b")
         next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")["status"] = (
             "ACTIVE"
         )
@@ -4816,13 +4827,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
         save.assert_not_called()
 
     def test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment(self) -> None:
-        data, capabilities, slices, tasks, gates = load(str(REPO / "planning/backlog.yaml"))
-        data = copy.deepcopy(data)
-        data["wave_amendments"] = [
-            amendment
-            for amendment in data["wave_amendments"]
-            if amendment["id"] in {"W1.A01", "W1.A02", "W1.A03", "W1.A04", "W1.A05"}
-        ]
+        data, capabilities, slices, tasks, gates = self.historical_workflow("9a56ed8d25d4747d0ad6741255ea5c7514e08fc7")
         before_amendments = copy.deepcopy(data["wave_amendments"])
         before_maintenance = copy.deepcopy(data["control_plane"]["maintenance_increments"])
         approval = json.loads((REPO / "planning/wave-amendment-approvals/W1.A05.json").read_bytes())

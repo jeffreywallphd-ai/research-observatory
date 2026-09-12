@@ -185,8 +185,21 @@ class GovernancectlTests(unittest.TestCase):
                 governancectl.repository_root(str(root))
 
     def test_current_repository_shadow_command_is_read_only_json(self) -> None:
-        backlog = REPO / "planning" / "backlog.yaml"
-        before = backlog.read_bytes()
+        # A real named-branch producer is required even when this suite is detached.
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        backlog = repo / "planning/backlog.yaml"
+        backlog.parent.mkdir()
+        before = (REPO / "planning/backlog.yaml").read_bytes()
+        backlog.write_bytes(before)
+        (repo / "planning/backlog.schema.json").write_bytes((REPO / "planning/backlog.schema.json").read_bytes())
+        for arguments in (
+            ["init", "-b", "codex/shadow-receipt-fixture"],
+            ["config", "user.name", "Shadow Fixture"],
+            ["config", "user.email", "fixture@example.invalid"],
+            ["add", "planning/backlog.yaml", "planning/backlog.schema.json"],
+            ["commit", "-m", "synthetic shadow fixture"],
+        ):
+            subprocess.run(["git", *arguments], cwd=repo, capture_output=True, check=True)
         before_mtime = backlog.stat().st_mtime_ns
 
         result = subprocess.run(
@@ -194,16 +207,17 @@ class GovernancectlTests(unittest.TestCase):
                 sys.executable,
                 str(REPO / "tools" / "governancectl.py"),
                 "--repo",
-                str(REPO),
+                str(repo),
                 "next",
                 "--shadow",
                 "--json",
             ],
-            cwd=REPO,
+            cwd=repo,
             capture_output=True,
             text=True,
-            check=True,
+            check=False,
         )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         document = json.loads(result.stdout)
 
         self.assertEqual("governance-next-action-shadow", document["documentType"])
@@ -230,7 +244,7 @@ class GovernancectlTests(unittest.TestCase):
         self.assertEqual("self-check-only", document["kernel"]["checkpointTrust"])
         self.assertTrue(document["kernel"]["checkpointTailVerified"])
         receipt = document["kernel"]["receipt"]
-        git_binding = governancectl.current_git_binding(REPO)
+        git_binding = governancectl.current_git_binding(repo)
         governance_receipt.validate_receipt(
             receipt,
             event=event,
@@ -244,6 +258,14 @@ class GovernancectlTests(unittest.TestCase):
             "passed" if git_binding["trackedWorktreeClean"] and document["shadowAgreement"]["category"] else "failed"
         )
         self.assertEqual(expected_status, receipt["verification"]["overallStatus"])
+        self.assertEqual(before, backlog.read_bytes())
+        self.assertEqual(before_mtime, backlog.stat().st_mtime_ns)
+
+        subprocess.run(["git", "checkout", "--quiet", "--detach", "HEAD"], cwd=repo, check=True)
+        detached = subprocess.run(result.args, cwd=repo, capture_output=True, text=True, check=False)
+        self.assertNotEqual(0, detached.returncode)
+        self.assertIn("Shadow receipt Git producer state is invalid: Receipt Git binding is invalid", detached.stderr)
+        self.assertEqual("", detached.stdout)
         self.assertEqual(before, backlog.read_bytes())
         self.assertEqual(before_mtime, backlog.stat().st_mtime_ns)
 

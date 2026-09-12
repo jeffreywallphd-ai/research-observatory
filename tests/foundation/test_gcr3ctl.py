@@ -23,6 +23,13 @@ import gcr3ctl  # noqa: E402
 import gcr4ctl  # noqa: E402
 import recoveryctl  # noqa: E402
 import taskctl  # noqa: E402
+from historical_witness_fixture import (  # noqa: E402
+    SYNTHETIC_SHA256,
+    checkout_historical_repository,
+    historical_bytes,
+    init_shared_repository,
+    install_synthetic_witness,
+)
 
 
 class Gcr3ctlTests(unittest.TestCase):
@@ -36,8 +43,47 @@ class Gcr3ctlTests(unittest.TestCase):
         return path
 
     def run_python(self, repo: Path, *arguments: str, expected: int = 0) -> subprocess.CompletedProcess[str]:
+        # Current controllers/dependencies exercise real historical-fixture Git
+        # authority, not a closed historical toolchain. The selected script must
+        # also be present unchanged in the fixture's committed candidate.
+        child = "\n".join(
+            [
+                "import importlib.util, pathlib, subprocess, sys",
+                f"source = pathlib.Path({str(REPO)!r})",
+                f"helper = pathlib.Path({str(Path(__file__).resolve().parent)!r})",
+                "repo = pathlib.Path.cwd().resolve(strict=True)",
+                "sys.path = [str(source / 'tools'), str(helper)] + [p for p in sys.path "
+                "if p and not pathlib.Path(p).resolve().is_relative_to(repo)]",
+                "from historical_witness_fixture import FixtureWitnesses",
+                "adapter = FixtureWitnesses(source)",
+                "adapter.register(repo)",
+                "arguments = sys.argv[1:]",
+                "relative = arguments[0]",
+                "assert relative in {'tools/gcr3ctl.py', 'tools/gcr4ctl.py', "
+                "'tools/recoveryctl.py', 'tools/taskctl.py'}",
+                "script = repo / relative",
+                "assert script.resolve(strict=True) == script",
+                "payload = script.read_bytes()",
+                "normalize = lambda value: value.replace(b'\\r\\n', b'\\n')",
+                "assert normalize(payload) == normalize((source / relative).read_bytes())",
+                "committed = subprocess.check_output(['git', 'show', 'HEAD:' + relative], cwd=repo)",
+                "assert normalize(payload) == normalize(committed)",
+                "name = script.stem",
+                "spec = importlib.util.spec_from_file_location(name, script)",
+                "module = importlib.util.module_from_spec(spec)",
+                "sys.modules[name] = module",
+                "spec.loader.exec_module(module)",
+                "parsed = module.build_parser().parse_args(arguments[1:])",
+                "is_taskctl = relative == 'tools/taskctl.py'",
+                "target = pathlib.Path(parsed.file if is_taskctl else parsed.repo).resolve(strict=True)",
+                "assert target == (repo / 'planning/backlog.yaml' if is_taskctl else repo), 'effective fixture target'",
+                "sys.argv = arguments",
+                "with adapter:",
+                "    raise SystemExit(module.main())",
+            ]
+        )
         result = subprocess.run(
-            [sys.executable, *arguments],
+            [sys.executable, "-B", "-c", child, *arguments],
             cwd=repo,
             capture_output=True,
             text=True,
@@ -46,37 +92,37 @@ class Gcr3ctlTests(unittest.TestCase):
         self.assertEqual(expected, result.returncode, result.stdout + result.stderr)
         return result
 
+    def test_fixture_cli_rejects_effective_root_overrides_before_dispatch(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary, tempfile.TemporaryDirectory() as outside:
+            repo = Path(temporary)
+            init_shared_repository(repo, REPO)
+            self.git(repo, "config", "user.name", "Synthetic Fixture")
+            self.git(repo, "config", "user.email", "fixture@example.invalid")
+            (repo / "tools").mkdir()
+            (repo / "planning").mkdir()
+            (repo / "planning/backlog.yaml").write_bytes(b"fixture: true\n")
+            for name in ("gcr3ctl", "taskctl"):
+                shutil.copy2(REPO / f"tools/{name}.py", repo / f"tools/{name}.py")
+            self.git(repo, "add", "tools/gcr3ctl.py", "tools/taskctl.py", "planning/backlog.yaml")
+            self.git(repo, "commit", "-m", "fixture: effective CLI target denial")
+            for name, flag, abbreviation, local, tail in (
+                ("gcr3ctl", "--repo", "--rep", ".", ["validate", "GCR-0003"]),
+                ("taskctl", "--file", "--fi", "planning/backlog.yaml", ["validate"]),
+            ):
+                for override in (flag, abbreviation):
+                    with self.subTest(controller=name, override=override):
+                        result = self.run_python(
+                            repo, f"tools/{name}.py", flag, local, f"{override}={outside}", *tail, expected=1
+                        )
+                        self.assertIn("effective fixture target", result.stderr)
+            self.assertEqual([], list(Path(outside).iterdir()))
+
     def create_exact_gcr4_bridge(self, temporary: str) -> tuple[Path, str, str, str, str]:
         repo = Path(temporary) / "gcr4-bridge"
-        bundle = Path(temporary) / "gcr4-source.bundle"
-        bundled = subprocess.run(
-            [
-                "git",
-                "-c",
-                f"safe.directory={REPO.as_posix()}",
-                "-C",
-                str(REPO),
-                "bundle",
-                "create",
-                str(bundle),
-                gcr4ctl.BRANCH,
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(0, bundled.returncode, bundled.stdout + bundled.stderr)
-        cloned = subprocess.run(
-            ["git", "clone", "-b", gcr4ctl.BRANCH, str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(0, cloned.returncode, cloned.stdout + cloned.stderr)
+        checkout_historical_repository(repo, REPO, gcr4ctl.APPROVAL_COMMIT, gcr4ctl.BRANCH)
         self.git(repo, "config", "user.email", "gcr4-bridge@example.test")
         self.git(repo, "config", "user.name", "GCR4 Bridge Fixture")
         self.git(repo, "config", "core.autocrlf", "false")
-        self.git(repo, "checkout", "-B", gcr4ctl.BRANCH, gcr4ctl.APPROVAL_COMMIT)
         self.assertEqual(
             "",
             self.git(
@@ -118,8 +164,12 @@ class Gcr3ctlTests(unittest.TestCase):
         for relative in (gcr4ctl.TRIGGER_PATH, gcr4ctl.GCR3_LEDGER_PATH):
             destination = repo / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(REPO / relative, destination)
-        self.assertEqual(gcr4ctl.TRIGGER_SHA256, gcr4ctl.sha256((repo / gcr4ctl.TRIGGER_PATH).read_bytes()))
+            if relative == gcr4ctl.TRIGGER_PATH:
+                install_synthetic_witness(self, repo, REPO)
+            else:
+                shutil.copy2(REPO / relative, destination)
+        self.assertNotEqual(gcr4ctl.TRIGGER_SHA256, SYNTHETIC_SHA256)
+        self.assertEqual(SYNTHETIC_SHA256, gcr4ctl.sha256((repo / gcr4ctl.TRIGGER_PATH).read_bytes()))
         self.assertEqual(
             gcr4ctl.GCR3_LEDGER_SHA256,
             gcr4ctl.sha256((repo / gcr4ctl.GCR3_LEDGER_PATH).read_bytes()),
@@ -456,7 +506,7 @@ class Gcr3ctlTests(unittest.TestCase):
             self.git(r02_repo, "config", "user.name", "GCR3 R02 Fixture")
             trigger = r02_repo / gcr3ctl.TRIGGER_PATH
             trigger.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(REPO / gcr3ctl.TRIGGER_PATH, trigger)
+            install_synthetic_witness(self, r02_repo, REPO)
             remediation_path = r02_repo / "tests/foundation/test_gcr3ctl.py"
             remediation_path.write_bytes(
                 remediation_path.read_bytes() + b"\n# fixture strict-descendant GCR-0003 R02 remediation\n"
@@ -601,7 +651,7 @@ class Gcr3ctlTests(unittest.TestCase):
                     self.git(variant, "config", "user.name", "GCR4 Denial Fixture")
                     variant_trigger = variant / gcr3ctl.TRIGGER_PATH
                     variant_trigger.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(REPO / gcr3ctl.TRIGGER_PATH, variant_trigger)
+                    install_synthetic_witness(self, variant, REPO)
 
                     if scenario == "missing-packet":
                         self.git(variant, "rm", "--", gcr4ctl.PACKET_PATH)
@@ -694,7 +744,7 @@ class Gcr3ctlTests(unittest.TestCase):
         candidate = self.git(repo, "rev-parse", "HEAD")
         trigger = repo / gcr3ctl.TRIGGER_PATH
         trigger.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / gcr3ctl.TRIGGER_PATH, trigger)
+        install_synthetic_witness(self, repo, REPO)
         packet = {
             "activationBoundary": {"controlRevision": 9},
             "acceptanceCriteria": ["criterion"],
@@ -769,7 +819,10 @@ class Gcr3ctlTests(unittest.TestCase):
         ):
             destination = repo / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(REPO / relative, destination)
+            if relative == gcr3ctl.BACKLOG_PATH:
+                destination.write_bytes(historical_bytes(REPO, gcr3ctl.PACKET_COMMIT, relative, gcr3ctl.BACKLOG_SHA256))
+            else:
+                shutil.copy2(REPO / relative, destination)
         approval_path = repo / gcr3ctl.APPROVAL_PATH
         approval_path.parent.mkdir(parents=True, exist_ok=True)
         approval_path.write_bytes(b'{"fixture": true}\n')
@@ -784,7 +837,9 @@ class Gcr3ctlTests(unittest.TestCase):
         candidate = self.git(repo, "rev-parse", "HEAD")
         # Preserve the release-authoritative worktree bytes while Git retains
         # the normalized LF blob. Git considers this CRLF worktree clean.
-        shutil.copy2(REPO / gcr3ctl.BACKLOG_PATH, repo / gcr3ctl.BACKLOG_PATH)
+        (repo / gcr3ctl.BACKLOG_PATH).write_bytes(
+            historical_bytes(REPO, gcr3ctl.PACKET_COMMIT, gcr3ctl.BACKLOG_PATH, gcr3ctl.BACKLOG_SHA256)
+        )
         self.assertEqual("", self.git(repo, "status", "--short"))
         state_path = repo / gcr3ctl.STATE_PATH
         state_path.parent.mkdir(parents=True, exist_ok=True)
@@ -963,7 +1018,7 @@ class Gcr3ctlTests(unittest.TestCase):
         evidence_commit = self.git(repo, "rev-parse", "HEAD")
         trigger = repo / gcr3ctl.TRIGGER_PATH
         trigger.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / gcr3ctl.TRIGGER_PATH, trigger)
+        install_synthetic_witness(self, repo, REPO)
         predecessor_backlog = (repo / gcr3ctl.BACKLOG_PATH).read_bytes()
         predecessor_state = state_path.read_bytes()
         self.assertEqual(gcr3ctl.BACKLOG_SHA256, gcr3ctl.sha256(predecessor_backlog))
@@ -1043,11 +1098,17 @@ class Gcr3ctlTests(unittest.TestCase):
         )
 
     def test_repository_authority_is_valid_at_revision_nine(self) -> None:
-        approval, packet, base = gcr3ctl.load_authority(REPO)
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, gcr3ctl.APPROVAL_COMMIT, gcr3ctl.BRANCH)
+        (repo / gcr3ctl.BACKLOG_PATH).write_bytes(
+            historical_bytes(REPO, gcr3ctl.PACKET_COMMIT, gcr3ctl.BACKLOG_PATH, gcr3ctl.BACKLOG_SHA256)
+        )
+        install_synthetic_witness(self, repo, REPO)
+        approval, packet, base = gcr3ctl.load_authority(repo)
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual(gcr3ctl.GCR_ID, packet["controlRecoveryId"])
         self.assertEqual("d6ec319a6d9d3ccbc5fc195e91d8ee6be594ef3c", base)
-        _payload, backlog = gcr3ctl.current_boundary(REPO, packet, revision=9)
+        _payload, backlog = gcr3ctl.current_boundary(repo, packet, revision=9)
         self.assertEqual(9, backlog["control_plane"]["revision"])
 
     def test_root_cause_analysis_is_not_required_before_a_third_submission(self) -> None:
@@ -1799,6 +1860,11 @@ class Gcr3ctlTests(unittest.TestCase):
                         f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                         "import gcr3ctl, taskctl",
                         "repo = pathlib.Path(sys.argv[1])",
+                        f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                        "from historical_witness_fixture import FixtureWitnesses",
+                        f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                        "adapter.__enter__()",
+                        "adapter.register(repo)",
                         "boundary = sys.argv[2]",
                         "new_backlog = (repo / '.git/gcr3-successor-backlog').read_bytes()",
                         "new_state = (repo / '.git/gcr3-successor-state').read_bytes()",
@@ -1867,15 +1933,7 @@ class Gcr3ctlTests(unittest.TestCase):
         ]
 
         def run(repo: Path, *arguments: str, expected: int = 0) -> subprocess.CompletedProcess[str]:
-            result = subprocess.run(
-                [sys.executable, *arguments],
-                cwd=repo,
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            self.assertEqual(expected, result.returncode, result.stdout + result.stderr)
-            return result
+            return self.run_python(repo, *arguments, expected=expected)
 
         def assert_historic_retry_denied(repo: Path, candidate: str) -> None:
             before = (repo / gcr3ctl.BACKLOG_PATH).read_bytes()
@@ -1901,36 +1959,11 @@ class Gcr3ctlTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temporary:
             repo = Path(temporary) / "repo"
-            bundle = Path(temporary) / "source.bundle"
-            bundled = subprocess.run(
-                [
-                    "git",
-                    "-c",
-                    f"safe.directory={REPO.as_posix()}",
-                    "-C",
-                    str(REPO),
-                    "bundle",
-                    "create",
-                    str(bundle),
-                    gcr3ctl.BRANCH,
-                ],
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            self.assertEqual(0, bundled.returncode, bundled.stdout + bundled.stderr)
-            clone = subprocess.run(
-                ["git", "clone", "-b", gcr3ctl.BRANCH, str(bundle), str(repo)],
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            self.assertEqual(0, clone.returncode, clone.stdout + clone.stderr)
+            checkout_historical_repository(repo, REPO, gcr3ctl.APPROVAL_COMMIT, gcr3ctl.BRANCH)
             self.git(repo, "config", "user.email", "gcr3-e2e@example.test")
             self.git(repo, "config", "user.name", "GCR3 E2E Fixture")
             self.git(repo, "config", "core.autocrlf", "false")
             self.assertEqual(gcr3ctl.BRANCH, self.git(repo, "branch", "--show-current"))
-            self.git(repo, "checkout", "-B", gcr3ctl.BRANCH, gcr3ctl.APPROVAL_COMMIT)
             for relative in implementation_paths:
                 destination = repo / relative
                 destination.parent.mkdir(parents=True, exist_ok=True)
@@ -1940,7 +1973,10 @@ class Gcr3ctlTests(unittest.TestCase):
             candidate = self.git(repo, "rev-parse", "HEAD")
             trigger = repo / gcr3ctl.TRIGGER_PATH
             trigger.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(REPO / gcr3ctl.TRIGGER_PATH, trigger)
+            install_synthetic_witness(self, repo, REPO)
+            (repo / gcr3ctl.BACKLOG_PATH).write_bytes(
+                historical_bytes(REPO, gcr3ctl.PACKET_COMMIT, gcr3ctl.BACKLOG_PATH, gcr3ctl.BACKLOG_SHA256)
+            )
             self.assertEqual(gcr3ctl.BACKLOG_SHA256, gcr3ctl.sha256((repo / gcr3ctl.BACKLOG_PATH).read_bytes()))
             assert_historic_retry_denied(repo, "214ac1aac53b4396ee29f7a935ddcac2a34618b6")
 
@@ -2205,7 +2241,9 @@ class Gcr3ctlTests(unittest.TestCase):
                         "candidateCommit": witness["commit"],
                         "evidence": {
                             "path": gcr3ctl.TRIGGER_PATH,
-                            "sha256": recoveryctl.sha256(witness_payload),
+                            # Keep the historical descriptor; only the reviewed
+                            # test adapter substitutes the expected input digest.
+                            "sha256": gcr3ctl.TRIGGER_SHA256,
                             "commit": witness["commit"],
                         },
                     },
@@ -2378,7 +2416,7 @@ class Gcr3ctlTests(unittest.TestCase):
             self.assertEqual("PAUSED", taskctl.wave_map(final_data)["W1"]["campaign"]["status"])
             self.assertEqual("BLOCKED", final_tasks["CAP-02.S04.T03"]["status"])
             self.assertEqual("PENDING", taskctl.index_backlog(final_data)[4]["G1"]["status"])
-            self.assertEqual(gcr3ctl.TRIGGER_SHA256, gcr3ctl.sha256(trigger.read_bytes()))
+            self.assertEqual(SYNTHETIC_SHA256, gcr3ctl.sha256(trigger.read_bytes()))
             self.assertEqual(
                 [gcr3ctl.TRIGGER_PATH],
                 self.git(repo, "ls-files", "--others", "--exclude-standard").splitlines(),

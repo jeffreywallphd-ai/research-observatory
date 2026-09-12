@@ -17,6 +17,12 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import gcr4ctl  # noqa: E402
+from historical_witness_fixture import (  # noqa: E402
+    SYNTHETIC_SHA256,
+    checkout_historical_repository,
+    historical_bytes,
+    install_synthetic_witness,
+)
 
 
 class Gcr4ctlTests(unittest.TestCase):
@@ -44,7 +50,10 @@ class Gcr4ctlTests(unittest.TestCase):
         ):
             destination = repo / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(REPO / relative, destination)
+            if relative == gcr4ctl.BACKLOG_PATH:
+                destination.write_bytes(historical_bytes(REPO, gcr4ctl.PACKET_COMMIT, relative, gcr4ctl.BACKLOG_SHA256))
+            else:
+                shutil.copy2(REPO / relative, destination)
         state = subprocess.run(
             ["git", "show", f"{gcr4ctl.GCR3_REVIEWED_STATE_COMMIT}:{gcr4ctl.GCR3_STATE_PATH}"],
             cwd=REPO,
@@ -59,7 +68,10 @@ class Gcr4ctlTests(unittest.TestCase):
         for relative in (gcr4ctl.TRIGGER_PATH, gcr4ctl.GCR3_LEDGER_PATH):
             destination = repo / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(REPO / relative, destination)
+            if relative == gcr4ctl.TRIGGER_PATH:
+                install_synthetic_witness(self, repo, REPO)
+            else:
+                shutil.copy2(REPO / relative, destination)
         return repo
 
     def prepared_transaction_fixture(self, temporary: str) -> tuple[Path, bytes, bytes, dict, dict]:
@@ -130,7 +142,10 @@ class Gcr4ctlTests(unittest.TestCase):
             gcr4ctl.freeze_submission(args, remediation=False)
 
     def test_exact_approved_authority_is_valid(self) -> None:
-        approval, packet, introduction = gcr4ctl.load_authority(REPO)
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, gcr4ctl.APPROVAL_COMMIT, gcr4ctl.BRANCH)
+        install_synthetic_witness(self, repo, REPO)
+        approval, packet, introduction = gcr4ctl.load_authority(repo)
         self.assertEqual(gcr4ctl.APPROVAL_COMMIT, introduction)
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual(gcr4ctl.BOOTSTRAP_ID, packet["bootstrapUnit"]["id"])
@@ -254,6 +269,11 @@ class Gcr4ctlTests(unittest.TestCase):
                         f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                         "import gcr4ctl",
                         "repo = pathlib.Path(sys.argv[1])",
+                        f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                        "from historical_witness_fixture import FixtureWitnesses",
+                        f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                        "adapter.__enter__()",
+                        "adapter.register(repo)",
                         "boundary = sys.argv[2]",
                         "meta = repo / '.git/gcr4-test'",
                         "transaction = json.loads((meta / 'transaction.json').read_bytes())",
@@ -352,7 +372,7 @@ class Gcr4ctlTests(unittest.TestCase):
                 gcr4ctl.GCR3_LEDGER_SHA256,
                 gcr4ctl.sha256((repo / gcr4ctl.GCR3_LEDGER_PATH).read_bytes()),
             )
-            self.assertEqual(gcr4ctl.TRIGGER_SHA256, gcr4ctl.sha256((repo / gcr4ctl.TRIGGER_PATH).read_bytes()))
+            self.assertEqual(SYNTHETIC_SHA256, gcr4ctl.sha256((repo / gcr4ctl.TRIGGER_PATH).read_bytes()))
 
     def test_recovery_crash_during_state_next_cleanup_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -365,6 +385,11 @@ class Gcr4ctlTests(unittest.TestCase):
                     f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                     "import gcr4ctl",
                     "repo = pathlib.Path(sys.argv[1])",
+                    f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                    "from historical_witness_fixture import FixtureWitnesses",
+                    f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                    "adapter.__enter__()",
+                    "adapter.register(repo)",
                     "def crash(label):",
                     ("  if label == 'gcr4-cleanup-GCR-0004.B00.gcr3-state.next': os._exit(77)"),
                     "gcr4ctl.adoption_fault_boundary = crash",

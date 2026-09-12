@@ -51,7 +51,7 @@ class UiReferenceCheckTests(unittest.TestCase):
 
         self.assertEqual(first, second)
         self.assertTrue(first["ok"], first["errors"])
-        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.4", first["reference_id"])
+        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.6", first["reference_id"])
         site = json.loads((REFERENCE / "SITE_MANIFEST.json").read_text(encoding="utf-8"))
         manifest = yaml.safe_load((REFERENCE / "REFERENCE_MANIFEST.yaml").read_text(encoding="utf-8"))
         self.assertEqual(len(site["pages"]), first["product_pages"])

@@ -19,6 +19,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import taskctl  # noqa: E402
+from historical_witness_fixture import init_shared_repository  # noqa: E402
 
 TASK_ID = "CAP-02.S04.T03"
 HEAD = "8ad2b7a6ed8349d84380dbc36a73d586238a109a"
@@ -27,8 +28,48 @@ MANIFEST_RELATIVE = "artifacts/evidence/task-recovery/CAP-02.S04.T03.json"
 
 
 class ExactTaskRecoveryTests(unittest.TestCase):
+    def use_historical_repository(self) -> None:
+        """Historical inputs for synthetic persistence tests, not live resume proof."""
+        source = REPO
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        # The hardened manifest boundary predates unrelated GRR-0002 witness
+        # history. load_context supplies the same synthetic adopted/released
+        # GRR-0001 state that these atomic-persistence tests have always used.
+        revision = "0362cfe72c84f167338329490f6799ba9f84a808"
+        init_shared_repository(repo, source)
+        subprocess.run(["git", "update-ref", "HEAD", revision], cwd=repo, check=True)
+        subprocess.run(["git", "read-tree", "HEAD"], cwd=repo, check=True)
+        payload = taskctl.git_blob(source, revision, MANIFEST_RELATIVE)
+        self.assertIsNotNone(payload)
+        manifest = json.loads(payload or b"")
+        paths = {
+            "planning/backlog.yaml",
+            "planning/backlog.schema.json",
+            "artifacts/evidence/W1.A03.B00.json",
+            MANIFEST_RELATIVE,
+            taskctl.EXACT_T03_RECOVERY["manifest_schema"],
+            manifest["authority"]["approvalPath"],
+            manifest["authority"]["packetPath"],
+            manifest["uiEvidence"]["path"],
+        }
+        for relative in sorted(paths):
+            self.assertNotEqual("artifacts/evidence/W1.A04.B00.json", relative)
+            raw = taskctl.git_blob(source, revision, relative)
+            self.assertIsNotNone(raw, relative)
+            destination = repo / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(raw or b"")
+        self.enterContext(patch.dict(globals(), {"REPO": repo}))
+        self._synthetic_revision_six = True
+
     def load_context(self, *, base_sha: str = HEAD):
         data = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        if getattr(self, "_synthetic_revision_six", False):
+            # These atomic tests already isolate full semantic/resume admission.
+            # The two reader values and resume revision are explicitly synthetic:
+            # revision 5 predates the resume schema, while real revision 6 includes
+            # an unrelated active hold. Real manifest/Git/schema/CAS checks remain.
+            data["control_plane"].update(revision=6, minimum_tool_revision=6)
         context = taskctl.index_backlog(data)
         data, _capabilities, _slices, tasks, _gates = context
         paused_task = taskctl.historical_task(REPO, taskctl.EXACT_T03_RECOVERY["pause_record"], TASK_ID)
@@ -196,6 +237,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         return persist
 
     def test_manifest_matches_schema_and_exact_repository_lineage(self) -> None:
+        self.use_historical_repository()
         schema = json.loads(
             (REPO / "planning/enabler-change-requests/task-recovery-manifest.schema.json").read_text(encoding="utf-8")
         )
@@ -355,6 +397,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         self.assertEqual([], taskctl.task_recovery_projection_errors(context[0], task, REPO))
 
     def test_recovery_uses_real_atomic_persistence_for_one_task_only(self) -> None:
+        self.use_historical_repository()
         head = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
         ).stdout.strip()
@@ -399,6 +442,7 @@ class ExactTaskRecoveryTests(unittest.TestCase):
         self.assertEqual(before["release_gates"], after["release_gates"])
 
     def test_real_atomic_persistence_rejects_a_competing_writer_without_overwrite(self) -> None:
+        self.use_historical_repository()
         head = subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=REPO, capture_output=True, text=True, check=True
         ).stdout.strip()

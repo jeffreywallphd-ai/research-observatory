@@ -20,6 +20,11 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
 import gcr7ctl  # noqa: E402
+from historical_witness_fixture import (  # noqa: E402
+    checkout_historical_repository,
+    historical_bytes,
+    install_synthetic_witness,
+)
 
 
 class Gcr7ctlTests(unittest.TestCase):
@@ -55,35 +60,14 @@ class Gcr7ctlTests(unittest.TestCase):
 
     def clone_authority_repo(self, root: Path, *, commit: str = gcr7ctl.APPROVAL_COMMIT) -> Path:
         repo = root / "authority"
-        bundle = root / "authority.bundle"
-        subprocess.run(
-            [
-                "git",
-                "-c",
-                f"safe.directory={REPO.as_posix()}",
-                "-C",
-                str(REPO),
-                "bundle",
-                "create",
-                str(bundle),
-                gcr7ctl.BRANCH,
-            ],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "clone", "--branch", gcr7ctl.BRANCH, "--single-branch", str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        checkout_historical_repository(repo, REPO, commit, gcr7ctl.BRANCH)
         self.git(repo, "config", "user.email", "gcr7@example.test")
         self.git(repo, "config", "user.name", "GCR7 Test")
         self.git(repo, "config", "core.autocrlf", "true")
-        self.git(repo, "checkout", "-B", gcr7ctl.BRANCH, commit)
-        (repo / gcr7ctl.BACKLOG_PATH).write_bytes((REPO / gcr7ctl.BACKLOG_PATH).read_bytes())
-        self.write(repo, gcr7ctl.TRIGGER_PATH, (REPO / gcr7ctl.TRIGGER_PATH).read_bytes())
+        (repo / gcr7ctl.BACKLOG_PATH).write_bytes(
+            historical_bytes(REPO, commit, gcr7ctl.BACKLOG_PATH, gcr7ctl.BACKLOG_PREDECESSOR_RAW_SHA256)
+        )
+        install_synthetic_witness(self, repo, REPO)
         return repo
 
     def adoption_evidence(self, approved_state: str) -> dict:
@@ -142,7 +126,11 @@ class Gcr7ctlTests(unittest.TestCase):
         }
 
     def successor_backlog(self) -> dict:
-        document = copy.deepcopy(yaml.safe_load((REPO / gcr7ctl.BACKLOG_PATH).read_bytes()))
+        document = yaml.safe_load(
+            historical_bytes(
+                REPO, gcr7ctl.APPROVAL_COMMIT, gcr7ctl.BACKLOG_PATH, gcr7ctl.BACKLOG_PREDECESSOR_RAW_SHA256
+            )
+        )
         document["control_plane"]["control_generations"].append(
             {
                 "id": gcr7ctl.GCR_ID,
@@ -170,7 +158,8 @@ class Gcr7ctlTests(unittest.TestCase):
         return document
 
     def test_exact_approval_authority_is_ready_and_gcr6_is_inert(self) -> None:
-        _approval, packet, introduction = gcr7ctl.load_authority(REPO)
+        repo = self.clone_authority_repo(Path(self.enterContext(tempfile.TemporaryDirectory())))
+        _approval, packet, introduction = gcr7ctl.load_authority(repo)
         self.assertEqual(gcr7ctl.APPROVAL_COMMIT, introduction)
         self.assertEqual(gcr7ctl.GCR_ID, packet["controlRecoveryId"])
         self.assertFalse((REPO / "tools/gcr6ctl.py").exists())

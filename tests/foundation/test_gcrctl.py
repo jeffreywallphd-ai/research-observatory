@@ -19,6 +19,7 @@ sys.path.insert(0, str(REPO / "tools"))
 
 import gcrctl  # noqa: E402
 import taskctl  # noqa: E402
+from historical_witness_fixture import checkout_historical_repository, install_synthetic_witness  # noqa: E402
 
 
 class GcrctlTests(unittest.TestCase):
@@ -79,7 +80,7 @@ class GcrctlTests(unittest.TestCase):
         candidate = self.git(repo, "rev-parse", "HEAD")
         trigger = repo / gcrctl.TRIGGER_PATH
         trigger.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / gcrctl.TRIGGER_PATH, trigger)
+        install_synthetic_witness(self, repo, REPO)
         packet = {
             "activationBoundary": {"controlRevision": 6},
             "acceptanceCriteria": ["criterion"],
@@ -225,7 +226,10 @@ class GcrctlTests(unittest.TestCase):
         return evidence_commit
 
     def test_current_exact_authority_is_approved_and_witness_is_non_authoritative(self) -> None:
-        approval, packet, introduction = gcrctl.load_authority(REPO)
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, "c34f8398adc54b3703b94daf7482faf9c09cfdfc", gcrctl.BRANCH)
+        install_synthetic_witness(self, repo, REPO)
+        approval, packet, introduction = gcrctl.load_authority(repo)
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual(gcrctl.GCR_ID, packet["controlRecoveryId"])
         self.assertEqual(gcrctl.PACKET_COMMIT, approval["packet"]["commit"])
@@ -564,6 +568,11 @@ class GcrctlTests(unittest.TestCase):
                         f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                         "import gcrctl, taskctl",
                         "repo = pathlib.Path(sys.argv[1])",
+                        f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                        "from historical_witness_fixture import FixtureWitnesses",
+                        f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                        "adapter.__enter__()",
+                        "adapter.register(repo)",
                         "boundary = sys.argv[2]",
                         "packet = json.loads(sys.argv[3])",
                         f"approved = {json.dumps(approved_state)}",

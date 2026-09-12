@@ -24,6 +24,11 @@ import gcrctl  # noqa: E402
 import planctl  # noqa: E402
 import recoveryctl  # noqa: E402
 import taskctl  # noqa: E402
+from historical_witness_fixture import (  # noqa: E402
+    SYNTHETIC_WITNESS,
+    checkout_historical_repository,
+    install_synthetic_witness,
+)
 
 
 def identity_packet(request: str, wave: str, amendment_count: int) -> dict:
@@ -53,6 +58,11 @@ def identity_packet(request: str, wave: str, amendment_count: int) -> dict:
 
 
 class GovernanceRecoveryTests(unittest.TestCase):
+    def historical_authority_repo(self, revision: str = "fdf437b78711e409f4c61f2e6e365bf3e8162105") -> Path:
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, revision, gcrctl.BRANCH)
+        return repo
+
     @staticmethod
     def git(repo: Path, *arguments: str) -> str:
         result = subprocess.run(
@@ -68,20 +78,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
     def append_fixture(self, temporary: str) -> tuple[Path, argparse.Namespace, bytes]:
         repo = Path(temporary) / "append-fixture"
-        bundle = Path(temporary) / "fixture.bundle"
-        subprocess.run(
-            ["git", "bundle", "create", str(bundle), "HEAD"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "clone", "--quiet", str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        fixture_base = "ed0bf716f8586e078c6fe3b8ac7e2885a6eb98c4"
+        checkout_historical_repository(repo, REPO, fixture_base, "codex/append-fixture")
         self.git(repo, "config", "user.email", "fixture@example.invalid")
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
@@ -92,11 +90,10 @@ class GovernanceRecoveryTests(unittest.TestCase):
         )
         if not approval_introduction:
             raise AssertionError("Canonical W1.A03 approval introduction is unavailable")
-        fixture_base = self.git(REPO, "rev-parse", f"{approval_introduction}^")
-        self.git(repo, "checkout", "-b", "codex/append-fixture", fixture_base)
-        shutil.copy2(REPO / "tools/taskctl.py", repo / "tools/taskctl.py")
-        shutil.copy2(REPO / "tools/planctl.py", repo / "tools/planctl.py")
-        shutil.copy2(REPO / "tools/recoveryctl.py", repo / "tools/recoveryctl.py")
+        self.assertEqual(fixture_base, self.git(REPO, "rev-parse", f"{approval_introduction}^"))
+        # Materialize the actual current import closure used by the fixture CLI.
+        for name in ("taskctl", "planctl", "recoveryctl", "capability_plan_check", "governance_kernel"):
+            shutil.copy2(REPO / f"tools/{name}.py", repo / f"tools/{name}.py")
         backlog_path = repo / "planning/backlog.yaml"
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
         hold = (backlog["control_plane"]["recovery_holds"])[0]
@@ -381,20 +378,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
     def second_hold_fixture(self, temporary: str) -> Path:
         repo = Path(temporary) / "second-hold-fixture"
-        bundle = Path(temporary) / "second-hold.bundle"
-        subprocess.run(
-            ["git", "bundle", "create", str(bundle), "HEAD"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "clone", "--quiet", str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        checkout_historical_repository(repo, REPO, "fdf437b78711e409f4c61f2e6e365bf3e8162105", gcrctl.BRANCH)
         self.git(repo, "config", "user.email", "fixture@example.invalid")
         self.git(repo, "config", "user.name", "Fixture Implementer")
         self.git(repo, "config", "commit.gpgsign", "false")
@@ -483,19 +467,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
         temporary: str,
     ) -> tuple[Path, dict[str, Any], dict[str, Any], dict[str, Any]]:
         repo = Path(temporary) / "supplement-fixture"
-        bundle = Path(temporary) / "supplement-fixture.bundle"
-        subprocess.run(
-            ["git", "bundle", "create", str(bundle), "HEAD"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "clone", "--quiet", str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=True,
+        checkout_historical_repository(
+            repo, REPO, "0ae57caba82d3f54f6a357aaa3bbca2894154920", "codex/supplement-fixture"
         )
         self.git(repo, "config", "user.email", "fixture@example.invalid")
         self.git(repo, "config", "user.name", "Fixture Reviewer")
@@ -510,7 +483,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "checkout", "-B", "codex/supplement-fixture", supplement_approval_intro)
 
         backlog_path = repo / "planning/backlog.yaml"
-        current = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        released_payload = taskctl.git_blob(REPO, "fdf437b78711e409f4c61f2e6e365bf3e8162105", "planning/backlog.yaml")
+        assert released_payload is not None
+        current = yaml.safe_load(released_payload)
         current_supplement = copy.deepcopy(current["control_plane"]["recovery_holds"][0]["supplements"][0])
         backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
         backlog["control_plane"]["revision"] = taskctl.RECOVERY_BASE_REVISION
@@ -554,20 +529,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         """Create a real-Git revision-7 clone through the actual GCR lifecycle."""
 
         repo = Path(temporary) / "gcr-adopted-supplement-fixture"
-        bundle = Path(temporary) / "gcr-adopted-supplement-fixture.bundle"
-        subprocess.run(
-            ["git", "bundle", "create", str(bundle), "HEAD"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "-c", "core.autocrlf=true", "clone", "--quiet", str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        checkout_historical_repository(repo, REPO, "f06bde5376d97d4ef6137b76befbc9e0c4359ad0", gcrctl.BRANCH)
         self.git(repo, "config", "user.email", "fixture@example.invalid")
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
@@ -583,7 +545,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         backlog_path.write_bytes(backlog_path.read_bytes().replace(b"\n", b"\r\n"))
         witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
         witness.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH, witness)
+        install_synthetic_witness(self, repo, REPO)
         fixture_candidate_paths = [
             "planning/governance-control-recovery/governance-control-recovery-transaction.schema.json",
             "tests/foundation/test_recoveryctl.py",
@@ -716,28 +678,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
 
     def b01_scope_clone(self, temporary: str) -> Path:
         repo = Path(temporary) / "b01-scope-authority-fixture"
-        bundle = Path(temporary) / "b01-scope-authority-fixture.bundle"
-        subprocess.run(
-            ["git", "bundle", "create", str(bundle), "HEAD"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            [
-                "git",
-                "-c",
-                "core.autocrlf=false",
-                "clone",
-                "--quiet",
-                str(bundle),
-                str(repo),
-            ],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        checkout_historical_repository(repo, REPO, "366baf2510eac1367bc8683c5bd37705ce875345", gcrctl.BRANCH)
         self.git(repo, "config", "user.email", "fixture@example.invalid")
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
@@ -825,22 +766,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
             "B01_SCOPE_APPROVAL_SHA256": hashlib.sha256(approval_payload).hexdigest(),
         }
 
-    def b02_scope_clone(self, temporary: str, *, revision: str = "HEAD") -> Path:
+    def b02_scope_clone(self, temporary: str, *, revision: str = "f6f0f640e9acd0da74a1ff73afe85f09db797a8e") -> Path:
         repo = Path(temporary) / "b02-scope-authority-fixture"
-        bundle = Path(temporary) / "b02-scope-authority-fixture.bundle"
-        subprocess.run(
-            ["git", "bundle", "create", str(bundle), "HEAD"],
-            cwd=REPO,
-            capture_output=True,
-            text=True,
-            check=True,
-        )
-        subprocess.run(
-            ["git", "-c", "core.autocrlf=false", "clone", "--quiet", str(bundle), str(repo)],
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+        checkout_historical_repository(repo, REPO, revision, gcrctl.BRANCH)
         self.git(repo, "config", "user.email", "fixture@example.invalid")
         self.git(repo, "config", "user.name", "Fixture Reviewer")
         self.git(repo, "config", "commit.gpgsign", "false")
@@ -848,7 +776,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.git(repo, "switch", "-C", "codex/w1-windows-local-runtime", revision)
         witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
         witness.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH, witness)
+        install_synthetic_witness(self, repo, REPO)
         return repo
 
     @staticmethod
@@ -996,8 +924,14 @@ class GovernanceRecoveryTests(unittest.TestCase):
         schema_relative = "planning/governance-recovery-requests/governance-recovery-supplement.v2.schema.json"
         (repo / proposal_relative).write_bytes(b"# Fixture GRR-0002.S01\n")
         (repo / review_relative).write_bytes(b"<!doctype html><title>Fixture GRR-0002.S01</title>\n")
-        witness_payload = (repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH).read_bytes()
-        witness = json.loads(witness_payload)
+        # The fixture-authored packet uses separate synthetic evidence, binding
+        # an actual fixture commit without asserting a historical private result.
+        witness_relative = "artifacts/evidence/synthetic-supplement-target.json"
+        witness = {"taskId": "W1.A04.B00", "commit": self.git(repo, "rev-parse", "HEAD"), "syntheticFixture": True}
+        witness_payload = (json.dumps(witness, sort_keys=True) + "\n").encode()
+        (repo / witness_relative).write_bytes(witness_payload)
+        self.git(repo, "add", "--", witness_relative)
+        self.git(repo, "commit", "-m", "fixture: bind synthetic target evidence")
         amendment_relative = "planning/wave-amendment-approvals/W1.A04.json"
         amendment_payload = (repo / amendment_relative).read_bytes()
         amendment = json.loads(amendment_payload)
@@ -1061,7 +995,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
                     "id": "W1.A04.B00",
                     "candidateCommit": witness["commit"],
                     "evidence": {
-                        "path": recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH,
+                        "path": witness_relative,
                         "sha256": recoveryctl.sha256(witness_payload),
                         "commit": witness["commit"],
                     },
@@ -1280,7 +1214,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         return path, ledger
 
     def test_canonical_recovery_authority_and_hold_validate(self) -> None:
-        approval, packet, hold = recoveryctl.validate_request(REPO, "GRR-0001")
+        approval, packet, hold = recoveryctl.validate_request(self.historical_authority_repo(), "GRR-0001")
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual("W1.A03", packet["postBootstrap"]["requiredAmendmentId"])
         self.assertEqual("RELEASED", hold["status"])
@@ -1304,12 +1238,13 @@ class GovernanceRecoveryTests(unittest.TestCase):
             )
 
     def test_approved_supplement_authority_and_installed_stopped_boundary_validate(self) -> None:
+        repo = self.historical_authority_repo()
         approval, packet, _approval_payload, _packet_payload = recoveryctl.load_supplement_authority(
-            REPO, "GRR-0001.S01"
+            repo, "GRR-0001.S01"
         )
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual("GRR-0001.B01", packet["supplementalBootstrap"]["id"])
-        _approval, _packet, hold, supplement = recoveryctl.validate_supplement(REPO, "GRR-0001.S01")
+        _approval, _packet, hold, supplement = recoveryctl.validate_supplement(repo, "GRR-0001.S01")
         self.assertEqual("RELEASED", hold["status"])
         self.assertEqual("APPROVED", supplement["bootstrap"]["status"])
         self.assertTrue(
@@ -1440,20 +1375,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
     def test_v2_supplement_workspace_requires_exact_non_authoritative_witness(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             repo = Path(temporary) / "witness-workspace-fixture"
-            bundle = Path(temporary) / "witness-workspace-fixture.bundle"
-            subprocess.run(
-                ["git", "bundle", "create", str(bundle), "HEAD"],
-                cwd=REPO,
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-            subprocess.run(
-                ["git", "clone", "--quiet", str(bundle), str(repo)],
-                capture_output=True,
-                text=True,
-                check=True,
-            )
+            checkout_historical_repository(repo, REPO, "f06bde5376d97d4ef6137b76befbc9e0c4359ad0", gcrctl.BRANCH)
             self.git(repo, "config", "user.email", "fixture@example.invalid")
             self.git(repo, "config", "user.name", "Fixture Reviewer")
             self.git(repo, "config", "commit.gpgsign", "false")
@@ -1461,8 +1383,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
             packet = {"schemaVersion": "2.0-recovery-supplement-proposal"}
             witness = repo / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH
             witness.parent.mkdir(parents=True, exist_ok=True)
-            witness_payload = (REPO / recoveryctl.CONTROL_RECOVERY_TRIGGER_PATH).read_bytes()
-            witness.write_bytes(witness_payload)
+            witness_payload = SYNTHETIC_WITNESS
+            install_synthetic_witness(self, repo, REPO)
 
             recoveryctl.require_supplement_workspace(repo, packet)
             transition_relative = ""
@@ -2404,7 +2326,8 @@ class GovernanceRecoveryTests(unittest.TestCase):
             self.assertEqual("APPROVED", approval["status"])
 
     def test_taskctl_shared_recovery_review_history_denies_projection_tamper(self) -> None:
-        _approval, packet, _hold = recoveryctl.validate_request(REPO, "GRR-0001")
+        repo = self.historical_authority_repo()
+        _approval, packet, _hold = recoveryctl.validate_request(repo, "GRR-0001")
         data, _capabilities, _slices, _tasks, _gates = taskctl.load(str(REPO / "planning/backlog.yaml"))
         canonical = data["control_plane"]["recovery_holds"][0]
         self.assertEqual([], taskctl.recovery_review_history_errors(REPO, canonical, packet))
@@ -2864,14 +2787,15 @@ class GovernanceRecoveryTests(unittest.TestCase):
         )
 
     def test_failed_release_is_atomic(self) -> None:
-        backlog = REPO / "planning/backlog.yaml"
+        repo = self.historical_authority_repo()
+        backlog = repo / "planning/backlog.yaml"
         before = backlog.read_bytes()
         result = subprocess.run(
             [
                 sys.executable,
                 str(REPO / "tools/recoveryctl.py"),
                 "--repo",
-                str(REPO),
+                str(repo),
                 "release",
                 "GRR-0001",
                 "--agent",
@@ -3017,7 +2941,9 @@ class GovernanceRecoveryTests(unittest.TestCase):
         self.assertEqual(12, properties["controlTransition"]["properties"]["successorRevision"]["const"])
 
     def test_v5_preappend_boundary_requires_gcr7_and_preserves_backlog(self) -> None:
-        payload, data, _capabilities, _slices, tasks, _gates = recoveryctl.backlog_state(REPO)
+        repo = self.historical_authority_repo("2eea1d0c67eb57d53e88f6717de3cfcd96fcf282")
+        install_synthetic_witness(self, repo, REPO)
+        payload, data, _capabilities, _slices, tasks, _gates = recoveryctl.backlog_state(repo)
         data["control_plane"]["control_generations"].append(
             {
                 "id": "GCR-0007",
@@ -3061,7 +2987,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
         wave = taskctl.wave_map(data)["W1"]
         blocked_task = tasks["CAP-02.S04.T03"]
         recoveryctl.validate_preappend_supplement_boundary(
-            REPO,
+            repo,
             packet,
             data,
             hold=hold,
@@ -3070,12 +2996,12 @@ class GovernanceRecoveryTests(unittest.TestCase):
             installed=[],
             require_installed=False,
         )
-        self.assertEqual(payload, (REPO / "planning/backlog.yaml").read_bytes())
+        self.assertEqual(payload, (repo / "planning/backlog.yaml").read_bytes())
 
         data["control_plane"]["control_generations"][-1]["id"] = "GCR-0006"
         with self.assertRaisesRegex(SystemExit, "exact adopted GCR-0007"):
             recoveryctl.validate_preappend_supplement_boundary(
-                REPO,
+                repo,
                 packet,
                 data,
                 hold=hold,
@@ -3084,7 +3010,7 @@ class GovernanceRecoveryTests(unittest.TestCase):
                 installed=[],
                 require_installed=False,
             )
-        self.assertEqual(payload, (REPO / "planning/backlog.yaml").read_bytes())
+        self.assertEqual(payload, (repo / "planning/backlog.yaml").read_bytes())
 
 
 if __name__ == "__main__":

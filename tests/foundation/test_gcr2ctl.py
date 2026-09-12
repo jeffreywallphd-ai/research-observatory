@@ -21,6 +21,11 @@ sys.path.insert(0, str(REPO / "tools"))
 
 import gcr2ctl  # noqa: E402
 import taskctl  # noqa: E402
+from historical_witness_fixture import (  # noqa: E402
+    checkout_historical_repository,
+    historical_bytes,
+    install_synthetic_witness,
+)
 
 
 class Gcr2ctlTests(unittest.TestCase):
@@ -67,7 +72,7 @@ class Gcr2ctlTests(unittest.TestCase):
         candidate = self.git(repo, "rev-parse", "HEAD")
         trigger = repo / gcr2ctl.TRIGGER_PATH
         trigger.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / gcr2ctl.TRIGGER_PATH, trigger)
+        install_synthetic_witness(self, repo, REPO)
         packet = {
             "activationBoundary": {"controlRevision": 8},
             "acceptanceCriteria": ["criterion"],
@@ -142,7 +147,10 @@ class Gcr2ctlTests(unittest.TestCase):
         ):
             destination = repo / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(REPO / relative, destination)
+            if relative == gcr2ctl.BACKLOG_PATH:
+                destination.write_bytes(historical_bytes(REPO, gcr2ctl.PACKET_COMMIT, relative, gcr2ctl.BACKLOG_SHA256))
+            else:
+                shutil.copy2(REPO / relative, destination)
         approval_path = repo / gcr2ctl.APPROVAL_PATH
         approval_path.parent.mkdir(parents=True, exist_ok=True)
         approval_path.write_bytes(b'{"fixture": true}\n')
@@ -157,7 +165,9 @@ class Gcr2ctlTests(unittest.TestCase):
         candidate = self.git(repo, "rev-parse", "HEAD")
         # Preserve the release-authoritative worktree bytes while Git retains
         # the normalized LF blob. Git considers this CRLF worktree clean.
-        shutil.copy2(REPO / gcr2ctl.BACKLOG_PATH, repo / gcr2ctl.BACKLOG_PATH)
+        (repo / gcr2ctl.BACKLOG_PATH).write_bytes(
+            historical_bytes(REPO, gcr2ctl.PACKET_COMMIT, gcr2ctl.BACKLOG_PATH, gcr2ctl.BACKLOG_SHA256)
+        )
         self.assertEqual("", self.git(repo, "status", "--short"))
         state_path = repo / gcr2ctl.STATE_PATH
         state_path.parent.mkdir(parents=True, exist_ok=True)
@@ -302,7 +312,7 @@ class Gcr2ctlTests(unittest.TestCase):
         evidence_commit = self.git(repo, "rev-parse", "HEAD")
         trigger = repo / gcr2ctl.TRIGGER_PATH
         trigger.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(REPO / gcr2ctl.TRIGGER_PATH, trigger)
+        install_synthetic_witness(self, repo, REPO)
         predecessor_backlog = (repo / gcr2ctl.BACKLOG_PATH).read_bytes()
         predecessor_state = state_path.read_bytes()
         self.assertEqual(gcr2ctl.BACKLOG_SHA256, gcr2ctl.sha256(predecessor_backlog))
@@ -380,18 +390,27 @@ class Gcr2ctlTests(unittest.TestCase):
         )
 
     def test_repository_authority_is_valid_at_revision_eight(self) -> None:
-        approval, packet, base = gcr2ctl.load_authority(REPO)
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, "c029ba348a8bd0abee23e11c078aff4b8fd0b02b", gcr2ctl.BRANCH)
+        (repo / gcr2ctl.BACKLOG_PATH).write_bytes(
+            historical_bytes(REPO, gcr2ctl.PACKET_COMMIT, gcr2ctl.BACKLOG_PATH, gcr2ctl.BACKLOG_SHA256)
+        )
+        install_synthetic_witness(self, repo, REPO)
+        approval, packet, base = gcr2ctl.load_authority(repo)
         self.assertEqual("APPROVED", approval["status"])
         self.assertEqual(gcr2ctl.GCR_ID, packet["controlRecoveryId"])
         self.assertEqual("c029ba348a8bd0abee23e11c078aff4b8fd0b02b", base)
-        _payload, backlog = gcr2ctl.current_boundary(REPO, packet, revision=8)
+        _payload, backlog = gcr2ctl.current_boundary(repo, packet, revision=8)
         self.assertEqual(8, backlog["control_plane"]["revision"])
 
     def test_late_remediation_review_projection_requires_current_root_cause_analysis(self) -> None:
-        _approval, packet, _base = gcr2ctl.load_authority(REPO)
-        state = json.loads((REPO / gcr2ctl.STATE_PATH).read_bytes())
+        repo = Path(self.enterContext(tempfile.TemporaryDirectory()))
+        checkout_historical_repository(repo, REPO, "38fa99e4fdbb74b5ebb9f360d6fe99e6ff0781f7", gcr2ctl.BRANCH)
+        install_synthetic_witness(self, repo, REPO)
+        _approval, packet, _base = gcr2ctl.load_authority(repo)
+        state = json.loads((repo / gcr2ctl.STATE_PATH).read_bytes())
         self.assertEqual(3, len(state["attempts"]))
-        candidate = gcr2ctl.git(REPO, "rev-parse", "HEAD")
+        candidate = gcr2ctl.git(repo, "rev-parse", "HEAD")
         state["status"] = "REVIEW"
         state["currentSubmission"] = {
             "attemptId": "R04",
@@ -409,10 +428,10 @@ class Gcr2ctlTests(unittest.TestCase):
             "openFindingIds": sorted(gcr2ctl.open_findings(state)),
             "rootCauseAnalysis": gcr2ctl.R04_ROOT_CAUSE_ANALYSIS,
         }
-        gcr2ctl.validate_history(REPO, state, packet)
+        gcr2ctl.validate_history(repo, state, packet)
         state["currentSubmission"]["rootCauseAnalysis"] = None
         with self.assertRaisesRegex(SystemExit, "current remediation submission"):
-            gcr2ctl.validate_history(REPO, state, packet)
+            gcr2ctl.validate_history(repo, state, packet)
 
     def test_v3_schemas_are_exactly_revision_eight_to_nine(self) -> None:
         packet_schema = json.loads(
@@ -676,6 +695,11 @@ class Gcr2ctlTests(unittest.TestCase):
                         f"sys.path.insert(0, {json.dumps(str(REPO / 'tools'))})",
                         "import gcr2ctl, taskctl",
                         "repo = pathlib.Path(sys.argv[1])",
+                        f"sys.path.insert(0, {json.dumps(str(Path(__file__).resolve().parent))})",
+                        "from historical_witness_fixture import FixtureWitnesses",
+                        f"adapter = FixtureWitnesses(pathlib.Path({json.dumps(str(REPO))}))",
+                        "adapter.__enter__()",
+                        "adapter.register(repo)",
                         "boundary = sys.argv[2]",
                         "new_backlog = (repo / '.git/gcr2-successor-backlog').read_bytes()",
                         "new_state = (repo / '.git/gcr2-successor-state').read_bytes()",
