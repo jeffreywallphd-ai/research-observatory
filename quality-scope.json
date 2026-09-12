@@ -179,6 +179,7 @@
     "tests/foundation/test_verify_runner.py",
     "tests/packaging/test_core_sidecar_package.py",
     "tests/desktop/test_ui_conformance.py",
+    "tests/desktop/test_application_lock_recovery.py",
     "tests/desktop/test_desktop_app_check.py",
     "tests/desktop/test_desktop_performance_check.py",
     "tests/desktop/test_core_sidecar_performance_check.py",

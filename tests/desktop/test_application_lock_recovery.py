@@ -6,7 +6,7 @@ import json
 import sys
 import unittest
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from playwright.sync_api import sync_playwright
 
@@ -60,6 +60,8 @@ ADAPTER = r"""(() => {
 
 
 class ApplicationLockRecoveryTests(unittest.TestCase):
+    document: ClassVar[str]
+
     @classmethod
     def setUpClass(cls) -> None:
         errors = product_build_errors(REPO)
