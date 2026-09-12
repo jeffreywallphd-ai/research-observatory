@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-control-maintenance-evidence",
+  "status": "PASS",
+  "baseCommit": "f731c96159d5ee214c21412922df7e5c6198e6cf",
+  "candidate": "efad8da66fc5e3487efef93b22bf923894ed5951",
+  "changedPaths": [
+    "quality-scope.json",
+    "tests/desktop/test_application_lock_recovery.py",
+    "artifacts/evidence/w1-quality-inventory.maintenance-01.md"
+  ],
+  "scope": "Admit an existing regression test to unchanged governed quality checks and declare its shared HTML document type. No application behavior, assertions, authority, profile or release criteria change.",
+  "report": {
+    "path": "artifacts/tmp/W1.quality-inventory-02.json",
+    "sha256": "cbd1508a5b21e1a94ef8572e699c17dd01e846b2bb53b14629c9371934b24009",
+    "producer": "artifacts/tmp/W1.quality-inventory-02.py",
+    "producerSha256": "8cf0bce83ca78645ae82417f1cb11f6b1f941c9d1d3de6b6de6d1f2a4d0443e6",
+    "helperSha256": "9f004fdc97b7711f44918015dc0afac5cd73b5623bb132fc8888e2d701b06803",
+    "developmentOnly": false,
+    "seconds": 33.23672179999994,
+    "inputCount": 3425
+  },
+  "checks": [
+    {
+      "id": "scope",
+      "status": "PASS",
+      "result": "Four scope/quality-control unit tests.",
+      "seconds": 0.25894799997331575,
+      "log": "artifacts/tmp/W1.quality-inventory-02.scope.log",
+      "sha256": "72d7a4af21a3fc37dae201b44f5dc2972c34fd70a84fb02e48f525a2c7352aa3"
+    },
+    {
+      "id": "foundation:quality",
+      "status": "PASS",
+      "result": "Format, lint and types for all 231 governed Python files.",
+      "seconds": 0.8906409000046551,
+      "log": "artifacts/tmp/W1.quality-inventory-02.quality.log",
+      "sha256": "4734d8c4e4a3acf1045a042c5bda702ea792a907da01876a6b7f4e5be69a4050"
+    },
+    {
+      "id": "lock-recovery-regressions",
+      "status": "PASS",
+      "result": "Four existing built-renderer recovery regressions, unchanged assertions; synthetic transport.",
+      "seconds": 31.040309999953024,
+      "log": "artifacts/tmp/W1.quality-inventory-02.recovery.log",
+      "sha256": "ee9c324cd5f7bfb92fcba41d56105d1e7dec71521d51b6976db266bc5f1babd2"
+    }
+  ],
+  "containment": {
+    "allRootExitCodes": 0,
+    "allDrained": true,
+    "totalProcesses": 43,
+    "timedOut": false,
+    "buildAuxiliaryExceptionUsed": false
+  },
+  "retainedAdverse": [
+    {
+      "path": "artifacts/tmp/W1.full-qualification-03.json",
+      "sha256": "806a72e6cd41dedee51eab6d3030bdc6675795aa5c0412a231a12a49124e6f90",
+      "status": "FAIL",
+      "reason": "Existing recovery regression missing from explicit Python inventory."
+    },
+    {
+      "path": "artifacts/tmp/W1.quality-inventory-01.json",
+      "sha256": "2eba9b7e0611327402945d0465d3afb32a11a3d5c03cb9931462d9e9b58f0c8d",
+      "status": "FAIL",
+      "reason": "Development-only inventory addition exposed two missing shared-document type declarations."
+    }
+  ],
+  "limits": [
+    "Fresh checks at the exact source candidate; no closed installed-runtime cache reuse claimed.",
+    "Browser regressions use synthetic transport, not native authentication or ordinary-account proof.",
+    "No full Wave or G1 approval. Fresh full qualification and remaining native/package/performance evidence remain due."
+  ]
+}

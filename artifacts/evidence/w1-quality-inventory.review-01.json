@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-control-maintenance-independent-review",
+  "reviewId": "w1-quality-inventory.review-01",
+  "baseCommit": "f731c96159d5ee214c21412922df7e5c6198e6cf",
+  "candidateCommit": "efad8da66fc5e3487efef93b22bf923894ed5951",
+  "reviewedAt": "2026-09-12T14:17:52Z",
+  "reviewer": "agent:/root/c04_evidence_review",
+  "independence": {
+    "implementer": "agent:codex",
+    "implementationAuthoredByReviewer": false
+  },
+  "result": "ACCEPTED",
+  "findings": [],
+  "scope": "Three-path quality-inventory correction only: admit the existing recovery regression file to unchanged governed quality checks and declare its existing shared document as ClassVar[str]. No product behavior, test assertion, reference, authority, profile or release criterion changes.",
+  "evidence": {
+    "path": "artifacts/evidence/w1-quality-inventory.evidence-01.json",
+    "gitBlob": "eb736f4a8d3451190c3187e82b3d64cf78e44bc3",
+    "sha256": "161de8830a316a158ffea3c5648adb80456b1b379d6a0d1f6db23863e69df945",
+    "deliveryStatusAtReview": "Uncommitted publication; no evidence-delivery commit is asserted."
+  },
+  "reviewedArtifacts": [
+    {
+      "path": "artifacts/evidence/w1-quality-inventory.maintenance-01.md",
+      "gitBlob": "7c289ef0c6d0ae597117301ab44b5959e2dfc9fc",
+      "sha256": "b3a837c97917b915806a244a80cb1e66c5f94c948d3bca2330e79e2bab053fcc"
+    },
+    {
+      "path": "quality-scope.json",
+      "gitBlob": "10f9b59a0aaa127602b03ebab9c24e279c517aee",
+      "sha256": "33c439b27418b563efd5ec7ba872374273b9ecc6d9e7eb83af3d70c4adbafb6f"
+    },
+    {
+      "path": "tests/desktop/test_application_lock_recovery.py",
+      "gitBlob": "ba87f15ddf15308729c4755c07f8947647efa5c4",
+      "sha256": "f1f76d0d22a8697bfe4c9e6c8b9b01f8756265358756ed2dfdb988f580b176bb"
+    }
+  ],
+  "verification": {
+    "path": "artifacts/tmp/W1.quality-inventory-02.json",
+    "sha256": "cbd1508a5b21e1a94ef8572e699c17dd01e846b2bb53b14629c9371934b24009",
+    "producer": {
+      "path": "artifacts/tmp/W1.quality-inventory-02.py",
+      "sha256": "8cf0bce83ca78645ae82417f1cb11f6b1f941c9d1d3de6b6de6d1f2a4d0443e6"
+    },
+    "containmentHelper": {
+      "path": "artifacts/tmp/w1_owned_build_01.py",
+      "sha256": "9f004fdc97b7711f44918015dc0afac5cd73b5623bb132fc8888e2d701b06803"
+    },
+    "developmentOnly": false,
+    "status": "PASS",
+    "selectedInputCount": 3425,
+    "selectedInputHashMismatches": 0,
+    "selectedRuntimeHashesMatch": true,
+    "seconds": 33.23672179999994,
+    "ownedProcesses": 43,
+    "allRootExitCodesZero": true,
+    "allGroupsDrained": true,
+    "timedOut": false,
+    "buildAuxiliaryExceptionUsed": false,
+    "checks": [
+      {
+        "id": "scope",
+        "command": ["{checkout}\\.venv\\Scripts\\python.exe", "-B", "-m", "unittest", "-v", "tests.foundation.test_quality_check"],
+        "cwd": ".",
+        "status": "PASS",
+        "exitCode": 0,
+        "tests": 4,
+        "testSeconds": 0.061,
+        "ownedWrapperSeconds": 0.25894799997331575,
+        "log": "artifacts/tmp/W1.quality-inventory-02.scope.log",
+        "logSha256": "72d7a4af21a3fc37dae201b44f5dc2972c34fd70a84fb02e48f525a2c7352aa3"
+      },
+      {
+        "id": "quality",
+        "evidenceSummaryId": "foundation:quality",
+        "command": ["{checkout}\\.venv\\Scripts\\python.exe", "-B", "tools/quality_check.py", "--repo", "."],
+        "cwd": ".",
+        "status": "PASS",
+        "exitCode": 0,
+        "governedFiles": 231,
+        "checks": ["format", "lint", "types"],
+        "ownedWrapperSeconds": 0.8906409000046551,
+        "log": "artifacts/tmp/W1.quality-inventory-02.quality.log",
+        "logSha256": "4734d8c4e4a3acf1045a042c5bda702ea792a907da01876a6b7f4e5be69a4050"
+      },
+      {
+        "id": "recovery",
+        "evidenceSummaryId": "lock-recovery-regressions",
+        "command": ["{checkout}\\.venv\\Scripts\\python.exe", "-B", "-m", "unittest", "-v", "tests.desktop.test_application_lock_recovery"],
+        "cwd": ".",
+        "status": "PASS",
+        "exitCode": 0,
+        "tests": 4,
+        "testSeconds": 29.996,
+        "ownedWrapperSeconds": 31.040309999953024,
+        "log": "artifacts/tmp/W1.quality-inventory-02.recovery.log",
+        "logSha256": "ee9c324cd5f7bfb92fcba41d56105d1e7dec71521d51b6976db266bc5f1babd2"
+      }
+    ]
+  },
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W1.full-qualification-03.json",
+      "sha256": "806a72e6cd41dedee51eab6d3030bdc6675795aa5c0412a231a12a49124e6f90",
+      "log": "artifacts/tmp/W1.full-qualification-03.log",
+      "logSha256": "c084128e9ebe986b6933daea3f112cb16714ac2c2544a5422c115e13d262c0c2",
+      "status": "FAIL",
+      "disposition": "Authenticated failure at foundation:quality because tests/desktop/test_application_lock_recovery.py was unlisted. Root exit 2, no timeout, zero active processes and EMPTY_CONFIRMED drainage. This maintenance acceptance does not relabel the full qualification attempt as passing."
+    },
+    {
+      "path": "artifacts/tmp/W1.quality-inventory-01.json",
+      "sha256": "2eba9b7e0611327402945d0465d3afb32a11a3d5c03cb9931462d9e9b58f0c8d",
+      "log": "artifacts/tmp/W1.quality-inventory-01.quality.log",
+      "logSha256": "8ed9d6862fa107844f97a06a73573e440314fc59e1272d727fbf8d47bfb8ed97",
+      "status": "FAIL",
+      "developmentOnly": true,
+      "disposition": "Authenticated two attr-defined diagnostics for the existing shared document, at its class assignment and instance use, after inventory admission. The ClassVar[str] declaration resolves those diagnostics without changing assignment, assertions or runtime test behavior. This development result remains non-qualifying."
+    }
+  ],
+  "notes": [
+    "Independently reviewed the exact direct predecessor-to-candidate edge and its complete three-path delta. Candidate Git blobs match the current source bytes and recorded input hashes. No material source finding remains.",
+    "The inventory addition restores closure of an already governed Python root; it does not expand product authority or weaken a gate. Existing actual-scope and omitted-file rejection tests remain unchanged, as do duplicate/stale-file rejection and the complete format/lint/type command sequence. The four existing recovery regressions retain all assertions.",
+    "Independently inspected the producer's narrow delta from accepted W1.frame-helper-02.py. Only command selection, source/output names and description change. Clean committed qualification, under-lock producer identity, selected input locks, exclusive owned logs, protected-witness inventory denial and mandatory process drainage remain intact. The helper was unchanged and its exact digest matches.",
+    "Read the actual final report and all three logs. Candidate, status, command identities, working directories, group times, producer/helper identities and log hashes authenticate. Publication summary IDs map explicitly to the recorded quality and recovery commands. Its inventory exactly equals the candidate's tracked paths plus the five selected generated renderer files; all 3425 hashes match. The three selected runtime hashes also match. All three groups report root exit zero, no timeout, zero active processes and EMPTY_CONFIRMED drainage, totaling 43 owned processes.",
+    "This accepts only fresh affected control-maintenance verification. It is not complete installed-runtime closure, cached evidence reuse, native authentication or ordinary-account proof, production packaging, performance qualification, full W1/G1 approval, local-main integration or release approval. The recovery tests use synthetic browser transport. Fresh full Wave qualification and other outstanding Wave obligations remain due.",
+    "No ordinary account/project/policy data, credentials, protected witness contents or excluded sibling contents were inspected. The protected witness was absent from the selected input inventory and was not opened, hashed, copied, staged or changed. The reviewer authored only this new review file and ran no tests, builds or native UI actions."
+  ]
+}
