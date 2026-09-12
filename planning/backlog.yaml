@@ -128,21 +128,22 @@ waves:
     notes: Repository owner approved the complete amended W1 packet, including CAP-02-D04, amended CAP-02.S03, and ADR-0016,
       in Codex on 2026-08-18.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex
     branch: codex/w1-windows-local-runtime
     worktree: C:/ai-projects/research-observatory
-    base_sha: c722dd3a950f58de39beb5f2e1219cc36b2350c7
+    base_sha: d449f9081e04b924f666e92200407941f7cb1e18
     profile: LOC
     platform: windows-x64
     started_at: '2026-08-14T01:36:01+00:00'
-    updated_at: '2026-09-08T14:29:09+00:00'
-    pause_reason: Fresh native qualification reproduced status unavailability and a false Windows unlock affordance for persisted
-      No login. Qualification attempt 02 was deliberately stopped; owned processes are drained. Pause for linked authority-preserving
-      correction of W1.A05.T04 before fresh W1 qualification.
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-09-12T13:51:36+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex
+      claimed_at: '2026-09-12T13:51:36+00:00'
+      expires_at: '2026-09-13T13:51:36+00:00'
     resume_records:
     - id: W1.R01
       wave_id: W1
@@ -276,6 +277,18 @@ waves:
       platform: windows-x64
       actor: codex
       resumed_at: '2026-09-08T12:28:57+00:00'
+    - id: W1.R12
+      wave_id: W1
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: d449f9081e04b924f666e92200407941f7cb1e18
+      prior_campaign_sha256: 9fa24990c8907741a3ee4a6026389e01fb739b59f99810c7abc9e6b800326e22
+      branch: codex/w1-windows-local-runtime
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex
+      resumed_at: '2026-09-12T13:51:36+00:00'
     corrective_tasks:
     - title: Choose project folders through one protected native dialog
       objective: Replace all implemented W1 directory-entry fields with shared native selection and stable read-only destinations.
@@ -1243,7 +1256,7 @@ waves:
     notes: Adopt independently approved styling outcome and owner cosmetic acceptance; preserve all functional W1 obligations
       and history. Restore ordinary scope while keeping W1 paused for explicit continuation.
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
