@@ -1,0 +1,135 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-independent-review",
+  "reviewId": "linked-ui-authority.review-01",
+  "reviewedCommit": "6aafd85ca206452488b764cea396488fb1a32543",
+  "predecessorCommit": "9d6a5a12df7d55d81420128f70b4620dee282b19",
+  "reviewedAt": "2026-09-12T12:59:31Z",
+  "reviewer": "agent:/root/c04_evidence_review",
+  "independence": {
+    "implementer": "agent:codex",
+    "implementationAuthoredByReviewer": false
+  },
+  "disposition": "ACCEPTED",
+  "findings": [],
+  "evidence": {
+    "path": "artifacts/evidence/linked-ui-authority.evidence-01.json",
+    "introductionCommit": "99ca202442345bdc2e1676048fc03fde5ec42864",
+    "gitBlob": "36ba31bca36d50c961e77b31ccdb769899ee2056",
+    "sha256": "1bd7a8301e0d6f65db1a6692201ed8851d93fb6f57e7e0a368382324be88168b"
+  },
+  "reviewedArtifacts": [
+    {
+      "path": "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+      "gitBlob": "5c88c6bdc0b793e0327532708c43f616ce3507af",
+      "sha256": "d10efbf2dc6ef497a01edabe3c35c9a7beb7a56197067452d06414d00ef732ef"
+    },
+    {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "gitBlob": "37c4994c20b7ea2bf202e50f14d664f6e6e0f3d7",
+      "sha256": "d8a4188edcbebba3940ef493d3ebde25ddc7b219ead38ea53b24d68fd98062bb"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "gitBlob": "d2f01c1cced964c4e661590f5d1648f5ac7a9dd3",
+      "sha256": "2809d91e1174c43a024aaa5bd67090d8c20015a8d30c27f2c67a37ee48be6a51"
+    },
+    {
+      "path": "tools/taskctl.py",
+      "gitBlob": "ccefbb4a07c8c2be72782f2086eee8901bd66370",
+      "sha256": "f60c350b8e3ff98099232b8cf1c4d3cc267036eb70f20ec83acc795dd5634aa7"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "gitBlob": "96e419b293d6ff79fe1ac8e3c4613a3bb3ab2847",
+      "sha256": "290c3184b3a0a5fe4382e6e53786d1c11dc0581396ab3f316c218c8cef7d3afd"
+    }
+  ],
+  "sourceCommits": [
+    {
+      "commit": "1a0c61ed9ca79dc304f42d74be2536bf3a01ebe6",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+          "gitBlob": "c80c6b213f5999614e32fe7af1d189d5515cdcdd",
+          "sha256": "fc07920c18e02c4a2cc4de3d390ba8178fe3e77f890fb13a76009c0934ceb5e5"
+        },
+        {
+          "path": "docs/automation/design-first-ui-changes.md",
+          "gitBlob": "e5acd9fcd652b8fe85634f59b9284121ceae1e4c",
+          "sha256": "7e2ddd9a26c9590a1d2516ddf19b98efe9fae8163dac1a32d859825a737978cc"
+        },
+        {
+          "path": "tests/foundation/test_ui_change_gate.py",
+          "gitBlob": "c3a41648641ddb4e1a000f17dcf1493bc0a5a940",
+          "sha256": "d5c777242b408a9ee90e1df2f819a88e93f9fa391ee36e75167c69c9133bcd3d"
+        },
+        {
+          "path": "tools/taskctl.py",
+          "gitBlob": "8137c5e9205700ecbc1a7f812c8ef75fedd15299",
+          "sha256": "970f9155aa56532e3d7c15a769015aea6154f58f54cd2c9c8918d6077b040300"
+        },
+        {
+          "path": "tools/ui_change_gate.py",
+          "gitBlob": "5186100f0cb4d09866d3d334ad358aac4d24a419",
+          "sha256": "f03c4ef7b89a5c0b91d37832456acd1c055948b970e03785992089171ee65d8e"
+        }
+      ]
+    },
+    {
+      "commit": "6aafd85ca206452488b764cea396488fb1a32543",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+          "gitBlob": "5c88c6bdc0b793e0327532708c43f616ce3507af",
+          "sha256": "d10efbf2dc6ef497a01edabe3c35c9a7beb7a56197067452d06414d00ef732ef"
+        },
+        {
+          "path": "docs/automation/design-first-ui-changes.md",
+          "gitBlob": "37c4994c20b7ea2bf202e50f14d664f6e6e0f3d7",
+          "sha256": "d8a4188edcbebba3940ef493d3ebde25ddc7b219ead38ea53b24d68fd98062bb"
+        },
+        {
+          "path": "tests/foundation/test_ui_change_gate.py",
+          "gitBlob": "d2f01c1cced964c4e661590f5d1648f5ac7a9dd3",
+          "sha256": "2809d91e1174c43a024aaa5bd67090d8c20015a8d30c27f2c67a37ee48be6a51"
+        },
+        {
+          "path": "tools/taskctl.py",
+          "gitBlob": "ccefbb4a07c8c2be72782f2086eee8901bd66370",
+          "sha256": "f60c350b8e3ff98099232b8cf1c4d3cc267036eb70f20ec83acc795dd5634aa7"
+        },
+        {
+          "path": "tools/ui_change_gate.py",
+          "gitBlob": "96e419b293d6ff79fe1ac8e3c4613a3bb3ab2847",
+          "sha256": "290c3184b3a0a5fe4382e6e53786d1c11dc0581396ab3f316c218c8cef7d3afd"
+        }
+      ]
+    }
+  ],
+  "closedFindings": [
+    {
+      "priority": "P2",
+      "candidate": "1a0c61ed9ca79dc304f42d74be2536bf3a01ebe6",
+      "priorDisposition": "NOT_ACCEPTED",
+      "title": "Public UI gate does not enforce promised complete maintenance attribution",
+      "finding": "The public UI gate activated complete maintenance attribution only after a gate-control path changed. It missed unreviewed taskctl-only controls, later maintenance-note changes and unrelated delivery, although task submission rejected them.",
+      "closedAtCommit": "6aafd85ca206452488b764cea396488fb1a32543",
+      "closure": "The public UI gate, including its no-net-UI branch, and taskctl now share corrective_scope_errors and corrective_path_admitted. The full original-base-to-candidate history must attribute every out-of-scope commit to an exact independently reviewed control-only chain. Reviewed filenames do not authorize later edits. The new public-gate regressions and the fresh selected suite pass.",
+      "adverseEvidence": {
+        "path": "artifacts/tmp/linked-ui-authority-checks-01.json",
+        "sha256": "624f8be91670af7c466f94971d7a96773290ee0039dda53fd11434b65081b4b9",
+        "log": "artifacts/tmp/linked-ui-authority-checks-01.regressions.log",
+        "logSha256": "e8627e3a46ea93cc33104348c8b5b5133a7e26a2504496a9ad9fd7645b5ac5d6"
+      }
+    }
+  ],
+  "notes": [
+    "This accepts only the bounded five-file control-maintenance increment at the reviewed final candidate. It does not retrospectively accept the adverse first candidate. Its 43-test run had 42 passes and one diagnostic-wording failure; the inherited review-obligation assertion remains intact and passes at the final candidate.",
+    "Independently reviewed both exact source commits. Their complete ordered inventories, sole-parent edges, regular Git blobs and SHA-256 values authenticate against Git. The final reviewedArtifacts inventory is the union of every path touched by those commits, bound at the final candidate. Evidence delivery is the immediate sole-parent evidence-only commit. The review-only delivery is still to be committed.",
+    "The optional identical sourceCommits inventories preserve the adverse source history without reset or invented earlier acceptance. Every intermediate source commit remains linear and control-only. Omissions, reordering, substituted hashes, incomplete intermediate or final inventories, mismatched carriers, hidden product-and-revert history and merged source history are denied. Existing absent-field single-source behavior and immediate evidence/review-only delivery requirements remain strict.",
+    "The amendment-origin route consumes existing authenticated named approval, packet, immutable original task and approved-reference contract authority. It does not fabricate an ordinary review_gate, edit immutable origin metadata, waive current correction conformance, or change the six admitted W1.C04.T01 product/test paths. Ordinary unsupported origins and authority substitutions remain denied.",
+    "Read the actual fresh receipt and three logs; their hashes, exact candidate, producer and containment-helper identities match the evidence. The selected suite reports 45 tests passing in 229.126 seconds (owned wrapper 230.51681339996867 seconds); Ruff lint and format checks pass. All three recorded groups exit zero with zero active processes and EMPTY_CONFIRMED drainage. The first candidate's failed receipt and log also authenticate and remain adverse.",
+    "The live public UI gate has not yet been run on this committed review delivery. Acceptance here does not claim that live gate passed, W1.C04.T01 task completion, product/native qualification, installed-runtime evidence reuse, full Wave qualification, integration or release approval. The protected W1.A04.B00 witness was not opened, hashed, copied or modified by this review."
+  ]
+}
