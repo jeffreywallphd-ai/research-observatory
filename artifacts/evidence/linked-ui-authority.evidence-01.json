@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-evidence",
+  "candidateCommit": "6aafd85ca206452488b764cea396488fb1a32543",
+  "predecessorCommit": "9d6a5a12df7d55d81420128f70b4620dee282b19",
+  "implementer": "agent:codex",
+  "riskTier": 2,
+  "contract": "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+  "selectedChecksStatus": "PASS",
+  "independentReviewStatus": "PENDING",
+  "changedFiles": [
+    {
+      "path": "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+      "blob": "5c88c6bdc0b793e0327532708c43f616ce3507af",
+      "sha256": "d10efbf2dc6ef497a01edabe3c35c9a7beb7a56197067452d06414d00ef732ef"
+    },
+    {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "blob": "37c4994c20b7ea2bf202e50f14d664f6e6e0f3d7",
+      "sha256": "d8a4188edcbebba3940ef493d3ebde25ddc7b219ead38ea53b24d68fd98062bb"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "blob": "d2f01c1cced964c4e661590f5d1648f5ac7a9dd3",
+      "sha256": "2809d91e1174c43a024aaa5bd67090d8c20015a8d30c27f2c67a37ee48be6a51"
+    },
+    {
+      "path": "tools/taskctl.py",
+      "blob": "ccefbb4a07c8c2be72782f2086eee8901bd66370",
+      "sha256": "f60c350b8e3ff98099232b8cf1c4d3cc267036eb70f20ec83acc795dd5634aa7"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "blob": "96e419b293d6ff79fe1ac8e3c4613a3bb3ab2847",
+      "sha256": "290c3184b3a0a5fe4382e6e53786d1c11dc0581396ab3f316c218c8cef7d3afd"
+    }
+  ],
+  "sourceCommits": [
+    {
+      "commit": "1a0c61ed9ca79dc304f42d74be2536bf3a01ebe6",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+          "gitBlob": "c80c6b213f5999614e32fe7af1d189d5515cdcdd",
+          "sha256": "fc07920c18e02c4a2cc4de3d390ba8178fe3e77f890fb13a76009c0934ceb5e5"
+        },
+        {
+          "path": "docs/automation/design-first-ui-changes.md",
+          "gitBlob": "e5acd9fcd652b8fe85634f59b9284121ceae1e4c",
+          "sha256": "7e2ddd9a26c9590a1d2516ddf19b98efe9fae8163dac1a32d859825a737978cc"
+        },
+        {
+          "path": "tests/foundation/test_ui_change_gate.py",
+          "gitBlob": "c3a41648641ddb4e1a000f17dcf1493bc0a5a940",
+          "sha256": "d5c777242b408a9ee90e1df2f819a88e93f9fa391ee36e75167c69c9133bcd3d"
+        },
+        {
+          "path": "tools/taskctl.py",
+          "gitBlob": "8137c5e9205700ecbc1a7f812c8ef75fedd15299",
+          "sha256": "970f9155aa56532e3d7c15a769015aea6154f58f54cd2c9c8918d6077b040300"
+        },
+        {
+          "path": "tools/ui_change_gate.py",
+          "gitBlob": "5186100f0cb4d09866d3d334ad358aac4d24a419",
+          "sha256": "f03c4ef7b89a5c0b91d37832456acd1c055948b970e03785992089171ee65d8e"
+        }
+      ]
+    },
+    {
+      "commit": "6aafd85ca206452488b764cea396488fb1a32543",
+      "changedFiles": [
+        {
+          "path": "artifacts/evidence/linked-ui-authority.maintenance-01.md",
+          "gitBlob": "5c88c6bdc0b793e0327532708c43f616ce3507af",
+          "sha256": "d10efbf2dc6ef497a01edabe3c35c9a7beb7a56197067452d06414d00ef732ef"
+        },
+        {
+          "path": "docs/automation/design-first-ui-changes.md",
+          "gitBlob": "37c4994c20b7ea2bf202e50f14d664f6e6e0f3d7",
+          "sha256": "d8a4188edcbebba3940ef493d3ebde25ddc7b219ead38ea53b24d68fd98062bb"
+        },
+        {
+          "path": "tests/foundation/test_ui_change_gate.py",
+          "gitBlob": "d2f01c1cced964c4e661590f5d1648f5ac7a9dd3",
+          "sha256": "2809d91e1174c43a024aaa5bd67090d8c20015a8d30c27f2c67a37ee48be6a51"
+        },
+        {
+          "path": "tools/taskctl.py",
+          "gitBlob": "ccefbb4a07c8c2be72782f2086eee8901bd66370",
+          "sha256": "f60c350b8e3ff98099232b8cf1c4d3cc267036eb70f20ec83acc795dd5634aa7"
+        },
+        {
+          "path": "tools/ui_change_gate.py",
+          "gitBlob": "96e419b293d6ff79fe1ac8e3c4613a3bb3ab2847",
+          "sha256": "290c3184b3a0a5fe4382e6e53786d1c11dc0581396ab3f316c218c8cef7d3afd"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe -B -X utf8 -m unittest -v tests.foundation.test_ui_change_gate tests.foundation.test_taskctl_workflow -k linked -k legacy_control -k corrective -k current_w1_amendment -k postimplementation_maintenance",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 230.51681339996867,
+      "log": "artifacts/tmp/linked-ui-authority-checks-02.regressions.log",
+      "outputSha256": "da58f4e8f318f8431def3a0b6f5bfed36a910ec6fcb83b96c722b7abdab86abd",
+      "provenance": "fresh",
+      "ownedProcesses": 14007,
+      "drainage": "EMPTY_CONFIRMED"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -B -X utf8 -m ruff check tools/ui_change_gate.py tools/taskctl.py tests/foundation/test_ui_change_gate.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.14798120001796633,
+      "log": "artifacts/tmp/linked-ui-authority-checks-02.lint.log",
+      "outputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "provenance": "fresh",
+      "ownedProcesses": 4,
+      "drainage": "EMPTY_CONFIRMED"
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe -B -X utf8 -m ruff format --check tools/ui_change_gate.py tools/taskctl.py tests/foundation/test_ui_change_gate.py",
+      "cwd": ".",
+      "exitCode": 0,
+      "durationSeconds": 0.14732420002110302,
+      "log": "artifacts/tmp/linked-ui-authority-checks-02.format.log",
+      "outputSha256": "eee76f865de5a9f2456950f710ae5d5f9b5bd0ea02aa54f614c5eed6642a0bfd",
+      "provenance": "fresh",
+      "ownedProcesses": 4,
+      "drainage": "EMPTY_CONFIRMED"
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/linked-ui-authority-checks-02.json",
+    "sha256": "e2f2c2623ca12a6128ba41be52a73fea4665eff99de4e9984aae4cdc7828c7a7",
+    "producerSha256": "d77a90c1288d8cdf9f2b850ee4ed0e520e7b5b75a8ef9058f43b0432edda78a2",
+    "helperSha256": "9f004fdc97b7711f44918015dc0afac5cd73b5623bb132fc8888e2d701b06803"
+  },
+  "adverseHistory": [
+    {
+      "candidate": "1a0c61ed9ca79dc304f42d74be2536bf3a01ebe6",
+      "disposition": "NOT_ACCEPTED",
+      "checksReceipt": "artifacts/tmp/linked-ui-authority-checks-01.json",
+      "checksReceiptSha256": "624f8be91670af7c466f94971d7a96773290ee0039dda53fd11434b65081b4b9",
+      "finding": "Independent P2: public gate did not attribute every out-of-scope commit; see the retained maintenance note.",
+      "closure": "Shared full-history scope check; new public-gate RED/green cases, intermediate product and merge denials. Final independent confirmation pending."
+    }
+  ],
+  "limits": [
+    "No original task, reference, product, security or release authority changed.",
+    "Public live gate awaits this carrier's independent review delivery; no pre-review gate PASS is claimed.",
+    "No product/native, installed-runtime reuse, full W1 qualification, integration or release approval is claimed."
+  ]
+}
