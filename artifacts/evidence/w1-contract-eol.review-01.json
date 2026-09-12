@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-checkout-control-maintenance-independent-review",
+  "reviewId": "w1-contract-eol.review-01",
+  "baseCommit": "a36f5c0f5a68c85766222ef1c7945d470cf95f1c",
+  "candidateCommit": "c6bfef0a3ba4fcc2fd13a8b51fedb45450cd077f",
+  "reviewedAt": "2026-09-12T14:26:20Z",
+  "reviewer": "agent:/root/c04_evidence_review",
+  "independence": {
+    "implementer": "agent:codex",
+    "implementationAuthoredByReviewer": false
+  },
+  "result": "ACCEPTED",
+  "findings": [],
+  "scope": "Three-path checkout-control maintenance only: one path-specific LF attribute for the existing generated lifecycle contract, a real fresh-checkout regression and the maintenance note. No generated contract bytes, generator, schema, existing assertion, comparison tolerance, product behavior or approval authority changed.",
+  "evidence": {
+    "path": "artifacts/evidence/w1-contract-eol.evidence-01.json",
+    "gitBlob": "b99eff3c015dc7b77dbb72aa55232eeb37b72c36",
+    "sha256": "9f37d9c54cddb449297ebb64c2403f193d75f61b9ecc6f2e3919d0d5ffe8f1d7",
+    "deliveryStatusAtReview": "Uncommitted publication; no evidence-delivery commit is asserted."
+  },
+  "reviewedArtifacts": [
+    {
+      "path": ".gitattributes",
+      "gitBlob": "7d371e6d77b7b672e8c0a86cf756bf258450bdea",
+      "sha256": "620c5433686eb48e66154d2c0fcc385e7f0841952cad13ee2e2e0904357062a5"
+    },
+    {
+      "path": "artifacts/evidence/w1-contract-eol.maintenance-01.md",
+      "gitBlob": "4d40588a9e774578fc4f62f96c6ff2c6ddb2f3c3",
+      "sha256": "8cf3e9de83c7da3d2e9d3811906845fcda9edbf21d4d7fb9515233ea90270500"
+    },
+    {
+      "path": "tests/contracts/test_domain_lifecycles.py",
+      "gitBlob": "19f0b86cfb3fc6512dcc8c02fab5eadacabdf805",
+      "sha256": "519f2244a8ae59721d2c1e149343b79389d15c77983ecaa2c321516e7b1e1ef8"
+    }
+  ],
+  "verification": {
+    "path": "artifacts/tmp/W1.contract-eol-02.json",
+    "sha256": "96658c3e81e6328e42ee29c85d0349fc36ad29e57fb71d1c7300cebfa1402810",
+    "producer": {
+      "path": "artifacts/tmp/W1.contract-eol-01.py",
+      "sha256": "5569349eb884df1a4a5ef6316b7162d4dc9eff0145ca310e543930e4f3081c87"
+    },
+    "containmentHelper": {
+      "path": "artifacts/tmp/w1_owned_build_01.py",
+      "sha256": "9f004fdc97b7711f44918015dc0afac5cd73b5623bb132fc8888e2d701b06803"
+    },
+    "developmentOnly": false,
+    "status": "PASS",
+    "selectedInputCount": 3428,
+    "selectedInputHashMismatches": 0,
+    "selectedRuntimeHashesMatch": true,
+    "seconds": 7.298316499975044,
+    "ownedProcesses": 62,
+    "allRootExitCodesZero": true,
+    "allGroupsDrained": true,
+    "timedOut": false,
+    "buildAuxiliaryExceptionUsed": false,
+    "checks": [
+      {
+        "id": "lifecycle",
+        "command": ["{checkout}\\.venv\\Scripts\\python.exe", "-B", "-m", "unittest", "-v", "tests.contracts.test_domain_lifecycles"],
+        "cwd": ".",
+        "status": "PASS",
+        "exitCode": 0,
+        "tests": 8,
+        "testSeconds": 0.095,
+        "ownedWrapperSeconds": 1.020241199992597,
+        "log": "artifacts/tmp/W1.contract-eol-02.lifecycle.log",
+        "logSha256": "61f138710f783b74716a48d1df57d4efcdf48afb21961ebc4333e998cca0d2ed"
+      },
+      {
+        "id": "quality",
+        "command": ["{checkout}\\.venv\\Scripts\\python.exe", "-B", "tools/quality_check.py", "--repo", "."],
+        "cwd": ".",
+        "status": "PASS",
+        "exitCode": 0,
+        "governedFiles": 231,
+        "checks": ["format", "lint", "types"],
+        "ownedWrapperSeconds": 0.8814246999681927,
+        "log": "artifacts/tmp/W1.contract-eol-02.quality.log",
+        "logSha256": "4734d8c4e4a3acf1045a042c5bda702ea792a907da01876a6b7f4e5be69a4050"
+      },
+      {
+        "id": "contracts",
+        "command": ["{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node.exe", "{checkout}\\.local\\toolchains\\node-v24.19.0-win-x64\\node_modules\\corepack\\dist\\corepack.js", "pnpm", "--dir", "packages/contracts", "run", "verify"],
+        "cwd": ".",
+        "status": "PASS",
+        "exitCode": 0,
+        "tests": 96,
+        "testFiles": 11,
+        "completePackageVerifySequencePassed": true,
+        "ownedWrapperSeconds": 4.318356399948243,
+        "log": "artifacts/tmp/W1.contract-eol-02.contracts.log",
+        "logSha256": "671c7d8d8448bc0a16463d5bc2abfe4ff48fbca084f118ad93c6bc599ca949d8"
+      }
+    ]
+  },
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/W1.supplemental-02.json",
+      "sha256": "17a7422da1c4558caadd2d18ff24d8101d164d22fb3a2128acf7a6142e4f75e4",
+      "status": "FAIL",
+      "workflowLog": "artifacts/tmp/W1.supplemental-02-01.log",
+      "workflowLogSha256": "b66ba1770b07a413c213759470ff1bc5e93e9a7d20130cc0215d92735c3f116e",
+      "contractsLog": "artifacts/tmp/W1.supplemental-02-02.log",
+      "contractsLogSha256": "9f010eb68f7dcee7f53e3810c60dfa21fbdc32e8084d388d1daf1356028e0296",
+      "disposition": "Authenticated 21 passing workflow-executor tests followed by exact-byte lifecycle-generated-file freshness rejection in the isolated checkout. The overall supplemental attempt remains FAIL; later contract checks were not completed."
+    },
+    {
+      "path": "artifacts/tmp/W1.contract-eol-01.json",
+      "sha256": "6a8bf2c98862b3a063eee830194ed1d5e3bf4f9cc5f3053a71ee8e169f6d4dbb",
+      "log": "artifacts/tmp/W1.contract-eol-01.regression.log",
+      "logSha256": "3d436a53ce223c635fb81d7622e0209f427ac3cd02e590840f9afc939c13caec",
+      "status": "FAIL",
+      "developmentOnly": true,
+      "disposition": "Authenticated one-test RED before the LF attribute: the real checkout produced carriage-return bytes and failed assertNotIn(b'\\r', actual). Root exit 1, seven owned processes drained, no timeout. The same regression passes in committed qualifying attempt 02 without assertion changes."
+    }
+  ],
+  "notes": [
+    "Independently reviewed the complete direct predecessor-to-candidate edge and all three changed files. Their Git blobs and current bytes authenticate. The generated lifecycle file has the identical Git blob aeda263a5928a78f841add9c9180578912ef5c20 at both commits. No material source finding remains.",
+    "The new attribute affects only packages/contracts/domain/lifecycle.generated.ts. The regression obtains expected bytes from HEAD and checks out only the indexed target into a newly owned TemporaryDirectory under per-command core.autocrlf=true and core.safecrlf=false overrides. It uses no force, index-update flag or persistent configuration mutation; it requires both absence of carriage returns and exact equality. Existing lifecycle assertions and generator freshness comparisons are unchanged.",
+    "The producer is a narrow command/label derivative of the previously accepted quality-inventory runner. Clean committed qualification, selected input locks, under-lock producer identity, exclusive owned output, protected-witness inventory denial and mandatory process drainage remain unchanged. The complete contracts package verify command executes its existing generator freshness checks, typecheck and Vitest suite; it does not introduce a relaxed comparison or new generation semantics.",
+    "Read the actual final report and all three logs. Candidate, producer/helper identities, command identities, working directories, log hashes, status, group times and containment match the publication. The recorded inventory exactly equals tracked candidate paths plus five selected generated renderer files; all 3428 hashes and the three selected runtime hashes match. Every group has root exit zero, no timeout, zero active processes and EMPTY_CONFIRMED drainage, totaling 62 owned processes.",
+    "This accepts only the fresh bounded checkout-control correction. It does not claim that the already converted isolated file has been refreshed, that a subsequent isolated verification passed, or that prior failed evidence is reusable as passing. Planned regeneration with the unchanged generator and fresh remaining qualification are separate follow-through, not authorization to discard unrelated user edits.",
+    "No product, schema, contract source hash, security authority, governed reference or Wave acceptance requirement changed. Complete installed-runtime closure, native/account proof, production packaging, performance qualification, independent Wave review and fresh full W1 qualification remain outside this disposition. No W1/G1 approval, local-main integration or release approval is implied.",
+    "No ordinary account/project/policy data, credentials, protected witness contents or excluded sibling contents were inspected. The protected witness was absent from selected inputs and was not opened, hashed, copied, staged or changed. The reviewer authored only this new review file and ran no tests, builds or native UI actions."
+  ]
+}
