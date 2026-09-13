@@ -1,0 +1,20 @@
+{
+  "kind": "bounded-control-independent-review",
+  "candidateCommit": "ea4db5d26d76fcaba037c6453cc55827a31d5045",
+  "predecessorCommit": "592efbd4dcbae9fad1a7c3f3f54460bcd4893a89",
+  "reviewer": "agent:/root/w1_continuation_preflight",
+  "disposition": "APPROVED_BOUNDED_CONTROL_SCOPE",
+  "blockingFindings": [],
+  "scope": "Retired unexecuted bootstrap payload boundary; immutable authority checks and ordinary pre-append evidence authentication preserved.",
+  "persistenceProof": {
+    "path": "artifacts/tmp/G1-persistence-check-01.json",
+    "sha256": "50d24666cb55aef5172293f5716ff819fbfd93b44c40026f21368cf1cf94b883",
+    "producerPath": "artifacts/tmp/G1-persistence-check-01.py",
+    "producerSha256": "5185394a17c738b28885583a9b58395de3870bc1abc8ed04db63e2f22e4a6b50",
+    "disposition": "Authenticated: no canonical validation errors, fixture gate persisted, stale CAS denied, canonical bytes unchanged, no protected witness content access. Fixture W2 claim is Wave-record-only."
+  },
+  "limitations": [
+    "Not a G1 release decision or W2 authorization.",
+    "Not full-Wave qualification or a general validation exemption."
+  ]
+}
