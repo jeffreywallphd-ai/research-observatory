@@ -27,9 +27,13 @@ claims were not independently revalidated and are not adopted as facts here.
 
 ## Remaining issues — do not reopen W1 core delivery
 
-- Git ownership/clone and intermittent CLI fixture cleanup: verify the intended
-  execution identity and bounded child cleanup; no global trust change or ignored
-  cleanup error. Use a focused case, not a completed suite replay.
+- Git ownership/clone: both formerly failing cases now pass from the canonical
+  checkout under the normal execution identity. The earlier isolated-checkout
+  ownership failure remains evidence; no global trust setting changed.
+- CLI fixture cleanup still fails with Windows sharing/access errors under the
+  normal identity. Resolve fixture-owned child/handle cleanup before relying on
+  this case in a new qualification run; do not ignore the error or widen retries
+  without cause. Application assertions were not the failing stage.
 - Protected benchmarks: use disposable configured authority, not ordinary user
   storage or a plaintext substitution. Do not reinterpret setup failures as timings.
 - Scanner: diagnose the retained scanner failure with sanitized output; a failed
@@ -60,3 +64,39 @@ fail-closed `RO-CORE-INTENT-ACTOR-UNAVAILABLE`: its fixture had omitted the now-
 intent service. The follow-up supplies the existing real service/repositories with
 a synthetic actor, matching lifecycle tests; no real profile vault is consulted.
 The retained failure is not overwritten by its targeted follow-up result.
+
+At `95077c2b6be7fe03fff8fb501b72a2edc7bd096d`:
+
+| Selected check | Result |
+|---|---|
+| Privacy consent/cache case with synthetic intent authority | PASS, 1 test, 0.275 s |
+| Real-Git presentation-witness fixture, normal identity | PASS, 1 test, 67.633 s |
+| Adopted-maintenance Git fixture, normal identity | PASS, 1 test, 129.625 s |
+| CLI default/duplicate-flag case, normal identity | ERROR during fixture cleanup, 1 test, 3.929 s; retained/deferred |
+| Review-site integrity | PASS, 492 HTML pages; no errors |
+| Five affected Python files | Lint/format/type checks PASS |
+
+The first narrow mypy invocation omitted the Core source search root and failed
+import resolution. The corrected invocation used repository configuration,
+`--no-namespace-packages` and process-local `MYPYPATH=services/core-api/src`;
+no missing-import suppression or code relaxation was added. The privacy hook
+initially flagged the old synthetic token literal; runtime generation resolved
+that fixture finding. Hooks remained enabled and passed all commits.
+
+Independent review found that Markdown summaries omitted the owner-only completion
+limitation shown in HTML. At `f743739587db423e0c0fb19a608d19edf048f227`, one shared
+formatter projects existing completion notes into both Markdown views. Its new
+regression failed for both renderers before the fix, then passed (1 test); generated
+views matched exactly, and both affected Python files passed lint/format/types.
+Eighteen selected documentation links also resolved. No completed product suite
+was rerun, and no application code changed.
+
+Local site report: `artifacts/tmp/W1-W2-review-site-check-01.json`, SHA-256
+`a5543c24f548fb31dfdc795fb4a77181de0f2d6251de9656dab1cb2819089f6a`.
+Raw outputs stay local; these focused results do not replace the earlier matrix.
+
+Independent reviewer `/root/w1_continuation_preflight` **APPROVED** the bounded
+control scope at `f743739587db423e0c0fb19a608d19edf048f227`, with no remaining material
+findings. The projection finding is closed. This reasonable maintenance pass is
+complete; the listed residual checks remain follow-up work, not a reopening of
+W1 core acceptance or an assertion of full qualification. G1/W2 remains unchanged.
