@@ -35,7 +35,12 @@ from research_observatory_core.ports.object_store import (  # noqa: E402
 )
 from research_observatory_core.privacy import PrivacyPolicyProblem, ProjectPrivacyService  # noqa: E402
 from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
-from research_observatory_core.repositories import sqlite_privacy_policy_repository  # noqa: E402
+from research_observatory_core.repositories import (  # noqa: E402
+    sqlite_dependency_impact_repository,
+    sqlite_intent_revision_repository,
+    sqlite_privacy_policy_repository,
+)
+from research_observatory_core.research_intents import ResearchIntentService  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
     development_plaintext_database_fixture,
     open_canonical_database,
@@ -514,12 +519,19 @@ class PrivacyControlTests(unittest.TestCase):
             target.rename(cache)
 
     def test_authenticated_api_enforces_consent_and_cache_confirmation(self) -> None:
+        intents = ResearchIntentService(
+            self.lifecycle,
+            repository_factory=sqlite_intent_revision_repository,
+            stale_state_repository_factory=sqlite_dependency_impact_repository,
+            local_actor_id="018f0000-0000-7000-8000-000000000001",
+        )
         app = create_app(
             settings=CoreSettings(),
             capability_digest=capability_token_digest(TOKEN),
             expected_authority=AUTHORITY,
             projects=self.lifecycle,
             privacy=self.privacy,
+            intents=intents,
         )
         headers = {"Authorization": f"Bearer {TOKEN}"}
         with TestClient(

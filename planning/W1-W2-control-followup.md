@@ -9,7 +9,7 @@ W2 design remains mutable and its execution unstarted.
 
 | Work | Bounded implementation / proof |
 |---|---|
-| Test fixtures | Correct two missing Core source imports and the obsolete privacy API request; generate the in-process test capability token at runtime. Run only these previously blocked/failed modules or cases; preserve assertions. |
+| Test fixtures | Correct two missing Core source imports and the obsolete privacy API request; supply its synthetic intent actor and generate its in-process capability token at runtime. Run only these previously blocked/failed modules or cases; preserve assertions. |
 | Diagnostic reporting | Add verbose output to the existing 14 unittest discovery commands so case IDs and skip reasons are retained. One focused inventory regression protects the configuration. No new runner or automatic retries. |
 | UX planning | Extend existing Wave/capability assessment and task-start rows with user goals, cross-page context, outcome, recovery and continuation. No duplicate journey registry. |
 | UX review | Keep existing styling/workflow/accessibility/visual controls. Add conditional, bounded goal-only exploration for uncertain important journeys; model opinions are advisory unless tied to an existing material requirement. |
@@ -49,3 +49,14 @@ Changes are confined to control documentation, test fixtures, reporting and W1
 owner-status projection. No application behavior, frozen UX reference, historical
 approval or future Wave packet is rewritten. Record focused results and independent
 review alongside this note; do not claim a fresh full-suite qualification.
+
+## Focused results
+
+Candidate `a31119fe` passed the previously unloadable dependency-impact module
+(15 tests, 1.966 s), selective-recalculation module (14 tests, 2.988 s), and two
+reporting/profile-contract cases (0.003 s). Those completed checks are not replayed.
+The privacy case advanced beyond its obsolete request but failed with the expected
+fail-closed `RO-CORE-INTENT-ACTOR-UNAVAILABLE`: its fixture had omitted the now-required
+intent service. The follow-up supplies the existing real service/repositories with
+a synthetic actor, matching lifecycle tests; no real profile vault is consulted.
+The retained failure is not overwritten by its targeted follow-up result.
