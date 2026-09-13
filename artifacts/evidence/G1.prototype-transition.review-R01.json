@@ -1,0 +1,25 @@
+{
+  "kind": "independent-prototype-transition-exception-review",
+  "reviewer": "agent:/root/w1_continuation_preflight",
+  "candidateCommit": "f3f7ce43d3d5d8be4188a9a76acd3eb1204046f3",
+  "proposal": {
+    "path": "planning/G1-prototype-transition-proposal.md",
+    "sha256": "9db3e8df2c36b87a9da221f41497c62401b4edcd8307431935ed624733a40874"
+  },
+  "disposition": "SUPPORTABLE_FOR_EXPLICIT_HUMAN_DECISION",
+  "blockingFindings": [],
+  "assessment": "The four-criterion evidence map, retained failures and unknowns, one-time local prototype scope and separate W2 approval boundary are truthful. The bounded recording repair is independently approved and real persistence proof is complete.",
+  "limits": [
+    "This is not full-Wave qualification, acceptance of the exceptions or G1 approval.",
+    "W1 core remains owner-accepted; live G1 and W2 approval remain PENDING and no W2 campaign exists.",
+    "No completed product suite was rerun for this review. Historical component observations retain their own execution candidates."
+  ],
+  "integrationSequencing": {
+    "localMain": "39558eb0183a8196a03ecc1578e00b3b4f4ee568",
+    "mainAncestorOfCandidate": true,
+    "productTreesCompared": ["apps", "services", "packages"],
+    "productTreeDifferences": [],
+    "controlAndDocumentationIntegrated": false,
+    "disposition": "Disclose this residual sequencing in the human handoff and later decision record. G1 approval neither performs nor waives Section 11 integration/cleanliness requirements. Keep the campaign checkout and protected-witness boundary until those conditions are lawfully resolved; this is not a new control gate."
+  }
+}
