@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "scope": "Initial W2 planning kickoff and G1 handoff projection; not complete W2 packet approval",
+  "candidate": "85060e3f18749e21d8edbc54e44957fb6b174732",
+  "reviewer": "/root/w1_continuation_preflight",
+  "result": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "id": "W2-KICKOFF-R01-F01",
+      "priority": "P2",
+      "blocking": true,
+      "path": "tools/plan_review_site.py",
+      "description": "G1 is displayed APPROVED beside an unconditional assertion that full qualification is required, while the recorded gate exception notes and evidence are omitted.",
+      "closure": "Distinguish normal requirements from the recorded approval; project existing notes and evidence with escaping, add a focused regression and regenerate the views. No schema or authority change."
+    }
+  ],
+  "observations": [
+    "G1 owner approval is faithfully attributed; W2 remains unapproved, unclaimed and unstarted.",
+    "The 11-slice, 33-task inventory is complete.",
+    "Three reopened decisions, structured assessments, estimates and slice/ADR/reference work remain explicitly pending.",
+    "The shared runner-progress proposal is bounded and does not authorize implementation."
+  ]
+}

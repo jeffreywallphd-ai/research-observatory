@@ -235,6 +235,39 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
                 task_page_name(unsafe)
 
 
+class GateDecisionProjectionTests(unittest.TestCase):
+    def test_gate_requirements_and_recorded_exception_are_distinct_escaped_and_nonmutating(self) -> None:
+        from copy import deepcopy
+
+        from plan_review_site import gate_decision_html
+
+        gate = {
+            "id": "G1",
+            "name": "Local <prototype>",
+            "status": "APPROVED",
+            "approval": {
+                "notes": "Owner exception <limited>; retained gaps are not PASS.",
+                "evidence": ["artifacts/evidence/owner-decision.md", "javascript:alert(1)", "../outside.md"],
+            },
+        }
+        before = deepcopy(gate)
+        rendered = gate_decision_html(gate)
+        self.assertIn("Normal gate requirements:", rendered)
+        self.assertIn("the full Wave-exit suite passes", rendered)
+        self.assertIn("independent Wave review is APPROVED", rendered)
+        self.assertIn("Gate approval note:", rendered)
+        self.assertIn("Owner exception &lt;limited&gt;; retained gaps are not PASS.", rendered)
+        self.assertIn("Local &lt;prototype&gt;", rendered)
+        self.assertIn('href="../../../artifacts/evidence/owner-decision.md"', rendered)
+        self.assertIn("javascript:alert(1)", rendered)
+        self.assertEqual(1, rendered.count("href="))
+        self.assertEqual(before, gate)
+        pending = gate_decision_html({"id": "G2", "name": "Future", "status": "PENDING"})
+        self.assertIn("No gate approval note recorded.", pending)
+        self.assertIn("No gate approval evidence recorded.", pending)
+        self.assertNotIn("Owner exception", pending)
+
+
 class CorrectiveTaskProjectionTests(unittest.TestCase):
     def test_unfinished_correction_prevents_completed_wave_badge(self) -> None:
         from plan_review_site import wave_delivery_status

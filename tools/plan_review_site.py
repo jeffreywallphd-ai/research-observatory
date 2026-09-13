@@ -15,6 +15,7 @@ from contextlib import suppress
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 
 import yaml
 from planctl import _git_blob, governed_experience_binding
@@ -121,6 +122,31 @@ def render_markdown(markdown: str) -> str:
 
 def esc(value: Any) -> str:
     return html.escape("" if value is None else str(value), quote=True)
+
+
+def gate_decision_html(gate: dict[str, Any]) -> str:
+    """Display existing gate authority without inferring qualification from status."""
+    approval = gate.get("approval") or {}
+    evidence = []
+    for value in approval.get("evidence") or []:
+        path = str(value)
+        safe_relative = (
+            ":" not in path and "\\" not in path and all(part not in {"", ".", ".."} for part in path.split("/"))
+        )
+        label = esc(path)
+        evidence.append(
+            f'<li><a href="../../../{esc(quote(path, safe="/"))}">{label}</a></li>'
+            if safe_relative
+            else f"<li><code>{label}</code></li>"
+        )
+    evidence_html = "<ul>" + "".join(evidence) + "</ul>" if evidence else "<p>No gate approval evidence recorded.</p>"
+    return (
+        f"<p>{esc(gate.get('name'))}. <strong>Normal gate requirements:</strong> all Wave tasks are DONE, "
+        "every slice is independently approved, the full Wave-exit suite passes, independent Wave "
+        "review is APPROVED, prior gates are approved, and the criteria below have exact evidence.</p>"
+        f"<p><strong>Gate approval note:</strong> {esc(approval.get('notes') or 'No gate approval note recorded.')}</p>"
+        f"<div><strong>Gate approval evidence:</strong>{evidence_html}</div>"
+    )
 
 
 def display_slug(value: str) -> str:
@@ -1921,7 +1947,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <div class="wave-capability-list">{"".join(increment_cards)}</div>
 <section class="review-toolbar">
   <div class="hero-top"><div><span class="eyebrow">Wave exit / successor activation</span><h2>{esc(gate.get("id"))} — {esc(wave_id)} exit / {esc(unlocks)} activation</h2></div>{status_badge(gate.get("status"))}</div>
-  <p>{esc(gate.get("name"))}. Approval is legal only after all Wave tasks are DONE, every slice is independently approved, the full Wave-exit suite passes, independent Wave review is APPROVED, prior gates are approved, and the criteria below have exact evidence.</p>
+  {gate_decision_html(gate)}
   <ul class="gate-criteria">{criteria}</ul>
   <dl class="summary-grid"><div><dt>Gate status</dt><dd>{esc(gate.get("status"))}</dd></div><div><dt>Wave review</dt><dd>{esc(wave_completion.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(approval.get("approved_by") or "Pending")}</dd></div><div><dt>Unlocks</dt><dd>{esc(unlocks)}</dd></div></dl>
   <p data-wave-completion-notes="{esc(wave_id)}"><strong>Completion disposition:</strong> {esc(wave_completion.get("notes") or "No completion disposition recorded.")}</p>
