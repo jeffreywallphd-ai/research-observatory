@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 23cdd68fbf7478b167f744ff0d1d687efeffa31364224e82437f874d3b50c705
+source_sha256: 7b25fff0eb09ad920a63f031cbab2dfabbc692f2d1fb38adbf794c6520bf3ad3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -82,7 +82,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### G1 - Durable Windows local application core
 
-**After / unlocks / status:** `W1` / `W2` / `PENDING`
+**After / unlocks / status:** `W1` / `W2` / `APPROVED`
 
 **Criteria:**
 
@@ -7715,7 +7715,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Researchers can import existing bibliographies with preview, mapping, validation, and repeatable merge behavior.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -7723,7 +7723,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S01.T01 - Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

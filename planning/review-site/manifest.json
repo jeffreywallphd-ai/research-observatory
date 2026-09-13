@@ -155,7 +155,7 @@
       "slice_count": 15,
       "task_count": 48,
       "exit_gate_id": "G1",
-      "gate_status": "PENDING",
+      "gate_status": "APPROVED",
       "approval_status": "APPROVED",
       "completion_status": "APPROVED",
       "unlocks_waves": [
@@ -12726,7 +12726,7 @@
             {
               "task_id": "CAP-04.S01.T01",
               "title": "Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -12767,7 +12767,7 @@
             {
               "task_id": "CAP-04.S01.T01",
               "title": "Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-04/CAP-04.S01.T01.html",
               "dependencies": [
                 "CAP-03.S03.T02",
