@@ -1924,6 +1924,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <p>{esc(gate.get("name"))}. Approval is legal only after all Wave tasks are DONE, every slice is independently approved, the full Wave-exit suite passes, independent Wave review is APPROVED, prior gates are approved, and the criteria below have exact evidence.</p>
   <ul class="gate-criteria">{criteria}</ul>
   <dl class="summary-grid"><div><dt>Gate status</dt><dd>{esc(gate.get("status"))}</dd></div><div><dt>Wave review</dt><dd>{esc(wave_completion.get("status"))}</dd></div><div><dt>Approved by</dt><dd>{esc(approval.get("approved_by") or "Pending")}</dd></div><div><dt>Unlocks</dt><dd>{esc(unlocks)}</dd></div></dl>
+  <p data-wave-completion-notes="{esc(wave_id)}"><strong>Completion disposition:</strong> {esc(wave_completion.get("notes") or "No completion disposition recorded.")}</p>
+  <p><strong>Completion reviewer:</strong> {esc(wave_completion.get("reviewer") or "Pending")}</p>
 </section>
 """
         wave_page = shell(

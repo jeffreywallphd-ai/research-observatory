@@ -41,6 +41,13 @@ class VerificationRunnerTests(unittest.TestCase):
         self.contract = load_contract(REPO)
         self.policy = load_selection_policy(REPO)
 
+    def test_unittest_commands_report_case_ids_and_skip_reasons(self) -> None:
+        commands = [command["argv"] for command in self.contract["commands"].values() if "unittest" in command["argv"]]
+        self.assertTrue(commands)
+        for argv in commands:
+            with self.subTest(argv=argv):
+                self.assertIn("-v", argv)
+
     def git(self, repo: Path, *args: str) -> str:
         completed = subprocess.run(
             ["git", "-c", "user.name=Verification Tests", "-c", "user.email=verify@example.invalid", *args],

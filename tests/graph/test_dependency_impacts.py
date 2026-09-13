@@ -1,16 +1,20 @@
 from __future__ import annotations
 
+import sys
 import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from research_observatory_core.dependency_impacts import (
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "services" / "core-api" / "src"))
+
+from research_observatory_core.dependency_impacts import (  # noqa: E402
     DependencyGraphEdge,
     plan_dependency_impact,
 )
-from research_observatory_core.ports.repositories import (
+from research_observatory_core.ports.repositories import (  # noqa: E402
     DEFAULT_DEPENDENCY_IMPACT_LIMITS,
     AggregateRevision,
     AggregateRevisionDraft,
@@ -23,11 +27,11 @@ from research_observatory_core.ports.repositories import (
     RepositoryConflict,
     RepositoryProblem,
 )
-from research_observatory_core.repositories import (
+from research_observatory_core.repositories import (  # noqa: E402
     create_sqlite_unit_of_work_factory,
     sqlite_dependency_impact_repository,
 )
-from research_observatory_core.storage import (
+from research_observatory_core.storage import (  # noqa: E402
     development_plaintext_database_fixture,
     initialize_database,
     open_canonical_database,

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import sys
 import tempfile
 import unittest
 from collections.abc import Callable
@@ -9,7 +10,10 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from research_observatory_core.ports.repositories import (
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "services" / "core-api" / "src"))
+
+from research_observatory_core.ports.repositories import (  # noqa: E402
     AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
@@ -20,7 +24,7 @@ from research_observatory_core.ports.repositories import (
     RepositoryConflict,
     RepositoryProblem,
 )
-from research_observatory_core.ports.workflow_executor import (
+from research_observatory_core.ports.workflow_executor import (  # noqa: E402
     WorkflowActor,
     WorkflowJobClaim,
     WorkflowJobRecord,
@@ -29,13 +33,13 @@ from research_observatory_core.ports.workflow_executor import (
     WorkflowQueueConflict,
     WorkflowQueueProblem,
 )
-from research_observatory_core.recalculation_contracts import (
+from research_observatory_core.recalculation_contracts import (  # noqa: E402
     RecalculationAuthority,
     RecalculationCandidateCommit,
     RestoreRevisionCommit,
     SelectiveRecalculationRepository,
 )
-from research_observatory_core.repositories import (
+from research_observatory_core.repositories import (  # noqa: E402
     create_sqlite_unit_of_work_factory,
     sqlite_dependency_impact_repository,
     sqlite_material_dependency_repository,
@@ -43,7 +47,7 @@ from research_observatory_core.repositories import (
     sqlite_selective_recalculation_repository,
     sqlite_workflow_queue_repository,
 )
-from research_observatory_core.selective_recalculation import (
+from research_observatory_core.selective_recalculation import (  # noqa: E402
     RecalculationWorkflowIdentity,
     RecalculationWorkflowRequest,
     RestoreReviewIdentity,
@@ -51,12 +55,12 @@ from research_observatory_core.selective_recalculation import (
     RestoreRevisionCommand,
     SelectiveRecalculationService,
 )
-from research_observatory_core.storage import (
+from research_observatory_core.storage import (  # noqa: E402
     development_plaintext_database_fixture,
     initialize_database,
     open_canonical_database,
 )
-from research_observatory_core.workflow_contracts import workflow_snapshot_errors
+from research_observatory_core.workflow_contracts import workflow_snapshot_errors  # noqa: E402
 
 PROJECT_ID = "01890f6e-6a40-7cc5-98b7-123456789abc"
 SYSTEM_ID = "01890f6e-6a40-7cc5-98b7-000000000301"

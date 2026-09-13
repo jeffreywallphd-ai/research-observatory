@@ -126,6 +126,30 @@ timezone, reduced motion, light/dark schemes, fonts, animation suppression, and
 deterministic time/random data. Browser requests are aborted and reference
 assets are inlined, so qualification is offline.
 
+## Cross-page journeys and exploratory review
+
+Read this section for a material navigation/workflow change or its slice/Wave
+review. Reuse the affected workflow IDs and task acceptance rows; add no parallel
+journey registry. Existing route/workflow/reference checks prove their explicit
+contracts, not human comprehension or complete product behavior. Pair affected
+product journey checks with trusted outcome/state assertions, including safe
+return, correction, cancellation and restart where promised.
+
+For an important new journey whose discoverability is uncertain, use one bounded
+goal-only walkthrough in a fresh reviewer context: ordinary starting state and
+user goal, no source code or prescribed click sequence. Record observed steps,
+confusion and outcome; then use informed diagnosis separately. Disclose tool or
+context leakage and label agent observations as exploratory, not human research
+or full accessibility proof. Reuse existing computer-use tooling and review
+records; this is not mandatory for every task or unchanged journey.
+
+Findings name the goal/state, evidence, violated requirement or tentative
+hypothesis, consequence and smallest repair. Merge duplicates. Subjective polish
+remains advisory; block only on an existing material requirement or an explicitly
+approved new invariant. No UX score, new approval layer or automatic baseline
+refresh. Deterministic checks cover executable behavior; models and humans supply
+different evidence, not interchangeable passes.
+
 ## Visual baseline changes
 
 `verification/baselines/desktop-ui.json` records the screenshot SHA-256 values

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import secrets
 import sqlite3
 import subprocess
 import sys
@@ -40,7 +41,7 @@ from research_observatory_core.storage import (  # noqa: E402
     open_canonical_database,
 )
 
-TOKEN = "0123456789abcdef" * 4
+TOKEN = secrets.token_hex(32)  # Ephemeral authority for the in-process test client only.
 AUTHORITY = "127.0.0.1:49152"
 TRACE = "a" * 32
 CONSENT = "acknowledge-egress-preview-v1"
@@ -533,7 +534,8 @@ class PrivacyControlTests(unittest.TestCase):
                     "parentDirectory": str(self.parent),
                     "directoryName": "api-study",
                     "displayName": "API Study",
-                    "templateId": "theory-synthesis",
+                    "primaryUseCase": "theory-article-development",
+                    "researchObjective": "Verify explicit consent and confirmed cache clearing.",
                 },
             )
             self.assertEqual(created.status_code, 200, created.text)

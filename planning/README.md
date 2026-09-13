@@ -74,6 +74,11 @@ and rationale; the reviewer records any override with its rationale.
 The campaign survives process/session interruptions. An expired lease may be
 renewed only by its recorded owner. Later-Wave work stays gated.
 
+Historical exception: [W1 core owner acceptance](../artifacts/evidence/W1.owner-core-acceptance-01.md)
+records prototype delivery complete with retained qualification gaps. It does
+not report a full-green suite or approve W2 execution; future Waves retain the
+normal lifecycle above.
+
 ## Initiation assessment and controlled planning adaptation
 
 Plans are working hypotheses during initiation. Before a new Wave packet is
@@ -109,6 +114,15 @@ Each assessment must state:
   the planned work; and
 - the itemized implementation estimate, planned redesign/refactoring, and
   disposition of deferred work, including changes inherited from earlier Waves.
+
+For materially new or changed user-facing workflows, add a short journey to the
+existing Wave/capability assessment: user goal and ordinary starting point,
+important cross-page transitions, context carried or deliberately cleared,
+observable outcome, recovery and useful next step. Reuse approved vocabulary,
+components and workflow IDs. Compare interaction alternatives only for material
+design choices; do not require a new UX document or approval for each task.
+Slice/task mini-planning refines only affected transitions through
+[task-start planning](../docs/automation/task-start-planning.md#step-2-build-the-acceptance-closure-map).
 
 Tested code remains authoritative evidence of current behavior, but current
 behavior does not set the desired direction. Within accepted architectural

@@ -70,6 +70,13 @@ fields before implementation. For migration or compatibility work, use exact
 predecessor bytes. For a cross-layer behavior, identify one real end-to-end
 principal boundary instead of relying only on parallel unit doubles.
 
+For a material user-facing change, the experience row follows the user's journey,
+not just the changed page. Link affected workflow IDs to named checks for the
+outcome, safe context/draft handling, next/back/return behavior and a relevant
+failure or cancellation path. Respect security-driven clearing on lock/restart;
+continuity is not permission to restore protected state. Check actual durable
+outcomes, not only success notices. Reuse the existing row; no extra worksheet.
+
 ## Step 3: Convert material rows into tests
 
 Before production code where practical:

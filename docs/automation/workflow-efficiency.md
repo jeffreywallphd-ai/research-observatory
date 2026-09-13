@@ -161,6 +161,16 @@ closure and not an automatic cache key. Full Wave qualification stays fresh.
 
 ## Automatic receipts and safe reuse
 
+Before a costly run, check only its actual prerequisites: intended execution
+identity and Git access, imports, disposable storage authority, and required
+scanner/runtime availability. Stop the affected group on a demonstrated setup
+failure; do not repair it by weakening assertions or global trust settings.
+Use verbose unittest output to retain case IDs and skip reasons. Diagnose a
+failed case before a targeted retry; do not replay completed suites merely to
+obtain better reporting. Preserve infrastructure errors, product failures,
+skips and exploratory observations as distinct outcomes. This adds no runner,
+cache authority, mandatory all-tool preflight or additional approval gate.
+
 Prefer tool-generated facts over hand-transcribed command results. A receipt
 should bind the candidate, exact inputs and producer, selected command,
 exit/disposition, timing and output digests. It does not decide whether a test
