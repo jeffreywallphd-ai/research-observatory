@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "1.0",
+  "scope": "Bounded W2 kickoff and G1 decision projection; not complete W2 packet approval",
+  "candidate": "71307d8947eb55a5f66f24ca8589778a7e226273",
+  "reviewer": "/root/w1_continuation_preflight",
+  "result": "APPROVED",
+  "priorReview": "artifacts/evidence/W2.initiation-kickoff.review-R01.json",
+  "closedFindings": [
+    {
+      "id": "W2-KICKOFF-R01-F01",
+      "closure": "The shared renderer and generated W1 page distinguish normal gate requirements from the exact owner-approved exception and link its existing decision record. Escaping, safe relative links and pending/no-note states are covered without reading payloads or changing authority."
+    }
+  ],
+  "openFindings": [],
+  "verification": {
+    "candidateInputsHeldFixed": true,
+    "newRegression": "PASS: GateDecisionProjectionTests, 1 case; prior unchanged rendering failed the new assertion",
+    "lintFormatTypes": "PASS: ruff check, ruff format --check and mypy for tools/plan_review_site.py and tests/foundation/test_plan_review_task_drilldown.py",
+    "generatedSite": "PASS: 492 HTML pages, no errors or warnings; deterministic regeneration matches",
+    "siteReport": "artifacts/tmp/W2-kickoff-review-site-check-01.json",
+    "siteReportSha256": "a5543c24f548fb31dfdc795fb4a77181de0f2d6251de9656dab1cb2819089f6a",
+    "reviewedGeneratedPageRawSha256": {
+      "planning/review-site/waves/W1.html": "dd4a468d10671426faf524f6e8a739123597a8f9d50a9cb14cbb637528525178",
+      "planning/review-site/waves/W2.html": "14cd86687dbb2859ed660ff7c0d64e7747241228a067a2a1d225d86af42d19a5"
+    },
+    "limits": "Tool-observed focused control checks and independent projection review; the count-only site report is not an execution-authentication receipt. No completed W1 product suite was replayed."
+  },
+  "planningState": {
+    "g1": "APPROVED under the recorded limited prototype exception",
+    "w2Approval": "PENDING",
+    "w2Campaign": "Not started",
+    "resolvedDecisions": "4 of 7",
+    "completedTasks": "0 of 33",
+    "remainingPlanning": "Resolve three reopened selections, complete structured assessments and estimates, refresh all slice contracts and ADR/reference mappings, then independently review the complete packet before one W2 approval.",
+    "automation": "One shared approximately two-hour live-runner-progress increment proposed, not implemented; broader controls deferred."
+  },
+  "integration": "Campaign checkout retained. Existing integration/cleanliness requirements and protected-witness restrictions are not waived. No push or remote mutation."
+}

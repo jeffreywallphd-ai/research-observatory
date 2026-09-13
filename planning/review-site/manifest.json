@@ -979,7 +979,15 @@
         "CAP-04",
         "CAP-05"
       ],
-      "decision_ids": [],
+      "decision_ids": [
+        "CAP-04-D01",
+        "CAP-04-D02",
+        "CAP-04-D03",
+        "CAP-04-D04",
+        "CAP-05-D01",
+        "CAP-05-D02",
+        "CAP-05-D03"
+      ],
       "slice_ids": [
         "CAP-04.S01",
         "CAP-04.S02",
@@ -12708,7 +12716,7 @@
       "capability_alias": "CAP-scholarly-ingestion",
       "title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
       "plan_path": "planning/capability-plans/CAP-04.md",
-      "plan_sha256": "a38473795ff18f921f4986a85731df1c59bc6b6e7b52a164c6d19712af3c2d10",
+      "plan_sha256": "a6cab08051e7b4b3476af8b33c068090ebe3b8e3b5c27090c211303647efea82",
       "page": "CAP-04/index.html",
       "decision_count": 4,
       "slice_count": 5,
@@ -13230,7 +13238,7 @@
       "capability_alias": "CAP-document-inspection",
       "title": "Document acquisition, parsing, source inspection, and page anchors",
       "plan_path": "planning/capability-plans/CAP-05.md",
-      "plan_sha256": "e10e72d7d87efd05c9eb2f5cd99e68955699fb463ef9d8c152bcc3bd35e9d8bc",
+      "plan_sha256": "bb208e3b44396488d8b8c8cfcafa135f946a829beb03b430e3e434bcf44e879e",
       "page": "CAP-05/index.html",
       "decision_count": 3,
       "slice_count": 6,
