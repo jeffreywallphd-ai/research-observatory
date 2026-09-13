@@ -3,12 +3,16 @@ plan_schema_version: '1.1'
 document_type: capability-decision-plan
 baseline: '1.3'
 supplemental_release: 1.3.4
+planning_policy_version: initiation-assessment-2.0
+initiation_assessment: null
 capability_id: CAP-04
 title: Scholarly ingestion, connectors, canonicalization, and corpus governance
 status: proposed
-execution_mode: long-running-capability-campaign
-decision_completion: complete
-open_blocking_decisions: []
+execution_mode: wave-scoped-capability-increments
+decision_completion: reopened
+open_blocking_decisions:
+- CAP-04-D01
+- CAP-04-D04
 slice_ids:
 - CAP-04.S01
 - CAP-04.S02
@@ -20,12 +24,13 @@ decisions:
   title: Open scholarly sources
   candidates:
   - OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
-  - Scrape publisher/search pages
+  - Local imports with DOI lookup only; defer broad multi-provider discovery
   recommendation: OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
-  recommendation_basis: Official APIs provide lawful, testable metadata acquisition and replaceable source behavior.
-  selected_option: OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
-  status: accepted
+  recommendation_basis: Official adapters retain the planned source coverage and reproducible observations; provider-specific credentials, terms, redacted replay and limits must be resolved before lock.
+  selected_option: null
+  status: reopened
   required_adr: null
+  binding_waves: [W2]
 - id: CAP-04-D02
   title: Canonicalization
   candidates:
@@ -36,6 +41,7 @@ decisions:
   selected_option: Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review
   status: accepted
   required_adr: null
+  binding_waves: [W2]
 - id: CAP-04-D03
   title: Rights/provenance
   candidates:
@@ -46,16 +52,18 @@ decisions:
   selected_option: Every import records discovery path, source terms, access status, license/rights and retrieval time
   status: accepted
   required_adr: null
+  binding_waves: [W2]
 - id: CAP-04-D04
   title: Extensibility
   candidates:
   - Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
-  - Arbitrary plugin code with application privileges
+  - First-party built-in connectors only; defer third-party execution and SDK delivery
   recommendation: Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
-  recommendation_basis: New sources should not bypass core policy or destabilize the desktop product.
-  selected_option: Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
-  status: accepted
+  recommendation_basis: Retain the planned extensibility outcome without ambient application privilege; resolve the real Windows isolation and credential-broker boundary before lock.
+  selected_option: null
+  status: reopened
   required_adr: null
+  binding_waves: [W2]
 approval:
   status: pending
   approved_by: null
@@ -64,9 +72,12 @@ approval:
 ---
 # CAP-04 — Capability decision and execution plan
 
-> **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+> **W2 planning in progress.** G1's limited transition is approved; this capability
+> contribution is not. Resolve the reopened decisions and complete the initiation
+> assessment, estimates and slice refresh before requesting the single W2 approval.
+> Retained selected recommendations are planning choices, not execution authority.
 
-<div class="visual-flow"><span>Review all slices</span><b>→</b><span>Confirm or override resolved defaults</span><b>→</b><span>Approve once</span><b>→</b><span>Run long capability campaign</span><b>→</b><span>Production readiness review</span></div>
+<div class="visual-flow"><span>Refresh W2 contributions</span><b>→</b><span>Resolve binding decisions</span><b>→</b><span>Approve complete W2 packet</span><b>→</b><span>Execute W2 campaign</span><b>→</b><span>Qualify G2 exit</span></div>
 
 ## 0. Control and authority
 
@@ -74,11 +85,35 @@ approval:
 |---|---|
 | Capability | `CAP-04` — Scholarly ingestion, connectors, canonicalization, and corpus governance |
 | Objective | Build a source-transparent canonical corpus from local libraries, open scholarly APIs, and later licensed adapters while preserving rights, versions, and discovery paths. |
-| Execution mode | Capability campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Execution mode | Contribution to the W2 campaign; slices complete in dependency order |
+| Decision status | `REOPENED` — source/replay and connector-isolation details need resolution |
 | Slice plans | `CAP-04.S01`, `CAP-04.S02`, `CAP-04.S03`, `CAP-04.S04`, `CAP-04.S05` |
-| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.6`; affected slice/page mappings require refresh; preserve inherited catalog bindings |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
+
+## 0A. Initiation assessment and planning adaptation
+
+Initial assessment: 2026-09-13, W2. See the shared
+[W2 initiation assessment](../W2-initiation.md) for the complete contribution
+inventory, current primary sources, cross-capability journey, carry-forward risks
+and one bounded automation proposal. Structured estimates remain incomplete;
+`initiation_assessment: null` deliberately prevents approval-ready claims.
+
+- **Baseline / fit:** reuse W1 Core-owned revisions, protected object streams,
+  provenance and durable jobs. The corpus-first outcome still fits the Vision;
+  imports/connectors must consume these boundaries, not recreate them.
+- **Adaptation:** keep local imports usable without provider credentials. Resolve
+  source-specific configuration and redacted request replay in CAP-04-D01;
+  resolve actual least-privilege connector execution in CAP-04-D04. An ordinary
+  worker process is not a sandbox. The alternative to the SDK would reduce
+  proposed W2 scope and is not silently selected.
+- **Journey:** project → import picker/preview → review conflicts → commit →
+  corpus/manifest → document acquisition. Preserve source, project and selection
+  context; failed/cancelled preview must not commit partial canonical records.
+- **Support / debt:** one shared runner-progress increment is proposed in the
+  linked assessment, counted once, not per capability. No foundational rewrite
+  or broad historical-fixture repair is selected. Before lock, complete the
+  fifteen atomic task estimates and necessary ADR/reference mappings.
 
 ## 1. Capability outcome and production-ready exit
 
@@ -117,14 +152,17 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 | ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
 |---|---|---|---|---|---|
-| `CAP-04-D01` | **Open scholarly sources** | OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures | Scrape publisher/search pages | Official APIs provide lawful, testable metadata acquisition and replaceable source behavior. | [OpenAlex API Documentation](https://docs.openalex.org/) |
+| `CAP-04-D01` | **Open scholarly sources — reopened** | OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures | Local imports with DOI lookup only; defer broad multi-provider discovery | Retain source coverage; resolve provider configuration, terms, limits and secret-free replay before selection. | [Current source assessment](../W2-initiation.md#current-primary-source-refresh) |
 | `CAP-04-D02` | **Canonicalization** | Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review | Last-imported record wins | Source disagreement and version relationships must remain visible and reversible. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
 | `CAP-04-D03` | **Rights/provenance** | Every import records discovery path, source terms, access status, license/rights and retrieval time | Store only normalized citation metadata | Rights and provenance are required for later text, model and export decisions. | [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) |
-| `CAP-04-D04` | **Extensibility** | Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures | Arbitrary plugin code with application privileges | New sources should not bypass core policy or destabilize the desktop product. | [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12) |
+| `CAP-04-D04` | **Extensibility — reopened** | Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures | First-party built-in connectors only; defer third-party execution and SDK delivery | Retain the SDK outcome; choose and prove the Windows isolation/credential boundary, not merely a child process. | Systems Design section 16.4; CAP-04.S05 |
 
 ### Review and approval
 
-The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+All seven decisions across CAP-04/CAP-05 bind W2. Reopened rows need an explicit
+planning selection and rationale; retained selections remain reviewable. Approval
+covers the complete Wave and every contributing slice at one immutable commit,
+not this capability in isolation. The G1 decision is not W2 packet approval.
 
 
 ## 5. Cross-slice architecture contract
@@ -163,7 +201,11 @@ The reviewer must confirm the entire capability’s trust boundaries, data class
 
 ## 9. Long-running execution contract
 
-Once approved and started, the agent should execute the whole capability slice by slice. It may make ordinary low-risk implementation choices within the accepted architecture, debug tests, refactor within module boundaries, select documented fallbacks and rerun evaluations without asking for confirmation. Progress is recorded through task/slice evidence and periodic concise updates rather than approval stops.
+After complete W2 approval, execute this contribution through the same Wave
+campaign and dependency-eligible taskctl claims. Ordinary implementation and
+debugging stay within the approved contract. Select risk-appropriate checks;
+supplemental refactoring uses W2's single locked budget. Capability completion
+does not create a separate lease, approval or release gate.
 
 ### Allowed pause classifications
 
@@ -182,8 +224,9 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 - [ ] Capability-wide architecture and end-to-end path are coherent.
 - [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
 - [ ] Security/privacy/rights/research-integrity review is complete.
-- [ ] All slice plans are approved at immutable commits.
-- [ ] `python tools/planctl.py ready CAP-04 --require-approved` passes.
+- [ ] Initiation-assessment 2.0 and all W2 atomic estimates are complete; shared allocations are counted once.
+- [ ] All W2 slice plans are approved at the same immutable Wave packet commit.
+- [ ] `python tools/planctl.py --repo . wave ready W2 --require-approved` passes.
 - [ ] The first dependency-ready task can start and the campaign can continue without routine decision stops.
 
 ## 11. Research and technical basis
@@ -195,10 +238,8 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 
 ## 12. Approval record
 
-The packet remains **proposed**. Approval requires:
-
-- `decision_completion: complete`;
-- every front-matter decision `status: accepted`;
-- `approval.status: approved`, named approver, timestamp and approved commit;
-- approved slice plans and any required ADRs/reference versions;
-- passing approval-mode plan validation.
+The contribution remains **proposed**, with W2-binding decisions reopened.
+Complete its assessment, estimates, selections and required ADR/reference work;
+then validate and independently review the entire W2 packet before requesting
+the owner's one immutable pre-Wave approval. No capability-only approval or
+blanket inheritance of the G1 exception is authorized.

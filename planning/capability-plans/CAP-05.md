@@ -3,12 +3,15 @@ plan_schema_version: '1.1'
 document_type: capability-decision-plan
 baseline: '1.3'
 supplemental_release: 1.3.4
+planning_policy_version: initiation-assessment-2.0
+initiation_assessment: null
 capability_id: CAP-05
 title: Document acquisition, parsing, source inspection, and page anchors
 status: proposed
-execution_mode: long-running-capability-campaign
-decision_completion: complete
-open_blocking_decisions: []
+execution_mode: wave-scoped-capability-increments
+decision_completion: reopened
+open_blocking_decisions:
+- CAP-05-D01
 slice_ids:
 - CAP-05.S01
 - CAP-05.S02
@@ -21,12 +24,13 @@ decisions:
   title: Document preference
   candidates:
   - Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
-  - OCR every document; rely only on remote parsing
+  - Native structured intake plus lightweight local PDF text fallback; defer full layout extraction
   recommendation: Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
-  recommendation_basis: Native structure is higher fidelity; local PDF fallback preserves privacy and offline operation.
-  selected_option: Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
-  status: accepted
+  recommendation_basis: Retain structured fidelity and the planned local Docling outcome; resolve Windows runtime, offline model assets, isolation and limits before lock.
+  selected_option: null
+  status: reopened
   required_adr: null
+  binding_waves: [W2]
 - id: CAP-05-D02
   title: Revision/anchor model
   candidates:
@@ -37,6 +41,7 @@ decisions:
   selected_option: Immutable document revisions with structural, page-region, text-position and quote selectors
   status: accepted
   required_adr: null
+  binding_waves: [W2]
 - id: CAP-05-D03
   title: Correction
   candidates:
@@ -47,6 +52,7 @@ decisions:
   selected_option: Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing
   status: accepted
   required_adr: null
+  binding_waves: [W2]
 approval:
   status: pending
   approved_by: null
@@ -55,9 +61,12 @@ approval:
 ---
 # CAP-05 — Capability decision and execution plan
 
-> **Capability approval gate — proposed, recommendations resolved.** The planning agent has researched the credible alternatives and preselected the documented best-in-class recommendation for every material decision. Those choices are complete decisions. Reviewers may confirm the defaults or override a choice with explicit rationale; one approval then authorizes this packet and all contained slice plans at an immutable commit. No separate decision-selection stop is required.
+> **W2 planning in progress.** G1's limited transition is approved; this capability
+> contribution is not. Resolve local-parser feasibility and complete the initiation
+> assessment, estimates and slice refresh before requesting the single W2 approval.
+> Retained selected recommendations are planning choices, not execution authority.
 
-<div class="visual-flow"><span>Review all slices</span><b>→</b><span>Confirm or override resolved defaults</span><b>→</b><span>Approve once</span><b>→</b><span>Run long capability campaign</span><b>→</b><span>Production readiness review</span></div>
+<div class="visual-flow"><span>Refresh W2 contributions</span><b>→</b><span>Resolve binding decisions</span><b>→</b><span>Approve complete W2 packet</span><b>→</b><span>Execute W2 campaign</span><b>→</b><span>Qualify G2 exit</span></div>
 
 ## 0. Control and authority
 
@@ -65,11 +74,36 @@ approval:
 |---|---|
 | Capability | `CAP-05` — Document acquisition, parsing, source inspection, and page anchors |
 | Objective | Convert lawful full text into immutable, inspectable document revisions while retaining page, layout, reference, table, and figure context. |
-| Execution mode | Capability campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` — best-in-class recommendations preselected and accepted; capability approval pending |
+| Execution mode | Contribution to the W2 campaign; slices complete in dependency order |
+| Decision status | `REOPENED` — pinned local-parser runtime/assets need feasibility and selection |
 | Slice plans | `CAP-05.S01`, `CAP-05.S02`, `CAP-05.S03`, `CAP-05.S04`, `CAP-05.S05`, `CAP-05.S06` |
-| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.3` for all listed user-facing pages |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.6`; affected slice/page mappings require refresh; preserve inherited catalog bindings |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
+
+## 0A. Initiation assessment and planning adaptation
+
+Initial assessment: 2026-09-13, W2. See the shared
+[W2 initiation assessment](../W2-initiation.md) for baseline evidence, primary
+sources, complete contribution inventory, user journey and retained risks.
+Structured estimates remain incomplete; `initiation_assessment: null` deliberately
+prevents approval-ready claims.
+
+- **Baseline / fit:** reuse immutable revisions, protected object streams,
+  durable jobs and selective recalculation. Traceable source inspection remains
+  central to the Vision. A parser's output and quality score are not evidence
+  acceptance; the researcher retains correction and interpretation authority.
+- **Adaptation:** CAP-05-D01 remains open until the local Docling package/runtime,
+  offline assets and resource/isolation design are supported. Resolve secure
+  viewer range access in CAP-05.S04.T01 without decrypted paths. These are new
+  integration needs, not proof that W1 supplies a hostile-content sandbox.
+- **Journey:** corpus/work-version → attachment or permitted copy → parse status
+  → exact source anchor → correction/impact preview → return to the originating
+  selection. Keep missing full text and ambiguous anchors explicit. A reparse
+  cannot silently replace an accepted revision.
+- **Support / debt:** use the single shared runner-progress proposal; no second
+  allocation or new UX framework. No foundational rewrite is selected. Before
+  lock, complete eighteen atomic estimates, inherited-risk dispositions and the
+  required document/anchor/viewer ADR and reference mappings.
 
 ## 1. Capability outcome and production-ready exit
 
@@ -109,13 +143,16 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 | ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
 |---|---|---|---|---|---|
-| `CAP-05-D01` | **Document preference** | Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port | OCR every document; rely only on remote parsing | Native structure is higher fidelity; local PDF fallback preserves privacy and offline operation. | [Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) |
+| `CAP-05-D01` | **Document preference — reopened** | Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port | Native structured intake plus lightweight local PDF text fallback; defer full layout extraction | Retain the planned Docling outcome; prove Windows packaging, offline assets and limits before selection. A reduced-layout alternative changes proposed scope. | [Current parser assessment](../W2-initiation.md#current-primary-source-refresh) |
 | `CAP-05-D02` | **Revision/anchor model** | Immutable document revisions with structural, page-region, text-position and quote selectors | Mutable current text with page number only | Downstream evidence requires stable, inspectable source context across correction/reparse. | [Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) |
 | `CAP-05-D03` | **Correction** | Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing | Edit parsed text in place | Preserves source/parser history and prevents silent mutation of accepted evidence. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
 
 ### Review and approval
 
-The best-in-class recommendation in every row is already the selected, accepted decision. Reviewers may confirm the complete set without editing individual choices, or replace a recommendation with another documented candidate and record an explicit rationale. The only remaining routine human gate is approval of this capability packet and all slice plans at one immutable commit.
+All seven decisions across CAP-04/CAP-05 bind W2. Resolve the reopened parser
+decision and keep retained selections reviewable. Approval covers the complete
+Wave and every contributing slice at one immutable commit, not this capability
+in isolation. The G1 decision is not W2 packet approval.
 
 
 ## 5. Cross-slice architecture contract
@@ -154,7 +191,11 @@ The reviewer must confirm the entire capability’s trust boundaries, data class
 
 ## 9. Long-running execution contract
 
-Once approved and started, the agent should execute the whole capability slice by slice. It may make ordinary low-risk implementation choices within the accepted architecture, debug tests, refactor within module boundaries, select documented fallbacks and rerun evaluations without asking for confirmation. Progress is recorded through task/slice evidence and periodic concise updates rather than approval stops.
+After complete W2 approval, execute this contribution through the same Wave
+campaign and dependency-eligible taskctl claims. Ordinary implementation and
+debugging stay within the approved contract. Select risk-appropriate checks;
+supplemental refactoring uses W2's single locked budget. Capability completion
+does not create a separate lease, approval or release gate.
 
 ### Allowed pause classifications
 
@@ -173,8 +214,9 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 - [ ] Capability-wide architecture and end-to-end path are coherent.
 - [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
 - [ ] Security/privacy/rights/research-integrity review is complete.
-- [ ] All slice plans are approved at immutable commits.
-- [ ] `python tools/planctl.py ready CAP-05 --require-approved` passes.
+- [ ] Initiation-assessment 2.0 and all W2 atomic estimates are complete; shared allocations are counted once.
+- [ ] All W2 slice plans are approved at the same immutable Wave packet commit.
+- [ ] `python tools/planctl.py --repo . wave ready W2 --require-approved` passes.
 - [ ] The first dependency-ready task can start and the campaign can continue without routine decision stops.
 
 ## 11. Research and technical basis
@@ -184,10 +226,8 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 
 ## 12. Approval record
 
-The packet remains **proposed**. Approval requires:
-
-- `decision_completion: complete`;
-- every front-matter decision `status: accepted`;
-- `approval.status: approved`, named approver, timestamp and approved commit;
-- approved slice plans and any required ADRs/reference versions;
-- passing approval-mode plan validation.
+The contribution remains **proposed**, with a W2-binding decision reopened.
+Complete its assessment, estimates, selections and required ADR/reference work;
+then validate and independently review the entire W2 packet before requesting
+the owner's one immutable pre-Wave approval. No capability-only approval or
+blanket inheritance of the G1 exception is authorized.
