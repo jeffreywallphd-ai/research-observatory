@@ -4067,10 +4067,7 @@ def recovery_supplement_authority_errors(
             and target_amendment.get("target_wave") == packet.get("targetWave")
             and target_amendment.get("kind") == "gate-integrity-safety-defect"
             and target_amendment.get("approval_reference") == expected_approval_reference
-            and (target_amendment.get("lifecycle") or {}).get("status") == "SUPERSEDED"
-            and target_amendment.get("bootstrap") is None
-            and target_amendment.get("campaign") is None
-            and target_amendment.get("tasks") == []
+            and is_unexecuted_superseded_reservation(target_amendment)
         )
         if (target_amendment and not terminal_migration_projection) or target.get("backlogPresence") is not False:
             errors.append(f"{supplement_id}: pre-append target amendment was fabricated in backlog state")
@@ -4100,29 +4097,36 @@ def recovery_supplement_authority_errors(
             errors.append(f"{supplement_id}: target amendment approval is stale or invalid")
         candidate = str(target_bootstrap.get("candidateCommit") or "")
         evidence = target_bootstrap.get("evidence") or {}
-        evidence_relative = str(evidence.get("path") or "")
-        try:
-            evidence_path = safe_control_path(
-                repo,
-                evidence_relative,
-                prefix="artifacts/evidence",
-                label=f"{supplement_id} target bootstrap evidence",
-            )
-            evidence_payload = evidence_path.read_bytes()
-            evidence_document = json.loads(evidence_payload)
-        except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
-            errors.append(f"{supplement_id}: cannot load target bootstrap evidence: {exc}")
-            evidence_document = {}
-            evidence_payload = b""
         if (
             not git_commit_exists(repo, candidate)
             or not git_is_ancestor(repo, candidate)
             or evidence.get("commit") != candidate
-            or hashlib.sha256(evidence_payload).hexdigest() != evidence.get("sha256")
-            or evidence_document.get("taskId") != target_bootstrap.get("id")
-            or evidence_document.get("commit") != candidate
         ):
             errors.append(f"{supplement_id}: target bootstrap candidate/evidence authority mismatch")
+        # A present target is either the authenticated retired reservation or
+        # rejected above. Neither may acquire authority from its former payload.
+        # The ordinary pre-append path still authenticates the actual evidence.
+        if not target_amendment:
+            evidence_relative = str(evidence.get("path") or "")
+            try:
+                evidence_path = safe_control_path(
+                    repo,
+                    evidence_relative,
+                    prefix="artifacts/evidence",
+                    label=f"{supplement_id} target bootstrap evidence",
+                )
+                evidence_payload = evidence_path.read_bytes()
+                evidence_document = json.loads(evidence_payload)
+            except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as exc:
+                errors.append(f"{supplement_id}: cannot load target bootstrap evidence: {exc}")
+                evidence_document = {}
+                evidence_payload = b""
+            if (
+                hashlib.sha256(evidence_payload).hexdigest() != evidence.get("sha256")
+                or evidence_document.get("taskId") != target_bootstrap.get("id")
+                or evidence_document.get("commit") != candidate
+            ):
+                errors.append(f"{supplement_id}: target bootstrap candidate/evidence authority mismatch")
     else:
         amendment = wave_amendment_map(data).get(str(target_approval.get("id") or "")) or {}
         amendment_reference = amendment.get("approval_reference") or {}

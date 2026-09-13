@@ -1036,14 +1036,41 @@ class BacklogSchemaTests(unittest.TestCase):
             terminal["lifecycle"]["history"][-1]["actor"],
         )
         self.assertIn("under GOV-MIG-0001", terminal["lifecycle"]["history"][-1]["rationale"])
+        data["wave_amendments"] = [item for item in data["wave_amendments"] if item["id"] != terminal["id"]]
         data["wave_amendments"].append(terminal)
         hold = next(item for item in data["control_plane"]["recovery_holds"] if item["id"] == "HOLD-W1-GRR-0002")
-        for supplement in hold["supplements"]:
-            errors, _packet = taskctl.recovery_supplement_authority_errors(data, REPO, hold, supplement)
-            self.assertFalse(
-                any("pre-append target amendment was fabricated" in error for error in errors),
-                errors,
-            )
+        original = taskctl.safe_control_path
+
+        def deny_retired_payload(repo: Path, relative: str, **kwargs: Any) -> Path:
+            if relative == "artifacts/evidence/W1.A04.B00.json":
+                raise AssertionError("Retired witness must not be opened, read or hashed")
+            return original(repo, relative, **kwargs)
+
+        with patch.object(taskctl, "safe_control_path", side_effect=deny_retired_payload):
+            for supplement in hold["supplements"]:
+                with self.subTest(supplement=supplement["id"]):
+                    errors, _packet = taskctl.recovery_supplement_authority_errors(data, REPO, hold, supplement)
+                    self.assertEqual([], errors)
+
+            for field, value in (
+                ("change_request_id", "ECR-9999"),
+                ("target_wave", "W2"),
+                ("kind", "optional-feature"),
+                ("approval_reference", {}),
+                ("bootstrap", {"status": "APPROVED"}),
+                ("campaign", {"status": "ACTIVE"}),
+                ("tasks", [{"id": "W1.A04.T01"}]),
+                ("completion", {"status": "APPROVED"}),
+                ("lifecycle", {"status": "SUPERSEDED", "history": []}),
+                ("lifecycle", {"status": "APPROVED", "history": []}),
+            ):
+                changed = copy.deepcopy(data)
+                taskctl.wave_amendment_map(changed)[terminal["id"]][field] = value
+                with self.subTest(field=field, value=value):
+                    errors, _packet = taskctl.recovery_supplement_authority_errors(
+                        changed, REPO, hold, hold["supplements"][-1]
+                    )
+                    self.assertIn("GRR-0002.S02: pre-append target amendment was fabricated in backlog state", errors)
 
     def test_neutral_gcr7_does_not_change_the_w1_a04_postappend_denial(self) -> None:
         revision = "2eea1d0c67eb57d53e88f6717de3cfcd96fcf282"
