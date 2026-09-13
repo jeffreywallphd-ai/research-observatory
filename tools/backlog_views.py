@@ -38,6 +38,12 @@ def joined(values: list[Any] | None, *, code: bool = False) -> str:
     return ", ".join(rendered)
 
 
+def wave_completion_label(wave: dict[str, Any]) -> str:
+    completion = wave.get("completion") or {}
+    status = f"`{inline(completion.get('status', 'PENDING'))}`"
+    return f"{status} — {inline(completion['notes'])}" if completion.get("notes") else status
+
+
 def bullets(lines: list[str], values: list[Any] | None) -> None:
     if not values:
         lines.append("- None")
@@ -627,7 +633,7 @@ def render_summary(data: dict[str, Any], digest: str) -> str:
             f"| `{inline(wave_id)}` - {inline(wave.get('title'))} | "
             f"`{inline((wave.get('approval') or {}).get('status', 'PENDING'))}` | "
             f"`{inline((wave.get('campaign') or {}).get('status', 'NONE'))}` | "
-            f"`{inline((wave.get('completion') or {}).get('status', 'PENDING'))}` | "
+            f"{wave_completion_label(wave)} | "
             f"{approved_count}/{len(wave_slices)} | "
             f"{sum(item.get('status') == 'DONE' for item in wave_tasks)}/{len(wave_tasks)} | "
             f"`{inline(gate.get('id'))}` / `{inline(gate.get('status'))}` |"
@@ -794,7 +800,7 @@ def render_plan(data: dict[str, Any], digest: str) -> str:
                 f"**Pre-Wave approval / campaign / qualification:** "
                 f"`{inline((wave.get('approval') or {}).get('status', 'PENDING'))}` / "
                 f"`{inline((wave.get('campaign') or {}).get('status', 'NONE'))}` / "
-                f"`{inline((wave.get('completion') or {}).get('status', 'PENDING'))}`",
+                f"{wave_completion_label(wave)}",
                 "",
                 f"**Capability contributions:** {joined(wave_capabilities, code=True)}",
                 "",

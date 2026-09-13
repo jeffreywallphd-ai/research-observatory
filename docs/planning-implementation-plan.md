@@ -265,7 +265,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W0 - Engineering foundation
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `NONE` / `APPROVED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `NONE` / `APPROVED` — Historical W0 qualification predates the Wave-campaign controller.
 
 **Capability contributions:** `CAP-00`
 
@@ -275,7 +275,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W1 - Windows local runtime and durable core
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `COMPLETE` / `APPROVED`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `COMPLETE` / `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md.
 
 **Capability contributions:** `CAP-01`, `CAP-02`, `CAP-03`, `CAP-07`
 

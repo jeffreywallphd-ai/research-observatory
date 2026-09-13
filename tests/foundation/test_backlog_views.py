@@ -19,6 +19,7 @@ from backlog_views import (  # noqa: E402
     PLAN_VIEW,
     expected_outputs,
     hierarchy,
+    render_plan,
     render_summary,
     source_digest,
     synchronize,
@@ -26,6 +27,13 @@ from backlog_views import (  # noqa: E402
 
 
 class BacklogViewTests(unittest.TestCase):
+    def test_wave_completion_disposition_is_visible_in_both_markdown_views(self) -> None:
+        note = "Owner acceptance only; qualification gaps retained."
+        data = {"waves": [{"id": "W1", "completion": {"status": "APPROVED", "notes": note}}]}
+        for renderer in (render_summary, render_plan):
+            with self.subTest(renderer=renderer.__name__):
+                self.assertIn(f"`APPROVED` — {note}", renderer(data, "a" * 64))
+
     def test_linked_correction_is_visible_in_plan_summary_and_active_work(self) -> None:
         from backlog_views import correction_markdown, corrective_tasks, render_plan
 
