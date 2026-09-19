@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-04.S01 · ordered slice 1 of 5</span><h1>SLICE-reference-library-and-file-imports</h1><p>Reference-library and file imports</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>eb67891f9d21</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>4b08d6596bd0</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
   <div><span class="eyebrow">Capability decision gate</span><h2>Recommendations resolved; complete pre-Wave approval controls execution</h2><p>Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated.</p></div>
@@ -216,7 +216,7 @@ python tools/verify.py --profile data
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-04.S01.T01`, `CAP-04.S01.T02`, `CAP-04.S01.T03` |
 | Slice dependencies | `CAP-03.S03.T02`, `CAP-02.S02.T03` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -355,13 +355,13 @@ does not depend on `CAP-04.S03` being implemented or produce duplicate source re
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026&#x27;s exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026&#x27;s exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
 - Preview summarizes records, errors, duplicates/candidates, missing identifiers, field coverage, and expected corpus changes.
 - Users can inspect raw and normalized values side by side and apply decisions to groups with undo before commit.
 - Commit requires a clear summary and leaves a navigable manifest.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Treat imported text as untrusted data, never instructions; neutralize formula injection in CSV previews/exports.
@@ -611,7 +611,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Import IR and source-key/idempotency algorithm.

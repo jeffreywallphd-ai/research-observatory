@@ -12716,7 +12716,7 @@
       "capability_alias": "CAP-scholarly-ingestion",
       "title": "Scholarly ingestion, connectors, canonicalization, and corpus governance",
       "plan_path": "planning/capability-plans/CAP-04.md",
-      "plan_sha256": "1d8fdb122f368ce7891329a401f2ca27bc7771e23a6ca070ef30f157ebae30cc",
+      "plan_sha256": "ed58678aa61040220ebb8978afab5a1fb78899149c0a576d5a6094774646df7a",
       "page": "CAP-04/index.html",
       "decision_count": 4,
       "slice_count": 5,
@@ -12727,7 +12727,7 @@
           "wave": "W2",
           "title": "Reference-library and file imports",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S01-reference-library-and-file-imports.md",
-          "plan_sha256": "eb67891f9d21c91a0c881175daef95c84601c16a33c0719cc05f2722afa2b4fb",
+          "plan_sha256": "4b08d6596bd09eecec7047e9afe923ebcc8393540c03286a6812853e4a433eb2",
           "page": "CAP-04/CAP-04.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -12818,7 +12818,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "b0a04ffdb618fd6edd8f03225abf062c6bc225b00736d966414cbbcbe18d8a22",
+              "plan_section_sha256": "345e19e19bf71a225df9d0bf129d84bf256a83b3857c12a80c9d968b5552844c",
               "worksheet": null
             }
           ]
@@ -12829,7 +12829,7 @@
           "wave": "W2",
           "title": "Open scholarly source adapters",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S02-open-scholarly-source-adapters.md",
-          "plan_sha256": "3bd86713fed48ae0b5590860bf72fb14cc6b35c9859e88427897bb36d27d6398",
+          "plan_sha256": "4ece8d3a2d8ba151214325bba2f0bcc17f765e70f2d454ce57bed523de489453",
           "page": "CAP-04/CAP-04.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -12920,7 +12920,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "4704099de38b64b4e13df390d6eee4289dc65646b212ff84464286aeeb7b077a",
+              "plan_section_sha256": "ba16017acd86adfcd1a293aa0a452e3f974cd5edf014fb7ef3f2e3abc37124cb",
               "worksheet": null
             }
           ]
@@ -12931,7 +12931,7 @@
           "wave": "W2",
           "title": "Canonical work, version, and identity reconciliation",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S03-canonical-work-version-and-identity-reconciliation.md",
-          "plan_sha256": "b1088255f5daa530e7b75a4b01fe3d9753cc332b0425a99169ae14f7e54a61d0",
+          "plan_sha256": "e71c6745fbe68f5cbf91389c223b689bcb968cb084ab3590f17d23c48faec982",
           "page": "CAP-04/CAP-04.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -13022,7 +13022,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "1f5634ebf3587190b45b1a0d58f4f1eb526206e9f52b81a545a53a069f52c2f2",
+              "plan_section_sha256": "8327190b7932b231a54f291d28debf3b5b81b0a28f6e4fd3cf9882afeae5963f",
               "worksheet": null
             }
           ]
@@ -13033,7 +13033,7 @@
           "wave": "W2",
           "title": "Corpus membership, discovery path, and rights governance",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S04-corpus-membership-discovery-path-and-rights-governance.md",
-          "plan_sha256": "76468dd5668f3901888e18d1dc18ddcfa38dd23e9b6f84f489b48d924bce3860",
+          "plan_sha256": "0c61c129b78f9e0d7546bbc70f585094e7567644cf2229a3c4b27c59f5021707",
           "page": "CAP-04/CAP-04.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -13124,7 +13124,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "cdc5a4391dfe29581a47bed0515f3ee198c87f043974814372d447588b851ac5",
+              "plan_section_sha256": "fcdf9845e59d4917f98bfc7472e67d80b09f67d62670b92e1272c54c117dd284",
               "worksheet": null
             }
           ]
@@ -13135,7 +13135,7 @@
           "wave": "W2",
           "title": "Connector SDK and controlled extensibility",
           "plan_path": "planning/slice-plans/CAP-04/CAP-04.S05-connector-sdk-and-controlled-extensibility.md",
-          "plan_sha256": "f4c17741831737f2ee4bc9d5f15c63d60e2fcd5472d21033de047bfc801ffe92",
+          "plan_sha256": "a9220fd3285198a5d882949bdcb6978c8dacefb78006e5fe8a6964c050040845",
           "page": "CAP-04/CAP-04.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -13226,7 +13226,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "26d0533ee70df81ced4900587128f95b19fc53e13cdb7ca03f324e3c5fe595c9",
+              "plan_section_sha256": "ac716ffb31be03d0a7572478a9fc3679ae94a73f51a7994e8d7dd2eb4a87710c",
               "worksheet": null
             }
           ]
@@ -13238,7 +13238,7 @@
       "capability_alias": "CAP-document-inspection",
       "title": "Document acquisition, parsing, source inspection, and page anchors",
       "plan_path": "planning/capability-plans/CAP-05.md",
-      "plan_sha256": "f35bfbc0f3eb3c51630a1f20f0888642fbd727198f5d1100bb281b889b39f0ef",
+      "plan_sha256": "6564cec87db68cf02c468786cea552dbe329c61a53162f7e6ab4f8ef7d9d448a",
       "page": "CAP-05/index.html",
       "decision_count": 3,
       "slice_count": 6,
@@ -13249,7 +13249,7 @@
           "wave": "W2",
           "title": "Rights-aware document acquisition",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S01-rights-aware-document-acquisition.md",
-          "plan_sha256": "0ba2c5999e1cdeb618cf0e9f79f5ce6a72e2fb6c1735ee2c99af5ed353f847d4",
+          "plan_sha256": "8a10d69be59385d0e83b3fc4ce90518d112f5495b9762517f6ec379fb5ec4d78",
           "page": "CAP-05/CAP-05.S01.html",
           "task_count": 3,
           "task_reviews": [
@@ -13341,7 +13341,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "7cb53fe1fd16703e6b1cef79134781172a75179ba6c92949c1f9a543e42cbea1",
+              "plan_section_sha256": "0bd7b1c2201b43e812ebf6c819f63e26bb18f0608504b7bfef75d85d189fd9a2",
               "worksheet": null
             }
           ]
@@ -13352,7 +13352,7 @@
           "wave": "W2",
           "title": "Structured and PDF parsing pipeline",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S02-structured-and-pdf-parsing-pipeline.md",
-          "plan_sha256": "dd17bf9a37416e4de3335124602354906223dd73e3fa8aaf5c7181945a3fb451",
+          "plan_sha256": "f861a044867be49094b152136a56f26f7c013bdda962ad1eff6d910fde01c384",
           "page": "CAP-05/CAP-05.S02.html",
           "task_count": 3,
           "task_reviews": [
@@ -13444,7 +13444,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "7cb29b972d96eb9399de904520d7f9b43d7f08fb601f00d71a8aa3206bb8f4e8",
+              "plan_section_sha256": "9f0c139b060bfba81b00403ef16de0792d67a2d024844dd62d33c67049bf201e",
               "worksheet": null
             }
           ]
@@ -13455,7 +13455,7 @@
           "wave": "W2",
           "title": "Immutable document revisions and source anchors",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S03-immutable-document-revisions-and-source-anchors.md",
-          "plan_sha256": "37e6675b1e65bdc39b3a308b77de0ff593832d29dd1daead00ce030ff8ce4a42",
+          "plan_sha256": "196c412b33acebf8a48069849ef76447ddbb29667dd68353865ec691c69e863c",
           "page": "CAP-05/CAP-05.S03.html",
           "task_count": 3,
           "task_reviews": [
@@ -13546,7 +13546,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "21a3925dfb04f64092a7f7fb36f946c70ebccb90c91d0019d06c72d6d5dc12de",
+              "plan_section_sha256": "421e749fb65c955d0ee49f6df47b8ace81a469347fc6ffcf63dd7e5a3f46b3e9",
               "worksheet": null
             }
           ]
@@ -13557,7 +13557,7 @@
           "wave": "W2",
           "title": "Source viewer and evidence inspection experience",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S04-source-viewer-and-evidence-inspection-experience.md",
-          "plan_sha256": "c88429bf5441fc97941a153da19bf2609d2f93aceb7017bfcc0b25f42b4c4323",
+          "plan_sha256": "61bc3c8e43f78357e33ab996067dae33a75d97edc2e965f72416eed34adafe16",
           "page": "CAP-05/CAP-05.S04.html",
           "task_count": 3,
           "task_reviews": [
@@ -13648,7 +13648,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "b9740783030bfa465deeff310918b08990356e33fb311aac2d3db2b3620f3d01",
+              "plan_section_sha256": "fc51b37eed3b117f9973a034e58a9546dd1540681584a087ff3bc596f9c5b4c5",
               "worksheet": null
             }
           ]
@@ -13659,7 +13659,7 @@
           "wave": "W2",
           "title": "References, citation contexts, tables, and figures",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S05-references-citation-contexts-tables-and-figures.md",
-          "plan_sha256": "757412f395f09e3a0f2f6b5a758230dbf25a7a6f48544a50de13bbda84f60cbc",
+          "plan_sha256": "b92f236e0f63e028f4acc674eb1232621866a45a862ec12c92542c0b9dec44d6",
           "page": "CAP-05/CAP-05.S05.html",
           "task_count": 3,
           "task_reviews": [
@@ -13750,7 +13750,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "27ae62eec93c67f77676f29835b5bb0bac7040ab736bec4b1947319d2d9b77f5",
+              "plan_section_sha256": "94ebe343d75f6fcd868275c373eac009acc0268dadfa64cda5a0acce734633b2",
               "worksheet": null
             }
           ]
@@ -13761,7 +13761,7 @@
           "wave": "W2",
           "title": "Parsing quality, correction, and reprocessing",
           "plan_path": "planning/slice-plans/CAP-05/CAP-05.S06-parsing-quality-correction-and-reprocessing.md",
-          "plan_sha256": "78ad1b381d854dd5f940801a2df4809616f09597464e392435f5809eb1280123",
+          "plan_sha256": "2d88e0bb0a0b383969f0104bffe388cd9e7c81856f36d4901f0c89e2181c1f2c",
           "page": "CAP-05/CAP-05.S06.html",
           "task_count": 3,
           "task_reviews": [
@@ -13853,7 +13853,7 @@
                 "branch": null,
                 "base_sha": null
               },
-              "plan_section_sha256": "e6c587b32e6187c5e606e099a21c3a9611e8f5123d433e2d7088ac7a6c4b5980",
+              "plan_section_sha256": "4a501a65d25a6e271577ef945fbdc1180dd0907fbf93f87134a724689306dbe2",
               "worksheet": null
             }
           ]
@@ -28351,7 +28351,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "f48f11ed12c10d26acb1b80053e1a823c3ee5c16",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.6"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.7"
         }
       },
       "scope_addenda": [
@@ -28928,7 +28928,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "43e317be1e644c77e653ff5f121425d6e2cde2ef",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.6"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.7"
         }
       },
       "scope_addenda": [],
@@ -29499,7 +29499,7 @@
         "sourceBinding": {
           "mode": "historical-approved",
           "packetCommit": "07b21b270dfb967ad3fd7e35217978c0860c8116",
-          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.6"
+          "currentReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.7"
         }
       },
       "scope_addenda": [],

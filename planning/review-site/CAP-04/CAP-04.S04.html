@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-04.S04 · ordered slice 4 of 5</span><h1>SLICE-corpus-membership-discovery-path-and-rights-governance</h1><p>Corpus membership, discovery path, and rights governance</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>76468dd5668f</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>0c61c129b78f</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
   <div><span class="eyebrow">Capability decision gate</span><h2>Recommendations resolved; complete pre-Wave approval controls execution</h2><p>Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated.</p></div>
@@ -209,7 +209,7 @@ python tools/verify.py --profile search
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-04.S04.T01`, `CAP-04.S04.T02`, `CAP-04.S04.T03` |
 | Slice dependencies | `CAP-04.S03.T03`, `CAP-03.S02.T03` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -340,13 +340,13 @@ The following durable types are recommended. Final field names belong in version
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026&#x27;s exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026&#x27;s exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
 - Corpus Canvas shows canonical item, versions, inclusion state, discovery paths, source availability, and rights status.
 - Coverage diagnostics explain database/language/year/venue/full-text limitations and allow alternative boundary comparisons.
 - Unknown rights are not presented as forbidden or permitted without explanation.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Enforce rights in service APIs; UI hiding alone is insufficient.
@@ -590,7 +590,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Rights/permitted-use vocabulary and default-unknown policy.

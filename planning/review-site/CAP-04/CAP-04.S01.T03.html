@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li></ul>
   <p data-task-claim="CAP-04.S01.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-04.S01.T03" data-task-plan-sha256="b0a04ffdb618fd6edd8f03225abf062c6bc225b00736d966414cbbcbe18d8a22"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S01.T03` - Implement idempotent import commits and import manifests
+<section class="task-summary" data-task-plan="CAP-04.S01.T03" data-task-plan-sha256="345e19e19bf71a225df9d0bf129d84bf256a83b3857c12a80c9d968b5552844c"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S01.T03` - Implement idempotent import commits and import manifests
 **Objective:** Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting canonical IDs.
 
 **Dependencies:** `CAP-04.S01.T02`
@@ -196,7 +196,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Import IR and source-key/idempotency algorithm.

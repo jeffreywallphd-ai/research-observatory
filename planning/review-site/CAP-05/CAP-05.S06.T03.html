@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile e2e-local</li></ul>
   <p data-task-claim="CAP-05.S06.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-05.S06.T03" data-task-plan-sha256="e6c587b32e6187c5e606e099a21c3a9611e8f5123d433e2d7088ac7a6c4b5980"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S06.T03` - Implement parser upgrade comparison and stale propagation
+<section class="task-summary" data-task-plan="CAP-05.S06.T03" data-task-plan-sha256="4a501a65d25a6e271577ef945fbdc1180dd0907fbf93f87134a724689306dbe2"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S06.T03` - Implement parser upgrade comparison and stale propagation
 **Objective:** Batch reparse preview, old/new structure diff, anchor migration candidates, acceptance, and dependent-output invalidation.
 
 **Dependencies:** `CAP-05.S06.T02`
@@ -197,7 +197,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
+Shared accepted records: [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Parsing quality metric definitions and triage thresholds.

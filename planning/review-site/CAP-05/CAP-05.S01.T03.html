@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li></ul>
   <p data-task-claim="CAP-05.S01.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-05.S01.T03" data-task-plan-sha256="7cb53fe1fd16703e6b1cef79134781172a75179ba6c92949c1f9a543e42cbea1"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S01.T03` - Create acquisition queue, conflict, and entitlement placeholders
+<section class="task-summary" data-task-plan="CAP-05.S01.T03" data-task-plan-sha256="0bd7b1c2201b43e812ebf6c819f63e26bb18f0608504b7bfef75d85d189fd9a2"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S01.T03` - Create acquisition queue, conflict, and entitlement placeholders
 **Objective:** Resumable download/import jobs, alternative copies, unavailable state, and manual/institutional entitlement request placeholders.
 
 **Dependencies:** `CAP-05.S01.T02`
@@ -197,7 +197,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md), [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md), [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Safe acquisition URL/destination policy and MIME/magic validation library.
