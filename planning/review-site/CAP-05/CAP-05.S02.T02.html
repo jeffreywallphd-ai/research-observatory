@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li></ul>
   <p data-task-claim="CAP-05.S02.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-05.S02.T02" data-task-plan-sha256="0228855a90961611374eaa8864185b048d83b17806126c3f8d84941b8447cc07"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-05.S02.T02` - Implement native JATS/TEI/XML/HTML parsing
+<section class="task-summary" data-task-plan="CAP-05.S02.T02" data-task-plan-sha256="87484cd0d82e22f8c921e9602dc6a1115baaa1642fb8be6d0ea95d10e2d575f6"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-05.S02.T02` - Implement native JATS/TEI/XML/HTML parsing
 **Objective:** Namespace-aware parsers for titles, abstracts, sections, paragraphs, lists, footnotes, tables, figures, references, and in-text citations.
 
 **Dependencies:** `CAP-05.S02.T01`
@@ -65,7 +65,7 @@
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-05.S02.T02`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
 2. Implement the domain/core path behind the approved port or aggregate boundary. Keep side effects behind adapters, use explicit transaction/idempotency boundaries, and emit provenance/dependency facts atomically where the governing architecture requires them.
 3. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-4. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+4. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Golden structured documents reproduce expected hierarchy and text; unsupported elements are retained as typed unknown blocks with source locations.

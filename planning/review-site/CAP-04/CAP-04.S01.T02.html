@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li></ul>
   <p data-task-claim="CAP-04.S01.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-04.S01.T02" data-task-plan-sha256="6878e8942f158b6acffbd2de6d040adf92f122bd9b916d6c0383baf148b1bef5"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S01.T02` - Create import preview, mapping, and conflict UI
+<section class="task-summary" data-task-plan="CAP-04.S01.T02" data-task-plan-sha256="98be68f012dbb4178dc61340729025df50be5def0977da785df79814aa5d0565"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S01.T02` - Create import preview, mapping, and conflict UI
 **Objective:** Desktop wizard showing parsed records, field mapping, duplicate candidates, warnings, rights defaults, and import options.
 
 **Dependencies:** `CAP-04.S01.T01`
@@ -66,7 +66,7 @@
 2. Implement the domain/core path behind the approved port or aggregate boundary. Keep side effects behind adapters, use explicit transaction/idempotency boundaries, and emit provenance/dependency facts atomically where the governing architecture requires them.
 3. Implement the desktop interaction using shared Academic Minimal tokens/components and the approved page/workflow contract. Cover keyboard, focus, screen reader, light/dark, loading, empty, offline, denied, error, and recovery states. If the required experience differs materially, stop and update/approve the governed reference before application code.
 4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+5. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.

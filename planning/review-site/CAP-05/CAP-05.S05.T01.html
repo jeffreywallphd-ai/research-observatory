@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile service</li></ul>
   <p data-task-claim="CAP-05.S05.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-05.S05.T01" data-task-plan-sha256="6f22c6cc0aeba94b284d86d2ad72c42e29fe1a0a60dfdb3942f8a1708d539d9b"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-05.S05.T01` - Extract and reconcile reference-list entries
+<section class="task-summary" data-task-plan="CAP-05.S05.T01" data-task-plan-sha256="5c78dd79ac3cba4a62339796fee018b4e7ff29ae3cdf877b9be68a84b85a3411"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-05.S05.T01` - Extract and reconcile reference-list entries
 **Objective:** Parsed references, identifiers, raw strings, author/year/title fields, and links to canonical works or unresolved candidates.
 
 **Dependencies:** `CAP-05.S03.T03`
@@ -66,7 +66,7 @@
 2. Implement the smallest vertical path that satisfies the task objective while preserving the slice architecture and adjacent-capability contracts.
 3. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
 4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+5. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Reference order and raw text are preserved; exact identifiers reconcile automatically; uncertain matches remain candidates with scores and review state.

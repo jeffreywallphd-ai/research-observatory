@@ -250,6 +250,51 @@
         "CAP-03.S06.T01",
         "CAP-03.S06.T02"
       ]
+    },
+    {
+      "id": "ADR-0027",
+      "path": "docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md",
+      "title": "Keep scholarly source replay separate from private authentication",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-04.S02.T01",
+        "CAP-04.S02.T02",
+        "CAP-04.S02.T03",
+        "CAP-04.S03.T01",
+        "CAP-04.S04.T02"
+      ]
+    },
+    {
+      "id": "ADR-0028",
+      "path": "docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md",
+      "title": "Isolate Windows connectors and parsers behind narrow brokers",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-04.S05.T01",
+        "CAP-04.S05.T02",
+        "CAP-04.S05.T03",
+        "CAP-05.S02.T01",
+        "CAP-05.S02.T03"
+      ]
+    },
+    {
+      "id": "ADR-0029",
+      "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
+      "title": "Preserve document revisions and mediate source viewing",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-05.S02.T01",
+        "CAP-05.S02.T02",
+        "CAP-05.S02.T03",
+        "CAP-05.S03.T01",
+        "CAP-05.S03.T02",
+        "CAP-05.S03.T03",
+        "CAP-05.S04.T01",
+        "CAP-05.S04.T02",
+        "CAP-05.S04.T03",
+        "CAP-05.S06.T02",
+        "CAP-05.S06.T03"
+      ]
     }
   ]
 }

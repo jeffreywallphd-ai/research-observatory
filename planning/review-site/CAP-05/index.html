@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-05 · immutable evidence key</span><h1>CAP-document-inspection</h1><p>Document acquisition, parsing, source inspection, and page anchors</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>1</dd></div><div><dt>Plan hash</dt><dd><code>bb208e3b4439</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>1</dd></div><div><dt>Plan hash</dt><dd><code>a81d5c329786</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
@@ -59,12 +59,12 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-05-D01" data-recommendation="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-plan-hash="bb208e3b44396488d8b8c8cfcafa135f946a829beb03b430e3e434bcf44e879e">
+<section class="decision-card" data-decision-id="CAP-05-D01" data-recommendation="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-plan-hash="a81d5c329786b77d9cb440c7107f5a6f390f5abac7f2a1e60fb597927ab22605">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D01</span><h3>Document preference</h3></div>
     <span class="status status-reopened">Reopened</span>
   </div>
-  <p class="decision-basis">Retain structured fidelity and the planned local Docling outcome; resolve Windows runtime, offline model assets, isolation and limits before lock.</p>
+  <p class="decision-basis">ADR-0029 proposes modular Docling 2.126.0 in the ADR-0028 CPU worker; Windows/Python 3.14 wheel resolution succeeded, but exact offline assets/resource profile and viewer feasibility remain pre-approval work.</p>
   <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-05-D01-option-0">
   <input id="CAP-05-D01-option-0" type="radio" name="CAP-05-D01" value="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-decision-option>
   <span><strong>Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port</strong><span class="recommended">Recommended</span></span>
@@ -83,10 +83,10 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>ADR-0029</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-05-D02" data-recommendation="Immutable document revisions with structural, page-region, text-position and quote selectors" data-plan-hash="bb208e3b44396488d8b8c8cfcafa135f946a829beb03b430e3e434bcf44e879e">
+<section class="decision-card" data-decision-id="CAP-05-D02" data-recommendation="Immutable document revisions with structural, page-region, text-position and quote selectors" data-plan-hash="a81d5c329786b77d9cb440c7107f5a6f390f5abac7f2a1e60fb597927ab22605">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D02</span><h3>Revision/anchor model</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -113,7 +113,7 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-05-D03" data-recommendation="Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing" data-plan-hash="bb208e3b44396488d8b8c8cfcafa135f946a829beb03b430e3e434bcf44e879e">
+<section class="decision-card" data-decision-id="CAP-05-D03" data-recommendation="Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing" data-plan-hash="a81d5c329786b77d9cb440c7107f5a6f390f5abac7f2a1e60fb597927ab22605">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D03</span><h3>Correction</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -221,6 +221,12 @@ prevents approval-ready claims.
   allocation or new UX framework. No foundational rewrite is selected. Before
   lock, complete eighteen atomic estimates, inherited-risk dispositions and the
   required document/anchor/viewer ADR and reference mappings.
+
+All six slice procedures now use whole-Wave authority. Three reviewed dependency
+edges make parser isolation, viewer navigation and reference-rematching handoffs
+explicit. ADR-0029 records the bounded package-resolution result separately from
+unproven runtime/security behavior; it preserves the viewer and offline-asset
+planning gaps rather than claiming the complete packet is ready.
 
 ## 1. Capability outcome and production-ready exit
 

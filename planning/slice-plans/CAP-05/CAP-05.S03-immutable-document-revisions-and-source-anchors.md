@@ -21,7 +21,7 @@ task_ids:
 - CAP-05.S03.T01
 - CAP-05.S03.T02
 - CAP-05.S03.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.3
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.6
 approval:
   status: pending
   approved_by: null
@@ -29,7 +29,7 @@ approval:
   approved_commit: null
 ---
 # CAP-05.S03 - Immutable document revisions and source anchors
-> **Implementation gate — proposed plan.** This slice may not begin until `planning/capability-plans/CAP-05.md` is decision-complete and approved, this plan is approved, all required ADRs are accepted or explicitly waived, and `python tools/planctl.py ready CAP-05 --require-approved` passes. After campaign start, execute continuously and pause only for an allowed classified condition.
+> **Implementation gate — proposed W2 contribution.** Implementation requires the complete W2 packet approved at one immutable commit, its binding ADR/reference decisions resolved, and `python tools/planctl.py --repo . wave ready W2 --require-approved` passing. Then use the same W2 campaign and dependency-eligible taskctl claims; no capability-only approval or lease.
 ## 0. Plan control
 | Field | Value |
 |---|---|
@@ -42,7 +42,7 @@ approval:
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-05.S03.T01`, `CAP-05.S03.T02`, `CAP-05.S03.T03` |
 | Slice dependencies | `CAP-05.S02.T03`, `CAP-02.S02.T03` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.3` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -79,7 +79,7 @@ This slice contributes to the capability objective: **Convert lawful full text i
 ## 3. Authority, dependencies, and campaign stop conditions
 
 ### 3.1 Governing sources
-- `START_HERE.md` and `docs/governance/document-set-and-bootstrap.md`.
+- `AGENTS.md` and the conditional routes in `planning/README.md`; historical bootstrap documents do not govern current execution.
 - `docs/product/vision.md` for purpose, principles, research modes, and non-goals.
 - Accepted ADRs, then `docs/architecture/source/systems-design.md`.
 - `planning/backlog.yaml` for `CAP-05.S03` and its task state/dependencies.
@@ -101,17 +101,17 @@ This slice contributes to the capability objective: **Convert lawful full text i
 - The task would require unrelated work in another capability rather than an explicit backlog task/handoff.
 - Evidence suggests the selected technology cannot satisfy security, rights, portability, recovery, or performance requirements; record the evidence and open an ADR instead of forcing implementation.
 
-### 3.3 Decision-complete capability rule
+### 3.4 Complete Wave approval
 
-Planning by capability is the default. Before `capability start`, the planning agent inspects all slices and adjacent contracts, researches credible options, and records the strongest best-in-class recommendation as the selected and accepted option for every material decision in the capability packet. Those selections count as completed decisions. The static review site is a confirmation-and-override surface plus the one-time capability approval gate; implementation agents must not repeatedly ask for choices already settled by the packet. After approval, execution proceeds continuously slice by slice through a production-ready end-to-end capability.
+Before execution, resolve and independently review every W2-binding contribution, decision, interface, recovery path and qualification criterion. One explicit owner approval freezes the complete Wave packet. Capability plans remain cross-Wave outcome maps, not execution leases. Ordinary debugging and approved slice transitions do not require new approval.
 
-### 3.4 Allowed campaign pauses
+### 3.5 Allowed campaign pauses
 
-Only validated infeasibility, an external dependency, unavailable required hardware, a genuinely new consequential human decision, or an approved design-reference gate may pause the capability. Routine debugging, recoverable tests, refactoring and documented fallbacks do not.
+Follow the approval/stop boundaries in AGENTS.md. Pause only affected work for a documented unmet authority, dependency, safety or feasibility gate; ordinary failed checks remain work to resolve. Supplemental refactoring uses the one locked W2 budget and is not permission to change approved scope.
 
 ## 4. Selected implementation decisions
 
-The capability packet's researched best-in-class recommendations are already selected, accepted, and decision-complete. This section projects the applicable decisions into the slice implementation contract. Capability approval authorizes those defaults; a reviewer may override a selection before approval only with explicit rationale. During execution, no implementation agent may silently choose a different candidate.
+These are proposed planning selections, subordinate to accepted ADRs. The shared W2 assessment records remaining gaps; neither a recommendation nor G1 transition approval authorizes implementation. Resolve conflicting forecasts before the single immutable W2 approval, then preserve its selected scope.
 
 The following decisions are the default implementation direction for this slice. They remain subordinate to accepted ADRs and must be revised if benchmark or security evidence disproves them.
 
@@ -128,7 +128,7 @@ External products and infrastructure remain behind ports. Domain identities, pro
 ## 5. Architecture and implementation design
 
 ### 5.1 Components and recommended repository locations
-- `services/core-api/modules/documents/`, `acquisition/`, `parsing/`, and `anchors/`.
+- `services/core-api/src/research_observatory_core/documents/`, `acquisition/`, `parsing/`, and `anchors/`.
 - `workers/document/` for isolated parser processes and resource controls.
 - `packages/contracts/documents/`, `anchors/`, and `rights/`.
 - `apps/desktop/src/workspaces/document-reader/` and `parsing-quality/`.
@@ -155,8 +155,8 @@ The following durable types are recommended. Final field names belong in version
 - `AnchorMigrationCandidate`
 
 **Required invariants**
-- Every durable identity and revision follows CAP-03 canonical identifier/version rules or creates the necessary contract in this slice when CAP-03 is not yet available.
-- Consequential state changes are atomic with required provenance/outbox/dependency facts once those foundations exist; earlier slices provide an explicit integration seam and fixtures.
+- Every durable identity and revision reuses the implemented CAP-03 canonical contracts under ADR-0013/ADR-0024; do not create a parallel identity store.
+- Consequential state changes are atomic with existing required provenance/outbox/dependency facts; reuse W1 repository transactions and ADR-0025 durable jobs.
 - Accepted human decisions and historical revisions are never silently overwritten.
 - Unknown, not-reported, not-applicable, ambiguous, disputed, denied, and unavailable states remain distinct where the domain requires them.
 - Persistence, cache, derived index, and UI projections are never treated as interchangeable authority.
@@ -175,11 +175,13 @@ The following durable types are recommended. Final field names belong in version
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
+Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+
 - Deep links visibly identify document revision and resolution confidence.
 - When coordinates are unavailable, structured text fallback is explicit.
 - Broken anchors show the last known source, reason, affected objects, and repair/migration actions.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.3`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Anchor APIs enforce project/document rights and return only permitted context length.
@@ -217,7 +219,7 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 2. Implement the smallest vertical path that satisfies the task objective while preserving the slice architecture and adjacent-capability contracts.
 3. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
 4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+5. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Reparse creates a new revision; prior revisions remain queryable; structural IDs are stable within a revision and never reused across different content.
@@ -255,7 +257,7 @@ python tools/verify.py --profile data
 3. Implement the desktop interaction using shared Academic Minimal tokens/components and the approved page/workflow contract. Cover keyboard, focus, screen reader, light/dark, loading, empty, offline, denied, error, and recovery states. If the required experience differs materially, stop and update/approve the governed reference before application code.
 4. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
 5. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-6. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+6. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Clicking fixture anchors highlights the intended passage after restart; anchors tolerate display scaling; unavailable coordinates fall back to structural/text anchors visibly.
@@ -292,7 +294,7 @@ python tools/verify.py --profile desktop
 2. Implement the domain/core path behind the approved port or aggregate boundary. Keep side effects behind adapters, use explicit transaction/idempotency boundaries, and emit provenance/dependency facts atomically where the governing architecture requires them.
 3. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
 4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+5. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Every observed evidence fixture resolves to a source revision and readable context; broken anchors are detected and mark dependents stale.
@@ -378,7 +380,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 - No concealed TODO/FIXME, disabled failing test, manual-only production step, or untracked follow-up required for the slice outcome.
 
 ## 16. Definition of Ready
-- The containing capability campaign is eligible or explicitly selected, and all predecessor capabilities required by its first active slice are complete or gated.
+- The complete W2 campaign is approved and active; the selected task and slice satisfy canonical dependencies and taskctl eligibility.
 - Status is READY and all dependency task IDs are DONE.
 - The task wave has no activation gate or its activation gate is approved.
 - The objective, deliverable, acceptance criteria, verification profiles, platform targets, and review gate are understandable without hidden context.
@@ -391,11 +393,11 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 - This plan is approved and its approval metadata identifies the reviewed commit/reference.
 - All blocking ADRs in Section 19 are accepted.
 - Required official-source constraints, licenses, fixtures, platform resources, and test credentials are available or safely stubbed.
-- The first task is READY under `taskctl` and no prior slice in the active capability remains incomplete.
+- The selected task is READY under taskctl in the approved W2 campaign, with required predecessor tasks/slices complete.
 
 ## 17. Definition of Done
 - Deliverables and all task acceptance criteria are satisfied.
-- Verification commands pass on the reviewed commit and criterion-to-evidence records are attached.
+- Risk-selected checks pass on the reviewed commit with criterion-to-evidence records and selected/deferred coverage; slice/checkpoint/Wave breadth follows the workflow, not blanket task-profile replay.
 - Security, privacy, rights, accessibility, scholarly-method, platform, migration, or release gates are completed when specified.
 - Documentation, tests, migrations, fixtures, provenance, and stale-dependency behavior are updated as relevant.
 - An independent reviewer sets review.result to approved and status to DONE.
@@ -408,7 +410,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 - The promised outcome is demonstrable end to end: Every extracted passage and downstream assertion points to a specific immutable revision and stable location.
 - All task implementations operate together from a clean project/install state, not only in isolated tests.
 - The slice evidence bundle passes independent review and the downstream handoff fixtures/contracts are usable.
-- Capability campaign state advances only after the slice completion record is approved.
+- W2 campaign state advances through taskctl only after the required independent slice disposition.
 
 ## 18. Risks and mitigations
 | Risk | Required mitigation |
@@ -423,11 +425,14 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-- ADR: Multi-selector source-anchor schema and normalization rules.
-- ADR: Document revision commit/acceptance semantics.
-- ADR: Anchor resolution confidence and migration policy.
+Shared proposed records: [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
+The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
-A listed item beginning with `ADR REQUIRED` blocks the relevant implementation choice. Other ADRs may be completed within the first task only when that task explicitly owns the decision and the capability campaign approval permits it.
+- Binding detail: Multi-selector source-anchor schema and normalization rules.
+- Binding detail: Document revision commit/acceptance semantics.
+- Binding detail: Anchor resolution confidence and migration policy.
+
+Resolve these material topics through the shared W2 ADR set before packet approval; routine implementation details need no separate ADR. New ADRs remain Proposed until accepted. Do not defer a foreseeable binding architecture choice to implementation or treat a safely stubbed test as real-boundary qualification.
 
 ## 20. Research and standards basis
 | Key | Primary or official source | Applied decision |
@@ -440,16 +445,16 @@ These sources constrain implementation choices but do not replace repository-spe
 
 ## 21. AI implementation runbook
 
-**Long-running campaign rule.** Continue through dependency-ready tasks and slices without repeatedly requesting decisions already settled by the approved capability packet. Use only classified pause categories and attach exact evidence/next action.
+**Long-running campaign rule.** Resume the same approved W2 campaign through taskctl. Use full task designators, risk-selected verification, independent dispositions and local integration. Continue through eligible slices/checkpoints to fresh Wave qualification and the separate G2 human exit gate.
 1. Run the repository validators and confirm this plan is approved, matches the current backlog slice/task IDs, and has no unresolved blocking ADR.
-2. Confirm `CAP-05` is the active capability campaign and `CAP-05.S03` is the next eligible slice.
-3. Claim the first READY task in order: `CAP-05.S03.T01`. Do not globally select work outside the capability.
+2. Confirm W2 is the approved active campaign and `CAP-05.S03` is dependency-eligible.
+3. Claim only the next READY task in `CAP-05.S03` through taskctl; do not bypass Wave dependencies or create a capability lease.
 4. Load only the governing documents, accepted ADRs, approved UI reference sections, this plan, task contract, and affected code/tests.
 5. Implement one task at a time. Preserve unrelated working changes; do not weaken tests, delete evidence, or make hidden architectural decisions.
 6. After each task, run focused verification, attach criterion-linked evidence, obtain the required independent task review, and transition state through `taskctl`.
 7. After all tasks are DONE, execute the complete Section 10 slice matrix from a clean state and assemble the Section 15 evidence bundle.
-8. Request an independent slice review. Address findings through tracked tasks or reopen the affected task; never self-approve or mark the slice complete based on narrative evidence alone.
-9. Record the approved slice completion and handoff artifacts, then allow the capability campaign to select the next dependent slice.
+8. Request independent slice review. Preserve findings and prior dispositions; completed-task defects use the linked correction route rather than rewriting history.
+9. Record approved slice completion and handoff, then continue the same W2 campaign to its next eligible contribution.
 
 ---
 **Generated for Research Observatory baseline 1.3, supplemental planning release 1.3.4.**  

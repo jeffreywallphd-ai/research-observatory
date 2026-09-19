@@ -26,10 +26,10 @@ decisions:
   - Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
   - Native structured intake plus lightweight local PDF text fallback; defer full layout extraction
   recommendation: Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
-  recommendation_basis: Retain structured fidelity and the planned local Docling outcome; resolve Windows runtime, offline model assets, isolation and limits before lock.
+  recommendation_basis: ADR-0029 proposes modular Docling 2.126.0 in the ADR-0028 CPU worker; Windows/Python 3.14 wheel resolution succeeded, but exact offline assets/resource profile and viewer feasibility remain pre-approval work.
   selected_option: null
   status: reopened
-  required_adr: null
+  required_adr: ADR-0029
   binding_waves: [W2]
 - id: CAP-05-D02
   title: Revision/anchor model
@@ -104,6 +104,12 @@ prevents approval-ready claims.
   allocation or new UX framework. No foundational rewrite is selected. Before
   lock, complete eighteen atomic estimates, inherited-risk dispositions and the
   required document/anchor/viewer ADR and reference mappings.
+
+All six slice procedures now use whole-Wave authority. Three reviewed dependency
+edges make parser isolation, viewer navigation and reference-rematching handoffs
+explicit. ADR-0029 records the bounded package-resolution result separately from
+unproven runtime/security behavior; it preserves the viewer and offline-asset
+planning gaps rather than claiming the complete packet is ready.
 
 ## 1. Capability outcome and production-ready exit
 

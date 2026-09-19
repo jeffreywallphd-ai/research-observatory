@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7b25fff0eb09ad920a63f031cbab2dfabbc692f2d1fb38adbf794c6520bf3ad3
+source_sha256: df209774cf79bcb5c672bfdaa0d00ff6bda5e7fd0b8c0770cb43c1c2d0e546e1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8500,7 +8500,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB` / `windows-x64`
 
-**Dependencies:** `CAP-05.S02.T02`
+**Dependencies:** `CAP-05.S02.T02`, `CAP-04.S05.T02`
 
 **Owner / review:** - / - (`-`)
 
@@ -8847,7 +8847,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-05.S05.T02`
+**Dependencies:** `CAP-05.S05.T02`, `CAP-05.S04.T02`
 
 **Owner / review:** - / - (`-`)
 
@@ -8926,7 +8926,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-05.S06.T01`
+**Dependencies:** `CAP-05.S06.T01`, `CAP-05.S05.T01`
 
 **Owner / review:** - / - (`-`)
 

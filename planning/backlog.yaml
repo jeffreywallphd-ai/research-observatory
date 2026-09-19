@@ -19540,6 +19540,7 @@ capabilities:
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
       dependencies:
       - CAP-05.S02.T02
+      - CAP-04.S05.T02
       priority: P0
       wave: W2
       deployment_profiles: *id054
@@ -20036,6 +20037,7 @@ capabilities:
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
       dependencies:
       - CAP-05.S05.T02
+      - CAP-05.S04.T02
       priority: P1
       wave: W2
       deployment_profiles: *id057
@@ -20152,6 +20154,7 @@ capabilities:
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
       dependencies:
       - CAP-05.S06.T01
+      - CAP-05.S05.T01
       priority: P0
       wave: W2
       deployment_profiles: *id058

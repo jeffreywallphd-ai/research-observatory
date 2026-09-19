@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile graph</li></ul>
   <p data-task-claim="CAP-05.S05.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-05.S05.T02" data-task-plan-sha256="dd7aea15647e2356da0c4427fdd0e0c4bfa74b5e944c04d5d0dca1df3c1b9b34"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-05.S05.T02` - Extract in-text citation contexts and targets
+<section class="task-summary" data-task-plan="CAP-05.S05.T02" data-task-plan-sha256="3c7f6b0c692829fbcd223a3bc5a356fddb0beef49866a3d81026dfb8809dc8ae"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-05.S05.T02` - Extract in-text citation contexts and targets
 **Objective:** Citation markers linked to reference entries with sentence/paragraph context, location, and multi-target handling.
 
 **Dependencies:** `CAP-05.S05.T01`
@@ -65,7 +65,7 @@
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-05.S05.T02`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
 2. Implement the smallest vertical path that satisfies the task objective while preserving the slice architecture and adjacent-capability contracts.
 3. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-4. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+4. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Fixture citation styles resolve correctly; unresolved and ambiguous targets are explicit; contexts retain exact source anchors.

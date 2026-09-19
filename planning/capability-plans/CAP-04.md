@@ -26,10 +26,10 @@ decisions:
   - OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
   - Local imports with DOI lookup only; defer broad multi-provider discovery
   recommendation: OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
-  recommendation_basis: Official adapters retain the planned source coverage and reproducible observations; provider-specific credentials, terms, redacted replay and limits must be resolved before lock.
+  recommendation_basis: ADR-0027 proposes provider-specific private configuration and protected scientific replay without authentication/contact values; architecture acceptance remains pending.
   selected_option: null
   status: reopened
-  required_adr: null
+  required_adr: ADR-0027
   binding_waves: [W2]
 - id: CAP-04-D02
   title: Canonicalization
@@ -59,10 +59,10 @@ decisions:
   - Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
   - First-party built-in connectors only; defer third-party execution and SDK delivery
   recommendation: Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
-  recommendation_basis: Retain the planned extensibility outcome without ambient application privilege; resolve the real Windows isolation and credential-broker boundary before lock.
+  recommendation_basis: ADR-0028 proposes LPAC, no direct network or project/vault access, narrow brokers and explicit local publisher/project trust; real packaged isolation remains an implementation qualification obligation.
   selected_option: null
   status: reopened
-  required_adr: null
+  required_adr: ADR-0028
   binding_waves: [W2]
 approval:
   status: pending
@@ -114,6 +114,11 @@ and one bounded automation proposal. Structured estimates remain incomplete;
   linked assessment, counted once, not per capability. No foundational rewrite
   or broad historical-fixture repair is selected. Before lock, complete the
   fifteen atomic task estimates and necessary ADR/reference mappings.
+
+The next increment has refreshed all five slice procedures and drafted ADR-0027
+and ADR-0028. Source records/manifest IDs precede work/version reconciliation;
+the CAP-04.S01 handoff now states that explicitly. Reopened selections remain
+pending architecture disposition; no acceptance or task completion is inferred.
 
 ## 1. Capability outcome and production-ready exit
 

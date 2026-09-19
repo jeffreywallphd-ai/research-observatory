@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile data</li></ul>
   <p data-task-claim="CAP-04.S03.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-04.S03.T02" data-task-plan-sha256="52623c8a839eaa14e691909a066af88922bc8b801957d33f481421824f2caafb"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S03.T02` - Implement probabilistic duplicate candidate generation and review
+<section class="task-summary" data-task-plan="CAP-04.S03.T02" data-task-plan-sha256="a6a17c371b4d0010ed2d423921b50ad9f16f404676c57ca9962a5471c60bdf54"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S03.T02` - Implement probabilistic duplicate candidate generation and review
 **Objective:** Fuzzy candidate scoring using title, authors, year, venue, pages, abstract, and identifiers plus merge/split review UI.
 
 **Dependencies:** `CAP-04.S03.T01`
@@ -67,7 +67,7 @@
 3. Implement the desktop interaction using shared Academic Minimal tokens/components and the approved page/workflow contract. Cover keyboard, focus, screen reader, light/dark, loading, empty, offline, denied, error, and recovery states. If the required experience differs materially, stop and update/approve the governed reference before application code.
 4. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
 5. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-6. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+6. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Gold duplicate fixtures meet declared precision/recall thresholds; ambiguous clusters require review; merges are reversible and preserve conflicting fields.

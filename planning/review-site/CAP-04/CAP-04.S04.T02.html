@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile security-local</li></ul>
   <p data-task-claim="CAP-04.S04.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-04.S04.T02" data-task-plan-sha256="aed3c0fae92e2d853d9c7bd55695a758e0e99c332fc738c591e2f31443be5642"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S04.T02` - Implement rights, license, entitlement, and permitted-use metadata
+<section class="task-summary" data-task-plan="CAP-04.S04.T02" data-task-plan-sha256="d4074bebb7ece03c4c4b0d79d2c571ca6fca0bf6aa75cb7a1832a873c1a0006d"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S04.T02` - Implement rights, license, entitlement, and permitted-use metadata
 **Objective:** Rights vocabulary and policies for metadata, full text, derived text, embeddings, model egress, collaboration, and export.
 
 **Dependencies:** `CAP-04.S04.T01`
@@ -66,7 +66,7 @@
 2. Implement the domain/core path behind the approved port or aggregate boundary. Keep side effects behind adapters, use explicit transaction/idempotency boundaries, and emit provenance/dependency facts atomically where the governing architecture requires them.
 3. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
 4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+5. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Unknown rights default to restrictive behavior; policy decisions are source-specific and inspectable; changing rights marks affected operations for re-evaluation.

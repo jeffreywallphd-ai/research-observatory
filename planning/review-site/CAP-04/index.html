@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-04 · immutable evidence key</span><h1>CAP-scholarly-ingestion</h1><p>Scholarly ingestion, connectors, canonicalization, and corpus governance</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>2</dd></div><div><dt>Plan hash</dt><dd><code>a6cab08051e7</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>2</dd></div><div><dt>Plan hash</dt><dd><code>3e80858b2922</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
@@ -59,12 +59,12 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-04-D01" data-recommendation="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-plan-hash="a6cab08051e7b4b3476af8b33c068090ebe3b8e3b5c27090c211303647efea82">
+<section class="decision-card" data-decision-id="CAP-04-D01" data-recommendation="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D01</span><h3>Open scholarly sources</h3></div>
     <span class="status status-reopened">Reopened</span>
   </div>
-  <p class="decision-basis">Official adapters retain the planned source coverage and reproducible observations; provider-specific credentials, terms, redacted replay and limits must be resolved before lock.</p>
+  <p class="decision-basis">ADR-0027 proposes provider-specific private configuration and protected scientific replay without authentication/contact values; architecture acceptance remains pending.</p>
   <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-04-D01-option-0">
   <input id="CAP-04-D01-option-0" type="radio" name="CAP-04-D01" value="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-decision-option>
   <span><strong>OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures</strong><span class="recommended">Recommended</span></span>
@@ -83,10 +83,10 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>ADR-0027</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-04-D02" data-recommendation="Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review" data-plan-hash="a6cab08051e7b4b3476af8b33c068090ebe3b8e3b5c27090c211303647efea82">
+<section class="decision-card" data-decision-id="CAP-04-D02" data-recommendation="Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D02</span><h3>Canonicalization</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -113,7 +113,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-04-D03" data-recommendation="Every import records discovery path, source terms, access status, license/rights and retrieval time" data-plan-hash="a6cab08051e7b4b3476af8b33c068090ebe3b8e3b5c27090c211303647efea82">
+<section class="decision-card" data-decision-id="CAP-04-D03" data-recommendation="Every import records discovery path, source terms, access status, license/rights and retrieval time" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D03</span><h3>Rights/provenance</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -140,12 +140,12 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-04-D04" data-recommendation="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-plan-hash="a6cab08051e7b4b3476af8b33c068090ebe3b8e3b5c27090c211303647efea82">
+<section class="decision-card" data-decision-id="CAP-04-D04" data-recommendation="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D04</span><h3>Extensibility</h3></div>
     <span class="status status-reopened">Reopened</span>
   </div>
-  <p class="decision-basis">Retain the planned extensibility outcome without ambient application privilege; resolve the real Windows isolation and credential-broker boundary before lock.</p>
+  <p class="decision-basis">ADR-0028 proposes LPAC, no direct network or project/vault access, narrow brokers and explicit local publisher/project trust; real packaged isolation remains an implementation qualification obligation.</p>
   <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-04-D04-option-0">
   <input id="CAP-04-D04-option-0" type="radio" name="CAP-04-D04" value="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-decision-option>
   <span><strong>Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures</strong><span class="recommended">Recommended</span></span>
@@ -164,7 +164,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <label class="field-label">Detailed feedback, rationale, or implementation conditions
     <textarea rows="4" data-decision-rationale placeholder="Optional for the recommendation; required for any override, including Other."></textarea>
   </label>
-  <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
+  <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>ADR-0028</code></p>
 </section>
 </div>
 <section class="section-heading"><span class="eyebrow">Slice sequence</span><h2>Review the implementation plan slice by slice</h2></section>
@@ -241,6 +241,11 @@ and one bounded automation proposal. Structured estimates remain incomplete;
   linked assessment, counted once, not per capability. No foundational rewrite
   or broad historical-fixture repair is selected. Before lock, complete the
   fifteen atomic task estimates and necessary ADR/reference mappings.
+
+The next increment has refreshed all five slice procedures and drafted ADR-0027
+and ADR-0028. Source records/manifest IDs precede work/version reconciliation;
+the CAP-04.S01 handoff now states that explicitly. Reopened selections remain
+pending architecture disposition; no acceptance or task completion is inferred.
 
 ## 1. Capability outcome and production-ready exit
 

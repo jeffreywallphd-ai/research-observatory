@@ -63,20 +63,20 @@ the historical, explicitly limited evidence cited by the G1 decision.
 
 ### Material planning mismatches to close before locking W2
 
-1. Old capability-campaign approval language is replaced in the capability plans
-   by Wave-scoped authority. Refresh the same obsolete language in all eleven
-   unapproved slice plans; no old instruction can authorize a capability lease.
-2. Slice plans still cite Academic Minimal 1.3. The current
+1. Capability and all eleven unapproved slice procedures now require one complete
+   W2 approval and the same Wave campaign. They reuse implemented W1 identity,
+   provenance and jobs rather than the old not-yet-available fallback language.
+   All 33 task acceptance blocks remain unchanged.
+2. Slice plans now cite the current Academic Minimal 1.6 reference. The
    [reference approval](../design/ui-reference/APPROVAL.yaml) records **1.6**;
    its README's earlier "proposal" wording is stale and is not authority.
-   Map W2 pages against that approval. Preserve ADR-0026's exact inherited 1.5
+   Complete affected W2 page/journey mapping against that approval. Preserve ADR-0026's exact inherited 1.5
    workflow-catalog binding unless its governed migration is explicitly selected;
    do not relabel existing project selections or edit frozen reference history.
-3. CAP-04.S02's proposal to retain exact request URLs conflicts with secret/contact
-   redaction when providers use query credentials. Retain scientific query,
-   source, cursor and response provenance without authentication/contact values
-   in logs, exports or tracked fixtures; resolve protected replay representation
-   in CAP-04-D01 before implementation.
+3. CAP-04.S02 no longer calls for credential-bearing exact request URLs. Proposed
+   ADR-0027 separates protected scientific replay from current broker-injected
+   authentication/contact values, including redaction of echoed response values.
+   It still needs independent architecture disposition and acceptance with W2.
 4. Protected storage does not currently promise seek/range semantics. Resolve
    the viewer stream design for **CAP-05.S04.T01** without adding plaintext
    temporary paths or unauthenticated content URLs.
@@ -103,6 +103,52 @@ credible alternatives, record the selected implementation and required ADRs,
 and perform only bounded feasibility checks necessary for those decisions.
 No service account, live research query, installation or purchase was made for
 this assessment. No replacement parser is silently substituted for Docling.
+
+### Proposed shared architecture and bounded feasibility
+
+Three records consolidate shared material boundaries; they are **Proposed**, not
+accepted architecture or permission to start tasks:
+
+- [ADR-0027 — source replay and private authentication](../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md):
+  retain all four adapters, provider-specific configuration, encrypted scientific
+  replay, source assertions and current action-specific rights.
+- [ADR-0028 — Windows worker isolation and brokers](../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md):
+  LPAC, no ambient network/project/vault access, bounded IPC, explicit publisher
+  trust and per-project permissions; no marketplace or new workflow engine.
+- [ADR-0029 — document revisions and source viewing](../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md):
+  modular local Docling, exact-version anchors, human correction/reparse acceptance
+  and authenticated viewing. Offline asset identities/resource limits and viewer
+  transport feasibility remain explicit pre-approval gaps.
+
+On 2026-09-13, a planning-only `uv 0.12.2` wheel resolution for Windows x64 /
+Python 3.14.6 succeeded for `docling-slim[convert-core,format-pdf,models-local]==2.126.0`,
+`docling-parse==7.16.0` and `docling-ibm-models==4.0.2`, with CPU-only PyTorch
+selection. It resolved **73 packages**, including `torch==2.14.0+cpu` and
+`torchvision==0.29.0+cpu`. The local hash-bearing output is
+`artifacts/tmp/W2-parser-probe/requirements.lock`, SHA-256
+`7b72b13d77dc465ed8403732ccf41996aee1ee1e71aa40590dd9547dafa3527f`.
+Public PyPI/PyTorch metadata only; wheel-only resolution, keyring disabled,
+no package installation/build, model download or application dependency edit.
+An initial CLI invocation rejected incompatible `--no-build`/`--only-binary`
+flags; the corrected wheel-only invocation exited 0, with a normalized upstream
+version-specifier warning. This is not runtime, import, licensing, sandbox,
+offline conversion, packaging or performance qualification, nor a shipping lock.
+
+Independent planning preflight identified these material handoffs:
+
+| Task | Required prerequisite / ownership clarification |
+|---|---|
+| CAP-05.S02.T03 | CAP-04.S05.T02 supplies the qualified worker boundary. |
+| CAP-05.S05.T03 | CAP-05.S04.T02 supplies original-page/deep-link navigation. |
+| CAP-05.S06.T02 | CAP-05.S05.T01 supplies reference reconciliation for corrections. |
+| CAP-04.S01.T03 | Commit canonical source-record/manifest IDs first; CAP-04.S03 owns later work/version reconciliation. No duplicate engine or backward dependency. |
+
+The three dependency additions are proposed W2 planning edits, mirrored in the
+backlog and task sections, not completion/state changes. The viewer feasibility
+check must include whole-file authentication, held metadata transactions,
+concurrent writes, source/range limits and cancellation. Do not treat small
+responses as bounded source work or add an encrypted cache without designing its
+separate lifecycle. These findings are ordinary packet work, not extra human gates.
 
 ## UX journey to refine in the existing contracts
 

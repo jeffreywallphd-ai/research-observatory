@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile data</li></ul>
   <p data-task-claim="CAP-05.S03.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-05.S03.T01" data-task-plan-sha256="84b34c6786597e101793f2d08a82b2b9589de8c79575126c4d5afed8b828aad8"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-05.S03.T01` - Persist normalized sections, blocks, sentences, and references
+<section class="task-summary" data-task-plan="CAP-05.S03.T01" data-task-plan-sha256="d41d0da952781d706f27feb0f9961accff35fbc0452615860f439932c8bf3dd3"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-05.S03.T01` - Persist normalized sections, blocks, sentences, and references
 **Objective:** Canonical document-revision schema and repositories for structural hierarchy, ordering, labels, text, and reference links.
 
 **Dependencies:** `CAP-05.S02.T03`, `CAP-02.S02.T03`
@@ -66,7 +66,7 @@
 2. Implement the smallest vertical path that satisfies the task objective while preserving the slice architecture and adjacent-capability contracts.
 3. Implement and test the relevant trust boundary explicitly: validate untrusted input, constrain permissions/resources/destinations, redact diagnostics, deny unsupported access, and verify that failure leaves canonical state unchanged or recoverable.
 4. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-5. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+5. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Reparse creates a new revision; prior revisions remain queryable; structural IDs are stable within a revision and never reused across different content.

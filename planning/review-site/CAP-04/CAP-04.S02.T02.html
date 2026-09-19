@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile search</li></ul>
   <p data-task-claim="CAP-04.S02.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-04.S02.T02" data-task-plan-sha256="c1902f0ae20654431d4dc44398da4bd5c7de31acf3251e2adca11f5be8b09de3"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S02.T02` - Implement OpenAlex and Crossref adapters
+<section class="task-summary" data-task-plan="CAP-04.S02.T02" data-task-plan-sha256="1d00ba54339a1dfd6045af8f150f759270b5d0c4f6da01d9efe7b5f999c64cf6"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S02.T02` - Implement OpenAlex and Crossref adapters
 **Objective:** Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.
 
 **Dependencies:** `CAP-04.S02.T01`
@@ -65,7 +65,7 @@
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-04.S02.T02`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
 2. Implement the domain/core path behind the approved port or aggregate boundary. Keep side effects behind adapters, use explicit transaction/idempotency boundaries, and emit provenance/dependency facts atomically where the governing architecture requires them.
 3. Integrate persistence, events/provenance, migration/version metadata, and restart behavior. Exercise the path after process/application restart and against prior-compatible fixtures where applicable.
-4. Run the task verification commands plus targeted unit/contract/integration tests. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
+4. Select affected unit/contract/integration checks under the workflow verification-breadth rule; record selected/deferred coverage. Full listed profiles remain slice/Wave coverage, not an automatic replay after every task edit. Produce criterion-to-evidence records tied to the reviewed commit; update contracts, fixtures, documentation, ADRs, and the slice evidence index without adding unrelated work.
 
 **Acceptance criteria from the authoritative backlog**
 - Known-item fixtures resolve to canonical candidates; pagination resumes after failure; rate limits are obeyed; raw responses can be replayed in tests.
