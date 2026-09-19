@@ -132,6 +132,13 @@ Restoration cannot implicitly broaden any current default or per-record action
 permission, including records outside the visible page. Such undo requests fail
 atomically. A rights change requires its own explicit authorization; undo cannot
 supply it.
+The public undo command accepts only the expected current revision. Core resolves
+the previous effective edit, skipping appended undo events so repeated undo never
+becomes an implicit redo. Stale requests fail without replay. Rights comparison
+resolves both sparse histories setwise, checks default permissions first, and
+evaluates changed decisions only; permission requires both a permitted value and
+researcher-confirmed basis. This retains all-action restrictions outside the page
+without expanding large correction payloads in application memory.
 Digests stream the complete ordered effective draft, not just visible rows. Current
 rights and cancellation still constrain historical reads, including raw-record
 access. Per-record inspect denial blocks affected pages rather than exposing raw
@@ -264,8 +271,8 @@ delimiters use `/2` with the delimiter in its header. Source/chunk hashes and
 raw-span record keys are unchanged. The generated review contract displays the
 persisted selection rather than current form state.
 
-This is not yet a complete production wizard. Duplicate/count projection and
-scalable undo remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
+This is not yet a complete production wizard. Duplicate/count projection remains
+CAP-04.S01.T02 work. Native-window, full 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
 
 ## Verification and technical basis

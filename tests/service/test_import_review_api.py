@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
+from research_observatory_core.import_preview_repository import sqlite_import_preview_repository
+from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights, review_record
+from research_observatory_core.ports.import_previews import PreviewDraftChange
 
 from tests.service import test_import_preview_service as fixture
 
@@ -59,6 +63,31 @@ class ImportReviewApiTests(unittest.TestCase):
         current = self.post("review").json()
         self.assertEqual(3, current["revision"])
 
+    def test_undo_walks_effective_history_without_redo_or_automatic_stale_retry(self):
+        self.assertEqual(200, self.post("begin-review").status_code)
+        row = self.post("records", revision=1, after=1).json()["records"][0]
+        records = [{"ordinal": row["ordinal"], "recordKey": row["recordKey"]}]
+        self.assertEqual(200, self.post("edit", expectedRevision=1, records=records, included=False).status_code)
+        self.assertEqual(200, self.post("mapping", expectedRevision=2, mode="automatic", columns=[]).status_code)
+        restored = self.post("undo", expectedRevision=3)
+        self.assertEqual(200, restored.status_code)
+        self.assertEqual(4, restored.json()["revision"])
+        self.assertEqual(1, restored.json()["undoTargetRevision"])
+        self.assertFalse(self.post("records", revision=4, after=1).json()["records"][0]["included"])
+        self.assertEqual(409, self.post("undo", expectedRevision=3).status_code)
+        self.assertEqual(422, self.post("undo", expectedRevision=4, restoreRevision=3).status_code)
+        self.assertEqual(200, self.post("undo", expectedRevision=4).status_code)
+        self.assertTrue(self.post("records", revision=5, after=1).json()["records"][0]["included"])
+        self.assertIsNone(self.post("review").json()["undoTargetRevision"])
+        self.assertEqual(409, self.post("undo", expectedRevision=5).status_code)
+        self.assertEqual(200, self.post("edit", expectedRevision=5, records=records, included=False).status_code)
+        self.assertEqual(5, self.post("review").json()["undoTargetRevision"])
+        self.assertEqual(200, self.post("undo", expectedRevision=6).status_code)
+        self.assertIsNone(self.post("review").json()["undoTargetRevision"])
+        self.assertTrue(self.post("records", revision=7, after=1).json()["records"][0]["included"])
+        # Prior excluded revision remains readable, not overwritten by undo.
+        self.assertFalse(self.post("records", revision=2, after=1).json()["records"][0]["included"])
+
     def test_validation_authentication_and_project_close_cannot_leak_records(self):
         self.post("begin-review")
         response = self.post("records", revision=True)
@@ -75,6 +104,25 @@ class ImportReviewApiTests(unittest.TestCase):
         self.assertEqual(409, closed.status_code)
         self.assertNotIn("Synthetic", closed.text)
         self.assertNotIn(self.fixture.root, closed.text)
+
+    def test_undo_cannot_reopen_restricted_source_via_authenticated_route(self):
+        self.assertEqual(200, self.post("begin-review").status_code)
+        repository = sqlite_import_preview_repository(
+            Path(self.fixture.root) / "state/project.sqlite3", self.fixture.project_id
+        )
+        row = repository.draft_page(self.preview, revision=1, after=1, limit=1)[0]
+        denied = ImportRights(inspect=ImportPermission(value="denied", basis="researcher-confirmed"))
+        repository.revise_draft(
+            self.preview,
+            PreviewDraftChange(
+                expected_revision=1,
+                actor=self.fixture.service.actor("1" * 32),
+                decisions=(review_record(row.record, included=False, fields=(), rights=denied),),
+            ),
+        )
+        self.assertEqual(403, self.post("undo", expectedRevision=2).status_code)
+        self.assertEqual(2, self.post("review").json()["revision"])
+        self.assertEqual(403, self.post("records", revision=1, after=1).status_code)
 
     def test_automatic_column_targets_roundtrip_and_single_change_preserves_other_fields(self):
         self.assertEqual(200, self.post("begin-review").status_code)

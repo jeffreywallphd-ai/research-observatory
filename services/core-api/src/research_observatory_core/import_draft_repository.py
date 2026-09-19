@@ -56,6 +56,11 @@ _RIGHTS_ACTIONS: tuple[RightsAction, ...] = (
     "export",
     "share",
 )
+_PERMISSION_MASK = " + ".join(
+    f"CASE WHEN json_extract(rights, '$.\"{action}\".value')='permitted' "
+    f"AND json_extract(rights, '$.\"{action}\".basis')='researcher-confirmed' THEN {1 << index} ELSE 0 END"
+    for index, action in enumerate(_RIGHTS_ACTIONS)
+)
 
 
 class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
@@ -88,10 +93,33 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
         ).fetchone()
         if row is None or state.source_sha256 is None:
             raise PreviewProblem("preview-draft-not-found")
+        undo_target = row[0]
+        if row[1] is not None:
+            # Undo walks the effective edit stack, not the appended undo events.
+            # Monotonic FK/CHECK constraints prevent a cycle or forward jump.
+            target = self._query(
+                connection,
+                """
+                WITH RECURSIVE restored(revision) AS (
+                    SELECT :revision UNION ALL
+                    SELECT d.undo_revision FROM restored r CROSS JOIN import_draft_revisions d ON d.revision=r.revision
+                     WHERE d.preview_id=:preview AND d.project_id=:project AND d.undo_revision IS NOT NULL
+                )
+                SELECT d.predecessor_revision
+                  FROM restored r CROSS JOIN import_draft_revisions d ON d.revision=r.revision
+                 WHERE d.preview_id=:preview AND d.project_id=:project AND d.undo_revision IS NULL
+            """,
+                state.preview_id,
+                revision=row[1],
+            ).fetchone()
+            if target is None:
+                raise PreviewProblem("preview-draft-history-invalid")
+            undo_target = target[0]
         return PreviewDraft(
             revision=revision,
             predecessor_revision=row[0],
             restore_revision=row[1],
+            undo_target_revision=undo_target,
             attempt_id=row[2],
             record_count=row[6],
             authority=DraftAuthority(
@@ -246,26 +274,60 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
                 raise PreviewProblem("preview-rights-restore-denied")
 
         does_not_broaden(current.authority.rights, restored.authority.rights)
-        # Include records outside the visible page and every historical branch.
-        # Stream only changed ordinals; untouched records use the checked defaults.
-        rows = self._query(
+
+        # Resolve both sparse histories once, independent of the visible page.
+        # Ordinals absent from both effective branches use the checked defaults;
+        # decisions on an abandoned branch cannot supply current permission.
+        # Only action masks cross the query, never large correction/raw payloads.
+        def mask(rights: ImportRights) -> int:
+            return sum(1 << index for index, action in enumerate(_RIGHTS_ACTIONS) if rights.permits(action))
+
+        broadened = self._query(
             connection,
-            """
-            SELECT DISTINCT ordinal FROM import_record_decisions
-             WHERE preview_id=:preview AND project_id=:project ORDER BY ordinal
-        """,
+            f"""
+            WITH RECURSIVE histories(side, revision) AS (
+                SELECT 0, :before UNION ALL SELECT 1, :after
+                UNION ALL
+                SELECT h.side, COALESCE(d.undo_revision, d.predecessor_revision)
+                  FROM histories h CROSS JOIN import_draft_revisions d ON d.revision=h.revision
+                 WHERE d.preview_id=:preview AND d.project_id=:project
+                   AND COALESCE(d.undo_revision, d.predecessor_revision) IS NOT NULL
+            ), latest AS (
+                SELECT d.ordinal, MAX(CASE h.side WHEN 0 THEN d.revision END) before_revision,
+                    MAX(CASE h.side WHEN 1 THEN d.revision END) after_revision
+                  FROM histories h CROSS JOIN import_record_decisions d ON d.revision=h.revision
+                 WHERE d.preview_id=:preview AND d.project_id=:project GROUP BY d.ordinal
+            ), changed AS (
+                SELECT * FROM latest WHERE before_revision IS NOT after_revision
+            ), selected AS (
+                SELECT 0 side, ordinal, before_revision revision FROM changed WHERE before_revision IS NOT NULL
+                UNION ALL
+                SELECT 1 side, ordinal, after_revision revision FROM changed WHERE after_revision IS NOT NULL
+            ), effective AS (
+                SELECT s.side, s.ordinal, COALESCE(json_extract(d.decision_json, '$.rights'),
+                    CASE s.side WHEN 0 THEN :before_rights ELSE :after_rights END) rights
+                  FROM selected s CROSS JOIN import_record_decisions d ON d.revision=s.revision AND d.ordinal=s.ordinal
+                 WHERE d.preview_id=:preview AND d.project_id=:project
+            ), permissions AS (
+                SELECT side, ordinal, ({_PERMISSION_MASK}) mask FROM effective
+            ), combined AS (
+                SELECT ordinal, MAX(CASE side WHEN 0 THEN mask END) before_mask,
+                    MAX(CASE side WHEN 1 THEN mask END) after_mask
+                  FROM permissions GROUP BY ordinal
+            )
+            SELECT 1 FROM combined
+             WHERE (COALESCE(after_mask, :after_mask) & ~COALESCE(before_mask, :before_mask)) != 0 LIMIT 1
+            """,
             preview_id,
-        )
-        try:
-            for row in rows:
-                before, _ = self._decision(connection, preview_id, current.revision, row[0])
-                after, _ = self._decision(connection, preview_id, restored.revision, row[0])
-                does_not_broaden(
-                    before.rights if before and before.rights else current.authority.rights,
-                    after.rights if after and after.rights else restored.authority.rights,
-                )
-        finally:
-            rows.close()
+            before=current.revision,
+            after=restored.revision,
+            before_rights=current.authority.rights.model_dump_json(by_alias=True),
+            after_rights=restored.authority.rights.model_dump_json(by_alias=True),
+            before_mask=mask(current.authority.rights),
+            after_mask=mask(restored.authority.rights),
+        ).fetchone()
+        if broadened is not None:
+            raise PreviewProblem("preview-rights-restore-denied")
 
     def revise_draft(self, preview_id: str, change: PreviewDraftChange) -> PreviewDraft:
         change = PreviewDraftChange.model_validate(change)

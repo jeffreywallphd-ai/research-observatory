@@ -229,6 +229,29 @@ class ImportInteractionTests(unittest.TestCase):
                         "Researcher correction " + theme, exact=True
                     ).wait_for()
                     page.get_by_label("Select record 2", exact=True).check()
+                    # The second theme reuses the prior excluded draft. Establish
+                    # an explicit included state before testing exclusion + undo.
+                    page.get_by_role("button", name="Include selected", exact=True).click()
+                    page.wait_for_function(
+                        "document.querySelector('[aria-label=\"Selected import preview\"]')"
+                        "?.getAttribute('aria-busy') === 'false'"
+                    )
+                    preview = selected_previews[0]
+                    before_exclusion = api.client.post(
+                        "/projects/imports/review", json={"root": fixture.root, "previewId": preview}
+                    ).json()
+                    included_row = api.client.post(
+                        "/projects/imports/records",
+                        json={
+                            "root": fixture.root,
+                            "previewId": preview,
+                            "revision": before_exclusion["revision"],
+                            "after": 1,
+                            "limit": 1,
+                        },
+                    ).json()["records"][0]
+                    self.assertTrue(included_row["included"], theme)
+                    page.get_by_label("Select record 2", exact=True).check()
                     page.get_by_role("button", name="Exclude selected", exact=True).click()
                     page.wait_for_function(
                         "document.querySelector('[aria-label=\"Selected import preview\"]')"
@@ -250,6 +273,35 @@ class ImportInteractionTests(unittest.TestCase):
                     ).json()
                     self.assertFalse(records["records"][0]["included"])
                     self.assertEqual("Researcher correction " + theme, records["records"][0]["title"]["text"])
+                    undo = page.get_by_role("button", name="Undo last draft change", exact=True)
+                    undo.focus()
+                    page.keyboard.press("Enter")
+                    page.wait_for_function(
+                        "document.activeElement?.textContent === 'Undo last draft change'"
+                        " && !document.activeElement.disabled"
+                    )
+                    restored = api.client.post(
+                        "/projects/imports/review", json={"root": fixture.root, "previewId": preview}
+                    ).json()
+                    self.assertEqual(summary["revision"] + 1, restored["revision"])
+                    restored_row = api.client.post(
+                        "/projects/imports/records",
+                        json={
+                            "root": fixture.root,
+                            "previewId": preview,
+                            "revision": restored["revision"],
+                            "after": 1,
+                            "limit": 1,
+                        },
+                    ).json()["records"][0]
+                    self.assertTrue(restored_row["included"], theme)
+                    self.assertEqual("Researcher correction " + theme, restored_row["title"]["text"])
+                    page.get_by_label("Select record 2", exact=True).check()
+                    page.get_by_role("button", name="Exclude selected", exact=True).click()
+                    page.wait_for_function(
+                        "document.querySelector('[aria-label=\"Selected import preview\"]')"
+                        "?.getAttribute('aria-busy') === 'false'"
+                    )
                     self.assertEqual(0, page.locator('input[type="file"]').count())
                     cancel_button = page.get_by_role("button", name="Cancel this preview…", exact=True)
                     cancel_button.focus()

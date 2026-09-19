@@ -111,6 +111,7 @@ class PreviewDraft(DraftValue):
     revision: Revision
     predecessor_revision: Revision | None
     restore_revision: Revision | None
+    undo_target_revision: Revision | None
     attempt_id: Identity
     record_count: Annotated[int, Field(ge=0, le=200000)]
     authority: DraftAuthority

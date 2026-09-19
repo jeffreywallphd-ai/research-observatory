@@ -2175,6 +2175,7 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
         "/projects/imports/mapping" => {
             &["root", "previewId", "expectedRevision", "mode", "columns"]
         }
+        "/projects/imports/undo" => &["root", "previewId", "expectedRevision"],
         "/projects/imports/edit" => &[
             "root",
             "previewId",
@@ -2256,6 +2257,7 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
                         && target(&item["target"])
                 })
         }
+        "/projects/imports/undo" => number("expectedRevision", 1, 2_147_483_646),
         "/projects/imports/edit" => {
             let Some(records) = object["records"].as_array() else {
                 return false;
@@ -3483,6 +3485,10 @@ mod tests {
             ("begin-review", address.clone()),
             ("review", address.clone()),
             (
+                "undo",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "expectedRevision":2}),
+            ),
+            (
                 "records",
                 serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "after":0, "limit":25}),
             ),
@@ -3534,6 +3540,21 @@ mod tests {
                     .is_err()
                 );
             }
+        }
+        for values in [
+            serde_json::json!({"expectedRevision":true}),
+            serde_json::json!({"expectedRevision":0}),
+            serde_json::json!({"expectedRevision":2147483647_i64}),
+            serde_json::json!({"expectedRevision":2,"restoreRevision":1}),
+        ] {
+            let mut body = address.clone();
+            body.as_object_mut()
+                .unwrap()
+                .extend(values.as_object().unwrap().clone());
+            assert!(!super::validate_import_review_request(
+                "/projects/imports/undo",
+                &body.to_string()
+            ));
         }
         for values in [
             serde_json::json!({"revision":true,"after":0,"limit":25}),

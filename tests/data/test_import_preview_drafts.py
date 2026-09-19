@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import sqlite3
+import time
 import unittest
+from contextlib import closing
+from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.import_drafts import (
@@ -81,6 +85,108 @@ class ImportPreviewDraftTests(unittest.TestCase):
         fourth = self.change(preview, 3, decisions=(edits[0],))
         rows = self.repository().draft_page(preview, revision=fourth.revision, after=1, limit=2)
         self.assertEqual([False, True], [row.decision.included for row in rows])
+
+    def test_undo_resolves_rights_setwise_instead_of_per_ordinal_history_queries(self):
+        preview, records = self.accepted(b"title\n" + b"Synthetic\n" * 300)
+        self.change(preview, 0)
+        for index in range(3):
+            self.change(
+                preview,
+                index + 1,
+                decisions=tuple(
+                    review_record(record, included=False, fields=())
+                    for record in records[1 + index * 100 : 101 + index * 100]
+                ),
+            )
+        repository = self.repository()
+        from research_observatory_core.ports.import_previews import PreviewDraftChange
+
+        with patch.object(repository, "_decision", side_effect=AssertionError("per-record undo history lookup")):
+            restored = repository.revise_draft(
+                preview, PreviewDraftChange(expected_revision=4, restore_revision=1, actor=self.actor())
+            )
+        self.assertEqual(5, restored.revision)
+        self.assertIsNone(restored.undo_target_revision)
+        self.assertTrue(
+            all(row.decision.included for row in repository.draft_page(preview, revision=5, after=200, limit=100))
+        )
+
+    def test_setwise_undo_preserves_each_action_restriction_outside_visible_page(self):
+        allowed = ImportRights.model_validate(
+            {
+                action: {"value": "permitted", "basis": "researcher-confirmed"}
+                for action in ("store", "inspect", "index", "derive", "model-use", "quote", "export", "share")
+            }
+        )
+        preview, records = self.accepted(b"title\n" + b"Synthetic\n" * 30)
+        self.change(preview, 0, rights=allowed)
+        # Explicit reset is allowed while inspect remains permitted; inspect is last.
+        for action in ("store", "index", "derive", "model-use", "quote", "export", "share", "inspect"):
+            with self.subTest(action=action):
+                before = self.repository().draft(preview).revision
+                restricted = ImportRights.model_validate(
+                    {**allowed.model_dump(by_alias=True), action: {"value": "denied", "basis": "researcher-confirmed"}}
+                )
+                self.change(
+                    preview,
+                    before,
+                    decisions=(review_record(records[-1], included=False, fields=(), rights=restricted),),
+                )
+                with self.assertRaisesRegex(PreviewProblem, "rights-restore-denied"):
+                    self.change(preview, before + 1, restore_revision=before)
+                self.assertEqual(before + 1, self.repository().draft(preview).revision)
+                if action != "inspect":
+                    self.change(
+                        preview,
+                        before + 1,
+                        decisions=(review_record(records[-1], included=False, fields=(), rights=allowed),),
+                    )
+
+    def test_undo_query_handles_100k_decisions_and_10k_revisions(self):
+        # Isolated query-scale proof, not a canonical 100k project/import benchmark.
+        # The adjacent tests exercise actual accepted records, immutable history
+        # and all rights through the production repository and authenticated API.
+        preview, _ = self.accepted()
+        initial = self.change(preview, 0)
+        rights = initial.authority.rights.model_dump_json(by_alias=True)
+        project = initial.authority.project_id
+        with closing(sqlite3.connect(":memory:")) as connection:
+            connection.execute("PRAGMA temp_store=MEMORY")
+            connection.execute(
+                "CREATE TABLE import_draft_revisions (preview_id TEXT, project_id TEXT, revision INTEGER, "
+                "predecessor_revision INTEGER, undo_revision INTEGER, PRIMARY KEY(preview_id, project_id, revision))"
+            )
+            connection.execute(
+                "CREATE TABLE import_record_decisions (preview_id TEXT, project_id TEXT, revision INTEGER, "
+                "ordinal INTEGER, decision_json TEXT, PRIMARY KEY(preview_id, project_id, revision, ordinal))"
+            )
+            connection.executemany(
+                "INSERT INTO import_draft_revisions VALUES (?, ?, ?, ?, NULL)",
+                ((preview, project, revision, revision - 1 if revision > 1 else None) for revision in range(1, 10002)),
+            )
+            connection.executemany(
+                "INSERT INTO import_record_decisions VALUES (?, ?, ?, ?, ?)",
+                (
+                    (preview, project, (ordinal - 1) // 10 + 2, ordinal, '{"rights":' + rights + "}")
+                    for ordinal in range(1, 100001)
+                ),
+            )
+            current = initial.model_copy(update={"revision": 10001})
+            restored = initial.model_copy(update={"revision": 10000})
+            start = time.perf_counter()
+            self.repository()._restore_rights(connection, preview, current, restored)
+            elapsed = time.perf_counter() - start
+            print(f"Synthetic undo query: 100000 decisions, 10001 revisions, {elapsed:.3f}s; in-memory query only")
+            # Restriction at the far end must not be lost by the sparse optimization.
+            denied = initial.authority.rights.model_copy(
+                update={"inspect": ImportPermission(value="denied", basis="researcher-confirmed")}
+            )
+            connection.execute(
+                "UPDATE import_record_decisions SET decision_json=? WHERE ordinal=100000",
+                ('{"rights":' + denied.model_dump_json(by_alias=True) + "}",),
+            )
+            with self.assertRaisesRegex(PreviewProblem, "rights-restore-denied"):
+                self.repository()._restore_rights(connection, preview, current, restored)
 
     def test_mapping_binding_correction_and_exclusion_survive_remapping(self):
         preview, records = self.accepted()

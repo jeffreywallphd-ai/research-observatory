@@ -18,6 +18,7 @@ from .import_review import (
     ImportPreviewPage,
     ImportReview,
     MappingEdit,
+    MutationRevision,
     PageLimit,
     RecordSelection,
     ReviewDetail,
@@ -64,6 +65,10 @@ class ImportMappingRequest(ImportAddress, MappingEdit):
 
 class ImportGroupRequest(ImportAddress, GroupEdit):
     pass
+
+
+class ImportUndoRequest(ImportAddress):
+    expected_revision: MutationRevision
 
 
 def _problem(request: Request, status: int, code: str, title: str) -> CoreProblem:
@@ -228,6 +233,18 @@ def register_import_routes(
             request,
             command,
             lambda review, runtime: review.edit(command.preview_id, edit, actor=runtime.actor(request.state.trace_id)),
+        )
+
+    @router.post("/undo", response_model=ReviewSummary)
+    def review_undo(request: Request, command: ImportUndoRequest) -> ReviewSummary:
+        return run(
+            request,
+            command,
+            lambda review, runtime: review.undo(
+                command.preview_id,
+                expected_revision=command.expected_revision,
+                actor=runtime.actor(request.state.trace_id),
+            ),
         )
 
     @router.post("/report", response_model=DiagnosticPage)

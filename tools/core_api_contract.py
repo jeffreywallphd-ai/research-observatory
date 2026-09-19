@@ -1592,12 +1592,13 @@ export function decodeImportPreviewPage(value: unknown): ImportPreviewPage | nul
 export function decodeReviewSummary(value: unknown): ReviewSummary | null {
   const item = importOwned(value);
   if (!item || !exactKeys(item, ["previewId", "revision", "predecessorRevision", "attemptId", "recordCount",
-    "mappingId", "mappingRevision", "mappingHighWater", "mappingMode", "rights", "options", "delimiter"])
+    "mappingId", "mappingRevision", "mappingHighWater", "mappingMode", "rights", "options", "delimiter", "undoTargetRevision"])
     || !canonicalUuid7(item.previewId) || !canonicalUuid7(item.attemptId) || !canonicalUuid7(item.mappingId)
     || !integer(item.revision, 1, 2147483647) || item.predecessorRevision !== (item.revision === 1 ? null : item.revision - 1)
     || !integer(item.recordCount, 0, 200000) || !integer(item.mappingRevision, 1, 2147483647)
     || !integer(item.mappingHighWater, item.mappingRevision, 2147483647)
     || !member(item.delimiter, [",", "\t", ";"] as const)
+    || (item.undoTargetRevision !== null && !integer(item.undoTargetRevision, 1, (item.revision as number) - 1))
     || !registryEnum(item.mappingMode, ["automatic", "columns"])) return null;
   const rights = record(item.rights), options = record(item.options);
   if (!rights || !exactKeys(rights, IMPORT_RIGHTS) || !IMPORT_RIGHTS.every((name) => {
@@ -1786,6 +1787,15 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         records: command.records.map((r) => ({ ordinal: r.ordinal, recordKey: r.recordKey })), included: command.included,
         corrections: command.corrections.map((c) => ({ name: c.name, value: c.value })),
       }), ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
+      if (result.previewId !== command.previewId || result.revision !== command.expectedRevision + 1) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async undoImportReview(value: ImportUndoRequest): Promise<ReviewSummary> {
+      const command = importCommand(value);
+      if (!integer(command.expectedRevision, 1, 2147483646)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/undo",
+        body: importBody({ root: command.root, previewId: command.previewId, expectedRevision: command.expectedRevision }),
+        ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
       if (result.previewId !== command.previewId || result.revision !== command.expectedRevision + 1) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },

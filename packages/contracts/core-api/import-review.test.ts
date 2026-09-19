@@ -5,7 +5,7 @@ const previewId = "01900000-0000-7000-8000-000000000001";
 const address = { root: "C:/Research/synthetic", previewId };
 const permission = { value: "unknown", basis: "not-reported" };
 const summary = () => ({ previewId, revision: 1, predecessorRevision: null, attemptId: previewId, recordCount: 2,
-  mappingId: previewId, mappingRevision: 1, mappingHighWater: 1, mappingMode: "automatic", delimiter: ",",
+  mappingId: previewId, mappingRevision: 1, mappingHighWater: 1, mappingMode: "automatic", delimiter: ",", undoTargetRevision: null,
   rights: Object.fromEntries(["store", "inspect", "index", "derive", "model-use", "quote", "export", "share"].map((name) => [name, { ...permission }])),
   options: { duplicatePolicy: "review", malformedPolicy: "exclude-and-report" } });
 const page = () => ({ revision: 1, nextAfter: 2, complete: true, records: [{ ordinal: 2, recordKey: "a".repeat(64),
@@ -45,6 +45,7 @@ describe("import review generated client", () => {
     ["importReviewDetail", { ...address, revision: 1, ordinal: 2, recordKey: "a".repeat(64), section: "raw", start: 0, limit: 25 }, "recordKey", "b".repeat(64), { ...detail(), recordKey: "b".repeat(64) }],
     ["mapImportReview", { ...address, expectedRevision: 1, mode: "columns", columns: [{ index: 0, target: "title" }] }, "expectedRevision", 2, { ...summary(), revision: 3, predecessorRevision: 2 }],
     ["editImportReview", { ...address, expectedRevision: 1, included: false, corrections: [], records: [{ ordinal: 2, recordKey: "a".repeat(64) }] }, "expectedRevision", 2, { ...summary(), revision: 3, predecessorRevision: 2 }],
+    ["undoImportReview", { ...address, expectedRevision: 2 }, "expectedRevision", 3, { ...summary(), revision: 4, predecessorRevision: 3 }],
     ["importDiagnosticPage", { ...address, revision: 1, after: 0, limit: 25 }, "revision", 2, { revision: 2, nextAfter: 2, complete: true, csv: "ordinal,line_start,line_end,status,diagnostic\r\n1,1,1,parsed,none\r\n2,2,2,parsed,none\r\n" }],
   ] as const;
 
@@ -82,6 +83,8 @@ describe("import review generated client", () => {
     expect(decodeReviewSummary({ ...summary(), mappingHighWater: 0 })).toBeNull();
     expect(decodeReviewSummary({ ...summary(), delimiter: "|" })).toBeNull();
     expect(decodeReviewSummary({ ...summary(), delimiter: ";" })?.delimiter).toBe(";");
+    expect(decodeReviewSummary({ ...summary(), undoTargetRevision: 1 })).toBeNull();
+    expect(decodeReviewSummary({ ...summary(), undoTargetRevision: true })).toBeNull();
     const granted = summary(); granted.rights.export!.value = "permitted";
     expect(decodeReviewSummary(granted)).toBeNull();
     let invoked = false;

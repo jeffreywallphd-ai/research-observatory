@@ -117,6 +117,7 @@ class ReviewSummary(DraftValue):
     rights: ImportRights
     options: ImportOptions
     delimiter: CsvDelimiter
+    undo_target_revision: Revision | None
 
 
 class ShortValue(DraftValue):
@@ -250,6 +251,7 @@ class ImportReview:
                 rights=draft.authority.rights,
                 options=draft.authority.options,
                 delimiter=draft.authority.delimiter,
+                undo_target_revision=draft.undo_target_revision,
             )
         )
 
@@ -476,6 +478,18 @@ class ImportReview:
         change = PreviewDraftChange(expected_revision=edit.expected_revision, actor=actor, decisions=tuple(decisions))
         # Repository applies its expanded group-size bound atomically too.
         changed = self._repository.revise_draft(preview, change)
+        return self._summary(preview, changed)
+
+    def undo(self, preview: str, *, expected_revision: int, actor: PreviewActor) -> ReviewSummary:
+        draft = self._base(preview, expected_revision)
+        if draft.undo_target_revision is None:
+            raise PreviewProblem("preview-undo-unavailable")
+        changed = self._repository.revise_draft(
+            preview,
+            PreviewDraftChange(
+                expected_revision=expected_revision, restore_revision=draft.undo_target_revision, actor=actor
+            ),
+        )
         return self._summary(preview, changed)
 
     def report(self, preview: str, request: ReviewPageRequest) -> DiagnosticPage:

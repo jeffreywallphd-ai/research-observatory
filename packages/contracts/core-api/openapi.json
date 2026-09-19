@@ -863,6 +863,30 @@
         "title": "ImportRights",
         "type": "object"
       },
+      "ImportUndoRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedRevision": {
+            "$ref": "#/components/schemas/MutationRevision"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "expectedRevision"
+        ],
+        "title": "ImportUndoRequest",
+        "type": "object"
+      },
       "IntentAcceptRequest": {
         "additionalProperties": false,
         "properties": {
@@ -4597,6 +4621,16 @@
           },
           "rights": {
             "$ref": "#/components/schemas/ImportRights"
+          },
+          "undoTargetRevision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revision"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
@@ -4611,7 +4645,8 @@
           "mappingMode",
           "rights",
           "options",
-          "delimiter"
+          "delimiter",
+          "undoTargetRevision"
         ],
         "title": "ReviewSummary",
         "type": "object"
@@ -7354,6 +7389,87 @@
           }
         },
         "summary": "Preview Status",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/undo": {
+      "post": {
+        "operationId": "review_undo_projects_imports_undo_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportUndoRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Undo",
         "tags": [
           "imports"
         ]

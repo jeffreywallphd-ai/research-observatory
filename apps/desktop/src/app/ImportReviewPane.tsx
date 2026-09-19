@@ -43,6 +43,7 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
   const live = useRef(true);
   const statusHeading = useRef<HTMLHeadingElement>(null);
   const cancelButton = useRef<HTMLButtonElement>(null);
+  const undoButton = useRef<HTMLButtonElement>(null);
   const address = { root, previewId: initial.previewId };
 
   async function readDraft(current: ImportPreviewItem): Promise<ReviewSummary> {
@@ -116,6 +117,13 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
       if (live.current && ticket === generation.current) { setSummary(null); setPage(null); setHeaders([]); setRecord(null); setFailure(importFailure(error)); }
     } finally { if (live.current && ticket === generation.current) setBusy(false); }
   }
+  async function undo(): Promise<void> {
+    if (!summary || summary.undoTargetRevision === null || busy) return;
+    await change(() => client.undoImportReview({ ...address, expectedRevision: summary.revision }), "Last draft change undone. Prior source values and revision history remain retained.");
+    globalThis.requestAnimationFrame(() => {
+      if (live.current) (undoButton.current && !undoButton.current.disabled ? undoButton.current : statusHeading.current)?.focus();
+    });
+  }
   async function cancel(): Promise<void> {
     const ticket = ++generation.current; setBusy(true); setFailure(null);
     try {
@@ -167,6 +175,7 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
     {summary ? <>
       <Panel title="Draft decisions"><p>Revision {summary.revision} · {summary.recordCount.toLocaleString()} source rows (including headers/directives). Raw source values are preserved. No canonical records have been committed.</p>
         {initial.formatName === "csv" ? <p>CSV separator: {summary.delimiter === "," ? "Comma" : summary.delimiter === ";" ? "Semicolon" : "Tab"}. Start a new import to change parsing settings.</p> : null}
+        <div className="ro-action-row"><Button ref={undoButton} disabled={busy || summary.undoTargetRevision === null} onClick={() => void undo()}>Undo last draft change</Button><span className="field-note">{summary.undoTargetRevision === null ? "No earlier draft change to undo." : "Restores the previous effective edit as a new revision. Current rights restrictions still apply."}</span></div>
         <p>Download a complete diagnostic CSV with row locations, validation codes and exclusion reasons. It does not contain reference text, names or local paths.</p>
         <div className="ro-action-row"><Button ref={reportButton} disabled={busy} onClick={() => void downloadReport()}>Download diagnostic report…</Button>{savingReport ? <><span role="status">Saving the complete current draft report…</span><Button onClick={() => reportOwner.current?.abort()}>Cancel report download</Button></> : null}</div>
         <dl className="import-rights">{Object.entries(summary.rights).map(([action, permission]) => <div key={action}><dt>{action}</dt><dd>{permission.value} · {permission.basis.replaceAll("-", " ")}</dd></div>)}</dl>
