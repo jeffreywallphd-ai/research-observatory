@@ -33,6 +33,8 @@ from .workflow_contracts import (
 
 _STABLE_CODE = re.compile(r"^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$")
 _CONCURRENCY_CLASSES = frozenset({"interactive", "document", "ai", "maintenance"})
+# Accepted workflow ProjectId bridge; job/actor identities remain UUIDv7.
+_PROJECT_ID = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\Z")
 
 
 class WorkflowPreparationProblem(ValueError):
@@ -95,7 +97,8 @@ class ProjectWorkerPolicy:
     def __post_init__(self) -> None:
         demands, limits = dict(self.demands), dict(self.concurrency_limits)
         if (
-            not is_uuid_v7(self.project_id)
+            not isinstance(self.project_id, str)
+            or _PROJECT_ID.fullmatch(self.project_id) is None
             or (self.quota is not None and not isinstance(self.quota, WorkerResources))
             or any(kind not in _CONCURRENCY_CLASSES for kind in {*demands, *limits})
             or any(type(limit) is not int or limit < 0 for limit in limits.values())

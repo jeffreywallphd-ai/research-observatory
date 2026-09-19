@@ -14,6 +14,7 @@ ObjectCreationSource = Literal[
     "legacy-unreported",
 ]
 ObjectAccessPurpose = Literal[
+    "reference-import",
     "document-analysis",
     "test-verification",
     "storage-performance",

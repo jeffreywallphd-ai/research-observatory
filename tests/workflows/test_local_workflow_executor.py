@@ -11,7 +11,7 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
@@ -27,6 +27,7 @@ from research_observatory_core.ports.workflow_executor import (
     WorkflowQueueConflict,
     WorkflowQueueProblem,
 )
+from research_observatory_core.projects import ProjectLifecycleService
 from research_observatory_core.repositories import (
     create_sqlite_unit_of_work_factory,
     sqlite_material_dependency_repository,
@@ -235,6 +236,66 @@ def runnable_contracts(*, identity_variant: bool = False) -> tuple[dict[str, obj
 
 
 class LocalWorkflowExecutorTests(unittest.TestCase):
+    def test_lifecycle_project_identity_is_admitted_without_widening_job_identity(self) -> None:
+        projects = ProjectLifecycleService()
+        self.addCleanup(projects.shutdown)
+        project = projects.create(
+            parent_directory=str(Path(self.temporary.name).resolve()),
+            directory_name="import-project",
+            display_name="Synthetic import project",
+            template_id="theory-synthesis",
+            trace_id="a" * 32,
+        )
+        projects.open(root=project.root, trace_id="b" * 32)
+        repository = sqlite_workflow_queue_repository(Path(project.root), project.project_id)
+        demand = WorkerResources(1, 10, 0, 10)
+        policy = ProjectWorkerPolicy(project.project_id, demand, {"document": demand}, {"document": 1})
+        controller = LocalAdmissionController(interactive_reserve=demand)
+        binding = sqlite_workflow_admission_binding(repository, controller=controller, policy=policy)
+        binding.validate(repository)
+        definition, snapshot, job_id = runnable_contracts()
+        snapshot["projectId"] = project.project_id
+        self.assertEqual((), workflow_snapshot_errors(definition, snapshot))
+        submission = prepare_workflow_job(
+            definition,
+            snapshot,
+            job_id=job_id,
+            concurrency_class="document",
+            priority=0,
+            available_at="2026-08-30T12:02:00.000Z",
+        )
+        repository.enqueue(submission, actor=SYSTEM)
+        self.assertEqual(project.project_id, submission.project_id)
+        with self.assertRaisesRegex(ValueError, "identity or concurrency"):
+            prepare_workflow_job(
+                definition,
+                snapshot,
+                job_id=project.project_id,
+                concurrency_class="document",
+                priority=0,
+                available_at="2026-08-30T12:02:00.000Z",
+            )
+        with self.assertRaisesRegex(ValueError, "policy mismatch"):
+            sqlite_workflow_admission_binding(
+                repository,
+                controller=controller,
+                policy=ProjectWorkerPolicy(PROJECT_ID, demand, {"document": demand}, {"document": 1}),
+            )
+
+    def test_project_policy_denies_noncanonical_and_unsupported_project_ids(self) -> None:
+        demand = WorkerResources(1, 10, 0, 10)
+        for identity in (
+            None,
+            1,
+            "",
+            PROJECT_ID.upper(),
+            PROJECT_ID.replace("-", ""),
+            "018f47a2-4d6b-1f78-9f2e-7fb76c86d060",
+            "018f47a2-4d6b-4f78-7f2e-7fb76c86d060",
+        ):
+            with self.subTest(identity=identity), self.assertRaises(ValueError):
+                ProjectWorkerPolicy(cast(str, identity), demand, {"document": demand}, {"document": 1})
+
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.root = Path(self.temporary.name).resolve() / "project"

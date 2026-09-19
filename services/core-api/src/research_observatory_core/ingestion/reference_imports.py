@@ -15,9 +15,9 @@ import re
 import time
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Final, Protocol
 
-PARSER_VERSION = "local-reference-imports/1.0.0"
+PARSER_VERSION: Final = "local-reference-imports/1.0.0"
 NORMALIZATION_VERSION = "local-reference-candidates/1.0.0"
 FORMATS = frozenset({"ris", "bibtex", "csl-json", "doi-list", "csv"})
 _BYTES = tuple(bytes([value]) for value in range(256))
@@ -263,6 +263,48 @@ def _line(cursor: _Cursor, frame: _Frame) -> None:
 def _doi(value: str) -> str | None:
     value = _DOI_WRAPPER.sub("", value.strip()).casefold()
     return value if _DOI.fullmatch(value) else None
+
+
+def normalize_import_field(
+    name: str,
+    value: object,
+    index: int,
+    warnings: set[str],
+    *,
+    max_field_bytes: int = 64 * 1024,
+) -> FieldCandidate | None:
+    """Shared parser/mapping suggestion; never an accepted value or identity grant."""
+    key = name.casefold()
+    aliases = {
+        "ti": "title",
+        "t1": "title",
+        "do": "doi",
+        "py": "year",
+        "y1": "year",
+        "au": "author",
+        "a1": "author",
+        "jo": "container",
+        "jf": "container",
+        "journal": "container",
+        "container-title": "container",
+    }
+    key = aliases.get(key, key)
+    if key not in {"title", "doi", "year", "author", "container"} or not isinstance(value, str):
+        return None
+    normalized = " ".join(value.split())
+    if key == "doi":
+        doi = _doi(value)
+        if doi is None:
+            warnings.add("invalid-doi")
+            return None
+        normalized = doi
+    if any(ord(char) < 32 or ord(char) == 127 for char in normalized):
+        warnings.add("control-character")
+        return None
+    if len(normalized.encode("utf-8")) > max_field_bytes:
+        warnings.add("candidate-limit")
+        return None
+    return FieldCandidate(key, normalized, index) if normalized else None
 
 
 class ImportSession:
@@ -591,37 +633,7 @@ class ImportSession:
         )
 
     def _candidate(self, name: str, value: object, index: int, warnings: set[str]) -> FieldCandidate | None:
-        key = name.casefold()
-        aliases = {
-            "ti": "title",
-            "t1": "title",
-            "do": "doi",
-            "py": "year",
-            "y1": "year",
-            "au": "author",
-            "a1": "author",
-            "jo": "container",
-            "jf": "container",
-            "journal": "container",
-            "container-title": "container",
-        }
-        key = aliases.get(key, key)
-        if key not in {"title", "doi", "year", "author", "container"} or not isinstance(value, str):
-            return None
-        normalized = " ".join(value.split())
-        if key == "doi":
-            doi = _doi(value)
-            if doi is None:
-                warnings.add("invalid-doi")
-                return None
-            normalized = doi
-        if any(ord(char) < 32 or ord(char) == 127 for char in normalized):
-            warnings.add("control-character")
-            return None
-        if len(normalized.encode("utf-8")) > self.limits.max_field_bytes:
-            warnings.add("candidate-limit")
-            return None
-        return FieldCandidate(key, normalized, index) if normalized else None
+        return normalize_import_field(name, value, index, warnings, max_field_bytes=self.limits.max_field_bytes)
 
     def _ris(self, text: str, warnings: set[str]) -> list[tuple[RawField, object]]:
         parsed: list[tuple[RawField, object]] = []

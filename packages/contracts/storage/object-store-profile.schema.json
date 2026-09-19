@@ -101,7 +101,7 @@
     "readableRightsStates": {"const": ["allowed", "not-applicable"]},
     "accessPurposes": {
       "const": {
-        "local-read": ["document-analysis", "test-verification", "storage-performance"],
+        "local-read": ["reference-import", "document-analysis", "test-verification", "storage-performance"],
         "controlled-egress": ["project-backup", "project-export", "provider-egress"]
       }
     },

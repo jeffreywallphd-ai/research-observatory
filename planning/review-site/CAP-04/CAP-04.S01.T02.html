@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S01.html">SLICE-reference-library-and-file-imports</a><span>/</span><span aria-current="page">CAP-04.S01.T02</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S01.T02">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S01.T02 · task 2 of 3</span><h1>Create import preview, mapping, and conflict UI</h1><p>Desktop wizard showing parsed records, field mapping, duplicate candidates, warnings, rights defaults, and import options.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S01.T02 · task 2 of 3</span><h1>Create import preview, mapping, and conflict UI</h1><p>Desktop wizard showing parsed records, field mapping, duplicate candidates, warnings, rights defaults, and import options.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S01.html">SLICE-reference-library-and-file-imports</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li></ul>
-  <p data-task-claim="CAP-04.S01.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S01.T02" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="34a8015b14245ed76a6f9629a69c3ed8574bde42"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>34a8015b14245ed76a6f9629a69c3ed8574bde42</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S01.T02" data-task-plan-sha256="98be68f012dbb4178dc61340729025df50be5def0977da785df79814aa5d0565"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S01.T02` - Create import preview, mapping, and conflict UI
 **Objective:** Desktop wizard showing parsed records, field mapping, duplicate candidates, warnings, rights defaults, and import options.
@@ -88,13 +88,75 @@ python tools/verify.py --profile desktop
 python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S01.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T02" data-worksheet-sha256="9eeca410f79cde4039eca534ab35dc5bf3af06be35de786232149e825f078e8f">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>9eeca410f79cde4039eca534ab35dc5bf3af06be35de786232149e825f078e8f</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T02 — import preview, mapping and conflict UI
+
+Claim base: `34a8015b14245ed76a6f9629a69c3ed8574bde42`. Authority: the
+approved W2 packet at `c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`,
+CAP-04.S01, ADR-0027, inherited ADR-0019/0025/0026, and
+`RO-UI-ACADEMIC-MINIMAL-1.7`. CAP-04.S01.T01 is DONE.
+
+This task creates a reviewable draft, not canonical SourceRecord/Work imports.
+CAP-04.S01.T03 owns atomic commits/manifests; CAP-04.S03 owns new work/version
+reconciliation. No cloud traffic, provider credentials or real research fixtures.
+
+| Material boundary | Outcome and planned proof |
+|---|---|
+| AC1: review and correction | Paginated raw/candidate comparison, explicit field mapping, exclusions, duplicate candidates, rights defaults, group edits and undo; domain and renderer behavioral tests. Immutable effective decisions bind accepted values, selection, rights, options and mapping revision. |
+| AC1: cancellation/report | Cancel or failed parsing never publishes a canonical import. A complete diagnostic report covers malformed/excluded records without raw content or paths; spreadsheet output neutralizes active cells. Focused cancellation, malformed-source and export tests. |
+| Source and project authority | Native selected regular file only; renderer receives no arbitrary read capability. Every Core action binds project, source digest, preview ID/revision and current rights. Test substitution, closed/read-only project, stale revision and lock/project-switch responses. |
+| Durable/compatible execution | Reuse protected project storage, object-store and durable-job ports. Verified immutable source, bounded record pages, explicit ordinary restart versus security-lock interruption. Real project/worker, persistence/restart and cancellation-before-publication tests. |
+| AC2: principal boundary | Synthetic native selection through authenticated Core and the actual project store, then preview, mapping, exclusion and safe report. Mocks cannot substitute for this wiring check. |
+| AC3: governed experience | Implement the approved Import records journey in ingestion/reconciliation, with shared components/tokens, keyboard/focus/status and workflow return context. No illustrative corpus counts or fictitious resolved works. |
+| Evidence selection | Focused changed-module, contract, native, renderer, rights and migration checks; bounded 100k pagination proof. Full W1 replay is not selected. Slice/Wave qualification retains broader obligations. |
+
+## Read-only preflight and first regressions
+
+The independent preflight identified a real integration mismatch:
+`ProjectWorkerPolicy` only admits UUIDv7 projects although normal lifecycle-created
+projects use UUIDv4 and the accepted workflow ProjectId contract supports both.
+The approved current task explicitly integrates existing durable jobs and project
+identities. Adjust only this adapter check, with actual lifecycle-created-project
+admission and malformed/wrong-project denials before wiring imports. Keep job and
+actor UUIDv7 constraints and repository/storage identity checks intact. This is
+current-task integration, not a W1 reopening, new correction lane or automation
+maintenance. The independent authority preflight found no new human gate for this
+bounded delta; preserve W1 records and migration authority.
+
+Before implementation, add draft/mapping/rights/digest and worker-admission
+regressions. Keep raw IR immutable, unknown rights restrictive and stale revisions
+rejecting. Subsequent integration checks must establish actual persistence and
+native behavior; domain-only success is not task completion.
+
+## In-progress boundary observations
+
+- The lifecycle-created-project regression reproduced the v7-only worker rejection;
+  the narrow bridge adjustment passes creation/enqueue and invalid/wrong-project
+  denials. Job identity remains UUIDv7.
+- Draft/mapping tests were added before their implementation. Independent read-only
+  preflight found no blocking groundwork defect; final service proof must bind the
+  immutable mapping revision and include mapping/exclusion diagnostics in reports.
+- Object readers retain a writer reservation until closed. Ordered encrypted source
+  chunks (128 KiB maximum) release this barrier before each parser read returns;
+  actual encrypted-object replay permits a second connection to reserve the writer
+  after every read. This is not native/production composition qualification.
+- Independent storage preflight requires new preview chunk references to join object
+  deletion authority. Never delete a shared chunk when one preview is cancelled;
+  incomplete intake and pages must remain distinct from verified complete source.
+
+Next: protected preview repository/migration and reference accounting, then durable
+job composition, native intake, Core/client/renderer integration, focused real-boundary
+qualification and formal independent commit-bound review. No task completion claimed.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S01.T02" data-review-mode="latest-review-only">
   <h3>CAP-04.S01.T02 — Create import preview, mapping, and conflict UI</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S01.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S01.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S01.T01.html">Previous</a><a class="button button-primary" href="CAP-04.S01.T03.html">Next</a></nav>

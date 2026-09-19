@@ -12878,7 +12878,7 @@
             {
               "task_id": "CAP-04.S01.T02",
               "title": "Create import preview, mapping, and conflict UI",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -12926,18 +12926,21 @@
             {
               "task_id": "CAP-04.S01.T02",
               "title": "Create import preview, mapping, and conflict UI",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S01.T02.html",
               "dependencies": [
                 "CAP-04.S01.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "34a8015b14245ed76a6f9629a69c3ed8574bde42"
               },
               "plan_section_sha256": "98be68f012dbb4178dc61340729025df50be5def0977da785df79814aa5d0565",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-04.S01.T02.task-start.md",
+                "sha256": "9eeca410f79cde4039eca534ab35dc5bf3af06be35de786232149e825f078e8f"
+              }
             },
             {
               "task_id": "CAP-04.S01.T03",

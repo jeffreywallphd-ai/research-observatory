@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0b08f57387c87ee1289b6ba01b2116b8c831d268efca189ec7a521ec381bb8c6
+source_sha256: 4b1d10f6e49a209e41205f299574e7d1ffd5c73bb84631e8c004157520f802ad
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -7797,13 +7797,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S01.T02 - Create import preview, mapping, and conflict UI
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S01.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Desktop wizard showing parsed records, field mapping, duplicate candidates, warnings, rights defaults, and import options.
 

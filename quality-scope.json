@@ -12,6 +12,10 @@
   "pythonFiles": [
     "services/core-api/src/research_observatory_core/ingestion/__init__.py",
     "services/core-api/src/research_observatory_core/ingestion/reference_imports.py",
+    "services/core-api/src/research_observatory_core/ingestion/import_drafts.py",
+    "services/core-api/src/research_observatory_core/ingestion/source_chunks.py",
+    "tests/service/test_import_drafts.py",
+    "tests/data/test_import_source_chunks.py",
     "tests/service/test_reference_imports.py",
     "tests/service/test_reference_import_streaming.py",
     "tests/contracts/test_reference_import_contracts.py",

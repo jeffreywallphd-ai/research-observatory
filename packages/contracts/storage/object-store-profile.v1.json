@@ -35,7 +35,7 @@
   "retentionClasses": ["project-lifetime", "derived-rebuildable", "export-retained"],
   "readableRightsStates": ["allowed", "not-applicable"],
   "accessPurposes": {
-    "local-read": ["document-analysis", "test-verification", "storage-performance"],
+    "local-read": ["reference-import", "document-analysis", "test-verification", "storage-performance"],
     "controlled-egress": ["project-backup", "project-export", "provider-egress"]
   },
   "defaultAccessPolicy": "allow-known-local-read-deny-controlled-egress",

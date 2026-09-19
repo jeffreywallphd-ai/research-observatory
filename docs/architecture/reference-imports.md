@@ -89,6 +89,35 @@ codes only, while original content stays in the protected IR. No default log sin
 or telemetry is added. Source/durable-job integration and cross-process cancellation
 remain slice integration obligations, not claims established by these pure parsers.
 
+## Preview groundwork (CAP-04.S01.T02 in progress)
+
+`import_drafts` keeps immutable mapping revisions, action-specific rights and
+per-record decisions separate from parser observations. Duplicate CSV column
+names use occurrence-qualified selectors; conflicting singleton candidates remain
+explicit. Corrections do not overwrite raw fields. The versioned streaming
+effective-draft hash includes source/project, parser, mapping profile/revision,
+ordered decisions, rights and options; transient preview identity is excluded.
+A hash is not evidence of complete parsing, current permission or commit authority.
+
+`source_chunks` uses the existing encrypted object port to retain ordered source
+pieces of at most 128 KiB (256 MiB total). Whole-source SHA-256 remains the import
+identity; chunk hashes are storage details. Every bounded read checks current
+inspect permission, verifies one encrypted piece and closes its object reader
+before returning bytes. This preserves the existing object reader's rights barrier
+without holding its SQLite writer reservation across parser yields. No new cipher,
+plaintext staging, filesystem capability or import-only database is introduced.
+The `reference-import` purpose is local-read only; unknown rights do not authorize
+intake or inspection, and store/inspect permission grants no other action.
+
+These helpers are not yet a complete production preview. The service/repository
+must bind contiguous chunk membership and total length atomically, prevent deletion
+of referenced/shared chunks, verify whole-source EOF, authorize current project
+and rights on every action, and persist immutable draft revisions. No canonical
+source records are created here. The parser-only diagnostic CSV intentionally
+omits content, source names, hashes and paths; the final draft report must also
+include mapping warnings and exclusion decisions. Content-bearing reports need
+current export authority and spreadsheet-formula neutralization.
+
 ## Verification and technical basis
 
 Focused service and contract tests cover all formats, deterministic replay,
