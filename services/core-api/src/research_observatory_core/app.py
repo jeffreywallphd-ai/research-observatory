@@ -17,6 +17,7 @@ from . import CORE_API_VERSION
 from .authentication import LocalAuthenticationMiddleware
 from .config import CoreSettings
 from .import_api import register_import_routes
+from .import_intake_api import register_intake_routes
 from .import_preview_service import ImportPreviewService
 from .logging import emit_log_record
 from .model_catalog import ModelCatalogProblem, ModelCatalogService
@@ -302,6 +303,7 @@ def create_app(
         )
 
     register_import_routes(app, lambda request: runtime(request).imports, project_problem)
+    register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
 
     def run_project_action(request: Request, action: Callable[[], ProjectProjection]) -> ProjectProjection:
         try:

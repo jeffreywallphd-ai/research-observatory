@@ -267,6 +267,53 @@ struct SupervisorInner {
     unverified_stop: bool,
     diagnostics: VecDeque<RuntimeDiagnostic>,
     sequence: u64,
+    import_project: ImportProjectSelection,
+}
+
+#[derive(Default)]
+struct ImportProjectSelection {
+    generation: u64,
+    selected: Option<(String, String)>,
+}
+
+impl ImportProjectSelection {
+    fn changing(&mut self) -> Result<u64, &'static str> {
+        self.selected = None;
+        self.generation = self
+            .generation
+            .checked_add(1)
+            .ok_or("RO-IMPORT-PROJECT-UNAVAILABLE")?;
+        Ok(self.generation)
+    }
+
+    fn complete(&mut self, generation: u64, response: &CoreApiResponse) {
+        if generation != self.generation || response.status != 200 || response.body.len() > 65536 {
+            return;
+        }
+        let Ok(body) = serde_json::from_str::<serde_json::Value>(&response.body) else {
+            return;
+        };
+        let (Some(root), Some(project)) = (body["root"].as_str(), body["projectId"].as_str())
+        else {
+            return;
+        };
+        if body["open"] == true
+            && body["accessMode"] == "read-write"
+            && body["compatibilityState"] == "compatible"
+            && canonical_project_root(root)
+            && canonical_project_id(project)
+        {
+            self.selected = Some((root.to_owned(), project.to_owned()));
+        }
+    }
+
+    fn matches(&self, generation: u64, root: &str, project: &str) -> bool {
+        self.generation == generation
+            && self
+                .selected
+                .as_ref()
+                .is_some_and(|(r, p)| r == root && p == project)
+    }
 }
 
 impl SupervisorInner {
@@ -351,6 +398,110 @@ pub struct RuntimeSupervisor {
     shared: Arc<SupervisorShared>,
 }
 
+/// Private supervisor-to-Core protocol. Never deserialize this from a renderer request.
+#[derive(Clone, Copy)]
+pub(crate) enum NativeImportAction {
+    Context,
+    Create,
+    Chunk,
+    Seal,
+    Schedule,
+    Status,
+    Cancel,
+}
+
+impl NativeImportAction {
+    fn path(&self) -> &'static str {
+        match self {
+            Self::Context => "/native/imports/context",
+            Self::Create => "/native/imports/create",
+            Self::Chunk => "/native/imports/chunk",
+            Self::Seal => "/native/imports/seal",
+            Self::Schedule => "/native/imports/schedule",
+            Self::Status => "/native/imports/status",
+            Self::Cancel => "/native/imports/cancel",
+        }
+    }
+}
+
+pub(crate) struct NativeImportConnection {
+    supervisor: RuntimeSupervisor,
+    port: u16,
+    token: CapabilityToken,
+    cancellation: Arc<AtomicBool>,
+    attempt: u8,
+    project_generation: u64,
+    root: String,
+    project_id: String,
+}
+
+impl NativeImportConnection {
+    pub(crate) fn is_current(&self) -> bool {
+        self.current(true)
+    }
+
+    fn current(&self, require_selected_project: bool) -> bool {
+        let mut inner = self
+            .supervisor
+            .shared
+            .inner
+            .lock()
+            .expect("runtime supervisor mutex poisoned");
+        inner.refresh();
+        !self.cancellation.load(Ordering::Acquire)
+            && inner.state == RuntimeState::Ready
+            && !inner.stopping
+            && !inner.launching
+            && inner.attempt == self.attempt
+            && inner.process.as_ref().is_some_and(|process| {
+                process.port == self.port && Arc::ptr_eq(&process.cancellation, &self.cancellation)
+            })
+            && (!require_selected_project
+                || inner.import_project.matches(
+                    self.project_generation,
+                    &self.root,
+                    &self.project_id,
+                ))
+    }
+
+    pub(crate) fn request(
+        &self,
+        action: NativeImportAction,
+        body: serde_json::Value,
+    ) -> Result<CoreApiResponse, &'static str> {
+        if body["root"].as_str() != Some(self.root.as_str())
+            || body["projectId"].as_str() != Some(self.project_id.as_str())
+        {
+            return Err("RO-IMPORT-PROJECT-UNAVAILABLE");
+        }
+        let body = body.to_string();
+        if body.len() > 900000 {
+            return Err("RO-CORE-API-REQUEST-INVALID");
+        }
+        // Cleanup only removes authority in the original Core/project session.
+        let require_selected_project = !matches!(action, NativeImportAction::Cancel);
+        if !self.current(require_selected_project) {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        let response = authenticated_api_request_with_cancellation(
+            self.port,
+            &self.token,
+            &CoreApiRequest {
+                method: "POST".into(),
+                path: action.path().into(),
+                body: Some(body),
+                if_match: None,
+                idempotency_key: None,
+            },
+            Some(self.cancellation.as_ref()),
+        );
+        if !self.current(require_selected_project) {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        response
+    }
+}
+
 impl RuntimeSupervisor {
     pub fn new(config: Result<SupervisorConfig, &'static str>) -> Self {
         Self::with_authority(config, None)
@@ -409,6 +560,7 @@ impl RuntimeSupervisor {
                     unverified_stop: false,
                     diagnostics,
                     sequence: u64::from(configuration_failed),
+                    import_project: ImportProjectSelection::default(),
                 }),
                 lifecycle: Condvar::new(),
                 session,
@@ -545,7 +697,7 @@ impl RuntimeSupervisor {
 
     pub fn api_request(&self, request: &CoreApiRequest) -> Result<CoreApiResponse, &'static str> {
         validate_api_request(request)?;
-        let (port, capability_token, cancellation, attempt) = {
+        let (port, capability_token, cancellation, attempt, project_change) = {
             let mut inner = self
                 .shared
                 .inner
@@ -555,12 +707,27 @@ impl RuntimeSupervisor {
             if inner.state != RuntimeState::Ready || inner.stopping || inner.launching {
                 return Err("RO-CORE-API-UNAVAILABLE");
             }
+            let project_change = if request.method == "POST"
+                && matches!(
+                    request.path.as_str(),
+                    "/projects"
+                        | "/projects/open"
+                        | "/projects/close"
+                        | "/projects/archive"
+                        | "/projects/restore"
+                        | "/projects/delete"
+                ) {
+                Some(inner.import_project.changing()?)
+            } else {
+                None
+            };
             let process = inner.process.as_ref().ok_or("RO-CORE-API-UNAVAILABLE")?;
             (
                 process.port,
                 process.capability_token.duplicate_for_request(),
                 Arc::clone(&process.cancellation),
                 inner.attempt,
+                project_change,
             )
         };
         let response = authenticated_api_request_with_cancellation(
@@ -585,6 +752,9 @@ impl RuntimeSupervisor {
             return Err("RO-CORE-API-CANCELLED");
         }
         if let Ok(response) = &response {
+            if let Some(generation) = project_change {
+                inner.import_project.complete(generation, response);
+            }
             inner.record(
                 "RO-CORE-API-REQUEST-COMPLETE",
                 "api",
@@ -592,6 +762,39 @@ impl RuntimeSupervisor {
             );
         }
         response
+    }
+
+    pub(crate) fn native_import_connection(
+        &self,
+        root: &str,
+        project_id: &str,
+    ) -> Result<NativeImportConnection, &'static str> {
+        let mut inner = self
+            .shared
+            .inner
+            .lock()
+            .expect("runtime supervisor mutex poisoned");
+        inner.refresh();
+        if inner.state != RuntimeState::Ready
+            || inner.stopping
+            || inner.launching
+            || !inner
+                .import_project
+                .matches(inner.import_project.generation, root, project_id)
+        {
+            return Err("RO-IMPORT-PROJECT-UNAVAILABLE");
+        }
+        let process = inner.process.as_ref().ok_or("RO-CORE-API-UNAVAILABLE")?;
+        Ok(NativeImportConnection {
+            supervisor: self.clone(),
+            port: process.port,
+            token: process.capability_token.duplicate_for_request(),
+            cancellation: Arc::clone(&process.cancellation),
+            attempt: inner.attempt,
+            project_generation: inner.import_project.generation,
+            root: root.to_owned(),
+            project_id: project_id.to_owned(),
+        })
     }
 
     /// Return the supervised root PID for integration qualification only.
@@ -883,11 +1086,21 @@ fn canonical_operation_id(value: &str) -> bool {
         && !rest.ends_with('-')
 }
 
-fn canonical_uuid_v7(value: &str) -> bool {
+pub(crate) fn canonical_uuid_v7(value: &str) -> bool {
     value.len() == 36
         && value.bytes().enumerate().all(|(index, byte)| match index {
             8 | 13 | 18 | 23 => byte == b'-',
             14 => byte == b'7',
+            19 => matches!(byte, b'8' | b'9' | b'a' | b'b'),
+            _ => byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte),
+        })
+}
+
+pub(crate) fn canonical_project_id(value: &str) -> bool {
+    value.len() == 36
+        && value.bytes().enumerate().all(|(index, byte)| match index {
+            8 | 13 | 18 | 23 => byte == b'-',
+            14 => matches!(byte, b'4' | b'7'),
             19 => matches!(byte, b'8' | b'9' | b'a' | b'b'),
             _ => byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte),
         })
@@ -2936,6 +3149,273 @@ impl ProcessTreeContainment {
 
 #[cfg(test)]
 mod tests {
+    use super::{CoreApiResponse, ImportProjectSelection};
+    fn import_project_response(root: &str, project_id: &str) -> CoreApiResponse {
+        CoreApiResponse {
+            status: 200,
+            content_type: "application/json".into(),
+            trace_id: "a".repeat(32),
+            etag: None,
+            body: serde_json::json!({"root":root,"projectId":project_id,"open":true,
+                "accessMode":"read-write","compatibilityState":"compatible"})
+            .to_string(),
+        }
+    }
+
+    #[test]
+    fn native_import_project_authority_invalidates_before_change_and_rejects_late_completion() {
+        let root = "C:/Synthetic/project";
+        let project = "01900000-0000-7000-8000-000000000001";
+        let mut selected = ImportProjectSelection::default();
+        let first = selected.changing().unwrap();
+        selected.complete(first, &import_project_response(root, project));
+        assert!(selected.matches(first, root, project));
+        let second = selected.changing().unwrap();
+        assert!(!selected.matches(first, root, project));
+        selected.complete(first, &import_project_response(root, project));
+        assert!(!selected.matches(second, root, project));
+        selected.complete(second, &import_project_response(root, project));
+        assert!(selected.matches(second, root, project));
+        assert!(
+            !selected.matches(first, root, project),
+            "same project reopen does not revive transfer"
+        );
+        assert!(!selected.matches(second, "C:/Synthetic/other", project));
+        assert!(!selected.matches(second, root, "01900000-0000-7000-8000-000000000002"));
+    }
+
+    #[test]
+    fn native_import_project_authority_requires_successful_open_writable_projection() {
+        let root = "C:/Synthetic/project";
+        let project = "01900000-0000-4000-8000-000000000001";
+        let mut selected = ImportProjectSelection::default();
+        for (field, value) in [
+            ("open", serde_json::json!(false)),
+            ("accessMode", serde_json::json!("read-only")),
+            (
+                "compatibilityState",
+                serde_json::json!("migration-required"),
+            ),
+            ("projectId", serde_json::json!("invalid")),
+        ] {
+            let ticket = selected.changing().unwrap();
+            let mut response = import_project_response(root, project);
+            let mut body: serde_json::Value = serde_json::from_str(&response.body).unwrap();
+            body[field] = value;
+            response.body = body.to_string();
+            selected.complete(ticket, &response);
+            assert!(!selected.matches(ticket, root, project));
+        }
+        let ticket = selected.changing().unwrap();
+        let mut response = import_project_response(root, project);
+        response.status = 409;
+        selected.complete(ticket, &response);
+        assert!(!selected.matches(ticket, root, project));
+    }
+
+    #[test]
+    fn native_import_private_routes_are_not_renderer_bridge_capabilities() {
+        for action in [
+            super::NativeImportAction::Context,
+            super::NativeImportAction::Create,
+            super::NativeImportAction::Chunk,
+            super::NativeImportAction::Seal,
+            super::NativeImportAction::Schedule,
+            super::NativeImportAction::Status,
+            super::NativeImportAction::Cancel,
+        ] {
+            assert!(
+                super::validate_api_request(&super::CoreApiRequest {
+                    method: "POST".into(),
+                    path: action.path().into(),
+                    body: Some("{}".into()),
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_err()
+            );
+        }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn native_import_wire_pins_project_and_process_but_allows_original_session_cleanup() {
+        use super::NativeImportAction;
+        use std::io::Write;
+        // Real loopback bytes and a test-owned contained child, not a real Core
+        // or production authentication proof. Drop always reaps this child.
+        struct Fixture(RuntimeSupervisor);
+        impl Drop for Fixture {
+            fn drop(&mut self) {
+                self.0.stop_for_application_lock();
+            }
+        }
+        let listener = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let mut command = Command::new(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "supervisor::tests::process_stop_fixture_child",
+                "--nocapture",
+            ])
+            .env("RO_STOP_FIXTURE_CHILD", "1")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        configure_hidden_process(&mut command);
+        let mut child = command.spawn().unwrap();
+        let stdin = child.stdin.take().unwrap();
+        let containment = ProcessTreeContainment::attach_and_resume(&child).unwrap();
+        let token = CapabilityToken::generate().unwrap();
+        let mut token_bytes = Vec::new();
+        token.append_hex(&mut token_bytes);
+        let token_text = String::from_utf8(token_bytes).unwrap();
+        let fixture = Fixture(RuntimeSupervisor::new(Err("RO-CORE-NOT-PACKAGED")));
+        let root = "C:/Synthetic/project";
+        let project = "01900000-0000-4000-8000-000000000001";
+        {
+            let mut inner = fixture.0.shared.inner.lock().unwrap();
+            inner.process = Some(RunningProcess {
+                child,
+                stdin,
+                containment,
+                capability_token: token,
+                cancellation: Arc::new(AtomicBool::new(false)),
+                port: listener.local_addr().unwrap().port(),
+            });
+            inner.state = RuntimeState::Ready;
+            let generation = inner.import_project.changing().unwrap();
+            inner
+                .import_project
+                .complete(generation, &import_project_response(root, project));
+        }
+        let connection = fixture.0.native_import_connection(root, project).unwrap();
+        let address =
+            serde_json::json!({"root":root,"projectId":project,"sessionId":"a".repeat(32)});
+        let serve = |action: NativeImportAction, change_project: bool| {
+            let socket = listener.try_clone().unwrap();
+            let supervisor = fixture.0.clone();
+            let token = token_text.clone();
+            let expected = address.clone();
+            thread::spawn(move || {
+                let deadline = Instant::now() + Duration::from_secs(5);
+                let mut stream = loop {
+                    match socket.accept() {
+                        Ok((stream, _)) => break stream,
+                        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                            assert!(Instant::now() < deadline, "bounded request wait expired");
+                            thread::sleep(Duration::from_millis(5));
+                        }
+                        Err(_) => panic!("synthetic listener failed"),
+                    }
+                };
+                stream.set_nonblocking(false).unwrap();
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(2)))
+                    .unwrap();
+                let mut bytes = Vec::new();
+                while !bytes.ends_with(b"\r\n\r\n") {
+                    let mut byte = [0];
+                    stream.read_exact(&mut byte).unwrap();
+                    bytes.push(byte[0]);
+                    assert!(bytes.len() <= 8192);
+                }
+                let headers = String::from_utf8(bytes).unwrap();
+                assert!(headers.starts_with(&format!("POST {} HTTP/1.1\r\n", action.path())));
+                assert!(
+                    headers
+                        .lines()
+                        .any(|line| line == format!("Authorization: Bearer {token}"))
+                );
+                let trace = headers
+                    .lines()
+                    .find_map(|line| line.strip_prefix("X-Trace-Id: "))
+                    .unwrap();
+                let length: usize = headers
+                    .lines()
+                    .find_map(|line| line.strip_prefix("Content-Length: "))
+                    .unwrap()
+                    .parse()
+                    .unwrap();
+                assert!(length < 4096);
+                let mut body = vec![0; length];
+                stream.read_exact(&mut body).unwrap();
+                assert_eq!(
+                    serde_json::from_slice::<serde_json::Value>(&body).unwrap(),
+                    expected
+                );
+                if change_project {
+                    supervisor
+                        .shared
+                        .inner
+                        .lock()
+                        .unwrap()
+                        .import_project
+                        .changing()
+                        .unwrap();
+                }
+                write!(stream, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nX-Trace-Id: {trace}\r\nContent-Length: 2\r\n\r\n{{}}").unwrap();
+            })
+        };
+        assert!(connection.is_current());
+        let mut wrong = address.clone();
+        wrong["root"] = "C:/Synthetic/other".into();
+        assert!(
+            connection
+                .request(NativeImportAction::Context, wrong)
+                .is_err()
+        );
+        let server = serve(NativeImportAction::Context, false);
+        assert!(
+            connection
+                .request(NativeImportAction::Context, address.clone())
+                .is_ok()
+        );
+        server.join().unwrap();
+        let server = serve(NativeImportAction::Chunk, true);
+        assert_eq!(
+            connection.request(NativeImportAction::Chunk, address.clone()),
+            Err("RO-CORE-API-CANCELLED")
+        );
+        server.join().unwrap();
+        assert!(!connection.is_current());
+        assert!(
+            connection
+                .request(NativeImportAction::Schedule, address.clone())
+                .is_err()
+        );
+        let server = serve(NativeImportAction::Cancel, false);
+        assert!(
+            connection
+                .request(NativeImportAction::Cancel, address.clone())
+                .is_ok()
+        );
+        server.join().unwrap();
+        // Even an identical port/attempt cannot substitute another process token.
+        fixture
+            .0
+            .shared
+            .inner
+            .lock()
+            .unwrap()
+            .process
+            .as_mut()
+            .unwrap()
+            .cancellation = Arc::new(AtomicBool::new(false));
+        assert!(
+            connection
+                .request(NativeImportAction::Cancel, address.clone())
+                .is_err()
+        );
+        connection.cancellation.store(true, Ordering::Release);
+        assert!(
+            connection
+                .request(NativeImportAction::Cancel, address)
+                .is_err()
+        );
+    }
+
     #[test]
     fn import_review_bridge_admits_only_exact_bounded_review_operations() {
         let address = serde_json::json!({"root":"C:/Research/synthetic", "previewId":"01900000-0000-7000-8000-000000000001"});
@@ -4190,6 +4670,7 @@ mod tests {
             unverified_stop: false,
             diagnostics: VecDeque::new(),
             sequence: 0,
+            import_project: ImportProjectSelection::default(),
         };
         for _ in 0..80 {
             inner.record("RO-CORE-RUNTIME-LOG", "stderr", None);
@@ -4224,6 +4705,7 @@ mod tests {
             unverified_stop: false,
             diagnostics: VecDeque::new(),
             sequence: 0,
+            import_project: ImportProjectSelection::default(),
         };
         inner.record("RO-CORE-RUNTIME-LOG", "stderr", None);
         inner.record("RO-CORE-LOG-OVERSIZE", "stdout", None);

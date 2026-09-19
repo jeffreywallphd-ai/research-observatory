@@ -202,12 +202,26 @@ and authority remains current. No plaintext staging or renderer source path.
 Source identity begins at the verified open, not an earlier Shell observation.
 This follows Windows [file sharing semantics](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew)
 and [handle path verification](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew).
-These helpers are not yet exposed by an application command. Integration must pin
-the project session/Core launch and use the live cancellation check through final
-seal/scheduling; tests of helpers do not qualify actual native selection.
+The native intake command now composes these helpers with private authenticated
+Core routes. The renderer supplies explicit format/encoding/rights and its selected
+project, never the source path or Core session nonce. Every transfer pins the
+actual supervisor process, launch and selected-project generation plus an ephemeral
+Core/project session. Close/reopen, replacement launches and late project replies
+cannot continue an old transfer. Cleanup cancellation may reach only the original
+still-running Core/session after a project selection changes.
 
-This is not yet a complete production wizard. Selected-file intake composition, complete
-native report publication, duplicate/count projection, scalable undo and UI wiring
+File/network work and failed-result cleanup run off the window thread and outside
+the security-lock mutex. Final publication rechecks lock generation, cancellation,
+owner window and project/process authority. Cancellation arriving before worker
+admission is retained by exact operation ID; the bounded queue never evicts a
+pending cancellation, and flooding it closes intake for that native session.
+The private routes are excluded from the renderer API schema/allowlist and retain
+existing loopback capability authentication and actual-body limits. A supplied
+source seal remains unverified until the worker proves EOF and digest equality.
+Helper/protocol checks do not qualify actual native selection or packaging.
+
+This is not yet a complete production wizard. Complete native report publication,
+duplicate/count projection, scalable undo and UI wiring
 remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
 

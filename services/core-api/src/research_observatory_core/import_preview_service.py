@@ -8,6 +8,7 @@ the executor may recover leases or claim import work. No canonical source import
 from __future__ import annotations
 
 import json
+import secrets
 import threading
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -31,7 +32,7 @@ from .ingestion.preview_workflow import (
 )
 from .ingestion.source_chunks import put_source_chunk
 from .logging import emit_log_record
-from .ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewCreate, PreviewProblem
+from .ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewCreate, PreviewProblem, PreviewState
 from .ports.object_store import ObjectStore
 from .ports.repositories import IntentRevisionRepository, UnitOfWorkFactory
 from .ports.workflow_executor import WorkflowActor, WorkflowJobAuthority, WorkflowJobRecord, WorkflowQueueRepository
@@ -60,6 +61,7 @@ class _Binding:
     path: Path
     project_id: str
     adapters: ImportProjectAdapters
+    session_id: str = field(default_factory=lambda: secrets.token_hex(16))
     stopped: threading.Event = field(default_factory=threading.Event)
     drained: threading.Event = field(default_factory=threading.Event)
 
@@ -144,6 +146,35 @@ class ImportPreviewService:
     def attach(self, root: str) -> None:
         self._action(root, lambda _binding: None)
         self._wake.set()
+
+    def native_context(self, root: str, project_id: str) -> str:
+        def context(binding: _Binding) -> str:
+            if binding.project_id != project_id:
+                raise PreviewProblem("preview-project-session-changed")
+            return binding.session_id
+
+        return self._action(root, context)
+
+    def in_native_session[Result](
+        self, root: str, project_id: str, session_id: str, action: Callable[[], Result]
+    ) -> Result:
+        def guarded(binding: _Binding) -> Result:
+            if binding.project_id != project_id or not secrets.compare_digest(binding.session_id, session_id):
+                raise PreviewProblem("preview-project-session-changed")
+            # Retain the project's reentrant lifecycle mutex through the bounded
+            # action. Close/reopen cannot interleave between this check and I/O.
+            return action()
+
+        return self._action(root, guarded)
+
+    def intake_status(self, root: str, preview_id: str) -> tuple[PreviewState, WorkflowJobRecord | None]:
+        def status(binding: _Binding):
+            state = binding.adapters.previews.read(preview_id)
+            if not state.rights.permits("inspect"):
+                raise PreviewProblem("preview-rights-denied")
+            return state, binding.adapters.queue.find_idempotency(fingerprint(["import-preview/1", preview_id]))
+
+        return self._action(root, status)
 
     def create(self, root: str, command: PreviewCreate):
         command = PreviewCreate.model_validate(command)

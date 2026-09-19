@@ -2,6 +2,7 @@ pub mod application_lock;
 pub mod application_lock_verification;
 mod application_sign_in_policy;
 pub mod directory_picker;
+mod import_runtime;
 #[cfg(windows)]
 mod import_source;
 pub mod supervisor;
@@ -26,6 +27,97 @@ use support_bundle::{SupportBundleExport, SupportBundleManager, SupportBundlePre
 use tauri::{App, AppHandle, Emitter, Manager, Runtime, State};
 
 pub const PRODUCT_NAME: &str = "Research Observatory";
+
+#[tauri::command]
+async fn import_selected_file(
+    window: tauri::WebviewWindow,
+    manager: State<'_, import_runtime::ImportManager>,
+    picker: State<'_, DirectoryPickerManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    message: tauri::ipc::Request<'_>,
+) -> Result<import_runtime::ImportOutcome, ()> {
+    use import_runtime::ImportOutcome;
+    let tauri::ipc::InvokeBody::Json(payload) = message.body() else {
+        return Ok(ImportOutcome::Failed);
+    };
+    let Some(request) = import_runtime::decode_request(payload) else {
+        return Ok(ImportOutcome::Failed);
+    };
+    let Some(owner) = directory_window_handle(&window) else {
+        return Ok(ImportOutcome::Unavailable);
+    };
+    #[cfg(all(feature = "integration-harness", windows))]
+    if window
+        .try_state::<directory_integration_harness::Fixture>()
+        .is_some_and(|fixture| {
+            fixture.revalidate().is_err()
+                || !directory_picker::fixture_contains(&fixture.projects, &request.root)
+        })
+    {
+        return Ok(ImportOutcome::Unavailable);
+    }
+    let Ok(ticket) = lock.begin_protected_action() else {
+        return Ok(ImportOutcome::Cancelled);
+    };
+    #[cfg(windows)]
+    {
+        let (manager, picker, supervisor, security) = (
+            manager.inner().clone(),
+            picker.inner().clone(),
+            supervisor.inner().clone(),
+            lock.inner().clone(),
+        );
+        let result = tauri::async_runtime::spawn_blocking(move || {
+            import_runtime::prepare(
+                manager, picker, supervisor, security, ticket, owner, request,
+            )
+        })
+        .await;
+        match result {
+            Ok(Ok(mut prepared)) => {
+                let owner_valid = directory_window_handle(&window) == Some(owner);
+                let security = lock.inner().clone();
+                // Rejected-result cleanup can perform a bounded cancellation RPC;
+                // it must run off the UI thread and outside the security mutex.
+                Ok(tauri::async_runtime::spawn_blocking(move || {
+                    let accepted = owner_valid
+                        && security
+                            .commit_protected_action(ticket, || Ok(prepared.accept()))
+                            .unwrap_or(false);
+                    if accepted {
+                        prepared.into_outcome()
+                    } else {
+                        ImportOutcome::Cancelled
+                    }
+                })
+                .await
+                .unwrap_or(ImportOutcome::Failed))
+            }
+            Ok(Err(error)) => Ok(import_runtime::failure(error)),
+            Err(_) => Ok(ImportOutcome::Failed),
+        }
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = (manager, picker, supervisor, request, owner, ticket);
+        Ok(ImportOutcome::Unavailable)
+    }
+}
+
+#[tauri::command]
+fn cancel_import_file(
+    window: tauri::WebviewWindow,
+    manager: State<'_, import_runtime::ImportManager>,
+    picker: State<'_, DirectoryPickerManager>,
+    operation_id: String,
+) -> Result<(), ()> {
+    if directory_window_handle(&window).is_none() {
+        return Err(());
+    }
+    manager.cancel(&operation_id, &picker);
+    Ok(())
+}
 
 #[tauri::command]
 async fn choose_project_directory(
@@ -479,6 +571,8 @@ pub fn run() {
 
 fn application_builder() -> tauri::Builder<tauri::Wry> {
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
+        import_selected_file,
+        cancel_import_file,
         choose_project_directory,
         default_project_parent,
         core_runtime_start,
@@ -551,6 +645,11 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
                 if matches!(picker.begin_close(), CloseDisposition::AlreadyClosing) {
                     return;
                 }
+                let imports = window
+                    .state::<import_runtime::ImportManager>()
+                    .inner()
+                    .clone();
+                imports.begin_close();
                 let security = window
                     .state::<ApplicationLockManager>()
                     .begin_terminal_exit();
@@ -560,6 +659,7 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
                 tauri::async_runtime::spawn_blocking(move || {
                     supervisor.stop_for_native_exit(security);
                     picker.wait_for_cleanup();
+                    imports.wait_for_cleanup();
                     // Keep UI dispatch alive until native work has drained and
                     // the session is sealed; never join its STA on the UI thread.
                     let _ = closing_window.destroy();
@@ -585,6 +685,7 @@ fn setup_runtime(
     app.manage(lock.clone());
     app.manage(support.clone());
     app.manage(picker.clone());
+    app.manage(import_runtime::ImportManager::default());
     if lock.is_unlocked() {
         let startup = supervisor.clone();
         tauri::async_runtime::spawn_blocking(move || startup.start());
