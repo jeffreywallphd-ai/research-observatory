@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 11
+DATABASE_SCHEMA_VERSION = 12
+IMPORT_PREVIEW_DATABASE_SCHEMA_VERSION = 11
 DEPENDENCY_IMPACT_DATABASE_SCHEMA_VERSION = 10
 MATERIAL_DEPENDENCY_DATABASE_SCHEMA_VERSION = 9
 WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION = 8
@@ -76,6 +77,12 @@ IMPORT_PREVIEW_TABLES = (
     "import_draft_revisions",
     "import_record_decisions",
     "import_preview_events",
+)
+IMPORT_SUMMARY_TABLES = (
+    "import_summary_attempts",
+    "import_summary_rows",
+    "import_summary_groups",
+    "import_summary_completions",
 )
 
 EXPECTED_TABLES = (
@@ -117,6 +124,7 @@ EXPECTED_TABLES = (
     "settings",
     "outbox_events",
     *IMPORT_PREVIEW_TABLES,
+    *IMPORT_SUMMARY_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -151,6 +159,7 @@ IMMUTABLE_ROW_TABLES = (
     "provenance_legacy_bridges",
     "settings",
     *IMPORT_PREVIEW_TABLES,
+    *IMPORT_SUMMARY_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -177,6 +186,10 @@ EXPECTED_TRIGGERS = tuple(
             "import_attempt_binding",
             "import_record_membership",
             "import_completion_membership",
+            "import_summary_attempt_binding",
+            "import_summary_row_membership",
+            "import_summary_group_membership",
+            "import_summary_completion_membership",
         ]
     )
 )
@@ -207,6 +220,9 @@ EXPECTED_INDEXES = (
     "dependency_impact_audit_sequence",
     "import_chunk_object",
     "import_decision_record",
+    "import_summary_draft",
+    "import_summary_raw",
+    "import_summary_doi",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -224,7 +240,8 @@ PROVENANCE_LEDGER_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4
 WORKFLOW_EXECUTOR_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
 MATERIAL_DEPENDENCY_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
 DEPENDENCY_IMPACT_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
-EXPECTED_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
+IMPORT_PREVIEW_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
+EXPECTED_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -283,7 +300,8 @@ PROVENANCE_LEDGER_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143
 WORKFLOW_EXECUTOR_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f3583b8f1ce42db8ecba7"
 MATERIAL_DEPENDENCY_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76"
 DEPENDENCY_IMPACT_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
-EXPECTED_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9fd6d98595a7888c91"
+IMPORT_PREVIEW_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9fd6d98595a7888c91"
+EXPECTED_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -1006,6 +1024,10 @@ SCHEMA_METADATA_V10_DDL = SCHEMA_METADATA_V9_DDL.replace(
 SCHEMA_METADATA_V11_DDL = SCHEMA_METADATA_V10_DDL.replace(
     "schema_version INTEGER NOT NULL CHECK (schema_version = 10)",
     "schema_version INTEGER NOT NULL CHECK (schema_version = 11)",
+)
+SCHEMA_METADATA_V12_DDL = SCHEMA_METADATA_V11_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 11)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 12)",
 )
 
 PROVENANCE_LEDGER_DDL = (
@@ -2165,13 +2187,147 @@ IMPORT_PREVIEW_DDL = (
     "CREATE INDEX import_decision_record ON import_record_decisions (preview_id, project_id, ordinal, revision)",
 )
 
+IMPORT_SUMMARY_DDL = (
+    f"""
+        CREATE TABLE import_summary_attempts (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            summary_attempt_id TEXT NOT NULL CHECK ({_uuid_check("summary_attempt_id", "7")}),
+            job_id TEXT NOT NULL CHECK ({_uuid_check("job_id", "7")}),
+            parse_attempt_id TEXT NOT NULL,
+            draft_revision INTEGER NOT NULL CHECK (draft_revision BETWEEN 1 AND 2147483647),
+            algorithm_version TEXT NOT NULL CHECK (algorithm_version='draft-summary/1'),
+            started_at TEXT NOT NULL CHECK ({_timestamp_check("started_at")}),
+            PRIMARY KEY (preview_id, project_id, summary_attempt_id),
+            UNIQUE (summary_attempt_id),
+            UNIQUE (preview_id, project_id, summary_attempt_id, parse_attempt_id),
+            FOREIGN KEY (preview_id, project_id, draft_revision, parse_attempt_id)
+                REFERENCES import_draft_revisions (preview_id, project_id, revision, attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (summary_attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE import_summary_rows (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            summary_attempt_id TEXT NOT NULL,
+            parse_attempt_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 200000),
+            record_key TEXT NOT NULL,
+            record_kind TEXT NOT NULL CHECK (record_kind IN ('record', 'header', 'directive')),
+            parse_status TEXT NOT NULL CHECK (parse_status IN ('parsed', 'malformed')),
+            included INTEGER NOT NULL CHECK (included IN (0, 1)),
+            warning_count INTEGER NOT NULL CHECK (warning_count BETWEEN 0 AND 64),
+            coverage_mask INTEGER NOT NULL CHECK (coverage_mask BETWEEN 0 AND 31),
+            raw_key TEXT CHECK (raw_key IS NULL OR (length(raw_key)=64 AND raw_key NOT GLOB '*[^0-9a-f]*')),
+            doi_key TEXT CHECK (doi_key IS NULL OR (length(doi_key)=64 AND doi_key NOT GLOB '*[^0-9a-f]*')),
+            PRIMARY KEY (preview_id, project_id, summary_attempt_id, ordinal),
+            CHECK (included=0 OR (record_kind='record' AND parse_status='parsed')),
+            CHECK ((included=0 AND raw_key IS NULL AND doi_key IS NULL AND coverage_mask=0)
+                OR (included=1 AND raw_key IS NOT NULL)),
+            CHECK ((coverage_mask & 2)=0 AND doi_key IS NULL OR (coverage_mask & 2)=2 AND doi_key IS NOT NULL),
+            FOREIGN KEY (preview_id, project_id, summary_attempt_id, parse_attempt_id)
+                REFERENCES import_summary_attempts (preview_id, project_id, summary_attempt_id, parse_attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, parse_attempt_id, ordinal, record_key)
+                REFERENCES import_parse_records (preview_id, project_id, attempt_id, ordinal, record_key)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE import_summary_groups (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            summary_attempt_id TEXT NOT NULL,
+            reason TEXT NOT NULL CHECK (reason IN ('raw', 'doi')),
+            group_key TEXT NOT NULL CHECK (length(group_key)=64 AND group_key NOT GLOB '*[^0-9a-f]*'),
+            member_count INTEGER NOT NULL CHECK (member_count BETWEEN 2 AND 200000),
+            first_ordinal INTEGER NOT NULL CHECK (first_ordinal BETWEEN 1 AND 200000),
+            PRIMARY KEY (preview_id, project_id, summary_attempt_id, reason, group_key),
+            FOREIGN KEY (preview_id, project_id, summary_attempt_id, first_ordinal)
+                REFERENCES import_summary_rows (preview_id, project_id, summary_attempt_id, ordinal)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_summary_completions (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            summary_attempt_id TEXT NOT NULL,
+            receipt_revision_id TEXT NOT NULL CHECK ({_uuid_check("receipt_revision_id", "7")}),
+            record_count INTEGER NOT NULL CHECK (record_count BETWEEN 0 AND 200000),
+            result_sha256 TEXT NOT NULL CHECK (length(result_sha256)=64 AND result_sha256 NOT GLOB '*[^0-9a-f]*'),
+            summary_json TEXT NOT NULL CHECK (length(summary_json) BETWEEN 2 AND 4096),
+            completed_at TEXT NOT NULL CHECK ({_timestamp_check("completed_at")}),
+            PRIMARY KEY (preview_id, project_id, summary_attempt_id),
+            UNIQUE (project_id, receipt_revision_id),
+            FOREIGN KEY (preview_id, project_id, summary_attempt_id)
+                REFERENCES import_summary_attempts (preview_id, project_id, summary_attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (receipt_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in IMPORT_SUMMARY_TABLES
+        for statement in _immutable_triggers(table, "import summary history is append-only")
+    ),
+    """
+        CREATE TRIGGER import_summary_attempt_binding BEFORE INSERT ON import_summary_attempts
+        WHEN NOT EXISTS (
+            SELECT 1 FROM workflow_job_attempts a JOIN workflow_queue_jobs j ON j.job_id=a.job_id
+             WHERE a.attempt_id=NEW.summary_attempt_id AND a.job_id=NEW.job_id
+               AND a.project_id=NEW.project_id AND j.project_id=NEW.project_id
+               AND j.current_attempt_id=a.attempt_id AND a.state='running' AND j.state='running'
+               AND j.cancellation_requested_at IS NULL
+        )
+        BEGIN SELECT RAISE(ABORT, 'import summary attempt binding denied'); END
+    """,
+    """
+        CREATE TRIGGER import_summary_row_membership BEFORE INSERT ON import_summary_rows
+        WHEN EXISTS (SELECT 1 FROM import_summary_completions WHERE preview_id=NEW.preview_id
+                      AND project_id=NEW.project_id AND summary_attempt_id=NEW.summary_attempt_id)
+          OR NEW.ordinal <> (SELECT COALESCE(MAX(ordinal), 0) + 1 FROM import_summary_rows
+                              WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id
+                                AND summary_attempt_id=NEW.summary_attempt_id)
+        BEGIN SELECT RAISE(ABORT, 'import summary row membership denied'); END
+    """,
+    """
+        CREATE TRIGGER import_summary_group_membership BEFORE INSERT ON import_summary_groups
+        WHEN EXISTS (SELECT 1 FROM import_summary_completions WHERE preview_id=NEW.preview_id
+                      AND project_id=NEW.project_id AND summary_attempt_id=NEW.summary_attempt_id)
+        BEGIN SELECT RAISE(ABORT, 'import summary already complete'); END
+    """,
+    """
+        CREATE TRIGGER import_summary_completion_membership BEFORE INSERT ON import_summary_completions
+        WHEN NEW.record_count <> (SELECT COUNT(*) FROM import_summary_rows WHERE preview_id=NEW.preview_id
+                      AND project_id=NEW.project_id AND summary_attempt_id=NEW.summary_attempt_id)
+          OR NOT EXISTS (
+            SELECT 1 FROM import_summary_attempts a JOIN import_parse_completions c
+                ON c.preview_id=a.preview_id AND c.project_id=a.project_id AND c.attempt_id=a.parse_attempt_id
+             WHERE a.preview_id=NEW.preview_id AND a.project_id=NEW.project_id
+               AND a.summary_attempt_id=NEW.summary_attempt_id AND c.record_count=NEW.record_count
+          )
+        BEGIN SELECT RAISE(ABORT, 'import summary completion membership denied'); END
+    """,
+    "CREATE INDEX import_summary_draft ON import_summary_attempts (preview_id, project_id, draft_revision)",
+    "CREATE INDEX import_summary_raw ON import_summary_rows "
+    "(preview_id, project_id, summary_attempt_id, raw_key, ordinal)",
+    "CREATE INDEX import_summary_doi ON import_summary_rows "
+    "(preview_id, project_id, summary_attempt_id, doi_key, ordinal)",
+)
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V11_DDL,
+    SCHEMA_METADATA_V12_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -2185,6 +2341,7 @@ _DDL_STATEMENTS = (
     *MATERIAL_DEPENDENCY_DDL,
     *DEPENDENCY_IMPACT_DDL,
     *IMPORT_PREVIEW_DDL,
+    *IMPORT_SUMMARY_DDL,
 )
 
 

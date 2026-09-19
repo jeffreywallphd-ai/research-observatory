@@ -80,7 +80,7 @@ class ImportPreviewMigrationTests(unittest.TestCase):
     def test_exact_v10_is_backed_up_and_preserved_without_fabricated_previews(self):
         create_version_10_fixture(self.database)
         plan = runner.plan_database_migration(self.database, expected_project_id=predecessor.PROJECT_ID)
-        self.assertEqual(("0011_import_previews",), plan.migration_ids)
+        self.assertEqual(("0011_import_previews", "0012_import_summaries"), plan.migration_ids)
         result = runner.migrate_database(self.database, expected_project_id=predecessor.PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertIsNotNone(result.backup_relative_path)
@@ -92,7 +92,7 @@ class ImportPreviewMigrationTests(unittest.TestCase):
             backup.close()
         current = storage.open_canonical_database(self.database, expected_project_id=predecessor.PROJECT_ID)
         try:
-            self.assertEqual(11, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(12, current.execute("PRAGMA user_version").fetchone()[0])
             for table in PREVIEW_TABLES:
                 self.assertEqual(0, current.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
             self.assertEqual("dark", current.execute("SELECT text_value FROM settings").fetchone()[0])

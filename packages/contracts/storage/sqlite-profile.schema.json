@@ -28,9 +28,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-sqlite-profile"},
     "profileId": {"const": "sqlite-wal-v1"},
-    "databaseSchemaVersion": {"const": 11},
+    "databaseSchemaVersion": {"const": 12},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"},
+    "schemaFingerprintSha256": {"const": "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -95,7 +95,11 @@
         "import_parse_completions",
         "import_draft_revisions",
         "import_record_decisions",
-        "import_preview_events"
+        "import_preview_events",
+        "import_summary_attempts",
+        "import_summary_rows",
+        "import_summary_groups",
+        "import_summary_completions"
       ]
     },
     "mutableStateTables": {
@@ -181,7 +185,11 @@
         "import_parse_completions",
         "import_draft_revisions",
         "import_record_decisions",
-        "import_preview_events"
+        "import_preview_events",
+        "import_summary_attempts",
+        "import_summary_rows",
+        "import_summary_groups",
+        "import_summary_completions"
       ]
     }
   }

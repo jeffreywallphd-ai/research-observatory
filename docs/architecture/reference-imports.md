@@ -275,6 +275,12 @@ This is not yet a complete production wizard. Duplicate/count projection remains
 CAP-04.S01.T02 work. Native-window, full 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
 
+The version-12 migration supplies protected append-only summary attempt, row,
+group and completion relations for the remaining projection work. Exact v11 DDL
+is retained as a test fixture; backup-first upgrade and rollback preserve prior
+preview rows and create no historical summaries. No summary UI or worker is
+claimed from this storage groundwork alone.
+
 ## Verification and technical basis
 
 Focused service and contract tests cover all formats, deterministic replay,

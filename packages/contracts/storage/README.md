@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-11 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-12 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -11,7 +11,7 @@ The profile is not an API for issuing SQL. Core owns the SQLite adapter, the
 desktop never opens the database, and downstream modules consume repository
 ports introduced by the storage slice. Ordinary connections deny schema DDL.
 The separately constructed T02 Alembic authority is never returned to ordinary
-callers: it checkpoints and validates exact supported version-1 through version-10 fixtures, reserves the
+callers: it checkpoints and validates exact supported version-1 through version-11 fixtures, reserves the
 writer, creates and verifies an online backup, and only then replaces the
 affected controls in one transaction. `sqlite-migration-recovery.schema.json`
 binds the immutable backup manifest to exact backup bytes, the reviewed revision,
@@ -63,6 +63,12 @@ storage accounting, including cancelled previews; cancellation is not deletion
 authority. Migration creates no source observations, drafts or scholarly records.
 An intake seal binds declared source identity; actual parser EOF and the exact
 successful durable attempt remain prerequisites for exposing a complete preview.
+
+Version 12 adds append-only draft-summary attempts, compact ordinal metadata,
+indexed duplicate groups and completion receipts. It retains no extra raw source
+copies, invents no prior summaries and leaves canonical scholarly records alone.
+Results require current draft/rights checks and accepted durable worker output;
+the presence of projection rows is not completion or permission.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and
