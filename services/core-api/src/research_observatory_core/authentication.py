@@ -7,6 +7,7 @@ import ipaddress
 import json
 import secrets
 from collections.abc import Awaitable, Callable
+from dataclasses import dataclass
 from typing import Any
 
 AsgiReceive = Callable[[], Awaitable[dict[str, Any]]]
@@ -15,6 +16,22 @@ AsgiApp = Callable[[dict[str, Any], AsgiReceive, AsgiSend], Awaitable[None]]
 
 TOKEN_HEX_LENGTH = 64
 STARTUP_RECORD_BYTES = len(b"auth ") + TOKEN_HEX_LENGTH + len(b"\n")
+WORKFLOW_STARTUP_RECORD_BYTES = STARTUP_RECORD_BYTES + len(b" workflow ") + 32 + 1 + 32
+
+
+@dataclass(frozen=True, slots=True)
+class NativeWorkflowContext:
+    """Native control-pipe authority, never accepted from HTTP or environment."""
+
+    resume_epoch: str
+    launch_nonce: str
+
+    def __post_init__(self) -> None:
+        if any(
+            len(value) != 32 or any(character not in "0123456789abcdef" for character in value)
+            for value in (self.resume_epoch, self.launch_nonce)
+        ):
+            raise ValueError("native workflow context is invalid")
 
 
 def capability_token_digest(token: str | bytes | bytearray | memoryview) -> bytes:
@@ -33,6 +50,26 @@ def parse_startup_authentication(record: bytearray) -> bytes:
         if len(record) != STARTUP_RECORD_BYTES or not record.startswith(b"auth ") or not record.endswith(b"\n"):
             raise ValueError("supervised startup authentication record is invalid")
         return capability_token_digest(memoryview(record)[5:-1])
+    finally:
+        record[:] = b"\x00" * len(record)
+
+
+def parse_startup_record(record: bytearray) -> tuple[bytes, NativeWorkflowContext | None]:
+    """Extend the single bounded inherited record; legacy auth grants no worker epoch."""
+
+    try:
+        if len(record) == STARTUP_RECORD_BYTES:
+            return parse_startup_authentication(record), None
+        if (
+            len(record) != WORKFLOW_STARTUP_RECORD_BYTES
+            or record[:5] != b"auth "
+            or record[69:79] != b" workflow "
+            or record[111:112] != b" "
+            or record[-1:] != b"\n"
+        ):
+            raise ValueError("supervised startup context is invalid")
+        context = NativeWorkflowContext(record[79:111].decode("ascii"), record[112:144].decode("ascii"))
+        return capability_token_digest(memoryview(record)[5:69]), context
     finally:
         record[:] = b"\x00" * len(record)
 

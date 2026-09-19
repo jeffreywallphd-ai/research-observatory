@@ -18,15 +18,17 @@ from pydantic import ValidationError
 
 from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 from .app import create_app
-from .authentication import STARTUP_RECORD_BYTES, parse_startup_authentication
+from .authentication import WORKFLOW_STARTUP_RECORD_BYTES, NativeWorkflowContext, parse_startup_record
 from .config import CoreSettings
+from .import_preview_repository import sqlite_import_preview_repository
+from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
 from .migrations.runner import migration_framework_projection
 from .model_catalog import ModelCatalogService
 from .model_gateway_service import ProjectModelGatewayService
 from .model_registry_repository import SqliteModelRoutingRepository, sqlite_model_catalog_repository
 from .modules import default_module_registry
-from .object_store import upgrade_local_object_envelopes
+from .object_store import create_local_object_store, upgrade_local_object_envelopes
 from .ports.credential_store import CredentialStoreProblem
 from .ports.database_keys import DatabaseKeyProvider
 from .ports.object_store_keys import ObjectMasterKeyProvider
@@ -41,6 +43,7 @@ from .repositories import (
     sqlite_privacy_policy_repository,
     sqlite_provenance_ledger_repository,
     sqlite_selective_recalculation_repository,
+    sqlite_workflow_admission_binding,
     sqlite_workflow_progress_repository,
     sqlite_workflow_queue_repository,
 )
@@ -57,6 +60,7 @@ from .windows_credentials import (
     create_windows_local_actor_identity,
     create_windows_object_key_provider,
 )
+from .workflow_executor import LocalAdmissionController, ProjectWorkerPolicy, WorkerResources
 from .workflow_progress import WorkflowProgressService
 
 EXIT_CONFIGURATION_ERROR = 2
@@ -76,6 +80,7 @@ def create_runtime_app(
     database_key_provider: DatabaseKeyProvider | None | object = _DEFAULT_DATABASE_KEY_PROVIDER,
     local_actor_id: str | None | object = _DEFAULT_LOCAL_ACTOR_ID,
     profile_vault_root: Path | None = None,
+    workflow_context: NativeWorkflowContext | None = None,
 ) -> FastAPI:
     """Compose Core with the Windows profile vault and mandatory pre-open upgrades."""
 
@@ -126,12 +131,47 @@ def create_runtime_app(
         object_upgrade=partial(upgrade_local_object_envelopes, key_provider=resolved_provider)
     )
     privacy = ProjectPrivacyService(projects, sqlite_privacy_policy_repository)
+    # One process-wide resource ledger, with explicit interactive headroom.
+    # These are conservative admission reservations, not OS-enforced quotas.
+    controller = LocalAdmissionController(interactive_reserve=WorkerResources(1, 256 * 1024**2, 0, 256 * 1024**2))
+
+    def import_adapters(path: Path, identity: str) -> ImportProjectAdapters:
+        queue = sqlite_workflow_queue_repository(path, identity)
+        demand = WorkerResources(1, 256 * 1024**2, 0, 1024**3)
+        return ImportProjectAdapters(
+            previews=sqlite_import_preview_repository(path / "state/project.sqlite3", identity),
+            intents=sqlite_intent_revision_repository(path, identity),
+            queue=queue,
+            store=create_local_object_store(
+                path,
+                identity,
+                key_provider=resolved_provider,
+                access_policy=privacy.object_access_policy(str(path)),
+            ),
+            units=create_sqlite_unit_of_work_factory(path / "state/project.sqlite3", identity),
+            admission=sqlite_workflow_admission_binding(
+                queue,
+                controller=controller,
+                policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+            ),
+        )
+
+    imports = None
+    if workflow_context is not None and resolved_actor_id is not None and resolved_provider is not None:
+        imports = ImportPreviewService(
+            projects,
+            privacy,
+            import_adapters,
+            local_actor_id=resolved_actor_id,
+            resume_epoch=workflow_context.resume_epoch,
+        )
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
         expected_authority=expected_authority,
         projects=projects,
         privacy=privacy,
+        imports=imports,
         model_gateway=ProjectModelGatewayService(
             projects,
             privacy,
@@ -223,9 +263,9 @@ def _watch_supervisor(server: uvicorn.Server) -> None:
 def run_supervised(settings: CoreSettings, *, profile_vault_root: Path | None = None) -> int:
     """Bind an OS-assigned loopback socket and serve under desktop ownership."""
 
-    record = bytearray(sys.stdin.buffer.readline(STARTUP_RECORD_BYTES + 1))
+    record = bytearray(sys.stdin.buffer.readline(WORKFLOW_STARTUP_RECORD_BYTES + 1))
     try:
-        capability_digest = parse_startup_authentication(record)
+        capability_digest, workflow_context = parse_startup_record(record)
     except ValueError:
         print(
             json.dumps(
@@ -250,6 +290,7 @@ def run_supervised(settings: CoreSettings, *, profile_vault_root: Path | None = 
                 capability_digest=capability_digest,
                 expected_authority=authority,
                 profile_vault_root=profile_vault_root,
+                workflow_context=workflow_context,
             ),
             host=assigned_host,
             port=assigned_port,

@@ -158,10 +158,35 @@ cancellation before recovery/claim, not a fabricated assertion of an observed
 security lock. Native code must supply a durable trusted epoch before this service
 is composed into production; the renderer cannot choose one.
 
-These boundaries are not yet a complete production wizard. Native epoch handoff,
-application composition, authenticated API/bridge bounds, duplicate candidates and
-UI wiring remain CAP-04.S01.T02 work. Internal repository page limits are not the
-native bridge limit: API projections must stay below 1 MiB.
+The native supervisor arms an atomic, bounded recovery marker after acquiring
+the existing application-instance guard. Active means the whole native session,
+including ordinary Core stops and no-child intervals. Same-native restart may
+retain its owned epoch; a new native process rotates an unresolved active epoch.
+Lock admission increments an atomic security latch under the lock-manager mutex,
+before its asynchronous immediate-stop callback. Disk publication happens after
+termination, never ahead of it. A missing/invalid/replaced marker grants no old
+worker authority; it does not invent an application sign-in requirement.
+
+Only terminal native exit may publish an ordinary-restart marker: first fence
+protected actions, lock/policy/verification admission and Core starts, drain
+launch/process work, and reconcile the security latch. Unverified shutdown stays
+active. No further marker publication is admitted after sealing. This is local
+session recovery, not rollback resistance against a hostile same-account user.
+
+The inherited, bounded startup control record carries the epoch and per-launch
+nonce alongside the launch capability; it is cleared after parsing. Legacy
+authentication grants no import-worker context. Runtime composition requires
+that context, local actor authority and object keys. Project open attaches the
+worker; close and process lifespan drain it before releasing the project session.
+One shared local admission ledger reserves one CPU slot and 256 MiB RAM for
+interactive use; the serialized import pool reserves one CPU slot, 256 MiB RAM
+and 1 GiB disk. These are admission estimates, not OS resource enforcement.
+
+This is not yet a complete production wizard. Authenticated import API/bridge
+bounds, selected-file intake, duplicate candidates and UI wiring remain
+CAP-04.S01.T02 work. Internal repository page limits are not the native bridge
+limit: API projections must stay below 1 MiB. Native-window and packaged end-to-end
+qualification remain required; unit/service composition is not a substitute.
 
 ## Verification and technical basis
 

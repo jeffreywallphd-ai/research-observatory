@@ -11,6 +11,7 @@ use std::sync::{Arc, Condvar, Mutex, Weak, mpsc};
 use std::thread;
 use std::time::{Duration, Instant};
 
+use crate::workflow_session::WorkflowSessionAuthority;
 use serde::{Deserialize, Serialize};
 
 const EXPECTED_EXECUTABLE: &str = "research-observatory-core-x86_64-pc-windows-msvc.exe";
@@ -263,6 +264,7 @@ struct SupervisorInner {
     process: Option<RunningProcess>,
     launching: bool,
     stopping: bool,
+    unverified_stop: bool,
     diagnostics: VecDeque<RuntimeDiagnostic>,
     sequence: u64,
 }
@@ -323,6 +325,7 @@ impl SupervisorInner {
             }
             Ok(None) => {}
             Err(_) => {
+                self.unverified_stop = true;
                 self.process = None;
                 self.transition(
                     RuntimeState::Crashed,
@@ -337,6 +340,9 @@ impl SupervisorInner {
 struct SupervisorShared {
     inner: Mutex<SupervisorInner>,
     lifecycle: Condvar,
+    session: Option<Arc<WorkflowSessionAuthority>>,
+    security_stop: AtomicBool,
+    terminal: AtomicBool,
 }
 
 #[derive(Clone)]
@@ -347,6 +353,30 @@ pub struct RuntimeSupervisor {
 
 impl RuntimeSupervisor {
     pub fn new(config: Result<SupervisorConfig, &'static str>) -> Self {
+        Self::with_authority(config, None)
+    }
+
+    pub(crate) fn with_session(
+        config: Result<SupervisorConfig, &'static str>,
+        session: Arc<WorkflowSessionAuthority>,
+    ) -> Self {
+        let armed = session.prepare_launch();
+        let supervisor = Self::with_authority(config, Some(session));
+        if let Err(code) = armed {
+            supervisor
+                .shared
+                .inner
+                .lock()
+                .expect("runtime supervisor mutex poisoned")
+                .record(code, "supervisor", None);
+        }
+        supervisor
+    }
+
+    fn with_authority(
+        config: Result<SupervisorConfig, &'static str>,
+        session: Option<Arc<WorkflowSessionAuthority>>,
+    ) -> Self {
         let configuration_failed = config.is_err();
         let initial_diagnostic = match &config {
             Ok(_) => "RO-CORE-STOPPED",
@@ -376,10 +406,14 @@ impl RuntimeSupervisor {
                     process: None,
                     launching: false,
                     stopping: false,
+                    unverified_stop: false,
                     diagnostics,
                     sequence: u64::from(configuration_failed),
                 }),
                 lifecycle: Condvar::new(),
+                session,
+                security_stop: AtomicBool::new(false),
+                terminal: AtomicBool::new(false),
             }),
         }
     }
@@ -396,7 +430,8 @@ impl RuntimeSupervisor {
                 .lock()
                 .expect("runtime supervisor mutex poisoned");
             inner.refresh();
-            if inner.stopping
+            if self.shared.terminal.load(Ordering::Acquire)
+                || inner.stopping
                 || inner.launching
                 || matches!(inner.state, RuntimeState::Starting | RuntimeState::Ready)
             {
@@ -411,6 +446,7 @@ impl RuntimeSupervisor {
                 return inner.snapshot();
             }
             inner.attempt += 1;
+            self.shared.security_stop.store(false, Ordering::Release);
             inner.launching = true;
             inner.transition(
                 RuntimeState::Starting,
@@ -429,13 +465,14 @@ impl RuntimeSupervisor {
                     .expect("runtime supervisor mutex poisoned");
                 if inner.attempt != attempt || inner.state != RuntimeState::Starting {
                     drop(inner);
-                    stop_running_process(&mut process);
+                    let stopped = stop_running_process(&mut process, &self.shared.security_stop);
                     let mut inner = self
                         .shared
                         .inner
                         .lock()
                         .expect("runtime supervisor mutex poisoned");
                     inner.launching = false;
+                    inner.unverified_stop |= !stopped;
                     self.shared.lifecycle.notify_all();
                     let snapshot = inner.snapshot();
                     return snapshot;
@@ -454,6 +491,9 @@ impl RuntimeSupervisor {
                     .lock()
                     .expect("runtime supervisor mutex poisoned");
                 inner.launching = false;
+                // Startup failures do not prove a clean native shutdown. Keep
+                // its durable marker active even if child cleanup was attempted.
+                inner.unverified_stop = true;
                 self.shared.lifecycle.notify_all();
                 if inner.attempt != attempt || inner.state != RuntimeState::Starting {
                     return inner.snapshot();
@@ -571,7 +611,52 @@ impl RuntimeSupervisor {
     }
 
     pub fn stop_for_application_lock(&self) -> RuntimeSnapshot {
-        self.stop_with_policy(true)
+        self.shared.security_stop.store(true, Ordering::Release);
+        if let Some(session) = &self.shared.session {
+            session.invalidate_for_security_lock();
+        }
+        let snapshot = self.stop_with_policy(true);
+        if !self.shared.terminal.load(Ordering::Acquire)
+            && let Some(session) = &self.shared.session
+            && let Err(code) = session.settle_security()
+        {
+            self.shared
+                .inner
+                .lock()
+                .expect("runtime supervisor mutex poisoned")
+                .record(code, "supervisor", None);
+        }
+        snapshot
+    }
+
+    /// Caller must first close lock admission. Never invoked for ordinary Core
+    /// stop/retry: the native marker stays active throughout those intervals.
+    pub(crate) fn begin_native_exit(&self) {
+        self.shared.terminal.store(true, Ordering::Release);
+    }
+
+    pub(crate) fn stop_for_native_exit(&self, security: bool) -> RuntimeSnapshot {
+        self.begin_native_exit();
+        let snapshot = if security {
+            self.stop_for_application_lock()
+        } else {
+            self.stop()
+        };
+        let mut inner = self
+            .shared
+            .inner
+            .lock()
+            .expect("runtime supervisor mutex poisoned");
+        if !inner.launching
+            && !inner.stopping
+            && !inner.unverified_stop
+            && inner.process.is_none()
+            && let Some(session) = &self.shared.session
+            && let Err(code) = session.seal_terminal()
+        {
+            inner.record(code, "supervisor", None);
+        }
+        snapshot
     }
 
     fn stop_with_policy(&self, immediate: bool) -> RuntimeSnapshot {
@@ -584,6 +669,9 @@ impl RuntimeSupervisor {
             .lock()
             .expect("runtime supervisor mutex poisoned");
         inner.refresh();
+        if immediate {
+            self.shared.security_stop.store(true, Ordering::Release);
+        }
         if inner.stopping {
             while inner.stopping {
                 inner = self
@@ -608,19 +696,22 @@ impl RuntimeSupervisor {
         }
         let process = inner.process.take();
         drop(inner);
-        if let Some(mut process) = process {
+        let stopped = if let Some(mut process) = process {
             if immediate {
-                stop_running_process_immediately(&mut process);
+                stop_running_process_immediately(&mut process)
             } else {
-                stop_running_process(&mut process);
+                stop_running_process(&mut process, &self.shared.security_stop)
             }
-        }
+        } else {
+            true
+        };
         let mut inner = self
             .shared
             .inner
             .lock()
             .expect("runtime supervisor mutex poisoned");
         inner.stopping = false;
+        inner.unverified_stop |= !stopped;
         self.shared.lifecycle.notify_all();
         inner.snapshot()
     }
@@ -631,6 +722,21 @@ fn launch(
     shared: Arc<SupervisorShared>,
     attempt: u8,
 ) -> Result<RunningProcess, (RuntimeState, &'static str)> {
+    ensure_attempt_active(&shared, attempt)?;
+    let workflow_context = shared.session.as_ref().and_then(|session| {
+        match session.prepare_launch() {
+            Ok(context) => Some(context),
+            Err(code) => {
+                shared
+                    .inner
+                    .lock()
+                    .expect("runtime supervisor mutex poisoned")
+                    .record(code, "supervisor", None);
+                None // Core remains available; legacy startup grants no import worker authority.
+            }
+        }
+    });
+    ensure_attempt_active(&shared, attempt)?;
     let capability_token =
         CapabilityToken::generate().map_err(|code| (RuntimeState::Crashed, code))?;
     let mut command = Command::new(&config.executable);
@@ -665,9 +771,15 @@ fn launch(
         .stdin
         .take()
         .ok_or((RuntimeState::Crashed, "RO-CORE-CONTROL-PIPE-FAILED"))?;
-    let mut authentication = Vec::with_capacity(70);
+    let mut authentication = Vec::with_capacity(145);
     authentication.extend_from_slice(b"auth ");
     capability_token.append_hex(&mut authentication);
+    if let Some(context) = workflow_context {
+        authentication.extend_from_slice(b" workflow ");
+        authentication.extend_from_slice(context.resume_epoch.as_bytes());
+        authentication.push(b' ');
+        authentication.extend_from_slice(context.launch_nonce.as_bytes());
+    }
     authentication.push(b'\n');
     let authentication_written = stdin
         .write_all(&authentication)
@@ -2420,28 +2532,33 @@ fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
         .map_err(|_| "RO-CORE-AUTH-RANDOM-FAILED")
 }
 
-fn stop_running_process(process: &mut RunningProcess) {
+fn stop_running_process(process: &mut RunningProcess, security_stop: &AtomicBool) -> bool {
+    if security_stop.load(Ordering::Acquire) {
+        return stop_running_process_immediately(process);
+    }
     let _ = process.stdin.write_all(b"shutdown\n");
     let _ = process.stdin.flush();
     let deadline = Instant::now() + STOP_TIMEOUT;
     loop {
+        if security_stop.load(Ordering::Acquire) {
+            break stop_running_process_immediately(process);
+        }
         match process.child.try_wait() {
-            Ok(Some(_)) => break,
+            Ok(Some(_)) => break true,
             Ok(None) if Instant::now() < deadline => thread::sleep(Duration::from_millis(20)),
             _ => {
                 process.containment.terminate();
-                let _ = process.child.wait();
-                break;
+                break process.child.wait().is_ok();
             }
         }
     }
 }
 
-fn stop_running_process_immediately(process: &mut RunningProcess) {
+fn stop_running_process_immediately(process: &mut RunningProcess) -> bool {
     process.cancellation.store(true, Ordering::Release);
     process.containment.terminate();
     let _ = process.child.kill();
-    let _ = process.child.wait();
+    process.child.wait().is_ok()
 }
 
 fn readiness_is_compatible(response: &[u8]) -> bool {
@@ -2688,11 +2805,23 @@ mod tests {
         validate_api_request, validate_handshake, validate_model_catalog_api_request,
         version_response_is_compatible,
     };
+    #[cfg(windows)]
+    use super::{
+        ProcessTreeContainment, RunningProcess, configure_hidden_process, stop_running_process,
+    };
+    use crate::workflow_session::WorkflowSessionAuthority;
     use std::collections::VecDeque;
+    use std::fs;
     use std::io::Read;
     use std::net::TcpListener;
+    #[cfg(windows)]
+    use std::process::{Command, Stdio};
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::{Arc, mpsc};
+    #[cfg(windows)]
+    use std::thread;
+    #[cfg(windows)]
+    use std::time::{Duration, Instant};
 
     fn handshake(pid: u32) -> Vec<u8> {
         format!(
@@ -3848,6 +3977,7 @@ mod tests {
             process: None,
             launching: false,
             stopping: false,
+            unverified_stop: false,
             diagnostics: VecDeque::new(),
             sequence: 0,
         };
@@ -3881,6 +4011,7 @@ mod tests {
             process: None,
             launching: false,
             stopping: false,
+            unverified_stop: false,
             diagnostics: VecDeque::new(),
             sequence: 0,
         };
@@ -3902,5 +4033,101 @@ mod tests {
             Some("RO-CORE-INTEGRITY-FAILED")
         );
         assert!(!snapshot.retry_available);
+    }
+
+    #[test]
+    fn terminal_native_exit_seals_once_and_cannot_start_again() {
+        let root = std::env::temp_dir().join(format!(
+            "ro-native-exit-{}",
+            crate::application_sign_in_policy::secure_random_hex::<16>().unwrap()
+        ));
+        let session = Arc::new(WorkflowSessionAuthority::new(&root));
+        let supervisor =
+            RuntimeSupervisor::with_session(Err("RO-CORE-NOT-PACKAGED"), Arc::clone(&session));
+        let first = session.prepare_launch().unwrap();
+        supervisor.stop();
+        // Child stop did not seal the still-live native session.
+        assert_eq!(
+            first.resume_epoch,
+            session.prepare_launch().unwrap().resume_epoch
+        );
+        supervisor.stop_for_native_exit(false);
+        assert!(session.prepare_launch().is_err());
+        assert!(supervisor.shared.terminal.load(Ordering::Acquire));
+        assert_ne!(supervisor.start().state, RuntimeState::Ready);
+        let restarted = WorkflowSessionAuthority::new(&root)
+            .prepare_launch()
+            .unwrap();
+        assert_eq!(first.resume_epoch, restarted.resume_epoch);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn unverified_process_stop_cannot_publish_an_ordinary_exit() {
+        let root = std::env::temp_dir().join(format!(
+            "ro-unverified-exit-{}",
+            crate::application_sign_in_policy::secure_random_hex::<16>().unwrap()
+        ));
+        let session = Arc::new(WorkflowSessionAuthority::new(&root));
+        let supervisor =
+            RuntimeSupervisor::with_session(Err("RO-CORE-NOT-PACKAGED"), Arc::clone(&session));
+        let first = session.prepare_launch().unwrap();
+        supervisor.shared.inner.lock().unwrap().unverified_stop = true;
+        supervisor.stop_for_native_exit(false);
+        let restarted = WorkflowSessionAuthority::new(&root)
+            .prepare_launch()
+            .unwrap();
+        assert_ne!(first.resume_epoch, restarted.resume_epoch);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn process_stop_fixture_child() {
+        if std::env::var_os("RO_STOP_FIXTURE_CHILD").is_some() {
+            // Deliberately ignores cooperative shutdown. A test-owned Job Object
+            // must terminate this child; never a user process or ordinary Core.
+            thread::sleep(Duration::from_secs(15));
+        }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn security_stop_interrupts_an_already_started_graceful_wait() {
+        let mut command = Command::new(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "supervisor::tests::process_stop_fixture_child",
+                "--nocapture",
+            ])
+            .env("RO_STOP_FIXTURE_CHILD", "1")
+            .stdin(Stdio::piped())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        configure_hidden_process(&mut command);
+        let mut child = command.spawn().unwrap();
+        let stdin = child.stdin.take().unwrap();
+        let containment = ProcessTreeContainment::attach_and_resume(&child).unwrap();
+        let mut process = RunningProcess {
+            child,
+            stdin,
+            containment,
+            capability_token: CapabilityToken::generate().unwrap(),
+            cancellation: Arc::new(AtomicBool::new(false)),
+            port: 0,
+        };
+        let security = Arc::new(AtomicBool::new(false));
+        let signal = Arc::clone(&security);
+        let started = Instant::now();
+        let waiter = thread::spawn(move || {
+            stop_running_process(&mut process, &signal);
+            assert!(process.child.try_wait().unwrap().is_some());
+            assert!(process.cancellation.load(Ordering::Acquire));
+        });
+        thread::sleep(Duration::from_millis(100));
+        security.store(true, Ordering::Release);
+        waiter.join().unwrap();
+        assert!(started.elapsed() < Duration::from_secs(3));
     }
 }

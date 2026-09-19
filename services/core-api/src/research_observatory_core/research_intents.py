@@ -72,6 +72,9 @@ _MAX_HISTORY = 100
 class _UnavailableIntentRepository(IntentRevisionRepository):
     """Fail-closed composition used when no concrete local adapter is supplied."""
 
+    def project_identity(self) -> None:
+        return None
+
     def read(self) -> tuple[IntentRevisionRecord, ...]:
         raise RepositoryProblem("research intent repository is unavailable")
 

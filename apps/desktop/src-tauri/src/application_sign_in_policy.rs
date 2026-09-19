@@ -182,7 +182,7 @@ pub(crate) enum PolicyLoadState {
 }
 
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
-struct FileAuthority {
+pub(crate) struct FileAuthority {
     present: bool,
     sha256: Option<String>,
     length: u64,
@@ -470,7 +470,7 @@ impl PolicyStore {
     }
 }
 
-fn stable_application_data_path(path: &Path) -> PathBuf {
+pub(crate) fn stable_application_data_path(path: &Path) -> PathBuf {
     let absolute = std::path::absolute(path).unwrap_or_else(|_| path.to_path_buf());
     let mut cursor = absolute.as_path();
     let mut missing = Vec::new();
@@ -506,7 +506,7 @@ fn parse_legacy(bytes: &[u8]) -> Result<LegacyApplicationLockProfile, &'static s
     Ok(profile)
 }
 
-fn file_authority(path: &Path) -> Result<FileAuthority, &'static str> {
+pub(crate) fn file_authority(path: &Path) -> Result<FileAuthority, &'static str> {
     let metadata = match fs::symlink_metadata(path) {
         Ok(metadata) => metadata,
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
@@ -604,7 +604,7 @@ fn file_identity(_file: &File, metadata: &fs::Metadata) -> Result<(u64, u64), &'
     Ok((metadata.dev(), metadata.ino()))
 }
 
-fn read_bounded_file(path: &Path) -> Result<Option<Vec<u8>>, &'static str> {
+pub(crate) fn read_bounded_file(path: &Path) -> Result<Option<Vec<u8>>, &'static str> {
     let metadata = match fs::symlink_metadata(path) {
         Ok(metadata) => metadata,
         Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
@@ -644,7 +644,7 @@ fn open_no_follow(path: &Path) -> Result<File, &'static str> {
     File::open(path).map_err(|_| "RO-SIGN-IN-POLICY-INVALID")
 }
 
-fn reject_reparse(path: &Path) -> Result<(), &'static str> {
+pub(crate) fn reject_reparse(path: &Path) -> Result<(), &'static str> {
     let metadata = fs::symlink_metadata(path).map_err(|_| "RO-SIGN-IN-POLICY-WRITE-FAILED")?;
     if is_reparse(&metadata) || !metadata.is_dir() {
         Err("RO-SIGN-IN-POLICY-WRITE-FAILED")
@@ -693,7 +693,11 @@ impl Drop for StagedPolicy {
 }
 
 #[cfg(windows)]
-fn publish_file(staging: &Path, destination: &Path, replace: bool) -> Result<(), &'static str> {
+pub(crate) fn publish_file(
+    staging: &Path,
+    destination: &Path,
+    replace: bool,
+) -> Result<(), &'static str> {
     use std::os::windows::ffi::OsStrExt;
     use windows_sys::Win32::Storage::FileSystem::{
         MOVEFILE_REPLACE_EXISTING, MOVEFILE_WRITE_THROUGH, MoveFileExW,
@@ -730,7 +734,11 @@ fn publish_file(staging: &Path, destination: &Path, replace: bool) -> Result<(),
 }
 
 #[cfg(not(windows))]
-fn publish_file(staging: &Path, destination: &Path, replace: bool) -> Result<(), &'static str> {
+pub(crate) fn publish_file(
+    staging: &Path,
+    destination: &Path,
+    replace: bool,
+) -> Result<(), &'static str> {
     if replace {
         fs::rename(staging, destination).map_err(|_| "RO-SIGN-IN-POLICY-WRITE-FAILED")
     } else {

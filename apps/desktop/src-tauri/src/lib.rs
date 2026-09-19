@@ -4,6 +4,7 @@ mod application_sign_in_policy;
 pub mod directory_picker;
 pub mod supervisor;
 pub mod support_bundle;
+mod workflow_session;
 
 use application_lock::{
     ApplicationLockAuditEvent, ApplicationLockManager, ApplicationLockReason,
@@ -499,6 +500,15 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
     ];
     tauri::Builder::default()
         .invoke_handler(move |invoke| {
+            if invoke
+                .message
+                .webview()
+                .try_state::<ApplicationLockManager>()
+                .is_some_and(|lock| lock.is_terminal())
+            {
+                invoke.resolver.reject("RO-APPLICATION-CLOSING");
+                return true;
+            }
             #[cfg(all(feature = "integration-harness", windows))]
             if invoke
                 .message
@@ -535,25 +545,23 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
                 && window.label() == "main"
             {
                 let picker = window.state::<DirectoryPickerManager>().inner().clone();
-                match picker.begin_close() {
-                    CloseDisposition::WaitForCleanup => {
-                        api.prevent_close();
-                        let closing_window = window.clone();
-                        tauri::async_runtime::spawn_blocking(move || {
-                            picker.wait_for_cleanup();
-                            // Tauri dispatches destruction to its UI thread. It
-                            // must not join the STA while processing CloseRequested.
-                            let _ = closing_window.destroy();
-                        });
-                    }
-                    CloseDisposition::AlreadyClosing => {
-                        api.prevent_close();
-                        return;
-                    }
-                    CloseDisposition::CloseNow => {}
+                api.prevent_close();
+                if matches!(picker.begin_close(), CloseDisposition::AlreadyClosing) {
+                    return;
                 }
+                let security = window
+                    .state::<ApplicationLockManager>()
+                    .begin_terminal_exit();
                 let supervisor = window.state::<RuntimeSupervisor>().inner().clone();
-                tauri::async_runtime::spawn_blocking(move || supervisor.stop());
+                supervisor.begin_native_exit();
+                let closing_window = window.clone();
+                tauri::async_runtime::spawn_blocking(move || {
+                    supervisor.stop_for_native_exit(security);
+                    picker.wait_for_cleanup();
+                    // Keep UI dispatch alive until native work has drained and
+                    // the session is sealed; never join its STA on the UI thread.
+                    let _ = closing_window.destroy();
+                });
             }
         })
 }
@@ -564,8 +572,12 @@ fn setup_runtime(
     application_data: &std::path::Path,
     picker: DirectoryPickerManager,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let supervisor = RuntimeSupervisor::new(config);
     let lock = ApplicationLockManager::acquire(application_data).map_err(std::io::Error::other)?;
+    let session = std::sync::Arc::new(workflow_session::WorkflowSessionAuthority::new(
+        application_data,
+    ));
+    lock.bind_security_latch(session.security_latch());
+    let supervisor = RuntimeSupervisor::with_session(config, session);
     let support = SupportBundleManager::default();
     app.manage(supervisor.clone());
     app.manage(lock.clone());
@@ -2424,6 +2436,9 @@ fn start_lock_monitor(
     std::thread::spawn(move || {
         loop {
             std::thread::sleep(std::time::Duration::from_secs(1));
+            if lock.is_terminal() {
+                break;
+            }
             if let Some(snapshot) = lock.lock_if_idle() {
                 picker.cancel_pending();
                 support.clear_pending();

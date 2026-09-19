@@ -1,5 +1,6 @@
 use std::collections::VecDeque;
 use std::path::Path;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
@@ -134,6 +135,8 @@ struct CompletedTransition {
 }
 
 struct ApplicationLockInner {
+    terminal: bool,
+    security_latch: Option<Arc<AtomicU64>>,
     state: ApplicationLockState,
     reason: Option<ApplicationLockReason>,
     configuration_state: LockConfigurationState,
@@ -192,7 +195,7 @@ impl ApplicationLockInner {
     }
 
     fn lock(&mut self, reason: ApplicationLockReason) -> bool {
-        if !self.policy.mode.is_protected() {
+        if self.terminal || !self.policy.mode.is_protected() {
             return false;
         }
         if self.state == ApplicationLockState::Locked {
@@ -202,6 +205,9 @@ impl ApplicationLockInner {
             return false;
         }
         self.generation = self.generation.saturating_add(1);
+        if let Some(latch) = &self.security_latch {
+            latch.fetch_add(1, Ordering::AcqRel);
+        }
         self.state = ApplicationLockState::Locked;
         self.reason = Some(reason);
         self.record("application-lock", "locked", reason_code(reason));
@@ -257,6 +263,8 @@ impl ApplicationLockManager {
             }
         };
         let mut inner = ApplicationLockInner {
+            terminal: false,
+            security_latch: None,
             state,
             reason,
             configuration_state,
@@ -297,12 +305,43 @@ impl ApplicationLockManager {
     }
 
     pub fn is_unlocked(&self) -> bool {
-        self.shared.lock().expect("lock mutex poisoned").state == ApplicationLockState::Unlocked
+        let inner = self.shared.lock().expect("lock mutex poisoned");
+        !inner.terminal && inner.state == ApplicationLockState::Unlocked
+    }
+
+    pub(crate) fn bind_security_latch(&self, latch: Arc<AtomicU64>) {
+        self.shared
+            .lock()
+            .expect("lock mutex poisoned")
+            .security_latch = Some(latch);
+    }
+
+    pub(crate) fn is_terminal(&self) -> bool {
+        self.shared.lock().expect("lock mutex poisoned").terminal
+    }
+
+    /// Serialize with actual lock admission, before any asynchronous stop call.
+    /// No disk, process, provider or picker wait while holding this mutex.
+    pub(crate) fn begin_terminal_exit(&self) -> bool {
+        let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        let uncertain = inner.state == ApplicationLockState::Locked
+            || inner.reauthentication_in_progress
+            || inner.configuration_state == LockConfigurationState::Invalid;
+        if !inner.terminal {
+            inner.terminal = true;
+            inner.generation = inner.generation.saturating_add(1);
+            inner.pending_transition = None;
+            inner.reauthentication_in_progress = false;
+            if uncertain && let Some(latch) = &inner.security_latch {
+                latch.fetch_add(1, Ordering::AcqRel);
+            }
+        }
+        uncertain
     }
 
     pub fn begin_protected_action(&self) -> Result<u64, &'static str> {
         let inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.state != ApplicationLockState::Unlocked {
+        if inner.terminal || inner.state != ApplicationLockState::Unlocked {
             return Err("RO-APPLICATION-LOCKED");
         }
         Ok(inner.generation)
@@ -310,7 +349,10 @@ impl ApplicationLockManager {
 
     pub fn finish_protected_action(&self, generation: u64) -> Result<(), &'static str> {
         let inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.state != ApplicationLockState::Unlocked || inner.generation != generation {
+        if inner.terminal
+            || inner.state != ApplicationLockState::Unlocked
+            || inner.generation != generation
+        {
             return Err("RO-APPLICATION-LOCKED");
         }
         Ok(())
@@ -322,7 +364,10 @@ impl ApplicationLockManager {
         commit: impl FnOnce() -> Result<T, &'static str>,
     ) -> Result<T, &'static str> {
         let inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.state != ApplicationLockState::Unlocked || inner.generation != generation {
+        if inner.terminal
+            || inner.state != ApplicationLockState::Unlocked
+            || inner.generation != generation
+        {
             return Err("RO-APPLICATION-LOCKED");
         }
         commit()
@@ -336,7 +381,7 @@ impl ApplicationLockManager {
 
     pub fn record_activity(&self) {
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.state == ApplicationLockState::Unlocked {
+        if !inner.terminal && inner.state == ApplicationLockState::Unlocked {
             inner.last_activity = Instant::now();
         }
     }
@@ -352,7 +397,8 @@ impl ApplicationLockManager {
     pub fn lock_if_idle(&self) -> Option<ApplicationLockSnapshot> {
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
         let timeout = inner.policy.inactivity_timeout_minutes;
-        if inner.state == ApplicationLockState::Unlocked
+        if !inner.terminal
+            && inner.state == ApplicationLockState::Unlocked
             && inner.policy.mode.is_protected()
             && timeout > 0
             && inner.last_activity.elapsed() >= Duration::from_secs(u64::from(timeout) * 60)
@@ -388,6 +434,9 @@ impl ApplicationLockManager {
     ) -> Result<PolicyTransitionResult, &'static str> {
         let (source_mode, source, generation, target, snapshot) = {
             let mut inner = self.shared.lock().expect("lock mutex poisoned");
+            if inner.terminal {
+                return Err("RO-APPLICATION-CLOSING");
+            }
             expire_pending_transition(&mut inner);
             if inner.configuration_state == LockConfigurationState::Invalid {
                 return Ok(transition_result(
@@ -476,7 +525,8 @@ impl ApplicationLockManager {
         let handle_digest = sha256_hex(handle.as_bytes());
         let target_digest = sha256_hex(&target.canonical_bytes()?);
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.generation != generation
+        if inner.terminal
+            || inner.generation != generation
             || inner.state != snapshot.state
             || inner.configuration_state == LockConfigurationState::Invalid
             || inner.policy_source != source
@@ -536,6 +586,9 @@ impl ApplicationLockManager {
     ) -> Result<PolicyTransitionResult, &'static str> {
         let (source_mode, source, generation, source_was_locked, target) = {
             let mut inner = self.shared.lock().expect("lock mutex poisoned");
+            if inner.terminal {
+                return Err("RO-APPLICATION-CLOSING");
+            }
             expire_pending_transition(&mut inner);
             if inner.configuration_state != LockConfigurationState::Invalid
                 && !inner.policy.mode.is_protected()
@@ -607,7 +660,8 @@ impl ApplicationLockManager {
         let handle_digest = sha256_hex(handle.as_bytes());
         let target_digest = sha256_hex(&target.canonical_bytes()?);
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.generation != generation
+        if inner.terminal
+            || inner.generation != generation
             || inner.policy_source != source
             || !inner.reauthentication_in_progress
         {
@@ -673,6 +727,17 @@ impl ApplicationLockManager {
         let handle_digest = sha256_hex(handle.as_bytes());
         let pending = {
             let mut inner = self.shared.lock().expect("lock mutex poisoned");
+            if inner.terminal {
+                return transition_result(
+                    &inner,
+                    PolicyTransitionOutcome::Denied,
+                    "RO-APPLICATION-CLOSING",
+                    None,
+                    None,
+                    inner.policy.mode,
+                    false,
+                );
+            }
             if let Some(completed) = &inner.completed_transition
                 && completed.handle_digest == handle_digest
             {
@@ -782,7 +847,8 @@ impl ApplicationLockManager {
             core_started = true;
         }
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
-        if inner.generation != pending.generation
+        if inner.terminal
+            || inner.generation != pending.generation
             || inner.policy_source != pending.source
             || inner
                 .pending_transition
@@ -945,6 +1011,9 @@ impl ApplicationLockManager {
     ) -> Result<ApplicationUnlockAttempt, &'static str> {
         let mode = {
             let inner = self.shared.lock().expect("lock mutex poisoned");
+            if inner.terminal {
+                return Err("RO-APPLICATION-CLOSING");
+            }
             if inner.configuration_state == LockConfigurationState::Invalid {
                 return Err("RO-LOCK-RECOVERY-REQUIRED");
             }
@@ -997,6 +1066,9 @@ impl ApplicationLockManager {
         let result = match verification {
             VerificationOutcome::Cancelled => {
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                if inner.terminal {
+                    return Err("RO-APPLICATION-CLOSING");
+                }
                 inner.reauthentication_in_progress = false;
                 inner.record("application-unlock", "cancelled", "RO-LOCK-AUTH-CANCELLED");
                 unlock_attempt(
@@ -1007,6 +1079,9 @@ impl ApplicationLockManager {
             }
             VerificationOutcome::Denied => {
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                if inner.terminal {
+                    return Err("RO-APPLICATION-CLOSING");
+                }
                 inner.reauthentication_in_progress = false;
                 inner.failed_attempts = inner.failed_attempts.saturating_add(1);
                 let exponent = inner.failed_attempts.saturating_sub(1).min(5);
@@ -1016,6 +1091,9 @@ impl ApplicationLockManager {
             }
             VerificationOutcome::Unavailable => {
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                if inner.terminal {
+                    return Err("RO-APPLICATION-CLOSING");
+                }
                 inner.reauthentication_in_progress = false;
                 inner.record(
                     "application-unlock",
@@ -1030,12 +1108,18 @@ impl ApplicationLockManager {
             }
             VerificationOutcome::Busy => {
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                if inner.terminal {
+                    return Err("RO-APPLICATION-CLOSING");
+                }
                 inner.reauthentication_in_progress = false;
                 inner.record("application-unlock", "busy", "RO-LOCK-AUTH-BUSY");
                 unlock_attempt(&inner, VerificationOutcome::Busy, "RO-LOCK-AUTH-BUSY")
             }
             VerificationOutcome::Failed => {
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
+                if inner.terminal {
+                    return Err("RO-APPLICATION-CLOSING");
+                }
                 inner.reauthentication_in_progress = false;
                 inner.record("application-unlock", "failed", "RO-LOCK-AUTH-FAILED");
                 unlock_attempt(&inner, VerificationOutcome::Failed, "RO-LOCK-AUTH-FAILED")
@@ -1055,7 +1139,8 @@ impl ApplicationLockManager {
                     return Ok(attempt);
                 }
                 let mut inner = self.shared.lock().expect("lock mutex poisoned");
-                if inner.state != ApplicationLockState::Locked
+                if inner.terminal
+                    || inner.state != ApplicationLockState::Locked
                     || inner.generation != reservation.generation
                 {
                     inner.reauthentication_in_progress = false;
@@ -1082,7 +1167,8 @@ impl ApplicationLockManager {
 
     fn reauthentication_is_current(&self, reservation: &ReauthenticationReservation) -> bool {
         let inner = self.shared.lock().expect("lock mutex poisoned");
-        inner.state == ApplicationLockState::Locked
+        !inner.terminal
+            && inner.state == ApplicationLockState::Locked
             && inner.reauthentication_in_progress
             && inner.generation == reservation.generation
     }
@@ -1098,6 +1184,11 @@ impl ApplicationLockManager {
         &self,
     ) -> Result<ReauthenticationReservation, ReauthenticationReservationError> {
         let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        if inner.terminal {
+            return Err(ReauthenticationReservationError::InvalidState(
+                "RO-APPLICATION-CLOSING",
+            ));
+        }
         if inner.state != ApplicationLockState::Locked {
             inner.record("application-unlock", "failed", "RO-LOCK-AUTH-NOT-LOCKED");
             return Err(ReauthenticationReservationError::InvalidState(
@@ -1352,6 +1443,88 @@ mod tests {
 
     fn default_manager() -> ApplicationLockManager {
         ApplicationLockManager::new(&root("default"))
+    }
+
+    #[test]
+    fn terminal_exit_fences_actions_and_later_lock_admission() {
+        let manager = manager();
+        let latch = Arc::new(AtomicU64::new(0));
+        manager.bind_security_latch(Arc::clone(&latch));
+        let generation = manager.begin_protected_action().unwrap();
+        assert!(!manager.begin_terminal_exit());
+        assert!(manager.is_terminal());
+        assert!(!manager.is_unlocked());
+        assert!(manager.begin_protected_action().is_err());
+        assert!(manager.finish_protected_action(generation).is_err());
+        assert!(
+            manager
+                .commit_protected_action::<()>(generation, || panic!("late commit"))
+                .is_err()
+        );
+        assert!(!manager.lock(ApplicationLockReason::Manual).1);
+        assert!(manager.lock_if_idle().is_none());
+        assert_eq!(latch.load(Ordering::Acquire), 0);
+        assert!(
+            manager
+                .prepare_policy_transition_with(SignInMode::None, None, 0, |_| panic!(
+                    "late verification"
+                ))
+                .is_err()
+        );
+        assert!(
+            manager
+                .reauthenticate_with(
+                    &|| panic!("late verification"),
+                    || panic!("late start"),
+                    || panic!("late stop")
+                )
+                .is_err()
+        );
+    }
+
+    #[test]
+    fn admitted_lock_latches_before_its_stop_callback_and_exit_rejects_late_verification() {
+        let manager = manager();
+        let latch = Arc::new(AtomicU64::new(0));
+        manager.bind_security_latch(Arc::clone(&latch));
+        assert!(manager.lock(ApplicationLockReason::Manual).1);
+        assert_eq!(latch.load(Ordering::Acquire), 1);
+        let result = manager
+            .reauthenticate_with(
+                &|| {
+                    assert!(manager.begin_terminal_exit());
+                    VerificationOutcome::Succeeded
+                },
+                || panic!("late start"),
+                || panic!("late stop"),
+            )
+            .unwrap();
+        assert_ne!(result.outcome, VerificationOutcome::Succeeded);
+        assert_eq!(manager.status().state, ApplicationLockState::Locked);
+        assert!(manager.is_terminal());
+    }
+
+    #[test]
+    fn terminal_exit_denies_prepared_policy_without_changing_settings() {
+        let manager = manager();
+        let before = manager.status();
+        let prepared = manager
+            .prepare_policy_transition_with(SignInMode::None, None, 0, |_| {
+                VerificationOutcome::Succeeded
+            })
+            .unwrap();
+        assert!(prepared.handle.is_some());
+        assert!(manager.begin_terminal_exit());
+        let result = manager.commit_policy_transition_with_core(
+            prepared.handle.as_ref().unwrap(),
+            true,
+            || panic!("late start"),
+            || panic!("late stop"),
+        );
+        assert_eq!(result.outcome, PolicyTransitionOutcome::Denied);
+        assert_eq!(result.reason_code, "RO-APPLICATION-CLOSING");
+        assert_eq!(manager.status().policy_revision, before.policy_revision);
+        assert_eq!(manager.status().sign_in_mode, before.sign_in_mode);
     }
 
     #[cfg(windows)]

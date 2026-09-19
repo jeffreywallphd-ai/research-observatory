@@ -9,10 +9,15 @@ import time
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
+from fastapi.testclient import TestClient
+from research_observatory_core.authentication import NativeWorkflowContext, capability_token_digest
+from research_observatory_core.config import CoreSettings
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.import_preview_repository import sqlite_import_preview_repository
 from research_observatory_core.import_preview_service import ImportPreviewService, ImportProjectAdapters
+from research_observatory_core.main import create_runtime_app
 from research_observatory_core.object_store import create_local_object_store
 from research_observatory_core.ports.import_previews import PreviewCreate, PreviewProblem
 from research_observatory_core.privacy import ProjectPrivacyService
@@ -35,6 +40,7 @@ from research_observatory_core.workflow_executor import (
 )
 
 from tests.data import test_import_source_chunks as fixture
+from tests.database_key_fixtures import InMemoryDatabaseKeyProvider
 
 
 class ImportPreviewServiceTests(unittest.TestCase):
@@ -224,6 +230,96 @@ class ImportPreviewServiceTests(unittest.TestCase):
         self.service.detach(self.root)
         with self.assertRaises(PreviewProblem):
             self.service.records_page(self.root, cancelled, after=0, limit=10)
+
+
+class ImportRuntimeCompositionTests(unittest.TestCase):
+    def application(self, context):
+        return create_runtime_app(
+            settings=CoreSettings(),
+            object_key_provider=fixture.MemoryKeyProvider({"object-key-v1": b"k" * 32}, "object-key-v1"),
+            database_key_provider=InMemoryDatabaseKeyProvider(),
+            local_actor_id=new_uuid_v7(),
+            workflow_context=context,
+            capability_digest=capability_token_digest("a" * 64),
+            expected_authority="127.0.0.1:49152",
+        )
+
+    def client(self, app):
+        return TestClient(
+            app,
+            base_url="http://127.0.0.1:49152",
+            headers={"Authorization": "Bearer " + "a" * 64},
+            client=("127.0.0.1", 50000),
+        )
+
+    def test_legacy_startup_has_no_import_authority(self):
+        app = self.application(None)
+        with self.client(app):
+            self.assertIsNone(app.state.runtime.imports)
+
+    def test_authenticated_project_open_attaches_real_protected_worker_and_close_drains(self):
+        app = self.application(NativeWorkflowContext("b" * 32, "c" * 32))
+        with tempfile.TemporaryDirectory(prefix="ro-composed-import-") as temporary:
+            # Deterministic capacity observation only; storage/auth/lifecycle/
+            # queue/admission composition are real. Not platform-capacity proof.
+            with (
+                patch(
+                    "research_observatory_core.repositories._windows_worker_capacity",
+                    return_value=WorkerCapacity(4, 4 * 1024**3, 0, 4 * 1024**3),
+                ),
+                self.client(app) as client,
+            ):
+                created = client.post(
+                    "/projects",
+                    json={
+                        "parentDirectory": temporary,
+                        "directoryName": "synthetic-import",
+                        "displayName": "Synthetic import",
+                        "primaryUseCase": "theory-synthesis",
+                        "researchObjective": "Synthetic bibliography",
+                    },
+                )
+                self.assertEqual(200, created.status_code)
+                root, identity = created.json()["root"], created.json()["projectId"]
+                self.assertEqual(200, client.post("/projects/open", json={"root": root}).status_code)
+                service = app.state.runtime.imports
+                self.assertIsNotNone(service)
+                raw = b"title\nSynthetic\n"
+                preview = new_uuid_v7()
+                service.create(
+                    root,
+                    PreviewCreate(
+                        preview_id=preview,
+                        source_name="synthetic.csv",
+                        format_name="csv",
+                        rights=fixture.RIGHTS,
+                        actor=service.actor("d" * 32),
+                    ),
+                )
+                service.append_chunk(root, preview, ordinal=1, data=raw)
+                service.seal(
+                    root,
+                    preview,
+                    source_sha256=hashlib.sha256(raw).hexdigest(),
+                    byte_length=len(raw),
+                    chunk_count=1,
+                    trace_id="d" * 32,
+                )
+                job = service.schedule(root, preview)
+                queue = sqlite_workflow_queue_repository(Path(root), identity)
+                deadline = time.monotonic() + 5
+                while time.monotonic() < deadline and queue.get(job.job_id).state not in {"succeeded", "failed"}:
+                    time.sleep(0.01)
+                self.assertEqual("succeeded", queue.get(job.job_id).state)
+                self.assertEqual(2, len(service.records_page(root, preview, after=0, limit=10)))
+                self.assertNotEqual(b"SQLite format 3\0", (Path(root) / "state/project.sqlite3").read_bytes()[:16])
+                self.assertEqual(200, client.post("/projects/close", json={"root": root}).status_code)
+                self.assertEqual(200, client.post("/projects/close", json={"root": root}).status_code)
+                self.assertFalse((Path(root) / ".locks/session.lock").exists())
+                self.assertEqual(200, client.post("/projects/open", json={"root": root}).status_code)
+                self.assertEqual(2, len(service.records_page(root, preview, after=0, limit=10)))
+            # Lifespan stopped its worker before releasing the project session.
+            self.assertFalse((Path(root) / ".locks/session.lock").exists())
 
 
 if __name__ == "__main__":

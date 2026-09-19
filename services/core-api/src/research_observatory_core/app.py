@@ -16,6 +16,7 @@ from starlette.exceptions import HTTPException
 from . import CORE_API_VERSION
 from .authentication import LocalAuthenticationMiddleware
 from .config import CoreSettings
+from .import_preview_service import ImportPreviewService
 from .logging import emit_log_record
 from .model_catalog import ModelCatalogProblem, ModelCatalogService
 from .model_gateway_service import ProjectModelGatewayService
@@ -81,6 +82,7 @@ from .operations import (
     OperationRegistry,
     OperationReplayGap,
 )
+from .ports.import_previews import PreviewProblem
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .provenance import ProvenanceProblem, ProvenanceService
@@ -107,6 +109,7 @@ class RuntimeContext:
     provenance: ProvenanceService
     task_center: TaskCenterService
     recalculation: RecalculationControlService
+    imports: ImportPreviewService | None = None
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -124,6 +127,7 @@ def create_app(
     provenance: ProvenanceService | None = None,
     task_center: TaskCenterService | None = None,
     recalculation: RecalculationControlService | None = None,
+    imports: ImportPreviewService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -164,14 +168,19 @@ def create_app(
             provenance=resolved_provenance,
             task_center=resolved_task_center,
             recalculation=resolved_recalculation,
+            imports=imports,
         )
         app.state.runtime = context
+        if context.imports is not None:
+            context.imports.start()
         context.state = RuntimeState.READY
         emit_log_record("runtime.started", level=resolved_settings.log_level, fields={"state": context.state.value})
         try:
             yield
         finally:
             context.state = RuntimeState.STOPPING
+            if context.imports is not None:
+                context.imports.shutdown()
             context.projects.shutdown()
             emit_log_record(
                 "runtime.stopping", level=resolved_settings.log_level, fields={"state": context.state.value}
@@ -296,6 +305,18 @@ def create_app(
             return action()
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
+        except PreviewProblem:
+            raise CoreProblem(
+                problem_detail(
+                    status=503,
+                    code="RO-CORE-IMPORT-WORKER-UNAVAILABLE",
+                    title="Local import worker is not ready",
+                    detail="The project action did not finish. No canonical import was published.",
+                    trace_id=request.state.trace_id,
+                    retryable=True,
+                    remediation="Wait briefly and retry the project action.",
+                )
+            ) from None
 
     def run_model_catalog_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
         try:
@@ -595,10 +616,20 @@ def create_app(
         tags=["projects"],
     )
     def open_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
-        return run_project_action(
-            request,
-            lambda: runtime(request).projects.open(root=command.root, trace_id=request.state.trace_id),
-        )
+        def open_and_attach() -> ProjectProjection:
+            context = runtime(request)
+            projection = context.projects.open(root=command.root, trace_id=request.state.trace_id)
+            try:
+                if context.imports is not None and projection.access_mode.value == "read-write":
+                    context.imports.attach(projection.root)
+            except Exception:
+                # This call acquired the new session; do not strand it on a
+                # failed worker binding and then reject the user's open retry.
+                context.projects.close(root=projection.root, trace_id=request.state.trace_id)
+                raise
+            return projection
+
+        return run_project_action(request, open_and_attach)
 
     @app.post(
         "/projects/close",
@@ -607,10 +638,18 @@ def create_app(
         tags=["projects"],
     )
     def close_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
-        return run_project_action(
-            request,
-            lambda: runtime(request).projects.close(root=command.root, trace_id=request.state.trace_id),
-        )
+        def drain_and_close() -> ProjectProjection:
+            context = runtime(request)
+            if context.imports is not None:
+                try:
+                    context.imports.detach(command.root)
+                except ProjectLifecycleProblem as error:
+                    if error.code != "RO-CORE-PROJECT-NOT-OPEN":
+                        raise
+                    # Preserve existing idempotent close and foreign-lock checks.
+            return context.projects.close(root=command.root, trace_id=request.state.trace_id)
+
+        return run_project_action(request, drain_and_close)
 
     @app.post(
         "/projects/archive",

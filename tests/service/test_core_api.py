@@ -24,7 +24,11 @@ SERVICE_SRC = REPO / "services" / "core-api" / "src"
 sys.path.insert(0, str(SERVICE_SRC))
 
 from research_observatory_core.app import create_app  # noqa: E402
-from research_observatory_core.authentication import capability_token_digest, parse_startup_authentication  # noqa: E402
+from research_observatory_core.authentication import (  # noqa: E402
+    capability_token_digest,
+    parse_startup_authentication,
+    parse_startup_record,
+)
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.contract import canonical_openapi_bytes  # noqa: E402
 from research_observatory_core.logging import build_log_record  # noqa: E402
@@ -639,6 +643,34 @@ class CoreApiTests(unittest.TestCase):
         self.assertEqual(json.loads(rejected.stderr)["status"], "startup-authentication-error")
         self.assertEqual(rejected.stdout, b"")
         self.assertNotIn(exposed_value.encode("ascii"), rejected.stderr)
+
+    def test_native_workflow_context_requires_exact_inherited_record_and_clears_token(self) -> None:
+        legacy = bytearray(f"auth {TOKEN}\n".encode("ascii"))
+        digest, context = parse_startup_record(legacy)
+        self.assertEqual(digest, capability_token_digest(TOKEN))
+        self.assertIsNone(context)
+        self.assertEqual(legacy, bytearray(len(legacy)))
+        epoch, nonce = "a" * 32, "b" * 32
+        valid = f"auth {TOKEN} workflow {epoch} {nonce}\n".encode("ascii")
+        record = bytearray(valid)
+        digest, context = parse_startup_record(record)
+        self.assertEqual(digest, capability_token_digest(TOKEN))
+        assert context is not None
+        self.assertEqual((context.resume_epoch, context.launch_nonce), (epoch, nonce))
+        self.assertEqual(record, bytearray(len(record)))
+        for invalid in (
+            valid.replace(b" workflow ", b" WORKFLOW "),
+            valid.replace(epoch.encode(), epoch.upper().encode()),
+            valid.replace(nonce.encode(), b"z" * 32),
+            valid.replace(b"\n", b"\r\n"),
+            valid + b"extra\n",
+            valid.replace(b" workflow ", b"  workflow "),
+            valid.replace(TOKEN.encode(), TOKEN.upper().encode()),
+        ):
+            record = bytearray(invalid)
+            with self.subTest(length=len(invalid)), self.assertRaises(ValueError):
+                parse_startup_record(record)
+            self.assertEqual(record, bytearray(len(record)))
 
 
 if __name__ == "__main__":
