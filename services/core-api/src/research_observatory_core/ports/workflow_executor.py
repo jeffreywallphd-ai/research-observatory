@@ -285,6 +285,12 @@ class WorkflowQueueRepository(Protocol):
 
     def get(self, job_id: str) -> WorkflowJobRecord: ...
 
+    def find_idempotency(self, idempotency_key: str) -> WorkflowJobRecord | None: ...
+
+    def active_jobs(
+        self, *, activity_type: str, after: str | None, limit: int = 100
+    ) -> tuple[WorkflowJobRecord, ...]: ...
+
     def authority(self, job_id: str) -> WorkflowJobAuthority: ...
 
     def claim_next(
@@ -294,6 +300,7 @@ class WorkflowQueueRepository(Protocol):
         concurrency_classes: tuple[ConcurrencyClass, ...],
         now: str,
         lease_duration_ms: int,
+        activity_types: tuple[str, ...] | None = None,
     ) -> WorkflowJobClaim | None: ...
 
     def start(self, claim: WorkflowJobClaim, *, now: str) -> WorkflowJobRecord: ...
@@ -376,7 +383,9 @@ class WorkflowQueueRepository(Protocol):
 
     def cancel(self, claim: WorkflowJobClaim, *, now: str, reason_code: str) -> WorkflowJobRecord: ...
 
-    def recover_expired(self, *, now: str, actor: WorkflowActor, limit: int = 100) -> int: ...
+    def recover_expired(
+        self, *, now: str, actor: WorkflowActor, limit: int = 100, activity_types: tuple[str, ...] | None = None
+    ) -> int: ...
 
 
 __all__ = [

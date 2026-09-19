@@ -536,8 +536,16 @@ class PrivacyPolicyRepository(Protocol):
     def append_event(self, event: PrivacyAuditEvent) -> None: ...
 
 
+@dataclass(frozen=True, slots=True)
+class IntentProjectIdentity:
+    manifest_project_id: str
+    domain_project_id: str
+
+
 @runtime_checkable
 class IntentRevisionRepository(Protocol):
+    def project_identity(self) -> IntentProjectIdentity | None: ...
+
     def read(self) -> tuple[IntentRevisionRecord, ...]: ...
 
     def read_workflow_authority(self) -> WorkflowAuthorityMutation: ...

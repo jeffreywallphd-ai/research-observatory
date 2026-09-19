@@ -140,10 +140,28 @@ covering parser warnings, mapping warnings and exclusions without source content
 names, hashes or paths. Content-bearing export remains a separately authorized
 action. Draft editing never creates canonical SourceRecords.
 
-These boundaries are not yet a complete production wizard. Native/service project
-and lock authorization, worker composition, duplicate-candidate projection and UI
-wiring remain CAP-04.S01.T02 work. Internal repository page limits are not the
-native bridge limit: the service must project/paginate responses below 1 MiB.
+The service composes real project authority, encrypted objects and a local worker
+pump. Its exact job configuration binds source/manifest, parser and limits,
+rights, privacy, native recovery epoch and an actual canonical Intent revision.
+The existing persisted manifest/domain project-ID bridge is checked explicitly.
+A draft Intent is contextual, not accepted or governing; preview does not invent
+an intent acceptance gate. Worker definitions deny network/model access and use
+unknown record progress. Every bounded activity operation revalidates the open
+project; ordinary close drains work before releasing the project session.
+
+The worker only claims and recovers its registered import activity. Shared
+admission preserves interactive capacity; no reservation means no claim. A parse
+receipt binds actual verified EOF, source-manifest and ordered IR identity, and
+only the exact succeeded attempt publishes its preview. Expired ordinary attempts
+replay immutable source chunks. Recovery-epoch mismatch receives policy
+cancellation before recovery/claim, not a fabricated assertion of an observed
+security lock. Native code must supply a durable trusted epoch before this service
+is composed into production; the renderer cannot choose one.
+
+These boundaries are not yet a complete production wizard. Native epoch handoff,
+application composition, authenticated API/bridge bounds, duplicate candidates and
+UI wiring remain CAP-04.S01.T02 work. Internal repository page limits are not the
+native bridge limit: API projections must stay below 1 MiB.
 
 ## Verification and technical basis
 

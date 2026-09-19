@@ -398,6 +398,7 @@ class LocalWorkerSupervisor:
         lease_duration_ms: int = 30_000,
         recovery_batch_size: int = 100,
         admission: LocalWorkerAdmission | None = None,
+        activity_types: tuple[str, ...] | None = None,
     ) -> None:
         if not isinstance(admission, LocalWorkerAdmission):
             raise ValueError("worker supervisor requires explicit resource admission")
@@ -414,6 +415,15 @@ class LocalWorkerSupervisor:
             or not isinstance(recovery_batch_size, int)
             or isinstance(recovery_batch_size, bool)
             or not 1 <= recovery_batch_size <= 1_000
+            or (
+                activity_types is not None
+                and (
+                    not activity_types
+                    or len(activity_types) > 64
+                    or len(set(activity_types)) != len(activity_types)
+                    or any(not _stable_code(item) or item not in handlers for item in activity_types)
+                )
+            )
         ):
             raise ValueError("worker supervisor configuration is invalid")
         self._repository = repository
@@ -425,6 +435,7 @@ class LocalWorkerSupervisor:
         self._lease_duration_ms = lease_duration_ms
         self._recovery_batch_size = recovery_batch_size
         self._admission = admission
+        self._activity_types = activity_types
 
     def _execute(self, claim: WorkflowJobClaim) -> WorkflowJobRecord:
         context = WorkflowActivityContext(self._repository, claim, self._now, self._lease_duration_ms)
@@ -473,6 +484,7 @@ class LocalWorkerSupervisor:
             now=self._now(),
             actor=self._recovery_actor,
             limit=self._recovery_batch_size,
+            activity_types=self._activity_types,
         )
         claims: list[tuple[WorkflowJobClaim, object]] = []
         controller = self._admission.controller
@@ -492,6 +504,7 @@ class LocalWorkerSupervisor:
                             concurrency_classes=(concurrency_class,),
                             now=self._now(),
                             lease_duration_ms=self._lease_duration_ms,
+                            activity_types=self._activity_types,
                         )
                     except BaseException:
                         controller.release(token)

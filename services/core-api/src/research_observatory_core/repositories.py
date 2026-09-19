@@ -50,6 +50,7 @@ from .ports.repositories import (
     IntentAuditEvent,
     IntentPolicyAuditEvent,
     IntentPolicyDecisionRecord,
+    IntentProjectIdentity,
     IntentRevisionRecord,
     IntentRevisionRepository,
     KnowledgeStatus,
@@ -413,6 +414,35 @@ class _SqliteIntentRevisionRepository(IntentRevisionRepository):
 
     def _open(self) -> CanonicalConnection:
         return open_canonical_database(self._database, expected_project_id=self._project_id)
+
+    def project_identity(self) -> IntentProjectIdentity | None:
+        """Read the retained ADR-0013 bridge, without equating v4/v7 identities."""
+        try:
+            connection = self._open()
+            try:
+                rows = connection.execute(
+                    "SELECT revision, value_type, text_value FROM settings WHERE project_id=? AND setting_key=?",
+                    (self._project_id, _INTENT_BRIDGE_KEY),
+                ).fetchall()
+            finally:
+                connection.close()
+            if not rows:
+                return None
+            if len(rows) != 1 or rows[0][0] != 0 or rows[0][1] != "text":
+                raise ValueError
+            value = json.loads(rows[0][2])
+            if (
+                not isinstance(value, dict)
+                or set(value) != {"authority", "domainProjectId", "manifestProjectId", "schemaVersion"}
+                or value["authority"] != "ADR-0013"
+                or value["schemaVersion"] != "1.0"
+                or value["manifestProjectId"] != self._project_id
+                or not is_uuid_v7(value["domainProjectId"])
+            ):
+                raise ValueError
+            return IntentProjectIdentity(self._project_id, value["domainProjectId"])
+        except OSError, sqlite3.Error, StorageProblem, TypeError, ValueError, IndexError:
+            raise _transaction_failure("research intent bridge is invalid") from None
 
     def read(self) -> tuple[IntentRevisionRecord, ...]:
         try:
@@ -5520,6 +5550,46 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         except (OSError, sqlite3.Error, StorageProblem, ValueError) as error:
             raise WorkflowQueueProblem("workflow authority read failed") from error
 
+    def find_idempotency(self, idempotency_key: str) -> WorkflowJobRecord | None:
+        if not isinstance(idempotency_key, str) or re.fullmatch(r"sha256:[0-9a-f]{64}", idempotency_key) is None:
+            raise WorkflowQueueProblem("workflow idempotency lookup is invalid")
+        with self._transaction() as connection:
+            row = connection.execute(
+                "SELECT job_id FROM workflow_queue_jobs WHERE project_id=? AND idempotency_key=?",
+                (self._project_id, idempotency_key),
+            ).fetchone()
+            return None if row is None else self._row(self._select_job(connection, self._project_id, str(row[0])))
+
+    def active_jobs(self, *, activity_type: str, after: str | None, limit: int = 100) -> tuple[WorkflowJobRecord, ...]:
+        if (
+            not _workflow_code(activity_type)
+            or len(activity_type) > 96
+            or (after is not None and not is_uuid_v7(after))
+            or type(limit) is not int
+            or not 1 <= limit <= 100
+        ):
+            raise WorkflowQueueProblem("workflow page authority is invalid")
+        with self._transaction() as connection:
+            rows = connection.execute(
+                "SELECT job_id FROM workflow_queue_jobs WHERE project_id=? AND activity_type=? "
+                "AND state NOT IN ('succeeded', 'failed', 'cancelled') AND job_id>? ORDER BY job_id LIMIT ?",
+                (self._project_id, activity_type, after or "", limit),
+            ).fetchall()
+            return tuple(self._row(self._select_job(connection, self._project_id, str(row[0]))) for row in rows)
+
+    @staticmethod
+    def _activity_filter(activity_types: tuple[str, ...] | None) -> tuple[str, tuple[str, ...]]:
+        if activity_types is None:
+            return "", ()
+        if (
+            not isinstance(activity_types, tuple)
+            or not 1 <= len(activity_types) <= 64
+            or any(not _workflow_code(item) or len(item) > 96 for item in activity_types)
+            or len(set(activity_types)) != len(activity_types)
+        ):
+            raise WorkflowQueueProblem("workflow activity scope is invalid")
+        return " AND activity_type IN (" + ",".join("?" for _ in activity_types) + ")", activity_types
+
     @staticmethod
     def _latest_checkpoint(connection: CanonicalConnection, job_id: str) -> WorkflowCheckpointRecord | None:
         row = connection.execute(
@@ -5561,6 +5631,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         concurrency_classes: tuple[ConcurrencyClass, ...],
         now: str,
         lease_duration_ms: int,
+        activity_types: tuple[str, ...] | None = None,
     ) -> WorkflowJobClaim | None:
         instant = _workflow_time(now)
         if (
@@ -5572,6 +5643,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             raise WorkflowQueueProblem("workflow claim authority is invalid")
         expires_at = _workflow_timestamp(instant + timedelta(milliseconds=lease_duration_ms))
         placeholders = ",".join("?" for _ in concurrency_classes)
+        activity_filter, activities = self._activity_filter(activity_types)
         with self._transaction() as connection:
             candidate = connection.execute(
                 f"""
@@ -5581,10 +5653,10 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                  FROM workflow_queue_jobs
                  WHERE project_id=? AND state IN ('runnable', 'retry-scheduled')
                    AND attempt_count<max_attempts AND available_at<=?
-                   AND concurrency_class IN ({placeholders})
+                   AND concurrency_class IN ({placeholders}) {activity_filter}
                  ORDER BY priority DESC, available_at, job_id LIMIT 1
                 """,
-                (self._project_id, now, *concurrency_classes),
+                (self._project_id, now, *concurrency_classes, *activities),
             ).fetchone()
             if candidate is None:
                 return None
@@ -7079,15 +7151,18 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
     def cancel(self, claim: WorkflowJobClaim, *, now: str, reason_code: str) -> WorkflowJobRecord:
         return self._finish_attempt(claim, now=now, error_code=reason_code, cancel=True)
 
-    def recover_expired(self, *, now: str, actor: WorkflowActor, limit: int = 100) -> int:
+    def recover_expired(
+        self, *, now: str, actor: WorkflowActor, limit: int = 100, activity_types: tuple[str, ...] | None = None
+    ) -> int:
         _workflow_time(now)
         _workflow_actor(actor)
         if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1_000:
             raise WorkflowQueueProblem("workflow recovery limit is invalid")
         recovered = 0
+        activity_filter, activities = self._activity_filter(activity_types)
         with self._transaction() as connection:
             rows = connection.execute(
-                """
+                f"""
                 SELECT job.job_id, job.workflow_run_id, job.state, job.current_attempt_id,
                        job.attempt_count, job.max_attempts, job.cancellation_requested_at,
                        attempt.state, job.interruption_kind, job.partial_artifact_disposition,
@@ -7095,9 +7170,9 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                   FROM workflow_queue_jobs AS job
                   JOIN workflow_job_attempts AS attempt ON attempt.attempt_id=job.current_attempt_id
                  WHERE job.project_id=? AND job.state IN ('claimed', 'running', 'cancelling')
-                   AND job.lease_expires_at<=? ORDER BY job.job_id LIMIT ?
+                   AND job.lease_expires_at<=? {activity_filter} ORDER BY job.job_id LIMIT ?
                 """,
-                (self._project_id, now, limit),
+                (self._project_id, now, *activities, limit),
             ).fetchall()
             for row in rows:
                 job_id = str(row[0])
