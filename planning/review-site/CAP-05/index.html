@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-05 · immutable evidence key</span><h1>CAP-document-inspection</h1><p>Document acquisition, parsing, source inspection, and page anchors</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>1</dd></div><div><dt>Plan hash</dt><dd><code>a81d5c329786</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>6</dd></div><div><dt>Decisions</dt><dd>3</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>f35bfbc0f3eb</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
@@ -59,14 +59,14 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-05-D01" data-recommendation="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-plan-hash="a81d5c329786b77d9cb440c7107f5a6f390f5abac7f2a1e60fb597927ab22605">
+<section class="decision-card" data-decision-id="CAP-05-D01" data-recommendation="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-plan-hash="f35bfbc0f3eb3c51630a1f20f0888642fbd727198f5d1100bb281b889b39f0ef">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D01</span><h3>Document preference</h3></div>
-    <span class="status status-reopened">Reopened</span>
+    <span class="status status-accepted">Accepted</span>
   </div>
-  <p class="decision-basis">ADR-0029 proposes modular Docling 2.126.0 in the ADR-0028 CPU worker; Windows/Python 3.14 wheel resolution succeeded, but exact offline assets/resource profile and viewer feasibility remain pre-approval work.</p>
+  <p class="decision-basis">ADR-0029 selects modular Docling 2.126.0 with pinned Heron/TableFormer assets, bounded CPU resources and authenticated sequential-range viewing. Wheel resolution and synthetic storage observations support selection, not runtime/security qualification; independent architecture disposition remains pending.</p>
   <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-05-D01-option-0">
-  <input id="CAP-05-D01-option-0" type="radio" name="CAP-05-D01" value="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-decision-option>
+  <input id="CAP-05-D01-option-0" type="radio" name="CAP-05-D01" value="Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port" data-decision-option checked>
   <span><strong>Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port</strong><span class="recommended">Recommended</span></span>
 </label><label class="decision-option" for="CAP-05-D01-option-1">
   <input id="CAP-05-D01-option-1" type="radio" name="CAP-05-D01" value="Native structured intake plus lightweight local PDF text fallback; defer full layout extraction" data-decision-option>
@@ -86,7 +86,7 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>ADR-0029</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-05-D02" data-recommendation="Immutable document revisions with structural, page-region, text-position and quote selectors" data-plan-hash="a81d5c329786b77d9cb440c7107f5a6f390f5abac7f2a1e60fb597927ab22605">
+<section class="decision-card" data-decision-id="CAP-05-D02" data-recommendation="Immutable document revisions with structural, page-region, text-position and quote selectors" data-plan-hash="f35bfbc0f3eb3c51630a1f20f0888642fbd727198f5d1100bb281b889b39f0ef">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D02</span><h3>Revision/anchor model</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -113,7 +113,7 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-05-D03" data-recommendation="Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing" data-plan-hash="a81d5c329786b77d9cb440c7107f5a6f390f5abac7f2a1e60fb597927ab22605">
+<section class="decision-card" data-decision-id="CAP-05-D03" data-recommendation="Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing" data-plan-hash="f35bfbc0f3eb3c51630a1f20f0888642fbd727198f5d1100bb281b889b39f0ef">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-05-D03</span><h3>Correction</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -179,9 +179,9 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
 </a></div>
 <details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **W2 planning in progress.** G1&#x27;s limited transition is approved; this capability
-&gt; contribution is not. Resolve local-parser feasibility and complete the initiation
-&gt; assessment, estimates and slice refresh before requesting the single W2 approval.
-&gt; Retained selected recommendations are planning choices, not execution authority.
+&gt; contribution is not. All three recommendations are selected for the proposed packet;
+&gt; independent architecture/reference/packet review and exact human approval remain.
+&gt; Decision selection is a planning choice, not ADR acceptance or execution authority.
 
 &lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Refresh W2 contributions&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Resolve binding decisions&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve complete W2 packet&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Execute W2 campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Qualify G2 exit&lt;/span&gt;&lt;/div&gt;
 
@@ -192,7 +192,7 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
 | Capability | `CAP-05` — Document acquisition, parsing, source inspection, and page anchors |
 | Objective | Convert lawful full text into immutable, inspectable document revisions while retaining page, layout, reference, table, and figure context. |
 | Execution mode | Contribution to the W2 campaign; slices complete in dependency order |
-| Decision status | `REOPENED` — pinned local-parser runtime/assets need feasibility and selection |
+| Decision status | `COMPLETE` planning selections; proposed ADRs still require review/approval |
 | Slice plans | `CAP-05.S01`, `CAP-05.S02`, `CAP-05.S03`, `CAP-05.S04`, `CAP-05.S05`, `CAP-05.S06` |
 | Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.6`; affected slice/page mappings require refresh; preserve inherited catalog bindings |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
@@ -202,16 +202,19 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
 Initial assessment: 2026-09-13, W2. See the shared
 [W2 initiation assessment](../W2-initiation.md) for baseline evidence, primary
 sources, complete contribution inventory, user journey and retained risks.
-Structured estimates remain incomplete; `initiation_assessment: null` deliberately
-prevents approval-ready claims.
+Structured estimates above cover all eighteen atomic tasks; the shared
+[estimate basis](../W2-initiation.md#estimate-basis-and-shared-accounting) is not
+an elapsed-time promise. Independent architecture and complete-packet review
+remain prerequisites to approval.
 
 - **Baseline / fit:** reuse immutable revisions, protected object streams,
   durable jobs and selective recalculation. Traceable source inspection remains
   central to the Vision. A parser&#x27;s output and quality score are not evidence
   acceptance; the researcher retains correction and interpretation authority.
-- **Adaptation:** CAP-05-D01 remains open until the local Docling package/runtime,
-  offline assets and resource/isolation design are supported. Resolve secure
-  viewer range access in CAP-05.S04.T01 without decrypted paths. These are new
+- **Adaptation:** CAP-05-D01 awaits independent disposition of the selected local
+  Docling assets/resource profile and bounded protected viewer design. The
+  [feasibility observations](../W2-feasibility.md) justify starting with existing
+  encrypted storage, not a new cache. These are new
   integration needs, not proof that W1 supplies a hostile-content sandbox.
 - **Journey:** corpus/work-version → attachment or permitted copy → parse status
   → exact source anchor → correction/impact preview → return to the originating
@@ -219,14 +222,15 @@ prevents approval-ready claims.
   cannot silently replace an accepted revision.
 - **Support / debt:** use the single shared runner-progress proposal; no second
   allocation or new UX framework. No foundational rewrite is selected. Before
-  lock, complete eighteen atomic estimates, inherited-risk dispositions and the
-  required document/anchor/viewer ADR and reference mappings.
+  lock, resolve inherited-risk dispositions and the required document/anchor/viewer
+  ADR and reference mappings. Its 294 engineering-hours estimate includes viewer
+  cancellation integration and later qualification, not just screen construction.
 
 All six slice procedures now use whole-Wave authority. Three reviewed dependency
 edges make parser isolation, viewer navigation and reference-rematching handoffs
 explicit. ADR-0029 records the bounded package-resolution result separately from
-unproven runtime/security behavior; it preserves the viewer and offline-asset
-planning gaps rather than claiming the complete packet is ready.
+unproven runtime/security behavior; it now selects concrete viewer and offline-asset contracts, while retaining real
+implementation qualification and independent packet review as unmet prerequisites.
 
 ## 1. Capability outcome and production-ready exit
 
@@ -244,7 +248,7 @@ Completion also requires all slices and tasks independently approved, capability
 
 | Slice | Responsibility | Production outcome | Upstream dependencies |
 |---|---|---|---|
-| `CAP-05.S01` | Rights-aware document acquisition | Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use. | `CAP-04.S04.T02`, `CAP-02.S03.T03` |
+| `CAP-05.S01` | Rights-aware document acquisition | Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use. | `CAP-04.S04.T02`, `CAP-02.S03.T03`, `CAP-04.S05.T02` |
 | `CAP-05.S02` | Structured and PDF parsing pipeline | A replaceable local parser pipeline produces normalized document structure with retained originals and quality signals. | `CAP-05.S01.T03`, `CAP-03.S04.T02` |
 | `CAP-05.S03` | Immutable document revisions and source anchors | Every extracted passage and downstream assertion points to a specific immutable revision and stable location. | `CAP-05.S02.T03`, `CAP-02.S02.T03` |
 | `CAP-05.S04` | Source viewer and evidence inspection experience | Researchers can read original pages and structured text side by side, navigate anchors, and inspect provenance without leaving the workflow. | `CAP-05.S03.T03`, `CAP-01.S02.T03` |
@@ -266,14 +270,14 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 | ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
 |---|---|---|---|---|---|
-| `CAP-05-D01` | **Document preference — reopened** | Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port | Native structured intake plus lightweight local PDF text fallback; defer full layout extraction | Retain the planned Docling outcome; prove Windows packaging, offline assets and limits before selection. A reduced-layout alternative changes proposed scope. | [Current parser assessment](../W2-initiation.md#current-primary-source-refresh) |
+| `CAP-05-D01` | **Document preference — selected** | Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port | Native structured intake plus lightweight local PDF text fallback; defer full layout extraction | Retain the planned Docling outcome; prove Windows packaging, offline assets and limits before selection. A reduced-layout alternative changes proposed scope. | [Current parser assessment](../W2-initiation.md#current-primary-source-refresh) |
 | `CAP-05-D02` | **Revision/anchor model** | Immutable document revisions with structural, page-region, text-position and quote selectors | Mutable current text with page number only | Downstream evidence requires stable, inspectable source context across correction/reparse. | [Web Annotation Data Model](https://www.w3.org/TR/annotation-model/) |
 | `CAP-05-D03` | **Correction** | Researcher corrections are overlays/new revisions that trigger scoped staleness and reprocessing | Edit parsed text in place | Preserves source/parser history and prevents silent mutation of accepted evidence. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
 
 ### Review and approval
 
-All seven decisions across CAP-04/CAP-05 bind W2. Resolve the reopened parser
-decision and keep retained selections reviewable. Approval covers the complete
+All seven decisions across CAP-04/CAP-05 bind W2. Keep selected recommendations
+and their alternatives reviewable. Proposed ADRs are not yet accepted. Approval covers the complete
 Wave and every contributing slice at one immutable commit, not this capability
 in isolation. The G1 decision is not W2 packet approval.
 
@@ -349,8 +353,8 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 
 ## 12. Approval record
 
-The contribution remains **proposed**, with a W2-binding decision reopened.
-Complete its assessment, estimates, selections and required ADR/reference work;
+The contribution remains **proposed**, with all W2 planning selections recorded.
+Complete independent ADR/reference and whole-packet review;
 then validate and independently review the entire W2 packet before requesting
 the owner&#x27;s one immutable pre-Wave approval. No capability-only approval or
 blanket inheritance of the G1 exception is authorized.</pre></article></details>

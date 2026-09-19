@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile documents</li><li>python tools/verify.py --profile e2e-local</li></ul>
   <p data-task-claim="CAP-05.S02.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-05.S02.T03" data-task-plan-sha256="484ff245370e37f97205c87d94a19477518d4650e83828d35ffe7363c9e8a8bd"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S02.T03` - Integrate the local Docling-based PDF parser with fallback
+<section class="task-summary" data-task-plan="CAP-05.S02.T03" data-task-plan-sha256="7cb29b972d96eb9399de904520d7f9b43d7f08fb601f00d71a8aa3206bb8f4e8"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-05.S02.T03` - Integrate the local Docling-based PDF parser with fallback
 **Objective:** Packaged Docling-based local PDF parser adapter, resource limits, page rendering, OCR-disabled-by-default policy, fallback text extraction, and quality report.
 
 **Dependencies:** `CAP-05.S02.T02`, `CAP-04.S05.T02`
@@ -114,6 +114,7 @@ python tools/verify.py --profile e2e-local
 ```
 
 ## 11. Performance and resource budgets
+- Proposed ADR-0029 binds the selected CPU tier, asset inventory, input/page/pixel/IR and process limits, cancellation deadline and representative cold/warm targets. [Feasibility observations](../../W2-feasibility.md) are not runtime qualification.
 - Benchmark representative scholarly PDFs by page count, layout complexity, table/figure density, memory, CPU, and latency on minimum Windows hardware.
 - Lazy page rendering and bounded parallelism avoid loading all pages.
 - Package only required Docling assets/models and record first-run versus warm performance.

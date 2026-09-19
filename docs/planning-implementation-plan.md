@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: df209774cf79bcb5c672bfdaa0d00ff6bda5e7fd0b8c0770cb43c1c2d0e546e1
+source_sha256: 98bb105003d88aadadc8a019e9374b3f8eb029f5a68c4788d22755965acc8c2b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -7736,12 +7736,14 @@ Original tasks and approvals remain unchanged.
 **Deliverables:**
 
 - Streaming parsers that preserve original fields, import source, line/record location, and warnings.
+- Separately reviewed W2-RUNNER-PROGRESS support allocation: at most two engineering-hours for live verifier output with complete diagnostics, or an explicit bounded deferral with no partial runner changes.
 
 **Acceptance criteria:**
 
 - Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields remain available for audit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- The optional two-hour W2-RUNNER-PROGRESS allocation either delivers independently reviewed live output preserving command order, exit/fail-stop and terminal-report semantics, or records its deferral without partial runner changes; parser delivery is not held for optional harness expansion.
 
 **Verification:**
 
@@ -8317,7 +8319,7 @@ Original tasks and approvals remain unchanged.
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
-**Dependencies:** `CAP-04.S04.T02`, `CAP-02.S03.T03`
+**Dependencies:** `CAP-04.S04.T02`, `CAP-02.S03.T03`, `CAP-04.S05.T02`
 
 **Owner / review:** - / - (`-`)
 

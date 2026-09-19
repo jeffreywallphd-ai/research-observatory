@@ -40,10 +40,10 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-05.S02 · ordered slice 2 of 6</span><h1>SLICE-structured-and-pdf-parsing-pipeline</h1><p>Structured and PDF parsing pipeline</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>4e6fcda20478</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>dd17bf9a3741</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
-  <div><span class="eyebrow">Capability decision gate</span><h2>Resolve 1 capability decision before implementation</h2><p>Capability-wide decisions remain durable, but execution starts only after the complete active Wave packet is approved at one immutable commit.</p></div>
+  <div><span class="eyebrow">Capability decision gate</span><h2>Recommendations resolved; complete pre-Wave approval controls execution</h2><p>Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated.</p></div>
   <a class="button button-primary" href="index.html#decision-register">Review capability decisions</a>
 </section>
 <section class="decision-summary"><div class="section-heading"><span class="eyebrow">Slice decisions</span><h2>Recommended implementation selections</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>## 4. Selected implementation decisions
@@ -500,6 +500,7 @@ python tools/verify.py --profile e2e-local
 ```
 
 ## 11. Performance and resource budgets
+- Proposed ADR-0029 binds the selected CPU tier, asset inventory, input/page/pixel/IR and process limits, cancellation deadline and representative cold/warm targets. [Feasibility observations](../../W2-feasibility.md) are not runtime qualification.
 - Benchmark representative scholarly PDFs by page count, layout complexity, table/figure density, memory, CPU, and latency on minimum Windows hardware.
 - Lazy page rendering and bounded parallelism avoid loading all pages.
 - Package only required Docling assets/models and record first-run versus warm performance.

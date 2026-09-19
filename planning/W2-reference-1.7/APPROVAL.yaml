@@ -1,0 +1,18 @@
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.7
+version: '1.7'
+status: proposed
+approval_kind: human
+approved_by: null
+approved_at: null
+approval_basis: null
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.6
+scope:
+  normative:
+  - Inherited1.6 contracts unchanged except the explicit Source Manager connector-review
+    addition
+  - Local publisher trust distinct from project permission; cancellation, renewed
+    consent, disable/quarantine and context return
+  illustrative:
+  - Mock package, publisher, destination, version and inactive actions
+implementation_rule: Inert proposal; exact human reference approval and complete W2
+  packet approval precede product implementation.

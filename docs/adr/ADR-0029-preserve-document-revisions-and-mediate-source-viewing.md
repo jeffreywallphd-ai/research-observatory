@@ -71,7 +71,7 @@ Recommend candidate 1. This **Proposed** record is not execution authority.
 Use secure native JATS/TEI/XML/HTML parsing where available; retain unsupported
 blocks and format warnings. Disable external entities, network resolution, active
 HTML, macros and unbounded archive expansion. For PDF use
-`docling-slim[convert-core,format-pdf,models-local]==2.126.0`, initially constrained
+`docling-slim[convert-core,format-pdf,format-docx,models-local]==2.126.0`, initially constrained
 to `docling-parse==7.16.0` and `docling-ibm-models==4.0.2`, in the separate
 ADR-0028 CPU worker. This is the modular distribution of Docling, not a replacement
 parser or a new dependency in Core. Pin the complete qualified worker lock.
@@ -81,8 +81,25 @@ license and notice inventory. Runtime uses a read-only artifacts directory,
 offline hub settings and denied network; missing assets return an actionable
 local error, not an implicit download. OCR, VLM, remote serving and document-provided
 plugins remain disabled by default. A scan with no usable text remains visible
-as incomplete, not an invented extraction. Final asset identities and supported
-resource profile must be specified before this decision is approval-ready.
+as incomplete, not an invented extraction. Select Heron layout and TableFormer
+accurate with cell matching; disable picture/code/formula enrichment. The exact
+revision/file/digest/license inventory is in
+[W2 feasibility](../../planning/W2-feasibility.md#cap-05s02t03--offline-asset-selection).
+Those publisher-reported digests must be checked against downloaded build inputs;
+they are not a claim of locally verified weights or distribution qualification.
+
+The planned CPU parsing tier is Windows x64 with 16 GiB RAM and 4 logical cores;
+8 GiB remains the metadata/review tier, not an unqualified parsing promise.
+Admit one parser at a time, at most 4 CPU threads, 4 GiB private committed memory,
+128 MiB input, 500 pages, 40 million decoded pixels per page and 64 MiB serialized
+IR (binary derivatives separately bounded). Limit wall time to 15 minutes; reject
+oversize input safely and retain usable metadata/original without partial canonical
+structure. Cancellation requests cooperative stop, then terminates the owned job
+within 5 seconds if it cannot stop; a later retry creates a new attempt.
+Benchmark 10-page born-digital two-column/table fixtures: planned p95 <= 60 seconds
+warm and <= 90 seconds cold, with actual hardware, sample count and resource peaks
+reported. These are qualification targets, not measured performance. The limits
+must be enforced by job admission/containment, not merely parser flags.
 
 The neutral IR records original object digest, parser/config/asset versions,
 ordered blocks/sections, raw text, references, tables/figures, source page dimensions
@@ -116,26 +133,111 @@ chunks, returns the requested bytes and closes promptly. It preserves full-sourc
 authentication and encrypted-at-rest format; it does **not** provide O(1) seek.
 Disable automatic whole-file prefetch and streaming in the PDF.js range integration;
 virtualize page/text rendering, cancel obsolete requests and release buffers at
-project close/lock. No long-lived database read lease, plaintext disk cache or
-whole-file renderer buffer is selected.
+project close/lock. No long-lived database read lease, plaintext disk cache,
+eager whole-file fetch or duplicate source-sized application buffer is selected.
+Range fetching does not eliminate PDF.js's worker source-length allocation:
+the [v5.4.149 implementation](https://github.com/mozilla/pdf.js/blob/v5.4.149/src/core/chunked_stream.js#L19)
+allocates it independently of automatic fetching. Permit that allocation only
+within the source cap and aggregate budget below. This inspected version is
+evidence of allocation behavior, not the selected shipping dependency pin;
+qualify the exact pinned build and terminate its worker on project close/lock.
 
-**Unresolved before packet approval:** establish whether this repeated verification
-fits the existing representative first-page/resource target and concurrent metadata
-writes. The proof must set maximum source/range sizes and per-document concurrency,
-include full-file authentication time, and verify prompt cancellation/lease release.
-Small response size alone does not bound source work. If it fails, explicitly
-select a bounded cache of encrypted derivative chunks using the existing object
-envelope, with parent-revision/rights binding and recoverable eviction. Release the
-source read transaction before publishing derivative chunks to avoid self-contention;
-review its lifecycle as a separate material boundary. Do not
-invent a new cryptosystem or silently relax the target. This is a visible planning
-decision, not permission to implement both options or add a control framework.
+Select that adapter first, informed by the bounded real-storage
+[probe](../../planning/W2-feasibility.md#cap-05s04t01--protected-range-cost), not an
+encrypted derivative cache. Admit sources <= 128 MiB and ranges <= 1 MiB, with one
+active source read per project and a bounded queue of 8 requests; coalesce duplicate
+ranges and cancel obsolete work before admission. Copy only the requested bounded
+range, close the stream/transaction, then deliver to the renderer. Interleave
+metadata writes between range operations; a viewer cannot monopolize the writer.
+Larger or over-budget sources show an actionable limit, retaining their metadata
+and original; never add an unaccounted main-thread source copy.
+
+The current verified-open implementation has no cancellation checkpoint during
+full authentication. CAP-05.S04.T01 includes a backward-compatible cancellation
+hook in that read loop and prefix discard, checked between bounded chunks with
+rollback/close on cancellation. No bytes may be exposed before authentication
+completes. Do not pretend dropping a renderer promise cancels Core work, forcibly
+terminate a database thread, or release an in-use lease. Lock/close cancels queued
+work, denies delivery immediately and drains owned reads; qualify <= 1 second
+cancellation/lease release at the supported maximum with concurrent writes.
+
+Retain the representative open-to-first-page target <= 1.5 seconds after Core
+readiness, using a 10 MiB / 50-page born-digital PDF on the declared Windows tier.
+Measure cold/warm p95 over at least 20 opens, and a 128 MiB / 500-page stress fixture,
+including full authentication, renderer/gateway and memory. Enforce bounded
+page/thumbnail rendering and a 256 MiB aggregate viewer-owned buffer budget,
+including the worker source allocation, in-flight range/transfer copies, decoded
+page surfaces and thumbnails; no eager per-page rendering. Reject or release
+owned work safely before exceeding admission limits. Measure the complete viewer
+and worker resource footprint, not only application-side arrays. The synthetic
+storage observation does not pass these checks.
+If the adapter cannot meet them, stop only that design boundary and propose an
+explicit successor (for example encrypted derivative chunks with recoverable
+eviction), not an unapproved cache/cryptosystem or relaxed target.
 
 Disable PDF scripting/XFA/actions/attachments and remote asset fetches. All copy,
 print, external-open and export commands go through action-specific rights checks
 and explicit destination selection where required. Keep copied text out of audit
 logs; permitted quotations carry source identifiers. Application controls do not
 prevent a researcher taking a screenshot or using an already authorized export.
+
+### Acquisition, normalization and quality decisions
+
+- Core receives local selections as validated streams, never renderer-selected
+  unrestricted paths. Encrypted staging is quarantined until bounded format checks
+  complete in the qualified ADR-0028 worker. Use an explicit signature/MIME allowlist
+  plus format structural checks (PDF header/trailer, ZIP inventory for DOCX, secure
+  XML root, bounded text decoding), not extension or remote Content-Type alone.
+  Prefer these bounded checks over a new general-purpose libmagic runtime. Reject
+  executables, encrypted/password-protected documents and unsafe archives with a
+  safe error; no password retention or macro execution. Rejected content has no
+  canonical association; clean only the owned staging object through existing GC.
+- Acquisition uses the same DNS/redirect/TLS broker boundary, no browser cookies,
+  paywall bypass or credential forwarding. Apply the 128 MiB source cap to both wire
+  and expanded content, at most 5 redirects and a 120-second transfer deadline.
+  Select a permitted location explicitly; preserve source, license, content digest
+  and human-confirmed uncertain associations. Resume with validated ETag/range
+  identity or discard the owned partial and restart; never concatenate changed
+  content. A failed acquisition leaves its metadata record usable.
+- IR normalization `ro-text-nfc-1` applies Unicode NFC and CRLF/CR → LF only;
+  preserve whitespace and raw text with a source-offset mapping. Half-open offsets
+  count Unicode code points, not UTF-16 units or bytes; renderer conversion is
+  explicit. No implicit dehyphenation, case-folding or ligature rewrite in anchor
+  identity. Structured selection is native JATS/TEI/XML/HTML first, PDF Docling next;
+  DOCX uses the isolated Docling conversion path, TXT bounded decoding. Unsupported
+  elements retain type, source location and raw text rather than being dropped.
+- Same-revision structural/text/page selectors resolve deterministically. A later
+  revision offers an exact-quote/context candidate only if unique; fuzzy matching
+  is advisory and cannot move accepted evidence. Missing/ambiguous context is a
+  visible repair state. A correction is a typed patch over an exact base revision
+  with expected old values, actor and rationale; conflicts refuse an in-place edit.
+  Acceptance atomically appends the new revision, accepted-head decision and scoped
+  dependency event. Select batch preview with independent explicit per-document
+  acceptance, rather than a batch-wide head-switch transaction. Each acceptance
+  revalidates its exact base, current rights and researcher authority and commits
+  revision/head/event atomically. Interruption preserves completed acceptances;
+  failed or unaccepted items retain their old heads. Resume revalidates remaining
+  items and surfaces changed-base conflicts, never silently retries acceptance.
+  Show per-document outcomes; no implicit or automatic bulk acceptance. Verify
+  cancellation between acceptances, failed acceptance rollback, concurrent-base
+  conflict and restart without duplicate dependency events. This avoids a large
+  batch transaction while retaining deliberate, inspectable partial completion.
+- Reference entries retain ordered raw strings and identifier assertions; exact
+  unique IDs may link under ADR-0027, all other matches remain review candidates.
+  Citation contexts bind the marker, target candidate set and exact source range;
+  unresolved styles are explicit. Tables preserve row/column indices, spans, raw
+  cell text and anchors; figures retain caption/page-region and protected preview.
+  No OCR/picture interpretation is selected in W2; scans remain incomplete and
+  inspectable. A visual preview or extracted numeric cell is never verified evidence.
+- Quality reports separately expose missing text/pages, replacement characters,
+  reading-order warnings, anchor coverage, unresolved references and table-cell
+  confidence/geometry warnings. Missing text on a page, broken/ambiguous anchors,
+  absent expected blocks or parser failure route to review; unavailable model
+  confidence remains unknown. Numeric extraction confidence < 0.8 is a triage signal
+  only, not a cross-model probability or acceptance threshold. Reference/reading-
+  order/table correctness uses human-labeled fixture expectations; no aggregate
+  score automatically advances scholarly state. Human inspection/correction remains
+  available regardless of the score. Freeze fixture labels before tuning thresholds.
 
 ## Consequences
 
@@ -148,8 +250,9 @@ uncommitted outputs; source and metadata remain usable.
 
 Local CPU dependencies/assets add installation size and cold-start cost. Windows
 wheel resolution is not runtime, LPAC, packaging, licensing or performance proof.
-Both remaining planning gaps above must be closed before W2 approval; production
-qualification remains a later implementation obligation, not waived by G1.
+The bounded probes support the selected planning direction, not implementation
+qualification. Independent architecture/packet review and human acceptance are
+still required; production qualification is not waived by G1.
 
 ## Verification
 

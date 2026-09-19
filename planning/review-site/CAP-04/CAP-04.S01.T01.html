@@ -42,8 +42,8 @@
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S01.html">SLICE-reference-library-and-file-imports</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
-  <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Streaming parsers that preserve original fields, import source, line/record location, and warnings.</li></ul>
-  <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields remain available for audit.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li></ul>
+  <h3>Expected deliverables</h3><ul class="gate-criteria"><li>Streaming parsers that preserve original fields, import source, line/record location, and warnings.</li><li>Separately reviewed W2-RUNNER-PROGRESS support allocation: at most two engineering-hours for live verifier output with complete diagnostics, or an explicit bounded deferral with no partial runner changes.</li></ul>
+  <h3>Acceptance criteria</h3><ul class="gate-criteria"><li>Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields remain available for audit.</li><li>Automated tests cover the expected path and at least one material failure or boundary condition.</li><li>Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.</li><li>The optional two-hour W2-RUNNER-PROGRESS allocation either delivers independently reviewed live output preserving command order, exit/fail-stop and terminal-report semantics, or records its deferral without partial runner changes; parser delivery is not held for optional harness expansion.</li></ul>
   <h3>Dependencies</h3><ul class="gate-criteria" data-task-dependencies="CAP-03.S03.T02|CAP-02.S02.T03"><li data-task-dependency="CAP-03.S03.T02"><a href="../CAP-03/CAP-03.S03.T02.html"><code>CAP-03.S03.T02</code></a></li><li data-task-dependency="CAP-02.S02.T03"><a href="../CAP-02/CAP-02.S02.T03.html"><code>CAP-02.S02.T03</code></a></li></ul>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
@@ -51,7 +51,7 @@
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li></ul>
   <p data-task-claim="CAP-04.S01.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
 </section>
-<section class="task-summary" data-task-plan="CAP-04.S01.T01" data-task-plan-sha256="f6fab8e60a2fd8a364321d2356cedae90564f6785381d229956b1cf196cd304e"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-04.S01.T01` - Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers
+<section class="task-summary" data-task-plan="CAP-04.S01.T01" data-task-plan-sha256="55ce09ebe09b87858c734c86c4862c6108d23edb40cb341f4e5732758349b931"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-04.S01.T01` - Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers
 **Objective:** Streaming parsers that preserve original fields, import source, line/record location, and warnings.
 
 **Dependencies:** `CAP-03.S03.T02`, `CAP-02.S02.T03`
@@ -60,6 +60,15 @@
 
 **Expected deliverables**
 - Streaming parsers that preserve original fields, import source, line/record location, and warnings.
+- Separately reviewed W2-RUNNER-PROGRESS support allocation: at most two engineering-hours for live verifier output with complete diagnostics, or an explicit bounded deferral with no partial runner changes.
+
+This is an explicitly mixed task: 16 engineering-hours product work and a
+two-hour support subset, not a second task or budget. Use the existing bounded
+maintenance route for `tools/verify.py` and its focused tests; expanded independent
+control review applies to that delta. Preserve command order/arguments, both output
+streams, skips, exit codes, fail-stop and truthful interrupted/terminal reporting.
+Do not run historical W1 suites merely to exercise the progress display. At the
+ceiling record deferral and keep the prior runner; do not expand the harness.
 
 **Ordered implementation sequence**
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-04.S01.T01`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
@@ -71,6 +80,7 @@
 - Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields remain available for audit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- The optional two-hour W2-RUNNER-PROGRESS allocation either delivers independently reviewed live output preserving command order, exit/fail-stop and terminal-report semantics, or records its deferral without partial runner changes; parser delivery is not held for optional harness expansion.
 
 **Required criterion-linked evidence**
 - Reviewed commit SHA, changed-file inventory, and scope-deviation explanation if any.

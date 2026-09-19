@@ -174,6 +174,12 @@ The following durable types are recommended. Final field names belong in version
 ## 6. User experience and approved reference
 Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
+The [inert W2 reference proposal](../../W2-reference-proposal.md) supplies the
+missing inline Source Manager publisher-trust/project-permission contract.
+Its candidate1.7 identity is not active authority. Obtain exact reference approval
+with the complete W2 packet before implementing the new interaction; no marketplace
+or Application Settings page is selected.
+
 - Source Manager shows publisher, signature/trust, requested permissions, destinations, credentials, status, and conformance result.
 - Installing/enabling a plugin requires a permission review; permission increases require reapproval.
 - Failures identify plugin versus platform responsibility and offer disable/quarantine.

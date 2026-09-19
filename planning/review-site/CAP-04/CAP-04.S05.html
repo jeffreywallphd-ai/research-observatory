@@ -40,10 +40,10 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-04.S05 · ordered slice 5 of 5</span><h1>SLICE-connector-sdk-and-controlled-extensibility</h1><p>Connector SDK and controlled extensibility</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P1</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>d63a20f30088</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P1</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>f4c177418317</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
-  <div><span class="eyebrow">Capability decision gate</span><h2>Resolve 2 capability decisions before implementation</h2><p>Capability-wide decisions remain durable, but execution starts only after the complete active Wave packet is approved at one immutable commit.</p></div>
+  <div><span class="eyebrow">Capability decision gate</span><h2>Recommendations resolved; complete pre-Wave approval controls execution</h2><p>Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated.</p></div>
   <a class="button button-primary" href="index.html#decision-register">Review capability decisions</a>
 </section>
 <section class="decision-summary"><div class="section-heading"><span class="eyebrow">Slice decisions</span><h2>Recommended implementation selections</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>## 4. Selected implementation decisions
@@ -340,6 +340,12 @@ The following durable types are recommended. Final field names belong in version
 
 ## 6. User experience and approved reference
 Current visual/page authority is 1.6. Preserve ADR-0026&#x27;s exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+
+The [inert W2 reference proposal](../../W2-reference-proposal.md) supplies the
+missing inline Source Manager publisher-trust/project-permission contract.
+Its candidate1.7 identity is not active authority. Obtain exact reference approval
+with the complete W2 packet before implementing the new interaction; no marketplace
+or Application Settings page is selected.
 
 - Source Manager shows publisher, signature/trust, requested permissions, destinations, credentials, status, and conformance result.
 - Installing/enabling a plugin requires a permission review; permission increases require reapproval.

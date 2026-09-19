@@ -343,6 +343,7 @@ python tools/verify.py --profile security-local
 ```
 
 ## 11. Performance and resource budgets
+- Proposed ADR-0029 selects bounded verified sequential ranges, maximum sizes/concurrency, cooperative read-loop cancellation, prompt lease release and representative/stress fixtures. Its [storage probe](../../W2-feasibility.md) is not renderer, minimum-hardware or cancellation proof; CAP-05.S04.T01 includes that integration and qualification.
 - Render visible pages only, cache bounded thumbnails/pages, and cancel obsolete renders during rapid navigation.
 - Open-to-first-page target <=1.5 seconds for a representative local PDF after Core readiness.
 - Large documents remain usable without loading all pages or text into renderer memory.

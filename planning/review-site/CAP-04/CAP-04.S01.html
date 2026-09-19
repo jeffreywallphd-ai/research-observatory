@@ -40,10 +40,10 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-04.S01 · ordered slice 1 of 5</span><h1>SLICE-reference-library-and-file-imports</h1><p>Reference-library and file imports</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>30aa55a0f783</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>eb67891f9d21</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
-  <div><span class="eyebrow">Capability decision gate</span><h2>Resolve 2 capability decisions before implementation</h2><p>Capability-wide decisions remain durable, but execution starts only after the complete active Wave packet is approved at one immutable commit.</p></div>
+  <div><span class="eyebrow">Capability decision gate</span><h2>Recommendations resolved; complete pre-Wave approval controls execution</h2><p>Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated.</p></div>
   <a class="button button-primary" href="index.html#decision-register">Review capability decisions</a>
 </section>
 <section class="decision-summary"><div class="section-heading"><span class="eyebrow">Slice decisions</span><h2>Recommended implementation selections</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>## 4. Selected implementation decisions
@@ -93,6 +93,15 @@ External products and infrastructure remain behind ports. Domain identities, pro
 
 **Expected deliverables**
 - Streaming parsers that preserve original fields, import source, line/record location, and warnings.
+- Separately reviewed W2-RUNNER-PROGRESS support allocation: at most two engineering-hours for live verifier output with complete diagnostics, or an explicit bounded deferral with no partial runner changes.
+
+This is an explicitly mixed task: 16 engineering-hours product work and a
+two-hour support subset, not a second task or budget. Use the existing bounded
+maintenance route for `tools/verify.py` and its focused tests; expanded independent
+control review applies to that delta. Preserve command order/arguments, both output
+streams, skips, exit codes, fail-stop and truthful interrupted/terminal reporting.
+Do not run historical W1 suites merely to exercise the progress display. At the
+ceiling record deferral and keep the prior runner; do not expand the harness.
 
 **Ordered implementation sequence**
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-04.S01.T01`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
@@ -104,6 +113,7 @@ External products and infrastructure remain behind ports. Domain identities, pro
 - Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields remain available for audit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- The optional two-hour W2-RUNNER-PROGRESS allocation either delivers independently reviewed live output preserving command order, exit/fail-stop and terminal-report semantics, or records its deferral without partial runner changes; parser delivery is not held for optional harness expansion.
 
 **Required criterion-linked evidence**
 - Reviewed commit SHA, changed-file inventory, and scope-deviation explanation if any.
@@ -383,6 +393,15 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 
 **Expected deliverables**
 - Streaming parsers that preserve original fields, import source, line/record location, and warnings.
+- Separately reviewed W2-RUNNER-PROGRESS support allocation: at most two engineering-hours for live verifier output with complete diagnostics, or an explicit bounded deferral with no partial runner changes.
+
+This is an explicitly mixed task: 16 engineering-hours product work and a
+two-hour support subset, not a second task or budget. Use the existing bounded
+maintenance route for `tools/verify.py` and its focused tests; expanded independent
+control review applies to that delta. Preserve command order/arguments, both output
+streams, skips, exit codes, fail-stop and truthful interrupted/terminal reporting.
+Do not run historical W1 suites merely to exercise the progress display. At the
+ceiling record deferral and keep the prior runner; do not expand the harness.
 
 **Ordered implementation sequence**
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-04.S01.T01`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
@@ -394,6 +413,7 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 - Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields remain available for audit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- The optional two-hour W2-RUNNER-PROGRESS allocation either delivers independently reviewed live output preserving command order, exit/fail-stop and terminal-report semantics, or records its deferral without partial runner changes; parser delivery is not held for optional harness expansion.
 
 **Required criterion-linked evidence**
 - Reviewed commit SHA, changed-file inventory, and scope-deviation explanation if any.

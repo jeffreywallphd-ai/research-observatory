@@ -335,6 +335,7 @@ python tools/verify.py --profile e2e-local
 ```
 
 ## 11. Performance and resource budgets
+- Proposed ADR-0029 binds the selected CPU tier, asset inventory, input/page/pixel/IR and process limits, cancellation deadline and representative cold/warm targets. [Feasibility observations](../../W2-feasibility.md) are not runtime qualification.
 - Benchmark representative scholarly PDFs by page count, layout complexity, table/figure density, memory, CPU, and latency on minimum Windows hardware.
 - Lazy page rendering and bounded parallelism avoid loading all pages.
 - Package only required Docling assets/models and record first-run versus warm performance.

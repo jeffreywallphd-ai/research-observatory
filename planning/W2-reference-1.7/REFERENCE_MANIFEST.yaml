@@ -1,0 +1,126 @@
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.7
+version: '1.7'
+status: proposed
+approval_file: APPROVAL.yaml
+canonical_token_file: assets/tokens.css
+style_guides:
+- STYLE_GUIDE.md
+- style-guide.html
+workflow_catalog:
+- WORKFLOW_CATALOG.md
+- WORKFLOW_CATALOG.json
+page_contracts: CAPABILITY_COVERAGE.json
+page_inventory: PAGE_INVENTORY.md
+site_manifest: SITE_MANIFEST.json
+generator: scripts/build_mockups.py
+validator: scripts/verify_site.py
+governed_files:
+- APPROVAL.yaml
+- CAPABILITY_COVERAGE.json
+- CAPABILITY_COVERAGE.md
+- PAGE_INVENTORY.md
+- PAGE_INVENTORY_SOURCE.md
+- README.md
+- SITE_MANIFEST.json
+- STYLE_GUIDE.md
+- STYLE_GUIDE_SOURCE.md
+- WORKFLOW_CATALOG.json
+- WORKFLOW_CATALOG.md
+- application-settings.html
+- assets/app.css
+- assets/app.js
+- assets/print.css
+- assets/tokens.css
+- audit-lineage.html
+- claim-graph.html
+- corpus-canvas.html
+- critical-lens.html
+- document-reader.html
+- evidence-matrix.html
+- help-onboarding.html
+- index.html
+- ingestion-reconciliation.html
+- intent-contract.html
+- living-monitor.html
+- manuscript-blueprint.html
+- manuscript-studio.html
+- model-center.html
+- new-project.html
+- novelty-audit.html
+- opportunity-radar.html
+- parsing-quality.html
+- project-settings.html
+- projects.html
+- prototype-index.html
+- research-notebook.html
+- reviewer-simulation.html
+- revision-response.html
+- schema-manager.html
+- screening.html
+- scripts/build_mockups.py
+- scripts/render_previews.py
+- scripts/smoke_interactions.py
+- scripts/verify_site.py
+- search-studio.html
+- source-manager.html
+- study-design.html
+- style-guide.html
+- synthesis-studio.html
+- task-center.html
+- technical-reports.html
+- theory-map.html
+file_hashes:
+  APPROVAL.yaml: 3580ebad381dd045c3da7b2c6850eebef07ef91335faf3f6ddb9d1327f5eca15
+  CAPABILITY_COVERAGE.json: f1e078bbd4a14a2fc8a724ed217936df6ed44e8e835d8fd0b61c9d5283fbcb9b
+  CAPABILITY_COVERAGE.md: bdbd6c3cfd6c9de6f855225499e5ec44188d666abe6030dcff9e4824413ee929
+  PAGE_INVENTORY.md: 3e16b59e61cd78a30e13d52f30fb5e81808164e080f94fc600134f8afbaab9f6
+  PAGE_INVENTORY_SOURCE.md: 3e16b59e61cd78a30e13d52f30fb5e81808164e080f94fc600134f8afbaab9f6
+  README.md: 0dfd0144eb246fe58ba5a2f634e51d1976a8dacad766192e2d2da6a157100aef
+  SITE_MANIFEST.json: 75741dcc04c1bc06c1135929e9a914f5d6017eb1c4ac9c05a31e1ef3b4fe4a83
+  STYLE_GUIDE.md: 11503f0fdbb3f5130227d9c7132d0d000cdf3e6bd1caa289d224711264d7c2c2
+  STYLE_GUIDE_SOURCE.md: 11503f0fdbb3f5130227d9c7132d0d000cdf3e6bd1caa289d224711264d7c2c2
+  WORKFLOW_CATALOG.json: 21132005448dbef1f0302aee54919bd782dc405948cfe436f09b8f3f489bf1ad
+  WORKFLOW_CATALOG.md: 6cf5a7d92978e454b0f29c13b3f1f28ed27f66a6e1666567d8c5ead661b79105
+  application-settings.html: 44a3ea1fe4c0148deade589015832eef01e404a54ea1175c42860f5dbb8b20a6
+  assets/app.css: 4b4c87c6d4e8dfc4bc2ad92886f248e75e5a6bd7f7f1927f6179c5d3855333ee
+  assets/app.js: 14cce9a46a84d4481935bbb7df1dd9b15935b9c04620d1c20517652603532c26
+  assets/print.css: 03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c
+  assets/tokens.css: e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5
+  audit-lineage.html: 48dc3a81b945c3459e47aaea2abac03281296ad600219494d3d07da7dd9342b2
+  claim-graph.html: cfcf01123f8fbf642bb65c9121ce8aa0a2be5bc26a2c23406d7113ff54880d81
+  corpus-canvas.html: 4ce596101a173768f98d56c51a9a053936d52c7c51681c32d30b205636632876
+  critical-lens.html: 4df65f59007386780501f69acc724822d0045791545d6e9a40cd9596e544b1f7
+  document-reader.html: 9154fa67ece0420d89703896ddd093622d38f6f2d42062852df09d6a0b34bb6b
+  evidence-matrix.html: 259e483e8a98b480113b500abc3c48e879ea97c9596b291ba3854c84f3d5807a
+  help-onboarding.html: 82704b3241caf68a1577f6a3a5d97960ff223b8164c4289c144114f3e63d0383
+  index.html: a01773150c07b018f566e876642d4bb63b58bde841bbbfa030a5c0cf33d52632
+  ingestion-reconciliation.html: 19ac890d8d5b2fc0fe4862728b167fa307cd7b54e938a51526d058aaf7e9bf80
+  intent-contract.html: 6613477dc9bbcc2927bc6c6ac6b1f384b7057cb88e0211a7bfa0fa9a72110b20
+  living-monitor.html: da80b84b84b7f5dffc74547ccdc1e7b7a38fc168b9624139cf16dbb6d2ce8fb9
+  manuscript-blueprint.html: 11e4a1e6d546c259caab0c7f857ac1e38fa29298820b1425f1c89d711a316351
+  manuscript-studio.html: 05363f0119dc8092ca04474ddd9e0d6498b83340a19c6ab4f8f5319cfcf26aee
+  model-center.html: 0a3501b98d8722568a839644dad7268e0e526664bfd3344dd4d4b3a755640598
+  new-project.html: e15ba1781748b03078527d47d80c99a2238bfd2d593af4de70b63d07c257a181
+  novelty-audit.html: b5b7a4279da57f8adcd878a030c81c33cd441daf09686b2404ecdf3735ef8c10
+  opportunity-radar.html: 5090a9cc06393a1e97f1e0d9a99ad1c9783c14fccc7083d8b4ae9ee6330b2de5
+  parsing-quality.html: 763e922d572962b914f6c1d0e6bc40143ab719bcd1d240b6fe3429b0f7d703ab
+  project-settings.html: ec47caa2ca4f5d6ba2818513ae752167aef542a2d074254b3c05d7c9513f16fd
+  projects.html: 04d60344bcc788b4bec0b3285c6a1d10a8562a3191d847b0214df749d41d36fb
+  prototype-index.html: 66a3d59fc89b2041b5225b372c011a028340a69cd6f17306229321bdbf9be3fc
+  research-notebook.html: 5ce8e7f9382324b6d3a0bd3f4d99f1e946065b337b6d1b564419d9cd3433086f
+  reviewer-simulation.html: 92c86ee59e7319f00cec74fba77d9c20a30b0e02de454ab1148030e8a1e54dc4
+  revision-response.html: db85f951e2f2c615f0f6a4761de5b43d5d6cb44a4ce36abd9b9fa9d40b9ec151
+  schema-manager.html: 29c1337ab267aa1d31effed05036c6b9dc9e9dabf2eca19856fecbea83c9a492
+  screening.html: 46fff75368a3d08617e43673b42fc2c42cadd582f0623adb52fa274b0295ba36
+  scripts/build_mockups.py: 73238a06247242eccd24cefc20f4049f49826e7c16681c86969472aec6922715
+  scripts/render_previews.py: 230b914bbbb0d345357ecb6f87b068bc7b8886bfb7621762bd4929bbb3b5ddbd
+  scripts/smoke_interactions.py: 75ebd3d33665cc887a9d45a22ea0ffcf08c0821b88627209d8087d395e52fa85
+  scripts/verify_site.py: 891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f
+  search-studio.html: 42aa7c5f8a5e3bfd6cc88e37b7687b1275fcca138431e9032ece75cffc1d583d
+  source-manager.html: 3745163ced246fba0aa5c83534f1a4e3fbbae0dd9e07a3fedf2bc794cbb2148c
+  study-design.html: e71bcd05ce09c7397af5b83674f12db6135a147471a2d0df689459a3e93bcba7
+  style-guide.html: 7ed4a3a786ff840f546adabbe26840dbf2f6a2c69c57b3333241ca21ef89f1e1
+  synthesis-studio.html: 701072f0c769670c48d79f81f79e1f6802a9386484ac1ce2899c1a3139969e3d
+  task-center.html: 259dbb6c949c08b6ad1940cca851729f1b69a5dcc56d45222730707874da13dd
+  technical-reports.html: 141dd7f037be8f31a42c5c186fb6a34995d3cb8bd130e1030a1e11d1531352c0
+  theory-map.html: e05d9fc70247887145557b26ab687dff4c2ba017f3fbc428be72640fa52ad260

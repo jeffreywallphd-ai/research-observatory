@@ -40,7 +40,7 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-04 · immutable evidence key</span><h1>CAP-scholarly-ingestion</h1><p>Scholarly ingestion, connectors, canonicalization, and corpus governance</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>Review this capability's durable decisions as one part of each complete Wave packet. Execution is leased to the Wave, not to this capability.</p>
-  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>2</dd></div><div><dt>Plan hash</dt><dd><code>3e80858b2922</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Slices</dt><dd>5</dd></div><div><dt>Decisions</dt><dd>4</dd></div><div><dt>Open blockers</dt><dd>0</dd></div><div><dt>Plan hash</dt><dd><code>1d8fdb122f36</code></dd></div></dl>
 </section>
 <section class="review-toolbar" data-review-toolbar>
   <div><h2>Capability decisions classified by Wave approval</h2><p>Best-in-class capability decisions are preselected and decision-complete. Their binding-Wave labels determine which exact pre-Wave packet authorizes them. Inherited and future decisions remain context only until their own Wave approval.</p></div>
@@ -59,14 +59,14 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
 </section>
 <section id="decision-register" class="section-heading"><span class="eyebrow">Decision register</span><h2>Confirm resolved defaults or record overrides</h2><p>Each researched best-in-class recommendation is already selected and decision-complete. The decision's binding-Wave label controls when it is authorized. Any documented alternative requires rationale. Other additionally requires a brief description.</p></section>
 <div class="decision-list">
-<section class="decision-card" data-decision-id="CAP-04-D01" data-recommendation="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
+<section class="decision-card" data-decision-id="CAP-04-D01" data-recommendation="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-plan-hash="1d8fdb122f368ce7891329a401f2ca27bc7771e23a6ca070ef30f157ebae30cc">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D01</span><h3>Open scholarly sources</h3></div>
-    <span class="status status-reopened">Reopened</span>
+    <span class="status status-accepted">Accepted</span>
   </div>
   <p class="decision-basis">ADR-0027 proposes provider-specific private configuration and protected scientific replay without authentication/contact values; architecture acceptance remains pending.</p>
   <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-04-D01-option-0">
-  <input id="CAP-04-D01-option-0" type="radio" name="CAP-04-D01" value="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-decision-option>
+  <input id="CAP-04-D01-option-0" type="radio" name="CAP-04-D01" value="OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures" data-decision-option checked>
   <span><strong>OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures</strong><span class="recommended">Recommended</span></span>
 </label><label class="decision-option" for="CAP-04-D01-option-1">
   <input id="CAP-04-D01-option-1" type="radio" name="CAP-04-D01" value="Local imports with DOI lookup only; defer broad multi-provider discovery" data-decision-option>
@@ -86,7 +86,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>ADR-0027</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-04-D02" data-recommendation="Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
+<section class="decision-card" data-decision-id="CAP-04-D02" data-recommendation="Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review" data-plan-hash="1d8fdb122f368ce7891329a401f2ca27bc7771e23a6ca070ef30f157ebae30cc">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D02</span><h3>Canonicalization</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -96,8 +96,8 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <input id="CAP-04-D02-option-0" type="radio" name="CAP-04-D02" value="Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review" data-decision-option checked>
   <span><strong>Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review</strong><span class="recommended">Recommended</span></span>
 </label><label class="decision-option" for="CAP-04-D02-option-1">
-  <input id="CAP-04-D02-option-1" type="radio" name="CAP-04-D02" value="Last-imported record wins" data-decision-option>
-  <span><strong>Last-imported record wins</strong></span>
+  <input id="CAP-04-D02-option-1" type="radio" name="CAP-04-D02" value="Deterministic latest-source canonical projection with immutable assertions, visible conflicts and reversible human overrides" data-decision-option>
+  <span><strong>Deterministic latest-source canonical projection with immutable assertions, visible conflicts and reversible human overrides</strong></span>
 </label><label class="decision-option decision-option-other" for="CAP-04-D02-option-other">
   <input id="CAP-04-D02-option-other" type="radio" name="CAP-04-D02" value="__OTHER__" data-decision-option data-other-choice>
   <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
@@ -113,7 +113,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-04-D03" data-recommendation="Every import records discovery path, source terms, access status, license/rights and retrieval time" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
+<section class="decision-card" data-decision-id="CAP-04-D03" data-recommendation="Every import records discovery path, source terms, access status, license/rights and retrieval time" data-plan-hash="1d8fdb122f368ce7891329a401f2ca27bc7771e23a6ca070ef30f157ebae30cc">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D03</span><h3>Rights/provenance</h3></div>
     <span class="status status-accepted">Accepted</span>
@@ -123,8 +123,8 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <input id="CAP-04-D03-option-0" type="radio" name="CAP-04-D03" value="Every import records discovery path, source terms, access status, license/rights and retrieval time" data-decision-option checked>
   <span><strong>Every import records discovery path, source terms, access status, license/rights and retrieval time</strong><span class="recommended">Recommended</span></span>
 </label><label class="decision-option" for="CAP-04-D03-option-1">
-  <input id="CAP-04-D03-option-1" type="radio" name="CAP-04-D03" value="Store only normalized citation metadata" data-decision-option>
-  <span><strong>Store only normalized citation metadata</strong></span>
+  <input id="CAP-04-D03-option-1" type="radio" name="CAP-04-D03" value="Minimal normalized records linked to protected provenance and action-specific rights sidecars" data-decision-option>
+  <span><strong>Minimal normalized records linked to protected provenance and action-specific rights sidecars</strong></span>
 </label><label class="decision-option decision-option-other" for="CAP-04-D03-option-other">
   <input id="CAP-04-D03-option-other" type="radio" name="CAP-04-D03" value="__OTHER__" data-decision-option data-other-choice>
   <span><strong>Other</strong><small>Propose a direction not listed above</small></span>
@@ -140,14 +140,14 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <p class="decision-meta">Binding Wave approval(s): <code>W2</code> · Required ADR: <code>None currently identified</code></p>
 </section>
 
-<section class="decision-card" data-decision-id="CAP-04-D04" data-recommendation="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-plan-hash="3e80858b2922ac6f17f8279e903385cc4ed88b5ef8a5021e1426771b80c2308c">
+<section class="decision-card" data-decision-id="CAP-04-D04" data-recommendation="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-plan-hash="1d8fdb122f368ce7891329a401f2ca27bc7771e23a6ca070ef30f157ebae30cc">
   <div class="decision-heading">
     <div><span class="eyebrow">CAP-04-D04</span><h3>Extensibility</h3></div>
-    <span class="status status-reopened">Reopened</span>
+    <span class="status status-accepted">Accepted</span>
   </div>
   <p class="decision-basis">ADR-0028 proposes LPAC, no direct network or project/vault access, narrow brokers and explicit local publisher/project trust; real packaged isolation remains an implementation qualification obligation.</p>
   <fieldset><legend>Resolved selection (change only to override)</legend><label class="decision-option" for="CAP-04-D04-option-0">
-  <input id="CAP-04-D04-option-0" type="radio" name="CAP-04-D04" value="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-decision-option>
+  <input id="CAP-04-D04-option-0" type="radio" name="CAP-04-D04" value="Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures" data-decision-option checked>
   <span><strong>Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures</strong><span class="recommended">Recommended</span></span>
 </label><label class="decision-option" for="CAP-04-D04-option-1">
   <input id="CAP-04-D04-option-1" type="radio" name="CAP-04-D04" value="First-party built-in connectors only; defer third-party execution and SDK delivery" data-decision-option>
@@ -200,9 +200,9 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
   <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
 </a></div>
 <details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **W2 planning in progress.** G1&#x27;s limited transition is approved; this capability
-&gt; contribution is not. Resolve the reopened decisions and complete the initiation
-&gt; assessment, estimates and slice refresh before requesting the single W2 approval.
-&gt; Retained selected recommendations are planning choices, not execution authority.
+&gt; contribution is not. All four recommendations are selected for the proposed packet;
+&gt; independent architecture/reference/packet review and exact human approval remain.
+&gt; Decision selection is a planning choice, not ADR acceptance or execution authority.
 
 &lt;div class=&quot;visual-flow&quot;&gt;&lt;span&gt;Refresh W2 contributions&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Resolve binding decisions&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Approve complete W2 packet&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Execute W2 campaign&lt;/span&gt;&lt;b&gt;→&lt;/b&gt;&lt;span&gt;Qualify G2 exit&lt;/span&gt;&lt;/div&gt;
 
@@ -213,7 +213,7 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
 | Capability | `CAP-04` — Scholarly ingestion, connectors, canonicalization, and corpus governance |
 | Objective | Build a source-transparent canonical corpus from local libraries, open scholarly APIs, and later licensed adapters while preserving rights, versions, and discovery paths. |
 | Execution mode | Contribution to the W2 campaign; slices complete in dependency order |
-| Decision status | `REOPENED` — source/replay and connector-isolation details need resolution |
+| Decision status | `COMPLETE` planning selections; proposed ADRs and reference still require review/approval |
 | Slice plans | `CAP-04.S01`, `CAP-04.S02`, `CAP-04.S03`, `CAP-04.S04`, `CAP-04.S05` |
 | Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.6`; affected slice/page mappings require refresh; preserve inherited catalog bindings |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
@@ -223,8 +223,10 @@ python tools/planctl.py --repo . ready CAP-04 --wave &lt;active-wave&gt; --requi
 Initial assessment: 2026-09-13, W2. See the shared
 [W2 initiation assessment](../W2-initiation.md) for the complete contribution
 inventory, current primary sources, cross-capability journey, carry-forward risks
-and one bounded automation proposal. Structured estimates remain incomplete;
-`initiation_assessment: null` deliberately prevents approval-ready claims.
+and one bounded automation proposal. Structured estimates above cover all fifteen
+atomic tasks; [estimate basis](../W2-initiation.md#estimate-basis-and-shared-accounting)
+distinguishes engineering effort from elapsed agent time. Architecture and UX
+review remain prerequisites; complete estimates alone do not authorize approval.
 
 - **Baseline / fit:** reuse W1 Core-owned revisions, protected object streams,
   provenance and durable jobs. The corpus-first outcome still fits the Vision;
@@ -239,13 +241,14 @@ and one bounded automation proposal. Structured estimates remain incomplete;
   context; failed/cancelled preview must not commit partial canonical records.
 - **Support / debt:** one shared runner-progress increment is proposed in the
   linked assessment, counted once, not per capability. No foundational rewrite
-  or broad historical-fixture repair is selected. Before lock, complete the
-  fifteen atomic task estimates and necessary ADR/reference mappings.
+  or broad historical-fixture repair is selected. The explicitly mixed first task
+  includes 2 support hours within its 18-hour estimate, with focused independent
+  control review. No other capability counts that allocation.
 
 The next increment has refreshed all five slice procedures and drafted ADR-0027
 and ADR-0028. Source records/manifest IDs precede work/version reconciliation;
-the CAP-04.S01 handoff now states that explicitly. Reopened selections remain
-pending architecture disposition; no acceptance or task completion is inferred.
+the CAP-04.S01 handoff now states that explicitly. Selections await independent
+architecture disposition and human acceptance; no task completion is inferred.
 
 ## 1. Capability outcome and production-ready exit
 
@@ -284,15 +287,15 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 
 | ID | Decision | Recommended selection | Credible alternative | Why recommended / replacement boundary | Basis |
 |---|---|---|---|---|---|
-| `CAP-04-D01` | **Open scholarly sources — reopened** | OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures | Local imports with DOI lookup only; defer broad multi-provider discovery | Retain source coverage; resolve provider configuration, terms, limits and secret-free replay before selection. | [Current source assessment](../W2-initiation.md#current-primary-source-refresh) |
-| `CAP-04-D02` | **Canonicalization** | Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review | Last-imported record wins | Source disagreement and version relationships must remain visible and reversible. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
-| `CAP-04-D03` | **Rights/provenance** | Every import records discovery path, source terms, access status, license/rights and retrieval time | Store only normalized citation metadata | Rights and provenance are required for later text, model and export decisions. | [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) |
-| `CAP-04-D04` | **Extensibility — reopened** | Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures | First-party built-in connectors only; defer third-party execution and SDK delivery | Retain the SDK outcome; choose and prove the Windows isolation/credential boundary, not merely a child process. | Systems Design section 16.4; CAP-04.S05 |
+| `CAP-04-D01` | **Open scholarly sources — selected** | OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures | Local imports with DOI lookup only; defer broad multi-provider discovery | Retain source coverage; resolve provider configuration, terms, limits and secret-free replay before selection. | [Current source assessment](../W2-initiation.md#current-primary-source-refresh) |
+| `CAP-04-D02` | **Canonicalization** | Canonical work/version/source records with deterministic reconciliation candidates and human ambiguity review | Deterministic latest-source canonical projection with immutable assertions, visible conflicts and reversible human overrides | Both preserve evidence; explicit work/version reconciliation makes uncertainty and edition relationships first-class, whereas a latest-source projection is simpler but more sensitive to retrieval order and needs additional conflict inspection. | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) |
+| `CAP-04-D03` | **Rights/provenance** | Every import records discovery path, source terms, access status, license/rights and retrieval time | Minimal normalized records linked to protected provenance and action-specific rights sidecars | Both retain rights/provenance; the selected explicit import contract reduces missing-link and stale-sidecar risks for downstream text/model/export actions, at the cost of richer import records. | [PRISMA-S: An Extension to the PRISMA Statement for Reporting Literature Searches](https://doi.org/10.1186/s13643-020-01542-z) |
+| `CAP-04-D04` | **Extensibility — selected** | Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures | First-party built-in connectors only; defer third-party execution and SDK delivery | Retain the SDK outcome; choose and prove the Windows isolation/credential boundary, not merely a child process. | Systems Design section 16.4; CAP-04.S05 |
 
 ### Review and approval
 
-All seven decisions across CAP-04/CAP-05 bind W2. Reopened rows need an explicit
-planning selection and rationale; retained selections remain reviewable. Approval
+All seven decisions across CAP-04/CAP-05 bind W2. Selected recommendations and
+their alternatives remain reviewable; Proposed ADRs are not yet accepted. Approval
 covers the complete Wave and every contributing slice at one immutable commit,
 not this capability in isolation. The G1 decision is not W2 packet approval.
 
@@ -370,8 +373,8 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 
 ## 12. Approval record
 
-The contribution remains **proposed**, with W2-binding decisions reopened.
-Complete its assessment, estimates, selections and required ADR/reference work;
+The contribution remains **proposed**, with all W2 planning selections recorded.
+Complete independent ADR/reference and whole-packet review;
 then validate and independently review the entire W2 packet before requesting
 the owner&#x27;s one immutable pre-Wave approval. No capability-only approval or
 blanket inheritance of the G1 exception is authorized.</pre></article></details>

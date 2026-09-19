@@ -219,6 +219,15 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 
 **Expected deliverables**
 - Streaming parsers that preserve original fields, import source, line/record location, and warnings.
+- Separately reviewed W2-RUNNER-PROGRESS support allocation: at most two engineering-hours for live verifier output with complete diagnostics, or an explicit bounded deferral with no partial runner changes.
+
+This is an explicitly mixed task: 16 engineering-hours product work and a
+two-hour support subset, not a second task or budget. Use the existing bounded
+maintenance route for `tools/verify.py` and its focused tests; expanded independent
+control review applies to that delta. Preserve command order/arguments, both output
+streams, skips, exit codes, fail-stop and truthful interrupted/terminal reporting.
+Do not run historical W1 suites merely to exercise the progress display. At the
+ceiling record deferral and keep the prior runner; do not expand the harness.
 
 **Ordered implementation sequence**
 1. Confirm the governing contracts, task dependencies, approved reference (when user-facing), and the specific fixture set for `CAP-04.S01.T01`. Add failing tests for the required success path and at least one material boundary/failure case before production code.
@@ -230,6 +239,7 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 - Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields remain available for audit.
 - Automated tests cover the expected path and at least one material failure or boundary condition.
 - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+- The optional two-hour W2-RUNNER-PROGRESS allocation either delivers independently reviewed live output preserving command order, exit/fail-stop and terminal-report semantics, or records its deferral without partial runner changes; parser delivery is not held for optional harness expansion.
 
 **Required criterion-linked evidence**
 - Reviewed commit SHA, changed-file inventory, and scope-deviation explanation if any.

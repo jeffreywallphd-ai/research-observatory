@@ -97,7 +97,23 @@ with W2; the sandbox is not already supplied or proven by W1.
 
 Qualify the packaged worker, LPAC token, denied ambient reads/writes and broker
 denials early in **CAP-04.S05.T02**, then reuse that exact boundary for
-**CAP-05.S02.T03**. If LPAC or mandatory no-plaintext-write behavior cannot work,
+document inspection in **CAP-05.S01.T01** and parsing in **CAP-05.S02.T03**.
+Use private inherited anonymous pipes with length-prefixed UTF-8 JSON control
+frames (1 MiB maximum) and separately bounded binary input/output frames. Protocol
+version, job nonce, sequence and operation are mandatory; reject unknown/oversize/
+duplicate frames and mismatched jobs before processing. No listening RPC server.
+Connector capabilities are `lookup`, `search`, `references`, `citations`,
+`open-access-locations` and `repository-metadata`; unsupported operations deny.
+The last operation is a schema-validated public metadata endpoint, not arbitrary
+HTTP. Downloads are a separate Core acquisition operation with current rights.
+Limit connectors to 256 MiB committed memory, one active job per project and
+60 seconds/job; provider requests have their stricter ADR-0027 budget. Exact
+destination scheme/host/port/path templates are signed manifest data; wildcards,
+user-info, file/data URLs and DNS-rebinding/redirect escapes deny. Secrets never
+enter IPC. Package updates bind an exact digest and explicit enable decision even
+when permissions are unchanged; increased permissions require renewed consent.
+
+If LPAC or mandatory no-plaintext-write behavior cannot work,
 fail closed and present evidence for a revised decision. Do not fall back to an
 ordinary same-user process or silently give broader capabilities.
 

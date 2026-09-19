@@ -205,7 +205,7 @@ Each material scenario must have: deterministic trigger fixture, durable state e
 ### 9.1 `CAP-05.S01.T01` - Implement local document attachment and version association
 **Objective:** Drag/drop and file-picker flows for PDF, JATS, TEI, XML, HTML, DOCX, and plain text with work/version selection.
 
-**Dependencies:** `CAP-04.S04.T02`, `CAP-02.S03.T03`  
+**Dependencies:** `CAP-04.S04.T02`, `CAP-02.S03.T03`, `CAP-04.S05.T02`
 **Risk / review gate:** `medium` / `agent-review`  
 **Verification profiles:** `documents`, `desktop`
 

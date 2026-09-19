@@ -98,6 +98,68 @@ No account provisioning, live query, purchase or external upload is authorized
 by selecting this design. Exact provider admission schemas and redaction fixtures
 are implementation artifacts under this boundary, not additional human gates.
 
+### Binding ingestion and corpus details
+
+- Import identity is SHA-256 of versioned canonical serialization of source-object
+  digest, parser version, mapping-profile revision, ordered selected-record keys
+  and the immutable effective-draft decision digest. That digest binds accepted
+  per-record mapped values/corrections, inclusion/link decisions, rights/default
+  decisions and import options; exclude credentials, paths and transient UI state. A
+  record key binds its original ordinal/location and raw-record digest; it is not
+  a work ID. A project-scoped unique import-identity constraint and one transaction
+  make an identical effective draft replay its existing manifest after current
+  authorization checks. A changed accepted value or decision creates a new attempt
+  and manifest revision, reusing existing source-record identities rather than
+  duplicating records or overwriting prior decisions. A reused request ID with a
+  different effective-draft digest is a conflict, not a replay. Test identical-draft
+  retry and same-source/profile/selection with changed corrections or rights.
+  Preserve raw fields, byte/record location, normalized fields and
+  per-field warnings in versioned ImportIR; mapping profiles are immutable project
+  revisions. Never use an absolute source path as identity or exported metadata.
+- CSV is data, not code. No evaluated formulas, macros or BibTeX commands.
+  Spreadsheet-oriented export prefixes potentially active cells (`=`, `+`, `-`,
+  `@`, leading control whitespace) as inert text while retaining original values
+  in protected provenance; normal CSV quoting alone is not neutralization.
+- Use the existing HTTPX transport behind one Core-owned broker with normal TLS
+  verification. Separate per-provider admission buckets, initially one in-flight
+  request and at most one request/second until a stricter advertised limit applies.
+  At most three attempts with bounded jitter/Retry-After; authentication/permission
+  denial is terminal. Cap each metadata response at 10 MiB and request at 30 seconds;
+  validate decompressed limits too. Persist resumable cursors, not an unbounded
+  automatic search. No shared cross-project result cache is selected.
+- Retain protected source snapshots only where source terms/rights permit; otherwise
+  retain the permitted fields, digest, retrieval/terms observation and an explicit
+  unavailable replay-body state. Do not treat redaction as permission to redistribute.
+  Deterministic tests use synthetic/licensed fixtures. A separate opt-in live smoke
+  at the source slice checkpoint and Wave exit uses a public known item, at most
+  five requests/provider, configured local authority and no private research query.
+  Missing optional provider configuration must pass the not-configured path, not
+  be reported as live success. No mandatory account purchase/provisioning is selected.
+- Work identifies the scholarly contribution; WorkVersion identifies a preprint,
+  accepted manuscript, version of record, correction or retraction-linked edition.
+  SourceRecord remains an immutable provider assertion. Explicit version links
+  outrank title similarity. Conflicting/reassigned identifiers cannot auto-merge.
+  DOI normalization removes recognized DOI wrappers, trims boundary whitespace and
+  case-folds the identifier; do not strip meaningful internal punctuation. Preserve
+  raw identifiers. Provider IDs remain namespaced; arXiv version suffixes identify
+  versions, not interchangeable work assertions. Normalization is versioned.
+- Exact unique valid identifiers may auto-link, never probabilistic title/author
+  similarity. Deterministic candidate ranking uses normalized title tokens, author,
+  year and venue features, with transparent component scores. Before tuning, freeze
+  a rights-cleared labeled fixture set and candidate retrieval targets of precision
+  >=0.90 and recall >=0.95; report pair and cluster errors separately. Scores are not
+  probabilities. Human merge/split appends decisions and alias/membership revisions,
+  checks expected predecessors and marks affected dependents; undo is a new decision,
+  never deletion or identity reuse. No invented gold labels or auto-adjudication.
+- Rights dimensions are store, inspect, index, derive, model-use, quote, export
+  and share, each permitted/denied/unknown with provenance and conditions. Unknown
+  denies that action; permission in one dimension does not grant another. Corpus
+  snapshots bind an immutable membership revision plus the exact source/work/version
+  assertions and governing protocol. Discovery edges carry root import/query, source,
+  direction, time and predecessor IDs; overlap reports count explicit distinct sets
+  at one snapshot, not inferred unseen coverage. Rights changes re-evaluate affected
+  actions without erasing the historical basis or silently running them again.
+
 ## Consequences
 
 W2 retains source coverage and a useful offline path. Replay explains the

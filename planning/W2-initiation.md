@@ -1,6 +1,6 @@
 # W2 initiation — Windows local evidence foundation
 
-Working assessment, 2026-09-13. **Planning in progress; not an approved execution
+Working assessment, refreshed 2026-09-19. **Planning in progress; not an approved execution
 packet.** The [G1 owner decision](../artifacts/evidence/G1.owner-approval-01.md)
 clears the upstream gate through a limited local-prototype exception. It does
 not turn retained W1 gaps into PASS or approve W2 implementation. Live state,
@@ -18,7 +18,9 @@ revision. Import, parsing and reconciliation must not manufacture evidence or
 make scholarly acceptance decisions for the researcher.
 
 The current forecast is **11 slices / 33 tasks**, three tasks in every row.
-No task, dependency or product criterion is removed by this initiation increment.
+No task or product criterion is removed. The runner-progress allocation below
+adds an explicit bounded support deliverable to CAP-04.S01.T01; it is not hidden
+in the parser criteria or counted twice.
 
 | Contribution | Outcome / planning emphasis |
 |---|---|
@@ -66,7 +68,8 @@ the historical, explicitly limited evidence cited by the G1 decision.
 1. Capability and all eleven unapproved slice procedures now require one complete
    W2 approval and the same Wave campaign. They reuse implemented W1 identity,
    provenance and jobs rather than the old not-yet-available fallback language.
-   All 33 task acceptance blocks remain unchanged.
+   All original product criteria remain unchanged; CAP-04.S01.T01 adds only the
+   separately bounded optional runner-progress criterion described below.
 2. Slice plans now cite the current Academic Minimal 1.6 reference. The
    [reference approval](../design/ui-reference/APPROVAL.yaml) records **1.6**;
    its README's earlier "proposal" wording is stale and is not authority.
@@ -117,8 +120,9 @@ accepted architecture or permission to start tasks:
   trust and per-project permissions; no marketplace or new workflow engine.
 - [ADR-0029 — document revisions and source viewing](../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md):
   modular local Docling, exact-version anchors, human correction/reparse acceptance
-  and authenticated viewing. Offline asset identities/resource limits and viewer
-  transport feasibility remain explicit pre-approval gaps.
+  and authenticated viewing. Exact offline asset identities, resource limits and
+  a bounded sequential-range design are now selected for independent review;
+  [feasibility observations](W2-feasibility.md) do not qualify production behavior.
 
 On 2026-09-13, a planning-only `uv 0.12.2` wheel resolution for Windows x64 /
 Python 3.14.6 succeeded for `docling-slim[convert-core,format-pdf,models-local]==2.126.0`,
@@ -139,18 +143,38 @@ Independent planning preflight identified these material handoffs:
 | Task | Required prerequisite / ownership clarification |
 |---|---|
 | CAP-05.S02.T03 | CAP-04.S05.T02 supplies the qualified worker boundary. |
+| CAP-05.S01.T01 | CAP-04.S05.T02 also precedes attachment format/password inspection; untrusted inspection cannot run unsandboxed before the later parser. |
 | CAP-05.S05.T03 | CAP-05.S04.T02 supplies original-page/deep-link navigation. |
 | CAP-05.S06.T02 | CAP-05.S05.T01 supplies reference reconciliation for corrections. |
 | CAP-04.S01.T03 | Commit canonical source-record/manifest IDs first; CAP-04.S03 owns later work/version reconciliation. No duplicate engine or backward dependency. |
 
-The three dependency additions are proposed W2 planning edits, mirrored in the
-backlog and task sections, not completion/state changes. The viewer feasibility
-check must include whole-file authentication, held metadata transactions,
-concurrent writes, source/range limits and cancellation. Do not treat small
-responses as bounded source work or add an encrypted cache without designing its
-separate lifecycle. These findings are ordinary packet work, not extra human gates.
+The four dependency additions are proposed W2 planning edits, mirrored in the
+backlog and task sections, not completion/state changes. A real protected-storage
+probe measured whole-source verification and writer contention; it supports a
+bounded existing-stream adapter, not a new cache. ADR-0029 includes the missing
+cancellation hook and exact admission/qualification limits. Packaged end-to-end
+viewer, parser and LPAC proof remains implementation work. These findings are
+ordinary packet work, not extra human gates.
 
 ## UX journey to refine in the existing contracts
+
+Independent mapping found one material reference addition: CAP-04.S05's local
+publisher-trust and project-permission review in Source Manager. Prepare one
+compact panel using existing components and the design-first route; no new page,
+marketplace or Application Settings redesign. The [inert 1.7 proposal](W2-reference-proposal.md)
+now supplies that panel and its normative interaction contract; validation/review
+and human approval remain pending. The remaining journeys fit 1.6.
+Keep the exact inherited ADR-0026 workflow catalog 1.5 binding unchanged.
+
+| Contribution | Existing route / return context |
+|---|---|
+| CAP-04.S01–S03 | Source Manager → Ingestion Review → Corpus Canvas; manifest opens Audit & Lineage as a supporting tool. |
+| CAP-04.S04–S05 | Corpus Canvas/source inspection and Source Manager; configuration or trust review returns to the same source and current primary workflow. |
+| CAP-05.S01–S03 | Selected corpus work/version → acquisition → Task Center/Parsing Quality → exact Document Reader revision. |
+| CAP-05.S04–S06 | Document Reader ↔ Parsing Quality; human-accepted correction/reparse → scoped Audit & Lineage impact → originating selection. |
+
+These are governed reference destinations, not claims that future workspaces
+already exist. Do not auto-complete scholarly stages when import or parsing ends.
 
 Start in an open project with its accepted intent and selected workflow.
 
@@ -183,7 +207,7 @@ journey remains unclear; advisory styling preferences do not become feature gate
 `-v` already preserves unittest names and skip reasons. Forward output while
 retaining the complete final stdout/stderr report, so a slow case or skip becomes
 visible promptly. This is planned bounded maintenance, not implemented here and
-not a hidden addition to a product task.
+an explicitly separated support portion of CAP-04.S01.T01.
 
 - Scope: `tools/verify.py`, focused cases in
   `tests/foundation/test_verify_runner.py`, and a short evidence note.
@@ -202,17 +226,71 @@ not a hidden addition to a product task.
 - No automatic retries, result caching, resume engine, new receipt schema,
   dashboard, mandatory global preflight, new gate or weakening of assertions.
 
-Before approval, give this shared allocation one identity under the existing
-maintenance/accounting route and count it once in the itemized Wave estimate;
-do not invent a product-task ID or double-count it across capability estimates.
-The final accounting representation is still to be resolved during packet assembly.
+Allocation identity **W2-RUNNER-PROGRESS** is a two-hour subset of the mixed
+CAP-04.S01.T01 estimate (16 product + 2 support). It is an accounting label, not
+a new task/state/controller. The unapproved task contract explicitly identifies
+the support deliverable and separate control review. At the ceiling, preserve
+any failed evidence and record deferral without leaving partial runner changes;
+continue the parser work. Optional control perfection cannot block the product.
 
 Defer broader harness recovery/caching, historical-fixture overhaul, orchestration
 redesign and extra UX instrumentation to W3 or later, selected only when valuable.
 Use the existing prerequisite checks for the actual selected command; a new
 universal preflight framework is not needed.
 
+## Estimate basis and shared accounting
+
+The two structured capability assessments itemize all **33 atomic tasks** in
+**engineering-hours**: 236 for CAP-04 and 294 for CAP-05, **530 total** including
+the two-hour support allocation once. These are planning estimates of developer
+effort, not measured duration, model cost or a promise of 530 hours of elapsed
+agent work. No slice/capability total is added again to its children.
+
+Basis: 12–18 hours for an ordinary existing-boundary vertical; 20 hours for
+reversible ambiguous reconciliation; 28 hours for real isolation, packaged
+Docling or the protected viewer. Estimates include focused implementation,
+tests, review/remediation and an apportioned share of slice/checkpoint/Wave
+qualification. No additional unitemized qualification estimate is counted.
+Resource and packaging tasks carry greater uncertainty; update forecasts openly
+without rewriting the eventual approved denominator.
+
+The single planned refactoring allocation is W2-RUNNER-PROGRESS (2 hours).
+The read cancellation hook is necessary new viewer behavior, not unrelated
+cleanup. No major redesign/refactoring is selected. Broader harness, historical
+fixture and optional performance optimization remain deferred.
+If this exact estimate is approved, the subsequent supplemental allowance is
+79.5 engineering-hours (15% of 530), starting at zero with W2 approval. This is
+not current spending authority or an invitation to use the allowance. The
+preselected two hours are already in scope; only excess/supplemental work draws
+against that future allowance, with no carryover from W1.
+
 ## Retained qualification risks and proportionate follow-up
+
+### Execution checkpoints (not human gates)
+
+After approval, claim only taskctl's dependency-eligible tasks in the single W2
+campaign. Use these risk clusters for integrated checks; no additional leases,
+approval controllers or repeated whole-repository suites:
+
+1. **CAP-04.S01–CAP-04.S03:** import → four source contracts → reconciliation;
+   verify idempotency, protected replay/redaction, conflicting identities and
+   cancellation/restart with the existing Core/provenance boundary.
+2. **CAP-04.S04–CAP-04.S05 plus CAP-05.S01:** rights → SDK/LPAC → acquisition;
+   prove actual denied files/secrets/network, exact trust/permission transitions,
+   quarantined inspection and resumable encrypted acquisition before relying on it.
+3. **CAP-05.S02–CAP-05.S04:** packaged offline parser → immutable anchors →
+   viewer; qualify minimum-tier resources, verified-range cancellation/contention,
+   exact-revision navigation and real renderer/native/accessibility wiring.
+4. **CAP-05.S05–CAP-05.S06:** citations/structures → human correction/reparse;
+   check preserved history, uncertain links and selective staleness, then perform
+   the fresh full W2/G2 qualification and separate release decision.
+
+Each checkpoint records exact shared-contract inputs and the union of affected
+checks plus a clean build/smoke. Later checks reuse valid earlier evidence only
+under the existing input-closure rules; fresh Wave qualification is not cached.
+Additive migrations preserve immutable old revisions and encrypted recovery
+copies; failure does not downgrade schema, overwrite accepted heads or delete
+originals. Broad historical cleanup remains outside this plan.
 
 The [completed control follow-up](W1-W2-control-followup.md) and G1 decision retain
 the evidence; do not replay completed W1 suites simply to improve reporting.
@@ -233,17 +311,19 @@ not a W2 security, integrity, accessibility or release waiver.
 
 ## Next planning increment and approval boundary
 
-1. Resolve the named material decisions and consolidate required ADR work by
-   shared boundary, without a document for every routine implementation choice.
-2. Refresh all eleven slice contracts, affected UX mappings, migration/recovery
-   and checkpoint evidence. Keep current IDs and make any proposed dependency
-   changes explicit through the canonical planning route.
-3. Complete structured initiation-assessment 2.0 data and all 33 atomic task
-   estimates in one unit, with the shared maintenance allocation counted once.
-   No total or 15% allowance is claimed while those estimates are missing.
+1. Independently review the seven selected recommendations and three shared
+   Proposed ADRs, including resource/admission choices and retained qualifications.
+2. Review all eleven slice contracts, the bounded proposed reference, and the
+   explicit dependency/migration/recovery/checkpoint handoffs. Resolve blocking
+   findings without silently moving scope or thresholds.
+3. Review structured initiation-assessment 2.0 data and all 33 atomic estimates
+   in one unit, with the shared maintenance allocation counted once. They are
+   now itemized, but remain unapproved and reviewable.
 4. Validate and independently review the complete W2 packet; then request one
    immutable pre-Wave approval. Only after that approval and normal integration/
    readiness requirements may the W2 campaign start.
 
-This kickoff is deliberately not approval-ready. Planning can continue without a
-new human decision now; implementation, gate relaxation and later Waves cannot.
+The authored packet now has selections and estimates; independent disposition,
+exact architecture/reference approval and normal clean-worktree prerequisites
+remain unmet. Do not request execution approval on the strength of schema checks
+alone. Implementation, gate relaxation and later Waves remain unauthorized.

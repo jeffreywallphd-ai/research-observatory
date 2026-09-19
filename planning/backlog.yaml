@@ -18416,11 +18416,16 @@ capabilities:
       objective: Streaming parsers that preserve original fields, import source, line/record location, and warnings.
       deliverables:
       - Streaming parsers that preserve original fields, import source, line/record location, and warnings.
+      - 'Separately reviewed W2-RUNNER-PROGRESS support allocation: at most two engineering-hours for live verifier output
+        with complete diagnostics, or an explicit bounded deferral with no partial runner changes.'
       acceptance_criteria:
       - Fixture files import deterministically; malformed records are isolated rather than aborting the batch; unknown fields
         remain available for audit.
       - Automated tests cover the expected path and at least one material failure or boundary condition.
       - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      - The optional two-hour W2-RUNNER-PROGRESS allocation either delivers independently reviewed live output preserving
+        command order, exit/fail-stop and terminal-report semantics, or records its deferral without partial runner changes;
+        parser delivery is not held for optional harness expansion.
       dependencies:
       - CAP-03.S03.T02
       - CAP-02.S02.T03
@@ -19281,6 +19286,7 @@ capabilities:
       dependencies:
       - CAP-04.S04.T02
       - CAP-02.S03.T03
+      - CAP-04.S05.T02
       priority: P0
       wave: W2
       deployment_profiles: *id053

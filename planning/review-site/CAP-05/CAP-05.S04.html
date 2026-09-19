@@ -40,10 +40,10 @@
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">CAP-05.S04 · ordered slice 4 of 6</span><h1>SLICE-source-viewer-and-evidence-inspection-experience</h1><p>Source viewer and evidence inspection experience</p></div><span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span></div>
   <p>The descriptive label is the default presentation. The numeric slice ID preserves explicit dependency order and immutable evidence history. This plan becomes executable after the capability decisions and its wave's slice plans are approved.</p>
-  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>f8ad74961183</code></dd></div></dl>
+  <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Priority</dt><dd>P0</dd></div><div><dt>Tasks</dt><dd>3</dd></div><div><dt>Plan hash</dt><dd><code>c88429bf5441</code></dd></div></dl>
 </section>
 <section class="callout callout-warning">
-  <div><span class="eyebrow">Capability decision gate</span><h2>Resolve 1 capability decision before implementation</h2><p>Capability-wide decisions remain durable, but execution starts only after the complete active Wave packet is approved at one immutable commit.</p></div>
+  <div><span class="eyebrow">Capability decision gate</span><h2>Recommendations resolved; complete pre-Wave approval controls execution</h2><p>Confirm or override capability defaults once, then approve the ordered slice plans for the wave being activated.</p></div>
   <a class="button button-primary" href="index.html#decision-register">Review capability decisions</a>
 </section>
 <section class="decision-summary"><div class="section-heading"><span class="eyebrow">Slice decisions</span><h2>Recommended implementation selections</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>## 4. Selected implementation decisions
@@ -512,6 +512,7 @@ python tools/verify.py --profile security-local
 ```
 
 ## 11. Performance and resource budgets
+- Proposed ADR-0029 selects bounded verified sequential ranges, maximum sizes/concurrency, cooperative read-loop cancellation, prompt lease release and representative/stress fixtures. Its [storage probe](../../W2-feasibility.md) is not renderer, minimum-hardware or cancellation proof; CAP-05.S04.T01 includes that integration and qualification.
 - Render visible pages only, cache bounded thumbnails/pages, and cancel obsolete renders during rapid navigation.
 - Open-to-first-page target &lt;=1.5 seconds for a representative local PDF after Core readiness.
 - Large documents remain usable without loading all pages or text into renderer memory.
