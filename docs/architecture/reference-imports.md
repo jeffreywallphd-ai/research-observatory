@@ -128,6 +128,10 @@ mapping conflict is visible and excluded until resolved, never silently imported
 
 Undo appends a revision restoring a selected earlier state. Sparse decision reads
 follow that restored history; later edits cannot resurrect the abandoned branch.
+Restoration cannot implicitly broaden any current default or per-record action
+permission, including records outside the visible page. Such undo requests fail
+atomically. A rights change requires its own explicit authorization; undo cannot
+supply it.
 Digests stream the complete ordered effective draft, not just visible rows. Current
 rights and cancellation still constrain historical reads, including raw-record
 access. Per-record inspect denial blocks affected pages rather than exposing raw

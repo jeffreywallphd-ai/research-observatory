@@ -19,6 +19,7 @@ from .ingestion.import_drafts import (
     ImportRights,
     MappingProfile,
     RecordDecision,
+    RightsAction,
     effective_draft_sha256,
     propose_fields,
     review_record,
@@ -45,6 +46,16 @@ _HISTORY = """
            AND COALESCE(d.undo_revision, d.predecessor_revision) IS NOT NULL
     )
 """
+_RIGHTS_ACTIONS: tuple[RightsAction, ...] = (
+    "store",
+    "inspect",
+    "index",
+    "derive",
+    "model-use",
+    "quote",
+    "export",
+    "share",
+)
 
 
 class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
@@ -201,6 +212,39 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
             raise PreviewProblem("preview-draft-record-mismatch")
         return record
 
+    def _restore_rights(
+        self,
+        connection: CanonicalConnection,
+        preview_id: str,
+        current: PreviewDraft,
+        restored: PreviewDraft,
+    ) -> None:
+        def does_not_broaden(before: ImportRights, after: ImportRights) -> None:
+            if any(after.permits(action) and not before.permits(action) for action in _RIGHTS_ACTIONS):
+                raise PreviewProblem("preview-rights-restore-denied")
+
+        does_not_broaden(current.authority.rights, restored.authority.rights)
+        # Include records outside the visible page and every historical branch.
+        # Stream only changed ordinals; untouched records use the checked defaults.
+        rows = self._query(
+            connection,
+            """
+            SELECT DISTINCT ordinal FROM import_record_decisions
+             WHERE preview_id=:preview AND project_id=:project ORDER BY ordinal
+        """,
+            preview_id,
+        )
+        try:
+            for row in rows:
+                before, _ = self._decision(connection, preview_id, current.revision, row[0])
+                after, _ = self._decision(connection, preview_id, restored.revision, row[0])
+                does_not_broaden(
+                    before.rights if before and before.rights else current.authority.rights,
+                    after.rights if after and after.rights else restored.authority.rights,
+                )
+        finally:
+            rows.close()
+
     def revise_draft(self, preview_id: str, change: PreviewDraftChange) -> PreviewDraft:
         change = PreviewDraftChange.model_validate(change)
         actor = _actor(change.actor)
@@ -215,6 +259,8 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
                 raise PreviewProblem("preview-draft-revision-conflict")
             previous = self._draft(connection, state, latest) if latest else None
             restored = self._draft(connection, state, change.restore_revision) if change.restore_revision else None
+            if restored and previous:
+                self._restore_rights(connection, preview_id, previous, restored)
             base = restored or previous
             mapping = change.mapping or (
                 base.authority.mapping

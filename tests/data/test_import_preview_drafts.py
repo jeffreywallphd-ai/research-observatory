@@ -185,6 +185,38 @@ class ImportPreviewDraftTests(unittest.TestCase):
         # Rights on one record do not leak or silently grant another dimension.
         self.assertEqual(3, self.repository().records_page(preview, after=2, limit=1)[0].ordinal)
 
+    def test_undo_cannot_remove_current_record_rights_restrictions(self):
+        preview, records = self.accepted()
+        self.change(preview, 0)
+        denied = review_record(records[1], included=False, fields=(), rights=ImportRights())
+        self.change(preview, 1, decisions=(denied,))
+        with self.assertRaisesRegex(PreviewProblem, "rights-restore-denied"):
+            self.change(preview, 2, restore_revision=1)
+        self.assertEqual(2, self.repository().draft(preview).revision)
+        for action in (
+            lambda: self.repository().records_page(preview, after=1, limit=1),
+            lambda: self.repository().draft_page(preview, revision=1, after=1, limit=1),
+        ):
+            with self.assertRaisesRegex(PreviewProblem, "record-rights-denied"):
+                action()
+
+    def test_undo_checks_export_rights_beyond_the_visible_page_and_defaults(self):
+        preview, records = self.accepted(b"title\n" + b"Synthetic\n" * 105)
+        allowed = fixture.fixture.RIGHTS.model_copy(
+            update={
+                "export": ImportPermission(value="permitted", basis="researcher-confirmed"),
+            }
+        )
+        restricted = fixture.fixture.RIGHTS
+        self.change(preview, 0, rights=allowed)
+        self.change(preview, 1, decisions=(review_record(records[-1], included=False, fields=(), rights=restricted),))
+        with self.assertRaisesRegex(PreviewProblem, "rights-restore-denied"):
+            self.change(preview, 2, restore_revision=1)
+        self.change(preview, 2, rights=restricted)
+        with self.assertRaisesRegex(PreviewProblem, "rights-restore-denied"):
+            self.change(preview, 3, restore_revision=2)
+        self.assertEqual(3, self.repository().draft(preview).revision)
+
     def test_group_decisions_and_complete_report_cross_page_boundaries(self):
         preview, records = self.accepted(b"title\n" + b"Synthetic\n" * 105)
         self.change(preview, 0)

@@ -56,3 +56,13 @@ native behavior; domain-only success is not task completion.
 Next: protected preview repository/migration and reference accounting, then durable
 job composition, native intake, Core/client/renderer integration, focused real-boundary
 qualification and formal independent commit-bound review. No task completion claimed.
+
+## Draft-review acceptance closure
+
+Checkpoint-03 review at `a6219124afd9165414b4ccefd0e0ff9cb714aa76` found
+that undo could remove a current per-record inspection restriction. Immediate
+cause: the rights guard covered direct decisions but not restored history.
+Extend the current-rights row to every history jump: restoring an older draft
+must not broaden any current action permission implicitly. Add denial → undo →
+raw/historical read regression before remediation. Preserve the adverse review;
+do not integrate its candidate until this boundary passes independent re-review.

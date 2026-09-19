@@ -89,9 +89,9 @@ python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T02" data-worksheet-sha256="9eeca410f79cde4039eca534ab35dc5bf3af06be35de786232149e825f078e8f">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T02" data-worksheet-sha256="214dbb59ef7e4e3f3a9bb552d6ded649536fb07d9948823a7368a42149b157b1">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>9eeca410f79cde4039eca534ab35dc5bf3af06be35de786232149e825f078e8f</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>214dbb59ef7e4e3f3a9bb552d6ded649536fb07d9948823a7368a42149b157b1</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T02 — import preview, mapping and conflict UI
 
 Claim base: `34a8015b14245ed76a6f9629a69c3ed8574bde42`. Authority: the
@@ -149,7 +149,17 @@ native behavior; domain-only success is not task completion.
 
 Next: protected preview repository/migration and reference accounting, then durable
 job composition, native intake, Core/client/renderer integration, focused real-boundary
-qualification and formal independent commit-bound review. No task completion claimed.</pre></article>
+qualification and formal independent commit-bound review. No task completion claimed.
+
+## Draft-review acceptance closure
+
+Checkpoint-03 review at `a6219124afd9165414b4ccefd0e0ff9cb714aa76` found
+that undo could remove a current per-record inspection restriction. Immediate
+cause: the rights guard covered direct decisions but not restored history.
+Extend the current-rights row to every history jump: restoring an older draft
+must not broaden any current action permission implicitly. Add denial → undo →
+raw/historical read regression before remediation. Preserve the adverse review;
+do not integrate its candidate until this boundary passes independent re-review.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
