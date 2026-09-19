@@ -18,6 +18,7 @@
     "tests/data/test_import_source_chunks.py",
     "tests/service/test_reference_imports.py",
     "tests/service/test_reference_import_streaming.py",
+    "tests/service/test_import_review_scale_windows.py",
     "tests/contracts/test_reference_import_contracts.py",
     "tools/adr_check.py",
     "tools/adr_new.py",

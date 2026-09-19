@@ -94,7 +94,6 @@ class ImportInteractionTests(unittest.TestCase):
                 )
                 scheduled = api.post("schedule", address)
                 self.assertEqual(200, scheduled.status_code)
-                fixture.service.run_pending()
                 return {
                     "status": "prepared",
                     "sourceName": "synthetic-preview.csv",
@@ -168,6 +167,13 @@ class ImportInteractionTests(unittest.TestCase):
                 page.add_init_script(script)
                 page.goto("http://tauri.localhost/index.html", wait_until="load")
                 page.wait_for_function("document.body.dataset.applicationReady === 'true'")
+                page.evaluate("""() => {
+                  window.__importAnnouncements = [];
+                  const live = document.querySelector('[data-live-region]');
+                  new MutationObserver(() => {
+                    if (live.textContent) window.__importAnnouncements.push(live.textContent);
+                  }).observe(live, { childList: true, subtree: true, characterData: true });
+                }""")
                 menu = page.locator("[data-all-tools]")
                 menu.locator("summary").click()
                 menu.get_by_role("button", name="Local projects", exact=True).click()
@@ -192,7 +198,14 @@ class ImportInteractionTests(unittest.TestCase):
                 page.get_by_label("I confirm I may store and inspect this file locally.", exact=True).check()
                 choose.focus()
                 page.keyboard.press("Enter")
+                batch = workspace.locator(".import-batches").get_by_role("button")
+                batch.get_by_text("Parsing: runnable", exact=True).wait_for()
+                fixture.service.run_pending()
                 page.get_by_role("button", name="Apply column mapping", exact=True).wait_for(timeout=10000)
+                batch.get_by_text("Ready for review", exact=True).wait_for()
+                page.locator("[data-live-region]").get_by_text(
+                    "Import preview: Ready for review.", exact=True
+                ).wait_for()
                 self.assertEqual("title", page.locator("#import-column-0").input_value())
                 self.assertEqual("title", page.locator("#import-column-1").input_value())
                 self.assertEqual("doi", page.locator("#import-column-2").input_value())
@@ -222,6 +235,16 @@ class ImportInteractionTests(unittest.TestCase):
                     fixture.service.run_pending()
                     summary_panel.get_by_role("button", name="Refresh summary status", exact=True).click()
                     summary_panel.get_by_text("Complete for this draft", exact=True).wait_for()
+                    page.locator("[data-live-region]").get_by_text(
+                        "Preview summary: Complete for this draft.", exact=True
+                    ).wait_for()
+                    announcements = page.evaluate("window.__importAnnouncements.length")
+                    summary_panel.get_by_role("button", name="Refresh summary status", exact=True).click()
+                    page.wait_for_function(
+                        "document.querySelector('[aria-label=\"Import summary and duplicate candidates\"]')"
+                        "?.getAttribute('aria-busy') === 'false'"
+                    )
+                    self.assertEqual(announcements, page.evaluate("window.__importAnnouncements.length"))
                     summary_panel.get_by_text("No works have been merged.", exact=False).wait_for()
                     summary_panel.get_by_role("button", name="Review group at row", exact=False).first.click()
                     summary_panel.get_by_role("button", name="Compare candidate row", exact=False).first.click()
@@ -340,6 +363,29 @@ class ImportInteractionTests(unittest.TestCase):
                     workspace.get_by_text("in your selected folder.", exact=False).wait_for()
                     page.wait_for_function("document.activeElement?.textContent === 'Download diagnostic report…'")
                     page.locator("[data-theme-toggle]").click()
+                # An older list reply must not overwrite a newer authoritative
+                # cancellation, even when the user refreshed before cancelling.
+                page.evaluate("""() => {
+                  const prior = window.__TAURI_INTERNALS__.invoke;
+                  window.__TAURI_INTERNALS__.invoke = async (command, args) => {
+                    const result = await prior(command, args);
+                    if (command === 'core_api_request' && args.request.path === '/projects/imports/list') {
+                      return await new Promise(resolve => { window.__releaseImportList = () => resolve(result); });
+                    }
+                    return result;
+                  };
+                }""")
+                page.get_by_role("button", name="Refresh batches", exact=True).click()
+                page.wait_for_function("typeof window.__releaseImportList === 'function'")
+                page.get_by_role("button", name="Cancel this preview…", exact=True).click()
+                page.get_by_role("button", name="Confirm cancellation", exact=True).click()
+                batch.get_by_text("cancelled", exact=True).wait_for()
+                page.evaluate("window.__releaseImportList()")
+                page.wait_for_function(
+                    "!Array.from(document.querySelectorAll('button'))"
+                    ".find(node => node.textContent === 'Refresh batches').disabled"
+                )
+                self.assertEqual("synthetic-preview.csvcancelled", batch.inner_text().replace("\n", ""))
                 # Deliver an authentic Core response after navigation has unmounted
                 # the private preview; it must not resurrect the old source UI.
                 page.evaluate("""() => {

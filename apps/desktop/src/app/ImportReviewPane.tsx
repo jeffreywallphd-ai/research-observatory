@@ -22,7 +22,7 @@ export function importStatusLabel(item: ImportPreviewItem): string {
 }
 const terminal = (item: ImportPreviewItem): boolean => ["cancelled", "failed", "security-interrupted"].includes(item.state) || item.jobState === "failed" || item.jobState === "cancelled";
 
-export function ImportReviewPane({ root, projectId, initial, client, announce }: { readonly root: string; readonly projectId: string; readonly initial: ImportPreviewItem; readonly client: ImportClient; readonly announce: (message: string) => void }): ReactNode {
+export function ImportReviewPane({ root, projectId, initial, client, announce, onStatus }: { readonly root: string; readonly projectId: string; readonly initial: ImportPreviewItem; readonly client: ImportClient; readonly announce: (message: string) => void; readonly onStatus: (status: ImportPreviewItem) => void }): ReactNode {
   const [status, setStatus] = useState(initial);
   const [summary, setSummary] = useState<ReviewSummary | null>(null);
   const [page, setPage] = useState<ReviewPage | null>(null);
@@ -42,6 +42,7 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
   const reportButton = useRef<HTMLButtonElement>(null);
   const generation = useRef(0);
   const live = useRef(true);
+  const lastStatusLabel = useRef(importStatusLabel(initial));
   const statusHeading = useRef<HTMLHeadingElement>(null);
   const cancelButton = useRef<HTMLButtonElement>(null);
   const undoButton = useRef<HTMLButtonElement>(null);
@@ -79,7 +80,9 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
     try {
       const current = await client.importPreviewStatus(address);
       if (!live.current || ticket !== generation.current) return;
-      setStatus(current);
+      setStatus(current); onStatus(current);
+      const label = importStatusLabel(current);
+      if (label !== lastStatusLabel.current) { lastStatusLabel.current = label; announce(`Import preview: ${label}.`); }
       if (current.jobState === "succeeded" && ["parse-completed", "draft-revised"].includes(current.state)) {
         await show(await readDraft(current), ticket); setCursors([0]);
       } else { setSummary(null); setPage(null); setHeaders([]); }
@@ -130,7 +133,8 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
     try {
       const next = await client.cancelImportPreview(address);
       if (!live.current || ticket !== generation.current) return;
-      setStatus(next); setSummary(null); setPage(null); setRecord(null); setHeaders([]); setSelected([]); setConfirmCancel(false);
+      setStatus(next); onStatus(next); setSummary(null); setPage(null); setRecord(null); setHeaders([]); setSelected([]); setConfirmCancel(false);
+      lastStatusLabel.current = importStatusLabel(next);
       announce("Preview cancelled. Its incomplete source and audit remain retained; no canonical import was published.");
       statusHeading.current?.focus();
     } catch (error) { if (live.current && ticket === generation.current) setFailure(importFailure(error)); }

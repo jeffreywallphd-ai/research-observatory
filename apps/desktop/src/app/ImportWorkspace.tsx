@@ -32,24 +32,38 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
   const [options, setOptions] = useState<ImportIntakeOptions>({ formatName: "ris", encoding: "utf-8", delimiter: ",", localUseConfirmed: false });
   const live = useRef(true);
   const libraryGeneration = useRef(0);
+  const pendingList = useRef<{ generation: number; updates: Map<string, ImportPreviewItem> } | null>(null);
   const intake = useRef<AbortController | null>(null);
   const chooseButton = useRef<HTMLButtonElement>(null);
 
   async function load(cursor: string | null): Promise<void> {
     const generation = ++libraryGeneration.current;
+    const request = { generation, updates: new Map<string, ImportPreviewItem>() };
+    pendingList.current = request;
     setLoading(true); setFailure(null);
     try {
       const next = await client.importPreviews({ root: project.root, after: cursor, limit: 25 });
       if (!live.current || generation !== libraryGeneration.current) return;
-      setPage(next); setAfter(cursor);
+      // A pane reply received after this list request started is newer than
+      // its snapshot. Keep those updates without changing the page or cursor.
+      setPage({ ...next, items: next.items.map((item) => request.updates.get(item.previewId) ?? item) }); setAfter(cursor);
     } catch (error) {
       if (live.current && generation === libraryGeneration.current) { setPage(null); setFailure(importFailure(error)); }
-    } finally { if (live.current && generation === libraryGeneration.current) setLoading(false); }
+    } finally {
+      if (pendingList.current === request) pendingList.current = null;
+      if (live.current && generation === libraryGeneration.current) setLoading(false);
+    }
+  }
+  function updateStatus(current: ImportPreviewItem): void {
+    if (!live.current) return;
+    pendingList.current?.updates.set(current.previewId, current);
+    setPage((saved) => saved ? { ...saved, items: saved.items.map((item) => item.previewId === current.previewId ? current : item) } : saved);
+    setSelected((saved) => saved?.previewId === current.previewId ? current : saved);
   }
   useEffect(() => {
     live.current = true;
     if (initialPreviews === undefined) void load(null);
-    return () => { live.current = false; libraryGeneration.current += 1; intake.current?.abort(); };
+    return () => { live.current = false; libraryGeneration.current += 1; pendingList.current = null; intake.current?.abort(); };
   }, [client, project.root]);
 
   async function choose(): Promise<void> {
@@ -105,7 +119,7 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
         <ul className="import-batches ro-stack">{page?.items.map((item) => <li key={item.previewId}><Button disabled={choosing} aria-pressed={selected?.previewId === item.previewId} onClick={() => setSelected(item)}><span className="ro-wrap-anywhere">{item.sourceName}</span><StatusBadge>{importStatusLabel(item)}</StatusBadge></Button></li>)}</ul>
         <nav className="ro-action-row" aria-label="Import batch pages"><Button disabled={loading || after === null} onClick={() => void load(null)}>First batches</Button><Button disabled={loading || !page || page.complete} onClick={() => page && void load(page.nextAfter)}>Next batches</Button></nav>
       </Panel>
-      {selected ? <ImportReviewPane key={selected.previewId} root={project.root} projectId={project.projectId} initial={selected} client={client} announce={announce} /> : <Panel title="Select a batch to review"><p>Compare raw fields with normalized candidates, correct mappings, and exclude unwanted records. Saved previews are retained in this project.</p></Panel>}
+      {selected ? <ImportReviewPane key={selected.previewId} root={project.root} projectId={project.projectId} initial={selected} client={client} announce={announce} onStatus={updateStatus} /> : <Panel title="Select a batch to review"><p>Compare raw fields with normalized candidates, correct mappings, and exclude unwanted records. Saved previews are retained in this project.</p></Panel>}
     </div>
   </div>;
 }

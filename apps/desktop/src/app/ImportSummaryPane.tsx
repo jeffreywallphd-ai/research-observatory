@@ -5,6 +5,7 @@ import { Button, DataTable, Notification, Panel, StatusBadge } from "@research-o
 type Reason = "raw" | "doi";
 type ImportClient = ReturnType<typeof createCoreApiClient>;
 const active = (status: ImportSummaryStatus | null): boolean => Boolean(status?.jobState && !["succeeded", "failed", "cancelled"].includes(status.jobState));
+const statusLabel = (status: ImportSummaryStatus): string => status.counts ? "Complete for this draft" : status.jobState ? `Calculation ${status.jobState.replaceAll("-", " ")}` : "Not calculated";
 
 export function ImportSummaryPane({ root, previewId, revision, client, disabled, announce, inspect, select, failureText }: {
   readonly root: string; readonly previewId: string; readonly revision: number; readonly client: ImportClient;
@@ -21,6 +22,7 @@ export function ImportSummaryPane({ root, previewId, revision, client, disabled,
   const [loading, setLoading] = useState(true);
   const [failure, setFailure] = useState<string | null>(null);
   const live = useRef(true), generation = useRef(0);
+  const lastStatusLabel = useRef<string | null>(null);
   const address = { root, previewId, revision };
 
   async function perform(ticket: number, action: () => Promise<void>): Promise<void> {
@@ -43,8 +45,12 @@ export function ImportSummaryPane({ root, previewId, revision, client, disabled,
         if (!live.current || ticket !== generation.current) return;
         setGroups(page); setGroupCursors([null]); setMembers(null);
       }
-      if (operation === "start") announce("Preview summary calculation requested. No canonical records will be changed.");
-      if (operation === "cancel") announce("Summary cancellation requested. The editable preview is retained.");
+      const label = statusLabel(next);
+      const changed = label !== lastStatusLabel.current;
+      lastStatusLabel.current = label;
+      if (changed && (next.counts || next.jobState === "failed" || next.jobState === "cancelled")) announce(`Preview summary: ${label}.`);
+      else if (operation === "start") announce("Preview summary calculation requested. No canonical records will be changed.");
+      else if (operation === "cancel") announce("Summary cancellation requested. The editable preview is retained.");
     });
   }
   useEffect(() => {
@@ -80,7 +86,7 @@ export function ImportSummaryPane({ root, previewId, revision, client, disabled,
       <p>Revision {revision}. This is a summary of this import only, not a corpus merge.</p>
       {failure ? <Notification tone="danger" title="Summary unavailable">{failure}</Notification> : null}
       {loading ? <p role="status">Reading summary status…</p> : null}
-      {status ? <StatusBadge>{counts ? "Complete for this draft" : status.jobState ? `Calculation ${status.jobState.replaceAll("-", " ")}` : "Not calculated"}</StatusBadge> : null}
+      {status ? <StatusBadge>{statusLabel(status)}</StatusBadge> : null}
       {!counts ? <p>Counts and duplicate candidates are unavailable until calculation completes. Missing results are not zero.</p> : null}
       {status?.diagnosticCode ? <p>Diagnostic: {status.diagnosticCode}. Review the job in Task Center before retrying. Retry does not change the saved draft or permissions.</p> : null}
       {status?.jobState === "cancelled" ? <p>The summary was cancelled; your preview is intact. To calculate the same draft again, retry its job in Task Center.</p> : null}

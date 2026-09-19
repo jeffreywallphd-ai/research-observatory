@@ -271,15 +271,10 @@ delimiters use `/2` with the delimiter in its header. Source/chunk hashes and
 raw-span record keys are unchanged. The generated review contract displays the
 persisted selection rather than current form state.
 
-This is not yet a complete production wizard. Duplicate/count projection remains
-CAP-04.S01.T02 work. Native-window, full 100k-record and packaged end-to-end
-qualification remain required; unit/service composition is not a substitute.
-
 The version-12 migration supplies protected append-only summary attempt, row,
-group and completion relations for the remaining projection work. Exact v11 DDL
+group and completion relations for this projection. Exact v11 DDL
 is retained as a test fixture; backup-first upgrade and rollback preserve prior
-preview rows and create no historical summaries. No summary UI or worker is
-claimed from this storage groundwork alone.
+preview rows and create no historical summaries.
 
 The summary adapter now computes compact rows from the actual effective draft,
 with store/inspect permission for every row, including excluded and contextual
@@ -319,9 +314,18 @@ distinct; reading status never schedules computation. The renderer polls active
 jobs only, clears results on revision/project changes and discards late replies.
 The summary uses shared panels, tables, buttons and spacing, with coverage among
 included parsed records, exact-source/DOI candidate groups, comparison and selection
-into existing correction/exclusion controls. No Work merge or predicted canonical
-re-import effect is claimed. Native-window, packaged and whole-project scale
-qualification remain required task work.
+into existing correction/exclusion controls. Guarded status replies also update
+the matching saved batch; an older list response cannot undo a newer status.
+No Work merge or predicted canonical re-import effect is claimed.
+
+Actual native/protected-Core preview, mapping, candidate review, exclusion,
+diagnostic export, restart and cancellation were exercised at checkpoint-16;
+see the task's native qualification note for exact candidate and fixture scope.
+That run found the batch-status correction above, checked separately afterward.
+Whole-project 100k validation remains in progress. Frozen-package loading has
+passed; the complete frozen supervised import journey remains explicit slice/Wave
+qualification, not inferred from native development execution or package loading.
+CAP-04.S01.T03 still owns canonical commit/manifests and their final wizard step.
 
 ## Verification and technical basis
 

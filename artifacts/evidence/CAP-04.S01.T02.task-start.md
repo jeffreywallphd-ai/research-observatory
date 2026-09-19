@@ -80,3 +80,16 @@ Extend API identity proof across the asynchronous boundary: the request must own
 one immutable snapshot before dispatch, and the response must bind to that exact
 snapshot even if the caller changes its object. Add deferred-response mutation
 tests for all seven import methods before remediation; preserve this P2 finding.
+
+Native qualification of checkpoint-16 found a stale batch-list status while the
+selected pane correctly showed parse completion or cancellation. Extend the
+experience row to both views: authoritative pane replies update the matching
+batch without manual refresh, and a delayed older list reply must not undo that
+status. The built-renderer regression reproduced running-to-ready failure before
+the product correction; also cover cancellation, delayed list reply and unmount.
+
+Final readiness review also found that background parse/summary completion was
+visible only in non-live badges. Extend screen-reader proof to deduplicated
+completion/terminal announcements through the existing live region, not just
+loading/request messages. Add actual built-renderer announcement assertions and
+verify that unchanged status refreshes do not repeat announcements.
