@@ -116,6 +116,27 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
                 raise PreviewProblem("preview-draft-attempt-mismatch")
             return draft
 
+    def mapping_high_water(self, preview_id: str) -> int:
+        with self._transaction(preview_id) as connection:
+            state = self._read(connection, preview_id)
+            self._active(state)
+            draft = self._draft(connection, state, self._latest(connection, preview_id))
+            if draft.attempt_id != self._accepted_attempt(connection, preview_id):
+                raise PreviewProblem("preview-draft-attempt-mismatch")
+            return int(
+                self._query(
+                    connection,
+                    """
+                SELECT MAX(CAST(json_extract(mapping_json, '$.revision') AS INTEGER))
+                  FROM import_draft_revisions
+                 WHERE project_id=:project AND :preview IS NOT NULL
+                   AND json_extract(mapping_json, '$.profileId')=:profile
+            """,
+                    preview_id,
+                    profile=draft.authority.mapping.profile_id,
+                ).fetchone()[0]
+            )
+
     def _mapping(self, connection: CanonicalConnection, preview: str, mapping: MappingProfile) -> None:
         # A project mapping identity/revision always denotes the same immutable bytes,
         # even after undo or reuse in another preview. New revisions use the high-water mark.

@@ -1908,6 +1908,133 @@ fn validate_model_catalog_api_request(path: &str, body: &str) -> bool {
     })
 }
 
+fn validate_import_review_request(path: &str, body: &str) -> bool {
+    let keys: &[&str] = match path {
+        "/projects/imports/begin-review" | "/projects/imports/review" => &["root", "previewId"],
+        "/projects/imports/records" | "/projects/imports/report" => {
+            &["root", "previewId", "revision", "after", "limit"]
+        }
+        "/projects/imports/detail" => &[
+            "root",
+            "previewId",
+            "revision",
+            "ordinal",
+            "recordKey",
+            "section",
+            "start",
+            "limit",
+        ],
+        "/projects/imports/mapping" => {
+            &["root", "previewId", "expectedRevision", "mode", "columns"]
+        }
+        "/projects/imports/edit" => &[
+            "root",
+            "previewId",
+            "expectedRevision",
+            "records",
+            "included",
+            "corrections",
+        ],
+        _ => return false,
+    };
+    let Some(object) = exact_json_object(body, keys, 900_000) else {
+        return false;
+    };
+    if !object["root"].as_str().is_some_and(canonical_project_root)
+        || !object["previewId"].as_str().is_some_and(canonical_uuid_v7)
+    {
+        return false;
+    }
+    let number = |name: &str, minimum: u64, maximum: u64| {
+        object
+            .get(name)
+            .and_then(serde_json::Value::as_u64)
+            .is_some_and(|n| (minimum..=maximum).contains(&n))
+    };
+    let exact = |value: &serde_json::Value, keys: &[&str]| {
+        value.as_object().is_some_and(|item| {
+            item.len() == keys.len() && keys.iter().all(|key| item.contains_key(*key))
+        })
+    };
+    let target = |value: &serde_json::Value| {
+        value
+            .as_str()
+            .is_some_and(|name| matches!(name, "title" | "doi" | "year" | "author" | "container"))
+    };
+    match path {
+        "/projects/imports/begin-review" | "/projects/imports/review" => true,
+        "/projects/imports/records" | "/projects/imports/report" => {
+            number("revision", 1, 2_147_483_647)
+                && number("after", 0, 200_000)
+                && number("limit", 1, 100)
+        }
+        "/projects/imports/detail" => {
+            number("revision", 1, 2_147_483_647)
+                && number("ordinal", 1, 200_000)
+                && object["recordKey"]
+                    .as_str()
+                    .is_some_and(|s| canonical_lower_hex(s, 64))
+                && object["section"]
+                    .as_str()
+                    .is_some_and(|s| matches!(s, "raw" | "candidates" | "effective"))
+                && number("start", 0, 4096)
+                && number("limit", 1, 100)
+        }
+        "/projects/imports/mapping" => {
+            let Some(columns) = object["columns"].as_array() else {
+                return false;
+            };
+            let Some(mode) = object["mode"].as_str() else {
+                return false;
+            };
+            let mut indices = std::collections::HashSet::new();
+            number("expectedRevision", 1, 2_147_483_646)
+                && columns.len() <= 256
+                && (mode == "columns" || mode == "automatic" && columns.is_empty())
+                && columns.iter().all(|item| {
+                    exact(item, &["index", "target"])
+                        && item["index"]
+                            .as_u64()
+                            .is_some_and(|n| n <= 4095 && indices.insert(n))
+                        && target(&item["target"])
+                })
+        }
+        "/projects/imports/edit" => {
+            let Some(records) = object["records"].as_array() else {
+                return false;
+            };
+            let Some(corrections) = object["corrections"].as_array() else {
+                return false;
+            };
+            let mut ordinals = std::collections::HashSet::new();
+            number("expectedRevision", 1, 2_147_483_646)
+                && (1..=100).contains(&records.len())
+                && corrections.len() <= 64
+                && (object["included"].is_boolean()
+                    || object["included"].is_null() && !corrections.is_empty())
+                && records.iter().all(|item| {
+                    exact(item, &["ordinal", "recordKey"])
+                        && item["ordinal"]
+                            .as_u64()
+                            .is_some_and(|n| (1..=200_000).contains(&n) && ordinals.insert(n))
+                        && item["recordKey"]
+                            .as_str()
+                            .is_some_and(|s| canonical_lower_hex(s, 64))
+                })
+                && corrections.iter().all(|item| {
+                    exact(item, &["name", "value"])
+                        && target(&item["name"])
+                        && item["value"].as_str().is_some_and(|s| {
+                            !s.trim().is_empty()
+                                && s.len() <= 65_536
+                                && !s.chars().any(|c| c <= '\u{1f}' || c == '\u{7f}')
+                        })
+                })
+        }
+        _ => false,
+    }
+}
+
 fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
@@ -1971,6 +2098,16 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
         {
             return Ok(());
         }
+    }
+    if request.method == "POST"
+        && request.if_match.is_none()
+        && request.idempotency_key.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_import_review_request(&request.path, body))
+    {
+        return Ok(());
     }
     if request.method == "POST"
         && request.if_match.is_none()
@@ -2799,6 +2936,79 @@ impl ProcessTreeContainment {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn import_review_bridge_admits_only_exact_bounded_review_operations() {
+        let address = serde_json::json!({"root":"C:/Research/synthetic", "previewId":"01900000-0000-7000-8000-000000000001"});
+        let cases = [
+            ("begin-review", address.clone()),
+            ("review", address.clone()),
+            (
+                "records",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "after":0, "limit":25}),
+            ),
+            (
+                "report",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "after":0, "limit":100}),
+            ),
+            (
+                "detail",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "ordinal":2, "recordKey":"a".repeat(64), "section":"raw", "start":0, "limit":25}),
+            ),
+            (
+                "mapping",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "expectedRevision":1, "mode":"columns", "columns":[{"index":0,"target":"title"}]}),
+            ),
+            (
+                "edit",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "expectedRevision":1, "records":[{"ordinal":2,"recordKey":"a".repeat(64)}], "included":false, "corrections":[]}),
+            ),
+        ];
+        for (route, body) in cases {
+            let request = super::CoreApiRequest {
+                method: "POST".into(),
+                path: format!("/projects/imports/{route}"),
+                body: Some(body.to_string()),
+                if_match: None,
+                idempotency_key: None,
+            };
+            assert!(super::validate_api_request(&request).is_ok(), "{route}");
+            let mut spoofed = body.clone();
+            spoofed["actor"] = serde_json::json!("caller");
+            assert!(
+                super::validate_api_request(&super::CoreApiRequest {
+                    body: Some(spoofed.to_string()),
+                    ..request.clone()
+                })
+                .is_err()
+            );
+            for path in [
+                "/projects/imports/intake",
+                "/projects/imports/read-path",
+                "/projects/imports/commit",
+            ] {
+                assert!(
+                    super::validate_api_request(&super::CoreApiRequest {
+                        path: path.into(),
+                        ..request.clone()
+                    })
+                    .is_err()
+                );
+            }
+        }
+        for values in [
+            serde_json::json!({"revision":true,"after":0,"limit":25}),
+            serde_json::json!({"revision":1,"after":0,"limit":101}),
+        ] {
+            let mut body = address.clone();
+            body.as_object_mut()
+                .unwrap()
+                .extend(values.as_object().unwrap().clone());
+            assert!(!super::validate_import_review_request(
+                "/projects/imports/records",
+                &body.to_string()
+            ));
+        }
+    }
     use super::{
         CapabilityToken, CoreApiRequest, RuntimeState, RuntimeSupervisor, SupervisorInner,
         authenticated_api_request_with_cancellation, parse_api_response, semantic_version,

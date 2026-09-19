@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -66,7 +67,10 @@ def _interfaces(openapi: dict[str, Any]) -> str:
                 raise ValueError(f"OpenAPI property {name}.{property_name} must be an object")
             # FastAPI response serialization includes declared defaults and nulls;
             # generated response types therefore expose the exact wire object.
-            lines.append(f"  readonly {property_name}: {_schema_type(property_schema)};")
+            key = (
+                property_name if re.fullmatch(r"[A-Za-z_$][A-Za-z0-9_$]*", property_name) else json.dumps(property_name)
+            )
+            lines.append(f"  readonly {key}: {_schema_type(property_schema)};")
         lines.append("}")
         blocks.append("\n".join(lines) + "\n")
     return "\n".join(blocks)
@@ -1531,8 +1535,201 @@ export function parseOperationEventStream(body: string): readonly OperationProgr
   return events;
 }
 
+const IMPORT_FIELDS = ["title", "doi", "year", "author", "container"];
+const IMPORT_RIGHTS = ["store", "inspect", "index", "derive", "model-use", "quote", "export", "share"];
+const IMPORT_BODY_BYTES = 900_000;
+
+function importText(value: unknown, maximum: number, minimum = 0): value is string {
+  return typeof value === "string" && value.length <= maximum * 2
+    && [...value].length >= minimum && [...value].length <= maximum;
+}
+
+function importOwned(value: unknown): Readonly<Record<string, unknown>> | null {
+  try {
+    const owned = record(registryOwnedValue(value));
+    return owned && new TextEncoder().encode(JSON.stringify(owned)).length <= IMPORT_BODY_BYTES ? owned : null;
+  } catch { return null; }
+}
+
+function importDigest(value: unknown): value is string {
+  return typeof value === "string" && /^[0-9a-f]{64}$/.test(value);
+}
+
+function importWarnings(value: unknown): boolean {
+  return Array.isArray(value) && value.length <= 64 && value.every((item) => typeof item === "string"
+    && item.length <= 64 && /^[a-z]+(?:-[a-z]+)*$/.test(item));
+}
+
+export function decodeReviewSummary(value: unknown): ReviewSummary | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["previewId", "revision", "predecessorRevision", "attemptId", "recordCount",
+    "mappingId", "mappingRevision", "mappingHighWater", "mappingMode", "rights", "options"])
+    || !canonicalUuid7(item.previewId) || !canonicalUuid7(item.attemptId) || !canonicalUuid7(item.mappingId)
+    || !integer(item.revision, 1, 2147483647) || item.predecessorRevision !== (item.revision === 1 ? null : item.revision - 1)
+    || !integer(item.recordCount, 0, 200000) || !integer(item.mappingRevision, 1, 2147483647)
+    || !integer(item.mappingHighWater, item.mappingRevision, 2147483647)
+    || !registryEnum(item.mappingMode, ["automatic", "columns"])) return null;
+  const rights = record(item.rights), options = record(item.options);
+  if (!rights || !exactKeys(rights, IMPORT_RIGHTS) || !IMPORT_RIGHTS.every((name) => {
+    const right = record(rights[name]);
+    return right && exactKeys(right, ["value", "basis"]) && registryEnum(right.value, ["unknown", "permitted", "denied"])
+      && registryEnum(right.basis, ["not-reported", "researcher-confirmed"])
+      && (right.value === "unknown" || right.basis === "researcher-confirmed");
+  }) || !options || !exactKeys(options, ["duplicatePolicy", "malformedPolicy"])
+    || options.duplicatePolicy !== "review" || options.malformedPolicy !== "exclude-and-report") return null;
+  return item as unknown as ReviewSummary;
+}
+
+export function decodeReviewPage(value: unknown): ReviewPage | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["revision", "records", "nextAfter", "complete"])
+    || !integer(item.revision, 1, 2147483647) || !integer(item.nextAfter, 0, 200000) || typeof item.complete !== "boolean"
+    || !Array.isArray(item.records) || item.records.length > 100 || (!item.complete && item.records.length === 0)) return null;
+  let previous = 0;
+  const short = (value: unknown): boolean => {
+    if (value === null) return true;
+    const text = record(value);
+    return !!text && exactKeys(text, ["text", "truncated"]) && importText(text.text, 256, 1) && typeof text.truncated === "boolean";
+  };
+  for (const value of item.records) {
+    const row = record(value);
+    if (!row || !exactKeys(row, ["ordinal", "recordKey", "kind", "status", "included", "title", "doi", "fieldCount", "warnings"])
+      || !integer(row.ordinal, 1, 200000) || previous !== 0 && row.ordinal !== previous + 1
+      || !importDigest(row.recordKey) || !registryEnum(row.kind, ["record", "header", "directive"])
+      || !registryEnum(row.status, ["parsed", "malformed"]) || typeof row.included !== "boolean"
+      || row.included && (row.kind !== "record" || row.status !== "parsed")
+      || !integer(row.fieldCount, 0, 4096) || !short(row.title) || !short(row.doi) || !importWarnings(row.warnings)) return null;
+    previous = row.ordinal;
+  }
+  if (item.records.length && item.nextAfter !== previous) return null;
+  return item as unknown as ReviewPage;
+}
+
+export function decodeReviewDetail(value: unknown): ReviewDetail | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["revision", "ordinal", "recordKey", "section", "fields", "nextIndex", "complete"])
+    || !integer(item.revision, 1, 2147483647) || !integer(item.ordinal, 1, 200000) || !importDigest(item.recordKey)
+    || !registryEnum(item.section, ["raw", "candidates", "effective"]) || !integer(item.nextIndex, 0, 4096)
+    || typeof item.complete !== "boolean" || !Array.isArray(item.fields) || item.fields.length > 100
+    || (!item.complete && item.fields.length === 0)) return null;
+  let previous = -1;
+  for (const value of item.fields) {
+    const field = record(value);
+    if (!field || !exactKeys(field, ["index", "name", "value", "sourceFieldIndex", "origin", "target", "warnings"])
+      || !integer(field.index, 0, 4095) || previous >= 0 && field.index !== previous + 1
+      || !importText(field.name, 65536) || !importText(field.value, 65536)
+      || !registryEnum(field.origin, ["raw", "candidate", "mapping", "correction"])
+      || !importWarnings(field.warnings) || field.target !== null && !registryEnum(field.target, IMPORT_FIELDS)
+      || (field.origin === "correction" ? field.sourceFieldIndex !== null : !integer(field.sourceFieldIndex, 0, 4095))
+      || (item.section === "raw" ? field.origin !== "raw" || field.sourceFieldIndex !== field.index
+        : field.origin === "raw" || field.target !== null || !registryEnum(field.name, IMPORT_FIELDS))
+      || item.section === "candidates" && field.origin !== "candidate") return null;
+    previous = field.index;
+  }
+  if (item.fields.length && item.nextIndex !== previous + 1) return null;
+  return item as unknown as ReviewDetail;
+}
+
+export function decodeDiagnosticPage(value: unknown): DiagnosticPage | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["revision", "csv", "nextAfter", "complete"])
+    || !integer(item.revision, 1, 2147483647) || !integer(item.nextAfter, 0, 200000) || typeof item.complete !== "boolean"
+    || !importText(item.csv, IMPORT_BODY_BYTES)) return null;
+  const csv = item.csv.replace(/^ordinal,line_start,line_end,status,diagnostic\r\n/, "");
+  if (csv && !csv.endsWith("\r\n")) return null;
+  let previous = 0;
+  for (const line of csv.split("\r\n").slice(0, -1)) {
+    if (!/^[1-9][0-9]*,[1-9][0-9]*,[1-9][0-9]*,(parsed|malformed),[a-z]+(?:-[a-z]+)*$/.test(line)) return null;
+    const ordinal = Number(line.split(",")[0]);
+    if (!integer(ordinal, 1, 200000) || ordinal < previous || previous && ordinal > previous + 1) return null;
+    previous = ordinal;
+  }
+  if (previous && item.nextAfter !== previous || !item.complete && !previous) return null;
+  return item as unknown as DiagnosticPage;
+}
+
+function importBody(value: unknown): string {
+  const item = importOwned(value);
+  if (!item || !projectRoot(item.root) || !canonicalUuid7(item.previewId)) throw new Error("RO-CORE-REQUEST-INVALID");
+  return JSON.stringify(item);
+}
+
+function importPageBody(command: ImportPageRequest): string {
+  if (!integer(command.revision, 1, 2147483647) || !integer(command.after, 0, 200000) || !integer(command.limit, 1, 100)) throw new Error("RO-CORE-REQUEST-INVALID");
+  return importBody({ root: command.root, previewId: command.previewId, revision: command.revision, after: command.after, limit: command.limit });
+}
+
 export function createCoreApiClient(transport: CoreApiTransport) {
   return Object.freeze({
+    async beginImportReview(command: ImportAddress): Promise<ReviewSummary> {
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/begin-review",
+        body: importBody({ root: command.root, previewId: command.previewId }), ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
+      if (result.previewId !== command.previewId || result.revision !== 1) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async importReview(command: ImportAddress): Promise<ReviewSummary> {
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/review",
+        body: importBody({ root: command.root, previewId: command.previewId }), ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
+      if (result.previewId !== command.previewId) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async importReviewPage(command: ImportPageRequest): Promise<ReviewPage> {
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/records",
+        body: importPageBody(command), ifMatch: null, idempotencyKey: null }, decodeReviewPage);
+      if (result.revision !== command.revision || result.nextAfter < command.after || result.records.length > command.limit
+        || (result.records.length ? result.records[0]!.ordinal !== command.after + 1 : result.nextAfter !== command.after)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async importReviewDetail(command: ImportDetailRequest): Promise<ReviewDetail> {
+      if (!integer(command.revision, 1, 2147483647) || !integer(command.ordinal, 1, 200000) || !importDigest(command.recordKey)
+        || !registryEnum(command.section, ["raw", "candidates", "effective"]) || !integer(command.start, 0, 4096)
+        || !integer(command.limit, 1, 100)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/detail", body: importBody({
+        root: command.root, previewId: command.previewId, revision: command.revision, ordinal: command.ordinal,
+        recordKey: command.recordKey, section: command.section, start: command.start, limit: command.limit,
+      }), ifMatch: null, idempotencyKey: null }, decodeReviewDetail);
+      if (result.revision !== command.revision || result.ordinal !== command.ordinal || result.recordKey !== command.recordKey
+        || result.section !== command.section || result.nextIndex < command.start || result.fields.length > command.limit
+        || (result.fields.length ? result.fields[0]!.index !== command.start : result.nextIndex !== command.start)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async mapImportReview(command: ImportMappingRequest): Promise<ReviewSummary> {
+      if (!integer(command.expectedRevision, 1, 2147483646) || !registryEnum(command.mode, ["automatic", "columns"])
+        || !Array.isArray(command.columns) || command.columns.length > 256 || command.mode === "automatic" && command.columns.length !== 0
+        || new Set(command.columns.map((c) => c.index)).size !== command.columns.length
+        || command.columns.some((c) => !integer(c.index, 0, 4095) || !registryEnum(c.target, IMPORT_FIELDS))) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/mapping", body: importBody({
+        root: command.root, previewId: command.previewId, expectedRevision: command.expectedRevision, mode: command.mode,
+        columns: command.columns.map((c) => ({ index: c.index, target: c.target })),
+      }), ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
+      if (result.previewId !== command.previewId || result.revision !== command.expectedRevision + 1) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async editImportReview(command: ImportGroupRequest): Promise<ReviewSummary> {
+      if (!integer(command.expectedRevision, 1, 2147483646) || !Array.isArray(command.records)
+        || command.records.length < 1 || command.records.length > 100 || !Array.isArray(command.corrections) || command.corrections.length > 64
+        || !(typeof command.included === "boolean" || command.included === null && command.corrections.length > 0)
+        || new Set(command.records.map((r) => r.ordinal)).size !== command.records.length
+        || command.records.some((r) => !integer(r.ordinal, 1, 200000) || !importDigest(r.recordKey))
+        || command.corrections.some((c) => !registryEnum(c.name, IMPORT_FIELDS) || !importText(c.value, 65536, 1)
+          || !c.value.trim() || /[\u0000-\u001f\u007f]/.test(c.value) || new TextEncoder().encode(c.value).length > 65536)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/edit", body: importBody({
+        root: command.root, previewId: command.previewId, expectedRevision: command.expectedRevision,
+        records: command.records.map((r) => ({ ordinal: r.ordinal, recordKey: r.recordKey })), included: command.included,
+        corrections: command.corrections.map((c) => ({ name: c.name, value: c.value })),
+      }), ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
+      if (result.previewId !== command.previewId || result.revision !== command.expectedRevision + 1) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async importDiagnosticPage(command: ImportPageRequest): Promise<DiagnosticPage> {
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/report",
+        body: importPageBody(command), ifMatch: null, idempotencyKey: null }, decodeDiagnosticPage);
+      const header = "ordinal,line_start,line_end,status,diagnostic\r\n";
+      const lines = result.csv.startsWith(header) ? result.csv.slice(header.length) : result.csv;
+      if (result.revision !== command.revision || result.nextAfter < command.after || result.nextAfter > command.after + command.limit
+        || result.csv.startsWith(header) !== (command.after === 0) || (lines ? Number(lines.split(",")[0]) !== command.after + 1 : result.nextAfter !== command.after)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
     async version(): Promise<VersionResponse> {
       return await requestJson(transport, {
         method: "GET", path: "/runtime/version", body: null, ifMatch: null, idempotencyKey: null,

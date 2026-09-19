@@ -18,6 +18,7 @@ from pathlib import Path
 from pydantic import TypeAdapter
 
 from .domain_contracts import is_uuid_v7
+from .import_review import ImportReview
 from .ingestion.preview_activity import ImportPreviewActivity
 from .ingestion.preview_workflow import (
     ACTIVITY,
@@ -227,6 +228,9 @@ class ImportPreviewService:
         return self._action(
             root, lambda binding: binding.adapters.previews.records_page(preview_id, after=after, limit=limit)
         )
+
+    def review_action[Result](self, root: str, action: Callable[[ImportReview], Result]) -> Result:
+        return self._action(root, lambda binding: action(ImportReview(binding.adapters.previews)))
 
     def cancel(self, root: str, preview_id: str, *, trace_id: str) -> None:
         def cancel(binding: _Binding) -> None:

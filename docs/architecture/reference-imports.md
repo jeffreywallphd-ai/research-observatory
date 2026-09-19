@@ -182,10 +182,20 @@ One shared local admission ledger reserves one CPU slot and 256 MiB RAM for
 interactive use; the serialized import pool reserves one CPU slot, 256 MiB RAM
 and 1 GiB disk. These are admission estimates, not OS resource enforcement.
 
-This is not yet a complete production wizard. Authenticated import API/bridge
-bounds, selected-file intake, duplicate candidates and UI wiring remain
-CAP-04.S01.T02 work. Internal repository page limits are not the native bridge
-limit: API projections must stay below 1 MiB. Native-window and packaged end-to-end
+The authenticated review routes use strict, bounded JSON-list DTOs without
+relaxing the tuple-based domain models. A 900,000-byte envelope budget leaves
+headroom for native HTTP framing. Summary abbreviations are explicit; separate
+raw/candidate/effective detail pages retain complete values. CSV mappings select
+immutable column indices and resolve repeated headers in Core. Mapping revisions
+advance from the project profile high-water mark even after undo. Group edits
+preserve untouched values and check their expanded size incrementally before
+atomic publication. Stale edits require rereading, never automatic replay against
+a newer draft. Diagnostic fragments bind the revision and scanned ordinal;
+current rights are checked on every page and completeness is explicit.
+
+This is not yet a complete production wizard. Selected-file intake, complete
+native report publication, duplicate/count projection, scalable undo and UI wiring
+remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
 
 ## Verification and technical basis

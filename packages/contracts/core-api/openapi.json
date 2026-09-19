@@ -186,6 +186,23 @@
         "title": "CapabilitiesResponse",
         "type": "object"
       },
+      "ColumnSelection": {
+        "additionalProperties": false,
+        "properties": {
+          "index": {
+            "$ref": "#/components/schemas/FieldIndex"
+          },
+          "target": {
+            "$ref": "#/components/schemas/MappedName"
+          }
+        },
+        "required": [
+          "index",
+          "target"
+        ],
+        "title": "ColumnSelection",
+        "type": "object"
+      },
       "ConfigurationResponse": {
         "additionalProperties": false,
         "properties": {
@@ -214,6 +231,11 @@
         ],
         "title": "ConfigurationResponse",
         "type": "object"
+      },
+      "Cursor": {
+        "maximum": 200000.0,
+        "minimum": 0.0,
+        "type": "integer"
       },
       "DeletionDisclosure": {
         "additionalProperties": false,
@@ -264,6 +286,38 @@
         "title": "DeletionDisclosure",
         "type": "object"
       },
+      "DiagnosticPage": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "csv": {
+            "maxLength": 900000,
+            "title": "Csv",
+            "type": "string"
+          },
+          "nextAfter": {
+            "$ref": "#/components/schemas/Cursor"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "revision",
+          "csv",
+          "nextAfter",
+          "complete"
+        ],
+        "title": "DiagnosticPage",
+        "type": "object"
+      },
+      "Digest": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
       "DocumentRetentionPolicy": {
         "enum": [
           "project-lifetime",
@@ -280,6 +334,28 @@
         ],
         "title": "EgressEnforcement",
         "type": "string"
+      },
+      "FieldCorrection": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/MappedName"
+          },
+          "value": {
+            "$ref": "#/components/schemas/TextValue"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ],
+        "title": "FieldCorrection",
+        "type": "object"
+      },
+      "FieldIndex": {
+        "maximum": 4095.0,
+        "minimum": 0.0,
+        "type": "integer"
       },
       "HTTPValidationError": {
         "properties": {
@@ -333,6 +409,280 @@
           "capabilities"
         ],
         "title": "HealthResponse",
+        "type": "object"
+      },
+      "Identity": {
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        "type": "string"
+      },
+      "ImportAddress": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId"
+        ],
+        "title": "ImportAddress",
+        "type": "object"
+      },
+      "ImportDetailRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "$ref": "#/components/schemas/PageLimit",
+            "default": 25
+          },
+          "ordinal": {
+            "$ref": "#/components/schemas/Ordinal"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "recordKey": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "section": {
+            "$ref": "#/components/schemas/Section"
+          },
+          "start": {
+            "default": 0,
+            "maximum": 4096.0,
+            "minimum": 0.0,
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ordinal",
+          "recordKey",
+          "root",
+          "previewId",
+          "revision",
+          "section"
+        ],
+        "title": "ImportDetailRequest",
+        "type": "object"
+      },
+      "ImportGroupRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "corrections": {
+            "items": {
+              "$ref": "#/components/schemas/FieldCorrection"
+            },
+            "maxItems": 64,
+            "title": "Corrections",
+            "type": "array"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/MutationRevision"
+          },
+          "included": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Included"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/RecordSelection"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Records",
+            "type": "array"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedRevision",
+          "records",
+          "root",
+          "previewId"
+        ],
+        "title": "ImportGroupRequest",
+        "type": "object"
+      },
+      "ImportMappingRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnSelection"
+            },
+            "maxItems": 256,
+            "title": "Columns",
+            "type": "array"
+          },
+          "expectedRevision": {
+            "$ref": "#/components/schemas/MutationRevision"
+          },
+          "mode": {
+            "default": "columns",
+            "enum": [
+              "automatic",
+              "columns"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedRevision",
+          "columns",
+          "root",
+          "previewId"
+        ],
+        "title": "ImportMappingRequest",
+        "type": "object"
+      },
+      "ImportOptions": {
+        "additionalProperties": false,
+        "properties": {
+          "duplicatePolicy": {
+            "const": "review",
+            "default": "review",
+            "title": "Duplicatepolicy",
+            "type": "string"
+          },
+          "malformedPolicy": {
+            "const": "exclude-and-report",
+            "default": "exclude-and-report",
+            "title": "Malformedpolicy",
+            "type": "string"
+          }
+        },
+        "title": "ImportOptions",
+        "type": "object"
+      },
+      "ImportPageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "$ref": "#/components/schemas/Cursor",
+            "default": 0
+          },
+          "limit": {
+            "$ref": "#/components/schemas/PageLimit",
+            "default": 25
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision",
+          "root",
+          "previewId"
+        ],
+        "title": "ImportPageRequest",
+        "type": "object"
+      },
+      "ImportPermission": {
+        "additionalProperties": false,
+        "properties": {
+          "basis": {
+            "default": "not-reported",
+            "enum": [
+              "not-reported",
+              "researcher-confirmed"
+            ],
+            "title": "Basis",
+            "type": "string"
+          },
+          "value": {
+            "default": "unknown",
+            "enum": [
+              "permitted",
+              "denied",
+              "unknown"
+            ],
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "title": "ImportPermission",
+        "type": "object"
+      },
+      "ImportRights": {
+        "additionalProperties": false,
+        "properties": {
+          "derive": {
+            "$ref": "#/components/schemas/ImportPermission"
+          },
+          "export": {
+            "$ref": "#/components/schemas/ImportPermission"
+          },
+          "index": {
+            "$ref": "#/components/schemas/ImportPermission"
+          },
+          "inspect": {
+            "$ref": "#/components/schemas/ImportPermission"
+          },
+          "model-use": {
+            "$ref": "#/components/schemas/ImportPermission"
+          },
+          "quote": {
+            "$ref": "#/components/schemas/ImportPermission"
+          },
+          "share": {
+            "$ref": "#/components/schemas/ImportPermission"
+          },
+          "store": {
+            "$ref": "#/components/schemas/ImportPermission"
+          }
+        },
+        "title": "ImportRights",
         "type": "object"
       },
       "IntentAcceptRequest": {
@@ -1590,6 +1940,16 @@
         "title": "IntentWorkspaceProjection",
         "type": "object"
       },
+      "MappedName": {
+        "enum": [
+          "title",
+          "doi",
+          "year",
+          "author",
+          "container"
+        ],
+        "type": "string"
+      },
       "ModelAccelerator": {
         "enum": [
           "none",
@@ -2172,6 +2532,11 @@
         "title": "ModulesResponse",
         "type": "object"
       },
+      "MutationRevision": {
+        "maximum": 2147483646.0,
+        "minimum": 1.0,
+        "type": "integer"
+      },
       "OperationPage": {
         "additionalProperties": false,
         "properties": {
@@ -2329,6 +2694,16 @@
         ],
         "title": "OperationStatus",
         "type": "object"
+      },
+      "Ordinal": {
+        "maximum": 200000.0,
+        "minimum": 1.0,
+        "type": "integer"
+      },
+      "PageLimit": {
+        "maximum": 100.0,
+        "minimum": 1.0,
+        "type": "integer"
       },
       "PrivacyNetworkPolicy": {
         "enum": [
@@ -3717,6 +4092,102 @@
         "title": "RecalculationScheduleRequest",
         "type": "object"
       },
+      "RecordSelection": {
+        "additionalProperties": false,
+        "properties": {
+          "ordinal": {
+            "$ref": "#/components/schemas/Ordinal"
+          },
+          "recordKey": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        },
+        "required": [
+          "ordinal",
+          "recordKey"
+        ],
+        "title": "RecordSelection",
+        "type": "object"
+      },
+      "RecordSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "doi": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShortValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fieldCount": {
+            "maximum": 4096.0,
+            "minimum": 0.0,
+            "title": "Fieldcount",
+            "type": "integer"
+          },
+          "included": {
+            "title": "Included",
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "record",
+              "header",
+              "directive"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "ordinal": {
+            "$ref": "#/components/schemas/Ordinal"
+          },
+          "recordKey": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "status": {
+            "enum": [
+              "parsed",
+              "malformed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShortValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/WarningCode"
+            },
+            "maxItems": 64,
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ordinal",
+          "recordKey",
+          "kind",
+          "status",
+          "included",
+          "title",
+          "doi",
+          "fieldCount",
+          "warnings"
+        ],
+        "title": "RecordSummary",
+        "type": "object"
+      },
       "RegistryCode": {
         "maxLength": 128,
         "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
@@ -3756,6 +4227,218 @@
         "title": "RemoteModelApproval",
         "type": "string"
       },
+      "ReviewDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewField"
+            },
+            "maxItems": 100,
+            "title": "Fields",
+            "type": "array"
+          },
+          "nextIndex": {
+            "maximum": 4096.0,
+            "minimum": 0.0,
+            "title": "Nextindex",
+            "type": "integer"
+          },
+          "ordinal": {
+            "$ref": "#/components/schemas/Ordinal"
+          },
+          "recordKey": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "section": {
+            "$ref": "#/components/schemas/Section"
+          }
+        },
+        "required": [
+          "revision",
+          "ordinal",
+          "recordKey",
+          "section",
+          "fields",
+          "nextIndex",
+          "complete"
+        ],
+        "title": "ReviewDetail",
+        "type": "object"
+      },
+      "ReviewField": {
+        "additionalProperties": false,
+        "properties": {
+          "index": {
+            "$ref": "#/components/schemas/FieldIndex"
+          },
+          "name": {
+            "maxLength": 65536,
+            "title": "Name",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "raw",
+              "candidate",
+              "mapping",
+              "correction"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "sourceFieldIndex": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldIndex"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MappedName"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "maxLength": 65536,
+            "title": "Value",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/WarningCode"
+            },
+            "maxItems": 32,
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "index",
+          "name",
+          "value",
+          "sourceFieldIndex",
+          "origin"
+        ],
+        "title": "ReviewField",
+        "type": "object"
+      },
+      "ReviewPage": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "nextAfter": {
+            "$ref": "#/components/schemas/Cursor"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/RecordSummary"
+            },
+            "maxItems": 100,
+            "title": "Records",
+            "type": "array"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "revision",
+          "records",
+          "nextAfter",
+          "complete"
+        ],
+        "title": "ReviewPage",
+        "type": "object"
+      },
+      "ReviewSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "attemptId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "mappingHighWater": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "mappingId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "mappingMode": {
+            "enum": [
+              "automatic",
+              "columns"
+            ],
+            "title": "Mappingmode",
+            "type": "string"
+          },
+          "mappingRevision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "options": {
+            "$ref": "#/components/schemas/ImportOptions"
+          },
+          "predecessorRevision": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Revision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "recordCount": {
+            "$ref": "#/components/schemas/Cursor"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "rights": {
+            "$ref": "#/components/schemas/ImportRights"
+          }
+        },
+        "required": [
+          "previewId",
+          "revision",
+          "predecessorRevision",
+          "attemptId",
+          "recordCount",
+          "mappingId",
+          "mappingRevision",
+          "mappingHighWater",
+          "mappingMode",
+          "rights",
+          "options"
+        ],
+        "title": "ReviewSummary",
+        "type": "object"
+      },
+      "Revision": {
+        "maximum": 2147483647.0,
+        "minimum": 1.0,
+        "type": "integer"
+      },
       "RuntimeState": {
         "enum": [
           "starting",
@@ -3766,12 +4449,45 @@
         "title": "RuntimeState",
         "type": "string"
       },
+      "Section": {
+        "enum": [
+          "raw",
+          "candidates",
+          "effective"
+        ],
+        "type": "string"
+      },
+      "ShortValue": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 256,
+            "title": "Text",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "text",
+          "truncated"
+        ],
+        "title": "ShortValue",
+        "type": "object"
+      },
       "TelemetryMode": {
         "enum": [
           "off",
           "local-diagnostics-only"
         ],
         "title": "TelemetryMode",
+        "type": "string"
+      },
+      "TextValue": {
+        "maxLength": 65536,
+        "minLength": 1,
         "type": "string"
       },
       "ValidationError": {
@@ -3850,6 +4566,11 @@
         },
         "title": "VersionResponse",
         "type": "object"
+      },
+      "WarningCode": {
+        "maxLength": 64,
+        "pattern": "^[a-z]+(?:-[a-z]+)*$",
+        "type": "string"
       },
       "WorkflowCancelRequest": {
         "additionalProperties": false,
@@ -5643,6 +6364,573 @@
         "summary": "Delete Project",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/projects/imports/begin-review": {
+      "post": {
+        "operationId": "begin_review_projects_imports_begin_review_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportAddress"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Begin Review",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/detail": {
+      "post": {
+        "operationId": "review_detail_projects_imports_detail_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportDetailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Detail",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/edit": {
+      "post": {
+        "operationId": "review_edit_projects_imports_edit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportGroupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Edit",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/mapping": {
+      "post": {
+        "operationId": "review_mapping_projects_imports_mapping_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportMappingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Mapping",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/records": {
+      "post": {
+        "operationId": "review_page_projects_imports_records_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportPageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Page",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/report": {
+      "post": {
+        "operationId": "review_report_projects_imports_report_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportPageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiagnosticPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Report",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/review": {
+      "post": {
+        "operationId": "review_summary_projects_imports_review_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportAddress"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewSummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Summary",
+        "tags": [
+          "imports"
         ]
       }
     },
