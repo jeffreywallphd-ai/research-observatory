@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S01.T01",
+  "baseCommit": "f05ac90621d7cbe03abd53b880764f2d6a996445",
+  "branch": "codex/w2-implementation",
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Focused ReferenceImportTests and ReferenceImportContractTests exercise all five formats, raw fields/bytes and locations, repeated/unknown fields, deterministic record keys across read chunking, and valid-malformed-valid isolation. Preserved pre-submission F01/F02 are replayed by rejected-definition, unresolved-shadowing, atomicity and capacity regressions."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Automated cases cover cancellation during framing/field parsing, bounded source/record/field/depth/count/macro resources, corruption, encoding, read failure, abandoned iteration and immutable-input restart. A real temporary binary file exercises the stream boundary. Fresh generated-stream benchmark consumes 100,000 records twice per RIS/BibTeX/CSV without collecting the result batch; measured peak traced memory must stay below 16 MiB."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Versioned ImportRecord schema, architecture documentation, synthetic fixtures and packaging/quality inventories accompany the pure parser. Raw fields, normalization candidates, unknown confidence and unset mapping remain separate. No persistence migration, canonical commit, network dispatch, rights grant or UI change is claimed. The separately reviewed bounded review-link portability repair preserves historical sources and strict deterministic comparison. Each ordered raw field carries bounded warning codes so rejected DOI candidates, unresolved macros and formula-like cells retain attribution."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "W2-RUNNER-PROGRESS is explicitly deferred in the committed task-start worksheet, as permitted by this criterion. No tools/verify.py or runner test changes are included; parser delivery is not conditioned on optional harness expansion."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "contracts:unit",
+      "foundation:unit",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "New pure import-parser/IR boundary requires targeted parser, contract and streaming tests, lint/types/inventory/build/architecture checks. Incidental generated-link defect requires focused control regressions plus full deterministic site validation. Selected IDs identify coverage domains; raw checks below specify exact narrowed commands, not full-profile executions.",
+    "deferred": [
+      "Full service/data/desktop profiles, canonical import transactions and durable-job integration belong to CAP-04.S01 slice/checkpoint qualification. Preview/mapping/export UI is CAP-04.S01.T02; idempotent atomic commits are CAP-04.S01.T03. Fresh full W2 qualification, native accessibility/platform and independent slice/Wave review remain required; no completed W1 suite is replayed."
+    ]
+  },
+  "preSubmissionFindingReplay": [
+    {
+      "id": "F01",
+      "record": "artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md",
+      "evidence": "test_rejected_macro_name_does_not_consume_capacity and test_macro_directive_is_atomic_and_local_unresolved_binding_wins",
+      "remediationCandidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+      "disposition": "fixed; independent focused replay approved pending final manifest disposition"
+    },
+    {
+      "id": "F02",
+      "record": "artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md",
+      "evidence": "test_unresolved_macro_redefinition_shadows_stale_value and test_unresolved_macro_uses_capacity_without_recounting_previous_piece",
+      "remediationCandidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+      "disposition": "fixed; independent focused replay approved pending final manifest disposition"
+    },
+    {
+      "id": "F03",
+      "record": "artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md",
+      "evidence": "test_field_warnings_identify_repeated_doi_macro_and_formula_inputs and test_field_warning_attribution_is_required_and_schema_valid",
+      "remediationCandidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+      "disposition": "fixed; independent focused replay approved pending final manifest disposition"
+    }
+  ],
+  "scopeLimits": [
+    "Pure source-retaining parser task only, not a completed import workflow or CAP-04.S01 slice. Records are provisional until full digest-checked traversal; complete traversal is not an import commit or all-record-valid assertion.",
+    "Benchmark reports traced allocation peaks, not total process memory or OS cold-cache latency. Windows x64 only; all bibliographic fixture content is synthetic.",
+    "Pre-submission adverse findings and prior planning validation failure remain preserved, not rewritten as passing evidence."
+  ],
+  "commit": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md",
+    "artifacts/evidence/CAP-04.S01.T01.task-start.md",
+    "artifacts/evidence/W2.review-link-portability-maintenance-01.md",
+    "docs/architecture/README.md",
+    "docs/architecture/reference-imports.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/ingestion/import-record.schema.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S01.T01.html",
+    "planning/review-site/CAP-04/CAP-04.S01.html",
+    "planning/review-site/CAP-04/index.html",
+    "planning/review-site/enablers/ECR-0004.html",
+    "planning/review-site/enablers/ECR-0008.html",
+    "planning/review-site/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/recoveries/GRR-0001.html",
+    "planning/review-site/recoveries/GRR-0002.html",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/ingestion/__init__.py",
+    "services/core-api/src/research_observatory_core/ingestion/reference_imports.py",
+    "tests/contracts/test_reference_import_contracts.py",
+    "tests/fixtures/scholarly-metadata/README.md",
+    "tests/fixtures/scholarly-metadata/records.csl.json",
+    "tests/fixtures/scholarly-metadata/records.csv",
+    "tests/fixtures/scholarly-metadata/records.doi",
+    "tests/foundation/test_plan_review_amendments.py",
+    "tests/service/test_reference_import_streaming.py",
+    "tests/service/test_reference_imports.py",
+    "tools/plan_review_site.py"
+  ],
+  "checks": [
+    {
+      "id": "parser-contract-streaming",
+      "command": "python -m unittest tests.service.test_reference_imports tests.contracts.test_reference_import_contracts tests.service.test_reference_import_streaming -v",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "29 tests passed in 57.900 seconds, including the six 100k-record runs."
+    },
+    {
+      "id": "review-site",
+      "command": "python tools/plan_review_check.py --repo . --report artifacts/tmp/CAP-04.S01.T01.final-plan-review.json",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "Planning review site: pass - 19 capabilities, 111 slices, 337 tasks, 492 HTML pages"
+    },
+    {
+      "id": "control-portability",
+      "command": "python -m unittest tests.foundation.test_plan_review_amendments.PlanReviewSourceLinkPortabilityTests -v",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "test_governed_source_links_are_portable_encoded_and_keep_git_identity (tests.foundation.test_plan_review_amendments.PlanReviewSourceLinkPortabilityTests.test_governed_source_links_are_portable_encoded_and_keep_git_identity) ... ok\r\ntest_recovery_source_links_are_identical_across_checkout_roots (tests.foundation.test_plan_review_amendments.PlanReviewSourceLinkPortabilityTests.test_recovery_source_links_are_identical_across_checkout_roots) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 2 tests in 0.030s\r\n\r\nOK"
+    },
+    {
+      "id": "lint",
+      "command": "python -m ruff check services/core-api/src/research_observatory_core/ingestion tests/service/test_reference_imports.py tests/service/test_reference_import_streaming.py tests/contracts/test_reference_import_contracts.py tools/plan_review_site.py tests/foundation/test_plan_review_amendments.py",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "All checks passed!"
+    },
+    {
+      "id": "format",
+      "command": "python -m ruff format --check services/core-api/src/research_observatory_core/ingestion tests/service/test_reference_imports.py tests/service/test_reference_import_streaming.py tests/contracts/test_reference_import_contracts.py tools/plan_review_site.py tests/foundation/test_plan_review_amendments.py",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "7 files already formatted"
+    },
+    {
+      "id": "types",
+      "command": "python -m mypy services/core-api/src/research_observatory_core/ingestion tests/service/test_reference_imports.py tests/service/test_reference_import_streaming.py tests/contracts/test_reference_import_contracts.py tools/plan_review_site.py tests/foundation/test_plan_review_amendments.py",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "Success: no issues found in 7 source files"
+    },
+    {
+      "id": "architecture",
+      "command": "python tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "Architecture contract: pass - 13 areas, 12 modules, 5 stable interfaces, and 3 deployment profiles"
+    },
+    {
+      "id": "build",
+      "command": "python tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S01.T01.final-build-manifest.json",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "Build manifest: PASS - 0.1.0+g3d5cdd9 (clean)"
+    },
+    {
+      "id": "backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "provenance": "fresh committed-candidate execution",
+      "result": "Generated backlog views: PASS - no changes"
+    },
+    {
+      "id": "quality-inventory",
+      "command": "python -c 'from pathlib import Path; from tools.quality_check import load_scope; print(len(load_scope(Path.cwd())))'",
+      "exitCode": 0,
+      "result": "240 governed files; inventory complete."
+    }
+  ],
+  "streamingBenchmark": {
+    "fixtureVersion": "synthetic-repeated-metadata-v1",
+    "platform": "Windows",
+    "architecture": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.14.6",
+    "repetitions": 2,
+    "method": "first and immediate repeat in one process; tracemalloc enabled; no OS cold-cache claim",
+    "memoryRegressionCeilingBytes": 16777216,
+    "latency": "descriptive baseline, not a release latency claim",
+    "measurements": [
+      {
+        "format": "ris",
+        "repetition": 1,
+        "records": 100000,
+        "seconds": 8.652109,
+        "peakTracedBytes": 28669
+      },
+      {
+        "format": "ris",
+        "repetition": 2,
+        "records": 100000,
+        "seconds": 9.832001,
+        "peakTracedBytes": 28589
+      },
+      {
+        "format": "bibtex",
+        "repetition": 1,
+        "records": 100000,
+        "seconds": 11.262937,
+        "peakTracedBytes": 28555
+      },
+      {
+        "format": "bibtex",
+        "repetition": 2,
+        "records": 100000,
+        "seconds": 10.101118,
+        "peakTracedBytes": 28547
+      },
+      {
+        "format": "csv",
+        "repetition": 1,
+        "records": 100000,
+        "seconds": 8.92853,
+        "peakTracedBytes": 29725
+      },
+      {
+        "format": "csv",
+        "repetition": 2,
+        "records": 100000,
+        "seconds": 9.041534,
+        "peakTracedBytes": 29605
+      }
+    ]
+  },
+  "execution": {
+    "candidateFixed": true,
+    "trackedTreeClean": true,
+    "pythonVersion": "3.14.6",
+    "pythonLauncherSha256": "20f9f153434a7cbadb44594b0796e85707f444bd21deda9d0bfb0be94cff290a",
+    "platform": "Windows x64",
+    "rawOutputReport": "artifacts/tmp/CAP-04.S01.T01.final-qualification.json",
+    "rawOutputSha256": "4ba3e1dc82e6246804ba1007f2815b0d0063a39cd3fd5997510d2738b82c706e",
+    "reportPolicy": "Ignored local execution output; no evidence reuse or full-profile claim."
+  },
+  "independentControlReview": {
+    "reviewer": "agent:/root/w2_document_packet_preflight",
+    "candidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+    "result": "approved",
+    "scope": "Bounded generated source-link portability repair only.",
+    "evidence": "Independent two-test replay PASS (0.028s), four generated page deltas are href-only, historical hashes and sourceCommit descriptors preserved, strict checker unchanged. Final exact-candidate full site validation PASS satisfies review condition."
+  }
+}

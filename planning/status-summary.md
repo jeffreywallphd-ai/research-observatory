@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5200a18994d690f12ae70870f9aa5a2fa43969af1583301b8799eca362a9b3c9
+source_sha256: 0b08f57387c87ee1289b6ba01b2116b8c831d268efca189ec7a521ec381bb8c6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -52,9 +52,9 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 252 |
-| `IN_PROGRESS` | 1 |
-| `DONE` | 67 |
+| `NOT_STARTED` | 251 |
+| `READY` | 1 |
+| `DONE` | 68 |
 | `DEFERRED` | 36 |
 
 ### Wave amendment lifecycle
@@ -619,6 +619,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-03.S06.T03` | `append-only v1` | 2 | `-` | approved / agent:t03-independent-reviewer | - |
 | `CAP-03.S06.T04` | `append-only v1` | 3 | `-` | approved / agent:t04-r03-independent-reviewer | - |
 | `CAP-03.S06.T05` | `append-only v1` | 1 | `-` | approved / agent:t05-r01-independent-reviewer | - |
+| `CAP-04.S01.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_ux_plan_review | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -648,7 +649,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 0/11 | 0/33 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 0/11 | 1/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -667,7 +668,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 6/6 | 20/20 | - |
-| CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 0/15 | `CAP-04.S01.T01` |
+| CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 0/5 | 1/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 1/5 | 3/15 | - |
@@ -703,9 +704,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `CAP-04.S01.T01` Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+No task is currently active.
 
 ## Linked corrective tasks
 

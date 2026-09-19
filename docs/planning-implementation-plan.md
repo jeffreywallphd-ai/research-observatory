@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5200a18994d690f12ae70870f9aa5a2fa43969af1583301b8799eca362a9b3c9
+source_sha256: 0b08f57387c87ee1289b6ba01b2116b8c831d268efca189ec7a521ec381bb8c6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -7715,21 +7715,21 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Researchers can import existing bibliographies with preview, mapping, validation, and repeatable merge behavior.
 
-**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T02`, `CAP-02.S02.T03`
 
-#### - [ ] CAP-04.S01.T01 - Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers
+#### - [x] CAP-04.S01.T01 - Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T02`, `CAP-02.S02.T03`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/w2_ux_plan_review (`approved`)
 
 **Objective:** Streaming parsers that preserve original fields, import source, line/record location, and warnings.
 
@@ -7749,17 +7749,55 @@ Original tasks and approvals remain unchanged.
 
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-04.S01.T01.json` at `3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e`
+
 ##### Review history — CAP-04.S01.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `2e2961090728e6227ada68be5be61e9542e0482bfddd21419fc9d0c488037c61`
+
+- Candidate / base / branch: `3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e` / `f05ac90621d7cbe03abd53b880764f2d6a996445` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-19T18:00:31+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S01.T01.json` / `eb88adb249770893953c3f7a731d6070b9b31c4730ca879579b6009b507f5c27` / `3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e`
+- Acceptance-criteria SHA-256: `6e931ed089973f9b3887b8184c9df15975fbe44cf59a25aadc555786e2d46b07`
+- Verification-selection SHA-256: `c29fa7adb366eeee7fe51849f0715662d889bb5ce8ed408aee5f969836bb429d`
+- Changed paths: `artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md`, `artifacts/evidence/CAP-04.S01.T01.task-start.md`, `artifacts/evidence/W2.review-link-portability-maintenance-01.md`, `docs/architecture/README.md`, `docs/architecture/reference-imports.md`, `docs/planning-implementation-plan.md`, `packages/contracts/README.md`, `packages/contracts/ingestion/import-record.schema.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S01.T01.html`, `planning/review-site/CAP-04/CAP-04.S01.html`, `planning/review-site/CAP-04/index.html`, `planning/review-site/enablers/ECR-0004.html`, `planning/review-site/enablers/ECR-0008.html`, `planning/review-site/index.html`, `planning/review-site/manifest.json`, `planning/review-site/recoveries/GRR-0001.html`, `planning/review-site/recoveries/GRR-0002.html`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/ingestion/__init__.py`, `services/core-api/src/research_observatory_core/ingestion/reference_imports.py`, `tests/contracts/test_reference_import_contracts.py`, `tests/fixtures/scholarly-metadata/README.md`, `tests/fixtures/scholarly-metadata/records.csl.json`, `tests/fixtures/scholarly-metadata/records.csv`, `tests/fixtures/scholarly-metadata/records.doi`, `tests/foundation/test_plan_review_amendments.py`, `tests/service/test_reference_import_streaming.py`, `tests/service/test_reference_imports.py`, `tools/plan_review_site.py`
+- Selected checks: `python -m unittest tests.service.test_reference_imports tests.contracts.test_reference_import_contracts tests.service.test_reference_import_streaming -v`, `python tools/plan_review_check.py --repo . --report artifacts/tmp/CAP-04.S01.T01.final-plan-review.json`, `python -m unittest tests.foundation.test_plan_review_amendments.PlanReviewSourceLinkPortabilityTests -v`, `python -m ruff check services/core-api/src/research_observatory_core/ingestion tests/service/test_reference_imports.py tests/service/test_reference_import_streaming.py tests/contracts/test_reference_import_contracts.py tools/plan_review_site.py tests/foundation/test_plan_review_amendments.py`, `python -m ruff format --check services/core-api/src/research_observatory_core/ingestion tests/service/test_reference_imports.py tests/service/test_reference_import_streaming.py tests/contracts/test_reference_import_contracts.py tools/plan_review_site.py tests/foundation/test_plan_review_amendments.py`, `python -m mypy services/core-api/src/research_observatory_core/ingestion tests/service/test_reference_imports.py tests/service/test_reference_import_streaming.py tests/contracts/test_reference_import_contracts.py tools/plan_review_site.py tests/foundation/test_plan_review_amendments.py`, `python tools/architecture_check.py --repo .`, `python tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S01.T01.final-build-manifest.json`, `python tools/backlog_views.py --repo . --check`, `python -c 'from pathlib import Path; from tools.quality_check import load_scope; print(len(load_scope(Path.cwd())))'`
+- Deferred checks: `Full service/data/desktop profiles, canonical import transactions and durable-job integration belong to CAP-04.S01 slice/checkpoint qualification. Preview/mapping/export UI is CAP-04.S01.T02; idempotent atomic commits are CAP-04.S01.T03. Fresh full W2 qualification, native accessibility/platform and independent slice/Wave review remain required; no completed W1 suite is replayed.`
+- Selection rationale: New pure import-parser/IR boundary requires targeted parser, contract and streaming tests, lint/types/inventory/build/architecture checks. Incidental generated-link defect requires focused control regressions plus full deterministic site validation. Selected IDs identify coverage domains; raw checks below specify exact narrowed commands, not full-profile executions.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_ux_plan_review / `2026-09-19T18:04:33+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S01.T01.review-R01.json` / `344c679b4af1825a8e3ddded21c741003f0a1f14355d22176171e057c96e8f46`
+
+**Review notes:** Independent expanded task review approves the exact frozen R01 candidate and evidence. Authenticated current_submission, canonical packet/evidence/acceptance hashes, the exact 33-path base-to-candidate inventory, independent reviewer identity and empty prior controlled history. Reviewed raw fidelity, deterministic noncanonical record keys, malformed isolation, bounded streaming/encoding/cancellation and the portable parser/schema handoff. Pre-submission F01, F02 and F03 are closed as detailed below; they remain preserved adverse evidence, not invented controlled review rounds. Independently executed six selected unittest methods at this same fixed candidate: test_rejected_macro_name_does_not_consume_capacity; test_unresolved_macro_redefinition_shadows_stale_value; test_macro_directive_is_atomic_and_local_unresolved_binding_wins; test_unresolved_macro_uses_capacity_without_recounting_previous_piece; test_field_warnings_identify_repeated_doi_macro_and_formula_inputs; test_field_warning_attribution_is_required_and_schema_valid. Every method reported ok; actual unittest output was Ran 6 tests in 0.004s, followed by OK. No tests were rerun during manifest review. Final implementer qualification is independently inspected output, not claimed as reviewer execution: 29 tests PASS in 57.900s including six 100k-record benchmark runs; lint, format, types, architecture, build, inventory, backlog views and 492-page site checks pass. The raw qualification report matches its declared SHA-256. Benchmark claims correctly concern traced allocation peaks and descriptive first/repeat timing, not process RSS or cold-cache qualification. The bounded generated-link repair relies on the separate exact-candidate approved control disposition by agent:/root/w2_document_packet_preflight; its final site-validation condition is satisfied. Optional runner work is explicitly deferred without runner edits. This approves pure T01 parser delivery only, not T02 mapping/UI, T03 canonical commits, complete slice integration or Wave qualification. No material finding remains open in the reviewed scope.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/w2_ux_plan_review at `2026-09-19T18:04:33+00:00`
+
+**Latest notes:** Independent expanded task review approves the exact frozen R01 candidate and evidence. Authenticated current_submission, canonical packet/evidence/acceptance hashes, the exact 33-path base-to-candidate inventory, independent reviewer identity and empty prior controlled history. Reviewed raw fidelity, deterministic noncanonical record keys, malformed isolation, bounded streaming/encoding/cancellation and the portable parser/schema handoff. Pre-submission F01, F02 and F03 are closed as detailed below; they remain preserved adverse evidence, not invented controlled review rounds. Independently executed six selected unittest methods at this same fixed candidate: test_rejected_macro_name_does_not_consume_capacity; test_unresolved_macro_redefinition_shadows_stale_value; test_macro_directive_is_atomic_and_local_unresolved_binding_wins; test_unresolved_macro_uses_capacity_without_recounting_previous_piece; test_field_warnings_identify_repeated_doi_macro_and_formula_inputs; test_field_warning_attribution_is_required_and_schema_valid. Every method reported ok; actual unittest output was Ran 6 tests in 0.004s, followed by OK. No tests were rerun during manifest review. Final implementer qualification is independently inspected output, not claimed as reviewer execution: 29 tests PASS in 57.900s including six 100k-record benchmark runs; lint, format, types, architecture, build, inventory, backlog views and 492-page site checks pass. The raw qualification report matches its declared SHA-256. Benchmark claims correctly concern traced allocation peaks and descriptive first/repeat timing, not process RSS or cold-cache qualification. The bounded generated-link repair relies on the separate exact-candidate approved control disposition by agent:/root/w2_document_packet_preflight; its final site-validation condition is satisfied. Optional runner work is explicitly deferred without runner edits. This approves pure T01 parser delivery only, not T02 mapping/UI, T03 canonical commits, complete slice integration or Wave qualification. No material finding remains open in the reviewed scope.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-04.S01.T02 - Create import preview, mapping, and conflict UI
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

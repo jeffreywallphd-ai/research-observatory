@@ -1,0 +1,70 @@
+{
+  "task_id": "CAP-04.S01.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+  "reviewer": "agent:/root/w2_ux_plan_review",
+  "result": "approved",
+  "evidence_sha256": "eb88adb249770893953c3f7a731d6070b9b31c4730ca879579b6009b507f5c27",
+  "packet_sha256": "2e2961090728e6227ada68be5be61e9542e0482bfddd21419fc9d0c488037c61",
+  "acceptance_criteria_sha256": "6e931ed089973f9b3887b8184c9df15975fbe44cf59a25aadc555786e2d46b07",
+  "notes": "Independent expanded task review approves the exact frozen R01 candidate and evidence. Authenticated current_submission, canonical packet/evidence/acceptance hashes, the exact 33-path base-to-candidate inventory, independent reviewer identity and empty prior controlled history. Reviewed raw fidelity, deterministic noncanonical record keys, malformed isolation, bounded streaming/encoding/cancellation and the portable parser/schema handoff. Pre-submission F01, F02 and F03 are closed as detailed below; they remain preserved adverse evidence, not invented controlled review rounds. Independently executed six selected unittest methods at this same fixed candidate: test_rejected_macro_name_does_not_consume_capacity; test_unresolved_macro_redefinition_shadows_stale_value; test_macro_directive_is_atomic_and_local_unresolved_binding_wins; test_unresolved_macro_uses_capacity_without_recounting_previous_piece; test_field_warnings_identify_repeated_doi_macro_and_formula_inputs; test_field_warning_attribution_is_required_and_schema_valid. Every method reported ok; actual unittest output was Ran 6 tests in 0.004s, followed by OK. No tests were rerun during manifest review. Final implementer qualification is independently inspected output, not claimed as reviewer execution: 29 tests PASS in 57.900s including six 100k-record benchmark runs; lint, format, types, architecture, build, inventory, backlog views and 492-page site checks pass. The raw qualification report matches its declared SHA-256. Benchmark claims correctly concern traced allocation peaks and descriptive first/repeat timing, not process RSS or cold-cache qualification. The bounded generated-link repair relies on the separate exact-candidate approved control disposition by agent:/root/w2_document_packet_preflight; its final site-validation condition is satisfied. Optional runner work is explicitly deferred without runner edits. This approves pure T01 parser delivery only, not T02 mapping/UI, T03 canonical commits, complete slice integration or Wave qualification. No material finding remains open in the reviewed scope.",
+  "findings": [],
+  "closures": [],
+  "preSubmissionFindings": [
+    {
+      "id": "F01",
+      "record": "artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md",
+      "originalCandidate": "9cd11940a84a5ea088f099db2a42cf4e6da73ed3",
+      "criterion": "AC1 malformed-record isolation",
+      "disposition": "closed",
+      "closureCandidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+      "closure": "Macro definitions are staged until all record field validation succeeds. The original rejected-name/capacity reproduction now permits the following valid definition; rejected multi-definition overwrites leave prior state intact.",
+      "tests": [
+        "ReferenceImportTests.test_rejected_macro_name_does_not_consume_capacity",
+        "ReferenceImportTests.test_macro_directive_is_atomic_and_local_unresolved_binding_wins"
+      ]
+    },
+    {
+      "id": "F02",
+      "record": "artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md",
+      "originalCandidate": "9cd11940a84a5ea088f099db2a42cf4e6da73ed3",
+      "criterion": "AC1 and ADR-0027 raw-versus-normalized fidelity",
+      "disposition": "closed",
+      "closureCandidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+      "closure": "Explicit unresolved bindings shadow stale values, propagate warnings through dependent macros and suppress invented candidates. Later valid definitions recover normally; capacity and per-atom byte accounting remain bounded.",
+      "tests": [
+        "ReferenceImportTests.test_unresolved_macro_redefinition_shadows_stale_value",
+        "ReferenceImportTests.test_unresolved_macro_uses_capacity_without_recounting_previous_piece",
+        "ReferenceImportTests.test_macro_directive_is_atomic_and_local_unresolved_binding_wins"
+      ]
+    },
+    {
+      "id": "F03",
+      "record": "artifacts/evidence/CAP-04.S01.T01.pre-submission-review-01.md",
+      "originalCandidate": "9cd11940a84a5ea088f099db2a42cf4e6da73ed3",
+      "criterion": "AC3 and ADR-0027 per-field ImportIR warnings",
+      "disposition": "closed",
+      "closureCandidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+      "closure": "Ordered raw fields carry bounded warning codes, including rejected DOI candidates, unresolved macros and formula-like CSV cells. Raw bytes remain unchanged, record summaries retain the warnings and the serialized schema requires field attribution.",
+      "tests": [
+        "ReferenceImportTests.test_field_warnings_identify_repeated_doi_macro_and_formula_inputs",
+        "ReferenceImportContractTests.test_field_warning_attribution_is_required_and_schema_valid"
+      ]
+    }
+  ],
+  "independentReplay": {
+    "candidate": "3d5cdd9e6d21ef5fd15c1d01e15d18b366fffb6e",
+    "method": "Python -B inline unittest.TestSuite selecting five service methods and one contract method; no full suite or benchmark replay.",
+    "testCount": 6,
+    "testRunnerSeconds": 0.004,
+    "exitCode": 0,
+    "outputSummary": "All six named methods reported ok. Ran 6 tests in 0.004s\n\nOK",
+    "inputsFixed": true
+  },
+  "inspectedQualification": {
+    "path": "artifacts/tmp/CAP-04.S01.T01.final-qualification.json",
+    "sha256": "4ba3e1dc82e6246804ba1007f2815b0d0063a39cd3fd5997510d2738b82c706e",
+    "provenance": "Fresh implementer execution at the exact candidate; reviewer read and authenticated the recorded results without rerunning them.",
+    "scopedEvidenceAccepted": true
+  }
+}
