@@ -281,6 +281,25 @@ is retained as a test fixture; backup-first upgrade and rollback preserve prior
 preview rows and create no historical summaries. No summary UI or worker is
 claimed from this storage groundwork alone.
 
+The summary adapter now computes compact rows from the actual effective draft,
+with store/inspect permission for every row, including excluded and contextual
+rows. It rechecks the exact current revision inside each insertion transaction.
+Pages resolve sparse history once and stream selected decision payloads while
+retaining the 16 MiB bound. Counts and candidate groups derive from complete stored
+rows, never caller-supplied totals. Coverage uses included parsed records as its
+denominator. Context rows, malformed rows and excluded records remain explicit.
+
+Exact raw-record hashes and unique normalized DOIs identify within-preview review
+candidates only; they do not merge works or predict canonical re-import effects.
+Overlapping reasons count each candidate record once, with indexed group/member
+paging rather than materialized pairs. A receipt binds project, preview, source,
+manifest, draft, parse attempt, summary job/attempt, algorithm and ordered result.
+Completion remains hidden until that exact output reference is accepted by the
+durable queue. Any draft/rights change invalidates previous summary reads. Failed
+attempts retain hidden rows; a recovered attempt begins at ordinal one.
+This adapter is not yet wired to a summary activity, API or renderer; those and
+native/packaged/whole-project scale qualification remain required task work.
+
 ## Verification and technical basis
 
 Focused service and contract tests cover all formats, deterministic replay,

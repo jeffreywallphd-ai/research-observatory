@@ -30,6 +30,7 @@ _REPOSITORY_ADAPTER_MODULES = {
     "model_registry_repository",
     "import_preview_repository",
     "import_draft_repository",
+    "import_summary_repository",
 }
 _DATA_ADAPTER_FILES = {"object_store.py", "storage.py"} | {f"{module}.py" for module in _REPOSITORY_ADAPTER_MODULES}
 

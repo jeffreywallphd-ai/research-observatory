@@ -644,6 +644,6 @@ class _SqliteImportPreviewRepository:
 
 def sqlite_import_preview_repository(path: Path, project_id: str) -> ImportPreviewRepository:
     # Compose draft operations over the same intake adapter, without a second DB.
-    from .import_draft_repository import SqliteImportDraftRepository
+    from .import_summary_repository import SqliteImportSummaryRepository
 
-    return SqliteImportDraftRepository(path, project_id)
+    return SqliteImportSummaryRepository(path, project_id)

@@ -138,6 +138,8 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.migrations.versions.v0012_import_summaries",
             "research_observatory_core.import_preview_repository",
             "research_observatory_core.import_draft_repository",
+            "research_observatory_core.import_summary_repository",
+            "research_observatory_core.ingestion.import_summaries",
             "research_observatory_core.import_preview_service",
             "research_observatory_core.ingestion.preview_activity",
             "research_observatory_core.ingestion.preview_workflow",

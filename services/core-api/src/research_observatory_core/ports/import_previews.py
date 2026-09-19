@@ -21,6 +21,7 @@ from ..ingestion.import_drafts import (
     RecordDecision,
     Revision,
 )
+from ..ingestion.import_summaries import SummaryResult, SummaryRow
 from ..ingestion.reference_imports import ImportRecord, ImportSession, ImportSource
 from ..ingestion.source_chunks import SourceChunk
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
@@ -124,6 +125,24 @@ class PreviewDraftRecord:
     warnings: tuple[str, ...]
 
 
+class PreviewSummary(DraftValue):
+    project_id: ProjectIdentity
+    preview_id: Identity
+    draft_revision: Revision
+    parse_attempt_id: Identity
+    summary_attempt_id: Identity
+    job_id: Identity
+    receipt_revision_id: Identity
+    result: SummaryResult
+
+
+class SummaryGroup(DraftValue):
+    reason: Literal["raw", "doi"]
+    group_key: Digest
+    member_count: Annotated[int, Field(ge=2, le=200000)]
+    first_ordinal: Annotated[int, Field(ge=1, le=200000)]
+
+
 class ImportPreviewRepository(Protocol):
     def create(self, command: PreviewCreate) -> PreviewState: ...
     def read(self, preview_id: str) -> PreviewState: ...
@@ -156,3 +175,26 @@ class ImportPreviewRepository(Protocol):
     ) -> tuple[PreviewDraftRecord, ...]: ...
     def draft_digest(self, preview_id: str, *, revision: int) -> str: ...
     def diagnostic_report(self, preview_id: str, *, revision: int) -> Iterator[str]: ...
+    def begin_summary(
+        self, preview_id: str, *, revision: int, claim: WorkflowJobClaim, actor: PreviewActor
+    ) -> None: ...
+    def append_summary_page(
+        self, preview_id: str, *, revision: int, after: int, claim: WorkflowJobClaim, actor: PreviewActor
+    ) -> tuple[SummaryRow, ...]: ...
+    def summary_result(self, preview_id: str, *, claim: WorkflowJobClaim, actor: PreviewActor) -> SummaryResult: ...
+    def finish_summary(
+        self,
+        preview_id: str,
+        *,
+        claim: WorkflowJobClaim,
+        result: SummaryResult,
+        receipt_revision_id: str,
+        actor: PreviewActor,
+    ) -> WorkflowOutputReference: ...
+    def summary(self, preview_id: str, *, revision: int) -> PreviewSummary | None: ...
+    def summary_groups(
+        self, preview_id: str, *, revision: int, reason: Literal["raw", "doi"], after: str | None, limit: int
+    ) -> tuple[SummaryGroup, ...]: ...
+    def summary_members(
+        self, preview_id: str, *, revision: int, reason: Literal["raw", "doi"], group_key: str, after: int, limit: int
+    ) -> tuple[int, ...]: ...

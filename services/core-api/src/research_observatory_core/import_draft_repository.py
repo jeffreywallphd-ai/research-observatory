@@ -210,6 +210,57 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
             return None, None
         return RecordDecision.model_validate_json(row[0]), MappingProfile.model_validate_json(row[1])
 
+    def _page_decision_revisions(
+        self, connection: CanonicalConnection, preview: str, revision: int, current: int, after: int, through: int
+    ) -> dict[int, tuple[int | None, int | None]]:
+        # Materialize history once, not twice per row in a large preview. Only
+        # <=100 ordinal/revision keys are buffered; large payloads stay streamed.
+        rows = self._query(
+            connection,
+            """
+            WITH RECURSIVE histories(side, revision) AS MATERIALIZED (
+                SELECT 0, :revision UNION ALL SELECT 1, :current WHERE :current <> :revision
+                UNION ALL
+                SELECT h.side, COALESCE(d.undo_revision, d.predecessor_revision)
+                  FROM histories h CROSS JOIN import_draft_revisions d ON d.revision=h.revision
+                 WHERE d.preview_id=:preview AND d.project_id=:project
+                   AND COALESCE(d.undo_revision, d.predecessor_revision) IS NOT NULL
+            )
+            SELECT d.ordinal,
+                MAX(CASE WHEN d.revision IN (SELECT revision FROM histories WHERE side=0) THEN d.revision END),
+                MAX(CASE WHEN :current <> :revision AND d.revision IN
+                    (SELECT revision FROM histories WHERE side=1) THEN d.revision END)
+              FROM import_record_decisions d INDEXED BY import_decision_record
+             WHERE d.preview_id=:preview AND d.project_id=:project AND d.ordinal>:after AND d.ordinal<=:through
+             GROUP BY d.ordinal ORDER BY d.ordinal
+            """,
+            preview,
+            revision=revision,
+            current=current,
+            after=after,
+            through=through,
+        )
+        return {row[0]: (row[1], row[1] if revision == current else row[2]) for row in rows}
+
+    def _decision_at(self, connection: CanonicalConnection, preview: str, revision: int | None, ordinal: int):
+        if revision is None:
+            return None, None
+        row = self._query(
+            connection,
+            """
+            SELECT d.decision_json, r.mapping_json
+              FROM import_record_decisions d JOIN import_draft_revisions r
+                ON r.preview_id=d.preview_id AND r.project_id=d.project_id AND r.revision=d.revision
+             WHERE d.preview_id=:preview AND d.project_id=:project AND d.revision=:revision AND d.ordinal=:ordinal
+            """,
+            preview,
+            revision=revision,
+            ordinal=ordinal,
+        ).fetchone()
+        if row is None:
+            raise PreviewProblem("preview-draft-record-mismatch")
+        return RecordDecision.model_validate_json(row[0]), MappingProfile.model_validate_json(row[1])
+
     @staticmethod
     def _project_row(record: ImportRecord, draft: PreviewDraft, previous, previous_mapping) -> PreviewDraftRecord:
         proposal = propose_fields(record, draft.authority.mapping)
@@ -438,9 +489,16 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
                 raise PreviewProblem("preview-draft-attempt-mismatch")
             result: list[PreviewDraftRecord] = []
             size = 0
-            for ordinal in range(after + 1, min(draft.record_count, after + limit) + 1):
-                previous, mapping = self._decision(connection, preview_id, revision, ordinal)
-                current_decision, _ = self._decision(connection, preview_id, current, ordinal)
+            through = min(draft.record_count, after + limit)
+            selected = self._page_decision_revisions(connection, preview_id, revision, current, after, through)
+            for ordinal in range(after + 1, through + 1):
+                requested_revision, current_revision = selected.get(ordinal, (None, None))
+                previous, mapping = self._decision_at(connection, preview_id, requested_revision, ordinal)
+                current_decision = (
+                    previous
+                    if requested_revision == current_revision
+                    else self._decision_at(connection, preview_id, current_revision, ordinal)[0]
+                )
                 for decision in (previous, current_decision):
                     if decision and decision.rights and not decision.rights.permits("inspect"):
                         raise PreviewProblem("preview-record-rights-denied")

@@ -111,6 +111,60 @@ class ImportPreviewDraftTests(unittest.TestCase):
             all(row.decision.included for row in repository.draft_page(preview, revision=5, after=200, limit=100))
         )
 
+    def test_page_resolves_history_once_and_preserves_abandoned_branch_semantics(self):
+        preview, records = self.accepted()
+        self.change(preview, 0)
+        edits = tuple(review_record(record, included=False, fields=()) for record in records[1:])
+        self.change(preview, 1, decisions=edits)
+        self.change(preview, 2, restore_revision=1)
+        self.change(preview, 3, decisions=(edits[0],))
+        repository = self.repository()
+        with patch.object(repository, "_decision", side_effect=AssertionError("per-record page history lookup")):
+            for revision, expected in ((1, [True, True]), (2, [False, False]), (3, [True, True]), (4, [False, True])):
+                rows = repository.draft_page(preview, revision=revision, after=1, limit=2)
+                self.assertEqual(expected, [row.decision.included for row in rows])
+
+    def test_page_key_selection_matches_scalar_history_for_every_retained_revision(self):
+        preview, records = self.accepted(b"title\nOne\nTwo\nThree\nFour\n")
+        self.change(preview, 0)
+        for index, ordinal in enumerate((2, 3, 2, 4)):
+            self.change(
+                preview,
+                index + 1,
+                decisions=(review_record(records[ordinal - 1], included=False, fields=()),),
+            )
+        self.change(preview, 5, restore_revision=2)
+        self.change(preview, 6, decisions=(review_record(records[4], included=False, fields=()),))
+        repository = self.repository()
+        with repository._transaction(preview) as connection:
+            state = repository._read(connection, preview)
+            for revision in range(1, 8):
+                draft = repository._draft(connection, state, revision)
+                expected = tuple(
+                    repository._project_row(
+                        repository._record(connection, state, draft.attempt_id, record.ordinal),
+                        draft,
+                        *repository._decision(connection, preview, revision, record.ordinal),
+                    )
+                    for record in records
+                )
+                self.assertEqual(expected, repository.draft_page(preview, revision=revision, after=0, limit=100))
+
+    def test_page_byte_limit_stops_before_loading_later_decisions(self):
+        preview, records = self.accepted(b"title\nOne\nTwo\nThree\n")
+        self.change(preview, 0)
+        denied = ImportRights(inspect=ImportPermission(value="denied", basis="researcher-confirmed"))
+        self.change(preview, 1, decisions=(review_record(records[3], included=False, fields=(), rights=denied),))
+        repository = self.repository()
+        with patch(
+            "research_observatory_core.import_draft_repository.StoredImportRecord.model_dump_json",
+            return_value="x" * (8 * 1024 * 1024),
+        ):
+            rows = repository.draft_page(preview, revision=1, after=0, limit=100)
+        self.assertEqual([1], [row.record.ordinal for row in rows])
+        with self.assertRaisesRegex(PreviewProblem, "record-rights-denied"):
+            repository.draft_page(preview, revision=1, after=3, limit=1)
+
     def test_setwise_undo_preserves_each_action_restriction_outside_visible_page(self):
         allowed = ImportRights.model_validate(
             {
