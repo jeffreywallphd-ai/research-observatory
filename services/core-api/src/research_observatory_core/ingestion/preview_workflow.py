@@ -10,9 +10,9 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import asdict
-from typing import Annotated, Any, Literal, Self
+from typing import Annotated, Any, Literal, Protocol, Self
 
-from pydantic import Field, TypeAdapter, model_validator
+from pydantic import BaseModel, Field, TypeAdapter, model_validator
 
 from ..domain_contracts import new_uuid_v7
 from ..models import IntentRevisionStatus
@@ -161,13 +161,41 @@ def _definition(
     input_type: type[PreviewJobInput] | type[PreviewDelimitedJobInput] = PreviewJobInput,
 ) -> dict[str, Any]:
     version = "1.0.0" if input_type is PreviewJobInput else "1.1.0"
+    return local_import_definition(
+        definition_id,
+        revision_id,
+        now,
+        input_type=input_type,
+        version=version,
+        activity=ACTIVITY,
+        step_key="parse-reference-source",
+        schema_id="import-preview",
+        key_scope="import-preview-source",
+        scopes=["objects-read", "artifacts-write", "policy-read"],
+    )
+
+
+def local_import_definition(
+    definition_id: str,
+    revision_id: str,
+    now: str,
+    *,
+    input_type: type[BaseModel],
+    version: str,
+    activity: str,
+    step_key: str,
+    schema_id: str,
+    key_scope: str,
+    scopes: list[str],
+) -> dict[str, Any]:
+    """Shared declarative single-activity shape; callers retain exact schema identity."""
     input_schema = {
-        "schemaId": "import-preview-input",
+        "schemaId": schema_id + "-input",
         "schemaVersion": version,
         "schemaHash": fingerprint(input_type.model_json_schema()),
     }
     output_schema = {
-        "schemaId": "import-preview-output",
+        "schemaId": schema_id + "-output",
         "schemaVersion": "1.0.0",
         "schemaHash": fingerprint(TypeAdapter(tuple[WorkflowOutputReference]).json_schema()),
     }
@@ -178,7 +206,7 @@ def _definition(
         "workflowDefinitionId": definition_id,
         "definitionRevisionId": revision_id,
         "definitionVersion": version,
-        "workflowKey": ACTIVITY,
+        "workflowKey": activity,
         "createdAt": now,
         "inputSchema": input_schema,
         "outputSchema": output_schema,
@@ -189,9 +217,9 @@ def _definition(
         },
         "steps": [
             {
-                "stepKey": "parse-reference-source",
+                "stepKey": step_key,
                 "kind": "activity",
-                "activityType": ACTIVITY,
+                "activityType": activity,
                 "dependsOn": [],
                 "inputSchema": input_schema,
                 "outputSchema": output_schema,
@@ -204,7 +232,7 @@ def _definition(
                     "retryableErrorCodes": ["dependency-unavailable"],
                     "nonRetryableErrorCodes": ["rights-denied", "policy-denied", "stale-authority"],
                 },
-                "idempotency": {"mode": "required", "keyScope": "import-preview-source"},
+                "idempotency": {"mode": "required", "keyScope": key_scope},
                 # Retry starts a fresh fenced attempt over immutable chunks; provisional
                 # records are not a checkpoint or accepted output.
                 "checkpointPolicy": {"mode": "forbidden", "maximumIntervalSeconds": None},
@@ -217,7 +245,7 @@ def _definition(
                     "network": "none",
                     "projectFiles": "read-write",
                     "model": "none",
-                    "capabilityScopes": ["objects-read", "artifacts-write", "policy-read"],
+                    "capabilityScopes": scopes,
                 },
                 "progress": {"unit": "records", "totalKind": "unknown", "totalUnits": None},
                 "humanTask": None,
@@ -229,6 +257,39 @@ def _definition(
 def build_preview_job(inputs: PreviewInput, *, actor: WorkflowActor, now: str) -> WorkflowJobSubmission:
     inputs = _validated_input(inputs)
     definition = _definition(new_uuid_v7(), new_uuid_v7(), now, type(inputs))
+    return build_local_import_job(
+        inputs,
+        definition,
+        actor=actor,
+        now=now,
+        step_key="parse-reference-source",
+        idempotency_key=fingerprint(["import-preview/1", inputs.preview_id]),
+    )
+
+
+class LocalImportJobBinding(Protocol):
+    @property
+    def project_id(self) -> str: ...
+    @property
+    def intent(self) -> PreviewIntentContext: ...
+    @property
+    def configuration_id(self) -> str: ...
+    @property
+    def configuration_version(self) -> str: ...
+    @property
+    def configuration_hash(self) -> str: ...
+    def policy_reference(self) -> dict[str, str]: ...
+
+
+def build_local_import_job(
+    inputs: LocalImportJobBinding,
+    definition: dict[str, Any],
+    *,
+    actor: WorkflowActor,
+    now: str,
+    step_key: str,
+    idempotency_key: str,
+) -> WorkflowJobSubmission:
     run, snapshot_id, step, job = (new_uuid_v7() for _ in range(4))
     transitions = (
         ("workflow-run", run, None, "accepted", "command-accepted"),
@@ -294,7 +355,7 @@ def build_preview_job(inputs: PreviewInput, *, actor: WorkflowActor, now: str) -
         "stepRuns": [
             {
                 "stepRunId": step,
-                "stepKey": "parse-reference-source",
+                "stepKey": step_key,
                 "state": "runnable",
                 "sequence": 3,
                 "progress": progress,
@@ -310,7 +371,7 @@ def build_preview_job(inputs: PreviewInput, *, actor: WorkflowActor, now: str) -
                 "stepRunId": step,
                 "state": "runnable",
                 "sequence": 5,
-                "idempotencyKey": fingerprint(["import-preview/1", inputs.preview_id]),
+                "idempotencyKey": idempotency_key,
                 "commandFingerprint": inputs.configuration_hash,
                 "attemptIds": [],
                 "currentAttemptId": None,

@@ -20,6 +20,7 @@ from pydantic import TypeAdapter
 
 from .domain_contracts import is_uuid_v7
 from .import_review import ImportPreviewPage, ImportReview, bounded, preview_item
+from .ingestion.import_summaries import SUMMARY_ACTIVITY
 from .ingestion.preview_activity import ImportPreviewActivity
 from .ingestion.preview_workflow import (
     ACTIVITY,
@@ -31,6 +32,8 @@ from .ingestion.preview_workflow import (
     preview_job_input,
 )
 from .ingestion.source_chunks import put_source_chunk
+from .ingestion.summary_activity import ImportSummaryActivity
+from .ingestion.summary_workflow import SummaryJobInput, bind_summary_claim, build_summary_job, summary_job_input
 from .logging import emit_log_record
 from .ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewCreate, PreviewProblem, PreviewState
 from .ports.object_store import ObjectStore
@@ -82,6 +85,24 @@ def _configuration(authority: WorkflowJobAuthority) -> tuple[str, str, str]:
         return preview, epoch, revision
     except ValueError, KeyError, TypeError:
         raise PreviewProblem("preview-runtime-configuration-invalid") from None
+
+
+def _summary_configuration(authority: WorkflowJobAuthority) -> tuple[str, int, str, str]:
+    try:
+        snapshot = json.loads(authority.snapshot_json)
+        prefix, preview, revision, epoch = snapshot["configuration"]["configurationId"].split(".")
+        if prefix != "import-summary" or not is_uuid_v7(preview) or not revision.isascii() or not revision.isdecimal():
+            raise ValueError
+        number = int(revision)
+        if str(number) != revision or not 1 <= number <= 2147483647:
+            raise ValueError
+        TypeAdapter(ResumeEpoch).validate_python(epoch)
+        intent = snapshot["intent"]["revisionId"]
+        if not is_uuid_v7(intent):
+            raise ValueError
+        return preview, number, epoch, intent
+    except ValueError, KeyError, TypeError:
+        raise PreviewProblem("preview-summary-configuration-invalid") from None
 
 
 class ImportPreviewService:
@@ -280,6 +301,85 @@ class ImportPreviewService:
             root, lambda binding: binding.adapters.previews.records_page(preview_id, after=after, limit=limit)
         )
 
+    def _summary_inputs(
+        self, binding: _Binding, preview: str, revision: int, intent_revision: str | None = None
+    ) -> SummaryJobInput:
+        draft = binding.adapters.previews.draft(preview)
+        if type(revision) is not int or draft.revision != revision:
+            raise PreviewProblem("preview-draft-revision-conflict")
+        policy = self._privacy.get(str(binding.path))
+        if policy.project_id != binding.project_id:
+            raise PreviewProblem("preview-policy-project-mismatch")
+        return summary_job_input(
+            binding.adapters.previews.read(preview),
+            draft,
+            self._intent(binding, intent_revision),
+            fingerprint(policy.model_dump(mode="json", by_alias=True)),
+            self._epoch,
+        )
+
+    def _active_summaries(self, binding: _Binding):
+        after = None
+        while page := binding.adapters.queue.active_jobs(activity_type=SUMMARY_ACTIVITY, after=after):
+            yield from page
+            after = page[-1].job_id
+
+    def _summary_job(self, binding: _Binding, inputs: SummaryJobInput) -> WorkflowJobRecord | None:
+        accepted = binding.adapters.previews.summary(inputs.preview.preview_id, revision=inputs.draft_revision)
+        if accepted is not None:
+            return binding.adapters.queue.get(accepted.job_id)
+        selected = None
+        for job in self._active_summaries(binding):
+            authority = binding.adapters.queue.authority(job.job_id)
+            configuration = json.loads(authority.snapshot_json)["configuration"]
+            if configuration == {
+                "configurationId": inputs.configuration_id,
+                "configurationVersion": inputs.configuration_version,
+                "configurationHash": inputs.configuration_hash,
+            }:
+                selected = job
+        return selected or binding.adapters.queue.find_idempotency(inputs.idempotency_key)
+
+    def schedule_summary(self, root: str, preview_id: str, *, revision: int) -> WorkflowJobRecord:
+        def schedule(binding: _Binding) -> WorkflowJobRecord:
+            inputs = self._summary_inputs(binding, preview_id, revision)
+            prior = self._summary_job(binding, inputs)
+            if prior is not None:
+                return prior
+            return binding.adapters.queue.enqueue(
+                build_summary_job(inputs, actor=self._workflow_actor(), now=self._now()), actor=self._workflow_actor()
+            )
+
+        result = self._action(root, schedule)
+        self._wake.set()
+        return result
+
+    def summary_status(self, root: str, preview_id: str, *, revision: int):
+        def status(binding: _Binding):
+            inputs = self._summary_inputs(binding, preview_id, revision)
+            return binding.adapters.previews.summary(preview_id, revision=revision), self._summary_job(binding, inputs)
+
+        return self._action(root, status)
+
+    def cancel_summary(self, root: str, preview_id: str, *, revision: int, job_id: str) -> None:
+        def cancel(binding: _Binding) -> None:
+            queue = binding.adapters.queue
+            preview, bound_revision, _, _ = _summary_configuration(queue.authority(job_id))
+            if preview != preview_id or bound_revision != revision:
+                raise PreviewProblem("preview-summary-job-authority-mismatch")
+            job = queue.get(job_id)
+            if job.state not in {"succeeded", "failed", "cancelled"}:
+                queue.request_cancellation(
+                    job_id,
+                    actor=self._workflow_actor(),
+                    now=self._now(),
+                    reason_code="import-summary-cancelled",
+                    interruption_kind="user-cancel",
+                )
+
+        self._action(root, cancel)
+        self._wake.set()
+
     def review_action[Result](self, root: str, action: Callable[[ImportReview], Result]) -> Result:
         return self._action(root, lambda binding: action(ImportReview(binding.adapters.previews)))
 
@@ -296,28 +396,42 @@ class ImportPreviewService:
                     interruption_kind="user-cancel",
                 )
             binding.adapters.previews.cancel(preview_id, actor=self.actor(trace_id))
+            for summary in self._active_summaries(binding):
+                preview, _, _, _ = _summary_configuration(queue.authority(summary.job_id))
+                if preview == preview_id:
+                    queue.request_cancellation(
+                        summary.job_id,
+                        actor=self._workflow_actor(),
+                        now=self._now(),
+                        reason_code="import-preview-cancelled",
+                        interruption_kind="user-cancel",
+                    )
 
         self._action(root, cancel)
 
     def _reconcile(self, binding: _Binding) -> None:
         queue = binding.adapters.queue
-        after: str | None = None
-        while page := self._guard(binding, partial(queue.active_jobs, activity_type=ACTIVITY, after=after)):
-            for job in page:
+        for activity in (ACTIVITY, SUMMARY_ACTIVITY):
+            after: str | None = None
+            while page := self._guard(binding, partial(queue.active_jobs, activity_type=activity, after=after)):
+                for job in page:
 
-                def reconcile(job_id=job.job_id) -> None:
-                    _, epoch, _ = _configuration(queue.authority(job_id))
-                    if epoch != self._epoch:
-                        queue.request_cancellation(
-                            job_id,
-                            actor=self._workflow_actor(),
-                            now=self._now(),
-                            reason_code="resume-authority-changed",
-                            interruption_kind="policy",
+                    def reconcile(job_id=job.job_id, kind=activity) -> None:
+                        authority = queue.authority(job_id)
+                        epoch = (
+                            _configuration(authority)[1] if kind == ACTIVITY else _summary_configuration(authority)[2]
                         )
+                        if epoch != self._epoch:
+                            queue.request_cancellation(
+                                job_id,
+                                actor=self._workflow_actor(),
+                                now=self._now(),
+                                reason_code="resume-authority-changed",
+                                interruption_kind="policy",
+                            )
 
-                self._guard(binding, reconcile)
-            after = page[-1].job_id
+                    self._guard(binding, reconcile)
+                after = page[-1].job_id
 
     def _run(self, binding: _Binding) -> None:
         adapters = binding.adapters
@@ -341,14 +455,52 @@ class ImportPreviewService:
                 trace_id=claim.job_id.replace("-", ""),
             )(context, claim)
 
+        def summary_handler(context, claim):
+            def authorize():
+                authority = adapters.queue.authority(claim.job_id)
+                preview, revision, epoch, intent = _summary_configuration(authority)
+                if epoch != self._epoch:
+                    raise PreviewProblem("preview-resume-authority-changed")
+                continuation = json.loads(authority.snapshot_json).get("continuation")
+                predecessor = None
+                if continuation is not None:
+                    source = continuation["sourceJobId"]
+                    predecessor = (adapters.queue.get(source), adapters.queue.authority(source))
+                return bind_summary_claim(
+                    authority, claim, self._summary_inputs(binding, preview, revision, intent), predecessor=predecessor
+                )
+
+            inputs = self._guard(binding, authorize)
+
+            def guarded(action):
+                def current():
+                    if (
+                        self._summary_inputs(
+                            binding, inputs.preview.preview_id, inputs.draft_revision, inputs.intent.revision_id
+                        )
+                        != inputs
+                    ):
+                        raise PreviewProblem("preview-summary-authority-changed")
+                    return action()
+
+                return self._guard(binding, current)
+
+            return ImportSummaryActivity(
+                inputs=inputs,
+                repository=adapters.previews,
+                unit_of_work=adapters.units,
+                guard=guarded,
+                trace_id=claim.job_id.replace("-", ""),
+            )(context, claim)
+
         supervisor = LocalWorkerSupervisor(
             adapters.queue,
-            {ACTIVITY: handler},
+            {ACTIVITY: handler, SUMMARY_ACTIVITY: summary_handler},
             concurrency_limits={"document": 1},
             now=self._now,
             recovery_actor=WorkflowActor(self._actor_id, "system", "workflow-coordinator"),
             admission=adapters.admission,
-            activity_types=(ACTIVITY,),
+            activity_types=(ACTIVITY, SUMMARY_ACTIVITY),
         )
         supervisor.run_available()
 

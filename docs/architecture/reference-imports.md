@@ -297,8 +297,17 @@ manifest, draft, parse attempt, summary job/attempt, algorithm and ordered resul
 Completion remains hidden until that exact output reference is accepted by the
 durable queue. Any draft/rights change invalidates previous summary reads. Failed
 attempts retain hidden rows; a recovered attempt begins at ordinal one.
-This adapter is not yet wired to a summary activity, API or renderer; those and
-native/packaged/whole-project scale qualification remain required task work.
+The local summary activity now reuses the durable worker and current project
+guards. Its distinct exact input binds source/parser, accepted parse, draft,
+Intent context, privacy, native epoch and algorithm. The shared single-step job
+assembler preserves historical parser definitions byte-for-byte. Summary retries
+reuse Task Center continuation semantics with the actual unsuccessful predecessor
+and exact scientific authority; they never silently adopt a new policy or draft.
+Every bounded operation revalidates the project and authority, with cooperative
+cancellation and heartbeat. Security-epoch mismatch cancels old queued summaries;
+a later explicit calculation has new authority. Summary-only cancellation leaves
+the review draft intact. The summary API/renderer and native/packaged/whole-project
+scale qualification remain required task work.
 
 ## Verification and technical basis
 
