@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/ingestion/import-record.schema.json",
+  "title": "Provisional local ImportRecord v1",
+  "description": "Protected preview data, not canonical identity, accepted mapping, rights authority or import completion. Raw source remains in its caller-authorized immutable object.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "parserVersion", "source", "format", "ordinal", "recordKey", "location", "rawSha256", "rawBase64", "kind", "status", "fields", "candidates", "warnings", "mappingDecision"],
+  "properties": {
+    "schemaVersion": {"const": "1.0"},
+    "parserVersion": {"const": "local-reference-imports/1.0.0"},
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["filename", "sha256", "encoding"],
+      "properties": {
+        "filename": {"type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[^/\\\\:\\u0000-\\u001f\\u007f]+$", "not": {"enum": [".", ".."]}},
+        "sha256": {"$ref": "#/$defs/digest"},
+        "encoding": {"enum": ["utf-8", "cp1252"]}
+      }
+    },
+    "format": {"enum": ["ris", "bibtex", "csl-json", "doi-list", "csv"]},
+    "ordinal": {"type": "integer", "minimum": 1, "maximum": 10000000},
+    "recordKey": {"$ref": "#/$defs/digest"},
+    "location": {
+      "type": "object", "additionalProperties": false,
+      "required": ["byteStart", "byteEnd", "lineStart", "lineEnd"],
+      "properties": {
+        "byteStart": {"type": "integer", "minimum": 0, "maximum": 2147483648},
+        "byteEnd": {"type": "integer", "minimum": 0, "maximum": 2147483648},
+        "lineStart": {"type": "integer", "minimum": 1, "maximum": 2147483649},
+        "lineEnd": {"type": "integer", "minimum": 1, "maximum": 2147483649}
+      }
+    },
+    "rawSha256": {"$ref": "#/$defs/digest"},
+    "rawBase64": {"type": ["string", "null"], "contentEncoding": "base64", "maxLength": 22369624},
+    "kind": {"enum": ["record", "header", "directive"]},
+    "status": {"enum": ["parsed", "malformed"]},
+    "fields": {
+      "type": "array", "maxItems": 4096,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["name", "rawValue"],
+        "properties": {"name": {"type": "string", "maxLength": 65536}, "rawValue": {"type": "string", "maxLength": 65536}}
+      }
+    },
+    "candidates": {
+      "type": "array", "maxItems": 4096,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["name", "value", "sourceFieldIndex", "normalizationVersion", "confidence"],
+        "properties": {
+          "name": {"enum": ["title", "doi", "year", "author", "container"]},
+          "value": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "sourceFieldIndex": {"type": "integer", "minimum": 0, "maximum": 4095},
+          "normalizationVersion": {"const": "local-reference-candidates/1.0.0"},
+          "confidence": {"type": "object", "additionalProperties": false, "required": ["kind"], "properties": {"kind": {"const": "unknown"}}}
+        }
+      }
+    },
+    "warnings": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "maxLength": 64, "pattern": "^[a-z]+(?:-[a-z]+)*$"}},
+    "mappingDecision": {"type": "null"}
+  },
+  "$defs": {"digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

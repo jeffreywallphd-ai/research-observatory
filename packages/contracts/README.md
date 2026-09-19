@@ -6,6 +6,12 @@ Boundary: Schemas, API definitions, events, and generated client sources shared 
 Contracts must not expose operating-system paths, database connection objects,
 framework components, provider SDK types, or other deployment-specific details.
 
+`ingestion/import-record.schema.json` defines protected, provisional local parser
+output for RIS, BibTeX, CSL JSON, DOI lists and structured CSV. Raw source ranges,
+repeated fields and normalized candidates remain separate from human mapping and
+canonical identity. See [reference imports](../../docs/architecture/reference-imports.md)
+for the verified-EOF boundary, bounds, error semantics and downstream obligations.
+
 `core-api/` contains the hand-authored runtime/handshake schemas plus the exact,
 deterministically generated OpenAPI document and transport-neutral TypeScript
 client for the local Core process. `python tools/core_api_contract.py --repo .

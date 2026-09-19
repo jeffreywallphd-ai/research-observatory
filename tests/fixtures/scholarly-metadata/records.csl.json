@@ -1,0 +1,12 @@
+[
+  {
+    "id": "synthetic-import-1",
+    "type": "article-journal",
+    "title": "Synthetic Reference Import Fixture",
+    "author": [{"family": "Fixture", "given": "Example"}],
+    "issued": {"date-parts": [[2024, 1, 2]]},
+    "DOI": "https://doi.org/10.99999/SYNTHETIC(ONE)",
+    "x-fixture": {"synthetic": true, "notes": ["Not scholarly evidence"]}
+  },
+  {"id": "synthetic-import-2", "type": "report", "title": "Synthetic Missing Optional Fields"}
+]

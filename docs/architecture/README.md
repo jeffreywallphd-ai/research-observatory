@@ -6,6 +6,9 @@ Accepted records in [`../adr/`](../adr/) supersede affected baseline decisions.
 machine-checked dependency matrix; it does not replace the full
 [`systems-design.md`](source/systems-design.md).
 
+For W2's raw-preserving local metadata parser boundary, see
+[reference imports](reference-imports.md).
+
 ## Runtime shape
 
 ```mermaid

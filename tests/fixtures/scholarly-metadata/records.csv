@@ -1,0 +1,4 @@
+title,DOI,note
+Synthetic Reference Import Fixture,10.99999/SYNTHETIC(ONE),"Fictional metadata,
+not scholarly evidence"
+Synthetic Missing Optional Fields,,Unknown fields remain visible

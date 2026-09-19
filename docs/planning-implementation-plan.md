@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1f7d53e2f5f9ac86c8b911730bd9a8b2af1325f3e844075b8c97710faa32b706
+source_sha256: 5200a18994d690f12ae70870f9aa5a2fa43969af1583301b8799eca362a9b3c9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -285,7 +285,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W2 - Windows local evidence foundation
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `NONE` / `PENDING`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
 
 **Capability contributions:** `CAP-04`, `CAP-05`
 
@@ -7723,13 +7723,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S01.T01 - Implement RIS, BibTeX, CSL JSON, DOI-list, and structured CSV parsers
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-03.S03.T02`, `CAP-02.S02.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Streaming parsers that preserve original fields, import source, line/record location, and warnings.
 

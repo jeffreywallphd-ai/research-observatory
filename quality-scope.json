@@ -10,6 +10,11 @@
     "workers"
   ],
   "pythonFiles": [
+    "services/core-api/src/research_observatory_core/ingestion/__init__.py",
+    "services/core-api/src/research_observatory_core/ingestion/reference_imports.py",
+    "tests/service/test_reference_imports.py",
+    "tests/service/test_reference_import_streaming.py",
+    "tests/contracts/test_reference_import_contracts.py",
     "tools/adr_check.py",
     "tools/adr_new.py",
     "tools/agent_protocol_check.py",

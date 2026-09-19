@@ -12,6 +12,7 @@
     {"id": "uv", "path": "uv.lock"}
   ],
   "schemaPaths": [
+    "packages/contracts/ingestion/import-record.schema.json",
     "packages/contracts/model-gateway/model-manifest.schema.json",
     "design/ui-change.schema.json",
     "evaluation/baseline-approval.schema.json",
