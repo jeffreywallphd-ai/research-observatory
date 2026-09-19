@@ -102,7 +102,7 @@ fn default_parent_from_known_folders(
     )
 }
 
-fn local_path_syntax(value: &str) -> bool {
+pub(crate) fn local_path_syntax(value: &str) -> bool {
     let bytes = value.as_bytes();
     if !(bytes.len() >= 3
         && value.encode_utf16().count() <= 4096
@@ -128,7 +128,7 @@ fn local_path_syntax(value: &str) -> bool {
             })
 }
 
-fn same_path(first: &Path, second: &Path) -> bool {
+pub(crate) fn same_path(first: &Path, second: &Path) -> bool {
     first
         .as_os_str()
         .to_string_lossy()
@@ -155,7 +155,7 @@ pub(crate) fn fixture_contains(root: &Path, value: &str) -> bool {
 }
 
 #[cfg(windows)]
-fn is_reparse(metadata: &std::fs::Metadata) -> bool {
+pub(crate) fn is_reparse(metadata: &std::fs::Metadata) -> bool {
     use std::os::windows::fs::MetadataExt;
     metadata.file_attributes() & 0x400 != 0
 }
@@ -166,6 +166,43 @@ fn is_reparse(_metadata: &std::fs::Metadata) -> bool {
 }
 
 type AuthorityCheck = Arc<dyn Fn() -> bool + Send + Sync>;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PickerFailure {
+    Cancelled,
+    Unavailable,
+    Failed,
+}
+
+trait PickerResult {
+    fn cancelled() -> Self;
+    fn unavailable() -> Self;
+    fn failed() -> Self;
+}
+
+impl PickerResult for DirectoryOutcome {
+    fn cancelled() -> Self {
+        Self::Cancelled
+    }
+    fn unavailable() -> Self {
+        Self::Unavailable
+    }
+    fn failed() -> Self {
+        Self::Failed
+    }
+}
+
+impl<T> PickerResult for Result<T, PickerFailure> {
+    fn cancelled() -> Self {
+        Err(PickerFailure::Cancelled)
+    }
+    fn unavailable() -> Self {
+        Err(PickerFailure::Unavailable)
+    }
+    fn failed() -> Self {
+        Err(PickerFailure::Failed)
+    }
+}
 
 fn authority_valid(check: &AuthorityCheck) -> bool {
     std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| check())).unwrap_or(false)
@@ -413,16 +450,60 @@ impl DirectoryPickerManager {
         })
     }
 
+    /// The selected file and cancellation reservation never pass through the
+    /// renderer. The reservation spans both the dialog and its bounded transfer.
+    #[cfg(windows)]
+    pub(crate) fn import_source<T: Send + 'static>(
+        &self,
+        owner: isize,
+        authority: impl Fn() -> bool + Send + Sync + 'static,
+        consume: impl FnOnce(
+            crate::import_source::HeldImportSource,
+            AuthorityCheck,
+        ) -> Result<T, PickerFailure>
+        + Send
+        + 'static,
+    ) -> Result<T, PickerFailure> {
+        #[cfg(feature = "integration-harness")]
+        let fixture_root = self.fixture_root.clone();
+        self.run_managed_worker(Arc::new(authority), move |reservation, authority| {
+            let source = native::show_import_source(
+                owner,
+                &reservation.pending,
+                authority,
+                #[cfg(feature = "integration-harness")]
+                fixture_root.as_deref(),
+            )?;
+            let pending = Arc::clone(&reservation.pending);
+            let authority = Arc::clone(authority);
+            let live: AuthorityCheck = Arc::new(move || {
+                !pending.cancelled.load(Ordering::Acquire) && authority_valid(&authority)
+            });
+            if !authority_valid(&live) {
+                return Err(PickerFailure::Cancelled);
+            }
+            consume(source, live)
+        })
+    }
+
     fn run_worker(
         &self,
         authority: AuthorityCheck,
         backend: impl FnOnce(&Reservation, &AuthorityCheck) -> DirectoryOutcome + Send + 'static,
     ) -> DirectoryOutcome {
+        self.run_managed_worker(authority, backend)
+    }
+
+    fn run_managed_worker<T: PickerResult + Send + 'static>(
+        &self,
+        authority: AuthorityCheck,
+        backend: impl FnOnce(&Reservation, &AuthorityCheck) -> T + Send + 'static,
+    ) -> T {
         if !authority_valid(&authority) {
-            return DirectoryOutcome::Cancelled;
+            return T::cancelled();
         }
         let Some(reservation) = self.reserve() else {
-            return DirectoryOutcome::Unavailable;
+            return T::unavailable();
         };
         std::thread::Builder::new()
             .name("project-directory-sta".into())
@@ -430,20 +511,21 @@ impl DirectoryPickerManager {
                 if reservation.pending.cancelled.load(Ordering::Acquire)
                     || !authority_valid(&authority)
                 {
-                    return DirectoryOutcome::Cancelled;
+                    return T::cancelled();
                 }
                 let result = backend(&reservation, &authority);
                 if reservation.pending.cancelled.load(Ordering::Acquire)
                     || !authority_valid(&authority)
                 {
-                    DirectoryOutcome::Cancelled
+                    T::cancelled()
                 } else {
                     result
                 }
             })
-            .map_or(DirectoryOutcome::Failed, |worker| {
-                worker.join().unwrap_or(DirectoryOutcome::Failed)
-            })
+            .map_or_else(
+                |_| T::failed(),
+                |worker| worker.join().unwrap_or_else(|_| T::failed()),
+            )
     }
 }
 
@@ -471,9 +553,9 @@ mod native {
     };
     use windows::Win32::System::Ole::IOleWindow;
     use windows::Win32::UI::Shell::{
-        FOS_DONTADDTORECENT, FOS_FORCEFILESYSTEM, FOS_NOCHANGEDIR, FOS_NODEREFERENCELINKS,
-        FOS_PATHMUSTEXIST, FOS_PICKFOLDERS, FileOpenDialog, IFileDialog, IFileOpenDialog,
-        IShellItem, SHCreateItemFromParsingName, SIGDN_FILESYSPATH,
+        FOS_DONTADDTORECENT, FOS_FILEMUSTEXIST, FOS_FORCEFILESYSTEM, FOS_NOCHANGEDIR,
+        FOS_NODEREFERENCELINKS, FOS_PATHMUSTEXIST, FOS_PICKFOLDERS, FileOpenDialog, IFileDialog,
+        IFileOpenDialog, IShellItem, SHCreateItemFromParsingName, SIGDN_FILESYSPATH,
     };
     use windows::core::{HRESULT, Interface, PCWSTR, w};
     use windows_sys::Win32::Foundation::{GetLastError, HWND as RawHwnd, LPARAM, LRESULT, WPARAM};
@@ -830,6 +912,47 @@ mod native {
         authority: &AuthorityCheck,
         #[cfg(feature = "integration-harness")] fixture_root: Option<&Path>,
     ) -> DirectoryOutcome {
+        select_path(
+            owner,
+            Some(request),
+            pending,
+            authority,
+            #[cfg(feature = "integration-harness")]
+            fixture_root,
+        )
+    }
+
+    pub(super) fn show_import_source(
+        owner: isize,
+        pending: &Arc<PendingDialog>,
+        authority: &AuthorityCheck,
+        #[cfg(feature = "integration-harness")] fixture_root: Option<&Path>,
+    ) -> Result<crate::import_source::HeldImportSource, PickerFailure> {
+        match select_path(
+            owner,
+            None,
+            pending,
+            authority,
+            #[cfg(feature = "integration-harness")]
+            fixture_root,
+        ) {
+            DirectoryOutcome::Selected { path } => {
+                crate::import_source::HeldImportSource::open_selected(Path::new(&path))
+                    .map_err(|_| PickerFailure::Failed)
+            }
+            DirectoryOutcome::Cancelled => Err(PickerFailure::Cancelled),
+            DirectoryOutcome::Unavailable => Err(PickerFailure::Unavailable),
+            DirectoryOutcome::Failed => Err(PickerFailure::Failed),
+        }
+    }
+
+    fn select_path(
+        owner: isize,
+        request: Option<&DirectoryRequest>,
+        pending: &Arc<PendingDialog>,
+        authority: &AuthorityCheck,
+        #[cfg(feature = "integration-harness")] fixture_root: Option<&Path>,
+    ) -> DirectoryOutcome {
         #[cfg(feature = "integration-harness")]
         pending
             .trace_enabled
@@ -848,13 +971,12 @@ mod native {
         #[cfg(feature = "integration-harness")]
         if fixture_root.is_some_and(|root| {
             request
-                .previous_location
-                .as_deref()
+                .and_then(|request| request.previous_location.as_deref())
                 .is_some_and(|path| !fixture_contains(root, path))
         }) {
             return DirectoryOutcome::Failed;
         }
-        let previous = match request.previous_location.as_deref() {
+        let previous = match request.and_then(|request| request.previous_location.as_deref()) {
             Some(path) => match validate_existing_directory(path, &roots) {
                 Ok(path) => Some(path),
                 Err(PathFailure::Invalid) => return DirectoryOutcome::Failed,
@@ -887,47 +1009,53 @@ mod native {
         };
         #[cfg(feature = "integration-harness")]
         fixture_trace(fixture_root.is_some(), "configure-options", None);
-        let configured = unsafe {
-            (|| -> windows::core::Result<()> {
-                let options = dialog.GetOptions()?;
-                dialog.SetOptions(
-                    options
-                        | FOS_PICKFOLDERS
-                        | FOS_FORCEFILESYSTEM
-                        | FOS_PATHMUSTEXIST
-                        | FOS_NOCHANGEDIR
-                        | FOS_DONTADDTORECENT
-                        | FOS_NODEREFERENCELINKS,
-                )?;
-                #[cfg(feature = "integration-harness")]
-                fixture_trace(fixture_root.is_some(), "configure-title", None);
-                match request.purpose {
-                    DirectoryPurpose::CreateParent => {
-                        dialog.SetTitle(w!("Choose a parent folder for the new project"))?
-                    }
-                    DirectoryPurpose::OpenProject => {
-                        dialog.SetTitle(w!("Choose an existing Research Observatory project"))?
-                    }
-                }
-                if let Some(path) = previous {
+        let configured =
+            unsafe {
+                (|| -> windows::core::Result<()> {
+                    let options = dialog.GetOptions()?;
+                    dialog.SetOptions(
+                        options
+                            | if request.is_some() {
+                                FOS_PICKFOLDERS
+                            } else {
+                                FOS_FILEMUSTEXIST
+                            }
+                            | FOS_FORCEFILESYSTEM
+                            | FOS_PATHMUSTEXIST
+                            | FOS_NOCHANGEDIR
+                            | FOS_DONTADDTORECENT
+                            | FOS_NODEREFERENCELINKS,
+                    )?;
                     #[cfg(feature = "integration-harness")]
-                    fixture_trace(fixture_root.is_some(), "parse-initial-shell-item", None);
-                    let item = shell_item_for_directory(&path)?;
-                    #[cfg(feature = "integration-harness")]
-                    fixture_trace(fixture_root.is_some(), "set-initial-shell-folder", None);
-                    // The field's explicit current value takes precedence over
-                    // OS MRU state. Failure to suggest it is non-destructive.
-                    let suggested = dialog.SetFolder(&item);
-                    #[cfg(feature = "integration-harness")]
-                    if fixture_root.is_some() {
-                        suggested?;
+                    fixture_trace(fixture_root.is_some(), "configure-title", None);
+                    match request.map(|request| request.purpose) {
+                        Some(DirectoryPurpose::CreateParent) => {
+                            dialog.SetTitle(w!("Choose a parent folder for the new project"))?
+                        }
+                        Some(DirectoryPurpose::OpenProject) => dialog
+                            .SetTitle(w!("Choose an existing Research Observatory project"))?,
+                        None => dialog
+                            .SetTitle(w!("Choose a bibliography or reference file to import"))?,
                     }
-                    #[cfg(not(feature = "integration-harness"))]
-                    let _ = suggested;
-                }
-                Ok(())
-            })()
-        };
+                    if let Some(path) = previous {
+                        #[cfg(feature = "integration-harness")]
+                        fixture_trace(fixture_root.is_some(), "parse-initial-shell-item", None);
+                        let item = shell_item_for_directory(&path)?;
+                        #[cfg(feature = "integration-harness")]
+                        fixture_trace(fixture_root.is_some(), "set-initial-shell-folder", None);
+                        // The field's explicit current value takes precedence over
+                        // OS MRU state. Failure to suggest it is non-destructive.
+                        let suggested = dialog.SetFolder(&item);
+                        #[cfg(feature = "integration-harness")]
+                        if fixture_root.is_some() {
+                            suggested?;
+                        }
+                        #[cfg(not(feature = "integration-harness"))]
+                        let _ = suggested;
+                    }
+                    Ok(())
+                })()
+            };
         if let Err(error) = configured {
             #[cfg(feature = "integration-harness")]
             fixture_trace(
@@ -998,7 +1126,15 @@ mod native {
             if fixture_root.is_some_and(|root| !fixture_contains(root, value)) {
                 return Err(PathFailure::Invalid);
             }
-            validate_existing_directory(value, &roots)
+            if request.is_some() {
+                validate_existing_directory(value, &roots)
+            } else if local_path_syntax(value) {
+                // The native-only caller immediately opens and retains a regular
+                // file plus ancestor handles. Never return this path to the UI.
+                Ok(path)
+            } else {
+                Err(PathFailure::Invalid)
+            }
         });
         match path {
             Ok(path) => DirectoryOutcome::Selected {
@@ -1864,6 +2000,73 @@ mod tests {
         DirectoryOutcome::Selected {
             path: "C:\\Synthetic selection".into(),
         }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn native_import_never_consumes_a_file_for_an_invalid_owner() {
+        let manager = DirectoryPickerManager::default();
+        let result: Result<(), PickerFailure> = manager.import_source(
+            0,
+            || true,
+            |_, _| panic!("invalid owner cannot select source authority"),
+        );
+        assert_eq!(result, Err(PickerFailure::Unavailable));
+        assert!(manager.admission().active.is_none());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn import_transfer_keeps_reservation_until_held_file_cleanup_after_close() {
+        use std::sync::mpsc;
+        use std::time::Duration;
+        let fixture = Fixture::new();
+        let path = fixture.0.join("synthetic.ris");
+        std::fs::write(&path, vec![b'X'; 128 * 1024 + 1]).unwrap();
+        let manager = DirectoryPickerManager::default();
+        let worker_manager = manager.clone();
+        let source_path = path.clone();
+        let (entered, entry) = mpsc::channel();
+        let (release, released) = mpsc::channel();
+        let worker = std::thread::spawn(move || {
+            worker_manager.run_managed_worker(Arc::new(|| true), move |reservation, authority| {
+                let source =
+                    crate::import_source::HeldImportSource::open_selected(&source_path).unwrap();
+                source
+                    .transfer(
+                        || {
+                            !reservation.pending.cancelled.load(Ordering::Acquire)
+                                && authority_valid(authority)
+                        },
+                        |ordinal, _| {
+                            assert_eq!(ordinal, 1, "cancellation stops before a second chunk");
+                            entered.send(()).unwrap();
+                            released.recv().unwrap();
+                            Ok(())
+                        },
+                    )
+                    .map_err(|_| PickerFailure::Cancelled)
+            })
+        });
+        entry.recv_timeout(Duration::from_secs(5)).unwrap();
+        assert!(std::fs::OpenOptions::new().write(true).open(&path).is_err());
+        assert!(matches!(
+            manager.begin_close(),
+            CloseDisposition::WaitForCleanup
+        ));
+        let waiting = manager.clone();
+        let (cleaned, cleanup) = mpsc::channel();
+        let waiter = std::thread::spawn(move || {
+            waiting.wait_for_cleanup();
+            cleaned.send(()).unwrap();
+        });
+        assert!(cleanup.recv_timeout(Duration::from_millis(50)).is_err());
+        release.send(()).unwrap();
+        assert_eq!(worker.join().unwrap(), Err(PickerFailure::Cancelled));
+        cleanup.recv_timeout(Duration::from_secs(5)).unwrap();
+        waiter.join().unwrap();
+        assert!(std::fs::OpenOptions::new().write(true).open(&path).is_ok());
+        assert!(!manager.is_open());
     }
 
     #[cfg(windows)]

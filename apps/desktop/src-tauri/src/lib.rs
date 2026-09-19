@@ -2,6 +2,8 @@ pub mod application_lock;
 pub mod application_lock_verification;
 mod application_sign_in_policy;
 pub mod directory_picker;
+#[cfg(windows)]
+mod import_source;
 pub mod supervisor;
 pub mod support_bundle;
 mod workflow_session;

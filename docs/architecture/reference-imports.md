@@ -193,7 +193,20 @@ atomic publication. Stale edits require rereading, never automatic replay agains
 a newer draft. Diagnostic fragments bind the revision and scanned ordinal;
 current rights are checked on every page and completeness is explicit.
 
-This is not yet a complete production wizard. Selected-file intake, complete
+Native selected-file groundwork reuses the folder picker's STA, cancellation and
+cleanup reservation, now spanning the consuming transfer. A native-only held file
+rejects network/device/reparse/offline sources, retains non-deletable ancestors,
+denies file write/delete sharing and verifies same-handle identity/length and EOF.
+Reads are at most 128 KiB; a seal is returned only after all chunks are accepted
+and authority remains current. No plaintext staging or renderer source path.
+Source identity begins at the verified open, not an earlier Shell observation.
+This follows Windows [file sharing semantics](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew)
+and [handle path verification](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew).
+These helpers are not yet exposed by an application command. Integration must pin
+the project session/Core launch and use the live cancellation check through final
+seal/scheduling; tests of helpers do not qualify actual native selection.
+
+This is not yet a complete production wizard. Selected-file intake composition, complete
 native report publication, duplicate/count projection, scalable undo and UI wiring
 remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
