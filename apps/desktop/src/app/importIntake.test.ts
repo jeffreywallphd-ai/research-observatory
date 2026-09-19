@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { chooseImportSource, decodeImportOutcome } from "./importIntake";
+import { chooseImportSource, decodeImportOutcome, saveImportReport } from "./importIntake";
 
 const native = vi.hoisted(() => vi.fn());
 vi.mock("@tauri-apps/api/core", () => ({ invoke: native }));
@@ -12,6 +12,30 @@ const result = () => ({ status: "prepared", sourceName: "synthetic.csv", preview
 } });
 
 describe("native import intake", () => {
+  it("saves a fixed draft report without giving the renderer a destination path", async () => {
+    vi.stubGlobal("window", { __TAURI_INTERNALS__: {} });
+    const address = { ...project, previewId: result().preview.previewId, revision: 2 };
+    native.mockImplementationOnce(async (_command, { request }) => ({ status: "saved", filename: `import-diagnostics-${request.operationId}.csv`, byteLength: 45 }));
+    expect(await saveImportReport(address)).toMatchObject({ status: "saved", byteLength: 45 });
+    expect(native.mock.calls[0]![0]).toBe("save_import_report");
+    expect(Object.keys(native.mock.calls[0]![1].request).sort()).toEqual(["operationId", "previewId", "projectId", "revision", "root"]);
+    native.mockResolvedValueOnce({ status: "saved", filename: "C:/private.csv", byteLength: 2 });
+    expect(await saveImportReport(address)).toEqual({ status: "failed" });
+  });
+  it("retains a committed report result even when cancellation arrives after publication", async () => {
+    vi.stubGlobal("window", { __TAURI_INTERNALS__: {} });
+    native.mockResolvedValue(undefined);
+    let release!: (value: unknown) => void;
+    native.mockImplementationOnce(() => new Promise((resolve) => { release = resolve; }));
+    const owner = new AbortController();
+    const resultPromise = saveImportReport({ ...project, previewId: result().preview.previewId, revision: 2 }, owner.signal);
+    const operationId = native.mock.calls[0]![1].request.operationId;
+    owner.abort();
+    expect(native).toHaveBeenLastCalledWith("cancel_import_file", { operationId });
+    expect(await chooseImportSource(project, options)).toEqual({ status: "unavailable" });
+    release({ status: "saved", filename: `import-diagnostics-${operationId}.csv`, byteLength: 45 });
+    expect(await resultPromise).toMatchObject({ status: "saved" });
+  });
   it("requires explicit local rights and a native host; never invents a browser file input", async () => {
     expect(await chooseImportSource(project, options)).toEqual({ status: "unavailable" });
     vi.stubGlobal("window", { __TAURI_INTERNALS__: {} });

@@ -408,6 +408,7 @@ pub(crate) enum NativeImportAction {
     Schedule,
     Status,
     Cancel,
+    Report,
 }
 
 impl NativeImportAction {
@@ -420,6 +421,7 @@ impl NativeImportAction {
             Self::Schedule => "/native/imports/schedule",
             Self::Status => "/native/imports/status",
             Self::Cancel => "/native/imports/cancel",
+            Self::Report => "/native/imports/report",
         }
     }
 }
@@ -436,6 +438,35 @@ pub(crate) struct NativeImportConnection {
 }
 
 impl NativeImportConnection {
+    /// Fence native project/launch transitions through one bounded local rename.
+    /// No network or long-running preparation is admitted in this closure.
+    pub(crate) fn publish_current<T>(
+        &self,
+        publish: impl FnOnce() -> Result<T, &'static str>,
+    ) -> Result<T, &'static str> {
+        let mut inner = self
+            .supervisor
+            .shared
+            .inner
+            .lock()
+            .map_err(|_| "RO-IMPORT-PROJECT-UNAVAILABLE")?;
+        inner.refresh();
+        if self.cancellation.load(Ordering::Acquire)
+            || inner.state != RuntimeState::Ready
+            || inner.stopping
+            || inner.launching
+            || inner.attempt != self.attempt
+            || !inner.process.as_ref().is_some_and(|process| {
+                process.port == self.port && Arc::ptr_eq(&process.cancellation, &self.cancellation)
+            })
+            || !inner
+                .import_project
+                .matches(self.project_generation, &self.root, &self.project_id)
+        {
+            return Err("RO-IMPORT-PROJECT-UNAVAILABLE");
+        }
+        publish()
+    }
     pub(crate) fn is_current(&self) -> bool {
         self.current(true)
     }
@@ -3236,6 +3267,7 @@ mod tests {
             super::NativeImportAction::Schedule,
             super::NativeImportAction::Status,
             super::NativeImportAction::Cancel,
+            super::NativeImportAction::Report,
         ] {
             assert!(
                 super::validate_api_request(&super::CoreApiRequest {
@@ -3372,6 +3404,14 @@ mod tests {
             })
         };
         assert!(connection.is_current());
+        let mut published = false;
+        connection
+            .publish_current(|| {
+                published = true;
+                Ok(())
+            })
+            .unwrap();
+        assert!(published);
         let mut wrong = address.clone();
         wrong["root"] = "C:/Synthetic/other".into();
         assert!(
@@ -3393,6 +3433,11 @@ mod tests {
         );
         server.join().unwrap();
         assert!(!connection.is_current());
+        assert!(
+            connection
+                .publish_current::<()>(|| panic!("changed project cannot publish a report"))
+                .is_err()
+        );
         assert!(
             connection
                 .request(NativeImportAction::Schedule, address.clone())

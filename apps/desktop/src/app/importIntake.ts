@@ -33,6 +33,31 @@ export function decodeImportOutcome(value: unknown, options: ImportIntakeOptions
 }
 
 let pending = false;
+export type ImportReportOutcome = { readonly status: "saved"; readonly filename: string; readonly byteLength: number }
+  | { readonly status: "cancelled" | "unavailable" | "failed" };
+
+export async function saveImportReport(address: { readonly root: string; readonly projectId: string; readonly previewId: string; readonly revision: number }, signal?: AbortSignal): Promise<ImportReportOutcome> {
+  if (signal?.aborted) return { status: "cancelled" };
+  if (typeof globalThis.window === "undefined" || !("__TAURI_INTERNALS__" in globalThis.window) || pending) return { status: "unavailable" };
+  const bytes = new Uint8Array(16); globalThis.crypto.getRandomValues(bytes);
+  const operationId = Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("");
+  const request = { root: address.root, projectId: address.projectId, previewId: address.previewId, revision: address.revision, operationId };
+  const cancel = (): void => { void invoke("cancel_import_file", { operationId }).catch(() => undefined); };
+  pending = true; signal?.addEventListener("abort", cancel, { once: true });
+  try {
+    const value = data(await invoke("save_import_report", { request }));
+    if (value && keys(value, ["status"]) && (value.status === "cancelled" || value.status === "unavailable" || value.status === "failed")) return { status: value.status };
+    if (value && keys(value, ["status", "filename", "byteLength"]) && value.status === "saved"
+      && value.filename === `import-diagnostics-${operationId}.csv` && typeof value.byteLength === "number"
+      && Number.isSafeInteger(value.byteLength) && value.byteLength > 0 && value.byteLength <= 268435456) {
+      // A late cancellation cannot undo a file already published by native code.
+      return { status: "saved", filename: value.filename, byteLength: value.byteLength };
+    }
+    return { status: "failed" };
+  } catch { return { status: "failed" }; }
+  finally { signal?.removeEventListener("abort", cancel); pending = false; }
+}
+
 export async function chooseImportSource(
   project: { readonly root: string; readonly projectId: string }, options: ImportIntakeOptions, signal?: AbortSignal,
 ): Promise<ImportIntakeOutcome> {

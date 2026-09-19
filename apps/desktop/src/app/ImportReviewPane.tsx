@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CoreApiClientError, createCoreApiClient, type ColumnSelection, type FieldCorrection, type ImportPreviewItem, type RecordSelection, type RecordSummary, type ReviewDetail, type ReviewField, type ReviewPage, type ReviewSummary, type Section } from "@research-observatory/contracts/core-api";
 import { Button, DataTable, Field, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
+import { saveImportReport } from "./importIntake";
 
 type ImportClient = ReturnType<typeof createCoreApiClient>;
 const TARGETS = ["title", "doi", "year", "author", "container"] as const;
@@ -20,7 +21,7 @@ export function importStatusLabel(item: ImportPreviewItem): string {
 }
 const terminal = (item: ImportPreviewItem): boolean => ["cancelled", "failed", "security-interrupted"].includes(item.state) || item.jobState === "failed" || item.jobState === "cancelled";
 
-export function ImportReviewPane({ root, initial, client, announce }: { readonly root: string; readonly initial: ImportPreviewItem; readonly client: ImportClient; readonly announce: (message: string) => void }): ReactNode {
+export function ImportReviewPane({ root, projectId, initial, client, announce }: { readonly root: string; readonly projectId: string; readonly initial: ImportPreviewItem; readonly client: ImportClient; readonly announce: (message: string) => void }): ReactNode {
   const [status, setStatus] = useState(initial);
   const [summary, setSummary] = useState<ReviewSummary | null>(null);
   const [page, setPage] = useState<ReviewPage | null>(null);
@@ -34,6 +35,10 @@ export function ImportReviewPane({ root, initial, client, announce }: { readonly
   const [target, setTarget] = useState<FieldCorrection["name"]>("title");
   const [correction, setCorrection] = useState("");
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [savingReport, setSavingReport] = useState(false);
+  const [reportNotice, setReportNotice] = useState<string | null>(null);
+  const reportOwner = useRef<AbortController | null>(null);
+  const reportButton = useRef<HTMLButtonElement>(null);
   const generation = useRef(0);
   const live = useRef(true);
   const statusHeading = useRef<HTMLHeadingElement>(null);
@@ -82,7 +87,7 @@ export function ImportReviewPane({ root, initial, client, announce }: { readonly
   }
   useEffect(() => {
     live.current = true; void refresh();
-    return () => { live.current = false; generation.current += 1; };
+    return () => { live.current = false; generation.current += 1; reportOwner.current?.abort(); };
   }, [client, root, initial.previewId]);
   useEffect(() => {
     if (busy || summary || terminal(status) || !status.jobId || failure) return;
@@ -130,6 +135,24 @@ export function ImportReviewPane({ root, initial, client, announce }: { readonly
     cancelButton.current?.focus();
   }
 
+  async function downloadReport(): Promise<void> {
+    if (!summary || busy) return;
+    const owner = new AbortController(); reportOwner.current = owner;
+    setBusy(true); setSavingReport(true); setReportNotice(null);
+    try {
+      const result = await saveImportReport({ ...address, projectId, revision: summary.revision }, owner.signal);
+      if (!live.current) return;
+      const message = result.status === "saved" ? `Saved ${result.filename} (${result.byteLength.toLocaleString()} bytes) in your selected folder.`
+        : result.status === "cancelled" ? "Report download cancelled before publication. No report file was saved."
+        : result.status === "unavailable" ? "The native folder chooser is unavailable. Retry from the desktop window."
+        : "The report save result could not be confirmed. Check your selected folder, then reload the current draft before retrying.";
+      setReportNotice(message); announce(message);
+    } catch { if (live.current) setReportNotice("The report save result could not be confirmed. Check your selected folder before retrying."); }
+    finally {
+      if (live.current) { setBusy(false); setSavingReport(false); reportOwner.current = null; globalThis.requestAnimationFrame(() => { if (live.current) reportButton.current?.focus(); }); }
+    }
+  }
+
   return <section className="ro-stack" aria-label="Selected import preview" aria-busy={busy} onKeyDown={(event) => { if (event.key === "Escape" && confirmCancel && !busy) { event.preventDefault(); event.stopPropagation(); keepPreview(); } }}>
     <Panel title="Review source"><h2 ref={statusHeading} tabIndex={-1} className="ro-typography ro-typography--section-title ro-wrap-anywhere">{status.sourceName}</h2>
       <div className="ro-cluster"><StatusBadge>{importStatusLabel(status)}</StatusBadge><span>{status.formatName} · {status.encoding} · {status.byteLength.toLocaleString()} bytes</span></div>
@@ -139,9 +162,12 @@ export function ImportReviewPane({ root, initial, client, announce }: { readonly
       {terminal(status) ? <p>This preview cannot publish an import. Choose the source again to begin a new preview.</p> : null}
     </Panel>
     {failure ? <Notification tone="danger" title="Review unavailable">{failure}</Notification> : null}
+    {reportNotice ? <Notification tone="info" title="Diagnostic report">{reportNotice}</Notification> : null}
     {busy ? <p role="status">Reading the current protected preview…</p> : null}
     {summary ? <>
       <Panel title="Draft decisions"><p>Revision {summary.revision} · {summary.recordCount.toLocaleString()} source rows (including headers/directives). Raw source values are preserved. No canonical records have been committed.</p>
+        <p>Download a complete diagnostic CSV with row locations, validation codes and exclusion reasons. It does not contain reference text, names or local paths.</p>
+        <div className="ro-action-row"><Button ref={reportButton} disabled={busy} onClick={() => void downloadReport()}>Download diagnostic report…</Button>{savingReport ? <><span role="status">Saving the complete current draft report…</span><Button onClick={() => reportOwner.current?.abort()}>Cancel report download</Button></> : null}</div>
         <dl className="import-rights">{Object.entries(summary.rights).map(([action, permission]) => <div key={action}><dt>{action}</dt><dd>{permission.value} · {permission.basis.replaceAll("-", " ")}</dd></div>)}</dl>
         <p className="field-note">Duplicate policy: review. Malformed rows: exclude and report. Unknown permissions remain restrictive.</p>
       </Panel>

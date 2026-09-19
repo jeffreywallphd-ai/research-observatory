@@ -2,6 +2,8 @@ pub mod application_lock;
 pub mod application_lock_verification;
 mod application_sign_in_policy;
 pub mod directory_picker;
+#[cfg(windows)]
+mod import_report;
 mod import_runtime;
 #[cfg(windows)]
 mod import_source;
@@ -117,6 +119,59 @@ fn cancel_import_file(
     }
     manager.cancel(&operation_id, &picker);
     Ok(())
+}
+
+#[tauri::command]
+async fn save_import_report(
+    window: tauri::WebviewWindow,
+    manager: State<'_, import_runtime::ImportManager>,
+    picker: State<'_, DirectoryPickerManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    message: tauri::ipc::Request<'_>,
+) -> Result<import_runtime::ReportOutcome, ()> {
+    use import_runtime::ReportOutcome;
+    let tauri::ipc::InvokeBody::Json(payload) = message.body() else {
+        return Ok(ReportOutcome::Failed);
+    };
+    let Some(request) = import_runtime::decode_report_request(payload) else {
+        return Ok(ReportOutcome::Failed);
+    };
+    let Some(owner) = directory_window_handle(&window) else {
+        return Ok(ReportOutcome::Unavailable);
+    };
+    #[cfg(all(feature = "integration-harness", windows))]
+    if window
+        .try_state::<directory_integration_harness::Fixture>()
+        .is_some_and(|fixture| {
+            fixture.revalidate().is_err()
+                || !directory_picker::fixture_contains(&fixture.projects, &request.root)
+        })
+    {
+        return Ok(ReportOutcome::Unavailable);
+    }
+    let Ok(ticket) = lock.begin_protected_action() else {
+        return Ok(ReportOutcome::Cancelled);
+    };
+    #[cfg(windows)]
+    {
+        let (manager, picker, supervisor, lock) = (
+            manager.inner().clone(),
+            picker.inner().clone(),
+            supervisor.inner().clone(),
+            lock.inner().clone(),
+        );
+        Ok(tauri::async_runtime::spawn_blocking(move || {
+            import_runtime::save_report(manager, picker, supervisor, lock, ticket, owner, request)
+        })
+        .await
+        .unwrap_or(ReportOutcome::Failed))
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = (manager, picker, supervisor, request, owner, ticket);
+        Ok(ReportOutcome::Unavailable)
+    }
 }
 
 #[tauri::command]
@@ -573,6 +628,7 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
         import_selected_file,
         cancel_import_file,
+        save_import_report,
         choose_project_directory,
         default_project_parent,
         core_runtime_start,

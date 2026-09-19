@@ -99,6 +99,34 @@ class ImportInteractionTests(unittest.TestCase):
                 }
             if command == "cancel_import_file":
                 return None
+            if command == "save_import_report":
+                request = args["request"]
+                self.assertEqual({"root", "projectId", "previewId", "revision", "operationId"}, set(request))
+                address = {**api.session(), "previewId": request["previewId"]}
+                after = 0
+                fragments = []
+                while True:
+                    result = api.post("report", address, revision=request["revision"], after=after, limit=25)
+                    self.assertEqual(200, result.status_code)
+                    item = result.json()
+                    fragments.append(item["csv"])
+                    after = item["nextAfter"]
+                    if item["complete"]:
+                        break
+                final = api.post("report", address, revision=request["revision"], after=after, limit=25)
+                self.assertEqual(200, final.status_code)
+                self.assertEqual("", final.json()["csv"])
+                report = "".join(fragments)
+                self.assertEqual(56, after)
+                self.assertIn("excluded", report)
+                self.assertNotIn("Synthetic", report)
+                self.assertNotIn("Researcher correction", report)
+                self.assertEqual(1, report.count("ordinal,line_start"))
+                return {
+                    "status": "saved",
+                    "filename": f"import-diagnostics-{request['operationId']}.csv",
+                    "byteLength": len(report.encode()),
+                }
             raise AssertionError("Unexpected test-host command")
 
         script = (
@@ -112,7 +140,7 @@ class ImportInteractionTests(unittest.TestCase):
         (() => {
           const prior = window.__TAURI_INTERNALS__.invoke;
           window.__TAURI_INTERNALS__.invoke = (command, args) =>
-            ['core_api_request', 'import_selected_file', 'cancel_import_file'].includes(command)
+            ['core_api_request', 'import_selected_file', 'cancel_import_file', 'save_import_report'].includes(command)
               ? window.__import_test_native(command, args) : prior(command, args);
         })();"""
         )
@@ -225,6 +253,11 @@ class ImportInteractionTests(unittest.TestCase):
                     page.keyboard.press("Escape")
                     self.assertEqual(0, page.get_by_role("button", name="Keep preview", exact=True).count())
                     self.assertTrue(cancel_button.evaluate("node => node === document.activeElement"))
+                    download = page.get_by_role("button", name="Download diagnostic report…", exact=True)
+                    download.focus()
+                    page.keyboard.press("Enter")
+                    workspace.get_by_text("in your selected folder.", exact=False).wait_for()
+                    page.wait_for_function("document.activeElement?.textContent === 'Download diagnostic report…'")
                     page.locator("[data-theme-toggle]").click()
                 # Deliver an authentic Core response after navigation has unmounted
                 # the private preview; it must not resurrect the old source UI.

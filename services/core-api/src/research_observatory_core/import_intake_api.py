@@ -18,6 +18,7 @@ from pydantic import Field, model_validator
 from .domain_contracts import new_uuid_v7
 from .import_api import BoundedImportRoute, _problem
 from .import_preview_service import ImportPreviewService
+from .import_review import Cursor, DiagnosticPage, ImportReview, ReviewPageRequest
 from .import_review import PreviewProgress as IntakeStatus
 from .ingestion.import_drafts import Digest, DraftValue, Identity, ImportRights, ProjectIdentity
 from .ingestion.reference_imports import ImportSource
@@ -79,6 +80,15 @@ class IntakeSeal(IntakeAddress):
     source_sha256: Digest
     byte_length: Annotated[int, Field(strict=True, ge=0, le=268435456)]
     chunk_count: Annotated[int, Field(strict=True, ge=0, le=2048)]
+
+
+class IntakeReport(IntakeAddress, ReviewPageRequest):
+    pass
+
+
+class IntakeReportPage(DiagnosticPage):
+    preview_id: Identity
+    record_count: Cursor
 
 
 def register_intake_routes(
@@ -192,6 +202,28 @@ def register_intake_routes(
         def action(runtime):
             runtime.cancel(command.root, command.preview_id, trace_id=request.state.trace_id)
             return status(runtime, command.root, command.preview_id)
+
+        return run(request, command, action)
+
+    @router.post("/report", response_model=IntakeReportPage)
+    def report(request: Request, command: IntakeReport) -> IntakeReportPage:
+        def action(runtime):
+            def page(review: ImportReview) -> IntakeReportPage:
+                # This export is the current draft, not historical authority.
+                # Even a terminal empty page rechecks the head revision: an edit
+                # or revocation on an earlier page invalidates the whole export.
+                current = review.summary(command.preview_id)
+                if current.revision != command.revision:
+                    raise PreviewProblem("preview-draft-revision-conflict")
+                result = review.report(
+                    command.preview_id,
+                    ReviewPageRequest(revision=command.revision, after=command.after, limit=command.limit),
+                )
+                return IntakeReportPage(
+                    **result.model_dump(), preview_id=command.preview_id, record_count=current.record_count
+                )
+
+            return runtime.review_action(command.root, page)
 
         return run(request, command, action)
 

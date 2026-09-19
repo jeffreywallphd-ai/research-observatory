@@ -89,6 +89,50 @@ fn identity(file: &File) -> Result<(u32, u64), &'static str> {
     ))
 }
 
+/// Pin a selected local directory and all its ancestors against replacement.
+/// Shared by native source reads and create-new diagnostic report publication.
+pub(crate) fn pin_directory(path: &Path) -> Result<Vec<File>, &'static str> {
+    let value = path.to_str().ok_or(UNAVAILABLE)?;
+    if !local_path_syntax(value)
+        || path
+            .components()
+            .any(|part| device_component(&part.as_os_str().to_string_lossy()))
+    {
+        return Err(UNAVAILABLE);
+    }
+    let drive = value[..3]
+        .replace('/', "\\")
+        .encode_utf16()
+        .chain(Some(0))
+        .collect::<Vec<_>>();
+    if !matches!(unsafe { GetDriveTypeW(drive.as_ptr()) }, 2 | 3 | 5 | 6) {
+        return Err(UNAVAILABLE);
+    }
+    let mut guards = Vec::new();
+    let mut current = PathBuf::new();
+    for part in path.components() {
+        current.push(part);
+        if !current.is_absolute() {
+            continue;
+        }
+        let guard = OpenOptions::new()
+            .access_mode(FILE_READ_ATTRIBUTES)
+            .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
+            .custom_flags(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT)
+            .open(&current)
+            .map_err(|_| "RO-IMPORT-SOURCE-ANCESTOR-UNAVAILABLE")?;
+        let metadata = guard.metadata().map_err(|_| UNAVAILABLE)?;
+        if !metadata.is_dir()
+            || is_reparse(&metadata)
+            || !same_path(&opened_path(&guard)?, &current)
+        {
+            return Err("RO-IMPORT-SOURCE-ANCESTOR-INVALID");
+        }
+        guards.push(guard);
+    }
+    Ok(guards)
+}
+
 impl HeldImportSource {
     pub(crate) fn open_selected(path: &Path) -> Result<Self, &'static str> {
         let value = path.to_str().ok_or(UNAVAILABLE)?;
@@ -114,28 +158,7 @@ impl HeldImportSource {
         if basename.trim().is_empty() || basename.chars().count() > 255 {
             return Err(UNAVAILABLE);
         }
-        let mut ancestors = Vec::new();
-        let mut current = PathBuf::new();
-        for part in path.parent().ok_or(UNAVAILABLE)?.components() {
-            current.push(part);
-            if !current.is_absolute() {
-                continue;
-            }
-            let guard = OpenOptions::new()
-                .access_mode(FILE_READ_ATTRIBUTES)
-                .share_mode(FILE_SHARE_READ | FILE_SHARE_WRITE)
-                .custom_flags(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT)
-                .open(&current)
-                .map_err(|_| "RO-IMPORT-SOURCE-ANCESTOR-UNAVAILABLE")?;
-            let metadata = guard.metadata().map_err(|_| UNAVAILABLE)?;
-            if !metadata.is_dir()
-                || is_reparse(&metadata)
-                || !same_path(&opened_path(&guard)?, &current)
-            {
-                return Err("RO-IMPORT-SOURCE-ANCESTOR-INVALID");
-            }
-            ancestors.push(guard);
-        }
+        let ancestors = pin_directory(path.parent().ok_or(UNAVAILABLE)?)?;
         let file = OpenOptions::new()
             .read(true)
             .share_mode(FILE_SHARE_READ)

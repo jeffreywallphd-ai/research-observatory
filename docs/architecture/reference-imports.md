@@ -229,8 +229,26 @@ and unsaved edits across record pagination. Raw/candidate/effective fields remai
 distinct. Project navigation discards private renderer state and ignores late
 responses; cancellation dismissal restores focus and supports Escape.
 
-This is not yet a complete production wizard. Complete native report publication,
-duplicate/count projection, scalable undo and explicit CSV delimiter integration
+Diagnostic download now streams private session-bound Core pages into a native-
+selected local folder. Every page and final authorization require the same
+current draft revision; an intervening edit or rights change invalidates the
+download. The content-free CSV validates complete contiguous record coverage,
+including multiple diagnostics per record. A held create-new exclusive stage is
+flushed and read back before a same-handle, no-overwrite rename. Unpublished
+stages are deleted by their owned handle. Shared directory pins reject redirects
+and prevent ancestor replacement. No destination path reaches the renderer.
+
+The successful rename is publication: later cancellation cannot remove it or
+claim no file was saved. Native lock/project/launch and operation guards cover
+only this bounded local publication; Core's prior final authorization remains a
+separate point, not a cross-process transaction. Network and verification work
+stay outside publication mutexes. Interrupted native-process termination may
+leave a content-free hidden partial stage, never a successfully named report.
+This follows [Windows handle operations](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileinformationbyhandle)
+and [non-replacing rename semantics](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info).
+
+This is not yet a complete production wizard. Duplicate/count projection,
+scalable undo and explicit CSV delimiter integration
 remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
 

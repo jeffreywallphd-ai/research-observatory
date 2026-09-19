@@ -107,6 +107,56 @@ pub(crate) enum ImportOutcome {
     Failed,
 }
 
+#[derive(Clone, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub(crate) struct ReportRequest {
+    pub root: String,
+    pub project_id: String,
+    pub operation_id: String,
+    pub preview_id: String,
+    pub revision: u32,
+}
+pub(crate) fn decode_report_request(payload: &serde_json::Value) -> Option<ReportRequest> {
+    #[derive(Deserialize)]
+    #[serde(deny_unknown_fields)]
+    struct Envelope {
+        request: ReportRequest,
+    }
+    let Envelope { request } = serde_json::from_value(payload.clone()).ok()?;
+    (crate::directory_picker::local_path_syntax(&request.root)
+        && crate::supervisor::canonical_project_id(&request.project_id)
+        && crate::supervisor::canonical_uuid_v7(&request.preview_id)
+        && hex32(&request.operation_id)
+        && (1..=2147483647).contains(&request.revision))
+    .then_some(request)
+}
+#[derive(Debug, Serialize)]
+#[serde(tag = "status", rename_all = "kebab-case")]
+pub(crate) enum ReportOutcome {
+    Saved {
+        filename: String,
+        #[serde(rename = "byteLength")]
+        byte_length: u64,
+    },
+    Cancelled,
+    Unavailable,
+    Failed,
+}
+impl crate::directory_picker::PickerResult for ReportOutcome {
+    fn committed(&self) -> bool {
+        matches!(self, Self::Saved { .. })
+    }
+    fn cancelled() -> Self {
+        Self::Cancelled
+    }
+    fn unavailable() -> Self {
+        Self::Unavailable
+    }
+    fn failed() -> Self {
+        Self::Failed
+    }
+}
+
 struct ActiveImport {
     id: String,
     cancelled: Arc<AtomicBool>,
@@ -438,6 +488,135 @@ pub(crate) fn failure(error: PickerFailure) -> ImportOutcome {
     }
 }
 
+#[cfg(windows)]
+pub(crate) fn save_report(
+    manager: ImportManager,
+    picker: DirectoryPickerManager,
+    supervisor: RuntimeSupervisor,
+    lock: ApplicationLockManager,
+    ticket: u64,
+    owner: isize,
+    request: ReportRequest,
+) -> ReportOutcome {
+    use crate::import_report::{ReportCursor, ReportPage, StagedReport};
+    let permit = match manager.begin(&request.operation_id) {
+        Ok(permit) => permit,
+        Err(PickerFailure::Cancelled) => return ReportOutcome::Cancelled,
+        Err(_) => return ReportOutcome::Unavailable,
+    };
+    let Ok(connection) = supervisor.native_import_connection(&request.root, &request.project_id)
+    else {
+        return ReportOutcome::Unavailable;
+    };
+    let connection = Arc::new(connection);
+    let call_connection = Arc::clone(&connection);
+    let mut address = serde_json::json!({"root":request.root,"projectId":request.project_id});
+    let rpc = move |action, body| -> Result<serde_json::Value, &'static str> {
+        let response = call_connection.request(action, body)?;
+        if response.status != 200
+            || response.content_type != "application/json"
+            || response.body.len() > 900000
+        {
+            return Err("RO-IMPORT-REPORT-FAILED");
+        }
+        serde_json::from_str(&response.body).map_err(|_| "RO-IMPORT-REPORT-FAILED")
+    };
+    if permit.cancelled.load(Ordering::Acquire)
+        || lock.finish_protected_action(ticket).is_err()
+        || !picker.is_open()
+    {
+        return ReportOutcome::Cancelled;
+    }
+    let Ok(context) = rpc(NativeImportAction::Context, address.clone()) else {
+        return ReportOutcome::Failed;
+    };
+    if context.as_object().is_none_or(|object| object.len() != 2)
+        || context["projectId"] != request.project_id
+        || !context["sessionId"].as_str().is_some_and(hex32)
+    {
+        return ReportOutcome::Failed;
+    }
+    address["sessionId"] = context["sessionId"].clone();
+    address["previewId"] = request.preview_id.clone().into();
+    address["revision"] = request.revision.into();
+    address["limit"] = 25.into();
+    let page = move |after: u32| -> Result<ReportPage, &'static str> {
+        let mut body = address.clone();
+        body["after"] = after.into();
+        serde_json::from_value(rpc(NativeImportAction::Report, body)?)
+            .map_err(|_| "RO-IMPORT-REPORT-FAILED")
+    };
+    // Authorize the current draft before asking for a destination. This page is
+    // re-requested after the dialog; no stale page becomes export authority.
+    if page(0).is_err() {
+        return ReportOutcome::Failed;
+    }
+    let checking_connection = Arc::clone(&connection);
+    let checking_lock = lock.clone();
+    let checking_picker = picker.clone();
+    let publication_picker = picker.clone();
+    let cancelled = Arc::clone(&permit.cancelled);
+    picker.report_destination(
+        owner,
+        move || {
+            !cancelled.load(Ordering::Acquire)
+                && checking_picker.is_open()
+                && checking_lock.finish_protected_action(ticket).is_ok()
+                && checking_connection.is_current()
+        },
+        move |directory, authorized| {
+            let result = (|| -> Result<ReportOutcome, &'static str> {
+                let mut cursor = ReportCursor::new(&request.preview_id, request.revision);
+                let mut stage = StagedReport::create(&directory, &request.operation_id)?;
+                while !cursor.complete {
+                    if !authorized() {
+                        return Err("RO-IMPORT-REPORT-CANCELLED");
+                    }
+                    let csv = cursor.accept(page(cursor.after)?)?;
+                    if !authorized() {
+                        return Err("RO-IMPORT-REPORT-CANCELLED");
+                    }
+                    stage.append(csv.as_bytes())?;
+                }
+                stage.verify(|| authorized())?;
+                cursor.authorize_final(page(cursor.after)?)?;
+                let (filename, byte_length) = stage.receipt();
+                // Final Core authorization above and native rename below are
+                // distinct points, not an invented cross-process transaction.
+                lock.commit_protected_action(ticket, || {
+                    let state = permit
+                        .manager
+                        .shared
+                        .0
+                        .lock()
+                        .map_err(|_| "RO-IMPORT-REPORT-CANCELLED")?;
+                    if state.closed
+                        || permit.cancelled.load(Ordering::Acquire)
+                        || !publication_picker.is_open()
+                        || !crate::directory_picker::valid_owner(owner)
+                        || !state
+                            .active
+                            .as_ref()
+                            .is_some_and(|active| Arc::ptr_eq(&active.cancelled, &permit.cancelled))
+                    {
+                        return Err("RO-IMPORT-REPORT-CANCELLED");
+                    }
+                    connection.publish_current(|| stage.publish())
+                })?;
+                Ok(ReportOutcome::Saved {
+                    filename,
+                    byte_length,
+                })
+            })();
+            match result {
+                Ok(saved) => saved,
+                Err(_) if !authorized() => ReportOutcome::Cancelled,
+                Err(_) => ReportOutcome::Failed,
+            }
+        },
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -466,6 +645,30 @@ mod tests {
         }
         json!({"request":{"root":"C:/Synthetic/project", "projectId":"01900000-0000-4000-8000-000000000001",
             "operationId":"a".repeat(32),"formatName":"csv","encoding":"utf-8","rights":rights}})
+    }
+
+    #[test]
+    fn report_request_binds_exact_draft_and_never_accepts_renderer_destination() {
+        let value = json!({"request":{"root":"C:/Synthetic/project", "projectId":"01900000-0000-4000-8000-000000000001",
+            "operationId":"a".repeat(32), "previewId":"01900000-0000-7000-8000-000000000001", "revision":1}});
+        assert!(decode_report_request(&value).is_some());
+        for key in [
+            "path",
+            "destination",
+            "filename",
+            "sessionId",
+            "rights",
+            "actor",
+        ] {
+            let mut altered = value.clone();
+            altered["request"][key] = json!("synthetic");
+            assert!(decode_report_request(&altered).is_none());
+        }
+        for invalid in [json!(0), json!(true), json!(-1), json!(2147483648_u64)] {
+            let mut altered = value.clone();
+            altered["request"]["revision"] = invalid;
+            assert!(decode_report_request(&altered).is_none());
+        }
     }
 
     #[test]

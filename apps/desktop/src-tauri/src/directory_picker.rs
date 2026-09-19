@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
 pub enum DirectoryPurpose {
     CreateParent,
     OpenProject,
+    ImportReport,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -174,7 +175,10 @@ pub(crate) enum PickerFailure {
     Failed,
 }
 
-trait PickerResult {
+pub(crate) trait PickerResult {
+    fn committed(&self) -> bool {
+        false
+    }
     fn cancelled() -> Self;
     fn unavailable() -> Self;
     fn failed() -> Self;
@@ -224,7 +228,10 @@ pub fn decode_request(payload: &serde_json::Value) -> Option<DirectoryRequest> {
     {
         return None;
     }
-    serde_json::from_value(serde_json::Value::Object(request.clone())).ok()
+    let request: DirectoryRequest =
+        serde_json::from_value(serde_json::Value::Object(request.clone())).ok()?;
+    // Report destinations are native-only, never a renderer path capability.
+    (request.purpose != DirectoryPurpose::ImportReport).then_some(request)
 }
 
 pub fn valid_owner(owner: isize) -> bool {
@@ -494,6 +501,49 @@ impl DirectoryPickerManager {
         self.run_managed_worker(authority, backend)
     }
 
+    #[cfg(windows)]
+    pub(crate) fn report_destination(
+        &self,
+        owner: isize,
+        authority: impl Fn() -> bool + Send + Sync + 'static,
+        consume: impl FnOnce(PathBuf, AuthorityCheck) -> crate::import_runtime::ReportOutcome
+        + Send
+        + 'static,
+    ) -> crate::import_runtime::ReportOutcome {
+        use crate::import_runtime::ReportOutcome;
+        #[cfg(feature = "integration-harness")]
+        let fixture_root = self.fixture_root.clone();
+        self.run_managed_worker(Arc::new(authority), move |reservation, authority| {
+            let request = DirectoryRequest {
+                purpose: DirectoryPurpose::ImportReport,
+                previous_location: None,
+            };
+            let selected = native::show(
+                owner,
+                &request,
+                &reservation.pending,
+                authority,
+                #[cfg(feature = "integration-harness")]
+                fixture_root.as_deref(),
+            );
+            let path = match selected {
+                DirectoryOutcome::Selected { path } => PathBuf::from(path),
+                DirectoryOutcome::Cancelled => return ReportOutcome::Cancelled,
+                DirectoryOutcome::Unavailable => return ReportOutcome::Unavailable,
+                DirectoryOutcome::Failed => return ReportOutcome::Failed,
+            };
+            let pending = Arc::clone(&reservation.pending);
+            let authority = Arc::clone(authority);
+            let live: AuthorityCheck = Arc::new(move || {
+                !pending.cancelled.load(Ordering::Acquire) && authority_valid(&authority)
+            });
+            if !authority_valid(&live) {
+                return ReportOutcome::Cancelled;
+            }
+            consume(path, live)
+        })
+    }
+
     fn run_managed_worker<T: PickerResult + Send + 'static>(
         &self,
         authority: AuthorityCheck,
@@ -514,8 +564,9 @@ impl DirectoryPickerManager {
                     return T::cancelled();
                 }
                 let result = backend(&reservation, &authority);
-                if reservation.pending.cancelled.load(Ordering::Acquire)
-                    || !authority_valid(&authority)
+                if !result.committed()
+                    && (reservation.pending.cancelled.load(Ordering::Acquire)
+                        || !authority_valid(&authority))
                 {
                     T::cancelled()
                 } else {
@@ -1034,6 +1085,8 @@ mod native {
                         }
                         Some(DirectoryPurpose::OpenProject) => dialog
                             .SetTitle(w!("Choose an existing Research Observatory project"))?,
+                        Some(DirectoryPurpose::ImportReport) => dialog
+                            .SetTitle(w!("Choose where to save the import diagnostic report"))?,
                         None => dialog
                             .SetTitle(w!("Choose a bibliography or reference file to import"))?,
                     }
@@ -2000,6 +2053,43 @@ mod tests {
         DirectoryOutcome::Selected {
             path: "C:\\Synthetic selection".into(),
         }
+    }
+
+    #[test]
+    fn report_publication_is_not_relabelled_cancelled_after_commit() {
+        use crate::import_runtime::ReportOutcome;
+        let manager = DirectoryPickerManager::default();
+        let cancelling = manager.clone();
+        let result = manager.run_managed_worker(Arc::new(|| true), move |_, _| {
+            // The backend's successful rename has already happened. A close
+            // arriving before delivery cannot undo that durable publication.
+            cancelling.begin_close();
+            ReportOutcome::Saved {
+                filename: "synthetic.csv".into(),
+                byte_length: 45,
+            }
+        });
+        assert!(matches!(result, ReportOutcome::Saved { .. }));
+        assert!(manager.admission().active.is_none());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn report_destination_is_private_and_requires_a_real_owner() {
+        let manager = DirectoryPickerManager::default();
+        assert!(
+            decode_request(&serde_json::json!({"request":{"purpose":"import-report"}})).is_none()
+        );
+        let result = manager.report_destination(
+            0,
+            || true,
+            |_, _| panic!("invalid owner cannot select destination"),
+        );
+        assert!(matches!(
+            result,
+            crate::import_runtime::ReportOutcome::Unavailable
+        ));
+        assert!(manager.admission().active.is_none());
     }
 
     #[cfg(windows)]

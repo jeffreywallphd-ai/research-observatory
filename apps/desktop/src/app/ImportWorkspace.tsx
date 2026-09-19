@@ -73,7 +73,7 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
     } catch (error) {
       if (live.current && !owner.signal.aborted) setFailure(importFailure(error));
     } finally {
-      if (live.current) { setChoosing(false); intake.current = null; chooseButton.current?.focus(); }
+      if (live.current) { setChoosing(false); intake.current = null; globalThis.requestAnimationFrame(() => { if (live.current) chooseButton.current?.focus(); }); }
     }
   }
 
@@ -102,7 +102,7 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
         <ul className="import-batches ro-stack">{page?.items.map((item) => <li key={item.previewId}><Button disabled={choosing} aria-pressed={selected?.previewId === item.previewId} onClick={() => setSelected(item)}><span className="ro-wrap-anywhere">{item.sourceName}</span><StatusBadge>{importStatusLabel(item)}</StatusBadge></Button></li>)}</ul>
         <nav className="ro-action-row" aria-label="Import batch pages"><Button disabled={loading || after === null} onClick={() => void load(null)}>First batches</Button><Button disabled={loading || !page || page.complete} onClick={() => page && void load(page.nextAfter)}>Next batches</Button></nav>
       </Panel>
-      {selected ? <ImportReviewPane key={selected.previewId} root={project.root} initial={selected} client={client} announce={announce} /> : <Panel title="Select a batch to review"><p>Compare raw fields with normalized candidates, correct mappings, and exclude unwanted records. Saved previews are retained in this project.</p></Panel>}
+      {selected ? <ImportReviewPane key={selected.previewId} root={project.root} projectId={project.projectId} initial={selected} client={client} announce={announce} /> : <Panel title="Select a batch to review"><p>Compare raw fields with normalized candidates, correct mappings, and exclude unwanted records. Saved previews are retained in this project.</p></Panel>}
     </div>
   </div>;
 }

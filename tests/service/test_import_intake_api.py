@@ -236,6 +236,63 @@ class ImportIntakeApiTests(unittest.TestCase):
         self.assertFalse(discovery.json()["complete"])
         self.assertNotIn("synthetic.csv", discovery.text)
 
+    def test_native_report_pages_bind_session_revision_and_complete_diagnostics(self):
+        preview = self.fixture.intake()
+        self.fixture.service.schedule(self.fixture.root, preview)
+        self.fixture.service.run_pending()
+        public = {"root": self.fixture.root, "previewId": preview}
+        self.assertEqual(200, self.client.post("/projects/imports/begin-review", json=public).status_code)
+        address = {**self.session(), "previewId": preview}
+        first = self.post("report", address, revision=1, after=0, limit=1)
+        self.assertEqual(200, first.status_code)
+        self.assertEqual(preview, first.json()["previewId"])
+        self.assertEqual(2, first.json()["recordCount"])
+        self.assertEqual(1, first.json()["nextAfter"])
+        self.assertFalse(first.json()["complete"])
+        second = self.post("report", address, revision=1, after=1, limit=1)
+        self.assertTrue(second.json()["complete"])
+        self.assertEqual(2, second.json()["nextAfter"])
+        self.assertTrue(second.json()["csv"].startswith("2,"))
+        self.assertNotIn("Synthetic", first.text + second.text)
+        self.assertNotIn("synthetic.csv", first.text + second.text)
+        self.assertEqual(409, self.post("report", address, revision=2, after=0, limit=1).status_code)
+        self.assertEqual(422, self.post("report", address, revision=1, after=0, limit=1, path="report.csv").status_code)
+        final = self.post("report", address, revision=1, after=2, limit=1)
+        self.assertEqual("", final.json()["csv"])
+        self.assertTrue(final.json()["complete"])
+        repository = sqlite_import_preview_repository(
+            Path(self.fixture.root) / "state/project.sqlite3", self.fixture.project_id
+        )
+        repository.revise_draft(
+            preview, PreviewDraftChange(expected_revision=1, actor=self.fixture.service.actor("2" * 32))
+        )
+        self.assertEqual(409, self.post("report", address, revision=1, after=2, limit=1).status_code)
+
+    def test_report_final_authorization_rejects_earlier_record_rights_revocation(self):
+        preview = self.fixture.intake()
+        self.fixture.service.schedule(self.fixture.root, preview)
+        self.fixture.service.run_pending()
+        repository = sqlite_import_preview_repository(
+            Path(self.fixture.root) / "state/project.sqlite3", self.fixture.project_id
+        )
+        actor = self.fixture.service.actor("2" * 32)
+        draft = repository.revise_draft(preview, PreviewDraftChange(expected_revision=0, actor=actor))
+        address = {**self.session(), "previewId": preview}
+        self.assertEqual(200, self.post("report", address, revision=1, after=0, limit=25).status_code)
+        row = repository.draft_page(preview, revision=1, after=1, limit=1)[0]
+        denied = draft.authority.rights.model_copy(
+            update={"inspect": ImportPermission(value="denied", basis="researcher-confirmed")}
+        )
+        decision = row.decision.model_copy(update={"rights": denied})
+        repository.revise_draft(preview, PreviewDraftChange(expected_revision=1, actor=actor, decisions=(decision,)))
+        # A historical terminal page alone would not inspect any rows. Native
+        # publication requires this distinct current-head authorization instead.
+        self.assertEqual(409, self.post("report", address, revision=1, after=2, limit=25).status_code)
+        self.fixture.service.detach(self.fixture.root)
+        self.fixture.projects.close(root=self.fixture.root, trace_id="1" * 32)
+        self.fixture.projects.open(root=self.fixture.root, trace_id="1" * 32)
+        self.assertEqual(409, self.post("report", address, revision=1, after=2, limit=1).status_code)
+
 
 if __name__ == "__main__":
     unittest.main()
