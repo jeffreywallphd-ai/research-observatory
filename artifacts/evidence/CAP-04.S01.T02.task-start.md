@@ -73,3 +73,10 @@ authority was bound. Extend recovery proof to initial state as well as later
 events: Ordinary marker → initialized ApplicationRestart lock → bound latch
 must rotate the epoch, while an unlocked ordinary restart may retain it. Preserve
 the adverse finding and re-review this boundary before integration.
+
+Checkpoint-06 review at `8ac575a70c62a0c07aef930ef9fba141fb064a00` found
+that response checks referenced mutable caller input after awaiting transport.
+Extend API identity proof across the asynchronous boundary: the request must own
+one immutable snapshot before dispatch, and the response must bind to that exact
+snapshot even if the caller changes its object. Add deferred-response mutation
+tests for all seven import methods before remediation; preserve this P2 finding.

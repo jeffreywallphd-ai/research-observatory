@@ -1654,6 +1654,12 @@ function importBody(value: unknown): string {
   return JSON.stringify(item);
 }
 
+function importCommand<T extends ImportAddress>(value: T): T {
+  const owned = importOwned(value);
+  if (!owned || !projectRoot(owned.root) || !canonicalUuid7(owned.previewId)) throw new Error("RO-CORE-REQUEST-INVALID");
+  return owned as unknown as T;
+}
+
 function importPageBody(command: ImportPageRequest): string {
   if (!integer(command.revision, 1, 2147483647) || !integer(command.after, 0, 200000) || !integer(command.limit, 1, 100)) throw new Error("RO-CORE-REQUEST-INVALID");
   return importBody({ root: command.root, previewId: command.previewId, revision: command.revision, after: command.after, limit: command.limit });
@@ -1661,26 +1667,30 @@ function importPageBody(command: ImportPageRequest): string {
 
 export function createCoreApiClient(transport: CoreApiTransport) {
   return Object.freeze({
-    async beginImportReview(command: ImportAddress): Promise<ReviewSummary> {
+    async beginImportReview(value: ImportAddress): Promise<ReviewSummary> {
+      const command = importCommand(value);
       const result = await requestJson(transport, { method: "POST", path: "/projects/imports/begin-review",
         body: importBody({ root: command.root, previewId: command.previewId }), ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
       if (result.previewId !== command.previewId || result.revision !== 1) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },
-    async importReview(command: ImportAddress): Promise<ReviewSummary> {
+    async importReview(value: ImportAddress): Promise<ReviewSummary> {
+      const command = importCommand(value);
       const result = await requestJson(transport, { method: "POST", path: "/projects/imports/review",
         body: importBody({ root: command.root, previewId: command.previewId }), ifMatch: null, idempotencyKey: null }, decodeReviewSummary);
       if (result.previewId !== command.previewId) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },
-    async importReviewPage(command: ImportPageRequest): Promise<ReviewPage> {
+    async importReviewPage(value: ImportPageRequest): Promise<ReviewPage> {
+      const command = importCommand(value);
       const result = await requestJson(transport, { method: "POST", path: "/projects/imports/records",
         body: importPageBody(command), ifMatch: null, idempotencyKey: null }, decodeReviewPage);
       if (result.revision !== command.revision || result.nextAfter < command.after || result.records.length > command.limit
         || (result.records.length ? result.records[0]!.ordinal !== command.after + 1 : result.nextAfter !== command.after)) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },
-    async importReviewDetail(command: ImportDetailRequest): Promise<ReviewDetail> {
+    async importReviewDetail(value: ImportDetailRequest): Promise<ReviewDetail> {
+      const command = importCommand(value);
       if (!integer(command.revision, 1, 2147483647) || !integer(command.ordinal, 1, 200000) || !importDigest(command.recordKey)
         || !registryEnum(command.section, ["raw", "candidates", "effective"]) || !integer(command.start, 0, 4096)
         || !integer(command.limit, 1, 100)) throw new Error("RO-CORE-REQUEST-INVALID");
@@ -1693,7 +1703,8 @@ export function createCoreApiClient(transport: CoreApiTransport) {
         || (result.fields.length ? result.fields[0]!.index !== command.start : result.nextIndex !== command.start)) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },
-    async mapImportReview(command: ImportMappingRequest): Promise<ReviewSummary> {
+    async mapImportReview(value: ImportMappingRequest): Promise<ReviewSummary> {
+      const command = importCommand(value);
       if (!integer(command.expectedRevision, 1, 2147483646) || !registryEnum(command.mode, ["automatic", "columns"])
         || !Array.isArray(command.columns) || command.columns.length > 256 || command.mode === "automatic" && command.columns.length !== 0
         || new Set(command.columns.map((c) => c.index)).size !== command.columns.length
@@ -1705,7 +1716,8 @@ export function createCoreApiClient(transport: CoreApiTransport) {
       if (result.previewId !== command.previewId || result.revision !== command.expectedRevision + 1) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },
-    async editImportReview(command: ImportGroupRequest): Promise<ReviewSummary> {
+    async editImportReview(value: ImportGroupRequest): Promise<ReviewSummary> {
+      const command = importCommand(value);
       if (!integer(command.expectedRevision, 1, 2147483646) || !Array.isArray(command.records)
         || command.records.length < 1 || command.records.length > 100 || !Array.isArray(command.corrections) || command.corrections.length > 64
         || !(typeof command.included === "boolean" || command.included === null && command.corrections.length > 0)
@@ -1721,7 +1733,8 @@ export function createCoreApiClient(transport: CoreApiTransport) {
       if (result.previewId !== command.previewId || result.revision !== command.expectedRevision + 1) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     },
-    async importDiagnosticPage(command: ImportPageRequest): Promise<DiagnosticPage> {
+    async importDiagnosticPage(value: ImportPageRequest): Promise<DiagnosticPage> {
+      const command = importCommand(value);
       const result = await requestJson(transport, { method: "POST", path: "/projects/imports/report",
         body: importPageBody(command), ifMatch: null, idempotencyKey: null }, decodeDiagnosticPage);
       const header = "ordinal,line_start,line_end,status,diagnostic\r\n";

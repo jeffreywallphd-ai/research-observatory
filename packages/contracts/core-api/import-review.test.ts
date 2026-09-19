@@ -11,7 +11,45 @@ const summary = () => ({ previewId, revision: 1, predecessorRevision: null, atte
 const page = () => ({ revision: 1, nextAfter: 2, complete: true, records: [{ ordinal: 2, recordKey: "a".repeat(64),
   kind: "record", status: "parsed", included: true, title: { text: "Synthetic", truncated: false }, doi: null, fieldCount: 1, warnings: [] }] });
 
+const detail = () => ({ revision: 1, ordinal: 2, recordKey: "a".repeat(64), section: "raw", nextIndex: 1, complete: true,
+  fields: [{ index: 0, name: "title", value: "Synthetic", sourceFieldIndex: 0, origin: "raw", target: null, warnings: [] }] });
+
 describe("import review generated client", () => {
+  const changedPreview = "01900000-0000-7000-8000-000000000002";
+  const mutationCases = [
+    ["beginImportReview", { ...address }, "previewId", changedPreview, { ...summary(), previewId: changedPreview }],
+    ["importReview", { ...address }, "previewId", changedPreview, { ...summary(), previewId: changedPreview }],
+    ["importReviewPage", { ...address, revision: 1, after: 1, limit: 25 }, "revision", 2, { ...page(), revision: 2 }],
+    ["importReviewDetail", { ...address, revision: 1, ordinal: 2, recordKey: "a".repeat(64), section: "raw", start: 0, limit: 25 }, "recordKey", "b".repeat(64), { ...detail(), recordKey: "b".repeat(64) }],
+    ["mapImportReview", { ...address, expectedRevision: 1, mode: "columns", columns: [{ index: 0, target: "title" }] }, "expectedRevision", 2, { ...summary(), revision: 3, predecessorRevision: 2 }],
+    ["editImportReview", { ...address, expectedRevision: 1, included: false, corrections: [], records: [{ ordinal: 2, recordKey: "a".repeat(64) }] }, "expectedRevision", 2, { ...summary(), revision: 3, predecessorRevision: 2 }],
+    ["importDiagnosticPage", { ...address, revision: 1, after: 0, limit: 25 }, "revision", 2, { revision: 2, nextAfter: 2, complete: true, csv: "ordinal,line_start,line_end,status,diagnostic\r\n1,1,1,parsed,none\r\n2,2,2,parsed,none\r\n" }],
+  ] as const;
+
+  it.each(mutationCases)("%s binds a delayed reply to the sent request snapshot", async (method, input, field, changed, response) => {
+    const command = structuredClone(input) as any;
+    let resolve!: (value: any) => void;
+    let sent: any;
+    const client = createCoreApiClient(async (request) => {
+      sent = JSON.parse(request.body!);
+      return new Promise((done) => { resolve = done; });
+    });
+    const pending = client[method](command);
+    command[field] = changed;
+    expect(sent[field]).not.toEqual(changed);
+    resolve({ status: 200, contentType: "application/json", traceId: "a".repeat(32), etag: null, body: JSON.stringify(response) });
+    await expect(pending).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+  });
+
+  it("keeps a valid original reply valid after caller mutation", async () => {
+    const command = { ...address, revision: 1, after: 1, limit: 25 };
+    let resolve!: (value: any) => void;
+    const client = createCoreApiClient(async () => new Promise((done) => { resolve = done; }));
+    const pending = client.importReviewPage(command);
+    command.revision = 2;
+    resolve({ status: 200, contentType: "application/json", traceId: "a".repeat(32), etag: null, body: JSON.stringify(page()) });
+    await expect(pending).resolves.toMatchObject({ revision: 1 });
+  });
   it("owns bounded immutable values while retaining unknown action rights", () => {
     const value = summary();
     const result = decodeReviewSummary(value);
