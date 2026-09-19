@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createCoreApiClient, decodeReviewSummary, decodeReviewPage, decodeReviewDetail, decodeDiagnosticPage, decodeImportPreviewItem, decodeImportPreviewPage } from "./generated";
+import { createCoreApiClient, decodeReviewSummary, decodeReviewPage, decodeReviewDetail, decodeDiagnosticPage, decodeImportPreviewItem, decodeImportPreviewPage, decodeImportSummaryStatus, decodeImportDuplicateGroups, decodeImportDuplicateMembers } from "./generated";
 
 const previewId = "01900000-0000-7000-8000-000000000001";
 const address = { root: "C:/Research/synthetic", previewId };
@@ -14,7 +14,28 @@ const page = () => ({ revision: 1, nextAfter: 2, complete: true, records: [{ ord
 const detail = () => ({ revision: 1, ordinal: 2, recordKey: "a".repeat(64), section: "raw", nextIndex: 1, complete: true,
   fields: [{ index: 0, name: "title", value: "Synthetic", sourceFieldIndex: 0, origin: "raw", target: null, warnings: [] }] });
 
+const calculated = () => ({ previewId, revision: 1, algorithm: "draft-summary/1", jobId: previewId, jobState: "succeeded", diagnosticCode: null,
+  counts: { sourceRows: 4, recordRows: 3, contextRows: 1, malformedRows: 0, includedRecords: 3, excludedRecords: 0, warningRows: 0, warningCount: 0,
+    coverage: { title: 3, doi: 2, year: 0, author: 0, container: 0 }, rawDuplicateGroups: 0, doiDuplicateGroups: 1, candidateRecords: 2 } });
+const groups = () => ({ previewId, revision: 1, reason: "doi", groups: [{ groupKey: "a".repeat(64), memberCount: 2, firstOrdinal: 2 }], nextAfter: "a".repeat(64), complete: true });
+const members = () => ({ previewId, revision: 1, reason: "doi", groupKey: "a".repeat(64), records: [page().records[0], { ...page().records[0], ordinal: 4 }], nextAfter: 4, complete: true });
+
 describe("import review generated client", () => {
+  it("distinguishes missing summary from complete counts and bounds candidate pages", () => {
+    expect(decodeImportSummaryStatus(calculated())).not.toBeNull();
+    expect(decodeImportSummaryStatus({ ...calculated(), jobId: null, jobState: null, counts: null })).not.toBeNull();
+    expect(decodeImportSummaryStatus({ ...calculated(), jobState: "failed" })).toBeNull();
+    expect(decodeImportSummaryStatus({ ...calculated(), counts: { ...calculated().counts, includedRecords: 4 } })).toBeNull();
+    expect(decodeImportSummaryStatus({ ...calculated(), counts: { ...calculated().counts, coverage: { ...calculated().counts.coverage, doi: 4 } } })).toBeNull();
+    expect(decodeImportSummaryStatus({ ...calculated(), counts: { ...calculated().counts, candidateRecords: 1 } })).toBeNull();
+    expect(decodeImportSummaryStatus({ ...calculated(), sourcePath: "private" })).toBeNull();
+    expect(decodeImportDuplicateGroups(groups())).not.toBeNull();
+    expect(decodeImportDuplicateGroups({ ...groups(), groups: [groups().groups[0], groups().groups[0]] })).toBeNull();
+    expect(decodeImportDuplicateGroups({ ...groups(), nextAfter: null })).toBeNull();
+    expect(decodeImportDuplicateMembers(members())).not.toBeNull();
+    expect(decodeImportDuplicateMembers({ ...members(), records: [...members().records].reverse() })).toBeNull();
+    expect(decodeImportDuplicateMembers({ ...members(), records: [{ ...members().records[0], included: false }] })).toBeNull();
+  });
   const item = () => ({ previewId, state: "created", sourceName: "synthetic.csv", formatName: "csv", encoding: "utf-8", byteLength: 0, chunkCount: 0, jobId: null, jobState: null });
   it("bounds discovery and status without admitting paths, extra authority or unordered pages", () => {
     expect(decodeImportPreviewItem(item())).not.toBeNull();
@@ -39,6 +60,11 @@ describe("import review generated client", () => {
   });
   const changedPreview = "01900000-0000-7000-8000-000000000002";
   const mutationCases = [
+    ["importSummary", { ...address, revision: 1 }, "revision", 2, { ...calculated(), revision: 2 }],
+    ["startImportSummary", { ...address, revision: 1 }, "revision", 2, { ...calculated(), revision: 2 }],
+    ["cancelImportSummary", { ...address, revision: 1, jobId: previewId }, "revision", 2, { ...calculated(), revision: 2 }],
+    ["importDuplicateGroups", { ...address, revision: 1, reason: "doi", after: null, limit: 25 }, "reason", "raw", { ...groups(), reason: "raw" }],
+    ["importDuplicateMembers", { ...address, revision: 1, reason: "doi", groupKey: "a".repeat(64), after: 0, limit: 25 }, "groupKey", "b".repeat(64), { ...members(), groupKey: "b".repeat(64) }],
     ["beginImportReview", { ...address }, "previewId", changedPreview, { ...summary(), previewId: changedPreview }],
     ["importReview", { ...address }, "previewId", changedPreview, { ...summary(), previewId: changedPreview }],
     ["importReviewPage", { ...address, revision: 1, after: 1, limit: 25 }, "revision", 2, { ...page(), revision: 2 }],

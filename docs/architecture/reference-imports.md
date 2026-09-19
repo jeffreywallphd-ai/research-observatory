@@ -306,8 +306,22 @@ and exact scientific authority; they never silently adopt a new policy or draft.
 Every bounded operation revalidates the project and authority, with cooperative
 cancellation and heartbeat. Security-epoch mismatch cancels old queued summaries;
 a later explicit calculation has new authority. Summary-only cancellation leaves
-the review draft intact. The summary API/renderer and native/packaged/whole-project
-scale qualification remain required task work.
+the review draft intact. Retry status projects the actual leaf across branching
+continuations, including unsuccessful terminal jobs and reconstruction.
+
+The authenticated summary routes separately expose read/start/cancel and bounded
+group/member pages. The generated client owns requests before awaiting replies,
+validates coherent counts and exact preview/revision/reason/group identity, and
+rejects unordered or non-advancing pages. Native forwarding admits only these
+exact bounded shapes, never paths, actor input or arbitrary activity commands.
+Not-calculated, running, denied/failed, cancelled and complete-with-zero remain
+distinct; reading status never schedules computation. The renderer polls active
+jobs only, clears results on revision/project changes and discards late replies.
+The summary uses shared panels, tables, buttons and spacing, with coverage among
+included parsed records, exact-source/DOI candidate groups, comparison and selection
+into existing correction/exclusion controls. No Work merge or predicted canonical
+re-import effect is claimed. Native-window, packaged and whole-project scale
+qualification remain required task work.
 
 ## Verification and technical basis
 

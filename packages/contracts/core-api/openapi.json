@@ -232,6 +232,11 @@
         "title": "ConfigurationResponse",
         "type": "object"
       },
+      "Count": {
+        "maximum": 200000.0,
+        "minimum": 0.0,
+        "type": "integer"
+      },
       "CsvDelimiter": {
         "enum": [
           ",",
@@ -333,6 +338,13 @@
           "review-after-365-days"
         ],
         "title": "DocumentRetentionPolicy",
+        "type": "string"
+      },
+      "DuplicateReason": {
+        "enum": [
+          "raw",
+          "doi"
+        ],
         "type": "string"
       },
       "EgressEnforcement": {
@@ -488,6 +500,201 @@
           "section"
         ],
         "title": "ImportDetailRequest",
+        "type": "object"
+      },
+      "ImportDuplicateGroup": {
+        "additionalProperties": false,
+        "properties": {
+          "firstOrdinal": {
+            "$ref": "#/components/schemas/Ordinal"
+          },
+          "groupKey": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "memberCount": {
+            "maximum": 200000.0,
+            "minimum": 2.0,
+            "title": "Membercount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "groupKey",
+          "memberCount",
+          "firstOrdinal"
+        ],
+        "title": "ImportDuplicateGroup",
+        "type": "object"
+      },
+      "ImportDuplicateGroups": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/ImportDuplicateGroup"
+            },
+            "maxItems": 100,
+            "title": "Groups",
+            "type": "array"
+          },
+          "nextAfter": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Digest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/DuplicateReason"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "previewId",
+          "revision",
+          "reason",
+          "groups",
+          "nextAfter",
+          "complete"
+        ],
+        "title": "ImportDuplicateGroups",
+        "type": "object"
+      },
+      "ImportDuplicateGroupsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Digest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limit": {
+            "$ref": "#/components/schemas/PageLimit",
+            "default": 25
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/DuplicateReason"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "revision",
+          "reason"
+        ],
+        "title": "ImportDuplicateGroupsRequest",
+        "type": "object"
+      },
+      "ImportDuplicateMembers": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "groupKey": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "nextAfter": {
+            "$ref": "#/components/schemas/Cursor"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/DuplicateReason"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/RecordSummary"
+            },
+            "maxItems": 100,
+            "title": "Records",
+            "type": "array"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "previewId",
+          "revision",
+          "reason",
+          "groupKey",
+          "records",
+          "nextAfter",
+          "complete"
+        ],
+        "title": "ImportDuplicateMembers",
+        "type": "object"
+      },
+      "ImportDuplicateMembersRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "$ref": "#/components/schemas/Cursor",
+            "default": 0
+          },
+          "groupKey": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "limit": {
+            "$ref": "#/components/schemas/PageLimit",
+            "default": 25
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/DuplicateReason"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "revision",
+          "reason",
+          "groupKey"
+        ],
+        "title": "ImportDuplicateMembersRequest",
         "type": "object"
       },
       "ImportGroupRequest": {
@@ -861,6 +1068,138 @@
           }
         },
         "title": "ImportRights",
+        "type": "object"
+      },
+      "ImportSummaryCancelRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "revision",
+          "jobId"
+        ],
+        "title": "ImportSummaryCancelRequest",
+        "type": "object"
+      },
+      "ImportSummaryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "revision"
+        ],
+        "title": "ImportSummaryRequest",
+        "type": "object"
+      },
+      "ImportSummaryStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "algorithm": {
+            "const": "draft-summary/1",
+            "default": "draft-summary/1",
+            "title": "Algorithm",
+            "type": "string"
+          },
+          "counts": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SummaryCounts"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "diagnosticCode": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9.-]{0,95}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnosticcode"
+          },
+          "jobId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "jobState": {
+            "anyOf": [
+              {
+                "enum": [
+                  "runnable",
+                  "claimed",
+                  "running",
+                  "retry-scheduled",
+                  "cancelling",
+                  "cancelled",
+                  "failed",
+                  "succeeded"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jobstate"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          }
+        },
+        "required": [
+          "previewId",
+          "revision",
+          "jobId",
+          "jobState",
+          "diagnosticCode",
+          "counts"
+        ],
+        "title": "ImportSummaryStatus",
         "type": "object"
       },
       "ImportUndoRequest": {
@@ -4694,6 +5033,95 @@
         "title": "ShortValue",
         "type": "object"
       },
+      "SummaryCounts": {
+        "additionalProperties": false,
+        "properties": {
+          "candidateRecords": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "contextRows": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/SummaryCoverage"
+          },
+          "doiDuplicateGroups": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "excludedRecords": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "includedRecords": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "malformedRows": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "rawDuplicateGroups": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "recordRows": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "sourceRows": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "warningCount": {
+            "maximum": 12800000.0,
+            "minimum": 0.0,
+            "title": "Warningcount",
+            "type": "integer"
+          },
+          "warningRows": {
+            "$ref": "#/components/schemas/Count"
+          }
+        },
+        "required": [
+          "sourceRows",
+          "recordRows",
+          "contextRows",
+          "malformedRows",
+          "includedRecords",
+          "excludedRecords",
+          "warningRows",
+          "warningCount",
+          "coverage",
+          "rawDuplicateGroups",
+          "doiDuplicateGroups",
+          "candidateRecords"
+        ],
+        "title": "SummaryCounts",
+        "type": "object"
+      },
+      "SummaryCoverage": {
+        "additionalProperties": false,
+        "properties": {
+          "author": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "container": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "doi": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "title": {
+            "$ref": "#/components/schemas/Count"
+          },
+          "year": {
+            "$ref": "#/components/schemas/Count"
+          }
+        },
+        "required": [
+          "title",
+          "doi",
+          "year",
+          "author",
+          "container"
+        ],
+        "title": "SummaryCoverage",
+        "type": "object"
+      },
       "TelemetryMode": {
         "enum": [
           "off",
@@ -7389,6 +7817,411 @@
           }
         },
         "summary": "Preview Status",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/summary": {
+      "post": {
+        "operationId": "summary_status_projects_imports_summary_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportSummaryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummaryStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Summary Status",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/summary/cancel": {
+      "post": {
+        "operationId": "summary_cancel_projects_imports_summary_cancel_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportSummaryCancelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummaryStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Summary Cancel",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/summary/groups": {
+      "post": {
+        "operationId": "summary_groups_projects_imports_summary_groups_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportDuplicateGroupsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDuplicateGroups"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Summary Groups",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/summary/members": {
+      "post": {
+        "operationId": "summary_members_projects_imports_summary_members_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportDuplicateMembersRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDuplicateMembers"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Summary Members",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/summary/start": {
+      "post": {
+        "operationId": "summary_start_projects_imports_summary_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportSummaryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSummaryStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Summary Start",
         "tags": [
           "imports"
         ]

@@ -32,6 +32,7 @@ from .ingestion.import_drafts import (
     review_record,
     spreadsheet_cell,
 )
+from .ingestion.import_summaries import SummaryCounts
 from .ingestion.preview_records import WarningCode
 from .ingestion.reference_imports import import_field_target
 from .ports.import_previews import (
@@ -42,6 +43,7 @@ from .ports.import_previews import (
     PreviewDraftRecord,
     PreviewProblem,
     PreviewState,
+    PreviewSummary,
 )
 from .ports.workflow_executor import WorkflowJobRecord, WorkflowJobState
 
@@ -144,6 +146,44 @@ class ReviewPage(DraftValue):
     complete: bool
 
 
+type DuplicateReason = Literal["raw", "doi"]
+
+
+class ImportSummaryStatus(DraftValue):
+    preview_id: Identity
+    revision: Revision
+    algorithm: Literal["draft-summary/1"] = "draft-summary/1"
+    job_id: Identity | None
+    job_state: WorkflowJobState | None
+    diagnostic_code: Annotated[str, Field(pattern=r"^[a-z][a-z0-9.-]{0,95}$")] | None
+    counts: SummaryCounts | None
+
+
+class ImportDuplicateGroup(DraftValue):
+    group_key: Digest
+    member_count: Annotated[int, Field(strict=True, ge=2, le=200000)]
+    first_ordinal: Ordinal
+
+
+class ImportDuplicateGroups(DraftValue):
+    preview_id: Identity
+    revision: Revision
+    reason: DuplicateReason
+    groups: Annotated[list[ImportDuplicateGroup], Field(max_length=100)]
+    next_after: Digest | None
+    complete: bool
+
+
+class ImportDuplicateMembers(DraftValue):
+    preview_id: Identity
+    revision: Revision
+    reason: DuplicateReason
+    group_key: Digest
+    records: Annotated[list[RecordSummary], Field(max_length=100)]
+    next_after: Cursor
+    complete: bool
+
+
 class ReviewField(DraftValue):
     index: FieldIndex
     name: Annotated[str, Field(max_length=65536)]
@@ -232,6 +272,21 @@ def bounded[Value: DraftValue](value: Value) -> Value:
     return value
 
 
+def summary_status_item(
+    preview: str, revision: int, summary: PreviewSummary | None, job: WorkflowJobRecord | None
+) -> ImportSummaryStatus:
+    if summary is not None and (job is None or job.job_id != summary.job_id or job.state != "succeeded"):
+        raise PreviewProblem("preview-summary-job-authority-mismatch")
+    return ImportSummaryStatus(
+        preview_id=preview,
+        revision=revision,
+        job_id=job.job_id if job else None,
+        job_state=job.state if job else None,
+        diagnostic_code=job.diagnostic_code if job else None,
+        counts=summary.result.counts if summary else None,
+    )
+
+
 class ImportReview:
     def __init__(self, repository: ImportPreviewRepository):
         self._repository = repository
@@ -261,6 +316,60 @@ class ImportReview:
     def begin(self, preview: str, *, actor: PreviewActor) -> ReviewSummary:
         draft = self._repository.revise_draft(preview, PreviewDraftChange(expected_revision=0, actor=actor))
         return self._summary(preview, draft)
+
+    def duplicate_groups(
+        self, preview: str, *, revision: int, reason: DuplicateReason, after: str | None, limit: int
+    ) -> ImportDuplicateGroups:
+        groups = self._repository.summary_groups(preview, revision=revision, reason=reason, after=after, limit=limit)
+        cursor = groups[-1].group_key if groups else after
+        more = bool(groups) and bool(
+            self._repository.summary_groups(preview, revision=revision, reason=reason, after=cursor, limit=1)
+        )
+        self._base(preview, revision)
+        return bounded(
+            ImportDuplicateGroups(
+                preview_id=preview,
+                revision=revision,
+                reason=reason,
+                groups=[
+                    ImportDuplicateGroup(
+                        group_key=g.group_key, member_count=g.member_count, first_ordinal=g.first_ordinal
+                    )
+                    for g in groups
+                ],
+                next_after=cursor,
+                complete=not more,
+            )
+        )
+
+    def duplicate_members(
+        self, preview: str, *, revision: int, reason: DuplicateReason, group_key: str, after: int, limit: int
+    ) -> ImportDuplicateMembers:
+        ordinals = self._repository.summary_members(
+            preview, revision=revision, reason=reason, group_key=group_key, after=after, limit=limit
+        )
+        cursor = ordinals[-1] if ordinals else after
+        records = [
+            self.page(preview, ReviewPageRequest(revision=revision, after=ordinal - 1, limit=1)).records[0]
+            for ordinal in ordinals
+        ]
+        more = bool(ordinals) and bool(
+            self._repository.summary_members(
+                preview, revision=revision, reason=reason, group_key=group_key, after=cursor, limit=1
+            )
+        )
+        self._base(preview, revision)
+        return bounded(
+            ImportDuplicateMembers(
+                preview_id=preview,
+                revision=revision,
+                reason=reason,
+                group_key=group_key,
+                records=records,
+                next_after=cursor,
+                complete=not more,
+            )
+        )
 
     def _base(self, preview: str, expected: int) -> PreviewDraft:
         draft = self._repository.draft(preview)

@@ -12,11 +12,16 @@ from pydantic import Field
 from .import_preview_service import ImportPreviewService
 from .import_review import (
     RESPONSE_BYTES,
+    Cursor,
     DiagnosticPage,
+    DuplicateReason,
     GroupEdit,
+    ImportDuplicateGroups,
+    ImportDuplicateMembers,
     ImportPreviewItem,
     ImportPreviewPage,
     ImportReview,
+    ImportSummaryStatus,
     MappingEdit,
     MutationRevision,
     PageLimit,
@@ -27,10 +32,12 @@ from .import_review import (
     ReviewSummary,
     Section,
     preview_item,
+    summary_status_item,
 )
-from .ingestion.import_drafts import DraftValue, Identity, Revision
+from .ingestion.import_drafts import Digest, DraftValue, Identity, Revision
 from .models import ProblemDetail
 from .ports.import_previews import PreviewProblem
+from .ports.workflow_executor import WorkflowQueueProblem
 from .projects import ProjectLifecycleProblem
 from .transport import CoreProblem, problem_detail
 
@@ -69,6 +76,27 @@ class ImportGroupRequest(ImportAddress, GroupEdit):
 
 class ImportUndoRequest(ImportAddress):
     expected_revision: MutationRevision
+
+
+class ImportSummaryRequest(ImportAddress):
+    revision: Revision
+
+
+class ImportSummaryCancelRequest(ImportSummaryRequest):
+    job_id: Identity
+
+
+class ImportDuplicateGroupsRequest(ImportSummaryRequest):
+    reason: DuplicateReason
+    after: Digest | None = None
+    limit: PageLimit = 25
+
+
+class ImportDuplicateMembersRequest(ImportSummaryRequest):
+    reason: DuplicateReason
+    group_key: Digest
+    after: Cursor = 0
+    limit: PageLimit = 25
 
 
 def _problem(request: Request, status: int, code: str, title: str) -> CoreProblem:
@@ -152,6 +180,66 @@ def register_import_routes(
             raise _problem(
                 request, 422, "RO-CORE-IMPORT-DECISION-INVALID", "The import decision is not valid"
             ) from None
+        except WorkflowQueueProblem:
+            raise _problem(
+                request, 503, "RO-CORE-IMPORT-JOB-UNAVAILABLE", "The import calculation is unavailable"
+            ) from None
+
+    def summary(runtime: ImportPreviewService, command: ImportSummaryRequest) -> ImportSummaryStatus:
+        return summary_status_item(
+            command.preview_id,
+            command.revision,
+            *runtime.summary_status(command.root, command.preview_id, revision=command.revision),
+        )
+
+    @router.post("/summary", response_model=ImportSummaryStatus)
+    def summary_status(request: Request, command: ImportSummaryRequest) -> ImportSummaryStatus:
+        return run(request, command, lambda _review, runtime: summary(runtime, command))
+
+    @router.post("/summary/start", response_model=ImportSummaryStatus)
+    def summary_start(request: Request, command: ImportSummaryRequest) -> ImportSummaryStatus:
+        def action(_review: ImportReview, runtime: ImportPreviewService):
+            runtime.schedule_summary(command.root, command.preview_id, revision=command.revision)
+            return summary(runtime, command)
+
+        return run(request, command, action)
+
+    @router.post("/summary/cancel", response_model=ImportSummaryStatus)
+    def summary_cancel(request: Request, command: ImportSummaryCancelRequest) -> ImportSummaryStatus:
+        def action(_review: ImportReview, runtime: ImportPreviewService):
+            runtime.cancel_summary(command.root, command.preview_id, revision=command.revision, job_id=command.job_id)
+            return summary(runtime, command)
+
+        return run(request, command, action)
+
+    @router.post("/summary/groups", response_model=ImportDuplicateGroups)
+    def summary_groups(request: Request, command: ImportDuplicateGroupsRequest) -> ImportDuplicateGroups:
+        return run(
+            request,
+            command,
+            lambda review, _runtime: review.duplicate_groups(
+                command.preview_id,
+                revision=command.revision,
+                reason=command.reason,
+                after=command.after,
+                limit=command.limit,
+            ),
+        )
+
+    @router.post("/summary/members", response_model=ImportDuplicateMembers)
+    def summary_members(request: Request, command: ImportDuplicateMembersRequest) -> ImportDuplicateMembers:
+        return run(
+            request,
+            command,
+            lambda review, _runtime: review.duplicate_members(
+                command.preview_id,
+                revision=command.revision,
+                reason=command.reason,
+                group_key=command.group_key,
+                after=command.after,
+                limit=command.limit,
+            ),
+        )
 
     @router.post("/list", response_model=ImportPreviewPage)
     def previews(request: Request, command: ImportListRequest) -> ImportPreviewPage:

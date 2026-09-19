@@ -2159,6 +2159,22 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
         | "/projects/imports/status"
         | "/projects/imports/cancel" => &["root", "previewId"],
         "/projects/imports/list" => &["root", "after", "limit"],
+        "/projects/imports/summary" | "/projects/imports/summary/start" => {
+            &["root", "previewId", "revision"]
+        }
+        "/projects/imports/summary/cancel" => &["root", "previewId", "revision", "jobId"],
+        "/projects/imports/summary/groups" => {
+            &["root", "previewId", "revision", "reason", "after", "limit"]
+        }
+        "/projects/imports/summary/members" => &[
+            "root",
+            "previewId",
+            "revision",
+            "reason",
+            "groupKey",
+            "after",
+            "limit",
+        ],
         "/projects/imports/records" | "/projects/imports/report" => {
             &["root", "previewId", "revision", "after", "limit"]
         }
@@ -2216,6 +2232,31 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
         | "/projects/imports/review"
         | "/projects/imports/status"
         | "/projects/imports/cancel" => true,
+        "/projects/imports/summary" | "/projects/imports/summary/start" => {
+            number("revision", 1, 2_147_483_647)
+        }
+        "/projects/imports/summary/cancel" => {
+            number("revision", 1, 2_147_483_647)
+                && object["jobId"].as_str().is_some_and(canonical_uuid_v7)
+        }
+        "/projects/imports/summary/groups" | "/projects/imports/summary/members" => {
+            number("revision", 1, 2_147_483_647)
+                && number("limit", 1, 100)
+                && object["reason"]
+                    .as_str()
+                    .is_some_and(|s| matches!(s, "raw" | "doi"))
+                && if path.ends_with("/groups") {
+                    object["after"].is_null()
+                        || object["after"]
+                            .as_str()
+                            .is_some_and(|s| canonical_lower_hex(s, 64))
+                } else {
+                    number("after", 0, 200_000)
+                        && object["groupKey"]
+                            .as_str()
+                            .is_some_and(|s| canonical_lower_hex(s, 64))
+                }
+        }
         "/projects/imports/list" => {
             number("limit", 1, 25)
                 && (object["after"].is_null()
@@ -3485,6 +3526,26 @@ mod tests {
             ("begin-review", address.clone()),
             ("review", address.clone()),
             (
+                "summary",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1}),
+            ),
+            (
+                "summary/start",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1}),
+            ),
+            (
+                "summary/cancel",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "jobId":address["previewId"]}),
+            ),
+            (
+                "summary/groups",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "reason":"doi", "after":null, "limit":25}),
+            ),
+            (
+                "summary/members",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "reason":"raw", "groupKey":"a".repeat(64), "after":0, "limit":25}),
+            ),
+            (
                 "undo",
                 serde_json::json!({"root":address["root"], "previewId":address["previewId"], "expectedRevision":2}),
             ),
@@ -3518,6 +3579,28 @@ mod tests {
                 idempotency_key: None,
             };
             assert!(super::validate_api_request(&request).is_ok(), "{route}");
+            if route.starts_with("summary") {
+                for (key, invalid) in [
+                    ("revision", serde_json::json!(true)),
+                    ("limit", serde_json::json!(101)),
+                    ("reason", serde_json::json!("title")),
+                    ("groupKey", serde_json::json!("arbitrary-value")),
+                    ("jobId", serde_json::json!("not-a-job")),
+                ] {
+                    if body.get(key).is_some() {
+                        let mut changed = body.clone();
+                        changed[key] = invalid;
+                        assert!(
+                            super::validate_api_request(&super::CoreApiRequest {
+                                body: Some(changed.to_string()),
+                                ..request.clone()
+                            })
+                            .is_err(),
+                            "{route}: {key}"
+                        );
+                    }
+                }
+            }
             let mut spoofed = body.clone();
             spoofed["actor"] = serde_json::json!("caller");
             assert!(

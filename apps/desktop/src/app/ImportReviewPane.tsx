@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { CoreApiClientError, createCoreApiClient, type ColumnSelection, type FieldCorrection, type ImportPreviewItem, type RecordSelection, type RecordSummary, type ReviewDetail, type ReviewField, type ReviewPage, type ReviewSummary, type Section } from "@research-observatory/contracts/core-api";
 import { Button, DataTable, Field, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 import { saveImportReport } from "./importIntake";
+import { ImportSummaryPane } from "./ImportSummaryPane";
 
 type ImportClient = ReturnType<typeof createCoreApiClient>;
 const TARGETS = ["title", "doi", "year", "author", "container"] as const;
@@ -173,6 +174,11 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
     {reportNotice ? <Notification tone="info" title="Diagnostic report">{reportNotice}</Notification> : null}
     {busy ? <p role="status">Reading the current protected preview…</p> : null}
     {summary ? <>
+      <ImportSummaryPane key={summary.revision} root={root} previewId={initial.previewId} revision={summary.revision} client={client} disabled={busy} announce={announce} inspect={setRecord} failureText={importFailure} select={(records) => {
+        const combined = [...selected, ...records.filter((row) => !selected.some((item) => item.ordinal === row.ordinal)).map((row) => ({ ordinal: row.ordinal, recordKey: row.recordKey }))];
+        if (combined.length > 100) { announce("This would exceed 100 selected records. Clear the current selection or select fewer records."); return; }
+        setSelected(combined); announce(`${combined.length} records selected. Use the record correction and exclusion controls below.`);
+      }} />
       <Panel title="Draft decisions"><p>Revision {summary.revision} · {summary.recordCount.toLocaleString()} source rows (including headers/directives). Raw source values are preserved. No canonical records have been committed.</p>
         {initial.formatName === "csv" ? <p>CSV separator: {summary.delimiter === "," ? "Comma" : summary.delimiter === ";" ? "Semicolon" : "Tab"}. Start a new import to change parsing settings.</p> : null}
         <div className="ro-action-row"><Button ref={undoButton} disabled={busy || summary.undoTargetRevision === null} onClick={() => void undo()}>Undo last draft change</Button><span className="field-note">{summary.undoTargetRevision === null ? "No earlier draft change to undo." : "Restores the previous effective edit as a new revision. Current rights restrictions still apply."}</span></div>

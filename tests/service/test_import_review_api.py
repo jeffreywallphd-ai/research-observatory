@@ -63,6 +63,85 @@ class ImportReviewApiTests(unittest.TestCase):
         current = self.post("review").json()
         self.assertEqual(3, current["revision"])
 
+    def test_summary_is_explicit_revision_bound_and_never_an_unavailable_zero(self):
+        self.post("begin-review")
+        before = self.post("summary", revision=1)
+        self.assertEqual(200, before.status_code)
+        self.assertIsNone(before.json()["counts"])
+        self.assertIsNone(before.json()["jobId"])
+        self.assertEqual(409, self.post("summary/groups", revision=1, reason="doi").status_code)
+        started = self.post("summary/start", revision=1)
+        self.assertEqual(200, started.status_code)
+        self.assertEqual("runnable", started.json()["jobState"])
+        self.assertIsNone(started.json()["counts"])
+        self.fixture.service.run_pending()
+        ready = self.post("summary", revision=1)
+        self.assertEqual(200, ready.status_code)
+        self.assertEqual("succeeded", ready.json()["jobState"])
+        self.assertEqual(1, ready.json()["counts"]["includedRecords"])
+        self.assertEqual(1, ready.json()["counts"]["coverage"]["doi"])
+        self.assertEqual("no-store", ready.headers["Cache-Control"])
+        self.assertEqual([], self.post("summary/groups", revision=1, reason="doi").json()["groups"])
+        self.post("mapping", expectedRevision=1, mode="automatic", columns=[])
+        self.assertEqual(409, self.post("summary", revision=1).status_code)
+        self.assertIsNone(self.post("summary", revision=2).json()["counts"])
+
+    def test_summary_cancel_is_separate_from_preview_and_rejects_other_job(self):
+        self.post("begin-review")
+        started = self.post("summary/start", revision=1)
+        self.assertEqual(200, started.status_code)
+        job = started.json()["jobId"]
+        cancelled = self.post("summary/cancel", revision=1, jobId=job)
+        self.assertEqual(200, cancelled.status_code)
+        self.assertEqual("cancelled", cancelled.json()["jobState"])
+        self.assertIsNone(cancelled.json()["counts"])
+        self.assertEqual(200, self.post("records", revision=1).status_code)
+        parser_job = self.post("status").json()["jobId"]
+        self.assertEqual(409, self.post("summary/cancel", revision=1, jobId=parser_job).status_code)
+        self.assertEqual(422, self.post("summary/start", revision=True).status_code)
+        self.assertEqual(422, self.post("summary/members", revision=1, reason="title", groupKey="a" * 64).status_code)
+
+    def test_duplicate_groups_and_noncontiguous_members_are_complete_and_current(self):
+        self.preview = self.fixture.intake(
+            b"title,doi\nSynthetic A,10.99999/A\nSynthetic B,10.99999/B\n"
+            b"Synthetic A,10.99999/A\nSynthetic B,10.99999/B\n"
+        )
+        self.address["previewId"] = self.preview
+        self.fixture.service.schedule(self.fixture.root, self.preview)
+        self.fixture.service.run_pending()
+        self.post("begin-review")
+        self.post("summary/start", revision=1)
+        self.fixture.service.run_pending()
+        self.assertEqual(4, self.post("summary", revision=1).json()["counts"]["candidateRecords"])
+        for reason in ("raw", "doi"):
+            first = self.post("summary/groups", revision=1, reason=reason, after=None, limit=1).json()
+            self.assertFalse(first["complete"])
+            group = first["groups"][0]
+            self.assertEqual(2, group["memberCount"])
+            last = self.post("summary/groups", revision=1, reason=reason, after=first["nextAfter"], limit=1).json()
+            self.assertTrue(last["complete"])
+            self.assertNotEqual(group["groupKey"], last["groups"][0]["groupKey"])
+            members = self.post(
+                "summary/members", revision=1, reason=reason, groupKey=group["groupKey"], after=0, limit=1
+            ).json()
+            self.assertFalse(members["complete"])
+            remaining = self.post(
+                "summary/members",
+                revision=1,
+                reason=reason,
+                groupKey=group["groupKey"],
+                after=members["nextAfter"],
+                limit=1,
+            ).json()
+            self.assertTrue(remaining["complete"])
+            self.assertEqual(members["nextAfter"] + 2, remaining["nextAfter"])
+            self.assertEqual(group["firstOrdinal"], members["records"][0]["ordinal"])
+        self.post("mapping", expectedRevision=1, mode="automatic", columns=[])
+        self.assertEqual(409, self.post("summary/groups", revision=1, reason="doi").status_code)
+        self.assertEqual(
+            409, self.post("summary/members", revision=1, reason="doi", groupKey=group["groupKey"]).status_code
+        )
+
     def test_undo_walks_effective_history_without_redo_or_automatic_stale_retry(self):
         self.assertEqual(200, self.post("begin-review").status_code)
         row = self.post("records", revision=1, after=1).json()["records"][0]

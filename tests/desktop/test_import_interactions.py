@@ -40,7 +40,8 @@ class ImportInteractionTests(unittest.TestCase):
         fixture.service.detach(fixture.root)
         fixture.projects.close(root=fixture.root, trace_id="1" * 32)
         raw = (
-            "title;title;doi\n" + "".join(f"Synthetic {n};Alternative {n};10.99999/EXAMPLE{n}\n" for n in range(55))
+            "title;title;doi\n"
+            + "".join(f"Synthetic {n};Alternative {n};10.99999/EXAMPLE{n // 2}\n" for n in range(55))
         ).encode()
         selected_previews = []
         calls = []
@@ -212,6 +213,24 @@ class ImportInteractionTests(unittest.TestCase):
                         "document.querySelector('[aria-label=\"Selected import preview\"]')"
                         "?.getAttribute('aria-busy') === 'false'"
                     )
+                    summary_panel = page.get_by_label("Import summary and duplicate candidates", exact=True)
+                    summary_panel.get_by_text("Not calculated", exact=True).wait_for()
+                    calculate = summary_panel.get_by_role("button", name="Calculate preview summary", exact=True)
+                    calculate.focus()
+                    page.keyboard.press("Enter")
+                    summary_panel.get_by_role("button", name="Cancel summary calculation", exact=True).wait_for()
+                    fixture.service.run_pending()
+                    summary_panel.get_by_role("button", name="Refresh summary status", exact=True).click()
+                    summary_panel.get_by_text("Complete for this draft", exact=True).wait_for()
+                    summary_panel.get_by_text("No works have been merged.", exact=False).wait_for()
+                    summary_panel.get_by_role("button", name="Review group at row", exact=False).first.click()
+                    summary_panel.get_by_role("button", name="Compare candidate row", exact=False).first.click()
+                    page.get_by_role("region", name="raw fields", exact=True).wait_for()
+                    summary_panel.get_by_role(
+                        "button", name="Select this candidate page for editing", exact=True
+                    ).click()
+                    page.get_by_text("2 selected across pages (up to 100).", exact=False).wait_for()
+                    page.get_by_role("button", name="Clear selection", exact=True).click()
                     page.get_by_label("Select record 2", exact=True).check()
                     page.get_by_role("button", name="Next records", exact=True).click()
                     page.get_by_label("Select record 27", exact=True).check()

@@ -1636,6 +1636,64 @@ export function decodeReviewPage(value: unknown): ReviewPage | null {
   return item as unknown as ReviewPage;
 }
 
+export function decodeImportSummaryStatus(value: unknown): ImportSummaryStatus | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["previewId", "revision", "algorithm", "jobId", "jobState", "diagnosticCode", "counts"])
+    || !canonicalUuid7(item.previewId) || !integer(item.revision, 1, 2147483647) || item.algorithm !== "draft-summary/1"
+    || (item.diagnosticCode !== null && (typeof item.diagnosticCode !== "string" || !/^[a-z][a-z0-9.-]{0,95}$/.test(item.diagnosticCode)))
+    || (item.jobId === null ? item.jobState !== null || item.diagnosticCode !== null || item.counts !== null
+      : !canonicalUuid7(item.jobId) || !registryEnum(item.jobState, ["runnable", "claimed", "running", "retry-scheduled", "cancelling", "cancelled", "failed", "succeeded"]))) return null;
+  if (item.counts !== null) {
+    const c = record(item.counts), coverage = c && record(c.coverage);
+    const keys = ["sourceRows", "recordRows", "contextRows", "malformedRows", "includedRecords", "excludedRecords", "warningRows", "warningCount", "coverage", "rawDuplicateGroups", "doiDuplicateGroups", "candidateRecords"];
+    if (item.jobState !== "succeeded" || !c || !exactKeys(c, keys) || !coverage || !exactKeys(coverage, IMPORT_FIELDS)
+      || !keys.filter((key) => key !== "coverage").every((key) => integer(c[key], 0, key === "warningCount" ? 12800000 : 200000))) return null;
+    const counts = c as unknown as SummaryCounts;
+    if (counts.recordRows + counts.contextRows !== counts.sourceRows || counts.includedRecords + counts.excludedRecords !== counts.recordRows
+      || counts.malformedRows > counts.sourceRows - counts.includedRecords || counts.warningRows > counts.sourceRows
+      || counts.warningCount < counts.warningRows || counts.warningCount > 64 * counts.warningRows
+      || !IMPORT_FIELDS.every((key) => integer(coverage[key], 0, counts.includedRecords))
+      || counts.candidateRecords > counts.includedRecords || counts.candidateRecords === 1
+      || Boolean(counts.rawDuplicateGroups || counts.doiDuplicateGroups) !== Boolean(counts.candidateRecords)
+      || Math.max(counts.rawDuplicateGroups, counts.doiDuplicateGroups) * 2 > counts.candidateRecords) return null;
+  }
+  return item as unknown as ImportSummaryStatus;
+}
+
+export function decodeImportDuplicateGroups(value: unknown): ImportDuplicateGroups | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["previewId", "revision", "reason", "groups", "nextAfter", "complete"])
+    || !canonicalUuid7(item.previewId) || !integer(item.revision, 1, 2147483647) || !registryEnum(item.reason, ["raw", "doi"])
+    || !Array.isArray(item.groups) || item.groups.length > 100 || typeof item.complete !== "boolean"
+    || item.nextAfter !== null && !importDigest(item.nextAfter) || !item.complete && !item.groups.length) return null;
+  let previous = "";
+  for (const value of item.groups) {
+    const group = record(value);
+    if (!group || !exactKeys(group, ["groupKey", "memberCount", "firstOrdinal"]) || !importDigest(group.groupKey)
+      || (group.groupKey as string) <= previous || !integer(group.memberCount, 2, 200000) || !integer(group.firstOrdinal, 1, 200000)) return null;
+    previous = group.groupKey as string;
+  }
+  if (item.groups.length && item.nextAfter !== previous) return null;
+  return item as unknown as ImportDuplicateGroups;
+}
+
+export function decodeImportDuplicateMembers(value: unknown): ImportDuplicateMembers | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["previewId", "revision", "reason", "groupKey", "records", "nextAfter", "complete"])
+    || !canonicalUuid7(item.previewId) || !integer(item.revision, 1, 2147483647) || !registryEnum(item.reason, ["raw", "doi"])
+    || !importDigest(item.groupKey) || !Array.isArray(item.records) || item.records.length > 100
+    || !integer(item.nextAfter, 0, 200000) || typeof item.complete !== "boolean" || !item.complete && !item.records.length) return null;
+  let previous = 0;
+  for (const value of item.records) {
+    const row = record(value);
+    if (!row || !integer(row.ordinal, previous + 1, 200000) || !row.included
+      || !decodeReviewPage({ revision: item.revision, records: [row], nextAfter: row.ordinal, complete: true })) return null;
+    previous = row.ordinal as number;
+  }
+  if (item.records.length && item.nextAfter !== previous) return null;
+  return item as unknown as ImportDuplicateMembers;
+}
+
 export function decodeReviewDetail(value: unknown): ReviewDetail | null {
   const item = importOwned(value);
   if (!item || !exactKeys(item, ["revision", "ordinal", "recordKey", "section", "fields", "nextIndex", "complete"])
@@ -1685,10 +1743,10 @@ function importBody(value: unknown): string {
   return JSON.stringify(item);
 }
 
-function importCommand<T extends ImportAddress>(value: T): T {
+function importCommand<T extends ImportAddress>(value: T): T & Readonly<Record<string, unknown>> {
   const owned = importOwned(value);
   if (!owned || !projectRoot(owned.root) || !canonicalUuid7(owned.previewId)) throw new Error("RO-CORE-REQUEST-INVALID");
-  return owned as unknown as T;
+  return owned as unknown as T & Readonly<Record<string, unknown>>;
 }
 
 function importPageBody(command: ImportPageRequest): string {
@@ -1696,8 +1754,38 @@ function importPageBody(command: ImportPageRequest): string {
   return importBody({ root: command.root, previewId: command.previewId, revision: command.revision, after: command.after, limit: command.limit });
 }
 
+async function importSummaryCall(transport: CoreApiTransport, route: "summary" | "summary/start" | "summary/cancel", value: ImportSummaryRequest | ImportSummaryCancelRequest): Promise<ImportSummaryStatus> {
+  const command = importCommand(value);
+  if (!exactKeys(command, route === "summary/cancel" ? ["root", "previewId", "revision", "jobId"] : ["root", "previewId", "revision"])
+    || !integer(command.revision, 1, 2147483647) || route === "summary/cancel" && !canonicalUuid7((command as ImportSummaryCancelRequest).jobId)) throw new Error("RO-CORE-REQUEST-INVALID");
+  const result = await requestJson(transport, { method: "POST", path: `/projects/imports/${route}`, body: importBody(command), ifMatch: null, idempotencyKey: null }, decodeImportSummaryStatus);
+  if (result.previewId !== command.previewId || result.revision !== command.revision) throw new Error("RO-CORE-RESPONSE-INVALID");
+  return result;
+}
+
 export function createCoreApiClient(transport: CoreApiTransport) {
   return Object.freeze({
+    async importSummary(value: ImportSummaryRequest): Promise<ImportSummaryStatus> { return importSummaryCall(transport, "summary", value); },
+    async startImportSummary(value: ImportSummaryRequest): Promise<ImportSummaryStatus> { return importSummaryCall(transport, "summary/start", value); },
+    async cancelImportSummary(value: ImportSummaryCancelRequest): Promise<ImportSummaryStatus> { return importSummaryCall(transport, "summary/cancel", value); },
+    async importDuplicateGroups(value: ImportDuplicateGroupsRequest): Promise<ImportDuplicateGroups> {
+      const command = importCommand(value);
+      if (!exactKeys(command, ["root", "previewId", "revision", "reason", "after", "limit"]) || !integer(command.revision, 1, 2147483647)
+        || !registryEnum(command.reason, ["raw", "doi"]) || command.after !== null && !importDigest(command.after) || !integer(command.limit, 1, 100)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/summary/groups", body: importBody(command), ifMatch: null, idempotencyKey: null }, decodeImportDuplicateGroups);
+      if (result.previewId !== command.previewId || result.revision !== command.revision || result.reason !== command.reason || result.groups.length > command.limit
+        || (result.groups.length ? result.groups[0]!.groupKey <= (command.after ?? "") : result.nextAfter !== command.after)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async importDuplicateMembers(value: ImportDuplicateMembersRequest): Promise<ImportDuplicateMembers> {
+      const command = importCommand(value);
+      if (!exactKeys(command, ["root", "previewId", "revision", "reason", "groupKey", "after", "limit"]) || !integer(command.revision, 1, 2147483647)
+        || !registryEnum(command.reason, ["raw", "doi"]) || !importDigest(command.groupKey) || !integer(command.after, 0, 200000) || !integer(command.limit, 1, 100)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/summary/members", body: importBody(command), ifMatch: null, idempotencyKey: null }, decodeImportDuplicateMembers);
+      if (result.previewId !== command.previewId || result.revision !== command.revision || result.reason !== command.reason || result.groupKey !== command.groupKey
+        || result.records.length > command.limit || (result.records.length ? result.records[0]!.ordinal <= command.after : result.nextAfter !== command.after)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
     async importPreviews(value: ImportListRequest): Promise<ImportPreviewPage> {
       const command = importOwned(value);
       if (!command || !exactKeys(command, ["root", "after", "limit"]) || !projectRoot(command.root)

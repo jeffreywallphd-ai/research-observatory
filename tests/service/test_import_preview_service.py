@@ -114,8 +114,7 @@ class ImportPreviewServiceTests(unittest.TestCase):
             now=lambda: self.now,
         )
 
-    def intake(self):
-        raw = b"title,doi\nSynthetic,10.99999/EXAMPLE\n"
+    def intake(self, raw=b"title,doi\nSynthetic,10.99999/EXAMPLE\n"):
         actor = self.service.actor("2" * 32)
         command = PreviewCreate(
             preview_id=new_uuid_v7(),
