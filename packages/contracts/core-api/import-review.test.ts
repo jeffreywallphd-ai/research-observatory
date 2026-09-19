@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createCoreApiClient, decodeReviewSummary, decodeReviewPage, decodeReviewDetail, decodeDiagnosticPage } from "./generated";
+import { createCoreApiClient, decodeReviewSummary, decodeReviewPage, decodeReviewDetail, decodeDiagnosticPage, decodeImportPreviewItem, decodeImportPreviewPage } from "./generated";
 
 const previewId = "01900000-0000-7000-8000-000000000001";
 const address = { root: "C:/Research/synthetic", previewId };
@@ -15,6 +15,28 @@ const detail = () => ({ revision: 1, ordinal: 2, recordKey: "a".repeat(64), sect
   fields: [{ index: 0, name: "title", value: "Synthetic", sourceFieldIndex: 0, origin: "raw", target: null, warnings: [] }] });
 
 describe("import review generated client", () => {
+  const item = () => ({ previewId, state: "created", sourceName: "synthetic.csv", formatName: "csv", encoding: "utf-8", byteLength: 0, chunkCount: 0, jobId: null, jobState: null });
+  it("bounds discovery and status without admitting paths, extra authority or unordered pages", () => {
+    expect(decodeImportPreviewItem(item())).not.toBeNull();
+    expect(decodeImportPreviewItem({ ...item(), sourceName: "../private.csv" })).toBeNull();
+    expect(decodeImportPreviewItem({ ...item(), sessionId: "a".repeat(32) })).toBeNull();
+    expect(decodeImportPreviewItem({ ...item(), jobState: "succeeded" })).toBeNull();
+    expect(decodeImportPreviewPage({ items: [item()], nextAfter: previewId, complete: true })).not.toBeNull();
+    expect(decodeImportPreviewPage({ items: [item(),item()], nextAfter: previewId, complete: false })).toBeNull();
+    expect(decodeImportPreviewPage({ items: [], nextAfter: null, complete: false })).toBeNull();
+  });
+  it("binds discovery and status to owned inputs and rejects a cursor that fails to advance", async () => {
+    let resolve!: (value: any) => void;
+    const client = createCoreApiClient(async () => new Promise((done) => { resolve = done; }));
+    const command = { ...address };
+    const pending = client.importPreviewStatus(command);
+    command.previewId = "01900000-0000-7000-8000-000000000002";
+    resolve({ status: 200, contentType: "application/json", traceId: "a".repeat(32), etag: null, body: JSON.stringify({ ...item(), previewId: command.previewId }) });
+    await expect(pending).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+    const page = client.importPreviews({ root: address.root, after: previewId, limit: 1 });
+    resolve({ status: 200, contentType: "application/json", traceId: "a".repeat(32), etag: null, body: JSON.stringify({ items: [], nextAfter: previewId, complete: false }) });
+    await expect(page).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+  });
   const changedPreview = "01900000-0000-7000-8000-000000000002";
   const mutationCases = [
     ["beginImportReview", { ...address }, "previewId", changedPreview, { ...summary(), previewId: changedPreview }],

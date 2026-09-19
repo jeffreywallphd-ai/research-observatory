@@ -14,6 +14,8 @@ from .import_review import (
     RESPONSE_BYTES,
     DiagnosticPage,
     GroupEdit,
+    ImportPreviewItem,
+    ImportPreviewPage,
     ImportReview,
     MappingEdit,
     PageLimit,
@@ -23,6 +25,7 @@ from .import_review import (
     ReviewPageRequest,
     ReviewSummary,
     Section,
+    preview_item,
 )
 from .ingestion.import_drafts import DraftValue, Identity, Revision
 from .models import ProblemDetail
@@ -31,8 +34,16 @@ from .projects import ProjectLifecycleProblem
 from .transport import CoreProblem, problem_detail
 
 
-class ImportAddress(DraftValue):
+class ImportProjectRequest(DraftValue):
     root: Annotated[str, Field(min_length=1, max_length=4096)]
+
+
+class ImportListRequest(ImportProjectRequest):
+    after: Identity | None = None
+    limit: Annotated[int, Field(strict=True, ge=1, le=25)] = 25
+
+
+class ImportAddress(ImportProjectRequest):
     preview_id: Identity
 
 
@@ -109,7 +120,7 @@ def register_import_routes(
     )
 
     def run[Result](
-        request: Request, command: ImportAddress, action: Callable[[ImportReview, ImportPreviewService], Result]
+        request: Request, command: ImportProjectRequest, action: Callable[[ImportReview, ImportPreviewService], Result]
     ) -> Result:
         runtime = service(request)
         if runtime is None:
@@ -136,6 +147,32 @@ def register_import_routes(
             raise _problem(
                 request, 422, "RO-CORE-IMPORT-DECISION-INVALID", "The import decision is not valid"
             ) from None
+
+    @router.post("/list", response_model=ImportPreviewPage)
+    def previews(request: Request, command: ImportListRequest) -> ImportPreviewPage:
+        return run(
+            request,
+            command,
+            lambda _review, runtime: runtime.previews_page(command.root, after=command.after, limit=command.limit),
+        )
+
+    @router.post("/status", response_model=ImportPreviewItem)
+    def preview_status(request: Request, command: ImportAddress) -> ImportPreviewItem:
+        return run(
+            request,
+            command,
+            lambda _review, runtime: preview_item(*runtime.intake_status(command.root, command.preview_id)),
+        )
+
+    @router.post("/cancel", response_model=ImportPreviewItem)
+    def cancel_preview(request: Request, command: ImportAddress) -> ImportPreviewItem:
+        def action(_review: ImportReview, runtime: ImportPreviewService):
+            # Inspect before mutating; no filename or state for a denied source.
+            runtime.intake_status(command.root, command.preview_id)
+            runtime.cancel(command.root, command.preview_id, trace_id=request.state.trace_id)
+            return preview_item(*runtime.intake_status(command.root, command.preview_id))
+
+        return run(request, command, action)
 
     @router.post("/begin-review", response_model=ReviewSummary)
     def begin_review(request: Request, command: ImportAddress) -> ReviewSummary:

@@ -220,8 +220,17 @@ existing loopback capability authentication and actual-body limits. A supplied
 source seal remains unverified until the worker proves EOF and digest equality.
 Helper/protocol checks do not qualify actual native selection or packaging.
 
+The desktop ingestion workspace now composes intake, saved-preview discovery,
+status, mapping and grouped draft edits through these ports. Public discovery
+rechecks inspection permission and returns at most 25 basename-only items; its
+cursor advances over denied items without exposing their metadata. CSV controls
+use the same target-name suggestions as the parser, preserving untouched columns
+and unsaved edits across record pagination. Raw/candidate/effective fields remain
+distinct. Project navigation discards private renderer state and ignores late
+responses; cancellation dismissal restores focus and supports Escape.
+
 This is not yet a complete production wizard. Complete native report publication,
-duplicate/count projection, scalable undo and UI wiring
+duplicate/count projection, scalable undo and explicit CSV delimiter integration
 remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
 

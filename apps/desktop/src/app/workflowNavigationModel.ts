@@ -9,6 +9,7 @@ export const IMPLEMENTED_WORKSPACES = Object.freeze([
   { id: "projects", label: "Local projects", pageContractIds: ["projects.html", "new-project.html"] },
   { id: "home", label: "Project home", pageContractIds: ["index.html"] },
   { id: "intent", label: "Research intent", pageContractIds: ["intent-contract.html"] },
+  { id: "imports", label: "Ingestion & Reconciliation", pageContractIds: ["ingestion-reconciliation.html"] },
   { id: "tasks", label: "Task Center", pageContractIds: ["task-center.html"] },
   { id: "audit", label: "Audit & lineage", pageContractIds: ["audit-lineage.html"] },
   { id: "models", label: "Model & Privacy Center", pageContractIds: ["model-center.html"] },

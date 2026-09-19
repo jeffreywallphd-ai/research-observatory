@@ -76,6 +76,26 @@ class ImportReviewApiTests(unittest.TestCase):
         self.assertNotIn("Synthetic", closed.text)
         self.assertNotIn(self.fixture.root, closed.text)
 
+    def test_automatic_column_targets_roundtrip_and_single_change_preserves_other_fields(self):
+        self.assertEqual(200, self.post("begin-review").status_code)
+        header = self.post("records", revision=1, after=0, limit=1).json()["records"][0]
+        detail = self.post(
+            "detail", revision=1, ordinal=header["ordinal"], recordKey=header["recordKey"], section="raw"
+        ).json()
+        columns = [{"index": field["index"], "target": field["target"]} for field in detail["fields"]]
+        self.assertEqual([{"index": 0, "target": "title"}, {"index": 1, "target": "doi"}], columns)
+        self.assertEqual(200, self.post("mapping", expectedRevision=1, columns=columns).status_code)
+        record = self.post("records", revision=2, after=1, limit=1).json()["records"][0]
+        self.assertEqual("Synthetic", record["title"]["text"])
+        columns[0]["target"] = "container"
+        self.assertEqual(200, self.post("mapping", expectedRevision=2, columns=columns).status_code)
+        effective = self.post(
+            "detail", revision=3, ordinal=record["ordinal"], recordKey=record["recordKey"], section="effective"
+        ).json()["fields"]
+        self.assertEqual(
+            {"container": "Synthetic", "doi": "10.99999/example"}, {f["name"]: f["value"] for f in effective}
+        )
+
     def test_actual_request_bytes_are_bounded_before_json_parsing(self):
         # A missing/false Content-Length must not bypass the body bound.
         response = self.client.post(

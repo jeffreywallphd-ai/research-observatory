@@ -265,15 +265,8 @@ def _doi(value: str) -> str | None:
     return value if _DOI.fullmatch(value) else None
 
 
-def normalize_import_field(
-    name: str,
-    value: object,
-    index: int,
-    warnings: set[str],
-    *,
-    max_field_bytes: int = 64 * 1024,
-) -> FieldCandidate | None:
-    """Shared parser/mapping suggestion; never an accepted value or identity grant."""
+def import_field_target(name: str) -> str | None:
+    """The parser's suggested target, independent of a row's value validity."""
     key = name.casefold()
     aliases = {
         "ti": "title",
@@ -289,7 +282,20 @@ def normalize_import_field(
         "container-title": "container",
     }
     key = aliases.get(key, key)
-    if key not in {"title", "doi", "year", "author", "container"} or not isinstance(value, str):
+    return key if key in {"title", "doi", "year", "author", "container"} else None
+
+
+def normalize_import_field(
+    name: str,
+    value: object,
+    index: int,
+    warnings: set[str],
+    *,
+    max_field_bytes: int = 64 * 1024,
+) -> FieldCandidate | None:
+    """Shared parser/mapping suggestion; never an accepted value or identity grant."""
+    key = import_field_target(name)
+    if key is None or not isinstance(value, str):
         return None
     normalized = " ".join(value.split())
     if key == "doi":

@@ -18,11 +18,11 @@ from pydantic import Field, model_validator
 from .domain_contracts import new_uuid_v7
 from .import_api import BoundedImportRoute, _problem
 from .import_preview_service import ImportPreviewService
+from .import_review import PreviewProgress as IntakeStatus
 from .ingestion.import_drafts import Digest, DraftValue, Identity, ImportRights, ProjectIdentity
 from .ingestion.reference_imports import ImportSource
 from .ingestion.source_chunks import CHUNK_BYTES
 from .ports.import_previews import PreviewCreate, PreviewProblem
-from .ports.workflow_executor import WorkflowJobState
 from .projects import ProjectLifecycleProblem
 from .transport import CoreProblem
 
@@ -79,24 +79,6 @@ class IntakeSeal(IntakeAddress):
     source_sha256: Digest
     byte_length: Annotated[int, Field(strict=True, ge=0, le=268435456)]
     chunk_count: Annotated[int, Field(strict=True, ge=0, le=2048)]
-
-
-class IntakeStatus(DraftValue):
-    preview_id: Identity
-    state: Literal[
-        "created",
-        "source-sealed",
-        "parse-started",
-        "parse-completed",
-        "draft-revised",
-        "cancelled",
-        "failed",
-        "security-interrupted",
-    ]
-    byte_length: Annotated[int, Field(strict=True, ge=0, le=268435456)]
-    chunk_count: Annotated[int, Field(strict=True, ge=0, le=2048)]
-    job_id: Identity | None
-    job_state: WorkflowJobState | None
 
 
 def register_intake_routes(

@@ -56,8 +56,8 @@ class _SqliteImportPreviewRepository:
         self._queue = _SqliteWorkflowQueueRepository(database, project_id)
 
     @contextmanager
-    def _transaction(self, preview_id: str, *, write: bool = False) -> Iterator[CanonicalConnection]:
-        if not is_uuid_v7(preview_id):
+    def _transaction(self, preview_id: str | None, *, write: bool = False) -> Iterator[CanonicalConnection]:
+        if preview_id is not None and not is_uuid_v7(preview_id):
             raise PreviewProblem("preview-identity-invalid")
         connection: CanonicalConnection | None = None
         failed = False
@@ -154,6 +154,23 @@ class _SqliteImportPreviewRepository:
     def read(self, preview_id: str) -> PreviewState:
         with self._transaction(preview_id) as connection:
             return self._read(connection, preview_id)
+
+    def previews_page(self, *, after: str | None, limit: int) -> tuple[PreviewState, ...]:
+        if type(limit) is not int or not 1 <= limit <= 25:
+            raise PreviewProblem("preview-page-limit")
+        with self._transaction(after) as connection:
+            ids = _execute(
+                connection,
+                """
+                SELECT preview_id FROM import_previews
+                 WHERE project_id=:project AND (:after IS NULL OR preview_id>:after)
+                 ORDER BY preview_id LIMIT :limit
+            """,
+                project=self._project,
+                after=after,
+                limit=limit,
+            ).fetchall()
+            return tuple(self._read(connection, row[0]) for row in ids)
 
     def create(self, command: PreviewCreate) -> PreviewState:
         command = PreviewCreate.model_validate(command)

@@ -6,10 +6,14 @@ import base64
 import hashlib
 import unittest
 import uuid
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
+from research_observatory_core.import_preview_repository import sqlite_import_preview_repository
+from research_observatory_core.ingestion.import_drafts import ImportPermission
+from research_observatory_core.ports.import_previews import PreviewDraftChange
 
 from tests.service import test_import_preview_service as fixture
 
@@ -166,6 +170,71 @@ class ImportIntakeApiTests(unittest.TestCase):
         self.assertNotIn(self.fixture.root, response.text)
         # Private native commands are not generated into the renderer API contract.
         self.assertFalse(any(path.startswith("/native/") for path in self.client.get("/openapi.json").json()["paths"]))
+
+    def test_library_discovery_is_bounded_and_reopens_persisted_previews(self):
+        context = self.session()
+        ids = [self.create(context, sourceName=f"synthetic-{index}.csv").json()["previewId"] for index in range(3)]
+        first = self.client.post("/projects/imports/list", json={"root": self.fixture.root, "after": None, "limit": 2})
+        self.assertEqual(200, first.status_code)
+        self.assertEqual(ids[:2], [item["previewId"] for item in first.json()["items"]])
+        self.assertFalse(first.json()["complete"])
+        second = self.client.post(
+            "/projects/imports/list", json={"root": self.fixture.root, "after": first.json()["nextAfter"], "limit": 2}
+        )
+        self.assertEqual([ids[2]], [item["previewId"] for item in second.json()["items"]])
+        self.assertTrue(second.json()["complete"])
+        for item in first.json()["items"]:
+            self.assertNotIn("root", item)
+            self.assertNotIn("rights", item)
+            self.assertNotIn("sessionId", item)
+            self.assertEqual("created", item["state"])
+        self.fixture.service.detach(self.fixture.root)
+        self.fixture.projects.close(root=self.fixture.root, trace_id="1" * 32)
+        self.assertEqual(
+            409,
+            self.client.post(
+                "/projects/imports/status", json={"root": self.fixture.root, "previewId": ids[0]}
+            ).status_code,
+        )
+        self.fixture.projects.open(root=self.fixture.root, trace_id="1" * 32)
+        status = self.client.post("/projects/imports/status", json={"root": self.fixture.root, "previewId": ids[0]})
+        self.assertEqual(200, status.status_code)
+        self.assertEqual("synthetic-0.csv", status.json()["sourceName"])
+        cancelled = self.client.post("/projects/imports/cancel", json={"root": self.fixture.root, "previewId": ids[0]})
+        self.assertEqual(200, cancelled.status_code)
+        self.assertEqual("cancelled", cancelled.json()["state"])
+        for invalid in [{"after": "bogus", "limit": 2}, {"after": None, "limit": 26}, {"after": None, "limit": True}]:
+            self.assertEqual(
+                422, self.client.post("/projects/imports/list", json={"root": self.fixture.root, **invalid}).status_code
+            )
+
+    def test_discovery_status_and_cancel_recheck_inspection_rights(self):
+        preview = self.fixture.intake()
+        self.fixture.service.schedule(self.fixture.root, preview)
+        self.fixture.service.run_pending()
+        repository = sqlite_import_preview_repository(
+            Path(self.fixture.root) / "state/project.sqlite3", self.fixture.project_id
+        )
+        actor = self.fixture.service.actor("2" * 32)
+        draft = repository.revise_draft(preview, PreviewDraftChange(expected_revision=0, actor=actor))
+        denied = draft.authority.rights.model_copy(
+            update={"inspect": ImportPermission(value="denied", basis="researcher-confirmed")}
+        )
+        repository.revise_draft(preview, PreviewDraftChange(expected_revision=1, actor=actor, rights=denied))
+        for route in ("status", "cancel"):
+            response = self.client.post(
+                "/projects/imports/" + route, json={"root": self.fixture.root, "previewId": preview}
+            )
+            self.assertEqual(403, response.status_code)
+            self.assertNotIn("synthetic.csv", response.text)
+        discovery = self.client.post(
+            "/projects/imports/list", json={"root": self.fixture.root, "after": None, "limit": 1}
+        )
+        self.assertEqual(200, discovery.status_code)
+        self.assertEqual([], discovery.json()["items"])
+        self.assertEqual(preview, discovery.json()["nextAfter"])
+        self.assertFalse(discovery.json()["complete"])
+        self.assertNotIn("synthetic.csv", discovery.text)
 
 
 if __name__ == "__main__":

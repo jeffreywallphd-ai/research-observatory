@@ -1560,6 +1560,35 @@ function importWarnings(value: unknown): boolean {
     && item.length <= 64 && /^[a-z]+(?:-[a-z]+)*$/.test(item));
 }
 
+export function decodeImportPreviewItem(value: unknown): ImportPreviewItem | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["previewId", "state", "sourceName", "formatName", "encoding", "byteLength", "chunkCount", "jobId", "jobState"])
+    || !canonicalUuid7(item.previewId) || !importText(item.sourceName, 255, 1)
+    || /[\\/\x00-\x1f\x7f]/.test(item.sourceName as string) || [".", ".."].includes(item.sourceName as string)
+    || !registryEnum(item.formatName, ["ris", "bibtex", "csl-json", "doi-list", "csv"])
+    || !registryEnum(item.encoding, ["utf-8", "cp1252"])
+    || item.formatName === "csl-json" && item.encoding !== "utf-8"
+    || !registryEnum(item.state, ["created", "source-sealed", "parse-started", "parse-completed", "draft-revised", "cancelled", "failed", "security-interrupted"])
+    || !integer(item.byteLength, 0, 268435456) || !integer(item.chunkCount, 0, 2048)
+    || (item.jobId === null ? item.jobState !== null : !canonicalUuid7(item.jobId)
+      || !registryEnum(item.jobState, ["runnable", "claimed", "running", "retry-scheduled", "cancelling", "cancelled", "failed", "succeeded"]))) return null;
+  return item as unknown as ImportPreviewItem;
+}
+
+export function decodeImportPreviewPage(value: unknown): ImportPreviewPage | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["items", "nextAfter", "complete"]) || !Array.isArray(item.items) || item.items.length > 25
+    || typeof item.complete !== "boolean" || item.nextAfter !== null && !canonicalUuid7(item.nextAfter)
+    || !item.complete && item.nextAfter === null) return null;
+  let previous: string | null = null;
+  for (const entry of item.items) {
+    const preview = decodeImportPreviewItem(entry);
+    if (!preview || previous !== null && preview.previewId <= previous || item.nextAfter === null || preview.previewId > (item.nextAfter as string)) return null;
+    previous = preview.previewId;
+  }
+  return item as unknown as ImportPreviewPage;
+}
+
 export function decodeReviewSummary(value: unknown): ReviewSummary | null {
   const item = importOwned(value);
   if (!item || !exactKeys(item, ["previewId", "revision", "predecessorRevision", "attemptId", "recordCount",
@@ -1667,6 +1696,32 @@ function importPageBody(command: ImportPageRequest): string {
 
 export function createCoreApiClient(transport: CoreApiTransport) {
   return Object.freeze({
+    async importPreviews(value: ImportListRequest): Promise<ImportPreviewPage> {
+      const command = importOwned(value);
+      if (!command || !exactKeys(command, ["root", "after", "limit"]) || !projectRoot(command.root)
+        || command.after !== null && !canonicalUuid7(command.after) || !integer(command.limit, 1, 25)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/list",
+        body: JSON.stringify(command), ifMatch: null, idempotencyKey: null }, decodeImportPreviewPage);
+      if (result.items.length > command.limit || command.after !== null && (
+        result.nextAfter === null || result.nextAfter < (command.after as string)
+        || !result.complete && result.nextAfter === command.after
+        || result.items.some((item) => item.previewId <= (command.after as string)))) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async importPreviewStatus(value: ImportAddress): Promise<ImportPreviewItem> {
+      const command = importCommand(value);
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/status",
+        body: importBody({ root: command.root, previewId: command.previewId }), ifMatch: null, idempotencyKey: null }, decodeImportPreviewItem);
+      if (result.previewId !== command.previewId) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async cancelImportPreview(value: ImportAddress): Promise<ImportPreviewItem> {
+      const command = importCommand(value);
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/cancel",
+        body: importBody({ root: command.root, previewId: command.previewId }), ifMatch: null, idempotencyKey: null }, decodeImportPreviewItem);
+      if (result.previewId !== command.previewId || !["cancelled", "failed", "security-interrupted"].includes(result.state)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
     async beginImportReview(value: ImportAddress): Promise<ReviewSummary> {
       const command = importCommand(value);
       const result = await requestJson(transport, { method: "POST", path: "/projects/imports/begin-review",

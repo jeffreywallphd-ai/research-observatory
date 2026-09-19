@@ -31,6 +31,7 @@ import {
   type IntentProjectIdentity,
 } from "./IntentWorkspace";
 import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
+import { ImportWorkspace } from "./ImportWorkspace";
 import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
 import {
   WorkflowContextBar,
@@ -1258,6 +1259,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "tasks" ? (
             <TaskCenterWorkspace project={currentProject} announce={announce} />
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "imports" ? (
+            <ImportWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (
             <AuditLineageWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "models" ? (

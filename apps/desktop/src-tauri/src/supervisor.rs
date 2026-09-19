@@ -2123,7 +2123,11 @@ fn validate_model_catalog_api_request(path: &str, body: &str) -> bool {
 
 fn validate_import_review_request(path: &str, body: &str) -> bool {
     let keys: &[&str] = match path {
-        "/projects/imports/begin-review" | "/projects/imports/review" => &["root", "previewId"],
+        "/projects/imports/begin-review"
+        | "/projects/imports/review"
+        | "/projects/imports/status"
+        | "/projects/imports/cancel" => &["root", "previewId"],
+        "/projects/imports/list" => &["root", "after", "limit"],
         "/projects/imports/records" | "/projects/imports/report" => {
             &["root", "previewId", "revision", "after", "limit"]
         }
@@ -2154,7 +2158,8 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
         return false;
     };
     if !object["root"].as_str().is_some_and(canonical_project_root)
-        || !object["previewId"].as_str().is_some_and(canonical_uuid_v7)
+        || (path != "/projects/imports/list"
+            && !object["previewId"].as_str().is_some_and(canonical_uuid_v7))
     {
         return false;
     }
@@ -2175,7 +2180,15 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
             .is_some_and(|name| matches!(name, "title" | "doi" | "year" | "author" | "container"))
     };
     match path {
-        "/projects/imports/begin-review" | "/projects/imports/review" => true,
+        "/projects/imports/begin-review"
+        | "/projects/imports/review"
+        | "/projects/imports/status"
+        | "/projects/imports/cancel" => true,
+        "/projects/imports/list" => {
+            number("limit", 1, 25)
+                && (object["after"].is_null()
+                    || object["after"].as_str().is_some_and(canonical_uuid_v7))
+        }
         "/projects/imports/records" | "/projects/imports/report" => {
             number("revision", 1, 2_147_483_647)
                 && number("after", 0, 200_000)
@@ -3420,6 +3433,8 @@ mod tests {
     fn import_review_bridge_admits_only_exact_bounded_review_operations() {
         let address = serde_json::json!({"root":"C:/Research/synthetic", "previewId":"01900000-0000-7000-8000-000000000001"});
         let cases = [
+            ("status", address.clone()),
+            ("cancel", address.clone()),
             ("begin-review", address.clone()),
             ("review", address.clone()),
             (
@@ -3488,6 +3503,20 @@ mod tests {
                 &body.to_string()
             ));
         }
+        for after in [serde_json::Value::Null, address["previewId"].clone()] {
+            assert!(super::validate_import_review_request(
+                "/projects/imports/list",
+                &serde_json::json!({"root":address["root"],"after":after,"limit":25}).to_string()
+            ));
+        }
+        assert!(!super::validate_import_review_request(
+            "/projects/imports/list",
+            &serde_json::json!({"root":address["root"],"after":null,"limit":26}).to_string()
+        ));
+        assert!(!super::validate_import_review_request(
+            "/projects/imports/list",
+            &serde_json::json!({"root":address["root"],"after":"bogus","limit":25}).to_string()
+        ));
     }
     use super::{
         CapabilityToken, CoreApiRequest, RuntimeState, RuntimeSupervisor, SupervisorInner,

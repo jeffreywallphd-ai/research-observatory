@@ -119,6 +119,7 @@ IMPLEMENTED_PRODUCT_PAGE_CONTRACTS = frozenset(
         "audit-lineage.html",
         "help-onboarding.html",
         "index.html",
+        "ingestion-reconciliation.html",
         "intent-contract.html",
         "model-center.html",
         "new-project.html",

@@ -60,6 +60,15 @@ main > .workflow-context { margin-block: 0 var(--space-5); }
 .command-results span { color: var(--text-muted); }
 .status-grid, .project-home-grid, .intent-two-column, .lineage-summary-grid { grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr)); }
 .status-grid [data-local-service-boundary] { min-width: 0; }
+.import-layout { grid-template-columns: minmax(14rem, 1fr) minmax(0, 3fr); }
+.import-options, .import-comparison { grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
+.import-batches { margin: 0; padding: 0; list-style: none; }
+.import-batches button { width: 100%; justify-content: space-between; text-align: start; }
+.import-batches button[aria-pressed="true"] { border-color: var(--brand-600); background: var(--brand-50); }
+.import-rights { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--space-2); margin: 0; }
+.import-rights dd { margin: 0; color: var(--text-muted); }
+.import-field-value { margin-inline-start: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 68rem) { .import-layout { grid-template-columns: minmax(0, 1fr); } }
 .project-home-stale-list { --ro-stack-gap: var(--space-3); margin: 0; padding-inline-start: var(--space-5); }
 .project-home-revisit-list { --ro-stack-gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
 .project-home-revisit-list li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }

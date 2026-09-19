@@ -19,7 +19,7 @@ from pathlib import Path
 from pydantic import TypeAdapter
 
 from .domain_contracts import is_uuid_v7
-from .import_review import ImportReview
+from .import_review import ImportPreviewPage, ImportReview, bounded, preview_item
 from .ingestion.preview_activity import ImportPreviewActivity
 from .ingestion.preview_workflow import (
     ACTIVITY,
@@ -180,6 +180,26 @@ class ImportPreviewService:
         command = PreviewCreate.model_validate(command)
         trusted = command.model_copy(update={"actor": self.actor(command.actor.trace_id)})
         return self._action(root, lambda binding: binding.adapters.previews.create(trusted))
+
+    def previews_page(self, root: str, *, after: str | None, limit: int) -> ImportPreviewPage:
+        def page(binding: _Binding):
+            states = binding.adapters.previews.previews_page(after=after, limit=limit)
+            # The scan cursor is only an opaque preview identity. Names/content
+            # of inspection-denied previews never cross this boundary.
+            items = [
+                preview_item(
+                    state, binding.adapters.queue.find_idempotency(fingerprint(["import-preview/1", state.preview_id]))
+                )
+                for state in states
+                if state.rights.permits("inspect")
+            ]
+            return bounded(
+                ImportPreviewPage(
+                    items=items, next_after=states[-1].preview_id if states else after, complete=len(states) < limit
+                )
+            )
+
+        return self._action(root, page)
 
     def append_chunk(self, root: str, preview_id: str, *, ordinal: int, data: bytes) -> None:
         def append(binding: _Binding) -> None:

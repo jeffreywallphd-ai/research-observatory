@@ -10,7 +10,7 @@ from __future__ import annotations
 import csv
 import io
 import json
-from typing import Annotated, Literal, Self
+from typing import Annotated, Literal, Self, cast
 
 from pydantic import Field, model_validator
 
@@ -32,6 +32,7 @@ from .ingestion.import_drafts import (
     spreadsheet_cell,
 )
 from .ingestion.preview_records import WarningCode
+from .ingestion.reference_imports import import_field_target
 from .ports.import_previews import (
     ImportPreviewRepository,
     PreviewActor,
@@ -39,7 +40,9 @@ from .ports.import_previews import (
     PreviewDraftChange,
     PreviewDraftRecord,
     PreviewProblem,
+    PreviewState,
 )
+from .ports.workflow_executor import WorkflowJobRecord, WorkflowJobState
 
 # Includes the JSON envelope; leave headroom for the native 1 MiB HTTP limit.
 RESPONSE_BYTES = 900_000
@@ -163,6 +166,52 @@ class DiagnosticPage(DraftValue):
     csv: Annotated[str, Field(max_length=RESPONSE_BYTES)]
     next_after: Cursor
     complete: bool
+
+
+class PreviewProgress(DraftValue):
+    preview_id: Identity
+    state: Literal[
+        "created",
+        "source-sealed",
+        "parse-started",
+        "parse-completed",
+        "draft-revised",
+        "cancelled",
+        "failed",
+        "security-interrupted",
+    ]
+    byte_length: Annotated[int, Field(strict=True, ge=0, le=268435456)]
+    chunk_count: Annotated[int, Field(strict=True, ge=0, le=2048)]
+    job_id: Identity | None
+    job_state: WorkflowJobState | None
+
+
+class ImportPreviewItem(PreviewProgress):
+    source_name: Annotated[str, Field(min_length=1, max_length=255)]
+    format_name: Literal["ris", "bibtex", "csl-json", "doi-list", "csv"]
+    encoding: Literal["utf-8", "cp1252"]
+
+
+class ImportPreviewPage(DraftValue):
+    items: Annotated[list[ImportPreviewItem], Field(max_length=25)]
+    next_after: Identity | None
+    complete: bool
+
+
+def preview_item(state: PreviewState, job: WorkflowJobRecord | None) -> ImportPreviewItem:
+    if not state.rights.permits("inspect"):
+        raise PreviewProblem("preview-rights-denied")
+    return ImportPreviewItem(
+        preview_id=state.preview_id,
+        state=state.state,
+        source_name=state.source_name,
+        format_name=state.format_name,
+        encoding=state.encoding,
+        byte_length=state.byte_length,
+        chunk_count=state.chunk_count,
+        job_id=job.job_id if job else None,
+        job_state=job.state if job else None,
+    )
 
 
 def encoded_size(value: DraftValue) -> int:
@@ -298,7 +347,11 @@ class ImportReview:
         column_targets = {}
         for index, raw in enumerate(row.record.fields):
             occurrence = occurrences.get(raw.name, 0)
-            column_targets[index] = targets.get((raw.name, occurrence))
+            column_targets[index] = (
+                cast(MappedName | None, import_field_target(raw.name))
+                if draft.authority.mapping.mode == "automatic"
+                else targets.get((raw.name, occurrence))
+            )
             occurrences[raw.name] = occurrence + 1
         result = ReviewDetail(
             revision=revision,

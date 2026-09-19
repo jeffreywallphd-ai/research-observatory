@@ -163,6 +163,7 @@
     "tests/contracts/test_model_registry_contracts.py",
     "tests/contracts/test_import_review_contract.py",
     "tests/desktop/test_model_center_interactions.py",
+    "tests/desktop/test_import_interactions.py",
     "tests/service/test_model_registry_repository.py",
     "tests/service/test_model_registry_service.py",
     "tests/foundation/test_adr_check.py",
