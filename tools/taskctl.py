@@ -5595,6 +5595,7 @@ def wave_resume_record_errors(
         errors.append(f"{wave_id}: Wave resume record IDs are duplicated, gapped, reordered, or cross-Wave")
     commits: list[str] = []
     previous_time: dt.datetime | None = None
+    latest_worktree = None
     for record in records:
         if not isinstance(record, dict):
             errors.append(f"{wave_id}: Wave resume record is malformed")
@@ -5640,11 +5641,18 @@ def wave_resume_record_errors(
             continue
         if canonical_json_sha256(prior) != record.get("prior_campaign_sha256"):
             errors.append(f"{record_id}: prior PAUSED campaign hash is stale or rewritten")
+        # A historical '.' names its authenticated predecessor's checkout, not
+        # the checkout now replaying the ledger. Live execution checks remain
+        # separate and still require the actual canonical repository.
+        prior_binding = prior.get("worktree")
+        effective_binding = prior_binding if record.get("worktree") == "." else record.get("worktree")
+        if record is records[-1] and canonical_json_sha256(prior) == record.get("prior_campaign_sha256"):
+            latest_worktree = effective_binding
         for field in ("branch", "profile", "platform"):
             if record.get(field) != prior.get(field):
                 errors.append(f"{record_id}: {field} differs from the bound PAUSED campaign")
         try:
-            if not worktree_bindings_equal(record.get("worktree"), prior.get("worktree"), repo):
+            if not worktree_bindings_equal(effective_binding, prior_binding, repo):
                 errors.append(f"{record_id}: worktree differs from the bound PAUSED campaign")
         except OSError:
             errors.append(f"{record_id}: worktree cannot be resolved")
@@ -5662,7 +5670,7 @@ def wave_resume_record_errors(
         projection = {
             "base_sha": latest.get("pre_resume_commit"),
             "branch": latest.get("branch"),
-            "worktree": latest.get("worktree"),
+            "worktree": latest_worktree if latest_worktree is not None else latest.get("worktree"),
             "profile": latest.get("profile"),
             "platform": latest.get("platform"),
             "owner": latest.get("actor"),

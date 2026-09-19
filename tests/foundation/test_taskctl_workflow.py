@@ -7587,6 +7587,22 @@ class CorrectiveTaskWorkflowTests(unittest.TestCase):
                 self.assertEqual(prior_binding, wave["campaign"]["worktree"])
                 self.assertEqual(".", wave["campaign"]["resume_records"][-1]["worktree"])
                 self.assertEqual([], wave_resume_record_errors(data, wave["id"], wave["campaign"], root))
+                # Replaying committed history must not reinterpret a legacy path
+                # against the new checkout. Live execution remains bound above.
+                with tempfile.TemporaryDirectory(prefix="ro-resume-clone-") as clone_directory:
+                    clone = Path(clone_directory) / "checkout"
+                    git("clone", "--local", str(root), str(clone))
+                    self.assertEqual([], wave_resume_record_errors(data, wave["id"], wave["campaign"], clone))
+                    for target in ("projection", "record", "hash"):
+                        changed = copy.deepcopy(wave["campaign"])
+                        if target == "projection":
+                            changed["worktree"] = str(clone / "unrelated")
+                        elif target == "record":
+                            changed["resume_records"][-1]["worktree"] = str(clone / "unrelated")
+                        else:
+                            changed["resume_records"][-1]["prior_campaign_sha256"] = "0" * 64
+                        with self.subTest(prior_binding=prior_binding == ".", target=target):
+                            self.assertTrue(wave_resume_record_errors(data, wave["id"], changed, clone))
 
 
 if __name__ == "__main__":
