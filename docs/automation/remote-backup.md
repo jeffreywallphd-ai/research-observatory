@@ -33,11 +33,16 @@ automatically dismissed merely because a value resembles a hash or test token.
 Editing a legacy file requires either removing its embedded local paths where
 governance permits, or an exact independently reviewed retention receipt below.
 
-The protected untracked witness must not be read, staged, or backed up. Filename
-inventory checks precede content reads. `.local` and scratch exclusions stay in
-`.gitignore`; ignore rules do not remove existing history. New raw reports should
-be written in ignored locations, with publishable evidence using relative or
-symbolic roots.
+The former `artifacts/evidence/W1.A04.B00.json` witness was inspected and archived
+locally under the owner's explicit 2026-09-19 disposition; see
+[the retained-history record](../../artifacts/evidence/W1.A04.B00.owner-disposition-01.md).
+It is not accepted task evidence and must not be staged, published, or restored
+to the active evidence directory for routine work. The protected-name hook
+remains unchanged. Any further inspection or disposition of the archived bytes
+requires an explicit task need or owner instruction. Filename inventory checks
+precede content reads. `.local` and scratch exclusions stay in `.gitignore`;
+ignore rules do not remove existing history. New raw reports should be written
+in ignored locations, with publishable evidence using relative or symbolic roots.
 
 Local hook installation pins the checker, policy, and scanner configuration in
 ignored local state. Updating them requires a deliberate reviewed reinstall;
