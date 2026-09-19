@@ -310,10 +310,15 @@ impl ApplicationLockManager {
     }
 
     pub(crate) fn bind_security_latch(&self, latch: Arc<AtomicU64>) {
-        self.shared
-            .lock()
-            .expect("lock mutex poisoned")
-            .security_latch = Some(latch);
+        let mut inner = self.shared.lock().expect("lock mutex poisoned");
+        // Startup lock is established before runtime composition. Carry that
+        // already-admitted boundary into the new session before it is armed.
+        if inner.state == ApplicationLockState::Locked
+            || inner.configuration_state == LockConfigurationState::Invalid
+        {
+            latch.fetch_add(1, Ordering::AcqRel);
+        }
+        inner.security_latch = Some(latch);
     }
 
     pub(crate) fn is_terminal(&self) -> bool {
@@ -1480,6 +1485,30 @@ mod tests {
                 )
                 .is_err()
         );
+    }
+
+    #[test]
+    fn initial_restart_lock_rotates_old_epoch_but_unlocked_restart_retains_it() {
+        use crate::workflow_session::WorkflowSessionAuthority;
+        for (mode, timeout, locked) in [
+            (SignInMode::WindowsPassword, 5, true),
+            (SignInMode::None, 0, false),
+        ] {
+            let path = root("initial-workflow-lock");
+            let previous = WorkflowSessionAuthority::new(&path);
+            let old_epoch = previous.prepare_launch().unwrap().resume_epoch;
+            previous.seal_terminal().unwrap();
+            let manager = manager_at(&path, mode, timeout);
+            assert_eq!(
+                manager.status().state == ApplicationLockState::Locked,
+                locked
+            );
+            let next = WorkflowSessionAuthority::new(&path);
+            manager.bind_security_latch(next.security_latch());
+            let new_epoch = next.prepare_launch().unwrap().resume_epoch;
+            assert_eq!(old_epoch != new_epoch, locked);
+            fs::remove_dir_all(path).unwrap();
+        }
     }
 
     #[test]

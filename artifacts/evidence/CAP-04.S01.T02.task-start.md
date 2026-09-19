@@ -66,3 +66,10 @@ Extend the current-rights row to every history jump: restoring an older draft
 must not broaden any current action permission implicitly. Add denial → undo →
 raw/historical read regression before remediation. Preserve the adverse review;
 do not integrate its candidate until this boundary passes independent re-review.
+
+Checkpoint-05 review at `4e328d5f41c63c8abae9270168407cc52e0d0ebb` found
+that initial protected restart-lock state was not latched when native recovery
+authority was bound. Extend recovery proof to initial state as well as later
+events: Ordinary marker → initialized ApplicationRestart lock → bound latch
+must rotate the epoch, while an unlocked ordinary restart may retain it. Preserve
+the adverse finding and re-review this boundary before integration.
