@@ -28,9 +28,9 @@
     "schemaVersion": {"const": "1.0"},
     "documentType": {"const": "research-observatory-sqlite-profile"},
     "profileId": {"const": "sqlite-wal-v1"},
-    "databaseSchemaVersion": {"const": 10},
+    "databaseSchemaVersion": {"const": 11},
     "applicationId": {"const": 1380926035},
-    "schemaFingerprintSha256": {"const": "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"},
+    "schemaFingerprintSha256": {"const": "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"},
     "minimumSqliteVersion": {"const": "3.37.0"},
     "identifierStorage": {
       "const": {
@@ -86,7 +86,16 @@
         "provenance_ledger_relations",
         "provenance_ledger_checkpoints",
         "provenance_legacy_bridges",
-        "settings"
+        "settings",
+        "import_previews",
+        "import_source_chunks",
+        "import_source_seals",
+        "import_parse_attempts",
+        "import_parse_records",
+        "import_parse_completions",
+        "import_draft_revisions",
+        "import_record_decisions",
+        "import_preview_events"
       ]
     },
     "mutableStateTables": {
@@ -163,7 +172,16 @@
         "provenance_ledger_checkpoints",
         "provenance_legacy_bridges",
         "settings",
-        "outbox_events"
+        "outbox_events",
+        "import_previews",
+        "import_source_chunks",
+        "import_source_seals",
+        "import_parse_attempts",
+        "import_parse_records",
+        "import_parse_completions",
+        "import_draft_revisions",
+        "import_record_decisions",
+        "import_preview_events"
       ]
     }
   }

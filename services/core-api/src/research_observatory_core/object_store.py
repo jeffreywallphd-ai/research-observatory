@@ -1217,7 +1217,10 @@ def _inventory(state: _StoreState) -> _Inventory:
                        object.storage_state, object.created_at, object.verified_at,
                        (SELECT count(*) FROM documents AS document
                          WHERE document.project_id = object.project_id
-                           AND document.object_sha256 = object.object_sha256) AS reference_count,
+                           AND document.object_sha256 = object.object_sha256)
+                       + (SELECT count(*) FROM import_source_chunks AS chunk
+                           WHERE chunk.project_id = object.project_id
+                             AND chunk.object_sha256 = object.object_sha256) AS reference_count,
                        object.envelope_version, object.key_version, object.ciphertext_byte_length,
                        object.creation_source
                   FROM object_records AS object
@@ -1373,7 +1376,10 @@ _METADATA_SQL = """
            object.storage_state, object.created_at, object.verified_at,
            (SELECT count(*) FROM documents AS document
              WHERE document.project_id = object.project_id
-               AND document.object_sha256 = object.object_sha256) AS reference_count,
+               AND document.object_sha256 = object.object_sha256)
+           + (SELECT count(*) FROM import_source_chunks AS chunk
+               WHERE chunk.project_id = object.project_id
+                 AND chunk.object_sha256 = object.object_sha256) AS reference_count,
            object.envelope_version, object.key_version, object.ciphertext_byte_length,
            object.creation_source
     FROM object_records AS object

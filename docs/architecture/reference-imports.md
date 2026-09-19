@@ -109,11 +109,18 @@ plaintext staging, filesystem capability or import-only database is introduced.
 The `reference-import` purpose is local-read only; unknown rights do not authorize
 intake or inspection, and store/inspect permission grants no other action.
 
-These helpers are not yet a complete production preview. The service/repository
-must bind contiguous chunk membership and total length atomically, prevent deletion
-of referenced/shared chunks, verify whole-source EOF, authorize current project
-and rights on every action, and persist immutable draft revisions. No canonical
-source records are created here. The parser-only diagnostic CSV intentionally
+The protected version-11 repository now binds contiguous chunk membership and
+total length atomically, protects shared references from deletion, and retains
+bounded typed record metadata by durable job attempt. Raw binary bytes remain
+only in encrypted chunk objects, not JSON. A parser-complete attempt binds one
+observed workflow receipt with source-manifest dependency authority; pages remain
+unavailable until the exact successful attempt accepts that receipt. Ordinary
+expired-attempt recovery can reparse without exposing earlier provisional rows;
+security cancellation closes access. Source records are not created by previews.
+
+These boundaries are not yet a complete production wizard. Native/service project
+and lock authorization, worker composition, immutable draft editing and UI wiring
+remain CAP-04.S01.T02 work. The parser-only diagnostic CSV intentionally
 omits content, source names, hashes and paths; the final draft report must also
 include mapping warnings and exclusion decisions. Content-bearing reports need
 current export authority and spreadsheet-formula neutralization.

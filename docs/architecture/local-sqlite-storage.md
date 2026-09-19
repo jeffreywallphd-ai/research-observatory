@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-10 authority
+## Current version-11 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=10`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=11`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -78,6 +78,9 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `dependency_impact_items` | immutable ordered impact decisions and bounded path samples for one exact run preview; each sample binds its full path length, truncation state, and terminal output |
 | `dependency_stale_causes` | append-only project/output/change/policy stale authority, including bounded-path length/truncation authority; repeated propagation cannot erase or replace an earlier cause |
 | `dependency_impact_audit_events` | content-free append-only run-start, checkpoint, cancellation, and completion facts |
+| `import_previews`, `import_source_chunks`, `import_source_seals` | immutable local source identity and ordered encrypted chunk membership; seals close intake, not certify parser completion |
+| `import_parse_attempts`, `import_parse_records`, `import_parse_completions` | bounded provisional IR metadata by exact durable job/attempt; source bytes remain in encrypted objects |
+| `import_draft_revisions`, `import_record_decisions`, `import_preview_events` | immutable mapping/rights/options revisions, attributable record decisions and content-free action history; no canonical source import |
 | `provenance_events` | append-only typed event metadata, stable canonical/UUIDv7 actor authority, and record digest |
 | `settings` | append-only versioned, exactly-one-of typed scalar project settings |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
@@ -102,14 +105,14 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v9
-profiles to current schema v10. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v10
+profiles to current schema v11. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-10 database is detected
+verified backup remains available. A current version-11 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object

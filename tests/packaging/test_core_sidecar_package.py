@@ -64,6 +64,9 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.migrations.versions.v0008_workflow_executor",
                     "research_observatory_core.migrations.versions.v0009_material_dependencies",
                     "research_observatory_core.migrations.versions.v0010_dependency_impacts",
+                    "research_observatory_core.migrations.versions.v0011_import_previews",
+                    "research_observatory_core.import_preview_repository",
+                    "research_observatory_core.ports.import_previews",
                     "research_observatory_core.object_store",
                     "research_observatory_core.ports.credential_store",
                     "research_observatory_core.ports.database_keys",
@@ -103,6 +106,12 @@ class CoreSidecarPackageTests(unittest.TestCase):
             "research_observatory_core.migrations.versions.v0010_dependency_impacts",
             contract["requiredModules"],
         )
+        for module in (
+            "research_observatory_core.migrations.versions.v0011_import_previews",
+            "research_observatory_core.import_preview_repository",
+            "research_observatory_core.ports.import_previews",
+        ):
+            self.assertIn(module, contract["requiredModules"])
         self.assertIn("research_observatory_core.research_intent_contracts", contract["requiredModules"])
         self.assertIn("research_observatory_core.selective_recalculation", contract["requiredModules"])
         self.assertIn("research_observatory_core.recalculation_contracts", contract["requiredModules"])

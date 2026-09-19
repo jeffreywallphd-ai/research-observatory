@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 10,
+  "databaseSchemaVersion": 11,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187",
+  "schemaFingerprintSha256": "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -55,7 +55,16 @@
     "provenance_ledger_relations",
     "provenance_ledger_checkpoints",
     "provenance_legacy_bridges",
-    "settings"
+    "settings",
+    "import_previews",
+    "import_source_chunks",
+    "import_source_seals",
+    "import_parse_attempts",
+    "import_parse_records",
+    "import_parse_completions",
+    "import_draft_revisions",
+    "import_record_decisions",
+    "import_preview_events"
   ],
   "mutableStateTables": [
     "object_records",
@@ -122,6 +131,15 @@
     "provenance_ledger_checkpoints",
     "provenance_legacy_bridges",
     "settings",
-    "outbox_events"
+    "outbox_events",
+    "import_previews",
+    "import_source_chunks",
+    "import_source_seals",
+    "import_parse_attempts",
+    "import_parse_records",
+    "import_parse_completions",
+    "import_draft_revisions",
+    "import_record_decisions",
+    "import_preview_events"
   ]
 }

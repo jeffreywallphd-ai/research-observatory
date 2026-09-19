@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-10 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-11 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -11,7 +11,7 @@ The profile is not an API for issuing SQL. Core owns the SQLite adapter, the
 desktop never opens the database, and downstream modules consume repository
 ports introduced by the storage slice. Ordinary connections deny schema DDL.
 The separately constructed T02 Alembic authority is never returned to ordinary
-callers: it checkpoints and validates exact supported version-1 through version-5 fixtures, reserves the
+callers: it checkpoints and validates exact supported version-1 through version-10 fixtures, reserves the
 writer, creates and verifies an online backup, and only then replaces the
 affected controls in one transaction. `sqlite-migration-recovery.schema.json`
 binds the immutable backup manifest to exact backup bytes, the reviewed revision,
@@ -53,6 +53,16 @@ stored revision identities. The v9-to-v10 migration creates no run, decision,
 or stale state for historical
 outputs, so missing recalculation knowledge remains explicit rather than
 invented.
+
+Version 11 adds protected import-preview identity, ordered encrypted-source chunk
+references and seals, durable parse-attempt records/completion, immutable draft
+revisions/decisions, and content-free audit events. Sealing closes chunk membership;
+parse completion closes record membership. Draft revision predecessors cannot be
+NULL after revision one. Preview references participate in object deletion and
+storage accounting, including cancelled previews; cancellation is not deletion
+authority. Migration creates no source observations, drafts or scholarly records.
+An intake seal binds declared source identity; actual parser EOF and the exact
+successful durable attempt remain prerequisites for exposing a complete preview.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and

@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 10
+DATABASE_SCHEMA_VERSION = 11
+DEPENDENCY_IMPACT_DATABASE_SCHEMA_VERSION = 10
 MATERIAL_DEPENDENCY_DATABASE_SCHEMA_VERSION = 9
 WORKFLOW_EXECUTOR_DATABASE_SCHEMA_VERSION = 8
 PROVENANCE_LEDGER_DATABASE_SCHEMA_VERSION = 7
@@ -64,6 +65,18 @@ SQLCIPHER_PROFILE = "sqlcipher-4.12-community-wal-v1"
 DEVELOPMENT_PLAINTEXT_PROFILE = "development-plaintext-fixture"
 _SQLCIPHER_HEADER = b"SQLite format 3\x00"
 _DATABASE_ERRORS = (sqlite3.Error, sqlcipher.Error)
+
+IMPORT_PREVIEW_TABLES = (
+    "import_previews",
+    "import_source_chunks",
+    "import_source_seals",
+    "import_parse_attempts",
+    "import_parse_records",
+    "import_parse_completions",
+    "import_draft_revisions",
+    "import_record_decisions",
+    "import_preview_events",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -103,6 +116,7 @@ EXPECTED_TABLES = (
     "provenance_legacy_bridges",
     "settings",
     "outbox_events",
+    *IMPORT_PREVIEW_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -136,6 +150,7 @@ IMMUTABLE_ROW_TABLES = (
     "provenance_ledger_checkpoints",
     "provenance_legacy_bridges",
     "settings",
+    *IMPORT_PREVIEW_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -157,6 +172,11 @@ EXPECTED_TRIGGERS = tuple(
             "workflow_attempt_artifacts_identity_immutable",
             "workflow_attempt_artifacts_disposition_transition",
             "workflow_checkpoint_artifact_authority",
+            "import_chunk_membership",
+            "import_seal_membership",
+            "import_attempt_binding",
+            "import_record_membership",
+            "import_completion_membership",
         ]
     )
 )
@@ -185,6 +205,8 @@ EXPECTED_INDEXES = (
     "dependency_impact_item_sequence",
     "dependency_stale_output",
     "dependency_impact_audit_sequence",
+    "import_chunk_object",
+    "import_decision_record",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -201,7 +223,8 @@ ACTOR_IDENTITY_PROFILE_SHA256 = "ab8e57caf36e9219a99085648850cd07e2b286feb5e4834
 PROVENANCE_LEDGER_SCHEMA_SHA256 = "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
 WORKFLOW_EXECUTOR_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
 MATERIAL_DEPENDENCY_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
-EXPECTED_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
+DEPENDENCY_IMPACT_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
+EXPECTED_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -259,7 +282,8 @@ _PROFILE_SHA256 = hashlib.sha256(
 PROVENANCE_LEDGER_PROFILE_SHA256 = "aa59d6f2858f41b7732c91947566fffaf5cd146e1143277deccf2707ceb751e0"
 WORKFLOW_EXECUTOR_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f3583b8f1ce42db8ecba7"
 MATERIAL_DEPENDENCY_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76"
-EXPECTED_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
+DEPENDENCY_IMPACT_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
+EXPECTED_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9fd6d98595a7888c91"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -977,6 +1001,11 @@ SCHEMA_METADATA_V9_DDL = SCHEMA_METADATA_V8_DDL.replace(
 SCHEMA_METADATA_V10_DDL = SCHEMA_METADATA_V9_DDL.replace(
     "schema_version INTEGER NOT NULL CHECK (schema_version = 9)",
     "schema_version INTEGER NOT NULL CHECK (schema_version = 10)",
+)
+
+SCHEMA_METADATA_V11_DDL = SCHEMA_METADATA_V10_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 10)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 11)",
 )
 
 PROVENANCE_LEDGER_DDL = (
@@ -1913,13 +1942,236 @@ DEPENDENCY_IMPACT_DDL = (
     "CREATE INDEX dependency_impact_audit_sequence ON dependency_impact_audit_events (project_id, run_id, sequence)",
 )
 
+IMPORT_PREVIEW_DDL = (
+    f"""
+        CREATE TABLE import_previews (
+            preview_id TEXT NOT NULL CHECK ({_uuid_check("preview_id", "7")}),
+            project_id TEXT NOT NULL,
+            source_name TEXT NOT NULL CHECK (length(source_name) BETWEEN 1 AND 255
+                AND instr(source_name, '/') = 0 AND instr(source_name, char(92)) = 0
+                AND instr(source_name, ':') = 0 AND source_name NOT IN ('.', '..')),
+            format_name TEXT NOT NULL CHECK (format_name IN ('ris', 'bibtex', 'csl-json', 'doi-list', 'csv')),
+            encoding TEXT NOT NULL CHECK (encoding IN ('utf-8', 'cp1252')),
+            initial_rights_json TEXT NOT NULL CHECK (length(initial_rights_json) BETWEEN 2 AND 4096),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (length(trace_id) = 32 AND trace_id NOT GLOB '*[^0-9a-f]*'),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            PRIMARY KEY (preview_id, project_id),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE import_source_chunks (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 2048),
+            object_sha256 TEXT NOT NULL,
+            byte_length INTEGER NOT NULL CHECK (byte_length BETWEEN 1 AND 131072),
+            PRIMARY KEY (preview_id, project_id, ordinal),
+            FOREIGN KEY (preview_id, project_id) REFERENCES import_previews (preview_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (object_sha256, project_id) REFERENCES object_records (object_sha256, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_source_seals (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            source_sha256 TEXT NOT NULL CHECK (length(source_sha256) = 64
+                AND source_sha256 NOT GLOB '*[^0-9a-f]*'),
+            manifest_sha256 TEXT NOT NULL CHECK (length(manifest_sha256) = 64
+                AND manifest_sha256 NOT GLOB '*[^0-9a-f]*'),
+            byte_length INTEGER NOT NULL CHECK (byte_length BETWEEN 0 AND 268435456),
+            chunk_count INTEGER NOT NULL CHECK (chunk_count BETWEEN 0 AND 2048),
+            sealed_at TEXT NOT NULL CHECK ({_timestamp_check("sealed_at")}),
+            PRIMARY KEY (preview_id, project_id),
+            FOREIGN KEY (preview_id, project_id) REFERENCES import_previews (preview_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_parse_attempts (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            attempt_id TEXT NOT NULL CHECK ({_uuid_check("attempt_id", "7")}),
+            job_id TEXT NOT NULL CHECK ({_uuid_check("job_id", "7")}),
+            parser_version TEXT NOT NULL CHECK (parser_version = 'local-reference-imports/1.0.0'),
+            started_at TEXT NOT NULL CHECK ({_timestamp_check("started_at")}),
+            PRIMARY KEY (preview_id, project_id, attempt_id),
+            UNIQUE (attempt_id),
+            FOREIGN KEY (preview_id, project_id) REFERENCES import_source_seals (preview_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE import_parse_records (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            attempt_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 200000),
+            record_key TEXT NOT NULL CHECK (length(record_key) = 64 AND record_key NOT GLOB '*[^0-9a-f]*'),
+            record_json TEXT NOT NULL CHECK (length(record_json) BETWEEN 2 AND 8388608),
+            PRIMARY KEY (preview_id, project_id, attempt_id, ordinal),
+            UNIQUE (preview_id, project_id, attempt_id, ordinal, record_key),
+            FOREIGN KEY (preview_id, project_id, attempt_id)
+                REFERENCES import_parse_attempts (preview_id, project_id, attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_parse_completions (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            attempt_id TEXT NOT NULL,
+            receipt_revision_id TEXT NOT NULL CHECK ({_uuid_check("receipt_revision_id", "7")}),
+            record_count INTEGER NOT NULL CHECK (record_count BETWEEN 0 AND 200000),
+            source_sha256 TEXT NOT NULL CHECK (length(source_sha256) = 64
+                AND source_sha256 NOT GLOB '*[^0-9a-f]*'),
+            completed_at TEXT NOT NULL CHECK ({_timestamp_check("completed_at")}),
+            PRIMARY KEY (preview_id, project_id, attempt_id),
+            UNIQUE (project_id, receipt_revision_id),
+            FOREIGN KEY (receipt_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, attempt_id)
+                REFERENCES import_parse_attempts (preview_id, project_id, attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_draft_revisions (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            revision INTEGER NOT NULL CHECK (revision BETWEEN 1 AND 2147483647),
+            predecessor_revision INTEGER,
+            attempt_id TEXT NOT NULL,
+            mapping_json TEXT NOT NULL CHECK (length(mapping_json) BETWEEN 2 AND 1048576),
+            rights_json TEXT NOT NULL CHECK (length(rights_json) BETWEEN 2 AND 4096),
+            options_json TEXT NOT NULL CHECK (length(options_json) BETWEEN 2 AND 4096),
+            undo_revision INTEGER CHECK (undo_revision IS NULL OR (undo_revision >= 1 AND undo_revision < revision)),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (length(trace_id) = 32 AND trace_id NOT GLOB '*[^0-9a-f]*'),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            PRIMARY KEY (preview_id, project_id, revision),
+            UNIQUE (preview_id, project_id, revision, attempt_id),
+            CHECK ((revision = 1 AND predecessor_revision IS NULL)
+                OR (revision > 1 AND predecessor_revision IS NOT NULL AND predecessor_revision = revision - 1)),
+            FOREIGN KEY (preview_id, project_id, predecessor_revision)
+                REFERENCES import_draft_revisions (preview_id, project_id, revision)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, undo_revision)
+                REFERENCES import_draft_revisions (preview_id, project_id, revision)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, attempt_id)
+                REFERENCES import_parse_completions (preview_id, project_id, attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE import_record_decisions (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            revision INTEGER NOT NULL,
+            attempt_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL,
+            record_key TEXT NOT NULL,
+            decision_json TEXT NOT NULL CHECK (length(decision_json) BETWEEN 2 AND 8388608),
+            PRIMARY KEY (preview_id, project_id, revision, ordinal),
+            FOREIGN KEY (preview_id, project_id, revision, attempt_id)
+                REFERENCES import_draft_revisions (preview_id, project_id, revision, attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, attempt_id, ordinal, record_key)
+                REFERENCES import_parse_records (preview_id, project_id, attempt_id, ordinal, record_key)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_preview_events (
+            preview_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            sequence INTEGER NOT NULL CHECK (sequence BETWEEN 1 AND 2147483647),
+            event_type TEXT NOT NULL CHECK (event_type IN (
+                'created', 'source-sealed', 'parse-started', 'parse-completed',
+                'draft-revised', 'cancelled', 'failed', 'security-interrupted'
+            )),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (length(trace_id) = 32 AND trace_id NOT GLOB '*[^0-9a-f]*'),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            PRIMARY KEY (preview_id, project_id, sequence),
+            FOREIGN KEY (preview_id, project_id) REFERENCES import_previews (preview_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in IMPORT_PREVIEW_TABLES
+        for statement in _immutable_triggers(table, "import preview history is append-only")
+    ),
+    """
+        CREATE TRIGGER import_chunk_membership BEFORE INSERT ON import_source_chunks
+        WHEN EXISTS (SELECT 1 FROM import_source_seals
+                      WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id)
+          OR NEW.ordinal <> (SELECT COUNT(*) + 1 FROM import_source_chunks
+                              WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id)
+          OR EXISTS (SELECT 1 FROM import_source_chunks
+                      WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id AND byte_length <> 131072)
+          OR NOT EXISTS (SELECT 1 FROM object_records
+                          WHERE project_id=NEW.project_id AND object_sha256=NEW.object_sha256
+                            AND byte_length=NEW.byte_length AND storage_state='available'
+                            AND protection_profile='project-encrypted-v1' AND retention_class='project-lifetime')
+        BEGIN SELECT RAISE(ABORT, 'import chunk membership denied'); END
+    """,
+    """
+        CREATE TRIGGER import_seal_membership BEFORE INSERT ON import_source_seals
+        WHEN NEW.chunk_count <> (SELECT COUNT(*) FROM import_source_chunks
+                                  WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id)
+          OR NEW.byte_length <> (SELECT COALESCE(SUM(byte_length), 0) FROM import_source_chunks
+                                  WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id)
+        BEGIN SELECT RAISE(ABORT, 'import source seal denied'); END
+    """,
+    """
+        CREATE TRIGGER import_attempt_binding BEFORE INSERT ON import_parse_attempts
+        WHEN NOT EXISTS (
+            SELECT 1 FROM workflow_job_attempts a JOIN workflow_queue_jobs j ON j.job_id=a.job_id
+             WHERE a.attempt_id=NEW.attempt_id AND a.job_id=NEW.job_id
+               AND a.project_id=NEW.project_id AND j.project_id=NEW.project_id
+               AND j.current_attempt_id=a.attempt_id AND a.state='running' AND j.state='running'
+               AND j.cancellation_requested_at IS NULL
+        )
+        BEGIN SELECT RAISE(ABORT, 'import attempt binding denied'); END
+    """,
+    """
+        CREATE TRIGGER import_record_membership BEFORE INSERT ON import_parse_records
+        WHEN EXISTS (SELECT 1 FROM import_parse_completions WHERE preview_id=NEW.preview_id
+                      AND project_id=NEW.project_id AND attempt_id=NEW.attempt_id)
+          OR NEW.ordinal <> (SELECT COALESCE(MAX(ordinal), 0) + 1 FROM import_parse_records
+                              WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id
+                                AND attempt_id=NEW.attempt_id)
+        BEGIN SELECT RAISE(ABORT, 'import record membership denied'); END
+    """,
+    """
+        CREATE TRIGGER import_completion_membership BEFORE INSERT ON import_parse_completions
+        WHEN NEW.record_count <> (SELECT COUNT(*) FROM import_parse_records
+                                   WHERE preview_id=NEW.preview_id AND project_id=NEW.project_id
+                                     AND attempt_id=NEW.attempt_id)
+          OR NOT EXISTS (SELECT 1 FROM import_source_seals WHERE preview_id=NEW.preview_id
+                          AND project_id=NEW.project_id AND source_sha256=NEW.source_sha256)
+        BEGIN SELECT RAISE(ABORT, 'import completion membership denied'); END
+    """,
+    "CREATE INDEX import_chunk_object ON import_source_chunks (project_id, object_sha256)",
+    "CREATE INDEX import_decision_record ON import_record_decisions (preview_id, project_id, ordinal, revision)",
+)
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V10_DDL,
+    SCHEMA_METADATA_V11_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -1932,6 +2184,7 @@ _DDL_STATEMENTS = (
     *WORKFLOW_EXECUTOR_DDL,
     *MATERIAL_DEPENDENCY_DDL,
     *DEPENDENCY_IMPACT_DDL,
+    *IMPORT_PREVIEW_DDL,
 )
 
 
