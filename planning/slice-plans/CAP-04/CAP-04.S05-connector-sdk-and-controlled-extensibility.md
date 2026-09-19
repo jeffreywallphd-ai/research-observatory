@@ -8,7 +8,7 @@ capability_plan: planning/capability-plans/CAP-04.md
 planning_gate: capability-decision-complete
 slice_id: CAP-04.S05
 title: Connector SDK and controlled extensibility
-status: proposed
+status: approved
 wave: W2
 priority: P1
 deployment_profiles:
@@ -24,10 +24,10 @@ task_ids:
 - CAP-04.S05.T03
 ui_reference: RO-UI-ACADEMIC-MINIMAL-1.7
 approval:
-  status: pending
-  approved_by: null
-  approved_at: null
-  approved_commit: null
+  status: approved
+  approved_by: human:repository-owner
+  approved_at: '2026-09-19T16:55:50.446422+00:00'
+  approved_commit: c85a59f3a293f8e3f2eaf6454682c9a14b1efa55
 ---
 # CAP-04.S05 - Connector SDK and controlled extensibility
 > **Implementation gate — proposed W2 contribution.** Implementation requires the complete W2 packet approved at one immutable commit, its binding ADR/reference decisions resolved, and `python tools/planctl.py --repo . wave ready W2 --require-approved` passing. Then use the same W2 campaign and dependency-eligible taskctl claims; no capability-only approval or lease.

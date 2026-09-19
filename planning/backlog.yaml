@@ -1460,14 +1460,35 @@ waves:
   activation_gate: G1
   track: local-baseline
   approval:
-    status: PENDING
-    approved_by: null
-    approved_at: null
-    approved_commit: null
-    capability_ids: []
-    decision_ids: []
-    slice_ids: []
-    notes: null
+    status: APPROVED
+    approved_by: human:repository-owner
+    approved_at: '2026-09-19T16:55:50.446422+00:00'
+    approved_commit: c85a59f3a293f8e3f2eaf6454682c9a14b1efa55
+    capability_ids:
+    - CAP-04
+    - CAP-05
+    decision_ids:
+    - CAP-04-D01
+    - CAP-04-D02
+    - CAP-04-D03
+    - CAP-04-D04
+    - CAP-05-D01
+    - CAP-05-D02
+    - CAP-05-D03
+    slice_ids:
+    - CAP-04.S01
+    - CAP-04.S02
+    - CAP-04.S03
+    - CAP-04.S04
+    - CAP-04.S05
+    - CAP-05.S01
+    - CAP-05.S02
+    - CAP-05.S03
+    - CAP-05.S04
+    - CAP-05.S05
+    - CAP-05.S06
+    notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
+      remain recorded, not waived.
   campaign: null
   checkpoints: []
   completion:

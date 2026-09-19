@@ -51,7 +51,7 @@
   <div class="button-row"><button class="button" type="button" data-accept-recommendations>Restore recommended defaults</button><button class="button button-quiet" type="button" data-clear-decisions>Clear draft overrides</button><button class="button button-primary" type="button" data-export-feedback>Export decision-response JSON</button></div>
   <div class="feedback-message" data-feedback-message role="status"></div>
   <details><summary>Automation commands</summary><pre><code>python tools/planctl.py --repo . review CAP-05
-python tools/planctl.py --repo . wave approve W2 --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
+# W2 approval is immutable; later changes use an append-only Wave amendment.
 # Only for overrides or notes:
 python tools/planctl.py --repo . apply-feedback CAP-05 &lt;downloaded-json&gt;
 python tools/planctl.py --repo . approve CAP-05 --wave &lt;active-wave&gt; --feedback &lt;downloaded-json&gt; --by "&lt;reviewer&gt;" --commit &lt;git-sha&gt;
@@ -146,37 +146,37 @@ python tools/planctl.py --repo . ready CAP-05 --wave &lt;active-wave&gt; --requi
   <div class="slice-card-index">1</div>
   <div><span class="eyebrow">SLICE-rights-aware-document-acquisition</span><h3>Rights-aware document acquisition</h3>
   <p>3 tasks · W2 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-05.S02.html">
   <div class="slice-card-index">2</div>
   <div><span class="eyebrow">SLICE-structured-and-pdf-parsing-pipeline</span><h3>Structured and PDF parsing pipeline</h3>
   <p>3 tasks · W2 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-05.S03.html">
   <div class="slice-card-index">3</div>
   <div><span class="eyebrow">SLICE-immutable-document-revisions-and-source-anchors</span><h3>Immutable document revisions and source anchors</h3>
   <p>3 tasks · W2 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-05.S04.html">
   <div class="slice-card-index">4</div>
   <div><span class="eyebrow">SLICE-source-viewer-and-evidence-inspection-experience</span><h3>Source viewer and evidence inspection experience</h3>
   <p>3 tasks · W2 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-05.S05.html">
   <div class="slice-card-index">5</div>
   <div><span class="eyebrow">SLICE-references-citation-contexts-tables-and-figures</span><h3>References, citation contexts, tables, and figures</h3>
   <p>3 tasks · W2 · P1</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a>
 <a class="slice-card" href="CAP-05.S06.html">
   <div class="slice-card-index">6</div>
   <div><span class="eyebrow">SLICE-parsing-quality-correction-and-reprocessing</span><h3>Parsing quality, correction, and reprocessing</h3>
   <p>3 tasks · W2 · P0</p></div>
-  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-proposed">Proposed</span><span class="status status-not-started">Not Started</span></span>
+  <span class="status-stack" aria-label="Decision and completion status"><span class="status status-approved">Approved</span><span class="status status-not-started">Not Started</span></span>
 </a></div>
 <details class="plan-details"><summary>Read the full capability plan</summary><article class="plan-article"><pre class='markdown-fallback'>&gt; **W2 planning in progress.** G1&#x27;s limited transition is approved; this capability
 &gt; contribution is not. All three recommendations are selected for the proposed packet;
