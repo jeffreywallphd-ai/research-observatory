@@ -21,7 +21,7 @@ task_ids:
 - CAP-05.S01.T01
 - CAP-05.S01.T02
 - CAP-05.S01.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.6
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.7
 approval:
   status: pending
   approved_by: null
@@ -42,7 +42,7 @@ approval:
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-05.S01.T01`, `CAP-05.S01.T02`, `CAP-05.S01.T03` |
 | Slice dependencies | `CAP-04.S04.T02`, `CAP-02.S03.T03` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -171,14 +171,14 @@ The following durable types are recommended. Final field names belong in version
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
 - Attachment asks the researcher to confirm uncertain work/version association before commit.
 - Remote source selection displays provider, host, OA status, license, version, size/type when known, and policy outcome.
 - Failure states distinguish unavailable, access denied, entitlement needed, unsafe source, unsupported/password protected, corrupt, and retryable network failure.
 - Metadata records remain usable and show clear full-text status.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Apply OWASP-style file upload and SSRF controls; parse no active content during acquisition validation.
@@ -422,7 +422,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md), [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md), [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Safe acquisition URL/destination policy and MIME/magic validation library.

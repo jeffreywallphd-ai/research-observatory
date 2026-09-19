@@ -1,8 +1,11 @@
 # W2 Source Manager reference proposal
 
-**Proposed, not approved.** Candidate `RO-UI-ACADEMIC-MINIMAL-1.7` is an inert
-copy under [W2-reference-1.7](W2-reference-1.7/source-manager.html#connector-review).
-The active approved 1.6 package and all W1 approvals remain unchanged.
+**Owner approved; published as reference 1.7.** The exact reviewed proposal
+remains unchanged under [W2-reference-1.7](W2-reference-1.7/source-manager.html#connector-review).
+The [owner approval](../artifacts/evidence/W2.design-architecture-owner-approval-01.md)
+authorizes the [published reference](../design/ui-reference/source-manager.html#connector-review)
+and plan rebinding, not W2 execution. All W1 approvals and the preceding reference
+remain preserved in Git history.
 
 Purpose: close the independent UX finding for CAP-04.S05 without a new page,
 marketplace, styling system or control framework. All other 1.6 experience contracts
@@ -20,9 +23,9 @@ local trust from project consent, shows permission increases, preserves cancella
 and focus, and defines disable/quarantine without deleting scholarly evidence.
 No real publisher, credential, project or destination is used in the mock.
 
-Validate the proposed package and changed-page theme/reflow/keyboard states before
-requesting exact reference approval with the complete W2 packet. A proposed-status
-failure from the active-reference checker is expected and must not be relabeled
-as approved. Do not activate the reference, change product baselines or implement
-the experience before human approval. Active-reference conformance remains 1.6
-until the normal approved-reference publication step.
+The retained proposal snapshot deliberately retains its original Proposed metadata;
+it is evidence of the reviewed bytes, not the active approval record. Published
+reference 1.7 records the owner authority and preserves the approved design.
+Product baselines and implementation are not changed by this publication. The
+complete W2 packet still requires final validation, independent review and its
+single immutable execution approval.

@@ -1325,11 +1325,17 @@ REFERENCE_MANIFEST_KEYS = frozenset(
 
 
 def approval_record_errors(value: object, label: str, reference_id: str) -> list[str]:
+    from reference_design_approval import DESIGN_APPROVAL_AUTHORITY_KEYS, authority_shape_errors
+
     if not isinstance(value, dict):
         return [f"{label}: approval record must be an object"]
     errors: list[str] = []
     keys = set(value)
-    if keys not in {LEGACY_APPROVAL_KEYS, AUTHORITY_APPROVAL_KEYS}:
+    design_authority = (
+        isinstance(value.get("authority"), dict) and set(value["authority"]) == DESIGN_APPROVAL_AUTHORITY_KEYS
+    )
+    design_keys = AUTHORITY_APPROVAL_KEYS - {"deferred_surfaces"}
+    if keys not in {LEGACY_APPROVAL_KEYS, AUTHORITY_APPROVAL_KEYS} and not (design_authority and keys == design_keys):
         expected = AUTHORITY_APPROVAL_KEYS if keys & {"approval_kind", "authority"} else LEGACY_APPROVAL_KEYS
         errors.append(
             f"{label}: approval fields must be exact; missing={sorted(expected - keys)}, "
@@ -1366,10 +1372,10 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
                 or len(items) != len(set(items))
             ):
                 errors.append(f"{label}: scope.{field} must be unique nonempty strings")
-    deferred = value["deferred_surfaces"]
+    deferred = value.get("deferred_surfaces", [])
     if not isinstance(deferred, list) or any(not isinstance(item, str) or not item.strip() for item in deferred):
         errors.append(f"{label}: deferred_surfaces must be an array of nonempty strings")
-    if keys == AUTHORITY_APPROVAL_KEYS:
+    if keys == AUTHORITY_APPROVAL_KEYS or design_authority:
         authority = value["authority"]
         if value["approval_kind"] != "human" or not re.fullmatch(
             r"human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?", str(value["approved_by"])
@@ -1377,6 +1383,8 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
             errors.append(f"{label}: authority-bound approval must identify an explicit human approver")
         if not isinstance(authority, dict):
             errors.append(f"{label}: authority must be an object")
+        elif design_authority:
+            errors.extend(f"{label}: {error}" for error in authority_shape_errors(authority, reference_id))
         elif set(authority) == APPROVAL_AUTHORITY_KEYS:
             if (
                 not re.fullmatch(r"W[0-9]+\.A[0-9]{2}", str(authority["amendment_id"]))
@@ -1947,7 +1955,11 @@ def authority_bound_approval_errors(
     approval: dict[str, Any],
     approval_commit: str,
     approval_path: str,
+    *,
+    reference_revision: str | None = None,
 ) -> list[str]:
+    from reference_design_approval import DESIGN_APPROVAL_AUTHORITY_KEYS, design_authority_bound_approval_errors
+
     authority = approval.get("authority")
     if not isinstance(authority, dict):
         return []
@@ -1955,6 +1967,10 @@ def authority_bound_approval_errors(
         return amendment_authority_bound_approval_errors(repo, approval, approval_commit, approval_path)
     if set(authority) == WAVE_SLICE_APPROVAL_AUTHORITY_KEYS:
         return wave_slice_authority_bound_approval_errors(repo, approval, approval_commit, approval_path)
+    if set(authority) == DESIGN_APPROVAL_AUTHORITY_KEYS:
+        return design_authority_bound_approval_errors(
+            repo, approval, approval_commit, approval_path, reference_revision=reference_revision
+        )
     return []
 
 
@@ -1982,7 +1998,11 @@ def reference_package_at(
         if not approval_commit:
             errors.append(f"{revision}:{approval_path}: approval introduction commit cannot be found")
         else:
-            errors.extend(authority_bound_approval_errors(repo, approval, approval_commit, approval_path))
+            errors.extend(
+                authority_bound_approval_errors(
+                    repo, approval, approval_commit, approval_path, reference_revision=revision
+                )
+            )
     if not isinstance(manifest, dict) or set(manifest) != REFERENCE_MANIFEST_KEYS:
         errors.append(f"{revision}:{manifest_path}: manifest fields must be exact")
         return approval_bytes, None, errors

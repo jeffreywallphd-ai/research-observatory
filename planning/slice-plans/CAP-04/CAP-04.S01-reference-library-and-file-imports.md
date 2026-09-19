@@ -21,7 +21,7 @@ task_ids:
 - CAP-04.S01.T01
 - CAP-04.S01.T02
 - CAP-04.S01.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.6
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.7
 approval:
   status: pending
   approved_by: null
@@ -42,7 +42,7 @@ approval:
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-04.S01.T01`, `CAP-04.S01.T02`, `CAP-04.S01.T03` |
 | Slice dependencies | `CAP-03.S03.T02`, `CAP-02.S02.T03` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -181,13 +181,13 @@ does not depend on `CAP-04.S03` being implemented or produce duplicate source re
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
 - Preview summarizes records, errors, duplicates/candidates, missing identifiers, field coverage, and expected corpus changes.
 - Users can inspect raw and normalized values side by side and apply decisions to groups with undo before commit.
 - Commit requires a clear summary and leaves a navigable manifest.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Treat imported text as untrusted data, never instructions; neutralize formula injection in CSV previews/exports.
@@ -437,7 +437,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Import IR and source-key/idempotency algorithm.

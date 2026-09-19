@@ -152,6 +152,27 @@ different evidence, not interchangeable passes.
 
 ## Visual baseline changes
 
+### Pre-Wave reference publication
+
+Read this only when publishing a human-approved reference before its Wave plan
+is locked. Record the exact decision in `planning/reference-approvals/<reference-id>.json`
+using the `ui-reference-design-approval` shape; commit it before publication.
+Bind its introduction commit/hash in `APPROVAL.authority` using the three
+`design_approval_record*` fields. The shared validator checks human/date/scope,
+proposal commit/path/package hash, complete regular-file inventories, ancestry,
+unchanged record history, exact supersession and single-use authority.
+
+Publication changes only `status`, `approval_kind`, `approved_by`, `approved_at`,
+`approval_basis`, `authority` and the corresponding manifest status/approval hash.
+All other canonical proposal bytes stay unchanged. Only this authority shape may
+omit `deferred_surfaces`, and only when the authenticated proposal also omits it.
+Retained proposal-status prose does not override the published approval record.
+Run reference integrity plus committed authority/lineage checks and independent
+review; then update affected material plans before final Wave approval. This
+records the existing design gate, never approves execution or visual baselines.
+
+### Baseline publication
+
 `verification/baselines/desktop-ui.json` records the screenshot SHA-256 values
 and full renderer identity. `verification/desktop-ui-baseline.schema.json`
 strictly validates the current record and every reachable historical snapshot.

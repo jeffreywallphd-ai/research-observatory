@@ -62,7 +62,7 @@ decisions:
   - OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
   - Local imports with DOI lookup only; defer broad multi-provider discovery
   recommendation: OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
-  recommendation_basis: ADR-0027 proposes provider-specific private configuration and protected scientific replay without authentication/contact values; architecture acceptance remains pending.
+  recommendation_basis: Accepted ADR-0027 selects provider-specific private configuration and protected scientific replay without authentication/contact values; W2 execution approval remains pending.
   selected_option: OpenAlex, Crossref, Semantic Scholar and Unpaywall behind capability-described adapters with replay fixtures
   status: accepted
   required_adr: ADR-0027
@@ -95,7 +95,7 @@ decisions:
   - Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
   - First-party built-in connectors only; defer third-party execution and SDK delivery
   recommendation: Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
-  recommendation_basis: ADR-0028 proposes LPAC, no direct network or project/vault access, narrow brokers and explicit local publisher/project trust; real packaged isolation remains an implementation qualification obligation.
+  recommendation_basis: Accepted ADR-0028 selects LPAC, no direct network or project/vault access, narrow brokers and explicit local publisher/project trust; real packaged isolation remains an implementation qualification obligation.
   selected_option: Allowlisted connector SDK with sandboxed/bounded execution and contract fixtures
   status: accepted
   required_adr: ADR-0028
@@ -110,8 +110,8 @@ approval:
 
 > **W2 planning in progress.** G1's limited transition is approved; this capability
 > contribution is not. All four recommendations are selected for the proposed packet;
-> independent architecture/reference/packet review and exact human approval remain.
-> Decision selection is a planning choice, not ADR acceptance or execution authority.
+> ADR-0027/0028 and reference 1.7 have explicit owner approval. Final rebound-packet
+> review and complete W2 execution approval remain; no task is authorized yet.
 
 <div class="visual-flow"><span>Refresh W2 contributions</span><b>→</b><span>Resolve binding decisions</span><b>→</b><span>Approve complete W2 packet</span><b>→</b><span>Execute W2 campaign</span><b>→</b><span>Qualify G2 exit</span></div>
 
@@ -122,9 +122,9 @@ approval:
 | Capability | `CAP-04` — Scholarly ingestion, connectors, canonicalization, and corpus governance |
 | Objective | Build a source-transparent canonical corpus from local libraries, open scholarly APIs, and later licensed adapters while preserving rights, versions, and discovery paths. |
 | Execution mode | Contribution to the W2 campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` planning selections; proposed ADRs and reference still require review/approval |
+| Decision status | `COMPLETE` planning selections; architecture/reference approved, complete W2 approval pending |
 | Slice plans | `CAP-04.S01`, `CAP-04.S02`, `CAP-04.S03`, `CAP-04.S04`, `CAP-04.S05` |
-| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.6`; affected slice/page mappings require refresh; preserve inherited catalog bindings |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.7`; W2 slice/page mappings rebound; inherited catalog bindings preserved |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
 
 ## 0A. Initiation assessment and planning adaptation
@@ -134,8 +134,8 @@ Initial assessment: 2026-09-13, W2. See the shared
 inventory, current primary sources, cross-capability journey, carry-forward risks
 and one bounded automation proposal. Structured estimates above cover all fifteen
 atomic tasks; [estimate basis](../W2-initiation.md#estimate-basis-and-shared-accounting)
-distinguishes engineering effort from elapsed agent time. Architecture and UX
-review remain prerequisites; complete estimates alone do not authorize approval.
+distinguishes engineering effort from elapsed agent time. Architecture/reference
+review and owner acceptance are recorded; final packet review remains required.
 
 - **Baseline / fit:** reuse W1 Core-owned revisions, protected object streams,
   provenance and durable jobs. The corpus-first outcome still fits the Vision;
@@ -154,10 +154,10 @@ review remain prerequisites; complete estimates alone do not authorize approval.
   includes 2 support hours within its 18-hour estimate, with focused independent
   control review. No other capability counts that allocation.
 
-The next increment has refreshed all five slice procedures and drafted ADR-0027
+The current increment has refreshed all five slice procedures and accepted ADR-0027
 and ADR-0028. Source records/manifest IDs precede work/version reconciliation;
-the CAP-04.S01 handoff now states that explicitly. Selections await independent
-architecture disposition and human acceptance; no task completion is inferred.
+the CAP-04.S01 handoff now states that explicitly. The [owner design approval](../../artifacts/evidence/W2.design-architecture-owner-approval-01.md)
+binds these decisions and reference 1.7; it grants no task completion or execution.
 
 ## 1. Capability outcome and production-ready exit
 
@@ -204,7 +204,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 ### Review and approval
 
 All seven decisions across CAP-04/CAP-05 bind W2. Selected recommendations and
-their alternatives remain reviewable; Proposed ADRs are not yet accepted. Approval
+their alternatives remain reviewable; the three shared ADRs are accepted. W2 approval
 covers the complete Wave and every contributing slice at one immutable commit,
 not this capability in isolation. The G1 decision is not W2 packet approval.
 
@@ -264,7 +264,7 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 
 - [ ] All slice plans exist and pass `slice_plan_check.py` structurally.
 - [ ] Every material decision has credible candidates, recommendation and accepted status.
-- [ ] Required ADRs and design-reference changes are approved.
+- [x] Required ADRs and design-reference changes are approved.
 - [ ] Capability-wide architecture and end-to-end path are coherent.
 - [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
 - [ ] Security/privacy/rights/research-integrity review is complete.
@@ -283,7 +283,7 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 ## 12. Approval record
 
 The contribution remains **proposed**, with all W2 planning selections recorded.
-Complete independent ADR/reference and whole-packet review;
-then validate and independently review the entire W2 packet before requesting
+Architecture/reference acceptance is recorded separately; validate and
+independently review the final rebound W2 packet before requesting
 the owner's one immutable pre-Wave approval. No capability-only approval or
 blanket inheritance of the G1 exception is authorized.

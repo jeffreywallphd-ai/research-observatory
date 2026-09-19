@@ -643,7 +643,12 @@ class UiConformanceTests(unittest.TestCase):
         )
 
     def test_actual_amendment_bound_v16_approval_shape_is_exact(self) -> None:
-        approval = yaml.safe_load((REFERENCE / "APPROVAL.yaml").read_text(encoding="utf-8"))
+        # Historical approval shape must not read whichever reference is active now.
+        approval = yaml.safe_load(
+            subprocess.check_output(
+                ["git", "show", "0460b2af60643172504e1abe0f185e010f171700:design/ui-reference/APPROVAL.yaml"], cwd=REPO
+            )
+        )
         self.assertEqual([], approval_record_errors(approval, "v1.6-approval", "RO-UI-ACADEMIC-MINIMAL-1.6"))
         self.assertEqual(
             {

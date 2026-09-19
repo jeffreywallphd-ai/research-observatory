@@ -1,58 +1,23 @@
-reference_id: RO-UI-ACADEMIC-MINIMAL-1.6
-version: '1.6'
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.7
+version: '1.7'
 status: approved
 approval_kind: human
 approved_by: human:repository-owner
-approved_at: '2026-09-05T03:15:45Z'
-approval_basis: Exact ECR-0008 packet 2160cc9917282d80848189dc9669fe3827979246
-  and its reviewed Academic Minimal 1.6 reference are authorized by the standing
-  owner preapproval bound in W1.A09, introduced at
-  fcf627b4c83af81d0c3472526477bc7aa68d819c. Publication applies only the approved
-  metadata mapping; task completion, independent review, W1 passing and remote
-  actions are not granted by this reference approval.
-authority:
-  amendment_id: W1.A09
-  change_request_id: ECR-0008
-  approval_record: planning/wave-amendment-approvals/W1.A09.json
-  approval_record_sha256: 08cfedc4fa6883e3f1b1ffcf7b241f9994f60affbc7a44d4fa2004ca53881f5c
-  approval_record_introduction_commit: fcf627b4c83af81d0c3472526477bc7aa68d819c
-supersedes: RO-UI-ACADEMIC-MINIMAL-1.5
+approved_at: '2026-09-19T16:19:10Z'
+approval_basis: Owner replied Approved to the exact design/architecture handoff; no
+  W2 execution or release authority. See artifacts/evidence/W2.design-architecture-owner-approval-01.md.
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.6
 scope:
   normative:
-  - design tokens
-  - semantic evidence, result, manuscript, review, and revision-state meanings
-  - fourteen use-case workflow profiles
-  - project-creation selection
-  - shared native directory selection and read-only destination preview
-  - protected cancellation, catalog readiness and explicit recovery
-  - adaptive ordered navigation
-  - workflow context and previous/next behavior
-  - route and page inventory
-  - application-wide Security & sign-in governance form and provider states
-  - dependency staleness explanation and persistent deferred state
-  - grouped controlled-recalculation impact preview
-  - current privacy, rights, and egress policy visibility
-  - immutable recalculation comparison and human-gated restoration
-  - required page regions
-  - research-production safeguards
-  - cross-platform desktop parity
-  - light/dark parity
-  - keyboard, focus, responsive, density, and accessibility behavior
+  - Inherited1.6 contracts unchanged except the explicit Source Manager connector-review
+    addition
+  - Local publisher trust distinct from project permission; cancellation, renewed
+    consent, disable/quarantine and context return
   illustrative:
-  - mock names
-  - studies
-  - sources
-  - providers
-  - counts
-  - dates
-  - prose
-  - chart values
-  - nonfunctional actions
-implementation_rule: Any intentional user-facing change requires a proposed reference
-  update, validation, and explicit human approval before application implementation.
-  Restoring a defect to this baseline may cite the approved reference.
-deferred_surfaces:
-- university administrator console until W10
-- tenant administration until W11
-- billing until W11
-- managed-cloud operations console until W11
+  - Mock package, publisher, destination, version and inactive actions
+implementation_rule: Inert proposal; exact human reference approval and complete W2
+  packet approval precede product implementation.
+authority:
+  design_approval_record: planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.7.json
+  design_approval_record_sha256: 4fdff43bd0e2062fd8aa2d864d80bc55e760150a852b1f7a1cf5c326a7d5e357
+  design_approval_record_introduction_commit: 3addadbf686df1222cf89491a27503af7942a991

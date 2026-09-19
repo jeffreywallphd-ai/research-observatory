@@ -1,7 +1,7 @@
 # Research Observatory Use-Case and Workflow Catalog
 
-**Version:** 1.6
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.6`
+**Version:** 1.7
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.7`
 
 The selected use case is stored in the versioned Research Intent Contract. It orders the primary navigation, defaults, checkpoints, and expected outputs. All tools remain accessible as supporting tools.
 
@@ -10,6 +10,13 @@ The selected use case is stored in the versioned Research Intent Contract. It or
 When a material dependency revision makes an object stale, Audit & Lineage explains the cause, affected object, and safest next action. The impact preview groups effects as automatic, review required, blocked, or informational after checking current rights and egress policy. Deferral keeps the stale state visible. Recalculation and restoration create immutable revisions, expose comparisons, and require an exact human review decision before an approved or adjudicated state is replaced or restored.
 
 ## Catalog
+
+Source Manager's connector review is a supporting interaction, not a new workflow
+stage. Preserve the initiating source and current primary return context. Review,
+trust, enable and test are distinct; none automatically completes a research stage.
+All fourteen sequences and their keys remain unchanged. Existing project selections
+continue to bind their inherited exact catalog revision under ADR-0026; this visual
+reference proposal does not migrate those durable selections.
 
 ### 1. Rapid field orientation
 **Key:** `rapid-orientation`  

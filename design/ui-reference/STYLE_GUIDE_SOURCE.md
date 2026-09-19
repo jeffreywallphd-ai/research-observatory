@@ -1,7 +1,7 @@
 # Research Observatory — Academic Minimal Style and Experience Guide
 
-**Version:** 1.6
-**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.6`
+**Version:** 1.7
+**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.7`
 **Purpose:** Proposed implementation specification; not active authority until exact human approval. The existing crisp light / deep-navy visual system and workflow semantics are retained.
 
 ## 1. Authority and design-first change order
@@ -25,6 +25,40 @@ Cancel and Escape preserve the prior selection and form data, return focus to th
 Distinguish Core starting/not ready, catalog loading, catalog failure, input validation and failed project operations. Show the current state near the action it affects, with safe help and a bounded code when available. Read-only Retry reloads the catalog; explicit Retry Core startup may restart the local service. Neither replays a create/open/archive/delete request. Keep valid form input during recoverable errors; do not invent a fallback workflow catalog or announce readiness before native confirmation. The illustrative state examples in Projects and New Project are separate scenarios, not simultaneous application status.
 
 Use existing field, toolbar, notice, card, typography and spacing primitives. A shared location-output rule permits long paths to wrap and be selected; a shared disabled-button state distinguishes unavailable actions without relying on color alone (the nearby help names the prerequisite). Shared button keyboard focus uses the existing focus-ring token, remains visible over ordinary and hovered button shadows, and is verified by real Tab traversal in both themes. Do not repeat per-page folder styling or introduce a second token system. Reference mock buttons explain native intent only: they are not evidence that a native dialog or Core operation has executed.
+
+### 1.3 Connector trust and project permission
+
+Source Manager owns one inline connector-review panel; no new workspace or
+Application Settings surface is introduced. From the selected source, preserve
+project, source selection and current-primary return context. Show package/version
+and inspectable digest, publisher/signature state, local trust scope and the exact
+requested operations, destinations and data classes. Credential state is visible;
+secret values are not. A signature establishes identity, not safety.
+
+Local publisher trust and per-project permission are distinct explicit decisions.
+Neither implies the other, installs root trust, changes application sign-in or
+overrides project rights/egress policy. Package selection/review never executes
+code, tests a connection or performs research retrieval. Enable is unavailable
+with a nearby explanation until all prerequisites hold. Connection testing is a
+separate explicit network action. Compare existing and newly requested permissions
+on updates; increases require renewed consent before the new version can run.
+
+Cancel/Escape preserves the prior configuration and returns focus to the invoking
+source control. Move focus to the review heading on open and announce safe pending,
+success or failure states. Preserve review input on recoverable failure; discard
+late results and protected context on project close/lock. Do not treat focus loss
+or closing the panel as consent. A project switch invalidates a pending approval.
+
+Disable stops new requests and cancels this connector's in-flight work without
+deleting imported evidence or provenance. Local publisher-trust removal names its
+cross-project effect and disables dependent packages. Quarantine states show a safe
+reason and remedy; invalid signatures, permission violations and failed isolation
+have no bypass. Existing project permission does not authorize a replacement digest.
+
+Reuse cards, fields, key-value lists, notices, buttons, focus tokens and responsive
+grids. Use text state labels, accessible names and keyboard traversal in both
+themes; no per-page styling system. This reference's package and inactive actions
+are illustrative, not proof of an installed connector or authorization.
 
 ## 2. Design character
 

@@ -1,6 +1,6 @@
 {
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.6",
-  "version": "1.6",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.7",
+  "version": "1.7",
   "date": "2026-09-02",
   "product_page_count": 33,
   "capabilities": [
@@ -479,7 +479,8 @@
         "import-review route",
         "private technical-report sources",
         "uploaded manuscript-draft sources",
-        "rights and model-egress policy per source class"
+        "rights and model-egress policy per source class",
+        "connector publisher trust and project permission review"
       ],
       "illustrative_values": true
     },

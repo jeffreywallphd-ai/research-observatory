@@ -20,7 +20,7 @@ task_ids:
 - CAP-05.S02.T01
 - CAP-05.S02.T02
 - CAP-05.S02.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.6
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.7
 approval:
   status: pending
   approved_by: null
@@ -41,7 +41,7 @@ approval:
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-05.S02.T01`, `CAP-05.S02.T02`, `CAP-05.S02.T03` |
 | Slice dependencies | `CAP-05.S01.T03`, `CAP-03.S04.T02` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -117,7 +117,7 @@ The following decisions are the default implementation direction for this slice.
 1. **The canonical parser interface consumes an immutable source object/revision and produces a staged Document IR plus warnings, quality dimensions, raw-output references, and parser provenance.**
 2. **Prefer native structured formats using namespace-aware secure parsers; PDF is a fallback when no equivalent structured representation is available.**
 3. **Disable DTD/external entity/network resolution and preserve unsupported structured elements as typed unknown blocks with source locations.**
-4. **Use the proposed ADR-0028 sandbox and ADR-0029 modular Docling CPU worker. Its Windows/Python dependency resolution passed; actual offline assets, resource bounds, no-plaintext-write behavior and packaged LPAC execution still require proof. OCR remains disabled by default.**
+4. **Use the accepted ADR-0028 sandbox and ADR-0029 modular Docling CPU worker. Its Windows/Python dependency resolution passed; actual offline assets, resource bounds, no-plaintext-write behavior and packaged LPAC execution still require proof. OCR remains disabled by default.**
 5. **Provide a minimal fallback text/page extractor for degraded inspection, but label limitations and never promote it to high-quality canonical structure.**
 6. **No parser may directly mutate accepted document revisions; commit only after validation through CAP-05.S03.**
 
@@ -172,13 +172,13 @@ The following durable types are recommended. Final field names belong in version
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
 - Parsing progress names stages and resource expectations.
 - Low-quality or scanned/complex files are clearly triaged for review/OCR decision rather than displayed as successfully parsed.
 - Users can inspect parser/version, structured-format preference, warnings, and raw-versus-normalized results.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Treat documents as hostile data: disable XML external entities, scripts, embedded actions, remote fetches, macros, and active HTML.
@@ -335,7 +335,7 @@ python tools/verify.py --profile e2e-local
 ```
 
 ## 11. Performance and resource budgets
-- Proposed ADR-0029 binds the selected CPU tier, asset inventory, input/page/pixel/IR and process limits, cancellation deadline and representative cold/warm targets. [Feasibility observations](../../W2-feasibility.md) are not runtime qualification.
+- Accepted ADR-0029 binds the selected CPU tier, asset inventory, input/page/pixel/IR and process limits, cancellation deadline and representative cold/warm targets. [Feasibility observations](../../W2-feasibility.md) are not runtime qualification.
 - Benchmark representative scholarly PDFs by page count, layout complexity, table/figure density, memory, CPU, and latency on minimum Windows hardware.
 - Lazy page rendering and bounded parallelism avoid loading all pages.
 - Package only required Docling assets/models and record first-run versus warm performance.
@@ -419,7 +419,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md), [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md), [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Document IR schema and parser selection policy.

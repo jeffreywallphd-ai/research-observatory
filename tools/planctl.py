@@ -939,6 +939,7 @@ def governed_experience_binding(
 
     # Reuse the existing strict UI approval/authority/package validators. Import
     # only on this exceptional historical path, not ordinary planctl startup.
+    from reference_design_approval import DESIGN_APPROVAL_AUTHORITY_KEYS
     from ui_conformance import reference_package_at
 
     approval_path = f"{active_prefix}APPROVAL.yaml"
@@ -985,8 +986,13 @@ def governed_experience_binding(
                     errors.extend(
                         _reference_publication_content_errors(root, successor, successor_commit, approval_commit)
                     )
+            elif set(authority) == DESIGN_APPROVAL_AUTHORITY_KEYS:
+                # reference_package_at already authenticates the same strict
+                # human record/proposal/publication chain. This is historical
+                # resolution only, not adoption or Wave execution authority.
+                pass
             else:
-                errors.append("Historical experience resolver supports direct amendment publication only")
+                errors.append("Historical experience requires authenticated amendment or pre-Wave design publication")
             parent_revision = f"{approval_commit}^"
             prior = _json_object(yaml.safe_load(_git_blob(root, parent_revision, approval_path) or b""))
             prior_id = str(prior.get("reference_id") or "")

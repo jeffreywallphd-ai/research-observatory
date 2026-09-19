@@ -124,3 +124,14 @@ rule would weaken an accepted architecture gate.
 ## Task links
 
 - `CAP-00.S06.T04`
+
+## Implementation clarification — pre-Wave design approval
+
+The 2026-09-19 W2 publication exposed an adapter gap, not a changed decision:
+the approved design-first workflow permits human reference approval before
+the complete Wave is frozen. One shared validator now authenticates a separate
+immutable design-approval record, exact proposal package, ancestry and single-use
+metadata-only publication. Historical ECR views consume that same proof while
+retaining their original bound bytes. Existing amendment/Wave-slice schemas,
+baseline controls and execution gates remain unchanged. See the conditional
+[publication procedure](../automation/ui-conformance-verification.md#pre-wave-reference-publication).

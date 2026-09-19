@@ -21,7 +21,7 @@ task_ids:
 - CAP-05.S04.T01
 - CAP-05.S04.T02
 - CAP-05.S04.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.6
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.7
 approval:
   status: pending
   approved_by: null
@@ -42,7 +42,7 @@ approval:
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-05.S04.T01`, `CAP-05.S04.T02`, `CAP-05.S04.T03` |
 | Slice dependencies | `CAP-05.S03.T03`, `CAP-01.S02.T03` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -171,14 +171,14 @@ The following durable types are recommended. Final field names belong in version
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
 - Opening evidence lands on the correct highlighted source with surrounding context and a clear back-to-workflow path.
 - Multiple anchors use distinguishable, accessible markers and a navigable list.
 - Keyboard, screen reader, zoom/reflow, focus, and high-contrast behavior follow the approved design/a11y contracts.
 - Denied actions explain the policy and any lawful alternative.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Disable or intercept external links, embedded JavaScript/actions, attachments, forms, and file launches.
@@ -343,7 +343,7 @@ python tools/verify.py --profile security-local
 ```
 
 ## 11. Performance and resource budgets
-- Proposed ADR-0029 selects bounded verified sequential ranges, maximum sizes/concurrency, cooperative read-loop cancellation, prompt lease release and representative/stress fixtures. Its [storage probe](../../W2-feasibility.md) is not renderer, minimum-hardware or cancellation proof; CAP-05.S04.T01 includes that integration and qualification.
+- Accepted ADR-0029 selects bounded verified sequential ranges, maximum sizes/concurrency, cooperative read-loop cancellation, prompt lease release and representative/stress fixtures. Its [storage probe](../../W2-feasibility.md) is not renderer, minimum-hardware or cancellation proof; CAP-05.S04.T01 includes that integration and qualification.
 - Render visible pages only, cache bounded thumbnails/pages, and cancel obsolete renders during rapid navigation.
 - Open-to-first-page target <=1.5 seconds for a representative local PDF after Core readiness.
 - Large documents remain usable without loading all pages or text into renderer memory.
@@ -425,7 +425,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
+Shared accepted records: [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Authenticated range stream versus Tauri custom protocol for local PDF bytes.

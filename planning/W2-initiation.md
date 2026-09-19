@@ -70,22 +70,23 @@ the historical, explicitly limited evidence cited by the G1 decision.
    provenance and jobs rather than the old not-yet-available fallback language.
    All original product criteria remain unchanged; CAP-04.S01.T01 adds only the
    separately bounded optional runner-progress criterion described below.
-2. Slice plans now cite the current Academic Minimal 1.6 reference. The
-   [reference approval](../design/ui-reference/APPROVAL.yaml) records **1.6**;
-   its README's earlier "proposal" wording is stale and is not authority.
-   Complete affected W2 page/journey mapping against that approval. Preserve ADR-0026's exact inherited 1.5
+2. Slice plans now cite the published Academic Minimal 1.7 reference. The
+   [reference approval](../design/ui-reference/APPROVAL.yaml) records **1.7**
+   under the [owner decision](../artifacts/evidence/W2.design-architecture-owner-approval-01.md).
+   Affected W2 page/journey mappings use that approval. Preserve ADR-0026's exact inherited 1.5
    workflow-catalog binding unless its governed migration is explicitly selected;
    do not relabel existing project selections or edit frozen reference history.
-3. CAP-04.S02 no longer calls for credential-bearing exact request URLs. Proposed
+3. CAP-04.S02 no longer calls for credential-bearing exact request URLs. Accepted
    ADR-0027 separates protected scientific replay from current broker-injected
    authentication/contact values, including redaction of echoed response values.
-   It still needs independent architecture disposition and acceptance with W2.
+   Architecture review and owner acceptance are recorded; runtime proof remains.
 4. Protected storage does not currently promise seek/range semantics. Resolve
    the viewer stream design for **CAP-05.S04.T01** without adding plaintext
    temporary paths or unauthenticated content URLs.
 
-These are recorded planning gaps, not new approved architecture. Existing source
-authority governs the interim state; dependent implementation remains unstarted.
+The shared ADRs now resolve these architecture choices under exact owner approval.
+Feasibility observations are not qualification; implementation remains unstarted
+pending the final complete W2 packet approval.
 
 ## Current primary-source refresh
 
@@ -100,17 +101,17 @@ Reviewed 2026-09-13; these observations inform proposals, not live-provider proo
 | Docling documents prefetched offline assets, explicit remote-service opt-in and resource limits. [Advanced options](https://docling-project.github.io/docling/usage/advanced_options/) | Pin and prepackage required assets; verify no runtime network dependency. Documentation is not Windows packaging proof. |
 | W3C defines text quote/position and other selectors. [Web Annotation](https://www.w3.org/TR/annotation-model/) | Keep the multi-selector recommendation; application normalization, ambiguity and migration semantics still need exact fixtures. |
 
-Before lock, resolve **CAP-04-D01/CAP-04-D04** (source permissions/replay and
-connector isolation) and **CAP-05-D01** (local parser/runtime/assets). Compare
-credible alternatives, record the selected implementation and required ADRs,
-and perform only bounded feasibility checks necessary for those decisions.
+**CAP-04-D01/CAP-04-D04** (source permissions/replay and connector isolation)
+and **CAP-05-D01** (local parser/runtime/assets) now have selected alternatives
+and accepted ADRs. The bounded feasibility checks informed those decisions;
+they did not qualify the runtime or authorize execution.
 No service account, live research query, installation or purchase was made for
 this assessment. No replacement parser is silently substituted for Docling.
 
-### Proposed shared architecture and bounded feasibility
+### Accepted shared architecture and bounded feasibility
 
-Three records consolidate shared material boundaries; they are **Proposed**, not
-accepted architecture or permission to start tasks:
+Three records consolidate shared material boundaries. They are **Accepted** under
+the owner's exact design/architecture approval, not permission to start tasks:
 
 - [ADR-0027 — source replay and private authentication](../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md):
   retain all four adapters, provider-specific configuration, encrypted scientific
@@ -121,7 +122,7 @@ accepted architecture or permission to start tasks:
 - [ADR-0029 — document revisions and source viewing](../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md):
   modular local Docling, exact-version anchors, human correction/reparse acceptance
   and authenticated viewing. Exact offline asset identities, resource limits and
-  a bounded sequential-range design are now selected for independent review;
+  a bounded sequential-range design are accepted;
   [feasibility observations](W2-feasibility.md) do not qualify production behavior.
 
 On 2026-09-13, a planning-only `uv 0.12.2` wheel resolution for Windows x64 /
@@ -159,11 +160,12 @@ ordinary packet work, not extra human gates.
 ## UX journey to refine in the existing contracts
 
 Independent mapping found one material reference addition: CAP-04.S05's local
-publisher-trust and project-permission review in Source Manager. Prepare one
-compact panel using existing components and the design-first route; no new page,
-marketplace or Application Settings redesign. The [inert 1.7 proposal](W2-reference-proposal.md)
-now supplies that panel and its normative interaction contract; validation/review
-and human approval remain pending. The remaining journeys fit 1.6.
+publisher-trust and project-permission review in Source Manager. The approved
+compact panel reuses existing components; no new page, marketplace or Application
+Settings redesign. The [1.7 publication](W2-reference-proposal.md) supplies that
+panel and its normative interaction contract following validation, independent
+review and exact owner approval. Other journeys inherit unchanged 1.6 contracts
+within the published 1.7 package.
 Keep the exact inherited ADR-0026 workflow catalog 1.5 binding unchanged.
 
 | Contribution | Existing route / return context |
@@ -311,19 +313,19 @@ not a W2 security, integrity, accessibility or release waiver.
 
 ## Next planning increment and approval boundary
 
-1. Independently review the seven selected recommendations and three shared
-   Proposed ADRs, including resource/admission choices and retained qualifications.
-2. Review all eleven slice contracts, the bounded proposed reference, and the
-   explicit dependency/migration/recovery/checkpoint handoffs. Resolve blocking
-   findings without silently moving scope or thresholds.
-3. Review structured initiation-assessment 2.0 data and all 33 atomic estimates
-   in one unit, with the shared maintenance allocation counted once. They are
-   now itemized, but remain unapproved and reviewable.
-4. Validate and independently review the complete W2 packet; then request one
+1. Architecture/reference review and owner approval are complete. The three ADRs
+   are accepted and reference 1.7 is published; all eleven W2 slices now bind it.
+   Prior findings, rejected alternatives and retained qualification gaps survive.
+2. Validate and independently review this bounded publication/rebinding delta
+   against the reviewed seven selections, eleven slice contracts, handoffs and
+   all 33 atomic estimates. Count the shared support allocation once; do not
+   reopen unchanged decisions or silently change scope/thresholds.
+3. Validate and independently review the complete W2 packet; then request one
    immutable pre-Wave approval. Only after that approval and normal integration/
    readiness requirements may the W2 campaign start.
 
-The authored packet now has selections and estimates; independent disposition,
-exact architecture/reference approval and normal clean-worktree prerequisites
-remain unmet. Do not request execution approval on the strength of schema checks
-alone. Implementation, gate relaxation and later Waves remain unauthorized.
+The architecture/reference prerequisite is satisfied. Final rebound-packet
+validation, independent disposition and a clean immutable approval candidate
+still precede the owner's single W2 execution approval. Do not infer it from
+schema checks or the design decision. Implementation, gate relaxation and later
+Waves remain unauthorized.

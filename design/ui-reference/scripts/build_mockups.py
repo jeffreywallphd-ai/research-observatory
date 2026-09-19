@@ -242,7 +242,7 @@ def shell(page_key: str, title: str, subtitle: str, content: str, actions: str =
                 <span class="trust-point">{icon('link', 'icon icon-sm')} Citations resolve to source passages</span>
                 <span class="trust-point">{icon('eye', 'icon icon-sm')} AI judgments remain inspectable and contestable</span>
               </div>
-              <span>Mock data · Academic Minimal v1.6</span>
+              <span>Mock data · Academic Minimal v1.7</span>
             </footer>
           </main>
         </div>
@@ -617,7 +617,59 @@ def page_source_manager() -> str:
         <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">Source governance decisions</h2><div class="card-subtitle">Project-specific decisions that affect corpus scope.</div></div><a class="card-link" href="intent-contract.html">Review contract →</a></div><div class="list"><div class="list-item"><span class="list-content"><span class="list-title">Preprints</span><span class="list-meta">Include but tag as non-peer-reviewed; exclude from high-confidence synthesis by default.</span></span>{badge('Adjudicated', 'warning')}</div><div class="list-item"><span class="list-content"><span class="list-title">Conference proceedings</span><span class="list-meta">Include for HCI and technical AI; retain venue type.</span></span>{badge('Active', 'success')}</div><div class="list-item"><span class="list-content"><span class="list-title">Dissertations</span><span class="list-meta">Novelty challenger only unless explicitly promoted.</span></span>{badge('Bounded', 'brand')}</div></div></article>
       </section>
     """)
+    content += connector_review_panel()
     return shell("source-manager", "Source Manager", "Configure scholarly metadata, local libraries, open-access resolution, licensed connectors, and project-specific source governance.", content, actions, "Corpus inputs")
+
+
+def connector_review_panel() -> str:
+    return '''
+<section class="card card-lg section" id="connector-review" aria-labelledby="connector-review-title" tabindex="-1">
+  <div class="card-header">
+    <div><h2 class="card-title" id="connector-review-title">Review connector access</h2>
+    <p class="card-subtitle">Illustrative package review · no software is installed or enabled by this reference.</p></div>
+    <span class="badge badge-warning">Not enabled</span>
+  </div>
+  <dl class="key-value">
+    <dt>Package</dt><dd>Example repository connector · version 1.0 · package digest available for inspection</dd>
+    <dt>Publisher</dt><dd>Example publisher · valid package signature · publisher not yet trusted on this computer</dd>
+    <dt>Project</dt><dd>Current project only; no other project receives permission</dd>
+    <dt>Credential</dt><dd>Not required for this example. Secret values are never displayed here.</dd>
+  </dl>
+  <div class="divider"></div>
+  <div class="grid grid-2">
+    <div><h3 class="card-title">1. Local publisher trust</h3>
+      <p class="small">Trust permits this publisher's verified packages to be considered on this computer. It does not enable a connector or grant project access.</p>
+      <button class="btn" type="button" data-toast="Reference only: the application would request explicit local publisher trust; no setting changed.">Review publisher trust…</button>
+    </div>
+    <div><h3 class="card-title">2. Project permission</h3>
+      <p class="small">Review this exact package's requested access. Enabling applies only to the current project and remains subject to its rights and privacy policy.</p>
+      <ul class="small">
+        <li>Operation: look up repository records through the approved broker.</li>
+        <li>Destination: <span class="mono">repository.example.invalid</span> (illustrative).</li>
+        <li>Data sent: the identifiers or search terms explicitly selected for that request.</li>
+        <li>No direct project files, secret values, arbitrary network access or export.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notice warning" role="note"><div>
+    <div class="notice-title">Publisher trust is required before enabling</div>
+    <div class="notice-text">A valid signature identifies the publisher; it is not a safety guarantee. Cancel leaves the prior configuration unchanged. Connection testing is a separate explicit action.</div>
+  </div></div>
+  <div class="toolbar">
+    <button class="btn" type="button" data-toast="Reference only: cancel returns to the initiating source control; nothing changed.">Cancel review</button>
+    <button class="btn btn-primary" type="button" disabled aria-describedby="connector-enable-help">Enable for this project</button>
+  </div>
+  <p class="small muted" id="connector-enable-help">Unavailable until the publisher is trusted, the package verifies and you explicitly consent to the displayed project permissions.</p>
+  <details class="section">
+    <summary>Updates, disabling and blocked packages</summary>
+    <div class="list">
+      <div class="list-item"><div class="list-content"><span class="list-title">Permission increase</span><span class="list-meta">Show existing → requested operations, destinations and data classes. Keep the new package disabled until renewed consent; never inherit broader permission silently.</span></div></div>
+      <div class="list-item"><div class="list-content"><span class="list-title">Disable in this project</span><span class="list-meta">Stop new requests and cancel its in-flight work. Keep imported evidence and provenance. Re-enabling requires current policy and package checks.</span></div></div>
+      <div class="list-item"><div class="list-content"><span class="list-title">Quarantined or untrusted</span><span class="list-meta">Name the safe failure reason and supported remedy. Never offer a bypass for a bad signature or failed isolation. Publisher trust removal applies locally and disables dependent packages.</span></div></div>
+    </div>
+  </details>
+</section>
+'''
 
 
 def page_corpus_canvas() -> str:
@@ -1168,7 +1220,7 @@ def page_style_guide() -> str:
     def swatches(items):
         return ''.join([f'<div class="token-swatch"><div class="token-color" style="--swatch:{hexv}"></div><div class="token-meta"><div class="token-name">{name}</div><div class="token-value">{token}<br>{hexv}</div></div></div>' for name,hexv,token in items])
     content = dedent(f"""
-      <div class="notice"><span>{icon('info')}</span><div><div class="notice-title">Experience reference: Academic Minimal 1.6</div><div class="notice-text">Crisp white and cool-gray light surfaces, deep navy dark surfaces, restrained royal-blue interaction accents, serif display headings, compact sans-serif workbench text, and minimal decorative effects. Tokens, semantics, page contracts, and required interaction behavior are normative; names, counts, vendors, sample prose, and inactive mock actions are illustrative.</div></div></div>
+      <div class="notice"><span>{icon('info')}</span><div><div class="notice-title">Experience reference: Academic Minimal 1.7</div><div class="notice-text">Crisp white and cool-gray light surfaces, deep navy dark surfaces, restrained royal-blue interaction accents, serif display headings, compact sans-serif workbench text, and minimal decorative effects. Tokens, semantics, page contracts, and required interaction behavior are normative; names, counts, vendors, sample prose, and inactive mock actions are illustrative.</div></div></div>
 
       <section class="section" id="principles"><div class="section-header"><div><h2 class="section-title">1. Visual principles</h2><div class="section-description">The interface should communicate rigor before novelty and depth before decoration.</div></div></div><div class="grid grid-4"><article class="card card-lg"><h3 class="card-title">Evidence before prose</h3><p class="small muted">Primary actions expose sources, passages, status, and uncertainty. Generated prose is downstream.</p></article><article class="card card-lg"><h3 class="card-title">Quiet structure</h3><p class="small muted">Use borders, spacing, alignment, and typographic hierarchy before shadows or color.</p></article><article class="card card-lg"><h3 class="card-title">Blue means interaction</h3><p class="small muted">Royal blue identifies selection, active navigation, links, focus, and primary actions—not all data.</p></article><article class="card card-lg"><h3 class="card-title">State colors have fixed meaning</h3><p class="small muted">Semantic and evidence-state colors must not be reassigned by page or chart.</p></article></div></section>
 
@@ -1200,6 +1252,16 @@ def page_style_guide() -> str:
         </article>
       </section>
     """)
+    content += '''<section class="card card-lg section" id="connector-trust">
+      <h2 class="card-title">12. Connector trust and project permission</h2>
+      <p class="small">Keep local publisher trust distinct from consent to the exact package's
+      operations, destinations and data classes in the current project. Review or cancellation
+      executes no connector. Increased permissions need renewed consent; disabling retains evidence.</p>
+      <p class="small">Preserve source and workflow return context, restore invoking focus on cancel,
+      and clear protected state on lock. Reuse existing cards, notices, buttons and responsive grids.</p>
+      <a class="btn" href="source-manager.html#connector-review">Inspect the Source Manager review panel</a>
+      <a class="btn" href="STYLE_GUIDE.md#13-connector-trust-and-project-permission">Read the complete interaction contract</a>
+    </section>'''
     return shell("style-guide", "Academic Minimal Style Guide", "Implementation specification for the preferred Research Observatory visual system across light and dark themes.", content, actions, "Design system")
 
 
@@ -1228,7 +1290,7 @@ def style_guide_markdown() -> str:
     return (ROOT / "STYLE_GUIDE_SOURCE.md").read_text(encoding="utf-8")
 
 def readme_markdown() -> str:
-    return "# Research Observatory UI Reference\n\nThis directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.6**. This copy is an inert ECR-0008 proposal, not the active approved reference. See `APPROVAL.yaml` for its pending status.\n\n## Start with the workflow\n\nOpen `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, `audit-lineage.html` for controlled recalculation, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.\n\n## Authority\n\n- `assets/tokens.css`, semantic rules in `STYLE_GUIDE.md`, the fourteen profiles in `WORKFLOW_CATALOG.*`, route inventory, required page regions, accessibility behavior, and approved visual baselines are normative once this revision is approved.\n- Mock names, values, studies, providers, dates, prose, charts, and inactive actions are illustrative and do not create backend scope.\n- `APPROVAL.yaml` records approval status; `REFERENCE_MANIFEST.yaml` identifies governed files; `CAPABILITY_COVERAGE.*` maps capabilities to pages.\n- Intentional user-facing changes require an updated proposed reference, validation, human approval, and only then application implementation.\n\n## Open locally\n\n```bash\npython -m http.server 8080\n```\n\nThen open `http://localhost:8080/prototype-index.html`.\n\n## Shared implementation\n\n- `assets/tokens.css` — canonical light/dark tokens.\n- `assets/app.css` — shared shell, workflow navigation, components, layouts, data displays, and responsive behavior.\n- `assets/app.js` — theme, sidebar, tabs, mock actions, use-case selection, adaptive workflow ordering, and context guidance.\n- `STYLE_GUIDE.md` / `style-guide.html` — technical and visual specification.\n- `WORKFLOW_CATALOG.md` / `.json` — authoritative use-case sequences and outputs.\n- `CAPABILITY_COVERAGE.md` / `.json` — page contracts and capability mapping.\n- `scripts/build_mockups.py` — deterministic page generator.\n- `scripts/verify_site.py` — reference integrity checks.\n\nUniversity/cloud administrator consoles remain intentionally deferred and require active W10/W11 requirements and separately approved page contracts.\n"
+    return "# Research Observatory UI Reference\n\nThis directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.7**. This copy is an inert W2 connector-review proposal, not the active approved reference. See `APPROVAL.yaml` for its pending status.\n\n## Start with the workflow\n\nOpen `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, `audit-lineage.html` for controlled recalculation, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.\n\n## Authority\n\n- `assets/tokens.css`, semantic rules in `STYLE_GUIDE.md`, the fourteen profiles in `WORKFLOW_CATALOG.*`, route inventory, required page regions, accessibility behavior, and approved visual baselines are normative once this revision is approved.\n- Mock names, values, studies, providers, dates, prose, charts, and inactive actions are illustrative and do not create backend scope.\n- `APPROVAL.yaml` records approval status; `REFERENCE_MANIFEST.yaml` identifies governed files; `CAPABILITY_COVERAGE.*` maps capabilities to pages.\n- Intentional user-facing changes require an updated proposed reference, validation, human approval, and only then application implementation.\n\n## Open locally\n\n```bash\npython -m http.server 8080\n```\n\nThen open `http://localhost:8080/prototype-index.html`.\n\n## Shared implementation\n\n- `assets/tokens.css` — canonical light/dark tokens.\n- `assets/app.css` — shared shell, workflow navigation, components, layouts, data displays, and responsive behavior.\n- `assets/app.js` — theme, sidebar, tabs, mock actions, use-case selection, adaptive workflow ordering, and context guidance.\n- `STYLE_GUIDE.md` / `style-guide.html` — technical and visual specification.\n- `WORKFLOW_CATALOG.md` / `.json` — authoritative use-case sequences and outputs.\n- `CAPABILITY_COVERAGE.md` / `.json` — page contracts and capability mapping.\n- `scripts/build_mockups.py` — deterministic page generator.\n- `scripts/verify_site.py` — reference integrity checks.\n\nUniversity/cloud administrator consoles remain intentionally deferred and require active W10/W11 requirements and separately approved page contracts.\n"
 
 def inventory_markdown() -> str:
     return (ROOT / "PAGE_INVENTORY_SOURCE.md").read_text(encoding="utf-8")

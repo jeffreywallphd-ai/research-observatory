@@ -50,6 +50,8 @@
     "tools/protected_database_performance_check.py",
     "tools/quality_check.py",
     "tools/recoveryctl.py",
+    "tools/reference_design_approval.py",
+    "tests/foundation/test_reference_design_approval.py",
     "tools/repository_structure_check.py",
     "tools/runtime_check.py",
     "tools/security_check.py",

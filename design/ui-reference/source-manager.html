@@ -160,13 +160,60 @@
   <article class="card card-lg"><div class="card-header"><div><h2 class="card-title">Source governance decisions</h2><div class="card-subtitle">Project-specific decisions that affect corpus scope.</div></div><a class="card-link" href="intent-contract.html">Review contract →</a></div><div class="list"><div class="list-item"><span class="list-content"><span class="list-title">Preprints</span><span class="list-meta">Include but tag as non-peer-reviewed; exclude from high-confidence synthesis by default.</span></span><span class="badge badge-warning">Adjudicated</span></div><div class="list-item"><span class="list-content"><span class="list-title">Conference proceedings</span><span class="list-meta">Include for HCI and technical AI; retain venue type.</span></span><span class="badge badge-success">Active</span></div><div class="list-item"><span class="list-content"><span class="list-title">Dissertations</span><span class="list-meta">Novelty challenger only unless explicitly promoted.</span></span><span class="badge badge-brand">Bounded</span></div></div></article>
 </section>
 
+<section class="card card-lg section" id="connector-review" aria-labelledby="connector-review-title" tabindex="-1">
+  <div class="card-header">
+    <div><h2 class="card-title" id="connector-review-title">Review connector access</h2>
+    <p class="card-subtitle">Illustrative package review · no software is installed or enabled by this reference.</p></div>
+    <span class="badge badge-warning">Not enabled</span>
+  </div>
+  <dl class="key-value">
+    <dt>Package</dt><dd>Example repository connector · version 1.0 · package digest available for inspection</dd>
+    <dt>Publisher</dt><dd>Example publisher · valid package signature · publisher not yet trusted on this computer</dd>
+    <dt>Project</dt><dd>Current project only; no other project receives permission</dd>
+    <dt>Credential</dt><dd>Not required for this example. Secret values are never displayed here.</dd>
+  </dl>
+  <div class="divider"></div>
+  <div class="grid grid-2">
+    <div><h3 class="card-title">1. Local publisher trust</h3>
+      <p class="small">Trust permits this publisher's verified packages to be considered on this computer. It does not enable a connector or grant project access.</p>
+      <button class="btn" type="button" data-toast="Reference only: the application would request explicit local publisher trust; no setting changed.">Review publisher trust…</button>
+    </div>
+    <div><h3 class="card-title">2. Project permission</h3>
+      <p class="small">Review this exact package's requested access. Enabling applies only to the current project and remains subject to its rights and privacy policy.</p>
+      <ul class="small">
+        <li>Operation: look up repository records through the approved broker.</li>
+        <li>Destination: <span class="mono">repository.example.invalid</span> (illustrative).</li>
+        <li>Data sent: the identifiers or search terms explicitly selected for that request.</li>
+        <li>No direct project files, secret values, arbitrary network access or export.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notice warning" role="note"><div>
+    <div class="notice-title">Publisher trust is required before enabling</div>
+    <div class="notice-text">A valid signature identifies the publisher; it is not a safety guarantee. Cancel leaves the prior configuration unchanged. Connection testing is a separate explicit action.</div>
+  </div></div>
+  <div class="toolbar">
+    <button class="btn" type="button" data-toast="Reference only: cancel returns to the initiating source control; nothing changed.">Cancel review</button>
+    <button class="btn btn-primary" type="button" disabled aria-describedby="connector-enable-help">Enable for this project</button>
+  </div>
+  <p class="small muted" id="connector-enable-help">Unavailable until the publisher is trusted, the package verifies and you explicitly consent to the displayed project permissions.</p>
+  <details class="section">
+    <summary>Updates, disabling and blocked packages</summary>
+    <div class="list">
+      <div class="list-item"><div class="list-content"><span class="list-title">Permission increase</span><span class="list-meta">Show existing → requested operations, destinations and data classes. Keep the new package disabled until renewed consent; never inherit broader permission silently.</span></div></div>
+      <div class="list-item"><div class="list-content"><span class="list-title">Disable in this project</span><span class="list-meta">Stop new requests and cancel its in-flight work. Keep imported evidence and provenance. Re-enabling requires current policy and package checks.</span></div></div>
+      <div class="list-item"><div class="list-content"><span class="list-title">Quarantined or untrusted</span><span class="list-meta">Name the safe failure reason and supported remedy. Never offer a bypass for a bad signature or failed isolation. Publisher trust removal applies locally and disables dependent packages.</span></div></div>
+    </div>
+  </details>
+</section>
+
             <footer class="trust-footer">
               <div class="trust-points">
                 <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-shield"></use></svg> Evidence and outputs are provenance-tracked</span>
                 <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-link"></use></svg> Citations resolve to source passages</span>
                 <span class="trust-point"><svg class="icon icon-sm" aria-hidden="true"><use href="#icon-eye"></use></svg> AI judgments remain inspectable and contestable</span>
               </div>
-              <span>Mock data · Academic Minimal v1.6</span>
+              <span>Mock data · Academic Minimal v1.7</span>
             </footer>
           </main>
         </div>

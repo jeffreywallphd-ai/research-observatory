@@ -58,7 +58,7 @@ decisions:
   - Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
   - Native structured intake plus lightweight local PDF text fallback; defer full layout extraction
   recommendation: Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
-  recommendation_basis: ADR-0029 selects modular Docling 2.126.0 with pinned Heron/TableFormer assets, bounded CPU resources and authenticated sequential-range viewing. Wheel resolution and synthetic storage observations support selection, not runtime/security qualification; independent architecture disposition remains pending.
+  recommendation_basis: Accepted ADR-0029 selects modular Docling 2.126.0 with pinned Heron/TableFormer assets, bounded CPU resources and authenticated sequential-range viewing. Wheel resolution and synthetic storage observations support selection, not runtime/security qualification; W2 execution approval remains pending.
   selected_option: Prefer native JATS/TEI/XML/HTML; use pinned Docling-style local PDF parsing and retain replaceable parser port
   status: accepted
   required_adr: ADR-0029
@@ -95,8 +95,8 @@ approval:
 
 > **W2 planning in progress.** G1's limited transition is approved; this capability
 > contribution is not. All three recommendations are selected for the proposed packet;
-> independent architecture/reference/packet review and exact human approval remain.
-> Decision selection is a planning choice, not ADR acceptance or execution authority.
+> ADR-0029 and reference 1.7 have explicit owner approval. Final rebound-packet
+> review and complete W2 execution approval remain; no task is authorized yet.
 
 <div class="visual-flow"><span>Refresh W2 contributions</span><b>→</b><span>Resolve binding decisions</span><b>→</b><span>Approve complete W2 packet</span><b>→</b><span>Execute W2 campaign</span><b>→</b><span>Qualify G2 exit</span></div>
 
@@ -107,9 +107,9 @@ approval:
 | Capability | `CAP-05` — Document acquisition, parsing, source inspection, and page anchors |
 | Objective | Convert lawful full text into immutable, inspectable document revisions while retaining page, layout, reference, table, and figure context. |
 | Execution mode | Contribution to the W2 campaign; slices complete in dependency order |
-| Decision status | `COMPLETE` planning selections; proposed ADRs still require review/approval |
+| Decision status | `COMPLETE` planning selections; architecture/reference approved, complete W2 approval pending |
 | Slice plans | `CAP-05.S01`, `CAP-05.S02`, `CAP-05.S03`, `CAP-05.S04`, `CAP-05.S05`, `CAP-05.S06` |
-| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.6`; affected slice/page mappings require refresh; preserve inherited catalog bindings |
+| Approved UI reference | `RO-UI-ACADEMIC-MINIMAL-1.7`; W2 slice/page mappings rebound; inherited catalog bindings preserved |
 | Default interruption policy | Continue without routine stops; only classified infeasibility/external/hardware/human/design gates may pause |
 
 ## 0A. Initiation assessment and planning adaptation
@@ -119,14 +119,14 @@ Initial assessment: 2026-09-13, W2. See the shared
 sources, complete contribution inventory, user journey and retained risks.
 Structured estimates above cover all eighteen atomic tasks; the shared
 [estimate basis](../W2-initiation.md#estimate-basis-and-shared-accounting) is not
-an elapsed-time promise. Independent architecture and complete-packet review
-remain prerequisites to approval.
+an elapsed-time promise. Architecture/reference review and owner acceptance are
+recorded; final packet review remains required before execution approval.
 
 - **Baseline / fit:** reuse immutable revisions, protected object streams,
   durable jobs and selective recalculation. Traceable source inspection remains
   central to the Vision. A parser's output and quality score are not evidence
   acceptance; the researcher retains correction and interpretation authority.
-- **Adaptation:** CAP-05-D01 awaits independent disposition of the selected local
+- **Adaptation:** CAP-05-D01 now has accepted architecture for the selected local
   Docling assets/resource profile and bounded protected viewer design. The
   [feasibility observations](../W2-feasibility.md) justify starting with existing
   encrypted storage, not a new cache. These are new
@@ -192,7 +192,7 @@ The planning reviewer must test the complete vertical: inputs from previous capa
 ### Review and approval
 
 All seven decisions across CAP-04/CAP-05 bind W2. Keep selected recommendations
-and their alternatives reviewable. Proposed ADRs are not yet accepted. Approval covers the complete
+and their alternatives reviewable. The three shared ADRs are accepted. W2 approval covers the complete
 Wave and every contributing slice at one immutable commit, not this capability
 in isolation. The G1 decision is not W2 packet approval.
 
@@ -252,7 +252,7 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 
 - [ ] All slice plans exist and pass `slice_plan_check.py` structurally.
 - [ ] Every material decision has credible candidates, recommendation and accepted status.
-- [ ] Required ADRs and design-reference changes are approved.
+- [x] Required ADRs and design-reference changes are approved.
 - [ ] Capability-wide architecture and end-to-end path are coherent.
 - [ ] Fixtures, benchmarks, credentials/licenses, hardware and human authorities are available or approved stubs exist.
 - [ ] Security/privacy/rights/research-integrity review is complete.
@@ -269,7 +269,7 @@ Every pause records category, evidence, exact blocked task/slice, attempted alte
 ## 12. Approval record
 
 The contribution remains **proposed**, with all W2 planning selections recorded.
-Complete independent ADR/reference and whole-packet review;
-then validate and independently review the entire W2 packet before requesting
+Architecture/reference acceptance is [recorded separately](../../artifacts/evidence/W2.design-architecture-owner-approval-01.md);
+validate and independently review the final rebound W2 packet before requesting
 the owner's one immutable pre-Wave approval. No capability-only approval or
 blanket inheritance of the G1 exception is authorized.

@@ -1,6 +1,6 @@
 # Research Observatory Page Inventory
 
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.6`
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.7`
 **Product pages:** 33
 **Additional reference pages:** `style-guide.html`, `prototype-index.html`
 
@@ -12,7 +12,7 @@
 | `intent-contract.html` | Research Intent Contract | Declare objective, research type, workflow, evidence, authority, scope, venue/output, novelty, and stopping logic. |
 | `help-onboarding.html` | Help, Onboarding & Diagnostics | Workflow catalog, sample project, contextual help, shortcuts, diagnostics, and support bundles. |
 | `search-studio.html` | Search Studio | Structured, semantic, citation, and branch-based discovery with coverage diagnostics. |
-| `source-manager.html` | Source Manager | Open, local, licensed, reference-manager, report, and manuscript sources with rights and health. |
+| `source-manager.html` | Source Manager | Open, local, licensed, reference-manager, report, and manuscript sources with rights and health; bounded publisher-trust and project-permission review. |
 | `ingestion-reconciliation.html` | Ingestion & Reconciliation | Canonicalization, duplicates, versions, corrections, retractions, and rights review. |
 | `corpus-canvas.html` | Corpus Canvas | Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity. |
 | `screening.html` | Screening | Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics. |

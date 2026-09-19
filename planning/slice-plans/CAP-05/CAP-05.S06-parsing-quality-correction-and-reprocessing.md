@@ -21,7 +21,7 @@ task_ids:
 - CAP-05.S06.T01
 - CAP-05.S06.T02
 - CAP-05.S06.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.6
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.7
 approval:
   status: pending
   approved_by: null
@@ -42,7 +42,7 @@ approval:
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-05.S06.T01`, `CAP-05.S06.T02`, `CAP-05.S06.T03` |
 | Slice dependencies | `CAP-05.S04.T02`, `CAP-03.S05.T02` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -174,14 +174,14 @@ The following durable types are recommended. Final field names belong in version
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
 - Quality dashboard prioritizes actionable dimensions and links each warning to source/structure context.
 - Correction tools provide undo within draft, compare original/machine/corrected, and require explicit acceptance.
 - Upgrade comparison shows quality gains and regressions separately, not only aggregate score.
 - Impact preview lists evidence/graphs/syntheses/manuscripts that will become stale.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Correction UI never executes source content and respects document rights.
@@ -424,7 +424,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
+Shared accepted records: [ADR-0029](../../../docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Parsing quality metric definitions and triage thresholds.

@@ -22,7 +22,7 @@ task_ids:
 - CAP-04.S05.T01
 - CAP-04.S05.T02
 - CAP-04.S05.T03
-ui_reference: RO-UI-ACADEMIC-MINIMAL-1.6
+ui_reference: RO-UI-ACADEMIC-MINIMAL-1.7
 approval:
   status: pending
   approved_by: null
@@ -43,7 +43,7 @@ approval:
 | Platform targets | `windows-x64` |
 | Backlog tasks | `CAP-04.S05.T01`, `CAP-04.S05.T02`, `CAP-04.S05.T03` |
 | Slice dependencies | `CAP-04.S04.T03`, `CAP-00.S03.T03` |
-| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.6` for user-facing implementation |
+| Governing experience | `RO-UI-ACADEMIC-MINIMAL-1.7` for user-facing implementation |
 | Approval state | Pending human approval |
 
 ## 1. Purpose and contribution to the larger vision
@@ -116,10 +116,10 @@ These are proposed planning selections, subordinate to accepted ADRs. The shared
 
 The following decisions are the default implementation direction for this slice. They remain subordinate to accepted ADRs and must be revised if benchmark or security evidence disproves them.
 
-1. **Use the proposed ADR-0028 LPAC worker and narrow broker protocol, not a same-user child described as a sandbox. Keep plugins outside Core/renderer and fail closed if required isolation is unavailable.**
+1. **Use the accepted ADR-0028 LPAC worker and narrow broker protocol, not a same-user child described as a sandbox. Keep plugins outside Core/renderer and fail closed if required isolation is unavailable.**
 2. **Manifest declares plugin ID/version, API compatibility, publisher/signature, operations, destinations, credential scopes, data classes, rights behavior, resource limits, and permissions.**
 3. **Default deny filesystem, network, secret, model, export, and project access; grant only declared capabilities.**
-4. **Verify exact signed manifests/file hashes against explicit trusted publisher keys, then obtain per-project permission consent. The ADR-0028 proposal uses local Ed25519 trust without a marketplace. Unsigned development fixtures remain disposable test-only inputs, not an ordinary project execution mode.**
+4. **Verify exact signed manifests/file hashes against explicit trusted publisher keys, then obtain per-project permission consent. Accepted ADR-0028 uses local Ed25519 trust without a marketplace. Unsigned development fixtures remain disposable test-only inputs, not an ordinary project execution mode.**
 5. **Use JSON Schema/OpenAPI-like typed RPC with bounded messages, deadlines, cancellation, and provenance.**
 6. **Conformance tests are mandatory for pagination, retries, cancellation, rights, provenance, redaction, schema drift, and malicious behavior.**
 
@@ -172,19 +172,18 @@ The following durable types are recommended. Final field names belong in version
 - Downstream slices consume immutable IDs/revisions and typed policy/provenance instead of reading implementation tables or filesystem layout.
 
 ## 6. User experience and approved reference
-Current visual/page authority is 1.6. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
+Current visual/page authority is 1.7. Preserve ADR-0026's exact inherited 1.5 workflow-catalog binding; mapping this slice does not relabel existing selections. See [W2 journey and mappings](../../W2-initiation.md#ux-journey-to-refine-in-the-existing-contracts).
 
-The [inert W2 reference proposal](../../W2-reference-proposal.md) supplies the
-missing inline Source Manager publisher-trust/project-permission contract.
-Its candidate1.7 identity is not active authority. Obtain exact reference approval
-with the complete W2 packet before implementing the new interaction; no marketplace
-or Application Settings page is selected.
+The [approved W2 reference](../../W2-reference-proposal.md) supplies the inline
+Source Manager publisher-trust/project-permission contract. Published reference
+1.7 is now design authority; complete W2 packet approval still precedes
+implementation. No marketplace or Application Settings page is selected.
 
 - Source Manager shows publisher, signature/trust, requested permissions, destinations, credentials, status, and conformance result.
 - Installing/enabling a plugin requires a permission review; permission increases require reapproval.
 - Failures identify plugin versus platform responsibility and offer disable/quarantine.
 
-**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.6`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
+**Reference-first rule.** If these requirements cannot be implemented within `RO-UI-ACADEMIC-MINIMAL-1.7`, update the style guide, workflow/page contracts, and HTML reference; run the reference validators; obtain explicit human approval and a new reference ID; then implement. A defect that merely restores conformance to the approved reference does not require a new reference version.
 
 ## 7. Security, privacy, rights and research integrity
 - Use OS process isolation available to the platform plus application-level capability mediation; do not claim a perfect sandbox where OS guarantees are limited.
@@ -430,7 +429,7 @@ Every compatibility-sensitive artifact records its format/schema/protocol/parser
 | Scope expansion into later capabilities | Record new work in the backlog and preserve only required extension points here. |
 
 ## 19. Required ADRs and human decisions
-Shared proposed records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md).
+Shared accepted records: [ADR-0027](../../../docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md), [ADR-0028](../../../docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md).
 The following details belong in that shared packet; they do not each require a new ADR or human approval. Any unresolved material detail still prevents W2 packet approval.
 
 - Binding detail: Connector RPC transport and process-isolation mechanism.
