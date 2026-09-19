@@ -330,18 +330,14 @@ class ImportPreviewService:
             return binding.adapters.queue.get(accepted.job_id)
         queue = binding.adapters.queue
         selected = queue.find_idempotency(inputs.idempotency_key)
-        while selected is not None and (job := queue.latest_continuation(selected.job_id)) is not None:
+        if selected is not None and (job := queue.latest_continuation(selected.job_id)) is not None:
             authority = queue.authority(job.job_id)
             snapshot = json.loads(authority.snapshot_json)
-            if (
-                snapshot["configuration"]
-                != {
-                    "configurationId": inputs.configuration_id,
-                    "configurationVersion": inputs.configuration_version,
-                    "configurationHash": inputs.configuration_hash,
-                }
-                or snapshot["continuation"]["sourceWorkflowRunId"] != selected.workflow_run_id
-            ):
+            if snapshot["configuration"] != {
+                "configurationId": inputs.configuration_id,
+                "configurationVersion": inputs.configuration_version,
+                "configurationHash": inputs.configuration_hash,
+            }:
                 raise PreviewProblem("preview-summary-job-authority-mismatch")
             selected = job
         return selected

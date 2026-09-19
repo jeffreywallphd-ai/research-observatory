@@ -198,6 +198,35 @@ class ImportSummaryWorkflowTests(unittest.TestCase):
                 self.assertEqual(expected, status)
                 self.assertEqual(expected, self.service.schedule_summary(self.root, self.preview, revision=2))
 
+    def test_retry_on_older_sibling_branch_remains_visible_live_and_reconstructed(self):
+        original = self.service.schedule_summary(self.root, self.preview, revision=1)
+
+        def cancel(job):
+            self.service.cancel_summary(self.root, self.preview, revision=1, job_id=job.job_id)
+            self.service.run_pending()
+
+        cancel(original)
+        first = self.retry(original, 1)
+        cancel(first)
+        self.fixture.now = "2026-09-19T19:51:00.000Z"
+        sibling = self.retry(original, 2)
+        cancel(sibling)
+        self.fixture.now = "2026-09-19T19:52:00.000Z"
+        child = self.retry(first, 3)
+        for terminal in (False, True):
+            if terminal:
+                cancel(child)
+            expected = self.queue.get(child.job_id)
+            for reconstruct in (False, True):
+                with self.subTest(terminal=terminal, reconstruct=reconstruct):
+                    if reconstruct:
+                        self.service.shutdown()
+                        self.service = self.fixture.runtime()
+                        self.addCleanup(self.service.shutdown)
+                        self.service.attach(self.root)
+                    self.assertEqual(expected, self.service.summary_status(self.root, self.preview, revision=1)[1])
+                    self.assertEqual(expected, self.service.schedule_summary(self.root, self.preview, revision=1))
+
     def test_binding_rejects_each_material_input_and_claim_substitution(self):
         job = self.service.schedule_summary(self.root, self.preview, revision=1)
         inputs, claim = self.inputs(), self.claim()

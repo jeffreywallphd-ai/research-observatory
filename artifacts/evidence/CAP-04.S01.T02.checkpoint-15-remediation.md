@@ -19,3 +19,24 @@ Same-parent sibling retries use creation time then ID as a deterministic tie-bre
 Keep cancellation/recovery enumeration active-only. Exact configuration matching and accepted-result priority
 remain unchanged. Replay this finding and the affected worker/parser/queue checks;
 do not repeat unrelated W1 qualification.
+
+## Second adverse candidate and root cause
+
+`6fe427ed54b075cb3db8e2df342275476013807d` was also NOT APPROVED. Its
+linear regression closed (independent three tests, 5.522s), but O→A, O→B,
+then A→C returned cancelled B rather than runnable C. The first fix assumed
+retry history was linear although Task Center permits sibling continuations.
+The original active-only scan and the greedy-child fix both projected only part
+of that history. This is a status-projection defect, not missing worker authority.
+
+Before the third candidate, add that actual branching command sequence, including
+C terminal and service reconstruction. Resolve leaf continuations across the
+root's complete retry lineage inside the adapter, returning one job: active work
+first, otherwise creation time/ID. Validate the returned exact configuration.
+Do not infer ancestry from UUID sort order or assemble unbounded Python history.
+An accepted summary still names its exact accepted job.
+
+Fresh parent checks at the second candidate: 32 affected tests passed (26.415s),
+Ruff/format passed nine files, but Mypy rejected the page lambda's default cursor
+inference. Replace it with a typed callable binding and rerun changed checks.
+No integration or task completion was claimed for either adverse candidate.

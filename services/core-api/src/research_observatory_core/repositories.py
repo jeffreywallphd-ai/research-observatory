@@ -5578,22 +5578,40 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             return tuple(self._row(self._select_job(connection, self._project_id, str(row[0]))) for row in rows)
 
     def latest_continuation(self, job_id: str) -> WorkflowJobRecord | None:
-        """Read one direct retry; terminal retries remain visible after restart."""
+        """Project one leaf across retry branches, preferring still-active work."""
         if not is_uuid_v7(job_id):
             raise WorkflowQueueProblem("workflow continuation lookup is invalid")
         with self._transaction() as connection:
             self._select_job(connection, self._project_id, job_id)
             row = connection.execute(
                 """
-                SELECT job.job_id FROM workflow_queue_jobs AS job
-                JOIN workflow_authority_snapshots AS snapshot
-                  ON snapshot.snapshot_id=job.snapshot_id
-                 AND snapshot.snapshot_revision=job.snapshot_revision
-                WHERE job.project_id=?
-                  AND json_extract(snapshot.snapshot_json, '$.continuation.sourceJobId')=?
-                ORDER BY job.created_at DESC, job.job_id DESC LIMIT 1
+                WITH RECURSIVE candidates AS MATERIALIZED (
+                    SELECT job.job_id, job.workflow_run_id, job.state, job.created_at,
+                           json_extract(snapshot.snapshot_json, '$.continuation.sourceJobId') AS parent_job,
+                           json_extract(snapshot.snapshot_json, '$.continuation.sourceWorkflowRunId') AS parent_run
+                    FROM workflow_queue_jobs AS job
+                    JOIN workflow_authority_snapshots AS snapshot
+                      ON snapshot.snapshot_id=job.snapshot_id
+                     AND snapshot.snapshot_revision=job.snapshot_revision
+                    WHERE job.project_id=? AND job.activity_type=(
+                        SELECT activity_type FROM workflow_queue_jobs WHERE job_id=?
+                    )
+                ), lineage(job_id, workflow_run_id) AS (
+                    SELECT job_id, workflow_run_id FROM candidates WHERE job_id=?
+                    UNION
+                    SELECT child.job_id, child.workflow_run_id FROM candidates AS child
+                    JOIN lineage AS parent
+                      ON child.parent_job=parent.job_id AND child.parent_run=parent.workflow_run_id
+                )
+                SELECT job.job_id FROM candidates AS job JOIN lineage USING (job_id, workflow_run_id)
+                WHERE job.job_id<>? AND NOT EXISTS (
+                    SELECT 1 FROM candidates AS child
+                    WHERE child.parent_job=job.job_id AND child.parent_run=job.workflow_run_id
+                )
+                ORDER BY (job.state NOT IN ('succeeded', 'failed', 'cancelled')) DESC,
+                         job.created_at DESC, job.job_id DESC LIMIT 1
                 """,
-                (self._project_id, job_id),
+                (self._project_id, job_id, job_id, job_id),
             ).fetchone()
             return None if row is None else self._row(self._select_job(connection, self._project_id, str(row[0])))
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
+from functools import partial
 
 from ..domain_contracts import new_uuid_v7
 from ..ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewProblem
@@ -117,8 +118,13 @@ class ImportSummaryActivity:
             while after < inputs.record_count:
                 poll()
                 rows = self._guard(
-                    lambda cursor=after: self._repository.append_summary_page(
-                        preview, revision=inputs.draft_revision, after=cursor, claim=context.claim, actor=actor()
+                    partial(
+                        self._repository.append_summary_page,
+                        preview,
+                        revision=inputs.draft_revision,
+                        after=after,
+                        claim=context.claim,
+                        actor=actor(),
                     )
                 )
                 if not rows or rows[0].ordinal != after + 1 or rows[-1].ordinal > inputs.record_count:
