@@ -5577,6 +5577,26 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             ).fetchall()
             return tuple(self._row(self._select_job(connection, self._project_id, str(row[0]))) for row in rows)
 
+    def latest_continuation(self, job_id: str) -> WorkflowJobRecord | None:
+        """Read one direct retry; terminal retries remain visible after restart."""
+        if not is_uuid_v7(job_id):
+            raise WorkflowQueueProblem("workflow continuation lookup is invalid")
+        with self._transaction() as connection:
+            self._select_job(connection, self._project_id, job_id)
+            row = connection.execute(
+                """
+                SELECT job.job_id FROM workflow_queue_jobs AS job
+                JOIN workflow_authority_snapshots AS snapshot
+                  ON snapshot.snapshot_id=job.snapshot_id
+                 AND snapshot.snapshot_revision=job.snapshot_revision
+                WHERE job.project_id=?
+                  AND json_extract(snapshot.snapshot_json, '$.continuation.sourceJobId')=?
+                ORDER BY job.created_at DESC, job.job_id DESC LIMIT 1
+                """,
+                (self._project_id, job_id),
+            ).fetchone()
+            return None if row is None else self._row(self._select_job(connection, self._project_id, str(row[0])))
+
     @staticmethod
     def _activity_filter(activity_types: tuple[str, ...] | None) -> tuple[str, tuple[str, ...]]:
         if activity_types is None:

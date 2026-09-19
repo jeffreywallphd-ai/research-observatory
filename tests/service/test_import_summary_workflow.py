@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
+from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights, review_record
 from research_observatory_core.ingestion.import_summaries import SUMMARY_ACTIVITY
 from research_observatory_core.ingestion.summary_workflow import bind_summary_claim
 from research_observatory_core.models import PrivacyPolicyUpdateRequest
@@ -147,6 +148,55 @@ class ImportSummaryWorkflowTests(unittest.TestCase):
         self.assertEqual(second.job_id, status.job_id)
         self.assertEqual(second.job_id, summary.job_id)
         self.assertEqual("cancelled", self.queue.get(original.job_id).state)
+
+    def test_terminal_continuation_status_survives_reconstruction(self):
+        record = self.repository.records_page(self.preview, after=0, limit=10)[0]
+        self.repository.revise_draft(
+            self.preview,
+            PreviewDraftChange(
+                expected_revision=1,
+                actor=self.actor,
+                decisions=(
+                    review_record(
+                        record,
+                        included=False,
+                        fields=(),
+                        rights=ImportRights(
+                            store=ImportPermission(value="denied", basis="researcher-confirmed"),
+                            inspect=ImportPermission(value="permitted", basis="researcher-confirmed"),
+                        ),
+                    ),
+                ),
+            ),
+        )
+        original = self.service.schedule_summary(self.root, self.preview, revision=2)
+        self.service.cancel_summary(self.root, self.preview, revision=2, job_id=original.job_id)
+        self.service.run_pending()
+        failed = self.retry(original, 1)
+        self.service.run_pending()
+        failed = self.queue.get(failed.job_id)
+        self.assertEqual("failed", failed.state)
+        self.assertEqual("rights-denied", failed.diagnostic_code)
+        self.assert_terminal_status(failed)
+        cancelled = self.retry(failed, 2)
+        self.service.cancel_summary(self.root, self.preview, revision=2, job_id=cancelled.job_id)
+        self.service.run_pending()
+        cancelled = self.queue.get(cancelled.job_id)
+        self.assertEqual("cancelled", cancelled.state)
+        self.assert_terminal_status(cancelled)
+
+    def assert_terminal_status(self, expected):
+        for reconstruct in (False, True):
+            with self.subTest(state=expected.state, reconstruct=reconstruct):
+                if reconstruct:
+                    self.service.shutdown()
+                    self.service = self.fixture.runtime()
+                    self.addCleanup(self.service.shutdown)
+                    self.service.attach(self.root)
+                summary, status = self.service.summary_status(self.root, self.preview, revision=2)
+                self.assertIsNone(summary)
+                self.assertEqual(expected, status)
+                self.assertEqual(expected, self.service.schedule_summary(self.root, self.preview, revision=2))
 
     def test_binding_rejects_each_material_input_and_claim_substitution(self):
         job = self.service.schedule_summary(self.root, self.preview, revision=1)

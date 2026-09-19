@@ -328,17 +328,23 @@ class ImportPreviewService:
         accepted = binding.adapters.previews.summary(inputs.preview.preview_id, revision=inputs.draft_revision)
         if accepted is not None:
             return binding.adapters.queue.get(accepted.job_id)
-        selected = None
-        for job in self._active_summaries(binding):
-            authority = binding.adapters.queue.authority(job.job_id)
-            configuration = json.loads(authority.snapshot_json)["configuration"]
-            if configuration == {
-                "configurationId": inputs.configuration_id,
-                "configurationVersion": inputs.configuration_version,
-                "configurationHash": inputs.configuration_hash,
-            }:
-                selected = job
-        return selected or binding.adapters.queue.find_idempotency(inputs.idempotency_key)
+        queue = binding.adapters.queue
+        selected = queue.find_idempotency(inputs.idempotency_key)
+        while selected is not None and (job := queue.latest_continuation(selected.job_id)) is not None:
+            authority = queue.authority(job.job_id)
+            snapshot = json.loads(authority.snapshot_json)
+            if (
+                snapshot["configuration"]
+                != {
+                    "configurationId": inputs.configuration_id,
+                    "configurationVersion": inputs.configuration_version,
+                    "configurationHash": inputs.configuration_hash,
+                }
+                or snapshot["continuation"]["sourceWorkflowRunId"] != selected.workflow_run_id
+            ):
+                raise PreviewProblem("preview-summary-job-authority-mismatch")
+            selected = job
+        return selected
 
     def schedule_summary(self, root: str, preview_id: str, *, revision: int) -> WorkflowJobRecord:
         def schedule(binding: _Binding) -> WorkflowJobRecord:
