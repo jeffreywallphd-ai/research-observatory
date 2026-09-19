@@ -66,6 +66,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.migrations.versions.v0010_dependency_impacts",
                     "research_observatory_core.migrations.versions.v0011_import_previews",
                     "research_observatory_core.import_preview_repository",
+                    "research_observatory_core.import_draft_repository",
                     "research_observatory_core.ports.import_previews",
                     "research_observatory_core.object_store",
                     "research_observatory_core.ports.credential_store",
@@ -109,6 +110,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         for module in (
             "research_observatory_core.migrations.versions.v0011_import_previews",
             "research_observatory_core.import_preview_repository",
+            "research_observatory_core.import_draft_repository",
             "research_observatory_core.ports.import_previews",
         ):
             self.assertIn(module, contract["requiredModules"])

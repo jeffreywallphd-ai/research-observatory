@@ -521,6 +521,9 @@ class _SqliteImportPreviewRepository:
             raise PreviewProblem("preview-not-accepted")
         return str(row[0])
 
+    def _record_access(self, connection: CanonicalConnection, preview_id: str, ordinal: int) -> None:
+        """Draft adapter extends current rights checks inside the same read snapshot."""
+
     def records_page(self, preview_id: str, *, after: int, limit: int) -> tuple[ImportRecord, ...]:
         if type(after) is not int or not 0 <= after <= 200000 or type(limit) is not int or not 1 <= limit <= 100:
             raise PreviewProblem("preview-page-limit")
@@ -563,8 +566,13 @@ class _SqliteImportPreviewRepository:
             )
             if any(record.record_key != row[0] for record, row in zip(records, rows, strict=True)):
                 raise PreviewProblem("preview-record-identity-mismatch")
+            for record in records:
+                self._record_access(connection, preview_id, record.ordinal)
             return records
 
 
 def sqlite_import_preview_repository(path: Path, project_id: str) -> ImportPreviewRepository:
-    return _SqliteImportPreviewRepository(path, project_id)
+    # Compose draft operations over the same intake adapter, without a second DB.
+    from .import_draft_repository import SqliteImportDraftRepository
+
+    return SqliteImportDraftRepository(path, project_id)

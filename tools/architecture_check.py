@@ -25,7 +25,12 @@ REQUIRED_STABLE_INTERFACES = {
 _DATABASE_MODULES = {"sqlite3", "sqlalchemy"}
 _DATABASE_CALLS = {"connect", "cursor", "execute", "executemany", "executescript"}
 _CONNECTION_AUTHORITIES = {"CanonicalConnection", "open_canonical_database"}
-_REPOSITORY_ADAPTER_MODULES = {"repositories", "model_registry_repository", "import_preview_repository"}
+_REPOSITORY_ADAPTER_MODULES = {
+    "repositories",
+    "model_registry_repository",
+    "import_preview_repository",
+    "import_draft_repository",
+}
 _DATA_ADAPTER_FILES = {"object_store.py", "storage.py"} | {f"{module}.py" for module in _REPOSITORY_ADAPTER_MODULES}
 
 

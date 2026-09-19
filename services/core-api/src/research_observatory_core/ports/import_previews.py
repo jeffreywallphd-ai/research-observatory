@@ -2,11 +2,24 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+from dataclasses import dataclass
 from typing import Annotated, Literal, Protocol, Self
 
 from pydantic import Field, model_validator
 
-from ..ingestion.import_drafts import Digest, DraftValue, Identity, ImportRights, ProjectIdentity
+from ..ingestion.import_drafts import (
+    Digest,
+    DraftAuthority,
+    DraftValue,
+    Identity,
+    ImportOptions,
+    ImportRights,
+    MappingProfile,
+    ProjectIdentity,
+    RecordDecision,
+    Revision,
+)
 from ..ingestion.reference_imports import ImportRecord, ImportSession, ImportSource
 from ..ingestion.source_chunks import SourceChunk
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
@@ -59,6 +72,46 @@ class PreviewState(DraftValue):
     chunk_count: Annotated[int, Field(ge=0, le=2048)]
 
 
+class PreviewDraftChange(DraftValue):
+    expected_revision: Annotated[int, Field(ge=0, le=2147483646)]
+    actor: PreviewActor
+    mapping: MappingProfile | None = None
+    rights: ImportRights | None = None
+    options: ImportOptions | None = None
+    decisions: Annotated[tuple[RecordDecision, ...], Field(max_length=100)] = ()
+    restore_revision: Revision | None = None
+
+    @model_validator(mode="after")
+    def bounded_change(self) -> Self:
+        if len({item.ordinal for item in self.decisions}) != len(self.decisions):
+            raise ValueError("duplicate-record-decision")
+        if self.restore_revision is not None and (
+            self.mapping is not None
+            or self.rights is not None
+            or self.options is not None
+            or self.decisions
+            or self.restore_revision > self.expected_revision
+        ):
+            raise ValueError("draft-restore-must-stand-alone")
+        return self
+
+
+class PreviewDraft(DraftValue):
+    revision: Revision
+    predecessor_revision: Revision | None
+    restore_revision: Revision | None
+    attempt_id: Identity
+    record_count: Annotated[int, Field(ge=0, le=200000)]
+    authority: DraftAuthority
+
+
+@dataclass(frozen=True, slots=True)
+class PreviewDraftRecord:
+    record: ImportRecord
+    decision: RecordDecision
+    warnings: tuple[str, ...]
+
+
 class ImportPreviewRepository(Protocol):
     def create(self, command: PreviewCreate) -> PreviewState: ...
     def read(self, preview_id: str) -> PreviewState: ...
@@ -82,3 +135,10 @@ class ImportPreviewRepository(Protocol):
         actor: PreviewActor,
     ) -> WorkflowOutputReference: ...
     def records_page(self, preview_id: str, *, after: int, limit: int) -> tuple[ImportRecord, ...]: ...
+    def revise_draft(self, preview_id: str, change: PreviewDraftChange) -> PreviewDraft: ...
+    def draft(self, preview_id: str, *, revision: int | None = None) -> PreviewDraft: ...
+    def draft_page(
+        self, preview_id: str, *, revision: int, after: int, limit: int
+    ) -> tuple[PreviewDraftRecord, ...]: ...
+    def draft_digest(self, preview_id: str, *, revision: int) -> str: ...
+    def diagnostic_report(self, preview_id: str, *, revision: int) -> Iterator[str]: ...

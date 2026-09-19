@@ -118,12 +118,28 @@ unavailable until the exact successful attempt accepts that receipt. Ordinary
 expired-attempt recovery can reparse without exposing earlier provisional rows;
 security cancellation closes access. Source records are not created by previews.
 
+Draft revisions now use compare-and-swap on the current revision, one accepted
+parse attempt and bounded groups of at most 100 decisions. Each decision binds an
+actual record and the exact mapping profile. Profiles are immutable project-scoped
+identities/revisions; undo cannot redefine an earlier profile. Source values and
+researcher corrections remain distinct. Remapping recomputes source suggestions
+while preserving explicit corrections, exclusions and per-record rights. A new
+mapping conflict is visible and excluded until resolved, never silently imported.
+
+Undo appends a revision restoring a selected earlier state. Sparse decision reads
+follow that restored history; later edits cannot resurrect the abandoned branch.
+Digests stream the complete ordered effective draft, not just visible rows. Current
+rights and cancellation still constrain historical reads, including raw-record
+access. Per-record inspect denial blocks affected pages rather than exposing raw
+values through another route. Reports stream bounded, freshly authorized pages
+covering parser warnings, mapping warnings and exclusions without source content,
+names, hashes or paths. Content-bearing export remains a separately authorized
+action. Draft editing never creates canonical SourceRecords.
+
 These boundaries are not yet a complete production wizard. Native/service project
-and lock authorization, worker composition, immutable draft editing and UI wiring
-remain CAP-04.S01.T02 work. The parser-only diagnostic CSV intentionally
-omits content, source names, hashes and paths; the final draft report must also
-include mapping warnings and exclusion decisions. Content-bearing reports need
-current export authority and spreadsheet-formula neutralization.
+and lock authorization, worker composition, duplicate-candidate projection and UI
+wiring remain CAP-04.S01.T02 work. Internal repository page limits are not the
+native bridge limit: the service must project/paginate responses below 1 MiB.
 
 ## Verification and technical basis
 
