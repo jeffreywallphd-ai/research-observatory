@@ -13,13 +13,13 @@ import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from sqlalchemy import text
 from sqlalchemy.dialects.sqlite import dialect
 
-from .domain_contracts import is_uuid_v7
-from .ingestion.import_drafts import ImportRights
+from .domain_contracts import is_uuid_v7, new_uuid_v7
+from .ingestion.import_drafts import CsvDelimiter, DraftValue, Identity, ImportRights, ProjectIdentity
 from .ingestion.preview_records import StoredImportRecord
 from .ingestion.reference_imports import PARSER_VERSION, ImportRecord, ImportSession, ImportSource
 from .ingestion.source_chunks import CHUNK_BYTES, MAX_CHUNKS, MAX_SOURCE_BYTES, SourceChunk
@@ -30,6 +30,15 @@ from .storage import CanonicalConnection, StorageProblem, _normalize_utc_millise
 
 _DIALECT = dialect(paramstyle="named")
 _TERMINAL = {"cancelled", "failed", "security-interrupted"}
+
+
+class _ParserSettings(DraftValue):
+    schema_version: Literal["1.0"] = "1.0"
+    project_id: ProjectIdentity
+    preview_id: Identity
+    format_name: Literal["ris", "bibtex", "csl-json", "doi-list", "csv"]
+    encoding: Literal["utf-8", "cp1252"]
+    delimiter: CsvDelimiter
 
 
 def _json(value: Any) -> str:
@@ -130,12 +139,35 @@ class _SqliteImportPreviewRepository:
         ).fetchone()
         if row is None:
             raise PreviewProblem("preview-not-found")
+        settings = _execute(
+            connection,
+            """
+            SELECT revision, value_type, text_value FROM settings
+             WHERE project_id=:project AND setting_key=:key LIMIT 2
+        """,
+            project=self._project,
+            key="imports.preview." + preview_id,
+        ).fetchall()
+        delimiter: CsvDelimiter = ","  # Exact legacy behavior; never backfill on read.
+        if settings:
+            if len(settings) != 1 or settings[0][0] != 0 or settings[0][1] != "text":
+                raise PreviewProblem("preview-parser-settings-invalid")
+            parsed = _ParserSettings.model_validate_json(settings[0][2])
+            if (parsed.project_id, parsed.preview_id, parsed.format_name, parsed.encoding) != (
+                self._project,
+                preview_id,
+                row[1],
+                row[2],
+            ):
+                raise PreviewProblem("preview-parser-settings-mismatch")
+            delimiter = parsed.delimiter
         return PreviewState(
             project_id=self._project,
             preview_id=preview_id,
             source_name=row[0],
             format_name=row[1],
             encoding=row[2],
+            delimiter=delimiter,
             rights=ImportRights.model_validate_json(row[9] or row[3]),
             state=row[4],
             source_sha256=row[5],
@@ -191,6 +223,27 @@ class _SqliteImportPreviewRepository:
                 rights=command.rights.model_dump_json(by_alias=True),
                 actor=actor.actor_id,
                 trace=actor.trace_id,
+                created=actor.occurred_at,
+            )
+            # One reserved immutable revision, atomically with a *new* preview.
+            # No updater, public settings writer, legacy backfill or MAX(revision).
+            settings = _ParserSettings(
+                project_id=self._project,
+                preview_id=command.preview_id,
+                format_name=command.format_name,
+                encoding=command.encoding,
+                delimiter=command.delimiter,
+            )
+            _execute(
+                connection,
+                """
+                INSERT INTO settings VALUES (:id, :project, :key, 0, 'text', :value,
+                    NULL, NULL, NULL, :created, :created)
+            """,
+                id=new_uuid_v7(),
+                project=self._project,
+                key="imports.preview." + command.preview_id,
+                value=settings.model_dump_json(by_alias=True),
                 created=actor.occurred_at,
             )
             self._event(connection, command.preview_id, "created", actor)
@@ -461,6 +514,7 @@ class _SqliteImportPreviewRepository:
                 or state.source_sha256 is None
                 or session.source != ImportSource(state.source_name, state.source_sha256, state.encoding)
                 or session.format_name != state.format_name
+                or session.delimiter != state.delimiter
             ):
                 raise PreviewProblem("preview-parse-source-mismatch")
             receipt = _execute(

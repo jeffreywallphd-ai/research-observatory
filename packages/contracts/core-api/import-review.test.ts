@@ -5,7 +5,7 @@ const previewId = "01900000-0000-7000-8000-000000000001";
 const address = { root: "C:/Research/synthetic", previewId };
 const permission = { value: "unknown", basis: "not-reported" };
 const summary = () => ({ previewId, revision: 1, predecessorRevision: null, attemptId: previewId, recordCount: 2,
-  mappingId: previewId, mappingRevision: 1, mappingHighWater: 1, mappingMode: "automatic",
+  mappingId: previewId, mappingRevision: 1, mappingHighWater: 1, mappingMode: "automatic", delimiter: ",",
   rights: Object.fromEntries(["store", "inspect", "index", "derive", "model-use", "quote", "export", "share"].map((name) => [name, { ...permission }])),
   options: { duplicatePolicy: "review", malformedPolicy: "exclude-and-report" } });
 const page = () => ({ revision: 1, nextAfter: 2, complete: true, records: [{ ordinal: 2, recordKey: "a".repeat(64),
@@ -80,6 +80,8 @@ describe("import review generated client", () => {
     value.rights.export!.value = "permitted";
     expect(result?.rights.export.value).toBe("unknown");
     expect(decodeReviewSummary({ ...summary(), mappingHighWater: 0 })).toBeNull();
+    expect(decodeReviewSummary({ ...summary(), delimiter: "|" })).toBeNull();
+    expect(decodeReviewSummary({ ...summary(), delimiter: ";" })?.delimiter).toBe(";");
     const granted = summary(); granted.rights.export!.value = "permitted";
     expect(decodeReviewSummary(granted)).toBeNull();
     let invoked = false;

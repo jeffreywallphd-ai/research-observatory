@@ -4,6 +4,7 @@ import { decodeImportPreviewItem, type ImportPreviewItem } from "@research-obser
 export interface ImportIntakeOptions {
   readonly formatName: ImportPreviewItem["formatName"];
   readonly encoding: ImportPreviewItem["encoding"];
+  readonly delimiter: "," | "\t" | ";";
   readonly localUseConfirmed: boolean;
 }
 export type ImportIntakeOutcome = { readonly status: "prepared"; readonly preview: ImportPreviewItem }
@@ -68,7 +69,7 @@ export async function chooseImportSource(
   const bytes = new Uint8Array(16);
   globalThis.crypto.getRandomValues(bytes);
   const operationId = Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("");
-  const request = { root: project.root, projectId: project.projectId, operationId, formatName: selected.formatName, encoding: selected.encoding,
+  const request = { root: project.root, projectId: project.projectId, operationId, formatName: selected.formatName, encoding: selected.encoding, delimiter: selected.delimiter,
     rights: Object.fromEntries(["store", "inspect", "index", "derive", "model-use", "quote", "export", "share"].map((action) => [action,
       action === "store" || action === "inspect" ? { value: "permitted", basis: "researcher-confirmed" } : { value: "unknown", basis: "not-reported" }])) };
   const cancel = (): void => { void invoke("cancel_import_file", { operationId }).catch(() => undefined); };

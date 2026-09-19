@@ -20,7 +20,7 @@ from .import_api import BoundedImportRoute, _problem
 from .import_preview_service import ImportPreviewService
 from .import_review import Cursor, DiagnosticPage, ImportReview, ReviewPageRequest
 from .import_review import PreviewProgress as IntakeStatus
-from .ingestion.import_drafts import Digest, DraftValue, Identity, ImportRights, ProjectIdentity
+from .ingestion.import_drafts import CsvDelimiter, Digest, DraftValue, Identity, ImportRights, ProjectIdentity
 from .ingestion.reference_imports import ImportSource
 from .ingestion.source_chunks import CHUNK_BYTES
 from .ports.import_previews import PreviewCreate, PreviewProblem
@@ -48,6 +48,7 @@ class IntakeCreate(IntakeSession):
     source_name: Annotated[str, Field(min_length=1, max_length=255)]
     format_name: Literal["ris", "bibtex", "csl-json", "doi-list", "csv"]
     encoding: Literal["utf-8", "cp1252"]
+    delimiter: CsvDelimiter = ","
     rights: ImportRights
 
     @model_validator(mode="after")
@@ -55,6 +56,8 @@ class IntakeCreate(IntakeSession):
         ImportSource(self.source_name, "0" * 64, self.encoding)
         if self.format_name == "csl-json" and self.encoding != "utf-8":
             raise ValueError("csl-requires-utf8")
+        if self.format_name != "csv" and self.delimiter != ",":
+            raise ValueError("delimiter-requires-csv")
         return self
 
 
@@ -154,6 +157,7 @@ def register_intake_routes(
                     source_name=command.source_name,
                     format_name=command.format_name,
                     encoding=command.encoding,
+                    delimiter=command.delimiter,
                     rights=command.rights,
                     actor=runtime.actor(request.state.trace_id),
                 ),

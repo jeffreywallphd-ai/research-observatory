@@ -247,9 +247,25 @@ leave a content-free hidden partial stage, never a successfully named report.
 This follows [Windows handle operations](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfileinformationbyhandle)
 and [non-replacing rename semantics](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info).
 
-This is not yet a complete production wizard. Duplicate/count projection,
-scalable undo and explicit CSV delimiter integration
-remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
+CSV intake now explicitly selects comma, tab or semicolon in the native request;
+other formats reject non-comma choices. One reserved `imports.preview.<id>`
+settings row binds project, preview, format, encoding and delimiter at revision
+zero, atomically with preview creation. It uses existing immutable protected
+settings, not a new database schema or a writable preference. Reads reject
+malformed/mismatched settings and extra revisions. An absent legacy row means
+comma; reads never backfill or alter earlier authority. Changing parsing requires
+a new preview, preserving the original source and decisions.
+
+Comma jobs retain their exact input-schema/definition/configuration identity.
+Tab and semicolon use an explicit version-1.1 input/definition, bound again on
+worker claim and parser completion. Receipts include the actual delimiter.
+Comma effective-draft hashes retain byte-exact `/1` serialization; alternative
+delimiters use `/2` with the delimiter in its header. Source/chunk hashes and
+raw-span record keys are unchanged. The generated review contract displays the
+persisted selection rather than current form state.
+
+This is not yet a complete production wizard. Duplicate/count projection and
+scalable undo remain CAP-04.S01.T02 work. Native-window, 100k-record and packaged end-to-end
 qualification remain required; unit/service composition is not a substitute.
 
 ## Verification and technical basis

@@ -98,6 +98,7 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
                 project_id=self._project,
                 preview_id=state.preview_id,
                 source_sha256=state.source_sha256,
+                delimiter=state.delimiter,
                 mapping=MappingProfile.model_validate_json(row[3]),
                 rights=ImportRights.model_validate_json(row[4]),
                 options=ImportOptions.model_validate_json(row[5]),

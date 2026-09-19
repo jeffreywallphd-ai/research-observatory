@@ -40,7 +40,7 @@ class ImportInteractionTests(unittest.TestCase):
         fixture.service.detach(fixture.root)
         fixture.projects.close(root=fixture.root, trace_id="1" * 32)
         raw = (
-            "title,title,doi\n" + "".join(f"Synthetic {n},Alternative {n},10.99999/EXAMPLE{n}\n" for n in range(55))
+            "title;title;doi\n" + "".join(f"Synthetic {n};Alternative {n};10.99999/EXAMPLE{n}\n" for n in range(55))
         ).encode()
         selected_previews = []
         calls = []
@@ -69,12 +69,14 @@ class ImportInteractionTests(unittest.TestCase):
                 self.assertEqual(fixture.root, request["root"])
                 self.assertEqual(fixture.project_id, request["projectId"])
                 self.assertNotIn("sourcePath", request)
+                self.assertEqual(";", request["delimiter"])
                 context = api.session()
                 created = api.create(
                     context,
                     sourceName="synthetic-preview.csv",
                     formatName=request["formatName"],
                     encoding=request["encoding"],
+                    delimiter=request["delimiter"],
                     rights=request["rights"],
                 )
                 self.assertEqual(200, created.status_code)
@@ -179,6 +181,13 @@ class ImportInteractionTests(unittest.TestCase):
                 choose = workspace.get_by_role("button", name="Choose reference file…", exact=True)
                 self.assertTrue(choose.is_disabled())
                 page.get_by_label("Reference format", exact=True).select_option("csv")
+                page.get_by_label("CSV separator", exact=True).select_option("\t")
+                self.assertEqual("\t", page.get_by_label("CSV separator", exact=True).input_value())
+                page.get_by_label("Reference format", exact=True).select_option("ris")
+                self.assertEqual(0, page.get_by_label("CSV separator", exact=True).count())
+                page.get_by_label("Reference format", exact=True).select_option("csv")
+                self.assertEqual(",", page.get_by_label("CSV separator", exact=True).input_value())
+                page.get_by_label("CSV separator", exact=True).select_option(";")
                 page.get_by_label("I confirm I may store and inspect this file locally.", exact=True).check()
                 choose.focus()
                 page.keyboard.press("Enter")
@@ -188,6 +197,7 @@ class ImportInteractionTests(unittest.TestCase):
                 self.assertEqual("doi", page.locator("#import-column-2").input_value())
                 for theme in ("light", "dark"):
                     self.assertEqual(theme, page.locator("html").get_attribute("data-theme"))
+                    workspace.get_by_text("CSV separator: Semicolon.", exact=False).wait_for()
                     page.locator("#import-column-0").select_option("title")
                     page.locator("#import-column-1").select_option("")
                     page.locator("#import-column-2").select_option("doi")

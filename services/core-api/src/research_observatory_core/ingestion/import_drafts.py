@@ -26,6 +26,7 @@ type ProjectIdentity = Annotated[
     str, Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
 ]
 type MappedName = Literal["title", "doi", "year", "author", "container"]
+type CsvDelimiter = Literal[",", "\t", ";"]
 type TextValue = Annotated[str, Field(min_length=1, max_length=65536)]
 type Revision = Annotated[int, Field(strict=True, ge=1, le=2147483647)]
 type FieldIndex = Annotated[int, Field(strict=True, ge=0, le=4095)]
@@ -135,6 +136,7 @@ class DraftAuthority(DraftValue):
     mapping: MappingProfile
     rights: ImportRights
     options: ImportOptions = Field(default_factory=ImportOptions)
+    delimiter: CsvDelimiter = ","
 
 
 def _conflicts(fields: Iterable[MappedField]) -> tuple[MappedName, ...]:
@@ -247,8 +249,13 @@ def effective_draft_sha256(authority: DraftAuthority, decisions: Iterable[Record
     be replayed from a new UI session. Project scope is retained.
     """
     authority = DraftAuthority.model_validate(authority)
-    header = authority.model_dump(mode="json", by_alias=True, exclude={"preview_id"})
-    digest = hashlib.sha256(b'["effective-import-draft/1",')
+    # Comma retains the exact historical /1 bytes; explicit alternative parsing
+    # is a new scientific-input identity, never a rewrite of an earlier digest.
+    excluded = {"preview_id", "delimiter"} if authority.delimiter == "," else {"preview_id"}
+    header = authority.model_dump(mode="json", by_alias=True, exclude=excluded)
+    digest = hashlib.sha256(
+        b'["effective-import-draft/1",' if authority.delimiter == "," else b'["effective-import-draft/2",'
+    )
     digest.update(json.dumps(header, sort_keys=True, ensure_ascii=True, separators=(",", ":")).encode("ascii"))
     digest.update(b",[")
     previous = 0

@@ -51,8 +51,8 @@ class PreviewIntentContext(DraftValue):
         return {"intentId": self.intent_id, "revisionId": self.revision_id, "contentHash": self.content_hash}
 
 
-class PreviewJobInput(DraftValue):
-    schema_version: Literal["1.0"] = "1.0"
+class _PreviewInput(DraftValue):
+    schema_version: str = "1.0"
     project_id: ProjectIdentity
     preview_id: Identity
     source_sha256: Digest
@@ -63,7 +63,7 @@ class PreviewJobInput(DraftValue):
     byte_length: Annotated[int, Field(ge=0, le=268435456)]
     chunk_count: Annotated[int, Field(ge=0, le=2048)]
     parser_version: Literal["local-reference-imports/1.0.0"] = "local-reference-imports/1.0.0"
-    delimiter: Literal[","] = ","
+    delimiter: str = ","
     parser_limits_hash: Fingerprint
     rights_hash: Fingerprint
     intent: PreviewIntentContext
@@ -88,10 +88,39 @@ class PreviewJobInput(DraftValue):
     def policy_reference(self) -> dict[str, str]:
         return {"policyId": "local-import-preview-policy", "policyVersion": "1.0.0", "policyHash": self.policy_hash}
 
+    @property
+    def configuration_version(self) -> str:
+        return "1.0.0" if self.schema_version == "1.0" else "1.1.0"
+
+
+class PreviewJobInput(_PreviewInput):
+    # Keep this exact model name, field order and schema for queued comma jobs.
+    schema_version: Literal["1.0"] = "1.0"
+    delimiter: Literal[","] = ","
+
+
+class PreviewDelimitedJobInput(_PreviewInput):
+    schema_version: Literal["1.1"] = "1.1"
+    delimiter: Literal["\t", ";"]
+
+    @model_validator(mode="after")
+    def csv_only(self) -> Self:
+        if self.format_name != "csv":
+            raise ValueError("delimiter-requires-csv")
+        return self
+
+
+type PreviewInput = PreviewJobInput | PreviewDelimitedJobInput
+
+
+def _validated_input(inputs: PreviewInput) -> PreviewInput:
+    model = PreviewJobInput if inputs.schema_version == "1.0" else PreviewDelimitedJobInput
+    return model.model_validate(inputs)
+
 
 def preview_job_input(
     state: PreviewState, intent: PreviewIntentContext, policy_hash: str, resume_epoch: str
-) -> PreviewJobInput:
+) -> PreviewInput:
     state, intent = PreviewState.model_validate(state), PreviewIntentContext.model_validate(intent)
     if (
         state.source_sha256 is None
@@ -102,30 +131,40 @@ def preview_job_input(
         or not state.rights.permits("inspect")
     ):
         raise PreviewProblem("preview-workflow-authority-unavailable")
-    return PreviewJobInput(
-        project_id=state.project_id,
-        preview_id=state.preview_id,
-        source_sha256=state.source_sha256,
-        manifest_sha256=state.manifest_sha256,
-        source_name=state.source_name,
-        format_name=state.format_name,
-        encoding=state.encoding,
-        byte_length=state.byte_length,
-        chunk_count=state.chunk_count,
-        parser_version=PARSER_VERSION,
-        parser_limits_hash=fingerprint(asdict(ImportLimits())),
-        rights_hash=fingerprint(state.rights.model_dump(mode="json", by_alias=True)),
-        intent=intent,
-        policy_hash=policy_hash,
-        resume_epoch=resume_epoch,
+    model = PreviewJobInput if state.delimiter == "," else PreviewDelimitedJobInput
+    return model.model_validate(
+        dict(
+            project_id=state.project_id,
+            preview_id=state.preview_id,
+            source_sha256=state.source_sha256,
+            manifest_sha256=state.manifest_sha256,
+            source_name=state.source_name,
+            format_name=state.format_name,
+            encoding=state.encoding,
+            delimiter=state.delimiter,
+            byte_length=state.byte_length,
+            chunk_count=state.chunk_count,
+            parser_version=PARSER_VERSION,
+            parser_limits_hash=fingerprint(asdict(ImportLimits())),
+            rights_hash=fingerprint(state.rights.model_dump(mode="json", by_alias=True)),
+            intent=intent,
+            policy_hash=policy_hash,
+            resume_epoch=resume_epoch,
+        )
     )
 
 
-def _definition(definition_id: str, revision_id: str, now: str) -> dict[str, Any]:
+def _definition(
+    definition_id: str,
+    revision_id: str,
+    now: str,
+    input_type: type[PreviewJobInput] | type[PreviewDelimitedJobInput] = PreviewJobInput,
+) -> dict[str, Any]:
+    version = "1.0.0" if input_type is PreviewJobInput else "1.1.0"
     input_schema = {
         "schemaId": "import-preview-input",
-        "schemaVersion": "1.0.0",
-        "schemaHash": fingerprint(PreviewJobInput.model_json_schema()),
+        "schemaVersion": version,
+        "schemaHash": fingerprint(input_type.model_json_schema()),
     }
     output_schema = {
         "schemaId": "import-preview-output",
@@ -138,7 +177,7 @@ def _definition(definition_id: str, revision_id: str, now: str) -> dict[str, Any
         "contractVersion": "1.0.0",
         "workflowDefinitionId": definition_id,
         "definitionRevisionId": revision_id,
-        "definitionVersion": "1.0.0",
+        "definitionVersion": version,
         "workflowKey": ACTIVITY,
         "createdAt": now,
         "inputSchema": input_schema,
@@ -187,9 +226,9 @@ def _definition(definition_id: str, revision_id: str, now: str) -> dict[str, Any
     }
 
 
-def build_preview_job(inputs: PreviewJobInput, *, actor: WorkflowActor, now: str) -> WorkflowJobSubmission:
-    inputs = PreviewJobInput.model_validate(inputs)
-    definition = _definition(new_uuid_v7(), new_uuid_v7(), now)
+def build_preview_job(inputs: PreviewInput, *, actor: WorkflowActor, now: str) -> WorkflowJobSubmission:
+    inputs = _validated_input(inputs)
+    definition = _definition(new_uuid_v7(), new_uuid_v7(), now, type(inputs))
     run, snapshot_id, step, job = (new_uuid_v7() for _ in range(4))
     transitions = (
         ("workflow-run", run, None, "accepted", "command-accepted"),
@@ -230,14 +269,14 @@ def build_preview_job(inputs: PreviewJobInput, *, actor: WorkflowActor, now: str
         "definition": {
             "workflowDefinitionId": definition["workflowDefinitionId"],
             "definitionRevisionId": definition["definitionRevisionId"],
-            "definitionVersion": "1.0.0",
+            "definitionVersion": definition["definitionVersion"],
             "contentHash": workflow_record_sha256(definition),
         },
         "intent": inputs.intent.reference(),
         "policy": inputs.policy_reference(),
         "configuration": {
             "configurationId": inputs.configuration_id,
-            "configurationVersion": "1.0.0",
+            "configurationVersion": inputs.configuration_version,
             "configurationHash": inputs.configuration_hash,
         },
         "executor": {
@@ -291,15 +330,16 @@ def build_preview_job(inputs: PreviewJobInput, *, actor: WorkflowActor, now: str
     )
 
 
-def bind_preview_claim(
-    authority: WorkflowJobAuthority, claim: WorkflowJobClaim, inputs: PreviewJobInput
-) -> PreviewJobInput:
+def bind_preview_claim(authority: WorkflowJobAuthority, claim: WorkflowJobClaim, inputs: PreviewInput) -> PreviewInput:
     """Reconstruct exact input after restart; a matching activity name is insufficient."""
     try:
-        inputs = PreviewJobInput.model_validate(inputs)
+        inputs = _validated_input(inputs)
         definition, snapshot = json.loads(authority.definition_json), json.loads(authority.snapshot_json)
         expected_definition = _definition(
-            definition["workflowDefinitionId"], definition["definitionRevisionId"], definition["createdAt"]
+            definition["workflowDefinitionId"],
+            definition["definitionRevisionId"],
+            definition["createdAt"],
+            type(inputs),
         )
         jobs = [job for job in snapshot["jobs"] if job["jobId"] == claim.job_id]
         if (
@@ -319,7 +359,7 @@ def bind_preview_claim(
             or snapshot["configuration"]
             != {
                 "configurationId": inputs.configuration_id,
-                "configurationVersion": "1.0.0",
+                "configurationVersion": inputs.configuration_version,
                 "configurationHash": inputs.configuration_hash,
             }
             or snapshot["executor"]["profile"] != "local"

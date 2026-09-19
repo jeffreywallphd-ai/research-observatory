@@ -166,6 +166,7 @@ export function ImportReviewPane({ root, projectId, initial, client, announce }:
     {busy ? <p role="status">Reading the current protected preview…</p> : null}
     {summary ? <>
       <Panel title="Draft decisions"><p>Revision {summary.revision} · {summary.recordCount.toLocaleString()} source rows (including headers/directives). Raw source values are preserved. No canonical records have been committed.</p>
+        {initial.formatName === "csv" ? <p>CSV separator: {summary.delimiter === "," ? "Comma" : summary.delimiter === ";" ? "Semicolon" : "Tab"}. Start a new import to change parsing settings.</p> : null}
         <p>Download a complete diagnostic CSV with row locations, validation codes and exclusion reasons. It does not contain reference text, names or local paths.</p>
         <div className="ro-action-row"><Button ref={reportButton} disabled={busy} onClick={() => void downloadReport()}>Download diagnostic report…</Button>{savingReport ? <><span role="status">Saving the complete current draft report…</span><Button onClick={() => reportOwner.current?.abort()}>Cancel report download</Button></> : null}</div>
         <dl className="import-rights">{Object.entries(summary.rights).map(([action, permission]) => <div key={action}><dt>{action}</dt><dd>{permission.value} · {permission.basis.replaceAll("-", " ")}</dd></div>)}</dl>

@@ -148,6 +148,13 @@ class ImportDraftTests(unittest.TestCase):
             review_record(record, included=True, fields=propose_fields(record, profile()).fields) for record in records
         )
         digest = effective_draft_sha256(authority, iter(decisions))
+        # Frozen at f44e175c: adding defaults must not rewrite historical identity.
+        self.assertEqual("1d4c1acef2f71bf729e4d114e0fda8900fdf693b618beaca71569915d75b6295", digest)
+        delimiter_hashes = {digest}
+        for delimiter in ("\t", ";"):
+            changed = DraftAuthority.model_validate({**authority.model_dump(), "delimiter": delimiter})
+            delimiter_hashes.add(effective_draft_sha256(changed, iter(decisions)))
+        self.assertEqual(3, len(delimiter_hashes))
         self.assertEqual(
             digest,
             effective_draft_sha256(DraftAuthority.model_validate_json(authority.model_dump_json()), iter(decisions)),

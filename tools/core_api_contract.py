@@ -1592,11 +1592,12 @@ export function decodeImportPreviewPage(value: unknown): ImportPreviewPage | nul
 export function decodeReviewSummary(value: unknown): ReviewSummary | null {
   const item = importOwned(value);
   if (!item || !exactKeys(item, ["previewId", "revision", "predecessorRevision", "attemptId", "recordCount",
-    "mappingId", "mappingRevision", "mappingHighWater", "mappingMode", "rights", "options"])
+    "mappingId", "mappingRevision", "mappingHighWater", "mappingMode", "rights", "options", "delimiter"])
     || !canonicalUuid7(item.previewId) || !canonicalUuid7(item.attemptId) || !canonicalUuid7(item.mappingId)
     || !integer(item.revision, 1, 2147483647) || item.predecessorRevision !== (item.revision === 1 ? null : item.revision - 1)
     || !integer(item.recordCount, 0, 200000) || !integer(item.mappingRevision, 1, 2147483647)
     || !integer(item.mappingHighWater, item.mappingRevision, 2147483647)
+    || !member(item.delimiter, [",", "\t", ";"] as const)
     || !registryEnum(item.mappingMode, ["automatic", "columns"])) return null;
   const rights = record(item.rights), options = record(item.options);
   if (!rights || !exactKeys(rights, IMPORT_RIGHTS) || !IMPORT_RIGHTS.every((name) => {

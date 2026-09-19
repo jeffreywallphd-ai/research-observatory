@@ -232,6 +232,14 @@
         "title": "ConfigurationResponse",
         "type": "object"
       },
+      "CsvDelimiter": {
+        "enum": [
+          ",",
+          "\t",
+          ";"
+        ],
+        "type": "string"
+      },
       "Cursor": {
         "maximum": 200000.0,
         "minimum": 0.0,
@@ -4545,6 +4553,9 @@
           "attemptId": {
             "$ref": "#/components/schemas/Identity"
           },
+          "delimiter": {
+            "$ref": "#/components/schemas/CsvDelimiter"
+          },
           "mappingHighWater": {
             "$ref": "#/components/schemas/Revision"
           },
@@ -4599,7 +4610,8 @@
           "mappingHighWater",
           "mappingMode",
           "rights",
-          "options"
+          "options",
+          "delimiter"
         ],
         "title": "ReviewSummary",
         "type": "object"

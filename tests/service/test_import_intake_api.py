@@ -6,6 +6,8 @@ import base64
 import hashlib
 import unittest
 import uuid
+from contextlib import closing
+from dataclasses import asdict
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -13,7 +15,10 @@ from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.import_preview_repository import sqlite_import_preview_repository
 from research_observatory_core.ingestion.import_drafts import ImportPermission
+from research_observatory_core.ingestion.preview_workflow import fingerprint
+from research_observatory_core.ingestion.reference_imports import PARSER_VERSION, ImportLimits
 from research_observatory_core.ports.import_previews import PreviewDraftChange
+from research_observatory_core.storage import open_canonical_database
 
 from tests.service import test_import_preview_service as fixture
 
@@ -105,6 +110,69 @@ class ImportIntakeApiTests(unittest.TestCase):
         self.assertEqual(409, self.post("chunk", {**context, "previewId": preview}, ordinal=1, data="WA==").status_code)
         self.assertEqual(200, self.post("cancel", {**renewed, "previewId": preview}).status_code)
         self.assertEqual("cancelled", self.post("status", {**renewed, "previewId": preview}).json()["state"])
+
+    def test_explicit_delimiters_survive_project_reopen_and_reach_real_worker(self):
+        for delimiter in ("\t", ";"):
+            with self.subTest(delimiter=repr(delimiter)):
+                context = self.session()
+                created = self.create(context, delimiter=delimiter)
+                self.assertEqual(200, created.status_code)
+                preview = created.json()["previewId"]
+                address = {**context, "previewId": preview}
+                raw = f'title{delimiter}doi\n"Synthetic{delimiter} title"{delimiter}10.99999/EXAMPLE\n'.encode()
+                self.assertEqual(
+                    200, self.post("chunk", address, ordinal=1, data=base64.b64encode(raw).decode()).status_code
+                )
+                self.assertEqual(
+                    200,
+                    self.post(
+                        "seal", address, sourceSha256=hashlib.sha256(raw).hexdigest(), byteLength=len(raw), chunkCount=1
+                    ).status_code,
+                )
+                self.assertEqual(200, self.post("schedule", address).status_code)
+                self.fixture.service.detach(self.fixture.root)
+                self.fixture.projects.close(root=self.fixture.root, trace_id="1" * 32)
+                self.fixture.projects.open(root=self.fixture.root, trace_id="1" * 32)
+                renewed = {**self.session(), "previewId": preview}
+                self.fixture.service.run_pending()
+                self.assertEqual("succeeded", self.post("status", renewed).json()["jobState"])
+                repository = sqlite_import_preview_repository(
+                    Path(self.fixture.root) / "state/project.sqlite3", self.fixture.project_id
+                )
+                self.assertEqual(delimiter, repository.read(preview).delimiter)
+                rows = repository.records_page(preview, after=0, limit=25)
+                self.assertEqual(2, len(rows))
+                self.assertEqual(f"Synthetic{delimiter} title", rows[1].fields[0].raw_value)
+                self.assertEqual("10.99999/example", rows[1].candidates[1].value)
+                review = self.client.post(
+                    "/projects/imports/begin-review", json={"root": self.fixture.root, "previewId": preview}
+                )
+                self.assertEqual(200, review.status_code)
+                self.assertEqual(delimiter, review.json()["delimiter"])
+                self.assertEqual(delimiter, repository.draft(preview).authority.delimiter)
+                with closing(
+                    open_canonical_database(
+                        Path(self.fixture.root) / "state/project.sqlite3", expected_project_id=self.fixture.project_id
+                    )
+                ) as connection:
+                    recorded = connection.execute(
+                        "SELECT d.fingerprint FROM material_dependencies d JOIN import_parse_completions c "
+                        "ON c.project_id=d.project_id AND c.receipt_revision_id=d.output_revision_id "
+                        "WHERE c.preview_id=? AND d.configuration_id='import.parser-configuration'",
+                        (preview,),
+                    ).fetchall()
+                expected = fingerprint(
+                    {
+                        "parserVersion": PARSER_VERSION,
+                        "format": "csv",
+                        "encoding": "utf-8",
+                        "delimiter": delimiter,
+                        "limits": asdict(ImportLimits()),
+                    }
+                )
+                self.assertEqual([expected], [row[0] for row in recorded])
+        for invalid in ({"delimiter": "|"}, {"formatName": "ris", "delimiter": ";"}):
+            self.assertEqual(422, self.create(self.session(), **invalid).status_code)
 
     def test_claimed_seal_digest_is_not_accepted_as_verified_source(self):
         context = self.session()

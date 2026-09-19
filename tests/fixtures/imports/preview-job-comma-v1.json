@@ -1,0 +1,65 @@
+{
+  "inputs": {
+    "byteLength": 37,
+    "chunkCount": 1,
+    "delimiter": ",",
+    "encoding": "utf-8",
+    "formatName": "csv",
+    "intent": {
+      "contentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "domainProjectId": "01a0bbad-a2f0-70ef-817f-cf2149a88262",
+      "intentId": "01a0bbad-a2f0-7535-abfd-19ff7fae2d18",
+      "projectId": "01890f6e-6a40-4cc5-98b7-7f3f36b60210",
+      "revisionId": "01a0bbad-a2f0-7b77-a695-efb8bb01ab40",
+      "status": "draft"
+    },
+    "manifestSha256": "fc4681a789f10c145797122e9b627b5a5bf9abdd47bd4d8dcd0a6afd7d5a234f",
+    "parserLimitsHash": "sha256:3c90557e7cd47abf3454450b22673a9de3b250cde501372b515e1c50c03b524f",
+    "parserVersion": "local-reference-imports/1.0.0",
+    "policyHash": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "previewId": "01a0bbad-a29f-7caa-aaa2-eef6127d8f85",
+    "projectId": "01890f6e-6a40-4cc5-98b7-7f3f36b60210",
+    "resumeEpoch": "33333333333333333333333333333333",
+    "rightsHash": "sha256:e17f07b731bef2d07c92b8ccf316270661464c5615d844125514370ffe096f3a",
+    "schemaVersion": "1.0",
+    "sourceName": "references.csv",
+    "sourceSha256": "7ceea3876d6cbd3d56ba9bf568f89ab832eca2fefc3e0c7ff44c807b6308be62"
+  },
+  "submission": {
+    "activity_type": "local-reference-preview",
+    "available_at": "2026-08-30T12:02:00.000Z",
+    "checkpoint_mode": "forbidden",
+    "command_fingerprint": "sha256:7649074a6646fd8921a142b1a7b40058545aeac92dbde849cb4ef754cfd1da3c",
+    "concurrency_class": "document",
+    "definition_json": "{\"compatibility\":{\"historyContractVersion\":\"1.0.0\",\"maximumExecutorContractVersion\":\"1.0.0\",\"minimumExecutorContractVersion\":\"1.0.0\"},\"contractVersion\":\"1.0.0\",\"createdAt\":\"2026-08-30T12:02:00.000Z\",\"definitionRevisionId\":\"01a0bbad-a2f0-7b1b-bf20-6f2f190077b1\",\"definitionVersion\":\"1.0.0\",\"documentType\":\"research-observatory-workflow-definition\",\"inputSchema\":{\"schemaHash\":\"sha256:062ab377e03dbdb4ae07ee30bd333f3898b8838508444051ee429bf16ca856eb\",\"schemaId\":\"import-preview-input\",\"schemaVersion\":\"1.0.0\"},\"outputSchema\":{\"schemaHash\":\"sha256:a3ffb6ab45f2719bc72cd04700eae0545fbafb96fffeb3a0c7493b8c4404fc73\",\"schemaId\":\"import-preview-output\",\"schemaVersion\":\"1.0.0\"},\"schemaVersion\":\"1.0\",\"steps\":[{\"activityType\":\"local-reference-preview\",\"cancellationPolicy\":{\"gracePeriodMs\":5000,\"mode\":\"cooperative\",\"partialArtifactDisposition\":\"retained-incomplete\"},\"checkpointPolicy\":{\"maximumIntervalSeconds\":null,\"mode\":\"forbidden\"},\"dependsOn\":[],\"humanTask\":null,\"idempotency\":{\"keyScope\":\"import-preview-source\",\"mode\":\"required\"},\"inputSchema\":{\"schemaHash\":\"sha256:062ab377e03dbdb4ae07ee30bd333f3898b8838508444051ee429bf16ca856eb\",\"schemaId\":\"import-preview-input\",\"schemaVersion\":\"1.0.0\"},\"kind\":\"activity\",\"outputSchema\":{\"schemaHash\":\"sha256:a3ffb6ab45f2719bc72cd04700eae0545fbafb96fffeb3a0c7493b8c4404fc73\",\"schemaId\":\"import-preview-output\",\"schemaVersion\":\"1.0.0\"},\"permissions\":{\"capabilityScopes\":[\"objects-read\",\"artifacts-write\",\"policy-read\"],\"model\":\"none\",\"network\":\"none\",\"projectFiles\":\"read-write\"},\"progress\":{\"totalKind\":\"unknown\",\"totalUnits\":null,\"unit\":\"records\"},\"retryPolicy\":{\"initialBackoffMs\":1000,\"jitter\":\"deterministic\",\"maxAttempts\":3,\"maximumBackoffMs\":10000,\"multiplierBasisPoints\":20000,\"nonRetryableErrorCodes\":[\"rights-denied\",\"policy-denied\",\"stale-authority\"],\"retryableErrorCodes\":[\"dependency-unavailable\"]},\"stepKey\":\"parse-reference-source\"}],\"workflowDefinitionId\":\"01a0bbad-a2f0-7310-b2d4-529f54a1ba01\",\"workflowKey\":\"local-reference-preview\"}",
+    "definition_record_sha256": "sha256:8f83338321f19fbbf66abf5385b29950567f2cbcd6d5b546af2fd4c94b932b86",
+    "definition_revision_id": "01a0bbad-a2f0-7b1b-bf20-6f2f190077b1",
+    "deterministic_jitter": true,
+    "idempotency_key": "sha256:b43cbcdd4ca13fafd9cc3f5475aa8a16abacce4f3b6c5edf98b680790a0a178e",
+    "initial_backoff_ms": 1000,
+    "job_id": "01a0bbad-a2f3-7d1b-b506-0b0f3d199892",
+    "max_attempts": 3,
+    "maximum_backoff_ms": 10000,
+    "multiplier_basis_points": 20000,
+    "non_retryable_error_codes": [
+      "rights-denied",
+      "policy-denied",
+      "stale-authority"
+    ],
+    "partial_artifact_disposition": "retained-incomplete",
+    "priority": 0,
+    "progress_total_kind": "unknown",
+    "progress_total_units": null,
+    "progress_unit": "records",
+    "project_id": "01890f6e-6a40-4cc5-98b7-7f3f36b60210",
+    "retryable_error_codes": [
+      "dependency-unavailable"
+    ],
+    "snapshot_id": "01a0bbad-a2f3-753d-b244-1b0e1eca188f",
+    "snapshot_json": "{\"artifacts\":[],\"attempts\":[],\"cancellation\":{\"interruptionKind\":null,\"reasonCode\":null,\"requestedAt\":null},\"checkpoints\":[],\"configuration\":{\"configurationHash\":\"sha256:7649074a6646fd8921a142b1a7b40058545aeac92dbde849cb4ef754cfd1da3c\",\"configurationId\":\"import-preview.01a0bbad-a29f-7caa-aaa2-eef6127d8f85.33333333333333333333333333333333\",\"configurationVersion\":\"1.0.0\"},\"contractVersion\":\"1.0.0\",\"createdAt\":\"2026-08-30T12:02:00.000Z\",\"definition\":{\"contentHash\":\"sha256:8f83338321f19fbbf66abf5385b29950567f2cbcd6d5b546af2fd4c94b932b86\",\"definitionRevisionId\":\"01a0bbad-a2f0-7b1b-bf20-6f2f190077b1\",\"definitionVersion\":\"1.0.0\",\"workflowDefinitionId\":\"01a0bbad-a2f0-7310-b2d4-529f54a1ba01\"},\"documentType\":\"research-observatory-workflow-snapshot\",\"executor\":{\"adapterId\":\"local-durable-workflow\",\"adapterVersion\":\"1.0.0\",\"contractVersion\":\"1.0.0\",\"profile\":\"local\"},\"history\":[{\"actor\":{\"actorId\":\"018f47a2-4d6b-7f78-9f2e-7fb76c86d042\",\"actorType\":\"system\",\"role\":\"workflow-coordinator\"},\"checkpointId\":null,\"decisionId\":null,\"entityId\":\"01a0bbad-a2f3-7be7-8832-a79d9d919d92\",\"entityType\":\"workflow-run\",\"eventId\":\"01a0bbad-a2f3-70bd-9343-49123f4deaad\",\"fromState\":null,\"interruptionKind\":null,\"occurredAt\":\"2026-08-30T12:02:00.000Z\",\"progress\":null,\"reasonCode\":\"command-accepted\",\"sequence\":1,\"toState\":\"accepted\"},{\"actor\":{\"actorId\":\"018f47a2-4d6b-7f78-9f2e-7fb76c86d042\",\"actorType\":\"system\",\"role\":\"workflow-coordinator\"},\"checkpointId\":null,\"decisionId\":null,\"entityId\":\"01a0bbad-a2f3-7399-9bf5-d0973169770e\",\"entityType\":\"workflow-step\",\"eventId\":\"01a0bbad-a2f3-7431-83cd-248cd4b22a68\",\"fromState\":null,\"interruptionKind\":null,\"occurredAt\":\"2026-08-30T12:02:00.000Z\",\"progress\":null,\"reasonCode\":\"step-created\",\"sequence\":2,\"toState\":\"pending\"},{\"actor\":{\"actorId\":\"018f47a2-4d6b-7f78-9f2e-7fb76c86d042\",\"actorType\":\"system\",\"role\":\"workflow-coordinator\"},\"checkpointId\":null,\"decisionId\":null,\"entityId\":\"01a0bbad-a2f3-7399-9bf5-d0973169770e\",\"entityType\":\"workflow-step\",\"eventId\":\"01a0bbad-a2f3-7d29-8545-5d8cc2f93a46\",\"fromState\":\"pending\",\"interruptionKind\":null,\"occurredAt\":\"2026-08-30T12:02:00.000Z\",\"progress\":null,\"reasonCode\":\"dependencies-satisfied\",\"sequence\":3,\"toState\":\"runnable\"},{\"actor\":{\"actorId\":\"018f47a2-4d6b-7f78-9f2e-7fb76c86d042\",\"actorType\":\"system\",\"role\":\"workflow-coordinator\"},\"checkpointId\":null,\"decisionId\":null,\"entityId\":\"01a0bbad-a2f3-7d1b-b506-0b0f3d199892\",\"entityType\":\"job\",\"eventId\":\"01a0bbad-a2f3-7cc1-a726-aa65163e2ce4\",\"fromState\":null,\"interruptionKind\":null,\"occurredAt\":\"2026-08-30T12:02:00.000Z\",\"progress\":null,\"reasonCode\":\"job-created\",\"sequence\":4,\"toState\":\"pending\"},{\"actor\":{\"actorId\":\"018f47a2-4d6b-7f78-9f2e-7fb76c86d042\",\"actorType\":\"system\",\"role\":\"workflow-coordinator\"},\"checkpointId\":null,\"decisionId\":null,\"entityId\":\"01a0bbad-a2f3-7d1b-b506-0b0f3d199892\",\"entityType\":\"job\",\"eventId\":\"01a0bbad-a2f3-737c-a1e3-e829f5a232d3\",\"fromState\":\"pending\",\"interruptionKind\":null,\"occurredAt\":\"2026-08-30T12:02:00.000Z\",\"progress\":null,\"reasonCode\":\"job-ready\",\"sequence\":5,\"toState\":\"runnable\"}],\"humanTasks\":[],\"intent\":{\"contentHash\":\"sha256:1111111111111111111111111111111111111111111111111111111111111111\",\"intentId\":\"01a0bbad-a2f0-7535-abfd-19ff7fae2d18\",\"revisionId\":\"01a0bbad-a2f0-7b77-a695-efb8bb01ab40\"},\"jobs\":[{\"attemptIds\":[],\"cancellation\":{\"interruptionKind\":null,\"reasonCode\":null,\"requestedAt\":null},\"commandFingerprint\":\"sha256:7649074a6646fd8921a142b1a7b40058545aeac92dbde849cb4ef754cfd1da3c\",\"currentAttemptId\":null,\"idempotencyKey\":\"sha256:b43cbcdd4ca13fafd9cc3f5475aa8a16abacce4f3b6c5edf98b680790a0a178e\",\"inputArtifactIds\":[],\"jobId\":\"01a0bbad-a2f3-7d1b-b506-0b0f3d199892\",\"outputArtifactIds\":[],\"sequence\":5,\"state\":\"runnable\",\"stepRunId\":\"01a0bbad-a2f3-7399-9bf5-d0973169770e\"}],\"policy\":{\"policyHash\":\"sha256:2222222222222222222222222222222222222222222222222222222222222222\",\"policyId\":\"local-import-preview-policy\",\"policyVersion\":\"1.0.0\"},\"progress\":{\"completedUnits\":null,\"kind\":\"unknown\",\"totalUnits\":null,\"unit\":\"records\"},\"projectId\":\"01890f6e-6a40-4cc5-98b7-7f3f36b60210\",\"schemaVersion\":\"1.0\",\"sequence\":5,\"snapshotId\":\"01a0bbad-a2f3-753d-b244-1b0e1eca188f\",\"snapshotRevision\":1,\"state\":\"accepted\",\"stepRuns\":[{\"humanTaskIds\":[],\"inputArtifactIds\":[],\"jobIds\":[\"01a0bbad-a2f3-7d1b-b506-0b0f3d199892\"],\"outputArtifactIds\":[],\"progress\":{\"completedUnits\":null,\"kind\":\"unknown\",\"totalUnits\":null,\"unit\":\"records\"},\"sequence\":3,\"state\":\"runnable\",\"stepKey\":\"parse-reference-source\",\"stepRunId\":\"01a0bbad-a2f3-7399-9bf5-d0973169770e\"}],\"updatedAt\":\"2026-08-30T12:02:00.000Z\",\"workflowRunId\":\"01a0bbad-a2f3-7be7-8832-a79d9d919d92\"}",
+    "snapshot_record_sha256": "sha256:a738a0adcd9887c99eae72845df025e82600d4fa98e8343cc802f7807033e642",
+    "snapshot_revision": 1,
+    "step_run_id": "01a0bbad-a2f3-7399-9bf5-d0973169770e",
+    "workflow_run_id": "01a0bbad-a2f3-7be7-8832-a79d9d919d92"
+  }
+}

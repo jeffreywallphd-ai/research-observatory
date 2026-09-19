@@ -9,6 +9,7 @@ from typing import Annotated, Literal, Protocol, Self
 from pydantic import Field, model_validator
 
 from ..ingestion.import_drafts import (
+    CsvDelimiter,
     Digest,
     DraftAuthority,
     DraftValue,
@@ -40,12 +41,15 @@ class PreviewCreate(DraftValue):
     source_name: str
     format_name: Literal["ris", "bibtex", "csl-json", "doi-list", "csv"]
     encoding: Literal["utf-8", "cp1252"] = "utf-8"
+    delimiter: CsvDelimiter = ","
     rights: ImportRights
     actor: PreviewActor
 
     @model_validator(mode="after")
     def source_basename(self) -> Self:
         ImportSource(self.source_name, "0" * 64, self.encoding)
+        if self.format_name != "csv" and self.delimiter != ",":
+            raise ValueError("delimiter-requires-csv")
         return self
 
 
@@ -55,6 +59,7 @@ class PreviewState(DraftValue):
     source_name: str
     format_name: Literal["ris", "bibtex", "csl-json", "doi-list", "csv"]
     encoding: Literal["utf-8", "cp1252"]
+    delimiter: CsvDelimiter = ","
     rights: ImportRights
     state: Literal[
         "created",
@@ -70,6 +75,12 @@ class PreviewState(DraftValue):
     manifest_sha256: Digest | None
     byte_length: Annotated[int, Field(ge=0, le=268435456)]
     chunk_count: Annotated[int, Field(ge=0, le=2048)]
+
+    @model_validator(mode="after")
+    def csv_delimiter(self) -> Self:
+        if self.format_name != "csv" and self.delimiter != ",":
+            raise ValueError("delimiter-requires-csv")
+        return self
 
 
 class PreviewDraftChange(DraftValue):

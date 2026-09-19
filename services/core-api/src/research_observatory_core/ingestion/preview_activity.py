@@ -179,6 +179,7 @@ class ImportPreviewActivity:
             _GuardedSource(source, self._guard),
             ImportSource(state.source_name, state.source_sha256, state.encoding),
             state.format_name,
+            delimiter=state.delimiter,
             cancelled=poll,
         )
         digest = hashlib.sha256(b'["import-preview-records/1",[')

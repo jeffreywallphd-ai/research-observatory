@@ -7,11 +7,13 @@ import itertools
 import json
 import unittest
 from dataclasses import replace
+from pathlib import Path
 
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.preview_workflow import (
     ACTIVITY,
     PreviewIntentContext,
+    PreviewJobInput,
     bind_preview_claim,
     build_preview_job,
     preview_job_input,
@@ -36,6 +38,49 @@ from tests.data import test_import_preview_repository as fixture
 
 
 class ImportPreviewWorkflowTests(unittest.TestCase):
+    def test_frozen_comma_job_survives_queue_reload_without_definition_drift(self):
+        # Literal output captured from f44e175c before delimiter integration.
+        document = json.loads((Path(__file__).parents[1] / "fixtures/imports/preview-job-comma-v1.json").read_text())
+        inputs = PreviewJobInput.model_validate(document["inputs"])
+        old = document["submission"]
+        submission = prepare_workflow_job(
+            json.loads(old["definition_json"]),
+            json.loads(old["snapshot_json"]),
+            job_id=old["job_id"],
+            concurrency_class="document",
+            priority=0,
+            available_at=old["available_at"],
+        )
+        self.assertEqual(old["command_fingerprint"], inputs.configuration_hash)
+        self.assertEqual(old["definition_record_sha256"], submission.definition_record_sha256)
+        queue = sqlite_workflow_queue_repository(self.fixture.project, inputs.project_id)
+        queue.enqueue(submission, actor=fixture.worker_fixture.SYSTEM)
+        # Reconstruct the adapter as on restart; do not rebuild the old definition.
+        queue = sqlite_workflow_queue_repository(self.fixture.project, inputs.project_id)
+        claim = queue.claim_next(
+            worker_id=fixture.worker_fixture.WORKER_A,
+            concurrency_classes=("document",),
+            now=self.now,
+            lease_duration_ms=30_000,
+        )
+        assert claim is not None
+        self.assertEqual(inputs, bind_preview_claim(queue.authority(claim.job_id), claim, inputs))
+
+    def test_noncomma_input_is_versioned_and_cannot_substitute_for_queued_comma(self):
+        queue, claim = self.claimed()
+        hashes = {self.input.configuration_hash}
+        for delimiter in ("\t", ";"):
+            state = self.state.model_copy(update={"delimiter": delimiter})
+            selected = preview_job_input(state, self.intent, self.policy, self.epoch)
+            self.assertEqual(delimiter, selected.delimiter)
+            self.assertEqual("1.1", selected.schema_version)
+            hashes.add(selected.configuration_hash)
+            job = build_preview_job(selected, actor=fixture.worker_fixture.SYSTEM, now=self.now)
+            self.assertEqual("1.1.0", json.loads(job.definition_json)["definitionVersion"])
+            with self.assertRaises(PreviewProblem):
+                bind_preview_claim(queue.authority(claim.job_id), claim, selected)
+        self.assertEqual(3, len(hashes))
+
     def setUp(self):
         self.fixture = fixture.ImportPreviewRepositoryTests(methodName="runTest")
         lifecycle: unittest.TestCase = self.fixture

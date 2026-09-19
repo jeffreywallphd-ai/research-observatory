@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import io
+import json
 import sqlite3
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from research_observatory_core import storage
 from research_observatory_core.domain_contracts import new_uuid_v7
@@ -69,6 +71,139 @@ class ImportPreviewRepositoryTests(unittest.TestCase):
         )
         self.repository().create(command)
         return command.preview_id
+
+    def test_parser_settings_are_atomic_immutable_and_identity_bound(self):
+        command = PreviewCreate(
+            preview_id=new_uuid_v7(),
+            source_name="synthetic.csv",
+            format_name="csv",
+            delimiter=";",
+            rights=fixture.RIGHTS,
+            actor=self.actor(),
+        )
+        repository = self.repository()
+        with (
+            patch.object(repository, "_event", side_effect=PreviewProblem("synthetic-create-fault")),
+            self.assertRaises(PreviewProblem),
+        ):
+            repository.create(command)
+        connection = storage.open_canonical_database(
+            self.project / "state/project.sqlite3", expected_project_id=fixture.PROJECT_ID
+        )
+        try:
+            key = "imports.preview." + command.preview_id
+            self.assertEqual(
+                0, connection.execute("SELECT count(*) FROM settings WHERE setting_key=?", (key,)).fetchone()[0]
+            )
+            self.assertEqual(
+                0,
+                connection.execute(
+                    "SELECT count(*) FROM import_previews WHERE preview_id=?", (command.preview_id,)
+                ).fetchone()[0],
+            )
+            self.assertEqual(";", repository.create(command).delimiter)
+            self.assertEqual(";", self.repository().read(command.preview_id).delimiter)
+            row = connection.execute(
+                "SELECT setting_id, text_value FROM settings WHERE setting_key=?", (key,)
+            ).fetchone()
+            for sql in (
+                "UPDATE settings SET text_value='{}' WHERE setting_key=?",
+                "DELETE FROM settings WHERE setting_key=?",
+            ):
+                with self.assertRaises(sqlite3.DatabaseError):
+                    connection.execute(sql, (key,))
+            # Even a later adapter-inserted revision cannot become replacement authority.
+            connection.execute(
+                "INSERT INTO settings SELECT ?, project_id, setting_key, 1, value_type, text_value, "
+                "integer_value, real_value, boolean_value, created_at, modified_at FROM settings WHERE setting_id=?",
+                (new_uuid_v7(), row[0]),
+            )
+            with self.assertRaises(PreviewProblem):
+                repository.read(command.preview_id)
+        finally:
+            connection.close()
+
+    def test_legacy_preview_has_comma_default_without_backfill(self):
+        preview, actor = new_uuid_v7(), self.actor()
+        connection = storage.open_canonical_database(
+            self.project / "state/project.sqlite3", expected_project_id=fixture.PROJECT_ID
+        )
+        try:
+            connection.execute(
+                "INSERT INTO import_previews VALUES (?, ?, 'legacy.csv', 'csv', 'utf-8', ?, ?, ?, ?)",
+                (
+                    preview,
+                    fixture.PROJECT_ID,
+                    fixture.RIGHTS.model_dump_json(by_alias=True),
+                    actor.actor_id,
+                    actor.trace_id,
+                    actor.occurred_at,
+                ),
+            )
+            connection.execute(
+                "INSERT INTO import_preview_events VALUES (?, ?, 1, 'created', ?, ?, ?)",
+                (preview, fixture.PROJECT_ID, actor.actor_id, actor.trace_id, actor.occurred_at),
+            )
+            self.assertEqual(",", self.repository().read(preview).delimiter)
+            self.assertEqual(
+                0,
+                connection.execute(
+                    "SELECT count(*) FROM settings WHERE setting_key=?", ("imports.preview." + preview,)
+                ).fetchone()[0],
+            )
+        finally:
+            connection.close()
+
+    def test_completed_parser_cannot_substitute_a_different_delimiter(self):
+        raw = b"title,doi\nSynthetic,10.99999/EXAMPLE\n"
+        preview, sealed, session, claim, _, actor = self.parse_attempt(raw)
+        self.repository().append_records(preview, claim=claim, records=tuple(session.records()), actor=actor)
+        wrong = ImportSession(io.BytesIO(raw), session.source, "csv", delimiter=";")
+        tuple(wrong.records())
+        receipt = self.receipt_revision(preview, sealed.manifest_sha256, actor)
+        with self.assertRaisesRegex(PreviewProblem, "preview-parse-source-mismatch"):
+            self.repository().finish_parse(
+                preview, claim=claim, session=wrong, receipt_revision_id=receipt, actor=actor
+            )
+        self.assertEqual("parse-started", self.repository().read(preview).state)
+
+    def test_malformed_or_substituted_parser_settings_fail_without_publishing_preview(self):
+        from research_observatory_core.import_preview_repository import _ParserSettings
+
+        for mutation in (
+            {"projectId": new_uuid_v7()},
+            {"previewId": new_uuid_v7()},
+            {"formatName": "ris"},
+            {"encoding": "cp1252"},
+            {"delimiter": "|"},
+            {"schemaVersion": "2.0"},
+            {"unexpected": True},
+            None,
+        ):
+            command = PreviewCreate(
+                preview_id=new_uuid_v7(),
+                source_name="synthetic.csv",
+                format_name="csv",
+                delimiter=";",
+                rights=fixture.RIGHTS,
+                actor=self.actor(),
+            )
+            value = {
+                "schemaVersion": "1.0",
+                "projectId": fixture.PROJECT_ID,
+                "previewId": command.preview_id,
+                "formatName": "csv",
+                "encoding": "utf-8",
+                "delimiter": ";",
+            }
+            payload = "invalid-json" if mutation is None else json.dumps({**value, **mutation})
+            with (
+                patch.object(_ParserSettings, "model_dump_json", return_value=payload),
+                self.assertRaises(PreviewProblem),
+            ):
+                self.repository().create(command)
+            with self.assertRaisesRegex(PreviewProblem, "preview-not-found"):
+                self.repository().read(command.preview_id)
 
     def test_shared_references_survive_cancel_restart_and_block_deletion(self):
         raw = b"title\nSynthetic\n"

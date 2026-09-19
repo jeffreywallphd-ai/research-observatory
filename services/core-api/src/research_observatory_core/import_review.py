@@ -15,6 +15,7 @@ from typing import Annotated, Literal, Self, cast
 from pydantic import Field, model_validator
 
 from .ingestion.import_drafts import (
+    CsvDelimiter,
     Digest,
     DraftValue,
     FieldIndex,
@@ -115,6 +116,7 @@ class ReviewSummary(DraftValue):
     mapping_mode: Literal["automatic", "columns"]
     rights: ImportRights
     options: ImportOptions
+    delimiter: CsvDelimiter
 
 
 class ShortValue(DraftValue):
@@ -247,6 +249,7 @@ class ImportReview:
                 mapping_mode=draft.authority.mapping.mode,
                 rights=draft.authority.rights,
                 options=draft.authority.options,
+                delimiter=draft.authority.delimiter,
             )
         )
 

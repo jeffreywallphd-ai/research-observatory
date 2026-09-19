@@ -5,7 +5,7 @@ const native = vi.hoisted(() => vi.fn());
 vi.mock("@tauri-apps/api/core", () => ({ invoke: native }));
 afterEach(() => { vi.unstubAllGlobals(); native.mockReset(); });
 const project = { root: "C:/Research/synthetic", projectId: "01900000-0000-4000-8000-000000000001" };
-const options = { formatName: "csv", encoding: "utf-8", localUseConfirmed: true } as const;
+const options = { formatName: "csv", encoding: "utf-8", delimiter: ";", localUseConfirmed: true } as const;
 const result = () => ({ status: "prepared", sourceName: "synthetic.csv", preview: {
   previewId: "01900000-0000-7000-8000-000000000001", state: "source-sealed", byteLength: 10, chunkCount: 1,
   jobId: "01900000-0000-7000-8000-000000000002", jobState: "runnable",
@@ -49,7 +49,8 @@ describe("native import intake", () => {
     const [command, { request }] = native.mock.calls[0]!;
     expect(command).toBe("import_selected_file");
     expect(request.operationId).toMatch(/^[0-9a-f]{32}$/);
-    expect(Object.keys(request).sort()).toEqual(["encoding", "formatName", "operationId", "projectId", "rights", "root"]);
+    expect(Object.keys(request).sort()).toEqual(["delimiter", "encoding", "formatName", "operationId", "projectId", "rights", "root"]);
+    expect(request.delimiter).toBe(";");
     expect(request.rights.store).toEqual({ value: "permitted", basis: "researcher-confirmed" });
     expect(request.rights.export).toEqual({ value: "unknown", basis: "not-reported" });
   });

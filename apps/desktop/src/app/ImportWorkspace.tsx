@@ -29,7 +29,7 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
   const [loading, setLoading] = useState(initialPreviews === undefined);
   const [failure, setFailure] = useState<string | null>(null);
   const [choosing, setChoosing] = useState(false);
-  const [options, setOptions] = useState<ImportIntakeOptions>({ formatName: "ris", encoding: "utf-8", localUseConfirmed: false });
+  const [options, setOptions] = useState<ImportIntakeOptions>({ formatName: "ris", encoding: "utf-8", delimiter: ",", localUseConfirmed: false });
   const live = useRef(true);
   const libraryGeneration = useRef(0);
   const intake = useRef<AbortController | null>(null);
@@ -83,12 +83,15 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
     <Notification tone="info" title="Preview first — researcher decisions stay explicit">Files remain local. Import previews do not create canonical source records or resolve works and versions.</Notification>
     <Panel title="Import records"><div className="ro-form ro-stack">
       <div className="ro-grid import-options">
-        <div className="ro-field"><label htmlFor="import-format">Reference format</label><select id="import-format" disabled={choosing} value={options.formatName} onChange={(event) => setOptions({ ...options, formatName: event.currentTarget.value as ImportIntakeOptions["formatName"], encoding: event.currentTarget.value === "csl-json" ? "utf-8" : options.encoding })}>
-          <option value="ris">RIS</option><option value="bibtex">BibTeX</option><option value="csl-json">CSL JSON</option><option value="doi-list">DOI list</option><option value="csv">CSV (comma separated)</option>
+        <div className="ro-field"><label htmlFor="import-format">Reference format</label><select id="import-format" disabled={choosing} value={options.formatName} onChange={(event) => setOptions({ ...options, formatName: event.currentTarget.value as ImportIntakeOptions["formatName"], encoding: event.currentTarget.value === "csl-json" ? "utf-8" : options.encoding, delimiter: event.currentTarget.value === "csv" ? options.delimiter : "," })}>
+          <option value="ris">RIS</option><option value="bibtex">BibTeX</option><option value="csl-json">CSL JSON</option><option value="doi-list">DOI list</option><option value="csv">CSV / delimited table</option>
         </select></div>
         <div className="ro-field"><label htmlFor="import-encoding">Text encoding</label><select id="import-encoding" value={options.encoding} disabled={choosing || options.formatName === "csl-json"} onChange={(event) => setOptions({ ...options, encoding: event.currentTarget.value as ImportIntakeOptions["encoding"] })}>
           <option value="utf-8">UTF-8 (default)</option><option value="cp1252">Windows-1252</option>
         </select></div>
+        {options.formatName === "csv" ? <div className="ro-field"><label htmlFor="import-delimiter">CSV separator</label><select id="import-delimiter" aria-describedby="import-delimiter-help" value={options.delimiter} disabled={choosing} onChange={(event) => setOptions({ ...options, delimiter: event.currentTarget.value as ImportIntakeOptions["delimiter"] })}>
+          <option value=",">Comma (default)</option><option value={"\t"}>Tab</option><option value=";">Semicolon</option>
+        </select><p id="import-delimiter-help" className="field-note">Choose how columns are separated. To change a saved preview’s separator, start a new import; its original source and decisions stay unchanged.</p></div> : null}
       </div>
       <label className="ro-cluster"><input type="checkbox" checked={options.localUseConfirmed} disabled={choosing} onChange={(event) => setOptions({ ...options, localUseConfirmed: event.currentTarget.checked })} />I confirm I may store and inspect this file locally.</label>
       <p className="field-note">Indexing, derivation, model use, quotation, export and sharing remain unknown—not permitted by this confirmation. Choose an existing local bibliography file; no path typing is required.</p>

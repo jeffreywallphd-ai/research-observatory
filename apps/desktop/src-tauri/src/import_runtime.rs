@@ -16,7 +16,13 @@ pub(crate) struct ImportRequest {
     pub operation_id: String,
     format_name: String,
     encoding: String,
+    #[serde(default = "comma")]
+    delimiter: String,
     rights: serde_json::Value,
+}
+
+fn comma() -> String {
+    ",".to_string()
 }
 
 fn hex32(value: &str) -> bool {
@@ -79,6 +85,8 @@ pub(crate) fn decode_request(payload: &serde_json::Value) -> Option<ImportReques
         )
         && matches!(request.encoding.as_str(), "utf-8" | "cp1252")
         && !(request.format_name == "csl-json" && request.encoding != "utf-8")
+        && matches!(request.delimiter.as_str(), "," | "\t" | ";")
+        && (request.format_name == "csv" || request.delimiter == ",")
         && valid_rights(&request.rights))
     .then_some(request)
 }
@@ -446,7 +454,7 @@ pub(crate) fn prepare(
         move |source, authorized| {
             let source_name = source.basename().to_owned();
             let status = pending.status(pending.request(NativeImportAction::Create, serde_json::json!({
-                "sourceName":source_name,"formatName":request.format_name,"encoding":request.encoding,"rights":request.rights
+                "sourceName":source_name,"formatName":request.format_name,"encoding":request.encoding,"delimiter":request.delimiter,"rights":request.rights
             }))?)?;
             pending.preview_id = Some(status.preview_id.clone());
             if status.state != "created" || status.byte_length != 0 || status.chunk_count != 0 || status.job_id.is_some() {
@@ -645,6 +653,25 @@ mod tests {
         }
         json!({"request":{"root":"C:/Synthetic/project", "projectId":"01900000-0000-4000-8000-000000000001",
             "operationId":"a".repeat(32),"formatName":"csv","encoding":"utf-8","rights":rights}})
+    }
+
+    #[test]
+    fn native_import_delimiter_request_is_explicit_and_csv_only() {
+        assert_eq!(decode_request(&request()).unwrap().delimiter, ",");
+        for delimiter in [",", "\t", ";"] {
+            let mut value = request();
+            value["request"]["delimiter"] = json!(delimiter);
+            assert_eq!(decode_request(&value).unwrap().delimiter, delimiter);
+        }
+        for delimiter in ["", "|", "\\t", "\n"] {
+            let mut value = request();
+            value["request"]["delimiter"] = json!(delimiter);
+            assert!(decode_request(&value).is_none());
+        }
+        let mut value = request();
+        value["request"]["formatName"] = json!("ris");
+        value["request"]["delimiter"] = json!(";");
+        assert!(decode_request(&value).is_none());
     }
 
     #[test]
