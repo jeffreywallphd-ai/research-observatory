@@ -1,9 +1,10 @@
 ---
 id: ADR-0028
 title: Isolate Windows connectors and parsers behind narrow brokers
-status: Proposed
+status: Accepted
 date: 2026-09-13
-deciders: []
+deciders:
+  - human:repository-owner; W2 design/architecture approval recorded 2026-09-19
 linked_tasks:
   - CAP-04.S05.T01
   - CAP-04.S05.T02
@@ -56,8 +57,9 @@ it is not evidence that this application's Python/native dependencies run inside
 
 ## Decision
 
-Recommend candidate 2. This **Proposed** decision must be reviewed and accepted
-with W2; the sandbox is not already supplied or proven by W1.
+Select candidate 2 under the recorded [W2 design/architecture approval](../../artifacts/evidence/W2.design-architecture-owner-approval-01.md).
+Complete W2 packet approval remains required before implementation; the sandbox
+is not already supplied or proven by W1.
 
 - Launch a dedicated worker image, not a Core process with reduced API exposure.
   Apply LPAC before untrusted code executes; grant no network, registry/COM,

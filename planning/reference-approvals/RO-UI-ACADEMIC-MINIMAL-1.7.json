@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "ui-reference-design-approval",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-09-19T16:19:10Z",
+  "scope": "reference-publication-and-plan-binding-only",
+  "proposal": {
+    "commit": "67bc9e3b6215504e78fa30dbf41cc0a664977679",
+    "path": "planning/W2-reference-1.7",
+    "packageSha256": "abdb30a94510ceb6452019133f62189a38c77deda3ecebdf0d0dabdfdeebff6f"
+  },
+  "basis": "Owner replied Approved to the exact design/architecture handoff; no W2 execution or release authority. See artifacts/evidence/W2.design-architecture-owner-approval-01.md."
+}

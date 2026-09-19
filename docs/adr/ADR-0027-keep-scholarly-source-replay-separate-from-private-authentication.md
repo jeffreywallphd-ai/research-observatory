@@ -1,9 +1,10 @@
 ---
 id: ADR-0027
 title: Keep scholarly source replay separate from private authentication
-status: Proposed
+status: Accepted
 date: 2026-09-13
-deciders: []
+deciders:
+  - human:repository-owner; W2 design/architecture approval recorded 2026-09-19
 linked_tasks:
   - CAP-04.S02.T01
   - CAP-04.S02.T02
@@ -53,8 +54,9 @@ limits depend on the endpoint. These facts do not establish live availability.
 
 ## Decision
 
-Recommend candidate 2 with all four planned adapters. This remains **Proposed**
-until reviewed and accepted within the complete W2 packet.
+Select candidate 2 with all four planned adapters. The owner accepted this exact
+decision in [W2 design/architecture approval](../../artifacts/evidence/W2.design-architecture-owner-approval-01.md).
+Complete W2 packet approval remains required before implementation.
 
 - Local imports work offline with no account. Each provider advertises actual
   capabilities and configuration requirements. Missing configuration, quota,

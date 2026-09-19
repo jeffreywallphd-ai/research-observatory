@@ -255,7 +255,7 @@
       "id": "ADR-0027",
       "path": "docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md",
       "title": "Keep scholarly source replay separate from private authentication",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-04.S02.T01",
         "CAP-04.S02.T02",
@@ -268,7 +268,7 @@
       "id": "ADR-0028",
       "path": "docs/adr/ADR-0028-isolate-windows-connectors-and-parsers-behind-narrow-brokers.md",
       "title": "Isolate Windows connectors and parsers behind narrow brokers",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-04.S05.T01",
         "CAP-04.S05.T02",
@@ -281,7 +281,7 @@
       "id": "ADR-0029",
       "path": "docs/adr/ADR-0029-preserve-document-revisions-and-mediate-source-viewing.md",
       "title": "Preserve document revisions and mediate source viewing",
-      "status": "Proposed",
+      "status": "Accepted",
       "linkedTasks": [
         "CAP-05.S02.T01",
         "CAP-05.S02.T02",

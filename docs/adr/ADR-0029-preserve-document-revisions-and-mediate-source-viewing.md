@@ -1,9 +1,10 @@
 ---
 id: ADR-0029
 title: Preserve document revisions and mediate source viewing
-status: Proposed
+status: Accepted
 date: 2026-09-13
-deciders: []
+deciders:
+  - human:repository-owner; W2 design/architecture approval recorded 2026-09-19
 linked_tasks:
   - CAP-05.S02.T01
   - CAP-05.S02.T02
@@ -64,7 +65,9 @@ expand storage/migration scope substantially. Direct decrypted paths are invalid
 
 ## Decision
 
-Recommend candidate 1. This **Proposed** record is not execution authority.
+Select candidate 1 under the recorded [W2 design/architecture approval](../../artifacts/evidence/W2.design-architecture-owner-approval-01.md).
+This accepted architecture is not W2 execution authority; complete packet
+approval remains required before implementation.
 
 ### Parser and immutable structure
 
@@ -250,9 +253,9 @@ uncommitted outputs; source and metadata remain usable.
 
 Local CPU dependencies/assets add installation size and cold-start cost. Windows
 wheel resolution is not runtime, LPAC, packaging, licensing or performance proof.
-The bounded probes support the selected planning direction, not implementation
-qualification. Independent architecture/packet review and human acceptance are
-still required; production qualification is not waived by G1.
+The bounded probes support the accepted architecture, not implementation
+qualification. Final W2 packet review and human execution approval remain
+required; production qualification is not waived by G1.
 
 ## Verification
 
