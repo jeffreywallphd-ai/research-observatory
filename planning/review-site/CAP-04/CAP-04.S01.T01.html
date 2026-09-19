@@ -97,9 +97,9 @@ python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T01" data-worksheet-sha256="c83b48fb7b13d17c582220284e75fc4eab4320cbfd06071c7f74f7121beebc32">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T01" data-worksheet-sha256="7e51f3a8dee8a0896e3606a59ee1f2681686b2aa95348111ad2b45c910e5f941">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>c83b48fb7b13d17c582220284e75fc4eab4320cbfd06071c7f74f7121beebc32</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>7e51f3a8dee8a0896e3606a59ee1f2681686b2aa95348111ad2b45c910e5f941</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T01 — streaming reference imports
 
 Claim base: `f05ac90621d7cbe03abd53b880764f2d6a996445`.
@@ -128,7 +128,18 @@ First proof: add failing service tests before product code. Select focused parse
 unit/contract checks, lint/types, affected schema/quality inventories and the
 streaming benchmark. UI/computer-use, canonical transactions, project restart and
 full affected profiles remain CAP-04.S01 integration/W2 qualification obligations;
-T02 owns preview/mapping, T03 owns import commits. No new human gate discovered.</pre></article>
+T02 owns preview/mapping, T03 owns import commits. No new human gate discovered.
+
+## First adverse review: macro state isolation
+
+Independent review of candidate `9cd11940a84a5ea088f099db2a42cf4e6da73ed3`
+found two AC1 defects: rejected field names could consume macro capacity because
+definitions were committed before final validation; unresolved redefinitions
+were discarded, allowing stale text to become a later candidate. Add explicit
+rejected-definition -&gt; valid-definition and resolved -&gt; unresolved -&gt; resolved
+transition regressions before remediation. Commit macro state only after all
+record validation succeeds, and preserve unresolved shadowing without inventing
+candidate text. Replay these findings and the affected parser/contract boundary.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

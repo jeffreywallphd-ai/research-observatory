@@ -34,6 +34,12 @@ the original bytes/range and coded diagnostics. No malformed data is silently
 converted to a valid record. Unrecoverable framing quarantines the remaining
 range instead of guessing new record boundaries.
 
+Each retained field has bounded warning codes at its exact ordered position:
+duplicate fields, rejected normalization candidates, unresolved macros and
+formula-like cells remain attributable even when no candidate is emitted.
+Record warnings retain the summary plus framing/source-wide diagnostics. Warnings
+never replace raw values or confer human mapping acceptance.
+
 Record keys are SHA-256 of compact ASCII JSON:
 `["import-record-key/1", ordinal, byteStart, byteEnd, lineStart, lineEnd, rawSha256]`.
 They are independent of read chunking and filenames and are **not** canonical
@@ -55,7 +61,9 @@ CAP-04.S01.T03 owns authorized atomic commits and durable manifests.
   A new TY safely ends a malformed missing-ER record; valid later records survive.
 - BibTeX: brace/parenthesis entries, nested/escaped values, quoted/numeric literals
   and `#` concatenation. Local `@string` definitions are bounded text substitutions;
-  unresolved names remain warnings, not invented values. Preamble/comment content
+  definitions take effect only after full record validation. Unresolved
+  redefinitions shadow older values and propagate warnings, not stale or invented
+  values. Preamble/comment content
   is retained and inert; no TeX command, extension, filesystem read or subprocess.
 - CSL JSON: a UTF-8 item array, not an arbitrary repository wrapper. Top-level
   repeated fields and unknown nested values remain auditable. Syntax parsing is

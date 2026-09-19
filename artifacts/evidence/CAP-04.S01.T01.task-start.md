@@ -27,3 +27,14 @@ unit/contract checks, lint/types, affected schema/quality inventories and the
 streaming benchmark. UI/computer-use, canonical transactions, project restart and
 full affected profiles remain CAP-04.S01 integration/W2 qualification obligations;
 T02 owns preview/mapping, T03 owns import commits. No new human gate discovered.
+
+## First adverse review: macro state isolation
+
+Independent review of candidate `9cd11940a84a5ea088f099db2a42cf4e6da73ed3`
+found two AC1 defects: rejected field names could consume macro capacity because
+definitions were committed before final validation; unresolved redefinitions
+were discarded, allowing stale text to become a later candidate. Add explicit
+rejected-definition -> valid-definition and resolved -> unresolved -> resolved
+transition regressions before remediation. Commit macro state only after all
+record validation succeeds, and preserve unresolved shadowing without inventing
+candidate text. Replay these findings and the affected parser/contract boundary.

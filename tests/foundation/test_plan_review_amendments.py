@@ -12,6 +12,7 @@ import unittest
 from pathlib import Path
 from typing import Any, ClassVar
 from unittest.mock import patch
+from urllib.parse import unquote, urlsplit
 
 import yaml
 
@@ -38,6 +39,7 @@ from plan_review_site import (  # noqa: E402
     amendment_exit_projection,
     amendment_exit_review_html,
     build_site,
+    governed_experience_html,
     load_enabler_change_requests,
     task_review_history_html,
     task_review_projection,
@@ -308,6 +310,100 @@ def controlled_adoption_waves() -> list[dict[str, Any]]:
             ],
         }
     ]
+
+
+class PlanReviewSourceLinkPortabilityTests(unittest.TestCase):
+    def test_governed_source_links_are_portable_encoded_and_keep_git_identity(self) -> None:
+        relative = "planning/proposals/source #1% é.md"
+        experience: dict[str, Any] = {
+            "referenceId": "FIXTURE-1.0",
+            "files": [
+                {"path": relative, "sha256": "a" * 64},
+                {"path": "design/reference.md", "sha256": "b" * 64, "sourceCommit": "c" * 40},
+            ],
+        }
+        before = copy.deepcopy(experience)
+        first = governed_experience_html(Path("checkout-one"), experience)
+        second = governed_experience_html(Path("checkout-two"), experience)
+        self.assertEqual(first, second)
+        self.assertIn('href="../../../planning/proposals/source%20%231%25%20%C3%A9.md"', first[1])
+        self.assertNotIn("file:", first[1])
+        self.assertIn(f"<code>{'c' * 40}:design/reference.md</code>", first[1])
+        self.assertIn(f"<code>{'b' * 64}</code> (immutable Git source)", first[1])
+        self.assertEqual(1, first[1].count("href="))
+        self.assertEqual(before, experience)
+        for unsafe in ("../outside.md", "/outside.md", "C:/private.md", "a\\b.md", "a//b.md"):
+            with self.subTest(path=unsafe), self.assertRaises(ValueError):
+                governed_experience_html(Path("checkout-one"), {"files": [{"path": unsafe}]})
+
+    def test_recovery_source_links_are_identical_across_checkout_roots(self) -> None:
+        record: dict[str, Any] = {
+            "request_id": "GRR-9999",
+            "hold_id": "HOLD-FIXTURE",
+            "target_wave": "W1",
+            "hold_status": "RELEASED",
+            "bootstrap": {"id": "GRR-9999.B00", "status": "APPROVED"},
+            "post_bootstrap": {},
+            "release_conditions": [],
+            "authority_chain": {},
+            "packet_path": "planning/recovery/frozen packet.json",
+            "packet_sha256": "a" * 64,
+            "packet_commit": "b" * 40,
+            "proposal_path": "planning/recovery/proposal.md",
+            "review_path": "planning/recovery/review.html",
+            "approval_path": "planning/recovery/approval.json",
+            "approval_sha256": "c" * 64,
+            "approval_commit": "d" * 40,
+            "supplements": [
+                {
+                    "id": "GRR-9999.S01",
+                    "bootstrap_id": "GRR-9999.B01",
+                    "bootstrap_status": "APPROVED",
+                    "packet_path": "planning/recovery/supplement #1.json",
+                    "packet_sha256": "e" * 64,
+                    "approval_path": "planning/recovery/supplement approval.json",
+                    "approval_sha256": "f" * 64,
+                }
+            ],
+        }
+        before = copy.deepcopy(record)
+        pages = []
+        with tempfile.TemporaryDirectory() as temporary:
+            for name in ("original-checkout", "relocated-checkout"):
+                repo = Path(temporary) / name
+                (repo / "planning").mkdir(parents=True)
+                (repo / "planning/backlog.yaml").write_text("{}\n", encoding="utf-8")
+                source_paths = [record[key] for key in ("packet_path", "proposal_path", "review_path", "approval_path")]
+                source_paths.extend(record["supplements"][0][key] for key in ("packet_path", "approval_path"))
+                for relative in source_paths:
+                    source = repo / relative
+                    source.parent.mkdir(parents=True, exist_ok=True)
+                    source.write_text("unchanged synthetic historical source\n", encoding="utf-8")
+                site = repo / "planning/review-site"
+                with (
+                    patch("plan_review_site.load_enabler_change_requests", return_value=[]),
+                    patch("plan_review_site.load_recovery_holds", return_value=[record]),
+                ):
+                    build_site(repo, site)
+                page = site / "recoveries/GRR-9999.html"
+                rendered = page.read_text(encoding="utf-8")
+                pages.append(rendered)
+                self.assertNotIn("file:", rendered)
+                self.assertNotIn(repo.as_posix(), rendered)
+                links = [href for href in re.findall(r'href="([^"]+)"', rendered) if href.startswith("../../../")]
+                self.assertEqual(6, len(links))
+                self.assertEqual(
+                    {(repo / relative).resolve() for relative in source_paths},
+                    {(page.parent / unquote(urlsplit(href).path)).resolve() for href in links},
+                )
+                for relative in source_paths:
+                    self.assertEqual(
+                        "unchanged synthetic historical source\n", (repo / relative).read_text(encoding="utf-8")
+                    )
+                for value in ("a" * 64, "b" * 40, "c" * 64, "d" * 40, "e" * 64, "f" * 64):
+                    self.assertIn(value, rendered)
+        self.assertEqual(pages[0], pages[1])
+        self.assertEqual(before, record)
 
 
 class PlanReviewAmendmentTests(unittest.TestCase):

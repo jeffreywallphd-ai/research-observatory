@@ -996,6 +996,19 @@ def load_recovery_holds(repo: Path, backlog: dict[str, Any]) -> list[dict[str, A
     return records
 
 
+def repository_source_href(relative: str) -> str:
+    """Link from a depth-1 review page without embedding the checkout location."""
+    if (
+        not isinstance(relative, str)
+        or ":" in relative
+        or "\\" in relative
+        or any(part in {"", ".", ".."} for part in relative.split("/"))
+        or any(ord(character) < 32 for character in relative)
+    ):
+        raise ValueError("Expected a safe repository-relative source path")
+    return "../../../" + quote(relative, safe="/")
+
+
 def governed_experience_html(repo: Path, experience: dict[str, Any]) -> tuple[str, str]:
     """Keep historical hashes off mutable links and distinguish publication from adoption."""
     rows = "".join(
@@ -1003,7 +1016,7 @@ def governed_experience_html(repo: Path, experience: dict[str, Any]) -> tuple[st
             f"<li><code>{esc(item.get('sourceCommit'))}:{esc(item.get('path'))}</code>"
             f" — <code>{esc(item.get('sha256'))}</code> (immutable Git source)</li>"
             if item.get("sourceCommit")
-            else f'<li><a href="{esc((repo / str(item.get("path"))).resolve().as_uri())}">'
+            else f'<li><a href="{esc(repository_source_href(item.get("path")))}">'
             f"{esc(item.get('path'))}</a> — <code>{esc(item.get('sha256'))}</code></li>"
         )
         for item in experience.get("files", [])
@@ -1282,8 +1295,8 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         release_rows = "".join(f"<li>{esc(item)}</li>" for item in record["release_conditions"])
         supplement_rows = "".join(
             f"<li><strong>{esc(item['id'])}</strong> / <code>{esc(item['bootstrap_id'])}</code> — "
-            f'{esc(item["bootstrap_status"])}; <a href="{esc((repo / item["packet_path"]).resolve().as_uri())}">packet</a> '
-            f'<code>{esc(item["packet_sha256"])}</code>; <a href="{esc((repo / item["approval_path"]).resolve().as_uri())}">approval</a> '
+            f'{esc(item["bootstrap_status"])}; <a href="{esc(repository_source_href(item["packet_path"]))}">packet</a> '
+            f'<code>{esc(item["packet_sha256"])}</code>; <a href="{esc(repository_source_href(item["approval_path"]))}">approval</a> '
             f"<code>{esc(item['approval_sha256'])}</code></li>"
             for item in record["supplements"]
         )
@@ -1309,7 +1322,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
                 main=f"""
 <section class="hero compact"><div class="hero-top"><div><span class="eyebrow">{esc(record["hold_id"])}</span><h1>{esc(record["request_id"])} — governance recovery</h1></div>{status_badge(record["hold_status"])}</div><p>Target Wave {esc(record["target_wave"])}; bootstrap <code>{esc(bootstrap.get("id"))}</code> is {esc(bootstrap.get("status"))}.</p></section>
 <section class="callout callout-warning"><h2>Ordinary execution is denied</h2><p>This immutable recovery approval authorizes only the bootstrap. It grants zero authority to {esc(post.get("required_change_request_id"))}/{esc(post.get("required_amendment_id"))}, proposed tasks, ordinary Wave resume, or gate approval.</p><p><strong>Recommendation:</strong> complete independent bootstrap review, then prepare and separately approve the exact ECR/amendment. Safe alternatives are leaving the hold active or recording a governed terminal disposition; direct execution is prohibited.</p></section>
-<section class="review-toolbar"><h2>Hash-bound source records</h2><ul><li><a href="{esc((repo / record["packet_path"]).resolve().as_uri())}">Frozen packet</a> — <code>{esc(record["packet_sha256"])}</code> at <code>{esc(record["packet_commit"])}</code></li><li><a href="{esc((repo / record["proposal_path"]).resolve().as_uri())}">Canonical proposal</a></li><li><a href="{esc((repo / record["review_path"]).resolve().as_uri())}">Human review</a></li><li><a href="{esc((repo / record["approval_path"]).resolve().as_uri())}">Immutable approval</a> — <code>{esc(record["approval_sha256"])}</code> introduced at <code>{esc(record["approval_commit"])}</code></li><li><a href="../waves/{esc(record["target_wave"])}.html">Paused Wave packet</a></li></ul></section>
+<section class="review-toolbar"><h2>Hash-bound source records</h2><ul><li><a href="{esc(repository_source_href(record["packet_path"]))}">Frozen packet</a> — <code>{esc(record["packet_sha256"])}</code> at <code>{esc(record["packet_commit"])}</code></li><li><a href="{esc(repository_source_href(record["proposal_path"]))}">Canonical proposal</a></li><li><a href="{esc(repository_source_href(record["review_path"]))}">Human review</a></li><li><a href="{esc(repository_source_href(record["approval_path"]))}">Immutable approval</a> — <code>{esc(record["approval_sha256"])}</code> introduced at <code>{esc(record["approval_commit"])}</code></li><li><a href="../waves/{esc(record["target_wave"])}.html">Paused Wave packet</a></li></ul></section>
 <section class="review-toolbar"><h2>Frozen predecessor authority</h2><ul>{authority_rows}</ul></section>
 <section class="review-toolbar"><h2>Append-only recovery supplements</h2><ul>{supplement_rows or "<li>No supplemental bootstrap is installed.</li>"}</ul><p>A supplement authorizes only its sequential BNN bootstrap and never the repair amendment, ordinary task execution, Wave resume, hold release, or a gate.</p></section>
 <section class="review-toolbar"><h2>Exact release conditions</h2><ul>{release_rows}</ul><p>After every condition is proven, release the hold through <code>python tools/recoveryctl.py --repo . release {esc(record["request_id"])} --agent &lt;agent&gt;</code>. The Wave remains PAUSED until an explicit ordinary resume.</p></section>""",

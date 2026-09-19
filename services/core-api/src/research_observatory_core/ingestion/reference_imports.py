@@ -94,6 +94,7 @@ class ImportLimits:
 class RawField:
     name: str
     raw_value: str
+    warnings: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -155,7 +156,9 @@ class ImportRecord:
             "rawBase64": base64.b64encode(self.raw_bytes).decode("ascii") if self.raw_bytes is not None else None,
             "kind": self.kind,
             "status": self.status,
-            "fields": [{"name": item.name, "rawValue": item.raw_value} for item in self.fields],
+            "fields": [
+                {"name": item.name, "rawValue": item.raw_value, "warnings": list(item.warnings)} for item in self.fields
+            ],
             "candidates": [
                 {
                     "name": item.name,
@@ -295,7 +298,7 @@ class ImportSession:
         self._started = False
         self._deadline = 0.0
         self._columns: list[str] | None = None
-        self._macros: dict[str, str] = {}
+        self._macros: dict[str, str | None] = {}
 
     def _checkpoint(self) -> None:
         if self.cancelled():
@@ -520,6 +523,7 @@ class ImportSession:
         kind = "header" if self.format_name == "csv" and self.record_count == 1 else "record"
         status = "parsed"
         raw = bytes(frame.buffer) if frame.size <= frame.limit else None
+        definitions: dict[str, str | None] = {}
         try:
             if warnings - {"bibtex-comment"}:
                 raise ImportProblem("malformed-frame")
@@ -531,7 +535,7 @@ class ImportSession:
             elif self.format_name == "csl-json":
                 decoded = self._csl(text, warnings)
             elif self.format_name == "bibtex":
-                kind, decoded = self._bib(text, warnings)
+                kind, decoded, definitions = self._bib(text, warnings)
             else:
                 decoded = [(RawField("DOI", text.rstrip("\r\n")), text.strip())]
                 if _doi(text) is None:
@@ -545,13 +549,16 @@ class ImportSession:
                     for value in (item.name, item.raw_value)
                 ):
                     raise ImportProblem("field-limit")
+                field_warnings = set(item.warnings)
                 if item.name.casefold() in names:
-                    warnings.add("duplicate-field")
+                    field_warnings.add("duplicate-field")
                 names.add(item.name.casefold())
-                fields.append(item)
-                candidate = self._candidate(item.name, value, len(fields) - 1, warnings)
+                candidate = self._candidate(item.name, value, len(fields), field_warnings)
+                fields.append(RawField(item.name, item.raw_value, tuple(sorted(field_warnings))))
+                warnings.update(field_warnings)
                 if candidate is not None and kind == "record":
                     candidates.append(candidate)
+            self._macros.update(definitions)
         except UnicodeError:
             status = "malformed"
             warnings.add("invalid-encoding")
@@ -640,7 +647,12 @@ class ImportSession:
         if len(rows) != 1:
             raise ImportProblem("invalid-csv-record")
         values = rows[0]
-        if any(value.lstrip().startswith(("=", "+", "-", "@")) or (value and ord(value[0]) < 32) for value in values):
+
+        def field(name: str, value: str) -> RawField:
+            active = value.lstrip().startswith(("=", "+", "-", "@")) or (value and ord(value[0]) < 32)
+            return RawField(name, value, ("formula-like-cell",) if active else ())
+
+        if any(field("", value).warnings for value in values):
             warnings.add("formula-like-cell")
         if self.record_count == 1:
             if not values or len(values) > self.limits.max_fields or any(not value.strip() for value in values):
@@ -648,12 +660,12 @@ class ImportSession:
             if any(len(value.encode(self.source.encoding)) > self.limits.max_field_bytes for value in values):
                 raise ImportProblem("field-limit")
             self._columns = values
-            return "header", [(RawField(value, value), value) for value in values]
+            return "header", [(field(value, value), value) for value in values]
         if self._columns is None:
             raise ImportProblem("csv-header-unavailable")
         if len(values) != len(self._columns):
             raise ImportProblem("csv-column-count")
-        return "record", [(RawField(name, value), value) for name, value in zip(self._columns, values, strict=True)]
+        return "record", [(field(name, value), value) for name, value in zip(self._columns, values, strict=True)]
 
     def _csl(self, text: str, warnings: set[str]) -> list[tuple[RawField, object]]:
         def reject_constant(_value: str) -> None:
@@ -699,9 +711,9 @@ class ImportSession:
                 raise ValueError("invalid-object-delimiter")
         raise ValueError("unterminated-object")
 
-    def _bib(self, text: str, warnings: set[str]) -> tuple[str, list[tuple[RawField, object]]]:
+    def _bib(self, text: str, warnings: set[str]) -> tuple[str, list[tuple[RawField, object]], dict[str, str | None]]:
         if "bibtex-comment" in warnings:
-            return "directive", [(RawField("comment", text), None)]
+            return "directive", [(RawField("comment", text), None)], {}
         match = re.match(r"@([A-Za-z]+)\s*([({])", text)
         if match is None:
             raise ImportProblem("invalid-bibtex")
@@ -709,7 +721,7 @@ class ImportSession:
         body = text[match.end() : -1]
         if entry_type in {"comment", "preamble"}:
             warnings.add("inert-bibtex-directive")
-            return "directive", [(RawField(entry_type, body), None)]
+            return "directive", [(RawField(entry_type, body), None)], {}
         parsed: list[tuple[RawField, object]] = [(RawField("entry-type", match[1]), None)]
         if entry_type != "string":
             key, separator, body = body.partition(",")
@@ -719,7 +731,7 @@ class ImportSession:
             if not separator:
                 warnings.add("empty-bibtex-entry")
         index = 0
-        definitions: dict[str, str] = {}
+        definitions: dict[str, str | None] = {}
         while index < len(body):
             self._checkpoint()
             while index < len(body) and (body[index].isspace() or body[index] == ","):
@@ -741,6 +753,7 @@ class ImportSession:
             unresolved = False
             while True:
                 self._checkpoint()
+                piece: str | None = None
                 while index < len(body) and body[index].isspace():
                     index += 1
                 if index >= len(body):
@@ -764,7 +777,7 @@ class ImportSession:
                         index += 1
                     if index == len(body):
                         raise ImportProblem("unterminated-bibtex-value")
-                    pieces.append(body[value_start:index])
+                    piece = body[value_start:index]
                     index += 1
                 else:
                     token = _BIB_ATOM.match(body, index)
@@ -773,14 +786,15 @@ class ImportSession:
                     atom = token[0]
                     index += len(atom)
                     if atom.isascii() and atom.isdecimal():
-                        pieces.append(atom)
-                    elif atom.casefold() in self._macros:
-                        pieces.append(self._macros[atom.casefold()])
+                        piece = atom
                     else:
-                        unresolved = True
-                        warnings.add("unresolved-bibtex-macro")
-                if pieces:
-                    expanded_size += len(pieces[-1].encode(self.source.encoding))
+                        piece = definitions.get(atom.casefold(), self._macros.get(atom.casefold()))
+                if piece is None:
+                    unresolved = True
+                    warnings.add("unresolved-bibtex-macro")
+                else:
+                    pieces.append(piece)
+                    expanded_size += len(piece.encode(self.source.encoding))
                 if expanded_size > self.limits.max_field_bytes:
                     raise ImportProblem("field-limit")
                 while index < len(body) and body[index].isspace():
@@ -790,22 +804,18 @@ class ImportSession:
                     continue
                 break
             value = None if unresolved else "".join(pieces)
-            parsed.append((RawField(name, body[start:index]), value))
+            field_warnings = ("unresolved-bibtex-macro",) if unresolved else ()
+            parsed.append((RawField(name, body[start:index], field_warnings), value))
             if len(parsed) > self.limits.max_fields:
                 raise ImportProblem("field-count-limit")
-            if entry_type == "string" and value is not None:
+            if entry_type == "string":
                 definitions[name.casefold()] = value
             if index < len(body) and body[index] != ",":
                 raise ImportProblem("invalid-bibtex-separator")
         if entry_type == "string":
             if len(parsed) == 1:
                 raise ImportProblem("missing-bibtex-definition")
-            if any(
-                len(item.raw_value.encode(self.source.encoding)) > self.limits.max_field_bytes for item, _ in parsed
-            ):
-                raise ImportProblem("field-limit")
             if len(self._macros.keys() | definitions.keys()) > self.limits.max_macros:
                 raise ImportProblem("macro-count-limit")
-            self._macros.update(definitions)
-            return "directive", parsed
-        return "record", parsed
+            return "directive", parsed, definitions
+        return "record", parsed, {}

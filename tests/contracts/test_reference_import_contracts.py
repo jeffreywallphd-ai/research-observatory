@@ -19,6 +19,27 @@ from research_observatory_core.ingestion.reference_imports import ImportSession,
 
 
 class ReferenceImportContractTests(unittest.TestCase):
+    def test_field_warning_attribution_is_required_and_schema_valid(self):
+        schema = json.loads((REPO / "packages/contracts/ingestion/import-record.schema.json").read_text())
+        validator = Draft202012Validator(schema)
+        samples = (
+            ("ris", b"TY  - JOUR\nDO  - invalid\nDO  - 10.99999/valid\nER  -\n"),
+            ("bibtex", b"@article{a,title=unknown}"),
+            ("csv", b"title,note\nValid,=SUM(A1)\n"),
+        )
+        for format_name, raw in samples:
+            run = ImportSession(
+                io.BytesIO(raw), ImportSource("synthetic", hashlib.sha256(raw).hexdigest()), format_name
+            )
+            for record in run.records():
+                document = record.to_document()
+                self.assertEqual([], list(validator.iter_errors(document)))
+                for item in document["fields"]:
+                    self.assertTrue(set(item["warnings"]).issubset(document["warnings"]))
+                changed = copy.deepcopy(document)
+                del changed["fields"][0]["warnings"]
+                self.assertFalse(validator.is_valid(changed))
+
     def test_source_name_policy_preserves_unicode_basenames_and_denies_paths(self):
         schema = json.loads((REPO / "packages/contracts/ingestion/import-record.schema.json").read_text())
         filename_schema = schema["properties"]["source"]["properties"]["filename"]

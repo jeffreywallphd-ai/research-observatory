@@ -38,8 +38,8 @@
     "fields": {
       "type": "array", "maxItems": 4096,
       "items": {
-        "type": "object", "additionalProperties": false, "required": ["name", "rawValue"],
-        "properties": {"name": {"type": "string", "maxLength": 65536}, "rawValue": {"type": "string", "maxLength": 65536}}
+        "type": "object", "additionalProperties": false, "required": ["name", "rawValue", "warnings"],
+        "properties": {"name": {"type": "string", "maxLength": 65536}, "rawValue": {"type": "string", "maxLength": 65536}, "warnings": {"$ref": "#/$defs/warnings"}}
       }
     },
     "candidates": {
@@ -56,8 +56,11 @@
         }
       }
     },
-    "warnings": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "maxLength": 64, "pattern": "^[a-z]+(?:-[a-z]+)*$"}},
+    "warnings": {"$ref": "#/$defs/warnings"},
     "mappingDecision": {"type": "null"}
   },
-  "$defs": {"digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "warnings": {"type": "array", "maxItems": 32, "uniqueItems": true, "items": {"type": "string", "maxLength": 64, "pattern": "^[a-z]+(?:-[a-z]+)*$"}}
+  }
 }

@@ -288,6 +288,72 @@ class ReferenceImportTests(unittest.TestCase):
         self.assertEqual((), records[2].candidates)
         self.assertEqual("valid", records[3].candidates[0].value)
 
+    def test_rejected_macro_name_does_not_consume_capacity(self):
+        payload = b"@string{" + b"p" * 25 + b'="V"}\n@string{q="Good"}\n@article{a,title=q}'
+        run = session(payload, "bibtex", limits=ImportLimits(max_field_bytes=20, max_macros=1))
+        rejected, accepted, record = list(run.records())
+        self.assertEqual("malformed", rejected.status)
+        self.assertIn("field-limit", rejected.warnings)
+        self.assertEqual("parsed", accepted.status)
+        self.assertEqual("Good", record.candidates[0].value)
+        self.assertTrue(run.complete)
+
+    def test_unresolved_macro_redefinition_shadows_stale_value(self):
+        payload = (
+            b'@string{p="old"}\n@string{p=unknown}\n@string{q=p}\n'
+            b'@article{a,title=p,author=q}\n@string{p="new"}\n@article{b,title=p}'
+        )
+        run = session(payload, "bibtex")
+        records = list(run.records())
+        self.assertTrue(all(item.status == "parsed" for item in records))
+        for record in records[1:4]:
+            self.assertIn("unresolved-bibtex-macro", record.warnings)
+            self.assertEqual((), record.candidates)
+        self.assertEqual("new", records[-1].candidates[0].value)
+        self.assertTrue(run.complete)
+
+    def test_macro_directive_is_atomic_and_local_unresolved_binding_wins(self):
+        payload = (
+            b'@string{p="old"}\n@string{p="new",'
+            + b"x" * 25
+            + b'="bad"}\n@article{a,title=p}\n@string{p=unknown,q=p}\n@article{b,title=q}'
+        )
+        run = session(payload, "bibtex", limits=ImportLimits(max_field_bytes=20))
+        records = list(run.records())
+        self.assertEqual("malformed", records[1].status)
+        self.assertEqual("old", records[2].candidates[0].value)
+        self.assertEqual((), records[4].candidates)
+        self.assertIn("unresolved-bibtex-macro", records[4].warnings)
+
+    def test_unresolved_macro_uses_capacity_without_recounting_previous_piece(self):
+        payload = b'@string{p="123456789012345"}\n@string{p=p # unknown # missing}\n@string{q="new"}'
+        run = session(payload, "bibtex", limits=ImportLimits(max_field_bytes=40, max_macros=1))
+        old, unresolved, over_limit = list(run.records())
+        self.assertEqual("parsed", old.status)
+        self.assertEqual("parsed", unresolved.status)
+        self.assertIn("unresolved-bibtex-macro", unresolved.warnings)
+        self.assertEqual("malformed", over_limit.status)
+        self.assertIn("macro-count-limit", over_limit.warnings)
+
+    def test_field_warnings_identify_repeated_doi_macro_and_formula_inputs(self):
+        samples = (
+            ("ris", b"TY  - JOUR\nDO  - 10.99999/valid\nDO  - invalid\nER  -\n", "invalid-doi", 2),
+            ("bibtex", b"@article{a,title=unknown,author={Valid}}", "unresolved-bibtex-macro", 2),
+            ("csv", b"title,note\nValid,=SUM(A1)\n", "formula-like-cell", 1),
+        )
+        for format_name, payload, warning, expected_index in samples:
+            with self.subTest(format=format_name):
+                run = session(payload, format_name)
+                records = list(run.records())
+                record = next(item for item in records if item.kind == "record")
+                self.assertEqual(
+                    [expected_index], [index for index, item in enumerate(record.fields) if warning in item.warnings]
+                )
+                self.assertIn(warning, record.warnings)
+                self.assertEqual(payload[record.byte_start : record.byte_end], record.raw_bytes)
+                expected = ["duplicate-field", warning] if format_name == "ris" else [warning]
+                self.assertEqual(expected, record.to_document()["fields"][expected_index]["warnings"])
+
 
 if __name__ == "__main__":
     unittest.main()
