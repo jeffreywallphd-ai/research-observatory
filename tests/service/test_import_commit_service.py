@@ -55,6 +55,49 @@ class ImportCommitServiceTests(unittest.TestCase):
         restarted.run_pending()
         self.assertEqual("succeeded", self.fixture.queue.get(job.job_id).state)
 
+    def test_latest_request_uses_retained_order_not_uuid_sort_order_after_restart(self):
+        f = self.fixture
+        ids = iter(("01900000-0000-7000-8000-000000000099", "01900000-0000-7000-8000-000000000001"))
+        with patch("research_observatory_core.import_commit_repository.new_uuid_v7", side_effect=lambda: next(ids)):
+            first = f.service.prepare_commit(f.root, f.preview, revision=1)
+            f.repository.revise_draft(f.preview, PreviewDraftChange(expected_revision=1, actor=f.actor))
+            second = f.service.prepare_commit(f.root, f.preview, revision=2)
+        self.assertNotEqual(first, second)
+        restarted = self.restart()
+        self.assertEqual(second, restarted.latest_commit_status(f.root, f.preview)[0])
+        self.assertEqual(1, f.repository.commit_request(first).inputs.draft_revision)
+        self.assertEqual(2, f.repository.latest_commit_request(f.preview).inputs.draft_revision)
+
+    def test_latest_manifest_uses_accepted_order_not_uuid_sort_order_after_restart(self):
+        f = self.fixture
+        with patch(
+            "research_observatory_core.import_commit_repository.new_uuid_v7",
+            side_effect=lambda: new_uuid_v7(timestamp_ms=2000000000000),
+        ):
+            self.schedule()
+            f.service.run_pending()
+        first = f.service.import_manifest(f.root, f.preview)
+        item = f.repository.draft_page(f.preview, revision=1, after=1, limit=1)[0]
+        f.repository.revise_draft(
+            f.preview,
+            PreviewDraftChange(
+                expected_revision=1,
+                actor=f.actor,
+                decisions=(item.decision.model_copy(update={"included": False}),),
+            ),
+        )
+        with patch(
+            "research_observatory_core.import_commit_repository.new_uuid_v7",
+            side_effect=lambda: new_uuid_v7(timestamp_ms=1900000000000),
+        ):
+            job = f.service.schedule_commit(f.root, f.preview, revision=2, request_id=new_uuid_v7())
+            f.service.run_pending()
+        second = f.repository.manifest_for_job(job.job_id)
+        self.assertLess(second.revision_id, first.revision_id)
+        restarted = self.restart()
+        self.assertEqual(second, restarted.import_manifest(f.root, f.preview))
+        self.assertEqual(first, f.repository.manifest(first.revision_id))
+
     def test_changed_request_payload_conflicts_and_preserves_original(self):
         original = self.schedule()
         with self.assertRaises(PreviewProblem):

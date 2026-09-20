@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createCoreApiClient, type ImportDuplicateGroups, type ImportDuplicateMembers, type ImportSummaryStatus, type RecordSummary } from "@research-observatory/contracts/core-api";
 import { Button, DataTable, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
+import { ImportCommitPane } from "./ImportCommitPane";
 
 type Reason = "raw" | "doi";
 type ImportClient = ReturnType<typeof createCoreApiClient>;
 const active = (status: ImportSummaryStatus | null): boolean => Boolean(status?.jobState && !["succeeded", "failed", "cancelled"].includes(status.jobState));
 const statusLabel = (status: ImportSummaryStatus): string => status.counts ? "Complete for this draft" : status.jobState ? `Calculation ${status.jobState.replaceAll("-", " ")}` : "Not calculated";
 
-export function ImportSummaryPane({ root, previewId, revision, client, disabled, announce, inspect, select, failureText }: {
-  readonly root: string; readonly previewId: string; readonly revision: number; readonly client: ImportClient;
+export function ImportSummaryPane({ root, projectId, previewId, revision, client, disabled, announce, inspect, select, failureText }: {
+  readonly root: string; readonly projectId: string; readonly previewId: string; readonly revision: number; readonly client: ImportClient;
   readonly disabled: boolean; readonly announce: (message: string) => void;
   readonly inspect: (record: RecordSummary) => void; readonly select: (records: readonly RecordSummary[]) => void;
   readonly failureText: (error: unknown) => string;
@@ -81,7 +82,7 @@ export function ImportSummaryPane({ root, previewId, revision, client, disabled,
   }
   const unavailable = disabled || loading;
   const counts = status?.counts;
-  return <Panel title="Preview summary">
+  return <><Panel title="Preview summary">
     <div className="ro-stack" aria-label="Import summary and duplicate candidates" aria-busy={loading}>
       <p>Revision {revision}. This is a summary of this import only, not a corpus merge.</p>
       {failure ? <Notification tone="danger" title="Summary unavailable">{failure}</Notification> : null}
@@ -121,5 +122,5 @@ export function ImportSummaryPane({ root, previewId, revision, client, disabled,
         </> : null}
       </> : null}
     </div>
-  </Panel>;
+  </Panel><ImportCommitPane key={revision} root={root} projectId={projectId} previewId={previewId} revision={revision} counts={counts ?? null} client={client} disabled={unavailable} announce={announce} /></>;
 }

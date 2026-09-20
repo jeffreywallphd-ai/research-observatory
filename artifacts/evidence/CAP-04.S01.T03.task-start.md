@@ -48,3 +48,11 @@ do not rerun unrelated completed W1 profiles.
 Immediate root causes: the comparison path treated historical accepted metadata
 as sufficient authority; replay reused the generic queue receipt check without
 the import-specific semantic check. Preserve the first adverse disposition.
+
+## Transport review — durable discovery ordering
+
+Latest request/manifest means most recently retained/accepted, not greatest UUID.
+UUIDv7 random suffixes and clock movement do not establish insertion order.
+Challenge discovery with valid descending IDs and reopen; retain exact older
+requests/manifests. Use internal append-only insertion order, never caller time.
+The missed assumption was treating time-shaped identity as an acceptance sequence.

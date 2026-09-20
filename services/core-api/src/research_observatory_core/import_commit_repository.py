@@ -69,7 +69,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
             row = connection.execute(
                 "SELECT setting_key FROM settings WHERE project_id=? AND revision=0 "
                 "AND setting_key GLOB 'imports.commit-request.*' AND value_type='text' "
-                "AND json_extract(text_value,'$.inputs.preview.previewId')=? ORDER BY setting_id DESC LIMIT 1",
+                "AND json_extract(text_value,'$.inputs.preview.previewId')=? ORDER BY rowid DESC LIMIT 1",
                 (self._project, preview_id),
             ).fetchone()
             saved = self._request(connection, row[0].removeprefix("imports.commit-request.")) if row else None
@@ -141,7 +141,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
             self._active(self._read(connection, preview_id))
             row = connection.execute(
                 "SELECT revision_id FROM import_manifests WHERE project_id=? AND preview_id=? "
-                "ORDER BY revision_id DESC LIMIT 1",
+                "ORDER BY rowid DESC LIMIT 1",
                 (self._project, preview_id),
             ).fetchone()
         return self.manifest(row[0]) if row else None

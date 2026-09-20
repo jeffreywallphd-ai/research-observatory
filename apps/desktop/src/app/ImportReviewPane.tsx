@@ -11,7 +11,7 @@ export function importFailure(error: unknown): string {
     if (error.problem.code === "RO-CORE-IMPORT-REVISION-CONFLICT") return "This draft changed. Reload it before making another decision; your previous request was not replayed.";
     if (error.problem.code === "RO-CORE-IMPORT-RIGHTS-DENIED") return "Current rights do not permit this action. Private source values are unavailable.";
   }
-  return "The local import action did not complete. Reload this preview and inspect its current state before retrying. No canonical import was published.";
+  return "The local import action could not be confirmed. Reload this preview and inspect durable commit status before retrying; a missing reply does not mean nothing was imported.";
 }
 export function importStatusLabel(item: ImportPreviewItem): string {
   if (item.state === "cancelled" || item.state === "security-interrupted" || item.state === "failed") return item.state.replaceAll("-", " ");
@@ -178,12 +178,12 @@ export function ImportReviewPane({ root, projectId, initial, client, announce, o
     {reportNotice ? <Notification tone="info" title="Diagnostic report">{reportNotice}</Notification> : null}
     {busy ? <p role="status">Reading the current protected preview…</p> : null}
     {summary ? <>
-      <ImportSummaryPane key={summary.revision} root={root} previewId={initial.previewId} revision={summary.revision} client={client} disabled={busy} announce={announce} inspect={setRecord} failureText={importFailure} select={(records) => {
+      <ImportSummaryPane key={summary.revision} root={root} projectId={projectId} previewId={initial.previewId} revision={summary.revision} client={client} disabled={busy} announce={announce} inspect={setRecord} failureText={importFailure} select={(records) => {
         const combined = [...selected, ...records.filter((row) => !selected.some((item) => item.ordinal === row.ordinal)).map((row) => ({ ordinal: row.ordinal, recordKey: row.recordKey }))];
         if (combined.length > 100) { announce("This would exceed 100 selected records. Clear the current selection or select fewer records."); return; }
         setSelected(combined); announce(`${combined.length} records selected. Use the record correction and exclusion controls below.`);
       }} />
-      <Panel title="Draft decisions"><p>Revision {summary.revision} · {summary.recordCount.toLocaleString()} source rows (including headers/directives). Raw source values are preserved. No canonical records have been committed.</p>
+      <Panel title="Draft decisions"><p>Revision {summary.revision} · {summary.recordCount.toLocaleString()} source rows (including headers/directives). Raw source values are preserved. Draft edits do not change previously committed manifests; inspect commit status for durable outcomes.</p>
         {initial.formatName === "csv" ? <p>CSV separator: {summary.delimiter === "," ? "Comma" : summary.delimiter === ";" ? "Semicolon" : "Tab"}. Start a new import to change parsing settings.</p> : null}
         <div className="ro-action-row"><Button ref={undoButton} disabled={busy || summary.undoTargetRevision === null} onClick={() => void undo()}>Undo last draft change</Button><span className="field-note">{summary.undoTargetRevision === null ? "No earlier draft change to undo." : "Restores the previous effective edit as a new revision. Current rights restrictions still apply."}</span></div>
         <p>Download a complete diagnostic CSV with row locations, validation codes and exclusion reasons. It does not contain reference text, names or local paths.</p>
