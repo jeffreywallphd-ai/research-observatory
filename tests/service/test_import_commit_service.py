@@ -37,6 +37,10 @@ class ImportCommitServiceTests(unittest.TestCase):
         restarted.run_pending()
         self.assertEqual("succeeded", self.fixture.queue.get(job.job_id).state)
         self.assertEqual(job.job_id, self.schedule(restarted).job_id)
+        manifest, completed = restarted.commit_status(self.fixture.root, self.fixture.preview, request_id=self.request)
+        self.assertEqual(job.job_id, completed.job_id)
+        self.assertEqual(1, manifest.created_count)
+        self.assertEqual(manifest, restarted.import_manifest(self.fixture.root, self.fixture.preview))
 
     def test_request_written_before_enqueue_is_recovered_not_lost(self):
         binding = next(iter(self.fixture.service._bindings.values()))

@@ -1660,6 +1660,51 @@ export function decodeImportSummaryStatus(value: unknown): ImportSummaryStatus |
   return item as unknown as ImportSummaryStatus;
 }
 
+export function decodeImportManifest(value: unknown): ImportManifestView | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["projectId", "revisionId", "aggregateId", "previewId", "draftRevision", "sourceSha256", "identitySha256", "effectiveDraftSha256", "parserVersion", "mappingId", "mappingRevision", "previousManifestRevisionId", "recordCount", "selectedCount", "createdCount", "reusedCount", "membersSha256", "createdAt"])
+    || !(canonicalProjectId(item.projectId) || canonicalUuid7(item.projectId))
+    || ![item.revisionId, item.aggregateId, item.previewId, item.mappingId].every(canonicalUuid7)
+    || !integer(item.draftRevision, 1, 2147483647) || !integer(item.mappingRevision, 1, 2147483647)
+    || ![item.sourceSha256, item.identitySha256, item.effectiveDraftSha256, item.membersSha256].every(importDigest)
+    || !importText(item.parserVersion, 96, 1) || item.previousManifestRevisionId !== null && !canonicalUuid7(item.previousManifestRevisionId)
+    || ![item.recordCount, item.selectedCount, item.createdCount, item.reusedCount].every((value) => integer(value, 0, 200000))
+    || typeof item.createdAt !== "string" || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(item.createdAt) || !Number.isFinite(Date.parse(item.createdAt))) return null;
+  const manifest = item as unknown as ImportManifestView;
+  return manifest.selectedCount <= manifest.recordCount && manifest.createdCount + manifest.reusedCount === manifest.selectedCount ? manifest : null;
+}
+
+export function decodeImportCommitStatus(value: unknown): ImportCommitStatus | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["previewId", "requestId", "jobId", "jobState", "diagnosticCode", "manifest"])
+    || !canonicalUuid7(item.previewId) || !canonicalUuid7(item.requestId)
+    || item.diagnosticCode !== null && (typeof item.diagnosticCode !== "string" || !/^[a-z][a-z0-9.-]{0,95}$/.test(item.diagnosticCode))
+    || (item.jobId === null ? item.jobState !== null || item.diagnosticCode !== null
+      : !canonicalUuid7(item.jobId) || !registryEnum(item.jobState, ["runnable", "claimed", "running", "retry-scheduled", "cancelling", "cancelled", "failed", "succeeded"]))
+    || (item.jobState === "succeeded" ? !decodeImportManifest(item.manifest) : item.manifest !== null)) return null;
+  return item as unknown as ImportCommitStatus;
+}
+
+export function decodeImportManifestPage(value: unknown): ImportManifestPage | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["previewId", "revisionId", "records", "nextAfter", "complete"])
+    || !canonicalUuid7(item.previewId) || !canonicalUuid7(item.revisionId) || !integer(item.nextAfter, 0, 200000)
+    || typeof item.complete !== "boolean" || !Array.isArray(item.records) || item.records.length > 100 || !item.complete && !item.records.length) return null;
+  let previous = 0;
+  for (const value of item.records) {
+    const row = record(value);
+    if (!row || !exactKeys(row, ["ordinal", "recordKey", "included", "sourceRecordRevisionId", "warnings", "comparison", "previousRecordRevisionId"])
+      || !integer(row.ordinal, 1, 200000) || previous !== 0 && row.ordinal !== previous + 1 || !importDigest(row.recordKey)
+      || typeof row.included !== "boolean" || (row.included ? !canonicalUuid7(row.sourceRecordRevisionId) : row.sourceRecordRevisionId !== null)
+      || !Array.isArray(row.warnings) || row.warnings.length > 64 || !row.warnings.every((value) => importText(value, 96))
+      || !registryEnum(row.comparison, ["not-compared", "added", "unchanged", "updated", "ambiguous"])
+      || (["unchanged", "updated"].includes(row.comparison as string) ? !canonicalUuid7(row.previousRecordRevisionId) : row.previousRecordRevisionId !== null)) return null;
+    previous = row.ordinal;
+  }
+  if (item.records.length && item.nextAfter !== previous) return null;
+  return item as unknown as ImportManifestPage;
+}
+
 export function decodeImportDuplicateGroups(value: unknown): ImportDuplicateGroups | null {
   const item = importOwned(value);
   if (!item || !exactKeys(item, ["previewId", "revision", "reason", "groups", "nextAfter", "complete"])
@@ -1763,8 +1808,61 @@ async function importSummaryCall(transport: CoreApiTransport, route: "summary" |
   return result;
 }
 
+async function importCommitCall(transport: CoreApiTransport, route: "status" | "start" | "cancel", value: ImportCommitRequest | ImportCommitStartRequest | ImportCommitCancelRequest): Promise<ImportCommitStatus> {
+  const command = importCommand(value);
+  const keys = ["root", "previewId", "requestId", ...(route === "start" ? ["revision", "previousManifestRevisionId"] : route === "cancel" ? ["jobId"] : [])];
+  if (!exactKeys(command, keys) || !canonicalUuid7(command.requestId)
+    || route === "start" && (!integer(command.revision, 1, 2147483647) || command.previousManifestRevisionId !== null && !canonicalUuid7(command.previousManifestRevisionId))
+    || route === "cancel" && !canonicalUuid7(command.jobId)) throw new Error("RO-CORE-REQUEST-INVALID");
+  const result = await requestJson(transport, { method: "POST", path: `/projects/imports/commit/${route}`, body: importBody(command), ifMatch: null, idempotencyKey: null }, decodeImportCommitStatus);
+  if (result.previewId !== command.previewId || result.requestId !== command.requestId || route === "cancel" && result.jobId !== command.jobId) throw new Error("RO-CORE-RESPONSE-INVALID");
+  return result;
+}
+
 export function createCoreApiClient(transport: CoreApiTransport) {
   return Object.freeze({
+    async latestImportCommit(value: ImportAddress): Promise<ImportCommitStatus | null> {
+      const command = importCommand(value);
+      if (!exactKeys(command, ["root", "previewId"])) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/commit/latest", body: importBody(command), ifMatch: null, idempotencyKey: null }, (value) => {
+        if (value === null) return { status: null };
+        const status = decodeImportCommitStatus(value);
+        return status ? { status } : null;
+      });
+      if (result.status && result.status.previewId !== command.previewId) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result.status;
+    },
+    async prepareImportCommit(value: ImportCommitPrepareRequest): Promise<ImportCommitStatus> {
+      const command = importCommand(value);
+      if (!exactKeys(command, ["root", "previewId", "revision", "previousManifestRevisionId"]) || !integer(command.revision, 1, 2147483647)
+        || command.previousManifestRevisionId !== null && !canonicalUuid7(command.previousManifestRevisionId)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/commit/prepare", body: importBody(command), ifMatch: null, idempotencyKey: null }, decodeImportCommitStatus);
+      if (result.previewId !== command.previewId) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async importCommitStatus(value: ImportCommitRequest): Promise<ImportCommitStatus> { return importCommitCall(transport, "status", value); },
+    async startImportCommit(value: ImportCommitStartRequest): Promise<ImportCommitStatus> { return importCommitCall(transport, "start", value); },
+    async cancelImportCommit(value: ImportCommitCancelRequest): Promise<ImportCommitStatus> { return importCommitCall(transport, "cancel", value); },
+    async importManifest(value: ImportManifestRequest): Promise<ImportManifestView | null> {
+      const command = importCommand(value);
+      if (!exactKeys(command, ["root", "previewId", "revisionId"]) || command.revisionId !== null && !canonicalUuid7(command.revisionId)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/manifest", body: importBody(command), ifMatch: null, idempotencyKey: null }, (value) => {
+        if (value === null) return { manifest: null };
+        const manifest = decodeImportManifest(value);
+        return manifest ? { manifest } : null;
+      });
+      if (result.manifest && (result.manifest.previewId !== command.previewId || command.revisionId !== null && result.manifest.revisionId !== command.revisionId)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result.manifest;
+    },
+    async importManifestMembers(value: ImportManifestPageRequest): Promise<ImportManifestPage> {
+      const command = importCommand(value);
+      if (!exactKeys(command, ["root", "previewId", "revisionId", "after", "limit"]) || !canonicalUuid7(command.revisionId)
+        || !integer(command.after, 0, 200000) || !integer(command.limit, 1, 100)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/imports/manifest/members", body: importBody(command), ifMatch: null, idempotencyKey: null }, decodeImportManifestPage);
+      if (result.previewId !== command.previewId || result.revisionId !== command.revisionId || result.records.length > command.limit
+        || (result.records.length ? result.records[0]!.ordinal !== command.after + 1 : result.nextAfter !== command.after)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
     async importSummary(value: ImportSummaryRequest): Promise<ImportSummaryStatus> { return importSummaryCall(transport, "summary", value); },
     async startImportSummary(value: ImportSummaryRequest): Promise<ImportSummaryStatus> { return importSummaryCall(transport, "summary/start", value); },
     async cancelImportSummary(value: ImportSummaryCancelRequest): Promise<ImportSummaryStatus> { return importSummaryCall(transport, "summary/cancel", value); },

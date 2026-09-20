@@ -2163,6 +2163,26 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
             &["root", "previewId", "revision"]
         }
         "/projects/imports/summary/cancel" => &["root", "previewId", "revision", "jobId"],
+        "/projects/imports/commit/latest" => &["root", "previewId"],
+        "/projects/imports/commit/prepare" => &[
+            "root",
+            "previewId",
+            "revision",
+            "previousManifestRevisionId",
+        ],
+        "/projects/imports/commit/status" => &["root", "previewId", "requestId"],
+        "/projects/imports/commit/start" => &[
+            "root",
+            "previewId",
+            "requestId",
+            "revision",
+            "previousManifestRevisionId",
+        ],
+        "/projects/imports/commit/cancel" => &["root", "previewId", "requestId", "jobId"],
+        "/projects/imports/manifest" => &["root", "previewId", "revisionId"],
+        "/projects/imports/manifest/members" => {
+            &["root", "previewId", "revisionId", "after", "limit"]
+        }
         "/projects/imports/summary/groups" => {
             &["root", "previewId", "revision", "reason", "after", "limit"]
         }
@@ -2238,6 +2258,38 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
         "/projects/imports/summary/cancel" => {
             number("revision", 1, 2_147_483_647)
                 && object["jobId"].as_str().is_some_and(canonical_uuid_v7)
+        }
+        "/projects/imports/commit/latest" => true,
+        "/projects/imports/commit/prepare" => {
+            number("revision", 1, 2_147_483_647)
+                && (object["previousManifestRevisionId"].is_null()
+                    || object["previousManifestRevisionId"]
+                        .as_str()
+                        .is_some_and(canonical_uuid_v7))
+        }
+        "/projects/imports/commit/status" => {
+            object["requestId"].as_str().is_some_and(canonical_uuid_v7)
+        }
+        "/projects/imports/commit/start" => {
+            object["requestId"].as_str().is_some_and(canonical_uuid_v7)
+                && number("revision", 1, 2_147_483_647)
+                && (object["previousManifestRevisionId"].is_null()
+                    || object["previousManifestRevisionId"]
+                        .as_str()
+                        .is_some_and(canonical_uuid_v7))
+        }
+        "/projects/imports/commit/cancel" => {
+            object["requestId"].as_str().is_some_and(canonical_uuid_v7)
+                && object["jobId"].as_str().is_some_and(canonical_uuid_v7)
+        }
+        "/projects/imports/manifest" => {
+            object["revisionId"].is_null()
+                || object["revisionId"].as_str().is_some_and(canonical_uuid_v7)
+        }
+        "/projects/imports/manifest/members" => {
+            object["revisionId"].as_str().is_some_and(canonical_uuid_v7)
+                && number("after", 0, 200_000)
+                && number("limit", 1, 100)
         }
         "/projects/imports/summary/groups" | "/projects/imports/summary/members" => {
             number("revision", 1, 2_147_483_647)
@@ -3521,6 +3573,31 @@ mod tests {
     fn import_review_bridge_admits_only_exact_bounded_review_operations() {
         let address = serde_json::json!({"root":"C:/Research/synthetic", "previewId":"01900000-0000-7000-8000-000000000001"});
         let cases = [
+            ("commit/latest", address.clone()),
+            (
+                "commit/prepare",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revision":1, "previousManifestRevisionId":null}),
+            ),
+            (
+                "commit/status",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "requestId":address["previewId"]}),
+            ),
+            (
+                "commit/start",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "requestId":address["previewId"], "revision":1, "previousManifestRevisionId":null}),
+            ),
+            (
+                "commit/cancel",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "requestId":address["previewId"], "jobId":address["previewId"]}),
+            ),
+            (
+                "manifest",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revisionId":null}),
+            ),
+            (
+                "manifest/members",
+                serde_json::json!({"root":address["root"], "previewId":address["previewId"], "revisionId":address["previewId"], "after":0, "limit":25}),
+            ),
             ("status", address.clone()),
             ("cancel", address.clone()),
             ("begin-review", address.clone()),
@@ -3579,13 +3656,23 @@ mod tests {
                 idempotency_key: None,
             };
             assert!(super::validate_api_request(&request).is_ok(), "{route}");
-            if route.starts_with("summary") {
+            if route.starts_with("summary")
+                || route.starts_with("commit")
+                || route.starts_with("manifest")
+            {
                 for (key, invalid) in [
                     ("revision", serde_json::json!(true)),
                     ("limit", serde_json::json!(101)),
                     ("reason", serde_json::json!("title")),
                     ("groupKey", serde_json::json!("arbitrary-value")),
                     ("jobId", serde_json::json!("not-a-job")),
+                    ("requestId", serde_json::json!("not-a-request")),
+                    ("revisionId", serde_json::json!("not-a-revision")),
+                    (
+                        "previousManifestRevisionId",
+                        serde_json::json!("not-a-revision"),
+                    ),
+                    ("after", serde_json::json!(-1)),
                 ] {
                     if body.get(key).is_some() {
                         let mut changed = body.clone();

@@ -63,6 +63,20 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         with self._transaction(None) as connection:
             return self._request(connection, request_id)
 
+    def latest_commit_request(self, preview_id: str) -> ImportCommitRequest | None:
+        with self._transaction(preview_id) as connection:
+            self._active(self._read(connection, preview_id))
+            row = connection.execute(
+                "SELECT setting_key FROM settings WHERE project_id=? AND revision=0 "
+                "AND setting_key GLOB 'imports.commit-request.*' AND value_type='text' "
+                "AND json_extract(text_value,'$.inputs.preview.previewId')=? ORDER BY setting_id DESC LIMIT 1",
+                (self._project, preview_id),
+            ).fetchone()
+            saved = self._request(connection, row[0].removeprefix("imports.commit-request.")) if row else None
+            if saved is not None and saved.inputs.preview.preview_id != preview_id:
+                raise PreviewProblem("preview-commit-request-authority-mismatch")
+            return saved
+
     def save_commit_request(self, inputs: CommitJobInput, *, actor: PreviewActor) -> ImportCommitRequest:
         inputs = CommitJobInput.model_validate(inputs)
         actor = _actor(actor)
@@ -100,6 +114,37 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 ),
             )
             return saved
+
+    def manifest_for_job(self, job_id: str) -> ImportManifest | None:
+        if not is_uuid_v7(job_id):
+            raise PreviewProblem("preview-commit-job-identity-invalid")
+        with self._transaction(None) as connection:
+            row = connection.execute(
+                "SELECT o.output_manifest_json FROM workflow_committed_outputs o "
+                "JOIN workflow_queue_jobs j ON j.project_id=o.project_id AND j.job_id=o.job_id "
+                "WHERE o.project_id=? AND o.job_id=? AND j.state='succeeded'",
+                (self._project, job_id),
+            ).fetchone()
+            if row is None:
+                return None
+            outputs = json.loads(row[0])["outputs"]
+            if len(outputs) != 1:
+                raise PreviewProblem("preview-commit-output-authority-mismatch")
+            revision = outputs[0]["revisionId"]
+            canonical = self._output(_revision_with_connection(connection, self._project, revision))
+            if self._queue._output_manifest((canonical,))[0] != row[0]:
+                raise PreviewProblem("preview-commit-output-authority-mismatch")
+        return self.manifest(revision)
+
+    def latest_manifest(self, preview_id: str) -> ImportManifest | None:
+        with self._transaction(preview_id) as connection:
+            self._active(self._read(connection, preview_id))
+            row = connection.execute(
+                "SELECT revision_id FROM import_manifests WHERE project_id=? AND preview_id=? "
+                "ORDER BY revision_id DESC LIMIT 1",
+                (self._project, preview_id),
+            ).fetchone()
+        return self.manifest(row[0]) if row else None
 
     def manifest(self, revision_id: str) -> ImportManifest:
         if not is_uuid_v7(revision_id):

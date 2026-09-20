@@ -455,6 +455,204 @@
         "title": "ImportAddress",
         "type": "object"
       },
+      "ImportCommitCancelRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "requestId",
+          "jobId"
+        ],
+        "title": "ImportCommitCancelRequest",
+        "type": "object"
+      },
+      "ImportCommitPrepareRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "previousManifestRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "revision"
+        ],
+        "title": "ImportCommitPrepareRequest",
+        "type": "object"
+      },
+      "ImportCommitRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "requestId"
+        ],
+        "title": "ImportCommitRequest",
+        "type": "object"
+      },
+      "ImportCommitStartRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "previousManifestRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "requestId",
+          "revision"
+        ],
+        "title": "ImportCommitStartRequest",
+        "type": "object"
+      },
+      "ImportCommitStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "diagnosticCode": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9.-]{0,95}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnosticcode"
+          },
+          "jobId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "jobState": {
+            "anyOf": [
+              {
+                "enum": [
+                  "runnable",
+                  "claimed",
+                  "running",
+                  "retry-scheduled",
+                  "cancelling",
+                  "cancelled",
+                  "failed",
+                  "succeeded"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Jobstate"
+          },
+          "manifest": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ImportManifestView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "previewId",
+          "requestId",
+          "jobId",
+          "jobState",
+          "diagnosticCode",
+          "manifest"
+        ],
+        "title": "ImportCommitStatus",
+        "type": "object"
+      },
       "ImportDetailRequest": {
         "additionalProperties": false,
         "properties": {
@@ -781,6 +979,274 @@
           "root"
         ],
         "title": "ImportListRequest",
+        "type": "object"
+      },
+      "ImportManifestPage": {
+        "additionalProperties": false,
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "nextAfter": {
+            "$ref": "#/components/schemas/Cursor"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/ImportManifestRecord"
+            },
+            "maxItems": 100,
+            "title": "Records",
+            "type": "array"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "previewId",
+          "revisionId",
+          "records",
+          "nextAfter",
+          "complete"
+        ],
+        "title": "ImportManifestPage",
+        "type": "object"
+      },
+      "ImportManifestPageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "$ref": "#/components/schemas/Cursor",
+            "default": 0
+          },
+          "limit": {
+            "$ref": "#/components/schemas/PageLimit",
+            "default": 25
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "revisionId"
+        ],
+        "title": "ImportManifestPageRequest",
+        "type": "object"
+      },
+      "ImportManifestRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "comparison": {
+            "enum": [
+              "not-compared",
+              "added",
+              "unchanged",
+              "updated",
+              "ambiguous"
+            ],
+            "title": "Comparison",
+            "type": "string"
+          },
+          "included": {
+            "title": "Included",
+            "type": "boolean"
+          },
+          "ordinal": {
+            "$ref": "#/components/schemas/Ordinal"
+          },
+          "previousRecordRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recordKey": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "sourceRecordRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "warnings": {
+            "items": {
+              "maxLength": 96,
+              "type": "string"
+            },
+            "maxItems": 64,
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ordinal",
+          "recordKey",
+          "included",
+          "sourceRecordRevisionId",
+          "warnings",
+          "comparison",
+          "previousRecordRevisionId"
+        ],
+        "title": "ImportManifestRecord",
+        "type": "object"
+      },
+      "ImportManifestRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId"
+        ],
+        "title": "ImportManifestRequest",
+        "type": "object"
+      },
+      "ImportManifestView": {
+        "additionalProperties": false,
+        "properties": {
+          "aggregateId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "createdAt": {
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$",
+            "title": "Createdat",
+            "type": "string"
+          },
+          "createdCount": {
+            "maximum": 200000.0,
+            "minimum": 0.0,
+            "title": "Createdcount",
+            "type": "integer"
+          },
+          "draftRevision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "effectiveDraftSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "identitySha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "mappingId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "mappingRevision": {
+            "$ref": "#/components/schemas/Revision"
+          },
+          "membersSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "parserVersion": {
+            "maxLength": 96,
+            "minLength": 1,
+            "title": "Parserversion",
+            "type": "string"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "previousManifestRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "recordCount": {
+            "maximum": 200000.0,
+            "minimum": 0.0,
+            "title": "Recordcount",
+            "type": "integer"
+          },
+          "reusedCount": {
+            "maximum": 200000.0,
+            "minimum": 0.0,
+            "title": "Reusedcount",
+            "type": "integer"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "selectedCount": {
+            "maximum": 200000.0,
+            "minimum": 0.0,
+            "title": "Selectedcount",
+            "type": "integer"
+          },
+          "sourceSha256": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        },
+        "required": [
+          "projectId",
+          "revisionId",
+          "aggregateId",
+          "previewId",
+          "draftRevision",
+          "sourceSha256",
+          "identitySha256",
+          "effectiveDraftSha256",
+          "parserVersion",
+          "mappingId",
+          "mappingRevision",
+          "previousManifestRevisionId",
+          "recordCount",
+          "selectedCount",
+          "createdCount",
+          "reusedCount",
+          "membersSha256",
+          "createdAt"
+        ],
+        "title": "ImportManifestView",
         "type": "object"
       },
       "ImportMappingRequest": {
@@ -3552,6 +4018,10 @@
         ],
         "title": "ProjectDeleteRequest",
         "type": "object"
+      },
+      "ProjectIdentity": {
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        "type": "string"
       },
       "ProjectLifecycleState": {
         "enum": [
@@ -7174,6 +7644,419 @@
         ]
       }
     },
+    "/projects/imports/commit/cancel": {
+      "post": {
+        "operationId": "commit_cancel_projects_imports_commit_cancel_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportCommitCancelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportCommitStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Commit Cancel",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/commit/latest": {
+      "post": {
+        "operationId": "latest_commit_projects_imports_commit_latest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportAddress"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ImportCommitStatus"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Latest Commit Projects Imports Commit Latest Post"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Latest Commit",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/commit/prepare": {
+      "post": {
+        "operationId": "prepare_commit_projects_imports_commit_prepare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportCommitPrepareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportCommitStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Prepare Commit",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/commit/start": {
+      "post": {
+        "operationId": "commit_start_projects_imports_commit_start_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportCommitStartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportCommitStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Commit Start",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/commit/status": {
+      "post": {
+        "operationId": "commit_status_projects_imports_commit_status_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportCommitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportCommitStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Commit Status",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
     "/projects/imports/detail": {
       "post": {
         "operationId": "review_detail_projects_imports_detail_post",
@@ -7412,6 +8295,176 @@
           }
         },
         "summary": "Previews",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/manifest": {
+      "post": {
+        "operationId": "manifest_projects_imports_manifest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportManifestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ImportManifestView"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Manifest Projects Imports Manifest Post"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Manifest",
+        "tags": [
+          "imports"
+        ]
+      }
+    },
+    "/projects/imports/manifest/members": {
+      "post": {
+        "operationId": "manifest_members_projects_imports_manifest_members_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportManifestPageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportManifestPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Manifest Members",
         "tags": [
           "imports"
         ]

@@ -365,8 +365,16 @@ comparison status. Historical and current store/inspect permissions govern
 comparison, reuse and reads; a prior seal alone grants no current access. Accepted
 queue output and the exact manifest revision must agree. Pages are bounded, and
 the all-member rights scan selects compact rights metadata rather than a batch
-of full decision payloads. Public API/native/renderer integration, final guard
-lifetime and large-input qualification are still pending.
+of full decision payloads. Authenticated bounded routes expose explicit
+prepare/start/status/cancel, latest saved request discovery, and immutable
+manifest headers/member pages. Preparation mints a Core request ID and retains
+it before execution; discovery never automatically starts work. Generated client
+decoders bind replies to owned request snapshots and the native bridge admits
+only exact bounded operations. Public member pages expose decision metadata,
+warnings and canonical IDs, not bulk source payloads. An uncertain response
+requires a durable status read; it must not claim nothing was published.
+Renderer integration, final guard lifetime and large-input qualification remain
+pending.
 
 ## Verification and technical basis
 

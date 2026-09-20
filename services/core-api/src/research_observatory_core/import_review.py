@@ -1,4 +1,4 @@
-"""Bounded review transport over protected repository ports, never canonical imports.
+"""Bounded review and manifest transport over protected repository ports.
 
 JSON lists are a transport concern. Immutable domain tuples and their strict
 validation remain unchanged. Every mutation uses an exact predecessor; a lost
@@ -26,6 +26,7 @@ from .ingestion.import_drafts import (
     MappedField,
     MappedName,
     MappingProfile,
+    ProjectIdentity,
     RecordDecision,
     Revision,
     TextValue,
@@ -35,6 +36,7 @@ from .ingestion.import_drafts import (
 from .ingestion.import_summaries import SummaryCounts
 from .ingestion.preview_records import WarningCode
 from .ingestion.reference_imports import import_field_target
+from .ports.import_commits import ImportManifest
 from .ports.import_previews import (
     ImportPreviewRepository,
     PreviewActor,
@@ -157,6 +159,80 @@ class ImportSummaryStatus(DraftValue):
     job_state: WorkflowJobState | None
     diagnostic_code: Annotated[str, Field(pattern=r"^[a-z][a-z0-9.-]{0,95}$")] | None
     counts: SummaryCounts | None
+
+
+class ImportManifestView(DraftValue):
+    project_id: ProjectIdentity
+    revision_id: Identity
+    aggregate_id: Identity
+    preview_id: Identity
+    draft_revision: Revision
+    source_sha256: Digest
+    identity_sha256: Digest
+    effective_draft_sha256: Digest
+    parser_version: Annotated[str, Field(min_length=1, max_length=96)]
+    mapping_id: Identity
+    mapping_revision: Revision
+    previous_manifest_revision_id: Identity | None
+    record_count: Annotated[int, Field(ge=0, le=200000)]
+    selected_count: Annotated[int, Field(ge=0, le=200000)]
+    created_count: Annotated[int, Field(ge=0, le=200000)]
+    reused_count: Annotated[int, Field(ge=0, le=200000)]
+    members_sha256: Digest
+    created_at: Annotated[str, Field(pattern=r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")]
+
+
+class ImportCommitStatus(DraftValue):
+    preview_id: Identity
+    request_id: Identity
+    job_id: Identity | None
+    job_state: WorkflowJobState | None
+    diagnostic_code: Annotated[str, Field(pattern=r"^[a-z][a-z0-9.-]{0,95}$")] | None
+    manifest: ImportManifestView | None
+
+
+class ImportManifestRecord(DraftValue):
+    ordinal: Ordinal
+    record_key: Digest
+    included: bool
+    source_record_revision_id: Identity | None
+    warnings: Annotated[list[Annotated[str, Field(max_length=96)]], Field(max_length=64)]
+    comparison: Literal["not-compared", "added", "unchanged", "updated", "ambiguous"]
+    previous_record_revision_id: Identity | None
+
+
+class ImportManifestPage(DraftValue):
+    preview_id: Identity
+    revision_id: Identity
+    records: Annotated[list[ImportManifestRecord], Field(max_length=100)]
+    next_after: Cursor
+    complete: bool
+
+
+def manifest_view(manifest: ImportManifest | None) -> ImportManifestView | None:
+    if manifest is None:
+        return None
+    values = manifest.model_dump(exclude={"mapping"})
+    return bounded(
+        ImportManifestView(
+            **values,
+            mapping_id=manifest.mapping.profile_id,
+            mapping_revision=manifest.mapping.revision,
+        )
+    )
+
+
+def commit_status_item(preview: str, request: str, manifest: ImportManifest | None, job: WorkflowJobRecord | None):
+    if (manifest is not None) != (job is not None and job.state == "succeeded"):
+        raise PreviewProblem("preview-commit-output-authority-mismatch")
+    return ImportCommitStatus(
+        preview_id=preview,
+        request_id=request,
+        job_id=job.job_id if job else None,
+        job_state=job.state if job else None,
+        diagnostic_code=job.diagnostic_code if job else None,
+        manifest=manifest_view(manifest),
+    )
 
 
 class ImportDuplicateGroup(DraftValue):

@@ -19,7 +19,7 @@ from pathlib import Path
 
 from pydantic import TypeAdapter
 
-from .domain_contracts import is_uuid_v7
+from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .import_review import ImportPreviewPage, ImportReview, bounded, preview_item
 from .ingestion.commit_activity import ImportCommitActivity
 from .ingestion.commit_workflow import (
@@ -481,6 +481,89 @@ class ImportPreviewService:
         result = self._action(root, schedule)
         self._wake.set()
         return result
+
+    def prepare_commit(
+        self, root: str, preview_id: str, *, revision: int, previous_manifest_revision_id: str | None = None
+    ):
+        def prepare(binding: _Binding):
+            repository = binding.adapters.previews
+            prior = repository.latest_commit_request(preview_id)
+            request_id = prior.inputs.request_id if prior else new_uuid_v7()
+            inputs = self._commit_inputs(binding, preview_id, revision, request_id, previous_manifest_revision_id)
+            if prior is not None and prior.inputs == inputs:
+                return prior.inputs.request_id
+            inputs = self._commit_inputs(binding, preview_id, revision, new_uuid_v7(), previous_manifest_revision_id)
+            repository.save_commit_request(inputs, actor=self.actor(inputs.request_id.replace("-", "")))
+            return inputs.request_id
+
+        return self._action(root, prepare)
+
+    def latest_commit_status(self, root: str, preview_id: str):
+        def latest(binding: _Binding):
+            repository = binding.adapters.previews
+            repository.draft(preview_id)
+            saved = repository.latest_commit_request(preview_id)
+            if saved is None:
+                return None
+            job = self._commit_job(binding, saved.inputs)
+            manifest = repository.manifest_for_job(job.job_id) if job and job.state == "succeeded" else None
+            return saved.inputs.request_id, manifest, job
+
+        return self._action(root, latest)
+
+    def commit_status(self, root: str, preview_id: str, *, request_id: str):
+        def status(binding: _Binding):
+            repository = binding.adapters.previews
+            repository.draft(preview_id)
+            saved = repository.commit_request(request_id)
+            if saved is None:
+                return None, None
+            if saved.inputs.preview.preview_id != preview_id:
+                raise PreviewProblem("preview-commit-request-authority-mismatch")
+            job = self._commit_job(binding, saved.inputs)
+            manifest = repository.manifest_for_job(job.job_id) if job and job.state == "succeeded" else None
+            return manifest, job
+
+        return self._action(root, status)
+
+    def cancel_commit(self, root: str, preview_id: str, *, request_id: str, job_id: str) -> None:
+        def cancel(binding: _Binding):
+            saved = binding.adapters.previews.commit_request(request_id)
+            if saved is None or saved.inputs.preview.preview_id != preview_id:
+                raise PreviewProblem("preview-commit-request-authority-mismatch")
+            job = self._commit_job(binding, saved.inputs)
+            if job is None or job.job_id != job_id:
+                raise PreviewProblem("preview-commit-job-authority-mismatch")
+            if job.state not in {"succeeded", "failed", "cancelled"}:
+                binding.adapters.queue.request_cancellation(
+                    job_id,
+                    actor=self._workflow_actor(),
+                    now=self._now(),
+                    reason_code="import-commit-cancelled",
+                    interruption_kind="user-cancel",
+                )
+
+        self._action(root, cancel)
+        self._wake.set()
+
+    def import_manifest(self, root: str, preview_id: str, *, revision_id: str | None = None):
+        def read(binding: _Binding):
+            repository = binding.adapters.previews
+            manifest = repository.manifest(revision_id) if revision_id else repository.latest_manifest(preview_id)
+            if manifest is not None and manifest.preview_id != preview_id:
+                raise PreviewProblem("preview-commit-manifest-authority-mismatch")
+            return manifest
+
+        return self._action(root, read)
+
+    def import_manifest_members(self, root: str, preview_id: str, *, revision_id: str, after: int, limit: int):
+        def read(binding: _Binding):
+            manifest = binding.adapters.previews.manifest(revision_id)
+            if manifest.preview_id != preview_id:
+                raise PreviewProblem("preview-commit-manifest-authority-mismatch")
+            return binding.adapters.previews.manifest_members(revision_id, after=after, limit=limit)
+
+        return self._action(root, read)
 
     def summary_status(self, root: str, preview_id: str, *, revision: int):
         def status(binding: _Binding):
