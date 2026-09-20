@@ -52,6 +52,8 @@ from research_observatory_core.workflow_executor import (
     WorkerCapacity,
     WorkerResources,
     WorkflowActivityError,
+    WorkflowAtomicCompletion,
+    WorkflowAtomicCompletionError,
     prepare_workflow_job,
 )
 
@@ -355,6 +357,46 @@ class LocalWorkflowExecutorTests(unittest.TestCase):
             index = self._output_index
             self._output_index += 1
         return (_canonical_artifact(self.root, index, actor_id=claim.worker_id),)
+
+    def test_atomic_completion_is_verified_without_restaging(self) -> None:
+        self.repository.enqueue(self.submission(), actor=SYSTEM)
+
+        def handler(context, claim):
+            outputs = self.activity_output(claim)
+            context.stage_artifact(outputs[0])
+            self.repository.complete(claim, now=context.now(), outputs=outputs)
+            return WorkflowAtomicCompletion(outputs)
+
+        with patch.object(self.repository, "stage_artifact", wraps=self.repository.stage_artifact) as stage:
+            result = self.supervisor(self.admission(), handlers={"source-acquisition": handler}).run_available()
+        self.assertEqual("succeeded", result[0].state)
+        self.assertEqual(1, stage.call_count)
+
+    def test_atomic_completion_marker_cannot_complete_uncommitted_job(self) -> None:
+        submission = self.submission()
+        self.repository.enqueue(submission, actor=SYSTEM)
+
+        def handler(_context, claim):
+            return WorkflowAtomicCompletion(self.activity_output(claim))
+
+        with self.assertRaises(WorkflowAtomicCompletionError):
+            self.supervisor(self.admission(), handlers={"source-acquisition": handler}).run_available()
+        self.assertNotEqual("succeeded", self.repository.get(submission.job_id).state)
+
+    def test_atomic_completion_output_mismatch_is_not_swallowed_as_success(self) -> None:
+        submission = self.submission()
+        self.repository.enqueue(submission, actor=SYSTEM)
+
+        def handler(context, claim):
+            outputs = self.activity_output(claim)
+            context.stage_artifact(outputs[0])
+            self.repository.complete(claim, now=context.now(), outputs=outputs)
+            return WorkflowAtomicCompletion((replace(outputs[0], content_hash="sha256:" + "0" * 64),))
+
+        with self.assertRaises(WorkflowAtomicCompletionError):
+            self.supervisor(self.admission(), handlers={"source-acquisition": handler}).run_available()
+        # An invalid handler receipt must not rewrite the accepted durable fact.
+        self.assertEqual("succeeded", self.repository.get(submission.job_id).state)
 
     def queue_state(self):
         connection = open_canonical_database(self.database, expected_project_id=PROJECT_ID)

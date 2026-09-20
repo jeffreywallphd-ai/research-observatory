@@ -55,6 +55,21 @@ class WorkflowCancellationRequested(RuntimeError):
     """Cooperative activity cancellation reached a safe point."""
 
 
+class WorkflowAtomicCompletionError(RuntimeError):
+    """An activity's claimed durable completion could not be authenticated."""
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowAtomicCompletion:
+    """Outputs already accepted with the activity's canonical transaction.
+
+    This marker conveys no authority: the supervisor verifies the exact durable
+    attempt and output receipt through the queue's idempotent completion port.
+    """
+
+    outputs: tuple[WorkflowOutputReference, ...]
+
+
 @dataclass(frozen=True, slots=True)
 class WorkerResources:
     """Concurrent upper bounds, not cumulative spend or an OS enforcement limit."""
@@ -328,7 +343,7 @@ class WorkflowActivity(Protocol):
         self,
         context: WorkflowActivityContext,
         claim: WorkflowJobClaim,
-    ) -> tuple[WorkflowOutputReference, ...]: ...
+    ) -> tuple[WorkflowOutputReference, ...] | WorkflowAtomicCompletion: ...
 
 
 @dataclass(slots=True)
@@ -446,10 +461,22 @@ class LocalWorkerSupervisor:
             if handler is None:
                 raise WorkflowActivityError("activity-unregistered")
             outputs = handler(context, claim)
+            if isinstance(outputs, WorkflowAtomicCompletion):
+                try:
+                    if self._repository.get(claim.job_id).state != "succeeded":
+                        raise WorkflowAtomicCompletionError("activity completion is not durable")
+                    self._repository.complete(context.claim, now=self._now(), outputs=outputs.outputs)
+                except Exception as error:
+                    raise WorkflowAtomicCompletionError("activity completion receipt is invalid") from error
+                return self._repository.get(claim.job_id)
             for output in outputs:
                 context.stage_artifact(output)
             context.cancellation_safe_point()
             self._repository.complete(context.claim, now=self._now(), outputs=outputs)
+        except WorkflowAtomicCompletionError:
+            # A protocol error must remain observable even if the job already
+            # succeeded. Do not rewrite accepted facts or silently return success.
+            raise
         except WorkflowCancellationRequested:
             self._converge_cancellation(context.claim)
         except WorkflowActivityError as error:
@@ -541,6 +568,8 @@ __all__ = [
     "WorkflowActivity",
     "WorkflowActivityContext",
     "WorkflowActivityError",
+    "WorkflowAtomicCompletion",
+    "WorkflowAtomicCompletionError",
     "WorkflowCancellationRequested",
     "WorkflowPreparationProblem",
     "prepare_workflow_job",
