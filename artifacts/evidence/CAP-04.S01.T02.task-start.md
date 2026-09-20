@@ -93,3 +93,9 @@ visible only in non-live badges. Extend screen-reader proof to deduplicated
 completion/terminal announcements through the existing live region, not just
 loading/request messages. Add actual built-renderer announcement assertions and
 verify that unchanged status refreshes do not repeat announcements.
+
+The fixed 4df1c099 protected 100k observation exhausted its 1200-second
+observer during review pagination after 865 successful pages. Parsing and
+summary completed; candidate traversal and reopen were not reached. Add a
+structural regression against one protected connection per record, then batch
+bounded reads while preserving rights/history checks and both size caps.

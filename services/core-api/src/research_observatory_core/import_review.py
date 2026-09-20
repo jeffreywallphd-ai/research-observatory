@@ -348,11 +348,28 @@ class ImportReview:
         ordinals = self._repository.summary_members(
             preview, revision=revision, reason=reason, group_key=group_key, after=after, limit=limit
         )
-        cursor = ordinals[-1] if ordinals else after
-        records = [
-            self.page(preview, ReviewPageRequest(revision=revision, after=ordinal - 1, limit=1)).records[0]
-            for ordinal in ordinals
-        ]
+        rows = self._repository.draft_selection(preview, revision=revision, ordinals=ordinals) if ordinals else ()
+        cursor = after
+        records: list[RecordSummary] = []
+        for row in rows:
+            item = self._record_summary(row)
+            candidate = ImportDuplicateMembers(
+                preview_id=preview,
+                revision=revision,
+                reason=reason,
+                group_key=group_key,
+                records=[*records, item],
+                next_after=item.ordinal,
+                complete=False,
+            )
+            if encoded_size(candidate) > RESPONSE_BYTES:
+                if not records:
+                    raise PreviewProblem("preview-response-limit")
+                break
+            records.append(item)
+            cursor = item.ordinal
+        if ordinals and not records:
+            raise PreviewProblem("preview-draft-incomplete")
         more = bool(ordinals) and bool(
             self._repository.summary_members(
                 preview, revision=revision, reason=reason, group_key=group_key, after=cursor, limit=1
@@ -395,29 +412,13 @@ class ImportReview:
             next_after=request.after,
             complete=request.after == draft.record_count,
         )
-        for ordinal in range(request.after + 1, min(draft.record_count, request.after + request.limit) + 1):
-            rows = self._repository.draft_page(preview, revision=request.revision, after=ordinal - 1, limit=1)
-            if not rows:
-                raise PreviewProblem("preview-draft-incomplete")
-            row = rows[0]
+        rows = self._repository.draft_page(preview, revision=request.revision, after=request.after, limit=request.limit)
+        if request.after < draft.record_count and not rows:
+            raise PreviewProblem("preview-draft-incomplete")
+        for row in rows:
+            ordinal = row.record.ordinal
 
-            def short(name: str, row: PreviewDraftRecord = row) -> ShortValue | None:
-                value = next((field.value for field in row.decision.fields if field.name == name), None)
-                return None if value is None else ShortValue(text=value[:256], truncated=len(value) > 256)
-
-            item = RecordSummary.model_validate(
-                {
-                    "ordinal": ordinal,
-                    "recordKey": row.record.record_key,
-                    "kind": row.record.kind,
-                    "status": row.record.status,
-                    "included": row.decision.included,
-                    "title": short("title"),
-                    "doi": short("doi"),
-                    "fieldCount": len(row.record.fields),
-                    "warnings": list(row.warnings),
-                }
-            )
+            item = self._record_summary(row)
             candidate = ReviewPage(
                 revision=request.revision,
                 records=[*result.records, item],
@@ -430,6 +431,26 @@ class ImportReview:
                 break
             result = candidate
         return bounded(result)
+
+    @staticmethod
+    def _record_summary(row: PreviewDraftRecord) -> RecordSummary:
+        def short(name: str) -> ShortValue | None:
+            value = next((field.value for field in row.decision.fields if field.name == name), None)
+            return None if value is None else ShortValue(text=value[:256], truncated=len(value) > 256)
+
+        return RecordSummary.model_validate(
+            {
+                "ordinal": row.record.ordinal,
+                "recordKey": row.record.record_key,
+                "kind": row.record.kind,
+                "status": row.record.status,
+                "included": row.decision.included,
+                "title": short("title"),
+                "doi": short("doi"),
+                "fieldCount": len(row.record.fields),
+                "warnings": list(row.warnings),
+            }
+        )
 
     def detail(
         self,

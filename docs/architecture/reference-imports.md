@@ -318,6 +318,13 @@ into existing correction/exclusion controls. Guarded status replies also update
 the matching saved batch; an older list response cannot undo a newer status.
 No Work merge or predicted canonical re-import effect is claimed.
 
+Review pages use one bounded protected repository read rather than one connection
+per record. Candidate-member pages select at most 100 exact ordered ordinals,
+sharing the same current/historical rights and decision projection. Sparse reads
+do not load intervening records. Repository and transport byte limits both retain
+an ordered prefix; continuation follows the last emitted record, not the last
+requested member. This changes read granularity, not authorization or identity.
+
 Actual native/protected-Core preview, mapping, candidate review, exclusion,
 diagnostic export, restart and cancellation were exercised at checkpoint-16;
 see the task's native qualification note for exact candidate and fixture scope.

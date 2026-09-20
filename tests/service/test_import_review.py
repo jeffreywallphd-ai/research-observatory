@@ -43,6 +43,71 @@ class ImportReviewTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             MappingEdit.model_validate({"expectedRevision": 1, "columns": [], "actor": "caller"})
 
+    def test_page_uses_one_bounded_repository_read(self):
+        preview, _ = self.accepted(b"title\n" + b"Synthetic\n" * 105)
+        repository = self.review._repository
+        with patch.object(repository, "draft_page", wraps=repository.draft_page) as read:
+            page = self.review.page(preview, ReviewPageRequest(revision=1, limit=100))
+        self.assertEqual(list(range(1, 101)), [row.ordinal for row in page.records])
+        self.assertFalse(page.complete)
+        read.assert_called_once_with(preview, revision=1, after=0, limit=100)
+
+    def test_sparse_members_batch_and_cursor_follow_emitted_prefix(self):
+        preview, _ = self.accepted(b"title\nOne\nTwo\nThree\nFour\n")
+        repository = self.review._repository
+        ordinals = (2, 4, 5)
+
+        def members(_preview, **request):
+            return tuple(n for n in ordinals if n > request["after"])[: request["limit"]]
+
+        def page(after=0):
+            return self.review.duplicate_members(
+                preview, revision=1, reason="doi", group_key="a" * 64, after=after, limit=100
+            )
+
+        with patch.object(repository, "summary_members", side_effect=members):
+            with patch.object(repository, "draft_selection", wraps=repository.draft_selection) as read:
+                whole = page()
+            self.assertEqual(list(ordinals), [row.ordinal for row in whole.records])
+            read.assert_called_once_with(preview, revision=1, ordinals=ordinals)
+            self.assertTrue(whole.complete)
+            with patch(
+                "research_observatory_core.import_draft_repository.StoredImportRecord.model_dump_json",
+                return_value="x" * (8 * 1024 * 1024),
+            ):
+                first = page()
+                second = page(first.next_after)
+                last = page(second.next_after)
+            self.assertEqual([2, 4, 5], [first.next_after, second.next_after, last.next_after])
+            self.assertEqual([False, False, True], [first.complete, second.complete, last.complete])
+            with patch("research_observatory_core.import_review.RESPONSE_BYTES", encoded_size(first)):
+                bounded_page = page()
+            self.assertEqual([2], [row.ordinal for row in bounded_page.records])
+            self.assertEqual(2, bounded_page.next_after)
+            self.assertFalse(bounded_page.complete)
+            with (
+                patch("research_observatory_core.import_review.RESPONSE_BYTES", 1),
+                self.assertRaisesRegex(PreviewProblem, "response-limit"),
+            ):
+                page()
+
+    def test_sparse_members_recheck_head_after_selected_read(self):
+        preview, _ = self.accepted()
+        repository = self.review._repository
+        original = repository.draft_selection
+
+        def changed(*args, **kwargs):
+            rows = original(*args, **kwargs)
+            self.fixture.change(preview, 1)
+            return rows
+
+        with (
+            patch.object(repository, "summary_members", return_value=(2,)),
+            patch.object(repository, "draft_selection", side_effect=changed),
+            self.assertRaisesRegex(PreviewProblem, "revision-conflict"),
+        ):
+            self.review.duplicate_members(preview, revision=1, reason="doi", group_key="a" * 64, after=0, limit=100)
+
     def test_summary_page_detail_keep_original_and_correction_separate(self):
         preview, records = self.accepted()
         page = self.review.page(preview, ReviewPageRequest(revision=1, limit=2))

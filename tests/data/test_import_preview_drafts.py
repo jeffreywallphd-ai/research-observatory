@@ -165,6 +165,33 @@ class ImportPreviewDraftTests(unittest.TestCase):
         with self.assertRaisesRegex(PreviewProblem, "record-rights-denied"):
             repository.draft_page(preview, revision=1, after=3, limit=1)
 
+    def test_sparse_selection_preserves_history_rights_and_one_transaction(self):
+        preview, records = self.accepted(b"title\n" + b"Synthetic\n" * 105)
+        self.change(preview, 0)
+        self.change(preview, 1, decisions=(review_record(records[104], included=False, fields=()),))
+        self.change(preview, 2, restore_revision=1)
+        repository = self.repository()
+        ordinals = (2, 102, 105)
+        for revision in (1, 2, 3):
+            expected = tuple(
+                repository.draft_page(preview, revision=revision, after=n - 1, limit=1)[0] for n in ordinals
+            )
+            with patch.object(repository, "_transaction", wraps=repository._transaction) as transaction:
+                actual = repository.draft_selection(preview, revision=revision, ordinals=ordinals)
+            self.assertEqual(expected, actual)
+            transaction.assert_called_once_with(preview)
+        for invalid in ((), (True,), (1.0,), ("2",), (0,), (107,), (2, 2), (3, 2), tuple(range(1, 102))):
+            with self.subTest(ordinals=invalid), self.assertRaises(PreviewProblem):
+                repository.draft_selection(preview, revision=3, ordinals=invalid)
+        denied = ImportRights(inspect=ImportPermission(value="denied", basis="researcher-confirmed"))
+        self.change(preview, 3, decisions=(review_record(records[104], included=False, fields=(), rights=denied),))
+        for revision in (1, 2, 3, 4):
+            with self.subTest(revision=revision), self.assertRaisesRegex(PreviewProblem, "record-rights-denied"):
+                repository.draft_selection(preview, revision=revision, ordinals=ordinals)
+        repository.cancel(preview, actor=self.actor())
+        with self.assertRaises(PreviewProblem):
+            repository.draft_selection(preview, revision=1, ordinals=(2,))
+
     def test_setwise_undo_preserves_each_action_restriction_outside_visible_page(self):
         allowed = ImportRights.model_validate(
             {

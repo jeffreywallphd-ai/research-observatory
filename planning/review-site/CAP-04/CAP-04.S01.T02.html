@@ -89,9 +89,9 @@ python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T02" data-worksheet-sha256="786a33a918d5b1760a6f3d378be9ae026db32dbd295240914b5b2dd5030bb297">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T02" data-worksheet-sha256="4de6fc2bbdd00d948272fdbc9146f2447df613cfdbe642b227d971222e1075da">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>786a33a918d5b1760a6f3d378be9ae026db32dbd295240914b5b2dd5030bb297</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>4de6fc2bbdd00d948272fdbc9146f2447df613cfdbe642b227d971222e1075da</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T02 — import preview, mapping and conflict UI
 
 Claim base: `34a8015b14245ed76a6f9629a69c3ed8574bde42`. Authority: the
@@ -186,7 +186,13 @@ Final readiness review also found that background parse/summary completion was
 visible only in non-live badges. Extend screen-reader proof to deduplicated
 completion/terminal announcements through the existing live region, not just
 loading/request messages. Add actual built-renderer announcement assertions and
-verify that unchanged status refreshes do not repeat announcements.</pre></article>
+verify that unchanged status refreshes do not repeat announcements.
+
+The fixed 4df1c099 protected 100k observation exhausted its 1200-second
+observer during review pagination after 865 successful pages. Parsing and
+summary completed; candidate traversal and reopen were not reached. Add a
+structural regression against one protected connection per record, then batch
+bounded reads while preserving rights/history checks and both size caps.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

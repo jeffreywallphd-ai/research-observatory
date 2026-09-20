@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import csv
 import io
+import json
 from collections.abc import Iterator
+from itertools import pairwise
 
 from .domain_contracts import new_uuid_v7
 from .import_preview_repository import _actor, _SqliteImportPreviewRepository
@@ -211,7 +213,7 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
         return RecordDecision.model_validate_json(row[0]), MappingProfile.model_validate_json(row[1])
 
     def _page_decision_revisions(
-        self, connection: CanonicalConnection, preview: str, revision: int, current: int, after: int, through: int
+        self, connection: CanonicalConnection, preview: str, revision: int, current: int, ordinals: tuple[int, ...]
     ) -> dict[int, tuple[int | None, int | None]]:
         # Materialize history once, not twice per row in a large preview. Only
         # <=100 ordinal/revision keys are buffered; large payloads stay streamed.
@@ -231,14 +233,14 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
                 MAX(CASE WHEN :current <> :revision AND d.revision IN
                     (SELECT revision FROM histories WHERE side=1) THEN d.revision END)
               FROM import_record_decisions d INDEXED BY import_decision_record
-             WHERE d.preview_id=:preview AND d.project_id=:project AND d.ordinal>:after AND d.ordinal<=:through
+             WHERE d.preview_id=:preview AND d.project_id=:project
+               AND d.ordinal IN (SELECT value FROM json_each(:ordinals))
              GROUP BY d.ordinal ORDER BY d.ordinal
             """,
             preview,
             revision=revision,
             current=current,
-            after=after,
-            through=through,
+            ordinals=json.dumps(ordinals),
         )
         return {row[0]: (row[1], row[1] if revision == current else row[2]) for row in rows}
 
@@ -479,6 +481,29 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
     ) -> tuple[PreviewDraftRecord, ...]:
         if type(after) is not int or not 0 <= after <= 200000 or type(limit) is not int or not 1 <= limit <= 100:
             raise PreviewProblem("preview-page-limit")
+        return self._draft_rows(preview_id, revision=revision, after=after, limit=limit)
+
+    def draft_selection(
+        self, preview_id: str, *, revision: int, ordinals: tuple[int, ...]
+    ) -> tuple[PreviewDraftRecord, ...]:
+        if (
+            type(ordinals) is not tuple
+            or not 1 <= len(ordinals) <= 100
+            or any(type(ordinal) is not int or not 1 <= ordinal <= 200000 for ordinal in ordinals)
+            or any(left >= right for left, right in pairwise(ordinals))
+        ):
+            raise PreviewProblem("preview-page-selection-invalid")
+        return self._draft_rows(preview_id, revision=revision, ordinals=ordinals)
+
+    def _draft_rows(
+        self,
+        preview_id: str,
+        *,
+        revision: int,
+        after: int = 0,
+        limit: int = 100,
+        ordinals: tuple[int, ...] | None = None,
+    ) -> tuple[PreviewDraftRecord, ...]:
         with self._transaction(preview_id) as connection:
             state = self._read(connection, preview_id)
             self._active(state)
@@ -489,9 +514,12 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
                 raise PreviewProblem("preview-draft-attempt-mismatch")
             result: list[PreviewDraftRecord] = []
             size = 0
-            through = min(draft.record_count, after + limit)
-            selected = self._page_decision_revisions(connection, preview_id, revision, current, after, through)
-            for ordinal in range(after + 1, through + 1):
+            if ordinals is None:
+                ordinals = tuple(range(after + 1, min(draft.record_count, after + limit) + 1))
+            elif ordinals[-1] > draft.record_count:
+                raise PreviewProblem("preview-page-selection-invalid")
+            selected = self._page_decision_revisions(connection, preview_id, revision, current, ordinals)
+            for ordinal in ordinals:
                 requested_revision, current_revision = selected.get(ordinal, (None, None))
                 previous, mapping = self._decision_at(connection, preview_id, requested_revision, ordinal)
                 current_decision = (

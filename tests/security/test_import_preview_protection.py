@@ -21,7 +21,7 @@ class ImportPreviewProtectionTests(unittest.TestCase):
     database: Path
     keys: InMemoryDatabaseKeyProvider
 
-    def test_v10_to_v11_retains_encrypted_verified_backup_and_reopens(self):
+    def test_v10_to_v12_retains_encrypted_verified_backup_and_reopens(self):
         legacy = self.root / "legacy/state/project.sqlite3"
         create_version_10_fixture(legacy)
         with self.keys.active_key(fixture.PROJECT_ID, create=True) as lease:
@@ -39,7 +39,7 @@ class ImportPreviewProtectionTests(unittest.TestCase):
             source.close()
         result = migrate_database(self.database, expected_project_id=fixture.PROJECT_ID)
         self.assertEqual("migrated", result.status)
-        self.assertEqual(("0011_import_previews",), result.migration_ids)
+        self.assertEqual(("0011_import_previews", "0012_import_summaries"), result.migration_ids)
         backup = self.root / str(result.backup_relative_path)
         self.assertNotEqual(b"SQLite format 3\x00", backup.read_bytes()[:16])
         self.assertNotEqual(b"SQLite format 3\x00", self.database.read_bytes()[:16])
@@ -56,7 +56,8 @@ class ImportPreviewProtectionTests(unittest.TestCase):
         for _ in range(2):
             current = storage.open_canonical_database(self.database, expected_project_id=fixture.PROJECT_ID)
             try:
-                self.assertEqual(11, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(12, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(0, current.execute("SELECT COUNT(*) FROM import_summary_completions").fetchone()[0])
                 self.assertEqual("dark", current.execute("SELECT text_value FROM settings").fetchone()[0])
                 self.assertEqual([], current.execute("PRAGMA foreign_key_check").fetchall())
             finally:
