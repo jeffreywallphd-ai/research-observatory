@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S01.html">SLICE-reference-library-and-file-imports</a><span>/</span><span aria-current="page">CAP-04.S01.T03</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S01.T03">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S01.T03 · task 3 of 3</span><h1>Implement idempotent import commits and import manifests</h1><p>Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting canonical IDs.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S01.T03 · task 3 of 3</span><h1>Implement idempotent import commits and import manifests</h1><p>Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting canonical IDs.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S01.html">SLICE-reference-library-and-file-imports</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li></ul>
-  <p data-task-claim="CAP-04.S01.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S01.T03" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="b55c1285b33d17fca7b8ef37ed8ce16d1c83610a"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>b55c1285b33d17fca7b8ef37ed8ce16d1c83610a</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S01.T03" data-task-plan-sha256="345e19e19bf71a225df9d0bf129d84bf256a83b3857c12a80c9d968b5552844c"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S01.T03` - Implement idempotent import commits and import manifests
 **Objective:** Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting canonical IDs.
@@ -232,13 +232,52 @@ These sources constrain implementation choices but do not replace repository-spe
 **Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S01.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="dd84a7f74815087328cdcc478c589ae40f9d0375e53027d2d42110977cea1e5a">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>dd84a7f74815087328cdcc478c589ae40f9d0375e53027d2d42110977cea1e5a</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T03 — idempotent import commits and manifests
+
+Claim base: `b55c1285b33d17fca7b8ef37ed8ce16d1c83610a`.
+Authority: approved W2 packet `c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`,
+CAP-04.S01 sections 2–8, 9.3 and 10–15; ADR-0013/0024/0025/0027.
+Dependency CAP-04.S01.T02 is DONE with independent R01 approval.
+
+## Material acceptance and proof
+
+| Boundary | Required outcome and planned proof |
+|---|---|
+| AC1 / scientific identity | Versioned identity binds source, parser, immutable mapping profile/revision, ordered selected keys and complete effective-draft digest. Pure one-pass tests distinguish changed corrections, inclusion, rights, project and parsing settings; preview identity is not scientific authority. |
+| Source identity | Re-import across previews reuses the project/source-digest/record-key assertion and existing Core UUIDv7 record. Changed source bytes create retained assertions, not destructive replacements or DOI-based Work merges. Test same-file/different-preview and changed-file comparison. |
+| Replay vs request | Project-unique scientific identity returns the existing manifest after current authorization. Changed command under a reused request ID conflicts. Test restart/reply-loss replay and changed decision/rights manifests with raw values unchanged. |
+| Atomicity / provenance | Canonical records, immutable manifest membership/decisions, provenance/outbox/dependencies and accepted workflow output commit in one existing protected database transaction. Inject failure after material writes; no partial canonical import. Large membership is paged, not a truncated or oversized event. |
+| Current authority | Validate selected project/session, exact current draft, accepted parse, all effective rights, worker configuration/lease/cancellation at final transaction and on replay. Test stale, off-page denied, cancelled, substituted project and expired authority. Hash equality is not authorization. |
+| AC2 / real boundary | Real repository/worker/API path; ordinary process restart and cancellation/recovery. Narrow Windows protected-principal and built renderer/native wiring proofs where changed; preserve doubles and packaging limits explicitly. |
+| AC3 / compatibility | Capture exact v12 predecessor before additive migration; encrypted backup, rollback failpoints and reopen preserve old previews/summaries. Update strict contracts, generated client, packaging inventory, fixtures and architecture only where affected. |
+| Governed journey | UI reference 1.7: clear pre-commit summary, explicit action, durable status and navigable manifest; report source records awaiting reconciliation, safe next/back/return and late-response handling. CAP-04.S03 owns Work/Version reconciliation. |
+
+## Sequence and boundaries
+
+Start with identity characterization tests, then protected storage and transaction
+tests, durable execution/API, and final wizard/manifest integration. Reuse the
+existing Core ports, UUID minting, provenance and durable jobs; no import-only
+database, new identity store, credentials or remote service. Changed-file
+comparison uses an explicit predecessor, never a filename guess. Existing
+mapping-profile identity stays immutable; do not alter earlier draft hashes.
+
+The prior read-only adversarial preflight identified the same-connection commit
+requirement, 64-input event bound, separate request/scientific identity, full
+current-rights recheck and exact predecessor fixture. These are included above.
+No mandatory new human gate identified. Full slice integration, reviewed 100k
+performance baseline and frozen supervised journey remain slice/W2 qualification;
+do not rerun unrelated completed W1 profiles.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S01.T03" data-review-mode="latest-review-only">
   <h3>CAP-04.S01.T03 — Implement idempotent import commits and import manifests</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S01.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S01.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S01.T02.html">Previous</a><a class="button button-primary" href="CAP-04.S01.html">Next</a></nav>

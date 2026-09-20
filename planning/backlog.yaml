@@ -18965,11 +18965,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-09-20T02:20:42+00:00'
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      started_at: '2026-09-20T02:28:10+00:00'
+      updated_at: '2026-09-20T02:28:10+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -18979,10 +18979,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: b55c1285b33d17fca7b8ef37ed8ce16d1c83610a
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-09-20T02:28:10+00:00'
+        expires_at: '2026-09-20T10:28:10+00:00'
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
     platform_targets:

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8745b16a160a88b4b2dd21e74a3940494e2f4caf5e74584a190416d4c4d37cad
+source_sha256: 26f553f575cdc1bc978612a82b4b7c73c722e615488dd555ee849ad7f95b54ef
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -7870,13 +7870,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S01.T03 - Implement idempotent import commits and import manifests
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S01.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting canonical IDs.
 

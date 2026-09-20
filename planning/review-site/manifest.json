@@ -13133,7 +13133,7 @@
             {
               "task_id": "CAP-04.S01.T03",
               "title": "Implement idempotent import commits and import manifests",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -13187,18 +13187,21 @@
             {
               "task_id": "CAP-04.S01.T03",
               "title": "Implement idempotent import commits and import manifests",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S01.T03.html",
               "dependencies": [
                 "CAP-04.S01.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a"
               },
               "plan_section_sha256": "345e19e19bf71a225df9d0bf129d84bf256a83b3857c12a80c9d968b5552844c",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-04.S01.T03.task-start.md",
+                "sha256": "dd84a7f74815087328cdcc478c589ae40f9d0375e53027d2d42110977cea1e5a"
+              }
             }
           ]
         },
