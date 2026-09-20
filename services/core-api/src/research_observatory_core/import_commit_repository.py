@@ -6,16 +6,39 @@ neither staged decisions nor their scientific hash imply accepted output.
 
 from __future__ import annotations
 
+import hashlib
 import json
+from collections.abc import Callable, Iterator
+from typing import Any
 
+from .domain_contracts import new_uuid_v7
+from .import_preview_repository import _actor
 from .import_summary_repository import SqliteImportSummaryRepository
 from .ingestion.commit_workflow import CommitJobInput, bind_commit_claim, commit_job_input
-from .ingestion.import_commits import ImportIdentity, import_identity
+from .ingestion.import_commits import ImportIdentity, import_identity, source_assertion_key
 from .ingestion.import_drafts import RecordDecision
 from .ingestion.import_summaries import summarize_record
+from .ingestion.preview_workflow import fingerprint
 from .ports.import_previews import PreviewActor, PreviewDraft, PreviewProblem
-from .ports.workflow_executor import WorkflowJobClaim, WorkflowQueueProblem
+from .ports.repositories import (
+    AggregateKind,
+    AggregateRevision,
+    AggregateRevisionDraft,
+    AtomicRepositoryEvent,
+    MaterialDependency,
+)
+from .ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference, WorkflowQueueProblem
+from .repositories import (
+    _UNIT_OF_WORKS,
+    _projection_content_sha256,
+    _revision_with_connection,
+    _SqliteAggregateRepository,
+)
 from .storage import CanonicalConnection
+
+
+def _publication_step_completed(_step: str) -> None:
+    """Private failpoint for atomic publication rollback tests."""
 
 
 class SqliteImportCommitRepository(SqliteImportSummaryRepository):
@@ -33,9 +56,20 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
             raise PreviewProblem("preview-commit-job-authority-invalid") from None
 
     def _commit_head(
-        self, connection: CanonicalConnection, inputs: CommitJobInput, claim: WorkflowJobClaim, actor: PreviewActor
+        self,
+        connection: CanonicalConnection,
+        inputs: CommitJobInput,
+        claim: WorkflowJobClaim,
+        actor: PreviewActor,
+        *,
+        running: bool = True,
     ) -> PreviewDraft:
-        self._running(connection, claim, actor)
+        if running:
+            self._running(connection, claim, actor)
+        else:
+            if _actor(actor).actor_id != claim.worker_id:
+                raise PreviewProblem("preview-worker-actor-mismatch")
+            self._queue._verify_attempt_capability(connection, claim)
         state, draft = self._summary_head(connection, inputs.preview.preview_id, inputs.draft_revision)
         current = commit_job_input(
             state,
@@ -51,9 +85,15 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         return draft
 
     def _prepared(
-        self, connection: CanonicalConnection, inputs: CommitJobInput, claim: WorkflowJobClaim, actor: PreviewActor
+        self,
+        connection: CanonicalConnection,
+        inputs: CommitJobInput,
+        claim: WorkflowJobClaim,
+        actor: PreviewActor,
+        *,
+        running: bool = True,
     ) -> PreviewDraft:
-        draft = self._commit_head(connection, inputs, claim, actor)
+        draft = self._commit_head(connection, inputs, claim, actor, running=running)
         row = connection.execute(
             "SELECT job_id, preview_id, draft_revision, parse_attempt_id, previous_manifest_revision_id "
             "FROM import_commit_preparations WHERE project_id=? AND attempt_id=?",
@@ -154,3 +194,410 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 )
             finally:
                 rows.close()
+
+    @staticmethod
+    def _output(revision: AggregateRevision) -> WorkflowOutputReference:
+        return WorkflowOutputReference(
+            artifact_id=revision.aggregate_id,
+            revision_id=revision.revision_id,
+            content_hash=_projection_content_sha256(revision),
+            media_type="application/vnd.research-observatory.import-manifest+json",
+            provenance_entity_id=revision.aggregate_id,
+        )
+
+    def _staged(self, connection: CanonicalConnection, attempt: str):
+        return connection.execute(
+            "SELECT ordinal, record_key, included, decision_json, warnings_json, raw_sha256, doi_key "
+            "FROM import_commit_rows WHERE project_id=? AND attempt_id=? ORDER BY ordinal",
+            (self._project, attempt),
+        )
+
+    def _comparison(
+        self,
+        connection: CanonicalConnection,
+        inputs: CommitJobInput,
+        row: Any,
+        duplicates: frozenset[tuple[str, str]],
+    ) -> tuple[str, str | None]:
+        previous = inputs.previous_manifest_revision_id
+        if previous is None or not row[2]:
+            return "not-compared", None
+        for column, value, label in (("raw_sha256", row[5], "unchanged"), ("doi_key", row[6], "updated")):
+            if value is None:
+                continue
+            candidates = connection.execute(
+                "SELECT s.source_record_revision_id, s.decision_json, d.rights_json FROM import_manifest_members s "
+                "JOIN import_manifests m ON m.project_id=s.project_id AND m.revision_id=s.manifest_revision_id "
+                "JOIN import_commit_preparations p ON p.project_id=m.project_id AND p.attempt_id=m.attempt_id "
+                "JOIN import_draft_revisions d ON d.project_id=p.project_id AND d.preview_id=p.preview_id "
+                "AND d.revision=p.draft_revision "
+                f"WHERE s.project_id=? AND s.manifest_revision_id=? AND s.included=1 AND s.{column}=? LIMIT 2",
+                (self._project, previous, value),
+            ).fetchall()
+            if len(candidates) > 1 or (candidates and (column, value) in duplicates):
+                return "ambiguous", None
+            if candidates:
+                if label == "unchanged":
+                    old = RecordDecision.model_validate_json(candidates[0][1])
+                    current = RecordDecision.model_validate_json(row[3])
+                    old_rights = fingerprint(
+                        old.rights.model_dump(mode="json", by_alias=True)
+                        if old.rights
+                        else json.loads(candidates[0][2])
+                    )
+                    current_rights = (
+                        fingerprint(current.rights.model_dump(mode="json", by_alias=True))
+                        if current.rights
+                        else inputs.preview.rights_hash
+                    )
+                    if old.fields != current.fields or old_rights != current_rights:
+                        label = "updated"
+                return label, str(candidates[0][0])
+        return "added", None
+
+    def _members(
+        self, connection: CanonicalConnection, inputs: CommitJobInput, claim: WorkflowJobClaim, manifest: str
+    ) -> Iterator[tuple[Any, ...]]:
+        # At most half the bounded source rows can form duplicate groups. Group
+        # once per stream rather than scanning the current batch for each row.
+        duplicates = (
+            frozenset(
+                (column, str(row[0]))
+                for column in ("raw_sha256", "doi_key")
+                for row in connection.execute(
+                    f"SELECT {column} FROM import_commit_rows WHERE project_id=? AND attempt_id=? "
+                    f"AND included=1 AND {column} IS NOT NULL GROUP BY {column} HAVING COUNT(*)>1",
+                    (self._project, claim.attempt_id),
+                )
+            )
+            if inputs.previous_manifest_revision_id
+            else frozenset()
+        )
+        rows = self._staged(connection, claim.attempt_id)
+        try:
+            for row in rows:
+                source = None
+                if row[2]:
+                    saved = connection.execute(
+                        "SELECT revision_id FROM import_source_records WHERE project_id=? AND source_sha256=? "
+                        "AND record_key=?",
+                        (self._project, inputs.preview.source_sha256, row[1]),
+                    ).fetchone()
+                    if saved is None:
+                        raise PreviewProblem("preview-commit-source-incomplete")
+                    source = saved[0]
+                comparison, previous = self._comparison(connection, inputs, row, duplicates)
+                yield (
+                    manifest,
+                    self._project,
+                    inputs.preview.preview_id,
+                    inputs.parse_attempt_id,
+                    row[0],
+                    row[1],
+                    source,
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
+                    comparison,
+                    previous,
+                )
+        finally:
+            rows.close()
+
+    @staticmethod
+    def _append_canonical(
+        aggregates: _SqliteAggregateRepository,
+        *,
+        kind: AggregateKind,
+        label: str,
+        actor: PreviewActor,
+        parser: AggregateRevision,
+        digest: str,
+        key: str,
+    ) -> AggregateRevision:
+        return aggregates.append(
+            AggregateRevisionDraft(
+                revision_id=new_uuid_v7(),
+                aggregate_id=new_uuid_v7(),
+                aggregate_kind=kind,
+                created_at=actor.occurred_at,
+                modified_at=actor.occurred_at,
+                display_label_observed=label,
+                display_label_normalized=None,
+                knowledge_status="observed",
+                rights_status="unknown",
+                dependency_coverage="complete",
+                provenance_inputs=(parser,),
+                material_dependencies=(
+                    MaterialDependency(
+                        dependency_id=new_uuid_v7(),
+                        dependency_kind="source-revision",
+                        relation_type="direct",
+                        revision_id=parser.revision_id,
+                        configuration_id=None,
+                        configuration_version=None,
+                        fingerprint=_projection_content_sha256(parser),
+                        governing_policy_id="dependency.material.v1",
+                        governing_policy_version="1.0.0",
+                    ),
+                    MaterialDependency(
+                        dependency_id=new_uuid_v7(),
+                        dependency_kind="parameter-set",
+                        relation_type="direct",
+                        revision_id=None,
+                        configuration_id="import.commit",
+                        configuration_version="1.0.0",
+                        fingerprint="sha256:" + digest,
+                        governing_policy_id="dependency.material.v1",
+                        governing_policy_version="1.0.0",
+                    ),
+                ),
+            ),
+            AtomicRepositoryEvent(
+                event_id=new_uuid_v7(),
+                outbox_id=new_uuid_v7(),
+                event_type=kind + ".created",
+                occurred_at=actor.occurred_at,
+                available_at=actor.occurred_at,
+                trace_id=actor.trace_id,
+                actor_type="worker",
+                actor_id=actor.actor_id,
+                idempotency_key=key,
+            ),
+            expected_revision=None,
+        )
+
+    def _verified_identity(
+        self,
+        inputs: CommitJobInput,
+        claim: WorkflowJobClaim,
+        actor: PreviewActor,
+        now: Callable[[], str],
+        poll: Callable[[], None] | None,
+    ) -> ImportIdentity:
+        preview = inputs.preview.preview_id
+        with self._transaction(preview) as connection:
+            draft = self._prepared(connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}))
+
+        def decisions() -> Iterator[RecordDecision]:
+            after = 0
+            while after < inputs.record_count:
+                if poll is not None:
+                    poll()
+                page = self.draft_page(preview, revision=inputs.draft_revision, after=after, limit=100)
+                if not page:
+                    raise PreviewProblem("preview-commit-incomplete")
+                with self._transaction(preview) as connection:
+                    self._prepared(connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}))
+                    staged = connection.execute(
+                        "SELECT ordinal, record_key, included, decision_json, warnings_json, raw_sha256, doi_key "
+                        "FROM import_commit_rows WHERE project_id=? AND attempt_id=? AND ordinal>? AND ordinal<=? "
+                        "ORDER BY ordinal",
+                        (self._project, claim.attempt_id, after, page[-1].record.ordinal),
+                    ).fetchall()
+                if len(staged) != len(page):
+                    raise PreviewProblem("preview-commit-incomplete")
+                for item, row in zip(page, staged, strict=True):
+                    summary = summarize_record(item.record, item.decision, item.warnings, draft.authority.rights)
+                    expected = (
+                        item.record.ordinal,
+                        item.record.record_key,
+                        int(item.decision.included),
+                        item.decision.model_dump_json(by_alias=True),
+                        json.dumps(item.warnings, ensure_ascii=True, separators=(",", ":")),
+                        item.record.raw_sha256,
+                        summary.doi_key,
+                    )
+                    if tuple(row) != expected:
+                        raise PreviewProblem("preview-commit-prepared-row-mismatch")
+                    yield item.decision
+                after = page[-1].record.ordinal
+
+        try:
+            return import_identity(draft.authority, decisions(), expected_record_count=draft.record_count)
+        except ValueError:
+            raise PreviewProblem("preview-commit-record-denied") from None
+
+    def publish_commit(
+        self,
+        inputs: CommitJobInput,
+        *,
+        claim: WorkflowJobClaim,
+        actor: PreviewActor,
+        now: Callable[[], str],
+        poll: Callable[[], None] | None = None,
+    ) -> WorkflowOutputReference:
+        inputs = self._bind_commit(inputs, claim)
+        expected_identity = None
+        if self._queue.get(claim.job_id).state != "succeeded":
+            expected_identity = self._verified_identity(inputs, claim, actor, now, poll)
+        with self._transaction(inputs.preview.preview_id, write=True) as connection:
+            actor = actor.model_copy(update={"occurred_at": now()})
+            completed = connection.execute(
+                "SELECT output_manifest_json FROM workflow_committed_outputs WHERE project_id=? AND job_id=?",
+                (self._project, claim.job_id),
+            ).fetchone()
+            if completed is not None:
+                self._prepared(connection, inputs, claim, actor, running=False)
+                outputs = json.loads(completed[0])["outputs"]
+                if len(outputs) != 1:
+                    raise PreviewProblem("preview-commit-output-authority-mismatch")
+                saved = _revision_with_connection(connection, self._project, outputs[0]["revisionId"])
+                output = self._output(saved)
+                self._queue._complete_with_connection(connection, claim, now=actor.occurred_at, outputs=(output,))
+                return output
+            draft = self._prepared(connection, inputs, claim, actor)
+            cursor = self._staged(connection, claim.attempt_id)
+            try:
+                identity = import_identity(
+                    draft.authority,
+                    (RecordDecision.model_validate_json(row[3]) for row in cursor),
+                    expected_record_count=draft.record_count,
+                )
+            finally:
+                cursor.close()
+            if identity != expected_identity:
+                raise PreviewProblem("preview-commit-prepared-identity-mismatch")
+            existing = connection.execute(
+                "SELECT m.revision_id, o.output_manifest_json, o.output_record_sha256 "
+                "FROM import_manifests m JOIN import_manifest_seals s "
+                "ON s.project_id=m.project_id AND s.manifest_revision_id=m.revision_id "
+                "JOIN workflow_committed_outputs o ON o.project_id=m.project_id AND o.attempt_id=m.attempt_id "
+                "JOIN workflow_queue_jobs j ON j.project_id=o.project_id AND j.job_id=o.job_id AND j.state='succeeded' "
+                "WHERE m.project_id=? AND m.identity_sha256=?",
+                (self._project, identity.sha256),
+            ).fetchone()
+            token = _UNIT_OF_WORKS.register(connection, self._project)
+            try:
+                if existing is not None:
+                    manifest = _revision_with_connection(connection, self._project, existing[0])
+                    if self._queue._output_manifest((self._output(manifest),)) != tuple(existing[1:]):
+                        raise PreviewProblem("preview-commit-output-authority-mismatch")
+                else:
+                    aggregates = _SqliteAggregateRepository(token)
+                    receipt = connection.execute(
+                        "SELECT receipt_revision_id FROM import_parse_completions "
+                        "WHERE project_id=? AND preview_id=? AND attempt_id=?",
+                        (self._project, inputs.preview.preview_id, inputs.parse_attempt_id),
+                    ).fetchone()
+                    parser = _revision_with_connection(connection, self._project, receipt[0])
+                    created = 0
+                    rows = self._staged(connection, claim.attempt_id)
+                    try:
+                        for row in rows:
+                            if not row[2]:
+                                continue
+                            self._running(connection, claim, actor.model_copy(update={"occurred_at": now()}))
+                            prior = connection.execute(
+                                "SELECT revision_id FROM import_source_records WHERE project_id=? "
+                                "AND source_sha256=? AND record_key=?",
+                                (self._project, inputs.preview.source_sha256, row[1]),
+                            ).fetchone()
+                            if prior is not None:
+                                continue
+                            source_digest = source_assertion_key(self._project, inputs.preview.source_sha256, row[1])
+                            revision = self._append_canonical(
+                                aggregates,
+                                kind="record",
+                                label="Imported source record",
+                                actor=actor,
+                                parser=parser,
+                                digest=source_digest,
+                                key="import-source:" + source_digest,
+                            )
+                            connection.execute(
+                                "INSERT INTO import_source_records VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                (
+                                    self._project,
+                                    inputs.preview.source_sha256,
+                                    row[1],
+                                    revision.aggregate_id,
+                                    revision.revision_id,
+                                    inputs.preview.preview_id,
+                                    inputs.parse_attempt_id,
+                                    row[0],
+                                ),
+                            )
+                            created += 1
+                            _publication_step_completed("source-record-created")
+                    finally:
+                        rows.close()
+                    member_digest = hashlib.sha256()
+                    # The common event cannot carry 100k inputs. Bind the complete
+                    # ordered dedicated membership by digest, without truncation.
+                    for member in self._members(connection, inputs, claim, "pending"):
+                        member_digest.update(json.dumps(member[1:], separators=(",", ":"), ensure_ascii=True).encode())
+                        member_digest.update(b"\n")
+                    digest = member_digest.hexdigest()
+                    manifest = self._append_canonical(
+                        aggregates,
+                        kind="workflow",
+                        label="Local import manifest",
+                        actor=actor,
+                        parser=parser,
+                        digest=digest,
+                        key="import-manifest:" + identity.sha256,
+                    )
+                    connection.execute(
+                        "INSERT INTO import_manifests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        (
+                            self._project,
+                            manifest.revision_id,
+                            manifest.aggregate_id,
+                            claim.attempt_id,
+                            inputs.preview.preview_id,
+                            inputs.parse_attempt_id,
+                            inputs.preview.source_sha256,
+                            identity.sha256,
+                            identity.effective_draft_sha256,
+                            identity.record_count,
+                            identity.selected_count,
+                            created,
+                            identity.selected_count - created,
+                            actor.occurred_at,
+                        ),
+                    )
+                    _publication_step_completed("manifest-created")
+                    for member in self._members(connection, inputs, claim, manifest.revision_id):
+                        connection.execute(
+                            "INSERT INTO import_manifest_members VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            member,
+                        )
+                        _publication_step_completed("manifest-member-created")
+                    connection.execute(
+                        "INSERT INTO import_manifest_seals VALUES (?, ?, ?, ?)",
+                        (
+                            manifest.revision_id,
+                            self._project,
+                            digest,
+                            actor.occurred_at,
+                        ),
+                    )
+                    _publication_step_completed("manifest-sealed")
+                completed_at = now()
+                self._running(connection, claim, actor.model_copy(update={"occurred_at": completed_at}))
+                output = self._output(manifest)
+                connection.execute(
+                    "INSERT INTO workflow_attempt_artifacts VALUES "
+                    "(?, ?, ?, ?, ?, 'output', 'retained-incomplete', ?, ?, ?, ?, ?)",
+                    (
+                        claim.attempt_id,
+                        self._project,
+                        claim.job_id,
+                        output.artifact_id,
+                        output.revision_id,
+                        output.content_hash,
+                        output.media_type,
+                        output.provenance_entity_id,
+                        completed_at,
+                        completed_at,
+                    ),
+                )
+                _publication_step_completed("output-staged")
+                self._queue._complete_with_connection(connection, claim, now=completed_at, outputs=(output,))
+                _publication_step_completed("output-completed")
+                return output
+            finally:
+                _UNIT_OF_WORKS.unregister(token)

@@ -20,6 +20,7 @@
     "services/core-api/src/research_observatory_core/import_commit_repository.py",
     "services/core-api/src/research_observatory_core/ingestion/commit_workflow.py",
     "tests/data/test_import_commit_preparation.py",
+    "tests/data/test_import_commit_publication.py",
     "tests/service/test_import_commit_workflow.py",
     "services/core-api/src/research_observatory_core/ingestion/source_chunks.py",
     "tests/service/test_import_drafts.py",
