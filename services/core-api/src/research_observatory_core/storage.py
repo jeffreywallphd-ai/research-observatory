@@ -243,6 +243,7 @@ EXPECTED_INDEXES = (
     "import_manifest_source",
     "import_manifest_raw",
     "import_manifest_doi",
+    "import_manifest_source_record",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -262,7 +263,7 @@ MATERIAL_DEPENDENCY_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69
 DEPENDENCY_IMPACT_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
 IMPORT_PREVIEW_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
 IMPORT_SUMMARY_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
-EXPECTED_SCHEMA_SHA256 = "a35f336f7afa95856c6a7d23e2827e14aee7ac7abe0a300752ef50acc25adf08"
+EXPECTED_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -323,7 +324,7 @@ MATERIAL_DEPENDENCY_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119
 DEPENDENCY_IMPACT_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
 IMPORT_PREVIEW_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9fd6d98595a7888c91"
 IMPORT_SUMMARY_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
-EXPECTED_PROFILE_SHA256 = "5fdffc2da11147dace1224cab7d93af87e9ffb40e25cc11b8cccf8c53de55650"
+EXPECTED_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -2580,6 +2581,8 @@ IMPORT_COMMIT_DDL = (
     "CREATE INDEX import_manifest_raw ON import_manifest_members "
     "(project_id, manifest_revision_id, raw_sha256, ordinal)",
     "CREATE INDEX import_manifest_doi ON import_manifest_members (project_id, manifest_revision_id, doi_key, ordinal)",
+    "CREATE INDEX import_manifest_source_record ON import_manifest_members "
+    "(project_id, manifest_revision_id, source_record_revision_id) WHERE included=1",
 )
 
 _V6_BASE_DDL_STATEMENTS = tuple(

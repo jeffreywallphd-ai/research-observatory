@@ -11,8 +11,8 @@ revision = "0013_import_commits"
 down_revision = "0012_import_summaries"
 source_schema_version = 12
 target_schema_version = 13
-TARGET_SCHEMA_SHA256 = "a35f336f7afa95856c6a7d23e2827e14aee7ac7abe0a300752ef50acc25adf08"
-TARGET_PROFILE_SHA256 = "5fdffc2da11147dace1224cab7d93af87e9ffb40e25cc11b8cccf8c53de55650"
+TARGET_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
+TARGET_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
 MATERIAL_MIGRATION_STEPS = (
     "import-commit-authority-create",
     "metadata-v12-authority-drop",

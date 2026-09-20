@@ -144,3 +144,11 @@ class ImportCommitConstraintTests(unittest.TestCase):
         member[12:] = ["unchanged", old[6]]
         self.seal(manifest, member)
         self.assertEqual([], self.db.execute("PRAGMA foreign_key_check").fetchall())
+
+    def test_predecessor_lookup_is_indexed_by_exact_record(self):
+        plan = self.db.execute(
+            "EXPLAIN QUERY PLAN SELECT 1 FROM import_manifest_members "
+            "WHERE project_id=? AND manifest_revision_id=? AND included=1 AND source_record_revision_id=?",
+            (PROJECT, new_uuid_v7(), new_uuid_v7()),
+        ).fetchall()
+        self.assertTrue(any("source_record_revision_id=?" in row[3] for row in plan), plan)
