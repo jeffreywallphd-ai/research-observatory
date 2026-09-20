@@ -142,6 +142,34 @@ class ArchitectureContractTests(unittest.TestCase):
             rogue.write_text("import sqlite3\n", encoding="utf-8")
             self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
 
+    def test_import_commit_adapter_is_owned_but_forbidden_to_business_and_ports(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "import_commit_repository.py").write_text(
+                "from .storage import CanonicalConnection\ndef save(connection):\n    connection.execute('SELECT 1')\n",
+                encoding="utf-8",
+            )
+            self.assertEqual([], core_data_boundary_errors(root))
+        for location in ("business.py", "ports/import_commits.py"):
+            for source in (
+                "from .import_commit_repository import SqliteImportCommitRepository\n",
+                "import research_observatory_core.import_commit_repository\n",
+                "from research_observatory_core import import_commit_repository\n",
+                "from . import import_commit_repository\n",
+            ):
+                with self.subTest(location=location, source=source), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    path = root / location
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(source, encoding="utf-8")
+                    self.assertTrue(any("concrete" in error for error in core_data_boundary_errors(root)))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "business/import_commit_repository.py"
+            path.parent.mkdir()
+            path.write_text("import sqlite3\n", encoding="utf-8")
+            self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
+
     def test_typed_async_port_execution_is_not_a_database_call(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
