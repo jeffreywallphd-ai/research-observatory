@@ -36,6 +36,7 @@ from research_observatory_core.migrations.versions import (  # noqa: E402
     v0010_dependency_impacts,
     v0011_import_previews,
     v0012_import_summaries,
+    v0013_import_commits,
 )
 
 v0006_actor_identity = runner.v0006_actor_identity
@@ -701,7 +702,7 @@ class SqliteMigrationTests(unittest.TestCase):
         before = self.database.read_bytes()
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(1, plan.source_schema_version)
-        self.assertEqual(12, plan.target_schema_version)
+        self.assertEqual(13, plan.target_schema_version)
         self.assertTrue(plan.migration_required)
         self.assertEqual(
             (
@@ -716,6 +717,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -729,7 +731,7 @@ class SqliteMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(1, result.source_schema_version)
-        self.assertEqual(12, result.target_schema_version)
+        self.assertEqual(13, result.target_schema_version)
         self.assertEqual(
             (
                 "0002_schema_history",
@@ -743,6 +745,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             result.migration_ids,
         )
@@ -878,6 +881,15 @@ class SqliteMigrationTests(unittest.TestCase):
                         12,
                         result.recovery_manifest_sha256,
                         storage.IMPORT_PREVIEW_SCHEMA_SHA256,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        v0013_import_commits.revision,
+                        12,
+                        13,
+                        result.recovery_manifest_sha256,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                         "alembic-1.18.5",
                     ),
@@ -917,7 +929,7 @@ class SqliteMigrationTests(unittest.TestCase):
         create_version_2_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(2, plan.source_schema_version)
-        self.assertEqual(12, plan.target_schema_version)
+        self.assertEqual(13, plan.target_schema_version)
         self.assertEqual(
             (
                 "0003_object_envelopes",
@@ -930,6 +942,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -948,6 +961,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             result.migration_ids,
         )
@@ -1051,6 +1065,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         11,
                         12,
                         storage.IMPORT_PREVIEW_SCHEMA_SHA256,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0013_import_commits.revision,
+                        12,
+                        13,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1077,6 +1098,7 @@ class SqliteMigrationTests(unittest.TestCase):
                         "0010_dependency_impacts",
                         "0011_import_previews",
                         v0012_import_summaries.revision,
+                        v0013_import_commits.revision,
                     ),
                     plan.migration_ids,
                 )
@@ -1092,6 +1114,7 @@ class SqliteMigrationTests(unittest.TestCase):
                         "0010_dependency_impacts",
                         "0011_import_previews",
                         v0012_import_summaries.revision,
+                        v0013_import_commits.revision,
                     ),
                     result.migration_ids,
                 )
@@ -1120,6 +1143,7 @@ class SqliteMigrationTests(unittest.TestCase):
                             "0010_dependency_impacts",
                             "0011_import_previews",
                             v0012_import_summaries.revision,
+                            v0013_import_commits.revision,
                         )
                         if legacy_object
                         else (
@@ -1132,6 +1156,7 @@ class SqliteMigrationTests(unittest.TestCase):
                             "0010_dependency_impacts",
                             "0011_import_previews",
                             v0012_import_summaries.revision,
+                            v0013_import_commits.revision,
                         ),
                         history,
                     )
@@ -1152,6 +1177,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -1167,6 +1193,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             result.migration_ids,
         )
@@ -1247,6 +1274,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         11,
                         12,
                         storage.IMPORT_PREVIEW_SCHEMA_SHA256,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0013_import_commits.revision,
+                        12,
+                        13,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1281,6 +1315,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -1295,6 +1330,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             result.migration_ids,
         )
@@ -1339,6 +1375,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -1352,6 +1389,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 "0010_dependency_impacts",
                 "0011_import_previews",
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             result.migration_ids,
         )
@@ -1387,6 +1425,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0010_dependency_impacts.revision,
                 v0011_import_previews.revision,
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -1400,6 +1439,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0010_dependency_impacts.revision,
                 v0011_import_previews.revision,
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             result.migration_ids,
         )
@@ -1445,6 +1485,7 @@ class SqliteMigrationTests(unittest.TestCase):
                     v0010_dependency_impacts.revision,
                     v0011_import_previews.revision,
                     v0012_import_summaries.revision,
+                    v0013_import_commits.revision,
                 ),
                 tuple(
                     str(row[0])
@@ -1481,6 +1522,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0010_dependency_impacts.revision,
                 v0011_import_previews.revision,
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -1491,6 +1533,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0010_dependency_impacts.revision,
                 v0011_import_previews.revision,
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             result.migration_ids,
         )
@@ -1525,7 +1568,7 @@ class SqliteMigrationTests(unittest.TestCase):
             }
             self.assertEqual(workflow_tables_before, workflow_tables_after)
             self.assertEqual(
-                v0012_import_summaries.revision,
+                v0013_import_commits.revision,
                 current.execute(
                     "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
                 ).fetchone()[0],
@@ -1539,14 +1582,24 @@ class SqliteMigrationTests(unittest.TestCase):
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(storage.MATERIAL_DEPENDENCY_DATABASE_SCHEMA_VERSION, plan.source_schema_version)
         self.assertEqual(
-            (v0010_dependency_impacts.revision, v0011_import_previews.revision, v0012_import_summaries.revision),
+            (
+                v0010_dependency_impacts.revision,
+                v0011_import_previews.revision,
+                v0012_import_summaries.revision,
+                v0013_import_commits.revision,
+            ),
             plan.migration_ids,
         )
         self.assertEqual(storage.MATERIAL_DEPENDENCY_SCHEMA_SHA256, plan.source_schema_sha256)
 
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(
-            (v0010_dependency_impacts.revision, v0011_import_previews.revision, v0012_import_summaries.revision),
+            (
+                v0010_dependency_impacts.revision,
+                v0011_import_previews.revision,
+                v0012_import_summaries.revision,
+                v0013_import_commits.revision,
+            ),
             result.migration_ids,
         )
 
@@ -1575,7 +1628,7 @@ class SqliteMigrationTests(unittest.TestCase):
             ):
                 self.assertEqual(0, current.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
             self.assertEqual(
-                v0012_import_summaries.revision,
+                v0013_import_commits.revision,
                 current.execute(
                     "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
                 ).fetchone()[0],
@@ -1583,11 +1636,11 @@ class SqliteMigrationTests(unittest.TestCase):
         finally:
             current.close()
 
-    def test_fresh_v6_history_remains_current_after_v12_upgrade_and_restart(self) -> None:
+    def test_fresh_v6_history_remains_current_after_v13_upgrade_and_restart(self) -> None:
         create_fresh_version_6_fixture(self.database)
         projection = runner.migration_framework_projection()
-        self.assertEqual(12, projection["targetSchemaVersion"])
-        self.assertEqual(v0012_import_summaries.revision, projection["revisions"][-1])
+        self.assertEqual(13, projection["targetSchemaVersion"])
+        self.assertEqual(v0013_import_commits.revision, projection["revisions"][-1])
 
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(6, plan.source_schema_version)
@@ -1599,6 +1652,7 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0010_dependency_impacts.revision,
                 v0011_import_previews.revision,
                 v0012_import_summaries.revision,
+                v0013_import_commits.revision,
             ),
             plan.migration_ids,
         )
@@ -1666,6 +1720,13 @@ class SqliteMigrationTests(unittest.TestCase):
                         11,
                         12,
                         storage.IMPORT_PREVIEW_SCHEMA_SHA256,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0013_import_commits.revision,
+                        12,
+                        13,
+                        storage.IMPORT_SUMMARY_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),

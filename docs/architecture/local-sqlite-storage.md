@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-12 authority
+## Current version-13 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=12`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=13`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -81,6 +81,8 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `import_previews`, `import_source_chunks`, `import_source_seals` | immutable local source identity and ordered encrypted chunk membership; seals close intake, not certify parser completion |
 | `import_parse_attempts`, `import_parse_records`, `import_parse_completions` | bounded provisional IR metadata by exact durable job/attempt; source bytes remain in encrypted objects |
 | `import_draft_revisions`, `import_record_decisions`, `import_preview_events` | immutable mapping/rights/options revisions, attributable record decisions and content-free action history; no canonical source import |
+| `import_commit_preparations`, `import_commit_rows` | provisional exact-attempt staging; retained decisions are not canonical publication |
+| `import_source_records`, `import_manifests`, `import_manifest_members`, `import_manifest_seals` | canonical revision links, project-unique scientific import identity, complete ordered decisions and explicit predecessor membership; accepted output still requires atomic repository/worker publication |
 | `import_summary_attempts`, `import_summary_rows`, `import_summary_groups`, `import_summary_completions` | append-only fixed-draft inspection projections, bounded metadata and indexed candidate membership; visibility requires the exact accepted worker attempt and current rights, not merely stored rows |
 | `provenance_events` | append-only typed event metadata, stable canonical/UUIDv7 actor authority, and record digest |
 | `settings` | append-only versioned, exactly-one-of typed scalar project settings |
@@ -106,14 +108,14 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v11
-profiles to current schema v12. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v12
+profiles to current schema v13. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-12 database is detected
+verified backup remains available. A current version-13 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -155,6 +157,17 @@ index, and cannot confer permission. The repository/worker must fence batches,
 verify complete traversal, recheck current revision/rights and require actual
 workflow success before exposing results. The migration alone does not provide
 that runtime authority.
+
+Version 13 adds append-only import commit preparations and staged decision rows,
+source-assertion links to canonical record revisions, and manifests with complete
+ordered membership and final seals. Source assertions are unique within a project
+by source digest and record key; manifest scientific identities are project-unique.
+Staging is provisional, not canonical authority. Exact draft/parse/attempt foreign
+keys, contiguous ordinals and seal counts constrain publication. Existing previews,
+summaries and history remain unchanged; migration creates no historical imports.
+The commit repository must additionally validate current rights, draft and worker
+lease, and publish records, manifest, provenance and accepted worker output in one
+transaction. Schema presence alone does not establish that runtime behavior.
 
 ## Repository and transaction boundary
 

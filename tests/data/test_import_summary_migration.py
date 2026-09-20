@@ -99,7 +99,7 @@ class ImportSummaryMigrationTests(unittest.TestCase):
         create_version_11_fixture(self.database)
         identity = predecessor.predecessor.PROJECT_ID
         plan = runner.plan_database_migration(self.database, expected_project_id=identity)
-        self.assertEqual(("0012_import_summaries",), plan.migration_ids)
+        self.assertEqual(("0012_import_summaries", "0013_import_commits"), plan.migration_ids)
         result = runner.migrate_database(self.database, expected_project_id=identity)
         self.assertEqual("migrated", result.status)
         self.assertIsNotNone(result.backup_relative_path)
@@ -111,7 +111,7 @@ class ImportSummaryMigrationTests(unittest.TestCase):
             backup.close()
         current = storage.open_canonical_database(self.database, expected_project_id=identity)
         try:
-            self.assertEqual(12, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(13, current.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(
                 "synthetic-preserved.csv", current.execute("SELECT source_name FROM import_previews").fetchone()[0]
             )
@@ -196,7 +196,7 @@ class ProtectedImportSummaryMigrationTests(unittest.TestCase):
             saved.close()
         current = storage.open_canonical_database(self.database, expected_project_id=identity)
         try:
-            self.assertEqual(12, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(13, current.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(PREVIEW, current.execute("SELECT preview_id FROM import_previews").fetchone()[0])
         finally:
             current.close()

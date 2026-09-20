@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 12
+DATABASE_SCHEMA_VERSION = 13
+IMPORT_SUMMARY_DATABASE_SCHEMA_VERSION = 12
 IMPORT_PREVIEW_DATABASE_SCHEMA_VERSION = 11
 DEPENDENCY_IMPACT_DATABASE_SCHEMA_VERSION = 10
 MATERIAL_DEPENDENCY_DATABASE_SCHEMA_VERSION = 9
@@ -83,6 +84,14 @@ IMPORT_SUMMARY_TABLES = (
     "import_summary_rows",
     "import_summary_groups",
     "import_summary_completions",
+)
+IMPORT_COMMIT_TABLES = (
+    "import_commit_preparations",
+    "import_commit_rows",
+    "import_source_records",
+    "import_manifests",
+    "import_manifest_members",
+    "import_manifest_seals",
 )
 
 EXPECTED_TABLES = (
@@ -125,6 +134,7 @@ EXPECTED_TABLES = (
     "outbox_events",
     *IMPORT_PREVIEW_TABLES,
     *IMPORT_SUMMARY_TABLES,
+    *IMPORT_COMMIT_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -160,6 +170,7 @@ IMMUTABLE_ROW_TABLES = (
     "settings",
     *IMPORT_PREVIEW_TABLES,
     *IMPORT_SUMMARY_TABLES,
+    *IMPORT_COMMIT_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -190,6 +201,12 @@ EXPECTED_TRIGGERS = tuple(
             "import_summary_row_membership",
             "import_summary_group_membership",
             "import_summary_completion_membership",
+            "import_commit_preparation_binding",
+            "import_commit_row_membership",
+            "import_source_record_binding",
+            "import_manifest_binding",
+            "import_manifest_member_binding",
+            "import_manifest_seal_binding",
         ]
     )
 )
@@ -223,6 +240,9 @@ EXPECTED_INDEXES = (
     "import_summary_draft",
     "import_summary_raw",
     "import_summary_doi",
+    "import_manifest_source",
+    "import_manifest_raw",
+    "import_manifest_doi",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -241,7 +261,8 @@ WORKFLOW_EXECUTOR_SCHEMA_SHA256 = "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7
 MATERIAL_DEPENDENCY_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
 DEPENDENCY_IMPACT_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
 IMPORT_PREVIEW_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
-EXPECTED_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
+IMPORT_SUMMARY_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
+EXPECTED_SCHEMA_SHA256 = "a35f336f7afa95856c6a7d23e2827e14aee7ac7abe0a300752ef50acc25adf08"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -301,7 +322,8 @@ WORKFLOW_EXECUTOR_PROFILE_SHA256 = "c55bb71d5c9553de5d104ae591fee39e06407b479f9f
 MATERIAL_DEPENDENCY_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119b03f38ffb5d06bd1e46e76"
 DEPENDENCY_IMPACT_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
 IMPORT_PREVIEW_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9fd6d98595a7888c91"
-EXPECTED_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
+IMPORT_SUMMARY_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
+EXPECTED_PROFILE_SHA256 = "5fdffc2da11147dace1224cab7d93af87e9ffb40e25cc11b8cccf8c53de55650"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -1028,6 +1050,11 @@ SCHEMA_METADATA_V11_DDL = SCHEMA_METADATA_V10_DDL.replace(
 SCHEMA_METADATA_V12_DDL = SCHEMA_METADATA_V11_DDL.replace(
     "schema_version INTEGER NOT NULL CHECK (schema_version = 11)",
     "schema_version INTEGER NOT NULL CHECK (schema_version = 12)",
+)
+
+SCHEMA_METADATA_V13_DDL = SCHEMA_METADATA_V12_DDL.replace(
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 12)",
+    "schema_version INTEGER NOT NULL CHECK (schema_version = 13)",
 )
 
 PROVENANCE_LEDGER_DDL = (
@@ -2321,13 +2348,247 @@ IMPORT_SUMMARY_DDL = (
     "(preview_id, project_id, summary_attempt_id, doi_key, ordinal)",
 )
 
+IMPORT_COMMIT_DDL = (
+    f"""
+        CREATE TABLE import_commit_preparations (
+            project_id TEXT NOT NULL,
+            attempt_id TEXT PRIMARY KEY CHECK ({_uuid_check("attempt_id", "7")}),
+            job_id TEXT NOT NULL,
+            preview_id TEXT NOT NULL,
+            draft_revision INTEGER NOT NULL CHECK (draft_revision BETWEEN 1 AND 2147483647),
+            parse_attempt_id TEXT NOT NULL,
+            previous_manifest_revision_id TEXT,
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            UNIQUE (attempt_id, project_id, preview_id, parse_attempt_id),
+            FOREIGN KEY (preview_id, project_id, draft_revision, parse_attempt_id)
+                REFERENCES import_draft_revisions (preview_id, project_id, revision, attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (job_id) REFERENCES workflow_queue_jobs (job_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id) REFERENCES workflow_job_attempts (attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (previous_manifest_revision_id, project_id)
+                REFERENCES import_manifests (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE import_commit_rows (
+            attempt_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            preview_id TEXT NOT NULL,
+            parse_attempt_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 200000),
+            record_key TEXT NOT NULL,
+            included INTEGER NOT NULL CHECK (included IN (0, 1)),
+            decision_json TEXT NOT NULL CHECK (length(decision_json) BETWEEN 2 AND 16777216),
+            warnings_json TEXT NOT NULL CHECK (length(warnings_json) BETWEEN 2 AND 8192),
+            raw_sha256 TEXT NOT NULL CHECK (length(raw_sha256)=64 AND raw_sha256 NOT GLOB '*[^0-9a-f]*'),
+            doi_key TEXT CHECK (doi_key IS NULL OR (length(doi_key)=64 AND doi_key NOT GLOB '*[^0-9a-f]*')),
+            PRIMARY KEY (attempt_id, project_id, ordinal),
+            FOREIGN KEY (attempt_id, project_id, preview_id, parse_attempt_id)
+                REFERENCES import_commit_preparations (attempt_id, project_id, preview_id, parse_attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, parse_attempt_id, ordinal, record_key)
+                REFERENCES import_parse_records (preview_id, project_id, attempt_id, ordinal, record_key)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_source_records (
+            project_id TEXT NOT NULL,
+            source_sha256 TEXT NOT NULL CHECK (length(source_sha256)=64 AND source_sha256 NOT GLOB '*[^0-9a-f]*'),
+            record_key TEXT NOT NULL,
+            aggregate_id TEXT NOT NULL CHECK ({_uuid_check("aggregate_id", "7")}),
+            revision_id TEXT NOT NULL CHECK ({_uuid_check("revision_id", "7")}),
+            preview_id TEXT NOT NULL,
+            parse_attempt_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 200000),
+            PRIMARY KEY (project_id, source_sha256, record_key),
+            UNIQUE (revision_id, project_id),
+            UNIQUE (aggregate_id, project_id),
+            FOREIGN KEY (revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, parse_attempt_id, ordinal, record_key)
+                REFERENCES import_parse_records (preview_id, project_id, attempt_id, ordinal, record_key)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_manifests (
+            project_id TEXT NOT NULL,
+            revision_id TEXT NOT NULL CHECK ({_uuid_check("revision_id", "7")}),
+            aggregate_id TEXT NOT NULL CHECK ({_uuid_check("aggregate_id", "7")}),
+            attempt_id TEXT NOT NULL,
+            preview_id TEXT NOT NULL,
+            parse_attempt_id TEXT NOT NULL,
+            source_sha256 TEXT NOT NULL CHECK (length(source_sha256)=64 AND source_sha256 NOT GLOB '*[^0-9a-f]*'),
+            identity_sha256 TEXT NOT NULL CHECK (length(identity_sha256)=64 AND identity_sha256 NOT GLOB '*[^0-9a-f]*'),
+            draft_sha256 TEXT NOT NULL CHECK (length(draft_sha256)=64 AND draft_sha256 NOT GLOB '*[^0-9a-f]*'),
+            record_count INTEGER NOT NULL CHECK (record_count BETWEEN 0 AND 200000),
+            selected_count INTEGER NOT NULL CHECK (selected_count BETWEEN 0 AND record_count),
+            created_count INTEGER NOT NULL CHECK (created_count BETWEEN 0 AND selected_count),
+            reused_count INTEGER NOT NULL CHECK (reused_count=selected_count-created_count),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            PRIMARY KEY (revision_id, project_id),
+            UNIQUE (project_id, identity_sha256),
+            UNIQUE (attempt_id),
+            UNIQUE (revision_id, project_id, preview_id, parse_attempt_id),
+            FOREIGN KEY (revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (attempt_id, project_id, preview_id, parse_attempt_id)
+                REFERENCES import_commit_preparations (attempt_id, project_id, preview_id, parse_attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE import_manifest_members (
+            manifest_revision_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            preview_id TEXT NOT NULL,
+            parse_attempt_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 200000),
+            record_key TEXT NOT NULL,
+            source_record_revision_id TEXT,
+            included INTEGER NOT NULL CHECK (included IN (0, 1)),
+            decision_json TEXT NOT NULL CHECK (length(decision_json) BETWEEN 2 AND 16777216),
+            warnings_json TEXT NOT NULL CHECK (length(warnings_json) BETWEEN 2 AND 8192),
+            raw_sha256 TEXT NOT NULL CHECK (length(raw_sha256)=64 AND raw_sha256 NOT GLOB '*[^0-9a-f]*'),
+            doi_key TEXT CHECK (doi_key IS NULL OR (length(doi_key)=64 AND doi_key NOT GLOB '*[^0-9a-f]*')),
+            comparison TEXT NOT NULL
+                CHECK (comparison IN ('not-compared', 'added', 'unchanged', 'updated', 'ambiguous')),
+            previous_record_revision_id TEXT,
+            PRIMARY KEY (manifest_revision_id, project_id, ordinal),
+            CHECK ((included=0 AND source_record_revision_id IS NULL) OR
+                   (included=1 AND source_record_revision_id IS NOT NULL)),
+            CHECK ((comparison IN ('unchanged', 'updated') AND previous_record_revision_id IS NOT NULL) OR
+                   (comparison NOT IN ('unchanged', 'updated') AND previous_record_revision_id IS NULL)),
+            FOREIGN KEY (manifest_revision_id, project_id, preview_id, parse_attempt_id)
+                REFERENCES import_manifests (revision_id, project_id, preview_id, parse_attempt_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (preview_id, project_id, parse_attempt_id, ordinal, record_key)
+                REFERENCES import_parse_records (preview_id, project_id, attempt_id, ordinal, record_key)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_record_revision_id, project_id)
+                REFERENCES import_source_records (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (previous_record_revision_id, project_id)
+                REFERENCES import_source_records (revision_id, project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE import_manifest_seals (
+            manifest_revision_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            members_sha256 TEXT NOT NULL CHECK (length(members_sha256)=64 AND members_sha256 NOT GLOB '*[^0-9a-f]*'),
+            sealed_at TEXT NOT NULL CHECK ({_timestamp_check("sealed_at")}),
+            PRIMARY KEY (manifest_revision_id, project_id),
+            FOREIGN KEY (manifest_revision_id, project_id) REFERENCES import_manifests (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in IMPORT_COMMIT_TABLES
+        for statement in _immutable_triggers(table, "import commit history is append-only")
+    ),
+    """
+        CREATE TRIGGER import_commit_preparation_binding BEFORE INSERT ON import_commit_preparations
+        WHEN NOT EXISTS (
+            SELECT 1 FROM workflow_job_attempts a JOIN workflow_queue_jobs j ON j.job_id=a.job_id
+             WHERE a.attempt_id=NEW.attempt_id AND a.job_id=NEW.job_id AND a.project_id=NEW.project_id
+               AND j.project_id=NEW.project_id AND j.current_attempt_id=a.attempt_id
+               AND a.state='running' AND j.state='running' AND j.cancellation_requested_at IS NULL
+               AND j.activity_type='local-import-commit'
+        ) OR (NEW.previous_manifest_revision_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM import_manifest_seals s WHERE s.project_id=NEW.project_id
+              AND s.manifest_revision_id=NEW.previous_manifest_revision_id
+        ))
+        BEGIN SELECT RAISE(ABORT, 'import commit attempt binding denied'); END
+    """,
+    """
+        CREATE TRIGGER import_commit_row_membership BEFORE INSERT ON import_commit_rows
+        WHEN EXISTS (SELECT 1 FROM import_manifests WHERE attempt_id=NEW.attempt_id)
+          OR NEW.ordinal <> (SELECT COALESCE(MAX(ordinal), 0)+1 FROM import_commit_rows
+                               WHERE attempt_id=NEW.attempt_id AND project_id=NEW.project_id)
+        BEGIN SELECT RAISE(ABORT, 'import commit row membership denied'); END
+    """,
+    """
+        CREATE TRIGGER import_source_record_binding BEFORE INSERT ON import_source_records
+        WHEN NOT EXISTS (
+            SELECT 1 FROM aggregate_revisions r JOIN import_parse_completions c ON c.project_id=r.project_id
+             WHERE r.revision_id=NEW.revision_id AND r.project_id=NEW.project_id
+               AND r.aggregate_id=NEW.aggregate_id AND r.aggregate_kind='record' AND r.revision=0
+               AND c.preview_id=NEW.preview_id AND c.attempt_id=NEW.parse_attempt_id
+               AND c.source_sha256=NEW.source_sha256
+        )
+        BEGIN SELECT RAISE(ABORT, 'import source record binding denied'); END
+    """,
+    """
+        CREATE TRIGGER import_manifest_binding BEFORE INSERT ON import_manifests
+        WHEN NOT EXISTS (
+            SELECT 1 FROM aggregate_revisions r JOIN import_commit_preparations p ON p.project_id=r.project_id
+              JOIN import_parse_completions c ON c.preview_id=p.preview_id AND c.project_id=p.project_id
+                AND c.attempt_id=p.parse_attempt_id
+             WHERE r.revision_id=NEW.revision_id AND r.project_id=NEW.project_id
+               AND r.aggregate_id=NEW.aggregate_id AND r.aggregate_kind='workflow'
+               AND p.attempt_id=NEW.attempt_id AND c.source_sha256=NEW.source_sha256
+               AND c.record_count=NEW.record_count
+        ) OR NEW.record_count <> (SELECT COUNT(*) FROM import_commit_rows WHERE attempt_id=NEW.attempt_id)
+        BEGIN SELECT RAISE(ABORT, 'import manifest binding denied'); END
+    """,
+    """
+        CREATE TRIGGER import_manifest_member_binding BEFORE INSERT ON import_manifest_members
+        WHEN EXISTS (SELECT 1 FROM import_manifest_seals WHERE manifest_revision_id=NEW.manifest_revision_id
+                       AND project_id=NEW.project_id)
+          OR NOT EXISTS (
+              SELECT 1 FROM import_manifests m JOIN import_commit_rows r
+                ON r.attempt_id=m.attempt_id AND r.project_id=m.project_id
+               WHERE m.revision_id=NEW.manifest_revision_id AND m.project_id=NEW.project_id
+                 AND r.ordinal=NEW.ordinal AND r.record_key=NEW.record_key AND r.included=NEW.included
+                 AND r.decision_json=NEW.decision_json AND r.warnings_json=NEW.warnings_json
+                 AND r.raw_sha256=NEW.raw_sha256 AND r.doi_key IS NEW.doi_key
+          )
+          OR (NEW.previous_record_revision_id IS NOT NULL AND NOT EXISTS (
+              SELECT 1 FROM import_manifests m JOIN import_commit_preparations p
+                ON p.attempt_id=m.attempt_id AND p.project_id=m.project_id
+                JOIN import_manifest_members prior ON prior.manifest_revision_id=p.previous_manifest_revision_id
+                  AND prior.project_id=p.project_id
+               WHERE m.revision_id=NEW.manifest_revision_id AND m.project_id=NEW.project_id
+                 AND prior.included=1 AND prior.source_record_revision_id=NEW.previous_record_revision_id
+          ))
+          OR NEW.ordinal <> (SELECT COALESCE(MAX(ordinal), 0)+1 FROM import_manifest_members
+                               WHERE manifest_revision_id=NEW.manifest_revision_id AND project_id=NEW.project_id)
+          OR (NEW.included=1 AND NOT EXISTS (
+              SELECT 1 FROM import_source_records s JOIN import_manifests m ON m.project_id=s.project_id
+               WHERE m.revision_id=NEW.manifest_revision_id AND m.project_id=NEW.project_id
+                 AND s.revision_id=NEW.source_record_revision_id AND s.source_sha256=m.source_sha256
+                 AND s.record_key=NEW.record_key
+          ))
+        BEGIN SELECT RAISE(ABORT, 'import manifest member binding denied'); END
+    """,
+    """
+        CREATE TRIGGER import_manifest_seal_binding BEFORE INSERT ON import_manifest_seals
+        WHEN NOT EXISTS (
+            SELECT 1 FROM import_manifests m
+              WHERE m.revision_id=NEW.manifest_revision_id AND m.project_id=NEW.project_id
+              AND m.record_count=(SELECT COUNT(*) FROM import_manifest_members
+                    WHERE manifest_revision_id=m.revision_id AND project_id=m.project_id)
+              AND m.selected_count=(SELECT COALESCE(SUM(included),0) FROM import_manifest_members
+                    WHERE manifest_revision_id=m.revision_id AND project_id=m.project_id)
+        )
+        BEGIN SELECT RAISE(ABORT, 'import manifest seal binding denied'); END
+    """,
+    "CREATE INDEX import_manifest_source ON import_manifests (project_id, source_sha256, created_at, revision_id)",
+    "CREATE INDEX import_manifest_raw ON import_manifest_members "
+    "(project_id, manifest_revision_id, raw_sha256, ordinal)",
+    "CREATE INDEX import_manifest_doi ON import_manifest_members (project_id, manifest_revision_id, doi_key, ordinal)",
+)
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
 )
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V12_DDL,
+    SCHEMA_METADATA_V13_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -2342,6 +2603,7 @@ _DDL_STATEMENTS = (
     *DEPENDENCY_IMPACT_DDL,
     *IMPORT_PREVIEW_DDL,
     *IMPORT_SUMMARY_DDL,
+    *IMPORT_COMMIT_DDL,
 )
 
 

@@ -136,6 +136,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.migrations.versions.v0010_dependency_impacts",
             "research_observatory_core.migrations.versions.v0011_import_previews",
             "research_observatory_core.migrations.versions.v0012_import_summaries",
+            "research_observatory_core.migrations.versions.v0013_import_commits",
             "research_observatory_core.import_preview_repository",
             "research_observatory_core.import_draft_repository",
             "research_observatory_core.import_summary_repository",

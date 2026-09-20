@@ -21,21 +21,49 @@
     "backup"
   ],
   "properties": {
-    "schemaVersion": {"const": "1.0"},
-    "documentType": {"const": "research-observatory-sqlite-migration-recovery"},
-    "attemptId": {"type": "string", "pattern": "^[0-9a-f]{32}$"},
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "documentType": {
+      "const": "research-observatory-sqlite-migration-recovery"
+    },
+    "attemptId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
     "createdAt": {
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"
     },
-    "status": {"const": "backup-verified"},
-    "databaseRelativePath": {"const": "state/project.sqlite3"},
+    "status": {
+      "const": "backup-verified"
+    },
+    "databaseRelativePath": {
+      "const": "state/project.sqlite3"
+    },
     "projectId": {
       "type": "string",
       "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
     },
-    "sourceSchemaVersion": {"enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]},
-    "targetSchemaVersion": {"const": 12},
+    "sourceSchemaVersion": {
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    "targetSchemaVersion": {
+      "const": 13
+    },
     "migrationIds": {
       "oneOf": [
         {
@@ -50,7 +78,8 @@
             "0009_material_dependencies",
             "0010_dependency_impacts",
             "0011_import_previews",
-            "0012_import_summaries"
+            "0012_import_summaries",
+            "0013_import_commits"
           ]
         },
         {
@@ -64,18 +93,105 @@
             "0009_material_dependencies",
             "0010_dependency_impacts",
             "0011_import_previews",
-            "0012_import_summaries"
+            "0012_import_summaries",
+            "0013_import_commits"
           ]
         },
-        {"const": ["0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0011_import_previews", "0012_import_summaries"]},
-        {"const": ["0012_import_summaries"]}
+        {
+          "const": [
+            "0004_object_envelope_upgrades",
+            "0005_object_creation_source",
+            "0006_actor_identity",
+            "0007_provenance_ledger",
+            "0008_workflow_executor",
+            "0009_material_dependencies",
+            "0010_dependency_impacts",
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0005_object_creation_source",
+            "0006_actor_identity",
+            "0007_provenance_ledger",
+            "0008_workflow_executor",
+            "0009_material_dependencies",
+            "0010_dependency_impacts",
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0006_actor_identity",
+            "0007_provenance_ledger",
+            "0008_workflow_executor",
+            "0009_material_dependencies",
+            "0010_dependency_impacts",
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0007_provenance_ledger",
+            "0008_workflow_executor",
+            "0009_material_dependencies",
+            "0010_dependency_impacts",
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0008_workflow_executor",
+            "0009_material_dependencies",
+            "0010_dependency_impacts",
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0009_material_dependencies",
+            "0010_dependency_impacts",
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0010_dependency_impacts",
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0011_import_previews",
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0012_import_summaries",
+            "0013_import_commits"
+          ]
+        },
+        {
+          "const": [
+            "0013_import_commits"
+          ]
+        }
       ]
     },
     "sourceSchemaSha256": {
@@ -90,40 +206,75 @@
         "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04",
         "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc",
         "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187",
-        "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
+        "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0",
+        "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
       ]
     },
     "targetSchemaSha256": {
-      "const": "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
+      "const": "a35f336f7afa95856c6a7d23e2827e14aee7ac7abe0a300752ef50acc25adf08"
     },
     "checkpoint": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["mode", "logFrames", "checkpointedFrames"],
+      "required": [
+        "mode",
+        "logFrames",
+        "checkpointedFrames"
+      ],
       "properties": {
-        "mode": {"const": "passive-under-writer-reservation"},
-        "logFrames": {"type": "integer", "minimum": 0, "maximum": 2147483647},
-        "checkpointedFrames": {"type": "integer", "minimum": 0, "maximum": 2147483647}
+        "mode": {
+          "const": "passive-under-writer-reservation"
+        },
+        "logFrames": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "checkpointedFrames": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
       }
     },
     "backup": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["relativePath", "sha256", "sizeBytes", "quickCheck"],
+      "required": [
+        "relativePath",
+        "sha256",
+        "sizeBytes",
+        "quickCheck"
+      ],
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v(?:[1-9]|10|11)-to-v12-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v(?:[1-9]|10|11|12)-to-v13-[0-9a-f]{32}/project\\.sqlite3$"
         },
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "sizeBytes": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
-        "quickCheck": {"const": "ok"}
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sizeBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "quickCheck": {
+          "const": "ok"
+        }
       }
     }
   },
   "allOf": [
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 1}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 1
+          }
+        }
+      },
       "then": {
         "properties": {
           "migrationIds": {
@@ -138,7 +289,8 @@
               "0009_material_dependencies",
               "0010_dependency_impacts",
               "0011_import_previews",
-            "0012_import_summaries"
+              "0012_import_summaries",
+              "0013_import_commits"
             ]
           },
           "sourceSchemaSha256": {
@@ -148,7 +300,13 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 2}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 2
+          }
+        }
+      },
       "then": {
         "properties": {
           "migrationIds": {
@@ -162,7 +320,8 @@
               "0009_material_dependencies",
               "0010_dependency_impacts",
               "0011_import_previews",
-            "0012_import_summaries"
+              "0012_import_summaries",
+              "0013_import_commits"
             ]
           },
           "sourceSchemaSha256": {
@@ -172,11 +331,28 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 3}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 3
+          }
+        }
+      },
       "then": {
         "properties": {
           "migrationIds": {
-            "const": ["0004_object_envelope_upgrades", "0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]
+            "const": [
+              "0004_object_envelope_upgrades",
+              "0005_object_creation_source",
+              "0006_actor_identity",
+              "0007_provenance_ledger",
+              "0008_workflow_executor",
+              "0009_material_dependencies",
+              "0010_dependency_impacts",
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
           },
           "sourceSchemaSha256": {
             "const": "246ad968bb1931732c827d0739882c0d59ce91a06c7075867c503c0ef52fd356"
@@ -185,10 +361,28 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 4}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 4
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0005_object_creation_source", "0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0005_object_creation_source",
+              "0006_actor_identity",
+              "0007_provenance_ledger",
+              "0008_workflow_executor",
+              "0009_material_dependencies",
+              "0010_dependency_impacts",
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "0b957b48a4280c0dd3c3f9ec518ac44b5fff9354e828572cd2af8aa95e496ff6"
           }
@@ -196,10 +390,27 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 5}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 5
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0006_actor_identity", "0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0006_actor_identity",
+              "0007_provenance_ledger",
+              "0008_workflow_executor",
+              "0009_material_dependencies",
+              "0010_dependency_impacts",
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "4d505b3f925e9df09b137cae61b56125878aa84fd0d6cb353e5d415a0602e2fd"
           }
@@ -207,10 +418,26 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 6}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 6
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0007_provenance_ledger", "0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0007_provenance_ledger",
+              "0008_workflow_executor",
+              "0009_material_dependencies",
+              "0010_dependency_impacts",
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "11856aa1b328924596692f08acce368ffbb8798441353fe6a76036329460a7d4"
           }
@@ -218,10 +445,25 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 7}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 7
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0008_workflow_executor", "0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0008_workflow_executor",
+              "0009_material_dependencies",
+              "0010_dependency_impacts",
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "49329a82e7ade17d57f09a33e650d81e1b3b1d67dc6e4e3b4c8a79d24b6f7475"
           }
@@ -229,10 +471,24 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 8}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 8
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0009_material_dependencies", "0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0009_material_dependencies",
+              "0010_dependency_impacts",
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "1f5d94ac9a17732c72405fdda945df75d1558c444eaf7b6a5dcf286a50443b04"
           }
@@ -240,10 +496,23 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 9}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 9
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0010_dependency_impacts", "0011_import_previews", "0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0010_dependency_impacts",
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "a1f8087eda44532e269d19adfc6ee90591e00ca7a69be0ddab0db7c84744d2cc"
           }
@@ -251,10 +520,22 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 10}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 10
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0011_import_previews", "0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0011_import_previews",
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
           }
@@ -262,12 +543,44 @@
       }
     },
     {
-      "if": {"properties": {"sourceSchemaVersion": {"const": 11}}},
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 11
+          }
+        }
+      },
       "then": {
         "properties": {
-          "migrationIds": {"const": ["0012_import_summaries"]},
+          "migrationIds": {
+            "const": [
+              "0012_import_summaries",
+              "0013_import_commits"
+            ]
+          },
           "sourceSchemaSha256": {
             "const": "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 12
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "migrationIds": {
+            "const": [
+              "0013_import_commits"
+            ]
+          },
+          "sourceSchemaSha256": {
+            "const": "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
           }
         }
       }
