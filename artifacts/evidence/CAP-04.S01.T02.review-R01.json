@@ -1,0 +1,76 @@
+{
+  "task_id": "CAP-04.S01.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "552eae1c03bf3d63c44620981a49e8c344de86f1",
+  "reviewer": "w2_document_packet_preflight",
+  "result": "approved",
+  "notes": "Independent whole-task disposition approves the frozen R01 candidate for CAP-04.S01.T02's protected import-preview and review criteria. The integrated review authenticates the approved checkpoint lineage and preserved adverse closures, reviews the final status, bounded paging and test-fixture deltas, and authenticates the exact submission and final protected-scale report. No reproducible material blocker remains. This is task approval only: canonical commit/reconciliation, complete frozen supervised journey, reviewed performance baselines, integrated slice/Wave qualification and release remain outside this disposition.",
+  "findings": [],
+  "closures": [],
+  "authenticated_submission": {
+    "base_commit": "34a8015b14245ed76a6f9629a69c3ed8574bde42",
+    "branch": "codex/w2-implementation",
+    "packet_sha256": "81d6d0dca039623996520e51c9f5dfdd53c7f45095bd9c2bc63c9b31e7e9a427",
+    "evidence_path": "artifacts/evidence/CAP-04.S01.T02.json",
+    "evidence_sha256": "f07ab09ac1c5cbd96bedfe1ddaed73e9ed53a1f8b0bf73604508675cf3aa7444",
+    "acceptance_criteria_sha256": "15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770",
+    "selection_sha256": "7d544dc3c3efcfb54e3173ea9a0eea0f5bbddf60d1a6d7d6f0a2c3f2ea815189",
+    "changed_path_count": 140,
+    "packet_validation_errors": []
+  },
+  "criterion_disposition": [
+    {
+      "criterion_index": 1,
+      "disposition": "satisfied",
+      "basis": "Mapping and group corrections, exclusion, rights-preserving undo, complete content-free diagnostic export and cancellation are implemented without canonical import. Actual native checkpoint evidence covers Windows chooser, protected supervised Core, report publication and retained draft after ordinary restart; final built-renderer integration covers the affected review interactions and async ownership. Each observation retains its actual candidate and substitutions."
+    },
+    {
+      "criterion_index": 2,
+      "disposition": "satisfied",
+      "basis": "Focused regressions and reviewed boundary tests cover identity, current rights, revision and lease fencing, migration/recovery, cancellation, immutable request/receipt binding, continuation projection, page bounds and UI reply ownership. Fresh final-candidate protected functional traversal completes 100001 source rows, 1001 review pages, 1000 duplicate-member pages and fresh-runtime reopen with zero canonical records."
+    },
+    {
+      "criterion_index": 3,
+      "disposition": "satisfied",
+      "basis": "The integrated candidate includes additive protected v11/v12 metadata migrations, exact predecessor fixtures, strict generated contracts, native held-file/session/publication guards, immutable preview/draft/summary authority, affected architecture documentation and audit evidence. Canonical SourceRecord/import-manifest commit and Work/Version reconciliation remain subsequent approved tasks."
+    }
+  ],
+  "review_basis": {
+    "checkpoint_lineage": "Authenticated sixteen approved checkpoint candidates as ancestors of the final candidate; retained their bounded dispositions rather than presenting ancestral executions as fresh final-candidate runs.",
+    "incremental_review": "Reviewed 4df1c099 status/announcement correction, 86ddb4e bounded ordinary and sparse decision paging with full-envelope cursors, encrypted migration test expectation correction, and 552eae1 renderer startup-fixture isolation. No product/native/contracts change occurs in the final fixture-only increment.",
+    "fresh_renderer": "Final 552eae1 built-renderer/Core interaction passed one test in 13.168 seconds. Native chooser/host and automatic pump startup are explicit doubles; real explicit worker execution is retained.",
+    "fresh_protected_scale": {
+      "path": "artifacts/tmp/import-review-scale-windows-zltzaxre/diagnostic.json",
+      "sha256": "4325206bcc12206e0e6dcfc6d0992f7ef5f8a410b530a8bdedce1d87a304c0ed",
+      "authentication": "Independently read and hashed the named report. HEAD before/after equals the reviewed candidate, recorded source inputs are unchanged, and all stages passed.",
+      "runner_seconds": 520.687,
+      "report_seconds": 520.4815654000267,
+      "review_pages": 1001,
+      "duplicate_member_pages": 1000,
+      "accepted_workflow_outputs": 2,
+      "summary_completions": 1,
+      "canonical_records": 0,
+      "encrypted_header": true,
+      "performance_qualifying": false
+    },
+    "review_execution": "This formal round inspected the exact manifest, frozen packet, integrated changes and retained evidence; it did not rerun completed suites. The packet validator returned no errors. Earlier independent focused replays and adverse findings remain in the checkpoint records."
+  },
+  "preserved_adverse_records": [
+    "artifacts/evidence/CAP-04.S01.T02.checkpoint-03-review-01.md",
+    "artifacts/evidence/CAP-04.S01.T02.checkpoint-05-review-01.md",
+    "artifacts/evidence/CAP-04.S01.T02.checkpoint-06-review-01.md",
+    "artifacts/evidence/CAP-04.S01.T02.checkpoint-07-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T02.checkpoint-15-remediation.md",
+    "artifacts/evidence/CAP-04.S01.T02.completion-findings.md",
+    "artifacts/evidence/CAP-04.S01.T02.scale-observation-01.md",
+    "artifacts/evidence/CAP-04.S01.T02.scale-observation-02.md",
+    "artifacts/evidence/CAP-04.S01.T02.batching-disposition.md"
+  ],
+  "history_note": "Checkpoint adverse rounds and their reviewed closures remain append-only. Frozen formal R01 has no prior task-review attempt or open finding, so this ledger invents neither retrospective formal rounds nor formal closure IDs. The two incomplete scale observations remain failures/incomplete diagnostics, not passes.",
+  "scope_limits": [
+    "No canonical import or Work/Version reconciliation approval; CAP-04.S01.T03 and CAP-04.S03 retain those responsibilities.",
+    "Actual native and frozen --check observations remain bound to ancestral e80c53e8. Frozen --check proves package loading/missing-runtime behavior, not a complete supervised import/summary/report/restart journey. That full journey remains required at CAP-04.S01 integration/W2 packaging qualification.",
+    "Final protected-scale evidence proves functional traversal/reopen under the actual normal Windows principal with isolated fixtures. Its timing/memory measurements are diagnostic only, not a reviewed performance-baseline PASS.",
+    "This task disposition does not replace integrated slice/checkpoint/Wave checks, broader platform/security/privacy/rights/accessibility/performance qualification, independent Wave review or the human release gate."
+  ]
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8638323f00a438c4a27999090bbaae9abe9ba7fdec076327ddf262c06714d4df
+source_sha256: 8745b16a160a88b4b2dd21e74a3940494e2f4caf5e74584a190416d4c4d37cad
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -7795,15 +7795,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-04.S01.T02 - Create import preview, mapping, and conflict UI
+#### - [x] CAP-04.S01.T02 - Create import preview, mapping, and conflict UI
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S01.T01`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / w2_document_packet_preflight (`approved`)
 
 **Objective:** Desktop wizard showing parsed records, field mapping, duplicate candidates, warnings, rights defaults, and import options.
 
@@ -7822,17 +7822,55 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile desktop
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-04.S01.T02.json` at `552eae1c03bf3d63c44620981a49e8c344de86f1`
+
 ##### Review history — CAP-04.S01.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `81d6d0dca039623996520e51c9f5dfdd53c7f45095bd9c2bc63c9b31e7e9a427`
+
+- Candidate / base / branch: `552eae1c03bf3d63c44620981a49e8c344de86f1` / `34a8015b14245ed76a6f9629a69c3ed8574bde42` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-20T02:14:54+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S01.T02.json` / `f07ab09ac1c5cbd96bedfe1ddaed73e9ed53a1f8b0bf73604508675cf3aa7444` / `552eae1c03bf3d63c44620981a49e8c344de86f1`
+- Acceptance-criteria SHA-256: `15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770`
+- Verification-selection SHA-256: `7d544dc3c3efcfb54e3173ea9a0eea0f5bbddf60d1a6d7d6f0a2c3f2ea815189`
+- Changed paths: `Cargo.lock`, `apps/desktop/src-tauri/Cargo.toml`, `apps/desktop/src-tauri/src/application_lock.rs`, `apps/desktop/src-tauri/src/application_sign_in_policy.rs`, `apps/desktop/src-tauri/src/directory_picker.rs`, `apps/desktop/src-tauri/src/import_report.rs`, `apps/desktop/src-tauri/src/import_runtime.rs`, `apps/desktop/src-tauri/src/import_source.rs`, `apps/desktop/src-tauri/src/lib.rs`, `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src-tauri/src/workflow_session.rs`, `apps/desktop/src/app.css`, `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/ImportReviewPane.tsx`, `apps/desktop/src/app/ImportSummaryPane.tsx`, `apps/desktop/src/app/ImportWorkspace.test.tsx`, `apps/desktop/src/app/ImportWorkspace.tsx`, `apps/desktop/src/app/importIntake.test.ts`, `apps/desktop/src/app/importIntake.ts`, `apps/desktop/src/app/workflowNavigationModel.ts`, `artifacts/evidence/CAP-04.S01.T02.batching-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-01.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-02-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-02.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-03-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-03-review-01.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-03.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-04-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-04.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-05-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-05-review-01.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-05.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-06-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-06-review-01.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-06.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-07-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-08-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-09-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-09.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-10-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-10.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-11-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-11.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-12-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-12.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-13-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-13.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-14-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-14.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-15-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-15-remediation.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-15.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-16-disposition.md`, `artifacts/evidence/CAP-04.S01.T02.checkpoint-16.md`, `artifacts/evidence/CAP-04.S01.T02.completion-findings.md`, `artifacts/evidence/CAP-04.S01.T02.native-qualification-01.md`, `artifacts/evidence/CAP-04.S01.T02.scale-observation-01.md`, `artifacts/evidence/CAP-04.S01.T02.scale-observation-02.md`, `artifacts/evidence/CAP-04.S01.T02.task-start.md`, `docs/architecture/local-sqlite-storage.md`, `docs/architecture/reference-imports.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/import-review.test.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/storage/README.md`, `packages/contracts/storage/object-store-profile.schema.json`, `packages/contracts/storage/object-store-profile.v1.json`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S01.T02.html`, `planning/review-site/CAP-04/CAP-04.S01.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/authentication.py`, `services/core-api/src/research_observatory_core/import_api.py`, `services/core-api/src/research_observatory_core/import_draft_repository.py`, `services/core-api/src/research_observatory_core/import_intake_api.py`, `services/core-api/src/research_observatory_core/import_preview_repository.py`, `services/core-api/src/research_observatory_core/import_preview_service.py`, `services/core-api/src/research_observatory_core/import_review.py`, `services/core-api/src/research_observatory_core/import_summary_repository.py`, `services/core-api/src/research_observatory_core/ingestion/import_drafts.py`, `services/core-api/src/research_observatory_core/ingestion/import_summaries.py`, `services/core-api/src/research_observatory_core/ingestion/preview_activity.py`, `services/core-api/src/research_observatory_core/ingestion/preview_records.py`, `services/core-api/src/research_observatory_core/ingestion/preview_workflow.py`, `services/core-api/src/research_observatory_core/ingestion/reference_imports.py`, `services/core-api/src/research_observatory_core/ingestion/source_chunks.py`, `services/core-api/src/research_observatory_core/ingestion/summary_activity.py`, `services/core-api/src/research_observatory_core/ingestion/summary_workflow.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0011_import_previews.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0012_import_summaries.py`, `services/core-api/src/research_observatory_core/object_store.py`, `services/core-api/src/research_observatory_core/ports/import_previews.py`, `services/core-api/src/research_observatory_core/ports/object_store.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/ports/workflow_executor.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/research_intents.py`, `services/core-api/src/research_observatory_core/storage.py`, `services/core-api/src/research_observatory_core/workflow_executor.py`, `tests/contracts/test_import_review_contract.py`, `tests/data/test_import_preview_drafts.py`, `tests/data/test_import_preview_migration.py`, `tests/data/test_import_preview_repository.py`, `tests/data/test_import_source_chunks.py`, `tests/data/test_import_summary_migration.py`, `tests/data/test_import_summary_repository.py`, `tests/data/test_import_summary_storage.py`, `tests/data/test_sqlite_migrations.py`, `tests/desktop/test_import_interactions.py`, `tests/fixtures/imports/preview-job-comma-v1.json`, `tests/fixtures/imports/schema-v11-authority.json`, `tests/packaging/test_core_sidecar_package.py`, `tests/security/test_import_preview_protection.py`, `tests/service/test_core_api.py`, `tests/service/test_import_drafts.py`, `tests/service/test_import_intake_api.py`, `tests/service/test_import_preview_activity.py`, `tests/service/test_import_preview_service.py`, `tests/service/test_import_preview_workflow.py`, `tests/service/test_import_review.py`, `tests/service/test_import_review_api.py`, `tests/service/test_import_review_scale_windows.py`, `tests/service/test_import_summaries.py`, `tests/service/test_import_summary_workflow.py`, `tests/workflows/test_local_workflow_executor.py`, `tools/architecture_check.py`, `tools/core_api_contract.py`, `tools/core_sidecar_build.py`, `tools/desktop_app_check.py`
+- Selected checks: `python -m unittest tests.service.test_import_review tests.service.test_import_review_api tests.data.test_import_preview_drafts tests.security.test_import_preview_protection -v`, `ruff check/format on three changed product and three changed test files; mypy three changed product files; architecture_check; backlog_views --check; build_manifest`, `python -m unittest tests.desktop.test_import_interactions -v`, `RO_RUN_IMPORT_REVIEW_SCALE=1 python -m unittest tests.service.test_import_review_scale_windows -v`, `ruff check tests/desktop/test_import_interactions.py; ruff format --check tests/desktop/test_import_interactions.py`, `python tools/build_manifest.py --output artifacts/tmp/CAP-04.S01.T02.final-build-manifest.json; python tools/backlog_views.py --repo . --check`
+- Deferred checks: `CAP-04.S01.T03 canonical commit/manifests/final wizard step and CAP-04.S03 Work/Version reconciliation remain subsequent approved tasks.`, `Complete frozen supervised import/summary/report/restart journey remains explicit CAP-04.S01 integration/W2 packaging qualification. Exact-e80 frozen --check proves loading without system Python and missing-runtime detection, not the full journey.`, `Fresh full affected/repository/deployment-profile, cross-capability security/privacy/rights/accessibility/performance/platform matrices and independent slice/Wave review remain required at their prescribed stage. No reviewed latency/memory baseline or full-Wave qualification claimed.`
+- Selection rationale: Narrow affected checks for protected preview/storage, worker and native authority, public Core/client contracts and renderer. Sixteen exact-commit independently reviewed checkpoints retain incremental source/test proof. Final batching changes read granularity only, requiring fresh actual protected traversal, draft/API/rights regression and renderer integration. Final test-only scheduling seam receives its own fresh exact-candidate interaction check. Prior native/package observations remain explicitly bound to actual ancestral candidates, not relabeled fresh. No full W1 replay.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / w2_document_packet_preflight / `2026-09-20T02:20:42+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S01.T02.review-R01.json` / `517ce9160ca35413a5f0296ff36d860ec007cbc8051d1baf0143de6332ba691c`
+
+**Review notes:** Independent whole-task disposition approves the frozen R01 candidate for CAP-04.S01.T02's protected import-preview and review criteria. The integrated review authenticates the approved checkpoint lineage and preserved adverse closures, reviews the final status, bounded paging and test-fixture deltas, and authenticates the exact submission and final protected-scale report. No reproducible material blocker remains. This is task approval only: canonical commit/reconciliation, complete frozen supervised journey, reviewed performance baselines, integrated slice/Wave qualification and release remain outside this disposition.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by w2_document_packet_preflight at `2026-09-20T02:20:42+00:00`
+
+**Latest notes:** Independent whole-task disposition approves the frozen R01 candidate for CAP-04.S01.T02's protected import-preview and review criteria. The integrated review authenticates the approved checkpoint lineage and preserved adverse closures, reviews the final status, bounded paging and test-fixture deltas, and authenticates the exact submission and final protected-scale report. No reproducible material blocker remains. This is task approval only: canonical commit/reconciliation, complete frozen supervised journey, reviewed performance baselines, integrated slice/Wave qualification and release remain outside this disposition.
+
+**Currently open findings:** -
 
 #### - [ ] CAP-04.S01.T03 - Implement idempotent import commits and import manifests
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
