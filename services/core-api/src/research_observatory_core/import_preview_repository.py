@@ -23,7 +23,8 @@ from .ingestion.import_drafts import CsvDelimiter, DraftValue, Identity, ImportR
 from .ingestion.preview_records import StoredImportRecord
 from .ingestion.reference_imports import PARSER_VERSION, ImportRecord, ImportSession, ImportSource
 from .ingestion.source_chunks import CHUNK_BYTES, MAX_CHUNKS, MAX_SOURCE_BYTES, SourceChunk
-from .ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewCreate, PreviewProblem, PreviewState
+from .ports.import_commits import ImportRepository
+from .ports.import_previews import PreviewActor, PreviewCreate, PreviewProblem, PreviewState
 from .ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference, WorkflowQueueProblem
 from .repositories import _SqliteWorkflowQueueRepository
 from .storage import CanonicalConnection, StorageProblem, _normalize_utc_millisecond, open_canonical_database
@@ -642,8 +643,8 @@ class _SqliteImportPreviewRepository:
             return records
 
 
-def sqlite_import_preview_repository(path: Path, project_id: str) -> ImportPreviewRepository:
+def sqlite_import_preview_repository(path: Path, project_id: str) -> ImportRepository:
     # Compose draft operations over the same intake adapter, without a second DB.
-    from .import_summary_repository import SqliteImportSummaryRepository
+    from .import_commit_repository import SqliteImportCommitRepository
 
-    return SqliteImportSummaryRepository(path, project_id)
+    return SqliteImportCommitRepository(path, project_id)

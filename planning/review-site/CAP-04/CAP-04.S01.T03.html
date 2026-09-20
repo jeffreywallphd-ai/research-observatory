@@ -233,9 +233,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="dd84a7f74815087328cdcc478c589ae40f9d0375e53027d2d42110977cea1e5a">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="82764be93629a9de2276cf0905290df2788d2297a102bd7a0d294edb95c59aea">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>dd84a7f74815087328cdcc478c589ae40f9d0375e53027d2d42110977cea1e5a</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>82764be93629a9de2276cf0905290df2788d2297a102bd7a0d294edb95c59aea</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T03 — idempotent import commits and manifests
 
 Claim base: `b55c1285b33d17fca7b8ef37ed8ce16d1c83610a`.
@@ -270,7 +270,22 @@ requirement, 64-input event bound, separate request/scientific identity, full
 current-rights recheck and exact predecessor fixture. These are included above.
 No mandatory new human gate identified. Full slice integration, reviewed 100k
 performance baseline and frozen supervised journey remain slice/W2 qualification;
-do not rerun unrelated completed W1 profiles.</pre></article>
+do not rerun unrelated completed W1 profiles.
+
+## First publication review — missed acceptance rows
+
+- Comparison reads an earlier manifest&#x27;s historical decisions. Its current
+  default and per-record store/inspect authority must still permit that use,
+  including inside the final publication transaction. Add revoked-predecessor
+  regression; denial must leave canonical counts unchanged.
+- A generic accepted workflow output is not necessarily an import manifest.
+  Replay must authenticate a sealed manifest and its complete scientific input
+  identity, while permitting a valid reused manifest from an earlier request.
+  Add actual queue-completed parser-receipt substitution regression.
+
+Immediate root causes: the comparison path treated historical accepted metadata
+as sufficient authority; replay reused the generic queue receipt check without
+the import-specific semantic check. Preserve the first adverse disposition.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

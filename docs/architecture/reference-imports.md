@@ -334,6 +334,40 @@ passed; the complete frozen supervised import journey remains explicit slice/Wav
 qualification, not inferred from native development execution or package loading.
 CAP-04.S01.T03 still owns canonical commit/manifests and their final wizard step.
 
+## Canonical commit execution (CAP-04.S01.T03, integration in progress)
+
+Explicit commits reuse the protected project database, canonical UUIDv7 records,
+provenance/outbox and durable workflow queue. Source assertions are keyed by
+project/source digest/record key; scientific manifest identity separately binds
+parser, immutable mapping, complete ordered decisions and effective rights.
+Source-record creation, complete manifest membership and accepted job output
+publish in one transaction. Mechanical comparisons do not reconcile Works.
+
+Request identity is separate from scientific identity. The reserved
+`imports.commit-request.<UUID>` settings key has exactly one immutable revision
+zero containing a strict versioned `ImportCommitRequest`, exact configuration
+hash and original actor/time. UTF-8 content is bounded to 65,536 bytes. Missing
+requests remain missing; extra revisions, changed command/actor, malformed values
+or mismatched identity/hash fail closed. This uses the existing typed settings
+pattern; it changes neither v13 schema nor historical records.
+
+The service saves the exact command before queue admission, then finds and
+authenticates an existing idempotency result before building another job. A
+request-written/queue-absent interruption can be retried under current authority.
+Workers reconstruct saved inputs, recheck current project/draft/Intent/privacy/
+security epoch and retain explicit continuation authority. Security-epoch changes
+cancel old work, not silently reschedule it. Preview cancellation includes queued
+commits. The supervisor verifies already-atomic output acceptance through exact
+queue replay rather than restaging accepted artifacts.
+
+Manifest reads retain ordered included/excluded decisions, canonical IDs and
+comparison status. Historical and current store/inspect permissions govern
+comparison, reuse and reads; a prior seal alone grants no current access. Accepted
+queue output and the exact manifest revision must agree. Pages are bounded, and
+the all-member rights scan selects compact rights metadata rather than a batch
+of full decision payloads. Public API/native/renderer integration, final guard
+lifetime and large-input qualification are still pending.
+
 ## Verification and technical basis
 
 Focused service and contract tests cover all formats, deterministic replay,

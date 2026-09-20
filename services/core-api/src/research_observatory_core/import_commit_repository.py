@@ -11,14 +11,15 @@ import json
 from collections.abc import Callable, Iterator
 from typing import Any
 
-from .domain_contracts import new_uuid_v7
+from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .import_preview_repository import _actor
 from .import_summary_repository import SqliteImportSummaryRepository
 from .ingestion.commit_workflow import CommitJobInput, bind_commit_claim, commit_job_input
 from .ingestion.import_commits import ImportIdentity, import_identity, source_assertion_key
-from .ingestion.import_drafts import RecordDecision
+from .ingestion.import_drafts import ImportRights, RecordDecision
 from .ingestion.import_summaries import summarize_record
 from .ingestion.preview_workflow import fingerprint
+from .ports.import_commits import ImportCommitRequest, ImportManifest, ImportManifestMember
 from .ports.import_previews import PreviewActor, PreviewDraft, PreviewProblem
 from .ports.repositories import (
     AggregateKind,
@@ -42,6 +43,137 @@ def _publication_step_completed(_step: str) -> None:
 
 
 class SqliteImportCommitRepository(SqliteImportSummaryRepository):
+    def _request(self, connection: CanonicalConnection, request_id: str) -> ImportCommitRequest | None:
+        if not is_uuid_v7(request_id):
+            raise PreviewProblem("preview-commit-request-identity-invalid")
+        rows = connection.execute(
+            "SELECT revision,value_type,text_value FROM settings WHERE project_id=? AND setting_key=? LIMIT 2",
+            (self._project, "imports.commit-request." + request_id),
+        ).fetchall()
+        if not rows:
+            return None
+        if len(rows) != 1 or tuple(rows[0][:2]) != (0, "text") or len(rows[0][2].encode("utf-8")) > 65536:
+            raise PreviewProblem("preview-commit-request-authority-invalid")
+        saved = ImportCommitRequest.model_validate_json(rows[0][2])
+        if saved.inputs.project_id != self._project or saved.inputs.request_id != request_id:
+            raise PreviewProblem("preview-commit-request-authority-mismatch")
+        return saved
+
+    def commit_request(self, request_id: str) -> ImportCommitRequest | None:
+        with self._transaction(None) as connection:
+            return self._request(connection, request_id)
+
+    def save_commit_request(self, inputs: CommitJobInput, *, actor: PreviewActor) -> ImportCommitRequest:
+        inputs = CommitJobInput.model_validate(inputs)
+        actor = _actor(actor)
+        saved = ImportCommitRequest(inputs=inputs, configuration_hash=inputs.configuration_hash, actor=actor)
+        value = saved.model_dump_json(by_alias=True)
+        if inputs.project_id != self._project or len(value.encode("utf-8")) > 65536:
+            raise PreviewProblem("preview-commit-request-limit")
+        with self._transaction(inputs.preview.preview_id, write=True) as connection:
+            state, draft = self._summary_head(connection, inputs.preview.preview_id, inputs.draft_revision)
+            current = commit_job_input(
+                state,
+                draft,
+                inputs.intent,
+                inputs.preview.policy_hash,
+                inputs.preview.resume_epoch,
+                request_id=inputs.request_id,
+                previous_manifest_revision_id=inputs.previous_manifest_revision_id,
+            )
+            if current != inputs:
+                raise PreviewProblem("preview-commit-request-authority-mismatch")
+            prior = self._request(connection, inputs.request_id)
+            if prior is not None:
+                if prior.inputs != inputs or prior.actor.actor_id != actor.actor_id:
+                    raise PreviewProblem("preview-commit-request-conflict")
+                return prior
+            connection.execute(
+                "INSERT INTO settings VALUES (?,?,?,0,'text',?,NULL,NULL,NULL,?,?)",
+                (
+                    new_uuid_v7(),
+                    self._project,
+                    "imports.commit-request." + inputs.request_id,
+                    value,
+                    actor.occurred_at,
+                    actor.occurred_at,
+                ),
+            )
+            return saved
+
+    def manifest(self, revision_id: str) -> ImportManifest:
+        if not is_uuid_v7(revision_id):
+            raise PreviewProblem("preview-commit-manifest-identity-invalid")
+        with self._transaction(None) as connection:
+            self._manifest_access(connection, revision_id)
+            row = connection.execute(
+                "SELECT m.aggregate_id,m.preview_id,p.draft_revision,m.source_sha256,m.identity_sha256,"
+                "m.draft_sha256,p.previous_manifest_revision_id,m.record_count,m.selected_count,"
+                "m.created_count,m.reused_count,s.members_sha256,m.created_at "
+                "FROM import_manifests m JOIN import_manifest_seals s "
+                "ON s.project_id=m.project_id AND s.manifest_revision_id=m.revision_id "
+                "JOIN import_commit_preparations p ON p.project_id=m.project_id AND p.attempt_id=m.attempt_id "
+                "WHERE m.project_id=? AND m.revision_id=?",
+                (self._project, revision_id),
+            ).fetchone()
+            draft = self._draft(connection, self._read(connection, row[1]), row[2])
+            return ImportManifest(
+                project_id=self._project,
+                revision_id=revision_id,
+                aggregate_id=row[0],
+                preview_id=row[1],
+                draft_revision=row[2],
+                source_sha256=row[3],
+                identity_sha256=row[4],
+                effective_draft_sha256=row[5],
+                parser_version=draft.authority.parser_version,
+                mapping=draft.authority.mapping,
+                previous_manifest_revision_id=row[6],
+                record_count=row[7],
+                selected_count=row[8],
+                created_count=row[9],
+                reused_count=row[10],
+                members_sha256=row[11],
+                created_at=row[12],
+            )
+
+    def manifest_members(self, revision_id: str, *, after: int, limit: int) -> tuple[ImportManifestMember, ...]:
+        if not is_uuid_v7(revision_id) or type(after) is not int or not 0 <= after <= 200000:
+            raise PreviewProblem("preview-commit-manifest-cursor-invalid")
+        if type(limit) is not int or not 1 <= limit <= 100:
+            raise PreviewProblem("preview-commit-manifest-page-limit")
+        with self._transaction(None) as connection:
+            self._manifest_access(connection, revision_id)
+            rows = connection.execute(
+                "SELECT ordinal,record_key,source_record_revision_id,decision_json,warnings_json,"
+                "comparison,previous_record_revision_id FROM import_manifest_members "
+                "WHERE project_id=? AND manifest_revision_id=? AND ordinal>? ORDER BY ordinal LIMIT ?",
+                (self._project, revision_id, after, limit),
+            )
+            result: list[ImportManifestMember] = []
+            size = 0
+            try:
+                for row in rows:
+                    size += len(row[3].encode("utf-8")) + len(row[4].encode("utf-8")) + 512
+                    if size > 16 * 1024 * 1024:
+                        if not result:
+                            raise PreviewProblem("preview-commit-manifest-record-limit")
+                        break
+                    result.append(
+                        ImportManifestMember(
+                            ordinal=row[0],
+                            record_key=row[1],
+                            source_record_revision_id=row[2],
+                            decision=RecordDecision.model_validate_json(row[3]),
+                            warnings=tuple(json.loads(row[4])),
+                            comparison=row[5],
+                            previous_record_revision_id=row[6],
+                        )
+                    )
+            finally:
+                rows.close()
+            return tuple(result)
+
     def _bind_commit(self, inputs: CommitJobInput, claim: WorkflowJobClaim) -> CommitJobInput:
         # Immutable snapshots are read before taking the writer reservation.
         try:
@@ -257,15 +389,21 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
 
     def _manifest_access(self, connection: CanonicalConnection, revision: str) -> None:
         binding = connection.execute(
-            "SELECT p.preview_id, p.draft_revision FROM import_manifests m "
+            "SELECT p.preview_id, p.draft_revision, o.output_manifest_json, o.output_record_sha256 "
+            "FROM import_manifests m "
             "JOIN import_manifest_seals s ON s.project_id=m.project_id AND s.manifest_revision_id=m.revision_id "
             "JOIN import_commit_preparations p ON p.project_id=m.project_id AND p.attempt_id=m.attempt_id "
+            "JOIN workflow_committed_outputs o ON o.project_id=m.project_id AND o.attempt_id=m.attempt_id "
+            "JOIN workflow_queue_jobs j ON j.project_id=o.project_id AND j.job_id=o.job_id AND j.state='succeeded' "
             "WHERE m.project_id=? AND m.revision_id=?",
             (self._project, revision),
         ).fetchone()
         if binding is None:
             raise PreviewProblem("preview-commit-manifest-authority-mismatch")
-        preview, historical_revision = binding
+        preview, historical_revision = binding[:2]
+        output = self._output(_revision_with_connection(connection, self._project, revision))
+        if self._queue._output_manifest((output,)) != tuple(binding[2:]):
+            raise PreviewProblem("preview-commit-output-authority-mismatch")
         state = self._read(connection, preview)
         self._active(state)
         current = self._latest(connection, preview)
@@ -276,7 +414,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         after = 0
         while True:
             rows = connection.execute(
-                "SELECT ordinal, decision_json FROM import_manifest_members "
+                "SELECT ordinal, json_extract(decision_json, '$.rights') FROM import_manifest_members "
                 "WHERE project_id=? AND manifest_revision_id=? AND ordinal>? ORDER BY ordinal LIMIT 100",
                 (self._project, revision, after),
             ).fetchall()
@@ -285,13 +423,15 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
             selected = self._page_decision_revisions(
                 connection, preview, current, current, tuple(row[0] for row in rows)
             )
-            for ordinal, decision_json in rows:
-                old = RecordDecision.model_validate_json(decision_json)
+            for ordinal, rights_json in rows:
+                old_rights = (
+                    ImportRights.model_validate_json(rights_json) if rights_json else historical.authority.rights
+                )
                 current_decision = self._decision_at(
                     connection, preview, selected.get(ordinal, (None, None))[0], ordinal
                 )[0]
                 for rights in (
-                    old.rights or historical.authority.rights,
+                    old_rights,
                     current_decision.rights if current_decision and current_decision.rights else draft.authority.rights,
                 ):
                     if not rights.permits("store") or not rights.permits("inspect"):

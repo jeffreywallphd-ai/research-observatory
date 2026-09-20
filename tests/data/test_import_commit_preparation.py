@@ -36,6 +36,35 @@ class ImportCommitPreparationTests(unittest.TestCase):
     def begin(self, inputs=None, claim=None):
         self.repository.begin_commit(inputs or self.inputs, claim=claim or self.claim, actor=self.actor)
 
+    def test_immutable_request_reopens_exactly_and_rejects_changed_command_or_actor(self):
+        self.assertIsNone(self.repository.commit_request(self.inputs.request_id))
+        saved = self.repository.save_commit_request(self.inputs, actor=self.fixture.fixture.actor)
+        reopened = SqliteImportCommitRepository(self.database, self.inputs.project_id)
+        self.assertEqual(saved, reopened.commit_request(self.inputs.request_id))
+        self.assertEqual(saved, reopened.save_commit_request(self.inputs, actor=self.fixture.fixture.actor))
+        changed = self.inputs.model_copy(update={"previous_manifest_revision_id": new_uuid_v7()})
+        with self.assertRaises(PreviewProblem):
+            reopened.save_commit_request(changed, actor=self.fixture.fixture.actor)
+        with self.assertRaises(PreviewProblem):
+            reopened.save_commit_request(self.inputs, actor=self.actor)
+
+    def test_extra_request_revision_is_rejected_not_latest_wins(self):
+        saved = self.repository.save_commit_request(self.inputs, actor=self.fixture.fixture.actor)
+        with open_canonical_database(self.database, expected_project_id=self.inputs.project_id) as db:
+            db.execute(
+                "INSERT INTO settings VALUES (?,?,?,1,'text',?,NULL,NULL,NULL,?,?)",
+                (
+                    new_uuid_v7(),
+                    self.inputs.project_id,
+                    "imports.commit-request." + self.inputs.request_id,
+                    saved.model_dump_json(by_alias=True),
+                    self.actor.occurred_at,
+                    self.actor.occurred_at,
+                ),
+            )
+        with self.assertRaises(PreviewProblem):
+            self.repository.commit_request(self.inputs.request_id)
+
     def append(self, after=0):
         return self.repository.append_commit_page(self.inputs, after=after, claim=self.claim, actor=self.actor)
 

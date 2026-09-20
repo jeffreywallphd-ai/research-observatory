@@ -144,6 +144,10 @@ class ImportCommitPublicationTests(unittest.TestCase):
         )
         with self.assertRaises(PreviewProblem):
             f.repository.draft_page(preview, revision=1, after=0, limit=100)
+        with self.assertRaises(PreviewProblem):
+            f.repository.manifest(original.revision_id)
+        with self.assertRaises(PreviewProblem):
+            f.repository.manifest_members(original.revision_id, after=0, limit=1)
         self.prepare_another(b"title,doi\nChanged title,10.99999/EXAMPLE\n", previous=original.revision_id)
         before = self.counts()
         with self.assertRaises(PreviewProblem):
@@ -247,6 +251,32 @@ class ImportCommitPublicationTests(unittest.TestCase):
         with open_canonical_database(self.fixture.database, expected_project_id=self.fixture.inputs.project_id) as db:
             self.assertEqual(output.revision_id, db.execute("SELECT revision_id FROM import_manifests").fetchone()[0])
             self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
+
+    def test_manifest_reads_preserve_complete_ordered_decisions_and_identity(self):
+        output = self.publish()
+        repository = self.fixture.repository
+        manifest = repository.manifest(output.revision_id)
+        self.assertEqual(output.artifact_id, manifest.aggregate_id)
+        self.assertEqual(
+            (2, 1, 1, 0),
+            (
+                manifest.record_count,
+                manifest.selected_count,
+                manifest.created_count,
+                manifest.reused_count,
+            ),
+        )
+        first = repository.manifest_members(output.revision_id, after=0, limit=1)
+        second = repository.manifest_members(output.revision_id, after=first[-1].ordinal, limit=1)
+        self.assertEqual([1, 2], [item.ordinal for item in (*first, *second)])
+        self.assertFalse(first[0].decision.included)
+        self.assertTrue(second[0].decision.included)
+        self.assertIsNotNone(second[0].source_record_revision_id)
+        self.assertEqual((), repository.manifest_members(output.revision_id, after=2, limit=1))
+        with self.assertRaises(PreviewProblem):
+            repository.manifest_members(output.revision_id, after=True, limit=1)
+        with self.assertRaises(PreviewProblem):
+            repository.manifest_members(output.revision_id, after=0, limit=101)
 
     def test_multiple_current_candidates_are_not_reported_as_certain_updates(self):
         original = self.publish()

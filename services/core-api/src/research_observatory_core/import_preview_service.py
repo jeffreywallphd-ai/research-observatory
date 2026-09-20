@@ -2,7 +2,8 @@
 
 Adapters are composed by the runtime, never supplied by an API caller. Every
 bounded operation revalidates the open project. Recovery is reconciled before
-the executor may recover leases or claim import work. No canonical source import.
+the executor may recover leases or claim import work. Explicit commit requests
+publish canonical source assertions, not reconciled Works.
 """
 
 from __future__ import annotations
@@ -20,6 +21,14 @@ from pydantic import TypeAdapter
 
 from .domain_contracts import is_uuid_v7
 from .import_review import ImportPreviewPage, ImportReview, bounded, preview_item
+from .ingestion.commit_activity import ImportCommitActivity
+from .ingestion.commit_workflow import (
+    COMMIT_ACTIVITY,
+    CommitJobInput,
+    bind_commit_claim,
+    build_commit_job,
+    commit_job_input,
+)
 from .ingestion.import_summaries import SUMMARY_ACTIVITY
 from .ingestion.preview_activity import ImportPreviewActivity
 from .ingestion.preview_workflow import (
@@ -35,10 +44,17 @@ from .ingestion.source_chunks import put_source_chunk
 from .ingestion.summary_activity import ImportSummaryActivity
 from .ingestion.summary_workflow import SummaryJobInput, bind_summary_claim, build_summary_job, summary_job_input
 from .logging import emit_log_record
-from .ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewCreate, PreviewProblem, PreviewState
+from .ports.import_commits import ImportRepository
+from .ports.import_previews import PreviewActor, PreviewCreate, PreviewProblem, PreviewState
 from .ports.object_store import ObjectStore
 from .ports.repositories import IntentRevisionRepository, UnitOfWorkFactory
-from .ports.workflow_executor import WorkflowActor, WorkflowJobAuthority, WorkflowJobRecord, WorkflowQueueRepository
+from .ports.workflow_executor import (
+    WorkflowActor,
+    WorkflowJobAuthority,
+    WorkflowJobRecord,
+    WorkflowQueueConflict,
+    WorkflowQueueRepository,
+)
 from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleService
 from .research_intents import validated_workflow_authority
@@ -51,7 +67,7 @@ def _now() -> str:
 
 @dataclass(frozen=True, slots=True)
 class ImportProjectAdapters:
-    previews: ImportPreviewRepository
+    previews: ImportRepository
     intents: IntentRevisionRepository
     queue: WorkflowQueueRepository
     store: ObjectStore
@@ -324,6 +340,12 @@ class ImportPreviewService:
             yield from page
             after = page[-1].job_id
 
+    def _active_commits(self, binding: _Binding):
+        after = None
+        while page := binding.adapters.queue.active_jobs(activity_type=COMMIT_ACTIVITY, after=after):
+            yield from page
+            after = page[-1].job_id
+
     def _summary_job(self, binding: _Binding, inputs: SummaryJobInput) -> WorkflowJobRecord | None:
         accepted = binding.adapters.previews.summary(inputs.preview.preview_id, revision=inputs.draft_revision)
         if accepted is not None:
@@ -351,6 +373,110 @@ class ImportPreviewService:
             return binding.adapters.queue.enqueue(
                 build_summary_job(inputs, actor=self._workflow_actor(), now=self._now()), actor=self._workflow_actor()
             )
+
+        result = self._action(root, schedule)
+        self._wake.set()
+        return result
+
+    def _commit_inputs(
+        self,
+        binding: _Binding,
+        preview: str,
+        revision: int,
+        request_id: str,
+        previous: str | None,
+        intent_revision: str | None = None,
+    ) -> CommitJobInput:
+        summary = self._summary_inputs(binding, preview, revision, intent_revision)
+        return commit_job_input(
+            binding.adapters.previews.read(preview),
+            binding.adapters.previews.draft(preview),
+            summary.intent,
+            summary.preview.policy_hash,
+            self._epoch,
+            request_id=request_id,
+            previous_manifest_revision_id=previous,
+        )
+
+    def _stored_commit(self, binding: _Binding, authority: WorkflowJobAuthority) -> CommitJobInput:
+        try:
+            snapshot = json.loads(authority.snapshot_json)
+            prefix, preview, request = snapshot["configuration"]["configurationId"].split(".")
+            if prefix != "import-commit" or not is_uuid_v7(preview) or not is_uuid_v7(request):
+                raise ValueError
+            stored = binding.adapters.previews.commit_request(request)
+            if stored is None or stored.inputs.preview.preview_id != preview:
+                raise ValueError
+            inputs = stored.inputs
+            if snapshot["configuration"] != {
+                "configurationId": inputs.configuration_id,
+                "configurationVersion": inputs.configuration_version,
+                "configurationHash": inputs.configuration_hash,
+            }:
+                raise ValueError
+            return inputs
+        except ValueError, KeyError, TypeError:
+            raise PreviewProblem("preview-commit-request-authority-invalid") from None
+
+    def _current_commit(self, binding: _Binding, inputs: CommitJobInput) -> None:
+        if (
+            self._commit_inputs(
+                binding,
+                inputs.preview.preview_id,
+                inputs.draft_revision,
+                inputs.request_id,
+                inputs.previous_manifest_revision_id,
+                inputs.intent.revision_id,
+            )
+            != inputs
+        ):
+            raise PreviewProblem("preview-commit-authority-changed")
+
+    def _commit_job(self, binding: _Binding, inputs: CommitJobInput) -> WorkflowJobRecord | None:
+        queue = binding.adapters.queue
+        job = queue.find_idempotency(inputs.idempotency_key)
+        if job is not None:
+            job = queue.latest_continuation(job.job_id) or job
+            if self._stored_commit(binding, queue.authority(job.job_id)) != inputs:
+                raise PreviewProblem("preview-commit-job-authority-mismatch")
+        return job
+
+    def schedule_commit(
+        self,
+        root: str,
+        preview_id: str,
+        *,
+        revision: int,
+        request_id: str,
+        previous_manifest_revision_id: str | None = None,
+    ) -> WorkflowJobRecord:
+        def schedule(binding: _Binding) -> WorkflowJobRecord:
+            repository, queue = binding.adapters.previews, binding.adapters.queue
+            stored = repository.commit_request(request_id)
+            inputs = self._commit_inputs(
+                binding,
+                preview_id,
+                revision,
+                request_id,
+                previous_manifest_revision_id,
+                stored.inputs.intent.revision_id if stored else None,
+            )
+            repository.save_commit_request(inputs, actor=self.actor(request_id.replace("-", "")))
+            prior = self._commit_job(binding, inputs)
+            if prior is not None:
+                return prior
+            try:
+                return queue.enqueue(
+                    build_commit_job(inputs, actor=self._workflow_actor(), now=self._now()),
+                    actor=self._workflow_actor(),
+                )
+            except WorkflowQueueConflict:
+                # Another caller may have admitted this exact request after our
+                # absence check. Authenticate its durable authority before reuse.
+                winner = self._commit_job(binding, inputs)
+                if winner is None:
+                    raise
+                return winner
 
         result = self._action(root, schedule)
         self._wake.set()
@@ -408,21 +534,36 @@ class ImportPreviewService:
                         reason_code="import-preview-cancelled",
                         interruption_kind="user-cancel",
                     )
+            for commit in self._active_commits(binding):
+                inputs = self._stored_commit(binding, queue.authority(commit.job_id))
+                if inputs.preview.preview_id == preview_id:
+                    queue.request_cancellation(
+                        commit.job_id,
+                        actor=self._workflow_actor(),
+                        now=self._now(),
+                        reason_code="import-preview-cancelled",
+                        interruption_kind="user-cancel",
+                    )
 
         self._action(root, cancel)
 
     def _reconcile(self, binding: _Binding) -> None:
         queue = binding.adapters.queue
-        for activity in (ACTIVITY, SUMMARY_ACTIVITY):
+        for activity in (ACTIVITY, SUMMARY_ACTIVITY, COMMIT_ACTIVITY):
             after: str | None = None
             while page := self._guard(binding, partial(queue.active_jobs, activity_type=activity, after=after)):
                 for job in page:
 
                     def reconcile(job_id=job.job_id, kind=activity) -> None:
                         authority = queue.authority(job_id)
-                        epoch = (
-                            _configuration(authority)[1] if kind == ACTIVITY else _summary_configuration(authority)[2]
-                        )
+                        if kind == COMMIT_ACTIVITY:
+                            epoch = self._stored_commit(binding, authority).preview.resume_epoch
+                        else:
+                            epoch = (
+                                _configuration(authority)[1]
+                                if kind == ACTIVITY
+                                else _summary_configuration(authority)[2]
+                            )
                         if epoch != self._epoch:
                             queue.request_cancellation(
                                 job_id,
@@ -495,14 +636,42 @@ class ImportPreviewService:
                 trace_id=claim.job_id.replace("-", ""),
             )(context, claim)
 
+        def commit_handler(context, claim):
+            def authorize():
+                authority = adapters.queue.authority(claim.job_id)
+                inputs = self._stored_commit(binding, authority)
+                self._current_commit(binding, inputs)
+                continuation = json.loads(authority.snapshot_json).get("continuation")
+                predecessor = None
+                if continuation is not None:
+                    source = continuation["sourceJobId"]
+                    predecessor = adapters.queue.get(source), adapters.queue.authority(source)
+                return bind_commit_claim(authority, claim, inputs, predecessor=predecessor)
+
+            inputs = self._guard(binding, authorize)
+
+            def guarded(action):
+                def current():
+                    self._current_commit(binding, inputs)
+                    return action()
+
+                return self._guard(binding, current)
+
+            return ImportCommitActivity(
+                inputs=inputs,
+                repository=adapters.previews,
+                guard=guarded,
+                trace_id=claim.job_id.replace("-", ""),
+            )(context, claim)
+
         supervisor = LocalWorkerSupervisor(
             adapters.queue,
-            {ACTIVITY: handler, SUMMARY_ACTIVITY: summary_handler},
+            {ACTIVITY: handler, SUMMARY_ACTIVITY: summary_handler, COMMIT_ACTIVITY: commit_handler},
             concurrency_limits={"document": 1},
             now=self._now,
             recovery_actor=WorkflowActor(self._actor_id, "system", "workflow-coordinator"),
             admission=adapters.admission,
-            activity_types=(ACTIVITY, SUMMARY_ACTIVITY),
+            activity_types=(ACTIVITY, SUMMARY_ACTIVITY, COMMIT_ACTIVITY),
         )
         supervisor.run_available()
 
