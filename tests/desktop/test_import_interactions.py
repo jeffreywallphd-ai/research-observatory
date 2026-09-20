@@ -12,6 +12,7 @@ import hashlib
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from playwright.sync_api import sync_playwright
 
@@ -34,7 +35,10 @@ class ImportInteractionTests(unittest.TestCase):
     def test_real_review_mapping_group_correction_and_exclusion_in_both_themes(self):
         self.assertEqual([], product_build_errors(REPO))
         api = intake_api_fixture.ImportIntakeApiTests(methodName="runTest")
-        api.setUp()
+        # This scenario advances the real worker explicitly after observing the
+        # queued state. Do not race those assertions with the lifespan pump.
+        with patch("research_observatory_core.import_preview_service.ImportPreviewService.start"):
+            api.setUp()
         self.addCleanup(api.doCleanups)
         fixture = api.fixture
         fixture.service.detach(fixture.root)
