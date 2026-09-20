@@ -6,8 +6,9 @@ from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.commit_workflow import build_commit_job, commit_job_input
-from research_observatory_core.ingestion.import_drafts import MappedField
+from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights, MappedField
 from research_observatory_core.ports.import_previews import PreviewDraftChange, PreviewProblem
+from research_observatory_core.repositories import _revision_with_connection
 from research_observatory_core.storage import open_canonical_database
 
 from tests.data import test_import_commit_preparation as fixture
@@ -117,6 +118,52 @@ class ImportCommitPublicationTests(unittest.TestCase):
         first = self.publish()
         before = self.counts()
         self.assertEqual(first, self.publish())
+        self.assertEqual(before, self.counts())
+
+    def test_comparison_denies_current_predecessor_record_rights_revocation(self):
+        original = self.publish()
+        f = self.fixture
+        preview = f.inputs.preview.preview_id
+        item = f.repository.draft_page(preview, revision=1, after=0, limit=100)[-1]
+        f.repository.revise_draft(
+            preview,
+            PreviewDraftChange(
+                expected_revision=1,
+                actor=f.fixture.fixture.actor,
+                decisions=(
+                    item.decision.model_copy(
+                        update={
+                            "rights": ImportRights(
+                                store=ImportPermission(value="permitted", basis="researcher-confirmed"),
+                                inspect=ImportPermission(value="denied", basis="researcher-confirmed"),
+                            )
+                        }
+                    ),
+                ),
+            ),
+        )
+        with self.assertRaises(PreviewProblem):
+            f.repository.draft_page(preview, revision=1, after=0, limit=100)
+        self.prepare_another(b"title,doi\nChanged title,10.99999/EXAMPLE\n", previous=original.revision_id)
+        before = self.counts()
+        with self.assertRaises(PreviewProblem):
+            self.publish()
+        self.assertEqual(before, self.counts())
+
+    def test_generic_completed_receipt_is_not_an_import_manifest_replay(self):
+        f = self.fixture
+        f.append()
+        with open_canonical_database(f.database, expected_project_id=f.inputs.project_id) as db:
+            revision = db.execute(
+                "SELECT receipt_revision_id FROM import_parse_completions WHERE attempt_id=?",
+                (f.inputs.parse_attempt_id,),
+            ).fetchone()[0]
+            output = f.repository._output(_revision_with_connection(db, f.inputs.project_id, revision))
+        f.queue.stage_artifact(f.claim, artifact=output, role="output", now=f.actor.occurred_at)
+        f.queue.complete(f.claim, now=f.actor.occurred_at, outputs=(output,))
+        before = self.counts()
+        with self.assertRaises(PreviewProblem):
+            self.publish()
         self.assertEqual(before, self.counts())
 
     def test_forged_prepared_selection_cannot_override_actual_draft(self):

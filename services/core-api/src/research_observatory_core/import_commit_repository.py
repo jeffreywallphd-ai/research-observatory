@@ -255,6 +255,49 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 return label, str(candidates[0][0])
         return "added", None
 
+    def _manifest_access(self, connection: CanonicalConnection, revision: str) -> None:
+        binding = connection.execute(
+            "SELECT p.preview_id, p.draft_revision FROM import_manifests m "
+            "JOIN import_manifest_seals s ON s.project_id=m.project_id AND s.manifest_revision_id=m.revision_id "
+            "JOIN import_commit_preparations p ON p.project_id=m.project_id AND p.attempt_id=m.attempt_id "
+            "WHERE m.project_id=? AND m.revision_id=?",
+            (self._project, revision),
+        ).fetchone()
+        if binding is None:
+            raise PreviewProblem("preview-commit-manifest-authority-mismatch")
+        preview, historical_revision = binding
+        state = self._read(connection, preview)
+        self._active(state)
+        current = self._latest(connection, preview)
+        draft = self._draft(connection, state, current)
+        historical = self._draft(connection, state, historical_revision)
+        if draft.attempt_id != historical.attempt_id:
+            raise PreviewProblem("preview-commit-manifest-authority-mismatch")
+        after = 0
+        while True:
+            rows = connection.execute(
+                "SELECT ordinal, decision_json FROM import_manifest_members "
+                "WHERE project_id=? AND manifest_revision_id=? AND ordinal>? ORDER BY ordinal LIMIT 100",
+                (self._project, revision, after),
+            ).fetchall()
+            if not rows:
+                break
+            selected = self._page_decision_revisions(
+                connection, preview, current, current, tuple(row[0] for row in rows)
+            )
+            for ordinal, decision_json in rows:
+                old = RecordDecision.model_validate_json(decision_json)
+                current_decision = self._decision_at(
+                    connection, preview, selected.get(ordinal, (None, None))[0], ordinal
+                )[0]
+                for rights in (
+                    old.rights or historical.authority.rights,
+                    current_decision.rights if current_decision and current_decision.rights else draft.authority.rights,
+                ):
+                    if not rights.permits("store") or not rights.permits("inspect"):
+                        raise PreviewProblem("preview-commit-manifest-rights-denied")
+            after = rows[-1][0]
+
     def _members(
         self, connection: CanonicalConnection, inputs: CommitJobInput, claim: WorkflowJobClaim, manifest: str
     ) -> Iterator[tuple[Any, ...]]:
@@ -376,10 +419,14 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         actor: PreviewActor,
         now: Callable[[], str],
         poll: Callable[[], None] | None,
+        *,
+        running: bool = True,
     ) -> ImportIdentity:
         preview = inputs.preview.preview_id
         with self._transaction(preview) as connection:
-            draft = self._prepared(connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}))
+            draft = self._prepared(
+                connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}), running=running
+            )
 
         def decisions() -> Iterator[RecordDecision]:
             after = 0
@@ -390,7 +437,9 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 if not page:
                     raise PreviewProblem("preview-commit-incomplete")
                 with self._transaction(preview) as connection:
-                    self._prepared(connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}))
+                    self._prepared(
+                        connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}), running=running
+                    )
                     staged = connection.execute(
                         "SELECT ordinal, record_key, included, decision_json, warnings_json, raw_sha256, doi_key "
                         "FROM import_commit_rows WHERE project_id=? AND attempt_id=? AND ordinal>? AND ordinal<=? "
@@ -430,9 +479,8 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         poll: Callable[[], None] | None = None,
     ) -> WorkflowOutputReference:
         inputs = self._bind_commit(inputs, claim)
-        expected_identity = None
-        if self._queue.get(claim.job_id).state != "succeeded":
-            expected_identity = self._verified_identity(inputs, claim, actor, now, poll)
+        running = self._queue.get(claim.job_id).state != "succeeded"
+        expected_identity = self._verified_identity(inputs, claim, actor, now, poll, running=running)
         with self._transaction(inputs.preview.preview_id, write=True) as connection:
             actor = actor.model_copy(update={"occurred_at": now()})
             completed = connection.execute(
@@ -444,11 +492,23 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 outputs = json.loads(completed[0])["outputs"]
                 if len(outputs) != 1:
                     raise PreviewProblem("preview-commit-output-authority-mismatch")
+                manifest = connection.execute(
+                    "SELECT m.identity_sha256 FROM import_manifests m "
+                    "JOIN import_manifest_seals s ON s.project_id=m.project_id "
+                    "AND s.manifest_revision_id=m.revision_id "
+                    "WHERE m.project_id=? AND m.revision_id=?",
+                    (self._project, outputs[0]["revisionId"]),
+                ).fetchone()
+                if manifest is None or manifest[0] != expected_identity.sha256:
+                    raise PreviewProblem("preview-commit-manifest-authority-mismatch")
+                self._manifest_access(connection, outputs[0]["revisionId"])
                 saved = _revision_with_connection(connection, self._project, outputs[0]["revisionId"])
                 output = self._output(saved)
                 self._queue._complete_with_connection(connection, claim, now=actor.occurred_at, outputs=(output,))
                 return output
             draft = self._prepared(connection, inputs, claim, actor)
+            if inputs.previous_manifest_revision_id is not None:
+                self._manifest_access(connection, inputs.previous_manifest_revision_id)
             cursor = self._staged(connection, claim.attempt_id)
             try:
                 identity = import_identity(
@@ -472,6 +532,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
             token = _UNIT_OF_WORKS.register(connection, self._project)
             try:
                 if existing is not None:
+                    self._manifest_access(connection, existing[0])
                     manifest = _revision_with_connection(connection, self._project, existing[0])
                     if self._queue._output_manifest((self._output(manifest),)) != tuple(existing[1:]):
                         raise PreviewProblem("preview-commit-output-authority-mismatch")

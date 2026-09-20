@@ -71,6 +71,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.import_commit_repository",
                     "research_observatory_core.import_draft_repository",
                     "research_observatory_core.import_summary_repository",
+                    "research_observatory_core.ingestion.commit_activity",
                     "research_observatory_core.ingestion.commit_workflow",
                     "research_observatory_core.ingestion.import_commits",
                     "research_observatory_core.ingestion.import_summaries",
@@ -79,6 +80,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.ingestion.preview_workflow",
                     "research_observatory_core.ingestion.summary_activity",
                     "research_observatory_core.ingestion.summary_workflow",
+                    "research_observatory_core.ports.import_commits",
                     "research_observatory_core.ports.import_previews",
                     "research_observatory_core.object_store",
                     "research_observatory_core.ports.credential_store",
@@ -127,6 +129,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             "research_observatory_core.import_commit_repository",
             "research_observatory_core.import_draft_repository",
             "research_observatory_core.import_summary_repository",
+            "research_observatory_core.ingestion.commit_activity",
             "research_observatory_core.ingestion.commit_workflow",
             "research_observatory_core.ingestion.import_commits",
             "research_observatory_core.ingestion.import_summaries",
@@ -135,6 +138,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
             "research_observatory_core.ingestion.preview_workflow",
             "research_observatory_core.ingestion.summary_activity",
             "research_observatory_core.ingestion.summary_workflow",
+            "research_observatory_core.ports.import_commits",
             "research_observatory_core.ports.import_previews",
         ):
             self.assertIn(module, contract["requiredModules"])

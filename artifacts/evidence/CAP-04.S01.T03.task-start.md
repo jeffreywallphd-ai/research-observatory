@@ -33,3 +33,18 @@ current-rights recheck and exact predecessor fixture. These are included above.
 No mandatory new human gate identified. Full slice integration, reviewed 100k
 performance baseline and frozen supervised journey remain slice/W2 qualification;
 do not rerun unrelated completed W1 profiles.
+
+## First publication review — missed acceptance rows
+
+- Comparison reads an earlier manifest's historical decisions. Its current
+  default and per-record store/inspect authority must still permit that use,
+  including inside the final publication transaction. Add revoked-predecessor
+  regression; denial must leave canonical counts unchanged.
+- A generic accepted workflow output is not necessarily an import manifest.
+  Replay must authenticate a sealed manifest and its complete scientific input
+  identity, while permitting a valid reused manifest from an earlier request.
+  Add actual queue-completed parser-receipt substitution regression.
+
+Immediate root causes: the comparison path treated historical accepted metadata
+as sufficient authority; replay reused the generic queue receipt check without
+the import-specific semantic check. Preserve the first adverse disposition.
