@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Callable, Iterator
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -656,7 +657,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
             while after < inputs.record_count:
                 if poll is not None:
                     poll(False)
-                page, staged = guard(lambda after=after: page_and_staged(after))
+                page, staged = guard(partial(page_and_staged, after))
                 if len(staged) != len(page):
                     raise PreviewProblem("preview-commit-incomplete")
                 for item, row in zip(page, staged, strict=True):
