@@ -7,11 +7,10 @@ from collections.abc import Callable
 from functools import partial
 
 from ..ports.import_commits import ImportCommitRepository
-from ..ports.import_previews import PreviewActor, PreviewProblem
+from ..ports.import_previews import ImportActionGuard, PreviewActor, PreviewProblem
 from ..ports.workflow_executor import WorkflowJobClaim
 from ..workflow_executor import WorkflowActivityContext, WorkflowActivityError, WorkflowAtomicCompletion
 from .commit_workflow import CommitJobInput
-from .preview_activity import ImportActionGuard
 
 
 class ImportCommitActivity:
@@ -34,11 +33,11 @@ class ImportCommitActivity:
 
         last_heartbeat = self._clock()
 
-        def poll() -> None:
+        def poll(force_heartbeat: bool = False) -> None:
             nonlocal last_heartbeat
             self._guard(context.cancellation_safe_point)
             current = self._clock()
-            if current - last_heartbeat >= min(5.0, context.lease_duration_ms / 3000):
+            if force_heartbeat or current - last_heartbeat >= min(5.0, context.lease_duration_ms / 3000):
                 self._guard(
                     lambda: context.heartbeat(
                         {"kind": "unknown", "unit": "records", "completedUnits": None, "totalUnits": None}
@@ -62,10 +61,8 @@ class ImportCommitActivity:
                     raise PreviewProblem("preview-commit-incomplete")
                 after = next_after
             poll()
-            output = self._guard(
-                lambda: self._repository.publish_commit(
-                    inputs, claim=context.claim, actor=actor(), now=context.now, poll=poll
-                )
+            output = self._repository.publish_commit(
+                inputs, claim=context.claim, actor=actor(), now=context.now, poll=poll, guard=self._guard
             )
             return WorkflowAtomicCompletion((output,))
         except PreviewProblem as error:

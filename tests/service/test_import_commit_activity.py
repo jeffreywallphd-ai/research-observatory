@@ -5,6 +5,8 @@ from itertools import count
 from unittest.mock import patch
 
 from research_observatory_core.ingestion.commit_activity import ImportCommitActivity
+from research_observatory_core.ports.import_previews import PreviewProblem
+from research_observatory_core.storage import open_canonical_database
 from research_observatory_core.workflow_executor import (
     WorkflowActivityContext,
     WorkflowActivityError,
@@ -74,3 +76,88 @@ class ImportCommitActivityTests(unittest.TestCase):
         self.assertGreater(heartbeat.call_count, 0)
         self.assertEqual(1, len(result.outputs))
         self.assertEqual("succeeded", self.fixture.queue.get(self.fixture.job.job_id).state)
+
+    def test_verification_releases_outer_guard_but_pages_and_atomic_writer_are_guarded(self):
+        depth = 0
+        f = self.fixture
+
+        def guard(action):
+            nonlocal depth
+            depth += 1
+            try:
+                return action()
+            finally:
+                depth -= 1
+
+        verified = f.repository._verified_identity
+        page = f.repository.draft_page
+
+        def verify(*args, **kwargs):
+            self.assertEqual(0, depth, "full verification must not hold the lifecycle lock")
+            return verified(*args, **kwargs)
+
+        def guarded_page(*args, **kwargs):
+            self.assertEqual(1, depth)
+            return page(*args, **kwargs)
+
+        def writer_step(_step):
+            self.assertEqual(1, depth)
+
+        activity = ImportCommitActivity(inputs=f.inputs, repository=f.repository, guard=guard, trace_id="4" * 32)
+        with (
+            patch.object(f.repository, "_verified_identity", side_effect=verify),
+            patch.object(f.repository, "draft_page", side_effect=guarded_page),
+            patch("research_observatory_core.import_commit_repository._publication_step_completed", writer_step),
+            patch.object(f.queue, "heartbeat", wraps=f.queue.heartbeat) as heartbeat,
+        ):
+            activity(self.context, f.claim)
+        self.assertGreater(heartbeat.call_count, 0, "fresh lease required immediately before writer")
+
+    def test_authority_loss_after_verification_denies_publication_without_canonical_facts(self):
+        f = self.fixture
+        allowed = True
+        verified = f.repository._verified_identity
+
+        def guard(action):
+            if not allowed:
+                raise PreviewProblem("preview-authority-changed")
+            return action()
+
+        def verify(*args, **kwargs):
+            nonlocal allowed
+            result = verified(*args, **kwargs)
+            allowed = False
+            return result
+
+        activity = ImportCommitActivity(inputs=f.inputs, repository=f.repository, guard=guard, trace_id="4" * 32)
+        with (
+            patch.object(f.repository, "_verified_identity", side_effect=verify),
+            self.assertRaisesRegex(WorkflowActivityError, "stale-authority"),
+        ):
+            activity(self.context, f.claim)
+        with open_canonical_database(f.database, expected_project_id=f.inputs.project_id) as db:
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM import_source_records").fetchone()[0])
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM import_manifests").fetchone()[0])
+
+    def test_cancellation_after_verification_stops_before_writer(self):
+        f = self.fixture
+        verified = f.repository._verified_identity
+
+        def verify(*args, **kwargs):
+            result = verified(*args, **kwargs)
+            f.queue.request_cancellation(
+                f.job.job_id,
+                actor=f.fixture.actor,
+                now=self.context.now(),
+                reason_code="synthetic-cancel",
+                interruption_kind="user-cancel",
+            )
+            return result
+
+        with (
+            patch.object(f.repository, "_verified_identity", side_effect=verify),
+            patch.object(f.repository, "_publish_verified") as writer,
+            self.assertRaises(WorkflowCancellationRequested),
+        ):
+            self.activity(self.context, f.claim)
+        writer.assert_not_called()

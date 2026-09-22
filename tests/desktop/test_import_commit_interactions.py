@@ -18,6 +18,7 @@ from desktop_app_check import (  # noqa: E402
     inline_product_index,
     product_build_errors,
 )
+from research_observatory_core.storage import open_canonical_database  # noqa: E402
 
 from tests.service import test_import_review_api as api_fixture  # noqa: E402
 
@@ -143,5 +144,16 @@ class ImportCommitInteractionTests(unittest.TestCase):
                 if theme == "light":
                     page.locator("[data-theme-toggle]").click()
             self.assertEqual(2, calls.count("/projects/imports/commit/start"))
+            page.get_by_role("button", name="Cancel this preview…", exact=True).click()
+            page.get_by_role("button", name="Confirm cancellation", exact=True).click()
+            page.locator("[data-live-region]").get_by_text(
+                "Preview cancelled. Retained source, audit and any previously committed records remain unchanged.",
+                exact=True,
+            ).wait_for()
+            with open_canonical_database(
+                Path(f.root) / "state/project.sqlite3", expected_project_id=f.project_id
+            ) as db:
+                self.assertEqual(1, db.execute("SELECT COUNT(*) FROM import_source_records").fetchone()[0])
+                self.assertEqual(1, db.execute("SELECT COUNT(*) FROM import_manifests").fetchone()[0])
             page.wait_for_function("!document.querySelector('[aria-busy=\"true\"]')")
             page.goto("about:blank")

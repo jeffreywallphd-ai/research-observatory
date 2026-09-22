@@ -233,9 +233,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="82764be93629a9de2276cf0905290df2788d2297a102bd7a0d294edb95c59aea">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="7a125f21acc7062109075918667a81d71523fba21f75b5a5b5a48ae52b60578b">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>82764be93629a9de2276cf0905290df2788d2297a102bd7a0d294edb95c59aea</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>7a125f21acc7062109075918667a81d71523fba21f75b5a5b5a48ae52b60578b</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T03 — idempotent import commits and manifests
 
 Claim base: `b55c1285b33d17fca7b8ef37ed8ce16d1c83610a`.
@@ -285,7 +285,25 @@ do not rerun unrelated completed W1 profiles.
 
 Immediate root causes: the comparison path treated historical accepted metadata
 as sufficient authority; replay reused the generic queue receipt check without
-the import-specific semantic check. Preserve the first adverse disposition.</pre></article>
+the import-specific semantic check. Preserve the first adverse disposition.
+
+## Transport review — durable discovery ordering
+
+Latest request/manifest means most recently retained/accepted, not greatest UUID.
+UUIDv7 random suffixes and clock movement do not establish insertion order.
+Challenge discovery with valid descending IDs and reopen; retain exact older
+requests/manifests. Use internal append-only insertion order, never caller time.
+The missed assumption was treating time-shaped identity as an acceptance sequence.
+
+## Renderer review — cancellation after accepted publication
+
+Preview cancellation can follow an accepted commit. Announcements must preserve
+that distinction: cancellation retains canonical records and does not prove
+publication never happened. Extend the actual built-renderer journey through
+post-commit cancellation. Root cause: intake-only wording survived when commit
+was added; the initial journey covered commit/replay but not this state crossing.
+Review every remaining unconditional &quot;no import&quot; statement at the changed UI
+boundary; keep broader optional UX improvements outside this correction.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

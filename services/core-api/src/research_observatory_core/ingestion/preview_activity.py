@@ -11,10 +11,15 @@ import hashlib
 import time
 from collections.abc import Callable
 from dataclasses import asdict
-from typing import Protocol
 
 from ..domain_contracts import new_uuid_v7
-from ..ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewProblem, PreviewState
+from ..ports.import_previews import (
+    ImportActionGuard,
+    ImportPreviewRepository,
+    PreviewActor,
+    PreviewProblem,
+    PreviewState,
+)
 from ..ports.object_store import ObjectStore
 from ..ports.repositories import AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency, UnitOfWorkFactory
 from ..ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference
@@ -24,12 +29,6 @@ from .preview_records import StoredImportRecord
 from .preview_workflow import fingerprint
 from .reference_imports import PARSER_VERSION, ImportProblem, ImportRecord, ImportSession, ImportSource
 from .source_chunks import ChunkedImportSource
-
-
-class ImportActionGuard(Protocol):
-    """Retain current project and launch authority for one bounded operation."""
-
-    def __call__[Result](self, action: Callable[[], Result]) -> Result: ...
 
 
 class _GuardedSource:

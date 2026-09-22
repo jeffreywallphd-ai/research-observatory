@@ -15,7 +15,7 @@ from ..ingestion.import_drafts import (
     RecordDecision,
     Revision,
 )
-from .import_previews import ImportPreviewRepository, PreviewActor
+from .import_previews import ImportActionGuard, ImportPreviewRepository, PreviewActor
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
 
 
@@ -107,7 +107,8 @@ class ImportCommitRepository(Protocol):
         claim: WorkflowJobClaim,
         actor: PreviewActor,
         now: Callable[[], str],
-        poll: Callable[[], None] | None = None,
+        poll: Callable[[bool], None] | None = None,
+        guard: ImportActionGuard | None = None,
     ) -> WorkflowOutputReference: ...
 
 

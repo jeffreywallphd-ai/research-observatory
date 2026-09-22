@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Callable, Iterator
+from pathlib import Path
 from typing import Any
 
 from .domain_contracts import is_uuid_v7, new_uuid_v7
@@ -20,7 +21,7 @@ from .ingestion.import_drafts import ImportRights, RecordDecision
 from .ingestion.import_summaries import summarize_record
 from .ingestion.preview_workflow import fingerprint
 from .ports.import_commits import ImportCommitRequest, ImportManifest, ImportManifestMember
-from .ports.import_previews import PreviewActor, PreviewDraft, PreviewProblem
+from .ports.import_previews import ImportActionGuard, PreviewActor, PreviewDraft, PreviewProblem
 from .ports.repositories import (
     AggregateKind,
     AggregateRevision,
@@ -42,7 +43,15 @@ def _publication_step_completed(_step: str) -> None:
     """Private failpoint for atomic publication rollback tests."""
 
 
+def _run_action[Result](action: Callable[[], Result]) -> Result:
+    return action()
+
+
 class SqliteImportCommitRepository(SqliteImportSummaryRepository):
+    def __init__(self, database: Path, project_id: str):
+        super().__init__(database, project_id)
+        self._manifest_access_key: tuple[str, str, int, int, str] | None = None
+
     def _request(self, connection: CanonicalConnection, request_id: str) -> ImportCommitRequest | None:
         if not is_uuid_v7(request_id):
             raise PreviewProblem("preview-commit-request-identity-invalid")
@@ -150,7 +159,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         if not is_uuid_v7(revision_id):
             raise PreviewProblem("preview-commit-manifest-identity-invalid")
         with self._transaction(None) as connection:
-            self._manifest_access(connection, revision_id)
+            self._manifest_access(connection, revision_id, reuse=True)
             row = connection.execute(
                 "SELECT m.aggregate_id,m.preview_id,p.draft_revision,m.source_sha256,m.identity_sha256,"
                 "m.draft_sha256,p.previous_manifest_revision_id,m.record_count,m.selected_count,"
@@ -188,7 +197,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         if type(limit) is not int or not 1 <= limit <= 100:
             raise PreviewProblem("preview-commit-manifest-page-limit")
         with self._transaction(None) as connection:
-            self._manifest_access(connection, revision_id)
+            self._manifest_access(connection, revision_id, reuse=True)
             rows = connection.execute(
                 "SELECT ordinal,record_key,source_record_revision_id,decision_json,warnings_json,"
                 "comparison,previous_record_revision_id FROM import_manifest_members "
@@ -432,9 +441,9 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 return label, str(candidates[0][0])
         return "added", None
 
-    def _manifest_access(self, connection: CanonicalConnection, revision: str) -> None:
+    def _manifest_access(self, connection: CanonicalConnection, revision: str, *, reuse: bool = False) -> None:
         binding = connection.execute(
-            "SELECT p.preview_id, p.draft_revision, o.output_manifest_json, o.output_record_sha256 "
+            "SELECT p.preview_id, p.draft_revision, o.output_manifest_json, o.output_record_sha256, s.members_sha256 "
             "FROM import_manifests m "
             "JOIN import_manifest_seals s ON s.project_id=m.project_id AND s.manifest_revision_id=m.revision_id "
             "JOIN import_commit_preparations p ON p.project_id=m.project_id AND p.attempt_id=m.attempt_id "
@@ -447,7 +456,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
             raise PreviewProblem("preview-commit-manifest-authority-mismatch")
         preview, historical_revision = binding[:2]
         output = self._output(_revision_with_connection(connection, self._project, revision))
-        if self._queue._output_manifest((output,)) != tuple(binding[2:]):
+        if self._queue._output_manifest((output,)) != tuple(binding[2:4]):
             raise PreviewProblem("preview-commit-output-authority-mismatch")
         state = self._read(connection, preview)
         self._active(state)
@@ -456,6 +465,12 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         historical = self._draft(connection, state, historical_revision)
         if draft.attempt_id != historical.attempt_id:
             raise PreviewProblem("preview-commit-manifest-authority-mismatch")
+        # Only the complete positive rights scan is reusable. Binding, accepted
+        # output, active preview and immutable draft head are checked on every
+        # read in its transaction. Writer/replay paths always scan afresh.
+        key = (revision, binding[4], historical_revision, current, draft.attempt_id)
+        if reuse and self._manifest_access_key == key:
+            return
         after = 0
         while True:
             rows = connection.execute(
@@ -482,6 +497,8 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                     if not rights.permits("store") or not rights.permits("inspect"):
                         raise PreviewProblem("preview-commit-manifest-rights-denied")
             after = rows[-1][0]
+        if reuse:
+            self._manifest_access_key = key
 
     def _members(
         self, connection: CanonicalConnection, inputs: CommitJobInput, claim: WorkflowJobClaim, manifest: str
@@ -603,34 +620,43 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         claim: WorkflowJobClaim,
         actor: PreviewActor,
         now: Callable[[], str],
-        poll: Callable[[], None] | None,
+        poll: Callable[[bool], None] | None,
+        guard: ImportActionGuard,
         *,
         running: bool = True,
     ) -> ImportIdentity:
         preview = inputs.preview.preview_id
-        with self._transaction(preview) as connection:
-            draft = self._prepared(
-                connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}), running=running
-            )
+
+        def prepared():
+            with self._transaction(preview) as connection:
+                return self._prepared(
+                    connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}), running=running
+                )
+
+        draft = guard(prepared)
+
+        def page_and_staged(after: int):
+            page = self.draft_page(preview, revision=inputs.draft_revision, after=after, limit=100)
+            if not page:
+                raise PreviewProblem("preview-commit-incomplete")
+            with self._transaction(preview) as connection:
+                self._prepared(
+                    connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}), running=running
+                )
+                staged = connection.execute(
+                    "SELECT ordinal, record_key, included, decision_json, warnings_json, raw_sha256, doi_key "
+                    "FROM import_commit_rows WHERE project_id=? AND attempt_id=? AND ordinal>? AND ordinal<=? "
+                    "ORDER BY ordinal",
+                    (self._project, claim.attempt_id, after, page[-1].record.ordinal),
+                ).fetchall()
+            return page, staged
 
         def decisions() -> Iterator[RecordDecision]:
             after = 0
             while after < inputs.record_count:
                 if poll is not None:
-                    poll()
-                page = self.draft_page(preview, revision=inputs.draft_revision, after=after, limit=100)
-                if not page:
-                    raise PreviewProblem("preview-commit-incomplete")
-                with self._transaction(preview) as connection:
-                    self._prepared(
-                        connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}), running=running
-                    )
-                    staged = connection.execute(
-                        "SELECT ordinal, record_key, included, decision_json, warnings_json, raw_sha256, doi_key "
-                        "FROM import_commit_rows WHERE project_id=? AND attempt_id=? AND ordinal>? AND ordinal<=? "
-                        "ORDER BY ordinal",
-                        (self._project, claim.attempt_id, after, page[-1].record.ordinal),
-                    ).fetchall()
+                    poll(False)
+                page, staged = guard(lambda after=after: page_and_staged(after))
                 if len(staged) != len(page):
                     raise PreviewProblem("preview-commit-incomplete")
                 for item, row in zip(page, staged, strict=True):
@@ -661,11 +687,25 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         claim: WorkflowJobClaim,
         actor: PreviewActor,
         now: Callable[[], str],
-        poll: Callable[[], None] | None = None,
+        poll: Callable[[bool], None] | None = None,
+        guard: ImportActionGuard | None = None,
     ) -> WorkflowOutputReference:
-        inputs = self._bind_commit(inputs, claim)
-        running = self._queue.get(claim.job_id).state != "succeeded"
-        expected_identity = self._verified_identity(inputs, claim, actor, now, poll, running=running)
+        guarded = guard or _run_action
+        inputs = guarded(lambda: self._bind_commit(inputs, claim))
+        running = guarded(lambda: self._queue.get(claim.job_id).state != "succeeded")
+        expected_identity = self._verified_identity(inputs, claim, actor, now, poll, guarded, running=running)
+        if poll is not None:
+            poll(True)
+        return guarded(lambda: self._publish_verified(inputs, claim, actor, now, expected_identity))
+
+    def _publish_verified(
+        self,
+        inputs: CommitJobInput,
+        claim: WorkflowJobClaim,
+        actor: PreviewActor,
+        now: Callable[[], str],
+        expected_identity: ImportIdentity,
+    ) -> WorkflowOutputReference:
         with self._transaction(inputs.preview.preview_id, write=True) as connection:
             actor = actor.model_copy(update={"occurred_at": now()})
             completed = connection.execute(

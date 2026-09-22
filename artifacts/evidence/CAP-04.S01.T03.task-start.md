@@ -56,3 +56,13 @@ UUIDv7 random suffixes and clock movement do not establish insertion order.
 Challenge discovery with valid descending IDs and reopen; retain exact older
 requests/manifests. Use internal append-only insertion order, never caller time.
 The missed assumption was treating time-shaped identity as an acceptance sequence.
+
+## Renderer review — cancellation after accepted publication
+
+Preview cancellation can follow an accepted commit. Announcements must preserve
+that distinction: cancellation retains canonical records and does not prove
+publication never happened. Extend the actual built-renderer journey through
+post-commit cancellation. Root cause: intake-only wording survived when commit
+was added; the initial journey covered commit/replay but not this state crossing.
+Review every remaining unconditional "no import" statement at the changed UI
+boundary; keep broader optional UX improvements outside this correction.

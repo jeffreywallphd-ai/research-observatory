@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Annotated, Literal, Protocol, Self
 
@@ -25,6 +25,12 @@ from ..ingestion.import_summaries import SummaryResult, SummaryRow
 from ..ingestion.reference_imports import ImportRecord, ImportSession, ImportSource
 from ..ingestion.source_chunks import SourceChunk
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
+
+
+class ImportActionGuard(Protocol):
+    """Retain current project and launch authority for one bounded operation."""
+
+    def __call__[Result](self, action: Callable[[], Result]) -> Result: ...
 
 
 class PreviewProblem(RuntimeError):

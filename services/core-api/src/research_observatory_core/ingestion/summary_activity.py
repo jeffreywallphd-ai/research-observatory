@@ -7,12 +7,11 @@ from collections.abc import Callable
 from functools import partial
 
 from ..domain_contracts import new_uuid_v7
-from ..ports.import_previews import ImportPreviewRepository, PreviewActor, PreviewProblem
+from ..ports.import_previews import ImportActionGuard, ImportPreviewRepository, PreviewActor, PreviewProblem
 from ..ports.repositories import AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency, UnitOfWorkFactory
 from ..ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference
 from ..workflow_executor import WorkflowActivityContext, WorkflowActivityError
 from .import_summaries import SummaryResult, summary_receipt_fingerprint
-from .preview_activity import ImportActionGuard
 from .summary_workflow import SummaryJobInput
 
 
