@@ -259,6 +259,14 @@ class ImportPerformanceControlTests(unittest.TestCase):
                 self.assertNotEqual(first["sha256"], second["sha256"])
                 self.assertEqual(first["rootBindingSha256"], second["rootBindingSha256"])
 
+    def test_selected_inventory_covers_executed_core_and_schemas_not_frontend_generators(self):
+        names = set(str(check.git(check.REPO, "ls-files", "--", *check.INPUTS)).splitlines())
+        self.assertIn("services/core-api/src/research_observatory_core/storage.py", names)
+        self.assertIn("packages/contracts/core-api/openapi.json", names)
+        self.assertIn("tests/service/test_import_review_scale_windows.py", names)
+        self.assertNotIn("packages/contracts/core-api/generated.test.ts", names)
+        self.assertNotIn("packages/contracts/domain/generate.mjs", names)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -47,7 +47,7 @@ CASES = {
 }
 INPUTS = (
     "services/core-api/src",
-    "packages/contracts",
+    ":(glob)packages/contracts/**/*.json",
     "pyproject.toml",
     "uv.lock",
     str(BASELINE),

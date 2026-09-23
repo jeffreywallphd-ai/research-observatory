@@ -67,3 +67,15 @@ digest without logging its path, and locks/hashes the actual installed bytes.
 Child launches use the resolved Python executable. Links below the actual root
 remain rejected; changed root/bytes still fail final equality. A focused synthetic
 installed-file fingerprint control covers root binding and byte changes.
+
+The reviewer approved that correction at
+`79c4d86751361ad5f13307079314bb86ddef8f75`; eleven controls passed in 0.992s.
+Its prerequisite check then rejected raw-byte equality for a nonexecuted generated
+TypeScript test, because the existing checkout uses Git's CRLF conversion for
+those frontend/generator files. No workload started. The selected input list is
+now narrowed to executed Core source, JSON contracts/fixtures, exact workload and
+measurement helpers, baseline and environment locks. TypeScript tests/generator
+templates are not executed by these Python workloads; no checkout setting or
+file was rewritten, and committed/raw equality remains strict for every selected
+input. Existing diagnostics still retain their broader before/after inventory.
+A focused inventory test verifies Core/schema inclusion and frontend exclusion.
