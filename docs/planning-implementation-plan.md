@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d420fc867c28588ceb4392658ee2f86ebc8a0e895d0b5ea94cc1c04188deb99f
+source_sha256: 0625b35fc5143fc75a9d0d4407687eb5aae63f2a2a6a06745ea8db654fbd6f7f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -7868,15 +7868,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-04.S01.T03 - Implement idempotent import commits and import manifests
+#### - [x] CAP-04.S01.T03 - Implement idempotent import commits and import manifests
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S01.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / w2_commit_increment_review (`approved`)
 
 **Objective:** Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting canonical IDs.
 
@@ -7895,13 +7895,51 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-04.S01.T03.json` at `42efdbd9a179dfabe3343474adeaabcd4acad204`
+
 ##### Review history — CAP-04.S01.T03
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current latest-review projection:** `-` by - at `-`
+###### Round R01
 
-**Latest notes:** -
+**Immutable submission packet:** `R01` / packet SHA-256 `034e29483754705751b8c9d14df61ce8f3396d59df14789103b53babcd3048e4`
+
+- Candidate / base / branch: `42efdbd9a179dfabe3343474adeaabcd4acad204` / `b55c1285b33d17fca7b8ef37ed8ce16d1c83610a` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-23T01:08:28+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S01.T03.json` / `1e65135bb6951efc3b2ebee43231b196da97575c6fb9271f868132c683a64748` / `42efdbd9a179dfabe3343474adeaabcd4acad204`
+- Acceptance-criteria SHA-256: `fe917b4a62e8911a8945521ecf9282a0f3ee20bd4e45db9a30c42ac914608921`
+- Verification-selection SHA-256: `a231166342b42298ef73ebe7ef0e919d0fc60370691e243042b1387464c778ef`
+- Changed paths: `apps/desktop/src-tauri/src/supervisor.rs`, `apps/desktop/src/app/ImportCommitPane.tsx`, `apps/desktop/src/app/ImportReviewPane.tsx`, `apps/desktop/src/app/ImportSummaryPane.tsx`, `artifacts/evidence/CAP-04.S01.T03.groundwork-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.groundwork-01.md`, `artifacts/evidence/CAP-04.S01.T03.journey-closure-01.md`, `artifacts/evidence/CAP-04.S01.T03.migration-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.migration-01.md`, `artifacts/evidence/CAP-04.S01.T03.migration-02-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.migration-02.md`, `artifacts/evidence/CAP-04.S01.T03.native-01.md`, `artifacts/evidence/CAP-04.S01.T03.preparation-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.preparation-01.md`, `artifacts/evidence/CAP-04.S01.T03.preparation-02.md`, `artifacts/evidence/CAP-04.S01.T03.publication-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.publication-01.md`, `artifacts/evidence/CAP-04.S01.T03.publication-02-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.publication-02.md`, `artifacts/evidence/CAP-04.S01.T03.publication-03.md`, `artifacts/evidence/CAP-04.S01.T03.publication-control-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.publication-control-01.md`, `artifacts/evidence/CAP-04.S01.T03.responsiveness-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.responsiveness-01.md`, `artifacts/evidence/CAP-04.S01.T03.scale-01.md`, `artifacts/evidence/CAP-04.S01.T03.scale-02.md`, `artifacts/evidence/CAP-04.S01.T03.service-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.service-01.md`, `artifacts/evidence/CAP-04.S01.T03.service-02.md`, `artifacts/evidence/CAP-04.S01.T03.task-start.md`, `artifacts/evidence/CAP-04.S01.T03.transport-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.transport-01.md`, `artifacts/evidence/CAP-04.S01.T03.transport-02-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.transport-02.md`, `artifacts/evidence/CAP-04.S01.T03.worker-completion-01-disposition.md`, `artifacts/evidence/CAP-04.S01.T03.worker-completion-01.md`, `docs/architecture/local-sqlite-storage.md`, `docs/architecture/reference-imports.md`, `docs/architecture/workflow-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/import-commit.test.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S01.T03.html`, `planning/review-site/CAP-04/CAP-04.S01.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/packaging/sidecar-build.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/import_api.py`, `services/core-api/src/research_observatory_core/import_commit_repository.py`, `services/core-api/src/research_observatory_core/import_draft_repository.py`, `services/core-api/src/research_observatory_core/import_preview_repository.py`, `services/core-api/src/research_observatory_core/import_preview_service.py`, `services/core-api/src/research_observatory_core/import_review.py`, `services/core-api/src/research_observatory_core/ingestion/commit_activity.py`, `services/core-api/src/research_observatory_core/ingestion/commit_workflow.py`, `services/core-api/src/research_observatory_core/ingestion/import_commits.py`, `services/core-api/src/research_observatory_core/ingestion/preview_activity.py`, `services/core-api/src/research_observatory_core/ingestion/summary_activity.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0013_import_commits.py`, `services/core-api/src/research_observatory_core/ports/import_commits.py`, `services/core-api/src/research_observatory_core/ports/import_previews.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `services/core-api/src/research_observatory_core/workflow_executor.py`, `tests/data/test_import_commit_hot_path.py`, `tests/data/test_import_commit_migration.py`, `tests/data/test_import_commit_preparation.py`, `tests/data/test_import_commit_publication.py`, `tests/data/test_import_commit_storage.py`, `tests/data/test_import_manifest_access.py`, `tests/data/test_import_preview_migration.py`, `tests/data/test_import_summary_migration.py`, `tests/data/test_sqlite_migrations.py`, `tests/desktop/test_import_commit_interactions.py`, `tests/fixtures/imports/schema-v12-authority.json`, `tests/foundation/test_architecture_check.py`, `tests/packaging/test_core_sidecar_package.py`, `tests/service/test_import_commit_activity.py`, `tests/service/test_import_commit_api.py`, `tests/service/test_import_commit_identity.py`, `tests/service/test_import_commit_interruptions.py`, `tests/service/test_import_commit_process_windows.py`, `tests/service/test_import_commit_scale_windows.py`, `tests/service/test_import_commit_service.py`, `tests/service/test_import_commit_workflow.py`, `tests/workflows/test_local_workflow_executor.py`, `tools/architecture_check.py`, `tools/core_api_contract.py`, `tools/core_sidecar_build.py`
+- Selected checks: `python -m unittest tests.data.test_import_commit_hot_path.ImportCommitHotPathTests tests.data.test_import_commit_publication.ImportCommitPublicationTests tests.service.test_import_commit_activity.ImportCommitActivityTests tests.service.test_import_commit_service.ImportCommitServiceTests tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests tests.service.test_import_commit_scale_windows.ImportCommitDiagnosticReportingTests tests.data.test_sqlite_repositories.SqliteRepositoryTests -v`, `RO_RUN_IMPORT_COMMIT_SCALE=1 RO_IMPORT_COMMIT_RECORDS=100000 python -m unittest tests.service.test_import_commit_scale_windows.ImportCommitScaleWindowsTests -v`, `python -m unittest tests.desktop.test_import_commit_interactions tests.service.test_import_commit_process_windows -v`, `pnpm --filter @research-observatory/desktop run lint; pnpm --filter @research-observatory/desktop run typecheck; ruff check and format --check on five registered T03 test files; quality_check.load_scope`, `python tools/build_manifest.py --output artifacts/tmp/CAP-04.S01.T03.final-build-manifest.json; python tools/backlog_views.py --repo . --check`
+- Deferred checks: `Reviewed 100k performance baseline, repetitions/distribution, minimum hardware and regression threshold remain CAP-04.S01 slice qualification. Current timings are diagnostic only, with little headroom under the worker observation cap.`, `Ordinary status reads still wait behind atomic publication's lifecycle mutex. The cancellation escape is restored; ordinary-read latency is not claimed fixed or qualified.`, `Full frozen supervised native import/summary/report/commit/restart journey, abrupt-kill/stale-lock recovery, broader accessibility/security/privacy/rights/platform and packaging matrices remain CAP-04.S01 integration/checkpoint/W2 qualification.`, `Fresh full repository/affected profiles, cross-capability integration, independent slice/Wave reviews and the separate G2 human gate remain required. No Work/Version reconciliation or W2 completion is claimed.`
+- Selection rationale: High-risk import commit crosses protected persistence, immutable scientific identity/current rights, migration, durable worker, public/native/client contracts and renderer cancellation/recovery. Retained independent exact-commit increments establish these boundaries without rerunning completed unrelated profiles. Final increment changes only renderer pending-state/semantically equivalent cancellation prose, isolated regressions and evidence/quality inventory; fresh exact-final-candidate renderer/Core/process and affected quality/build checks cover that delta. The actual protected100k observation binds unchanged Core input closure at its explicit ancestral candidate, not a fresh final-candidate or cached benchmark claim.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / w2_commit_increment_review / `2026-09-23T01:12:55+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S01.T03.review-R01.json` / `3c8ca801656b628e59a053b1ef50ed59b9d75f93df1446eb406e8fef19d1d93f`
+
+**Review notes:** Independent whole-task disposition approves the frozen R01 candidate for CAP-04.S01.T03's idempotent canonical source-record/import-manifest criteria. The review authenticates the retained checkpoint lineage and adverse closures, reviews the final cancellation and real-process-restart increment, and authenticates the criterion manifest, frozen packet and named runtime reports. No reproducible material task-level blocker remains. This is task approval only, not Work/Version reconciliation, a reviewed performance baseline, integrated slice/Wave qualification, packaging qualification or release approval.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by w2_commit_increment_review at `2026-09-23T01:12:55+00:00`
+
+**Latest notes:** Independent whole-task disposition approves the frozen R01 candidate for CAP-04.S01.T03's idempotent canonical source-record/import-manifest criteria. The review authenticates the retained checkpoint lineage and adverse closures, reviews the final cancellation and real-process-restart increment, and authenticates the criterion manifest, frozen packet and named runtime reports. No reproducible material task-level blocker remains. This is task approval only, not Work/Version reconciliation, a reviewed performance baseline, integrated slice/Wave qualification, packaging qualification or release approval.
+
+**Currently open findings:** -
 
 ### SLICE-open-scholarly-source-adapters (`CAP-04.S02`) - Open scholarly source adapters
 

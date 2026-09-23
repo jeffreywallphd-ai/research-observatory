@@ -1,0 +1,242 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S01.T03",
+  "baseCommit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a",
+  "branch": "codex/w2-implementation",
+  "commit": "42efdbd9a179dfabe3343474adeaabcd4acad204",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/ImportCommitPane.tsx",
+    "apps/desktop/src/app/ImportReviewPane.tsx",
+    "apps/desktop/src/app/ImportSummaryPane.tsx",
+    "artifacts/evidence/CAP-04.S01.T03.groundwork-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.groundwork-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.journey-closure-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.migration-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.migration-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.migration-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.migration-02.md",
+    "artifacts/evidence/CAP-04.S01.T03.native-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.preparation-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.preparation-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.preparation-02.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-02.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-03.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-control-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-control-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.responsiveness-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.responsiveness-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.scale-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.scale-02.md",
+    "artifacts/evidence/CAP-04.S01.T03.service-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.service-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.service-02.md",
+    "artifacts/evidence/CAP-04.S01.T03.task-start.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-02.md",
+    "artifacts/evidence/CAP-04.S01.T03.worker-completion-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.worker-completion-01.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/architecture/reference-imports.md",
+    "docs/architecture/workflow-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/import-commit.test.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S01.T03.html",
+    "planning/review-site/CAP-04/CAP-04.S01.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/import_api.py",
+    "services/core-api/src/research_observatory_core/import_commit_repository.py",
+    "services/core-api/src/research_observatory_core/import_draft_repository.py",
+    "services/core-api/src/research_observatory_core/import_preview_repository.py",
+    "services/core-api/src/research_observatory_core/import_preview_service.py",
+    "services/core-api/src/research_observatory_core/import_review.py",
+    "services/core-api/src/research_observatory_core/ingestion/commit_activity.py",
+    "services/core-api/src/research_observatory_core/ingestion/commit_workflow.py",
+    "services/core-api/src/research_observatory_core/ingestion/import_commits.py",
+    "services/core-api/src/research_observatory_core/ingestion/preview_activity.py",
+    "services/core-api/src/research_observatory_core/ingestion/summary_activity.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0013_import_commits.py",
+    "services/core-api/src/research_observatory_core/ports/import_commits.py",
+    "services/core-api/src/research_observatory_core/ports/import_previews.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/workflow_executor.py",
+    "tests/data/test_import_commit_hot_path.py",
+    "tests/data/test_import_commit_migration.py",
+    "tests/data/test_import_commit_preparation.py",
+    "tests/data/test_import_commit_publication.py",
+    "tests/data/test_import_commit_storage.py",
+    "tests/data/test_import_manifest_access.py",
+    "tests/data/test_import_preview_migration.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/desktop/test_import_commit_interactions.py",
+    "tests/fixtures/imports/schema-v12-authority.json",
+    "tests/foundation/test_architecture_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/service/test_import_commit_activity.py",
+    "tests/service/test_import_commit_api.py",
+    "tests/service/test_import_commit_identity.py",
+    "tests/service/test_import_commit_interruptions.py",
+    "tests/service/test_import_commit_process_windows.py",
+    "tests/service/test_import_commit_scale_windows.py",
+    "tests/service/test_import_commit_service.py",
+    "tests/service/test_import_commit_workflow.py",
+    "tests/workflows/test_local_workflow_executor.py",
+    "tools/architecture_check.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_build.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Versioned scientific identity and project-local source assertions make identical-file re-import idempotent across previews. Changed-file comparison creates immutable explanatory manifests, preserving original values, decisions, unresolved comparisons and prior records; Work/Version reconciliation remains CAP-04.S03. Named identity, publication and service checks are retained in independently reviewed groundwork/publication/service dispositions. The atomic-publication-selected check below exercises current publication/service behavior; protected-100k proves exactly 100000 records, one manifest and unchanged replay/reopen. Final-journey-and-process proves renderer discovery, lost replies, manifest navigation and replay against actual Core, plus durable replay across real new processes."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Atomic-publication-selected covers rollback, current rights/predecessor and receipt substitution, stale draft/claim, lease renewal/expiry, authenticated cancellation before the lifecycle mutex, long-SQL interruption and truthful close failure. Prior adverse findings remain preserved and closed explicitly. Final-journey-and-process passes three late-response cancellation orderings and protected ordinary-close interruption across three processes: zero partial canonical rows; exactly failed/dependency-unavailable attempt1 followed by succeeded attempt2; unchanged original job/request and one accepted result after third-process replay. Protected-100k first attempt succeeds without automatic retry; complete 1001-page membership, request replay and fresh-runtime reopen pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Additive v13 migration uses the exact frozen v12 predecessor, protected backup and rollback; migration-02 disposition binds schema/profile hashes and index-query-plan closure. Strict Core/OpenAPI/generated-client/native route and package inventories, existing provenance/outbox/accepted-output transaction, architecture contracts, fixtures and recovery documentation are updated within approved scope. Retained preparation/worker/transport/publication-control dispositions authenticate their exact candidates and selected machine checks. Final-quality passes affected lint/type/format and the complete 299-file quality inventory; final-build-and-backlog passes a clean candidate and current generated Markdown. The generated 492-page review site was checked precommit with unchanged planning inputs; not relabeled a fresh final-candidate check."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "data:unit",
+      "contracts:unit",
+      "desktop:unit",
+      "packaging:unit",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "High-risk import commit crosses protected persistence, immutable scientific identity/current rights, migration, durable worker, public/native/client contracts and renderer cancellation/recovery. Retained independent exact-commit increments establish these boundaries without rerunning completed unrelated profiles. Final increment changes only renderer pending-state/semantically equivalent cancellation prose, isolated regressions and evidence/quality inventory; fresh exact-final-candidate renderer/Core/process and affected quality/build checks cover that delta. The actual protected100k observation binds unchanged Core input closure at its explicit ancestral candidate, not a fresh final-candidate or cached benchmark claim.",
+    "deferred": [
+      "Reviewed 100k performance baseline, repetitions/distribution, minimum hardware and regression threshold remain CAP-04.S01 slice qualification. Current timings are diagnostic only, with little headroom under the worker observation cap.",
+      "Ordinary status reads still wait behind atomic publication's lifecycle mutex. The cancellation escape is restored; ordinary-read latency is not claimed fixed or qualified.",
+      "Full frozen supervised native import/summary/report/commit/restart journey, abrupt-kill/stale-lock recovery, broader accessibility/security/privacy/rights/platform and packaging matrices remain CAP-04.S01 integration/checkpoint/W2 qualification.",
+      "Fresh full repository/affected profiles, cross-capability integration, independent slice/Wave reviews and the separate G2 human gate remain required. No Work/Version reconciliation or W2 completion is claimed."
+    ]
+  },
+  "checks": [
+    {
+      "id": "atomic-publication-selected",
+      "commit": "c136912f8d115d50cfc84a9d65d518431a301019",
+      "command": "python -m unittest tests.data.test_import_commit_hot_path.ImportCommitHotPathTests tests.data.test_import_commit_publication.ImportCommitPublicationTests tests.service.test_import_commit_activity.ImportCommitActivityTests tests.service.test_import_commit_service.ImportCommitServiceTests tests.service.test_import_commit_interruptions.ImportCommitInterruptionTests tests.service.test_import_commit_scale_windows.ImportCommitDiagnosticReportingTests tests.data.test_sqlite_repositories.SqliteRepositoryTests -v",
+      "exitCode": 0,
+      "result": "65 cases PASS78.241s with fixed committed inputs. Independently reviewed in publication-control-01-disposition. Later ddc product delta only splits an error literal, and final42ef product delta is renderer-only; this is ancestral execution, not a fresh final-candidate rerun."
+    },
+    {
+      "id": "protected-100k",
+      "commit": "ddc3b980ef65c0c1ef26766fbc02f2a8462f596c",
+      "command": "RO_RUN_IMPORT_COMMIT_SCALE=1 RO_IMPORT_COMMIT_RECORDS=100000 python -m unittest tests.service.test_import_commit_scale_windows.ImportCommitScaleWindowsTests -v",
+      "exitCode": 0,
+      "provenance": "fresh execution at named ancestral candidate and fixed selected Core inputs",
+      "result": "1 case PASS1115.577s. Actual execution-principal DPAPI/SQLCipher, production Core/automatic worker; ASGI/native context/project/vault/source fixtures. Attempt1 succeeded, canonical source100000, manifest1, members100001, seal1, accepted commit1; all1001pages, replay/reopen pass. Performance diagnostic only.",
+      "report": {
+        "path": "artifacts/tmp/import-commit-scale-windows-q0c40rd6/diagnostic.json",
+        "sha256": "22e00d9802a5cd65b8a048d2849e71f301cf32543216ffa82d069f1fb8f36e47",
+        "headUnchanged": true,
+        "sourceInputsUnchanged": true,
+        "performanceQualifying": false
+      }
+    },
+    {
+      "id": "final-journey-and-process",
+      "commit": "42efdbd9a179dfabe3343474adeaabcd4acad204",
+      "command": "python -m unittest tests.desktop.test_import_commit_interactions tests.service.test_import_commit_process_windows -v",
+      "exitCode": 0,
+      "provenance": "fresh final committed candidate; HEAD and selected inputs fixed",
+      "result": "5 cases PASS39.537s, no skips. Four actual built-renderer/generated-client/fixture-Core interactions cover both themes, focus, explicit commit, lost reply, manifest navigation, replay, retained-record cancellation, pending-read cancellation, parent gate, duplicate activation and three stale-response orderings. Native bridge and automatic renderer-fixture worker startup are explicit doubles. The fifth case uses three actual production-Core processes with isolated Windows DPAPI/SQLCipher and automatic recovery, not a native host or packaging double presented as real.",
+      "report": {
+        "path": "artifacts/tmp/import-commit-process-5mnyex6r/result.json",
+        "sha256": "11cd9a17372254e7f5442396e82e6e106f14d7e6cbe9dc0af815710f2d19f11d",
+        "distinctProcesses": 3,
+        "attempts": [
+          {
+            "attempt": 1,
+            "state": "failed",
+            "diagnosticCode": "dependency-unavailable"
+          },
+          {
+            "attempt": 2,
+            "state": "succeeded",
+            "diagnosticCode": null
+          }
+        ],
+        "acceptedCommitOutputs": 1
+      },
+      "output": "artifacts/tmp/CAP-04.S01.T03.final-journey-checks.log"
+    },
+    {
+      "id": "final-quality",
+      "commit": "42efdbd9a179dfabe3343474adeaabcd4acad204",
+      "command": "pnpm --filter @research-observatory/desktop run lint; pnpm --filter @research-observatory/desktop run typecheck; ruff check and format --check on five registered T03 test files; quality_check.load_scope",
+      "exitCode": 0,
+      "result": "PASS desktop lint/TypeScript, affected Ruff lint/format5files, complete quality inventory299files. Exact names: test_import_commit_interactions.py, test_import_commit_process_windows.py, test_import_commit_api.py, test_import_commit_scale_windows.py, test_import_manifest_access.py. Product bundle built successfully before commit; each fresh renderer test authenticates that bundle against final source."
+    },
+    {
+      "id": "final-build-and-backlog",
+      "commit": "42efdbd9a179dfabe3343474adeaabcd4acad204",
+      "command": "python tools/build_manifest.py --output artifacts/tmp/CAP-04.S01.T03.final-build-manifest.json; python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "PASS clean build0.1.0+g42efdbd and current generated Markdown."
+    }
+  ],
+  "ancestorEvidence": [
+    "artifacts/evidence/CAP-04.S01.T03.groundwork-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.migration-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.migration-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.preparation-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-control-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.responsiveness-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.service-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.worker-completion-01-disposition.md"
+  ],
+  "preservedFindings": [
+    "artifacts/evidence/CAP-04.S01.T03.migration-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.scale-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.journey-closure-01.md"
+  ],
+  "scopeLimits": [
+    "Task-level canonical source-record/import-manifest delivery, not resolved Work/Version claims or release approval.",
+    "Actual native UI observation remains bound to3d87c354 and its debug harness in native-01.md; not relabeled final/native restart or packaged evidence.",
+    "Ordinary-process recovery test is normal-close interruption with retained native resume authority and new Core/project sessions; not abrupt kill or stale-lock recovery.",
+    "Incremental dispositions and observations keep their actual candidate, limits and adverse history. No automatic evidence-cache reuse is claimed."
+  ]
+}

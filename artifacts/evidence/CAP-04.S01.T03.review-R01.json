@@ -1,0 +1,130 @@
+{
+  "task_id": "CAP-04.S01.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "42efdbd9a179dfabe3343474adeaabcd4acad204",
+  "reviewer": "w2_commit_increment_review",
+  "result": "approved",
+  "notes": "Independent whole-task disposition approves the frozen R01 candidate for CAP-04.S01.T03's idempotent canonical source-record/import-manifest criteria. The review authenticates the retained checkpoint lineage and adverse closures, reviews the final cancellation and real-process-restart increment, and authenticates the criterion manifest, frozen packet and named runtime reports. No reproducible material task-level blocker remains. This is task approval only, not Work/Version reconciliation, a reviewed performance baseline, integrated slice/Wave qualification, packaging qualification or release approval.",
+  "findings": [],
+  "closures": [],
+  "authenticated_submission": {
+    "base_commit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a",
+    "branch": "codex/w2-implementation",
+    "packet_sha256": "034e29483754705751b8c9d14df61ce8f3396d59df14789103b53babcd3048e4",
+    "evidence_path": "artifacts/evidence/CAP-04.S01.T03.json",
+    "evidence_sha256": "1e65135bb6951efc3b2ebee43231b196da97575c6fb9271f868132c683a64748",
+    "acceptance_criteria_sha256": "fe917b4a62e8911a8945521ecf9282a0f3ee20bd4e45db9a30c42ac914608921",
+    "selection_sha256": "a231166342b42298ef73ebe7ef0e919d0fc60370691e243042b1387464c778ef",
+    "changed_path_count": 98,
+    "packet_validation_errors": [],
+    "evidence_reference_validation_errors": []
+  },
+  "criterion_disposition": [
+    {
+      "criterion_index": 1,
+      "disposition": "satisfied",
+      "basis": "Reviewed scientific identity and project-local source assertions distinguish request identity from complete source/parser/mapping/draft authority. Retained named publication and service checks prove identical-input manifest replay, same-file/new-preview source reuse, changed-file manifests, retained old assertions, corrected-mapping updates and ambiguous comparisons without inventing Work merges. The integrated renderer exposes explicit confirmation, durable discovery and navigable immutable membership. The retained protected 100k run reports exactly 100000 canonical source records, one manifest, complete membership and unchanged replay/reopen; final real-process proof retains the original request/job and accepted result without duplication."
+    },
+    {
+      "criterion_index": 2,
+      "disposition": "satisfied",
+      "basis": "The retained independently reviewed tests cover atomic canonical/provenance/output publication, material rollback points, current predecessor and off-page rights, forged staging/receipt substitution, stale draft/claim, live lease renewal, genuine expiry, cancellation, SQL interruption and bounded truthful close failure. The final five-case machine run adds built-renderer pending-read cancellation and stale-response ownership plus protected recovery across three actual Core processes. The process fixture asserts zero partial publication, exactly failed/dependency-unavailable attempt 1 followed by succeeded attempt 2, and unchanged accepted facts on third-process replay. Earlier adverse observations remain preserved rather than relabeled as passes."
+    },
+    {
+      "criterion_index": 3,
+      "disposition": "satisfied",
+      "basis": "The reviewed lineage supplies additive v13 storage with the authenticated v12 predecessor, encrypted backup/rollback/reopen and indexed predecessor membership; strict API/generated-client/native route contracts; packaging and quality inventories; existing atomic provenance/outbox/dependency/accepted-output semantics; and affected architecture/recovery documentation. Final renderer changes restore existing cancellation behavior and truthful retention wording without a new route, security authority or governed experience. Fresh final-candidate quality and clean build/backlog checks are distinguished from preceding-candidate executions. No unrelated scope expansion was identified."
+    }
+  ],
+  "review_basis": {
+    "checkpoint_lineage": "Authenticated all twelve retained T03 disposition candidates as ancestors of the final candidate. Earlier independent approvals and adverse findings retain their exact boundaries; this review does not claim to rerun their suites or recreate their observations. The five recorded checkpoint findings are explicitly closed by their retained successor dispositions.",
+    "final_increment": "Reviewed ddc3b980ef65c0c1ef26766fbc02f2a8462f596c through 42efdbd9a179dfabe3343474adeaabcd4acad204. ImportCommitPane separates status-read from action pending state, permits only cancellation during the former, preserves the parent disabled gate and synchronously rejects duplicate cancellation. Existing generation/live checks fence stale success, error and finally handling. Three deferred-response orderings exercise these rules with real Core cancellation and explicit native/scheduler doubles. Removing the English word 'any' from the retained-record announcement preserves its meaning and the durable-state assertion. Test-owned database handles now close explicitly; no product storage policy or assertion was weakened.",
+    "restart_gap_closure": "The small protected fixture uses multiprocessing spawn for three distinct processes and production Core composition. A scheduling seam pauses only after a real canonical append; normal project close supplies the actual stop signal, rollback and drain. New processes discover the same durable command/result and allow only existing-policy recovery with the retained native resume epoch. Exact attempt-history assertions reject hidden extra recovery retries. This closes ordinary-process restart proof, not abrupt-kill/stale-lock or native-host recovery.",
+    "fresh_final_machine_run": {
+      "candidate": "42efdbd9a179dfabe3343474adeaabcd4acad204",
+      "case_count": 5,
+      "seconds": 39.537,
+      "skips": 0,
+      "log_path": "artifacts/tmp/CAP-04.S01.T03.final-journey-checks.log",
+      "log_sha256": "d6f325701fc1a3002cae72c0fd77c8c30d0ec2dde783af917668df5b09ef5665",
+      "provenance": "Owner executed the four built-renderer cases and protected three-process case with final HEAD and selected inputs fixed. Reviewer independently inspected the retained named-case/OK log and report, not a duplicate execution. Native bridge and renderer-fixture automatic startup remain explicit doubles."
+    },
+    "fresh_protected_process_report": {
+      "path": "artifacts/tmp/import-commit-process-5mnyex6r/result.json",
+      "sha256": "11cd9a17372254e7f5442396e82e6e106f14d7e6cbe9dc0af815710f2d19f11d",
+      "authentication": "Independently read and hashed the report; its HEAD equals the final candidate, all three child phases exited zero and distinctProcesses is 3.",
+      "report_seconds": 11.617373800021596,
+      "canonical_source_records": 1,
+      "manifests": 1,
+      "members": 2,
+      "seals": 1,
+      "accepted_commit_outputs": 1,
+      "attempts": [
+        { "attempt": 1, "state": "failed", "diagnosticCode": "dependency-unavailable" },
+        { "attempt": 2, "state": "succeeded", "diagnosticCode": null }
+      ]
+    },
+    "retained_protected_scale_report": {
+      "candidate": "ddc3b980ef65c0c1ef26766fbc02f2a8462f596c",
+      "path": "artifacts/tmp/import-commit-scale-windows-q0c40rd6/diagnostic.json",
+      "sha256": "22e00d9802a5cd65b8a048d2849e71f301cf32543216ffa82d069f1fb8f36e47",
+      "authentication": "Independently read and hashed the owner-executed report. Recorded HEAD before/after equals the named ancestral candidate and recorded input closure is unchanged. Independently compared all 217 recorded source-input hashes with the final candidate and found no differences. This is source continuity for retained functional evidence, not a general installed-runtime cache receipt or a fresh final-candidate principal/benchmark run.",
+      "runner_seconds": 1115.577,
+      "canonical_source_records": 100000,
+      "manifests": 1,
+      "members": 100001,
+      "seals": 1,
+      "accepted_commit_outputs": 1,
+      "manifest_pages": 1001,
+      "successful_attempt": 1,
+      "retry_observed": false,
+      "performance_qualifying": false
+    },
+    "final_quality": "Owner-reported final desktop lint/TypeScript, Ruff lint/format on five affected registered tests and complete 299-file quality inventory passed. Reviewer inspected the clean build manifest bound to 42efdbd with no dirty source paths. Precommit build/site observations and ancestral static checks are not relabeled as newly executed final-candidate checks.",
+    "review_execution": "Read-only exact-diff, criterion/evidence and report inspection; no completed runtime suite rerun. Invoked the existing taskctl packet and evidence-reference validators read-only with no errors. The only reviewer write is this authorized append-only review ledger; no product, tests, backlog or HEAD mutation was made."
+  },
+  "prior_checkpoint_findings": [
+    {
+      "id": "T03-MIGRATION-01-F01",
+      "disposition": "closed",
+      "closure": "artifacts/evidence/CAP-04.S01.T03.migration-02-disposition.md"
+    },
+    {
+      "id": "T03-PUBLICATION-01-F01",
+      "disposition": "closed",
+      "closure": "artifacts/evidence/CAP-04.S01.T03.publication-02-disposition.md"
+    },
+    {
+      "id": "T03-PUBLICATION-01-F02",
+      "disposition": "closed",
+      "closure": "artifacts/evidence/CAP-04.S01.T03.publication-02-disposition.md"
+    },
+    {
+      "id": "T03-TRANSPORT-01-F01",
+      "disposition": "closed",
+      "closure": "artifacts/evidence/CAP-04.S01.T03.transport-02-disposition.md"
+    },
+    {
+      "id": "T03-TRANSPORT-02-F01",
+      "disposition": "closed",
+      "closure": "artifacts/evidence/CAP-04.S01.T03.responsiveness-01-disposition.md"
+    }
+  ],
+  "preserved_adverse_records": [
+    "artifacts/evidence/CAP-04.S01.T03.migration-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-01-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.transport-02-disposition.md",
+    "artifacts/evidence/CAP-04.S01.T03.scale-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.publication-control-01.md",
+    "artifacts/evidence/CAP-04.S01.T03.journey-closure-01.md"
+  ],
+  "history_note": "The earlier adverse checkpoint dispositions and their explicit closures remain append-only. The frozen R01 packet has no prior formal task-review attempt or open formal finding. Empty formal findings/closures therefore invent neither retrospective rounds nor formal closure IDs. The first protected 100k failure, failed lint candidate, renderer RED and test-owned handle errors remain distinct from later passing observations.",
+  "scope_limits": [
+    "Task-level source-record/import-manifest delivery only; CAP-04.S03 retains Work/Version reconciliation and no scholarly claim is verified by importing.",
+    "The 100k run proves its stated functional path, not a reviewed performance baseline. Warm/cold repetitions, distribution, minimum hardware and regression thresholds remain CAP-04.S01 qualification. The 896.235-second worker measurement is close to its 900-second diagnostic observation cap and is not a comfortable performance margin.",
+    "Ordinary status reads still wait behind the atomic-publication lifecycle mutex. Cancellation remains reachable during the pane's own status read; this is not approval or qualification of ordinary-read latency, and the parent disabled gate remains intact.",
+    "Actual native UI observations remain bound to ancestral 3d87c354 and its debug harness. Final renderer fixtures do not prove native dialogs, screen-reader behavior, packaged execution or native-host restart. The new process proof covers normal-close interruption with retained native resume authority, not abrupt kill or stale-lock recovery.",
+    "Integrated slice/checkpoint/Wave checks, full frozen supervised journey, packaging and broader security/privacy/rights/accessibility/platform/performance qualification, independent Wave review and the separate human release gate remain required."
+  ]
+}
