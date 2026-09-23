@@ -143,6 +143,119 @@ class UiChangeGateTests(unittest.TestCase):
             self.linked_candidate(root, data, contract)
             self.assertTrue(validate(root, automatic_base(root, "HEAD"))["ok"])
 
+    def test_linked_interruption_note_is_nonauthorizing_delivery(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, data, contract = self.linked_fixture(temporary)
+            self.linked_candidate(root, data, contract)
+            task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+            note = root / "artifacts/evidence/W1.resume-20990101-01.md"
+            note.write_text("# Interrupted synthetic check\nNo approval or scope authority.\n", encoding="utf-8")
+            head = self.commit(root, "retain an immutable interruption checkpoint")
+            result = validate(root, base, head)
+            self.assertTrue(result["ok"], result["errors"])
+            manifest = {
+                "taskId": task["id"],
+                "branch": task["branch"],
+                "commit": head,
+                "baseCommit": base,
+                "changedFiles": sorted(ui_gate.changed_paths(root, base, head)),
+                "checks": [{"command": "synthetic scope boundary", "exitCode": 0}],
+                "acceptanceCriteria": [{"criterion_index": 1, "evidence": ["synthetic fixture only"]}],
+                "unverifiedItems": [],
+                "correctiveIntegration": {
+                    "originSha256": task["correction"]["origin_sha256"],
+                    "authorityPreserved": True,
+                    "affectedChecks": ["synthetic scope boundary"],
+                    "reusedEvidence": [],
+                    "rationale": "Same-wave checkpoint does not authorize implementation or approval.",
+                },
+            }
+            self.assertEqual([], taskctl.validate_task_evidence(task, manifest, repo=root))
+            self.assertTrue(taskctl.validate_task_evidence(task, manifest))  # Git provenance is mandatory.
+
+    def test_linked_interruption_note_cannot_hide_invalid_paths_or_history(self) -> None:
+        for mutation in (
+            "wrong-wave",
+            "rewrite",
+            "remove",
+            "executable",
+            "symlink",
+            "mixed-product",
+            "hidden-product",
+            "authority",
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, base, data, contract = self.linked_fixture(temporary)
+                self.linked_candidate(root, data, contract)
+                task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+                relative = "artifacts/evidence/W1.resume-20990101-01.md"
+                if mutation == "wrong-wave":
+                    relative = relative.replace("W1", "W2")
+                note = root / relative
+                note.write_text("# Synthetic interruption\nNo authority.\n", encoding="utf-8")
+                if mutation in {"executable", "symlink"}:
+                    mode = "100755" if mutation == "executable" else "120000"
+                    self.git(root, "add", "--", relative)
+                    blob_id = self.git(root, "rev-parse", f":{relative}")
+                    self.git(root, "update-index", "--cacheinfo", f"{mode},{blob_id},{relative}")
+                    self.git(root, "commit", "-m", "nonregular checkpoint addition")
+                else:
+                    self.commit(root, "add interruption note")
+                if mutation == "rewrite":
+                    note.write_text("Rewritten historical checkpoint\n", encoding="utf-8")
+                elif mutation == "remove":
+                    note.unlink()
+                elif mutation in {"mixed-product", "hidden-product"}:
+                    target = root / "apps/desktop/src/Extra.tsx"
+                    target.write_text("unadmitted product change\n", encoding="utf-8")
+                    if mutation == "hidden-product":
+                        self.commit(root, "hidden product touch")
+                        target.unlink()
+                elif mutation == "authority":
+                    (root / "design/ui-reference/assets/tokens.css").write_text("unapproved tokens\n", encoding="utf-8")
+                if mutation not in {"wrong-wave", "executable", "symlink"}:
+                    self.commit(root, "retain inadmissible history")
+                head = self.git(root, "rev-parse", "HEAD")
+                scope_errors = ui_gate.corrective_scope_errors(root, task, head)
+                self.assertTrue(scope_errors)
+                if mutation in {"executable", "symlink"}:
+                    self.assertTrue(any("regular non-executable" in error for error in scope_errors))
+                self.assertFalse(validate(root, base, head)["ok"])
+
+    def test_linked_interruption_note_cannot_rewrite_preexisting_note(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, _base, data, _contract = self.linked_fixture(temporary)
+            task = copy.deepcopy(data["waves"][0]["campaign"]["corrective_tasks"][0])
+            note = root / "artifacts/evidence/W1.resume-20990101-01.md"
+            note.write_text("Existing synthetic checkpoint\n", encoding="utf-8")
+            task["base_sha"] = self.commit(root, "scope fixture base contains an older note")
+            note.write_text("Rewritten checkpoint\n", encoding="utf-8")
+            head = self.commit(root, "change older note after scope fixture base")
+            errors = ui_gate.corrective_scope_errors(root, task, head)
+            self.assertTrue(any("must add regular" in error for error in errors), errors)
+
+    def test_linked_interruption_note_namespace_is_exact(self) -> None:
+        task = {"wave": "W2"}
+        self.assertTrue(ui_gate.corrective_interruption_note(task, "artifacts/evidence/W2.resume-20990101-01.md"))
+        for path in (
+            None,
+            "artifacts/evidence/W1.resume-20990101-01.md",
+            "artifacts/evidence/W2.resume-20990230-01.md",
+            "artifacts/evidence/W2.resume-20990101.md",
+            "artifacts/evidence/W2.resume-20990101-1.md",
+            "artifacts/evidence/W2.resume-20990101-01.json",
+            "artifacts/evidence/W2.resume-20990101-01.md.py",
+            "artifacts/evidence/W2.resume-20990101-01.md/child.md",
+            "artifacts/evidence/nested/W2.resume-20990101-01.md",
+            "artifacts/evidence/../W2.resume-20990101-01.md",
+            "artifacts/evidence/W2.approval.md",
+        ):
+            with self.subTest(path=path):
+                self.assertFalse(ui_gate.corrective_interruption_note(task, path))
+        self.assertFalse(
+            ui_gate.corrective_interruption_note({"wave": "W."}, "artifacts/evidence/W2.resume-20990101-01.md")
+        )
+
     def test_linked_rejects_authority_and_live_claim_substitutions(self) -> None:
         for mutation in (
             "origin",

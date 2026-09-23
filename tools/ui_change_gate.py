@@ -10,6 +10,7 @@ import json
 import os
 import re
 import subprocess
+from datetime import date
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -916,6 +917,37 @@ def corrective_path_admitted(task: dict[str, Any], path: object) -> bool:
     )
 
 
+def corrective_interruption_note(task: dict[str, Any], path: object) -> bool:
+    """A non-authoritative handoff namespace, requiring separate Git admission."""
+    if not isinstance(path, str):
+        return False
+    match = re.fullmatch(rf"artifacts/evidence/{re.escape(str(task['wave']))}\.resume-(\d{{8}})-[0-9]{{2}}\.md", path)
+    if match is None:
+        return False
+    try:
+        date.fromisoformat(match[1])
+    except ValueError:
+        return False
+    return True
+
+
+def immutable_interruption_notes(repo: Path, task: dict[str, Any], paths_by_commit: dict[str, set[str]]) -> set[str]:
+    notes = {path for paths in paths_by_commit.values() for path in paths if corrective_interruption_note(task, path)}
+    for path in notes:
+        touches = [commit for commit, paths in paths_by_commit.items() if path in paths]
+        if len(touches) != 1:
+            raise ValueError("interruption notes must be immutable additions")
+        commit = touches[0]
+        lineage = git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()
+        if (
+            len(lineage) != 2
+            or tree_entry(repo, lineage[1], path) is not None
+            or tree_entry(repo, commit, path) != ("100644", "blob")
+        ):
+            raise ValueError("interruption notes must add regular non-executable Markdown blobs")
+    return notes
+
+
 def corrective_scope_errors(
     repo: Path, task: dict[str, Any], candidate: str, declared: list[object] | None = None
 ) -> list[str]:
@@ -926,12 +958,13 @@ def corrective_scope_errors(
             commit: commit_paths(repo, commit)
             for commit in git(repo, "rev-list", f"{base}..{candidate}").decode().splitlines()
         }
+        notes = immutable_interruption_notes(repo, task, paths_by_commit)
         extra_commits = {
             commit: paths
             for commit, paths in paths_by_commit.items()
-            if any(not corrective_path_admitted(task, path) for path in paths)
+            if any(not corrective_path_admitted(task, path) and path not in notes for path in paths)
         }
-        extra = [path for path in (declared or []) if not corrective_path_admitted(task, path)]
+        extra = [path for path in (declared or []) if not corrective_path_admitted(task, path) and path not in notes]
         if not extra_commits and not extra:
             return []
         maintenance = reviewed_control_maintenance_commits(repo, base, candidate)

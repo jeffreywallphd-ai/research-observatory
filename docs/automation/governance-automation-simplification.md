@@ -192,6 +192,15 @@ No new GRR/GCR, bootstrap or amendment is required merely to maintain these
 controls; independent review and human approval at the governed boundaries
 listed above remain mandatory.
 
+Linked-correction interruption handoffs may add a same-Wave
+`artifacts/evidence/WN.resume-YYYYMMDD-NN.md` note. These are non-authoritative
+checkpoints, not scope, approval, disposition or criterion evidence. The adapter
+requires a valid date, one immutable addition of a regular non-executable Git
+blob, and no later rewrite/removal. Prefer task-keyed progress notes during a
+correction. This narrow delivery rule does not admit other Wave artifacts,
+product paths or authority changes; full-history checking and independently
+reviewed control-maintenance chains remain required.
+
 - Exact source hashes and compare-and-swap publication.
 - Append-only approvals, reviews, findings, closures, and adverse attempts.
 - Independent review at security, migration, public-contract, and release
