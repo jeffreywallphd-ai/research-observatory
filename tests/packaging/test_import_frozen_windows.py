@@ -318,14 +318,24 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                     self.assertNotIn(project["root"], diagnostic["csv"])
                     first = commit(client, public, draft)
                     self.assertEqual((2, 2, 3), (first["createdCount"], first["selectedCount"], first["recordCount"]))
+                    self.assertEqual(first, commit(client, public, draft), "identical draft must reuse its manifest")
                     again, second_draft = intake(client, project)
                     second = commit(client, again, second_draft)
-                    self.assertEqual(first, second, "identical reimport must reuse the original manifest")
+                    # A new preview creates its own immutable mapping profile.
+                    # Its manifest differs, but it must not duplicate source records.
+                    self.assertNotEqual(first["mapping"]["profileId"], second["mapping"]["profileId"])
+                    self.assertNotEqual(first["revisionId"], second["revisionId"])
+                    self.assertEqual(first["sourceSha256"], second["sourceSha256"])
+                    self.assertEqual(
+                        (0, 2, 2, 3),
+                        tuple(second[key] for key in ("createdCount", "reusedCount", "selectedCount", "recordCount")),
+                    )
                     client.post("/projects/close", {"root": project["root"]})
                 self.assertEqual([], verify_artifact(snapshot_root, manifest, schema=schema, contract=contract))
                 with supervised(snapshot_root / manifest["entrypoint"], fixture, "reopen", epoch) as client:
                     client.post("/projects/open", {"root": project["root"]})
-                    self.assertEqual(first, client.post("/projects/imports/commit/latest", again)["manifest"])
+                    self.assertEqual(first, client.post("/projects/imports/commit/latest", public)["manifest"])
+                    self.assertEqual(second, client.post("/projects/imports/commit/latest", again)["manifest"])
                     members = client.post(
                         "/projects/imports/manifest/members",
                         {
@@ -341,6 +351,12 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                         2, len({row["sourceRecordRevisionId"] for row in members["records"] if row["included"]})
                     )
                     self.assertTrue(all(row["comparison"] == "not-compared" for row in members["records"]))
+                    second_members = client.post(
+                        "/projects/imports/manifest/members",
+                        {**manifest_address(project, second), "after": 0, "limit": 100},
+                    )
+                    self.assertTrue(second_members["complete"])
+                    self.assertEqual(members["records"], second_members["records"])
                     review = client.post("/projects/imports/review", again)
                     self.assertEqual("permitted", review["rights"]["inspect"]["value"])
                     self.assertEqual("unknown", review["rights"]["export"]["value"])
@@ -351,9 +367,9 @@ class ImportFrozenWindowsTests(unittest.TestCase):
             self.assertEqual(
                 {
                     "import_source_records": 2,
-                    "import_manifests": 1,
-                    "import_manifest_members": 3,
-                    "import_manifest_seals": 1,
+                    "import_manifests": 2,
+                    "import_manifest_members": 6,
+                    "import_manifest_seals": 2,
                 },
                 report["afterReimportAndRestart"],
             )
@@ -363,7 +379,9 @@ class ImportFrozenWindowsTests(unittest.TestCase):
             report.update(
                 outcome="passed",
                 manifest=first,
+                reimportManifest=second,
                 members=members,
+                reimportMembers=second_members,
                 rights=review["rights"],
                 processes=2,
                 summaryCounts=summary["counts"],

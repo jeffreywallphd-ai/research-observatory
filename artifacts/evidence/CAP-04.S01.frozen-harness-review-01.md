@@ -80,3 +80,31 @@ and the exact synthetic project ID; it neither enumerates vault entries nor
 changes product behavior. A focused control test verifies project-scoped reads
 and connection closure on failure. Independent incremental review and a fresh
 focused execution remain required; no broader suite replay is selected.
+
+## Appended scientific-identity correction
+
+The reviewer approved the cancellation correction at
+`c710adb5baa0f955ecc71f7b604b5caec99f2d5a`. Attempt 03 executed at
+`8d932f185b9037b4d08c2f749fd36197c1057859` (only a pending performance
+baseline JSON was added; harness/product bytes were unchanged). It proved zero
+publication counts after cancellation, then failed a new-preview manifest-equality
+expectation. Retained report: `artifacts/tmp/import-frozen-windows-j8spugmv/result.json`;
+log: `artifacts/tmp/CAP-04.S01.frozen-qualification-03.log`.
+
+Root cause: the harness conflated identical source bytes with identical scientific
+input authority. ADR-0027 binds the immutable mapping-profile revision as well as
+source, selection and decisions. Public `begin-review` creates a new profile for
+each preview; the public mapping command does not select a prior profile. The
+existing publication test `test_same_file_new_preview_reuses_source_assertion_ids`
+therefore requires source-record reuse, not manifest equality. Its distinct
+`test_same_scientific_import_reuses_manifest_and_records` covers identical draft
+authority. No product defect or scope change is inferred from this failed assertion.
+
+The corrected frozen journey explicitly checks both outcomes: replay of the same
+draft returns the exact manifest; a new preview/profile records a new manifest
+with zero created and two reused source records. After restart both manifests
+must retain identical ordered members/source identities, and exact database counts
+must be two sources, two manifests, six members and two seals. Cancellation still
+requires all-zero counts. The preceding expectation of one manifest was harness
+error, not an accepted contract being relaxed. All three failed invocations remain
+retained; no production test, deadline, identity algorithm or protection changes.
