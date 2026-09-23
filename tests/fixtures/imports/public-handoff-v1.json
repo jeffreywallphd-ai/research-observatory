@@ -1,0 +1,67 @@
+{
+  "manifest": {
+    "projectId": "ecd591e9-194b-459c-9e2c-5bc6830b3b53",
+    "revisionId": "01a0ce03-066d-74a3-afc9-58a3cd4246fa",
+    "aggregateId": "01a0ce03-066d-7d61-8f6c-b03faf8a59f2",
+    "previewId": "01a0ce02-e05f-7c45-97b3-1ccefe7d1f34",
+    "draftRevision": 1,
+    "sourceSha256": "3ad905f4bcc9808aa15b657f65975751b72de8dcbd5567dddc11b575109cd6f1",
+    "identitySha256": "75154711962632b2fd135bad2262d1788baadd38640a4dd20027bdd0021eb4dd",
+    "effectiveDraftSha256": "e42a4f559f3acc8678eae52fb19bd833b01fa406816b530b98ccb3c67291304c",
+    "parserVersion": "local-reference-imports/1.0.0",
+    "mappingId": "01a0ce02-e690-7d2e-9ac7-a28bb0ab46fb",
+    "mappingRevision": 1,
+    "previousManifestRevisionId": null,
+    "recordCount": 3,
+    "selectedCount": 2,
+    "createdCount": 2,
+    "reusedCount": 0,
+    "membersSha256": "a04d98689202618f2d5b7370db5219cec3b3caac7aa27e7d9443730f6cb81e94",
+    "createdAt": "2026-09-23T11:24:59.874Z"
+  },
+  "members": {
+    "previewId": "01a0ce02-e05f-7c45-97b3-1ccefe7d1f34",
+    "revisionId": "01a0ce03-066d-74a3-afc9-58a3cd4246fa",
+    "records": [
+      {
+        "ordinal": 1,
+        "recordKey": "b5a323c3f874438b9075fa802f7584a3f985f5b3b9584c592f4acf46b7b26f59",
+        "included": false,
+        "sourceRecordRevisionId": null,
+        "warnings": ["invalid-doi"],
+        "comparison": "not-compared",
+        "previousRecordRevisionId": null
+      },
+      {
+        "ordinal": 2,
+        "recordKey": "b7821f64ef5e371534b04a8d1197f327061dbd9e2f626cde083d1ab1db2e89bd",
+        "included": true,
+        "sourceRecordRevisionId": "01a0ce03-0665-7d63-a38d-616d6c22d731",
+        "warnings": [],
+        "comparison": "not-compared",
+        "previousRecordRevisionId": null
+      },
+      {
+        "ordinal": 3,
+        "recordKey": "09377bba92da2281794a9c31d28c12ccddd52df45b28891f250bd6a5516dcffb",
+        "included": true,
+        "sourceRecordRevisionId": "01a0ce03-066a-7ce4-a596-402b2421b6b3",
+        "warnings": [],
+        "comparison": "not-compared",
+        "previousRecordRevisionId": null
+      }
+    ],
+    "nextAfter": 3,
+    "complete": true
+  },
+  "rights": {
+    "store": {"value": "permitted", "basis": "researcher-confirmed"},
+    "inspect": {"value": "permitted", "basis": "researcher-confirmed"},
+    "index": {"value": "unknown", "basis": "not-reported"},
+    "derive": {"value": "unknown", "basis": "not-reported"},
+    "model-use": {"value": "unknown", "basis": "not-reported"},
+    "quote": {"value": "unknown", "basis": "not-reported"},
+    "export": {"value": "unknown", "basis": "not-reported"},
+    "share": {"value": "unknown", "basis": "not-reported"}
+  }
+}

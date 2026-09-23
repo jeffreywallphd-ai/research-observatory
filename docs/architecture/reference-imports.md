@@ -89,7 +89,7 @@ codes only, while original content stays in the protected IR. No default log sin
 or telemetry is added. Source/durable-job integration and cross-process cancellation
 remain slice integration obligations, not claims established by these pure parsers.
 
-## Preview groundwork (CAP-04.S01.T02 in progress)
+## Preview and review (CAP-04.S01.T02)
 
 `import_drafts` keeps immutable mapping revisions, action-specific rights and
 per-record decisions separate from parser observations. Duplicate CSV column
@@ -329,12 +329,17 @@ Actual native/protected-Core preview, mapping, candidate review, exclusion,
 diagnostic export, restart and cancellation were exercised at checkpoint-16;
 see the task's native qualification note for exact candidate and fixture scope.
 That run found the batch-status correction above, checked separately afterward.
-Whole-project 100k validation remains in progress. Frozen-package loading has
-passed; the complete frozen supervised import journey remains explicit slice/Wave
-qualification, not inferred from native development execution or package loading.
-CAP-04.S01.T03 still owns canonical commit/manifests and their final wizard step.
+The later native qualification exercised the complete commit wizard and restart;
+the frozen-Core qualification separately exercised real packaged processes,
+protected storage, cancellation, replay, source reuse and restart. See
+`artifacts/evidence/CAP-04.S01.native-qualification-01.md` and
+`artifacts/evidence/CAP-04.S01.frozen-harness-review-01.md` for exact candidates
+and limits. These do not qualify an installer or a frozen native application.
+The 100k performance qualification remains open after its second commit sample
+exceeded the worker observation limit; the failed result is retained in
+`artifacts/evidence/CAP-04.S01.performance-qualification-01.md`.
 
-## Canonical commit execution (CAP-04.S01.T03, integration in progress)
+## Canonical commit execution (CAP-04.S01.T03)
 
 Explicit commits reuse the protected project database, canonical UUIDv7 records,
 provenance/outbox and durable workflow queue. Source assertions are keyed by
@@ -373,8 +378,13 @@ decoders bind replies to owned request snapshots and the native bridge admits
 only exact bounded operations. Public member pages expose decision metadata,
 warnings and canonical IDs, not bulk source payloads. An uncertain response
 requires a durable status read; it must not claim nothing was published.
-Renderer integration, final guard lifetime and large-input qualification remain
-pending.
+The renderer provides explicit preparation, confirmation, status, cancellation
+and paginated manifest inspection using shared controls. Task evidence covers
+current/off-page rights, guard lifetime, failure, replay and process recovery;
+native and frozen-Core slice evidence covers their actual principal boundaries.
+Large-input performance qualification remains open, not inferred from the
+completed functional checks. The current evidence matrix is
+`artifacts/evidence/CAP-04.S01.qualification-01.md`.
 
 ## Verification and technical basis
 

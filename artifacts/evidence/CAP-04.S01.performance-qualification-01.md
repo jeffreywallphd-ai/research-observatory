@@ -53,7 +53,38 @@ python tools/import_performance_check.py --report artifacts/tmp/CAP-04.S01.perfo
 
 The tool sets its child source paths and explicit workload opt-ins itself. Unit
 controls: `python -m unittest tests.service.test_import_performance_check -v`.
-Actual scale results and independent result disposition are pending.
+Actual scale invocation at `cbc5e073a4b1cc69cdc366bb46100de48124cb81`
+ended FAIL (exit 1) after 3257.874 seconds. Independent failure diagnosis is
+pending. No automatic retry or threshold relaxation was performed.
+
+The retained aggregate `artifacts/tmp/CAP-04.S01.performance-qualification-01.json`
+has SHA256 `25f8ac372e90261cfdb06960d5ae11357fab3da32f47a69c48f8fa2d0beb7498`.
+All six parser measurements passed the memory limit. Review repetitions passed:
+elapsed 530.013/537.345s, workers 261.250/270.669s, peak working sets
+143650816/140402688 bytes. First commit repetition passed: elapsed 1118.756s,
+worker 896.527s, peak working set 154750976 bytes. It had only 3.473s worker
+headroom. These are individual observations, not an overall qualifying result.
+
+Second commit repetition (`import-commit-scale-windows-x3ik50pf`) failed at
+900.874s against the 900s worker observation ceiling. It completed 1001 staging
+pages (64.985s) and identity verification (270.520s); atomic publication exited
+with `ImportPublicationInterrupted` after 327.824s. No retry was observed. The
+last status observation was running at attempt one; it is not a success claim.
+The failed child log remains `artifacts/tmp/import-performance-uh5_wz1j/commit-2.log`.
+Source, limits and failed fixtures remain unchanged. Final wrapper equality
+publication did not run after the child failure; no final input-closure PASS is claimed.
+
+Independent diagnosis confirmed the 900s cutoff is the diagnostic `_wait_commit`
+observation deadline and reviewed benchmark cap, not a production commit deadline.
+The failed wait closes TestClient, whose normal lifespan shutdown signals the
+publication interruption. Retained cleanup facts contain 100001 staged rows but
+zero source records, manifests, members, seals or accepted commit outputs: rollback,
+not successful completion. The interrupted 900.874s value is censored and is not
+completion latency. The diagnostic SHA256 is
+`59c9ef1823cce0132ea9aec6a083b4987d09eaa9b5034104c081740661ecb7d7`.
+No infrastructure anomaly or correctness regression was demonstrated. Performance
+diagnosis/correction must preserve atomicity, current rights and the existing
+limits; the completed task is not reopened and the failed sample is not discarded.
 
 ## Prerequisite-only attempt
 
