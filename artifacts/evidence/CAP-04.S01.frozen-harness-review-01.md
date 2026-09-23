@@ -108,3 +108,13 @@ must be two sources, two manifests, six members and two seals. Cancellation stil
 requires all-zero counts. The preceding expectation of one manifest was harness
 error, not an accepted contract being relaxed. All three failed invocations remain
 retained; no production test, deadline, identity algorithm or protection changes.
+
+Independent review at `d75f791a2713ba0f2f8bb44a00736b4050e0cabb` agreed with
+the scientific-identity correction but requested a P2 public-response-shape fix:
+the assertion used internal `mapping.profileId`; `ImportManifestView` exposes
+`mappingId`. No execution occurred at that candidate. The correction uses the
+public field and adds a focused public-shape regression that also rejects newly
+created records, a reused profile identity or changed source bytes. The regression
+failed before its helper existed. Root cause was using the domain manifest rather
+than the API projection when writing the assertion; the request/response contract
+is now an explicit harness acceptance boundary. Prior findings remain preserved.

@@ -195,6 +195,16 @@ def manifest_address(project, manifest):
     return {"root": project["root"], "previewId": manifest["previewId"], "revisionId": manifest["revisionId"]}
 
 
+def check_reimport(first, second):
+    if (
+        first["mappingId"] == second["mappingId"]
+        or first["revisionId"] == second["revisionId"]
+        or first["sourceSha256"] != second["sourceSha256"]
+        or tuple(second[key] for key in ("createdCount", "reusedCount", "selectedCount", "recordCount")) != (0, 2, 2, 3)
+    ):
+        raise AssertionError("new-profile reimport must retain source identities without duplicate records")
+
+
 def canonical_counts(project):
     """Read only this invocation's created database; never enumerate vault records."""
     from research_observatory_core.storage import configure_protected_database_provider, open_canonical_database
@@ -323,13 +333,7 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                     second = commit(client, again, second_draft)
                     # A new preview creates its own immutable mapping profile.
                     # Its manifest differs, but it must not duplicate source records.
-                    self.assertNotEqual(first["mapping"]["profileId"], second["mapping"]["profileId"])
-                    self.assertNotEqual(first["revisionId"], second["revisionId"])
-                    self.assertEqual(first["sourceSha256"], second["sourceSha256"])
-                    self.assertEqual(
-                        (0, 2, 2, 3),
-                        tuple(second[key] for key in ("createdCount", "reusedCount", "selectedCount", "recordCount")),
-                    )
+                    check_reimport(first, second)
                     client.post("/projects/close", {"root": project["root"]})
                 self.assertEqual([], verify_artifact(snapshot_root, manifest, schema=schema, contract=contract))
                 with supervised(snapshot_root / manifest["entrypoint"], fixture, "reopen", epoch) as client:
@@ -400,6 +404,22 @@ class ImportFrozenWindowsTests(unittest.TestCase):
 
 
 class FrozenJourneyControlTests(unittest.TestCase):
+    def test_reimport_check_uses_public_mapping_identity_and_rejects_new_records(self):
+        first = {"mappingId": "first-profile", "revisionId": "first-manifest", "sourceSha256": "source"}
+        second = {
+            "mappingId": "second-profile",
+            "revisionId": "second-manifest",
+            "sourceSha256": "source",
+            "createdCount": 0,
+            "reusedCount": 2,
+            "selectedCount": 2,
+            "recordCount": 3,
+        }
+        check_reimport(first, second)
+        for changed in ({"createdCount": 1}, {"mappingId": "first-profile"}, {"sourceSha256": "changed"}):
+            with self.subTest(changed=changed), self.assertRaises(AssertionError):
+                check_reimport(first, {**second, **changed})
+
     def test_count_audit_is_project_scoped_and_closes_on_failure(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
