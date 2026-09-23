@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-evidence",
+  "candidateCommit": "53b20e4e59396778453dbd985f50d172d0b89d8c",
+  "predecessorCommit": "7ef91f94a4213972960e9321142c0e7138e90984",
+  "implementer": "agent:root",
+  "riskTier": 2,
+  "contract": "artifacts/evidence/correction-interruption-note.maintenance-01.md",
+  "selectedChecksStatus": "PASS",
+  "changedFiles": [
+    {"path": "artifacts/evidence/correction-interruption-note.maintenance-01.md", "blob": "b49d15fab8cbf935fb7ec4fe4e323b96e029220d", "sha256": "69d92cf59e7640c2817741cca69c455213df0c010a811a3c10f48eeb7d95e34b"},
+    {"path": "docs/automation/governance-automation-simplification.md", "blob": "2ac9565e80497d14981efdbffa529ab12ba9b25c", "sha256": "605f3b4765dfd71110f659af1e026dca66121891e6c67ce46abe76b5844413a5"},
+    {"path": "tests/foundation/test_ui_change_gate.py", "blob": "d1a2560a36283c7d58c6cb1161f952c556fc2b02", "sha256": "d3f44e75623a923af83a40fb6fb1a048df3200552ae29813fa2c2e3d0fca7f13"},
+    {"path": "tools/ui_change_gate.py", "blob": "60a4bde7e7214d415a39d6648521e8faf2d7fded", "sha256": "be7bff16d23eb086044518b99a94aa15ab0999308ecc3975ada4843f6a1c9b0a"}
+  ],
+  "checks": [
+    {
+      "command": "python -B -s -m unittest tests.foundation.test_ui_change_gate -k linked -v",
+      "exitCode": 0,
+      "result": "24 tests PASS in 196.331s; no skips; fixed clean committed candidate. Real Git fixtures cover immutable same-Wave interruption notes, exact namespace/date, repo-less rejection, rewriting/removal, preexisting notes, file modes, wrong-Wave, mixed/reverted unauthorized history and existing linked-correction authority boundaries.",
+      "log": {"path": "artifacts/tmp/W2.C01.T01.checkpoint-gate-01.log", "sha256": "08c81036977fde63686b100585a911545a6dfeadb942ba03be4941459f19facd"}
+    },
+    {
+      "command": "python -B -s -m unittest discover -s tests/foundation -p test_taskctl_workflow.py -k corrective -v",
+      "exitCode": 0,
+      "result": "14 tests PASS in 1.004s; no skips; same committed candidate.",
+      "log": {"path": "artifacts/tmp/W2.C01.T01.checkpoint-task-02.log", "sha256": "b666d67427b3b5b58813aba89a5843bd728b1fc98c2621f42a07b50832aa28fe"}
+    },
+    {"command": "python -m ruff check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py", "exitCode": 0, "result": "PASS at the committed candidate."},
+    {"command": "python -m ruff format --check tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py", "exitCode": 0, "result": "PASS at the committed candidate."},
+    {"command": "python -m mypy --config-file pyproject.toml --no-namespace-packages --follow-imports=silent tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py", "exitCode": 0, "result": "PASS at the committed candidate."},
+    {"command": "git diff --check", "exitCode": 0, "result": "PASS; clean tracked state and unchanged HEAD during verification."}
+  ],
+  "retainedAdverseChecks": [
+    {"path": "artifacts/tmp/W2.C01.T01.checkpoint-scope-red-01.log", "sha256": "a559baa9bf338d054538597cc90ed5ac08a91e94cb2ca6a78f6a329d5d48f4cc", "result": "Pre-edit positive regression FAIL as expected, 1 case in 1.799s: exact scope rejection."},
+    {"path": "artifacts/tmp/W2.C01.T01.checkpoint-task-01.log", "sha256": "0da1b865c1777fd5ee6f82f1f5cd8b2f20cd940638d96f5c08beb63c3748dd5d", "result": "Module-style task-test invocation could not import historical_witness_fixture. Corrected to established discovery invocation without source or assertion changes; not a product failure."}
+  ],
+  "invariants": [
+    "Only Git-authenticated, sole-parent, single-addition, regular non-executable same-Wave dated notes are nonauthoritative delivery records. Product scope and complete-history checks remain exact.",
+    "No scope, approval, criterion, original evidence, security boundary, runtime, threshold or release authority changed. Independent control-chain approval remains required.",
+    "No product tests or benchmark were repeated for this control-only delta. All 173 recorded benchmark source/tool/contract input hashes match the current candidate; installed runtime was not changed. This establishes continuity only, not a new benchmark execution or general cache authority."
+  ],
+  "scope": "Bounded checkpoint-delivery compatibility repair. W2.C01.T01 submission, its independent disposition, final CAP-04.S01 review and ordinary W2 resume remain separate operations."
+}
