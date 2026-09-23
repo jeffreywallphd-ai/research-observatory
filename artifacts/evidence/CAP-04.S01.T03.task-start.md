@@ -77,3 +77,21 @@ diagnostics before changing publication. Preserve exact lease fencing, atomic
 canonical/provenance/output acceptance, bounded memory, cancellation and security
 interruption. Neither a larger global lease nor discarded provenance is a fix.
 The retained diagnostic and read-only rollback facts are in `scale-01` evidence.
+
+## Final journey preflight — cancellation and actual process restart
+
+An automatic commit-status read can wait behind the atomic writer while the
+renderer disables Cancel with the same busy flag as a mutation. Preserve the
+parent's disabled gate and duplicate-mutation protection, but permit cancellation
+during that status read. A superseded read must not overwrite status, errors,
+announcements or the pending cancellation state. First add deferred-response
+built-renderer regressions with actual Core cancellation; then restore the
+existing cancellation affordance. No route or governed experience redesign.
+
+The retained service-reconstruction tests do not establish a process restart.
+Add a tiny protected fixture that closes during an actual transactional write,
+proves rollback, exits its Core process, then reopens/recovers and replays in
+separate new processes. Keep the same authorized native resume epoch while Core
+instances/project sessions change. This proves ordinary process restart, not
+abrupt-kill stale-lock recovery, native dialogs or packaged execution. The latter
+remain slice/Wave qualification; do not repeat unrelated completed suites.

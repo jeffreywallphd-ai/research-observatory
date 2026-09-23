@@ -135,7 +135,7 @@ export function ImportReviewPane({ root, projectId, initial, client, announce, o
       if (!live.current || ticket !== generation.current) return;
       setStatus(next); onStatus(next); setSummary(null); setPage(null); setRecord(null); setHeaders([]); setSelected([]); setConfirmCancel(false);
       lastStatusLabel.current = importStatusLabel(next);
-      announce("Preview cancelled. Retained source, audit and any previously committed records remain unchanged.");
+      announce("Preview cancelled. Retained source, audit and previously committed records remain unchanged.");
       statusHeading.current?.focus();
     } catch (error) { if (live.current && ticket === generation.current) setFailure(importFailure(error)); }
     finally { if (live.current && ticket === generation.current) setBusy(false); }

@@ -1,11 +1,13 @@
 """Built renderer/client/Core commit journey; native host is an explicit double."""
 
+import json
 import sys
 import unittest
+from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
@@ -24,6 +26,152 @@ from tests.service import test_import_review_api as api_fixture  # noqa: E402
 
 
 class ImportCommitInteractionTests(unittest.TestCase):
+    def test_cancel_remains_reachable_during_status_read_and_ignores_stale_success(self):
+        self._cancel_during_status_read("success-during-cancel")
+
+    def test_cancel_keeps_mutation_protection_after_stale_read_failure(self):
+        self._cancel_during_status_read("failure-during-cancel")
+
+    def test_late_status_read_cannot_resurrect_cancelled_commit(self):
+        self._cancel_during_status_read("success-after-cancel")
+
+    def _cancel_during_status_read(self, ordering):
+        self.assertEqual([], product_build_errors(REPO))
+        api = api_fixture.ImportReviewApiTests(methodName="runTest")
+        with patch("research_observatory_core.import_preview_service.ImportPreviewService.start"):
+            api.setUp()
+        self.addCleanup(api.doCleanups)
+        f = api.fixture
+        api.post("begin-review")
+        f.service.schedule_summary(f.root, api.preview, revision=1)
+        f.service.run_pending()
+        f.service.detach(f.root)
+        f.projects.close(root=f.root, trace_id="1" * 32)
+        cancellations = []
+
+        def native(command, args):
+            self.assertEqual("core_api_request", command)
+            request = args["request"]
+            if request["path"] == "/projects/imports/commit/cancel":
+                cancellations.append(json.loads(request["body"]))
+            headers = {"Content-Type": "application/json"}
+            if request["ifMatch"] is not None:
+                headers["If-Match"] = request["ifMatch"]
+            if request["idempotencyKey"] is not None:
+                headers["Idempotency-Key"] = request["idempotencyKey"]
+            result = api.client.request(request["method"], request["path"], content=request["body"], headers=headers)
+            return {
+                "status": result.status_code,
+                "contentType": result.headers["content-type"].split(";")[0],
+                "traceId": result.headers["x-trace-id"],
+                "etag": result.headers.get("etag"),
+                "body": result.text,
+            }
+
+        script = (
+            (REPO / "tests/desktop/fixtures/task_center_interactions.js")
+            .read_text("utf-8")
+            .replace("__WORKFLOW_CATALOG__", core_workflow_catalog_json(REPO))
+        )
+        script += (
+            DIRECTORY_PICKER_FIXTURE
+            + """;
+        (() => {
+          const prior = window.__TAURI_INTERNALS__.invoke;
+          const held = window.__commitHeld = {status: [], cancel: [], summary: []};
+          window.__TAURI_INTERNALS__.invoke = async (command, args) => {
+            if (command !== 'core_api_request') return prior(command, args);
+            const result = await window.__import_commit_native(command, args);
+            const kind = ({'/projects/imports/commit/latest': 'status',
+              '/projects/imports/commit/cancel': 'cancel',
+              '/projects/imports/summary': 'summary'})[args.request.path];
+            if (kind && held['hold_' + kind]) {
+              return new Promise((resolve, reject) => held[kind].push({resolve, reject, result}));
+            }
+            return result;
+          };
+        })();"""
+        )
+        playwright = self.enterContext(sync_playwright())
+        browser = playwright.chromium.launch(headless=True)
+        self.addCleanup(browser.close)
+        context = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+        document = inline_product_index(REPO)
+        context.route(
+            "**/*",
+            lambda route: (
+                route.fulfill(status=200, content_type="text/html", body=document)
+                if route.request.url == "http://tauri.localhost/index.html"
+                else route.abort()
+            ),
+        )
+        page = context.new_page()
+        page.set_default_timeout(7000)
+        page.expose_function("__import_commit_native", native)
+        page.add_init_script(script)
+        page.goto("http://tauri.localhost/index.html", wait_until="load")
+        page.wait_for_function("document.body.dataset.applicationReady === 'true'")
+        menu = page.locator("[data-all-tools]")
+
+        def navigate(name):
+            if menu.get_attribute("open") is None:
+                menu.locator("summary").click()
+            menu.get_by_role("button", name=name, exact=True).click()
+
+        navigate("Local projects")
+        choose_fixture_directory(page, "project-root", f.root)
+        page.get_by_role("button", name="Open project", exact=True).click()
+        page.get_by_text("Exclusive local session open", exact=True).wait_for()
+        navigate("Ingestion & Reconciliation")
+        page.locator(".import-batches").get_by_role("button").first.click()
+        commit = page.get_by_label("Import commit", exact=True)
+        commit.get_by_role("button", name="Review commit…", exact=True).click()
+        commit.get_by_role("button", name="Commit this draft", exact=True).click()
+        commit.get_by_text("Commit runnable", exact=True).wait_for()
+        current = api.post("commit/latest").json()
+        page.evaluate("() => { __commitHeld.hold_status = true; __commitHeld.hold_cancel = true; }")
+        page.wait_for_function("__commitHeld.status.length === 1")
+        cancel = commit.get_by_role("button", name="Cancel import commit", exact=True)
+        expect(cancel).to_be_enabled()
+        expect(commit.get_by_role("button", name="Refresh commit status", exact=True)).to_be_disabled()
+
+        # The local status-read exception must not override the parent's busy gate.
+        page.evaluate("() => { __commitHeld.hold_summary = true; }")
+        page.get_by_role("button", name="Refresh summary status", exact=True).click()
+        page.wait_for_function("__commitHeld.summary.length === 1")
+        expect(cancel).to_be_disabled()
+        page.evaluate("() => { const held = __commitHeld.summary[0]; held.resolve(held.result); }")
+        expect(cancel).to_be_enabled()
+        # Two synchronous activations cannot issue duplicate mutations.
+        cancel.evaluate("button => { button.click(); button.click(); }")
+        page.wait_for_function("__commitHeld.cancel.length === 1")
+        expect(cancel).to_be_disabled()
+        self.assertEqual([{**api.address, "requestId": current["requestId"], "jobId": current["jobId"]}], cancellations)
+        if ordering != "success-after-cancel":
+            page.evaluate(
+                "ordering => { const held = __commitHeld.status[0]; "
+                "if (ordering === 'failure-during-cancel') held.reject(new Error('synthetic stale failure')); "
+                "else held.resolve(held.result); }",
+                ordering,
+            )
+            expect(cancel).to_be_disabled()
+            expect(commit.get_by_text("Commit status needs attention", exact=True)).to_have_count(0)
+            self.assertEqual(1, len(cancellations))
+        page.evaluate("() => { const held = __commitHeld.cancel[0]; held.resolve(held.result); }")
+        commit.get_by_text("Commit cancelled", exact=True).wait_for()
+        if ordering == "success-after-cancel":
+            page.evaluate("() => { const held = __commitHeld.status[0]; held.resolve(held.result); }")
+        expect(cancel).to_have_count(0)
+        expect(commit.get_by_text("Commit cancelled", exact=True)).to_be_visible()
+        expect(commit.get_by_text("Commit status needs attention", exact=True)).to_have_count(0)
+        self.assertEqual("cancelled", api.post("commit/latest").json()["jobState"])
+        with closing(
+            open_canonical_database(Path(f.root) / "state/project.sqlite3", expected_project_id=f.project_id)
+        ) as db:
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM import_source_records").fetchone()[0])
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM import_manifests").fetchone()[0])
+        page.goto("about:blank")
+
     def test_commit_lost_reply_manifest_replay_and_navigation_in_both_themes(self):
         self.assertEqual([], product_build_errors(REPO))
         api = api_fixture.ImportReviewApiTests(methodName="runTest")
@@ -147,11 +295,11 @@ class ImportCommitInteractionTests(unittest.TestCase):
             page.get_by_role("button", name="Cancel this preview…", exact=True).click()
             page.get_by_role("button", name="Confirm cancellation", exact=True).click()
             page.locator("[data-live-region]").get_by_text(
-                "Preview cancelled. Retained source, audit and any previously committed records remain unchanged.",
+                "Preview cancelled. Retained source, audit and previously committed records remain unchanged.",
                 exact=True,
             ).wait_for()
-            with open_canonical_database(
-                Path(f.root) / "state/project.sqlite3", expected_project_id=f.project_id
+            with closing(
+                open_canonical_database(Path(f.root) / "state/project.sqlite3", expected_project_id=f.project_id)
             ) as db:
                 self.assertEqual(1, db.execute("SELECT COUNT(*) FROM import_source_records").fetchone()[0])
                 self.assertEqual(1, db.execute("SELECT COUNT(*) FROM import_manifests").fetchone()[0])

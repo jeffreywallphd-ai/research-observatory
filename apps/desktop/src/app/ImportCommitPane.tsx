@@ -3,6 +3,7 @@ import { createCoreApiClient, type ImportCommitStatus, type ImportManifestPage, 
 import { Button, DataTable, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
 
 type ImportClient = ReturnType<typeof createCoreApiClient>;
+type PendingOperation = "status" | "action" | null;
 const active = (status: ImportCommitStatus | null): boolean => Boolean(status?.jobState && !["succeeded", "failed", "cancelled"].includes(status.jobState));
 
 export function ImportCommitPane({ root, projectId, previewId, revision, counts, client, disabled, announce }: {
@@ -11,7 +12,9 @@ export function ImportCommitPane({ root, projectId, previewId, revision, counts,
   readonly announce: (message: string) => void;
 }): ReactNode {
   const [status, setStatus] = useState<ImportCommitStatus | null>(null);
-  const [loading, setLoading] = useState(true), [failure, setFailure] = useState<string | null>(null);
+  const [pending, setPending] = useState<PendingOperation>("status"), [failure, setFailure] = useState<string | null>(null);
+  const pendingOperation = useRef<PendingOperation>(null);
+  const loading = pending !== null;
   const [confirming, setConfirming] = useState(false);
   const [previous, setPrevious] = useState<ImportManifestView | null>(null);
   const [batches, setBatches] = useState<ImportPreviewPage | null>(null);
@@ -20,16 +23,18 @@ export function ImportCommitPane({ root, projectId, previewId, revision, counts,
   const reviewButton = useRef<HTMLButtonElement>(null), confirmHeading = useRef<HTMLHeadingElement>(null);
   const address = { root, previewId };
 
-  async function perform(action: () => Promise<void>): Promise<void> {
+  async function perform(action: () => Promise<void>, operation: Exclude<PendingOperation, null> = "action"): Promise<void> {
     const ticket = generation.current;
-    setLoading(true); setFailure(null);
+    pendingOperation.current = operation; setPending(operation); setFailure(null);
     try { await action(); }
     catch {
       if (live.current && ticket === generation.current) {
         setStatus(null); setConfirming(false); setShowManifest(false);
         setFailure("The import outcome could not be confirmed. Refresh commit status before retrying. Current rights and the saved draft will be checked again; a missing reply does not mean nothing was imported.");
       }
-    } finally { if (live.current && ticket === generation.current) setLoading(false); }
+    } finally {
+      if (live.current && ticket === generation.current) { pendingOperation.current = null; setPending(null); }
+    }
   }
   function accept(next: ImportCommitStatus | null, ticket: number): boolean {
     if (!live.current || ticket !== generation.current) return false;
@@ -43,7 +48,7 @@ export function ImportCommitPane({ root, projectId, previewId, revision, counts,
   }
   async function refresh(): Promise<void> {
     const ticket = ++generation.current;
-    await perform(async () => { accept(await client.latestImportCommit(address), ticket); });
+    await perform(async () => { accept(await client.latestImportCommit(address), ticket); }, "status");
   }
   useEffect(() => {
     live.current = true; void refresh();
@@ -70,7 +75,7 @@ export function ImportCommitPane({ root, projectId, previewId, revision, counts,
     });
   }
   async function cancel(): Promise<void> {
-    if (!status?.jobId) return;
+    if (disabled || pendingOperation.current === "action" || !active(status) || !status?.jobId) return;
     const ticket = ++generation.current;
     await perform(async () => { accept(await client.cancelImportCommit({ ...address, requestId: status.requestId, jobId: status.jobId! }), ticket); });
   }
@@ -107,7 +112,7 @@ export function ImportCommitPane({ root, projectId, previewId, revision, counts,
       {status?.diagnosticCode ? <p>Diagnostic: {status.diagnosticCode}</p> : null}
       <div className="ro-action-row">
         <Button disabled={unavailable} onClick={() => void refresh()}>Refresh commit status</Button>
-        {active(status) ? <Button disabled={unavailable} onClick={() => void cancel()}>Cancel import commit</Button> : null}
+        {active(status) ? <Button disabled={disabled || pending === "action"} onClick={() => void cancel()}>Cancel import commit</Button> : null}
         <Button ref={reviewButton} disabled={unavailable || !counts || active(status) || confirming} onClick={() => setConfirming(true)}>Review commit…</Button>
         {status?.manifest ? <Button disabled={unavailable} onClick={() => setShowManifest(!showManifest)}>{showManifest ? "Hide import manifest" : "Open import manifest"}</Button> : null}
       </div>

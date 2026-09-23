@@ -233,9 +233,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="ba6d053959a28388c58c87f47bd95abe79cbed6dbc37dfef21a22eff1a4e1701">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="41255fe0ac7961dbd04d435deb72d4a6ebf8c27e038dbafb685a157806d43724">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>ba6d053959a28388c58c87f47bd95abe79cbed6dbc37dfef21a22eff1a4e1701</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>41255fe0ac7961dbd04d435deb72d4a6ebf8c27e038dbafb685a157806d43724</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T03 — idempotent import commits and manifests
 
 Claim base: `b55c1285b33d17fca7b8ef37ed8ce16d1c83610a`.
@@ -314,7 +314,25 @@ material. Add a deterministic clock-crossing regression and phase/attempt-aware
 diagnostics before changing publication. Preserve exact lease fencing, atomic
 canonical/provenance/output acceptance, bounded memory, cancellation and security
 interruption. Neither a larger global lease nor discarded provenance is a fix.
-The retained diagnostic and read-only rollback facts are in `scale-01` evidence.</pre></article>
+The retained diagnostic and read-only rollback facts are in `scale-01` evidence.
+
+## Final journey preflight — cancellation and actual process restart
+
+An automatic commit-status read can wait behind the atomic writer while the
+renderer disables Cancel with the same busy flag as a mutation. Preserve the
+parent&#x27;s disabled gate and duplicate-mutation protection, but permit cancellation
+during that status read. A superseded read must not overwrite status, errors,
+announcements or the pending cancellation state. First add deferred-response
+built-renderer regressions with actual Core cancellation; then restore the
+existing cancellation affordance. No route or governed experience redesign.
+
+The retained service-reconstruction tests do not establish a process restart.
+Add a tiny protected fixture that closes during an actual transactional write,
+proves rollback, exits its Core process, then reopens/recovers and replays in
+separate new processes. Keep the same authorized native resume epoch while Core
+instances/project sessions change. This proves ordinary process restart, not
+abrupt-kill stale-lock recovery, native dialogs or packaged execution. The latter
+remain slice/Wave qualification; do not repeat unrelated completed suites.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
