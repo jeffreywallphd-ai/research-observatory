@@ -438,6 +438,9 @@ class ImportReviewScaleWindowsTests(unittest.TestCase):
                 "diagnosticCode": job.diagnostic_code,
                 "interruptionKind": job.interruption_kind,
             }
+            if job.attempt_count > 1:
+                self.report["retryObserved"] = True
+                self.fail("worker retry observed; the first failure is not a qualifying sample")
             if job.state in {"succeeded", "failed", "cancelled"}:
                 self.assertEqual("succeeded", job.state, "worker did not succeed; see content-free diagnostic")
                 return
