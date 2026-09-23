@@ -12,6 +12,7 @@ import hashlib
 import json
 import os
 import secrets
+import shutil
 import subprocess
 import tempfile
 import time
@@ -247,10 +248,17 @@ class ImportFrozenWindowsTests(unittest.TestCase):
 
         save()
         try:
+            # Match the existing package benchmark's disposable-copy boundary.
+            # Never apply temporary immutability permissions to the build output.
+            snapshot_parent = Path(tempfile.mkdtemp(prefix="import-frozen-package-", dir=scratch))
+            snapshot_root = snapshot_parent / "package"
+            shutil.copytree(root, snapshot_root)
+            report["packageSnapshot"] = snapshot_parent.relative_to(producer_repo).as_posix()
+            save()
             epoch = secrets.token_hex(16)
-            with immutable_package_snapshot(producer_repo, root, manifest):
-                self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
-                with supervised(root / manifest["entrypoint"], fixture, "create", epoch) as client:
+            with immutable_package_snapshot(producer_repo, snapshot_root, manifest):
+                self.assertEqual([], verify_artifact(snapshot_root, manifest, schema=schema, contract=contract))
+                with supervised(snapshot_root / manifest["entrypoint"], fixture, "create", epoch) as client:
                     created = client.post(
                         "/projects",
                         {
@@ -285,8 +293,8 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                     second = commit(client, again, second_draft)
                     self.assertEqual(first, second, "identical reimport must reuse the original manifest")
                     client.post("/projects/close", {"root": project["root"]})
-                self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
-                with supervised(root / manifest["entrypoint"], fixture, "reopen", epoch) as client:
+                self.assertEqual([], verify_artifact(snapshot_root, manifest, schema=schema, contract=contract))
+                with supervised(snapshot_root / manifest["entrypoint"], fixture, "reopen", epoch) as client:
                     client.post("/projects/open", {"root": project["root"]})
                     self.assertEqual(first, client.post("/projects/imports/commit/latest", again)["manifest"])
                     members = client.post(
@@ -308,7 +316,8 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                     self.assertEqual("permitted", review["rights"]["inspect"]["value"])
                     self.assertEqual("unknown", review["rights"]["export"]["value"])
                     client.post("/projects/close", {"root": project["root"]})
-                self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
+                self.assertEqual([], verify_artifact(snapshot_root, manifest, schema=schema, contract=contract))
+            self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
             self.assertEqual(head, git("rev-parse", "HEAD"))
             self.assertEqual("", git("status", "--porcelain"))
             self.assertEqual(report_sha, digest(package_report))

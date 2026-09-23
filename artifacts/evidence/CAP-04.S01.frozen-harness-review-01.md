@@ -31,3 +31,30 @@ artifact bytes, no content/token logging, durable reimport/restart outcomes.
 The test uses ordinary production protection and an explicitly authorized
 synthetic project; it does not inspect existing secrets, alter sign-in settings,
 launch the full production desktop or establish signing/performance/crash proof.
+
+## Appended pre-execution closure and setup attempt
+
+Reviewer independently approved both corrections at
+`cd03f8c13c71744bc8461f9d9cab3540cd376bb7`. Exact-candidate five control tests
+passed (0.002s), plus Ruff/format. Reviewer authenticated the package report
+SHA256 `756ced212ed46a95b21322bdcd224c3c4d6e3a2bc19fb712f3df1995800ea13f`
+and all 710 files/48,318,165 bytes against schema, inventory and build contract.
+
+The first actual invocation failed before Core launch: the reused package guard
+reported `Core package snapshot write denial is ineffective` on the original
+build directory. Retained report:
+`artifacts/tmp/import-frozen-windows-rqfizlcd/result.json`; log:
+`artifacts/tmp/CAP-04.S01.frozen-qualification-01.log`. No project key was created.
+The guard restored its temporary deny entry; its empty probe was moved into the
+failed fixture, preserving it and restoring the original exact package inventory.
+
+Cause established to the bounded level needed here: the runner guarded original
+build output instead of using the existing benchmark's disposable-copy route.
+No claim is made about a deeper Windows ACL cause. The same guard on a fresh
+copied package passed write denial and exact inventory validation without any
+Core launch. That fixture is retained in the producer repository under
+`artifacts/tmp/cap04-snapshot-guard-3sk81owu`.
+The runner now copies into a short-path confined disposable directory, guards
+and verifies that copy throughout both child lifetimes, and leaves original
+package bytes untouched. Neither the guard nor its assertions were weakened.
+Independent incremental review remains required before retry.
