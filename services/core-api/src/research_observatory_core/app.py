@@ -316,7 +316,10 @@ def create_app(
                     status=503,
                     code="RO-CORE-IMPORT-WORKER-UNAVAILABLE",
                     title="Local import worker is not ready",
-                    detail="The project action did not finish. Check durable import status before retrying; accepted records are retained.",
+                    detail=(
+                        "The project action did not finish. Check durable import status before retrying; "
+                        "accepted records are retained."
+                    ),
                     trace_id=request.state.trace_id,
                     retryable=True,
                     remediation="Wait briefly and retry the project action.",
