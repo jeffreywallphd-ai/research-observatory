@@ -207,8 +207,11 @@ def result_from_log(raw, kind):
 
 
 def installed_inputs():
-    site = Path(sys.prefix) / "Lib/site-packages"
-    require(site.is_dir() and site.resolve() == site.absolute(), "noncanonical installed dependencies")
+    # Campaigns reuse the configured environment through a .venv junction.
+    # Bind and lock its actual files, rather than treating that launcher alias
+    # as a second runtime or silently omitting installed dependency identity.
+    site = (Path(sys.prefix) / "Lib/site-packages").resolve(strict=True)
+    require(site.is_dir(), "installed dependencies unavailable")
     paths = sorted(
         path
         for path in site.rglob("*")
@@ -221,6 +224,7 @@ def installed_inputs():
     hashes = {path.relative_to(site).as_posix(): digest(path) for path in paths}
     return paths, {
         "files": len(paths),
+        "rootBindingSha256": hashlib.sha256(str(site).encode()).hexdigest(),
         "sha256": hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest(),
     }
 
@@ -270,7 +274,7 @@ def child(kind, repetition, fixture):
     print(json.dumps({"workload": kind, "repetition": repetition, "state": "running"}), flush=True)
     with log.open("xb") as stream:
         process = subprocess.Popen(
-            [sys.executable, "-B", "-s", "-P", "-m", "unittest", CASES[kind], "-v"],
+            [str(Path(sys.executable).resolve(strict=True)), "-B", "-s", "-P", "-m", "unittest", CASES[kind], "-v"],
             cwd=REPO,
             env=environment,
             stdout=stream,

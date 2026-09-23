@@ -54,3 +54,16 @@ python tools/import_performance_check.py --report artifacts/tmp/CAP-04.S01.perfo
 The tool sets its child source paths and explicit workload opt-ins itself. Unit
 controls: `python -m unittest tests.service.test_import_performance_check -v`.
 Actual scale results and independent result disposition are pending.
+
+## Prerequisite-only attempt
+
+At `7c1b4dcc`, ten exact-candidate controls passed in 1.001s; focused Ruff,
+format and two-file mypy passed. A real-principal locking/import/Git preflight
+then rejected the campaign's existing `.venv` junction before any workload or
+project creation. It points to the repository's configured shared environment;
+rejecting that launcher alias was an overly strict harness assumption, not a
+product failure. The correction resolves the installed root once, binds its
+digest without logging its path, and locks/hashes the actual installed bytes.
+Child launches use the resolved Python executable. Links below the actual root
+remain rejected; changed root/bytes still fail final equality. A focused synthetic
+installed-file fingerprint control covers root binding and byte changes.

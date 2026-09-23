@@ -242,6 +242,23 @@ class ImportPerformanceControlTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 check.safe_output_path(root, root / "outside.json")
 
+    def test_installed_fingerprint_binds_actual_file_bytes_and_root(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            site = root / "Lib/site-packages"
+            site.mkdir(parents=True)
+            source = site / "synthetic.py"
+            source.write_bytes(b"first")
+            with patch.object(check.sys, "prefix", str(root)):
+                paths, first = check.installed_inputs()
+                self.assertEqual([source.resolve()], paths)
+                self.assertEqual(1, first["files"])
+                self.assertEqual(64, len(first["rootBindingSha256"]))
+                source.write_bytes(b"second")
+                _, second = check.installed_inputs()
+                self.assertNotEqual(first["sha256"], second["sha256"])
+                self.assertEqual(first["rootBindingSha256"], second["rootBindingSha256"])
+
 
 if __name__ == "__main__":
     unittest.main()
