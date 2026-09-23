@@ -44,13 +44,14 @@ from .ingestion.source_chunks import put_source_chunk
 from .ingestion.summary_activity import ImportSummaryActivity
 from .ingestion.summary_workflow import SummaryJobInput, bind_summary_claim, build_summary_job, summary_job_input
 from .logging import emit_log_record
-from .ports.import_commits import ImportRepository
+from .ports.import_commits import ImportPublicationInterrupted, ImportRepository
 from .ports.import_previews import PreviewActor, PreviewCreate, PreviewProblem, PreviewState
 from .ports.object_store import ObjectStore
 from .ports.repositories import IntentRevisionRepository, UnitOfWorkFactory
 from .ports.workflow_executor import (
     WorkflowActor,
     WorkflowJobAuthority,
+    WorkflowJobClaim,
     WorkflowJobRecord,
     WorkflowQueueConflict,
     WorkflowQueueRepository,
@@ -58,7 +59,12 @@ from .ports.workflow_executor import (
 from .privacy import ProjectPrivacyService
 from .projects import ProjectLifecycleService
 from .research_intents import validated_workflow_authority
-from .workflow_executor import LocalWorkerAdmission, LocalWorkerSupervisor, WorkflowActivityError
+from .workflow_executor import (
+    LocalWorkerAdmission,
+    LocalWorkerSupervisor,
+    WorkflowActivityError,
+    WorkflowCancellationRequested,
+)
 
 
 def _now() -> str:
@@ -86,6 +92,16 @@ class _Binding:
 
     def __post_init__(self) -> None:
         self.drained.set()
+
+
+@dataclass(slots=True)
+class _Publication:
+    binding: _Binding
+    inputs: CommitJobInput
+    claim: WorkflowJobClaim
+    requested: threading.Event = field(default_factory=threading.Event)
+    finished: threading.Event = field(default_factory=threading.Event)
+    reason: str | None = None
 
 
 def _configuration(authority: WorkflowJobAuthority) -> tuple[str, str, str]:
@@ -138,6 +154,7 @@ class ImportPreviewService:
         self._projects, self._privacy, self._adapters = projects, privacy, adapters
         self._actor_id, self._now = local_actor_id, now
         self._bindings: dict[Path, _Binding] = {}
+        self._publications: dict[Path, _Publication] = {}
         self._mutex = threading.RLock()
         self._runner = threading.Lock()
         self._stopped, self._wake = threading.Event(), threading.Event()
@@ -148,6 +165,42 @@ class ImportPreviewService:
 
     def _workflow_actor(self) -> WorkflowActor:
         return WorkflowActor(self._actor_id, "human", "local-researcher")
+
+    def request_publication_stop(
+        self,
+        root: str,
+        *,
+        preview_id: str | None = None,
+        request_id: str | None = None,
+        job_id: str | None = None,
+        closing: bool = False,
+    ) -> None:
+        """Stop-only hint before the lifecycle mutex; never a cancellation receipt.
+
+        Called only by authenticated cancel/close routes. Match the current
+        in-process binding and logical command; do not open a caller path or
+        infer a different job from a partial commit identity.
+        """
+        with self._mutex:
+            path = Path(root)
+            active = self._publications.get(path)
+            if active is None or self._bindings.get(path) is not active.binding:
+                return
+            if not closing:
+                if preview_id != active.inputs.preview.preview_id:
+                    raise PreviewProblem("preview-worker-drain-pending")
+                if (request_id is not None or job_id is not None) and (
+                    request_id != active.inputs.request_id or job_id != active.claim.job_id
+                ):
+                    raise PreviewProblem("preview-commit-job-authority-mismatch")
+            if active.reason is None:
+                active.reason = "close" if closing else "cancel"
+            if closing:
+                active.binding.stopped.set()
+            active.requested.set()
+        # Never wait for a lifecycle lock still held by a blocked writer.
+        if not active.finished.wait(timeout=1.0):
+            raise PreviewProblem("preview-worker-drain-pending")
 
     def _binding(self, path: Path, identity: str) -> _Binding:
         with self._mutex:
@@ -740,12 +793,47 @@ class ImportPreviewService:
 
                 return self._guard(binding, current)
 
-            return ImportCommitActivity(
-                inputs=inputs,
-                repository=adapters.previews,
-                guard=guarded,
-                trace_id=claim.job_id.replace("-", ""),
-            )(context, claim)
+            active = _Publication(binding, inputs, claim)
+
+            def register():
+                with self._mutex:
+                    if self._bindings.get(binding.path) is not binding or binding.path in self._publications:
+                        raise PreviewProblem("preview-project-session-changed")
+                    self._publications[binding.path] = active
+
+            guarded(register)
+            try:
+                try:
+                    return ImportCommitActivity(
+                        inputs=inputs,
+                        repository=adapters.previews,
+                        guard=guarded,
+                        trace_id=claim.job_id.replace("-", ""),
+                        interrupted=lambda: active.requested.is_set() or self._stopped.is_set(),
+                    )(context, claim)
+                except ImportPublicationInterrupted:
+                    # Publication and its provisional heartbeats have rolled back.
+                    # Revalidate and persist the request before another admission.
+                    if active.reason == "cancel":
+                        self.cancel_commit(
+                            str(binding.path),
+                            inputs.preview.preview_id,
+                            request_id=inputs.request_id,
+                            job_id=claim.job_id,
+                        )
+                        adapters.queue.recover_expired(
+                            now=self._now(),
+                            actor=WorkflowActor(self._actor_id, "system", "workflow-coordinator"),
+                            limit=100,
+                            activity_types=(COMMIT_ACTIVITY,),
+                        )
+                        raise WorkflowCancellationRequested("import publication interrupted") from None
+                    raise WorkflowActivityError("dependency-unavailable") from None
+            finally:
+                with self._mutex:
+                    if self._publications.get(binding.path) is active:
+                        self._publications.pop(binding.path)
+                    active.finished.set()
 
         supervisor = LocalWorkerSupervisor(
             adapters.queue,
@@ -794,6 +882,8 @@ class ImportPreviewService:
             self._wake.wait(0.5)
 
     def detach(self, root: str) -> None:
+        self.request_publication_stop(root, closing=True)
+
         # Resolve while still open, then signal/drain outside lifecycle locks.
         def resolve(path: Path, identity: str) -> _Binding | None:
             with self._mutex:

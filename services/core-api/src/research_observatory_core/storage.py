@@ -637,6 +637,20 @@ class CanonicalConnection:
         except sqlcipher.Error as error:
             raise sqlite3.DatabaseError("protected database operation failed") from error
 
+    @contextmanager
+    def interrupt_when(self, requested: Callable[[], bool]):
+        """Scoped stop-only hook; never expose the raw handle or alter its policy.
+
+        The hook is removed before callers unwind/rollback. SQLite may itself
+        roll back an interrupted writer; ordinary transaction checks cover both.
+        """
+        connection = _CAPABILITY_REGISTRY.connection(self.__token)
+        connection.set_progress_handler(lambda: int(requested()), 1000)
+        try:
+            yield
+        finally:
+            connection.set_progress_handler(None, 0)
+
     @property
     def in_transaction(self) -> bool:
         return _CAPABILITY_REGISTRY.connection(self.__token).in_transaction

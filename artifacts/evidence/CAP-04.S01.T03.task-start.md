@@ -66,3 +66,14 @@ post-commit cancellation. Root cause: intake-only wording survived when commit
 was added; the initial journey covered commit/replay but not this state crossing.
 Review every remaining unconditional "no import" statement at the changed UI
 boundary; keep broader optional UX improvements outside this correction.
+
+## Protected scale diagnostic — atomic writer exceeds its renewable lease
+
+The first 100k attempt was abandoned for `lease-expired` and rolled back every
+canonical source/manifest row. The small fixture missed total atomic-writer cost:
+per-record provenance dominates, with repeated fixed-query compilation also
+material. Add a deterministic clock-crossing regression and phase/attempt-aware
+diagnostics before changing publication. Preserve exact lease fencing, atomic
+canonical/provenance/output acceptance, bounded memory, cancellation and security
+interruption. Neither a larger global lease nor discarded provenance is a fix.
+The retained diagnostic and read-only rollback facts are in `scale-01` evidence.

@@ -190,12 +190,26 @@ def register_import_routes(
     )
 
     def run[Result](
-        request: Request, command: ImportProjectRequest, action: Callable[[ImportReview, ImportPreviewService], Result]
+        request: Request,
+        command: ImportProjectRequest,
+        action: Callable[[ImportReview, ImportPreviewService], Result],
+        *,
+        stop_publication: bool = False,
     ) -> Result:
         runtime = service(request)
         if runtime is None:
             raise _problem(request, 503, "RO-CORE-IMPORT-UNAVAILABLE", "Import review is unavailable in this session")
         try:
+            if stop_publication:
+                if isinstance(command, ImportCommitCancelRequest):
+                    runtime.request_publication_stop(
+                        command.root,
+                        preview_id=command.preview_id,
+                        request_id=command.request_id,
+                        job_id=command.job_id,
+                    )
+                elif isinstance(command, ImportAddress):
+                    runtime.request_publication_stop(command.root, preview_id=command.preview_id)
             return runtime.review_action(command.root, lambda review: action(review, runtime))
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
@@ -290,7 +304,7 @@ def register_import_routes(
             )
             return commit(runtime, command)
 
-        return run(request, command, action)
+        return run(request, command, action, stop_publication=True)
 
     @router.post("/manifest", response_model=ImportManifestView | None)
     def manifest(request: Request, command: ImportManifestRequest) -> ImportManifestView | None:
@@ -412,7 +426,7 @@ def register_import_routes(
             runtime.cancel(command.root, command.preview_id, trace_id=request.state.trace_id)
             return preview_item(*runtime.intake_status(command.root, command.preview_id))
 
-        return run(request, command, action)
+        return run(request, command, action, stop_publication=True)
 
     @router.post("/begin-review", response_model=ReviewSummary)
     def begin_review(request: Request, command: ImportAddress) -> ReviewSummary:

@@ -91,3 +91,22 @@ history checkpoint without duplicate accepted output.
 
 CAP-03.S04.T03 owns the governed Task Center projection and interactions; T02
 does not introduce Task Center UI or server workflow infrastructure.
+
+Import commit preparation uses bounded guarded operations before atomic canonical
+publication. During that final writer, the existing exact live lease can renew
+on the same connection, at the unchanged interval and with normal progress/history
+validation. No second writer or expired-claim revival is permitted. A process-local
+registration binds the current project binding, command and claim. Authenticated
+cancel/close routes may signal only matching work before acquiring the lifecycle
+mutex; the signal requests rollback, not an accepted cancellation. A scoped,
+stop-only storage progress hook also interrupts long SQL, then clears before
+rollback. Drain waits are bounded and report an unconfirmed outcome on timeout.
+
+After rollback, cancellation is revalidated and durably requested before another
+admission. If rollback discarded renewals and exposed an expired durable lease,
+existing expired-attempt recovery converges cancellation without reviving that
+claim. Close/reopen retains binding drainage and explicit restart semantics;
+native security lock still terminates the process tree immediately. These controls
+do not establish strict stale-client-session rejection beyond the public route's
+existing logical-job identity, nor prove ordinary reads remain responsive during
+publication. Measure that remaining lifecycle-lock boundary at slice qualification.

@@ -6,7 +6,7 @@ import time
 from collections.abc import Callable
 from functools import partial
 
-from ..ports.import_commits import ImportCommitRepository
+from ..ports.import_commits import ImportCommitRepository, ImportPublicationInterrupted
 from ..ports.import_previews import ImportActionGuard, PreviewActor, PreviewProblem
 from ..ports.workflow_executor import WorkflowJobClaim
 from ..workflow_executor import WorkflowActivityContext, WorkflowActivityError, WorkflowAtomicCompletion
@@ -22,10 +22,12 @@ class ImportCommitActivity:
         guard: ImportActionGuard,
         trace_id: str,
         clock: Callable[[], float] = time.monotonic,
+        interrupted: Callable[[], bool] | None = None,
     ):
         self._inputs = CommitJobInput.model_validate(inputs)
         self._repository, self._guard = repository, guard
         self._trace, self._clock = trace_id, clock
+        self._interrupted = interrupted
 
     def __call__(self, context: WorkflowActivityContext, claim: WorkflowJobClaim) -> WorkflowAtomicCompletion:
         def actor() -> PreviewActor:
@@ -35,6 +37,8 @@ class ImportCommitActivity:
 
         def poll(force_heartbeat: bool = False) -> None:
             nonlocal last_heartbeat
+            if self._interrupted is not None and self._interrupted():
+                raise ImportPublicationInterrupted()
             self._guard(context.cancellation_safe_point)
             current = self._clock()
             if force_heartbeat or current - last_heartbeat >= min(5.0, context.lease_duration_ms / 3000):
@@ -62,7 +66,14 @@ class ImportCommitActivity:
                 after = next_after
             poll()
             output = self._repository.publish_commit(
-                inputs, claim=context.claim, actor=actor(), now=context.now, poll=poll, guard=self._guard
+                inputs,
+                claim=context.claim,
+                actor=actor(),
+                now=context.now,
+                poll=poll,
+                guard=self._guard,
+                lease_duration_ms=context.lease_duration_ms,
+                interrupted=self._interrupted,
             )
             return WorkflowAtomicCompletion((output,))
         except PreviewProblem as error:

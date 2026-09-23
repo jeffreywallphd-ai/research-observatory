@@ -9,6 +9,8 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Callable, Iterator
+from contextlib import contextmanager
+from datetime import datetime, timedelta
 from functools import partial
 from pathlib import Path
 from typing import Any
@@ -21,7 +23,12 @@ from .ingestion.import_commits import ImportIdentity, import_identity, source_as
 from .ingestion.import_drafts import ImportRights, RecordDecision
 from .ingestion.import_summaries import summarize_record
 from .ingestion.preview_workflow import fingerprint
-from .ports.import_commits import ImportCommitRequest, ImportManifest, ImportManifestMember
+from .ports.import_commits import (
+    ImportCommitRequest,
+    ImportManifest,
+    ImportManifestMember,
+    ImportPublicationInterrupted,
+)
 from .ports.import_previews import ImportActionGuard, PreviewActor, PreviewDraft, PreviewProblem
 from .ports.repositories import (
     AggregateKind,
@@ -52,6 +59,25 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
     def __init__(self, database: Path, project_id: str):
         super().__init__(database, project_id)
         self._manifest_access_key: tuple[str, str, int, int, str] | None = None
+
+    @contextmanager
+    def _publication_transaction(self, preview: str, interrupted: Callable[[], bool] | None):
+        with self._transaction(preview, write=True) as connection:
+            if interrupted is None:
+                yield connection
+            else:
+                # Keep rollback outside the installed progress hook. Do not turn
+                # an unrelated database error into a successful cancellation.
+                with connection.interrupt_when(interrupted):
+                    try:
+                        yield connection
+                    except Exception:
+                        # Inner adapters can translate an interrupted SQL call
+                        # into their bounded repository exception. The stop hint
+                        # still means rollback, never a successful publication.
+                        if interrupted():
+                            raise ImportPublicationInterrupted() from None
+                        raise
 
     def _request(self, connection: CanonicalConnection, request_id: str) -> ImportCommitRequest | None:
         if not is_uuid_v7(request_id):
@@ -690,6 +716,8 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         now: Callable[[], str],
         poll: Callable[[bool], None] | None = None,
         guard: ImportActionGuard | None = None,
+        lease_duration_ms: int | None = None,
+        interrupted: Callable[[], bool] | None = None,
     ) -> WorkflowOutputReference:
         guarded = guard or _run_action
         inputs = guarded(lambda: self._bind_commit(inputs, claim))
@@ -697,7 +725,17 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         expected_identity = self._verified_identity(inputs, claim, actor, now, poll, guarded, running=running)
         if poll is not None:
             poll(True)
-        return guarded(lambda: self._publish_verified(inputs, claim, actor, now, expected_identity))
+        return guarded(
+            lambda: self._publish_verified(
+                inputs,
+                claim,
+                actor,
+                now,
+                expected_identity,
+                lease_duration_ms=lease_duration_ms,
+                interrupted=interrupted,
+            )
+        )
 
     def _publish_verified(
         self,
@@ -706,9 +744,33 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         actor: PreviewActor,
         now: Callable[[], str],
         expected_identity: ImportIdentity,
+        *,
+        lease_duration_ms: int | None = None,
+        interrupted: Callable[[], bool] | None = None,
     ) -> WorkflowOutputReference:
-        with self._transaction(inputs.preview.preview_id, write=True) as connection:
+        with self._publication_transaction(inputs.preview.preview_id, interrupted) as connection:
             actor = actor.model_copy(update={"occurred_at": now()})
+            next_heartbeat = datetime.fromisoformat(actor.occurred_at)
+
+            def maintain(*, force: bool = False) -> None:
+                nonlocal claim, next_heartbeat
+                if interrupted is not None and interrupted():
+                    raise ImportPublicationInterrupted()
+                instant = now()
+                current = datetime.fromisoformat(instant)
+                if force or lease_duration_ms is None or current >= next_heartbeat:
+                    # Validate before renewing: a missed lease can never be revived.
+                    self._running(connection, claim, actor.model_copy(update={"occurred_at": instant}))
+                    if lease_duration_ms is not None:
+                        claim = self._queue._heartbeat_with_connection(
+                            connection,
+                            claim,
+                            now=instant,
+                            lease_duration_ms=lease_duration_ms,
+                            progress={"kind": "unknown", "unit": "records", "completedUnits": None, "totalUnits": None},
+                        )
+                        next_heartbeat = current + timedelta(milliseconds=min(5000, lease_duration_ms // 3))
+
             completed = connection.execute(
                 "SELECT output_manifest_json FROM workflow_committed_outputs WHERE project_id=? AND job_id=?",
                 (self._project, claim.job_id),
@@ -733,13 +795,20 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 self._queue._complete_with_connection(connection, claim, now=actor.occurred_at, outputs=(output,))
                 return output
             draft = self._prepared(connection, inputs, claim, actor)
+            maintain()
             if inputs.previous_manifest_revision_id is not None:
                 self._manifest_access(connection, inputs.previous_manifest_revision_id)
             cursor = self._staged(connection, claim.attempt_id)
+
+            def decisions():
+                for row in cursor:
+                    maintain()
+                    yield RecordDecision.model_validate_json(row[3])
+
             try:
                 identity = import_identity(
                     draft.authority,
-                    (RecordDecision.model_validate_json(row[3]) for row in cursor),
+                    decisions(),
                     expected_record_count=draft.record_count,
                 )
             finally:
@@ -774,9 +843,9 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                     rows = self._staged(connection, claim.attempt_id)
                     try:
                         for row in rows:
+                            maintain()
                             if not row[2]:
                                 continue
-                            self._running(connection, claim, actor.model_copy(update={"occurred_at": now()}))
                             prior = connection.execute(
                                 "SELECT revision_id FROM import_source_records WHERE project_id=? "
                                 "AND source_sha256=? AND record_key=?",
@@ -815,9 +884,11 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                     # The common event cannot carry 100k inputs. Bind the complete
                     # ordered dedicated membership by digest, without truncation.
                     for member in self._members(connection, inputs, claim, "pending"):
+                        maintain()
                         member_digest.update(json.dumps(member[1:], separators=(",", ":"), ensure_ascii=True).encode())
                         member_digest.update(b"\n")
                     digest = member_digest.hexdigest()
+                    maintain()
                     manifest = self._append_canonical(
                         aggregates,
                         kind="workflow",
@@ -848,6 +919,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                     )
                     _publication_step_completed("manifest-created")
                     for member in self._members(connection, inputs, claim, manifest.revision_id):
+                        maintain()
                         connection.execute(
                             "INSERT INTO import_manifest_members VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             member,
@@ -863,6 +935,7 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                         ),
                     )
                     _publication_step_completed("manifest-sealed")
+                maintain(force=True)
                 completed_at = now()
                 self._running(connection, claim, actor.model_copy(update={"occurred_at": completed_at}))
                 output = self._output(manifest)

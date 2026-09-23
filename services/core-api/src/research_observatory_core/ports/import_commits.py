@@ -79,6 +79,10 @@ class ImportManifestMember(DraftValue):
         return self
 
 
+class ImportPublicationInterrupted(RuntimeError):
+    """Stop-only request: rollback is not a durable cancellation disposition."""
+
+
 class ImportCommitRepository(Protocol):
     def save_commit_request(self, inputs: CommitJobInput, *, actor: PreviewActor) -> ImportCommitRequest: ...
 
@@ -109,6 +113,8 @@ class ImportCommitRepository(Protocol):
         now: Callable[[], str],
         poll: Callable[[bool], None] | None = None,
         guard: ImportActionGuard | None = None,
+        lease_duration_ms: int | None = None,
+        interrupted: Callable[[], bool] | None = None,
     ) -> WorkflowOutputReference: ...
 
 

@@ -17,7 +17,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, ClassVar, Literal, cast
 
-from sqlalchemy import Column, Integer, MetaData, String, Table, desc, insert, select
+from sqlalchemy import Column, Integer, MetaData, String, Table, bindparam, desc, insert, select
 from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
 from sqlalchemy.sql import ClauseElement
 
@@ -233,6 +233,41 @@ _EXTENSIONS = {
     )
 }
 _SQLITE_DIALECT = sqlite_dialect(paramstyle="named")
+
+
+def _fixed_statement(statement: ClauseElement) -> tuple[str, Mapping[str, Any]]:
+    """Compile a fixed adapter-owned shape once; never retain caller values."""
+    compiled = statement.compile(dialect=_SQLITE_DIALECT)
+    return str(compiled), compiled.params
+
+
+def _execute_fixed(connection: CanonicalConnection, statement: tuple[str, Mapping[str, Any]], **parameters: Any):
+    sql, defaults = statement
+    return connection.execute(sql, {**defaults, **parameters})
+
+
+_AGGREGATE_LOOKUP = select(*_REVISIONS.c, _DOCUMENTS.c.object_sha256).select_from(
+    _REVISIONS.outerjoin(
+        _DOCUMENTS,
+        (_REVISIONS.c.revision_id == _DOCUMENTS.c.revision_id) & (_REVISIONS.c.project_id == _DOCUMENTS.c.project_id),
+    )
+)
+_CURRENT_AGGREGATE = _fixed_statement(
+    _AGGREGATE_LOOKUP.where(
+        (_REVISIONS.c.aggregate_id == bindparam("aggregate")) & (_REVISIONS.c.project_id == bindparam("project"))
+    )
+    .order_by(desc(_REVISIONS.c.revision))
+    .limit(1)
+)
+_EXACT_AGGREGATE = _fixed_statement(
+    _AGGREGATE_LOOKUP.where(
+        (_REVISIONS.c.revision_id == bindparam("revision")) & (_REVISIONS.c.project_id == bindparam("project"))
+    ).limit(1)
+)
+_INSERT_IDENTITY = _fixed_statement(insert(_IDENTITIES))
+_INSERT_REVISION = _fixed_statement(insert(_REVISIONS))
+_INSERT_DOCUMENT = _fixed_statement(insert(_DOCUMENTS))
+_INSERT_EXTENSIONS = {kind: _fixed_statement(insert(table)) for kind, table in _EXTENSIONS.items()}
 
 
 class _SqlitePrivacyPolicyRepository(PrivacyPolicyRepository):
@@ -2593,35 +2628,10 @@ class _SqliteAggregateRepository:
 
     def get(self, aggregate_id: str) -> AggregateRevision:
         state = self._state()
-        statement = (
-            select(
-                _REVISIONS.c.revision_id,
-                _REVISIONS.c.aggregate_id,
-                _REVISIONS.c.aggregate_kind,
-                _REVISIONS.c.project_id,
-                _REVISIONS.c.revision,
-                _REVISIONS.c.contract_version,
-                _REVISIONS.c.created_at,
-                _REVISIONS.c.modified_at,
-                _REVISIONS.c.display_label_observed,
-                _REVISIONS.c.display_label_normalized,
-                _REVISIONS.c.knowledge_status,
-                _REVISIONS.c.rights_status,
-                _DOCUMENTS.c.object_sha256,
-            )
-            .select_from(
-                _REVISIONS.outerjoin(
-                    _DOCUMENTS,
-                    (_REVISIONS.c.revision_id == _DOCUMENTS.c.revision_id)
-                    & (_REVISIONS.c.project_id == _DOCUMENTS.c.project_id),
-                )
-            )
-            .where((_REVISIONS.c.aggregate_id == aggregate_id) & (_REVISIONS.c.project_id == state.project_id))
-            .order_by(desc(_REVISIONS.c.revision))
-            .limit(1)
-        )
         try:
-            row = _execute(state.connection, statement).fetchone()
+            row = _execute_fixed(
+                state.connection, _CURRENT_AGGREGATE, aggregate=aggregate_id, project=state.project_id
+            ).fetchone()
         except sqlite3.Error:
             self._mark_failed()
         else:
@@ -2793,45 +2803,43 @@ class _SqliteAggregateRepository:
                     self._mark_failed()
                     raise RepositoryConflict("document object is unavailable")
             if current is None:
-                _execute(
+                _execute_fixed(
                     state.connection,
-                    insert(_IDENTITIES).values(
-                        aggregate_id=projection.aggregate_id,
-                        project_id=projection.project_id,
-                        aggregate_kind=projection.aggregate_kind,
-                        created_at=projection.created_at,
-                    ),
-                )
-            _execute(
-                state.connection,
-                insert(_REVISIONS).values(
-                    revision_id=projection.revision_id,
+                    _INSERT_IDENTITY,
                     aggregate_id=projection.aggregate_id,
-                    aggregate_kind=projection.aggregate_kind,
                     project_id=projection.project_id,
-                    revision=projection.revision,
-                    contract_version=projection.contract_version,
+                    aggregate_kind=projection.aggregate_kind,
                     created_at=projection.created_at,
-                    modified_at=projection.modified_at,
-                    display_label_observed=projection.display_label_observed,
-                    display_label_normalized=projection.display_label_normalized,
-                    knowledge_status=projection.knowledge_status,
-                    rights_status=projection.rights_status,
-                ),
+                )
+            _execute_fixed(
+                state.connection,
+                _INSERT_REVISION,
+                revision_id=projection.revision_id,
+                aggregate_id=projection.aggregate_id,
+                aggregate_kind=projection.aggregate_kind,
+                project_id=projection.project_id,
+                revision=projection.revision,
+                contract_version=projection.contract_version,
+                created_at=projection.created_at,
+                modified_at=projection.modified_at,
+                display_label_observed=projection.display_label_observed,
+                display_label_normalized=projection.display_label_normalized,
+                knowledge_status=projection.knowledge_status,
+                rights_status=projection.rights_status,
             )
             if projection.aggregate_kind == "document":
-                _execute(
+                _execute_fixed(
                     state.connection,
-                    insert(_DOCUMENTS).values(
-                        revision_id=projection.revision_id,
-                        project_id=projection.project_id,
-                        object_sha256=projection.object_sha256,
-                    ),
+                    _INSERT_DOCUMENT,
+                    revision_id=projection.revision_id,
+                    project_id=projection.project_id,
+                    object_sha256=projection.object_sha256,
                 )
             else:
-                _execute(
+                _execute_fixed(
                     state.connection,
-                    insert(_EXTENSIONS[projection.aggregate_kind]).values(revision_id=projection.revision_id),
+                    _INSERT_EXTENSIONS[projection.aggregate_kind],
+                    revision_id=projection.revision_id,
                 )
             _record_aggregate_provenance(
                 state.connection,
@@ -3040,34 +3048,10 @@ class _SqliteAggregateRepository:
 
     def _by_revision_id(self, revision_id: str) -> AggregateRevision | None:
         state = self._state()
-        statement = (
-            select(
-                _REVISIONS.c.revision_id,
-                _REVISIONS.c.aggregate_id,
-                _REVISIONS.c.aggregate_kind,
-                _REVISIONS.c.project_id,
-                _REVISIONS.c.revision,
-                _REVISIONS.c.contract_version,
-                _REVISIONS.c.created_at,
-                _REVISIONS.c.modified_at,
-                _REVISIONS.c.display_label_observed,
-                _REVISIONS.c.display_label_normalized,
-                _REVISIONS.c.knowledge_status,
-                _REVISIONS.c.rights_status,
-                _DOCUMENTS.c.object_sha256,
-            )
-            .select_from(
-                _REVISIONS.outerjoin(
-                    _DOCUMENTS,
-                    (_REVISIONS.c.revision_id == _DOCUMENTS.c.revision_id)
-                    & (_REVISIONS.c.project_id == _DOCUMENTS.c.project_id),
-                )
-            )
-            .where((_REVISIONS.c.revision_id == revision_id) & (_REVISIONS.c.project_id == state.project_id))
-            .limit(1)
-        )
         try:
-            row = _execute(state.connection, statement).fetchone()
+            row = _execute_fixed(
+                state.connection, _EXACT_AGGREGATE, revision=revision_id, project=state.project_id
+            ).fetchone()
         except sqlite3.Error:
             self._mark_failed()
         else:
@@ -5976,37 +5960,50 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         lease_duration_ms: int,
         progress: Mapping[str, object],
     ) -> WorkflowJobClaim:
+        with self._transaction() as connection:
+            return self._heartbeat_with_connection(
+                connection, claim, now=now, lease_duration_ms=lease_duration_ms, progress=progress
+            )
+
+    def _heartbeat_with_connection(
+        self,
+        connection: CanonicalConnection,
+        claim: WorkflowJobClaim,
+        *,
+        now: str,
+        lease_duration_ms: int,
+        progress: Mapping[str, object],
+    ) -> WorkflowJobClaim:
+        """Renew a still-live exact claim inside atomic output publication."""
         instant = _workflow_time(now)
         if not 1_000 <= lease_duration_ms <= 3_600_000:
             raise WorkflowQueueProblem("workflow heartbeat duration is invalid")
         expires_at = _workflow_timestamp(instant + timedelta(milliseconds=lease_duration_ms))
-        with self._transaction() as connection:
-            row = self._lease_row(connection, claim, now, states=("running", "cancelling"))
-            progress_json, validated_progress = self._validated_attempt_progress(row, progress)
-            connection.execute(
-                "UPDATE workflow_queue_jobs SET lease_expires_at=?, heartbeat_at=?, updated_at=? WHERE job_id=?",
-                (expires_at, now, now, claim.job_id),
-            )
-            connection.execute(
-                "UPDATE workflow_job_attempts SET lease_expires_at=?, heartbeat_at=?, progress_json=? "
-                "WHERE attempt_id=?",
-                (expires_at, now, progress_json, claim.attempt_id),
-            )
-            self._append_history(
-                connection,
-                project_id=self._project_id,
-                workflow_run_id=str(row[0]),
-                job_id=claim.job_id,
-                attempt_id=claim.attempt_id,
-                entity_type="job-attempt",
-                entity_id=claim.attempt_id,
-                from_state=str(row[4]),
-                to_state=str(row[4]),
-                occurred_at=now,
-                actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
-                reason_code="progress-reported",
-                extra={"progress": validated_progress},
-            )
+        row = self._lease_row(connection, claim, now, states=("running", "cancelling"))
+        progress_json, validated_progress = self._validated_attempt_progress(row, progress)
+        connection.execute(
+            "UPDATE workflow_queue_jobs SET lease_expires_at=?, heartbeat_at=?, updated_at=? WHERE job_id=?",
+            (expires_at, now, now, claim.job_id),
+        )
+        connection.execute(
+            "UPDATE workflow_job_attempts SET lease_expires_at=?, heartbeat_at=?, progress_json=? WHERE attempt_id=?",
+            (expires_at, now, progress_json, claim.attempt_id),
+        )
+        self._append_history(
+            connection,
+            project_id=self._project_id,
+            workflow_run_id=str(row[0]),
+            job_id=claim.job_id,
+            attempt_id=claim.attempt_id,
+            entity_type="job-attempt",
+            entity_id=claim.attempt_id,
+            from_state=str(row[4]),
+            to_state=str(row[4]),
+            occurred_at=now,
+            actor=WorkflowActor(claim.worker_id, "workload", "local-workflow-worker"),
+            reason_code="progress-reported",
+            extra={"progress": validated_progress},
+        )
         return replace(claim, lease_expires_at=expires_at)
 
     def checkpoint(

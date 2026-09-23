@@ -1,6 +1,7 @@
 """Real commit activity/repository boundary with isolated development storage."""
 
 import unittest
+from datetime import datetime, timedelta
 from itertools import count
 from unittest.mock import patch
 
@@ -37,6 +38,48 @@ class ImportCommitActivityTests(unittest.TestCase):
         receipt = self.fixture.queue.complete(self.context.claim, now=self.context.now(), outputs=completion.outputs)
         self.assertTrue(receipt.replayed)
         self.assertEqual(1, len(completion.outputs))
+
+    def test_atomic_publication_renews_live_lease_without_extending_its_interval(self):
+        current = datetime.fromisoformat(self.fixture.fixture.now.replace("Z", "+00:00"))
+        self.context.now = lambda: current.isoformat(timespec="milliseconds").replace("+00:00", "Z")
+
+        def advance(step):
+            nonlocal current
+            if step in {"source-record-created", "manifest-created", "manifest-member-created"}:
+                current += timedelta(seconds=20)
+
+        with patch("research_observatory_core.import_commit_repository._publication_step_completed", advance):
+            completion = self.activity(self.context, self.fixture.claim)
+        self.assertEqual("succeeded", self.fixture.queue.get(self.fixture.job.job_id).state)
+        self.assertEqual(1, len(completion.outputs))
+        with open_canonical_database(self.fixture.database, expected_project_id=self.fixture.inputs.project_id) as db:
+            expiry, heartbeat = db.execute(
+                "SELECT lease_expires_at,heartbeat_at FROM workflow_job_attempts WHERE attempt_id=?",
+                (self.fixture.claim.attempt_id,),
+            ).fetchone()
+        self.assertEqual(timedelta(seconds=30), datetime.fromisoformat(expiry) - datetime.fromisoformat(heartbeat))
+
+    def test_atomic_publication_cannot_renew_a_genuinely_expired_lease(self):
+        current = datetime.fromisoformat(self.fixture.fixture.now.replace("Z", "+00:00"))
+        self.context.now = lambda: current.isoformat(timespec="milliseconds").replace("+00:00", "Z")
+
+        def advance(step):
+            nonlocal current
+            if step == "source-record-created":
+                current += timedelta(seconds=31)
+
+        with (
+            patch("research_observatory_core.import_commit_repository._publication_step_completed", advance),
+            self.assertRaises(WorkflowActivityError),
+        ):
+            self.activity(self.context, self.fixture.claim)
+        with open_canonical_database(self.fixture.database, expected_project_id=self.fixture.inputs.project_id) as db:
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM import_source_records").fetchone()[0])
+            expiry = db.execute(
+                "SELECT lease_expires_at FROM workflow_job_attempts WHERE attempt_id=?",
+                (self.fixture.claim.attempt_id,),
+            ).fetchone()[0]
+        self.assertEqual(self.fixture.claim.lease_expires_at, expiry)
 
     def test_cancelled_activity_does_not_begin_publication(self):
         self.fixture.queue.request_cancellation(

@@ -233,9 +233,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="7a125f21acc7062109075918667a81d71523fba21f75b5a5b5a48ae52b60578b">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S01.T03" data-worksheet-sha256="ba6d053959a28388c58c87f47bd95abe79cbed6dbc37dfef21a22eff1a4e1701">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>7a125f21acc7062109075918667a81d71523fba21f75b5a5b5a48ae52b60578b</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S01.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>ba6d053959a28388c58c87f47bd95abe79cbed6dbc37dfef21a22eff1a4e1701</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S01.T03 — idempotent import commits and manifests
 
 Claim base: `b55c1285b33d17fca7b8ef37ed8ce16d1c83610a`.
@@ -303,7 +303,18 @@ publication never happened. Extend the actual built-renderer journey through
 post-commit cancellation. Root cause: intake-only wording survived when commit
 was added; the initial journey covered commit/replay but not this state crossing.
 Review every remaining unconditional &quot;no import&quot; statement at the changed UI
-boundary; keep broader optional UX improvements outside this correction.</pre></article>
+boundary; keep broader optional UX improvements outside this correction.
+
+## Protected scale diagnostic — atomic writer exceeds its renewable lease
+
+The first 100k attempt was abandoned for `lease-expired` and rolled back every
+canonical source/manifest row. The small fixture missed total atomic-writer cost:
+per-record provenance dominates, with repeated fixed-query compilation also
+material. Add a deterministic clock-crossing regression and phase/attempt-aware
+diagnostics before changing publication. Preserve exact lease fencing, atomic
+canonical/provenance/output acceptance, bounded memory, cancellation and security
+interruption. Neither a larger global lease nor discarded provenance is a fix.
+The retained diagnostic and read-only rollback facts are in `scale-01` evidence.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

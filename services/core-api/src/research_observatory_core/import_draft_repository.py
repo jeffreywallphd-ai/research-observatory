@@ -13,8 +13,10 @@ import json
 from collections.abc import Iterator
 from itertools import pairwise
 
+from sqlalchemy import text
+
 from .domain_contracts import new_uuid_v7
-from .import_preview_repository import _actor, _SqliteImportPreviewRepository
+from .import_preview_repository import _DIALECT, _actor, _SqliteImportPreviewRepository
 from .ingestion.import_drafts import (
     DraftAuthority,
     ImportOptions,
@@ -48,6 +50,12 @@ _HISTORY = """
            AND COALESCE(d.undo_revision, d.predecessor_revision) IS NOT NULL
     )
 """
+_RECORD_LOOKUP = str(
+    text("""
+    SELECT record_key, record_json FROM import_parse_records
+     WHERE preview_id=:preview AND project_id=:project AND attempt_id=:attempt AND ordinal=:ordinal
+""").compile(dialect=_DIALECT)
+)
 _RIGHTS_ACTIONS: tuple[RightsAction, ...] = (
     "store",
     "inspect",
@@ -295,15 +303,9 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
         return PreviewDraftRecord(record, decision, tuple(sorted(warnings)))
 
     def _record(self, connection: CanonicalConnection, state: PreviewState, attempt: str, ordinal: int) -> ImportRecord:
-        row = self._query(
-            connection,
-            """
-            SELECT record_key, record_json FROM import_parse_records
-             WHERE preview_id=:preview AND project_id=:project AND attempt_id=:attempt AND ordinal=:ordinal
-        """,
-            state.preview_id,
-            attempt=attempt,
-            ordinal=ordinal,
+        row = connection.execute(
+            _RECORD_LOOKUP,
+            {"preview": state.preview_id, "project": self._project, "attempt": attempt, "ordinal": ordinal},
         ).fetchone()
         if row is None or state.source_sha256 is None:
             raise PreviewProblem("preview-draft-record-mismatch")
