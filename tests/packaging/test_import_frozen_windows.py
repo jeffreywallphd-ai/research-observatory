@@ -24,7 +24,7 @@ from unittest.mock import patch
 
 from build_manifest import guarded_atomic_write_json
 from core_sidecar_build import load_build_contract, verify_artifact
-from core_sidecar_performance_check import immutable_package_snapshot, read_line, readiness_ok, validate_handshake
+from core_sidecar_performance_check import immutable_package_snapshot, read_line, validate_handshake
 
 REPO = Path(__file__).resolve().parents[2]
 PRODUCT_PATHS = ("services/core-api", "packages/contracts", "pyproject.toml", "uv.lock")
@@ -49,23 +49,40 @@ class HttpCore:
         self.port, self.token = port, token
 
     def post(self, route, body, expected=200):
+        return self.request(route, body, expected=expected)
+
+    def request(self, route, body=None, *, expected=200, timeout=15):
         request = urllib.request.Request(
             f"http://127.0.0.1:{self.port}{route}",
-            data=json.dumps(body).encode(),
+            data=None if body is None else json.dumps(body).encode(),
             headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"},
         )
         try:
             opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
-            response = opener.open(request, timeout=15)
+            response = opener.open(request, timeout=timeout)
         except urllib.error.HTTPError as error:
             response = error
-        with response:
+        with response as response:
             if response.status != expected:
                 raise AssertionError(f"{route}: HTTP {response.status}, expected {expected}")
             content = response.read(900_001)
             if len(content) > 900_000:
                 raise AssertionError("bounded response exceeded")
         return json.loads(content)
+
+    def ready(self, handshake):
+        try:
+            value = self.request("/readyz", timeout=0.5)
+        except OSError, ValueError, AssertionError:
+            return False
+        return value == {
+            "schemaVersion": "1.0",
+            "service": "research-observatory-core",
+            "version": handshake["buildId"],
+            "state": "ready",
+            "capabilities": handshake["capabilities"],
+            "ready": True,
+        }
 
     def wait(self, route, body):
         deadline = time.monotonic() + 30
@@ -108,13 +125,15 @@ def supervised(executable, fixture, phase, epoch):
             raw = read_line(process.stdout, 10)
             if len(raw) > 4096 or not raw.endswith(b"\n"):
                 raise AssertionError("invalid bounded handshake")
-            port = validate_handshake(json.loads(raw), process.pid)
+            handshake = json.loads(raw)
+            port = validate_handshake(handshake, process.pid)
+            client = HttpCore(port, token)
             deadline = time.monotonic() + 10
-            while not readiness_ok(port, token):
+            while not client.ready(handshake):
                 if process.poll() is not None or time.monotonic() >= deadline:
                     raise AssertionError("frozen Core unavailable")
                 time.sleep(0.05)
-            yield HttpCore(port, token)
+            yield client
             process.stdin.write(b"shutdown\n")
             process.stdin.flush()
             process.wait(timeout=5)
@@ -167,6 +186,12 @@ def commit(client, public, draft):
     request = {**public, "revision": draft["revision"], "requestId": prepared["requestId"]}
     client.post("/projects/imports/commit/start", request)
     return client.wait("/projects/imports/commit/status", {**public, "requestId": prepared["requestId"]})["manifest"]
+
+
+def manifest_address(project, manifest):
+    if manifest["projectId"] != project["projectId"]:
+        raise AssertionError("manifest belongs to another project")
+    return {"root": project["root"], "previewId": manifest["previewId"], "revisionId": manifest["revisionId"]}
 
 
 @unittest.skipUnless(
@@ -267,8 +292,7 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                     members = client.post(
                         "/projects/imports/manifest/members",
                         {
-                            **again,
-                            "revisionId": first["revisionId"],
+                            **manifest_address(project, first),
                             "after": 0,
                             "limit": 100,
                         },
@@ -310,6 +334,41 @@ class ImportFrozenWindowsTests(unittest.TestCase):
 
 
 class FrozenJourneyControlTests(unittest.TestCase):
+    def test_reimport_manifest_uses_accepted_preview_authority(self):
+        project = {"root": "synthetic", "projectId": "project"}
+        accepted = {"projectId": "project", "previewId": "original-preview", "revisionId": "revision"}
+        self.assertEqual(
+            {"root": "synthetic", "previewId": "original-preview", "revisionId": "revision"},
+            manifest_address(project, accepted),
+        )
+        with self.assertRaisesRegex(AssertionError, "another project"):
+            manifest_address(project, {**accepted, "projectId": "other"})
+
+    def test_readiness_uses_private_transport_and_exact_payload(self):
+        client = HttpCore(12345, "synthetic")
+        handshake = {"buildId": "0.1.0", "capabilities": ["synthetic-capability"]}
+        expected = {
+            "schemaVersion": "1.0",
+            "service": "research-observatory-core",
+            "version": "0.1.0",
+            "state": "ready",
+            "capabilities": ["synthetic-capability"],
+            "ready": True,
+        }
+        with patch("urllib.request.build_opener") as build:
+            response = build.return_value.open.return_value.__enter__.return_value
+            response.status = 200
+            response.read.return_value = json.dumps(expected).encode()
+            self.assertTrue(client.ready(handshake))
+            proxy, redirects = build.call_args.args
+            self.assertEqual({}, proxy.proxies)
+            self.assertIsInstance(redirects, NoRedirect)
+            request = build.return_value.open.call_args.args[0]
+            self.assertEqual("GET", request.get_method())
+            self.assertEqual("http://127.0.0.1:12345/readyz", request.full_url)
+            response.read.return_value = json.dumps({**expected, "ready": False}).encode()
+            self.assertFalse(client.ready(handshake))
+
     def test_redirects_are_not_followed(self):
         self.assertIsNone(NoRedirect().redirect_request(None, None, 302, "", {}, "https://example.invalid"))
 
