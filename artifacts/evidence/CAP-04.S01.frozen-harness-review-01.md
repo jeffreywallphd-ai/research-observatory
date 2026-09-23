@@ -58,3 +58,25 @@ The runner now copies into a short-path confined disposable directory, guards
 and verifies that copy throughout both child lifetimes, and leaves original
 package bytes untouched. Neither the guard nor its assertions were weakened.
 Independent incremental review remains required before retry.
+
+## Appended cancellation-contract correction
+
+Independent pre-execution review approved the disposable-copy correction at
+`77fe2993f90ce1a880794ab0ce1646d9795b0a68`. Attempt 02 then launched frozen
+Core and reached synthetic intake and cancellation, but failed before commit:
+the harness expected an empty latest-commit result from a cancelled preview.
+Production correctly returned HTTP 409 / `RO-CORE-IMPORT-REVIEW-UNAVAILABLE`.
+Retained report: `artifacts/tmp/import-frozen-windows-1ahoyg0a/result.json`;
+log: `artifacts/tmp/CAP-04.S01.frozen-qualification-02.log`. Its synthetic
+project/key and package copy remain retained; this is not a passing journey.
+
+The missed boundary was cancellation revoking review authority, not deletion of
+audit data. The harness now checks the empty result before cancellation, requires
+the precise denial afterwards, and independently counts canonical publication
+tables in only its newly created protected database. Counts must be zero after
+cancellation and exactly two sources, one manifest, three members and one seal
+after reimport/restart. The count audit uses the existing protected connection
+and the exact synthetic project ID; it neither enumerates vault entries nor
+changes product behavior. A focused control test verifies project-scoped reads
+and connection closure on failure. Independent incremental review and a fresh
+focused execution remain required; no broader suite replay is selected.

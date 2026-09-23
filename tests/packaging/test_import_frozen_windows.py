@@ -21,7 +21,7 @@ import urllib.error
 import urllib.request
 from contextlib import contextmanager
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from build_manifest import guarded_atomic_write_json
 from core_sidecar_build import load_build_contract, verify_artifact
@@ -195,6 +195,31 @@ def manifest_address(project, manifest):
     return {"root": project["root"], "previewId": manifest["previewId"], "revisionId": manifest["revisionId"]}
 
 
+def canonical_counts(project):
+    """Read only this invocation's created database; never enumerate vault records."""
+    from research_observatory_core.storage import configure_protected_database_provider, open_canonical_database
+    from research_observatory_core.windows_credentials import create_windows_database_key_provider
+
+    path = Path(project["root"]) / "state/project.sqlite3"
+    with path.open("rb") as source:
+        if source.read(16) == b"SQLite format 3\x00":
+            raise AssertionError("synthetic database is not protected")
+    configure_protected_database_provider(create_windows_database_key_provider())
+    database = open_canonical_database(path, expected_project_id=project["projectId"])
+    try:
+        return {
+            table: database.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            for table in (
+                "import_source_records",
+                "import_manifests",
+                "import_manifest_members",
+                "import_manifest_seals",
+            )
+        }
+    finally:
+        database.close()
+
+
 @unittest.skipUnless(
     os.name == "nt" and os.environ.get("RO_RUN_IMPORT_FROZEN") == "1",
     "opt-in frozen test requires explicit synthetic-key authority and authenticated package",
@@ -273,9 +298,13 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                     self.assertEqual(fixture / "projects/synthetic-frozen", Path(project["root"]))
                     client.post("/projects/open", {"root": project["root"]})
                     cancelled, _ = intake(client, project)
+                    self.assertIsNone(client.post("/projects/imports/commit/latest", cancelled))
                     client.post("/projects/imports/cancel", cancelled)
                     self.assertEqual("cancelled", client.post("/projects/imports/status", cancelled)["state"])
-                    self.assertIsNone(client.post("/projects/imports/commit/latest", cancelled))
+                    denied = client.post("/projects/imports/commit/latest", cancelled, expected=409)
+                    self.assertEqual("RO-CORE-IMPORT-REVIEW-UNAVAILABLE", denied["code"])
+                    report["afterCancellation"] = canonical_counts(project)
+                    self.assertTrue(all(value == 0 for value in report["afterCancellation"].values()))
                     public, draft = intake(client, project)
                     summary_address = {**public, "revision": draft["revision"]}
                     client.post("/projects/imports/summary/start", summary_address)
@@ -318,6 +347,16 @@ class ImportFrozenWindowsTests(unittest.TestCase):
                     client.post("/projects/close", {"root": project["root"]})
                 self.assertEqual([], verify_artifact(snapshot_root, manifest, schema=schema, contract=contract))
             self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
+            report["afterReimportAndRestart"] = canonical_counts(project)
+            self.assertEqual(
+                {
+                    "import_source_records": 2,
+                    "import_manifests": 1,
+                    "import_manifest_members": 3,
+                    "import_manifest_seals": 1,
+                },
+                report["afterReimportAndRestart"],
+            )
             self.assertEqual(head, git("rev-parse", "HEAD"))
             self.assertEqual("", git("status", "--porcelain"))
             self.assertEqual(report_sha, digest(package_report))
@@ -343,6 +382,24 @@ class ImportFrozenWindowsTests(unittest.TestCase):
 
 
 class FrozenJourneyControlTests(unittest.TestCase):
+    def test_count_audit_is_project_scoped_and_closes_on_failure(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "state").mkdir()
+            (root / "state/project.sqlite3").write_bytes(b"synthetic ciphertext")
+            database = Mock()
+            database.execute.side_effect = RuntimeError("synthetic read failure")
+            with (
+                patch("research_observatory_core.windows_credentials.create_windows_database_key_provider"),
+                patch("research_observatory_core.storage.configure_protected_database_provider"),
+                patch("research_observatory_core.storage.open_canonical_database", return_value=database) as opened,
+            ):
+                with self.assertRaisesRegex(RuntimeError, "synthetic read failure"):
+                    canonical_counts({"root": str(root), "projectId": "synthetic-project"})
+                opened.assert_called_once_with(root / "state/project.sqlite3", expected_project_id="synthetic-project")
+                database.execute.assert_called_once_with("SELECT COUNT(*) FROM import_source_records")
+                database.close.assert_called_once_with()
+
     def test_reimport_manifest_uses_accepted_preview_authority(self):
         project = {"root": "synthetic", "projectId": "project"}
         accepted = {"projectId": "project", "previewId": "original-preview", "revisionId": "revision"}
