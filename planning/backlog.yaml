@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,16 +1499,14 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-09-22T23:45:34+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-09-22T23:45:34+00:00'
-      expires_at: '2026-09-23T23:45:34+00:00'
+    updated_at: '2026-09-23T12:41:10+00:00'
+    pause_reason: CAP-04.S01 100k commit qualification exceeded its unchanged observation budget. Quiescent boundary for linked
+      CAP-04.S01.T03 correction; no new approval gate or release claim.
+    pause_category: infeasible
+    lease: null
   checkpoints: []
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []

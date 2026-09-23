@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 0625b35fc5143fc75a9d0d4407687eb5aae63f2a2a6a06745ea8db654fbd6f7f
+source_sha256: 8d8588ce3dfcb5bd0cc2ea19cb708d5562e81b72cd0c8e82549d4546778faba6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -37,9 +37,9 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ACTIVE` | 1 |
 | `COMPLETE` | 1 |
 | `NONE` | 10 |
+| `PAUSED` | 1 |
 
 ### Slice completion
 
@@ -650,7 +650,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 0/11 | 3/33 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 0/11 | 3/33 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
