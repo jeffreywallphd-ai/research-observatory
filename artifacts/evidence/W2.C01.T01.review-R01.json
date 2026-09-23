@@ -1,0 +1,20 @@
+{
+  "task_id": "W2.C01.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "54f1fda65866d5d89b889762c295472fb70df0d1",
+  "base_commit": "c0da6393fe2f0280b7df314863f963a8d07dab16",
+  "submission_packet_sha256": "e0bb4f1edd3d298dde00508202dda1f543b6231983af625fddff173f2a1232d7",
+  "acceptance_criteria_sha256": "fe917b4a62e8911a8945521ecf9282a0f3ee20bd4e45db9a30c42ac914608921",
+  "selection_sha256": "887c03670a6d4d3dc3c069c9c4fea6c5859f6e6aa160aea46d9b7a6dc0cf60d1",
+  "reviewer": "agent:w2-s01-final-review",
+  "result": "approved",
+  "findings": [],
+  "closures": [],
+  "notes": "Independent focused disposition approves the exact frozen R01 correction candidate. Read-only packet, manifest and evidence-reference validation returned no errors; independently recomputed packet, evidence, criteria and selection hashes and authenticated the exact 18-path base-to-candidate inventory. The current original CAP-04.S01.T03 snapshot equals the immutable correction origin hash, inherited criteria are identical, and no original approval or history is rewritten. The product correction retains its prior independent code disposition and authenticated 66-case focused execution at e663f32743b35556936327e95ef61288b96bb55d. Complete fresh protected 100k performance qualification at 7ef91f94a4213972960e9321142c0e7138e90984 passed the unchanged baseline and limits: six parser measurements, two review and two commit samples, complete traversal/replay/reopen, and no retry. The reviewer independently authenticated the aggregate and console hashes and inspected the aggregate's retained metrics and embedded raw-sample structure; direct hashing of protected child report paths was access-denied, so their bindings remain those retained by the authenticated producer aggregate rather than a claimed separate reviewer execution or child-file authentication. Later changes are only the independently accepted four-path interruption-note control repair and its exact evidence/review deliveries. Authenticated 24 linked-gate and 14 corrective-workflow passing logs at control candidate 53b20e4e59396778453dbd985f50d172d0b89d8c; the maintenance review-only delivery is the current candidate. All 173 recorded benchmark source/tool/contract input hashes were independently matched, and the final candidate adds no product or benchmark-input changes. No new runtime suites were executed. The first benchmark failure, owner-interrupted second invocation, pre-edit regression failure and control setup failure remain adverse observations. No reproducible material correction-level blocker remains. This approves the linked correction only; final CAP-04.S01 matrix/disposition, campaign transitions, local integration and Wave/release qualification remain separate.",
+  "corrective_integration": {
+    "evidence_sha256": "c7d185382f8c2c59111d3a6f853022dec353b54050213854af6788fbead28d0a",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Reviewed the exact frozen manifest's inherited scientific-identity/replay, current-rights/claim, bounded-page, cancellation and atomic-publication boundaries using the preserved independent code review, named focused regressions and fresh protected benchmark. One fresh protected transaction per verification page preserves the prior projection, fresh-time preparation check and staged-read order without a cross-page authority cache. Both complete commit samples remain below the unchanged 900-second worker ceiling; the slowest has 21.847608 seconds of observed headroom, not a general throughput or minimum-hardware claim. The separate Git-aware interruption-note allowance retains exact product scope, full-history and independent control-review requirements and grants no authority to narrative notes. Existing native, frozen-package, public-handoff and visual evidence stays explicitly bound to its historical candidates; it is not relabeled as fresh correction execution. Scope and current authority are preserved, and affected integration evidence is adequate for this correction. The slice matrix must retain these candidate distinctions before separate slice approval."
+  }
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 1577d1f70b9699d283f84971845570a49ebd8d0b326b6c442682c1cbed486997
+source_sha256: 19c551b023e8bb8366bfbf08ee3c5c0ffd26d7f1132073531744e07e91adba78
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2667,7 +2667,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C01.T01 — Implement idempotent import commits and import manifests
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** The reviewed 100k-record CAP-04.S01 qualification at cbc5e073a4b1cc69cdc366bb46100de48124cb81 failed its second commit observation at 900.874 seconds against the unchanged 900-second worker ceiling. The first sample completed at 896.527 seconds. The failed sample is censored, not completion latency; teardown interrupted publication and retained zero canonical records/manifests/seals/accepted outputs. Aggregate SHA256 25f8ac372e90261cfdb06960d5ae11357fab3da32f47a69c48f8fa2d0beb7498 remains FAIL. Source inspection independently confirmed that each of 1001 identity-verification pages opens two protected read transactions, redundantly repeating protected connection and schema validation.
 
@@ -2685,13 +2685,43 @@ Original tasks and approvals remain unchanged.
 - tests/service/test_import_commit_activity.py
 #### Review history — W2.C01.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `e0bb4f1edd3d298dde00508202dda1f543b6231983af625fddff173f2a1232d7`
+
+- Candidate / base / branch: `54f1fda65866d5d89b889762c295472fb70df0d1` / `c0da6393fe2f0280b7df314863f963a8d07dab16` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-23T22:57:26+00:00`
+- Evidence: `artifacts/evidence/W2.C01.T01.json` / `c7d185382f8c2c59111d3a6f853022dec353b54050213854af6788fbead28d0a` / `54f1fda65866d5d89b889762c295472fb70df0d1`
+- Acceptance-criteria SHA-256: `fe917b4a62e8911a8945521ecf9282a0f3ee20bd4e45db9a30c42ac914608921`
+- Verification-selection SHA-256: `887c03670a6d4d3dc3c069c9c4fea6c5859f6e6aa160aea46d9b7a6dc0cf60d1`
+- Changed paths: `artifacts/evidence/W2.C01.T01.progress-01.md`, `artifacts/evidence/W2.C01.T01.task-start.md`, `artifacts/evidence/W2.resume-20260923-02.md`, `artifacts/evidence/correction-interruption-note.evidence-01.json`, `artifacts/evidence/correction-interruption-note.maintenance-01.md`, `artifacts/evidence/correction-interruption-note.review-01.json`, `docs/automation/governance-automation-simplification.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/import_commit_repository.py`, `services/core-api/src/research_observatory_core/import_draft_repository.py`, `tests/data/test_import_commit_hot_path.py`, `tests/foundation/test_ui_change_gate.py`, `tests/service/test_import_commit_activity.py`, `tools/ui_change_gate.py`
+- Selected checks: `python -B -s -m unittest tests.data.test_import_commit_hot_path tests.data.test_import_commit_preparation tests.data.test_import_commit_publication tests.data.test_import_manifest_access tests.data.test_import_preview_drafts tests.service.test_import_commit_activity tests.service.test_import_commit_interruptions -v`, `python -B -s -m unittest tests.foundation.test_ui_change_gate -k linked -v`, `python -B -s -m unittest discover -s tests/foundation -p test_taskctl_workflow.py -k corrective -v`, `python -B -s tools/import_performance_check.py --report artifacts/tmp/CAP-04.S01.performance-qualification-03.json`
+- Deferred checks: `Unchanged renderer, native dialog, frozen packaging, public handoff and visual suites retain their exact reviewed candidates and scope; they are not repeated or relabeled fresh for this internal transaction change.`, `Full repository/profile, cross-capability, installer and required-platform checks remain fresh W2 checkpoint/exit qualification. This correction does not qualify ordinary-read latency, minimum hardware, OS cold-cache behavior or Work/Version reconciliation.`
+- Selection rationale: An internal protected transaction-boundary correction affects draft projection and identity verification, current authority, cancellation and atomic publication. The exact committed correction passed66 focused cases and affected quality checks at e663f327. Fresh complete protected100k qualification ran at7ef91f94 with source/tool/contracts, actual installed runtime and HEAD fixed and reuse disabled. Later changes are independently reviewed checkpoint-delivery control maintenance and evidence only; all173 recorded benchmark source/tool/contract hashes remain equal, with no installed-runtime change. Retain those actual ancestral executions and candidates, not a cache or fresh-current-candidate claim. The control delta receives its own committed risk-selected regression checks and independent disposition.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:w2-s01-final-review / `2026-09-23T23:05:28+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C01.T01.review-R01.json` / `a8ff280e6454596480d96f28425255c9ef1d9a656c8e65fe0246cfbbbf224de7`
+
+**Review notes:** Independent focused disposition approves the exact frozen R01 correction candidate. Read-only packet, manifest and evidence-reference validation returned no errors; independently recomputed packet, evidence, criteria and selection hashes and authenticated the exact 18-path base-to-candidate inventory. The current original CAP-04.S01.T03 snapshot equals the immutable correction origin hash, inherited criteria are identical, and no original approval or history is rewritten. The product correction retains its prior independent code disposition and authenticated 66-case focused execution at e663f32743b35556936327e95ef61288b96bb55d. Complete fresh protected 100k performance qualification at 7ef91f94a4213972960e9321142c0e7138e90984 passed the unchanged baseline and limits: six parser measurements, two review and two commit samples, complete traversal/replay/reopen, and no retry. The reviewer independently authenticated the aggregate and console hashes and inspected the aggregate's retained metrics and embedded raw-sample structure; direct hashing of protected child report paths was access-denied, so their bindings remain those retained by the authenticated producer aggregate rather than a claimed separate reviewer execution or child-file authentication. Later changes are only the independently accepted four-path interruption-note control repair and its exact evidence/review deliveries. Authenticated 24 linked-gate and 14 corrective-workflow passing logs at control candidate 53b20e4e59396778453dbd985f50d172d0b89d8c; the maintenance review-only delivery is the current candidate. All 173 recorded benchmark source/tool/contract input hashes were independently matched, and the final candidate adds no product or benchmark-input changes. No new runtime suites were executed. The first benchmark failure, owner-interrupted second invocation, pre-edit regression failure and control setup failure remain adverse observations. No reproducible material correction-level blocker remains. This approves the linked correction only; final CAP-04.S01 matrix/disposition, campaign transitions, local integration and Wave/release qualification remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:w2-s01-final-review at `2026-09-23T23:05:28+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independent focused disposition approves the exact frozen R01 correction candidate. Read-only packet, manifest and evidence-reference validation returned no errors; independently recomputed packet, evidence, criteria and selection hashes and authenticated the exact 18-path base-to-candidate inventory. The current original CAP-04.S01.T03 snapshot equals the immutable correction origin hash, inherited criteria are identical, and no original approval or history is rewritten. The product correction retains its prior independent code disposition and authenticated 66-case focused execution at e663f32743b35556936327e95ef61288b96bb55d. Complete fresh protected 100k performance qualification at 7ef91f94a4213972960e9321142c0e7138e90984 passed the unchanged baseline and limits: six parser measurements, two review and two commit samples, complete traversal/replay/reopen, and no retry. The reviewer independently authenticated the aggregate and console hashes and inspected the aggregate's retained metrics and embedded raw-sample structure; direct hashing of protected child report paths was access-denied, so their bindings remain those retained by the authenticated producer aggregate rather than a claimed separate reviewer execution or child-file authentication. Later changes are only the independently accepted four-path interruption-note control repair and its exact evidence/review deliveries. Authenticated 24 linked-gate and 14 corrective-workflow passing logs at control candidate 53b20e4e59396778453dbd985f50d172d0b89d8c; the maintenance review-only delivery is the current candidate. All 173 recorded benchmark source/tool/contract input hashes were independently matched, and the final candidate adds no product or benchmark-input changes. No new runtime suites were executed. The first benchmark failure, owner-interrupted second invocation, pre-edit regression failure and control setup failure remain adverse observations. No reproducible material correction-level blocker remains. This approves the linked correction only; final CAP-04.S01 matrix/disposition, campaign transitions, local integration and Wave/release qualification remain separate.
 
 **Currently open findings:** -
 

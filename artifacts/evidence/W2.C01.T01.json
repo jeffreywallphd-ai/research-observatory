@@ -1,0 +1,114 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C01.T01",
+  "baseCommit": "c0da6393fe2f0280b7df314863f963a8d07dab16",
+  "branch": "codex/w2-implementation",
+  "commit": "54f1fda65866d5d89b889762c295472fb70df0d1",
+  "changedFiles": [
+    "artifacts/evidence/W2.C01.T01.progress-01.md",
+    "artifacts/evidence/W2.C01.T01.task-start.md",
+    "artifacts/evidence/W2.resume-20260923-02.md",
+    "artifacts/evidence/correction-interruption-note.evidence-01.json",
+    "artifacts/evidence/correction-interruption-note.maintenance-01.md",
+    "artifacts/evidence/correction-interruption-note.review-01.json",
+    "docs/automation/governance-automation-simplification.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/import_commit_repository.py",
+    "services/core-api/src/research_observatory_core/import_draft_repository.py",
+    "tests/data/test_import_commit_hot_path.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tests/service/test_import_commit_activity.py",
+    "tools/ui_change_gate.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The focused correction suite preserves scientific identity, replay, changed-input manifests and atomic publication. The new three-page regression verifies identical scientific identity with four fresh protected connections instead of seven; projection, current preparation authority and staged rows share each page's connection, with no cross-page cache and no canonical writes. Original CAP-04.S01.T03 evidence and approval remain immutable. Fresh protected-100k qualification passes two review and two commit samples: both commits create exactly100000 source records, one manifest,100001 members, one seal and one accepted commit output; complete membership traversal, request replay and fresh-runtime reopen preserve identity."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused suite passes 66 cases including between-page draft revision loss, forged preparation, current/historical rights, lease/claim checks, cancellation, rollback and replay. The activity regression observes bounded verification pages inside the guard and the whole identity pass outside it. The pre-edit two-case characterization failed the expected four-versus-seven connection count, while revision denial passed; the adverse log is retained."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The product correction changes only the four admitted product/test paths. The extracted private projection body and public page/selection validation are unchanged; original projection, fresh-time preparation check and staged-read order is preserved. No schema, migration, public API, UX, security authority, benchmark method or limit changed. W2.C01.T01.progress-01.md records affected four-file Ruff lint/format and mypy passing at e663f327; this is a saved ancestral disposition, not reconstructed exact invocation evidence or a fresh rerun. Separate bounded control maintenance admits Git-authenticated immutable same-Wave interruption notes without granting them authority; its exact independent candidate/evidence/review chain, 24 linked-gate tests and14 task-workflow tests cover the additional control paths. Task/state/generated delivery records do not expand product scope."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": ["service:unit", "data:unit", "foundation:unit", "foundation:quality", "foundation:backlog-views"],
+    "riskAnalysis": "An internal protected transaction-boundary correction affects draft projection and identity verification, current authority, cancellation and atomic publication. The exact committed correction passed66 focused cases and affected quality checks at e663f327. Fresh complete protected100k qualification ran at7ef91f94 with source/tool/contracts, actual installed runtime and HEAD fixed and reuse disabled. Later changes are independently reviewed checkpoint-delivery control maintenance and evidence only; all173 recorded benchmark source/tool/contract hashes remain equal, with no installed-runtime change. Retain those actual ancestral executions and candidates, not a cache or fresh-current-candidate claim. The control delta receives its own committed risk-selected regression checks and independent disposition.",
+    "deferred": [
+      "Unchanged renderer, native dialog, frozen packaging, public handoff and visual suites retain their exact reviewed candidates and scope; they are not repeated or relabeled fresh for this internal transaction change.",
+      "Full repository/profile, cross-capability, installer and required-platform checks remain fresh W2 checkpoint/exit qualification. This correction does not qualify ordinary-read latency, minimum hardware, OS cold-cache behavior or Work/Version reconciliation."
+    ]
+  },
+  "checks": [
+    {
+      "id": "focused-correction",
+      "commit": "e663f32743b35556936327e95ef61288b96bb55d",
+      "command": "python -B -s -m unittest tests.data.test_import_commit_hot_path tests.data.test_import_commit_preparation tests.data.test_import_commit_publication tests.data.test_import_manifest_access tests.data.test_import_preview_drafts tests.service.test_import_commit_activity tests.service.test_import_commit_interruptions -v",
+      "exitCode": 0,
+      "result": "66 tests PASS in 74.271 seconds, no skips; clean committed candidate with fixed inputs. Retained actual ancestral execution, not rerun or cached PASS at a new candidate.",
+      "log": {"path": "artifacts/tmp/W2.C01.T01.focused-01.log", "sha256": "168e85d44f1b76c3eeeb0d50c48a85cdd0db365bc1c7f43b057c5299557d8404"}
+    },
+    {
+      "id": "checkpoint-delivery-controls",
+      "commit": "53b20e4e59396778453dbd985f50d172d0b89d8c",
+      "command": "python -B -s -m unittest tests.foundation.test_ui_change_gate -k linked -v",
+      "exitCode": 0,
+      "result": "24 tests PASS in196.331s, no skips. Exact independent control-maintenance evidence records14 additional corrective workflow cases PASS1.004s plus affected quality checks. Product scope, original authority, immutable history and adverse records remain enforced.",
+      "log": {"path": "artifacts/tmp/W2.C01.T01.checkpoint-gate-01.log", "sha256": "08c81036977fde63686b100585a911545a6dfeadb942ba03be4941459f19facd"},
+      "evidence": "artifacts/evidence/correction-interruption-note.evidence-01.json",
+      "review": "artifacts/evidence/correction-interruption-note.review-01.json"
+    },
+    {
+      "id": "corrective-workflow-controls",
+      "commit": "53b20e4e59396778453dbd985f50d172d0b89d8c",
+      "command": "python -B -s -m unittest discover -s tests/foundation -p test_taskctl_workflow.py -k corrective -v",
+      "exitCode": 0,
+      "result": "14 tests PASS in1.004s, no skips, fixed committed control candidate; retained execution, not a product test rerun.",
+      "log": {"path": "artifacts/tmp/W2.C01.T01.checkpoint-task-02.log", "sha256": "b666d67427b3b5b58813aba89a5843bd728b1fc98c2621f42a07b50832aa28fe"}
+    },
+    {
+      "id": "fresh-protected-100k",
+      "commit": "7ef91f94a4213972960e9321142c0e7138e90984",
+      "command": "python -B -s tools/import_performance_check.py --report artifacts/tmp/CAP-04.S01.performance-qualification-03.json",
+      "exitCode": 0,
+      "provenance": "Fresh complete actual-Windows-principal execution, evidence reuse disabled. Committed source/tool/contracts and installed runtime inputs locked throughout, unchanged HEAD and final input/runtime validation passed; no competing heavy verification.",
+      "result": "PASS, performanceQualifying true, 3343.781887 seconds. Six100k parser measurements and two complete review plus two complete commit samples passed unchanged reviewed limits. Review elapsed521.231429/521.845353s, worker258.123312/258.916945s, peak141627392/142872576bytes. Commit elapsed1095.993442/1092.481683s, worker878.152392/875.556697s, peak154816512/154071040bytes; first-attempt success, complete pages/replay/restart and exact durable facts. Slowest commit worker has21.847608s headroom under900s; this is not a broad throughput or minimum-hardware claim.",
+      "report": {"path": "artifacts/tmp/CAP-04.S01.performance-qualification-03.json", "sha256": "bac4797a1fad85ea4de84942a5d781eaef1d255fb5359035764f4e3d63f0b9ff", "baselineSha256": "6b5a7f196046423ce3fbc07f8d79af642a15b0ce353994b4f7ea0e4a11a34a92", "toolSha256": "b69cc6e1ab05a357ecc85bf11af21148385c5785cd3622ffb868d3a293e8433a"},
+      "log": {"path": "artifacts/tmp/CAP-04.S01.performance-qualification-03.log", "sha256": "d9bfe2630a65aec7c8c26362d9a4d428d30675249fbf2b530cebbc05008f4d65"},
+      "retainedAdverseAttempts": [
+        {"path": "artifacts/tmp/CAP-04.S01.performance-qualification-01.json", "sha256": "25f8ac372e90261cfdb06960d5ae11357fab3da32f47a69c48f8fa2d0beb7498", "result": "Actual original performance-limit failure; unchanged and not relabeled PASS."},
+        {"path": "artifacts/tmp/CAP-04.S01.performance-qualification-02.json", "sha256": "72f354ef633850764ef4ede8fcbecd8de13bafe5998fc0eb35be40332cd5e519", "result": "Owner-interrupted incomplete run; unchanged, nonqualifying and distinct from a product regression."}
+      ]
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "6d85631ed208673dbc0e545727edce310b1c328d4374fea1605e441b705f546a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "python -B -s -m unittest tests.data.test_import_commit_hot_path tests.data.test_import_commit_preparation tests.data.test_import_commit_publication tests.data.test_import_manifest_access tests.data.test_import_preview_drafts tests.service.test_import_commit_activity tests.service.test_import_commit_interruptions -v",
+      "python -B -s tools/import_performance_check.py --report artifacts/tmp/CAP-04.S01.performance-qualification-03.json",
+      "python -B -s -m unittest tests.foundation.test_ui_change_gate -k linked -v",
+      "python -B -s -m unittest discover -s tests/foundation -p test_taskctl_workflow.py -k corrective -v"
+    ],
+    "reusedEvidence": [
+      "Original CAP-04.S01.T03.json and approved review-R01, recorded DONE at f850468ef679651b34af44611aa39c8d147c6074; inherited original criterion and unchanged boundaries, not new execution.",
+      "CAP-04.S01.native-qualification-01.md, CAP-04.S01.frozen-harness-review-01.md and CAP-04.S01.qualification-01.md preserve exact historical native/frozen/public-handoff/visual observations; final slice matrix must explicitly distinguish their prior product candidate from this internal correction."
+    ],
+    "rationale": "Restore approved large-import behavior through one fresh protected transaction per verification page without removing current authority, guards, bounds, rights, digest equality or final atomic writer checks. Adverse original performance failure and owner-interrupted attempt remain separate and retained. No original approval or task history is rewritten. The66-case committed regression suite and complete fresh benchmark establish the affected correction boundaries; prior native/package/handoff observations remain explicitly ancestral. The final slice matrix must distinguish the internal product correction from those earlier observations."
+  }
+}

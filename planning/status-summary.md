@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 1577d1f70b9699d283f84971845570a49ebd8d0b326b6c442682c1cbed486997
+source_sha256: 19c551b023e8bb8366bfbf08ee3c5c0ffd26d7f1132073531744e07e91adba78
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -644,14 +644,14 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/cap07_slice_review | - |
 | `W1.C04.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c04_evidence_review | - |
 | `W1.C05.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c04_evidence_review | - |
-| `W2.C01.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:w2-s01-final-review | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 0/11 | 3/34 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 0/11 | 4/34 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -706,9 +706,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `W2.C01.T01` Implement idempotent import commits and import manifests | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+No task is currently active.
 
 ## Linked corrective tasks
 
@@ -736,5 +734,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C01.T01 — Implement idempotent import commits and import manifests
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `approved`.
 
