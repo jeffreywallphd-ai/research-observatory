@@ -118,3 +118,31 @@ created records, a reused profile identity or changed source bytes. The regressi
 failed before its helper existed. Root cause was using the domain manifest rather
 than the API projection when writing the assertion; the request/response contract
 is now an explicit harness acceptance boundary. Prior findings remain preserved.
+
+## Passing frozen execution
+
+The independent reviewer closed the public-shape finding and approved execution
+at `c959ccdcd836966501922ec533b9a31ea45987f7`. Seven exact-candidate control
+tests passed in 0.239s; focused Ruff passed. With HEAD and selected inputs fixed,
+attempt 04 passed its one real frozen-Core journey in 26.388s, exit 0, no skips.
+
+- Report: `artifacts/tmp/import-frozen-windows-c5bzzq30/result.json`, SHA256
+  `1df5d398477eb6f8a8eaa615fa4882e397f2fe37344103b7649bf3a60ad66373`.
+- Log: `artifacts/tmp/CAP-04.S01.frozen-qualification-04.log`, SHA256
+  `e46f6c49e574bb34522b2063185ce27342bfd32fa911af260e749b727dd0df89`.
+- Executing harness SHA256:
+  `31de668944f0306c21ce44bc0d816dddbb4019fe71be3c9610c9d364113739f9`.
+- Frozen entrypoint SHA256:
+  `7544a7bda9185201e60edc17487704737fb3e89ce5ef7a7e97773eaa8c0cb172`.
+- Both supervised processes shut down normally. Protected counts were 0/0/0/0
+  after cancellation and 2/2/6/2 after draft replay, new-preview source reuse
+  and restart. Both manifests and identical ordered source identities survived.
+- Inspect remained permitted and export unknown. Diagnostic content/path
+  exclusion checks passed; diagnostic SHA256:
+  `9ddb1eb5ff6d3ebe4b17ef873d4c769f48db4e3d1f6bb1abd8330d29a7d466a2`.
+
+The original package and guarded disposable copy passed exact inventory checks.
+Synthetic fixtures/keys and adverse attempts remain retained. This proves frozen
+Core HTTP/control-pipe, production protected storage and worker integration; it
+does not establish full desktop packaging/signing, performance, crash recovery,
+or slice completion. Independent result disposition remains separate.
