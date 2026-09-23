@@ -9,3 +9,7 @@ These new fixture files are likewise dedicated to CC0-1.0 by their contributors.
 `records.csv` retains quoted multiline fields; `records.doi` tests DOI wrappers
 and meaningful punctuation. Deliberately malformed/boundary bytes are constructed
 inline in parser tests so their expected errors remain beside each assertion.
+
+`connector-page.v1.json` is a fabricated provider-neutral page for contract tests,
+not a captured provider response or evidence of live availability. It contains
+explicit missing rights observations and no credentials, contacts or real query.

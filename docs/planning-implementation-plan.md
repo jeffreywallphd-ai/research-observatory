@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9d6659cf0e3d6977a94d17575196d5f53d89df7d262107d0bca086cfbb2a19ac
+source_sha256: 1b8212e3fd2d6eb04a8d8e2a240417a4b2647fce5a902826ce80f1d223c16ba4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8013,13 +8013,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S02.T01 - Define connector request, result, cursor, rate-limit, and provenance contracts
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S01.T01`, `CAP-07.S01.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Provider-neutral interfaces for search, lookup, citation traversal, recommendations, OA resolution, retries, cache, and raw-response retention policy.
 

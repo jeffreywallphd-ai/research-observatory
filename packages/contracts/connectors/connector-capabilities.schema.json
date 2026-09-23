@@ -1,0 +1,113 @@
+{
+  "$defs": {
+    "ApiVersion": {
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "search",
+        "lookup",
+        "citations",
+        "recommendations",
+        "oa-resolution"
+      ],
+      "type": "string"
+    },
+    "ProviderId": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "Version": {
+      "maxLength": 128,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/connectors/connector-capabilities.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "adapterVersion": {
+      "$ref": "#/$defs/Version"
+    },
+    "configuration": {
+      "enum": [
+        "ready",
+        "not-configured",
+        "unavailable"
+      ],
+      "title": "Configuration",
+      "type": "string"
+    },
+    "identifierSchemes": {
+      "items": {
+        "$ref": "#/$defs/ProviderId"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "title": "Identifierschemes",
+      "type": "array"
+    },
+    "maximumPageSize": {
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Maximumpagesize",
+      "type": "integer"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/Operation"
+      },
+      "maxItems": 5,
+      "minItems": 1,
+      "title": "Operations",
+      "type": "array"
+    },
+    "providerId": {
+      "$ref": "#/$defs/ProviderId"
+    },
+    "requiredSettings": {
+      "items": {
+        "enum": [
+          "contact",
+          "provider-key"
+        ],
+        "type": "string"
+      },
+      "maxItems": 2,
+      "title": "Requiredsettings",
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "sourceApiVersion": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApiVersion"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "providerId",
+    "adapterVersion",
+    "sourceApiVersion",
+    "operations",
+    "identifierSchemes",
+    "maximumPageSize",
+    "configuration",
+    "requiredSettings"
+  ],
+  "title": "ConnectorCapabilities",
+  "type": "object"
+}

@@ -8,6 +8,8 @@ machine-checked dependency matrix; it does not replace the full
 
 For W2's raw-preserving local metadata parser boundary, see
 [reference imports](reference-imports.md).
+For the W2 provider-neutral request, page, cursor and provenance boundary, see
+[scholarly-source connector contracts](connector-contracts.md).
 
 ## Runtime shape
 

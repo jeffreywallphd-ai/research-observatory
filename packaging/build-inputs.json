@@ -12,6 +12,9 @@
     {"id": "uv", "path": "uv.lock"}
   ],
   "schemaPaths": [
+    "packages/contracts/connectors/connector-capabilities.schema.json",
+    "packages/contracts/connectors/connector-page.schema.json",
+    "packages/contracts/connectors/connector-request.schema.json",
     "packages/contracts/ingestion/import-record.schema.json",
     "packages/contracts/model-gateway/model-manifest.schema.json",
     "design/ui-change.schema.json",

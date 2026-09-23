@@ -6,6 +6,14 @@ Boundary: Schemas, API definitions, events, and generated client sources shared 
 Contracts must not expose operating-system paths, database connection objects,
 framework components, provider SDK types, or other deployment-specific details.
 
+`connectors/` publishes bounded scholarly-source request, page and capability
+schemas. Scientific queries/cursors and source assertions are protected data,
+not dispatch authority, canonical works or rights grants. Empty, partial and
+failed results retain distinct provenance and continuation states. The existing
+Core contract generator emits these additive schemas without adding HTTP routes.
+See [connector contracts](../../docs/architecture/connector-contracts.md) for
+semantic checks, broker responsibilities and the contract-only delivery boundary.
+
 `ingestion/import-record.schema.json` defines protected, provisional local parser
 output for RIS, BibTeX, CSL JSON, DOI lists and structured CSV. Raw source ranges,
 repeated fields and normalized candidates remain separate from human mapping and

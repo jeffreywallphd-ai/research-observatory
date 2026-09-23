@@ -10,6 +10,10 @@
     "workers"
   ],
   "pythonFiles": [
+    "services/core-api/src/research_observatory_core/connectors/__init__.py",
+    "services/core-api/src/research_observatory_core/connectors/contracts.py",
+    "services/core-api/src/research_observatory_core/ports/connectors.py",
+    "tests/contracts/test_connector_contracts.py",
     "tests/contracts/test_import_public_handoff.py",
     "tests/desktop/test_import_visual.py",
     "tools/import_performance_check.py",

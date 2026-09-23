@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S02.html">SLICE-open-scholarly-source-adapters</a><span>/</span><span aria-current="page">CAP-04.S02.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S02.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S02.T01 · task 1 of 3</span><h1>Define connector request, result, cursor, rate-limit, and provenance contracts</h1><p>Provider-neutral interfaces for search, lookup, citation traversal, recommendations, OA resolution, retries, cache, and raw-response retention policy.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S02.T01 · task 1 of 3</span><h1>Define connector request, result, cursor, rate-limit, and provenance contracts</h1><p>Provider-neutral interfaces for search, lookup, citation traversal, recommendations, OA resolution, retries, cache, and raw-response retention policy.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S02.html">SLICE-open-scholarly-source-adapters</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li></ul>
-  <p data-task-claim="CAP-04.S02.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S02.T01" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="02e613a5eda87d83fd73f125157395810e6ec2cc"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>02e613a5eda87d83fd73f125157395810e6ec2cc</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S02.T01" data-task-plan-sha256="8cff601179885e4278228a72d146ca752feabc7ba5d6f0a10885ac45e58bd268"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-04.S02.T01` - Define connector request, result, cursor, rate-limit, and provenance contracts
 **Objective:** Provider-neutral interfaces for search, lookup, citation traversal, recommendations, OA resolution, retries, cache, and raw-response retention policy.
@@ -87,13 +87,53 @@
 python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S02.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S02.T01" data-worksheet-sha256="4746fbb2ee0ac8171c4d100b892ceba8d247db1f8296dc1f95401878ee22ebf3">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S02.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>4746fbb2ee0ac8171c4d100b892ceba8d247db1f8296dc1f95401878ee22ebf3</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S02.T01 — portable scholarly-source contracts
+
+Claim base: `02e613a5eda87d83fd73f125157395810e6ec2cc`.
+Authority: the approved W2 packet at `c85a59f3`, CAP-04.S02 section9.1 and
+ADR-0027; ADR-0013/0024 identity/provenance and ADR-0019 current egress policy
+remain unchanged. CAP-04.S01 is independently approved; required task dependencies
+are DONE. No new approval or experience change is needed for this contract task.
+
+## Acceptance closure
+
+| Material boundary | Outcome and proof |
+|---|---|
+| Mockable, portable interfaces | Typed adapter/cancellation ports and immutable requests/results; a fake adapter completes a public-schema roundtrip without HTTP, paths, database or credential handles. |
+| Scientific identity and resume | Separate invocation ID from project-scoped scientific request hash; provider/version/query/filter/sort/projection/page identity and cursor/project binding have substitution tests. Expired cursors fail explicitly. |
+| Provenance and source assertions | Every page, including empty/failed pages, binds its request/provider and observation/retrieval state. Records retain actual raw identifiers and explicit license/terms/access observations, not canonical Work identity or permissions. |
+| Empty, partial and failed | Validate page/continuation/error combinations; not-configured, denied, timeout, cancellation and unsupported operations never become empty complete results. |
+| Private data and authentication | Closed scientific parameter shapes accept no arbitrary wire URL/header/auth/contact configuration. Payloads remain protected; bounded classified errors and reprs expose no query. Broker redaction/current authorization remain real implementation obligations for later adapters, not claims from these schema tests. |
+| Rate, retry, cache and retention | ADR-0027 limits are represented without a scheduler: one in-flight/provider, initially at most one request/second, at most three attempts,30s and10MiB decompressed. Auth/permission denial is terminal; raw retention and cache observations cannot confer rights. |
+| Compatibility and delivery | Version1 additive public JSON Schemas follow the existing Pydantic generation pattern; exact generation/fixture checks, unknown-field denial, domain UUID/UTC conventions, quality and schema inventory. No persisted predecessor or migration is introduced. |
+
+First add the contract fixtures and expected-success/adversarial tests, record the
+missing implementation failure, then implement the smallest models/ports and
+schema-generation extension. Select focused contract/unit, affected generation,
+architecture/build inventory and quality checks at the committed candidate.
+
+No provider HTTP calls, credential access, account setup, database publication,
+scheduler/cache implementation, UI, canonical reconciliation or licensed-provider
+expansion belongs to this task. Real network/broker/persistence/platform integration
+and source-slice qualification remain CAP-04.S02.T02/T03 and slice/checkpoint/Wave
+work. No completed import suites or benchmark are repeated for this additive seam.
+
+Read-only independent readiness survey found no authority conflict. It recommended
+existing Pydantic plus standalone public schemas and Protocol ports, not an extension
+of the specialized domain generator or a placeholder HTTP route. Its cursor,
+empty/partial and rights/auth separation risks are incorporated above. Independent
+commit-bound task review follows implementation; this worksheet grants no authority.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S02.T01" data-review-mode="latest-review-only">
   <h3>CAP-04.S02.T01 — Define connector request, result, cursor, rate-limit, and provenance contracts</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S02.html">Previous</a><a class="button button-primary" href="CAP-04.S02.T02.html">Next</a></nav>

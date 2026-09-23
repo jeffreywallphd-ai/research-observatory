@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "observationId": "0190a000-0000-7000-8000-000000000020",
+  "request": {
+    "schemaVersion": "1.0",
+    "projectId": "00000000-0000-4000-8000-000000000010",
+    "invocationId": "0190a000-0000-7000-8000-000000000011",
+    "providerId": "synthetic-provider",
+    "adapterVersion": "1.0.0",
+    "sourceApiVersion": "fixture-v1",
+    "query": {
+      "kind": "lookup",
+      "identifiers": [{"scheme": "doi", "value": "10.99999/synthetic-contract"}]
+    },
+    "pageSize": 25,
+    "cursor": null,
+    "policy": {
+      "maxInflight": 1,
+      "minimumIntervalMs": 1000,
+      "maximumAttempts": 3,
+      "timeoutMs": 30000,
+      "maximumResponseBytes": 10485760,
+      "maximumRetryAfterMs": 300000,
+      "cacheMode": "bypass",
+      "maximumFreshAgeMs": 0,
+      "rawRetention": "if-permitted"
+    }
+  },
+  "observedAt": "2026-01-01T00:00:00.000Z",
+  "retrievedAt": "2026-01-01T00:00:00.000Z",
+  "outcome": "complete",
+  "continuation": "exhausted",
+  "nextCursor": null,
+  "records": [
+    {
+      "providerId": "synthetic-provider",
+      "rawIdentifier": {"scheme": "provider-id", "value": "synthetic-001"},
+      "identifiers": [{"scheme": "doi", "value": "10.99999/synthetic-contract"}],
+      "retrievedAt": "2026-01-01T00:00:00.000Z",
+      "fields": [
+        {"namespace": "synthetic-provider", "name": "title", "encoding": "text", "value": "Synthetic contract fixture, not a scholarly source"}
+      ],
+      "terms": {
+        "license": {"state": "not-reported", "value": null},
+        "terms": {"state": "unknown", "value": null},
+        "access": "unknown"
+      }
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "rate": {
+    "providerId": "synthetic-provider",
+    "observedAt": "2026-01-01T00:00:00.000Z",
+    "remaining": null,
+    "retryAfterMs": null,
+    "circuit": "unknown"
+  },
+  "response": {
+    "bodyState": "unavailable",
+    "objectSha256": null,
+    "contentSha256": null,
+    "byteLength": null,
+    "redaction": "unavailable",
+    "reason": "not-retained"
+  },
+  "cache": {"state": "disabled", "ageMs": null, "requestSha256": null}
+}

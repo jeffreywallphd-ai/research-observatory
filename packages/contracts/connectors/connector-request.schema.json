@@ -1,0 +1,519 @@
+{
+  "$defs": {
+    "ApiVersion": {
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+      "type": "string"
+    },
+    "BoundedText": {
+      "maxLength": 65536,
+      "minLength": 1,
+      "type": "string"
+    },
+    "CitationQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "citations",
+            "references"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "kind": {
+          "const": "citations",
+          "title": "Kind",
+          "type": "string"
+        },
+        "seed": {
+          "$ref": "#/$defs/ProviderIdentifier"
+        }
+      },
+      "required": [
+        "kind",
+        "seed",
+        "direction"
+      ],
+      "title": "CitationQuery",
+      "type": "object"
+    },
+    "ConnectorCursor": {
+      "additionalProperties": false,
+      "properties": {
+        "expiresAt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UtcInstant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pageIndex": {
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Pageindex",
+          "type": "integer"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ProjectId"
+        },
+        "providerId": {
+          "$ref": "#/$defs/ProviderId"
+        },
+        "requestSha256": {
+          "$ref": "#/$defs/RequestDigest"
+        },
+        "value": {
+          "$ref": "#/$defs/IdentifierValue"
+        }
+      },
+      "required": [
+        "providerId",
+        "projectId",
+        "requestSha256",
+        "pageIndex",
+        "value",
+        "expiresAt"
+      ],
+      "title": "ConnectorCursor",
+      "type": "object"
+    },
+    "ConnectorPolicy": {
+      "additionalProperties": false,
+      "description": "Ceilings and requested behavior, never a current policy/rights grant.",
+      "properties": {
+        "cacheMode": {
+          "enum": [
+            "bypass",
+            "revalidate",
+            "allow-fresh"
+          ],
+          "title": "Cachemode",
+          "type": "string"
+        },
+        "maxInflight": {
+          "maximum": 1,
+          "minimum": 1,
+          "title": "Maxinflight",
+          "type": "integer"
+        },
+        "maximumAttempts": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Maximumattempts",
+          "type": "integer"
+        },
+        "maximumFreshAgeMs": {
+          "maximum": 86400000,
+          "minimum": 0,
+          "title": "Maximumfreshagems",
+          "type": "integer"
+        },
+        "maximumResponseBytes": {
+          "maximum": 10485760,
+          "minimum": 1,
+          "title": "Maximumresponsebytes",
+          "type": "integer"
+        },
+        "maximumRetryAfterMs": {
+          "$ref": "#/$defs/RetryAfter"
+        },
+        "minimumIntervalMs": {
+          "maximum": 86400000,
+          "minimum": 1000,
+          "title": "Minimumintervalms",
+          "type": "integer"
+        },
+        "rawRetention": {
+          "enum": [
+            "if-permitted",
+            "permitted-fields-only",
+            "do-not-retain"
+          ],
+          "title": "Rawretention",
+          "type": "string"
+        },
+        "timeoutMs": {
+          "maximum": 30000,
+          "minimum": 1,
+          "title": "Timeoutms",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maxInflight",
+        "minimumIntervalMs",
+        "maximumAttempts",
+        "timeoutMs",
+        "maximumResponseBytes",
+        "maximumRetryAfterMs",
+        "cacheMode",
+        "maximumFreshAgeMs",
+        "rawRetention"
+      ],
+      "title": "ConnectorPolicy",
+      "type": "object"
+    },
+    "IdentifierValue": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "type": "string"
+    },
+    "InvocationId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "LookupQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "identifiers": {
+          "items": {
+            "$ref": "#/$defs/ProviderIdentifier"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Identifiers",
+          "type": "array"
+        },
+        "kind": {
+          "const": "lookup",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "identifiers"
+      ],
+      "title": "LookupQuery",
+      "type": "object"
+    },
+    "OaQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "identifier": {
+          "$ref": "#/$defs/ProviderIdentifier"
+        },
+        "kind": {
+          "const": "oa-resolution",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "identifier"
+      ],
+      "title": "OaQuery",
+      "type": "object"
+    },
+    "ProjectId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ProviderId": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "ProviderIdentifier": {
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "$ref": "#/$defs/ProviderId"
+        },
+        "value": {
+          "$ref": "#/$defs/IdentifierValue"
+        }
+      },
+      "required": [
+        "scheme",
+        "value"
+      ],
+      "title": "ProviderIdentifier",
+      "type": "object"
+    },
+    "RecommendationQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "recommendations",
+          "title": "Kind",
+          "type": "string"
+        },
+        "negativeSeeds": {
+          "items": {
+            "$ref": "#/$defs/ProviderIdentifier"
+          },
+          "maxItems": 100,
+          "title": "Negativeseeds",
+          "type": "array"
+        },
+        "positiveSeeds": {
+          "items": {
+            "$ref": "#/$defs/ProviderIdentifier"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Positiveseeds",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "positiveSeeds",
+        "negativeSeeds"
+      ],
+      "title": "RecommendationQuery",
+      "type": "object"
+    },
+    "RequestDigest": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "RetryAfter": {
+      "maximum": 300000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "ScientificQuery": {
+      "discriminator": {
+        "mapping": {
+          "citations": "#/$defs/CitationQuery",
+          "lookup": "#/$defs/LookupQuery",
+          "oa-resolution": "#/$defs/OaQuery",
+          "recommendations": "#/$defs/RecommendationQuery",
+          "search": "#/$defs/SearchQuery"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchQuery"
+        },
+        {
+          "$ref": "#/$defs/LookupQuery"
+        },
+        {
+          "$ref": "#/$defs/CitationQuery"
+        },
+        {
+          "$ref": "#/$defs/RecommendationQuery"
+        },
+        {
+          "$ref": "#/$defs/OaQuery"
+        }
+      ]
+    },
+    "SearchFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "enum": [
+            "publication-year",
+            "author-id",
+            "source-id",
+            "work-type",
+            "language",
+            "open-access"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "operator": {
+          "enum": [
+            "eq",
+            "gte",
+            "lte"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/IdentifierValue"
+        }
+      },
+      "required": [
+        "field",
+        "operator",
+        "value"
+      ],
+      "title": "SearchFilter",
+      "type": "object"
+    },
+    "SearchQuery": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "enum": [
+            "any",
+            "title",
+            "abstract"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "fields": {
+          "items": {
+            "enum": [
+              "title",
+              "authors",
+              "date",
+              "venue",
+              "identifiers",
+              "abstract",
+              "references",
+              "rights"
+            ],
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Fields",
+          "type": "array"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/$defs/SearchFilter"
+          },
+          "maxItems": 32,
+          "title": "Filters",
+          "type": "array"
+        },
+        "kind": {
+          "const": "search",
+          "title": "Kind",
+          "type": "string"
+        },
+        "sort": {
+          "items": {
+            "$ref": "#/$defs/SearchSort"
+          },
+          "maxItems": 3,
+          "title": "Sort",
+          "type": "array"
+        },
+        "text": {
+          "$ref": "#/$defs/BoundedText"
+        }
+      },
+      "required": [
+        "kind",
+        "text",
+        "field",
+        "filters",
+        "sort",
+        "fields"
+      ],
+      "title": "SearchQuery",
+      "type": "object"
+    },
+    "SearchSort": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "ascending",
+            "descending"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "field": {
+          "enum": [
+            "relevance",
+            "publication-date",
+            "citation-count"
+          ],
+          "title": "Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field",
+        "direction"
+      ],
+      "title": "SearchSort",
+      "type": "object"
+    },
+    "UtcInstant": {
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+      "type": "string"
+    },
+    "Version": {
+      "maxLength": 128,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/connectors/connector-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "adapterVersion": {
+      "$ref": "#/$defs/Version"
+    },
+    "cursor": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConnectorCursor"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "invocationId": {
+      "$ref": "#/$defs/InvocationId"
+    },
+    "pageSize": {
+      "maximum": 1000,
+      "minimum": 1,
+      "title": "Pagesize",
+      "type": "integer"
+    },
+    "policy": {
+      "$ref": "#/$defs/ConnectorPolicy"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectId"
+    },
+    "providerId": {
+      "$ref": "#/$defs/ProviderId"
+    },
+    "query": {
+      "$ref": "#/$defs/ScientificQuery"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "sourceApiVersion": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApiVersion"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "projectId",
+    "invocationId",
+    "providerId",
+    "adapterVersion",
+    "sourceApiVersion",
+    "query",
+    "pageSize",
+    "cursor",
+    "policy"
+  ],
+  "title": "ConnectorRequest",
+  "type": "object"
+}

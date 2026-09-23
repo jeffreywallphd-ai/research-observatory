@@ -2401,6 +2401,11 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
     source = repo / "services" / "core-api" / "src"
     sys.path.insert(0, str(source))
     try:
+        from research_observatory_core.connectors.contracts import (
+            ConnectorCapabilities,
+            ConnectorRequest,
+            ConnectorResultPage,
+        )
         from research_observatory_core.contract import canonical_openapi_bytes
         from research_observatory_core.model_registry_contracts import ModelManifest
         from research_observatory_core.model_routing_contracts import RoutingPolicy
@@ -2431,6 +2436,25 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
             )
             + "\n"
         ).encode()
+        connector_schemas = {
+            repo / "packages/contracts/connectors" / filename: (
+                json.dumps(
+                    model.model_json_schema(by_alias=True)
+                    | {
+                        "$id": f"https://research-observatory.local/contracts/connectors/{filename}",
+                        "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n"
+            ).encode()
+            for filename, model in (
+                ("connector-request.schema.json", ConnectorRequest),
+                ("connector-page.schema.json", ConnectorResultPage),
+                ("connector-capabilities.schema.json", ConnectorCapabilities),
+            )
+        }
         workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)
         workflow_profile_projection_bytes = json.dumps(
             workflow_profile_projection,
@@ -2442,6 +2466,7 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
     finally:
         sys.path.remove(str(source))
     return {
+        **connector_schemas,
         repo / "packages" / "contracts" / "model-gateway" / "model-manifest.schema.json": manifest_schema,
         repo / "packages" / "contracts" / "model-gateway" / "routing-policy.schema.json": routing_schema,
         repo / "packages" / "contracts" / "core-api" / "openapi.json": openapi,
