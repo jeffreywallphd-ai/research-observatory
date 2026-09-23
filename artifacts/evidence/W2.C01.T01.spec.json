@@ -3,7 +3,7 @@
   "kind": "authority-preserving-correction",
   "origin": {
     "taskId": "CAP-04.S01.T03",
-    "commit": "42efdbd9a179dfabe3343474adeaabcd4acad204",
+    "commit": "f850468ef679651b34af44611aa39c8d147c6074",
     "sha256": "6d85631ed208673dbc0e545727edce310b1c328d4374fea1605e441b705f546a"
   },
   "reproduction": "The reviewed 100k-record CAP-04.S01 qualification at cbc5e073a4b1cc69cdc366bb46100de48124cb81 failed its second commit observation at 900.874 seconds against the unchanged 900-second worker ceiling. The first sample completed at 896.527 seconds. The failed sample is censored, not completion latency; teardown interrupted publication and retained zero canonical records/manifests/seals/accepted outputs. Aggregate SHA256 25f8ac372e90261cfdb06960d5ae11357fab3da32f47a69c48f8fa2d0beb7498 remains FAIL. Source inspection independently confirmed that each of 1001 identity-verification pages opens two protected read transactions, redundantly repeating protected connection and schema validation.",
