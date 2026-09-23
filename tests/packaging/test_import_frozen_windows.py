@@ -1,0 +1,332 @@
+"""Opt-in frozen Core import journey; creates only synthetic project vault keys.
+
+Requires explicit user authorization before invocation. No test-vault substitution,
+native UI, signing, performance or crash-recovery claim. Package report/hash and
+its independently reviewed source commit are explicit local environment inputs.
+"""
+
+from __future__ import annotations
+
+import base64
+import hashlib
+import json
+import os
+import secrets
+import subprocess
+import tempfile
+import time
+import unittest
+import urllib.error
+import urllib.request
+from contextlib import contextmanager
+from pathlib import Path
+from unittest.mock import patch
+
+from build_manifest import guarded_atomic_write_json
+from core_sidecar_build import load_build_contract, verify_artifact
+from core_sidecar_performance_check import immutable_package_snapshot, read_line, readiness_ok, validate_handshake
+
+REPO = Path(__file__).resolve().parents[2]
+PRODUCT_PATHS = ("services/core-api", "packages/contracts", "pyproject.toml", "uv.lock")
+SOURCE = b"title,doi\nSynthetic frozen A,10.99999/frozen-a\nSynthetic frozen B,10.99999/frozen-b\n"
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def git(*arguments):
+    return subprocess.check_output(["git", *arguments], cwd=REPO, text=True, encoding="utf-8").strip()
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *_args, **_kwargs):
+        return None
+
+
+class HttpCore:
+    def __init__(self, port, token):
+        self.port, self.token = port, token
+
+    def post(self, route, body, expected=200):
+        request = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}{route}",
+            data=json.dumps(body).encode(),
+            headers={"Authorization": "Bearer " + self.token, "Content-Type": "application/json"},
+        )
+        try:
+            opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+            response = opener.open(request, timeout=15)
+        except urllib.error.HTTPError as error:
+            response = error
+        with response:
+            if response.status != expected:
+                raise AssertionError(f"{route}: HTTP {response.status}, expected {expected}")
+            content = response.read(900_001)
+            if len(content) > 900_000:
+                raise AssertionError("bounded response exceeded")
+        return json.loads(content)
+
+    def wait(self, route, body):
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline:
+            value = self.post(route, body)
+            if value["jobState"] == "succeeded":
+                return value
+            if value["jobState"] in {"failed", "cancelled"}:
+                raise AssertionError(f"{route}: terminal {value['jobState']}")
+            time.sleep(0.05)
+        raise AssertionError("small synthetic job observation timed out")
+
+
+@contextmanager
+def supervised(executable, fixture, phase, epoch):
+    environment = {key: os.environ[key] for key in ("SystemRoot", "WINDIR") if key in os.environ}
+    environment.update(
+        TEMP=str(fixture / "temp"),
+        TMP=str(fixture / "temp"),
+        PATH=str(Path(os.environ["SYSTEMROOT"]) / "System32"),
+        RO_CORE_PROFILE="local",
+        RO_CORE_BIND_HOST="127.0.0.1",
+        RO_CORE_BIND_PORT="0",
+        RO_CORE_LOG_LEVEL="INFO",
+    )
+    with (fixture / f"{phase}.stderr.log").open("wb") as error_log:
+        process = subprocess.Popen(
+            [str(executable), "--supervised"],
+            cwd=fixture,
+            env=environment,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=error_log,
+            creationflags=subprocess.CREATE_NO_WINDOW,
+        )
+        try:
+            token = secrets.token_hex(32)
+            process.stdin.write(f"auth {token} workflow {epoch} {secrets.token_hex(16)}\n".encode())
+            process.stdin.flush()
+            raw = read_line(process.stdout, 10)
+            if len(raw) > 4096 or not raw.endswith(b"\n"):
+                raise AssertionError("invalid bounded handshake")
+            port = validate_handshake(json.loads(raw), process.pid)
+            deadline = time.monotonic() + 10
+            while not readiness_ok(port, token):
+                if process.poll() is not None or time.monotonic() >= deadline:
+                    raise AssertionError("frozen Core unavailable")
+                time.sleep(0.05)
+            yield HttpCore(port, token)
+            process.stdin.write(b"shutdown\n")
+            process.stdin.flush()
+            process.wait(timeout=5)
+            if process.returncode != 0:
+                raise AssertionError("frozen Core shutdown failed")
+        finally:
+            if process.poll() is None:
+                process.kill()  # Exact child owned by this invocation only.
+                process.wait(timeout=5)
+            for stream in (process.stdin, process.stdout):
+                stream.close()
+
+
+def intake(client, project):
+    native = {**project, **client.post("/native/imports/context", project)}
+    permitted = {"value": "permitted", "basis": "researcher-confirmed"}
+    preview = client.post(
+        "/native/imports/create",
+        {
+            **native,
+            "sourceName": "synthetic-frozen.csv",
+            "formatName": "csv",
+            "encoding": "utf-8",
+            "delimiter": ",",
+            "rights": {"store": permitted, "inspect": permitted},
+        },
+    )
+    native["previewId"] = preview["previewId"]
+    public = {"root": project["root"], "previewId": preview["previewId"]}
+    client.post("/native/imports/chunk", {**native, "ordinal": 1, "data": base64.b64encode(SOURCE).decode()})
+    client.post(
+        "/native/imports/seal",
+        {
+            **native,
+            "sourceSha256": hashlib.sha256(SOURCE).hexdigest(),
+            "byteLength": len(SOURCE),
+            "chunkCount": 1,
+        },
+    )
+    client.post("/native/imports/schedule", native)
+    client.wait("/projects/imports/status", public)
+    draft = client.post("/projects/imports/begin-review", public)
+    if draft["recordCount"] != 3:
+        raise AssertionError("incomplete synthetic preview")
+    return public, draft
+
+
+def commit(client, public, draft):
+    prepared = client.post("/projects/imports/commit/prepare", {**public, "revision": draft["revision"]})
+    request = {**public, "revision": draft["revision"], "requestId": prepared["requestId"]}
+    client.post("/projects/imports/commit/start", request)
+    return client.wait("/projects/imports/commit/status", {**public, "requestId": prepared["requestId"]})["manifest"]
+
+
+@unittest.skipUnless(
+    os.name == "nt" and os.environ.get("RO_RUN_IMPORT_FROZEN") == "1",
+    "opt-in frozen test requires explicit synthetic-key authority and authenticated package",
+)
+class ImportFrozenWindowsTests(unittest.TestCase):
+    def test_frozen_import_reimport_cancel_and_restart(self):
+        head = git("rev-parse", "HEAD")
+        self.assertEqual("", git("status", "--porcelain"), "commit inputs before qualification")
+        product_commit = os.environ["RO_IMPORT_PRODUCT_COMMIT"]
+        subprocess.run(["git", "merge-base", "--is-ancestor", product_commit, head], cwd=REPO, check=True)
+        self.assertEqual("", git("diff", product_commit, head, "--", *PRODUCT_PATHS))
+        package_report = Path(os.environ["RO_IMPORT_PACKAGE_REPORT"])
+        self.assertEqual(package_report.absolute(), package_report.resolve(strict=True))
+        report_sha = digest(package_report)
+        self.assertEqual(os.environ["RO_IMPORT_PACKAGE_REPORT_SHA256"], report_sha)
+        package = json.loads(package_report.read_text(encoding="utf-8"))
+        # The build report resides at <producer repo>/artifacts/tmp/report.json.
+        producer_repo = package_report.parents[2]
+        root = producer_repo / package["artifact"]
+        scratch = producer_repo / "artifacts/tmp"
+        self.assertTrue(root.resolve(strict=True).is_relative_to(scratch.resolve(strict=True)))
+        self.assertEqual(root.absolute(), root.resolve(strict=True))
+        manifest = package["manifest"]
+        schema = json.loads((REPO / "packages/contracts/core-api/sidecar-artifact.schema.json").read_text())
+        contract = load_build_contract(REPO)
+        self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
+        output_root = REPO / "artifacts/tmp"
+        self.assertEqual(output_root.absolute(), output_root.resolve(strict=True))
+        fixture = Path(tempfile.mkdtemp(prefix="import-frozen-windows-", dir=output_root))
+        (fixture / "temp").mkdir()
+        (fixture / "projects").mkdir()
+        report = {
+            "outcome": "running",
+            "head": head,
+            "productCommit": product_commit,
+            "toolSha256": digest(Path(__file__)),
+            "packageReportSha256": report_sha,
+            "entrypointSha256": digest(root / manifest["entrypoint"]),
+            "fixture": fixture.relative_to(REPO).as_posix(),
+            "fixturesRetained": True,
+            "scope": "frozen Core, real loopback HTTP/control pipe, protected storage and workers",
+            "limitations": [
+                "synthetic supervisor, not native app",
+                "not signing or performance proof",
+                "not crash recovery",
+            ],
+        }
+
+        def save():
+            guarded_atomic_write_json(REPO, fixture / "result.json", report, output_root)
+
+        save()
+        try:
+            epoch = secrets.token_hex(16)
+            with immutable_package_snapshot(producer_repo, root, manifest):
+                self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
+                with supervised(root / manifest["entrypoint"], fixture, "create", epoch) as client:
+                    created = client.post(
+                        "/projects",
+                        {
+                            "parentDirectory": str(fixture / "projects"),
+                            "directoryName": "synthetic-frozen",
+                            "displayName": "Synthetic frozen qualification",
+                            "primaryUseCase": "theory-synthesis",
+                            "researchObjective": "Synthetic frozen import qualification",
+                        },
+                    )
+                    project = {key: created[key] for key in ("root", "projectId")}
+                    self.assertEqual(fixture / "projects/synthetic-frozen", Path(project["root"]))
+                    client.post("/projects/open", {"root": project["root"]})
+                    cancelled, _ = intake(client, project)
+                    client.post("/projects/imports/cancel", cancelled)
+                    self.assertEqual("cancelled", client.post("/projects/imports/status", cancelled)["state"])
+                    self.assertIsNone(client.post("/projects/imports/commit/latest", cancelled))
+                    public, draft = intake(client, project)
+                    summary_address = {**public, "revision": draft["revision"]}
+                    client.post("/projects/imports/summary/start", summary_address)
+                    summary = client.wait("/projects/imports/summary", summary_address)
+                    self.assertEqual(2, summary["counts"]["includedRecords"])
+                    self.assertEqual(3, summary["counts"]["sourceRows"])
+                    diagnostic = client.post("/projects/imports/report", {**summary_address, "after": 0, "limit": 100})
+                    self.assertTrue(diagnostic["complete"])
+                    self.assertNotIn("Synthetic frozen", diagnostic["csv"])
+                    self.assertNotIn("10.99999/", diagnostic["csv"])
+                    self.assertNotIn(project["root"], diagnostic["csv"])
+                    first = commit(client, public, draft)
+                    self.assertEqual((2, 2, 3), (first["createdCount"], first["selectedCount"], first["recordCount"]))
+                    again, second_draft = intake(client, project)
+                    second = commit(client, again, second_draft)
+                    self.assertEqual(first, second, "identical reimport must reuse the original manifest")
+                    client.post("/projects/close", {"root": project["root"]})
+                self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
+                with supervised(root / manifest["entrypoint"], fixture, "reopen", epoch) as client:
+                    client.post("/projects/open", {"root": project["root"]})
+                    self.assertEqual(first, client.post("/projects/imports/commit/latest", again)["manifest"])
+                    members = client.post(
+                        "/projects/imports/manifest/members",
+                        {
+                            **again,
+                            "revisionId": first["revisionId"],
+                            "after": 0,
+                            "limit": 100,
+                        },
+                    )
+                    self.assertTrue(members["complete"])
+                    self.assertEqual([1, 2, 3], [row["ordinal"] for row in members["records"]])
+                    self.assertEqual([False, True, True], [row["included"] for row in members["records"]])
+                    self.assertEqual(
+                        2, len({row["sourceRecordRevisionId"] for row in members["records"] if row["included"]})
+                    )
+                    self.assertTrue(all(row["comparison"] == "not-compared" for row in members["records"]))
+                    review = client.post("/projects/imports/review", again)
+                    self.assertEqual("permitted", review["rights"]["inspect"]["value"])
+                    self.assertEqual("unknown", review["rights"]["export"]["value"])
+                    client.post("/projects/close", {"root": project["root"]})
+                self.assertEqual([], verify_artifact(root, manifest, schema=schema, contract=contract))
+            self.assertEqual(head, git("rev-parse", "HEAD"))
+            self.assertEqual("", git("status", "--porcelain"))
+            self.assertEqual(report_sha, digest(package_report))
+            report.update(
+                outcome="passed",
+                manifest=first,
+                members=members,
+                rights=review["rights"],
+                processes=2,
+                summaryCounts=summary["counts"],
+                diagnosticSha256=hashlib.sha256(diagnostic["csv"].encode()).hexdigest(),
+            )
+        except BaseException as error:
+            report.update(outcome="failed", failureType=type(error).__name__)
+            raise
+        finally:
+            save()
+            print(
+                json.dumps(
+                    {"report": (fixture / "result.json").relative_to(REPO).as_posix(), "outcome": report["outcome"]}
+                )
+            )
+
+
+class FrozenJourneyControlTests(unittest.TestCase):
+    def test_redirects_are_not_followed(self):
+        self.assertIsNone(NoRedirect().redirect_request(None, None, 302, "", {}, "https://example.invalid"))
+
+    def test_failed_job_is_not_accepted_or_retried(self):
+        client = HttpCore(1, "synthetic")
+        with patch.object(client, "post", return_value={"jobState": "failed"}) as post:
+            with self.assertRaisesRegex(AssertionError, "terminal failed"):
+                client.wait("/projects/imports/status", {})
+            self.assertEqual(1, post.call_count)
+
+    def test_reimport_uses_explicit_prepare_identity(self):
+        client = HttpCore(1, "synthetic")
+        with (
+            patch.object(client, "post", side_effect=[{"requestId": "prepared"}, {}]) as post,
+            patch.object(client, "wait", return_value={"manifest": {"revisionId": "accepted"}}),
+        ):
+            self.assertEqual({"revisionId": "accepted"}, commit(client, {"previewId": "preview"}, {"revision": 4}))
+            self.assertEqual(
+                {"previewId": "preview", "revision": 4, "requestId": "prepared"}, post.call_args_list[1].args[1]
+            )
