@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "import-performance-baseline",
+  "slice": "CAP-04.S01",
+  "fixtureVersion": "repeated-synthetic-csv-v1",
+  "source": {
+    "sha256": "c98a9e5dbe1a92373bc4137ea6aa3c6ae758e2f1d30f2ca53837502cb2f115a3",
+    "byteLength": 4600010,
+    "chunks": 36
+  },
+  "bibliographicRecords": 100000,
+  "regressionAllowance": 0.2,
+  "repetitions": 2,
+  "method": "Every fresh sample must pass; report raw samples and min/median/max, not estimated percentiles. Fresh process/project/vault per protected sample; OS cache is not flushed. Parser uses two immediate repetitions per format with tracemalloc.",
+  "hardware": {
+    "system": "Windows-11-10.0.26200-SP0",
+    "machine": "AMD64",
+    "logicalCpuCount": 20,
+    "python": "3.14.6",
+    "physicalMemoryBytes": null,
+    "limitation": "Historical RAM was not measured; no minimum-hardware claim. Current hardware and RAM must be recorded."
+  },
+  "samples": {
+    "review": {
+      "commit": "552eae1c03bf3d63c44620981a49e8c344de86f1",
+      "report": "artifacts/tmp/import-review-scale-windows-zltzaxre/diagnostic.json",
+      "reportSha256": "4325206bcc12206e0e6dcfc6d0992f7ef5f8a410b530a8bdedce1d87a304c0ed",
+      "tool": "tests/service/test_import_review_scale_windows.py",
+      "toolSha256": "f448725f77c5a2733b509c43706cfd1962bd631716dfc0ce55bb0234f0430ed7",
+      "elapsedSeconds": 520.4815654000267,
+      "peakWorkingSetBytes": 138588160,
+      "parseSeconds": 81.42138459999114,
+      "workerSeconds": 253.1940969999996,
+      "absoluteElapsedSeconds": 1200,
+      "absoluteWorkerSeconds": 360
+    },
+    "commit": {
+      "commit": "ddc3b980ef65c0c1ef26766fbc02f2a8462f596c",
+      "report": "artifacts/tmp/import-commit-scale-windows-q0c40rd6/diagnostic.json",
+      "reportSha256": "22e00d9802a5cd65b8a048d2849e71f301cf32543216ffa82d069f1fb8f36e47",
+      "tool": "tests/service/test_import_commit_scale_windows.py",
+      "toolSha256": "53972ad3c8a9d4aa43895592ca099a733c55036e87af2b47368459b2503ca2f3",
+      "elapsedSeconds": 1115.2465185999172,
+      "peakWorkingSetBytes": 154116096,
+      "workerSeconds": 896.2348788999952,
+      "absoluteElapsedSeconds": 1200,
+      "absoluteWorkerSeconds": 900
+    }
+  },
+  "parser": {
+    "fixtureVersion": "synthetic-repeated-metadata-v1",
+    "formats": ["ris", "bibtex", "csv"],
+    "repetitions": 2,
+    "peakTracedBytesExclusive": 16777216,
+    "latency": "Descriptive only; the accepted obligation is bounded streaming memory, not a new parser latency target."
+  },
+  "limitations": [
+    "Historical single diagnostic samples define reviewed comparison inputs, not retroactive qualification or a percentile distribution.",
+    "ASGI transport and synthetic native context; protected Core, storage and workers are real.",
+    "Not packaged performance, native accessibility or read-responsiveness proof."
+  ]
+}
