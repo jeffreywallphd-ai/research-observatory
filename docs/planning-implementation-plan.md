@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8d8588ce3dfcb5bd0cc2ea19cb708d5562e81b72cd0c8e82549d4546778faba6
+source_sha256: 1577d1f70b9699d283f84971845570a49ebd8d0b326b6c442682c1cbed486997
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2662,6 +2662,36 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/c04_evidence_review at `2026-09-12T15:57:51+00:00`
 
 **Latest notes:** Independently reviewed the exact three-path product/test correction and ten-path base-to-candidate Git delta against the frozen correction specification, original CAP-03.S04.T02 contract, approved slice Section 11, ADR-0025 and affected architecture. Authenticated the frozen R01 packet, criterion/selection bindings, manifest, qualifying producer, report, all five logs and selected input identities. The original completed task object and its origin snapshot remain unchanged. No material open finding remains within the admitted correction. This is task-scoped approval, not integration, full Wave qualification, production packaging, platform/principal qualification or release approval. R01 has no prior formal attempts or open findings; development and predecessor failures remain adverse history, not invented review rounds.
+
+**Currently open findings:** -
+
+### W2.C01.T01 — Implement idempotent import commits and import manifests
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** The reviewed 100k-record CAP-04.S01 qualification at cbc5e073a4b1cc69cdc366bb46100de48124cb81 failed its second commit observation at 900.874 seconds against the unchanged 900-second worker ceiling. The first sample completed at 896.527 seconds. The failed sample is censored, not completion latency; teardown interrupted publication and retained zero canonical records/manifests/seals/accepted outputs. Aggregate SHA256 25f8ac372e90261cfdb06960d5ae11357fab3da32f47a69c48f8fa2d0beb7498 remains FAIL. Source inspection independently confirmed that each of 1001 identity-verification pages opens two protected read transactions, redundantly repeating protected connection and schema validation.
+
+**Inherited criteria:**
+
+- Re-importing the same file does not duplicate records; changed files create a new manifest and explain additions, updates, and unresolved conflicts.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/import_commit_repository.py
+- services/core-api/src/research_observatory_core/import_draft_repository.py
+- tests/data/test_import_commit_hot_path.py
+- tests/service/test_import_commit_activity.py
+#### Review history — W2.C01.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

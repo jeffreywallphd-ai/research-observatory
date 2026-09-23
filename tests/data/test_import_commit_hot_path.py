@@ -4,6 +4,7 @@ import unittest
 from unittest.mock import patch
 
 from research_observatory_core import import_preview_repository, repositories
+from research_observatory_core.ports.import_previews import PreviewDraftChange, PreviewProblem
 
 from tests.data import test_import_commit_publication as publication
 
@@ -36,6 +37,68 @@ class ImportCommitHotPathTests(unittest.TestCase):
             page = f.repository.draft_page(f.inputs.preview.preview_id, revision=1, after=0, limit=100)
         self.assertEqual(f.inputs.record_count, len(page))
         self.assertEqual([], compiled_rows, "fixed record lookup must not compile per ordinal")
+
+    def prepared_pages(self):
+        f = self.case.fixture
+        f.queue.cancel(f.claim, now=f.fixture.now, reason_code="synthetic-replace")
+        self.case.prepare_another(b"title,doi\n" + b"Synthetic,10.99999/EXAMPLE\n" * 205)
+        self.assertEqual(200, f.append(after=100))
+        self.assertEqual(206, f.append(after=200))
+        return f
+
+    def test_identity_verification_uses_one_fresh_transaction_per_page(self):
+        f = self.prepared_pages()
+        expected = f.repository.prepared_identity(f.inputs, claim=f.claim, actor=f.actor)
+        prepared_connections, record_connections = [], []
+        prepared, record = f.repository._prepared, f.repository._record
+
+        def observe_prepared(connection, *args, **kwargs):
+            prepared_connections.append(connection)
+            return prepared(connection, *args, **kwargs)
+
+        def observe_record(connection, *args, **kwargs):
+            record_connections.append(connection)
+            return record(connection, *args, **kwargs)
+
+        with (
+            patch.object(
+                import_preview_repository,
+                "open_canonical_database",
+                wraps=import_preview_repository.open_canonical_database,
+            ) as opened,
+            patch.object(f.repository, "_prepared", side_effect=observe_prepared),
+            patch.object(f.repository, "_record", side_effect=observe_record),
+        ):
+            actual = f.repository._verified_identity(
+                f.inputs, f.claim, f.actor, lambda: f.actor.occurred_at, None, lambda action: action()
+            )
+        self.assertEqual(expected, actual)
+        self.assertEqual(4, opened.call_count, "initial authority plus one protected open for each of three pages")
+        self.assertEqual(4, len(prepared_connections))
+        self.assertEqual(4, len({id(connection) for connection in prepared_connections}))
+        self.assertEqual(206, len(record_connections))
+        for ordinal, connection in enumerate(record_connections):
+            self.assertIs(connection, prepared_connections[1 + ordinal // 100])
+        self.assertEqual((0, 0, 0, 0), self.case.counts()[3:7])
+
+    def test_revision_changed_between_verification_pages_is_rejected(self):
+        f = self.prepared_pages()
+        guarded_actions = 0
+
+        def guard(action):
+            nonlocal guarded_actions
+            guarded_actions += 1
+            if guarded_actions == 3:  # Initial authority and page one have completed.
+                f.repository.revise_draft(
+                    f.inputs.preview.preview_id,
+                    PreviewDraftChange(expected_revision=1, actor=f.fixture.fixture.actor),
+                )
+            return action()
+
+        with self.assertRaisesRegex(PreviewProblem, "preview-draft-revision-conflict"):
+            f.repository._verified_identity(f.inputs, f.claim, f.actor, lambda: f.actor.occurred_at, None, guard)
+        self.assertEqual(3, guarded_actions)
+        self.assertEqual((0, 0, 0, 0), self.case.counts()[3:7])
 
 
 if __name__ == "__main__":

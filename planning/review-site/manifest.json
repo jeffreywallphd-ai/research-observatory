@@ -1046,7 +1046,59 @@
         "W3"
       ],
       "interrupting_change_request_ids": [],
-      "interrupting_recovery_request_ids": []
+      "interrupting_recovery_request_ids": [],
+      "corrective_tasks": [
+        {
+          "task_id": "W2.C01.T01",
+          "title": "Implement idempotent import commits and import manifests",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Re-importing the same file does not duplicate records; changed files create a new manifest and explain additions, updates, and unresolved conflicts.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S01.T03",
+            "origin_commit": "f850468ef679651b34af44611aa39c8d147c6074",
+            "paused_state_sha256": "f823eca8842ddc4a7b6ebbac807597e5c655416d904d9561d89eadfa34777ada",
+            "origin_sha256": "6d85631ed208673dbc0e545727edce310b1c328d4374fea1605e441b705f546a",
+            "origin_contract_sha256": "dbac1a5556e303c3c9c583cacb3138912c371ae5e56fe5fe08da3e84143ac9e3",
+            "origin_history_sha256": "084ddd9256947ec42034c77b2553d22efd6c7b3eac4ec76a4fb9d22a8e2453da",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C01.T01.spec.json",
+              "sha256": "70766fa42f669e3fadac94efdc201d5198d226e6b039852f0611d2aac565aeca",
+              "commit": "c0da6393fe2f0280b7df314863f963a8d07dab16"
+            },
+            "reproduction": "The reviewed 100k-record CAP-04.S01 qualification at cbc5e073a4b1cc69cdc366bb46100de48124cb81 failed its second commit observation at 900.874 seconds against the unchanged 900-second worker ceiling. The first sample completed at 896.527 seconds. The failed sample is censored, not completion latency; teardown interrupted publication and retained zero canonical records/manifests/seals/accepted outputs. Aggregate SHA256 25f8ac372e90261cfdb06960d5ae11357fab3da32f47a69c48f8fa2d0beb7498 remains FAIL. Source inspection independently confirmed that each of 1001 identity-verification pages opens two protected read transactions, redundantly repeating protected connection and schema validation.",
+            "changed_paths": [
+              "services/core-api/src/research_observatory_core/import_commit_repository.py",
+              "services/core-api/src/research_observatory_core/import_draft_repository.py",
+              "tests/data/test_import_commit_hot_path.py",
+              "tests/service/test_import_commit_activity.py"
+            ],
+            "impact_analysis": "Restore the approved large-import delivery boundary with one fresh protected read transaction per identity-verification page. Extract the existing draft-page projection into a private connection-taking helper; public draft page/selection validation and transaction ownership remain unchanged. Inside identity verification, read the complete bounded draft page, current authority and staged rows through that one transaction. Preserve 100-row and 16MiB limits, per-record/current/historical rights, exact prepared-row comparison and scientific digest, per-page guard/poll/cancellation/heartbeat, fresh claim time, final writer revalidation, atomic publication and immutable provenance. No pooling, cross-page cache, schema, security authority, UX, deadline, threshold or qualification-method change. Add a failing multi-page connection-count/snapshot regression, unchanged-identity proof and between-page authority loss rejection; update the guard-depth test to witness verification's new helper. Replay affected forged-row, rights, cancellation, lease and rollback checks, then fresh affected protected performance qualification; retain all adverse samples. This is narrowly required defect restoration, not optional structural cleanup or a general repository refactor. No completed task or frozen approval is rewritten. Broader untouched native/packaging/renderer suites are not replayed merely for this internal transaction change."
+          },
+          "task_review": {
+            "task_id": "W2.C01.T01",
+            "title": "Implement idempotent import commits and import manifests",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
+        }
+      ]
     },
     {
       "wave_id": "W3",

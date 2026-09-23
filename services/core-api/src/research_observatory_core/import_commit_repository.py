@@ -663,10 +663,12 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
         draft = guard(prepared)
 
         def page_and_staged(after: int):
-            page = self.draft_page(preview, revision=inputs.draft_revision, after=after, limit=100)
-            if not page:
-                raise PreviewProblem("preview-commit-incomplete")
             with self._transaction(preview) as connection:
+                page = self._draft_rows_with_connection(
+                    connection, preview, revision=inputs.draft_revision, after=after, limit=100
+                )
+                if not page:
+                    raise PreviewProblem("preview-commit-incomplete")
                 self._prepared(
                     connection, inputs, claim, actor.model_copy(update={"occurred_at": now()}), running=running
                 )

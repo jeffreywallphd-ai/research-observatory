@@ -122,6 +122,8 @@ class ImportCommitActivityTests(unittest.TestCase):
 
     def test_verification_releases_outer_guard_but_pages_and_atomic_writer_are_guarded(self):
         depth = 0
+        verifying = False
+        verification_pages = 0
         f = self.fixture
 
         def guard(action):
@@ -133,14 +135,22 @@ class ImportCommitActivityTests(unittest.TestCase):
                 depth -= 1
 
         verified = f.repository._verified_identity
-        page = f.repository.draft_page
+        page = f.repository._draft_rows_with_connection
 
         def verify(*args, **kwargs):
+            nonlocal verifying
             self.assertEqual(0, depth, "full verification must not hold the lifecycle lock")
-            return verified(*args, **kwargs)
+            verifying = True
+            try:
+                return verified(*args, **kwargs)
+            finally:
+                verifying = False
 
         def guarded_page(*args, **kwargs):
+            nonlocal verification_pages
             self.assertEqual(1, depth)
+            if verifying:
+                verification_pages += 1
             return page(*args, **kwargs)
 
         def writer_step(_step):
@@ -149,11 +159,12 @@ class ImportCommitActivityTests(unittest.TestCase):
         activity = ImportCommitActivity(inputs=f.inputs, repository=f.repository, guard=guard, trace_id="4" * 32)
         with (
             patch.object(f.repository, "_verified_identity", side_effect=verify),
-            patch.object(f.repository, "draft_page", side_effect=guarded_page),
+            patch.object(f.repository, "_draft_rows_with_connection", side_effect=guarded_page),
             patch("research_observatory_core.import_commit_repository._publication_step_completed", writer_step),
             patch.object(f.queue, "heartbeat", wraps=f.queue.heartbeat) as heartbeat,
         ):
             activity(self.context, f.claim)
+        self.assertGreater(verification_pages, 0, "verification pages must be witnessed separately from staging")
         self.assertGreater(heartbeat.call_count, 0, "fresh lease required immediately before writer")
 
     def test_authority_loss_after_verification_denies_publication_without_canonical_facts(self):

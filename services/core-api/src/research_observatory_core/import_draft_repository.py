@@ -507,41 +507,56 @@ class SqliteImportDraftRepository(_SqliteImportPreviewRepository):
         ordinals: tuple[int, ...] | None = None,
     ) -> tuple[PreviewDraftRecord, ...]:
         with self._transaction(preview_id) as connection:
-            state = self._read(connection, preview_id)
-            self._active(state)
-            attempt = self._accepted_attempt(connection, preview_id)
-            draft = self._draft(connection, state, revision)
-            current = self._latest(connection, preview_id)
-            if draft.attempt_id != attempt:
-                raise PreviewProblem("preview-draft-attempt-mismatch")
-            result: list[PreviewDraftRecord] = []
-            size = 0
-            if ordinals is None:
-                ordinals = tuple(range(after + 1, min(draft.record_count, after + limit) + 1))
-            elif ordinals[-1] > draft.record_count:
-                raise PreviewProblem("preview-page-selection-invalid")
-            selected = self._page_decision_revisions(connection, preview_id, revision, current, ordinals)
-            for ordinal in ordinals:
-                requested_revision, current_revision = selected.get(ordinal, (None, None))
-                previous, mapping = self._decision_at(connection, preview_id, requested_revision, ordinal)
-                current_decision = (
-                    previous
-                    if requested_revision == current_revision
-                    else self._decision_at(connection, preview_id, current_revision, ordinal)[0]
-                )
-                for decision in (previous, current_decision):
-                    if decision and decision.rights and not decision.rights.permits("inspect"):
-                        raise PreviewProblem("preview-record-rights-denied")
-                record = self._record(connection, state, attempt, ordinal)
-                row = self._project_row(record, draft, previous, mapping)
-                size += len(StoredImportRecord.from_record(record).model_dump_json().encode("utf-8"))
-                size += len(row.decision.model_dump_json().encode("utf-8"))
-                if size > 16 * 1024 * 1024:
-                    if not result:
-                        raise PreviewProblem("preview-draft-record-limit")
-                    break
-                result.append(row)
-            return tuple(result)
+            return self._draft_rows_with_connection(
+                connection, preview_id, revision=revision, after=after, limit=limit, ordinals=ordinals
+            )
+
+    def _draft_rows_with_connection(
+        self,
+        connection: CanonicalConnection,
+        preview_id: str,
+        *,
+        revision: int,
+        after: int = 0,
+        limit: int = 100,
+        ordinals: tuple[int, ...] | None = None,
+    ) -> tuple[PreviewDraftRecord, ...]:
+        """Project one bounded page in the caller's fresh read transaction."""
+        state = self._read(connection, preview_id)
+        self._active(state)
+        attempt = self._accepted_attempt(connection, preview_id)
+        draft = self._draft(connection, state, revision)
+        current = self._latest(connection, preview_id)
+        if draft.attempt_id != attempt:
+            raise PreviewProblem("preview-draft-attempt-mismatch")
+        result: list[PreviewDraftRecord] = []
+        size = 0
+        if ordinals is None:
+            ordinals = tuple(range(after + 1, min(draft.record_count, after + limit) + 1))
+        elif ordinals[-1] > draft.record_count:
+            raise PreviewProblem("preview-page-selection-invalid")
+        selected = self._page_decision_revisions(connection, preview_id, revision, current, ordinals)
+        for ordinal in ordinals:
+            requested_revision, current_revision = selected.get(ordinal, (None, None))
+            previous, mapping = self._decision_at(connection, preview_id, requested_revision, ordinal)
+            current_decision = (
+                previous
+                if requested_revision == current_revision
+                else self._decision_at(connection, preview_id, current_revision, ordinal)[0]
+            )
+            for decision in (previous, current_decision):
+                if decision and decision.rights and not decision.rights.permits("inspect"):
+                    raise PreviewProblem("preview-record-rights-denied")
+            record = self._record(connection, state, attempt, ordinal)
+            row = self._project_row(record, draft, previous, mapping)
+            size += len(StoredImportRecord.from_record(record).model_dump_json().encode("utf-8"))
+            size += len(row.decision.model_dump_json().encode("utf-8"))
+            if size > 16 * 1024 * 1024:
+                if not result:
+                    raise PreviewProblem("preview-draft-record-limit")
+                break
+            result.append(row)
+        return tuple(result)
 
     def _record_access(self, connection: CanonicalConnection, preview_id: str, ordinal: int) -> None:
         revision = self._latest(connection, preview_id)
