@@ -1,0 +1,49 @@
+{
+  "task_id": "CAP-04.S02.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+  "base_commit": "6316b14d439c10f85fea6557e141d6f04111f17b",
+  "reviewer": "agent:w2-s01-final-review",
+  "result": "approved",
+  "evidence_sha256": "dbc27651ea4a1435afb7103b734fb53515c304ef3068c179d6098f6d57302834",
+  "packet_sha256": "46ae33a7248a0e0940d756a4cac0b4e714b1ff693082a8c911917491b3bd342f",
+  "acceptance_criteria_sha256": "181b23f5d3a4b609e5defe179b63b302ed41a7752268efa07aca88c544a6a29c",
+  "selection_sha256": "0b25a609dc9a517729064125ddc24c7fa472d8de9b4217c164c0f5d022fae383",
+  "notes": "Independent expanded task review approves this exact frozen R01 candidate under approved CAP-04.S02 section 9.2 and ADR-0027, with ADR-0017/0019 authority preserved. Authenticated current_submission, evidence/packet/criteria/selection hashes, Git ancestry and the exact 67-path claim-base-to-candidate inventory. Acceptance criteria match immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, claim base, candidate and current backlog; CAP-04.S02.T01 remains DONE/approved. Read-only validate_task_evidence and task_submission_packet_errors returned no errors. The 41-file remediation commit matches the staged delta independently inspected before commit. Review covered provider mapping and scientific/cursor/cache identity, fixed-destination transport and bounded parsing, broker-only authentication/contact handling, source observations versus action-specific permissions, exact Core-held confirmation with current Intent/privacy/session checks, durable publication and runtime/API composition. F01-F04 are closed in the separate pre_submission_closures records; these were pre-submission findings, not prior controlled rounds, so controlled findings and closures remain empty. Atomic page/checkpoint/output/workflow acceptance, current claim/lease/cancellation fencing, interrupted rollback and post-commit receipt behavior were inspected together. Shared document-lane admission and project-before-object receipt locking are appropriately bounded. Build/quality registration preserves the concrete-adapter boundary, and the legacy Intent test repair retains exact historical fixture bytes/hash/schema assertions while using the fingerprint-checked v10 builder and real upgrade. Authenticated all six qualifying raw-log hashes and results: 54 connector tests PASS in 24.027 seconds; 56 affected compatibility tests PASS in 12.713 seconds; six packaging tests in 24.206 seconds with five PASS and one explicitly skipped Windows-token file-symlink case; 15 generated-client and 18 affected renderer tests PASS; both TypeScript checks, exact API generation, affected Ruff check/format and mypy for 32 files PASS; 328-file inventory, architecture, clean 16b1524 build manifest and 492-page projection validation PASS. Authenticated the build-manifest hash and all six retained adverse-development log hashes. These qualifying executions were performed by the implementation owner at the fixed committed candidate; final review authenticated them and did not rerun broad suites, make provider calls or operate UI. Four inventory paths belong to separately owner-requested Git-control work at ad1df596877386c2b2f3d615cc26d0ffb3c5f763. Its independent disposition, reviewed registry and retained 13-test proof were authenticated separately; no control-source changes occurred in the T02 remediation commit and that ancestral proof is not represented as fresh product qualification. No material criterion-bound blocking finding remains. This approval covers OpenAlex/Crossref protected one-page operations and source metadata candidates, not canonical Work creation, full-text acquisition or grants of export/model/share rights. Real local protected persistence, actual Core/worker composition and isolated TLS were exercised with synthetic key/provider services, not a real-user credential vault or live providers. The symlink skip is not a pass. Remaining adapters, integrated four-provider slice behavior, downstream UI, native accessibility, real-principal/live-provider evidence where authorized, performance, full profiles, cross-capability/Wave qualification and the separate human release gate remain their documented later obligations. This is neither CAP-04.S02 slice approval nor Wave exit or release approval.",
+  "findings": [],
+  "closures": [],
+  "pre_submission_closures": [
+    {
+      "finding_id": "F01",
+      "source": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "criterion_index": 1,
+      "result": "closed",
+      "remediation_candidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "evidence": "Connector publication now validates the exact workflow capability, live lease, cancellation and predecessor using the same canonical writer that accepts observations, response references, checkpoint, staged output, provenance and workflow completion. Idempotent completion authenticates the attempt; BaseException rolls back an interrupted transaction. The qualifying connector log records PASS for test_queue_cancellation_at_publication_boundary_cannot_advance_checkpoint, test_expired_claim_at_publication_cannot_accept_page_or_output, test_interrupted_completion_rolls_back_page_and_checkpoint_across_restart and test_lost_acknowledgement_after_commit_does_not_turn_success_into_cancellation. Original cancellation and two pre-remedy lease/interruption failures remain retained and hash-bound in the manifest."
+    },
+    {
+      "finding_id": "F02",
+      "source": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "criterion_index": 1,
+      "result": "closed",
+      "remediation_candidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "evidence": "A cache-only hit no longer replaces the durable cache pointer, preserving the last actual remote-validation time independently of new observation times. test_cache_hits_do_not_renew_remote_validation_and_preserve_redaction passes against the real protected repository: t=4 is a hit, t=8 requires conditional revalidation, t=12 is a hit, and a fresh repository instance retains t=8 as validated_at. The prior five-second sliding-freshness failure and adverse regression remain preserved."
+    },
+    {
+      "finding_id": "F03",
+      "source": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "criterion_index": 2,
+      "result": "closed",
+      "remediation_candidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "evidence": "ConnectorCacheEntry carries the retained body's redaction flag; repository loading derives it from the immutable page, and the broker propagates it on fresh hits and 304 revalidation instead of relabelling the body not-required. The qualifying protected-cache regression asserts applied at every observation, preserved retrieval time and absence of the synthetic credential sentinel after reopening the repository. Source redaction remains an observation, not a rights grant."
+    },
+    {
+      "finding_id": "F04",
+      "source": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "criterion_index": 2,
+      "result": "closed",
+      "remediation_candidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "evidence": "bounded_json rejects non-finite decoded floats before sanitized serialization. The qualifying log records PASS for test_overflowing_json_number_is_a_typed_failure and test_json_has_depth_duplicate_nonfinite_and_node_bounds, including positive and negative overflowing exponents. The broker returns failed/incompatible-response with no records or complete accepted page; the original raw ValueError reproduction remains preserved in the manifest's adverse evidence."
+    }
+  ]
+}

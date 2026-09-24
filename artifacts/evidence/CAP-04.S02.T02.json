@@ -1,0 +1,258 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S02.T02",
+  "baseCommit": "6316b14d439c10f85fea6557e141d6f04111f17b",
+  "commit": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/AuditLineageWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+    "artifacts/evidence/CAP-04.S02.T02.task-start.md",
+    "artifacts/evidence/git-incremental-push-checks.md",
+    "docs/architecture/connector-contracts.md",
+    "docs/automation/remote-backup.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S01.html",
+    "planning/review-site/CAP-04/CAP-04.S02.T02.html",
+    "planning/review-site/CAP-04/CAP-04.S02.html",
+    "planning/review-site/CAP-04/CAP-04.S03.html",
+    "planning/review-site/CAP-04/CAP-04.S04.html",
+    "planning/review-site/CAP-04/CAP-04.S05.html",
+    "planning/review-site/CAP-05/CAP-05.S01.html",
+    "planning/review-site/CAP-05/CAP-05.S02.html",
+    "planning/review-site/CAP-05/CAP-05.S03.html",
+    "planning/review-site/CAP-05/CAP-05.S04.html",
+    "planning/review-site/CAP-05/CAP-05.S05.html",
+    "planning/review-site/CAP-05/CAP-05.S06.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "pyproject.toml",
+    "quality-scope.json",
+    "services/core-api/THIRD_PARTY_NOTICES.txt",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/connector_api.py",
+    "services/core-api/src/research_observatory_core/connector_repository.py",
+    "services/core-api/src/research_observatory_core/connector_service.py",
+    "services/core-api/src/research_observatory_core/connector_worker.py",
+    "services/core-api/src/research_observatory_core/connectors/adapters.py",
+    "services/core-api/src/research_observatory_core/connectors/broker.py",
+    "services/core-api/src/research_observatory_core/connectors/providers.py",
+    "services/core-api/src/research_observatory_core/connectors/transport.py",
+    "services/core-api/src/research_observatory_core/connectors/workflow.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/models.py",
+    "services/core-api/src/research_observatory_core/ports/connector_runtime.py",
+    "services/core-api/src/research_observatory_core/research_intents.py",
+    "tests/connectors/__init__.py",
+    "tests/connectors/test_connector_api.py",
+    "tests/connectors/test_connector_authority.py",
+    "tests/connectors/test_connector_broker.py",
+    "tests/connectors/test_connector_intent.py",
+    "tests/connectors/test_connector_persistence.py",
+    "tests/connectors/test_connector_tls.py",
+    "tests/connectors/test_connector_transport.py",
+    "tests/connectors/test_connector_workflow.py",
+    "tests/connectors/test_scholarly_mapping.py",
+    "tests/fixtures/scholarly-metadata/crossref-page.synthetic.v1.json",
+    "tests/fixtures/scholarly-metadata/openalex-page.synthetic.v1.json",
+    "tests/foundation/test_architecture_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/security/test_prospective_privacy.py",
+    "tests/service/test_research_intents.py",
+    "tools/architecture_check.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_build.py",
+    "tools/prospective_privacy.py",
+    "uv.lock",
+    "verification-profiles.json"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "ScholarlyMappingTests bind explicitly synthetic OpenAlex/Crossref known items to source-preserving canonical candidates, exact scientific query/filter/sort/projection semantics and resumable request-bound cursors. Broker tests cover single-flight spacing, bounded retry/Retry-After/circuit recovery and current authorization on cached pages. Protected repository tests prove replay, last remote-validation time, redaction provenance, checkpoint compare-and-swap, idempotence and fresh-instance restart."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Connector qualification covers consent/Intent/policy/session denial, cancellation, expired claim, atomic page/checkpoint/output/job rollback on interrupted completion, committed lost-acknowledgement replay, malformed/non-finite/oversized responses, hostile destinations and echoed secrets. Loopback TLS exercises the real transport certificate/hostname boundary; runtime-factory test exercises protected canonical storage and real background worker with synthetic HTTP plus close/reopen. API, generated clients and two affected renderer fixture tests pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "API/models/generated client, broker-owned credentials, provenance/audit, protected page/source observations, documented adapter seams, runtime registration, pinned dependency locks, third-party notices and build/quality inventories are updated. Existing canonical tables and migrations are reused; no product schema migration or parallel store. Historical Intent fixture repair preserves exact bytes/hash/schema assertions and uses its fingerprint-checked v10 builder and real migration. Current source quality, architecture, clean build and projections pass. Intervening independently reviewed Git controls are separately scoped below."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "service:unit",
+      "contracts:unit",
+      "packaging:unit",
+      "desktop:application",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Runtime provider adapters add network/secret authority, protected persistence, durable workflow/API and locked HTTP dependencies; select all new connector checks, directly affected Intent/import-runtime/contract/architecture/client checks and actual sidecar build. Command IDs are coverage domains; raw commands record narrowed execution, not full profiles. All qualifying runs use the same clean committed candidate; no other agent edits shared inputs.",
+    "deferred": [
+      "Four-provider integrated slice outcomes, remaining provider adapters and downstream source/search UI are CAP-04.S02.T03 and later slice work. Full profiles/native UI/real vault principal/live-provider accounts/accessibility/performance/cross-capability production qualification remain slice/checkpoint/Wave obligations. No real provider API calls, credentials, real projects or sign-in changes. The package symlink-token skip is explicit; no skipped check is asserted as passing. Completed broad import/performance suites were not rerun."
+    ]
+  },
+  "checks": [
+    {
+      "id": "connectors",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -B -s -m unittest discover -v -s tests/connectors -p 'test_*.py'",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T02.connectors-qualification-01.log",
+      "rawOutputSha256": "6892d83dec8d02651b684e5c53f8ec1867e3ea534c6092ef9bc9d7dfe7652de7",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "54 tests passed in 24.027 seconds, no skips. Scientific mapping, consent, retry/cache/redaction, real loopback TLS, encrypted persistence/restart, atomic workflow failure/cancellation and actual runtime composition with synthetic HTTP."
+    },
+    {
+      "id": "compatibility",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -B -s -m unittest tests.service.test_research_intents tests.service.test_import_preview_service.ImportRuntimeCompositionTests tests.contracts.test_connector_contracts tests.contracts.test_model_registry_contracts tests.foundation.test_architecture_check -v",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T02.compatibility-qualification-01.log",
+      "rawOutputSha256": "c3bdc6f3c97c8bbabf25897789ff900d0b0f0140033da17d9b7681a99bffae07",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "56 tests passed in 12.713 seconds, no skips: 24 Intent, 2 import-runtime, 21 contract/generator and 9 architecture tests."
+    },
+    {
+      "id": "packaging",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv/Scripts/python.exe -B -s -m unittest tests.packaging.test_core_sidecar_package -v",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T02.packaging-qualification-01.log",
+      "rawOutputSha256": "726d04a9afb48ed5c4f899d382cc16b6245cfa3a86f2a295e05c483c3bc74400",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "6 tests in 24.206 seconds: 5 passed, 1 skipped because this Windows token cannot create file symlinks. Real Windows PyInstaller onedir build, artifact verification and packaged sidecar checks pass. The skipped symlink case is not claimed as passing or Wave qualification."
+    },
+    {
+      "id": "quality",
+      "command": ".venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/connector_api.py services/core-api/src/research_observatory_core/connector_service.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connector_repository.py services/core-api/src/research_observatory_core/ports/connector_runtime.py services/core-api/src/research_observatory_core/connectors tests/connectors tests/service/test_research_intents.py tests/foundation/test_architecture_check.py tools/architecture_check.py tools/core_sidecar_build.py tests/packaging/test_core_sidecar_package.py tools/core_api_contract.py; if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/connector_api.py services/core-api/src/research_observatory_core/connector_service.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connector_repository.py services/core-api/src/research_observatory_core/ports/connector_runtime.py services/core-api/src/research_observatory_core/connectors tests/connectors tests/service/test_research_intents.py tests/foundation/test_architecture_check.py tools/architecture_check.py tools/core_sidecar_build.py tests/packaging/test_core_sidecar_package.py tools/core_api_contract.py; if ($LASTEXITCODE -ne 0) {exit $LASTEXITCODE}; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/models.py services/core-api/src/research_observatory_core/research_intents.py services/core-api/src/research_observatory_core/connector_api.py services/core-api/src/research_observatory_core/connector_service.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connector_repository.py services/core-api/src/research_observatory_core/ports/connector_runtime.py services/core-api/src/research_observatory_core/connectors tests/connectors tests/service/test_research_intents.py tests/foundation/test_architecture_check.py tools/architecture_check.py tools/core_sidecar_build.py tests/packaging/test_core_sidecar_package.py tools/core_api_contract.py",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "Ruff check PASS; 32 files already formatted; mypy PASS in 32 selected source files.",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T02.quality-qualification-01.log",
+      "rawOutputSha256": "65e0b72ae44d3eb4689367bd5dc0340d26399aa725d707b5c260e658fb4626e0"
+    },
+    {
+      "id": "clients",
+      "command": ".venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check; .local/toolchains/node-v24.19.0-win-x64/node.exe packages/contracts/node_modules/vitest/vitest.mjs run --root packages/contracts core-api/generated.test.ts; .local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/vitest/vitest.mjs run --root apps/desktop src/app/IntentWorkspace.test.tsx src/app/AuditLineageWorkspace.test.tsx; .local/toolchains/node-v24.19.0-win-x64/node.exe packages/contracts/node_modules/typescript/bin/tsc -p packages/contracts/tsconfig.json --noEmit; .local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/node_modules/typescript/bin/tsc -p apps/desktop/tsconfig.json --noEmit",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate; each native exit checked before proceeding",
+      "result": "Exact API generation PASS; 15 generated-client tests PASS in 353ms; 18 affected renderer tests PASS in 607ms; contracts and desktop typechecks PASS.",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T02.client-qualification-01.log",
+      "rawOutputSha256": "4d8cbd46ba3af23e5bbe9d49163406b1f3e22160e844b2f176e880bfd4546766"
+    },
+    {
+      "id": "inventory",
+      "command": ".venv/Scripts/python.exe -B -s -c 'from pathlib import Path; from tools.quality_check import load_scope; print(len(load_scope(Path.cwd())), \"governed files; inventory complete\")'; .venv/Scripts/python.exe -B -s tools/architecture_check.py --repo .; .venv/Scripts/python.exe -B -s tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S02.T02.build-01.json; .venv/Scripts/python.exe -B -s tools/backlog_views.py --repo . --check; .venv/Scripts/python.exe -B -s tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate; each native exit checked before proceeding",
+      "result": "328 governed files; inventory complete. Architecture PASS for 13 areas, 12 modules, 5 interfaces and 3 profiles. Build 0.1.0+g16b1524 clean. Backlog projection PASS. Exact review-site validation PASS for 19 capabilities,111 slices,337 tasks,492 HTML pages.",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T02.inventory-qualification-01.log",
+      "rawOutputSha256": "13d3254d4e3765664275dc46d0f72771b46cd0377bffdd9233a7726583714e14"
+    }
+  ],
+  "scopeLimits": [
+    "T02 source metadata candidates and protected one-page operations only; no canonical Work creation, scholarly validation, rights grant or full-text acquisition. Exact-query confirmation and current Intent/policy remain independent authorities.",
+    "The runtime integration uses real Core composition, protected storage, workflow/admission and API, but injected synthetic key/HTTP services; it is not native Windows-user vault or live provider qualification. Local TLS test uses a synthetic test trust root only in the test context.",
+    "Development failures and diagnostics are retained separately and are not relabelled qualification. Review-site checks do not establish product correctness."
+  ],
+  "execution": {
+    "candidateFixed": true,
+    "trackedTreeClean": true,
+    "platform": "Windows x64",
+    "pythonVersion": "3.14.6",
+    "reuseDisabled": true,
+    "buildManifest": "artifacts/tmp/CAP-04.S02.T02.build-01.json",
+    "buildManifestSha256": "2f5936ab9e3ae49f7b7ce344de36a079e16291f4b8e4bae94a7b75b813827824"
+  },
+  "interveningControlWork": {
+    "paths": [
+      "tools/prospective_privacy.py",
+      "tests/security/test_prospective_privacy.py",
+      "docs/automation/remote-backup.md",
+      "artifacts/evidence/git-incremental-push-checks.md"
+    ],
+    "candidate": "ad1df596877386c2b2f3d615cc26d0ffb3c5f763",
+    "disposition": ".local/security-audit/w2-git-incremental-review-01.md",
+    "scope": "Owner-requested outgoing-unpublished-commits control already independently approved; retained 13-test proof not rerun or asserted as fresh T02 qualification. Complete base-to-candidate inventory includes these paths; no further source/control edits in the T02 remediation commit."
+  },
+  "preSubmissionFindingReplay": [
+    {
+      "id": "F01",
+      "record": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "evidence": "test_queue_cancellation_at_publication_boundary_cannot_advance_checkpoint; test_expired_claim_at_publication_cannot_accept_page_or_output; test_interrupted_completion_rolls_back_page_and_checkpoint_across_restart; test_lost_acknowledgement_after_commit_does_not_turn_success_into_cancellation",
+      "remediationCandidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "disposition": "implemented and qualifying regression passed; independent exact-candidate closure required"
+    },
+    {
+      "id": "F02",
+      "record": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "evidence": "test_cache_hits_do_not_renew_remote_validation_and_preserve_redaction",
+      "remediationCandidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "disposition": "implemented and qualifying regression passed; independent exact-candidate closure required"
+    },
+    {
+      "id": "F03",
+      "record": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "evidence": "test_cache_hits_do_not_renew_remote_validation_and_preserve_redaction",
+      "remediationCandidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "disposition": "implemented and qualifying regression passed; independent exact-candidate closure required"
+    },
+    {
+      "id": "F04",
+      "record": "artifacts/evidence/CAP-04.S02.T02.pre-submission-review-01.md",
+      "evidence": "Non-finite JSON exponent rejection in bounded_json and broker typed-error regression",
+      "remediationCandidate": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+      "disposition": "implemented and qualifying regression passed; independent exact-candidate closure required"
+    }
+  ],
+  "developmentEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T02.publication-cancel-red-01.log",
+      "sha256": "3263c6a7addd1354eb69dc4cdf82fc3df08faf98e816b7dbf7f50d50199d7e85",
+      "result": "Original pre-remediation Task Center cancellation assertion failed; retained from the interrupted implementation."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T02.atomic-publication-red-02.log",
+      "sha256": "8e6d9b81bfa25e8819b13a579c146b28475ddcaf532412164695e859ef85f23e",
+      "result": "Two pre-remedy failures: expired lease and interrupted completion exposed accepted page/checkpoint state."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T02.cache-red-01.log",
+      "sha256": "b8b2cfa84abeb28ce35627ac122f4b3190a1dbb3589b0d58a77c095a0c7b607d",
+      "result": "Four failing subtests reproduced sliding freshness and lost redaction provenance."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T02.json-overflow-red-01.log",
+      "sha256": "ac22bcb41094809ed8c83ae8b4536e36c88d64f15d338286e047bb87e9e73a1c",
+      "result": "Non-finite exponent escaped as untyped ValueError before product remediation."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T02.intent-predecessor-red-01.log",
+      "sha256": "133feb90d6163e073b0cef89a9d87e73067057384f6b4f363635c33e574cc53c",
+      "result": "Legacy fixture asserted schema 10 against current schema 13; exact v10 setup repaired without weakening assertion."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T02.runtime-stall-diagnostic-01.log",
+      "sha256": "f9a7771c2f9bb8c08390c7cf7acea63c334f66a51d55842fc7e67dcbc147752c",
+      "result": "Timed faulthandler diagnostic exited 1 and captured project/object lock inversion; test-owned process stopped. Preserved adverse attempt, not qualifying success."
+    }
+  ]
+}
