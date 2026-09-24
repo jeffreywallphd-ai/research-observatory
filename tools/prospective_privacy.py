@@ -56,9 +56,13 @@ YAML_SOURCE_NAMES = tuple(
 )
 
 
-def git(repo: Path, *args: str, data: bytes | None = None) -> bytes:
+def git(repo: Path, *args: str, data: bytes | None = None, timeout: float | None = None) -> bytes:
     result = subprocess.run(
-        ["git", "--no-replace-objects", "-C", str(repo), *args], input=data, capture_output=True, check=False
+        ["git", "--no-replace-objects", "-C", str(repo), *args],
+        input=data,
+        capture_output=True,
+        check=False,
+        timeout=timeout,
     )
     if result.returncode:
         raise ValueError("Git input could not be verified")
@@ -765,6 +769,7 @@ def inspect(
     config: Path,
     reviews: dict | None = None,
     yaml_parser: Path | None = None,
+    published_tips: list[str] | None = None,
 ) -> dict:
     baseline = policy["baselineCommit"]
     validate_history(repo, baseline)
@@ -876,8 +881,14 @@ def inspect(
             if not SHA.fullmatch(tip):
                 raise ValueError("Invalid push tip")
             git(repo, "rev-parse", "--verify", tip + "^{commit}")
+        for published in published_tips or []:
+            if not SHA.fullmatch(published):
+                raise ValueError("Invalid published commit")
+            git(repo, "rev-parse", "--verify", published + "^{commit}")
         commits = (
-            git(repo, "rev-list", "--reverse", "--topo-order", *tips, "--not", baseline, "--").decode().splitlines()
+            git(repo, "rev-list", "--reverse", "--topo-order", *tips, "--not", baseline, *(published_tips or []), "--")
+            .decode()
+            .splitlines()
         )
         # Complete path inventory before any new commit/blob content is read.
         trees = {commit: entries(repo, commit) for commit in commits}
@@ -914,6 +925,43 @@ def push_tips(data: str, destinations: list[str]) -> list[str]:
             raise ValueError("Push destination must be main or a same-name codex branch")
         tips.append(local)
     return sorted(set(tips))
+
+
+def remote_commit_tips(repo: Path, remote_url: str, updates: str) -> list[str]:
+    """Fresh destination facts only; cached tracking refs never authorize exclusions."""
+    advertised: dict[str, str] = {}
+    raw = git(repo, "ls-remote", "--refs", "--heads", "--tags", "--", remote_url, timeout=30)
+    for line in raw.decode("utf-8").splitlines():
+        fields = line.split("\t")
+        if len(fields) != 2:
+            raise ValueError("Malformed remote advertisement")
+        oid, ref = fields
+        if (
+            not SHA.fullmatch(oid)
+            or oid == "0" * 40
+            or not ref.startswith(("refs/heads/", "refs/tags/"))
+            or ref in advertised
+        ):
+            raise ValueError("Invalid or duplicate remote advertisement")
+        advertised[ref] = oid
+    for line in updates.splitlines():
+        fields = line.split()
+        if len(fields) != 4:
+            raise ValueError("Malformed push update")
+        if advertised.get(fields[2], "0" * 40) != fields[3]:
+            raise ValueError("Remote changed during push preparation; retry")
+    commits = set()
+    for oid in set(advertised.values()):
+        try:
+            # Annotated commit tags peel safely. Unknown objects and blob/tree
+            # tags authorize no exclusion; at worst extra history is scanned.
+            commit = git(repo, "rev-parse", "--verify", oid + "^{commit}").decode().strip()
+        except ValueError:
+            continue
+        if not SHA.fullmatch(commit):
+            raise ValueError("Invalid published commit")
+        commits.add(commit)
+    return sorted(commits)
 
 
 def main() -> int:
@@ -953,6 +1001,7 @@ def main() -> int:
             print("Prospective privacy: commit message passed.")
             return 0
         tips = []
+        published_tips = []
         if args.mode == "push":
             if args.remote_url != policy["remoteUrl"]:
                 raise ValueError("Unexpected remote URL")
@@ -967,6 +1016,8 @@ def main() -> int:
             if not tips:
                 print("Prospective privacy: no new push objects.")
                 return 0
+            published_tips = remote_commit_tips(args.repo.resolve(), args.remote_url, updates)
+            print("Prospective privacy: checking commits not yet published to this remote.", flush=True)
         result = inspect(
             args.repo.resolve(),
             policy,
@@ -976,6 +1027,7 @@ def main() -> int:
             config=args.config.resolve(),
             reviews=json.loads(args.review_registry.read_bytes()) if args.review_registry else None,
             yaml_parser=args.yaml_parser,
+            published_tips=published_tips,
         )
         print(json.dumps(result))
         return int(result["status"] != "PASS")

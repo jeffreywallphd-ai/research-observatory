@@ -24,11 +24,18 @@ previously deleted recovery branches are not republished automatically.
 The installed, pinned local pre-commit, commit-message and pre-push checks run
 `tools/prospective_privacy.py` using an explicit privacy policy and pinned
 Gitleaks executable/default-rule configuration. Commit checks read the staged
-index, not unstaged working files. Push checks inspect every reachable commit
-outside the frozen baseline, including side parents and merge results. New
+index, not unstaged working files. For every supported branch, push checks inspect
+only outgoing commits not already reachable on the destination remote or covered
+by the frozen baseline, including unpublished side parents and merge results. A
+fresh, bounded remote query establishes published heads/tags; cached tracking
+refs and prior dry-runs are not trusted. New branches reuse history already
+published on another remote branch. Missing local remote objects authorize no
+exclusion; remote-query errors or changed destination tips require a retry. New
 paths and modified files are inspected in full, even if their blob existed in
 old history. Commit metadata is checked as well. Existing unchanged inherited
-content is not repeatedly rejected.
+content is not repeatedly rejected. New ref names remain checked even when all
+their commits are already published. Checks never skip a new commit merely
+because its final tree removed an earlier finding.
 
 The gate blocks concrete profile/workspace paths, non-public email addresses,
 raw machine reports, private local output, unsupported modes and unreviewed
@@ -120,6 +127,6 @@ semantics. The dependency-free hook checks the sealed judgment's exact inputs,
 parent edge and unchanged raw-line mapping. It does not accept a live repository
 allowlist or automatically extend retention. A changed candidate or predecessor
 needs a fresh independent receipt and deliberate reinstall. Retain earlier exact
-transition receipts in the registry for subsequent full-history push checks.
+transition receipts in the registry for subsequent outgoing-history push checks.
 This implements the owner's existing historical-retention decision, not authority
 for new disclosure, history rewriting, release approval or remote publication.

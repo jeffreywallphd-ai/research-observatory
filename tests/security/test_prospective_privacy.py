@@ -68,7 +68,7 @@ class ProspectivePrivacyTests(unittest.TestCase):
         self.git("commit", "-qm", message)
         return self.git("rev-parse", "HEAD").stdout.decode().strip()
 
-    def inspect(self, *, staged: bool = False, tip: str | None = None) -> dict:
+    def inspect(self, *, staged: bool = False, tip: str | None = None, published_tips: list[str] | None = None) -> dict:
         with patch.dict(os.environ, self.env, clear=True):
             return guard.inspect(
                 self.repo,
@@ -78,6 +78,7 @@ class ProspectivePrivacyTests(unittest.TestCase):
                 scanner=SCANNER,
                 config=self.config,
                 reviews=self.reviews,
+                published_tips=published_tips,
             )
 
     def approve_bytes(self, path: str, raw: bytes, *, binary: bool = False) -> dict:
@@ -910,10 +911,132 @@ print(len(fields))
         self.git("push")
         published = self.git("ls-remote", "--heads", "origin").stdout
         self.assertIn(self.base.encode(), published)
+        self.write("safe-next.txt", "One new committed change")
+        self.git("commit", "-m", "Incremental safe work")
+        pushed = self.git("push")
+        self.assertIn(b'"commitsChecked": 1', pushed.stdout + pushed.stderr)
+        self.git("branch", "codex/backup")
+        backed_up = self.git("push", "origin", "codex/backup:codex/backup")
+        self.assertIn(b'"commitsChecked": 0', backed_up.stdout + backed_up.stderr)
+        published = self.git("ls-remote", "--heads", "origin").stdout
         self.write("leak.txt", UNSAFE_PATH)
         self.git("-c", "core.hooksPath=" + str(self.repo / "no-hooks"), "commit", "-m", "Simulated bypass")
         self.assertNotEqual(0, self.git("push", check=False).returncode)
         self.assertEqual(published, self.git("ls-remote", "--heads", "origin").stdout)
+
+    def published_remote(self) -> Path:
+        remote = self.repo / "remote.git"
+        self.git("init", "--bare", str(remote))
+        self.git("push", str(remote), "HEAD:refs/heads/main")
+        return remote
+
+    def outgoing(self, remote: Path, tip: str, *, old: str = "0" * 40, ref: str = "codex/new") -> dict:
+        update = f"refs/heads/{ref} {tip} refs/heads/{ref} {old}\n"
+        with patch.dict(os.environ, self.env, clear=True):
+            published = guard.remote_commit_tips(self.repo, remote.as_posix(), update)
+        return self.inspect(tip=tip, published_tips=published)
+
+    def test_incremental_new_branch_excludes_only_actual_published_history(self) -> None:
+        self.write("published.txt", UNSAFE_PATH)
+        published = self.commit("Historical publication")
+        remote = self.published_remote()
+        self.assertEqual(0, self.outgoing(remote, published)["commitsChecked"])
+        self.write("safe.txt", "New safe work")
+        tip = self.commit("New branch work")
+        result = self.outgoing(remote, tip)
+        self.assertEqual("PASS", result["status"])
+        self.assertEqual(1, result["commitsChecked"])
+        self.assertEqual(1, result["entriesChecked"])
+        self.write("copy.txt", UNSAFE_PATH)
+        copied = self.commit("Copy a previously published blob into a new path")
+        self.assertEqual("FAIL", self.outgoing(remote, copied)["status"])
+
+    def test_incremental_ignores_forged_tracking_refs_and_checks_removed_leaks(self) -> None:
+        remote = self.published_remote()
+        self.write("leak.txt", UNSAFE_EMAIL)
+        leak = self.commit("Unpublished intermediate")
+        self.git("rm", "leak.txt")
+        tip = self.commit("Remove intermediate leak")
+        self.git("update-ref", "refs/remotes/origin/main", tip)
+        result = self.outgoing(remote, tip, old=self.base, ref="main")
+        self.assertEqual("FAIL", result["status"])
+        self.assertEqual(2, result["commitsChecked"])
+        self.assertNotEqual(leak, self.base)
+
+    def test_incremental_keeps_unpublished_merge_side_parents(self) -> None:
+        remote = self.published_remote()
+        branch = self.git("branch", "--show-current").stdout.decode().strip()
+        self.git("checkout", "-qb", "side")
+        self.write("leak.txt", UNSAFE_EMAIL)
+        self.commit("Private side parent")
+        self.git("checkout", branch)
+        self.write("safe.txt", "Safe main change")
+        self.commit("Main change")
+        self.git("merge", "-s", "ours", "side", "-m", "Merge side without its file")
+        tip = self.git("rev-parse", "HEAD").stdout.decode().strip()
+        result = self.outgoing(remote, tip)
+        self.assertEqual("FAIL", result["status"])
+        self.assertEqual(3, result["commitsChecked"])
+
+    def test_incremental_new_commit_metadata_and_credentials_remain_checked(self) -> None:
+        remote = self.published_remote()
+        self.write("safe.txt", "Safe content")
+        tip = self.commit("Private metadata " + UNSAFE_PATH)
+        self.assertEqual("FAIL", self.outgoing(remote, tip)["status"])
+        self.git("push", str(remote), "HEAD:refs/heads/main")
+        token = "gh" + "p_" + "7F3aBc9De2Gh5Jk8Lm1Np4Qr6St0UvXyZaBc"
+        self.write("new-credential.txt", token)
+        secret_tip = self.commit("Synthetic credential regression")
+        with self.assertRaisesRegex(ValueError, "Credential"):
+            self.outgoing(remote, secret_tip)
+
+    def test_incremental_remote_change_and_unavailable_remote_deny(self) -> None:
+        remote = self.published_remote()
+        for old, ref in (("1" * 40, "main"), ("0" * 40, "main"), (self.base, "codex/absent")):
+            with self.subTest(old=old, ref=ref), self.assertRaisesRegex(ValueError, "Remote changed"):
+                self.outgoing(remote, self.base, old=old, ref=ref)
+        with self.assertRaisesRegex(ValueError, "Git input"):
+            self.outgoing(self.repo / "missing.git", self.base)
+        with patch.object(guard, "git", side_effect=subprocess.TimeoutExpired("git", 30)):
+            with self.assertRaises(subprocess.TimeoutExpired):
+                self.outgoing(remote, self.base)
+
+    def test_incremental_advertisement_validation_and_unknown_objects(self) -> None:
+        original = guard.git
+        update = f"refs/heads/codex/new {self.base} refs/heads/codex/new {'0' * 40}\n"
+        advertisements = (
+            b"malformed\n",
+            f"{'z' * 40}\trefs/heads/main\n".encode(),
+            f"{self.base}\trefs/heads/main\n{'1' * 40}\trefs/heads/main\n".encode(),
+        )
+        for raw in advertisements:
+
+            def fake(repo: Path, *args: str, raw: bytes = raw, **kwargs: object) -> bytes:
+                return raw if args[0] == "ls-remote" else original(repo, *args, **kwargs)
+
+            with patch.object(guard, "git", side_effect=fake), self.assertRaises(ValueError):
+                guard.remote_commit_tips(self.repo, "synthetic-remote", update)
+        unknown = f"{'1' * 40}\trefs/heads/unknown\n".encode()
+        with patch.object(
+            guard,
+            "git",
+            side_effect=lambda repo, *args, **kwargs: (
+                unknown if args[0] == "ls-remote" else original(repo, *args, **kwargs)
+            ),
+        ):
+            self.assertEqual([], guard.remote_commit_tips(self.repo, "synthetic-remote", update))
+
+    def test_incremental_annotated_tags_resolve_commits_not_blobs(self) -> None:
+        remote = self.published_remote()
+        self.write("safe.txt", "Published only through a tag")
+        tagged = self.commit("Tagged history")
+        self.git("tag", "-a", "published", "-m", "Synthetic tag")
+        blob = self.git("rev-parse", "HEAD:safe.txt").stdout.decode().strip()
+        self.git("tag", "blob-only", blob)
+        self.git("push", str(remote), "refs/tags/published", "refs/tags/blob-only")
+        result = self.outgoing(remote, tagged)
+        self.assertEqual("PASS", result["status"])
+        self.assertEqual(0, result["commitsChecked"])
 
 
 if __name__ == "__main__":
