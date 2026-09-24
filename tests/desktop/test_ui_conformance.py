@@ -638,8 +638,8 @@ class UiConformanceTests(unittest.TestCase):
             load_context(REPO)
         verify.assert_called_once_with(
             REPO,
-            "RO-UI-ACADEMIC-MINIMAL-1.6",
-            "8d7fdc7ae43f04477ab55574542ad928500270f48d100bec74c4872ccb4366ea",
+            "RO-UI-ACADEMIC-MINIMAL-1.7",
+            "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878",
         )
 
     def test_actual_amendment_bound_v16_approval_shape_is_exact(self) -> None:
