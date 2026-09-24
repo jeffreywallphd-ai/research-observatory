@@ -24,6 +24,7 @@ sys.path.insert(0, str(REPO / "tools"))
 from desktop_app_check import (  # noqa: E402
     DIRECTORY_PICKER_FIXTURE,
     QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND,
+    QUALIFICATION_STATE_WITNESS,
     choose_fixture_directory,
     command_plan,
     component_catalog_browser_errors,
@@ -218,6 +219,8 @@ def valid_product_style_qualification_matrix() -> dict[str, Any]:
         ("projects", "Local projects", ["projects.html", "new-project.html"], "populated-project-list"),
         ("home", "Project home", ["index.html"], "project-ready"),
         ("intent", "Research intent", ["intent-contract.html"], "accepted-intent"),
+        ("imports", "Ingestion & Reconciliation", ["ingestion-reconciliation.html"], "retained-draft-review"),
+        ("sources", "Source Manager", ["source-manager.html"], "loaded-source-configuration"),
         ("tasks", "Task Center", ["task-center.html"], "populated-task-center"),
         ("audit", "Audit & lineage", ["audit-lineage.html"], "populated-lineage"),
         ("models", "Model & Privacy Center", ["model-center.html"], "empty-model-catalog"),
@@ -336,6 +339,54 @@ def valid_product_style_qualification_matrix() -> dict[str, Any]:
 
 
 class DesktopAppCheckTests(unittest.TestCase):
+    def test_import_and_source_witnesses_require_loaded_representative_content(self) -> None:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            try:
+                page = browser.new_page()
+
+                def assert_hidden_content_rejected(surface: str, selector: str) -> None:
+                    for declaration in ("display:none", "visibility:hidden", "opacity:0"):
+                        with self.subTest(surface=surface, selector=selector, declaration=declaration):
+                            node = page.locator(selector).first
+                            node.evaluate("(node, value) => node.setAttribute('style', value)", declaration)
+                            self.assertFalse(page.locator("main").evaluate(QUALIFICATION_STATE_WITNESS)[surface])
+                            node.evaluate("node => node.removeAttribute('style')")
+                    page.locator(selector).first.evaluate("node => node.hidden = true")
+                    self.assertFalse(page.locator("main").evaluate(QUALIFICATION_STATE_WITNESS)[surface])
+                    page.locator(selector).first.evaluate("node => node.hidden = false")
+
+                for surface in ("imports", "sources"):
+                    page.set_content('<main><h1>Workspace</h1><p role="status">Loading…</p></main>')
+                    self.assertIs(False, page.locator("main").evaluate(QUALIFICATION_STATE_WITNESS).get(surface))
+                page.set_content(
+                    '<main><ul class="import-batches"><li><button aria-pressed="true">'
+                    'synthetic.csv</button></li></ul><section aria-label="Selected import preview" '
+                    'aria-busy="false"><p>Revision 1 · 2 source rows</p>'
+                    "<table><caption>Source records — current page</caption><tbody><tr><td>"
+                    "Synthetic</td></tr></tbody></table></section></main>"
+                )
+                self.assertTrue(page.locator("main").evaluate(QUALIFICATION_STATE_WITNESS)["imports"])
+                for selector in ("main", "button", "section", "section p", "table", "caption", "tbody tr"):
+                    assert_hidden_content_rejected("imports", selector)
+                page.locator("tbody tr").evaluate("node => node.remove()")
+                self.assertFalse(page.locator("main").evaluate(QUALIFICATION_STATE_WITNESS)["imports"])
+                cards = "".join(
+                    '<section class="ro-panel"><span class="ro-status-badge">Configured for requests</span>'
+                    "<dl><dt>Operations</dt><dd>lookup</dd></dl>"
+                    f'<button aria-label="Configure {name}">Configure</button>'
+                    f'<button aria-label="Test {name}">Test</button></section>'
+                    for name in ("OpenAlex", "Crossref", "Semantic Scholar", "Unpaywall")
+                )
+                page.set_content(f"<main>{cards}</main>")
+                self.assertTrue(page.locator("main").evaluate(QUALIFICATION_STATE_WITNESS)["sources"])
+                for selector in ("main", ".ro-panel", ".ro-status-badge", "dl", "dd", "button"):
+                    assert_hidden_content_rejected("sources", selector)
+                page.get_by_role("button", name="Test Unpaywall", exact=True).evaluate("node => node.disabled = true")
+                self.assertFalse(page.locator("main").evaluate(QUALIFICATION_STATE_WITNESS)["sources"])
+            finally:
+                browser.close()
+
     def test_neutral_workspace_measurement_is_not_replaced_by_tonal_or_hidden_panels(self) -> None:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch()
@@ -515,8 +566,8 @@ class DesktopAppCheckTests(unittest.TestCase):
 
     def test_product_style_qualification_contract_is_exact_and_rejects_matrix_gaps(self) -> None:
         capture_contract = qualification_capture_contract(REPO)
-        self.assertEqual(120, len(capture_contract))
-        self.assertEqual(60, len({item["caseId"] for item in capture_contract}))
+        self.assertEqual(144, len(capture_contract))
+        self.assertEqual(72, len({item["caseId"] for item in capture_contract}))
         self.assertEqual({"product", "reference"}, {item["role"] for item in capture_contract})
         self.assertTrue(
             all(
@@ -655,7 +706,7 @@ class DesktopAppCheckTests(unittest.TestCase):
         matrix = details["workflowProfileMatrix"]
         # A new presentation does not relabel persisted scholarly workflows.
         activation = json.loads((REPO / "verification/extensions/desktop-ui.json").read_text(encoding="utf-8"))
-        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.6", activation["referenceId"])
+        self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.7", activation["referenceId"])
         self.assertEqual("RO-UI-ACADEMIC-MINIMAL-1.5", matrix["referenceId"])
         self.assertEqual("1.5", matrix["referenceVersion"])
         self.assertEqual("1.0.0", matrix["profileCatalogVersion"])

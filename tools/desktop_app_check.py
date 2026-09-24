@@ -979,6 +979,8 @@ QUALIFICATION_WORKSPACES = (
     ("projects", "Local projects", ("projects.html", "new-project.html"), "populated-project-list"),
     ("home", "Project home", ("index.html",), "project-ready"),
     ("intent", "Research intent", ("intent-contract.html",), "accepted-intent"),
+    ("imports", "Ingestion & Reconciliation", ("ingestion-reconciliation.html",), "retained-draft-review"),
+    ("sources", "Source Manager", ("source-manager.html",), "loaded-source-configuration"),
     ("tasks", "Task Center", ("task-center.html",), "populated-task-center"),
     ("audit", "Audit & lineage", ("audit-lineage.html",), "populated-lineage"),
     ("models", "Model & Privacy Center", ("model-center.html",), "empty-model-catalog"),
@@ -1001,6 +1003,8 @@ QUALIFICATION_REQUIRED_PRIMITIVES = {
     "projects": {"card", "form", "control", "action", "grid", "notice"},
     "home": {"card", "control", "grid"},
     "intent": {"card", "form", "control", "action", "grid", "notice"},
+    "imports": {"card", "form", "control", "action", "grid", "notice", "table"},
+    "sources": {"card", "control", "action", "grid", "notice"},
     "tasks": {"card", "control", "action", "grid"},
     "audit": {"card", "form", "control", "table", "notice"},
     "models": {"card", "control", "action", "notice"},
@@ -1011,11 +1015,42 @@ QUALIFICATION_REQUIRED_PRIMITIVES = {
     "local-service-boundary": {"control"},
     "shortcut-dialog": {"dialog", "control"},
 }
-QUALIFICATION_STATE_WITNESS = r"""element => ({
+QUALIFICATION_STATE_WITNESS = r"""element => {
+  const visible = node => {
+    if (!node || !node.getClientRects().length) return false;
+    for (let ancestor = node; ancestor; ancestor = ancestor.parentElement) {
+      const style = getComputedStyle(ancestor);
+      if (style.display === 'none' || style.visibility !== 'visible' || Number(style.opacity) === 0) return false;
+    }
+    return true;
+  };
+  return ({
   projects: Boolean(element.querySelector('[data-current-project]')),
   home: element.getAttribute('data-project-home-state') === 'ready',
   intent: [...element.querySelectorAll('.ro-status-badge')]
     .some(node => /Revision \d+ · accepted/.test(node.textContent)),
+  imports: (() => {
+    const batch = element.querySelector('.import-batches button[aria-pressed="true"]');
+    const preview = element.querySelector('[aria-label="Selected import preview"][aria-busy="false"]');
+    if (!visible(batch) || !visible(preview)) return false;
+    return [...preview.querySelectorAll('p')].some(node => visible(node)
+      && /Revision \d+ · \d+ source rows/.test(node.textContent))
+      && [...preview.querySelectorAll('table')].some(table => visible(table)
+        && visible(table.querySelector('caption'))
+        && table.querySelector('caption').textContent === 'Source records — current page'
+        && [...table.querySelectorAll('tbody tr')].some(visible));
+  })(),
+  sources: ['OpenAlex', 'Crossref', 'Semantic Scholar', 'Unpaywall'].every(name => {
+    const configure = element.querySelector(`button[aria-label="Configure ${name}"]`);
+    const test = element.querySelector(`button[aria-label="Test ${name}"]`);
+    const card = configure?.closest('.ro-panel');
+    const badge = card?.querySelector('.ro-status-badge');
+    const details = card?.querySelector('dl');
+    return Boolean(visible(configure) && !configure.disabled && visible(test) && !test.disabled
+      && test.closest('.ro-panel') === card && visible(badge) && badge.textContent === 'Configured for requests'
+      && visible(details) && [...details.querySelectorAll('dd')].every(visible)
+      && !card.textContent.includes('Not verified'));
+  }),
   tasks: element.querySelectorAll('.task-center-list li').length > 0,
   audit: element.querySelectorAll('.lineage-results tbody tr').length >= 10,
   models: Boolean(element.querySelector('[data-model-provider-profiles]'))
@@ -1027,7 +1062,8 @@ QUALIFICATION_STATE_WITNESS = r"""element => ({
   'application-lock': Boolean(element.closest('[data-application-locked]')),
   'local-service-boundary': element.getAttribute('data-boundary-state') === 'recovery-required',
   'shortcut-dialog': element.getAttribute('role') === 'dialog' && element.getAttribute('aria-modal') === 'true'
-})"""
+});
+}"""
 
 
 def qualification_measurement_errors(case: dict[str, Any]) -> list[str]:
@@ -1179,12 +1215,14 @@ def _implemented_workspace_contracts(repo: Path) -> list[dict[str, Any]]:
         for workspace_id, label, page_contract_ids, state_id in QUALIFICATION_WORKSPACES
     ]
     if workspaces != expected:
-        raise ValueError("desktop implemented-workspace identities or page mappings differ from the T02 contract")
+        raise ValueError(
+            "desktop implemented-workspace identities or page mappings differ from the qualification contract"
+        )
     return workspaces
 
 
 def qualification_capture_contract(repo: Path) -> list[dict[str, Any]]:
-    """Return the exact, persistence-neutral viewport capture inventory for T02."""
+    """Return the exact, persistence-neutral implemented-workspace capture inventory."""
 
     # Resolving the repository here makes traversal and non-repository inputs fail
     # before a caller can use this inventory as an artifact-write authority.
@@ -1285,7 +1323,7 @@ def product_style_qualification_errors(matrix: dict[str, Any]) -> list[str]:
     duplicate_case_ids: set[str] = set()
     observed_case_ids: set[str] = set()
     if not isinstance(raw_cases, list):
-        errors.append("desktop qualification must report 48 workspace cases")
+        errors.append(f"desktop qualification must report {len(expected_case_keys)} workspace cases")
         raw_cases = []
     for case in raw_cases:
         if not isinstance(case, dict):
@@ -1874,6 +1912,7 @@ def _style_audit_fixtures() -> dict[str, Any]:
         "decisionComplete": True,
         "canRequestAcceptance": False,
         "launchReady": True,
+        "egressPolicy": {"mode": "local-only", "approvedDestinationIds": []},
     }
     change_id = fixture_uuid(900)
     preview = {
@@ -2039,7 +2078,7 @@ class ProductStyleQualification:
                   const semantic = [];
                   for (const [kind, selector] of Object.entries({
                     card: '.ro-card,.ro-panel', form: '.ro-form', notice: '.ro-notice,.ro-notification',
-                    action: '.ro-action-row', control: 'button', table: '.ro-table-region',
+                    action: '.ro-action-row', control: 'button', table: '.ro-table-region,.ro-table-scroll',
                     dialog: '.ro-dialog-surface', stack: '.ro-stack', grid: '.ro-grid'
                   })) {
                     const nodes = [...element.querySelectorAll(selector)];
@@ -3099,6 +3138,8 @@ def runtime_frame_errors(
                 "Local projects",
                 "Project home",
                 "Research intent",
+                "Ingestion & Reconciliation",
+                "Source Manager",
                 "Task Center",
                 "Audit & lineage",
                 "Model & Privacy Center",
@@ -3188,6 +3229,35 @@ def runtime_frame_errors(
             current.get_by_role("button", name="Open project", exact=True).click()
             current.get_by_text("Exclusive local session open", exact=True).wait_for(timeout=5_000)
             qualification.record(projects, "projects", "[data-projects-workspace]")
+            # Read-only synthetic responses exercise the built panes. These
+            # fixtures are in the capture producer's existing input inventory;
+            # native intake, protected storage and provider access have separate proof.
+            intake_responses = json_object(repo / "tests/desktop/fixtures/intake_qualification.json")
+            projects.evaluate(
+                r"""responses => {
+              const original = window.__TAURI_INTERNALS__.invoke;
+              window.__INTAKE_QUALIFICATION_ORIGINAL__ = original;
+              window.__TAURI_INTERNALS__.invoke = async (command, args) => {
+                const request = args?.request;
+                if (command !== 'core_api_request' || !Object.hasOwn(responses, request?.path))
+                  return original(command, args);
+                const capabilities = request.path === '/projects/connectors/capabilities';
+                if (request.method !== (capabilities ? 'GET' : 'POST')
+                  || request.ifMatch !== null || request.idempotencyKey !== null
+                  || (capabilities ? request.body !== null : JSON.parse(request.body).root !== 'C:/Research/study-one'))
+                  throw new Error('unexpected intake qualification request');
+                return {status:200, contentType:'application/json', traceId:'0123456789abcdef0123456789abcdef',
+                  etag:null, body:JSON.stringify(responses[request.path])};
+              };
+            }""",
+                intake_responses,
+            )
+            open_desktop_tool(projects, "Ingestion & Reconciliation")
+            projects.locator(".import-batches button").first.click()
+            qualification.record(projects, "imports", "[data-import-workspace]")
+            open_desktop_tool(projects, "Source Manager")
+            qualification.record(projects, "sources", "[data-source-manager]")
+            projects.evaluate("() => { window.__TAURI_INTERNALS__.invoke = window.__INTAKE_QUALIFICATION_ORIGINAL__; }")
             style_audit_fixtures = _style_audit_fixtures()
             projects.evaluate(
                 """fixtures => {
@@ -3448,7 +3518,8 @@ def runtime_frame_errors(
                     noveltyRationale: 'Bound claims to the current reading.', autonomyLevel: 'suggest',
                     stoppingConditions: ['interpretive-saturation'],
                     revisionRationale: 'Exercise an explicit earlier-stage pass.', unresolvedDecisions: [],
-                    decisionComplete: true, canRequestAcceptance: true, launchReady: false
+                    decisionComplete: true, canRequestAcceptance: true, launchReady: false,
+                    egressPolicy: { mode: 'local-only', approvedDestinationIds: [] }
                   };
                   const source = {
                     stageStateId: '019d5f72-5331-7000-8000-000000000111',
@@ -3778,7 +3849,8 @@ def runtime_frame_errors(
                     noveltyStandard: 'theoretical', noveltyRationale: 'Bound novelty against prior theory.',
                     autonomyLevel: 'suggest', stoppingConditions: ['interpretive-saturation'],
                     revisionRationale: 'Establish the bounded theory workflow.', unresolvedDecisions: [],
-                    decisionComplete: true, canRequestAcceptance: true, launchReady: false
+                    decisionComplete: true, canRequestAcceptance: true, launchReady: false,
+                    egressPolicy: { mode: 'local-only', approvedDestinationIds: [] }
                   };
                   const projectionB = {
                     ...projection,
@@ -4104,7 +4176,7 @@ def runtime_frame_errors(
                     && context.includes(profile.stages[0].rationale)
                     && profile.expectedOutputs.every((output) => context.includes(output))
                     && context.includes('Quality gate · Unknown')
-                    && document.querySelectorAll('[data-all-tools] li').length === 9
+                    && document.querySelectorAll('[data-all-tools] li').length === 11
                     && !document.querySelector('a[href$=".html"]');
                 }"""
             )

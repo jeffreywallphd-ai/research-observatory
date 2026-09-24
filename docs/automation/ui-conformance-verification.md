@@ -49,10 +49,11 @@ computed text size, then prove post-scale overflow, control operability, and
 dialog focus/scrolling; labeling a requested scale or measuring only before
 scaling is insufficient. Valid long labels must remain readable and operable.
 The complete `styleQualificationMatrix` reuses the functional runtime adapters
-and checks all nine registered workspaces at three viewports in both themes,
+and checks all eleven registered workspaces at three viewports in both themes,
 plus lock, local-service recovery, and enlarged-text shortcut-dialog states.
 Required states are observed in the DOM (including accepted intent and populated
-task/lineage rows), not inferred from a requested case label. Computed semantic
+task/lineage rows, retained import draft/record rows and loaded source configuration),
+not inferred from a requested case label. Computed semantic
 geometry, pinned renderer/font witnesses, actual visible focus, and normal or
 contained scrolling remain the deciding contracts. Wait for the focus style to
 settle before measuring it; do not replace the focus assertion with a screenshot.
@@ -72,7 +73,8 @@ navigation scroller is not required to make the sidebar's surface fill its row.
 ## Retained product/reference captures
 
 Capture only from a committed, unchanged producer checkout with valid product
-and reference builds. A new directory receives 120 viewport PNGs and a manifest
+and reference builds. A new directory receives 144 viewport PNGs (66 workspace
+cases and six designated cases, each with product/reference views) and a manifest
 published last; interrupted or failed runs have no accepted completion marker.
 Existing directories are never overwritten. The bundle is comparison evidence,
 not a new visual baseline or approval of a design change.

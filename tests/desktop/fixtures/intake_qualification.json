@@ -1,0 +1,234 @@
+{
+  "/projects/imports/status": {
+    "previewId": "01900000-0000-7000-8000-000000000001",
+    "state": "draft-revised",
+    "byteLength": 37,
+    "chunkCount": 1,
+    "jobId": "01900000-0000-7000-8000-000000000002",
+    "jobState": "succeeded",
+    "sourceName": "synthetic.csv",
+    "formatName": "csv",
+    "encoding": "utf-8"
+  },
+  "/projects/imports/review": {
+    "previewId": "01900000-0000-7000-8000-000000000001",
+    "revision": 1,
+    "predecessorRevision": null,
+    "attemptId": "01900000-0000-7000-8000-000000000003",
+    "recordCount": 2,
+    "mappingId": "01900000-0000-7000-8000-000000000004",
+    "mappingRevision": 1,
+    "mappingHighWater": 1,
+    "mappingMode": "automatic",
+    "rights": {
+      "store": {
+        "value": "permitted",
+        "basis": "researcher-confirmed"
+      },
+      "inspect": {
+        "value": "permitted",
+        "basis": "researcher-confirmed"
+      },
+      "index": {
+        "value": "unknown",
+        "basis": "not-reported"
+      },
+      "derive": {
+        "value": "unknown",
+        "basis": "not-reported"
+      },
+      "model-use": {
+        "value": "unknown",
+        "basis": "not-reported"
+      },
+      "quote": {
+        "value": "unknown",
+        "basis": "not-reported"
+      },
+      "export": {
+        "value": "unknown",
+        "basis": "not-reported"
+      },
+      "share": {
+        "value": "unknown",
+        "basis": "not-reported"
+      }
+    },
+    "options": {
+      "duplicatePolicy": "review",
+      "malformedPolicy": "exclude-and-report"
+    },
+    "delimiter": ",",
+    "undoTargetRevision": null
+  },
+  "/projects/imports/records": {
+    "revision": 1,
+    "records": [
+      {
+        "ordinal": 1,
+        "recordKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "kind": "header",
+        "status": "parsed",
+        "included": false,
+        "title": null,
+        "doi": null,
+        "fieldCount": 2,
+        "warnings": [
+          "invalid-doi"
+        ]
+      },
+      {
+        "ordinal": 2,
+        "recordKey": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "kind": "record",
+        "status": "parsed",
+        "included": true,
+        "title": {
+          "text": "Synthetic",
+          "truncated": false
+        },
+        "doi": {
+          "text": "10.99999/example",
+          "truncated": false
+        },
+        "fieldCount": 2,
+        "warnings": []
+      }
+    ],
+    "nextAfter": 2,
+    "complete": true
+  },
+  "/projects/imports/summary": {
+    "previewId": "01900000-0000-7000-8000-000000000001",
+    "revision": 1,
+    "algorithm": "draft-summary/1",
+    "jobId": null,
+    "jobState": null,
+    "diagnosticCode": null,
+    "counts": null
+  },
+  "/projects/imports/commit/latest": null,
+  "/projects/imports/detail": {
+    "revision": 1,
+    "ordinal": 1,
+    "recordKey": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "section": "raw",
+    "fields": [
+      {
+        "index": 0,
+        "name": "title",
+        "value": "title",
+        "sourceFieldIndex": 0,
+        "origin": "raw",
+        "target": "title",
+        "warnings": []
+      },
+      {
+        "index": 1,
+        "name": "doi",
+        "value": "doi",
+        "sourceFieldIndex": 1,
+        "origin": "raw",
+        "target": "doi",
+        "warnings": [
+          "invalid-doi"
+        ]
+      }
+    ],
+    "nextIndex": 2,
+    "complete": true
+  },
+  "/projects/imports/list": {
+    "items": [
+      {
+        "previewId": "01900000-0000-7000-8000-000000000001",
+        "state": "draft-revised",
+        "byteLength": 37,
+        "chunkCount": 1,
+        "jobId": "01900000-0000-7000-8000-000000000002",
+        "jobState": "succeeded",
+        "sourceName": "synthetic.csv",
+        "formatName": "csv",
+        "encoding": "utf-8"
+      }
+    ],
+    "nextAfter": "01900000-0000-7000-8000-000000000001",
+    "complete": true
+  },
+  "/projects/connectors/capabilities": {
+    "items": [
+      {
+        "schemaVersion": "1.0",
+        "providerId": "openalex",
+        "adapterVersion": "1.0.0",
+        "sourceApiVersion": null,
+        "operations": [
+          "lookup",
+          "search"
+        ],
+        "identifierSchemes": [
+          "doi",
+          "openalex"
+        ],
+        "maximumPageSize": 100,
+        "configuration": "ready",
+        "requiredSettings": []
+      },
+      {
+        "schemaVersion": "1.0",
+        "providerId": "crossref",
+        "adapterVersion": "1.0.0",
+        "sourceApiVersion": null,
+        "operations": [
+          "lookup",
+          "search"
+        ],
+        "identifierSchemes": [
+          "doi"
+        ],
+        "maximumPageSize": 1000,
+        "configuration": "ready",
+        "requiredSettings": []
+      },
+      {
+        "schemaVersion": "1.0",
+        "providerId": "unpaywall",
+        "adapterVersion": "1.0.0",
+        "sourceApiVersion": "2",
+        "operations": [
+          "oa-resolution"
+        ],
+        "identifierSchemes": [
+          "doi"
+        ],
+        "maximumPageSize": 1,
+        "configuration": "ready",
+        "requiredSettings": [
+          "contact"
+        ]
+      },
+      {
+        "schemaVersion": "1.0",
+        "providerId": "semantic-scholar",
+        "adapterVersion": "1.0.0",
+        "sourceApiVersion": "1",
+        "operations": [
+          "citations",
+          "lookup",
+          "recommendations"
+        ],
+        "identifierSchemes": [
+          "doi",
+          "semantic-scholar"
+        ],
+        "maximumPageSize": 500,
+        "configuration": "ready",
+        "requiredSettings": []
+      }
+    ]
+  },
+  "/projects/connectors/recent": {
+    "items": [],
+    "scope": "latest-20-source-jobs-within-100-workflows"
+  }
+}
