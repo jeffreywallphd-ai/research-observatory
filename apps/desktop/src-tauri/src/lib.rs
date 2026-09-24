@@ -1,6 +1,9 @@
 pub mod application_lock;
 pub mod application_lock_verification;
 mod application_sign_in_policy;
+mod connector_configuration;
+#[cfg(windows)]
+mod connector_configuration_dialog;
 pub mod directory_picker;
 #[cfg(windows)]
 mod import_report;
@@ -29,6 +32,127 @@ use support_bundle::{SupportBundleExport, SupportBundleManager, SupportBundlePre
 use tauri::{App, AppHandle, Emitter, Manager, Runtime, State};
 
 pub const PRODUCT_NAME: &str = "Research Observatory";
+
+/// Opens only the four fixed public policy pages, never a caller-supplied URL,
+/// research query, file path or command. The UI labels the external browser action.
+#[tauri::command]
+async fn open_scholarly_source_terms(
+    window: tauri::WebviewWindow,
+    lock: State<'_, ApplicationLockManager>,
+    provider_id: connector_configuration::Provider,
+) -> Result<(), ()> {
+    let owner = directory_window_handle(&window).ok_or(())?;
+    let ticket = lock.begin_protected_action().map_err(|_| ())?;
+    let security = lock.inner().clone();
+    #[cfg(windows)]
+    return tauri::async_runtime::spawn_blocking(move || {
+        security.finish_protected_action(ticket).map_err(|_| ())?;
+        let address: Vec<u16> = connector_configuration::terms_url(provider_id)
+            .encode_utf16()
+            .chain([0])
+            .collect();
+        let verb: Vec<u16> = "open".encode_utf16().chain([0]).collect();
+        let result = unsafe {
+            windows_sys::Win32::UI::Shell::ShellExecuteW(
+                owner as _,
+                verb.as_ptr(),
+                address.as_ptr(),
+                std::ptr::null(),
+                std::ptr::null(),
+                windows_sys::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL,
+            )
+        };
+        if result as isize > 32 {
+            Ok(())
+        } else {
+            Err(())
+        }
+    })
+    .await
+    .map_err(|_| ())?;
+    #[cfg(not(windows))]
+    {
+        let _ = (owner, security, ticket, provider_id);
+        Err(())
+    }
+}
+
+#[tauri::command]
+async fn configure_scholarly_source(
+    window: tauri::WebviewWindow,
+    manager: State<'_, connector_configuration::ConfigurationManager>,
+    picker: State<'_, DirectoryPickerManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    message: tauri::ipc::Request<'_>,
+) -> Result<connector_configuration::ConfigurationOutcome, ()> {
+    use connector_configuration::ConfigurationOutcome;
+    let tauri::ipc::InvokeBody::Json(payload) = message.body() else {
+        return Ok(ConfigurationOutcome::Unavailable);
+    };
+    let Some(request) = connector_configuration::decode_request(payload) else {
+        return Ok(ConfigurationOutcome::Unavailable);
+    };
+    let Some(owner) = directory_window_handle(&window) else {
+        return Ok(ConfigurationOutcome::Unavailable);
+    };
+    #[cfg(all(feature = "integration-harness", windows))]
+    if window
+        .try_state::<directory_integration_harness::Fixture>()
+        .is_some_and(|fixture| {
+            fixture.revalidate().is_err()
+                || !directory_picker::fixture_contains(&fixture.projects, &request.root)
+        })
+    {
+        return Ok(ConfigurationOutcome::Unavailable);
+    }
+    let Ok(ticket) = lock.begin_protected_action() else {
+        return Ok(ConfigurationOutcome::Cancelled);
+    };
+    #[cfg(windows)]
+    {
+        let (manager, picker, supervisor, security) = (
+            manager.inner().clone(),
+            picker.inner().clone(),
+            supervisor.inner().clone(),
+            lock.inner().clone(),
+        );
+        let result = tauri::async_runtime::spawn_blocking(move || {
+            connector_configuration::configure(
+                manager, picker, supervisor, security, ticket, owner, request,
+            )
+        })
+        .await
+        .unwrap_or(ConfigurationOutcome::SaveUnconfirmed);
+        // No protected result is delivered to an old window/session. Once the
+        // worker could have submitted, uncertainty is never called cancellation.
+        if directory_window_handle(&window) != Some(owner)
+            || lock.finish_protected_action(ticket).is_err()
+        {
+            Ok(ConfigurationOutcome::SaveUnconfirmed)
+        } else {
+            Ok(result)
+        }
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = (request, owner, manager, picker, supervisor, ticket);
+        Ok(ConfigurationOutcome::Unavailable)
+    }
+}
+
+#[tauri::command]
+fn cancel_scholarly_source_configuration(
+    window: tauri::WebviewWindow,
+    manager: State<'_, connector_configuration::ConfigurationManager>,
+    operation_id: String,
+) -> Result<(), ()> {
+    if directory_window_handle(&window).is_none() {
+        return Err(());
+    }
+    manager.cancel(&operation_id);
+    Ok(())
+}
 
 #[tauri::command]
 async fn import_selected_file(
@@ -626,6 +750,9 @@ pub fn run() {
 
 fn application_builder() -> tauri::Builder<tauri::Wry> {
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
+        configure_scholarly_source,
+        open_scholarly_source_terms,
+        cancel_scholarly_source_configuration,
         import_selected_file,
         cancel_import_file,
         save_import_report,
@@ -742,6 +869,7 @@ fn setup_runtime(
     app.manage(support.clone());
     app.manage(picker.clone());
     app.manage(import_runtime::ImportManager::default());
+    app.manage(connector_configuration::ConfigurationManager::default());
     if lock.is_unlocked() {
         let startup = supervisor.clone();
         tauri::async_runtime::spawn_blocking(move || startup.start());
@@ -1803,8 +1931,13 @@ pub mod directory_integration_harness {
                 return false;
             }
             if request.method == "GET"
-                && request.path == "/workflow-profiles/catalog"
+                && matches!(
+                    request.path.as_str(),
+                    "/workflow-profiles/catalog" | "/projects/connectors/capabilities"
+                )
                 && request.body.is_none()
+                && request.if_match.is_none()
+                && request.idempotency_key.is_none()
             {
                 return true;
             }
@@ -2294,6 +2427,27 @@ pub mod directory_integration_harness {
             ] {
                 assert!(!fixture.permits_request(&request(body)));
             }
+        }
+
+        #[test]
+        fn fixture_allows_only_fixed_read_only_source_capability_route() {
+            let fixture = Fixture::create(&nonce()).unwrap();
+            let mut request = CoreApiRequest {
+                method: "GET".into(),
+                path: "/projects/connectors/capabilities".into(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            };
+            assert!(fixture.permits_request(&request));
+            request.path.push_str("?root=C:/outside");
+            assert!(!fixture.permits_request(&request));
+            request.path = "/projects/connectors/capabilities".into();
+            request.body = Some("{}".into());
+            assert!(!fixture.permits_request(&request));
+            request.body = None;
+            request.method = "POST".into();
+            assert!(!fixture.permits_request(&request));
         }
 
         #[test]

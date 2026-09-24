@@ -19,6 +19,7 @@ from .connectors.contracts import (
     ProjectId,
     ProviderId,
 )
+from .connectors.inspection import ConnectorInspection, ConnectorRecentRuns
 from .connectors.providers import HOSTS, ProviderProblem
 from .connectors.settings import ConnectorConnectionStatus
 from .models import ProblemDetail
@@ -44,6 +45,11 @@ class ConnectorConfirmationRequest(ConnectorProjectRequest):
 
 class ConnectorJobRequest(ConnectorProjectRequest):
     job_id: InvocationId
+
+
+class ConnectorInspectionRequest(ConnectorProjectRequest):
+    preview_id: InvocationId
+    record_offset: Annotated[int, Field(strict=True, ge=0, le=999)]
 
 
 class ConnectorJobStatus(ConnectorModel):
@@ -174,6 +180,14 @@ def register_connector_routes(
     @router.post("/jobs/status", response_model=ConnectorJobStatus)
     def status(request: Request, command: ConnectorJobRequest) -> ConnectorJobStatus:
         return run(request, lambda runtime: _status(runtime.status(command.root, command.job_id)))
+
+    @router.post("/recent", response_model=ConnectorRecentRuns)
+    def recent(request: Request, command: ConnectorProjectRequest) -> ConnectorRecentRuns:
+        return run(request, lambda runtime: runtime.recent(command.root))
+
+    @router.post("/inspect", response_model=ConnectorInspection | None)
+    def inspect(request: Request, command: ConnectorInspectionRequest) -> ConnectorInspection | None:
+        return run(request, lambda runtime: runtime.inspect(command.root, command.preview_id, command.record_offset))
 
     @router.post("/jobs/cancel", response_model=ConnectorJobStatus)
     def cancel(request: Request, command: ConnectorJobRequest) -> ConnectorJobStatus:

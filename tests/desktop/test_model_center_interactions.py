@@ -95,7 +95,9 @@ class ModelCenterInteractionTests(unittest.TestCase):
             + wrapper
         )
 
-    def supporting_workflow_page(self, context: Any, document: str) -> tuple[Any, list[str]]:
+    def supporting_workflow_page(
+        self, context: Any, document: str, *, fixture: str | None = None
+    ) -> tuple[Any, list[str]]:
         def route_application(route: Any) -> None:
             if route.request.url in {"http://tauri.localhost/", "http://tauri.localhost/index.html"}:
                 route.fulfill(status=200, content_type="text/html; charset=utf-8", body=document)
@@ -106,7 +108,7 @@ class ModelCenterInteractionTests(unittest.TestCase):
         page = context.new_page()
         errors: list[str] = []
         page.on("pageerror", lambda error: errors.append(str(error)))
-        page.add_init_script(self.supporting_workflow_fixture())
+        page.add_init_script(self.supporting_workflow_fixture() if fixture is None else fixture)
         page.goto("http://tauri.localhost/index.html", wait_until="load")
         page.wait_for_function("document.body.dataset.applicationReady === 'true'", timeout=5000)
         self.open_supporting_tool(page, "Local projects")

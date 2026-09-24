@@ -438,6 +438,40 @@ pub(crate) struct NativeImportConnection {
 }
 
 impl NativeImportConnection {
+    /// Fixed private connector protocol. The caller owns and clears the body;
+    /// it is never copied through CoreApiRequest's public String body or logs.
+    pub(crate) fn configuration_request(
+        &self,
+        write: bool,
+        body: &[u8],
+    ) -> Result<CoreApiResponse, &'static str> {
+        if body.len() > 8192 || !self.is_current() {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        let response = authenticated_api_request_bytes(
+            self.port,
+            &self.token,
+            &CoreApiRequest {
+                method: "POST".into(),
+                path: if write {
+                    "/native/connectors/configuration/replace"
+                } else {
+                    "/native/connectors/configuration/status"
+                }
+                .into(),
+                body: None,
+                if_match: None,
+                idempotency_key: None,
+            },
+            Some(body),
+            Some(self.cancellation.as_ref()),
+        );
+        if !self.is_current() {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        response
+    }
+
     /// Fence native project/launch transitions through one bounded local rename.
     /// No network or long-running preparation is admitted in this closure.
     pub(crate) fn publish_current<T>(
@@ -553,6 +587,16 @@ impl RuntimeSupervisor {
                 .record(code, "supervisor", None);
         }
         supervisor
+    }
+
+    /// Test-only composition of the same native workflow authority used by the
+    /// desktop. Older intent-only harnesses intentionally use legacy startup.
+    #[cfg(feature = "integration-harness")]
+    pub fn with_fixture_session(config: SupervisorConfig, application_data: &Path) -> Self {
+        Self::with_session(
+            Ok(config),
+            Arc::new(WorkflowSessionAuthority::new(application_data)),
+        )
     }
 
     fn with_authority(
@@ -826,6 +870,32 @@ impl RuntimeSupervisor {
             root: root.to_owned(),
             project_id: project_id.to_owned(),
         })
+    }
+
+    /// Synthetic qualification only; never registered as a Tauri command. The
+    /// harness starts Core with its explicitly isolated vault. No caller values
+    /// become credentials, and the response contains only presence/CAS state.
+    #[cfg(feature = "integration-harness")]
+    pub fn connector_configuration_fixture(
+        &self,
+        root: &str,
+        project_id: &str,
+        write: bool,
+        expected_version: Option<&str>,
+    ) -> Result<CoreApiResponse, &'static str> {
+        let connection = self.native_import_connection(root, project_id)?;
+        let mut value =
+            serde_json::json!({"root":root,"projectId":project_id,"providerId":"unpaywall"});
+        if write {
+            value.as_object_mut().unwrap().extend(serde_json::json!({
+                "key":null,"contact":"synthetic-native@example.invalid","expectedVersion":expected_version,
+                "preserveKey":false,"preserveContact":false,
+            }).as_object().unwrap().clone());
+        }
+        let body = crate::connector_configuration::PrivateBytes(
+            serde_json::to_vec(&value).map_err(|_| "RO-FIXTURE-SERIALIZE")?,
+        );
+        connection.configuration_request(write, &body.0)
     }
 
     /// Return the supervised root PID for integration qualification only.
@@ -1450,6 +1520,49 @@ fn validate_intent_impact_fields(object: &serde_json::Map<String, serde_json::Va
             .is_some_and(|value| unique_intent_members(value, STOPPING_CONDITIONS, 1, 3))
 }
 
+fn intent_object_with_egress(
+    body: &str,
+    keys: &[&str],
+    maximum: usize,
+) -> Option<serde_json::Map<String, serde_json::Value>> {
+    let mut extended = keys.to_vec();
+    extended.push("egressPolicy");
+    let mut object = exact_json_object(body, keys, maximum)
+        .or_else(|| exact_json_object(body, &extended, maximum))?;
+    if let Some(policy) = object.remove("egressPolicy") {
+        if !policy.is_null() {
+            let policy = policy.as_object()?;
+            if policy.len() != 2 {
+                return None;
+            }
+            let mode = policy.get("mode")?.as_str()?;
+            let destinations = policy.get("approvedDestinationIds")?.as_array()?;
+            if !["local-only", "approved-redacted", "approved-content"].contains(&mode)
+                || destinations.len() > 32
+                || (mode == "local-only") != destinations.is_empty()
+            {
+                return None;
+            }
+            let mut seen = std::collections::BTreeSet::new();
+            for value in destinations {
+                let name = value.as_str()?;
+                if name.is_empty()
+                    || name.len() > 100
+                    || !name.as_bytes()[0].is_ascii_lowercase()
+                        && !name.as_bytes()[0].is_ascii_digit()
+                    || !name.bytes().all(|b| {
+                        b.is_ascii_lowercase() || b.is_ascii_digit() || b"._-".contains(&b)
+                    })
+                    || !seen.insert(name)
+                {
+                    return None;
+                }
+            }
+        }
+    }
+    Some(object)
+}
+
 fn validate_intent_api_request(path: &str, body: &str) -> bool {
     const MAX_INTENT_BODY_BYTES: usize = 262_144;
     const IMPACT_KEYS: &[&str] = &[
@@ -1497,7 +1610,7 @@ fn validate_intent_api_request(path: &str, body: &str) -> bool {
             .unwrap_or(false);
     }
     if path == "/projects/intent/preview" {
-        return exact_json_object(body, IMPACT_KEYS, MAX_INTENT_BODY_BYTES)
+        return intent_object_with_egress(body, IMPACT_KEYS, MAX_INTENT_BODY_BYTES)
             .as_ref()
             .is_some_and(validate_intent_impact_fields);
     }
@@ -1516,7 +1629,7 @@ fn validate_intent_api_request(path: &str, body: &str) -> bool {
             ],
         ]
         .concat();
-        let Some(object) = exact_json_object(body, &expected, MAX_INTENT_BODY_BYTES) else {
+        let Some(object) = intent_object_with_egress(body, &expected, MAX_INTENT_BODY_BYTES) else {
             return false;
         };
         let acknowledgement = object.get("impactAcknowledgement").is_some_and(|value| {
@@ -2401,7 +2514,10 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.method == "GET"
         && matches!(
             request.path.as_str(),
-            "/runtime/version" | "/healthz" | "/workflow-profiles/catalog"
+            "/runtime/version"
+                | "/healthz"
+                | "/workflow-profiles/catalog"
+                | "/projects/connectors/capabilities"
         )
     {
         return if request.body.is_none()
@@ -2454,10 +2570,10 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.method == "POST"
         && request.if_match.is_none()
         && request.idempotency_key.is_none()
-        && request
-            .body
-            .as_deref()
-            .is_some_and(|body| validate_import_review_request(&request.path, body))
+        && request.body.as_deref().is_some_and(|body| {
+            validate_import_review_request(&request.path, body)
+                || crate::connector_configuration::validate_public_request(&request.path, body)
+        })
     {
         return Ok(());
     }
@@ -2617,6 +2733,22 @@ fn authenticated_api_request_with_cancellation(
     api_request: &CoreApiRequest,
     cancellation: Option<&AtomicBool>,
 ) -> Result<CoreApiResponse, &'static str> {
+    authenticated_api_request_bytes(
+        port,
+        capability_token,
+        api_request,
+        api_request.body.as_ref().map(|body| body.as_bytes()),
+        cancellation,
+    )
+}
+
+fn authenticated_api_request_bytes(
+    port: u16,
+    capability_token: &CapabilityToken,
+    api_request: &CoreApiRequest,
+    body: Option<&[u8]>,
+    cancellation: Option<&AtomicBool>,
+) -> Result<CoreApiResponse, &'static str> {
     if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
         return Err("RO-CORE-API-CANCELLED");
     }
@@ -2655,21 +2787,14 @@ fn authenticated_api_request_with_cancellation(
         wire.extend_from_slice(idempotency_key.as_bytes());
     }
     wire.extend_from_slice(b"\r\nAccept: application/json, text/event-stream");
-    if api_request.body.is_some() {
+    if body.is_some() {
         wire.extend_from_slice(b"\r\nContent-Type: application/json");
     }
     wire.extend_from_slice(b"\r\nContent-Length: ");
-    wire.extend_from_slice(
-        api_request
-            .body
-            .as_ref()
-            .map_or(0, String::len)
-            .to_string()
-            .as_bytes(),
-    );
+    wire.extend_from_slice(body.map_or(0, <[u8]>::len).to_string().as_bytes());
     wire.extend_from_slice(b"\r\nConnection: close\r\n\r\n");
-    if let Some(body) = &api_request.body {
-        wire.extend_from_slice(body.as_bytes());
+    if let Some(body) = body {
+        wire.extend_from_slice(body);
     }
     let written = stream.write_all(&wire).and_then(|_| stream.flush()).is_ok();
     zeroize_bytes(&mut wire);
@@ -3354,6 +3479,21 @@ mod tests {
 
     #[test]
     fn native_import_private_routes_are_not_renderer_bridge_capabilities() {
+        for path in [
+            "/native/connectors/configuration/status",
+            "/native/connectors/configuration/replace",
+        ] {
+            assert!(
+                super::validate_api_request(&super::CoreApiRequest {
+                    method: "POST".into(),
+                    path: path.into(),
+                    body: Some("{}".into()),
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_err()
+            );
+        }
         for action in [
             super::NativeImportAction::Context,
             super::NativeImportAction::Create,
@@ -4819,6 +4959,39 @@ mod tests {
     }
 
     #[test]
+    fn native_intent_egress_matches_optional_core_contract() {
+        for path in ["/projects/intent/preview", "/projects/intent/drafts"] {
+            let base = if path.ends_with("drafts") {
+                intent_draft_body()
+            } else {
+                intent_impact_body()
+            };
+            for policy in [
+                serde_json::Value::Null,
+                serde_json::json!({"mode":"local-only","approvedDestinationIds":[]}),
+                serde_json::json!({"mode":"approved-content","approvedDestinationIds":["unpaywall","future-provider"]}),
+                serde_json::json!({"mode":"approved-redacted","approvedDestinationIds":["openalex"]}),
+            ] {
+                let mut body = base.clone();
+                body["egressPolicy"] = policy;
+                assert!(super::validate_intent_api_request(path, &body.to_string()));
+            }
+            for policy in [
+                serde_json::json!({"mode":"local-only","approvedDestinationIds":["unpaywall"]}),
+                serde_json::json!({"mode":"approved-content","approvedDestinationIds":[]}),
+                serde_json::json!({"mode":"approved-content","approvedDestinationIds":["unpaywall","unpaywall"]}),
+                serde_json::json!({"mode":"automatic","approvedDestinationIds":["unpaywall"]}),
+                serde_json::json!({"mode":"approved-content","approvedDestinationIds":["private/value"]}),
+                serde_json::json!({"mode":"local-only","approvedDestinationIds":[],"approve":true}),
+            ] {
+                let mut body = base.clone();
+                body["egressPolicy"] = policy;
+                assert!(!super::validate_intent_api_request(path, &body.to_string()));
+            }
+        }
+    }
+
+    #[test]
     fn native_api_transport_parses_only_correlated_bounded_responses() {
         let trace = "0123456789abcdef0123456789abcdef";
         let response = format!(
@@ -4854,6 +5027,78 @@ mod tests {
                 .body,
             "hello"
         );
+    }
+
+    #[test]
+    fn private_byte_transport_sends_exact_body_and_rejects_lost_acknowledgment() {
+        use std::io::Write;
+        for drop_reply in [false, true] {
+            let listener = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+            let port = listener.local_addr().unwrap().port();
+            let token = CapabilityToken::generate().unwrap();
+            let mut expected_token = Vec::new();
+            token.append_hex(&mut expected_token);
+            let body = br#"{"contact":"synthetic-native@example.invalid","key":null}"#;
+            let server = std::thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                stream
+                    .set_read_timeout(Some(std::time::Duration::from_secs(2)))
+                    .unwrap();
+                let mut headers = Vec::new();
+                while !headers.ends_with(b"\r\n\r\n") {
+                    let mut byte = [0];
+                    stream.read_exact(&mut byte).unwrap();
+                    headers.push(byte[0]);
+                    assert!(headers.len() <= 8192);
+                }
+                let headers = String::from_utf8(headers).unwrap();
+                assert!(
+                    headers
+                        .starts_with("POST /native/connectors/configuration/replace HTTP/1.1\r\n")
+                );
+                assert!(headers.lines().any(|line| {
+                    line.strip_prefix("Authorization: Bearer ")
+                        .is_some_and(|v| v.as_bytes() == expected_token)
+                }));
+                let length: usize = headers
+                    .lines()
+                    .find_map(|line| line.strip_prefix("Content-Length: "))
+                    .unwrap()
+                    .parse()
+                    .unwrap();
+                assert_eq!(length, body.len());
+                let mut received = vec![0; length];
+                stream.read_exact(&mut received).unwrap();
+                assert_eq!(received, body);
+                // This server has accepted the mutation bytes. Missing reply is
+                // still an error; callers must not turn it into "unchanged".
+                if !drop_reply {
+                    let trace = headers
+                        .lines()
+                        .find_map(|line| line.strip_prefix("X-Trace-Id: "))
+                        .unwrap();
+                    let reply = format!(
+                        "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nX-Trace-Id: {trace}\r\nContent-Length: 2\r\n\r\n{{}}"
+                    );
+                    stream.write_all(reply.as_bytes()).unwrap();
+                }
+            });
+            let result = super::authenticated_api_request_bytes(
+                port,
+                &token,
+                &CoreApiRequest {
+                    method: "POST".into(),
+                    path: "/native/connectors/configuration/replace".into(),
+                    body: None,
+                    if_match: None,
+                    idempotency_key: None,
+                },
+                Some(body),
+                None,
+            );
+            assert_eq!(result.is_err(), drop_reply);
+            server.join().unwrap();
+        }
     }
 
     #[test]

@@ -55,6 +55,17 @@ def capabilities_document() -> dict[str, Any]:
 
 
 class ConnectorContractTests(unittest.TestCase):
+    def test_source_test_fixture_and_terms_bind_core_and_generated_client(self):
+        from research_observatory_core.connector_api import ConnectorPreviewRequest
+        from research_observatory_core.connectors.providers import TERMS, compile_request
+
+        raw = (REPO / "tests/fixtures/scholarly-metadata/source-test-request.v1.json").read_text("utf-8")
+        command = ConnectorPreviewRequest.model_validate_json(raw)
+        self.assertEqual("api.unpaywall.org", compile_request(command.request).host)
+        client = (REPO / "packages/contracts/core-api/generated.ts").read_text("utf-8")
+        for address in TERMS.values():
+            self.assertIn(json.dumps(address), client)
+
     def test_fixture_roundtrips_and_owns_an_immutable_snapshot(self) -> None:
         document = page_document()
         result = ConnectorResultPage.model_validate(document)

@@ -162,7 +162,30 @@ before configuration access/cache/replay and re-leases values on every retry.
 Unpaywall contact uses `email`; Semantic Scholar credentials use `x-api-key`.
 Injected values and encoded echoes are removed before source publication.
 
-The CAP-04.S02.T03 working checkpoint covers synthetic mappings, real isolated
-DPAPI, normal Core/worker/protected-project restart, and synthetic verified TLS.
-Native configuration entry, source-page UX and final task/slice qualification
-remain unfinished; these checks are not live-provider evidence.
+Source Manager keeps settings entry in an owned native form. The renderer sees
+only saved/cancelled/unavailable/conflict/rejected/unconfirmed outcomes. Cancel
+before dispatch changes nothing; after possible transmission, lost replies or
+stale context remain unconfirmed. Settings are not prefilled, and preservation
+requires the current CAS version. Reopening checks current presence; it does not
+infer which writer committed an earlier unconfirmed save.
+
+The Research Intent scope form exposes the existing local-only / approved
+content / approved-redacted policy through impact, draft and explicit acceptance.
+Existing destinations remain intact unless removed. A source Test is a bounded
+DOI lookup, with separate local preview and explicit send; it grants no authority.
+Fixed provider policy links open in the system browser without research data.
+
+Read-only `/projects/connectors/recent` and `/inspect` project routes recover
+original exact-preview jobs and accepted source observations. The recent window
+is limited to 20 original source jobs within 100 workflows; retry continuations
+remain in Task Center. An exact preview ID also resolves older or unconfirmed
+submissions. Inspection checks retained inspect rights without renewing network
+consent, and projects one record at a time with title, OA-location and discovery
+fields. Missing observations, missing jobs, partial/failed coverage and complete
+empty pages remain distinct. Confirmation tokens and session authority never
+enter the inspection projection. No migration or parallel history store is used.
+
+Development checks cover synthetic mappings, isolated real DPAPI, native/Core
+permission and configuration paths, protected-project restart and browser
+interactions. Final native/task/slice qualification remains pending; these checks
+are not live-provider or production-package evidence.

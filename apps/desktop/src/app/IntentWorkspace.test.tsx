@@ -162,6 +162,14 @@ function response(status: number, body: unknown, contentType = "application/json
 }
 
 describe("guided research intent workspace", () => {
+  it("preserves redacted mode and unfamiliar existing destinations in the editable scope", () => {
+    const workspace = { ...decisionCompleteWorkspace, current: { ...decisionCompleteDraft,
+      egressPolicy: { mode: "approved-redacted" as const, approvedDestinationIds: ["unpaywall", "future-approved-provider"] } } };
+    const markup = renderToStaticMarkup(<IntentWorkspace project={project} announce={vi.fn()} initialWorkspace={workspace} initialCatalog={catalog} />);
+    expect(markup).toContain('value="approved-redacted" selected=""');
+    expect(markup).toContain("Existing destination: future-approved-provider (retained unless you remove it)");
+    expect(markup).toContain("scholarly requests remain unavailable");
+  });
   it("rejects delayed persisted updates after the selected project changes", () => {
     const projectA = project;
     const projectB = {
@@ -243,6 +251,9 @@ describe("guided research intent workspace", () => {
     expect(markup).toContain("Purpose and intended contribution");
     expect(markup).toContain("Primary use case and guided workflow");
     expect(markup).toContain("Scope and evidence policy");
+    expect(markup).toContain("External scholarly requests");
+    expect(markup).toContain("Allow requests to Unpaywall");
+    expect(intentFieldAffectsImpact("egressPolicy")).toBe(true);
     expect(markup).toContain("AI authority profile");
     expect(markup).toContain("Novelty standard");
     expect(markup).toContain("Stopping logic");

@@ -61,7 +61,10 @@ fn run() -> Result<(), String> {
         )],
     )
     .map_err(str::to_owned)?;
-    let supervisor = RuntimeSupervisor::new(Ok(config));
+    let supervisor = match std::env::args_os().nth(5) {
+        Some(root) => RuntimeSupervisor::with_fixture_session(config, &PathBuf::from(root)),
+        None => RuntimeSupervisor::new(Ok(config)),
+    };
     start(&supervisor)?;
     emit(&json!({"kind": "ready"}))?;
 
@@ -73,6 +76,22 @@ fn run() -> Result<(), String> {
             supervisor.stop();
             start(&supervisor)?;
             emit(&json!({"kind": "restarted"}))?;
+            continue;
+        }
+        if value.get("control").and_then(Value::as_str) == Some("connector-configuration-fixture") {
+            let root = value["root"].as_str().ok_or("fixture root required")?;
+            let project_id = value["projectId"]
+                .as_str()
+                .ok_or("fixture project required")?;
+            match supervisor.connector_configuration_fixture(
+                root,
+                project_id,
+                value["write"].as_bool().unwrap_or(false),
+                value["expectedVersion"].as_str(),
+            ) {
+                Ok(response) => emit(&json!({"kind":"response","response":response}))?,
+                Err(code) => emit(&json!({"kind":"error","code":code}))?,
+            }
             continue;
         }
         let request: CoreApiRequest =

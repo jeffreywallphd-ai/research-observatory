@@ -35,6 +35,16 @@ class GraphOaBrokerTests(broker_fixtures.ConnectorBrokerFixture):
             WindowsCredentialStore(Path(self.temp.name) / "vault", audit_sink=self.events.append)
         )
 
+    async def test_public_adapter_description_tracks_current_private_configuration(self):
+        from research_observatory_core.connectors.adapters import scholarly_adapters
+
+        broker = self.broker([], settings=self.settings)
+        adapter = next(value for value in scholarly_adapters(broker) if value.describe().provider_id == "unpaywall")
+        self.assertEqual("not-configured", adapter.describe().configuration)
+        self.settings.replace("unpaywall", key=None, contact=CONTACT, expected_version=None, context=CONTEXT)
+        self.assertEqual("ready", adapter.describe().configuration)
+        self.assertEqual([], self.calls)
+
     async def test_required_configuration_and_policy_are_checked_before_network(self):
         broker = self.broker([], settings=self.settings)
         page = await broker.fetch(oa_request(), cancellation=self.cancel)

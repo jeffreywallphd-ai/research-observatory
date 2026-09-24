@@ -14,7 +14,7 @@ class ScholarlyAdapter:
         self._broker = broker
 
     def describe(self) -> ConnectorCapabilities:
-        return self._capabilities
+        return self._broker.describe(self._capabilities.provider_id)
 
     async def fetch(self, request: ConnectorRequest, *, cancellation: ConnectorCancellation) -> ConnectorResultPage:
         request = ConnectorRequest.model_validate(request)

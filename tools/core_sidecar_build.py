@@ -129,6 +129,8 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.connectors.adapters",
             "research_observatory_core.connectors.broker",
             "research_observatory_core.connectors.providers",
+            "research_observatory_core.connectors.settings",
+            "research_observatory_core.connectors.inspection",
             "research_observatory_core.connectors.transport",
             "research_observatory_core.connectors.workflow",
             "research_observatory_core.ports.connector_runtime",

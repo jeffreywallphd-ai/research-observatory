@@ -37,6 +37,7 @@ from ..ports.credential_store import (
 )
 from .contracts import (
     CacheObservation,
+    ConnectorCapabilities,
     ConnectorError,
     ConnectorRequest,
     ConnectorResultPage,
@@ -44,7 +45,7 @@ from .contracts import (
     RateLimitState,
     ResponseRetention,
 )
-from .providers import MappedPage, ProviderProblem, WireQuery, compile_request, map_response, source_terms
+from .providers import MappedPage, ProviderProblem, WireQuery, capabilities, compile_request, map_response, source_terms
 from .settings import ConnectorSettings
 from .transport import PublicHTTPTransport, bounded_json, private_wire, read_response, sanitize
 
@@ -159,6 +160,16 @@ class ConnectorBroker:
         self._settings = settings
         self._now, self._sleep = now, sleep
         self._publication = publication
+
+    def describe(self, provider: str) -> ConnectorCapabilities:
+        if self._settings is not None:
+            return self._settings.describe(provider)
+        # The legacy explicitly injected reference seam has no global profile
+        # settings. Normal Core composition always supplies ConnectorSettings.
+        state = "not-configured" if provider == "unpaywall" and provider not in self._contacts else "ready"
+        if (provider in self._keys or provider in self._contacts) and self._credentials is None:
+            state = "unavailable"
+        return ConnectorCapabilities.model_validate(capabilities(provider).model_dump() | {"configuration": state})
 
     def _guard[Result](
         self,

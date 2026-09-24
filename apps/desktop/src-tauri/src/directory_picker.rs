@@ -429,6 +429,19 @@ impl DirectoryPickerManager {
         !self.admission().closed
     }
 
+    /// Share native-dialog exclusion and terminal-close cleanup with private
+    /// configuration forms. The callback runs on a blocking worker, not the UI.
+    pub(crate) fn with_native_dialog<T>(
+        &self,
+        owner: isize,
+        action: impl FnOnce(&dyn Fn() -> bool) -> T,
+    ) -> Option<T> {
+        let reservation = self.reserve()?;
+        let current =
+            || !reservation.pending.cancelled.load(Ordering::Acquire) && valid_owner(owner);
+        current().then(|| action(&current))
+    }
+
     /// Called from a blocking waiter, never from the main window thread. The
     /// reservation moves into the dedicated STA, not the cancellable waiter.
     pub fn choose(

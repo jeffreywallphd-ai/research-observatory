@@ -13,8 +13,14 @@ from pathlib import Path
 
 import httpx2
 
-from .connector_service import ConnectorConsentService, _Pending
+from .connector_service import ConnectorConsentService, _fingerprint, _Pending
 from .connectors.broker import ConnectorBroker, ProviderRateController, utc_now
+from .connectors.inspection import (
+    ConnectorInspection,
+    ConnectorObservationSummary,
+    ConnectorRecentRuns,
+    ConnectorRunSummary,
+)
 from .connectors.providers import ProviderProblem
 from .connectors.settings import ConnectorConnectionStatus, ConnectorSettings
 from .connectors.transport import PublicHTTPTransport
@@ -263,6 +269,103 @@ class ConnectorWorkerService:
             return binding.adapters.queue.get(job_id)
 
         return self._action(root, status)
+
+    @staticmethod
+    def _summary(inputs: ConnectorJobInput, job: WorkflowJobRecord) -> ConnectorRunSummary:
+        request = inputs.preview.request
+        return ConnectorRunSummary(
+            preview_id=inputs.preview.preview_id,
+            invocation_id=request.invocation_id,
+            job_id=job.job_id,
+            workflow_run_id=job.workflow_run_id,
+            provider_id=request.provider_id,
+            operation=request.query.kind,
+            state=job.state,
+            updated_at=job.updated_at,
+            diagnostic_code=job.diagnostic_code,
+        )
+
+    def recent(self, root: str) -> ConnectorRecentRuns:
+        def recent(binding: _WorkerBinding) -> ConnectorRecentRuns:
+            queue = binding.adapters.queue
+            selected = sorted(
+                (
+                    job
+                    for run in queue.task_center(limit=100)
+                    if run.continuation_from_job_id is None
+                    for job in run.jobs
+                    if job.activity_type == ACTIVITY
+                ),
+                key=lambda job: (job.updated_at, job.job_id),
+                reverse=True,
+            )[:20]
+            return ConnectorRecentRuns(
+                items=tuple(
+                    self._summary(self._stored(binding, queue.authority(job.job_id)), queue.get(job.job_id))
+                    for job in selected
+                )
+            )
+
+        return self._action(root, recent)
+
+    def inspect(self, root: str, preview_id: str, record_offset: int) -> ConnectorInspection | None:
+        if not is_uuid_v7(preview_id) or type(record_offset) is not int or not 0 <= record_offset < 1000:
+            raise ProviderProblem("invalid-query")
+
+        def inspect(binding: _WorkerBinding) -> ConnectorInspection | None:
+            queue = binding.adapters.queue
+            job = queue.find_idempotency(_fingerprint([ACTIVITY, preview_id]))
+            if job is None:
+                return None  # No scheduled job found; not proof of a zero-result request.
+            inputs = self._stored(binding, queue.authority(job.job_id))
+            if inputs.preview.preview_id != preview_id:
+                raise ProviderProblem("policy-denied")
+            if not inputs.preview.retention.rights.permits("inspect"):
+                raise ProviderProblem("permission-denied")
+            # Historical inspection does not require or renew network consent.
+            page = binding.adapters.pages.replay(inputs.preview.request)
+            count = len(page.records) if page else 0
+            if record_offset >= max(1, count):
+                raise ProviderProblem("invalid-query")
+            observation = None
+            if page is not None:
+                selected = tuple(
+                    record.model_copy(
+                        update={
+                            "fields": tuple(
+                                field
+                                for field in record.fields
+                                if field.name in {"candidate.title", "candidate.oa-locations", "candidate.discovery"}
+                            )
+                        }
+                    )
+                    for record in page.records[record_offset : record_offset + 1]
+                )
+                if any(len(record.fields) != len({field.name for field in record.fields}) for record in selected):
+                    raise ProviderProblem("incompatible-response")
+                observation = ConnectorObservationSummary(
+                    observation_id=page.observation_id,
+                    observed_at=page.observed_at,
+                    retrieved_at=page.retrieved_at,
+                    outcome=page.outcome,
+                    continuation=page.continuation,
+                    record_count=count,
+                    records=selected,
+                )
+            return ConnectorInspection(
+                job=self._summary(inputs, job),
+                query_json=json.dumps(
+                    inputs.preview.request.query.model_dump(mode="json", by_alias=True),
+                    ensure_ascii=False,
+                    separators=(",", ":"),
+                ),
+                scientific_request_sha256=inputs.preview.request.scientific_sha256(),
+                observation=observation,
+                record_offset=record_offset,
+                next_record_offset=record_offset + 1 if record_offset + 1 < count else None,
+            )
+
+        return self._action(root, inspect)
 
     def _reconcile(self, binding: _WorkerBinding) -> None:
         queue = binding.adapters.queue

@@ -125,6 +125,21 @@ class GraphOaRuntimeTests(unittest.TestCase):
                     self.assertTrue(all(item["configuration"] == "ready" for item in states.json()["items"]))
                     prior = client.post("/projects/connectors/jobs/status", json={"root": root, "jobId": job["jobId"]})
                     self.assertEqual("succeeded", prior.json()["state"])
+                    recovered = client.post(
+                        "/projects/connectors/inspect",
+                        json={"root": root, "previewId": job["previewId"], "recordOffset": 0},
+                    )
+                    self.assertEqual(200, recovered.status_code, recovered.text)
+                    self.assertEqual(job["jobId"], recovered.json()["job"]["jobId"])
+                    location = next(
+                        field
+                        for field in recovered.json()["observation"]["records"][0]["fields"]
+                        if field["name"] == "candidate.oa-locations"
+                    )
+                    self.assertIn("host_type", location["value"])
+                    self.assertIn("license", location["value"])
+                    self.assertEqual(1, len(calls), "inspection after real Core restart must not redispatch")
+                    self.assertNotIn(CONTACT, recovered.text)
                     query = {
                         "kind": "recommendations",
                         "positiveSeeds": [{"scheme": "semantic-scholar", "value": PAPER}],
@@ -183,5 +198,5 @@ class GraphOaRuntimeTests(unittest.TestCase):
             )
             self.assertEqual(200, status.status_code, status.text)
             if status.json()["state"] in {"succeeded", "failed", "cancelled"} or time.monotonic() > deadline:
-                return status.json()
+                return status.json() | {"previewId": preview.json()["previewId"]}
             time.sleep(0.05)

@@ -8,6 +8,7 @@ import {
   type IntentDraftProjection,
   type IntentDraftRequest,
   type IntentImpactPreview,
+  type IntentEgressPolicy,
   type IntentWorkspaceProjection,
   type ProjectProjection,
   type WorkflowProfileCatalogProjection,
@@ -26,6 +27,10 @@ const EVIDENCE_TYPES: readonly EvidenceType[] = [
   "empirical-study", "systematic-review", "theoretical-work", "technical-evaluation", "standard",
   "dataset", "interpretive-text", "stakeholder-account", "critical-analysis", "private-report",
 ];
+const SCHOLARLY_DESTINATIONS = [
+  ["openalex", "OpenAlex"], ["crossref", "Crossref"],
+  ["semantic-scholar", "Semantic Scholar"], ["unpaywall", "Unpaywall"],
+] as const;
 
 export function selectedIntentGuidance(
   catalog: WorkflowProfileCatalogProjection,
@@ -196,6 +201,7 @@ interface IntentWorkspaceProps {
 }
 
 interface IntentFormState {
+  readonly egressPolicy: IntentEgressPolicy;
   readonly primaryUseCase: PrimaryUseCase;
   readonly researchObjective: string;
   readonly contributionIntent: string;
@@ -216,6 +222,7 @@ interface IntentFormState {
 }
 
 const IMPACT_FIELD_KEYS: ReadonlySet<keyof IntentFormState> = new Set([
+  "egressPolicy",
   "primaryUseCase",
   "sourceKinds",
   "languageCodes",
@@ -238,6 +245,7 @@ function initialForm(
 ): IntentFormState {
   const guide = catalog ? selectedIntentGuidance(catalog, current?.primaryUseCase ?? "theory-synthesis") : null;
   return {
+    egressPolicy: current?.egressPolicy ?? { mode: "local-only", approvedDestinationIds: [] },
     primaryUseCase: current?.primaryUseCase ?? guide?.profileId ?? "theory-synthesis",
     researchObjective: current?.researchObjective ?? "",
     contributionIntent: current?.contributionIntent ?? "",
@@ -367,9 +375,10 @@ export function IntentWorkspace({
   };
   const languageCodes = (): string[] => form.languageCodes.split(",").map((value) => value.trim().toLowerCase()).filter(Boolean);
   const optionalYear = (value: string): number | null => value === "" ? null : Number(value);
+  const egressComplete = form.egressPolicy.mode === "local-only" || form.egressPolicy.approvedDestinationIds.length > 0;
 
   const preview = (): void => {
-    if (!project || !workspace) return;
+    if (!project || !workspace || !egressComplete) return;
     const sourceProject = { projectId: project.projectId, root: project.root };
     setBusy("preview");
     setFailure(null);
@@ -386,6 +395,7 @@ export function IntentWorkspace({
       noveltyStandard: form.noveltyStandard,
       autonomyLevel: form.autonomyLevel,
       stoppingConditions: form.stoppingConditions,
+      egressPolicy: form.egressPolicy,
     }).then((next) => {
       if (!intentProjectIdentityMatches(activeProjectRef.current, sourceProject)) return;
       setImpact(next);
@@ -400,7 +410,7 @@ export function IntentWorkspace({
 
   const save = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    if (!project || !workspace || (impact?.acknowledgementRequired && !acknowledged)) return;
+    if (!project || !workspace || !egressComplete || (impact?.acknowledgementRequired && !acknowledged)) return;
     const sourceProject = { projectId: project.projectId, root: project.root };
     setBusy("save");
     setFailure(null);
@@ -425,6 +435,7 @@ export function IntentWorkspace({
       autonomyLevel: form.autonomyLevel,
       stoppingConditions: form.stoppingConditions,
       revisionRationale: form.revisionRationale,
+      egressPolicy: form.egressPolicy,
     }, idempotencyKey()).then((current) => {
       const nextWorkspace: IntentWorkspaceProjection = {
         schemaVersion: "1.0",
@@ -553,6 +564,18 @@ export function IntentWorkspace({
             <div className="intent-three-column ro-grid"><label>Languages (comma-separated)<input value={form.languageCodes} onChange={(event) => update("languageCodes", event.currentTarget.value)} /></label><label>Start year<input type="number" min="1000" max="9999" value={form.startYear} onChange={(event) => update("startYear", event.currentTarget.value)} /></label><label>End year<input type="number" min="1000" max="9999" value={form.endYear} onChange={(event) => update("endYear", event.currentTarget.value)} /></label></div>
             <fieldset><legend>Evidence types</legend>{EVIDENCE_TYPES.map((evidenceType) => <label key={evidenceType}><input type="checkbox" checked={form.evidenceTypes.includes(evidenceType)} onChange={(event) => update("evidenceTypes", event.currentTarget.checked ? [...form.evidenceTypes, evidenceType] : form.evidenceTypes.filter((item) => item !== evidenceType))} /> {evidenceType}</label>)}</fieldset>
             <p className="field-note">Mode recommendation: {guide?.defaultEvidenceTypes.join(", ") ?? "Loading…"}. Corpus-scope changes require a fresh impact preview.</p>
+            <fieldset disabled={busy !== null || acceptanceAttempt !== null}><legend>External scholarly requests</legend>
+              <label htmlFor="intent-egress-mode">Data allowed to leave this computer</label>
+              <select id="intent-egress-mode" value={form.egressPolicy.mode} onChange={(event) => update("egressPolicy", { mode: event.currentTarget.value as IntentEgressPolicy["mode"], approvedDestinationIds: event.currentTarget.value === "local-only" ? [] : form.egressPolicy.approvedDestinationIds })}>
+                <option value="local-only">Local only — no provider requests</option>
+                <option value="approved-content">Explicitly confirmed content to selected destinations</option>
+                <option value="approved-redacted">Redacted content only — scholarly requests remain unavailable</option>
+              </select>
+              {SCHOLARLY_DESTINATIONS.map(([id, name]) => <label key={id}><input type="checkbox" disabled={form.egressPolicy.mode === "local-only"} checked={form.egressPolicy.approvedDestinationIds.includes(id)} onChange={(event) => update("egressPolicy", { ...form.egressPolicy, approvedDestinationIds: event.currentTarget.checked ? [...form.egressPolicy.approvedDestinationIds, id] : form.egressPolicy.approvedDestinationIds.filter((value) => value !== id) })} /> Allow requests to {name}</label>)}
+              {form.egressPolicy.approvedDestinationIds.filter((id) => !SCHOLARLY_DESTINATIONS.some(([known]) => id === known)).map((id) => <label key={id}><input type="checkbox" checked onChange={() => update("egressPolicy", { ...form.egressPolicy, approvedDestinationIds: form.egressPolicy.approvedDestinationIds.filter((value) => value !== id) })} /> Existing destination: {id} (retained unless you remove it)</label>)}
+              <p className="field-note">Changing this policy requires impact review, a saved draft, and explicit human acceptance. Selecting Local only clears destinations. Source Test never grants permission. Project privacy consent, rights and an exact request confirmation are still required; private documents are not uploaded by these scholarly adapters.</p>
+              {!egressComplete ? <p role="status">Select at least one destination before previewing or saving an approved-egress policy.</p> : null}
+            </fieldset>
           </Panel>
 
           <div className="intent-two-column ro-grid">
@@ -564,14 +587,14 @@ export function IntentWorkspace({
 
           <Panel title="Preview revision effects" tone={impact?.acknowledgementRequired ? "warning" : "neutral"}>
             <p>Review changes to the primary workflow, corpus boundary, or novelty scope before saving a new immutable revision.</p>
-            <Button type="button" disabled={busy !== null || acceptanceAttempt !== null} onClick={preview}>{busy === "preview" ? "Preparing preview…" : "Preview revision effects"}</Button>
+            <Button type="button" disabled={busy !== null || acceptanceAttempt !== null || !egressComplete} onClick={preview}>{busy === "preview" ? "Preparing preview…" : "Preview revision effects"}</Button>
             {impact ? <div className="intent-impact ro-notice" aria-live="polite"><p><strong>Affected workflows:</strong> {impact.affectedWorkflows.join(", ") || "None"}</p><p><strong>Affected schemas:</strong> {impact.affectedSchemas.join(", ") || "None"}</p><p><strong>Affected checkpoints:</strong> {impact.affectedCheckpoints.join(", ") || "None"}</p><p><strong>Affected outputs:</strong> {impact.affectedOutputs.join(", ") || "None"}</p><p><strong>Autonomy defaults:</strong> {impact.autonomyDefaultEffects.join(", ") || "No effect"}</p><p><strong>Stopping logic:</strong> {impact.stoppingLogicEffects.join(", ") || "No effect"}</p><p><strong>Stale artifacts:</strong> {impact.staleArtifactIds.join(", ") || "None currently identified"}</p><p>All tools remain {impact.allToolsAccessible ? "available" : "restricted"}; evidence requirements {impact.evidenceRequirementsUnchanged ? "remain unchanged" : "changed"}; provenance requirements {impact.provenanceRequirementsUnchanged ? "remain unchanged" : "changed"}.</p>{impact.warnings.map((warning) => <p key={warning}>{warning}</p>)}{impact.acknowledgementRequired ? <label className="consent-boundary ro-notice"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.currentTarget.checked)} /><span>I reviewed the exact schemas, checkpoints, outputs, autonomy, stopping, and staleness effects and authorize this draft revision.</span></label> : null}</div> : null}
           </Panel>
 
           <Panel title="Save or accept intent revision">
             <label htmlFor="intent-rationale">Revision rationale</label><textarea id="intent-rationale" value={form.revisionRationale} onChange={(event) => update("revisionRationale", event.currentTarget.value)} rows={2} required />
             {workspace.current ? <p><StatusBadge tone={workspace.current.status === "accepted" || workspace.current.decisionComplete ? "success" : "warning"}>Revision {workspace.current.revision} · {workspace.current.status === "accepted" ? "accepted" : workspace.current.decisionComplete ? "decision complete draft" : `${workspace.current.unresolvedDecisions.length} unresolved`}</StatusBadge></p> : <p>No intent revision has been saved.</p>}
-            <div className="intent-actions ro-action-row"><Button tone="primary" type="submit" disabled={busy !== null || acceptanceAttempt !== null || (impact?.acknowledgementRequired === true && !acknowledged)}>{busy === "save" ? "Saving locally…" : "Save draft revision"}</Button><Button type="button" aria-expanded={showHistory} onClick={() => setShowHistory((value) => !value)}>Compare versions</Button><Button type="button" disabled>Launch gated analysis</Button></div>
+            <div className="intent-actions ro-action-row"><Button tone="primary" type="submit" disabled={busy !== null || acceptanceAttempt !== null || !egressComplete || (impact?.acknowledgementRequired === true && !acknowledged)}>{busy === "save" ? "Saving locally…" : "Save draft revision"}</Button><Button type="button" aria-expanded={showHistory} onClick={() => setShowHistory((value) => !value)}>Compare versions</Button><Button type="button" disabled>Launch gated analysis</Button></div>
             <div className="intent-acceptance">
               {acceptanceAttempt ? <Notification tone="warning" title={busy === "accept" ? "Acceptance request in progress" : "Acceptance outcome unresolved"}>Revision {acceptanceAttempt.command.expectedRevision} and content hash <code>{acceptanceAttempt.command.expectedRevisionContentHash.slice(0, 20)}…</code> remain frozen. Retry sends the same confirmed command and idempotency key; do not change the draft until Core returns the authoritative accepted revision.</Notification> : null}
               <label htmlFor="intent-acceptance-rationale">Human acceptance rationale</label>

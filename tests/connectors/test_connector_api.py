@@ -41,6 +41,32 @@ class ConnectorApiTests(fixtures.ConnectorWorkflowFixture):
             expected_authority=api.AUTHORITY,
         )
 
+    def test_inspection_api_is_bounded_authenticated_and_project_fenced(self):
+        preview, job = self.schedule()
+        with api.authenticated_client(self.app) as client:
+            address = {"root": self.root, "previewId": preview.preview_id, "recordOffset": 0}
+            self.assertEqual(
+                401,
+                client.post("/projects/connectors/inspect", json=address, headers={"Authorization": ""}).status_code,
+            )
+            for change in (
+                {"recordOffset": -1},
+                {"recordOffset": True},
+                {"recordOffset": 1000},
+                {"confirmation": "synthetic"},
+            ):
+                self.assertEqual(422, client.post("/projects/connectors/inspect", json=address | change).status_code)
+            result = client.post("/projects/connectors/inspect", json=address)
+            self.assertEqual(200, result.status_code, result.text)
+            self.assertEqual("no-store", result.headers["cache-control"])
+            self.assertEqual(job.job_id, result.json()["job"]["jobId"])
+            self.assertNotIn(preview.confirmation, result.text)
+            recent = client.post("/projects/connectors/recent", json={"root": self.root})
+            self.assertEqual(200, recent.status_code, recent.text)
+            self.assertEqual(preview.preview_id, recent.json()["items"][0]["previewId"])
+            client.post("/projects/close", json={"root": self.root})
+            self.assertNotEqual(200, client.post("/projects/connectors/inspect", json=address).status_code)
+
     def test_configuration_is_private_bounded_cas_and_never_implies_egress(self):
         address = {"root": self.root, "projectId": self.project.project_id, "providerId": "unpaywall"}
         with api.authenticated_client(self.app) as client:

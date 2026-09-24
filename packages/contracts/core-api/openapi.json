@@ -441,6 +441,89 @@
         "title": "ConnectorCursor",
         "type": "object"
       },
+      "ConnectorInspection": {
+        "additionalProperties": false,
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/ConnectorRunSummary"
+          },
+          "nextRecordOffset": {
+            "anyOf": [
+              {
+                "maximum": 999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextrecordoffset"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorObservationSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "queryJson": {
+            "maxLength": 262144,
+            "minLength": 1,
+            "title": "Queryjson",
+            "type": "string"
+          },
+          "recordOffset": {
+            "maximum": 999.0,
+            "minimum": 0.0,
+            "title": "Recordoffset",
+            "type": "integer"
+          },
+          "scientificRequestSha256": {
+            "$ref": "#/components/schemas/RequestDigest"
+          }
+        },
+        "required": [
+          "job",
+          "queryJson",
+          "scientificRequestSha256",
+          "observation",
+          "recordOffset",
+          "nextRecordOffset"
+        ],
+        "title": "ConnectorInspection",
+        "type": "object"
+      },
+      "ConnectorInspectionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "recordOffset": {
+            "maximum": 999.0,
+            "minimum": 0.0,
+            "title": "Recordoffset",
+            "type": "integer"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "recordOffset"
+        ],
+        "title": "ConnectorInspectionRequest",
+        "type": "object"
+      },
       "ConnectorJobRequest": {
         "additionalProperties": false,
         "properties": {
@@ -503,6 +586,77 @@
           "diagnosticCode"
         ],
         "title": "ConnectorJobStatus",
+        "type": "object"
+      },
+      "ConnectorObservationSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "continuation": {
+            "enum": [
+              "exhausted",
+              "next-page",
+              "retry-current",
+              "unavailable"
+            ],
+            "title": "Continuation",
+            "type": "string"
+          },
+          "fieldProjection": {
+            "const": "title-oa-locations-discovery",
+            "default": "title-oa-locations-discovery",
+            "title": "Fieldprojection",
+            "type": "string"
+          },
+          "observationId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "observedAt": {
+            "$ref": "#/components/schemas/UtcInstant"
+          },
+          "outcome": {
+            "enum": [
+              "complete",
+              "partial",
+              "failed"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "recordCount": {
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Recordcount",
+            "type": "integer"
+          },
+          "records": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectorRecord"
+            },
+            "maxItems": 1,
+            "title": "Records",
+            "type": "array"
+          },
+          "retrievedAt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UtcInstant"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "observationId",
+          "observedAt",
+          "retrievedAt",
+          "outcome",
+          "continuation",
+          "recordCount",
+          "records"
+        ],
+        "title": "ConnectorObservationSummary",
         "type": "object"
       },
       "ConnectorPolicy": {
@@ -660,6 +814,89 @@
         "title": "ConnectorPreviewRequest",
         "type": "object"
       },
+      "ConnectorProjectRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ],
+        "title": "ConnectorProjectRequest",
+        "type": "object"
+      },
+      "ConnectorRecentRuns": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectorRunSummary"
+            },
+            "maxItems": 20,
+            "title": "Items",
+            "type": "array"
+          },
+          "scope": {
+            "const": "latest-20-source-jobs-within-100-workflows",
+            "default": "latest-20-source-jobs-within-100-workflows",
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ConnectorRecentRuns",
+        "type": "object"
+      },
+      "ConnectorRecord": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/SourceField"
+            },
+            "maxItems": 256,
+            "title": "Fields",
+            "type": "array"
+          },
+          "identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderIdentifier"
+            },
+            "maxItems": 64,
+            "title": "Identifiers",
+            "type": "array"
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "rawIdentifier": {
+            "$ref": "#/components/schemas/ProviderIdentifier"
+          },
+          "retrievedAt": {
+            "$ref": "#/components/schemas/UtcInstant"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/SourceTerms"
+          }
+        },
+        "required": [
+          "providerId",
+          "rawIdentifier",
+          "identifiers",
+          "retrievedAt",
+          "fields",
+          "terms"
+        ],
+        "title": "ConnectorRecord",
+        "type": "object"
+      },
       "ConnectorRequest": {
         "additionalProperties": false,
         "properties": {
@@ -753,6 +990,70 @@
           }
         },
         "title": "ConnectorRetention",
+        "type": "object"
+      },
+      "ConnectorRunSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "diagnosticCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnosticcode"
+          },
+          "invocationId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/Operation"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "state": {
+            "enum": [
+              "runnable",
+              "claimed",
+              "running",
+              "retry-scheduled",
+              "cancelling",
+              "cancelled",
+              "failed",
+              "succeeded"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "updatedAt": {
+            "$ref": "#/components/schemas/UtcInstant"
+          },
+          "workflowRunId": {
+            "$ref": "#/components/schemas/InvocationId"
+          }
+        },
+        "required": [
+          "previewId",
+          "invocationId",
+          "jobId",
+          "workflowRunId",
+          "providerId",
+          "operation",
+          "state",
+          "updatedAt",
+          "diagnosticCode"
+        ],
+        "title": "ConnectorRunSummary",
         "type": "object"
       },
       "Count": {
@@ -6384,6 +6685,40 @@
         "title": "ShortValue",
         "type": "object"
       },
+      "SourceField": {
+        "additionalProperties": false,
+        "properties": {
+          "encoding": {
+            "enum": [
+              "text",
+              "json"
+            ],
+            "title": "Encoding",
+            "type": "string"
+          },
+          "name": {
+            "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$",
+            "title": "Name",
+            "type": "string"
+          },
+          "namespace": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "value": {
+            "maxLength": 65536,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "name",
+          "encoding",
+          "value"
+        ],
+        "title": "SourceField",
+        "type": "object"
+      },
       "SourceObservation": {
         "additionalProperties": false,
         "description": "A source-reported value or explicit absence; never a permission decision.",
@@ -8483,6 +8818,75 @@
         ]
       }
     },
+    "/projects/connectors/inspect": {
+      "post": {
+        "operationId": "inspect_projects_connectors_inspect_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorInspectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ConnectorInspection"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Inspect Projects Connectors Inspect Post"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Inspect",
+        "tags": [
+          "connectors"
+        ]
+      }
+    },
     "/projects/connectors/jobs/cancel": {
       "post": {
         "operationId": "cancel_projects_connectors_jobs_cancel_post",
@@ -8661,6 +9065,67 @@
           }
         },
         "summary": "Preview",
+        "tags": [
+          "connectors"
+        ]
+      }
+    },
+    "/projects/connectors/recent": {
+      "post": {
+        "operationId": "recent_projects_connectors_recent_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorRecentRuns"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Recent",
         "tags": [
           "connectors"
         ]

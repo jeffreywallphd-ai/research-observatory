@@ -1,0 +1,39 @@
+{
+  "root": "C:/Research/synthetic",
+  "request": {
+    "schemaVersion": "1.0",
+    "projectId": "01900000-0000-4000-8000-000000000001",
+    "invocationId": "01900000-0000-7000-8000-000000000001",
+    "providerId": "unpaywall",
+    "adapterVersion": "1.0.0",
+    "sourceApiVersion": "2",
+    "pageSize": 1,
+    "cursor": null,
+    "query": { "kind": "oa-resolution", "identifier": { "scheme": "doi", "value": "10.99999/synthetic" } },
+    "policy": {
+      "maxInflight": 1,
+      "minimumIntervalMs": 1000,
+      "maximumAttempts": 1,
+      "timeoutMs": 10000,
+      "maximumResponseBytes": 2097152,
+      "maximumRetryAfterMs": 10000,
+      "cacheMode": "bypass",
+      "maximumFreshAgeMs": 0,
+      "rawRetention": "if-permitted"
+    }
+  },
+  "retention": {
+    "rights": {
+      "store": { "value": "permitted", "basis": "researcher-confirmed" },
+      "inspect": { "value": "permitted", "basis": "researcher-confirmed" },
+      "index": { "value": "unknown", "basis": "not-reported" },
+      "derive": { "value": "unknown", "basis": "not-reported" },
+      "model-use": { "value": "unknown", "basis": "not-reported" },
+      "quote": { "value": "unknown", "basis": "not-reported" },
+      "export": { "value": "unknown", "basis": "not-reported" },
+      "share": { "value": "unknown", "basis": "not-reported" }
+    },
+    "retainBody": true,
+    "permittedFields": []
+  }
+}

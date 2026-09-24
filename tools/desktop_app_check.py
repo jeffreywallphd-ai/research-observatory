@@ -125,6 +125,7 @@ IMPLEMENTED_PRODUCT_PAGE_CONTRACTS = frozenset(
         "new-project.html",
         "project-settings.html",
         "projects.html",
+        "source-manager.html",
         "task-center.html",
     }
 )
@@ -2858,7 +2859,8 @@ def runtime_frame_errors(
                     noveltyRationale: 'Bound novelty against prior theory.', autonomyLevel: 'suggest',
                     stoppingConditions: ['interpretive-saturation'],
                     revisionRationale: 'Establish the bounded theory workflow.', unresolvedDecisions: [],
-                    decisionComplete: true, canRequestAcceptance: true, launchReady: false
+                    decisionComplete: true, canRequestAcceptance: true, launchReady: false,
+                    egressPolicy: { mode: 'local-only', approvedDestinationIds: [] }
                   };
                   let workflowStageState = null;
                   let workflowSupportingHandoff = null;

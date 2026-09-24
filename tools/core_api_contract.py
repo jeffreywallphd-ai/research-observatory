@@ -1846,8 +1846,184 @@ async function importCommitCall(transport: CoreApiTransport, route: "status" | "
   return result;
 }
 
+export const SCHOLARLY_PROVIDER_TERMS = Object.freeze({
+  openalex: "https://help.openalex.org/", crossref: "https://www.crossref.org/documentation/retrieve-metadata/rest-api/",
+  unpaywall: "https://data.unpaywall.org/products/api", "semantic-scholar": "https://www.semanticscholar.org/product/api",
+});
+
+export function decodeConnectorCapabilities(value: unknown): ConnectorCapabilitiesPage | null {
+  const page = importOwned(value);
+  if (!page || !exactKeys(page, ["items"]) || !Array.isArray(page.items) || page.items.length > 32) return null;
+  const providers = new Set<string>();
+  for (const raw of page.items) {
+    const item = record(raw);
+    if (!item || !exactKeys(item, ["schemaVersion", "providerId", "adapterVersion", "sourceApiVersion", "operations", "identifierSchemes", "maximumPageSize", "configuration", "requiredSettings"])
+      || item.schemaVersion !== "1.0" || typeof item.providerId !== "string" || !/^[a-z][a-z0-9.-]{0,127}$/.test(item.providerId)
+      || providers.has(item.providerId) || typeof item.adapterVersion !== "string" || !semver(item.adapterVersion)
+      || item.sourceApiVersion !== null && (typeof item.sourceApiVersion !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._+-]{0,127}$/.test(item.sourceApiVersion))
+      || !integer(item.maximumPageSize, 1, 1000) || !["ready", "not-configured", "unavailable"].includes(item.configuration as string)
+      || !Array.isArray(item.operations) || !item.operations.length || item.operations.length > 5
+      || !item.operations.every((v) => ["search", "lookup", "citations", "recommendations", "oa-resolution"].includes(v))
+      || new Set(item.operations).size !== item.operations.length
+      || !Array.isArray(item.identifierSchemes) || item.identifierSchemes.length > 32 || !item.identifierSchemes.every((v) => typeof v === "string" && /^[a-z][a-z0-9.-]{0,127}$/.test(v))
+      || !Array.isArray(item.requiredSettings) || item.requiredSettings.length > 2 || !item.requiredSettings.every((v) => v === "contact" || v === "provider-key")) return null;
+    providers.add(item.providerId);
+  }
+  return page as unknown as ConnectorCapabilitiesPage;
+}
+
+export function sourceTestCommand(root: string, projectId: string, provider: ConnectorCapabilities, doi: string, invocationId: string): ConnectorPreviewRequest {
+  const decoded = decodeConnectorCapabilities({ items: [provider] })?.items[0];
+  if (!decoded || decoded.configuration !== "ready" || !projectRoot(root) || !canonicalProjectId(projectId)
+    || !canonicalUuid7(invocationId) || !["openalex", "crossref", "unpaywall", "semantic-scholar"].includes(decoded.providerId)
+    || !/^10\.[0-9]{4,9}\/[^\s\u0000-\u001f\u007f]+$/i.test(doi) || doi.length > 2048) throw new Error("RO-CORE-REQUEST-INVALID");
+  const rights = Object.fromEntries(["store", "inspect", "index", "derive", "model-use", "quote", "export", "share"].map((action) => [action,
+    action === "store" || action === "inspect" ? { value: "permitted", basis: "researcher-confirmed" } : { value: "unknown", basis: "not-reported" }])) as unknown as ImportRights;
+  const identifier = { scheme: "doi", value: doi };
+  return { root, request: { schemaVersion: "1.0", projectId, invocationId, providerId: decoded.providerId,
+    adapterVersion: decoded.adapterVersion, sourceApiVersion: decoded.sourceApiVersion, pageSize: 1, cursor: null,
+    query: decoded.providerId === "unpaywall" ? { kind: "oa-resolution", identifier } : { kind: "lookup", identifiers: [identifier] },
+    policy: { maxInflight: 1, minimumIntervalMs: 1000, maximumAttempts: 1, timeoutMs: 10000, maximumResponseBytes: 2097152,
+      maximumRetryAfterMs: 10000, cacheMode: "bypass", maximumFreshAgeMs: 0, rawRetention: "if-permitted" } },
+    retention: { rights, retainBody: true, permittedFields: [] } };
+}
+
+function connectorJob(value: unknown): ConnectorJobStatus | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["jobId", "workflowRunId", "state", "diagnosticCode"]) || !canonicalUuid7(item.jobId) || !canonicalUuid7(item.workflowRunId)
+    || !["runnable", "claimed", "running", "retry-scheduled", "cancelling", "cancelled", "failed", "succeeded"].includes(item.state as string)
+    || item.diagnosticCode !== null && (typeof item.diagnosticCode !== "string" || !/^[a-zA-Z0-9-]{1,96}$/.test(item.diagnosticCode))) return null;
+  return item as unknown as ConnectorJobStatus;
+}
+
+function connectorPreview(value: unknown, command: ConnectorPreviewRequest): ConnectorPreview | null {
+  const item = importOwned(value);
+  const hosts: Record<string, string> = { openalex: "api.openalex.org", crossref: "api.crossref.org", unpaywall: "api.unpaywall.org", "semantic-scholar": "api.semanticscholar.org" };
+  if (!item || !exactKeys(item, ["previewId", "request", "requestSha256", "destinationHost", "retention", "terms", "intentRevisionId", "intentSha256", "policySha256", "expiresAt", "confirmation"])
+    || !canonicalUuid7(item.previewId) || !canonicalUuid7(item.intentRevisionId) || !contentHash(item.requestSha256) || !contentHash(item.intentSha256) || !contentHash(item.policySha256)
+    || !utcInstant(item.expiresAt) || typeof item.confirmation !== "string" || item.confirmation.length < 1 || item.confirmation.length > 128
+    || item.destinationHost !== hosts[command.request.providerId]
+    || canonicalContractJson(item.request) !== canonicalContractJson(command.request)
+    || canonicalContractJson(item.retention) !== canonicalContractJson(command.retention)) return null;
+  const terms = record(item.terms);
+  if (!terms || !exactKeys(terms, ["access", "license", "terms"]) || !["open", "closed", "unknown", "not-reported"].includes(terms.access as string)) return null;
+  for (const raw of [terms.license, terms.terms]) {
+    const observation = record(raw);
+    if (!observation || !exactKeys(observation, ["state", "value"]) || !["reported", "not-reported", "unknown", "not-applicable"].includes(observation.state as string)
+      || (observation.state === "reported" ? !importText(observation.value, 8192, 1) : observation.value !== null)) return null;
+  }
+  return item as unknown as ConnectorPreview;
+}
+
+async function sourceJobCall(transport: CoreApiTransport, route: "status" | "cancel", command: ConnectorJobRequest): Promise<ConnectorJobStatus> {
+  if (!projectRoot(command.root) || !canonicalUuid7(command.jobId)) throw new Error("RO-CORE-REQUEST-INVALID");
+  const result = await requestJson(transport, { method: "POST", path: `/projects/connectors/jobs/${route}`,
+    body: JSON.stringify({ root: command.root, jobId: command.jobId }), ifMatch: null, idempotencyKey: null }, connectorJob);
+  if (result.jobId !== command.jobId) throw new Error("RO-CORE-RESPONSE-INVALID");
+  return result;
+}
+
+function connectorRun(value: unknown): ConnectorRunSummary | null {
+  const item = record(value);
+  if (!item || !exactKeys(item, ["previewId", "invocationId", "jobId", "workflowRunId", "providerId", "operation", "state", "updatedAt", "diagnosticCode"])
+    || !canonicalUuid7(item.previewId) || !canonicalUuid7(item.invocationId) || !utcInstant(item.updatedAt)
+    || !["openalex", "crossref", "semantic-scholar", "unpaywall"].includes(item.providerId as string)
+    || !["search", "lookup", "citations", "recommendations", "oa-resolution"].includes(item.operation as string)
+    || !connectorJob({ jobId: item.jobId, workflowRunId: item.workflowRunId, state: item.state, diagnosticCode: item.diagnosticCode })) return null;
+  return item as unknown as ConnectorRunSummary;
+}
+
+export function decodeConnectorRecentRuns(value: unknown): ConnectorRecentRuns | null {
+  const page = importOwned(value);
+  if (!page || !exactKeys(page, ["items", "scope"]) || page.scope !== "latest-20-source-jobs-within-100-workflows"
+    || !Array.isArray(page.items) || page.items.length > 20 || !page.items.every(connectorRun)
+    || new Set(page.items.map((item) => item.previewId)).size !== page.items.length) return null;
+  return page as unknown as ConnectorRecentRuns;
+}
+
+function sourceIdentifier(value: unknown): boolean {
+  const item = record(value);
+  return !!item && exactKeys(item, ["scheme", "value"]) && typeof item.scheme === "string" && /^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$/.test(item.scheme) && item.scheme.length <= 128 && importText(item.value, 4096, 1);
+}
+function sourceTerms(value: unknown): boolean {
+  const item = record(value);
+  if (!item || !exactKeys(item, ["license", "terms", "access"]) || !["open", "closed", "unknown", "not-reported"].includes(item.access as string)) return false;
+  return [item.license, item.terms].every((raw) => {
+    const field = record(raw);
+    return field && exactKeys(field, ["state", "value"]) && ["reported", "unknown", "not-reported", "not-applicable"].includes(field.state as string)
+      && (field.state === "reported" ? importText(field.value, 65536, 1) : field.value === null);
+  });
+}
+
+export function decodeConnectorInspection(value: unknown): ConnectorInspection | null {
+  const item = importOwned(value);
+  if (!item || !exactKeys(item, ["job", "queryJson", "scientificRequestSha256", "observation", "recordOffset", "nextRecordOffset"])
+    || !connectorRun(item.job) || !importText(item.queryJson, 262144, 1) || !contentHash(item.scientificRequestSha256)
+    || !integer(item.recordOffset, 0, 999) || item.nextRecordOffset !== null && item.nextRecordOffset !== (item.recordOffset as number) + 1) return null;
+  const job = item.job as ConnectorRunSummary;
+  try { if (record(JSON.parse(item.queryJson as string))?.kind !== job.operation) return null; } catch { return null; }
+  if (item.observation === null) {
+    if (item.recordOffset !== 0 || item.nextRecordOffset !== null) return null;
+  } else {
+    const page = record(item.observation);
+    if (!page || !exactKeys(page, ["observationId", "observedAt", "retrievedAt", "outcome", "continuation", "recordCount", "records", "fieldProjection"])
+      || !canonicalUuid7(page.observationId) || !utcInstant(page.observedAt) || page.retrievedAt !== null && !utcInstant(page.retrievedAt)
+      || !["complete", "partial", "failed"].includes(page.outcome as string) || !["exhausted", "next-page", "retry-current", "unavailable"].includes(page.continuation as string)
+      || !integer(page.recordCount, 0, 1000) || !Array.isArray(page.records) || page.records.length !== (page.recordCount ? 1 : 0)
+      || (item.recordOffset as number) >= Math.max(1, page.recordCount as number)
+      || item.nextRecordOffset !== ((item.recordOffset as number) + 1 < (page.recordCount as number) ? (item.recordOffset as number) + 1 : null)
+      || page.fieldProjection !== "title-oa-locations-discovery") return null;
+    for (const raw of page.records) {
+      const row = record(raw);
+      if (!row || !exactKeys(row, ["providerId", "rawIdentifier", "identifiers", "retrievedAt", "fields", "terms"])
+        || row.providerId !== job.providerId || row.retrievedAt !== page.retrievedAt || !sourceIdentifier(row.rawIdentifier)
+        || !Array.isArray(row.identifiers) || row.identifiers.length > 64 || !row.identifiers.every(sourceIdentifier)
+        || !sourceTerms(row.terms) || !Array.isArray(row.fields) || row.fields.length > 3) return null;
+      const names = new Set<string>();
+      for (const entry of row.fields) {
+        const field = record(entry);
+        if (!field || !exactKeys(field, ["namespace", "name", "encoding", "value"]) || field.namespace !== job.providerId
+          || !["candidate.title", "candidate.oa-locations", "candidate.discovery"].includes(field.name as string) || names.has(field.name as string)
+          || !["text", "json"].includes(field.encoding as string) || !importText(field.value, 65536, 0)) return null;
+        names.add(field.name as string);
+        if (field.encoding === "json") { try { JSON.parse(field.value as string); } catch { return null; } }
+      }
+    }
+  }
+  return item as unknown as ConnectorInspection;
+}
+
 export function createCoreApiClient(transport: CoreApiTransport) {
   return Object.freeze({
+    async recentSourceRequests(command: ConnectorProjectRequest): Promise<ConnectorRecentRuns> {
+      if (!projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, { method: "POST", path: "/projects/connectors/recent", body: JSON.stringify({ root: command.root }), ifMatch: null, idempotencyKey: null }, decodeConnectorRecentRuns);
+    },
+    async inspectSourceRequest(command: ConnectorInspectionRequest): Promise<ConnectorInspection | null> {
+      if (!projectRoot(command.root) || !canonicalUuid7(command.previewId) || !integer(command.recordOffset, 0, 999)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/connectors/inspect", body: JSON.stringify({ root: command.root, previewId: command.previewId, recordOffset: command.recordOffset }), ifMatch: null, idempotencyKey: null }, (value) => {
+        if (value === null) return { inspection: null };
+        const inspection = decodeConnectorInspection(value);
+        return inspection ? { inspection } : null;
+      });
+      if (result.inspection && (result.inspection.job.previewId !== command.previewId || result.inspection.recordOffset !== command.recordOffset)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result.inspection;
+    },
+    async connectorCapabilities(): Promise<ConnectorCapabilitiesPage> {
+      return await requestJson(transport, { method: "GET", path: "/projects/connectors/capabilities", body: null, ifMatch: null, idempotencyKey: null }, decodeConnectorCapabilities);
+    },
+    async previewSourceTest(command: ConnectorPreviewRequest): Promise<ConnectorPreview> {
+      const owned = importOwned(command);
+      if (!owned || !exactKeys(owned, ["root", "request", "retention"]) || !projectRoot(owned.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const snapshot = owned as unknown as ConnectorPreviewRequest;
+      return await requestJson(transport, { method: "POST", path: "/projects/connectors/previews", body: JSON.stringify(snapshot), ifMatch: null, idempotencyKey: null }, (value) => connectorPreview(value, snapshot));
+    },
+    async confirmSourceTest(command: ConnectorConfirmationRequest): Promise<ConnectorJobStatus> {
+      if (!projectRoot(command.root) || !canonicalUuid7(command.previewId) || typeof command.confirmation !== "string" || !command.confirmation.length || command.confirmation.length > 128) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, { method: "POST", path: "/projects/connectors/confirmations", body: JSON.stringify({ root: command.root, previewId: command.previewId, confirmation: command.confirmation }), ifMatch: null, idempotencyKey: null }, connectorJob);
+    },
+    async sourceTestStatus(command: ConnectorJobRequest): Promise<ConnectorJobStatus> { return await sourceJobCall(transport, "status", command); },
+    async cancelSourceTest(command: ConnectorJobRequest): Promise<ConnectorJobStatus> { return await sourceJobCall(transport, "cancel", command); },
     async latestImportCommit(value: ImportAddress): Promise<ImportCommitStatus | null> {
       const command = importCommand(value);
       if (!exactKeys(command, ["root", "previewId"])) throw new Error("RO-CORE-REQUEST-INVALID");
