@@ -59,6 +59,8 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.connectors.adapters",
                     "research_observatory_core.connectors.broker",
                     "research_observatory_core.connectors.providers",
+                    "research_observatory_core.connectors.settings",
+                    "research_observatory_core.connectors.inspection",
                     "research_observatory_core.connectors.transport",
                     "research_observatory_core.connectors.workflow",
                     "research_observatory_core.ports.connector_runtime",
@@ -281,6 +283,8 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 self.assertNotIn(f"'{archived_module}'", archive.stdout)
             for required_module in (
                 "alembic.operations",
+                "research_observatory_core.connectors.settings",
+                "research_observatory_core.connectors.inspection",
                 "research_observatory_core.migrations.runner",
                 "research_observatory_core.migrations.versions.v0002_schema_history",
                 "research_observatory_core.migrations.versions.v0003_object_envelopes",
