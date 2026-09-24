@@ -997,9 +997,11 @@ print(len(fields))
                 self.outgoing(remote, self.base, old=old, ref=ref)
         with self.assertRaisesRegex(ValueError, "Git input"):
             self.outgoing(self.repo / "missing.git", self.base)
-        with patch.object(guard, "git", side_effect=subprocess.TimeoutExpired("git", 30)):
-            with self.assertRaises(subprocess.TimeoutExpired):
-                self.outgoing(remote, self.base)
+        with (
+            patch.object(guard, "git", side_effect=subprocess.TimeoutExpired("git", 30)),
+            self.assertRaises(subprocess.TimeoutExpired),
+        ):
+            self.outgoing(remote, self.base)
 
     def test_incremental_advertisement_validation_and_unknown_objects(self) -> None:
         original = guard.git
