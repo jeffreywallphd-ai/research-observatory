@@ -3,6 +3,7 @@ html { color-scheme: light; background: var(--canvas); }
 html[data-theme="dark"] { color-scheme: dark; }
 body { margin: 0; min-width: 20rem; color: var(--text-default); background: var(--canvas); font: 400 var(--text-md) / var(--leading-normal) var(--font-sans); }
 a { color: var(--brand-700); }
+:where(html[data-theme="dark"]) a { color: var(--brand-400); }
 .application-shell { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; }
 .skip-link { position: fixed; z-index: 30; inset-block-start: var(--space-2); inset-inline-start: var(--space-2); padding: var(--space-2) var(--space-3); color: var(--text-inverse); background: var(--brand-600); border-radius: var(--radius-sm); transform: translateY(-180%); }
 .skip-link:focus { transform: translateY(0); }

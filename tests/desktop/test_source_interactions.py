@@ -6,14 +6,19 @@ Those boundaries have separate native/runtime integration checks.
 
 from __future__ import annotations
 
+import hashlib
+import importlib.metadata
 import json
+import tempfile
 import unittest
+from pathlib import Path
 from typing import Any
 
 from playwright.sync_api import expect, sync_playwright
 from research_observatory_core.connectors.providers import HOSTS, capabilities
 
 from tests.desktop import test_model_center_interactions as fixtures
+from tests.desktop.test_import_visual import TEXT_COLORS, contrast_ratio, font_face_available, git
 
 REPO = fixtures.REPO
 inline_product_index = fixtures.inline_product_index
@@ -235,6 +240,112 @@ class SourceInteractionTests(unittest.TestCase):
                         context.close()
             finally:
                 browser.close()
+
+    def test_source_contrast_reflow_and_controlled_theme_captures(self) -> None:
+        self.assertEqual([], product_build_errors(REPO))
+        head = git("rev-parse", "HEAD")
+        fixture = Path(tempfile.mkdtemp(prefix="source-visual-", dir=REPO / "artifacts/tmp"))
+        report: dict[str, Any] = {
+            "status": "RUNNING",
+            "head": head,
+            "workingTreeCleanAtStart": git("status", "--porcelain") == "",
+            "samples": [],
+            "screenshots": [],
+            "rendering": {"deviceScaleFactor": 1, "locale": "en-US", "timezone": "UTC", "reducedMotion": "reduce"},
+            "scope": "Built Source Manager with native/Core doubles; no native or provider proof",
+        }
+        document = inline_product_index(REPO)
+        report["builtDocumentSha256"] = hashlib.sha256(document.encode()).hexdigest()
+        visual = json.loads((REPO / "verification/extensions/desktop-ui.json").read_text("utf-8"))["visual"]
+        try:
+            with sync_playwright() as playwright:
+                browser = playwright.chromium.launch(headless=True)
+                try:
+                    self.assertEqual(visual["browserVersion"], browser.version)
+                    self.assertEqual(visual["playwrightVersion"], importlib.metadata.version("playwright"))
+                    report.update(browser=browser.version, playwright=importlib.metadata.version("playwright"))
+                    for theme in ("light", "dark"):
+                        context = browser.new_context(
+                            viewport={"width": 1440, "height": 900},
+                            device_scale_factor=1,
+                            locale="en-US",
+                            timezone_id="UTC",
+                            reduced_motion="reduce",
+                        )
+                        page, errors = self.supporting_workflow_page(context, document)
+                        if theme == "dark":
+                            page.locator("[data-theme-toggle]").click()
+                        region = self.open_sources(page)
+                        expect(page.locator("html")).to_have_attribute("data-theme", theme)
+                        report["fonts"] = {font: font_face_available(page, font) for font in visual["requiredFonts"]}
+                        self.assertTrue(all(report["fonts"].values()))
+                        for state in ("inventory", "inspection"):
+                            if state == "inspection":
+                                self.preview(page)
+                                page.evaluate("__SOURCE_TEST__.uncertain = true")
+                                page.get_by_role("button", name="Send this DOI to unpaywall", exact=True).click()
+                                expect(
+                                    page.get_by_role("heading", name="Submission outcome unconfirmed", exact=True)
+                                ).to_be_visible()
+                                page.evaluate("__SOURCE_TEST__.observed = true")
+                                page.get_by_role("button", name="Inspect this source request", exact=True).click()
+                                expect(
+                                    page.get_by_role("heading", name="Source record 1 of 2", exact=True)
+                                ).to_be_visible()
+                            for width, height in ((1440, 900), (1280, 720), (720, 450)):
+                                page.set_viewport_size({"width": width, "height": height})
+                                page.evaluate("() => document.fonts.ready")
+                                geometry = region.evaluate("""el => ({
+                                  viewport: document.documentElement.clientWidth,
+                                  document: document.documentElement.scrollWidth,
+                                  left: el.getBoundingClientRect().left,
+                                  right: el.getBoundingClientRect().right})""")
+                                self.assertLessEqual(geometry["document"], geometry["viewport"] + 1)
+                                self.assertGreaterEqual(geometry["left"], 0)
+                                self.assertLessEqual(geometry["right"], geometry["viewport"] + 1)
+                                colors = region.evaluate(TEXT_COLORS)
+                                self.assertGreater(len(colors), 30)
+                                for color in colors:
+                                    color["ratio"] = contrast_ratio(color["foreground"], color["background"])
+                                report["samples"].append(
+                                    {
+                                        "state": state,
+                                        "theme": theme,
+                                        "width": width,
+                                        "height": height,
+                                        "geometry": geometry,
+                                        "textColors": colors,
+                                    }
+                                )
+                                self.assertTrue(
+                                    all(color["ratio"] >= color["minimum"] for color in colors),
+                                    [color for color in colors if color["ratio"] < color["minimum"]],
+                                )
+                                target = region if state == "inventory" else page.locator("[data-source-inspection]")
+                                capture = fixture / f"{state}-{theme}-{width}.png"
+                                target.screenshot(path=str(capture), animations="disabled")
+                                report["screenshots"].append(
+                                    {
+                                        "path": capture.relative_to(REPO).as_posix(),
+                                        "sha256": hashlib.sha256(capture.read_bytes()).hexdigest(),
+                                    }
+                                )
+                        self.assertEqual([], errors)
+                        context.close()
+                finally:
+                    browser.close()
+            self.assertEqual(head, git("rev-parse", "HEAD"))
+            report["status"] = "PASS"
+        except BaseException as error:
+            report.update(status="FAIL", failureType=type(error).__name__)
+            raise
+        finally:
+            (fixture / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+            print(
+                json.dumps(
+                    {"report": (fixture / "result.json").relative_to(REPO).as_posix(), "status": report["status"]}
+                )
+            )
 
     def test_intent_egress_requires_explicit_destinations_and_fresh_impact(self) -> None:
         self.assertEqual([], product_build_errors(REPO))

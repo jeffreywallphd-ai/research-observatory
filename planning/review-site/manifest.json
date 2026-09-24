@@ -13943,7 +13943,7 @@
               "plan_section_sha256": "ba16017acd86adfcd1a293aa0a452e3f974cd5edf014fb7ef3f2e3abc37124cb",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-04.S02.T03.task-start.md",
-                "sha256": "d3afa21bbb9cd739fce32f5dc29df5c7799b4cbc1dbe1409b08ef6f47994f9d9"
+                "sha256": "b3c00ece15aff506f5e4d0e11aa206c09084f031a16dfc0e372d8a8807c0ef04"
               }
             }
           ]

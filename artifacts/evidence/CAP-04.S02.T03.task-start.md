@@ -90,3 +90,11 @@ failing/passing native regression adds only that exact route, with no body,
 query, conditional header or idempotency key; project-root restrictions remain.
 The window closed cleanly with no pending dialog. Native settings interaction
 is still pending; no provider request or ordinary user-profile access occurred.
+
+Focused rendered contrast/reflow qualification exposed a material accessibility
+gap: Source Manager policy links inherited the shell's light-theme link token
+in dark mode (3.595:1 on the card background, below the required 4.5:1).
+The missing acceptance check is actual rendered link contrast in both themes,
+not token-name parity alone. Reuse the approved dark brand token in the existing
+shared link rule; retain the failing report and require contrast, reflow and
+theme captures at all three supported desktop widths before disposition.
