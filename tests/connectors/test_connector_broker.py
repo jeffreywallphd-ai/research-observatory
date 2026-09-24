@@ -125,7 +125,7 @@ class Secrets:
         raise AssertionError("the connector must never write authentication material")
 
 
-class ConnectorBrokerTests(unittest.IsolatedAsyncioTestCase):
+class ConnectorBrokerFixture(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.clock, self.authority, self.repository, self.cancel = Clock(), Authority(), Repository(), Cancellation()
         self.calls = []
@@ -149,6 +149,8 @@ class ConnectorBrokerTests(unittest.IsolatedAsyncioTestCase):
             **kwargs,
         )
 
+
+class ConnectorBrokerTests(ConnectorBrokerFixture):
     async def test_denial_before_secret_cache_and_network(self):
         self.authority.denied = True
         secrets = Secrets()

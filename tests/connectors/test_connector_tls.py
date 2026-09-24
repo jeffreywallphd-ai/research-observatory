@@ -71,7 +71,7 @@ class ConnectorTlsTests(unittest.IsolatedAsyncioTestCase):
                 "-subj",
                 "/CN=api.openalex.org",
                 "-addext",
-                "subjectAltName=DNS:api.openalex.org",
+                "subjectAltName=DNS:api.openalex.org,DNS:api.semanticscholar.org",
                 "-keyout",
                 str(key_path),
                 "-out",
@@ -94,7 +94,17 @@ class ConnectorTlsTests(unittest.IsolatedAsyncioTestCase):
         async def serve(reader, writer):
             try:
                 self.negotiated.append(writer.get_extra_info("ssl_object").version())
-                self.received.append(await asyncio.wait_for(reader.readuntil(b"\r\n\r\n"), timeout=3))
+                head = await asyncio.wait_for(reader.readuntil(b"\r\n\r\n"), timeout=3)
+                length = next(
+                    (
+                        int(line.split(b":", 1)[1])
+                        for line in head.split(b"\r\n")
+                        if line.lower().startswith(b"content-length:")
+                    ),
+                    0,
+                )
+                body = await asyncio.wait_for(reader.readexactly(length), timeout=3)
+                self.received.append(head + body)
                 writer.write(self.response)
                 await writer.drain()
             finally:
@@ -109,7 +119,7 @@ class ConnectorTlsTests(unittest.IsolatedAsyncioTestCase):
         self.server.close()
         await self.server.wait_closed()
 
-    async def exchange(self, *, trusted, host="api.openalex.org"):
+    async def exchange(self, *, trusted, host="api.openalex.org", method="GET", path="/works", body=b""):
         client_context = ssl.create_default_context()
         if trusted:
             client_context.load_verify_locations(cadata=self.pem.decode("ascii"))
@@ -129,8 +139,10 @@ class ConnectorTlsTests(unittest.IsolatedAsyncioTestCase):
                 with private_wire():
                     response = await transport.handle_async_request(
                         httpx2.Request(
-                            "GET",
-                            f"https://{host}/works",
+                            method,
+                            f"https://{host}{path}",
+                            content=body,
+                            headers={"Content-Type": "application/json"} if body else {},
                             extensions={"timeout": {key: 3.0 for key in ("connect", "read", "write", "pool")}},
                         )
                     )
@@ -148,6 +160,19 @@ class ConnectorTlsTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([("93.184.216.34", 443)], self.backend.targets)
         self.assertIn(b"Host: api.openalex.org\r\n", self.received[0])
         self.assertTrue(all(value in {"TLSv1.2", "TLSv1.3"} for value in self.negotiated))
+
+    async def test_recommendation_post_sends_exact_seed_bytes_over_verified_tls(self):
+        body = json.dumps({"positivePaperIds": ["a" * 40], "negativePaperIds": ["b" * 40]}).encode()
+        result = await self.exchange(
+            trusted=True,
+            host="api.semanticscholar.org",
+            method="POST",
+            path="/recommendations/v1/papers?limit=2&fields=title",
+            body=body,
+        )
+        self.assertEqual({"ok": True}, result)
+        self.assertTrue(self.received[0].startswith(b"POST /recommendations/v1/papers?"))
+        self.assertEqual(body, self.received[0].split(b"\r\n\r\n", 1)[1])
 
     async def test_untrusted_and_wrong_host_certificates_never_send_http(self):
         for trusted, host in ((False, "api.openalex.org"), (True, "api.crossref.org")):

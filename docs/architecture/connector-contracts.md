@@ -136,3 +136,33 @@ Tests use synthetic provider responses, actual local protected persistence and
 an isolated real TLS transport boundary. These are not live-provider, native UI
 or production-package claims; remaining adapters and slice/Wave qualification
 retain their own obligations.
+
+## OA and graph adapters — CAP-04.S02.T03
+
+Unpaywall resolves one DOI with API v2 and preserves every reported OA location,
+host, license and version. Semantic Scholar API v1 supports one-paper lookup,
+directed citations/references and positive/negative-seed recommendations. Graph
+assertions retain the seed/direction and raw edge; null edges, mismatched IDs,
+duplicate papers or non-advancing offsets are failures, not complete coverage.
+Recommendation requests use a bounded JSON POST to the one fixed HTTPS endpoint;
+other provider operations retain GET. No returned OA URL is fetched here.
+
+The existing Windows profile vault holds one strict, versioned `connector-token`
+connection record per provider. Complete compare-and-swap replacement makes key
+and contact updates atomic; explicit null clears a value. Missing optional
+configuration allows keyless access; missing Unpaywall contact is not-configured.
+Corrupt, inaccessible or lost-root configuration is unavailable, never keyless
+fallback. Profile values stay separate from project data and scientific replay.
+
+Authenticated native-only configuration routes accept bounded replacements and
+return only presence, availability and opaque CAS versions. They are excluded
+from public OpenAPI and the renderer's generic bridge. Saving is a local action,
+not consent or a connection test. The broker checks current operation authority
+before configuration access/cache/replay and re-leases values on every retry.
+Unpaywall contact uses `email`; Semantic Scholar credentials use `x-api-key`.
+Injected values and encoded echoes are removed before source publication.
+
+The CAP-04.S02.T03 working checkpoint covers synthetic mappings, real isolated
+DPAPI, normal Core/worker/protected-project restart, and synthetic verified TLS.
+Native configuration entry, source-page UX and final task/slice qualification
+remain unfinished; these checks are not live-provider evidence.

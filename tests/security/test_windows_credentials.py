@@ -125,6 +125,18 @@ class WindowsCredentialStoreTests(unittest.TestCase):
         protected.write_bytes(original)
         self.assertEqual(first, WindowsLocalActorIdentityProvider(self.vault).actor_id())
 
+    def test_missing_root_does_not_reinitialize_over_retained_records(self) -> None:
+        store = WindowsCredentialStore(self.vault, audit_sink=self.events.append)
+        store.put(reference(), b"synthetic-retained-material", context())
+        sealed = {path: path.read_bytes() for path in self.vault.rglob("*.sealed")}
+        roots = tuple(self.vault.glob("*.dpapi"))
+        self.assertEqual(1, len(roots))
+        roots[0].unlink()
+        with self.assertRaises(SecretUnavailable):
+            store.lease_record(reference(), context())
+        self.assertFalse(roots[0].exists(), "Lost root must not be replaced above retained ciphertext")
+        self.assertEqual(sealed, {path: path.read_bytes() for path in sealed})
+
     def test_corruption_and_os_unprotect_failure_retain_recoverable_ciphertext(self) -> None:
         secret = b"recoverable-secret-material"
         store = WindowsCredentialStore(self.vault, audit_sink=self.events.append)

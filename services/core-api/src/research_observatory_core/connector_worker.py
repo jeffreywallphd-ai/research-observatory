@@ -16,11 +16,13 @@ import httpx2
 from .connector_service import ConnectorConsentService, _Pending
 from .connectors.broker import ConnectorBroker, ProviderRateController, utc_now
 from .connectors.providers import ProviderProblem
+from .connectors.settings import ConnectorConnectionStatus, ConnectorSettings
 from .connectors.transport import PublicHTTPTransport
 from .connectors.workflow import ACTIVITY, ConnectorJobInput, bind_connector_claim, build_connector_job
 from .domain_contracts import is_uuid_v7
 from .logging import emit_log_record
 from .ports.connector_runtime import ConnectorAuthority, ConnectorOperationRepository, ConnectorPublication
+from .ports.credential_store import SecretAccessContext
 from .ports.workflow_executor import (
     WorkflowActor,
     WorkflowJobAuthority,
@@ -119,6 +121,7 @@ class ConnectorWorkerService:
         adapters: Callable[[Path, str], ConnectorWorkerAdapters],
         *,
         local_actor_id: str,
+        settings: ConnectorSettings | None = None,
         now: Callable[[], str] = utc_now,
         clock: Callable[[], float] = time.monotonic,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
@@ -127,6 +130,7 @@ class ConnectorWorkerService:
         if not is_uuid_v7(local_actor_id):
             raise ProviderProblem("policy-denied")
         self.consent, self._projects, self._adapters = consent, projects, adapters
+        self.settings = settings if settings is not None else ConnectorSettings(None)
         self._actor_id, self._now, self._clock, self._sleep = local_actor_id, now, clock, sleep
         self._transport_factory, self._rates = transport_factory, ProviderRateController(clock=clock)
         self._mutex, self._runner = threading.RLock(), threading.Lock()
@@ -136,6 +140,42 @@ class ConnectorWorkerService:
 
     def _actor(self) -> WorkflowActor:
         return WorkflowActor(self._actor_id, "human", "local-researcher")
+
+    def connection_status(self, root: str, project_id: str, provider: str) -> ConnectorConnectionStatus:
+        def status(binding: _WorkerBinding) -> ConnectorConnectionStatus:
+            if binding.project_id != project_id:
+                raise ProviderProblem("policy-denied")
+            return self.settings.status(provider)
+
+        return self._action(root, status)
+
+    def configure_connection(
+        self,
+        root: str,
+        project_id: str,
+        provider: str,
+        *,
+        key: str | None,
+        contact: str | None,
+        expected_version: str | None,
+        context: SecretAccessContext,
+        preserve_key: bool = False,
+        preserve_contact: bool = False,
+    ) -> ConnectorConnectionStatus:
+        def configure(binding: _WorkerBinding) -> ConnectorConnectionStatus:
+            if binding.project_id != project_id:
+                raise ProviderProblem("policy-denied")
+            return self.settings.replace(
+                provider,
+                key=key,
+                contact=contact,
+                expected_version=expected_version,
+                context=context,
+                preserve_key=preserve_key,
+                preserve_contact=preserve_contact,
+            )
+
+        return self._action(root, configure)
 
     def _action[Result](self, root: str, action: Callable[[_WorkerBinding], Result]) -> Result:
         def bound(path: Path, identity: str) -> Result:
@@ -271,6 +311,7 @@ class ConnectorWorkerService:
                     repository=binding.adapters.pages,
                     rates=self._rates,
                     transport=self._transport_factory(),
+                    settings=self.settings,
                     now=self._now,
                     sleep=self._sleep,
                     publication=ConnectorPublication(

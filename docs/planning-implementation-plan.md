@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2e8c0fcba4f1e29dc5d99d999b579124d9a6d1a37f74a1a0e8887915491cd59a
+source_sha256: 04d33e568d673472e6f932231c30162792cabdc5dde9b638e4089dd0e47e32cc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8158,13 +8158,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S02.T03 - Implement Unpaywall and Semantic Scholar adapters
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S02.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Open-access location resolution, academic graph lookup, citations/references, and related-paper recommendations with policy controls.
 

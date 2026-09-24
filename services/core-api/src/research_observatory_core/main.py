@@ -23,6 +23,7 @@ from .config import CoreSettings
 from .connector_repository import ConnectorRepository
 from .connector_service import ConnectorConsentService, ConnectorProjectAdapters
 from .connector_worker import ConnectorWorkerAdapters, ConnectorWorkerService
+from .connectors.settings import ConnectorSettings
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
@@ -59,9 +60,11 @@ from .storage import (
 )
 from .task_center import TaskCenterService
 from .windows_credentials import (
+    WindowsCredentialStore,
     create_windows_database_key_provider,
     create_windows_local_actor_identity,
     create_windows_object_key_provider,
+    default_windows_profile_vault_path,
 )
 from .workflow_executor import LocalAdmissionController, ProjectWorkerPolicy, WorkerResources
 from .workflow_progress import WorkflowProgressService
@@ -72,6 +75,7 @@ STARTING_DIAGNOSTIC_CODE = "RO-CORE-STARTING"
 _DEFAULT_OBJECT_KEY_PROVIDER = object()
 _DEFAULT_DATABASE_KEY_PROVIDER = object()
 _DEFAULT_LOCAL_ACTOR_ID = object()
+_DEFAULT_CONNECTOR_SETTINGS = object()
 
 
 def create_runtime_app(
@@ -84,6 +88,7 @@ def create_runtime_app(
     local_actor_id: str | None | object = _DEFAULT_LOCAL_ACTOR_ID,
     profile_vault_root: Path | None = None,
     workflow_context: NativeWorkflowContext | None = None,
+    connector_settings: ConnectorSettings | None | object = _DEFAULT_CONNECTOR_SETTINGS,
 ) -> FastAPI:
     """Compose Core with the Windows profile vault and mandatory pre-open upgrades."""
 
@@ -207,7 +212,24 @@ def create_runtime_app(
             ),
             local_actor_id=resolved_actor_id,
         )
-        connectors = ConnectorWorkerService(projects, consent, connector_adapters, local_actor_id=resolved_actor_id)
+        resolved_connector_settings: ConnectorSettings | None
+        if connector_settings is _DEFAULT_CONNECTOR_SETTINGS:
+            resolved_connector_settings = ConnectorSettings(
+                WindowsCredentialStore(profile_vault_root or default_windows_profile_vault_path())
+                if os.name == "nt"
+                else None
+            )
+        elif connector_settings is None or isinstance(connector_settings, ConnectorSettings):
+            resolved_connector_settings = connector_settings
+        else:
+            raise ValueError("connector settings authority is invalid")
+        connectors = ConnectorWorkerService(
+            projects,
+            consent,
+            connector_adapters,
+            local_actor_id=resolved_actor_id,
+            settings=resolved_connector_settings,
+        )
     return create_app(
         settings=settings,
         capability_digest=capability_digest,

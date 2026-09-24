@@ -440,8 +440,15 @@ class WindowsCredentialStore(CredentialStore):
                 staging.unlink()
 
     def _root_key(self) -> bytearray:
-        root_file, _records = self._ensure_root()
+        root_file, records = self._ensure_root()
         if not root_file.exists():
+            # Called under the vault lock. A lost root cannot make existing
+            # encrypted records appear to be absent under a newly generated key.
+            try:
+                if next(records.iterdir(), None) is not None:
+                    raise SecretUnavailable("Windows credential protection is unavailable")
+            except OSError:
+                raise SecretUnavailable("Windows credential protection is unavailable") from None
             key = bytearray(secrets.token_bytes(_ROOT_KEY_BYTES))
             plaintext = bytearray(_ROOT_MAGIC + key + hashlib.sha256(_ROOT_MAGIC + key).digest())
             try:

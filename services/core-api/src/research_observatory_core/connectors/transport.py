@@ -124,20 +124,49 @@ class PublicHTTPTransport(httpx2.AsyncBaseTransport):
 
     async def handle_async_request(self, request: httpx2.Request) -> httpx2.Response:
         if (
-            request.method != "GET"
-            or request.url.scheme != "https"
+            request.url.scheme != "https"
             or request.url.host not in HOSTS.values()
             or request.url.port not in (None, 443)
             or request.url.userinfo
             or request.url.fragment
         ):
             raise ProviderProblem("policy-denied")
+        try:
+            content = request.content
+        except httpx2.RequestNotRead:
+            raise ProviderProblem("policy-denied") from None
+        if request.method == "POST":
+            if (
+                request.url.host != HOSTS["semantic-scholar"]
+                or request.url.path != "/recommendations/v1/papers"
+                or len(content) > 128 * 1024
+                or request.headers.get("content-type") != "application/json"
+            ):
+                raise ProviderProblem("policy-denied")
+            payload = bounded_json(content)
+            if not isinstance(payload, dict) or set(payload) != {"positivePaperIds", "negativePaperIds"}:
+                raise ProviderProblem("policy-denied")
+            for name, minimum in (("positivePaperIds", 1), ("negativePaperIds", 0)):
+                values = payload[name]
+                if (
+                    not isinstance(values, list)
+                    or not minimum <= len(values) <= 100
+                    or any(
+                        not isinstance(value, str)
+                        or not 1 <= len(value) <= 4100
+                        or re.fullmatch(r"[0-9a-f]{40}|DOI:10\.[0-9]{4,9}/[^\s]+", value) is None
+                        for value in values
+                    )
+                ):
+                    raise ProviderProblem("policy-denied")
+        elif request.method != "GET" or content:
+            raise ProviderProblem("policy-denied")
         response = await self._pool.handle_async_request(
             httpcore2.Request(
-                method="GET",
+                method=request.method,
                 url=httpcore2.URL(scheme=b"https", host=request.url.raw_host, port=443, target=request.url.raw_path),
                 headers=request.headers.raw,
-                content=b"",
+                content=content,
                 extensions={"timeout": request.extensions["timeout"]},
             )
         )

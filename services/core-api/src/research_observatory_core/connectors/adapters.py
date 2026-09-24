@@ -5,7 +5,7 @@ from __future__ import annotations
 from ..ports.connectors import ConnectorAdapter, ConnectorCancellation, ConnectorFailure
 from .broker import ConnectorBroker
 from .contracts import ConnectorCapabilities, ConnectorError, ConnectorRequest, ConnectorResultPage
-from .providers import capabilities
+from .providers import HOSTS, capabilities
 
 
 class ScholarlyAdapter:
@@ -24,4 +24,4 @@ class ScholarlyAdapter:
 
 
 def scholarly_adapters(broker: ConnectorBroker) -> tuple[ConnectorAdapter, ...]:
-    return tuple(ScholarlyAdapter(provider, broker) for provider in ("openalex", "crossref"))
+    return tuple(ScholarlyAdapter(provider, broker) for provider in HOSTS)

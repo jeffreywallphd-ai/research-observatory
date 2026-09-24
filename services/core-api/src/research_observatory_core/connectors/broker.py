@@ -45,6 +45,7 @@ from .contracts import (
     ResponseRetention,
 )
 from .providers import MappedPage, ProviderProblem, WireQuery, compile_request, map_response, source_terms
+from .settings import ConnectorSettings
 from .transport import PublicHTTPTransport, bounded_json, private_wire, read_response, sanitize
 
 
@@ -144,6 +145,7 @@ class ConnectorBroker:
         credentials: CredentialStore | None = None,
         key_references: dict[str, SecretReference] | None = None,
         contact_references: dict[str, SecretReference] | None = None,
+        settings: ConnectorSettings | None = None,
         now: Callable[[], str] = utc_now,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
         publication: ConnectorPublication | None = None,
@@ -152,6 +154,9 @@ class ConnectorBroker:
         self._transport = transport or PublicHTTPTransport()
         self._credentials = credentials
         self._keys, self._contacts = dict(key_references or {}), dict(contact_references or {})
+        if settings is not None and (credentials is not None or self._keys or self._contacts):
+            raise ValueError("connector-private-configuration-conflict")
+        self._settings = settings
         self._now, self._sleep = now, sleep
         self._publication = publication
 
@@ -202,18 +207,39 @@ class ConnectorBroker:
             private_values = []
 
             def credentials(current):
-                if request.provider_id in self._keys:
-                    if request.provider_id != "openalex":
-                        raise ProviderProblem("unsupported-operation")
-                    key = self._secret(self._keys[request.provider_id], request, stack)
+                key = contact = None
+                if self._settings is not None:
+                    connection = stack.enter_context(
+                        self._settings.lease(
+                            request.provider_id,
+                            SecretAccessContext(
+                                "CAP-04.S02",
+                                SecretPurpose.CONNECTOR_AUTHENTICATION,
+                                request.invocation_id.replace("-", ""),
+                            ),
+                        )
+                    )
+                    key, contact = connection.key, connection.contact
+                else:
+                    if request.provider_id in self._keys:
+                        key = self._secret(self._keys[request.provider_id], request, stack)
+                    if request.provider_id in self._contacts:
+                        contact = self._secret(self._contacts[request.provider_id], request, stack)
+                if key is not None:
                     private_values.append(key)
-                    headers["Authorization"] = "Bearer " + key
-                if request.provider_id in self._contacts:
-                    contact = self._secret(self._contacts[request.provider_id], request, stack)
+                    if request.provider_id == "openalex":
+                        headers["Authorization"] = "Bearer " + key
+                    elif request.provider_id == "semantic-scholar":
+                        headers["x-api-key"] = key
+                    else:
+                        raise ProviderProblem("unsupported-operation")
+                if contact is not None:
                     if re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", contact) is None:
                         raise ProviderProblem("not-configured")
                     private_values.append(contact)
-                    pairs.append(("mailto", contact))
+                    pairs.append(("email" if request.provider_id == "unpaywall" else "mailto", contact))
+                elif request.provider_id == "unpaywall":
+                    raise ProviderProblem("not-configured")
 
             self._guard(request, "dispatch", stamp, credentials)
             if cache is not None:
@@ -222,11 +248,14 @@ class ConnectorBroker:
                 elif cache.last_modified:
                     headers["If-Modified-Since"] = cache.last_modified
             seconds = request.policy.timeout_ms / 1000
+            if plan.body is not None:
+                headers["Content-Type"] = "application/json"
             wire = httpx2.Request(
-                "GET",
+                plan.method,
                 "https://" + plan.host + plan.path,
                 params=httpx2.QueryParams(tuple(pairs)) if pairs else None,
                 headers=headers,
+                content=plan.body or b"",
                 extensions={"timeout": {key: seconds for key in ("connect", "read", "write", "pool")}},
             )
             response = None
@@ -368,6 +397,22 @@ class ConnectorBroker:
             except ValueError:
                 raise ProviderProblem("invalid-cursor") from None
             stamp = self._guard(request, "admission", None, lambda current: current)
+
+            # New observations and replays use current configuration even when
+            # scientific response bytes are cached. Authorization precedes access.
+            def check_settings(current):
+                if self._settings is not None:
+                    with self._settings.lease(
+                        request.provider_id,
+                        SecretAccessContext(
+                            "CAP-04.S02", SecretPurpose.CONNECTOR_AUTHENTICATION, request.invocation_id.replace("-", "")
+                        ),
+                    ):
+                        pass
+                elif request.provider_id == "unpaywall" and request.provider_id not in self._contacts:
+                    raise ProviderProblem("not-configured")
+
+            self._guard(request, "cache", stamp, check_settings)
             replayed = self._guard(request, "cache", stamp, lambda current: self._repository.replay(request))
             if replayed is not None:
                 if not stamp.retain_body and (

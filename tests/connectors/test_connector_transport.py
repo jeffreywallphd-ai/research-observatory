@@ -16,6 +16,7 @@ sys.path.insert(0, str(REPO / "services/core-api/src"))
 
 from research_observatory_core.connectors.providers import ProviderProblem  # noqa: E402
 from research_observatory_core.connectors.transport import (  # noqa: E402
+    PublicHTTPTransport,
     PublicNetworkBackend,
     bounded_json,
     read_response,
@@ -33,6 +34,27 @@ class BytesStream(httpx2.AsyncByteStream):
 
 
 class ConnectorTransportTests(unittest.IsolatedAsyncioTestCase):
+    async def test_post_admission_is_limited_to_bounded_recommendation_payload(self):
+        good = json.dumps({"positivePaperIds": ["a" * 40], "negativePaperIds": []}).encode()
+        for method, url, body in (
+            ("POST", "https://api.openalex.org/works", good),
+            ("POST", "https://api.semanticscholar.org/graph/v1/paper/batch", good),
+            ("PUT", "https://api.semanticscholar.org/recommendations/v1/papers", good),
+            ("GET", "https://api.semanticscholar.org/graph/v1/paper/test", good),
+            ("POST", "https://api.semanticscholar.org/recommendations/v1/papers", b"{}"),
+            ("POST", "https://api.semanticscholar.org/recommendations/v1/papers", b"x" * (128 * 1024 + 1)),
+        ):
+            transport = PublicHTTPTransport()
+            try:
+                with patch.object(transport._pool, "handle_async_request", new=AsyncMock()) as network:
+                    with self.subTest(method=method, url=url), self.assertRaises(ProviderProblem):
+                        await transport.handle_async_request(
+                            httpx2.Request(method, url, content=body, headers={"Content-Type": "application/json"})
+                        )
+                    network.assert_not_called()
+            finally:
+                await transport.aclose()
+
     async def test_private_mixed_and_embedded_addresses_never_reach_connector(self):
         for addresses in (
             ("127.0.0.1",),

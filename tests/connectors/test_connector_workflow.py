@@ -17,6 +17,7 @@ sys.path.insert(0, str(REPO / "services/core-api/src"))
 import httpx2
 from research_observatory_core.connector_repository import ConnectorRepository
 from research_observatory_core.connector_worker import ConnectorWorkerAdapters, ConnectorWorkerService
+from research_observatory_core.connectors.settings import ConnectorSettings
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.object_store import create_local_object_store
 from research_observatory_core.ports.workflow_executor import WorkflowLeaseRejected
@@ -25,6 +26,7 @@ from research_observatory_core.repositories import (
     sqlite_workflow_admission_binding,
     sqlite_workflow_queue_repository,
 )
+from research_observatory_core.windows_credentials import WindowsCredentialStore
 from research_observatory_core.workflow_executor import LocalAdmissionController, ProjectWorkerPolicy, WorkerResources
 
 from tests.connectors import test_connector_authority as authority_fixtures
@@ -67,6 +69,7 @@ class ConnectorWorkflowFixture(authority_fixtures.ConnectorAuthorityFixture):
             self.connectors,
             lambda _path, _project: ConnectorWorkerAdapters(self.repository, self.queue, self.admission),
             local_actor_id=authority_fixtures.fixtures.ACTOR_ID,
+            settings=ConnectorSettings(WindowsCredentialStore(Path(self.temp.name) / "connector-vault")),
             now=self.clock.now,
             transport_factory=lambda: httpx2.MockTransport(respond),
             clock=self.clock.monotonic,

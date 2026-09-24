@@ -7,13 +7,22 @@ from typing import Annotated
 
 from fastapi import APIRouter, FastAPI, Request, Response
 from fastapi.routing import APIRoute
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from .connector_service import ConnectorPreview, ConnectorRetention
 from .connector_worker import ConnectorWorkerService
-from .connectors.contracts import ConnectorCapabilities, ConnectorModel, ConnectorRequest, InvocationId
-from .connectors.providers import ProviderProblem, capabilities
+from .connectors.contracts import (
+    ConnectorCapabilities,
+    ConnectorModel,
+    ConnectorRequest,
+    InvocationId,
+    ProjectId,
+    ProviderId,
+)
+from .connectors.providers import HOSTS, ProviderProblem
+from .connectors.settings import ConnectorConnectionStatus
 from .models import ProblemDetail
+from .ports.credential_store import CredentialStoreProblem, SecretAccessContext, SecretConflict, SecretPurpose
 from .ports.workflow_executor import WorkflowJobRecord, WorkflowJobState, WorkflowQueueProblem
 from .projects import ProjectLifecycleProblem
 from .transport import CoreProblem, problem_detail
@@ -48,6 +57,20 @@ class ConnectorCapabilitiesPage(ConnectorModel):
     items: tuple[ConnectorCapabilities, ...]
 
 
+class _ConfigurationAddress(ConnectorProjectRequest):
+    project_id: ProjectId
+    provider_id: ProviderId
+
+
+class _ConfigurationWrite(_ConfigurationAddress):
+    model_config = ConfigDict(frozen=False)
+    key: Annotated[str, Field(strict=True, min_length=3, max_length=1024)] | None = Field(repr=False)
+    contact: Annotated[str, Field(strict=True, min_length=3, max_length=1024)] | None = Field(repr=False)
+    expected_version: Annotated[str, Field(strict=True, pattern=r"^[0-9a-f]{32}$")] | None
+    preserve_key: Annotated[bool, Field(strict=True)] = False
+    preserve_contact: Annotated[bool, Field(strict=True)] = False
+
+
 def _status(job: WorkflowJobRecord) -> ConnectorJobStatus:
     return ConnectorJobStatus(
         job_id=job.job_id, workflow_run_id=job.workflow_run_id, state=job.state, diagnostic_code=job.diagnostic_code
@@ -77,14 +100,21 @@ class _BoundedConnectorRoute(APIRoute):
 
         async def bounded(request: Request) -> Response:
             body = bytearray()
+            private = request.url.path.startswith("/native/connectors/")
+            maximum = 8192 if private else 256 * 1024
             async for chunk in request.stream():
-                if len(body) + len(chunk) > 256 * 1024:
+                if len(body) + len(chunk) > maximum:
                     raise connector_problem(request, "request-limit", status=413)
                 body.extend(chunk)
             request._body = bytes(body)
-            response = await handler(request)
-            response.headers["Cache-Control"] = "no-store"
-            return response
+            try:
+                response = await handler(request)
+                response.headers["Cache-Control"] = "no-store"
+                return response
+            finally:
+                if private:
+                    body[:] = b"\0" * len(body)
+                    request._body = b""
 
         return bounded
 
@@ -114,13 +144,18 @@ def register_connector_routes(
             raise connector_problem(request, error.code, status=status) from None
         except WorkflowQueueProblem:
             raise connector_problem(request, "job-unavailable") from None
+        except SecretConflict:
+            raise connector_problem(request, "configuration-conflict") from None
+        except CredentialStoreProblem:
+            raise connector_problem(request, "configuration-unavailable", status=503) from None
         except ValueError:
             raise connector_problem(request, "invalid-request", status=422) from None
 
     @router.get("/capabilities", response_model=ConnectorCapabilitiesPage)
     def available(request: Request) -> ConnectorCapabilitiesPage:
         return run(
-            request, lambda _: ConnectorCapabilitiesPage(items=(capabilities("openalex"), capabilities("crossref")))
+            request,
+            lambda runtime: ConnectorCapabilitiesPage(items=tuple(runtime.settings.describe(name) for name in HOSTS)),
         )
 
     @router.post("/previews", response_model=ConnectorPreview)
@@ -149,3 +184,37 @@ def register_connector_routes(
         return run(request, cancel)
 
     app.include_router(router)
+    # These fixed native-only routes are not in the renderer bridge allowlist or
+    # generated public API. Configuration itself grants no scientific egress.
+    private = APIRouter(prefix="/native/connectors", route_class=_BoundedConnectorRoute, include_in_schema=False)
+
+    @private.post("/configuration/status", response_model=ConnectorConnectionStatus)
+    def configuration_status(request: Request, command: _ConfigurationAddress) -> ConnectorConnectionStatus:
+        return run(
+            request, lambda runtime: runtime.connection_status(command.root, command.project_id, command.provider_id)
+        )
+
+    @private.post("/configuration/replace", response_model=ConnectorConnectionStatus)
+    def configure(request: Request, command: _ConfigurationWrite) -> ConnectorConnectionStatus:
+        try:
+            return run(
+                request,
+                lambda runtime: runtime.configure_connection(
+                    command.root,
+                    command.project_id,
+                    command.provider_id,
+                    key=command.key,
+                    contact=command.contact,
+                    expected_version=command.expected_version,
+                    preserve_key=command.preserve_key,
+                    preserve_contact=command.preserve_contact,
+                    context=SecretAccessContext(
+                        "CAP-04.S02", SecretPurpose.CONNECTOR_AUTHENTICATION, request.state.trace_id
+                    ),
+                ),
+            )
+        finally:
+            # Best-effort reference release, not a Python heap-erasure claim.
+            command.key = command.contact = None
+
+    app.include_router(private)

@@ -89,12 +89,12 @@ class ConnectorAuthorityFixture(intent_fixtures.ConnectorIntentFixture):
             trace_id=fixtures.TRACE,
         )
 
-    def intent(self, mode="approved-content"):
+    def intent(self, mode="approved-content", providers=("openalex",)):
         current = self.service.workspace(self.root).current
         command = fixtures.draft_request(
             self.root,
             expected_revision=current.revision if current else 0,
-            egressPolicy={"mode": mode, "approvedDestinationIds": [] if mode == "local-only" else ["openalex"]},
+            egressPolicy={"mode": mode, "approvedDestinationIds": [] if mode == "local-only" else list(providers)},
         )
         impact = self.service.preview(command.to_impact_request())
         command = command.model_copy(update={"impact_acknowledgement": impact.acknowledgement_token})

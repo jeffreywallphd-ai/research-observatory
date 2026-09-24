@@ -10,17 +10,20 @@ import json
 import re
 from dataclasses import dataclass, field
 from typing import Any
-from urllib.parse import quote, urlencode
+from urllib.parse import quote, urlencode, urlsplit
 
 from ..ingestion.reference_imports import normalize_import_field
 from .contracts import (
+    CitationQuery,
     ConnectorCapabilities,
     ConnectorCursor,
     ConnectorRecord,
     ConnectorRequest,
     ErrorCode,
     LookupQuery,
+    OaQuery,
     ProviderIdentifier,
+    RecommendationQuery,
     SearchFilter,
     SearchQuery,
     SourceField,
@@ -29,10 +32,17 @@ from .contracts import (
 )
 
 VERSION = "1.0.0"
-HOSTS = {"openalex": "api.openalex.org", "crossref": "api.crossref.org"}
+HOSTS = {
+    "openalex": "api.openalex.org",
+    "crossref": "api.crossref.org",
+    "unpaywall": "api.unpaywall.org",
+    "semantic-scholar": "api.semanticscholar.org",
+}
 TERMS = {
     "openalex": "https://help.openalex.org/",
     "crossref": "https://www.crossref.org/documentation/retrieve-metadata/rest-api/",
+    "unpaywall": "https://data.unpaywall.org/products/api",
+    "semantic-scholar": "https://www.semanticscholar.org/product/api",
 }
 
 
@@ -48,6 +58,8 @@ class WireQuery:
     path: str = field(repr=False)
     parameters: tuple[tuple[str, str], ...] = field(repr=False)
     singleton: bool = False
+    method: str = "GET"
+    body: bytes | None = field(default=None, repr=False)
 
 
 @dataclass(frozen=True, slots=True)
@@ -61,6 +73,19 @@ class MappedPage:
 def capabilities(provider: str) -> ConnectorCapabilities:
     if provider not in HOSTS:
         raise ProviderProblem("unsupported-operation")
+    if provider in {"unpaywall", "semantic-scholar"}:
+        oa = provider == "unpaywall"
+        return ConnectorCapabilities(
+            schema_version="1.0",
+            provider_id=provider,
+            adapter_version=VERSION,
+            source_api_version="2" if oa else "1",
+            operations=("oa-resolution",) if oa else ("citations", "lookup", "recommendations"),
+            identifier_schemes=("doi",) if oa else ("doi", "semantic-scholar"),
+            maximum_page_size=1 if oa else 500,
+            configuration="ready",
+            required_settings=("contact",) if oa else (),
+        )
     return ConnectorCapabilities(
         schema_version="1.0",
         provider_id=provider,
@@ -168,6 +193,8 @@ def compile_request(request: ConnectorRequest) -> WireQuery:
         capabilities(provider).assert_supported(request)
     except ValueError:
         raise ProviderProblem("unsupported-operation") from None
+    if provider in {"unpaywall", "semantic-scholar"}:
+        return _compile_graph_oa(request)
     query = request.query
     path, singleton = "/works", False
     pairs: list[tuple[str, str]] = []
@@ -265,6 +292,16 @@ def source_terms(provider: str, record: dict[str, Any] | None = None) -> SourceT
             observed = location.get("license")
             oa = record.get("open_access") or {}
             access = "open" if oa.get("is_oa") is True else "closed" if oa.get("is_oa") is False else "unknown"
+        elif provider in {"unpaywall", "semantic-scholar"}:
+            oa = record.get("is_oa" if provider == "unpaywall" else "isOpenAccess")
+            access = "open" if oa is True else "closed" if oa is False else "unknown"
+            location = record.get("best_oa_location" if provider == "unpaywall" else "openAccessPdf")
+            if location is not None:
+                if not isinstance(location, dict):
+                    raise ProviderProblem("incompatible-response")
+                observed = location.get("license")
+                if observed is not None and not isinstance(observed, str):
+                    raise ProviderProblem("incompatible-response")
         else:
             license_values = record.get("license")
             if license_values:
@@ -356,6 +393,8 @@ def map_response(request: ConnectorRequest, document: object, *, retrieved_at: s
         if not isinstance(document, dict):
             raise ValueError
         provider = request.provider_id
+        if provider in {"unpaywall", "semantic-scholar"}:
+            return _map_graph_oa(request, document, retrieved_at)
         if provider == "openalex":
             records = document["results"]
             cursor = document["meta"]["next_cursor"]
@@ -411,3 +450,184 @@ def map_response(request: ConnectorRequest, document: object, *, retrieved_at: s
         return MappedPage(mapped, following, source_terms(provider), warnings)
     except KeyError, IndexError, TypeError, ValueError, AttributeError, OverflowError:
         raise ProviderProblem("incompatible-response") from None
+
+
+_GRAPH_FIELDS = "title,authors,year,publicationDate,venue,externalIds,isOpenAccess,openAccessPdf"
+_MAX_OFFSET = 100_000_000
+
+
+def _semantic_id(identifier: ProviderIdentifier) -> str:
+    if identifier.scheme == "doi":
+        return "DOI:" + doi(identifier.value)
+    if identifier.scheme == "semantic-scholar" and re.fullmatch(r"[0-9a-fA-F]{40}", identifier.value):
+        return identifier.value.lower()
+    raise ProviderProblem("invalid-query")
+
+
+def _offset(request: ConnectorRequest) -> int:
+    if request.cursor is None:
+        return 0
+    value = request.cursor.value
+    if re.fullmatch(r"[1-9][0-9]{0,8}", value) is None or int(value) > _MAX_OFFSET:
+        raise ProviderProblem("invalid-cursor")
+    return int(value)
+
+
+def _compile_graph_oa(request: ConnectorRequest) -> WireQuery:
+    provider, query = request.provider_id, request.query
+    host = HOSTS[provider]
+    if isinstance(query, OaQuery):
+        if provider != "unpaywall" or request.cursor is not None:
+            raise ProviderProblem("unsupported-operation")
+        return WireQuery(host, "/v2/" + quote(doi(query.identifier.value), safe=""), (), True)
+    if provider != "semantic-scholar":
+        raise ProviderProblem("unsupported-operation")
+    pairs = [("fields", _GRAPH_FIELDS)]
+    if isinstance(query, LookupQuery):
+        if len(query.identifiers) != 1 or request.cursor is not None:
+            raise ProviderProblem("unsupported-operation")
+        return WireQuery(
+            host, "/graph/v1/paper/" + quote(_semantic_id(query.identifiers[0]), safe=""), tuple(pairs), True
+        )
+    if isinstance(query, CitationQuery):
+        pairs.extend((("offset", str(_offset(request))), ("limit", str(request.page_size))))
+        pairs[0] = ("fields", _GRAPH_FIELDS + ",contexts,intents,isInfluential")
+        return WireQuery(
+            host, "/graph/v1/paper/" + quote(_semantic_id(query.seed), safe="") + "/" + query.direction, tuple(pairs)
+        )
+    if isinstance(query, RecommendationQuery):
+        if request.cursor is not None:
+            raise ProviderProblem("unsupported-operation")
+        positive = [_semantic_id(item) for item in query.positive_seeds]
+        negative = [_semantic_id(item) for item in query.negative_seeds]
+        if len(set(positive + negative)) != len(positive + negative):
+            raise ProviderProblem("invalid-query")
+        body = json.dumps({"positivePaperIds": positive, "negativePaperIds": negative}, separators=(",", ":")).encode()
+        if len(body) > 128 * 1024:
+            raise ProviderProblem("invalid-query")
+        pairs.append(("limit", str(request.page_size)))
+        return WireQuery(host, "/recommendations/v1/papers", tuple(pairs), False, "POST", body)
+    raise ProviderProblem("unsupported-operation")
+
+
+def _oa_locations(raw: dict[str, Any]) -> list[dict[str, Any]]:
+    locations = raw.get("oa_locations")
+    if not isinstance(locations, list):
+        raise ProviderProblem("incompatible-response")
+    for location in locations:
+        if not isinstance(location, dict):
+            raise ProviderProblem("incompatible-response")
+        for name in ("url", "url_for_pdf", "url_for_landing_page", "host_type", "license", "version"):
+            value = location.get(name)
+            if value is not None and not isinstance(value, str):
+                raise ProviderProblem("incompatible-response")
+            if name.startswith("url") and value is not None:
+                address = urlsplit(value)
+                if (
+                    address.scheme not in {"http", "https"}
+                    or not address.netloc
+                    or address.username
+                    or address.password
+                ):
+                    raise ProviderProblem("incompatible-response")
+                _safe(value)
+    return locations
+
+
+def _graph_record(
+    raw: dict[str, Any], request: ConnectorRequest, retrieved_at: str, edge: dict | None = None
+) -> ConnectorRecord:
+    if not isinstance(raw, dict):
+        raise ProviderProblem("incompatible-response")
+    raw_id = ProviderIdentifier(scheme="semantic-scholar", value=raw["paperId"])
+    identifiers = [ProviderIdentifier(scheme="semantic-scholar", value=_semantic_id(raw_id))]
+    external = raw.get("externalIds")
+    if external is not None:
+        if not isinstance(external, dict):
+            raise ProviderProblem("incompatible-response")
+        if external.get("DOI"):
+            identifiers.append(ProviderIdentifier(scheme="doi", value=doi(external["DOI"])))
+    if raw.get("title") is not None and not isinstance(raw["title"], str):
+        raise ProviderProblem("incompatible-response")
+    if raw.get("authors") is not None and not isinstance(raw["authors"], list):
+        raise ProviderProblem("incompatible-response")
+    candidates = {
+        "title": raw.get("title"),
+        "authors": raw.get("authors"),
+        "date": raw.get("publicationDate"),
+        "venue": raw.get("venue"),
+    }
+    if isinstance(request.query, (CitationQuery, RecommendationQuery)):
+        candidates["discovery"] = request.query.model_dump(mode="json", by_alias=True)
+    source = dict(raw)
+    if edge is not None:
+        if "edge" in source:
+            raise ProviderProblem("incompatible-response")
+        source["edge"] = edge
+    return ConnectorRecord(
+        provider_id="semantic-scholar",
+        raw_identifier=raw_id,
+        identifiers=tuple(identifiers),
+        retrieved_at=retrieved_at,
+        fields=_source_fields("semantic-scholar", source, candidates),
+        terms=source_terms("semantic-scholar", raw),
+    )
+
+
+def _map_graph_oa(request: ConnectorRequest, document: dict, retrieved_at: str) -> MappedPage:
+    provider, query = request.provider_id, request.query
+    if isinstance(query, OaQuery):
+        identifier = ProviderIdentifier(scheme="doi", value=document["doi"])
+        normalized = doi(identifier.value)
+        if normalized != doi(query.identifier.value):
+            raise ProviderProblem("incompatible-response")
+        locations = _oa_locations(document)
+        record = ConnectorRecord(
+            provider_id=provider,
+            raw_identifier=identifier,
+            identifiers=(ProviderIdentifier(scheme="doi", value=normalized),),
+            retrieved_at=retrieved_at,
+            fields=_source_fields(provider, document, {"title": document.get("title"), "oa-locations": locations}),
+            terms=source_terms(provider, document),
+        )
+        return MappedPage((record,), None, source_terms(provider))
+    following = None
+    records: tuple[ConnectorRecord, ...]
+    if isinstance(query, LookupQuery):
+        records = (_graph_record(document, request, retrieved_at),)
+        expected = _semantic_id(query.identifiers[0])
+        if expected not in {_semantic_id(item) for item in records[0].identifiers}:
+            raise ProviderProblem("incompatible-response")
+    elif isinstance(query, RecommendationQuery):
+        values = document["recommendedPapers"]
+        if not isinstance(values, list):
+            raise ProviderProblem("incompatible-response")
+        records = tuple(_graph_record(item, request, retrieved_at) for item in values)
+    elif isinstance(query, CitationQuery):
+        offset, values, continuation = document["offset"], document["data"], document.get("next")
+        if type(offset) is not int or offset != _offset(request) or not isinstance(values, list):
+            raise ProviderProblem("incompatible-response")
+        key = "citingPaper" if query.direction == "citations" else "citedPaper"
+        records = tuple(_graph_record(item[key], request, retrieved_at, item) for item in values)
+        if continuation is not None:
+            if type(continuation) is not int or not values or not offset < continuation <= _MAX_OFFSET:
+                raise ProviderProblem("incompatible-response")
+            following = ConnectorCursor(
+                provider_id=provider,
+                project_id=request.project_id,
+                request_sha256=request.scientific_sha256(),
+                page_index=request.cursor.page_index + 1 if request.cursor else 1,
+                value=str(continuation),
+                expires_at=None,
+            )
+    else:
+        raise ProviderProblem("unsupported-operation")
+    identities = {item.raw_identifier.value.lower() for item in records}
+    if len(records) > request.page_size or len(identities) != len(records):
+        raise ProviderProblem("incompatible-response")
+    return MappedPage(
+        records,
+        following,
+        source_terms(provider),
+        ("non-snapshot-pagination",) if isinstance(query, CitationQuery) else (),
+    )

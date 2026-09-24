@@ -17,9 +17,12 @@ sys.path.insert(0, str(REPO / "services/core-api/src"))
 # ruff: noqa: E402
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import NativeWorkflowContext, capability_token_digest
+from research_observatory_core.connectors.settings import ConnectorSettings
+from research_observatory_core.windows_credentials import WindowsCredentialStore
 from research_observatory_core.workflow_executor import WorkerCapacity
 
 from tests.connectors import test_connector_workflow as fixtures
+from tests.connectors.test_connector_settings import CONTACT, KEY
 from tests.connectors.test_connector_transport import BytesStream
 from tests.connectors.test_scholarly_mapping import fixture, request
 from tests.service import test_core_api as api
@@ -37,6 +40,49 @@ class ConnectorApiTests(fixtures.ConnectorWorkflowFixture):
             capability_digest=capability_token_digest(api.TOKEN),
             expected_authority=api.AUTHORITY,
         )
+
+    def test_configuration_is_private_bounded_cas_and_never_implies_egress(self):
+        address = {"root": self.root, "projectId": self.project.project_id, "providerId": "unpaywall"}
+        with api.authenticated_client(self.app) as client:
+            self.assertFalse(any(path.startswith("/native/connectors/") for path in self.app.openapi()["paths"]))
+            before = client.get("/projects/connectors/capabilities")
+            self.assertEqual(200, before.status_code)
+            states = {item["providerId"]: item["configuration"] for item in before.json()["items"]}
+            self.assertEqual(
+                {"openalex": "ready", "crossref": "ready", "unpaywall": "not-configured", "semantic-scholar": "ready"},
+                states,
+            )
+            command = address | {"key": None, "contact": CONTACT, "expectedVersion": None}
+            denied = client.post(
+                "/native/connectors/configuration/replace", json=command, headers={"Authorization": ""}
+            )
+            self.assertEqual(401, denied.status_code)
+            changed = client.post("/native/connectors/configuration/replace", json=command)
+            self.assertEqual(200, changed.status_code, changed.text)
+            self.assertEqual("ready", changed.json()["configuration"])
+            self.assertNotIn(CONTACT, changed.text)
+            self.assertEqual("no-store", changed.headers["cache-control"])
+            conflict = client.post("/native/connectors/configuration/replace", json=command)
+            self.assertEqual(409, conflict.status_code)
+            self.assertIn("CONFIGURATION-CONFLICT", conflict.text)
+            wrong = client.post(
+                "/native/connectors/configuration/status",
+                json=address | {"projectId": "0190a000-0000-7000-8000-000000000099"},
+            )
+            self.assertEqual(403, wrong.status_code)
+            extra = client.post("/native/connectors/configuration/replace", json=command | {"vaultRoot": "synthetic"})
+            self.assertEqual(422, extra.status_code)
+            self.assertNotIn(CONTACT, extra.text)
+            self.assertEqual([], self.calls)
+            status = client.post("/native/connectors/configuration/status", json=address)
+            self.assertEqual(changed.json(), status.json())
+            graph = client.post(
+                "/native/connectors/configuration/replace",
+                json=command | {"providerId": "semantic-scholar", "contact": None, "key": KEY},
+            )
+            self.assertEqual(200, graph.status_code, graph.text)
+            self.assertNotIn(KEY, graph.text)
+            self.assertEqual([], self.calls)
 
     def test_authenticated_preview_confirmation_durable_status_and_session_fence(self):
         with api.authenticated_client(self.app) as client:
@@ -96,7 +142,11 @@ class ConnectorApiTests(fixtures.ConnectorWorkflowFixture):
 class ConnectorRuntimeCompositionTests(unittest.TestCase):
     def test_runtime_factory_uses_protected_repositories_and_real_worker(self):
         helper = runtime_fixture.ImportRuntimeCompositionTests()
-        app = helper.application(NativeWorkflowContext("b" * 32, "c" * 32))
+        vault = tempfile.TemporaryDirectory(prefix="ro-connector-runtime-vault-")
+        self.addCleanup(vault.cleanup)
+        app = helper.application(
+            NativeWorkflowContext("b" * 32, "c" * 32), ConnectorSettings(WindowsCredentialStore(Path(vault.name)))
+        )
         calls = []
 
         async def respond(wire):

@@ -232,13 +232,14 @@ class ImportPreviewServiceTests(unittest.TestCase):
 
 
 class ImportRuntimeCompositionTests(unittest.TestCase):
-    def application(self, context):
+    def application(self, context, connector_settings=None):
         return create_runtime_app(
             settings=CoreSettings(),
             object_key_provider=fixture.MemoryKeyProvider({"object-key-v1": b"k" * 32}, "object-key-v1"),
             database_key_provider=InMemoryDatabaseKeyProvider(),
             local_actor_id=new_uuid_v7(),
             workflow_context=context,
+            connector_settings=connector_settings,
             capability_digest=capability_token_digest("a" * 64),
             expected_authority="127.0.0.1:49152",
         )
