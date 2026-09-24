@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S02.html">SLICE-open-scholarly-source-adapters</a><span>/</span><span aria-current="page">CAP-04.S02.T02</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S02.T02">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S02.T02 · task 2 of 3</span><h1>Implement OpenAlex and Crossref adapters</h1><p>Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S02.T02 · task 2 of 3</span><h1>Implement OpenAlex and Crossref adapters</h1><p>Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S02.html">SLICE-open-scholarly-source-adapters</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>search</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile search</li></ul>
-  <p data-task-claim="CAP-04.S02.T02" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S02.T02" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="6316b14d439c10f85fea6557e141d6f04111f17b"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>6316b14d439c10f85fea6557e141d6f04111f17b</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S02.T02" data-task-plan-sha256="1d00ba54339a1dfd6045af8f150f759270b5d0c4f6da01d9efe7b5f999c64cf6"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.2 `CAP-04.S02.T02` - Implement OpenAlex and Crossref adapters
 **Objective:** Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.
@@ -87,13 +87,53 @@ python tools/verify.py --profile service
 python tools/verify.py --profile search
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S02.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S02.T02" data-worksheet-sha256="3d32968639b6c37677f8de43d7b6e5480b75718e1e9f9a150c5660b3f0663b2d">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S02.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>3d32968639b6c37677f8de43d7b6e5480b75718e1e9f9a150c5660b3f0663b2d</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S02.T02 acceptance closure
+
+Claim base: `6316b14d439c10f85fea6557e141d6f04111f17b`.
+Authority: the approved CAP-04.S02 plan section 9.2 at W2 packet
+`c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`; ADR-0027, ADR-0017,
+ADR-0019 and the existing canonical identity/provenance/storage contracts.
+CAP-04.S02.T01 is DONE and independently approved.
+
+## Material proof map
+
+| Criterion / boundary | Required outcome and selected proof |
+|---|---|
+| AC1 provider semantics | Synthetic known-item OpenAlex/Crossref fixtures produce source-preserving identifier/title/author/date/venue/reference candidates, not canonical Works. Exact field/filter/sort/projection compilation; reject unsupported semantics without widening. |
+| AC1 pagination/replay | A page binds the scientific request, provider, versions and current cursor. Failure does not advance it. Duplicate publication is idempotent; changed request/invocation collisions fail. Fresh repository/service instances resume the retained checkpoint and replay the sanitized response. |
+| AC1 rate/cache | One in-flight request per provider, at least one second spacing (or stricter advertised rate), at most three attempts, bounded jitter/Retry-After, observable circuit recovery. Exact project/page cache identity, current authorization on hits/revalidation, ETag/Last-Modified, explicit expiry and no cross-project reuse. |
+| AC2 broker authority | Core-owned admission compiles the wire request from the validated scientific request. Current open session/project, Intent, policy and exact researcher-authorized payload are checked before dispatch/retry/cache/publication. Offline, changed/revoked authority, unsupported query and cancellation deny without dispatch or publication. A request DTO is not consent. |
+| AC2 network/secret boundary | HTTPS provider allowlist, DNS-address binding, private/loopback/link-local denial, normal TLS verification, no environment proxy or unchecked redirects. ADR-0017 leases remain broker-only. Bound wire/decompressed bytes and parsing; test malformed JSON/schema drift, timeout/reset, 429/5xx, terminal auth, hostile cursors and echoed credential/contact values in arbitrary fields/errors/headers. |
+| AC2 durable principal | Use the existing encrypted project/object/repository/provenance boundaries, not a source-only database. Atomic accepted page, response references and checkpoint; injected publication failure/restart leaves no false completed page. Focused actual local persistence/transport proofs supplement unit doubles. |
+| AC3 compatibility/audit | Preserve CAP-04.S02.T01 schemas and source-specific observations. Any necessary additive persistence change uses the existing migration authority and exact predecessor tests. Content-free audit, protected replay data, explicit unknown rights and unavailable-body state. Update only affected inventories/docs/fixtures. |
+
+First tests precede product code: compilation/known-item mapping and malformed or
+unsupported response cases; then broker admission/rate/redaction and durable
+publication failure/restart tests at their implementation boundaries.
+
+No account provisioning, live provider query, credential inspection, real project
+access, full-text acquisition, automatic canonical reconciliation, or new UI
+pattern is authorized here. The adapter seam is consumed by subsequent source
+and search work. Any user-facing wiring must use the existing approved reference.
+
+Focused checks cover new connectors, affected contracts/runtime packaging and
+persistence. Completed import/performance suites are not replayed. Integrated
+four-provider slice checks, optional explicitly authorized live smoke and fresh
+Wave qualification remain separate; mocks are never labelled live success.
+
+Read-only adversarial preflight: requested for the new egress/persistence boundary.
+No mandatory new human gate identified at task start.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S02.T02" data-review-mode="latest-review-only">
   <h3>CAP-04.S02.T02 — Implement OpenAlex and Crossref adapters</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S02.T01.html">Previous</a><a class="button button-primary" href="CAP-04.S02.T03.html">Next</a></nav>

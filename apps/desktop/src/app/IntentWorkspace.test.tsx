@@ -122,6 +122,7 @@ const decisionCompleteDraft: IntentDraftProjection = {
   autonomyLevel: "suggest",
   stoppingConditions: ["interpretive-saturation"],
   revisionRationale: "Decision-complete bounded draft.",
+  egressPolicy: { mode: "local-only", approvedDestinationIds: [] },
   unresolvedDecisions: [],
   decisionComplete: true,
   canRequestAcceptance: true,

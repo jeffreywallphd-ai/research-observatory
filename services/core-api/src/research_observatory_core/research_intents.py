@@ -18,6 +18,7 @@ from .models import (
     IntentAcceptRequest,
     IntentDraftProjection,
     IntentDraftRequest,
+    IntentEgressPolicy,
     IntentGoverningReference,
     IntentImpactPreview,
     IntentImpactRequest,
@@ -421,9 +422,12 @@ def _canonical_json(value: object) -> str:
 
 
 def _command_sha256(command: IntentDraftRequest, *, manifest_project_id: str, actor_id: str) -> str:
+    command_document = command.model_dump(mode="json", by_alias=True)
+    if command.egress_policy is None:
+        command_document.pop("egressPolicy", None)  # preserve pre-connector idempotency fingerprints
     payload = {
         "actor": {"actorId": actor_id, "actorType": "human"},
-        "command": command.model_dump(mode="json", by_alias=True),
+        "command": command_document,
         "manifestProjectId": manifest_project_id,
         "operation": "intent.draft.save",
         "schemaVersion": "1.0",
@@ -1112,11 +1116,17 @@ def _build_revision(
             "rationale": "Researcher-selected stopping logic for this epistemic mode.",
             "requiresHumanConfirmation": True,
         },
-        "egressPolicy": {"mode": "local-only", "approvedDestinationIds": []},
+        "egressPolicy": command.egress_policy.model_dump(mode="json", by_alias=True)
+        if command.egress_policy is not None
+        else IntentEgressPolicy.model_validate(prior["egressPolicy"]).model_dump(mode="json", by_alias=True)
+        if prior is not None
+        else {"mode": "local-only", "approvedDestinationIds": []},
         "unresolvedDecisions": unresolved,
         "modeRequirements": _mode_requirements(command.primary_use_case, mode),
         "decision": None,
     }
+    if cast(Mapping[str, object], revision["egressPolicy"])["mode"] != "local-only":
+        cast(list[str], cast(dict[str, object], revision["autonomy"])["requiredHumanGates"]).append("external-egress")
     revision["revisionContentHash"] = _content_hash(revision)
     if decode_research_intent_revision(revision) is None:
         raise _problem(
@@ -1192,6 +1202,7 @@ def _projection(revision: Mapping[str, object]) -> IntentDraftProjection:
     temporal = cast(Mapping[str, object], source.get("temporalCoverage", {}))
     accepted = revision["status"] == "accepted"
     return IntentDraftProjection(
+        egress_policy=cast(Any, revision["egressPolicy"]),
         intent_id=cast(str, revision["intentId"]),
         revision_id=cast(str, revision["revisionId"]),
         revision=cast(int, revision["revision"]),
@@ -1463,7 +1474,7 @@ def validated_workflow_authority(
 
 
 def _scope_from_projection(projection: IntentDraftProjection) -> dict[str, object]:
-    return {
+    scope: dict[str, object] = {
         "primaryUseCase": projection.primary_use_case,
         "sourceKinds": list(projection.source_kinds),
         "languageCodes": list(projection.language_codes),
@@ -1475,10 +1486,13 @@ def _scope_from_projection(projection: IntentDraftProjection) -> dict[str, objec
         "autonomyLevel": projection.autonomy_level,
         "stoppingConditions": list(projection.stopping_conditions),
     }
+    if projection.egress_policy.mode != "local-only":
+        scope["egressPolicy"] = projection.egress_policy.model_dump(mode="json", by_alias=True)
+    return scope
 
 
 def _scope_from_request(command: IntentImpactRequest) -> dict[str, object]:
-    return {
+    scope: dict[str, object] = {
         "primaryUseCase": command.primary_use_case,
         "sourceKinds": list(command.source_kinds),
         "languageCodes": list(command.language_codes),
@@ -1490,6 +1504,9 @@ def _scope_from_request(command: IntentImpactRequest) -> dict[str, object]:
         "autonomyLevel": command.autonomy_level,
         "stoppingConditions": list(command.stopping_conditions),
     }
+    if command.egress_policy is not None:
+        scope["egressPolicy"] = command.egress_policy.model_dump(mode="json", by_alias=True)
+    return scope
 
 
 def _impact(
@@ -1515,7 +1532,12 @@ def _impact(
         )
     before = _scope_from_projection(current)
     after = _scope_from_request(command)
+    if command.egress_policy is None and "egressPolicy" in before:
+        after["egressPolicy"] = before["egressPolicy"]
     categories: list[str] = []
+    local_policy = {"mode": "local-only", "approvedDestinationIds": []}
+    if before.get("egressPolicy", local_policy) != after.get("egressPolicy", local_policy):
+        categories.append("egress-policy")
     if before["primaryUseCase"] != after["primaryUseCase"]:
         categories.append("primary-use-case")
     if any(
@@ -1599,6 +1621,12 @@ def _impact(
             ]
         )
     warnings: list[str] = []
+    if "egress-policy" in categories:
+        warnings.append(
+            "Destination eligibility will change only after accepting this exact Intent revision. "
+            "Every external request still needs a separate exact-payload confirmation "
+            "and current privacy/rights checks."
+        )
     if "primary-use-case" in categories:
         warnings.append(
             "Ordered workflow, validation checkpoints, and expected outputs will change after human acceptance."
@@ -1674,10 +1702,17 @@ def _policy_decision(
     explanation = "The action is permitted by the active accepted intent and is bound to its governing reference."
 
     if command.action == "external-egress":
-        outcome = "deny"
-        reason = "active-intent-prohibits-external-egress"
+        egress = cast(Mapping[str, object], accepted["egressPolicy"])
+        destinations = cast(Sequence[str], egress["approvedDestinationIds"])
+        eligible = egress["mode"] != "local-only" and command.destination_id in destinations
+        outcome = "require-confirmation" if eligible else "deny"
+        reason = (
+            "external-egress-requires-exact-confirmation" if eligible else "active-intent-prohibits-external-egress"
+        )
         explanation = (
-            "The active intent is local-only, so an external-egress gate cannot be bypassed or self-authorized."
+            "This destination requires a separate exact-payload human confirmation and current privacy/rights checks."
+            if eligible
+            else "The accepted intent does not authorize this external destination."
         )
         required_gates = ("external-egress",)
     elif command.action in _GATE_ACTIONS:

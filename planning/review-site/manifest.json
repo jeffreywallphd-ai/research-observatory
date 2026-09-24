@@ -13698,7 +13698,7 @@
             {
               "task_id": "CAP-04.S02.T02",
               "title": "Implement OpenAlex and Crossref adapters",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -13746,18 +13746,21 @@
             {
               "task_id": "CAP-04.S02.T02",
               "title": "Implement OpenAlex and Crossref adapters",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S02.T02.html",
               "dependencies": [
                 "CAP-04.S02.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "6316b14d439c10f85fea6557e141d6f04111f17b"
               },
               "plan_section_sha256": "1d00ba54339a1dfd6045af8f150f759270b5d0c4f6da01d9efe7b5f999c64cf6",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-04.S02.T02.task-start.md",
+                "sha256": "3d32968639b6c37677f8de43d7b6e5480b75718e1e9f9a150c5660b3f0663b2d"
+              }
             },
             {
               "task_id": "CAP-04.S02.T03",

@@ -20,6 +20,9 @@ from . import CORE_API_SCHEMA_VERSION, CORE_API_VERSION, CORE_SERVICE_ID
 from .app import create_app
 from .authentication import WORKFLOW_STARTUP_RECORD_BYTES, NativeWorkflowContext, parse_startup_record
 from .config import CoreSettings
+from .connector_repository import ConnectorRepository
+from .connector_service import ConnectorConsentService, ConnectorProjectAdapters
+from .connector_worker import ConnectorWorkerAdapters, ConnectorWorkerService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
@@ -157,6 +160,7 @@ def create_runtime_app(
         )
 
     imports = None
+    connectors = None
     if workflow_context is not None and resolved_actor_id is not None and resolved_provider is not None:
         imports = ImportPreviewService(
             projects,
@@ -165,6 +169,41 @@ def create_runtime_app(
             local_actor_id=resolved_actor_id,
             resume_epoch=workflow_context.resume_epoch,
         )
+
+        def connector_pages(path: Path, identity: str) -> ConnectorRepository:
+            return ConnectorRepository(
+                path / "state/project.sqlite3",
+                identity,
+                create_local_object_store(
+                    path,
+                    identity,
+                    key_provider=resolved_provider,
+                    access_policy=privacy.object_access_policy(str(path)),
+                ),
+            )
+
+        def connector_adapters(path: Path, identity: str) -> ConnectorWorkerAdapters:
+            queue = sqlite_workflow_queue_repository(path, identity)
+            demand = WorkerResources(1, 64 * 1024**2, 0, 64 * 1024**2)
+            return ConnectorWorkerAdapters(
+                connector_pages(path, identity),
+                queue,
+                sqlite_workflow_admission_binding(
+                    queue,
+                    controller=controller,
+                    policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+                ),
+            )
+
+        consent = ConnectorConsentService(
+            projects,
+            privacy,
+            lambda path, identity: ConnectorProjectAdapters(
+                sqlite_intent_revision_repository(path, identity), connector_pages(path, identity)
+            ),
+            local_actor_id=resolved_actor_id,
+        )
+        connectors = ConnectorWorkerService(projects, consent, connector_adapters, local_actor_id=resolved_actor_id)
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
@@ -172,6 +211,7 @@ def create_runtime_app(
         projects=projects,
         privacy=privacy,
         imports=imports,
+        connectors=connectors,
         model_gateway=ProjectModelGatewayService(
             projects,
             privacy,

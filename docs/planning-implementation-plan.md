@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 706a08fdd8c8191080358fd12a0b46f1a0a51aff163cb1362c6f15a65b9925c1
+source_sha256: cad127ca7bb083162f6f3a5714a35dbd9256608e61fa795e154419390ab14bbc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8085,13 +8085,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S02.T02 - Implement OpenAlex and Crossref adapters
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S02.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Fielded search, identifier lookup, pagination, work/author/source metadata, references where available, rate handling, and response caching.
 

@@ -10,6 +10,18 @@
     "workers"
   ],
   "pythonFiles": [
+    "services/core-api/src/research_observatory_core/connector_repository.py",
+    "services/core-api/src/research_observatory_core/connectors/adapters.py",
+    "services/core-api/src/research_observatory_core/connectors/broker.py",
+    "services/core-api/src/research_observatory_core/connectors/providers.py",
+    "services/core-api/src/research_observatory_core/connectors/transport.py",
+    "services/core-api/src/research_observatory_core/ports/connector_runtime.py",
+    "tests/connectors/__init__.py",
+    "tests/connectors/test_connector_broker.py",
+    "tests/connectors/test_connector_intent.py",
+    "tests/connectors/test_connector_persistence.py",
+    "tests/connectors/test_connector_transport.py",
+    "tests/connectors/test_scholarly_mapping.py",
     "services/core-api/src/research_observatory_core/connectors/__init__.py",
     "services/core-api/src/research_observatory_core/connectors/contracts.py",
     "services/core-api/src/research_observatory_core/ports/connectors.py",

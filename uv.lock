@@ -842,6 +842,8 @@ source = { virtual = "." }
 dependencies = [
     { name = "alembic" },
     { name = "fastapi" },
+    { name = "httpcore2" },
+    { name = "httpx2" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pynacl" },
@@ -854,7 +856,6 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "beautifulsoup4" },
-    { name = "httpx2" },
     { name = "jsonschema", extra = ["format-nongpl"] },
     { name = "lxml" },
     { name = "mypy" },
@@ -869,6 +870,8 @@ dev = [
 requires-dist = [
     { name = "alembic", specifier = "==1.18.5" },
     { name = "fastapi", specifier = "==0.139.2" },
+    { name = "httpcore2", specifier = "==2.7.0" },
+    { name = "httpx2", specifier = "==2.7.0" },
     { name = "pydantic", specifier = "==2.13.4" },
     { name = "pydantic-settings", specifier = "==2.14.2" },
     { name = "pynacl", specifier = "==1.6.2" },
@@ -881,7 +884,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "beautifulsoup4", specifier = "==4.14.3" },
-    { name = "httpx2", specifier = "==2.7.0" },
     { name = "jsonschema", extras = ["format-nongpl"], specifier = "==4.26.0" },
     { name = "lxml", specifier = "==6.1.1" },
     { name = "mypy", specifier = "==2.3.0" },

@@ -20,7 +20,9 @@ def _schema_type(schema: dict[str, Any]) -> str:
     reference = schema.get("$ref")
     if isinstance(reference, str):
         return reference.rsplit("/", 1)[-1]
-    variants = schema.get("anyOf")
+    if "const" in schema:
+        return json.dumps(schema["const"])
+    variants = schema.get("anyOf", schema.get("oneOf"))
     if isinstance(variants, list):
         return " | ".join(_schema_type(item) for item in variants if isinstance(item, dict))
     enum = schema.get("enum")
@@ -54,7 +56,12 @@ def _interfaces(openapi: dict[str, Any]) -> str:
         schema = schemas[name]
         if not isinstance(schema, dict):
             raise ValueError(f"OpenAPI schema {name} must be an object")
-        if "enum" in schema or schema.get("type") in {"string", "integer", "number", "boolean", "null", "array"}:
+        if (
+            "enum" in schema
+            or "anyOf" in schema
+            or "oneOf" in schema
+            or schema.get("type") in {"string", "integer", "number", "boolean", "null", "array"}
+        ):
             blocks.append(f"export type {name} = {_schema_type(schema)};\n")
             continue
         properties = schema.get("properties")
@@ -70,7 +77,12 @@ def _interfaces(openapi: dict[str, Any]) -> str:
             key = (
                 property_name if re.fullmatch(r"[A-Za-z_$][A-Za-z0-9_$]*", property_name) else json.dumps(property_name)
             )
-            lines.append(f"  readonly {key}: {_schema_type(property_schema)};")
+            # Additive request fields may explicitly preserve omission by older
+            # clients. Response projections remain exact, including defaults.
+            optional = "?" if property_schema.get("x-client-optional") is True else ""
+            if optional and property_name in schema.get("required", []):
+                raise ValueError(f"Required OpenAPI property {name}.{property_name} cannot be optional")
+            lines.append(f"  readonly {key}{optional}: {_schema_type(property_schema)};")
         lines.append("}")
         blocks.append("\n".join(lines) + "\n")
     return "\n".join(blocks)
@@ -343,7 +355,7 @@ const INTENT_STOPPING_CONDITIONS = [
   "source-exhaustion", "coverage-threshold", "interpretive-saturation", "benchmark-complete",
   "nearest-prior-work-challenged", "protocol-complete", "resource-budget", "researcher-decision",
 ] as const;
-const INTENT_CHANGE_CATEGORIES = ["primary-use-case", "corpus-scope", "novelty-scope"] as const;
+const INTENT_CHANGE_CATEGORIES = ["primary-use-case", "corpus-scope", "novelty-scope", "egress-policy"] as const;
 const INTENT_REVISION_STATUSES = ["draft", "accepted"] as const;
 const INTENT_POLICY_SUBJECTS = ["human", "model", "system"] as const;
 const INTENT_POLICY_ACTIONS = [
@@ -555,6 +567,17 @@ export function decodeProjectProjection(value: unknown): ProjectProjection | nul
   return candidate as unknown as ProjectProjection;
 }
 
+function intentEgressPolicy(value: unknown): value is IntentEgressPolicy {
+  const candidate = record(value);
+  if (!candidate || !exactKeys(candidate, ["mode", "approvedDestinationIds"])
+    || !member(candidate.mode, ["local-only", "approved-redacted", "approved-content"] as const)
+    || !Array.isArray(candidate.approvedDestinationIds) || candidate.approvedDestinationIds.length > 32
+    || !candidate.approvedDestinationIds.every((item) => typeof item === "string"
+      && /^[a-z0-9][a-z0-9._-]{0,99}$/.test(item))
+    || new Set(candidate.approvedDestinationIds).size !== candidate.approvedDestinationIds.length) return false;
+  return (candidate.mode === "local-only") === (candidate.approvedDestinationIds.length === 0);
+}
+
 export function decodeIntentDraftProjection(value: unknown): IntentDraftProjection | null {
   const candidate = record(value);
   if (!candidate || !exactKeys(candidate, [
@@ -562,7 +585,7 @@ export function decodeIntentDraftProjection(value: unknown): IntentDraftProjecti
     "primaryUseCase", "epistemicMode", "researchObjective", "contributionIntent", "phenomenon", "unitOfAnalysis",
     "levelOfAnalysis", "sourceKinds", "languageCodes", "startYear", "endYear", "includePrivateReports",
     "evidenceTypes", "noveltyStandard", "noveltyRationale", "autonomyLevel", "stoppingConditions",
-    "revisionRationale", "unresolvedDecisions", "decisionComplete", "canRequestAcceptance", "launchReady",
+    "revisionRationale", "unresolvedDecisions", "decisionComplete", "canRequestAcceptance", "launchReady", "egressPolicy",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !canonicalUuid7(candidate.intentId) || !canonicalUuid7(candidate.revisionId)
     || candidate.intentId === candidate.revisionId || !integer(candidate.revision, 1, Number.MAX_SAFE_INTEGER)
@@ -582,6 +605,7 @@ export function decodeIntentDraftProjection(value: unknown): IntentDraftProjecti
     || (candidate.noveltyStandard !== null && !member(candidate.noveltyStandard, INTENT_NOVELTY_STANDARDS))
     || !boundedNarrative(candidate.noveltyRationale) || !member(candidate.autonomyLevel, INTENT_AUTONOMY_LEVELS)
     || !uniqueMembers(candidate.stoppingConditions, INTENT_STOPPING_CONDITIONS, 3, 1)
+    || !intentEgressPolicy(candidate.egressPolicy)
     || !boundedNarrative(candidate.revisionRationale, 1) || !stringList(candidate.unresolvedDecisions, 64)
     || typeof candidate.decisionComplete !== "boolean" || typeof candidate.canRequestAcceptance !== "boolean"
     || typeof candidate.launchReady !== "boolean") return null;
@@ -667,7 +691,7 @@ export function decodeIntentImpactPreview(value: unknown): IntentImpactPreview |
     "acknowledgementToken",
   ])) return null;
   if (candidate.schemaVersion !== "1.0" || !integer(candidate.expectedRevision, 0, Number.MAX_SAFE_INTEGER)
-    || !uniqueMembers(candidate.changeCategories, INTENT_CHANGE_CATEGORIES, 3)
+    || !uniqueMembers(candidate.changeCategories, INTENT_CHANGE_CATEGORIES, 4)
     || !stringList(candidate.affectedWorkflows, 32) || !stringList(candidate.affectedOutputs, 32)
     || !stringList(candidate.affectedSchemas, 16) || !stringList(candidate.affectedCheckpoints, 256)
     || !stringList(candidate.autonomyDefaultEffects, 8) || !stringList(candidate.stoppingLogicEffects, 8)
@@ -1430,6 +1454,7 @@ function recalculationRestoreBody(command: RecalculationRestoreRequest): string 
 
 function intentImpactBody(command: IntentImpactRequest): string {
   if (!projectRoot(command.root) || !integer(command.expectedRevision, 0, Number.MAX_SAFE_INTEGER)
+    || (command.egressPolicy !== undefined && command.egressPolicy !== null && !intentEgressPolicy(command.egressPolicy))
     || !member(command.primaryUseCase, INTENT_PRIMARY_USE_CASES)
     || !uniqueMembers(command.sourceKinds, INTENT_SOURCE_KINDS, 32) || !languageCodes(command.languageCodes)
     || (command.startYear !== null && !integer(command.startYear, 1000, 9999))
@@ -1466,6 +1491,8 @@ function intentAcceptBody(command: IntentAcceptRequest): string {
 
 function intentPolicyBody(command: IntentPolicyRequest): string {
   if (!projectRoot(command.root) || !member(command.action, INTENT_POLICY_ACTIONS)
+    || (command.destinationId !== undefined && command.destinationId !== null
+      && (typeof command.destinationId !== "string" || !/^[a-z0-9][a-z0-9._-]{0,99}$/.test(command.destinationId)))
     || !member(command.subjectType, INTENT_POLICY_SUBJECTS)
     || (command.stoppingCondition !== null
       && !member(command.stoppingCondition, INTENT_STOPPING_CONDITIONS))) throw new Error("RO-CORE-REQUEST-INVALID");

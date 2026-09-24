@@ -182,6 +182,7 @@ const acceptedIntent: IntentDraftProjection = {
   noveltyStandard: "bounded-comparative",
   noveltyRationale: "Compare only within the accepted corpus.",
   revisionRationale: "Accepted scope.",
+  egressPolicy: { mode: "local-only", approvedDestinationIds: [] },
   decisionComplete: true,
   unresolvedDecisions: [],
   canRequestAcceptance: false,

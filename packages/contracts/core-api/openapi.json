@@ -1,6 +1,16 @@
 {
   "components": {
     "schemas": {
+      "ApiVersion": {
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
+        "type": "string"
+      },
+      "BoundedText": {
+        "maxLength": 65536,
+        "minLength": 1,
+        "type": "string"
+      },
       "CacheClearPreview": {
         "additionalProperties": false,
         "properties": {
@@ -186,6 +196,34 @@
         "title": "CapabilitiesResponse",
         "type": "object"
       },
+      "CitationQuery": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "enum": [
+              "citations",
+              "references"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "kind": {
+            "const": "citations",
+            "title": "Kind",
+            "type": "string"
+          },
+          "seed": {
+            "$ref": "#/components/schemas/ProviderIdentifier"
+          }
+        },
+        "required": [
+          "kind",
+          "seed",
+          "direction"
+        ],
+        "title": "CitationQuery",
+        "type": "object"
+      },
       "ColumnSelection": {
         "additionalProperties": false,
         "properties": {
@@ -230,6 +268,491 @@
           "bindPort"
         ],
         "title": "ConfigurationResponse",
+        "type": "object"
+      },
+      "ConnectorCapabilities": {
+        "additionalProperties": false,
+        "properties": {
+          "adapterVersion": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "configuration": {
+            "enum": [
+              "ready",
+              "not-configured",
+              "unavailable"
+            ],
+            "title": "Configuration",
+            "type": "string"
+          },
+          "identifierSchemes": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderId"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Identifierschemes",
+            "type": "array"
+          },
+          "maximumPageSize": {
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Maximumpagesize",
+            "type": "integer"
+          },
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/Operation"
+            },
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Operations",
+            "type": "array"
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "requiredSettings": {
+            "items": {
+              "enum": [
+                "contact",
+                "provider-key"
+              ],
+              "type": "string"
+            },
+            "maxItems": 2,
+            "title": "Requiredsettings",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sourceApiVersion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApiVersion"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "providerId",
+          "adapterVersion",
+          "sourceApiVersion",
+          "operations",
+          "identifierSchemes",
+          "maximumPageSize",
+          "configuration",
+          "requiredSettings"
+        ],
+        "title": "ConnectorCapabilities",
+        "type": "object"
+      },
+      "ConnectorCapabilitiesPage": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectorCapabilities"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ConnectorCapabilitiesPage",
+        "type": "object"
+      },
+      "ConnectorConfirmationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Confirmation",
+            "type": "string"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "confirmation"
+        ],
+        "title": "ConnectorConfirmationRequest",
+        "type": "object"
+      },
+      "ConnectorCursor": {
+        "additionalProperties": false,
+        "properties": {
+          "expiresAt": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UtcInstant"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pageIndex": {
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Pageindex",
+            "type": "integer"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "requestSha256": {
+            "$ref": "#/components/schemas/RequestDigest"
+          },
+          "value": {
+            "$ref": "#/components/schemas/IdentifierValue"
+          }
+        },
+        "required": [
+          "providerId",
+          "projectId",
+          "requestSha256",
+          "pageIndex",
+          "value",
+          "expiresAt"
+        ],
+        "title": "ConnectorCursor",
+        "type": "object"
+      },
+      "ConnectorJobRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "jobId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "jobId"
+        ],
+        "title": "ConnectorJobRequest",
+        "type": "object"
+      },
+      "ConnectorJobStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "diagnosticCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnosticcode"
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "state": {
+            "enum": [
+              "runnable",
+              "claimed",
+              "running",
+              "retry-scheduled",
+              "cancelling",
+              "cancelled",
+              "failed",
+              "succeeded"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workflowRunId": {
+            "$ref": "#/components/schemas/InvocationId"
+          }
+        },
+        "required": [
+          "jobId",
+          "workflowRunId",
+          "state",
+          "diagnosticCode"
+        ],
+        "title": "ConnectorJobStatus",
+        "type": "object"
+      },
+      "ConnectorPolicy": {
+        "additionalProperties": false,
+        "description": "Ceilings and requested behavior, never a current policy/rights grant.",
+        "properties": {
+          "cacheMode": {
+            "enum": [
+              "bypass",
+              "revalidate",
+              "allow-fresh"
+            ],
+            "title": "Cachemode",
+            "type": "string"
+          },
+          "maxInflight": {
+            "maximum": 1.0,
+            "minimum": 1.0,
+            "title": "Maxinflight",
+            "type": "integer"
+          },
+          "maximumAttempts": {
+            "maximum": 3.0,
+            "minimum": 1.0,
+            "title": "Maximumattempts",
+            "type": "integer"
+          },
+          "maximumFreshAgeMs": {
+            "maximum": 86400000.0,
+            "minimum": 0.0,
+            "title": "Maximumfreshagems",
+            "type": "integer"
+          },
+          "maximumResponseBytes": {
+            "maximum": 10485760.0,
+            "minimum": 1.0,
+            "title": "Maximumresponsebytes",
+            "type": "integer"
+          },
+          "maximumRetryAfterMs": {
+            "$ref": "#/components/schemas/RetryAfter"
+          },
+          "minimumIntervalMs": {
+            "maximum": 86400000.0,
+            "minimum": 1000.0,
+            "title": "Minimumintervalms",
+            "type": "integer"
+          },
+          "rawRetention": {
+            "enum": [
+              "if-permitted",
+              "permitted-fields-only",
+              "do-not-retain"
+            ],
+            "title": "Rawretention",
+            "type": "string"
+          },
+          "timeoutMs": {
+            "maximum": 30000.0,
+            "minimum": 1.0,
+            "title": "Timeoutms",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "maxInflight",
+          "minimumIntervalMs",
+          "maximumAttempts",
+          "timeoutMs",
+          "maximumResponseBytes",
+          "maximumRetryAfterMs",
+          "cacheMode",
+          "maximumFreshAgeMs",
+          "rawRetention"
+        ],
+        "title": "ConnectorPolicy",
+        "type": "object"
+      },
+      "ConnectorPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmation": {
+            "title": "Confirmation",
+            "type": "string"
+          },
+          "destinationHost": {
+            "title": "Destinationhost",
+            "type": "string"
+          },
+          "expiresAt": {
+            "$ref": "#/components/schemas/UtcInstant"
+          },
+          "intentRevisionId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "intentSha256": {
+            "$ref": "#/components/schemas/RequestDigest"
+          },
+          "policySha256": {
+            "$ref": "#/components/schemas/RequestDigest"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "request": {
+            "$ref": "#/components/schemas/ConnectorRequest"
+          },
+          "requestSha256": {
+            "$ref": "#/components/schemas/RequestDigest"
+          },
+          "retention": {
+            "$ref": "#/components/schemas/ConnectorRetention"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/SourceTerms"
+          }
+        },
+        "required": [
+          "previewId",
+          "request",
+          "requestSha256",
+          "destinationHost",
+          "retention",
+          "terms",
+          "intentRevisionId",
+          "intentSha256",
+          "policySha256",
+          "expiresAt",
+          "confirmation"
+        ],
+        "title": "ConnectorPreview",
+        "type": "object"
+      },
+      "ConnectorPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "$ref": "#/components/schemas/ConnectorRequest"
+          },
+          "retention": {
+            "$ref": "#/components/schemas/ConnectorRetention"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "request",
+          "retention"
+        ],
+        "title": "ConnectorPreviewRequest",
+        "type": "object"
+      },
+      "ConnectorRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "adapterVersion": {
+            "$ref": "#/components/schemas/Version"
+          },
+          "cursor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorCursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invocationId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "pageSize": {
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Pagesize",
+            "type": "integer"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/ConnectorPolicy"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectId"
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "query": {
+            "$ref": "#/components/schemas/ScientificQuery"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sourceApiVersion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApiVersion"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "projectId",
+          "invocationId",
+          "providerId",
+          "adapterVersion",
+          "sourceApiVersion",
+          "query",
+          "pageSize",
+          "cursor",
+          "policy"
+        ],
+        "title": "ConnectorRequest",
+        "type": "object"
+      },
+      "ConnectorRetention": {
+        "additionalProperties": false,
+        "description": "Researcher's action-specific response rights, not inferred from public access.\n\nNo full text, export, share or model-use permission is inferred. With the\nbody disabled, only named fields plus identity/terms observations survive.",
+        "properties": {
+          "permittedFields": {
+            "default": [],
+            "items": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 64,
+            "title": "Permittedfields",
+            "type": "array"
+          },
+          "retainBody": {
+            "default": false,
+            "title": "Retainbody",
+            "type": "boolean"
+          },
+          "rights": {
+            "$ref": "#/components/schemas/ImportRights"
+          }
+        },
+        "title": "ConnectorRetention",
         "type": "object"
       },
       "Count": {
@@ -430,6 +953,11 @@
         ],
         "title": "HealthResponse",
         "type": "object"
+      },
+      "IdentifierValue": {
+        "maxLength": 4096,
+        "minLength": 1,
+        "type": "string"
       },
       "Identity": {
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
@@ -1763,6 +2291,9 @@
             "title": "Decisioncomplete",
             "type": "boolean"
           },
+          "egressPolicy": {
+            "$ref": "#/components/schemas/IntentEgressPolicy"
+          },
           "endYear": {
             "anyOf": [
               {
@@ -2043,6 +2574,17 @@
             "title": "Contributionintent",
             "type": "string"
           },
+          "egressPolicy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IntentEgressPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-client-optional": true
+          },
           "endYear": {
             "anyOf": [
               {
@@ -2261,6 +2803,34 @@
         "title": "IntentDraftRequest",
         "type": "object"
       },
+      "IntentEgressPolicy": {
+        "additionalProperties": false,
+        "description": "Intent declaration only; never an exact request's consent or dispatch grant.",
+        "properties": {
+          "approvedDestinationIds": {
+            "default": [],
+            "items": {
+              "pattern": "^[a-z0-9][a-z0-9._-]{0,99}$",
+              "type": "string"
+            },
+            "maxItems": 32,
+            "title": "Approveddestinationids",
+            "type": "array"
+          },
+          "mode": {
+            "default": "local-only",
+            "enum": [
+              "local-only",
+              "approved-redacted",
+              "approved-content"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "title": "IntentEgressPolicy",
+        "type": "object"
+      },
       "IntentGoverningReference": {
         "additionalProperties": false,
         "properties": {
@@ -2383,11 +2953,12 @@
               "enum": [
                 "primary-use-case",
                 "corpus-scope",
-                "novelty-scope"
+                "novelty-scope",
+                "egress-policy"
               ],
               "type": "string"
             },
-            "maxItems": 3,
+            "maxItems": 4,
             "title": "Changecategories",
             "type": "array"
           },
@@ -2467,6 +3038,17 @@
             ],
             "title": "Autonomylevel",
             "type": "string"
+          },
+          "egressPolicy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IntentEgressPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "x-client-optional": true
           },
           "endYear": {
             "anyOf": [
@@ -2792,6 +3374,19 @@
             "title": "Action",
             "type": "string"
           },
+          "destinationId": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z0-9][a-z0-9._-]{0,99}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Destinationid",
+            "x-client-optional": true
+          },
           "root": {
             "maxLength": 4096,
             "minLength": 1,
@@ -2945,6 +3540,35 @@
           "history"
         ],
         "title": "IntentWorkspaceProjection",
+        "type": "object"
+      },
+      "InvocationId": {
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        "type": "string"
+      },
+      "LookupQuery": {
+        "additionalProperties": false,
+        "properties": {
+          "identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderIdentifier"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Identifiers",
+            "type": "array"
+          },
+          "kind": {
+            "const": "lookup",
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "identifiers"
+        ],
+        "title": "LookupQuery",
         "type": "object"
       },
       "MappedName": {
@@ -3544,6 +4168,35 @@
         "minimum": 1.0,
         "type": "integer"
       },
+      "OaQuery": {
+        "additionalProperties": false,
+        "properties": {
+          "identifier": {
+            "$ref": "#/components/schemas/ProviderIdentifier"
+          },
+          "kind": {
+            "const": "oa-resolution",
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "identifier"
+        ],
+        "title": "OaQuery",
+        "type": "object"
+      },
+      "Operation": {
+        "enum": [
+          "search",
+          "lookup",
+          "citations",
+          "recommendations",
+          "oa-resolution"
+        ],
+        "type": "string"
+      },
       "OperationPage": {
         "additionalProperties": false,
         "properties": {
@@ -4018,6 +4671,10 @@
         ],
         "title": "ProjectDeleteRequest",
         "type": "object"
+      },
+      "ProjectId": {
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        "type": "string"
       },
       "ProjectIdentity": {
         "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
@@ -4518,6 +5175,28 @@
           "direction"
         ],
         "title": "ProvenanceLineageRequest",
+        "type": "object"
+      },
+      "ProviderId": {
+        "maxLength": 128,
+        "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+        "type": "string"
+      },
+      "ProviderIdentifier": {
+        "additionalProperties": false,
+        "properties": {
+          "scheme": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "value": {
+            "$ref": "#/components/schemas/IdentifierValue"
+          }
+        },
+        "required": [
+          "scheme",
+          "value"
+        ],
+        "title": "ProviderIdentifier",
         "type": "object"
       },
       "ReadinessResponse": {
@@ -5103,6 +5782,40 @@
         "title": "RecalculationScheduleRequest",
         "type": "object"
       },
+      "RecommendationQuery": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "const": "recommendations",
+            "title": "Kind",
+            "type": "string"
+          },
+          "negativeSeeds": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderIdentifier"
+            },
+            "maxItems": 100,
+            "title": "Negativeseeds",
+            "type": "array"
+          },
+          "positiveSeeds": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderIdentifier"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Positiveseeds",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind",
+          "positiveSeeds",
+          "negativeSeeds"
+        ],
+        "title": "RecommendationQuery",
+        "type": "object"
+      },
       "RecordSelection": {
         "additionalProperties": false,
         "properties": {
@@ -5237,6 +5950,15 @@
         ],
         "title": "RemoteModelApproval",
         "type": "string"
+      },
+      "RequestDigest": {
+        "pattern": "^sha256:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "RetryAfter": {
+        "maximum": 300000.0,
+        "minimum": 0.0,
+        "type": "integer"
       },
       "ReviewDetail": {
         "additionalProperties": false,
@@ -5475,6 +6197,165 @@
         "title": "RuntimeState",
         "type": "string"
       },
+      "ScientificQuery": {
+        "discriminator": {
+          "mapping": {
+            "citations": "#/components/schemas/CitationQuery",
+            "lookup": "#/components/schemas/LookupQuery",
+            "oa-resolution": "#/components/schemas/OaQuery",
+            "recommendations": "#/components/schemas/RecommendationQuery",
+            "search": "#/components/schemas/SearchQuery"
+          },
+          "propertyName": "kind"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SearchQuery"
+          },
+          {
+            "$ref": "#/components/schemas/LookupQuery"
+          },
+          {
+            "$ref": "#/components/schemas/CitationQuery"
+          },
+          {
+            "$ref": "#/components/schemas/RecommendationQuery"
+          },
+          {
+            "$ref": "#/components/schemas/OaQuery"
+          }
+        ]
+      },
+      "SearchFilter": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "enum": [
+              "publication-year",
+              "author-id",
+              "source-id",
+              "work-type",
+              "language",
+              "open-access"
+            ],
+            "title": "Field",
+            "type": "string"
+          },
+          "operator": {
+            "enum": [
+              "eq",
+              "gte",
+              "lte"
+            ],
+            "title": "Operator",
+            "type": "string"
+          },
+          "value": {
+            "$ref": "#/components/schemas/IdentifierValue"
+          }
+        },
+        "required": [
+          "field",
+          "operator",
+          "value"
+        ],
+        "title": "SearchFilter",
+        "type": "object"
+      },
+      "SearchQuery": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "enum": [
+              "any",
+              "title",
+              "abstract"
+            ],
+            "title": "Field",
+            "type": "string"
+          },
+          "fields": {
+            "items": {
+              "enum": [
+                "title",
+                "authors",
+                "date",
+                "venue",
+                "identifiers",
+                "abstract",
+                "references",
+                "rights"
+              ],
+              "type": "string"
+            },
+            "maxItems": 8,
+            "title": "Fields",
+            "type": "array"
+          },
+          "filters": {
+            "items": {
+              "$ref": "#/components/schemas/SearchFilter"
+            },
+            "maxItems": 32,
+            "title": "Filters",
+            "type": "array"
+          },
+          "kind": {
+            "const": "search",
+            "title": "Kind",
+            "type": "string"
+          },
+          "sort": {
+            "items": {
+              "$ref": "#/components/schemas/SearchSort"
+            },
+            "maxItems": 3,
+            "title": "Sort",
+            "type": "array"
+          },
+          "text": {
+            "$ref": "#/components/schemas/BoundedText"
+          }
+        },
+        "required": [
+          "kind",
+          "text",
+          "field",
+          "filters",
+          "sort",
+          "fields"
+        ],
+        "title": "SearchQuery",
+        "type": "object"
+      },
+      "SearchSort": {
+        "additionalProperties": false,
+        "properties": {
+          "direction": {
+            "enum": [
+              "ascending",
+              "descending"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "field": {
+            "enum": [
+              "relevance",
+              "publication-date",
+              "citation-count"
+            ],
+            "title": "Field",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "direction"
+        ],
+        "title": "SearchSort",
+        "type": "object"
+      },
       "Section": {
         "enum": [
           "raw",
@@ -5501,6 +6382,66 @@
           "truncated"
         ],
         "title": "ShortValue",
+        "type": "object"
+      },
+      "SourceObservation": {
+        "additionalProperties": false,
+        "description": "A source-reported value or explicit absence; never a permission decision.",
+        "properties": {
+          "state": {
+            "enum": [
+              "reported",
+              "not-reported",
+              "unknown",
+              "not-applicable"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BoundedText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "state",
+          "value"
+        ],
+        "title": "SourceObservation",
+        "type": "object"
+      },
+      "SourceTerms": {
+        "additionalProperties": false,
+        "properties": {
+          "access": {
+            "enum": [
+              "open",
+              "closed",
+              "unknown",
+              "not-reported"
+            ],
+            "title": "Access",
+            "type": "string"
+          },
+          "license": {
+            "$ref": "#/components/schemas/SourceObservation"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/SourceObservation"
+          }
+        },
+        "required": [
+          "license",
+          "terms",
+          "access"
+        ],
+        "title": "SourceTerms",
         "type": "object"
       },
       "SummaryCounts": {
@@ -5605,6 +6546,10 @@
         "minLength": 1,
         "type": "string"
       },
+      "UtcInstant": {
+        "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+        "type": "string"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -5644,6 +6589,11 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "Version": {
+        "maxLength": 128,
+        "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$",
+        "type": "string"
       },
       "VersionResponse": {
         "additionalProperties": false,
@@ -7418,6 +8368,301 @@
         "summary": "Close Project",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/projects/connectors/capabilities": {
+      "get": {
+        "operationId": "available_projects_connectors_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorCapabilitiesPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Available",
+        "tags": [
+          "connectors"
+        ]
+      }
+    },
+    "/projects/connectors/confirmations": {
+      "post": {
+        "operationId": "confirm_projects_connectors_confirmations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorConfirmationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorJobStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Confirm",
+        "tags": [
+          "connectors"
+        ]
+      }
+    },
+    "/projects/connectors/jobs/cancel": {
+      "post": {
+        "operationId": "cancel_projects_connectors_jobs_cancel_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorJobStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Cancel",
+        "tags": [
+          "connectors"
+        ]
+      }
+    },
+    "/projects/connectors/jobs/status": {
+      "post": {
+        "operationId": "status_projects_connectors_jobs_status_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorJobStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Status",
+        "tags": [
+          "connectors"
+        ]
+      }
+    },
+    "/projects/connectors/previews": {
+      "post": {
+        "operationId": "preview_projects_connectors_previews_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Preview",
+        "tags": [
+          "connectors"
         ]
       }
     },

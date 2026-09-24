@@ -1,0 +1,18 @@
+{
+  "meta": {"count": 2, "next_cursor": "synthetic-page-2"},
+  "results": [{
+    "id": "https://openalex.org/W999999999901",
+    "doi": "https://doi.org/10.99999/SYNTHETIC-ADAPTER",
+    "title": "Synthetic adapter fixture; not a scholarly publication",
+    "publication_year": 2026,
+    "publication_date": "2026-01-01",
+    "type": "article",
+    "ids": {"openalex": "https://openalex.org/W999999999901", "doi": "https://doi.org/10.99999/SYNTHETIC-ADAPTER"},
+    "authorships": [{"author": {"id": "https://openalex.org/A999999999901", "display_name": "Synthetic Author"}, "institutions": []}],
+    "primary_location": {"is_oa": true, "license": "cc-by", "source": {"id": "https://openalex.org/S999999999901", "display_name": "Synthetic Venue"}},
+    "open_access": {"is_oa": true, "oa_status": "gold"},
+    "referenced_works": ["https://openalex.org/W999999999902"],
+    "abstract_inverted_index": {"Synthetic": [0], "fixture": [1]},
+    "future_field": {"note": "Untrusted synthetic source assertion"}
+  }]
+}

@@ -13,6 +13,11 @@ The owner reversed the earlier sanitized-publication-only arrangement. The
 already published sanitized tips are preserved in verified local recovery
 copies before a one-time exact-lease reconciliation with original branch tips.
 Routine future pushes are normal fast-forwards, not force or mirror pushes.
+Use the normal repository checkout for the active `codex/...` branch. Clearly
+labelled work-in-progress commits may be backed up on that branch; they do not
+claim passing tests, task completion, or approval. Only reviewed, verified units
+advance local `main`. An unfinished task alone is not a reason to use a separate
+clone or defer its branch backup. Privacy checks still apply to every push.
 Original local source, approval and evidence history is not rewritten. The three
 previously deleted recovery branches are not republished automatically.
 

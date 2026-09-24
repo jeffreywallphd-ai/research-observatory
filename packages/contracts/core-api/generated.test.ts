@@ -1247,6 +1247,7 @@ describe("generated Core API client", () => {
       autonomyLevel: "suggest",
       stoppingConditions: ["interpretive-saturation"],
       revisionRationale: "Initial bounded draft.",
+      egressPolicy: { mode: "local-only", approvedDestinationIds: [] },
       unresolvedDecisions: ["research-question", "source-scope"],
       decisionComplete: false,
       canRequestAcceptance: false,
@@ -1321,10 +1322,22 @@ describe("generated Core API client", () => {
       stoppingRequiresHumanConfirmation: true,
     } as const;
     expect(decodeIntentDraftProjection(current)).toEqual(current);
+    for (const egressPolicy of [
+      null,
+      { mode: "local-only", approvedDestinationIds: ["openalex"] },
+      { mode: "approved-content", approvedDestinationIds: [] },
+      { mode: "approved-content", approvedDestinationIds: ["openalex", "openalex"] },
+      { mode: "approved-content", approvedDestinationIds: ["https://untrusted.invalid"] },
+      { mode: "approved-content", approvedDestinationIds: ["openalex"], consent: true },
+    ]) expect(decodeIntentDraftProjection({ ...current, egressPolicy })).toBeNull();
+    expect(decodeIntentDraftProjection({ ...current,
+      egressPolicy: { mode: "approved-content", approvedDestinationIds: ["openalex"] },
+    })).not.toBeNull();
     expect(decodeIntentDraftProjection({ ...current, launchReady: true })).toBeNull();
     expect(decodeIntentWorkspaceProjection(workspace)).toEqual(workspace);
     expect(decodeIntentWorkspaceProjection({ ...workspace, history: [{ ...summary, revisionId: current.intentId }] })).toBeNull();
     expect(decodeIntentImpactPreview(impact)).toEqual(impact);
+    expect(decodeIntentImpactPreview({ ...impact, changeCategories: ["egress-policy"] })).not.toBeNull();
     expect(decodeIntentImpactPreview({ ...impact, acknowledgementToken: null })).toBeNull();
     expect(decodeIntentDraftProjection(accepted)).toEqual(accepted);
     expect(decodeIntentGoverningReference(governing)).toEqual(governing);

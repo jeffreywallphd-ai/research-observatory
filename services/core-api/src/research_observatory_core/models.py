@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import StrEnum
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -369,7 +369,7 @@ IntentStoppingCondition = Literal[
     "resource-budget",
     "researcher-decision",
 ]
-IntentChangeCategory = Literal["primary-use-case", "corpus-scope", "novelty-scope"]
+IntentChangeCategory = Literal["primary-use-case", "corpus-scope", "novelty-scope", "egress-policy"]
 IntentRevisionStatus = Literal["draft", "accepted"]
 IntentPolicySubject = Literal["human", "model", "system"]
 IntentHumanGate = Literal[
@@ -407,6 +407,23 @@ IntentOutputLabel = Literal[
 ]
 
 
+class IntentEgressPolicy(ContractModel):
+    """Intent declaration only; never an exact request's consent or dispatch grant."""
+
+    mode: Literal["local-only", "approved-redacted", "approved-content"] = "local-only"
+    approved_destination_ids: tuple[Annotated[str, Field(strict=True, pattern=r"^[a-z0-9][a-z0-9._-]{0,99}$")], ...] = (
+        Field(default=(), max_length=32)
+    )
+
+    @model_validator(mode="after")
+    def coherent_destinations(self) -> IntentEgressPolicy:
+        if len(set(self.approved_destination_ids)) != len(self.approved_destination_ids):
+            raise ValueError("intent-egress-destinations-duplicate")
+        if (self.mode == "local-only") != (not self.approved_destination_ids):
+            raise ValueError("intent-egress-destinations-invalid")
+        return self
+
+
 class IntentImpactRequest(ContractModel):
     root: str = Field(min_length=1, max_length=4096)
     expected_revision: int = Field(ge=0, le=9_007_199_254_740_991)
@@ -420,6 +437,9 @@ class IntentImpactRequest(ContractModel):
     novelty_standard: IntentNoveltyStandard | None
     autonomy_level: IntentAutonomyLevel
     stopping_conditions: tuple[IntentStoppingCondition, ...] = Field(min_length=1, max_length=3)
+    # Omission preserves the current declaration for old clients; initial drafts
+    # remain local-only. Null cannot silently clear an accepted destination list.
+    egress_policy: IntentEgressPolicy | None = Field(default=None, json_schema_extra={"x-client-optional": True})
 
     @model_validator(mode="after")
     def validate_scope(self) -> IntentImpactRequest:
@@ -485,6 +505,7 @@ class IntentDraftRequest(IntentImpactRequest):
             novelty_standard=self.novelty_standard,
             autonomy_level=self.autonomy_level,
             stopping_conditions=self.stopping_conditions,
+            egress_policy=self.egress_policy,
         )
 
 
@@ -507,6 +528,9 @@ class IntentPolicyRequest(ContractModel):
     action: IntentPolicyAction
     subject_type: IntentPolicySubject
     stopping_condition: IntentStoppingCondition | None = None
+    destination_id: str | None = Field(
+        default=None, pattern=r"^[a-z0-9][a-z0-9._-]{0,99}$", json_schema_extra={"x-client-optional": True}
+    )
 
 
 class IntentGoverningReference(ContractModel):
@@ -539,7 +563,7 @@ class IntentPolicyDecision(ContractModel):
 class IntentImpactPreview(ContractModel):
     schema_version: str = CORE_API_SCHEMA_VERSION
     expected_revision: int = Field(ge=0, le=9_007_199_254_740_991)
-    change_categories: tuple[IntentChangeCategory, ...] = Field(max_length=3)
+    change_categories: tuple[IntentChangeCategory, ...] = Field(max_length=4)
     affected_workflows: tuple[str, ...] = Field(max_length=32)
     affected_outputs: tuple[str, ...] = Field(max_length=32)
     affected_schemas: tuple[str, ...] = Field(max_length=16)
@@ -604,6 +628,7 @@ class WorkflowProfileCatalogProjection(ContractModel):
 
 
 class IntentDraftProjection(ContractModel):
+    egress_policy: IntentEgressPolicy = Field(default_factory=IntentEgressPolicy)
     schema_version: str = CORE_API_SCHEMA_VERSION
     intent_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
     revision_id: str = Field(pattern=r"^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")

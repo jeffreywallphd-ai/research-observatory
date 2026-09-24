@@ -16,6 +16,9 @@ from starlette.exceptions import HTTPException
 from . import CORE_API_VERSION
 from .authentication import LocalAuthenticationMiddleware
 from .config import CoreSettings
+from .connector_api import connector_problem, register_connector_routes
+from .connector_worker import ConnectorWorkerService
+from .connectors.providers import ProviderProblem
 from .import_api import register_import_routes
 from .import_intake_api import register_intake_routes
 from .import_preview_service import ImportPreviewService
@@ -112,6 +115,7 @@ class RuntimeContext:
     task_center: TaskCenterService
     recalculation: RecalculationControlService
     imports: ImportPreviewService | None = None
+    connectors: ConnectorWorkerService | None = None
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -130,6 +134,7 @@ def create_app(
     task_center: TaskCenterService | None = None,
     recalculation: RecalculationControlService | None = None,
     imports: ImportPreviewService | None = None,
+    connectors: ConnectorWorkerService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -171,16 +176,21 @@ def create_app(
             task_center=resolved_task_center,
             recalculation=resolved_recalculation,
             imports=imports,
+            connectors=connectors,
         )
         app.state.runtime = context
         if context.imports is not None:
             context.imports.start()
+        if context.connectors is not None:
+            context.connectors.start()
         context.state = RuntimeState.READY
         emit_log_record("runtime.started", level=resolved_settings.log_level, fields={"state": context.state.value})
         try:
             yield
         finally:
             context.state = RuntimeState.STOPPING
+            if context.connectors is not None:
+                context.connectors.shutdown()
             if context.imports is not None:
                 context.imports.shutdown()
             context.projects.shutdown()
@@ -304,12 +314,15 @@ def create_app(
 
     register_import_routes(app, lambda request: runtime(request).imports, project_problem)
     register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
+    register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
 
     def run_project_action(request: Request, action: Callable[[], ProjectProjection]) -> ProjectProjection:
         try:
             return action()
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
+        except ProviderProblem as error:
+            raise connector_problem(request, error.code) from None
         except PreviewProblem:
             raise CoreProblem(
                 problem_detail(
@@ -630,9 +643,15 @@ def create_app(
             try:
                 if context.imports is not None and projection.access_mode.value == "read-write":
                     context.imports.attach(projection.root)
+                if context.connectors is not None and projection.access_mode.value == "read-write":
+                    context.connectors.attach(projection.root)
             except Exception:
                 # This call acquired the new session; do not strand it on a
                 # failed worker binding and then reject the user's open retry.
+                if context.connectors is not None:
+                    context.connectors.detach(projection.root)
+                if context.imports is not None:
+                    context.imports.detach(projection.root)
                 context.projects.close(root=projection.root, trace_id=request.state.trace_id)
                 raise
             return projection
@@ -648,6 +667,8 @@ def create_app(
     def close_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
         def drain_and_close() -> ProjectProjection:
             context = runtime(request)
+            if context.connectors is not None:
+                context.connectors.detach(command.root)
             if context.imports is not None:
                 try:
                     context.imports.detach(command.root)

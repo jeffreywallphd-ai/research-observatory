@@ -19645,13 +19645,19 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile search
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-09-24T00:14:49+00:00'
+      status: BLOCKED
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      started_at: '2026-09-24T00:26:03+00:00'
+      updated_at: '2026-09-24T01:17:10+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Owner-requested stop within five minutes; unfinished implementation and retained cancellation regression preserved,
+          not a new approval gate.
+        next_action: On owner resume, resume W2 and reopen CAP-04.S02.T02 with the same owner. First fix the retained cancel-at-publication
+          regression using claim-fenced atomic page/checkpoint/workflow completion. See .local/slice-qualification-drafts/W2.resume-20260924-0115.md.
+        recorded_at: '2026-09-24T01:17:10+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -19659,10 +19665,10 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
+      base_sha: 6316b14d439c10f85fea6557e141d6f04111f17b
       lease: null
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
     - id: CAP-04.S02.T03

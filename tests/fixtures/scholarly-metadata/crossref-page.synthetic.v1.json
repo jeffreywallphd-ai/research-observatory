@@ -1,0 +1,21 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message-version": "1.0.0",
+  "message": {
+    "total-results": 2,
+    "next-cursor": "synthetic-crossref-page-2",
+    "items": [{
+      "DOI": "10.99999/SYNTHETIC-ADAPTER",
+      "title": ["Synthetic adapter fixture; not a scholarly publication"],
+      "author": [{"given": "Synthetic", "family": "Author", "ORCID": "https://orcid.org/0000-0000-0000-0000"}],
+      "container-title": ["Synthetic Venue"],
+      "published": {"date-parts": [[2026, 1, 1]]},
+      "type": "journal-article",
+      "reference": [{"key": "synthetic-ref-1", "DOI": "10.99999/synthetic-reference"}],
+      "license": [{"URL": "https://creativecommons.org/licenses/by/4.0/", "content-version": "vor"}],
+      "abstract": "<jats:p>Synthetic fixture; inert markup.</jats:p>",
+      "future-field": {"note": "Untrusted synthetic source assertion"}
+    }]
+  }
+}
