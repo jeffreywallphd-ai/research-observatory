@@ -13571,20 +13571,134 @@
             {
               "task_id": "CAP-04.S02.T01",
               "title": "Define connector request, result, cursor, rate-limit, and provenance contracts",
-              "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "status": "DONE",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:w2-s01-final-review",
+                "result": "approved",
+                "reviewed_at": "2026-09-24T00:14:49+00:00",
+                "notes": "Independent expanded public-contract task review approves the exact frozen R01 candidate. Authenticated current_submission, manifest, packet/criteria/selection hashes, Git ancestry and the exact 25-path base-to-candidate inventory. Acceptance criteria match the immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, claimed base, candidate and current backlog; required dependencies remain DONE/approved. Read-only validate_task_evidence and task_submission_packet_errors returned no errors. The preceding expanded review examined portable models/ports, scientific request/page identity, cursor/cache binding, provenance, source observations versus rights grants, protected payload versus broker-only authentication/contact, resource limits and complete/empty/partial/failed outcomes. F01/F02 from the preserved pre-submission review are explicitly closed below after exact-candidate regression replay and incremental schema review; they were not prior controlled rounds, so controlled findings and closures remain empty. Authenticated all five qualifying log hashes and their output: 21 tests PASS in 1.555 seconds with no skips, exact schema generation PASS, affected Ruff check/format and mypy PASS for five files, 308-file inventory and architecture PASS, clean e5c57e9 build manifest and backlog projection PASS. Authenticated the build manifest and all three adverse development-log hashes. The missing-module setup failure, development boundary failures and four failing first-review subtests remain distinct from qualifying success. No broad suite or provider call was repeated during final authentication. No material criterion-bound blocker remains. Approval is limited to CAP-04.S02.T01 portable contract delivery under approved slice section 9.1 and ADR-0027; it is not provider/broker/network/persistence implementation, CAP-04.S02 integrated qualification, Wave exit or release approval. Real current authority, echo redaction, rate/retry/cache enforcement, atomic publication and restart remain the documented later implementation obligations. Source terms observations confer no permissions, and JSON Schema structural validation does not replace Core semantic validation."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-09-24T00:09:20+00:00",
+                      "candidate_commit": "e5c57e9784d7f06957d9e5e850a916002110d87f",
+                      "base_commit": "02e613a5eda87d83fd73f125157395810e6ec2cc",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S02.T01.json",
+                        "sha256": "b73a60a4e19a57d3320fcaa0a19c191c53d4f5a5ed90266c89d898ff1159aa54",
+                        "commit": "e5c57e9784d7f06957d9e5e850a916002110d87f",
+                        "recorded_at": "2026-09-24T00:09:20+00:00"
+                      },
+                      "acceptance_criteria_sha256": "ab87be41b746ff14f5389aae39b6f1a91573bde58d1879acf6db089c596a2926",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-04.S02.T01.pre-submission-review-01.md",
+                        "artifacts/evidence/CAP-04.S02.T01.task-start.md",
+                        "docs/architecture/README.md",
+                        "docs/architecture/connector-contracts.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/README.md",
+                        "packages/contracts/connectors/connector-capabilities.schema.json",
+                        "packages/contracts/connectors/connector-page.schema.json",
+                        "packages/contracts/connectors/connector-request.schema.json",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S02.T01.html",
+                        "planning/review-site/CAP-04/CAP-04.S02.html",
+                        "planning/review-site/CAP-04/index.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W2.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/src/research_observatory_core/connectors/__init__.py",
+                        "services/core-api/src/research_observatory_core/connectors/contracts.py",
+                        "services/core-api/src/research_observatory_core/ports/connectors.py",
+                        "tests/contracts/test_connector_contracts.py",
+                        "tests/fixtures/scholarly-metadata/README.md",
+                        "tests/fixtures/scholarly-metadata/connector-page.v1.json",
+                        "tools/core_api_contract.py"
+                      ],
+                      "selected_checks": [
+                        ".venv/Scripts/python.exe -B -s -m unittest tests.contracts.test_connector_contracts tests.contracts.test_model_registry_contracts -v",
+                        ".venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check",
+                        ".venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/connectors services/core-api/src/research_observatory_core/ports/connectors.py tests/contracts/test_connector_contracts.py tools/core_api_contract.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/connectors services/core-api/src/research_observatory_core/ports/connectors.py tests/contracts/test_connector_contracts.py tools/core_api_contract.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages services/core-api/src/research_observatory_core/connectors services/core-api/src/research_observatory_core/ports/connectors.py tests/contracts/test_connector_contracts.py tools/core_api_contract.py",
+                        ".venv/Scripts/python.exe -B -s -c 'from pathlib import Path; from tools.quality_check import load_scope; print(len(load_scope(Path.cwd())), \"governed files; inventory complete\")'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -B -s tools/architecture_check.py --repo .; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -B -s tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S02.T01.build-02.json",
+                        ".venv/Scripts/python.exe -B -s tools/backlog_views.py --repo . --check"
+                      ],
+                      "deferred_checks": [
+                        "HTTP/broker authorization and secret redaction, actual rate/retry/cache enforcement, provider-specific fixtures, atomic protected page publication and restart belong to CAP-04.S02.T02/T03 and slice/checkpoint integration. Full W2 platform/package/accessibility/performance/security and cross-capability qualification remain required. No completed CAP-04.S01 import suite or benchmark was replayed. Contract-only task has no native/principal or persistence boundary to qualify."
+                      ],
+                      "selection_rationale": "Additive public connector values/ports plus the existing schema generator need focused contract/failure tests, exact generation, affected quality and architecture/build inventory. Command IDs identify coverage domains; exact narrowed commands below are not full-profile executions. Final runs are fresh at the fixed clean committed candidate after F01/F02 remediation.",
+                      "selection_sha256": "981cef66c0bff26fb24db828d98355d581f474a32bb391655da3149cf3b4ce82",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "contracts:unit",
+                        "foundation:quality",
+                        "foundation:architecture",
+                        "foundation:build-manifest",
+                        "foundation:backlog-views"
+                      ],
+                      "packet_sha256": "1a14a84b6335784afbff2ee6f881e55487d84a82856b1689fd0534489c806a5c"
+                    },
+                    "review": {
+                      "reviewer": "agent:w2-s01-final-review",
+                      "result": "approved",
+                      "reviewed_at": "2026-09-24T00:14:49+00:00",
+                      "notes": "Independent expanded public-contract task review approves the exact frozen R01 candidate. Authenticated current_submission, manifest, packet/criteria/selection hashes, Git ancestry and the exact 25-path base-to-candidate inventory. Acceptance criteria match the immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, claimed base, candidate and current backlog; required dependencies remain DONE/approved. Read-only validate_task_evidence and task_submission_packet_errors returned no errors. The preceding expanded review examined portable models/ports, scientific request/page identity, cursor/cache binding, provenance, source observations versus rights grants, protected payload versus broker-only authentication/contact, resource limits and complete/empty/partial/failed outcomes. F01/F02 from the preserved pre-submission review are explicitly closed below after exact-candidate regression replay and incremental schema review; they were not prior controlled rounds, so controlled findings and closures remain empty. Authenticated all five qualifying log hashes and their output: 21 tests PASS in 1.555 seconds with no skips, exact schema generation PASS, affected Ruff check/format and mypy PASS for five files, 308-file inventory and architecture PASS, clean e5c57e9 build manifest and backlog projection PASS. Authenticated the build manifest and all three adverse development-log hashes. The missing-module setup failure, development boundary failures and four failing first-review subtests remain distinct from qualifying success. No broad suite or provider call was repeated during final authentication. No material criterion-bound blocker remains. Approval is limited to CAP-04.S02.T01 portable contract delivery under approved slice section 9.1 and ADR-0027; it is not provider/broker/network/persistence implementation, CAP-04.S02 integrated qualification, Wave exit or release approval. Real current authority, echo redaction, rate/retry/cache enforcement, atomic publication and restart remain the documented later implementation obligations. Source terms observations confer no permissions, and JSON Schema structural validation does not replace Core semantic validation."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S02.T01.review-R01.json",
+                      "sha256": "33a0478a5d9956044a4d6d7f1537dc06665bf878234262ad7023b588771685c1"
+                    },
+                    "findings": [],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-04.S02.T01",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-09-24T00:09:20+00:00",
+                      "reviewed_at": "2026-09-24T00:14:49+00:00",
+                      "duration_seconds": 329,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "contracts:unit",
+                        "foundation:quality",
+                        "foundation:architecture",
+                        "foundation:build-manifest",
+                        "foundation:backlog-views"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             },
             {
               "task_id": "CAP-04.S02.T02",
               "title": "Implement OpenAlex and Crossref adapters",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -13612,7 +13726,7 @@
             {
               "task_id": "CAP-04.S02.T01",
               "title": "Define connector request, result, cursor, rate-limit, and provenance contracts",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "page": "CAP-04/CAP-04.S02.T01.html",
               "dependencies": [
                 "CAP-04.S01.T01",
@@ -13632,7 +13746,7 @@
             {
               "task_id": "CAP-04.S02.T02",
               "title": "Implement OpenAlex and Crossref adapters",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-04/CAP-04.S02.T02.html",
               "dependencies": [
                 "CAP-04.S02.T01"

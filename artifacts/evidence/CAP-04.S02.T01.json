@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S02.T01",
+  "baseCommit": "02e613a5eda87d83fd73f125157395810e6ec2cc",
+  "commit": "e5c57e9784d7f06957d9e5e850a916002110d87f",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S02.T01.pre-submission-review-01.md",
+    "artifacts/evidence/CAP-04.S02.T01.task-start.md",
+    "docs/architecture/README.md",
+    "docs/architecture/connector-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/connectors/connector-capabilities.schema.json",
+    "packages/contracts/connectors/connector-page.schema.json",
+    "packages/contracts/connectors/connector-request.schema.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S02.T01.html",
+    "planning/review-site/CAP-04/CAP-04.S02.html",
+    "planning/review-site/CAP-04/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/connectors/__init__.py",
+    "services/core-api/src/research_observatory_core/connectors/contracts.py",
+    "services/core-api/src/research_observatory_core/ports/connectors.py",
+    "tests/contracts/test_connector_contracts.py",
+    "tests/fixtures/scholarly-metadata/README.md",
+    "tests/fixtures/scholarly-metadata/connector-page.v1.json",
+    "tools/core_api_contract.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "ConnectorContractTests and ConnectorPortTests prove immutable public-schema roundtrip and mockable async composition for all five scientific operation shapes. Every result binds request/provider and explicit observation/retrieval and page terms states, including empty/failed pages; records retain actual raw identifiers, namespaced fields and separate license/terms observations. Normalized errors and strict provenance/outcome/cursor/cache relationships remain separate from rights or egress grants."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The 18 connector tests cover invalid operation/configuration/identifier, scientific project/version/query substitution, advancing/expired/cross-project cursors, cache page identity/freshness, terminal denial/cancellation, forged nested models, strict UTC, resource limits, malformed JSON, retention and provenance contradictions. Two first-review regressions replay F01 noncanonical direct resume time and F02 empty/failed page terms at this exact candidate."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Three versioned standalone generated JSON Schemas, immutable owned Core values, dependency-neutral Protocol ports, explicitly synthetic CC0 fixture, architecture documentation and build/quality inventories are delivered. Exact schema generation, 3 existing generator-contract regressions, affected lint/format/types, architecture, build inventory and backlog projection checks pass. No migration, persisted predecessor, network call, new API route, dependency, UI change, parallel identity store or runtime authorization claim is introduced."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Additive public connector values/ports plus the existing schema generator need focused contract/failure tests, exact generation, affected quality and architecture/build inventory. Command IDs identify coverage domains; exact narrowed commands below are not full-profile executions. Final runs are fresh at the fixed clean committed candidate after F01/F02 remediation.",
+    "deferred": [
+      "HTTP/broker authorization and secret redaction, actual rate/retry/cache enforcement, provider-specific fixtures, atomic protected page publication and restart belong to CAP-04.S02.T02/T03 and slice/checkpoint integration. Full W2 platform/package/accessibility/performance/security and cross-capability qualification remain required. No completed CAP-04.S01 import suite or benchmark was replayed. Contract-only task has no native/principal or persistence boundary to qualify."
+    ]
+  },
+  "checks": [
+    {
+      "id": "contracts",
+      "command": ".venv/Scripts/python.exe -B -s -m unittest tests.contracts.test_connector_contracts tests.contracts.test_model_registry_contracts -v",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "21 tests passed in 1.555 seconds; 18 connector tests and 3 shared-generator model-registry contract regressions; no skips.",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T01.contracts-qualification-02.log",
+      "rawOutputSha256": "f124f30e4b750f9e50ac345f49ebc88751c9da129351739819f7eeeb3af13ba6"
+    },
+    {
+      "id": "generation",
+      "command": ".venv/Scripts/python.exe -B -s tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "Core API contract: PASS; exact generated artifacts, including all three connector schemas.",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T01.generation-qualification-02.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+    },
+    {
+      "id": "quality",
+      "command": ".venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/connectors services/core-api/src/research_observatory_core/ports/connectors.py tests/contracts/test_connector_contracts.py tools/core_api_contract.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/connectors services/core-api/src/research_observatory_core/ports/connectors.py tests/contracts/test_connector_contracts.py tools/core_api_contract.py; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages services/core-api/src/research_observatory_core/connectors services/core-api/src/research_observatory_core/ports/connectors.py tests/contracts/test_connector_contracts.py tools/core_api_contract.py",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "Lint PASS; 5 files already formatted; mypy PASS for all 5 selected source files.",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T01.quality-qualification-02.log",
+      "rawOutputSha256": "f3565054191be79f0fb79f65cdc13f962a2ab794e21931dc577db3867490eba2"
+    },
+    {
+      "id": "inventory",
+      "command": ".venv/Scripts/python.exe -B -s -c 'from pathlib import Path; from tools.quality_check import load_scope; print(len(load_scope(Path.cwd())), \"governed files; inventory complete\")'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -B -s tools/architecture_check.py --repo .; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; .venv/Scripts/python.exe -B -s tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S02.T01.build-02.json",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "308 governed files; inventory complete. Architecture PASS: 13 areas, 12 modules, 5 stable interfaces, 3 deployment profiles. Build manifest PASS: 0.1.0+ge5c57e9 (clean).",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T01.inventory-qualification-02.log",
+      "rawOutputSha256": "88912d14d1d9a9d0325f02356059ad2a9559af801b3fad7a9586ef854383d541"
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe -B -s tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "provenance": "fresh execution at fixed committed candidate",
+      "result": "Generated backlog views: PASS - no changes.",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T01.backlog-qualification-02.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+    }
+  ],
+  "preSubmissionFindingReplay": [
+    {
+      "id": "F01",
+      "record": "artifacts/evidence/CAP-04.S02.T01.pre-submission-review-01.md",
+      "evidence": "test_direct_resume_time_rejects_offsets_naive_and_malformed_instants",
+      "remediationCandidate": "e5c57e9784d7f06957d9e5e850a916002110d87f",
+      "disposition": "implemented and regression passed; independent exact-candidate closure required"
+    },
+    {
+      "id": "F02",
+      "record": "artifacts/evidence/CAP-04.S02.T01.pre-submission-review-01.md",
+      "evidence": "test_empty_and_failed_pages_preserve_their_own_terms_observations",
+      "remediationCandidate": "e5c57e9784d7f06957d9e5e850a916002110d87f",
+      "disposition": "implemented and regression passed; independent exact-candidate closure required"
+    }
+  ],
+  "developmentEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T01.contract-red-01.log",
+      "sha256": "09c3fe0f41c51618cdfc26dc09dbd5f3774bc36258a458f19fa458821e1763ed",
+      "result": "Before implementation: missing connector module produced an import-loader error, not a behavioral assertion failure."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T01.contract-boundaries-red-01.log",
+      "sha256": "f798023590787ce8022fb6fc8ec428eadb70504478edd676cdbaa25df332bbdf",
+      "result": "Uncommitted development: 16 tests, 8 failing subtests and 3 errors in 1.136 seconds before capability/rate/terminal/page-cache fixes. Not qualifying evidence."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T01.review-red-01.log",
+      "sha256": "9da7c9a99dd70c8ba7219afb95eac9f72e55061742693e4501340a84171c3996",
+      "result": "Reviewer regressions before product remediation: 2 tests, 4 failing subtests in 0.002 seconds. Adverse findings preserved; no controlled review round invented."
+    }
+  ],
+  "deliveryValidation": {
+    "result": "Generated review-site check passed before the remediation commit: 19 capabilities, 111 slices, 337 tasks, 492 HTML pages.",
+    "scope": "Pre-commit delivery validation, not represented as a fresh committed-candidate product check.",
+    "rawOutput": "artifacts/tmp/CAP-04.S02.T01.remediation-site-check-01.log"
+  },
+  "execution": {
+    "candidateFixed": true,
+    "trackedTreeClean": true,
+    "platform": "Windows x64",
+    "pythonVersion": "3.14.6",
+    "reuseDisabled": true,
+    "buildManifest": "artifacts/tmp/CAP-04.S02.T01.build-02.json",
+    "buildManifestSha256": "9183eb61726e61a1fe7bc75575d51f695f784a57cd5d091f2cc2abf30e3f57ca"
+  },
+  "scopeLimits": [
+    "Portable contract completion only, not completed CAP-04.S02 adapters or a W2 release. Source observations never establish permissions, verified scholarship, live availability or complete remote coverage.",
+    "Ordinary repr/error text suppresses protected input; model serialization and structured validation errors are not safe diagnostics. Real broker echo-redaction and current authority remain later runtime obligations.",
+    "JSON Schema proves structural shape; cross-field semantics additionally require Core model validation. No measured performance or cross-platform claim."
+  ]
+}
