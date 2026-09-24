@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from datetime import datetime
 from typing import Annotated, Any, ClassVar, Literal, Self
 
@@ -34,9 +35,12 @@ type IdentifierValue = Annotated[str, Field(strict=True, min_length=1, max_lengt
 type Count = Annotated[int, Field(strict=True, ge=0, le=2**53 - 1)]
 type RetryAfter = Annotated[int, Field(strict=True, ge=0, le=300000)]
 type Operation = Literal["search", "lookup", "citations", "recommendations", "oa-resolution"]
+_UTC_PATTERN = r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$"
 
 
 def _utc(value: str) -> str:
+    if not isinstance(value, str) or re.fullmatch(_UTC_PATTERN, value) is None:
+        raise ValueError("connector-time-invalid")
     try:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
         canonical = parsed.isoformat(timespec="milliseconds").replace("+00:00", "Z")
@@ -49,7 +53,7 @@ def _utc(value: str) -> str:
 
 type UtcInstant = Annotated[
     str,
-    Field(strict=True, pattern=r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$"),
+    Field(strict=True, pattern=_UTC_PATTERN),
     AfterValidator(_utc),
 ]
 
@@ -413,6 +417,7 @@ class ConnectorResultPage(BoundedDocument):
     request: ConnectorRequest = Field(repr=False)
     observed_at: UtcInstant
     retrieved_at: UtcInstant | None
+    terms: SourceTerms = Field(repr=False)
     outcome: Literal["complete", "partial", "failed"]
     continuation: Literal["exhausted", "next-page", "retry-current", "unavailable"]
     next_cursor: ConnectorCursor | None = Field(repr=False)

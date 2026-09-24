@@ -28,6 +28,11 @@
   },
   "observedAt": "2026-01-01T00:00:00.000Z",
   "retrievedAt": "2026-01-01T00:00:00.000Z",
+  "terms": {
+    "license": {"state": "not-reported", "value": null},
+    "terms": {"state": "unknown", "value": null},
+    "access": "unknown"
+  },
   "outcome": "complete",
   "continuation": "exhausted",
   "nextCursor": null,

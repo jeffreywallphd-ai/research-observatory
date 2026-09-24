@@ -165,6 +165,37 @@ class ConnectorContractTests(unittest.TestCase):
             with self.subTest(contradictory=contradictory["outcome"]), self.assertRaises(ValueError):
                 ConnectorResultPage.model_validate(contradictory)
 
+    def test_direct_resume_time_rejects_offsets_naive_and_malformed_instants(self) -> None:
+        document = page_document()["request"]
+        request = ConnectorRequest.model_validate(document)
+        resumed = ConnectorRequest.model_validate(document | {"cursor": cursor_document(request)})
+        for now in (
+            "2026-01-01T23:00:00.000-05:00",
+            "2026-01-01T23:00:00.000",
+            "2026-01-01T23:00:00Z",
+            "2026-02-30T00:00:00.000Z",
+        ):
+            with self.subTest(now=now), self.assertRaisesRegex(ValueError, "time-invalid"):
+                resumed.assert_resumable(now)
+        resumed.assert_resumable("2026-01-01T23:59:59.999Z")
+        with self.assertRaisesRegex(ValueError, "cursor-expired"):
+            resumed.assert_resumable("2026-01-02T04:00:00.000Z")
+
+    def test_empty_and_failed_pages_preserve_their_own_terms_observations(self) -> None:
+        document = page_document() | {"records": []}
+        failure = document | {
+            "outcome": "failed",
+            "continuation": "unavailable",
+            "retrievedAt": None,
+            "errors": [{"code": "timeout", "retryable": True, "retryAfterMs": None}],
+        }
+        for page in (document, failure):
+            with self.subTest(outcome=page["outcome"]):
+                wire = ConnectorResultPage.model_validate(page).model_dump(mode="json", by_alias=True)
+                self.assertIn("terms", wire)
+                self.assertEqual("not-reported", wire["terms"]["license"]["state"])
+                self.assertEqual("unknown", wire["terms"]["terms"]["state"])
+
     def test_next_page_must_advance_the_same_scientific_request(self) -> None:
         document = page_document()
         request = ConnectorRequest.model_validate(document["request"])

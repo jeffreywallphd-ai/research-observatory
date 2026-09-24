@@ -34,3 +34,13 @@ existing Pydantic plus standalone public schemas and Protocol ports, not an exte
 of the specialized domain generator or a placeholder HTTP route. Its cursor,
 empty/partial and rights/auth separation risks are incorporated above. Independent
 commit-bound task review follows implementation; this worksheet grants no authority.
+
+## First-review acceptance refinement
+
+Independent pre-submission review at `526d554d` found two missed boundaries,
+preserved in `CAP-04.S02.T01.pre-submission-review-01.md`. F01 requires the
+direct resume-time helper, not only model fields, to reject offset/naive times
+before lexicographic expiry comparison. F02 requires page-level license/terms
+observations even with zero records, separately from per-record observations.
+Add these exact regressions before remediation; retain the original scope and
+replay findings plus affected schema/generator/quality checks at the new candidate.

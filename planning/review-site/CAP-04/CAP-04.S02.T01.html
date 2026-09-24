@@ -88,9 +88,9 @@ python tools/verify.py --profile service
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S02.T01" data-worksheet-sha256="4746fbb2ee0ac8171c4d100b892ceba8d247db1f8296dc1f95401878ee22ebf3">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S02.T01" data-worksheet-sha256="505fdea78f2bb32276c04fac21b706970741501c0f94bbe91aa367251cc430f0">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S02.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>4746fbb2ee0ac8171c4d100b892ceba8d247db1f8296dc1f95401878ee22ebf3</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S02.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>505fdea78f2bb32276c04fac21b706970741501c0f94bbe91aa367251cc430f0</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S02.T01 — portable scholarly-source contracts
 
 Claim base: `02e613a5eda87d83fd73f125157395810e6ec2cc`.
@@ -126,7 +126,17 @@ Read-only independent readiness survey found no authority conflict. It recommend
 existing Pydantic plus standalone public schemas and Protocol ports, not an extension
 of the specialized domain generator or a placeholder HTTP route. Its cursor,
 empty/partial and rights/auth separation risks are incorporated above. Independent
-commit-bound task review follows implementation; this worksheet grants no authority.</pre></article>
+commit-bound task review follows implementation; this worksheet grants no authority.
+
+## First-review acceptance refinement
+
+Independent pre-submission review at `526d554d` found two missed boundaries,
+preserved in `CAP-04.S02.T01.pre-submission-review-01.md`. F01 requires the
+direct resume-time helper, not only model fields, to reject offset/naive times
+before lexicographic expiry comparison. F02 requires page-level license/terms
+observations even with zero records, separately from per-record observations.
+Add these exact regressions before remediation; retain the original scope and
+replay findings plus affected schema/generator/quality checks at the new candidate.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

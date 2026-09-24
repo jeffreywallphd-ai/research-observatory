@@ -43,7 +43,10 @@ return different remote results.
 
 Every page retains its original request/provider, observation time, explicit
 retrieval time or absence, response-retention state, cache/rate observations,
-warnings and classified errors. A complete empty page is distinct from partial,
+page-level license/terms/access observations, warnings and classified errors.
+The page observations remain present even when records are empty, and do not
+substitute for each record's separate source observations.
+A complete empty page is distinct from partial,
 failed, denied, cancelled or not-configured. Partial/failed results explicitly
 say retry-current or unavailable, never exhausted. Actual returned assertions
 carry raw identifiers, namespaced fields, retrieval time and source-reported

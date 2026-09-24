@@ -964,6 +964,9 @@
       "title": "Schemaversion",
       "type": "string"
     },
+    "terms": {
+      "$ref": "#/$defs/SourceTerms"
+    },
     "warnings": {
       "items": {
         "$ref": "#/$defs/ProviderId"
@@ -979,6 +982,7 @@
     "request",
     "observedAt",
     "retrievedAt",
+    "terms",
     "outcome",
     "continuation",
     "nextCursor",
