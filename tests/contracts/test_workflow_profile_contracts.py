@@ -194,7 +194,7 @@ class WorkflowProfileContractTests(unittest.TestCase):
         arguments = (semantic, presentation, "RO-UI-ACADEMIC-MINIMAL-1.7", "1.7")
         self.assertTrue(presentation_mapping_errors(*arguments))
         self.assertEqual([], presentation_mapping_errors(*arguments, required_region_additions=additions))
-        invalid_additions = (
+        invalid_additions: tuple[dict[str, list[str]], ...] = (
             {},
             {"unknown.html": [region]},
             {"source-manager.html": [region, region]},
