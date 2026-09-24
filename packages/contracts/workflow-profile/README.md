@@ -21,6 +21,13 @@ root reference ID/version substitutions. The independent control checkpoint
 binds that witness before presentation consumers change. Semantic catalog,
 selection, intent and navigation identities remain 1.5; no migration occurs.
 
+Later approved presentations use a separate versioned witness. The 1.7 witness
+authenticates its pre-Wave owner approval and declares the single appended
+Source Manager required region for connector publisher trust/project permission.
+Only declared additions to existing page region lists are permitted; workflow
+content, order, existing regions and semantic source bytes remain exact.
+The original 1.6 witness and historical visual baselines remain unchanged.
+
 The contract is intentionally separate from executor-neutral workflow history.
 A profile describes the primary scholarly path and supporting-tool return
 policy; a stage-state record describes navigation and research-gate status. It

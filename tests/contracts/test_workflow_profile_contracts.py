@@ -173,13 +173,71 @@ class WorkflowProfileContractTests(unittest.TestCase):
             )
             self.assertIn("duplicate JSON field", " ".join(presentation_compatibility_errors(*arguments)))
 
+    def test_new_presentation_can_append_only_declared_required_regions(self) -> None:
+        sys.path.insert(0, str(REPO / "tools"))
+        from ui_conformance import presentation_mapping_errors
+
+        names = ("WORKFLOW_CATALOG.json", "CAPABILITY_COVERAGE.json")
+        semantic = {
+            name: (CONTRACT_ROOT / "source/academic-minimal-1.5" / name).read_text(encoding="utf-8") for name in names
+        }
+        presentation = {
+            name: subprocess.check_output(
+                ["git", "show", f"14b89c07a435a26bf894242a9e5f3e6429065055:design/ui-reference/{name}"],
+                cwd=REPO,
+                text=True,
+            )
+            for name in names
+        }
+        region = "connector publisher trust and project permission review"
+        additions = {"source-manager.html": [region]}
+        arguments = (semantic, presentation, "RO-UI-ACADEMIC-MINIMAL-1.7", "1.7")
+        self.assertTrue(presentation_mapping_errors(*arguments))
+        self.assertEqual([], presentation_mapping_errors(*arguments, required_region_additions=additions))
+        invalid_additions = (
+            {},
+            {"unknown.html": [region]},
+            {"source-manager.html": [region, region]},
+            {"source-manager.html": []},
+            {"source-manager.html": ["unapproved region"]},
+        )
+        for changed in invalid_additions:
+            with self.subTest(additions=changed):
+                self.assertTrue(presentation_mapping_errors(*arguments, required_region_additions=changed))
+        for name in names:
+            parsed = json.loads(presentation[name])
+            changed = copy.deepcopy(parsed)
+            if name == "CAPABILITY_COVERAGE.json":
+                changed["page_contracts"]["source-manager.html"]["required_regions"].reverse()
+            else:
+                changed["workflows"] = dict(reversed(list(changed["workflows"].items())))
+            candidate = {**presentation, name: json.dumps(changed, ensure_ascii=False, indent=2) + "\n"}
+            self.assertTrue(
+                presentation_mapping_errors(
+                    semantic, candidate, arguments[2], arguments[3], required_region_additions=additions
+                )
+            )
+            candidate = {**presentation, name: presentation[name].replace("{", '{"reference_id":"duplicate",', 1)}
+            self.assertTrue(
+                presentation_mapping_errors(
+                    semantic, candidate, arguments[2], arguments[3], required_region_additions=additions
+                )
+            )
+
     def test_presentation_witness_authenticates_real_git_publication_and_inputs(self) -> None:
+        # Preserve the exact accepted 1.6 publication, not the mutable active reference.
+        self.exercise_presentation_witness("5904c7eb152167f2f65c172d499fea8de5181689", "1.6")
+
+    def test_pre_wave_design_witness_authenticates_real_git_publication_and_inputs(self) -> None:
+        base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+        self.exercise_presentation_witness(base, "1.7")
+
+    def exercise_presentation_witness(self, base: str, version: str) -> None:
         sys.path.insert(0, str(REPO / "tools"))
         import ui_conformance as ui
         import yaml
 
-        witness_relative = ui.PRESENTATION_WITNESS_PATH
-        base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+        witness_relative = ui.presentation_witness_path(f"RO-UI-ACADEMIC-MINIMAL-{version}")
         with tempfile.TemporaryDirectory(prefix="ro-witness-git-") as temporary:
             root = Path(temporary) / "fixture"
             cloned = subprocess.run(
@@ -300,8 +358,15 @@ class WorkflowProfileContractTests(unittest.TestCase):
                 errors = ui.presentation_compatibility_errors(
                     root, presentation["referenceId"], validated["reference_package_sha256"]
                 )
-                self.assertIn("publication differs from approved proposal", " ".join(errors))
-                self.assertIn("assets/app.css", " ".join(errors))
+                expected = (
+                    "publication differs from approved proposal"
+                    if version == "1.6"
+                    else "approved presentation package is not authentic"
+                )
+                self.assertIn(expected, " ".join(errors))
+                self.assertIn(
+                    "assets/app.css" if version == "1.6" else "nonmetadata proposal content", " ".join(errors)
+                )
 
     def test_governed_catalog_is_exact_hash_bound_and_has_all_fourteen_profiles(self) -> None:
         schema_text = (

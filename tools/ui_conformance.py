@@ -434,12 +434,21 @@ def source(context: Context, key: str) -> str:
 
 
 def presentation_mapping_errors(
-    semantic: dict[str, str], presentation: dict[str, str], reference_id: str, version: str
+    semantic: dict[str, str],
+    presentation: dict[str, str],
+    reference_id: str,
+    version: str,
+    *,
+    required_region_additions: dict[str, list[str]] | None = None,
 ) -> list[str]:
-    """Permit only two root metadata substitutions, never scholarly/order drift."""
+    """Map metadata and explicit presentation regions without scholarly/order drift."""
     names = {"WORKFLOW_CATALOG.json", "CAPABILITY_COVERAGE.json"}
     if set(semantic) != names or set(presentation) != names:
         return ["presentation compatibility requires the exact two source documents"]
+    if required_region_additions is not None and (
+        not isinstance(required_region_additions, dict) or not required_region_additions
+    ):
+        return ["presentation required-region additions must be a nonempty object"]
     errors: list[str] = []
     for name in sorted(names):
         original = semantic[name].replace("\r\n", "\n").replace("\r", "\n")
@@ -454,8 +463,29 @@ def presentation_mapping_errors(
             if original.count(old_line) != 1:
                 errors.append(f"{name}: authenticated semantic root metadata is not exact")
             expected = expected.replace(old_line, prefix + json.dumps(new) + ",\n", 1)
+        if name == "CAPABILITY_COVERAGE.json" and required_region_additions is not None:
+            try:
+                document = json.loads(expected, object_pairs_hook=unique_json_object)
+                contracts = document["page_contracts"]
+                for page, additions in required_region_additions.items():
+                    if (
+                        not isinstance(page, str)
+                        or page not in contracts
+                        or not isinstance(additions, list)
+                        or not additions
+                        or any(not isinstance(region, str) or not region.strip() for region in additions)
+                        or len(set(additions)) != len(additions)
+                    ):
+                        raise ValueError("invalid declared required-region addition")
+                    existing = contracts[page]["required_regions"]
+                    if any(region in existing for region in additions):
+                        raise ValueError("declared regions must be new appended presentation requirements")
+                    existing.extend(additions)
+                expected = json.dumps(document, ensure_ascii=False, indent=2) + "\n"
+            except (KeyError, TypeError, ValueError) as exc:
+                errors.append(f"{name}: {exc}")
         if candidate != expected:
-            errors.append(f"{name}: presentation differs beyond the exact root identity/version mapping")
+            errors.append(f"{name}: presentation differs beyond the declared identity/version and region mapping")
     return errors
 
 
@@ -471,6 +501,17 @@ SEMANTIC_SOURCE_AUTHORITY: dict[str, Any] = {
     },
 }
 PRESENTATION_WITNESS_PATH = "packages/contracts/workflow-profile/presentation-compatibility.json"
+
+
+def presentation_witness_path(reference_id: str) -> str:
+    """Retain the original witness; each later publication gets its own record."""
+    match = re.fullmatch(r"RO-UI-ACADEMIC-MINIMAL-([1-9][0-9]*\.[0-9]+)", reference_id)
+    if match is None:
+        raise ValueError("presentation reference identity is invalid")
+    version = match[1]
+    if version == "1.6":
+        return PRESENTATION_WITNESS_PATH
+    return f"packages/contracts/workflow-profile/presentation-compatibility-{version}.json"
 
 
 def unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -491,21 +532,29 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
     """
     label = "presentation compatibility"
     try:
-        witness_path = confined_path(repo, PRESENTATION_WITNESS_PATH)
+        witness_relative = presentation_witness_path(reference_id)
+        witness_path = confined_path(repo, witness_relative)
         payload = stable_file_bytes(repo, witness_path)
         witness = json.loads(payload.decode("utf-8"), object_pairs_hook=unique_json_object)
-        if not isinstance(witness, dict) or set(witness) != {
+        keys = {
             "schemaVersion",
             "documentType",
             "semanticSource",
             "presentation",
-        }:
+        }
+        if isinstance(witness, dict) and witness.get("schemaVersion") == "1.1":
+            keys.add("requiredRegionAdditions")
+        if not isinstance(witness, dict) or set(witness) != keys:
             raise ValueError("witness fields must be exact")
         if (
-            witness["schemaVersion"] != "1.0"
+            witness["schemaVersion"] not in ("1.0", "1.1")
             or witness["documentType"] != "workflow-profile-presentation-compatibility"
         ):
             raise ValueError("witness identity is invalid")
+        if witness["schemaVersion"] == "1.1" and (
+            not isinstance(witness["requiredRegionAdditions"], dict) or not witness["requiredRegionAdditions"]
+        ):
+            raise ValueError("required-region additions must be a nonempty object")
         if witness["semanticSource"] != SEMANTIC_SOURCE_AUTHORITY:
             raise ValueError("semantic source authority differs from original approval")
         presentation = witness["presentation"]
@@ -531,17 +580,16 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
         ):
             raise ValueError("presentation identity/package/commit is invalid or stale")
         head = git(repo, "rev-parse", "HEAD")
-        committed, error = git_blob_at(repo, head, PRESENTATION_WITNESS_PATH)
+        committed, error = git_blob_at(repo, head, witness_relative)
         if (
             error
             or committed is None
-            or canonical_payload(PRESENTATION_WITNESS_PATH, committed)
-            != canonical_payload(PRESENTATION_WITNESS_PATH, payload)
+            or canonical_payload(witness_relative, committed) != canonical_payload(witness_relative, payload)
         ):
             raise ValueError("witness must match the current committed Git blob")
         semantic_relative = "packages/contracts/workflow-profile/source/academic-minimal-1.5"
         input_paths = [
-            PRESENTATION_WITNESS_PATH,
+            witness_relative,
             "design/ui-reference/",
             *[
                 f"{semantic_relative}/{name}"
@@ -550,7 +598,7 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
         ]
         if git(repo, "status", "--porcelain", "--untracked-files=all", "--", *input_paths):
             raise ValueError("presentation witness inputs must be clean committed files")
-        introduction = git(repo, "log", "-1", "--format=%H", head, "--", PRESENTATION_WITNESS_PATH)
+        introduction = git(repo, "log", "-1", "--format=%H", head, "--", witness_relative)
         if (
             not introduction
             or introduction == approval_commit
@@ -566,28 +614,33 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
         if not isinstance(approval, dict) or approval.get("version") != version:
             raise ValueError("approved presentation version differs")
         authority = approval.get("authority")
-        if not isinstance(authority, dict) or set(authority) != APPROVAL_AUTHORITY_KEYS:
-            raise ValueError("presentation witness requires exact amendment publication authority")
-        authority_payload, error = git_blob_at(
-            repo, authority["approval_record_introduction_commit"], authority["approval_record"]
-        )
-        if error or authority_payload is None:
-            raise ValueError("presentation approval record is missing")
-        authority_record = json.loads(authority_payload.decode("utf-8"), object_pairs_hook=unique_json_object)
-        packet_binding = authority_record["packet"]
-        packet_payload, error = git_blob_at(repo, packet_binding["commit"], packet_binding["path"])
-        if error or packet_payload is None:
-            raise ValueError("presentation approved packet is missing")
-        packet_record = json.loads(packet_payload.decode("utf-8"), object_pairs_hook=unique_json_object)
-        # Lazy reuse has no module-initialization cycle: this helper compares
-        # Git bytes only and does not call reference_package_at or this verifier.
-        from planctl import _reference_publication_content_errors
+        from reference_design_approval import DESIGN_APPROVAL_AUTHORITY_KEYS
 
-        publication_errors = _reference_publication_content_errors(
-            repo, packet_record, packet_binding["commit"], approval_commit
-        )
-        if publication_errors:
-            return [f"{label}: publication differs from approved proposal", *publication_errors]
+        if not isinstance(authority, dict):
+            raise ValueError("presentation witness requires exact publication authority")
+        if set(authority) == APPROVAL_AUTHORITY_KEYS:
+            authority_payload, error = git_blob_at(
+                repo, authority["approval_record_introduction_commit"], authority["approval_record"]
+            )
+            if error or authority_payload is None:
+                raise ValueError("presentation approval record is missing")
+            authority_record = json.loads(authority_payload.decode("utf-8"), object_pairs_hook=unique_json_object)
+            packet_binding = authority_record["packet"]
+            packet_payload, error = git_blob_at(repo, packet_binding["commit"], packet_binding["path"])
+            if error or packet_payload is None:
+                raise ValueError("presentation approved packet is missing")
+            packet_record = json.loads(packet_payload.decode("utf-8"), object_pairs_hook=unique_json_object)
+            from planctl import _reference_publication_content_errors
+
+            publication_errors = _reference_publication_content_errors(
+                repo, packet_record, packet_binding["commit"], approval_commit
+            )
+            if publication_errors:
+                return [f"{label}: publication differs from approved proposal", *publication_errors]
+        elif set(authority) != DESIGN_APPROVAL_AUTHORITY_KEYS:
+            raise ValueError("presentation witness requires exact amendment or pre-Wave design authority")
+        # reference_package_at already authenticates pre-Wave proposal bytes,
+        # owner approval, introduction lineage and exact publication inventory.
         reference = confined_path(repo, "design/ui-reference")
         validated = validate_reference(reference, None)
         if (
@@ -643,7 +696,13 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
             or git(repo, "status", "--porcelain", "--untracked-files=all", "--", *input_paths)
         ):
             raise ValueError("presentation witness candidate changed during verification")
-        return presentation_mapping_errors(semantic, current, reference_id, version)
+        return presentation_mapping_errors(
+            semantic,
+            current,
+            reference_id,
+            version,
+            required_region_additions=witness.get("requiredRegionAdditions"),
+        )
     except (OSError, ValueError, UnicodeError, yaml.YAMLError, subprocess.SubprocessError) as exc:
         return [f"{label}: {exc}"]
 
