@@ -91,10 +91,10 @@ class Repository:
     def checkpoint(self, value):
         return None
 
-    def publish(self, page, *, body, etag, last_modified, authority):
+    def publish(self, page, *, body, etag, last_modified, authority, publication=None):
         self.pages.append(page)
         self.bodies.append(body)
-        if body is not None and page.outcome == "complete":
+        if body is not None and page.outcome == "complete" and page.cache.state != "hit":
             self.entry = ConnectorCacheEntry(
                 page.request.project_id,
                 page.request.page_sha256(),
@@ -103,6 +103,7 @@ class Repository:
                 page.observed_at,
                 etag,
                 last_modified,
+                page.response.redaction == "applied",
             )
         return page
 
@@ -116,6 +117,12 @@ class Secrets:
         body = bytearray(b"private-key-sentinel")
         self.buffers.append(body)
         return SecretRecord("a" * 32, reference.kind), SecretLease(body)
+
+    def lease(self, reference, context):
+        return self.lease_record(reference, context)[1]
+
+    def put(self, reference, material, context, *, expected_version=None):
+        raise AssertionError("the connector must never write authentication material")
 
 
 class ConnectorBrokerTests(unittest.IsolatedAsyncioTestCase):
@@ -155,6 +162,93 @@ class ConnectorBrokerTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual([], self.calls)
         self.assertEqual([], secrets.contexts)
         self.assertEqual([], self.repository.pages)
+
+    async def test_overflowing_json_number_is_a_typed_failure(self):
+        broker = self.broker(
+            [httpx2.Response(200, content=b'{"unknown":1e400}', headers={"Content-Type": "application/json"})]
+        )
+        page = await broker.fetch(request("openalex"), cancellation=self.cancel)
+        self.assertEqual("failed", page.outcome)
+        self.assertEqual("incompatible-response", page.errors[0].code)
+        self.assertEqual((), page.records)
+        self.assertTrue(all(saved.outcome != "complete" for saved in self.repository.pages))
+        self.assertEqual(1, len(self.calls))
+
+    async def test_shared_provider_lane_serializes_dispatch_and_recovers_circuit(self):
+        active, maximum = 0, 0
+        starts = []
+
+        async def respond(wire):
+            nonlocal active, maximum
+            active += 1
+            maximum = max(maximum, active)
+            starts.append(self.clock.seconds)
+            await asyncio.sleep(0)
+            active -= 1
+            response = httpx2.Response(200, json=fixture("openalex"))
+            return httpx2.Response(200, headers=response.headers, stream=BytesStream(response.content))
+
+        rates = ProviderRateController(clock=self.clock.monotonic)
+        brokers = [
+            ConnectorBroker(
+                authority=self.authority,
+                repository=self.repository,
+                transport=httpx2.MockTransport(respond),
+                rates=rates,
+                now=self.clock.now,
+                sleep=self.clock.sleep,
+            )
+            for _ in range(2)
+        ]
+        pages = await asyncio.gather(
+            *(broker.fetch(request("openalex"), cancellation=self.cancel) for broker in brokers)
+        )
+        self.assertTrue(all(page.outcome == "complete" for page in pages))
+        self.assertEqual(1, maximum)
+        self.assertGreaterEqual(starts[1] - starts[0], 1)
+        for broker in brokers:
+            await broker.aclose()
+
+        failing = self.broker([httpx2.Response(503)] * 3 + [httpx2.Response(200, json=fixture("openalex"))])
+        first = await failing.fetch(request("openalex"), cancellation=self.cancel)
+        self.assertEqual("open", first.rate.circuit)
+        denied = await failing.fetch(request("openalex"), cancellation=self.cancel)
+        self.assertEqual("provider-unavailable", denied.errors[0].code)
+        self.assertEqual(3, len(self.calls))
+        self.clock.seconds += 31
+        recovered = await failing.fetch(request("openalex"), cancellation=self.cancel)
+        self.assertEqual("complete", recovered.outcome)
+        self.assertEqual("closed", recovered.rate.circuit)
+        self.assertEqual(4, len(self.calls))
+        await failing.aclose()
+
+    async def test_response_close_failure_discards_page_and_clears_secret_lease(self):
+        class FailingClose(BytesStream):
+            async def aclose(self):
+                raise OSError("synthetic-close-failure")
+
+        async def respond(wire):
+            self.calls.append(wire)
+            response = httpx2.Response(200, json=fixture("openalex"))
+            return httpx2.Response(200, headers=response.headers, stream=FailingClose(response.content))
+
+        secrets = Secrets()
+        broker = ConnectorBroker(
+            authority=self.authority,
+            repository=self.repository,
+            rates=ProviderRateController(clock=self.clock.monotonic),
+            transport=httpx2.MockTransport(respond),
+            credentials=secrets,
+            key_references={"openalex": SecretReference("local", SecretKind.PROVIDER_KEY, "openalex", "api-key")},
+            now=self.clock.now,
+            sleep=self.clock.sleep,
+        )
+        page = await broker.fetch(request("openalex"), cancellation=self.cancel)
+        self.assertEqual("provider-unavailable", page.errors[0].code)
+        self.assertEqual((), page.records)
+        self.assertTrue(all(not any(buffer) for buffer in secrets.buffers))
+        self.assertTrue(all(saved.outcome == "failed" for saved in self.repository.pages))
+        await broker.aclose()
 
     async def test_retry_rate_limits_and_terminal_authentication(self):
         broker = self.broker(

@@ -170,6 +170,25 @@ class ArchitectureContractTests(unittest.TestCase):
             path.write_text("import sqlite3\n", encoding="utf-8")
             self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
 
+    def test_connector_repository_is_a_root_adapter_not_a_business_or_port_dependency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "connector_repository.py").write_text(
+                "import sqlite3\nfrom .storage import CanonicalConnection\n", encoding="utf-8"
+            )
+            self.assertEqual([], core_data_boundary_errors(root))
+            for location in ("business.py", "ports/connectors.py", "business/connector_repository.py"):
+                path = root / location
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(
+                    "import sqlite3\nfrom research_observatory_core.connector_repository import ConnectorRepository\n",
+                    encoding="utf-8",
+                )
+                errors = core_data_boundary_errors(root)
+                self.assertTrue(any("outside adapter" in error for error in errors))
+                self.assertTrue(any("concrete" in error for error in errors))
+                path.unlink()
+
     def test_typed_async_port_execution_is_not_a_database_call(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

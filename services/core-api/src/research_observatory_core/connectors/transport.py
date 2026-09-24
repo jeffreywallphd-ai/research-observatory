@@ -11,6 +11,7 @@ import asyncio
 import ipaddress
 import json
 import logging
+import math
 import re
 import socket
 import time
@@ -231,6 +232,8 @@ def bounded_json(body: bytes) -> Any:
                 pending.extend(item.values())
             elif isinstance(item, list):
                 pending.extend(item)
+            elif isinstance(item, float) and not math.isfinite(item):
+                raise ProviderProblem("incompatible-response")
         if time.monotonic() - start > 2:
             raise ProviderProblem("timeout")
         return value

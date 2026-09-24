@@ -56,3 +56,39 @@ is not qualifying evidence, an independent disposition, or task completion.
 Resume with the atomic publication remedy described above, then finish the
 affected verification, inventories and review. No completed product test suites
 were rerun merely to consolidate the branch checkout or create this backup.
+
+## Resume findings and focused closure
+
+The 2026-09-24 resume retains the original claim base and all adverse logs in
+ignored `artifacts/tmp/`. Taskctl reopened the owner-stopped task. The initial
+readiness check validated the immutable capability/slice approvals but its final
+site check overlapped that transition and found stale task projections. Site
+regeneration followed by `plan_review_check` passed all 492 pages; no approval or
+frozen packet was changed.
+
+- Publication: preserve the original cancellation failure. New expired-lease and
+  interrupted-completion regressions failed before the remedy. Page/checkpoint,
+  provenance and workflow completion now share the existing canonical writer;
+  replay authenticates the exact attempt. Include lost post-commit acknowledgement.
+- Independent incremental review found sliding cache freshness, lost redaction
+  labels on hits/304s, and JSON exponent overflow escaping typed errors. The
+  protected-cache and broker regressions reproduced each before remediation.
+  Keep remote-validation time and body redaction provenance; reject non-finite
+  decoded numbers. No live-provider success is inferred.
+- Actual runtime composition exposed conflicting import/connector project
+  resource policies and a receipt-read lock inversion. Share the conservative
+  document-lane policy and preserve project-before-object lock ordering. The
+  timed diagnostic and interrupted test remain adverse observations. Qualify
+  the real runtime factory with protected storage and synthetic HTTP, plus the
+  two affected import-runtime cases (not the completed import/performance suites).
+- Bounded test maintenance: the inherited Intent test asserted schema v10 while
+  bootstrapping current v13. Reuse the fingerprint-checked historical v10 builder,
+  insert the unchanged hash-bound Intent bytes, migrate, then assert legacy
+  preservation and current authority. Keep the original schema/fixture assertions;
+  no migration or product acceptance rule is weakened.
+
+Development passes are diagnostic, not committed-candidate qualification.
+Final selected checks cover connector mapping/broker/transport/TLS/persistence,
+consent/workflow/API/runtime, affected Intent and generated clients, build/module
+inventories and quality. Full profiles, native UX, packaging execution and the
+four-provider slice matrix remain their later integration/Wave obligations.

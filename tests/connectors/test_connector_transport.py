@@ -91,7 +91,14 @@ class ConnectorTransportTests(unittest.IsolatedAsyncioTestCase):
                 await read_response(httpx2.Response(200, headers=headers, stream=BytesStream(body)), maximum)
 
     def test_json_has_depth_duplicate_nonfinite_and_node_bounds(self):
-        for body in (b'{"x":1,"x":2}', b'{"x":NaN}', b"[" * 65 + b"0" + b"]" * 65, b'"bad\x00"'):
+        for body in (
+            b'{"x":1,"x":2}',
+            b'{"x":NaN}',
+            b'{"x":1e400}',
+            b'{"x":-1e400}',
+            b"[" * 65 + b"0" + b"]" * 65,
+            b'"bad\x00"',
+        ):
             with self.subTest(body=body[:20]), self.assertRaises(ProviderProblem):
                 bounded_json(body)
         self.assertEqual({"x": [True, None, 4]}, bounded_json(b'{"x":[true,null,4]}'))

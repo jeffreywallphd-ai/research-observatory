@@ -10,7 +10,7 @@ from ..connectors.contracts import ConnectorRequest, ConnectorResultPage
 
 if TYPE_CHECKING:
     from ..connectors.workflow import ConnectorJobInput
-    from .workflow_executor import WorkflowOutputReference
+    from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
 
 type ConnectorStage = Literal["admission", "cache", "dispatch", "publication"]
 
@@ -55,6 +55,17 @@ class ConnectorCacheEntry:
     validated_at: str
     etag: str | None = field(repr=False)
     last_modified: str | None = field(repr=False)
+    redacted: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class ConnectorPublication:
+    """Core-only attempt binding for atomic page and workflow acceptance."""
+
+    inputs: ConnectorJobInput = field(repr=False)
+    claim: WorkflowJobClaim = field(repr=False)
+    now: Callable[[], str]
+    interrupted: Callable[[], bool]
 
 
 class ConnectorPageRepository(Protocol):
@@ -72,10 +83,13 @@ class ConnectorPageRepository(Protocol):
         etag: str | None,
         last_modified: str | None,
         authority: ConnectorAuthorityStamp,
+        publication: ConnectorPublication | None = None,
     ) -> ConnectorResultPage:
         """Atomically accept immutable observations/response references and CAS
         the completed-page checkpoint; failed/partial pages cannot advance it.
         Identical invocation replay returns its prior observation; collisions deny.
+        A bound workflow must accept the page and its output in this same
+        transaction, fenced by the current claim, lease and cancellation state.
         """
         ...
 

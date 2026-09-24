@@ -10,6 +10,14 @@
     "workers"
   ],
   "pythonFiles": [
+    "services/core-api/src/research_observatory_core/connector_api.py",
+    "services/core-api/src/research_observatory_core/connector_service.py",
+    "services/core-api/src/research_observatory_core/connector_worker.py",
+    "services/core-api/src/research_observatory_core/connectors/workflow.py",
+    "tests/connectors/test_connector_api.py",
+    "tests/connectors/test_connector_authority.py",
+    "tests/connectors/test_connector_tls.py",
+    "tests/connectors/test_connector_workflow.py",
     "services/core-api/src/research_observatory_core/connector_repository.py",
     "services/core-api/src/research_observatory_core/connectors/adapters.py",
     "services/core-api/src/research_observatory_core/connectors/broker.py",

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import os
@@ -14,6 +15,8 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
+import httpx2
+
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "services/core-api/src"))
 
@@ -22,13 +25,15 @@ from research_observatory_core.connectors.broker import ConnectorBroker, Provide
 from research_observatory_core.connectors.providers import ProviderProblem, map_response  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.object_store import create_local_object_store  # noqa: E402
+from research_observatory_core.ports.credential_store import SecretKind, SecretReference  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
     configure_protected_database_provider,
     initialize_database,
     open_canonical_database,
 )
 
-from tests.connectors.test_connector_broker import Authority, Clock  # noqa: E402
+from tests.connectors.test_connector_broker import Authority, Cancellation, Clock, Secrets  # noqa: E402
+from tests.connectors.test_connector_transport import BytesStream  # noqa: E402
 from tests.connectors.test_scholarly_mapping import NOW, fixture, request, search  # noqa: E402
 from tests.data.test_encrypted_object_store import MemoryKeyProvider  # noqa: E402
 from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
@@ -116,6 +121,52 @@ class ConnectorPersistenceTests(unittest.TestCase):
             if path.is_file():
                 self.assertNotIn(b"synthetic topic", path.read_bytes())
                 self.assertNotIn(b"synthetic-adapter", path.read_bytes())
+
+    def test_cache_hits_do_not_renew_remote_validation_and_preserve_redaction(self):
+        calls = []
+        document = fixture("openalex") | {"echo": "private-key-sentinel"}
+
+        async def respond(wire):
+            calls.append(wire)
+            response = httpx2.Response(200, json=document, headers={"ETag": '"synthetic"'})
+            if len(calls) == 2:
+                self.assertEqual('"synthetic"', wire.headers["if-none-match"])
+                response = httpx2.Response(304)
+            return httpx2.Response(response.status_code, headers=response.headers, stream=BytesStream(response.content))
+
+        clock = Clock()
+        broker = ConnectorBroker(
+            authority=self.authority,
+            repository=self.repo,
+            rates=ProviderRateController(clock=clock.monotonic),
+            transport=httpx2.MockTransport(respond),
+            credentials=Secrets(),
+            key_references={"openalex": SecretReference("local", SecretKind.PROVIDER_KEY, "openalex", "api-key")},
+            now=clock.now,
+            sleep=clock.sleep,
+        )
+        value = request("openalex", query=search())
+        value = type(value).model_validate(
+            value.model_dump()
+            | {"policy": value.policy.model_dump() | {"cache_mode": "allow-fresh", "maximum_fresh_age_ms": 5000}}
+        )
+        first = asyncio.run(broker.fetch(value, cancellation=Cancellation()))
+        self.assertEqual("applied", first.response.redaction)
+        for seconds, expected in ((4, "hit"), (8, "revalidated"), (12, "hit")):
+            with self.subTest(seconds=seconds):
+                clock.seconds = seconds
+                checkpoint = self.repo.checkpoint(value)
+                self.authority.stamp = replace(self.authority.stamp, expected_checkpoint_revision_id=checkpoint[0])
+                value = type(value).model_validate(value.model_dump() | {"invocation_id": new_uuid_v7()})
+                page = asyncio.run(broker.fetch(value, cancellation=Cancellation()))
+                self.assertEqual(expected, page.cache.state)
+                self.assertEqual("applied", page.response.redaction)
+                self.assertEqual(first.retrieved_at, page.retrieved_at)
+        self.assertEqual(2, len(calls))
+        restarted = self.repository().cached(value)
+        self.assertEqual("2026-01-01T00:00:08.000Z", restarted.validated_at)
+        self.assertNotIn(b"private-key-sentinel", restarted.body)
+        asyncio.run(broker.aclose())
 
     def test_fault_rolls_back_observation_and_checkpoint_then_retries(self):
         page, body = self.page()

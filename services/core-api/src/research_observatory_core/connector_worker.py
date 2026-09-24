@@ -20,7 +20,7 @@ from .connectors.transport import PublicHTTPTransport
 from .connectors.workflow import ACTIVITY, ConnectorJobInput, bind_connector_claim, build_connector_job
 from .domain_contracts import is_uuid_v7
 from .logging import emit_log_record
-from .ports.connector_runtime import ConnectorAuthority, ConnectorOperationRepository
+from .ports.connector_runtime import ConnectorAuthority, ConnectorOperationRepository, ConnectorPublication
 from .ports.workflow_executor import (
     WorkflowActor,
     WorkflowJobAuthority,
@@ -34,6 +34,7 @@ from .workflow_executor import (
     LocalWorkerSupervisor,
     WorkflowActivityContext,
     WorkflowActivityError,
+    WorkflowAtomicCompletion,
     WorkflowCancellationRequested,
 )
 
@@ -272,6 +273,12 @@ class ConnectorWorkerService:
                     transport=self._transport_factory(),
                     now=self._now,
                     sleep=self._sleep,
+                    publication=ConnectorPublication(
+                        inputs,
+                        context.claim,
+                        context.now,
+                        lambda: self._stopped.is_set() or binding.stopped.is_set(),
+                    ),
                 )
 
                 async def fetch():
@@ -281,16 +288,16 @@ class ConnectorWorkerService:
                         await broker.aclose()
 
                 result = asyncio.run(fetch())
-                context.cancellation_safe_point()
                 if result.outcome != "complete":
+                    context.cancellation_safe_point()
                     raise WorkflowActivityError("connector-" + result.errors[0].code)
-                return (
-                    authority.guard(
-                        inputs.preview.request,
-                        "publication",
-                        lambda _: binding.adapters.pages.output_reference(inputs.preview.request),
-                    ),
+                # Keep the project -> object-store lock order even when reading
+                # the already committed receipt. This is not a second output
+                # acceptance or a cancellable gap before publication.
+                output = self._action(
+                    str(binding.path), lambda current: current.adapters.pages.output_reference(inputs.preview.request)
                 )
+                return WorkflowAtomicCompletion((output,))
             except ProviderProblem as error:
                 raise WorkflowActivityError("connector-" + error.code) from None
 

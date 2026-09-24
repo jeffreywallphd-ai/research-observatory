@@ -88,9 +88,9 @@ python tools/verify.py --profile search
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S02.T02" data-worksheet-sha256="3d32968639b6c37677f8de43d7b6e5480b75718e1e9f9a150c5660b3f0663b2d">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S02.T02" data-worksheet-sha256="9a695c731799c9aaf80327924b86e06493a10c2ef4b993895fc2eb371a0e1f49">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S02.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>3d32968639b6c37677f8de43d7b6e5480b75718e1e9f9a150c5660b3f0663b2d</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S02.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>9a695c731799c9aaf80327924b86e06493a10c2ef4b993895fc2eb371a0e1f49</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S02.T02 acceptance closure
 
 Claim base: `6316b14d439c10f85fea6557e141d6f04111f17b`.
@@ -125,8 +125,66 @@ persistence. Completed import/performance suites are not replayed. Integrated
 four-provider slice checks, optional explicitly authorized live smoke and fresh
 Wave qualification remain separate; mocks are never labelled live success.
 
-Read-only adversarial preflight: requested for the new egress/persistence boundary.
-No mandatory new human gate identified at task start.</pre></article>
+Read-only adversarial preflight: incorporated. Backend Intent destination
+authoring and exact-request consent fit ADR-0019/ADR-0027&#x27;s approved provider work;
+this does not authorize a new governed UI interaction. Source-package trust is
+not exact-query consent. Existing canonical protected documents/settings indexes
+can retain source observations without introducing a parallel database.
+
+The second bounded preflight exposed a missed AC1/AC2 boundary: generic Task
+Center cancellation does not revoke connector consent, so polling before page
+publication is insufficient. Add current workflow claim/lease/cancellation to
+the publication transaction, atomically with page/checkpoint/output completion.
+Retain the failing `test_queue_cancellation_at_publication_boundary_cannot_advance_checkpoint`
+regression and add expired-claim plus crash/restart proof before remediation.
+This is ordinary in-scope debugging, not a new human approval gate.
+No mandatory new human gate identified at task start.
+
+## Work-in-progress backup checkpoint
+
+The owner permits unfinished work on `codex/w2-implementation`; only reviewed,
+verified units may advance `main`. This checkpoint preserves the partial
+implementation and the known failing cancellation-publication regression. It
+is not qualifying evidence, an independent disposition, or task completion.
+Resume with the atomic publication remedy described above, then finish the
+affected verification, inventories and review. No completed product test suites
+were rerun merely to consolidate the branch checkout or create this backup.
+
+## Resume findings and focused closure
+
+The 2026-09-24 resume retains the original claim base and all adverse logs in
+ignored `artifacts/tmp/`. Taskctl reopened the owner-stopped task. The initial
+readiness check validated the immutable capability/slice approvals but its final
+site check overlapped that transition and found stale task projections. Site
+regeneration followed by `plan_review_check` passed all 492 pages; no approval or
+frozen packet was changed.
+
+- Publication: preserve the original cancellation failure. New expired-lease and
+  interrupted-completion regressions failed before the remedy. Page/checkpoint,
+  provenance and workflow completion now share the existing canonical writer;
+  replay authenticates the exact attempt. Include lost post-commit acknowledgement.
+- Independent incremental review found sliding cache freshness, lost redaction
+  labels on hits/304s, and JSON exponent overflow escaping typed errors. The
+  protected-cache and broker regressions reproduced each before remediation.
+  Keep remote-validation time and body redaction provenance; reject non-finite
+  decoded numbers. No live-provider success is inferred.
+- Actual runtime composition exposed conflicting import/connector project
+  resource policies and a receipt-read lock inversion. Share the conservative
+  document-lane policy and preserve project-before-object lock ordering. The
+  timed diagnostic and interrupted test remain adverse observations. Qualify
+  the real runtime factory with protected storage and synthetic HTTP, plus the
+  two affected import-runtime cases (not the completed import/performance suites).
+- Bounded test maintenance: the inherited Intent test asserted schema v10 while
+  bootstrapping current v13. Reuse the fingerprint-checked historical v10 builder,
+  insert the unchanged hash-bound Intent bytes, migrate, then assert legacy
+  preservation and current authority. Keep the original schema/fixture assertions;
+  no migration or product acceptance rule is weakened.
+
+Development passes are diagnostic, not committed-candidate qualification.
+Final selected checks cover connector mapping/broker/transport/TLS/persistence,
+consent/workflow/API/runtime, affected Intent and generated clients, build/module
+inventories and quality. Full profiles, native UX, packaging execution and the
+four-provider slice matrix remain their later integration/Wave obligations.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
@@ -134,7 +192,7 @@ No mandatory new human gate identified at task start.</pre></article>
   <h3>CAP-04.S02.T02 — Implement OpenAlex and Crossref adapters</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
   <dl class="summary-grid" data-current-review-projection="CAP-04.S02.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
+  <p><strong>Latest notes:</strong> Reopened: Owner resumed W2 implementation; continue the same claimed task with cancellation, lease and atomic publication regression closure.</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S02.T01.html">Previous</a><a class="button button-primary" href="CAP-04.S02.T03.html">Next</a></nav>
 

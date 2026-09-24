@@ -5,13 +5,7 @@ import unittest
 from tests.service import test_research_intents as fixtures
 
 
-class ConnectorIntentTests(unittest.TestCase):
-    def setUp(self):
-        fixtures.ResearchIntentServiceTests.setUp(self)
-
-    def tearDown(self):
-        fixtures.ResearchIntentServiceTests.tearDown(self)
-
+class ConnectorIntentFixture(fixtures.ResearchIntentFixture):
     def accept(self, draft):
         command = fixtures.IntentAcceptRequest(
             root=self.root,
@@ -22,6 +16,8 @@ class ConnectorIntentTests(unittest.TestCase):
         )
         return self.service.accept(command, trace_id=fixtures.TRACE, idempotency_key=str(draft.revision + 1) * 32)
 
+
+class ConnectorIntentTests(ConnectorIntentFixture):
     def test_accepted_destination_requires_separate_confirmation_and_defaults_deny(self):
         initial = self.service.save_draft(
             fixtures.draft_request(self.root), trace_id=fixtures.TRACE, idempotency_key="1" * 32
@@ -59,6 +55,7 @@ class ConnectorIntentTests(unittest.TestCase):
                 trace_id=fixtures.TRACE,
             )
             self.assertEqual(outcome, decision.outcome)
+            assert decision.governing_intent is not None
             self.assertEqual(approved.revision_id, decision.governing_intent.revision_id)
         # Old clients omitting the additive field preserve, not erase, current declaration.
         preserved = self.service.save_draft(

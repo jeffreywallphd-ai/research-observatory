@@ -24,6 +24,7 @@ from ..ports.connector_runtime import (
     ConnectorAuthorityStamp,
     ConnectorCacheEntry,
     ConnectorPageRepository,
+    ConnectorPublication,
     ConnectorStage,
 )
 from ..ports.connectors import ConnectorCancellation
@@ -145,12 +146,14 @@ class ConnectorBroker:
         contact_references: dict[str, SecretReference] | None = None,
         now: Callable[[], str] = utc_now,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+        publication: ConnectorPublication | None = None,
     ):
         self._authority, self._repository, self._rates = authority, repository, rates
         self._transport = transport or PublicHTTPTransport()
         self._credentials = credentials
         self._keys, self._contacts = dict(key_references or {}), dict(contact_references or {})
         self._now, self._sleep = now, sleep
+        self._publication = publication
 
     def _guard[Result](
         self,
@@ -374,6 +377,20 @@ class ConnectorBroker:
                     )
                 ):
                     raise ProviderProblem("policy-denied")
+                if self._publication is not None:
+                    replayed = self._guard(
+                        request,
+                        "publication",
+                        stamp,
+                        lambda current: self._repository.publish(
+                            replayed,
+                            body=None,
+                            etag=None,
+                            last_modified=None,
+                            authority=current,
+                            publication=self._publication,
+                        ),
+                    )
                 return ConnectorResultPage.model_validate(replayed)
             cache = None
             if request.policy.cache_mode != "bypass" and stamp.retain_body:
@@ -399,6 +416,7 @@ class ConnectorBroker:
                             mapped=mapped,
                             retrieved_at=cache.retrieved_at,
                             body=body,
+                            redacted=cache.redacted,
                             cache=CacheObservation(state="hit", age_ms=age, request_sha256=request.page_sha256()),
                             retain=True,
                         )
@@ -460,7 +478,7 @@ class ConnectorBroker:
                                 mapped=mapped,
                                 retrieved_at=retrieved,
                                 body=body,
-                                redacted=received.redacted,
+                                redacted=received.redacted or (status == 304 and cache is not None and cache.redacted),
                                 cache=cache_result,
                                 retain=stamp.retain_body,
                             )
@@ -536,6 +554,7 @@ class ConnectorBroker:
                     etag=etag,
                     last_modified=modified,
                     authority=current,
+                    publication=self._publication,
                 ),
             )
             return ConnectorResultPage.model_validate(saved)

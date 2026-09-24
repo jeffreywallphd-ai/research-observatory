@@ -18,6 +18,7 @@ from research_observatory_core.connector_service import (
 )
 from research_observatory_core.connectors.providers import ProviderProblem
 from research_observatory_core.models import PrivacyPolicyUpdateRequest
+from research_observatory_core.ports.connector_runtime import ConnectorPageRepository
 from research_observatory_core.privacy import ProjectPrivacyService
 from research_observatory_core.repositories import sqlite_intent_revision_repository, sqlite_privacy_policy_repository
 
@@ -27,9 +28,11 @@ from tests.connectors.test_scholarly_mapping import request
 from tests.service import test_research_intents as fixtures
 
 
-class ConnectorAuthorityTests(unittest.TestCase):
+class ConnectorAuthorityFixture(intent_fixtures.ConnectorIntentFixture):
+    repository: ConnectorPageRepository
+
     def setUp(self):
-        fixtures.ResearchIntentServiceTests.setUp(self)
+        super().setUp()
         self.clock = Clock()
         self.repository = Repository()
         self.privacy = ProjectPrivacyService(self.projects, sqlite_privacy_policy_repository)
@@ -46,7 +49,7 @@ class ConnectorAuthorityTests(unittest.TestCase):
 
     def tearDown(self):
         self.connectors.detach(self.root)
-        fixtures.ResearchIntentServiceTests.tearDown(self)
+        super().tearDown()
 
     def consent_service(self):
         return ConnectorConsentService(
@@ -98,11 +101,13 @@ class ConnectorAuthorityTests(unittest.TestCase):
         draft = self.service.save_draft(
             command, trace_id=fixtures.TRACE, idempotency_key=str(command.expected_revision + 1) * 32
         )
-        return intent_fixtures.ConnectorIntentTests.accept(self, draft)
+        return self.accept(draft)
 
     def preview(self):
         return self.connectors.preview(self.root, self.request, self.rights)
 
+
+class ConnectorAuthorityTests(ConnectorAuthorityFixture):
     def test_local_default_and_accepted_intent_are_independent_denial_gates(self):
         with self.assertRaises(ProviderProblem):
             self.preview()

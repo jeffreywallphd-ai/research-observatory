@@ -19,7 +19,12 @@ from research_observatory_core.connector_repository import ConnectorRepository
 from research_observatory_core.connector_worker import ConnectorWorkerAdapters, ConnectorWorkerService
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.object_store import create_local_object_store
-from research_observatory_core.repositories import sqlite_workflow_admission_binding, sqlite_workflow_queue_repository
+from research_observatory_core.ports.workflow_executor import WorkflowLeaseRejected
+from research_observatory_core.repositories import (
+    _SqliteWorkflowQueueRepository,
+    sqlite_workflow_admission_binding,
+    sqlite_workflow_queue_repository,
+)
 from research_observatory_core.workflow_executor import LocalAdmissionController, ProjectWorkerPolicy, WorkerResources
 
 from tests.connectors import test_connector_authority as authority_fixtures
@@ -28,9 +33,11 @@ from tests.connectors.test_scholarly_mapping import fixture
 from tests.data.test_encrypted_object_store import MemoryKeyProvider
 
 
-class ConnectorWorkflowTests(unittest.TestCase):
+class ConnectorWorkflowFixture(authority_fixtures.ConnectorAuthorityFixture):
+    repository: ConnectorRepository
+
     def setUp(self):
-        authority_fixtures.ConnectorAuthorityTests.setUp(self)
+        super().setUp()
         self.calls = []
         self.keys = MemoryKeyProvider({"synthetic-key": b"s" * 32}, "synthetic-key")
         self.repository = ConnectorRepository(
@@ -48,10 +55,6 @@ class ConnectorWorkflowTests(unittest.TestCase):
         self.worker = self.worker_service()
         self.intent()
         self.policy()
-
-    consent_service = authority_fixtures.ConnectorAuthorityTests.consent_service
-    intent = authority_fixtures.ConnectorAuthorityTests.intent
-    policy = authority_fixtures.ConnectorAuthorityTests.policy
 
     def worker_service(self):
         async def respond(wire):
@@ -94,6 +97,8 @@ class ConnectorWorkflowTests(unittest.TestCase):
             self.root, preview.preview_id, confirmation=preview.confirmation
         )
 
+
+class ConnectorWorkflowTests(ConnectorWorkflowFixture):
     def test_confirmed_page_is_a_durable_job_with_protected_source_output(self):
         preview, job = self.schedule()
         replay = self.worker.confirm_and_schedule(self.root, preview.preview_id, confirmation=preview.confirmation)
@@ -103,7 +108,9 @@ class ConnectorWorkflowTests(unittest.TestCase):
         completed = self.queue.get(job.job_id)
         self.assertEqual("succeeded", completed.state)
         self.assertEqual(1, len(self.calls))
-        self.assertEqual("complete", self.repository.replay(self.request).outcome)
+        page = self.repository.replay(self.request)
+        assert page is not None
+        self.assertEqual("complete", page.outcome)
         self.assertIsNotNone(self.repository.checkpoint(self.request))
         self.assertIsNotNone(completed.committed_output_sha256)
         self.assertEqual(self.request, self.repository.operation(preview.preview_id).preview.request)
@@ -130,6 +137,53 @@ class ConnectorWorkflowTests(unittest.TestCase):
         self.assertEqual([], self.calls)
         self.assertIsNone(self.repository.checkpoint(self.request))
 
+    def test_expired_claim_at_publication_cannot_accept_page_or_output(self):
+        _, job = self.schedule()
+        publish = self.repository.publish
+
+        def expire_then_publish(*args, **kwargs):
+            self.clock.seconds += 61
+            return publish(*args, **kwargs)
+
+        # A stale executor can neither complete nor report failure using its
+        # expired capability. The next supervisor pass owns lease recovery.
+        with (
+            patch.object(self.repository, "publish", side_effect=expire_then_publish),
+            self.assertRaises(WorkflowLeaseRejected),
+        ):
+            self.worker.run_pending()
+        self.assertIsNone(self.repository.replay(self.request))
+        self.assertIsNone(self.repository.checkpoint(self.request))
+        self.assertIsNone(self.queue.get(job.job_id).committed_output_sha256)
+        self.worker.run_pending()
+        self.assertEqual("failed", self.queue.get(job.job_id).state)
+        self.assertEqual(1, len(self.calls))
+
+    def test_interrupted_completion_rolls_back_page_and_checkpoint_across_restart(self):
+        class SimulatedCrash(BaseException):
+            pass
+
+        _, job = self.schedule()
+        with (
+            patch.object(_SqliteWorkflowQueueRepository, "_complete_with_connection", side_effect=SimulatedCrash),
+            self.assertRaises(SimulatedCrash),
+        ):
+            self.worker.run_pending()
+        # Reopen the actual protected repositories, not their in-memory state.
+        restarted = ConnectorRepository(
+            Path(self.root) / "state/project.sqlite3",
+            self.project.project_id,
+            create_local_object_store(Path(self.root), self.project.project_id, key_provider=self.keys),
+        )
+        queue = sqlite_workflow_queue_repository(Path(self.root), self.project.project_id)
+        self.assertIsNone(restarted.replay(self.request))
+        self.assertIsNone(restarted.checkpoint(self.request))
+        self.assertIsNone(queue.get(job.job_id).committed_output_sha256)
+        self.clock.seconds += 61
+        self.worker.run_pending()
+        self.assertEqual("failed", queue.get(job.job_id).state)
+        self.assertEqual(1, len(self.calls))
+
     def test_policy_revocation_between_queue_and_dispatch_is_not_an_empty_success(self):
         _, job = self.schedule()
         self.policy(False)
@@ -137,6 +191,28 @@ class ConnectorWorkflowTests(unittest.TestCase):
         self.assertIn(self.queue.get(job.job_id).state, ("cancelled", "failed"))
         self.assertEqual([], self.calls)
         self.assertIsNone(self.repository.checkpoint(self.request))
+
+    def test_lost_acknowledgement_after_commit_does_not_turn_success_into_cancellation(self):
+        class LostAcknowledgement(BaseException):
+            pass
+
+        _, job = self.schedule()
+        publish = self.repository.publish
+
+        def publish_then_interrupt(*args, **kwargs):
+            publish(*args, **kwargs)
+            raise LostAcknowledgement
+
+        with (
+            patch.object(self.repository, "publish", side_effect=publish_then_interrupt),
+            self.assertRaises(LostAcknowledgement),
+        ):
+            self.worker.run_pending()
+        self.assertEqual("succeeded", self.queue.get(job.job_id).state)
+        self.assertIsNotNone(self.repository.checkpoint(self.request))
+        self.assertIsNotNone(self.queue.get(job.job_id).committed_output_sha256)
+        self.worker.run_pending()
+        self.assertEqual(1, len(self.calls))
 
     def test_queue_cancellation_at_publication_boundary_cannot_advance_checkpoint(self):
         _, job = self.schedule()

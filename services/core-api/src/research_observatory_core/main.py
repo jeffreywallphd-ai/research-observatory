@@ -137,10 +137,14 @@ def create_runtime_app(
     # One process-wide resource ledger, with explicit interactive headroom.
     # These are conservative admission reservations, not OS-enforced quotas.
     controller = LocalAdmissionController(interactive_reserve=WorkerResources(1, 256 * 1024**2, 0, 256 * 1024**2))
+    # Both activities share the document lane and its one project-wide policy.
+    # Reserve the larger import demand for either; never register conflicting
+    # quotas or permit a connector to bypass an active import reservation.
+    document_demand = WorkerResources(1, 256 * 1024**2, 0, 1024**3)
 
     def import_adapters(path: Path, identity: str) -> ImportProjectAdapters:
         queue = sqlite_workflow_queue_repository(path, identity)
-        demand = WorkerResources(1, 256 * 1024**2, 0, 1024**3)
+        demand = document_demand
         return ImportProjectAdapters(
             previews=sqlite_import_preview_repository(path / "state/project.sqlite3", identity),
             intents=sqlite_intent_revision_repository(path, identity),
@@ -184,7 +188,7 @@ def create_runtime_app(
 
         def connector_adapters(path: Path, identity: str) -> ConnectorWorkerAdapters:
             queue = sqlite_workflow_queue_repository(path, identity)
-            demand = WorkerResources(1, 64 * 1024**2, 0, 64 * 1024**2)
+            demand = document_demand
             return ConnectorWorkerAdapters(
                 connector_pages(path, identity),
                 queue,

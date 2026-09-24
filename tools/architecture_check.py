@@ -26,6 +26,7 @@ _DATABASE_MODULES = {"sqlite3", "sqlalchemy"}
 _DATABASE_CALLS = {"connect", "cursor", "execute", "executemany", "executescript"}
 _CONNECTION_AUTHORITIES = {"CanonicalConnection", "open_canonical_database"}
 _REPOSITORY_ADAPTER_MODULES = {
+    "connector_repository",
     "repositories",
     "model_registry_repository",
     "import_preview_repository",

@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sqlite3
+import subprocess
 import sys
 import tempfile
 import threading
@@ -21,6 +23,7 @@ from research_observatory_core.app import create_app  # noqa: E402
 from research_observatory_core.authentication import capability_token_digest  # noqa: E402
 from research_observatory_core.config import CoreSettings  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
+from research_observatory_core.migrations import runner as migration_runner  # noqa: E402
 from research_observatory_core.models import (  # noqa: E402
     IntentAcceptRequest,
     IntentDraftRequest,
@@ -53,6 +56,8 @@ from research_observatory_core.workflow_profile_contracts import (  # noqa: E402
     decode_workflow_profile_migration,
 )
 
+from tests.data import test_import_preview_migration as historical_intent_database  # noqa: E402
+
 TOKEN = "0123456789abcdef" * 4
 AUTHORITY = "127.0.0.1:49152"
 HEADERS = {"Authorization": f"Bearer {TOKEN}"}
@@ -81,7 +86,7 @@ def accept_request(revision, *, confirmed: bool = True) -> IntentAcceptRequest:
     )
 
 
-class ResearchIntentServiceTests(unittest.TestCase):
+class ResearchIntentFixture(unittest.TestCase):
     def setUp(self) -> None:
         self.database_profile = development_plaintext_database_fixture()
         self.database_profile.__enter__()
@@ -108,6 +113,8 @@ class ResearchIntentServiceTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.projects.shutdown()
 
+
+class ResearchIntentServiceTests(ResearchIntentFixture):
     def test_incomplete_draft_is_durable_but_cannot_launch(self) -> None:
         command = draft_request(
             self.root,
@@ -724,6 +731,20 @@ class ResearchIntentServiceTests(unittest.TestCase):
         )
         database = Path(self.root) / "state" / "project.sqlite3"
         manifest_project_id = self.project.project_id
+        # The current project bootstrap is no longer v10. Build the fingerprint-
+        # checked historical schema, insert the unchanged legacy intent there,
+        # then exercise the real upgrade before the current reader opens it.
+        self.projects.close(root=self.root, trace_id=TRACE)
+        connection = sqlite3.connect(database)
+        try:
+            self.assertEqual((0, 0, 0), tuple(connection.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()))
+        finally:
+            connection.close()
+        database.replace(database.with_name("current-bootstrap.sqlite3"))
+        historical_database = Path(self.temp.name) / "historical-state" / "project.sqlite3"
+        with patch.object(historical_intent_database.predecessor, "PROJECT_ID", manifest_project_id):
+            historical_intent_database.create_version_10_fixture(historical_database)
+        historical_database.replace(database)
         bridge = json.dumps(
             {
                 "authority": "ADR-0013",
@@ -763,6 +784,26 @@ class ResearchIntentServiceTests(unittest.TestCase):
         finally:
             connection.close()
 
+        if os.name == "nt":
+            # Migration backups are intentionally read-only. Reset only this
+            # test-owned temporary tree before its existing cleanup callback.
+            self.addCleanup(
+                subprocess.run,
+                [
+                    str(Path(os.environ["SYSTEMROOT"]) / "System32/icacls.exe"),
+                    self.temp.name,
+                    "/reset",
+                    "/t",
+                    "/c",
+                    "/q",
+                ],
+                capture_output=True,
+                timeout=30,
+                check=False,
+            )
+        upgraded = migration_runner.migrate_database(database, expected_project_id=manifest_project_id)
+        self.assertEqual("migrated", upgraded.status)
+        self.project = self.projects.open(root=self.root, trace_id=TRACE)
         restarted = ResearchIntentService(
             self.projects,
             repository_factory=sqlite_intent_revision_repository,

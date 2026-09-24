@@ -10,7 +10,8 @@ capability schemas, emitted by the existing `tools/core_api_contract.py --write`
 generator. `--check` and the contract fixtures reject drift. The matching owned
 Pydantic values live in `connectors/contracts.py`; `ports/connectors.py` exposes
 mockable adapter/cancellation interfaces with no SDK, path, database or secret
-handle. There is no new API route, framework, dependency or migration.
+handle. The portable seam itself introduced no API route, framework, dependency
+or migration. The provider runtime below builds on that seam.
 
 The five discriminated scientific operations are fielded search, identifier
 lookup, directed citations/references, positive/negative-seed recommendations and
@@ -95,6 +96,43 @@ enforced by the Core models; consuming a schema alone is not dispatch validation
 
 Synthetic fixtures and focused tests prove schema generation, immutable ownership,
 mockable composition and these local semantic boundaries. Existing import suites
-and performance evidence are unaffected. HTTP/broker enforcement, provider
-fixtures, durable cache/page acceptance, restart and real source-slice/platform
-qualification remain CAP-04.S02.T02/T03 and subsequent slice/Wave verification.
+and performance evidence are unaffected by that contract-only delivery.
+Integrated source-slice/platform qualification remains separate.
+
+## OpenAlex and Crossref runtime — CAP-04.S02.T02
+
+Core compiles only supported field/filter/sort/projection semantics into fixed
+HTTPS destinations. Unknown operations deny rather than broaden a query. The
+broker owns the single retry/rate budget, public-address DNS binding, TLS,
+bounded JSON parsing and broker-only credential leases. Error bodies, wire URLs,
+authentication/contact fields and dependency debug headers are not replay data.
+Sanitized scientific responses and source assertions remain protected project
+objects; they do not create canonical Works or grant export/model/share rights.
+
+Authenticated Core endpoints provide capabilities, exact-request previews,
+confirmations, job status and cancellation. An accepted Intent destination,
+current privacy policy, rights and exact researcher confirmation are separate
+requirements. Confirmation is session-local and expires; reopening a project
+does not silently reauthorize pending requests. Client-supplied request data or
+source-package trust cannot mint consent. Optional Intent egress fields preserve
+old clients' omission behavior and default to local-only.
+
+Each confirmed page is an existing durable workflow job. Under the current
+project/consent guard, one canonical writer validates the attempt capability,
+lease, cancellation and predecessor, then accepts page/raw references, cursor,
+output artifacts, provenance and workflow success together. Pre-commit failure
+rolls back all canonical acceptance; encrypted orphan objects may remain. Lost
+post-commit acknowledgement cannot convert accepted success to cancellation.
+Receipt reads retain project-before-object lock order. Import and connector
+workers share one conservative document-lane resource policy.
+
+Caches are project/page scoped and recheck current authority. Local cache hits
+do not renew remote-validation time; only a new response or valid conditional
+revalidation does. Retained-body redaction provenance survives hits, 304s and
+restart. Failed/partial pages do not advance checkpoints. Fresh invocations can
+resume from the exact completed predecessor with new current confirmation.
+
+Tests use synthetic provider responses, actual local protected persistence and
+an isolated real TLS transport boundary. These are not live-provider, native UI
+or production-package claims; remaining adapters and slice/Wave qualification
+retain their own obligations.

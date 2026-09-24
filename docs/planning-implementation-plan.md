@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cad127ca7bb083162f6f3a5714a35dbd9256608e61fa795e154419390ab14bbc
+source_sha256: 3ceb5fc84b316e4ea485e0b34c7d755d403481a753c161a791216fb11dd8979b
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8116,7 +8116,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: Owner resumed W2 implementation; continue the same claimed task with cancellation, lease and atomic publication regression closure.
 
 #### - [ ] CAP-04.S02.T03 - Implement Unpaywall and Semantic Scholar adapters
 

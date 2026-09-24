@@ -84,7 +84,8 @@ class ConnectorTlsTests(unittest.IsolatedAsyncioTestCase):
         self.pem = cert_path.read_bytes()
         server_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         server_context.load_cert_chain(cert_path, key_path)
-        self.received, self.negotiated = [], []
+        self.received: list[bytes] = []
+        self.negotiated: list[str] = []
         self.response = (
             b"HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nTransfer-Encoding: chunked\r\n"
             b'Connection: close\r\n\r\nb\r\n{"ok":true}\r\n0\r\n\r\n'

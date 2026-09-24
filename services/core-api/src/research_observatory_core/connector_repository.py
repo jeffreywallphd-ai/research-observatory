@@ -30,9 +30,9 @@ from .connectors.contracts import (
     RequestDigest,
 )
 from .connectors.providers import ProviderProblem
-from .connectors.workflow import ConnectorJobInput
+from .connectors.workflow import ConnectorJobInput, bind_connector_claim
 from .domain_contracts import new_uuid_v7
-from .ports.connector_runtime import ConnectorAuthorityStamp, ConnectorCacheEntry
+from .ports.connector_runtime import ConnectorAuthorityStamp, ConnectorCacheEntry, ConnectorPublication
 from .ports.object_store import ObjectPutCommand, ObjectStore, ObjectStoreProblem
 from .ports.repositories import (
     AggregateRevision,
@@ -41,8 +41,13 @@ from .ports.repositories import (
     MaterialDependency,
     RepositoryProblem,
 )
-from .ports.workflow_executor import WorkflowOutputReference
-from .repositories import _UNIT_OF_WORKS, _projection_content_sha256, _SqliteAggregateRepository
+from .ports.workflow_executor import WorkflowOutputReference, WorkflowQueueConflict
+from .repositories import (
+    _UNIT_OF_WORKS,
+    _projection_content_sha256,
+    _SqliteAggregateRepository,
+    _SqliteWorkflowQueueRepository,
+)
 from .storage import CanonicalConnection, StorageProblem, open_canonical_database
 
 _MAX_DOCUMENT = 16 * 1024 * 1024
@@ -91,6 +96,7 @@ class ConnectorRepository:
         if not database.is_absolute():
             raise ValueError("connector-repository-path-invalid")
         self._database, self._project, self._objects = database, project_id, objects
+        self._queue = _SqliteWorkflowQueueRepository(database, project_id)
 
     @contextmanager
     def _transaction(self, *, write: bool = False) -> Iterator[tuple[CanonicalConnection, _SqliteAggregateRepository]]:
@@ -109,6 +115,10 @@ class ConnectorRepository:
             if connection is not None and connection.in_transaction:
                 connection.rollback()
             raise ProviderProblem("incompatible-response") from None
+        except BaseException:
+            if connection is not None and connection.in_transaction:
+                connection.rollback()
+            raise
         finally:
             if token is not None:
                 _UNIT_OF_WORKS.unregister(token)
@@ -222,6 +232,7 @@ class ConnectorRepository:
                 page.observed_at,
                 stored.etag,
                 stored.last_modified,
+                page.response.redaction == "applied",
             )
 
     def source_record(self, revision_id: str, ordinal: int) -> ConnectorRecord:
@@ -314,13 +325,66 @@ class ConnectorRepository:
             if stored.page.outcome != "complete":
                 raise ValueError("connector-result-incomplete")
             revision = aggregates.get_revision(pointer.revision_id)
-            return WorkflowOutputReference(
-                revision.aggregate_id,
-                revision.revision_id,
-                _projection_content_sha256(revision),
-                "application/json",
-                revision.aggregate_id,
+            return self._output(revision)
+
+    @staticmethod
+    def _output(revision: AggregateRevision) -> WorkflowOutputReference:
+        return WorkflowOutputReference(
+            revision.aggregate_id,
+            revision.revision_id,
+            _projection_content_sha256(revision),
+            "application/json",
+            revision.aggregate_id,
+        )
+
+    def _running(self, connection: CanonicalConnection, publication: ConnectorPublication) -> None:
+        if publication.interrupted():
+            raise ProviderProblem("cancelled")
+        self._queue._verify_attempt_capability(connection, publication.claim)
+        row = self._queue._lease_row(connection, publication.claim, publication.now(), states=("running",))
+        if row[3] is not None:
+            raise WorkflowQueueConflict("workflow cancellation precedes connector publication")
+
+    def _finish_publication(
+        self,
+        connection: CanonicalConnection,
+        revision: AggregateRevision,
+        page: ConnectorResultPage,
+        publication: ConnectorPublication | None,
+    ) -> None:
+        if publication is None:
+            return
+        claim = publication.claim
+        if page.outcome != "complete":
+            self._running(connection, publication)
+            return
+        output = self._output(revision)
+        completed = connection.execute(
+            "SELECT 1 FROM workflow_committed_outputs WHERE project_id=? AND job_id=?",
+            (self._project, claim.job_id),
+        ).fetchone()
+        if completed is None:
+            self._running(connection, publication)
+            instant = publication.now()
+            connection.execute(
+                "INSERT INTO workflow_attempt_artifacts VALUES "
+                "(?, ?, ?, ?, ?, 'output', 'retained-incomplete', ?, ?, ?, ?, ?)",
+                (
+                    claim.attempt_id,
+                    self._project,
+                    claim.job_id,
+                    output.artifact_id,
+                    output.revision_id,
+                    output.content_hash,
+                    output.media_type,
+                    output.provenance_entity_id,
+                    instant,
+                    instant,
+                ),
             )
+        # Uses a fresh time and the SAME writer connection as the page, raw
+        # references and cursor. Replays also authenticate the exact attempt.
+        self._queue._complete_with_connection(connection, claim, now=publication.now(), outputs=(output,))
 
     def _put(self, body: bytes, now: str) -> str:
         if len(body) > _MAX_DOCUMENT:
@@ -435,13 +499,26 @@ class ConnectorRepository:
         etag: str | None,
         last_modified: str | None,
         authority: ConnectorAuthorityStamp,
+        publication: ConnectorPublication | None = None,
     ) -> ConnectorResultPage:
         page = ConnectorResultPage.model_validate(page)
         request = self._request(page.request)
         if authority.project_id != self._project:
             raise ProviderProblem("policy-denied")
+        if publication is not None:
+            if request != publication.inputs.preview.request:
+                raise ProviderProblem("policy-denied")
+            bind_connector_claim(self._queue.authority(publication.claim.job_id), publication.claim, publication.inputs)
         prior = self.replay(request)
         if prior is not None:
+            if publication is not None:
+                with self._transaction(write=True) as (connection, aggregates):
+                    pointer = self._pointer(connection, self._key("invocation", request.invocation_id))
+                    if pointer is None or pointer.request_sha256 != _request_hash(request):
+                        raise ProviderProblem("incompatible-response")
+                    self._finish_publication(
+                        connection, aggregates.get_revision(pointer.revision_id), prior, publication
+                    )
             return prior
         predecessor_state = self.checkpoint(request)
         if (predecessor_state[0] if predecessor_state else None) != authority.expected_checkpoint_revision_id:
@@ -477,6 +554,8 @@ class ConnectorRepository:
             # The raw document revision gets its preselected ID inside the same transaction.
             page_digest = self._put(_bytes(stored.model_dump(mode="json", by_alias=True)), page.observed_at)
             with self._transaction(write=True) as (connection, aggregates):
+                if publication is not None:
+                    self._running(connection, publication)
                 previous = self._pointer(connection, self._key("invocation", request.invocation_id))
                 if previous is not None:
                     if previous.request_sha256 != _request_hash(request):
@@ -516,15 +595,21 @@ class ConnectorRepository:
                 )
                 if page.outcome == "complete":
                     self._write_pointer(connection, checkpoint_key, pointer, page.observed_at)
-                    if retained:
+                    # A local hit is an observation, not remote validation. Keep
+                    # the last 200/304 cache pointer so repeated reads cannot
+                    # extend freshness indefinitely.
+                    if retained and page.cache.state != "hit":
                         self._write_pointer(
                             connection, self._key("cache", request.page_sha256()), pointer, page.observed_at
                         )
+                self._finish_publication(connection, revision, page, publication)
             return page
         except _ReplayPublication:
             replayed = self.replay(request)
             if replayed is None:
                 raise ProviderProblem("incompatible-response") from None
-            return replayed
+            return self.publish(
+                replayed, body=None, etag=None, last_modified=None, authority=authority, publication=publication
+            )
         except ObjectStoreProblem, ValueError, OSError:
             raise ProviderProblem("incompatible-response") from None
