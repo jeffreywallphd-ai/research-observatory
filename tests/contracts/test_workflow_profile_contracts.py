@@ -206,12 +206,12 @@ class WorkflowProfileContractTests(unittest.TestCase):
                 self.assertTrue(presentation_mapping_errors(*arguments, required_region_additions=changed))
         for name in names:
             parsed = json.loads(presentation[name])
-            changed = copy.deepcopy(parsed)
+            changed_document = copy.deepcopy(parsed)
             if name == "CAPABILITY_COVERAGE.json":
-                changed["page_contracts"]["source-manager.html"]["required_regions"].reverse()
+                changed_document["page_contracts"]["source-manager.html"]["required_regions"].reverse()
             else:
-                changed["workflows"] = dict(reversed(list(changed["workflows"].items())))
-            candidate = {**presentation, name: json.dumps(changed, ensure_ascii=False, indent=2) + "\n"}
+                changed_document["workflows"] = dict(reversed(list(changed_document["workflows"].items())))
+            candidate = {**presentation, name: json.dumps(changed_document, ensure_ascii=False, indent=2) + "\n"}
             self.assertTrue(
                 presentation_mapping_errors(
                     semantic, candidate, arguments[2], arguments[3], required_region_additions=additions
@@ -227,6 +227,25 @@ class WorkflowProfileContractTests(unittest.TestCase):
     def test_presentation_witness_authenticates_real_git_publication_and_inputs(self) -> None:
         # Preserve the exact accepted 1.6 publication, not the mutable active reference.
         self.exercise_presentation_witness("5904c7eb152167f2f65c172d499fea8de5181689", "1.6")
+
+    def test_new_witness_rejects_empty_or_malformed_region_declarations(self) -> None:
+        sys.path.insert(0, str(REPO / "tools"))
+        from ui_conformance import presentation_compatibility_errors, presentation_witness_path
+
+        reference_id = "RO-UI-ACADEMIC-MINIMAL-1.7"
+        relative = presentation_witness_path(reference_id)
+        witness = json.loads((REPO / relative).read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory(prefix="ro-witness-declarations-") as temporary:
+            root = Path(temporary)
+            path = root / relative
+            path.parent.mkdir(parents=True)
+            declarations: tuple[object, ...] = (None, {}, [], False)
+            for declaration in declarations:
+                with self.subTest(declaration=declaration):
+                    invalid = {**witness, "requiredRegionAdditions": declaration}
+                    path.write_text(json.dumps(invalid), encoding="utf-8")
+                    errors = presentation_compatibility_errors(root, reference_id, "1" * 64)
+                    self.assertIn("required-region additions must be a nonempty object", " ".join(errors))
 
     def test_pre_wave_design_witness_authenticates_real_git_publication_and_inputs(self) -> None:
         base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
