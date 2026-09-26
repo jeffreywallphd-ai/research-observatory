@@ -92,3 +92,46 @@ proof keeps its actual candidate and limitations. Slice matrix review composes
 native/TLS/rights/failure evidence; broad repository/profile/packaging and fresh
 cross-capability qualification remain W2 exit obligations. Optional live smoke
 requires separately configured authority and is not inferred from this note.
+
+## Committed control execution
+
+Candidate `1ccf0f923572aab5f553b2b7de6879d75a0a326c`: ten cases PASS in
+93.648 seconds (149.986743 seconds including input authentication). The owner
+invoked `artifacts/tmp/CAP-04.S02.qualify-controls-01.py` under the normal Windows
+principal with fresh parent/child bytecode prefixes. The wrapper enters the
+canonical benchmark input guard, locks 380 selected repository files and 6218
+installed dependency files, executes all six performance controls, three
+transport failure cases and the integrated protected-runtime case, then checks
+unchanged inputs before reporting PASS. Interpreter/DLL identity is recorded;
+the standard-library/OS closure is explicitly unauthenticated and reuse disabled.
+Focused pre-commit lint/format/types pass for all six additions; quality inventory has 342
+files. No product implementation changed in this increment.
+
+Receipt: `artifacts/tmp/CAP-04.S02.qualification-controls-01.json`, SHA256
+`d714e9ac0fe7bb96ed76ebff90bdc876fba6cec5693cf7abc1d341231acb4c29`.
+Verbose log: `artifacts/tmp/CAP-04.S02.qualification-controls-01.log`, SHA256
+`0410395cd0282f96eb83afd81908f166e300ed84d9c6ffad744787e340a8d38f`.
+Protected synthetic report: `artifacts/tmp/source-slice-0_z5smkx/result.json`,
+owner-read SHA256 `0ed99199bd4c52822fff7145b5b713eaaf5325a1b676b37fa30fbb9c35452b65`.
+It records eight cold/cache outcomes, 5/5/1/5 records by provider, nine total
+integrated dispatches, timeout/reset retained as classified failed observations,
+preserved restart/cancellation and unchanged preceding checkpoints. Every fresh
+cache invocation has zero dispatches. All four downstream handoffs retain unknown
+model-use/export/share rights. The separate two-call rate probe takes 1.142243
+seconds, with 1.069350-second wire spacing and requested/actual wait of
+0.997268/1.012436 seconds, maximum concurrency one.
+
+The report is protected by its real-principal fixture. The independent reviewer
+authenticated the aggregate/log and all 380 source hashes, then obtained an
+approved owner-context read of the protected report and independently hashed and
+projected its bytes. The bounded disposition is retained in
+`CAP-04.S02.qualification-controls-review-01.md`.
+These are functional/control observations, not the pending 100-record benchmark.
+
+The targeted F-SLICE-02 authority review found restoration fits existing Source
+Manager connection-health/inspection and confirmation regions. Exact request
+limits and an explicitly unavailable completion estimate avoid fabricating an
+ETA; later measured latency/retries must be labeled by scope. A companion typed
+read-only diagnostics projection keeps operational metadata separate from the
+unchanged scholarly inspection contract. The linked correction spec preserves
+reference bytes, source policy, historical observations and original approvals.
