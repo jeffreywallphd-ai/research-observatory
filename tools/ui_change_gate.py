@@ -1357,11 +1357,172 @@ def linked_correction_authority(
     if origin.get("review_gate") != "human-and-agent-review":
         errors = linked_amendment_origin_errors(repo, head, backlog, task, origin)
         if errors:
-            raise ValueError(
-                "linked UI correction origin lacks inherited human-and-agent-review "
-                "or authenticated amendment authority: " + "; ".join(errors)
-            )
+            conformance_errors = linked_conformance_origin_errors(repo, head, backlog, task, origin)
+            if conformance_errors:
+                raise ValueError(
+                    "linked UI correction origin lacks inherited human-and-agent-review, "
+                    "authenticated amendment or governed conformance authority: "
+                    + "; ".join(errors + conformance_errors)
+                )
     return origin
+
+
+def linked_conformance_origin_errors(
+    repo: Path, head: str, backlog: dict[str, Any], task: dict[str, Any], origin: dict[str, Any]
+) -> list[str]:
+    """Authenticate the installed-verifier alternative in ADR-0003, not its proof."""
+    import taskctl
+
+    try:
+        binding = task["correction"]
+        if (
+            origin.get("review_gate") != "agent-review"
+            or origin.get("experience_change") is not None
+            or origin.get("amendment_id") is not None
+            or binding.get("origin_amendment_id") is not None
+            or taskctl.canonical_json_sha256(taskctl.corrective_origin_snapshot(origin)) != binding["origin_sha256"]
+            or not independent_identity(origin.get("review", {}).get("reviewer"), origin.get("owner"))
+        ):
+            raise ValueError("conformance origin must be the exact independently reviewed ordinary task")
+        wave = next(item for item in backlog["waves"] if item["id"] == task["wave"])
+        approval = wave["approval"]
+        packet = str(approval.get("approved_commit"))
+        if (
+            approval.get("status") != "APPROVED"
+            or HUMAN_ID.fullmatch(str(approval.get("approved_by"))) is None
+            or resolve_commit(repo, packet) != packet
+            or not is_ancestor(repo, packet, binding["origin_commit"])
+        ):
+            raise ValueError("conformance origin requires the immutable human-approved Wave packet")
+        original = yaml_object(blob(repo, packet, "planning/backlog.yaml"), "approved Wave packet")
+        original_task = find_task(original, str(origin["id"]))
+        if (
+            original_task is None
+            or original_task.get("status") != "NOT_STARTED"
+            or original_task.get("review_gate") != origin.get("review_gate")
+            or original_task.get("experience_change") is not None
+            or taskctl.corrective_contract(original, original_task) != taskctl.corrective_contract(backlog, origin)
+        ):
+            raise ValueError("conformance origin scope differs from the approved Wave packet")
+        original_wave = next(item for item in original["waves"] if item["id"] == task["wave"])
+        if original_wave.get("approval", {}).get("status") == "APPROVED":
+            raise ValueError("conformance packet must precede its distinct approval record")
+        introductions = (
+            git(
+                repo,
+                "rev-list",
+                "--reverse",
+                "--ancestry-path",
+                f"{packet}..{binding['origin_commit']}",
+                "--",
+                "planning/backlog.yaml",
+            )
+            .decode()
+            .splitlines()
+        )
+        if not introductions:
+            raise ValueError("conformance Wave approval has no committed introduction")
+        introduced = introductions[0]
+        approved = yaml_object(blob(repo, introduced, "planning/backlog.yaml"), "Wave approval introduction")
+        if (
+            git(repo, "rev-list", "--parents", "-n", "1", introduced).decode().split() != [introduced, packet]
+            or next(item for item in approved["waves"] if item["id"] == task["wave"])["approval"] != approval
+        ):
+            raise ValueError("conformance Wave approval differs from its actual packet-child introduction")
+        if not is_ancestor(repo, introduced, str(origin.get("base_sha"))):
+            raise ValueError("conformance Wave approval must precede the original claim")
+        slices = [
+            (capability["id"], slice_)
+            for capability in original["capabilities"]
+            for slice_ in capability.get("slices", [])
+            if slice_.get("wave") == task["wave"]
+        ]
+        if approval.get("capability_ids") != sorted({identity for identity, _ in slices}) or approval.get(
+            "slice_ids"
+        ) != [slice_["id"] for _, slice_ in slices]:
+            raise ValueError("conformance Wave approval inventory differs from its packet")
+        selected = [
+            (identity, slice_)
+            for identity, slice_ in slices
+            if any(item["id"] == origin["id"] for item in slice_["tasks"])
+        ]
+        if len(selected) != 1:
+            raise ValueError("conformance origin must belong to exactly one approved Wave slice")
+        capability_id, slice_ = selected[0]
+        plan_paths = git(repo, "ls-tree", "-r", "--name-only", packet, "--", f"planning/slice-plans/{capability_id}")
+        plans = [
+            path for path in plan_paths.decode().splitlines() if PurePosixPath(path).name.startswith(f"{slice_['id']}-")
+        ]
+        if len(plans) != 1:
+            raise ValueError("conformance origin lacks its exact approved slice plan")
+        before = blob(repo, packet, plans[0]).decode("utf-8").replace("\r\n", "\n").split("---", 2)
+        after = blob(repo, head, plans[0]).decode("utf-8").replace("\r\n", "\n").split("---", 2)
+        old_meta, new_meta = yaml.safe_load(before[1]), yaml.safe_load(after[1])
+        expected_approval = {
+            "status": "approved",
+            **{key: approval[key] for key in ("approved_by", "approved_at", "approved_commit")},
+        }
+        if (
+            before[0].strip()
+            or after[0].strip()
+            or before[2] != after[2]
+            or new_meta.get("approval") != expected_approval
+            or new_meta.get("status") != "approved"
+            or {key: value for key, value in old_meta.items() if key not in {"approval", "status"}}
+            != {key: value for key, value in new_meta.items() if key not in {"approval", "status"}}
+            or origin["id"] not in old_meta.get("task_ids", [])
+        ):
+            raise ValueError("conformance slice scope is not the unchanged approved packet")
+        verifier = find_task(backlog, "CAP-00.S06.T04") or {}
+        installed = find_task(original, "CAP-00.S06.T04") or {}
+        if (
+            taskctl.corrective_origin_snapshot(verifier) != taskctl.corrective_origin_snapshot(installed)
+            or installed.get("status") != "DONE"
+            or installed.get("review", {}).get("result") != "approved"
+            or not independent_identity(installed.get("review", {}).get("reviewer"), installed.get("owner"))
+            or not installed.get("evidence")
+            or tree_entry(repo, head, "tools/ui_conformance.py") != ("100644", "blob")
+        ):
+            raise ValueError("conformance verifier was not independently installed before Wave approval")
+        for reference in installed["evidence"]:
+            if (
+                not is_ancestor(repo, reference["commit"], packet)
+                or hashlib.sha256(blob(repo, packet, reference["path"])).hexdigest() != reference["sha256"]
+            ):
+                raise ValueError("installed conformance evidence is not authenticated to the approved packet")
+        # Actual product conformance is required separately for the current
+        # correction; the old verifier's DONE flag is never a substitute.
+        if git(repo, "diff", "--name-only", packet, head, "--", "design/ui-reference").strip():
+            raise ValueError("conformance origin cannot borrow a later changed reference")
+        ranges = correction_submission_ranges(repo, binding["origin_commit"], {"tasks": [origin]}, ordinary_origin=True)
+        if not ranges or not is_ancestor(repo, ranges[-1]["candidate"], binding["origin_commit"]):
+            raise ValueError("conformance origin independent review is not ancestral")
+        return []
+    except (KeyError, IndexError, StopIteration, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+        return [str(exc)]
+
+
+def linked_conformance_classification_errors(
+    repo: Path, base: str, head: str, contract: dict[str, Any], task: dict[str, Any], policy: dict[str, Any]
+) -> list[str]:
+    if not isinstance(contract.get("restorationClassification"), dict):
+        return ["linked conformance restoration requires independent classification and current product captures"]
+    commits = implementation_commits(repo, base, head, policy)
+    files: set[str] = set()
+    for commit in commits:
+        if len(git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()) != 2:
+            return ["linked conformance restoration does not support merged UI history"]
+        files.update(path for path in commit_paths(repo, commit) if is_implementation_path(path, policy))
+    if not commits or files - corrective_ui_paths(task):
+        return ["linked conformance classification exceeds the admitted UI history"]
+    scope = {
+        "taskDefinitionSha256": task["correction"]["origin_sha256"],
+        "resumedUiFiles": sorted(files),
+        "resumedUiCommits": commits,
+        "reactivationCommit": base,
+        "correctionProductPaths": task["correction"]["changed_paths"],
+    }
+    return restoration_classification_errors(repo, base, head, contract, scope, policy)
 
 
 def linked_amendment_origin_errors(
@@ -1743,7 +1904,9 @@ def independent_identity(reviewer: object, owner: object) -> bool:
     return canonical(reviewer) != canonical(owner)
 
 
-def correction_submission_ranges(repo: Path, head: str, correction: dict[str, Any]) -> list[dict[str, Any]]:
+def correction_submission_ranges(
+    repo: Path, head: str, correction: dict[str, Any], *, ordinary_origin: bool = False
+) -> list[dict[str, Any]]:
     from taskctl import task_review_control_errors
 
     ranges: list[dict[str, Any]] = []
@@ -1784,9 +1947,42 @@ def correction_submission_ranges(repo: Path, head: str, correction: dict[str, An
             after = yaml_object(blob(repo, introduction, "planning/backlog.yaml"), "review projection")
             prior_task = backlog_task(before, identity) or {}
             reviewed_task = backlog_task(after, identity) or {}
+            separately_submitted = (
+                prior_task.get("status") == "REVIEW"
+                and (prior_task.get("review_control") or {}).get("current_submission") == packet
+            )
+            # Ordinary taskctl submit/review may be committed together. Its
+            # immutable packet and independent ledger still bind the candidate;
+            # the historical amendment lane keeps its distinct-commit rule.
+            ordinary_delivery = (
+                ordinary_origin
+                and re.fullmatch(r"CAP-[0-9]{2}\.S[0-9]{2}\.T[0-9]{2}", identity) is not None
+                and task.get("amendment_id") is None
+                and prior_task.get("status") == "IN_PROGRESS"
+                and prior_task.get("owner") == task.get("owner")
+                and prior_task.get("base_sha") == task.get("base_sha")
+                and all(
+                    prior_task.get(field) == task.get(field)
+                    for field in (
+                        "branch",
+                        "worktree",
+                        "platform_targets",
+                        "deployment_profiles",
+                        "verification_profiles",
+                        "review_gate",
+                        "experience_change",
+                        "title",
+                        "objective",
+                        "dependencies",
+                        "acceptance_criteria",
+                        "verification_commands",
+                    )
+                )
+                and (prior_task.get("review_control") or {}).get("current_submission") is None
+                and (prior_task.get("review_control") or {}).get("attempts", []) == attempts[: index - 1]
+            )
             if (
-                prior_task.get("status") != "REVIEW"
-                or (prior_task.get("review_control") or {}).get("current_submission") != packet
+                not (separately_submitted or ordinary_delivery)
                 or (reviewed_task.get("review_control") or {}).get("attempts") != attempts[:index]
                 or not is_ancestor(repo, packet["candidate_commit"], introduction)
             ):
@@ -2133,7 +2329,11 @@ def restoration_classification_errors(
     repo: Path, base: str, head: str, contract: dict[str, Any], scope: dict[str, Any], policy: dict[str, Any]
 ) -> list[str]:
     """Bind independent semantic judgment; hashes alone cannot classify a UX fix."""
-    reference = contract["amendmentAuthority"]["classification"]
+    reference = (
+        contract["restorationClassification"]
+        if "restorationClassification" in contract
+        else contract["amendmentAuthority"]["classification"]
+    )
     identity = contract["taskId"]
     path = str(reference["path"])
     if not re.fullmatch(re.escape(f"artifacts/evidence/{identity}.ui-classification-R") + r"[0-9]{2}\.json", path):
@@ -2171,7 +2371,9 @@ def restoration_classification_errors(
     # commits are permitted, but any later UI or reference edit needs a new one.
     for commit in git(repo, "rev-list", f"{candidate}..{head}").decode().splitlines():
         if any(
-            is_implementation_path(item, policy) or item.startswith(f"{policy['referenceRoot']}/")
+            is_implementation_path(item, policy)
+            or item.startswith(f"{policy['referenceRoot']}/")
+            or item in scope.get("correctionProductPaths", [])
             for item in commit_paths(repo, commit)
         ):
             return ["restoration classification is stale after a product/reference change"]
@@ -2229,6 +2431,19 @@ def restoration_classification_errors(
     )
     if authenticated != manifest:
         return ["restoration capture snapshot differs from its immutable record"]
+    if "restorationClassification" in contract:
+        from product_style_check import capture_producer_snapshot
+
+        # This includes the real Core, generated/companion contracts, renderer,
+        # build and checker inputs. A retained PNG inventory alone is not the
+        # current producer's conformance proof. Intermediate add/revert edits
+        # also invalidate the independent judgment, even if final bytes match.
+        if producer != capture_producer_snapshot(repo, candidate):
+            return ["linked restoration capture producer differs from current authenticated inputs"]
+        inputs = set(producer.get("inputGitBlobs", {})) | set(scope.get("correctionProductPaths", []))
+        for commit in git(repo, "rev-list", f"{candidate}..{head}").decode().splitlines():
+            if commit_paths(repo, commit) & inputs:
+                return ["linked restoration classification is stale after a dependent input change"]
     measurement_errors = qualification_report_errors(repo, authenticated["report"])
     if measurement_errors:
         return ["restoration capture measurements fail conformance: " + "; ".join(measurement_errors)]
@@ -2516,6 +2731,21 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
             errors.append(f"{kind} must use the unchanged approved reference from the base commit")
         if reference_changed:
             errors.append(f"{kind} cannot modify the governed UI reference")
+        if (
+            linked_origin is not None
+            and task is not None
+            and (
+                "restorationClassification" in contract
+                or (
+                    linked_origin.get("review_gate") == "agent-review"
+                    and task["correction"].get("origin_amendment_id") is None
+                )
+            )
+        ):
+            try:
+                errors.extend(linked_conformance_classification_errors(repo, base, head, contract, task, policy))
+            except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+                errors.append(f"invalid linked conformance classification: {exc}")
         review_task = linked_origin if linked_origin is not None else task
         if (
             kind == "defect-restoration"

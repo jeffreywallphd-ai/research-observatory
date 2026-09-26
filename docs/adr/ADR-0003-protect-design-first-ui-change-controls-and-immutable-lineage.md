@@ -108,3 +108,21 @@ restoration classification, and gate-control weakening.
 ## Task links
 
 - `CAP-00.S06.T03`
+
+## Implementation clarification — installed-conformance restoration
+
+The 2026-09-26 linked-restoration preflight exposed the still-unconditional
+temporary classification check after CAP-00.S06.T04 installed the governed
+verifier. A bounded adapter repair implements the existing conditional decision;
+it does not remove independent classification or change intentional-design
+authority. An ordinary independently completed task may use the current
+unreleased Wave's linked correction only with authenticated original human Wave
+approval, unchanged approved task/slice/reference, and installed verifier history.
+Current correction qualification additionally binds the existing independent
+restoration disposition and delivery-authenticated product/reference captures.
+The existing classifier validates actual conformance measurements and rejects
+self-classification, stale or reverted UI, and changed references. Missing proof
+continues to deny. Historical amendment and human-review lanes keep their rules.
+Original task records and approvals remain immutable; formal corrective review
+and release decisions remain separate. See the conditional
+[linked restoration procedure](../automation/design-first-ui-changes.md#linked-completed-task-restoration-existing-10).

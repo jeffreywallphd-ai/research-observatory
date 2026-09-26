@@ -428,6 +428,185 @@ class UiChangeGateTests(unittest.TestCase):
             self.assertFalse(result["ok"])
             self.assertTrue(any("inherited human-and-agent-review" in error for error in result["errors"]), result)
 
+    def test_linked_conformance_authenticates_real_completed_wave_authority(self) -> None:
+        # Read-only historical authority, not a live correction admission or a
+        # claim that this repository's product currently passes conformance.
+        head = self.git(REPO, "rev-parse", "HEAD")
+        data = yaml.safe_load(ui_gate.blob(REPO, head, "planning/backlog.yaml").decode("utf-8"))
+        origin = taskctl.index_backlog(copy.deepcopy(data))[3]["CAP-04.S02.T03"]
+        task: dict[str, Any] = {
+            "id": "W2.C02.T01",
+            "wave": "W2",
+            "correction": {
+                "origin_commit": head,
+                "origin_sha256": taskctl.canonical_json_sha256(taskctl.corrective_origin_snapshot(origin)),
+                "origin_amendment_id": None,
+            },
+        }
+        self.assertEqual([], ui_gate.linked_conformance_origin_errors(REPO, head, data, task, origin))
+        for mutation in (
+            "approver",
+            "human-approver",
+            "packet",
+            "scope",
+            "verifier",
+            "review",
+            "amendment",
+            "experience",
+            "early-claim",
+        ):
+            with self.subTest(mutation=mutation):
+                changed = copy.deepcopy(data)
+                altered = copy.deepcopy(origin)
+                wave = next(item for item in changed["waves"] if item["id"] == "W2")
+                if mutation == "approver":
+                    wave["approval"]["approved_by"] = "agent:owner"
+                elif mutation == "human-approver":
+                    wave["approval"]["approved_by"] = "human:unapproved"
+                elif mutation == "packet":
+                    wave["approval"]["approved_commit"] = head
+                elif mutation == "scope":
+                    altered["objective"] = "Unapproved scope"
+                elif mutation == "verifier":
+                    taskctl.index_backlog(changed)[3]["CAP-00.S06.T04"]["status"] = "NOT_STARTED"
+                elif mutation == "review":
+                    altered["review"]["reviewer"] = altered["owner"]
+                elif mutation == "amendment":
+                    altered["amendment_id"] = "W2.A99"
+                elif mutation == "early-claim":
+                    altered["base_sha"] = wave["approval"]["approved_commit"]
+                else:
+                    altered["experience_change"] = {"kind": "intentional-design-change"}
+                altered_task = copy.deepcopy(task)
+                altered_task["correction"]["origin_sha256"] = taskctl.canonical_json_sha256(
+                    taskctl.corrective_origin_snapshot(altered)
+                )
+                self.assertTrue(ui_gate.linked_conformance_origin_errors(REPO, head, changed, altered_task, altered))
+
+    def test_linked_classification_schema_does_not_admit_other_lanes(self) -> None:
+        schema = json.loads((REPO / "design/ui-change.schema.json").read_text(encoding="utf-8"))
+        contract = self.contract("defect-restoration", "a" * 64, "b" * 40, task_id="W2.C02.T01")
+        contract["restorationClassification"] = {
+            "path": "artifacts/evidence/W2.C02.T01.ui-classification-R01.json",
+            "commit": "c" * 40,
+            "sha256": "d" * 64,
+        }
+        validator = Draft202012Validator(schema)
+        self.assertEqual([], list(validator.iter_errors(contract)))
+        for task_id in ("CAP-04.S02.T03", "W2.A01.T01"):
+            self.assertTrue(list(validator.iter_errors({**contract, "taskId": task_id})))
+        self.assertTrue(list(validator.iter_errors({**contract, "schemaVersion": "1.1"})))
+
+    def test_linked_conformance_real_git_approval_must_precede_claim(self) -> None:
+        for initial_status in ("NOT_STARTED", "IN_PROGRESS", "DONE"):
+            with self.subTest(status=initial_status), tempfile.TemporaryDirectory() as temporary:
+                root, _, _ = self.prepare(temporary)
+                origin: dict[str, Any] = {
+                    "id": "CAP-01.S01.T01",
+                    "status": initial_status,
+                    "wave": "W1",
+                    "review_gate": "agent-review",
+                    "title": "Approved route",
+                    "objective": "Restore route",
+                    "dependencies": [],
+                    "acceptance_criteria": ["Approved route"],
+                    "verification_commands": [],
+                }
+                data: dict[str, Any] = {
+                    "capabilities": [
+                        {
+                            "id": "CAP-01",
+                            "slices": [
+                                {
+                                    "id": "CAP-01.S01",
+                                    "wave": "W1",
+                                    "tasks": [origin],
+                                }
+                            ],
+                        }
+                    ],
+                    "waves": [{"id": "W1", "approval": {"status": "PENDING"}}],
+                }
+                self.write_yaml(root / "planning/backlog.yaml", data)
+                packet = self.commit(root, "proposed Wave packet")
+                data["waves"][0]["approval"] = {
+                    "status": "APPROVED",
+                    "approved_by": "human:fixture-owner",
+                    "approved_commit": packet,
+                    "capability_ids": ["CAP-01"],
+                    "slice_ids": ["CAP-01.S01"],
+                }
+                self.write_yaml(root / "planning/backlog.yaml", data)
+                self.commit(root, "separate Wave approval")
+                origin.update(
+                    {
+                        "status": "DONE",
+                        "owner": "owner",
+                        "base_sha": packet,
+                        "review": {"reviewer": "agent:independent", "result": "approved"},
+                    }
+                )
+                self.write_yaml(root / "planning/backlog.yaml", data)
+                head = self.commit(root, "late completed-task delivery cannot authorize early execution")
+                task = {
+                    "wave": "W1",
+                    "correction": {
+                        "origin_commit": head,
+                        "origin_amendment_id": None,
+                        "origin_sha256": taskctl.canonical_json_sha256(origin),
+                    },
+                }
+                errors = ui_gate.linked_conformance_origin_errors(root, head, data, task, origin)
+                self.assertTrue(
+                    any(
+                        ("precede the original claim" if initial_status == "NOT_STARTED" else "scope differs") in error
+                        for error in errors
+                    ),
+                    errors,
+                )
+
+    def test_ordinary_origin_delivery_preserves_contract_and_claim_identity(self) -> None:
+        head = self.git(REPO, "rev-parse", "HEAD")
+        data = yaml.safe_load(ui_gate.blob(REPO, head, "planning/backlog.yaml").decode("utf-8"))
+        origin = taskctl.index_backlog(data)[3]["CAP-04.S02.T03"]
+        reference = origin["review_control"]["attempts"][-1]["ledger"]
+        _, introduction = ui_gate.immutable_record(REPO, head, reference["path"], reference["sha256"], evidence=True)
+        previous = ui_gate.resolve_commit(REPO, f"{introduction}^")
+        before = yaml.safe_load(ui_gate.blob(REPO, previous, "planning/backlog.yaml").decode("utf-8"))
+        self.assertTrue(ui_gate.correction_submission_ranges(REPO, head, {"tasks": [origin]}, ordinary_origin=True))
+        with self.assertRaisesRegex(ValueError, "frozen-submission transition"):
+            ui_gate.correction_submission_ranges(REPO, head, {"tasks": [origin]})
+        original_blob = ui_gate.blob
+        for field in ("branch", "objective", "worktree", "platform_targets"):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(before)
+                altered = taskctl.index_backlog(changed)[3][origin["id"]]
+                altered[field] = ["unsupported-platform"] if field == "platform_targets" else "substituted"
+                payload = yaml.safe_dump(taskctl.serializable_backlog(changed)).encode("utf-8")
+
+                def substitute(repo: Path, commit: str, path: str, payload: bytes = payload) -> bytes:
+                    if commit == previous and path == "planning/backlog.yaml":
+                        return payload
+                    return original_blob(repo, commit, path)
+
+                with (
+                    patch("ui_change_gate.blob", side_effect=substitute),
+                    self.assertRaisesRegex(ValueError, "frozen-submission transition"),
+                ):
+                    ui_gate.correction_submission_ranges(REPO, head, {"tasks": [origin]}, ordinary_origin=True)
+
+    def test_linked_conformance_eligibility_never_substitutes_for_classification(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, data, contract = self.linked_fixture(temporary, review_gate="agent-review")
+            head = self.linked_candidate(root, data, contract)
+            # Only the separately covered origin-authority boundary is stubbed.
+            # The real gate must still reject missing independent product proof.
+            with patch("ui_change_gate.linked_conformance_origin_errors", return_value=[]):
+                self.assertEqual(base, automatic_base(root, "HEAD"))
+                result = validate(root, base, head)
+            self.assertFalse(result["ok"], result)
+            self.assertTrue(any("independent classification" in error for error in result["errors"]), result)
+
     def test_ordinary_no_ui_historical_range_still_passes(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, _package = self.prepare(temporary)
@@ -1034,11 +1213,14 @@ class UiChangeGateTests(unittest.TestCase):
         # The capture reader has its own real PNG/producer suite. Stub only that
         # boundary here; this fixture tests actual Git records and classification,
         # not pixels, renderer behavior, or a complete product qualification.
-        for finding in (None, {"blockingVisualAcceptance": True}, {"blockingVisualAcceptance": 0}, {}):
-            with self.subTest(finding=finding), tempfile.TemporaryDirectory() as temporary:
+        for identity, finding in (
+            (identity, finding)
+            for identity in ("W1.A08.T02", "W2.C02.T01")
+            for finding in (None, {"blockingVisualAcceptance": True}, {"blockingVisualAcceptance": 0}, {})
+        ):
+            with self.subTest(identity=identity, finding=finding), tempfile.TemporaryDirectory() as temporary:
                 root, base, package = self.prepare(temporary)
                 policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
-                identity = "W1.A08.T02"
                 source_path = "apps/desktop/src/View.tsx"
                 (root / source_path).write_text("export const View = () => 'restored';\n", encoding="utf-8")
                 candidate = self.commit(root, "restoration candidate")
@@ -1121,10 +1303,20 @@ class UiChangeGateTests(unittest.TestCase):
                         }
                     },
                 }
+                linked_contract = {key: value for key, value in contract.items() if key != "amendmentAuthority"}
+                authority = contract["amendmentAuthority"]
+                assert isinstance(authority, dict)
+                linked_contract["restorationClassification"] = authority["classification"]
+                linked_task: dict[str, Any] = {
+                    "id": identity,
+                    "correction": {"origin_sha256": "d" * 64, "changed_paths": [source_path]},
+                }
                 with (
                     patch("product_style_check.read_capture_bundle", return_value=manifest) as capture_reader,
                     patch("desktop_app_check.qualification_capture_contract", return_value=[]),
                     patch("desktop_app_check.qualification_report_errors", return_value=[]),
+                    patch("product_style_check.capture_producer_snapshot", return_value=manifest["producer"]),
+                    patch("product_style_check.capture_source_identity", return_value={}),
                 ):
                     errors = restoration_classification_errors(root, base, head, contract, scope, policy)
                     if finding is not None:
@@ -1133,6 +1325,56 @@ class UiChangeGateTests(unittest.TestCase):
                     else:
                         self.assertEqual([], errors)
                         capture_reader.assert_called_once()
+                        # Same immutable record/capture reader also serves the
+                        # new contract reference. It does not classify authority
+                        # from a producer's focusedEvidence strings.
+                        self.assertEqual(
+                            [], restoration_classification_errors(root, base, head, linked_contract, scope, policy)
+                        )
+                        if identity == "W2.C02.T01":
+                            self.assertEqual(
+                                [],
+                                ui_gate.linked_conformance_classification_errors(
+                                    root, base, head, linked_contract, linked_task, policy
+                                ),
+                            )
+                            with patch("desktop_app_check.qualification_report_errors", return_value=["bad focus"]):
+                                self.assertTrue(
+                                    ui_gate.linked_conformance_classification_errors(
+                                        root, base, head, linked_contract, linked_task, policy
+                                    )
+                                )
+                            bad_contract = copy.deepcopy(linked_contract)
+                            bad_contract["implementationAgent"] = "agent:/root/fixture_review"
+                            self.assertTrue(
+                                ui_gate.linked_conformance_classification_errors(
+                                    root, base, head, bad_contract, linked_task, policy
+                                )
+                            )
+                            with patch("product_style_check.capture_producer_snapshot", return_value={"stale": True}):
+                                self.assertTrue(
+                                    ui_gate.linked_conformance_classification_errors(
+                                        root, base, head, linked_contract, linked_task, policy
+                                    )
+                                )
+                            added_path = "services/core-api/src/telemetry.py"
+                            linked_task["correction"]["changed_paths"].append(added_path)
+                            added = root / added_path
+                            added.parent.mkdir(parents=True)
+                            added.write_text("unreviewed = True\n", encoding="utf-8")
+                            changed = self.commit(root, "later non-UI product input")
+                            self.assertTrue(
+                                ui_gate.linked_conformance_classification_errors(
+                                    root, base, changed, linked_contract, linked_task, policy
+                                )
+                            )
+                            added.unlink()
+                            changed = self.commit(root, "revert non-UI product input")
+                            self.assertTrue(
+                                ui_gate.linked_conformance_classification_errors(
+                                    root, base, changed, linked_contract, linked_task, policy
+                                )
+                            )
                         original = (root / source_path).read_bytes()
                         (root / source_path).write_text("export const View = () => 'unreviewed';\n", encoding="utf-8")
                         self.commit(root, "unreviewed UI edit")

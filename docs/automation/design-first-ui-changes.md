@@ -37,9 +37,38 @@ completed approved-reference implementation of an authenticated, adopted
 human-approved amendment. That alternative authenticates the immutable packet,
 original UI contract at its reviewed candidate/base, and independent review
 history; it never synthesizes an amendment task's forbidden `review_gate`.
+An ordinary `agent-review` origin with no experience/amendment metadata may
+instead use ADR-0003's installed-conformance alternative. It authenticates the
+exact human-approved Wave packet and its distinct approval introduction,
+unchanged task/slice scope and reference, the previously completed verifier,
+and the origin's immutable independent review. Approval must precede the original
+claim; the packet cannot already contain an active or completed origin.
+Ordinary submit/review transitions
+may share a delivery commit; the exact prior claimed state, frozen submission,
+review ledger and resulting attempt history must still authenticate. The older
+amendment route retains its separate-submission-commit requirement.
+
+This alternative additionally requires `restorationClassification` in the v1.0
+contract, containing `path`, `sha256` and introduction `commit` for the existing
+`<correction-id>.ui-classification-Rnn.json` independent restoration disposition.
+The existing record's `taskDefinitionSha256` is the exact original-task snapshot
+digest; `resumedUiFiles` and `resumedUiCommits` cover all governed implementation
+history from the correction base. Its current producer, independently reviewed
+product/reference captures and measured conformance authenticate through the
+same capture reader used for resumed amendments. The field names retain that
+existing format; they do not create an amendment or new approval state. A missing
+record, self-review, invalid capture, unsupported merge or later UI/reference
+edit (including a revert) denies qualification. Installed verifier status alone
+and producer-declared focused checks never suffice. Automatic base selection can
+identify an eligible claim before these final proof artifacts exist.
+The complete current capture producer snapshot also authenticates Core, contract,
+build and checker inputs. Any later touch to those inputs or an admitted
+correction product/test path invalidates the judgment, including add/revert
+history; unchanged UI files alone are insufficient.
+
 Unsupported origins fail closed. Focused conformance evidence and the existing independent,
 commit-bound corrective integration review remain required. No new approval,
-classification record, schema version or workflow layer is introduced.
+classification record type, schema version or workflow layer is introduced.
 
 This live authority lane requires current `HEAD`, the current branch and
 repository-relative worktree, the correction's full admission base, claimed owner,
