@@ -1904,6 +1904,32 @@ def independent_identity(reviewer: object, owner: object) -> bool:
     return canonical(reviewer) != canonical(owner)
 
 
+def require_ordinary_submission_lineage(
+    repo: Path,
+    task: dict[str, Any],
+    packet: dict[str, Any],
+    previous: dict[str, Any] | None,
+    delivery: str,
+    introduction: str,
+) -> None:
+    expected_base = previous["candidate_commit"] if previous else task["base_sha"]
+    base, candidate = packet.get("base_commit"), packet.get("candidate_commit")
+    if (
+        base != expected_base
+        or packet.get("branch") != task.get("branch")
+        or not isinstance(base, str)
+        or not isinstance(candidate, str)
+        or resolve_commit(repo, base) != base
+        or resolve_commit(repo, candidate) != candidate
+        or base == candidate
+        or not is_ancestor(repo, base, candidate)
+        or candidate == delivery
+        or not is_ancestor(repo, candidate, delivery)
+        or not is_ancestor(repo, delivery, introduction)
+    ):
+        raise ValueError("ordinary origin submission must preserve claim branch and strict candidate/delivery lineage")
+
+
 def correction_submission_ranges(
     repo: Path, head: str, correction: dict[str, Any], *, ordinary_origin: bool = False
 ) -> list[dict[str, Any]]:
@@ -1992,6 +2018,10 @@ def correction_submission_ranges(
             if not re.fullmatch(re.escape(f"artifacts/evidence/{identity}") + r"(?:\.[A-Za-z0-9_-]+)*\.json", path):
                 raise ValueError("correction task evidence path is outside its exact namespace")
             manifest, delivery = immutable_record(repo, head, path, reference.get("sha256"), evidence=True)
+            if ordinary_origin:
+                require_ordinary_submission_lineage(
+                    repo, task, packet, attempts[index - 2]["submission"] if index > 1 else None, delivery, introduction
+                )
             if (
                 not is_ancestor(repo, delivery, introduction)
                 or any(

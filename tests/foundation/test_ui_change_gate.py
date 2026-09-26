@@ -595,6 +595,40 @@ class UiChangeGateTests(unittest.TestCase):
                 ):
                     ui_gate.correction_submission_ranges(REPO, head, {"tasks": [origin]}, ordinary_origin=True)
 
+    def test_ordinary_submission_lineage_uses_actual_git_ancestry(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _ = self.prepare(temporary)
+            (root / "candidate.txt").write_text("one", encoding="utf-8")
+            candidate = self.commit(root, "first candidate")
+            (root / "delivery.txt").write_text("evidence", encoding="utf-8")
+            delivery = self.commit(root, "evidence and review")
+            task = {"base_sha": base, "branch": "main"}
+            packet = {"base_commit": base, "candidate_commit": candidate, "branch": "main"}
+            ui_gate.require_ordinary_submission_lineage(root, task, packet, None, delivery, delivery)
+            unrelated = self.git(
+                root, "commit-tree", self.git(root, "rev-parse", f"{candidate}^{{tree}}"), "-m", "unrelated"
+            )
+            for changed, evidence, review in (
+                ({**packet, "base_commit": candidate}, delivery, delivery),
+                ({**packet, "branch": "other"}, delivery, delivery),
+                ({**packet, "candidate_commit": base}, delivery, delivery),
+                ({**packet, "candidate_commit": unrelated}, delivery, delivery),
+                (packet, candidate, delivery),
+                (packet, delivery, candidate),
+            ):
+                with self.subTest(packet=changed, evidence=evidence), self.assertRaises(ValueError):
+                    ui_gate.require_ordinary_submission_lineage(root, task, changed, None, evidence, review)
+            (root / "candidate.txt").write_text("two", encoding="utf-8")
+            second = self.commit(root, "remediation candidate")
+            (root / "delivery.txt").write_text("second evidence", encoding="utf-8")
+            final = self.commit(root, "second evidence and review")
+            remediation = {"base_commit": candidate, "candidate_commit": second, "branch": "main"}
+            ui_gate.require_ordinary_submission_lineage(root, task, remediation, packet, final, final)
+            with self.assertRaises(ValueError):
+                ui_gate.require_ordinary_submission_lineage(
+                    root, task, {**remediation, "base_commit": base}, packet, final, final
+                )
+
     def test_linked_conformance_eligibility_never_substitutes_for_classification(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, data, contract = self.linked_fixture(temporary, review_gate="agent-review")
