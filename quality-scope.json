@@ -10,6 +10,12 @@
     "workers"
   ],
   "pythonFiles": [
+    "tests/connectors/test_connector_network_failures.py",
+    "tests/connectors/test_source_slice_runtime.py",
+    "tests/connectors/source_public_handoff.py",
+    "tests/connectors/source_rate_wait.py",
+    "tests/connectors/test_source_performance_check.py",
+    "tools/source_performance_check.py",
     "services/core-api/src/research_observatory_core/connector_api.py",
     "services/core-api/src/research_observatory_core/connector_service.py",
     "services/core-api/src/research_observatory_core/connector_worker.py",
