@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S02.T03",
+    "commit": "035f11a3546658ed9c694acbae1c1a3ac4907724",
+    "sha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028"
+  },
+  "reproduction": "Independent slice preflight F-SLICE-02 at 035f11a3546658ed9c694acbae1c1a3ac4907724 (unchanged product 1e68cab433f194bf5d834bedc974bdac5a4f7cb6) found that broker requests produce no retained measured latency or actual HTTP attempt/retry count, and Source Manager confirmation/inspection exposes neither these facts nor explicit unavailable completion estimates and selected timing limits. CAP-04.S02 sections 11-12 and approved reference 1.7 connection health require this visibility. Existing benchmark timings are qualification measurements and do not repair ordinary runtime observability. The original task and its R01 approval remain immutable; F-SLICE-01 timeout/reset evidence was separately closed by the control increment.",
+  "changedPaths": [
+    "apps/desktop/src-tauri/src/connector_configuration.rs",
+    "apps/desktop/src/app/SourceManagerWorkspace.test.tsx",
+    "apps/desktop/src/app/SourceManagerWorkspace.tsx",
+    "apps/desktop/src/app/SourceRequestHistory.tsx",
+    "apps/desktop/src/app/SourceTestPane.tsx",
+    "packages/contracts/connectors/connector-page.schema.json",
+    "packages/contracts/core-api/connector-diagnostics.test.ts",
+    "packages/contracts/core-api/connector-diagnostics.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/package.json",
+    "services/core-api/src/research_observatory_core/connector_api.py",
+    "services/core-api/src/research_observatory_core/connector_worker.py",
+    "services/core-api/src/research_observatory_core/connectors/broker.py",
+    "services/core-api/src/research_observatory_core/connectors/contracts.py",
+    "services/core-api/src/research_observatory_core/connectors/inspection.py",
+    "tests/connectors/test_connector_broker.py",
+    "tests/connectors/test_connector_inspection.py",
+    "tests/connectors/test_connector_persistence.py",
+    "tests/connectors/test_source_slice_runtime.py",
+    "tests/contracts/test_connector_contracts.py",
+    "tests/desktop/test_source_interactions.py"
+  ],
+  "impactAnalysis": "Restore approved source operational visibility with bounded optional broker timing/attempt diagnostics stored in the existing protected page document, separate from provider-reported scholarly fields. Preserve exact historical serialized pages, object hashes, IDs, request/cache/scientific fingerprints, consent, rights, source policy and all existing timeouts/retry limits. Older pages without measurements report unavailable, never invented zero. A separate read-only diagnostics projection reuses current project/session/preview and inspection-right authority, performs no dispatch, and exposes bounded identities/status/timing only. Its companion handwritten strict TypeScript decoder uses automatically generated types and existing Core transport; generated OpenAPI/types/page schema remain produced by the unchanged generator. Existing scholarly inspection wire shape/decoder remains unchanged. Admit only the exact read-only route/body through the existing native bridge. Fill existing health/inspection key-value regions and pre-confirmation request-limit guidance with existing components; no new navigation, workflow/state, automatic request, predictor or reference change. Completion estimate remains explicitly unavailable; per-attempt timeout, attempt count and each permitted wait are request limits rather than an end-to-end deadline. Actual cache-only network latency is unavailable and retries are HTTP attempts, not workflow attempts. Add initial failing contract/broker/inspection/client/UI cases, exact old-page compatibility and unchanged retained identity proof, success/cache/retry/failure metrics, malformed/substituted metadata rejection, private-value exclusion, and real protected persistence/restart/inspection. Run focused generated-contract/client/native-route/renderer/browser tests and fresh corrected source integration plus independently reviewed performance calibration/qualification at slice scope. No database migration, new permissions or secret handling, release criteria, external telemetry, health scoring or supplemental refactoring allocation. Broader full profiles remain Wave qualification."
+}
