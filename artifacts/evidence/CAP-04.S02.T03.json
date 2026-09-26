@@ -1,0 +1,567 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S02.T03",
+  "baseCommit": "d45d33dec00466f66c845d4a56fe002f82d6ba08",
+  "commit": "1e68cab433f194bf5d834bedc974bdac5a4f7cb6",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/scripts/assemble-application.mjs",
+    "apps/desktop/scripts/assemble-reference.mjs",
+    "apps/desktop/scripts/source-configuration-native-integration.mjs",
+    "apps/desktop/src-tauri/Cargo.toml",
+    "apps/desktop/src-tauri/examples/supervised_core_harness.rs",
+    "apps/desktop/src-tauri/src/connector_configuration.rs",
+    "apps/desktop/src-tauri/src/connector_configuration_dialog.rs",
+    "apps/desktop/src-tauri/src/directory_picker.rs",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/IntentWorkspace.test.tsx",
+    "apps/desktop/src/app/IntentWorkspace.tsx",
+    "apps/desktop/src/app/SourceManagerWorkspace.test.tsx",
+    "apps/desktop/src/app/SourceManagerWorkspace.tsx",
+    "apps/desktop/src/app/SourceRequestHistory.tsx",
+    "apps/desktop/src/app/SourceTestPane.tsx",
+    "apps/desktop/src/app/sourceConfiguration.test.ts",
+    "apps/desktop/src/app/sourceConfiguration.ts",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-04.S02.T03.checkpoint-01.md",
+    "artifacts/evidence/CAP-04.S02.T03.task-start.md",
+    "artifacts/evidence/W2.reference-activation-control-review-01.md",
+    "artifacts/evidence/W2.reference-activation-maintenance-01.md",
+    "artifacts/evidence/W2.reference-consumer-maintenance-01.md",
+    "artifacts/evidence/W2.workspace-qualification-maintenance-01.md",
+    "docs/architecture/connector-contracts.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/connector-client.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/workflow-profile/README.md",
+    "packages/contracts/workflow-profile/presentation-compatibility-1.7.json",
+    "packages/ui-components/src/styles.css",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S02.T03.html",
+    "planning/review-site/CAP-04/CAP-04.S02.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/connector_api.py",
+    "services/core-api/src/research_observatory_core/connector_worker.py",
+    "services/core-api/src/research_observatory_core/connectors/adapters.py",
+    "services/core-api/src/research_observatory_core/connectors/broker.py",
+    "services/core-api/src/research_observatory_core/connectors/inspection.py",
+    "services/core-api/src/research_observatory_core/connectors/providers.py",
+    "services/core-api/src/research_observatory_core/connectors/settings.py",
+    "services/core-api/src/research_observatory_core/connectors/transport.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/windows_credentials.py",
+    "tests/connectors/test_connector_api.py",
+    "tests/connectors/test_connector_authority.py",
+    "tests/connectors/test_connector_broker.py",
+    "tests/connectors/test_connector_inspection.py",
+    "tests/connectors/test_connector_settings.py",
+    "tests/connectors/test_connector_tls.py",
+    "tests/connectors/test_connector_transport.py",
+    "tests/connectors/test_connector_workflow.py",
+    "tests/connectors/test_graph_oa_broker.py",
+    "tests/connectors/test_graph_oa_mapping.py",
+    "tests/connectors/test_graph_oa_runtime.py",
+    "tests/contracts/test_connector_contracts.py",
+    "tests/contracts/test_workflow_profile_contracts.py",
+    "tests/desktop/fixtures/intake_qualification.json",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/desktop/test_model_center_interactions.py",
+    "tests/desktop/test_source_interactions.py",
+    "tests/desktop/test_ui_conformance.py",
+    "tests/fixtures/scholarly-metadata/source-test-request.v1.json",
+    "tests/foundation/test_ui_reference_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/security/test_windows_credentials.py",
+    "tests/service/test_import_preview_service.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_build.py",
+    "tools/desktop_app_check.py",
+    "tools/ui_conformance.py",
+    "verification/baselines/desktop-ui.json",
+    "verification/extensions/desktop-ui.json"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh connectors (83 cases), generated-client and source-browser checks prove OA URL/host/license preservation, identifier and query binding, graph direction and recommendation seeds, provider-unavailable degradation without invented coverage, protected observations and read-only inspection. Actual normal native/Core integration proves private credential configuration, current Intent/privacy denial, exact local preview and restart. Synthetic HTTP fixtures are explicit; no live-provider availability claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh connectors, security-contracts, native-config-unit, native-supervisor-unit, native-route-unit, native-integration, renderer-unit and source-browser checks cover denial, malformed/hostile responses, retry/cancellation/restart, secret redaction, lost-root fail-closed behavior, CAS and lost acknowledgments, project changes, repeated inspection and UI focus. Native GUI/retention proof exercises the actual owned dialog, Escape/Cancel and focus restoration. The 30 workspace-controls tests retain all 11 workspaces and strict matrix/hidden-content/capture negatives."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Exact API generation/client contract, affected 35-file Python quality, desktop types/lint, real sidecar packaging, architecture, build inventory and planning projections pass. Existing stores/migrations and immutable reference/workflow authority are preserved. The normal Intent editor exposes its existing egress contract without granting permissions; source history reads existing protected observations. Approved 1.7 consumer activation, generated baseline and generic qualification repairs receive expanded independent control disposition with this task; historical 1.5 semantics remain exact."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "service:unit",
+      "contracts:unit",
+      "packaging:unit",
+      "desktop:application",
+      "desktop:unit",
+      "desktop:ui-reference-integrity",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Source adapters cross network, secret, protected storage, native admission and generated-client boundaries. Run focused connector/security/native/runtime/browser and packaging checks on one final clean candidate, plus all built workspace qualification because the stale inventory prevented current product validation. Raw commands are narrow selections within these domains, not full profile claims. Reference authority/baseline verification at its separately bound predecessor is recorded as intervening control evidence; the final current-reference integrity/consumer and complete built-product checks are fresh.",
+    "deferred": [
+      "Full service/search/security/desktop repository profiles, four-provider integrated slice handoff and performance, live-provider cadence, checkpoint/Wave packaging and full fresh platform qualification remain separate required stages. Two unavailable Windows-token symlink cases are reported as skips, never passes. The earlier isolated control-checkout full-quality run found 55 errors in 13 unchanged files; this is an unresolved Wave qualification observation, not a clean full-profile claim."
+    ]
+  },
+  "checks": [
+    {
+      "id": "connectors",
+      "command": ".venv/Scripts/python.exe -m unittest discover -v -s tests/connectors",
+      "rawOutput": "artifacts/tmp/W2.connectors-18.log",
+      "rawOutputSha256": "307df3fe9e729a738ba4129645cae51d5582df66d7817018ef046d658716c881",
+      "exitCode": 0,
+      "elapsedSeconds": 46.355,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "83 tests ran in 44.246 seconds. All passed, no skips."
+    },
+    {
+      "id": "security-contracts",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.security.test_windows_credentials tests.contracts.test_connector_contracts tests.contracts.test_model_registry_contracts",
+      "rawOutput": "artifacts/tmp/W2.security-contracts-18.log",
+      "rawOutputSha256": "3d8840793d15aa72a9934dcfb4fd2e2ba23a9fef7480c19bbbdc9aa4849d8ce3",
+      "exitCode": 0,
+      "elapsedSeconds": 4.708,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "33 tests ran in 2.680 seconds. One Windows-token symlink-privilege skip; remaining tests passed."
+    },
+    {
+      "id": "native-integration",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/node.exe apps/desktop/scripts/source-configuration-native-integration.mjs --report artifacts/tmp/CAP-04.S02.T03.native-integration-18.json",
+      "rawOutput": "artifacts/tmp/W2.native-integration-18.log",
+      "rawOutputSha256": "cceb513c9fb1c4d37dad57445b878d14c29129113a9ed764ceb9a4326e0ddf7c",
+      "exitCode": 0,
+      "elapsedSeconds": 9.565,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "renderer-unit",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/corepack.cmd pnpm --dir apps/desktop exec vitest run src/app/sourceConfiguration.test.ts src/app/SourceManagerWorkspace.test.tsx src/app/IntentWorkspace.test.tsx",
+      "rawOutput": "artifacts/tmp/W2.renderer-unit-18.log",
+      "rawOutputSha256": "c626ab18f74f908aa4b1c9b90edffa0f0ee45c99eaac05448c939dbe4a220335",
+      "exitCode": 0,
+      "elapsedSeconds": 1.213,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "source-browser",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_source_interactions",
+      "rawOutput": "artifacts/tmp/W2.source-browser-18.log",
+      "rawOutputSha256": "ab2b6b9a9fce4102504497a304864ab395ba3950d0088791d77acc63dfdac090",
+      "exitCode": 0,
+      "elapsedSeconds": 15.703,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "3 tests ran in 13.544 seconds. All passed, no skips."
+    },
+    {
+      "id": "lint",
+      "command": ".venv/Scripts/python.exe -m ruff check services/core-api/src/research_observatory_core/connector_api.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connectors/adapters.py services/core-api/src/research_observatory_core/connectors/broker.py services/core-api/src/research_observatory_core/connectors/inspection.py services/core-api/src/research_observatory_core/connectors/providers.py services/core-api/src/research_observatory_core/connectors/settings.py services/core-api/src/research_observatory_core/connectors/transport.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py tests/connectors/test_connector_api.py tests/connectors/test_connector_authority.py tests/connectors/test_connector_broker.py tests/connectors/test_connector_inspection.py tests/connectors/test_connector_settings.py tests/connectors/test_connector_tls.py tests/connectors/test_connector_transport.py tests/connectors/test_connector_workflow.py tests/connectors/test_graph_oa_broker.py tests/connectors/test_graph_oa_mapping.py tests/connectors/test_graph_oa_runtime.py tests/contracts/test_connector_contracts.py tests/contracts/test_workflow_profile_contracts.py tests/desktop/test_desktop_app_check.py tests/desktop/test_model_center_interactions.py tests/desktop/test_source_interactions.py tests/desktop/test_ui_conformance.py tests/foundation/test_ui_reference_check.py tests/packaging/test_core_sidecar_package.py tests/security/test_windows_credentials.py tests/service/test_import_preview_service.py tools/core_api_contract.py tools/core_sidecar_build.py tools/desktop_app_check.py tools/ui_conformance.py",
+      "rawOutput": "artifacts/tmp/W2.lint-18.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "exitCode": 0,
+      "elapsedSeconds": 0.125,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -m ruff format --check services/core-api/src/research_observatory_core/connector_api.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connectors/adapters.py services/core-api/src/research_observatory_core/connectors/broker.py services/core-api/src/research_observatory_core/connectors/inspection.py services/core-api/src/research_observatory_core/connectors/providers.py services/core-api/src/research_observatory_core/connectors/settings.py services/core-api/src/research_observatory_core/connectors/transport.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py tests/connectors/test_connector_api.py tests/connectors/test_connector_authority.py tests/connectors/test_connector_broker.py tests/connectors/test_connector_inspection.py tests/connectors/test_connector_settings.py tests/connectors/test_connector_tls.py tests/connectors/test_connector_transport.py tests/connectors/test_connector_workflow.py tests/connectors/test_graph_oa_broker.py tests/connectors/test_graph_oa_mapping.py tests/connectors/test_graph_oa_runtime.py tests/contracts/test_connector_contracts.py tests/contracts/test_workflow_profile_contracts.py tests/desktop/test_desktop_app_check.py tests/desktop/test_model_center_interactions.py tests/desktop/test_source_interactions.py tests/desktop/test_ui_conformance.py tests/foundation/test_ui_reference_check.py tests/packaging/test_core_sidecar_package.py tests/security/test_windows_credentials.py tests/service/test_import_preview_service.py tools/core_api_contract.py tools/core_sidecar_build.py tools/desktop_app_check.py tools/ui_conformance.py",
+      "rawOutput": "artifacts/tmp/W2.format-18.log",
+      "rawOutputSha256": "3e8c2dbca935b383c59c039636d312f0fa02f46e79ad8aca0b66c972c27bad86",
+      "exitCode": 0,
+      "elapsedSeconds": 0.101,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "types",
+      "command": ".venv/Scripts/python.exe -m mypy --config-file pyproject.toml --no-namespace-packages services/core-api/src/research_observatory_core/connector_api.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connectors/adapters.py services/core-api/src/research_observatory_core/connectors/broker.py services/core-api/src/research_observatory_core/connectors/inspection.py services/core-api/src/research_observatory_core/connectors/providers.py services/core-api/src/research_observatory_core/connectors/settings.py services/core-api/src/research_observatory_core/connectors/transport.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/windows_credentials.py tests/connectors/test_connector_api.py tests/connectors/test_connector_authority.py tests/connectors/test_connector_broker.py tests/connectors/test_connector_inspection.py tests/connectors/test_connector_settings.py tests/connectors/test_connector_tls.py tests/connectors/test_connector_transport.py tests/connectors/test_connector_workflow.py tests/connectors/test_graph_oa_broker.py tests/connectors/test_graph_oa_mapping.py tests/connectors/test_graph_oa_runtime.py tests/contracts/test_connector_contracts.py tests/contracts/test_workflow_profile_contracts.py tests/desktop/test_desktop_app_check.py tests/desktop/test_model_center_interactions.py tests/desktop/test_source_interactions.py tests/desktop/test_ui_conformance.py tests/foundation/test_ui_reference_check.py tests/packaging/test_core_sidecar_package.py tests/security/test_windows_credentials.py tests/service/test_import_preview_service.py tools/core_api_contract.py tools/core_sidecar_build.py tools/desktop_app_check.py tools/ui_conformance.py",
+      "rawOutput": "artifacts/tmp/W2.types-18.log",
+      "rawOutputSha256": "ea3299ab53ad62c778e8f16e6c893f593021e856b8a4d697536e1e96a05823c8",
+      "exitCode": 0,
+      "elapsedSeconds": 0.894,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Success: no issues found in 35 source files"
+    },
+    {
+      "id": "desktop-typecheck",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/corepack.cmd pnpm --dir apps/desktop run typecheck",
+      "rawOutput": "artifacts/tmp/W2.desktop-typecheck-18.log",
+      "rawOutputSha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+      "exitCode": 0,
+      "elapsedSeconds": 1.082,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "desktop-lint",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/corepack.cmd pnpm --dir apps/desktop run lint",
+      "rawOutput": "artifacts/tmp/W2.desktop-lint-18.log",
+      "rawOutputSha256": "f78ede1982f71d1f223b387397a8ac36d4e569cb5133d0d9e5e7c5292c13513d",
+      "exitCode": 0,
+      "elapsedSeconds": 0.403,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "api-contract",
+      "command": ".venv/Scripts/python.exe tools/core_api_contract.py --repo . --check",
+      "rawOutput": "artifacts/tmp/W2.api-contract-18.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "exitCode": 0,
+      "elapsedSeconds": 1.728,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "client-tests",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/corepack.cmd pnpm --dir packages/contracts exec vitest run core-api/generated.test.ts",
+      "rawOutput": "artifacts/tmp/W2.client-tests-18.log",
+      "rawOutputSha256": "68bc83de54f6b977ec2d023533f34de4a50ac7da753cb107a6dce6fb3d38fd1f",
+      "exitCode": 0,
+      "elapsedSeconds": 1.05,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "native-config-unit",
+      "command": ".local/toolchains/cargo/bin/cargo.exe test --locked --offline -p research-observatory-desktop --lib connector_configuration::tests",
+      "rawOutput": "artifacts/tmp/W2.native-config-unit-18.log",
+      "rawOutputSha256": "d624151300d80ad2d9bae27c4bb55238584aacf480b4df395cffc72ec72e1862",
+      "exitCode": 0,
+      "elapsedSeconds": 0.491,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "native-supervisor-unit",
+      "command": ".local/toolchains/cargo/bin/cargo.exe test --locked --offline -p research-observatory-desktop --lib supervisor::tests",
+      "rawOutput": "artifacts/tmp/W2.native-supervisor-unit-18.log",
+      "rawOutputSha256": "6b0bbfe3f7f9b8fd6d27090e66930e20f3134e76f5aa4a1a16fbf27d7465aa5c",
+      "exitCode": 0,
+      "elapsedSeconds": 0.611,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "native-route-unit",
+      "command": ".local/toolchains/cargo/bin/cargo.exe test --locked --offline -p research-observatory-desktop --features integration-harness --lib fixture_allows_only_fixed_read_only_source_capability_route",
+      "rawOutput": "artifacts/tmp/W2.native-route-unit-18.log",
+      "rawOutputSha256": "4c93658c18f506033b1e6fde0b89900dcb9cd395f92d6903dd1183efeb0e62dc",
+      "exitCode": 0,
+      "elapsedSeconds": 0.442,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "packaging",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "rawOutput": "artifacts/tmp/W2.packaging-18.log",
+      "rawOutputSha256": "9cb93e10c33b671f6d3d9815e369b7498a3e9b8eb51ef67b84313dd173d981a9",
+      "exitCode": 0,
+      "elapsedSeconds": 26.384,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "6 tests ran in 25.238 seconds. One Windows-token symlink-privilege skip; remaining tests passed."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv/Scripts/python.exe tools/architecture_check.py --repo .",
+      "rawOutput": "artifacts/tmp/W2.architecture-18.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "exitCode": 0,
+      "elapsedSeconds": 2.437,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "workspace-controls",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests tests.desktop.test_product_style_check.CaptureBundleTests tests.foundation.test_ui_reference_check.UiReferenceCheckTests.test_approved_reference_report_is_complete_and_deterministic",
+      "rawOutput": "artifacts/tmp/W2.workspace-controls-18.log",
+      "rawOutputSha256": "323c8f27d43c51b3e18b0a584c96b2832ddef4707c5cfe728b9233cfcc806f5f",
+      "exitCode": 0,
+      "elapsedSeconds": 78.525,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "30 tests ran in 77.358 seconds. All passed, no skips. Includes complete built renderer with all 11 workspaces / 66 viewport-theme cases, six designated boundaries, state/geometry negatives, capture-provenance controls and active 1.7 reference assertion."
+    },
+    {
+      "id": "product-style",
+      "command": ".venv/Scripts/python.exe tools/product_style_check.py --repo .",
+      "rawOutput": "artifacts/tmp/W2.product-style-18.log",
+      "rawOutputSha256": "603e0806960f81191d7e5faeee51c4c52125dafba6d191bbf2783cb12ed4485f",
+      "exitCode": 0,
+      "elapsedSeconds": 1.011,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "reference-integrity",
+      "command": ".venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.reference-integrity-18.json",
+      "rawOutput": "artifacts/tmp/W2.reference-integrity-18.log",
+      "rawOutputSha256": "72f6e4d68f485e692abae625574d928263877202de473ac7d018782af08900c9",
+      "exitCode": 0,
+      "elapsedSeconds": 1.126,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "quality-inventory",
+      "command": ".venv/Scripts/python.exe -c from pathlib import Path; from tools.quality_check import load_scope; print(len(load_scope(Path.cwd())), \"governed files; inventory complete\")",
+      "rawOutput": "artifacts/tmp/W2.quality-inventory-18.log",
+      "rawOutputSha256": "5777050d7161f98d076cf343890ca36b5eb843da21353cfd4e39c733e74bc5ac",
+      "exitCode": 0,
+      "elapsedSeconds": 0.145,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv/Scripts/python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S02.T03.build-18.json",
+      "rawOutput": "artifacts/tmp/W2.build-manifest-18.log",
+      "rawOutputSha256": "dab781294064a8b38f63bc5a5eafc53291fca6239a4e279a3f243c0e573adbd7",
+      "exitCode": 0,
+      "elapsedSeconds": 18.391,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "backlog-views",
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "rawOutput": "artifacts/tmp/W2.backlog-views-18.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "exitCode": 0,
+      "elapsedSeconds": 2.652,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "review-site",
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo .",
+      "rawOutput": "artifacts/tmp/W2.review-site-18.log",
+      "rawOutputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "exitCode": 0,
+      "elapsedSeconds": 183.731,
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed."
+    },
+    {
+      "id": "native-gui-and-retention",
+      "command": "Computer Use observation of the bound native fixture; .venv/Scripts/python.exe artifacts/tmp/CAP-04.S02.T03.native-retention-check-18.py",
+      "rawOutput": "artifacts/tmp/CAP-04.S02.T03.native-retention-check-18.json",
+      "rawOutputSha256": "5160b51b78da28e6d0bdf0df908ec1f834757031bfeaac6bc4baab93858b86e7",
+      "exitCode": 0,
+      "provenance": "fresh Windows-owner native GUI observation and strict machine retention check at the fixed candidate",
+      "result": "Real directory picker and open project; retained Unpaywall configuration; blank disabled contact field with Keep checked; Escape and Cancel before admission leave settings unchanged; Return reopens Configure without a focus-changing click. Project closes and app exits 0 with no pending dialog. Strict traversal checks 307 retained fixture/log files, unchanged build inputs and no UTF-8/UTF-16 synthetic plaintext. No new GUI Save or provider call is claimed.",
+      "artifacts": [
+        {
+          "path": "artifacts/tmp/CAP-04.S02.T03.native-build-18.json",
+          "sha256": "7cce71c341696e927b74e28293e7e5e28450291e006577d76fccd2e6ad4d438e"
+        },
+        {
+          "path": "artifacts/tmp/CAP-04.S02.T03.native-gui-observation-18.md",
+          "sha256": "1212a816bcb7c69d4e54953d0ce9ba0c696b52061c47bd13a3ee672792447441"
+        },
+        {
+          "path": "artifacts/tmp/CAP-04.S02.T03.native-gui-18.log",
+          "sha256": "3be3631457c95d8f8108c6dfc9ada2b4dd42b3a5e80c8c3742df545ffce30033"
+        },
+        {
+          "path": "artifacts/tmp/CAP-04.S02.T03.native-gui-18.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    {
+      "id": "connector-client",
+      "command": ".local/toolchains/node-v24.19.0-win-x64/corepack.cmd pnpm --dir packages/contracts exec vitest run core-api/connector-client.test.ts",
+      "rawOutput": "artifacts/tmp/W2.connector-client-18b.log",
+      "rawOutputSha256": "96d6f64e4757285a115d2d72094a9f13d38228391b8c4b98ad600007781f339b",
+      "exitCode": 0,
+      "elapsedSeconds": 0.88,
+      "provenance": "fresh execution at the same fixed candidate; untracked submission manifest is the only checkout addition",
+      "result": "Six tests pass: secret-bearing capabilities rejected, exact scientific preview/retention/destination and inspection/job identities checked, ambiguous confirmation never retried."
+    }
+  ],
+  "nativeIntegrationReport": {
+    "path": "artifacts/tmp/CAP-04.S02.T03.native-integration-18.json",
+    "sha256": "3fe647fd49b6841eb25e588f50e1c660c858c15286878e7fefb5ee86d6166b23"
+  },
+  "scopeLimits": [
+    "All provider metadata is explicitly synthetic and retains unknown downstream rights; no full-text acquisition, canonical Work reconciliation, live provider traffic, new account or release authority is claimed.",
+    "Fresh native integration uses real supervisor/Core, DPAPI and SQLCipher; renderer response doubles are used only for renderer behavior. The user-performed native Save at a8955b86 remains historical. Final candidate native integration freshly proves Save/CAS/replacement/restart, and GUI18 freshly proves reopen/Cancel/Escape/focus.",
+    "No source changes occurred during qualification. Runtime settings and private fixture paths stay ignored. Historical approvals, baseline captures and adverse results are preserved."
+  ],
+  "execution": {
+    "candidateFixed": true,
+    "trackedTreeClean": true,
+    "platform": "Windows x64",
+    "pythonVersion": "Python 3.14.6",
+    "receiptGroups": [
+      {
+        "path": "artifacts/tmp/W2.task-qualification-18.json",
+        "sha256": "33d1044407568a15487782b57fb779e41fbd9f3e197a129af91639911ffbe63c"
+      },
+      {
+        "path": "artifacts/tmp/W2.technical-qualification-18.json",
+        "sha256": "1188562c6139c3e1d71c11a2851147352bb0e9ff2fc093c90358f50e77f3b3cd"
+      },
+      {
+        "path": "artifacts/tmp/W2.control-qualification-18.json",
+        "sha256": "5bc685ee43225ef111ecfdef70dd656d1bb6043a453e01998951e549ad13ce4c"
+      }
+    ]
+  },
+  "interveningControlWork": {
+    "referenceAuthority": {
+      "commit": "14b89c07a435a26bf894242a9e5f3e6429065055",
+      "packageSha256": "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878"
+    },
+    "witnessControl": {
+      "candidate": "3581771958db73c345f606162a4b02b34ff8162f",
+      "independentReview": "artifacts/evidence/W2.reference-activation-control-review-01.md"
+    },
+    "consumerAndBaselineCandidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+    "referenceVerification": [
+      {
+        "name": "reference-integrity",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 1.218,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.reference-integrity-09.log",
+        "logSha256": "72f6e4d68f485e692abae625574d928263877202de473ac7d018782af08900c9"
+      },
+      {
+        "name": "reference-regressions",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 441.324,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.reference-regressions-09.log",
+        "logSha256": "e7b32eebdffcf83f33ecd50be44f9b01c145ea578f74d92f10a8cc6f891962ee"
+      },
+      {
+        "name": "reference-tokens",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 13.614,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.reference-tokens-09.log",
+        "logSha256": "b35a7fb184b6eb4c21a936e85206b76c4d9e91ea26852a84657988aebcae668c"
+      },
+      {
+        "name": "reference-routes",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 14.932,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.reference-routes-09.log",
+        "logSha256": "33a8ff18ded524edcb4596bca8a55ff646f4455835ae2f118d27a4e96404f5f6"
+      },
+      {
+        "name": "reference-workflows",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 29.09,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.reference-workflows-09.log",
+        "logSha256": "def817ebfcfc6aee94d7fdf7c1f89f4326b4b668f813f0e5f74205b01bdf45e6"
+      },
+      {
+        "name": "reference-accessibility",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 26.07,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.reference-accessibility-09.log",
+        "logSha256": "513661418258f184c710d1d5c5fa9086b7cac803c7800575fd5f494bf2b37916"
+      },
+      {
+        "name": "reference-visual",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 192.338,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.reference-visual-09.log",
+        "logSha256": "0e8783cbd5ec414982c58d16f8d3cf3925c9b098a1d5509766c773c48fefdd25"
+      },
+      {
+        "name": "product-style",
+        "candidate": "36085017c1c4f92e3e08bd1c2587f1bb9296ee1c",
+        "elapsedSeconds": 1.025,
+        "exitCode": 0,
+        "log": "artifacts/tmp/W2.product-style-09.log",
+        "logSha256": "603e0806960f81191d7e5faeee51c4c52125dafba6d191bbf2783cb12ed4485f"
+      }
+    ],
+    "qualificationRepair": "artifacts/evidence/W2.workspace-qualification-maintenance-01.md",
+    "provenance": "Separate ancestor-bound control proof, not reused/fresh final-candidate test results. Full reference40 tests, tokens/routes/workflows/accessibility/visual passed at360; product-frame failed there and is closed by the fresh final-candidate workspace-controls run. Exact 66-entry1.7 baseline was freshly rendered with pinned renderer before its commit."
+  },
+  "developmentEvidence": [
+    {
+      "path": "artifacts/evidence/CAP-04.S02.T03.checkpoint-01.md",
+      "provenance": "Earlier product-development evidence, not final qualification."
+    },
+    {
+      "path": "artifacts/tmp/W2.product-frame-09.log",
+      "sha256": "3cfe03b5d973f3536d5212c8fed7d0ac44c12a33e8c40bdb4617dda7e1babbe9"
+    },
+    {
+      "path": "artifacts/tmp/W2.consumer-reference-assertion-red-12.log",
+      "sha256": "54aaccde8f9caddb07ab8a3cc09cb4e2b82c1ecc72c9cf3a858de34a9d21c7cc"
+    },
+    {
+      "path": "artifacts/tmp/W2.consumer-active-assertion-red-12.log",
+      "sha256": "8c6d4c93945d764bb5a4cd814949612b73ae9af7019f3901da2d7072ae2cc9ff"
+    },
+    {
+      "path": "artifacts/tmp/W2.workspace-witness-red-13.log",
+      "sha256": "fd9baf2f29a68844ceba8d1fefb982d7d503b6d25487a9d6766c8541a7353523"
+    },
+    {
+      "path": "artifacts/tmp/W2.workspace-runtime-development-14.json",
+      "sha256": "ff457b759b5bd4db20a97a90c22f4be28ec7b6b5cf0dc37f3bb2c59e1bd69caa"
+    },
+    {
+      "path": "artifacts/tmp/W2.workspace-runtime-development-15.json",
+      "sha256": "c30ff7a64946a5c044c5f398b2ee95efe6279005a4bef4c26a7a925c41303bd5"
+    },
+    {
+      "path": "artifacts/tmp/W2.workspace-runtime-development-17.json",
+      "sha256": "4ec1198b0ce9478ec717fb2f64c300129c92e429369c29c1638a49481e5f15ae"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T03.native-gui-observation-08.md",
+      "provenance": "Historical manual Save/Test-empty-form and restart at a895. Initial08 traversal omitted ACL-protected files and is invalid for full retention; strict owner08b supersedes it. No source request was sent by the empty Test form."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.T03.native-retention-check-08b.json",
+      "sha256": "fb9e509a06100eec312ffda93c6f7d4f1fd5fc6143eaf9f1cd95c3318edf4583"
+    }
+  ],
+  "sourceVisualReport": {
+    "path": "artifacts/tmp/CAP-04.S02.T03.source-visual-projection-18.json",
+    "sha256": "0247c9f84fc4c3a3c19fc8c3c161de6c1872d40716799fd7c263ed5715c0e0ee",
+    "provenance": "Owner-read projection of current-candidate source-browser report; source report and all12 screenshot hashes checked."
+  }
+}
