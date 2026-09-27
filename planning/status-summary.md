@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: f79b273dd5337d5c30c326008424d8615ea052b22c077e90292795a3f85aa434
+source_sha256: 9ebb2841eaad05683d42b8882d629e8f772287968dbbcce857f27af64d493485
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -648,7 +648,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W1.C04.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c04_evidence_review | - |
 | `W1.C05.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/c04_evidence_review | - |
 | `W2.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:w2-s01-final-review | - |
-| `W2.C02.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C02.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -712,7 +712,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C02.T01` Implement Unpaywall and Semantic Scholar adapters | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C02.T01` Implement Unpaywall and Semantic Scholar adapters | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -744,5 +744,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C02.T01 — Implement Unpaywall and Semantic Scholar adapters
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
 
