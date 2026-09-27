@@ -311,6 +311,12 @@ class WorkflowTaskCenterRunRecord:
 
 @runtime_checkable
 class WorkflowQueueRepository(Protocol):
+    def accepted_output(self, job_id: str) -> WorkflowAcceptedOutput | None: ...
+
+    def continuation_jobs(self, job_id: str) -> tuple[WorkflowJobRecord, ...]:
+        """Root and all authenticated descendants; deny beyond the bounded lineage."""
+        ...
+
     def accepted_snapshot(self, *, activity_types: tuple[str, ...]) -> WorkflowAcceptedSnapshot: ...
 
     def accepted_page(

@@ -609,6 +609,86 @@ class ImportPreviewService:
 
         return self._action(root, read)
 
+    def _reconciliation_manifest(self, binding: _Binding, job_id, checkpoint=None):
+        from .reconciliation.contracts import ReconciliationProblem
+
+        accepted = binding.adapters.queue.accepted_output(job_id)
+        if accepted is None or accepted.activity_type != COMMIT_ACTIVITY or len(accepted.outputs) != 1:
+            raise ReconciliationProblem("reconciliation-source-unpublished")
+        inputs = self._stored_commit(binding, binding.adapters.queue.authority(job_id))
+        try:
+            manifest = binding.adapters.previews.accepted_manifest(inputs, job_id=job_id, checkpoint=checkpoint)
+        except PreviewProblem:
+            raise ReconciliationProblem("reconciliation-source-mismatch") from None
+        if manifest.preview_id != inputs.preview.preview_id or manifest.project_id != binding.project_id:
+            raise ReconciliationProblem("reconciliation-source-mismatch")
+        return manifest
+
+    def _reconciliation_page(self, binding: _Binding, root, job_id, manifest, *, after, limit):
+        from .reconciliation.contracts import ReconciliationProblem, SourceAddress
+        from .reconciliation.inventory import SourcePage, page_bounds
+
+        if manifest.project_id != binding.project_id:
+            raise ReconciliationProblem("reconciliation-source-mismatch")
+        page_bounds(after, limit, manifest.record_count)
+        members = binding.adapters.previews.manifest_members(manifest.revision_id, after=after, limit=limit)
+        if tuple(item.ordinal for item in members) != tuple(range(after + 1, after + len(members) + 1)):
+            raise ReconciliationProblem("reconciliation-source-incomplete")
+        addresses = tuple(
+            SourceAddress(
+                kind="import-member",
+                context_id=manifest.preview_id,
+                revision_id=manifest.revision_id,
+                ordinal=member.ordinal,
+                record_key=member.record_key,
+            )
+            for member in members
+            if member.decision.included
+        )
+        for address in addresses:
+            self.reconciliation_source(root, address)
+        return SourcePage(
+            job_id=job_id,
+            output_revision_id=manifest.revision_id,
+            record_count=manifest.record_count,
+            selected_count=manifest.selected_count,
+            after=after,
+            scanned_through=after + len(members),
+            addresses=addresses,
+        )
+
+    def reconciliation_sources(self, root, job_id, *, after, limit=100):
+        def read(binding: _Binding):
+            manifest = self._reconciliation_manifest(binding, job_id)
+            return self._reconciliation_page(binding, root, job_id, manifest, after=after, limit=limit)
+
+        return self._action(root, read)
+
+    def reconciliation_pages(self, root, job_id, *, limit=100, checkpoint=None):
+        # Authenticate the immutable scientific identity once per stream. Each
+        # page still re-enters current project authority and contributor rights.
+        # No lifecycle lock or database handle survives across a yield.
+        manifest = self._action(root, lambda binding: self._reconciliation_manifest(binding, job_id, checkpoint))
+        after = 0
+        while True:
+            if checkpoint is not None:
+                checkpoint()
+            page = self._action(
+                root,
+                partial(
+                    self._reconciliation_page,
+                    root=root,
+                    job_id=job_id,
+                    manifest=manifest,
+                    after=after,
+                    limit=limit,
+                ),
+            )
+            yield page
+            if page.complete:
+                return
+            after = page.scanned_through
+
     def reconciliation_source(self, root, address):
         """Resolve one complete manifest/member and recheck current local-use rights."""
         from .reconciliation.contracts import ReconciliationProblem, SourceAddress

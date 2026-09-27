@@ -1,11 +1,13 @@
 """Current-authority callback and canonical exact-reconciliation persistence port."""
 
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Protocol
 
 from ..reconciliation.candidates import PreparedRecord
 from ..reconciliation.contracts import ReconciliationInspection, ReconciliationResult, SourceAddress, SourceAssertion
 from ..reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
+from ..reconciliation.inventory import SourcePage
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,6 +58,12 @@ class ReconciliationRepository(Protocol):
 
 
 class ReconciliationSourceService(Protocol):
+    def reconciliation_pages(
+        self, root: str, job_id: str, *, limit: int = 100, checkpoint: Callable[[], None] | None = None
+    ) -> Iterator[SourcePage]: ...
+
+    def reconciliation_sources(self, root: str, job_id: str, *, after: int, limit: int = 100) -> SourcePage: ...
+
     def reconciliation_source(self, root: str, address: SourceAddress) -> SourceAssertion: ...
 
 

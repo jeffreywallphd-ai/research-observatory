@@ -239,15 +239,23 @@ class ConnectorRepository:
         """Stable source assertion address for reconciliation, not a canonical Work."""
         if isinstance(ordinal, bool) or not isinstance(ordinal, int) or not 0 <= ordinal < 1000:
             raise ProviderProblem("invalid-query")
+        _, records = self.source_records(revision_id, after=ordinal, limit=1)
+        if not records:
+            raise ValueError("connector-source-ordinal-invalid")
+        return records[0]
+
+    def source_records(self, revision_id: str, *, after: int, limit: int) -> tuple[int, tuple[ConnectorRecord, ...]]:
+        if type(after) is not int or type(limit) is not int or not 0 <= after <= 1000 or not 1 <= limit <= 100:
+            raise ProviderProblem("invalid-query")
         with self._transaction() as (_, aggregates):
             revision = aggregates.get_revision(revision_id)
             if revision.aggregate_kind != "document" or revision.object_sha256 is None:
                 raise ValueError("connector-source-invalid")
             stored = _StoredPage.model_validate_json(self._read_object(revision.object_sha256))
             self._request(stored.page.request)
-            if ordinal >= len(stored.page.records):
+            if stored.page.outcome != "complete" or after > len(stored.page.records):
                 raise ValueError("connector-source-ordinal-invalid")
-            return stored.page.records[ordinal]
+            return len(stored.page.records), stored.page.records[after : after + limit]
 
     def save_operation(self, inputs: ConnectorJobInput, *, actor_id: str, now: str) -> None:
         inputs = ConnectorJobInput.model_validate(inputs)

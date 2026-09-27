@@ -98,6 +98,40 @@ def build_connector_job(inputs: ConnectorJobInput, *, actor: WorkflowActor, now:
     )
 
 
+def validate_connector_origin(authority: WorkflowJobAuthority, job_id: str, inputs: ConnectorJobInput) -> None:
+    """Authenticate retained original authority without granting another dispatch."""
+    try:
+        inputs = ConnectorJobInput.model_validate(inputs)
+        definition, snapshot = json.loads(authority.definition_json), json.loads(authority.snapshot_json)
+        jobs = [job for job in snapshot["jobs"] if job["jobId"] == job_id]
+        if (
+            workflow_snapshot_errors(definition, snapshot)
+            or definition
+            != _definition(
+                definition["workflowDefinitionId"], definition["definitionRevisionId"], definition["createdAt"]
+            )
+            or workflow_record_sha256(definition) != authority.definition_record_sha256
+            or workflow_record_sha256(snapshot) != authority.snapshot_record_sha256
+            or snapshot["projectId"] != inputs.project_id
+            or snapshot.get("continuation") is not None
+            or snapshot["intent"] != inputs.intent.reference()
+            or snapshot["policy"] != inputs.policy_reference()
+            or snapshot["configuration"]
+            != {
+                "configurationId": inputs.configuration_id,
+                "configurationVersion": inputs.configuration_version,
+                "configurationHash": inputs.configuration_hash,
+            }
+            or snapshot["executor"]["profile"] != "local"
+            or len(jobs) != 1
+            or jobs[0]["commandFingerprint"] != inputs.configuration_hash
+            or jobs[0]["idempotencyKey"] != inputs.idempotency_key
+        ):
+            raise ValueError
+    except ValueError, TypeError, KeyError:
+        raise ProviderProblem("policy-denied") from None
+
+
 def bind_connector_claim(authority: WorkflowJobAuthority, claim: WorkflowJobClaim, inputs: ConnectorJobInput) -> None:
     try:
         definition, snapshot = json.loads(authority.definition_json), json.loads(authority.snapshot_json)

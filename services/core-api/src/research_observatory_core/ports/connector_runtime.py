@@ -95,6 +95,10 @@ class ConnectorPageRepository(Protocol):
 
 
 class ConnectorOperationRepository(ConnectorPageRepository, Protocol):
+    def source_records(
+        self, revision_id: str, *, after: int, limit: int
+    ) -> tuple[int, tuple[ConnectorRecord, ...]]: ...
+
     def source_record(self, revision_id: str, ordinal: int) -> ConnectorRecord: ...
 
     def save_operation(self, inputs: ConnectorJobInput, *, actor_id: str, now: str) -> None: ...

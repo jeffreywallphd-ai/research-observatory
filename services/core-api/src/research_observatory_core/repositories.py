@@ -5674,7 +5674,9 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             raise WorkflowQueueCorrupt("workflow inventory checkpoint differs") from None
         return WorkflowAcceptedBoundary(segment, sequence, row[6], chain)
 
-    def _accepted_scope_integrity(self, connection: CanonicalConnection, activity_types: tuple[str, ...]) -> None:
+    def _accepted_scope_integrity(
+        self, connection: CanonicalConnection, activity_types: tuple[str, ...], *, job_id: str | None = None
+    ) -> None:
         # LEFT joins are deliberate: an accepted job with a broken completion
         # reference is a denial, never an invisible gap in inventory coverage.
         activities = ",".join("?" for _ in activity_types)
@@ -5685,7 +5687,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             "LEFT JOIN provenance_ledger_events e ON e.project_id=o.project_id AND e.event_id=o.provenance_event_id "
             "LEFT JOIN provenance_ledger_checkpoints c ON c.project_id=e.project_id AND c.event_id=e.event_id "
             "LEFT JOIN outbox_events b ON b.project_id=o.project_id AND b.outbox_id=o.outbox_id "
-            f"WHERE j.project_id=? AND j.activity_type IN ({activities}) AND ("
+            f"WHERE j.project_id=? AND j.activity_type IN ({activities}) AND (? IS NULL OR j.job_id=?) AND ("
             "(j.state<>'succeeded' AND o.job_id IS NOT NULL) OR (j.state='succeeded' AND ("
             "o.job_id IS NULL OR a.attempt_id IS NULL OR a.job_id IS NOT j.job_id "
             "OR a.project_id IS NOT j.project_id OR a.state IS NOT 'succeeded' "
@@ -5698,7 +5700,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             "OR b.idempotency_key IS NOT ('workflow-output:' || j.job_id) "
             "OR b.record_sha256 IS NOT substr(e.record_sha256,8)"
             "))) LIMIT 1",
-            (self._project_id, *activity_types),
+            (self._project_id, *activity_types, job_id, job_id),
         ).fetchone()
         if invalid is not None:
             raise WorkflowQueueCorrupt("workflow inventory acceptance differs")
@@ -5793,60 +5795,166 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 "ORDER BY e.segment_key,e.sequence LIMIT ?",
                 tuple(parameters),
             ).fetchall()
-            outputs = []
-            for row in rows:
-                try:
-                    raw = json.loads(row[4])
-                    if set(raw) != {"outputs"} or not 1 <= len(raw["outputs"]) <= 256:
-                        raise ValueError
-                    references = tuple(
-                        WorkflowOutputReference(
-                            value["artifactId"],
-                            value["revisionId"],
-                            value["contentHash"],
-                            value["mediaType"],
-                            value["provenanceEntityId"],
-                        )
-                        for value in raw["outputs"]
-                    )
-                    manifest, digest = self._output_manifest(references)
-                    if (manifest, digest, row[6], "succeeded", digest, "succeeded", row[11], row[13]) != (
-                        row[4],
-                        row[5],
-                        row[7],
-                        row[8],
-                        row[9],
-                        row[10],
-                        row[12],
-                        row[14],
+            return tuple(self._accepted_row(connection, row, snapshot) for row in rows)
+
+    def _accepted_row(
+        self, connection: CanonicalConnection, row: Any, snapshot: WorkflowAcceptedSnapshot
+    ) -> WorkflowAcceptedOutput:
+        try:
+            raw = json.loads(row[4])
+            if set(raw) != {"outputs"} or not 1 <= len(raw["outputs"]) <= 256:
+                raise ValueError
+            references = tuple(
+                WorkflowOutputReference(
+                    value["artifactId"],
+                    value["revisionId"],
+                    value["contentHash"],
+                    value["mediaType"],
+                    value["provenanceEntityId"],
+                )
+                for value in raw["outputs"]
+            )
+            manifest, digest = self._output_manifest(references)
+            if (manifest, digest, row[6], "succeeded", digest, "succeeded", row[11], row[13]) != (
+                row[4],
+                row[5],
+                row[7],
+                row[8],
+                row[9],
+                row[10],
+                row[12],
+                row[14],
+            ):
+                raise ValueError
+            if row[16] != hashlib.sha256(f"{row[13]}\n{digest}".encode("ascii")).hexdigest():
+                raise ValueError
+            event = decode_provenance_event(json.loads(row[15]))
+            if event is None or event["type"] != "org.research-observatory.workflow.job-succeeded.v1":
+                raise ValueError
+            data = cast(dict[str, Any], event["data"])
+            if {(item["entityId"], item["revisionId"], item["contentHash"]) for item in data["outputs"]} != {
+                (item.artifact_id, item.revision_id, item.content_hash) for item in references
+            }:
+                raise ValueError
+            self._accepted_anchor(connection, row[2], row[3])
+            self._resolve_outputs(connection, references)
+        except ValueError, KeyError, TypeError:
+            raise WorkflowQueueCorrupt("workflow inventory output differs") from None
+        return WorkflowAcceptedOutput(
+            row[0],
+            row[1],
+            row[2],
+            row[3],
+            digest,
+            references,
+            WorkflowAcceptedCursor(snapshot.fingerprint, row[2], row[3]),
+        )
+
+    def accepted_output(self, job_id: str) -> WorkflowAcceptedOutput | None:
+        if not is_uuid_v7(job_id):
+            raise WorkflowQueueProblem("workflow accepted job identity is invalid")
+        with self._transaction() as connection:
+            self._select_job(connection, self._project_id, job_id)
+            activity = connection.execute(
+                "SELECT activity_type FROM workflow_queue_jobs WHERE project_id=? AND job_id=?",
+                (self._project_id, job_id),
+            ).fetchone()[0]
+            self._accepted_scope_integrity(connection, (activity,), job_id=job_id)
+            row = connection.execute(
+                "SELECT o.job_id,j.activity_type,e.segment_key,e.sequence,o.output_manifest_json,"
+                "o.output_record_sha256,o.attempt_id,j.current_attempt_id,j.state,j.committed_output_sha256,"
+                "a.state,o.idempotency_key,j.idempotency_key,"
+                "o.command_fingerprint,j.command_fingerprint,e.record_json,e.idempotency_sha256 "
+                "FROM workflow_committed_outputs o JOIN workflow_queue_jobs j USING (project_id,job_id) "
+                "LEFT JOIN workflow_job_attempts a ON a.attempt_id=o.attempt_id AND a.job_id=o.job_id "
+                "JOIN provenance_ledger_events e ON e.project_id=o.project_id AND e.event_id=o.provenance_event_id "
+                "WHERE o.project_id=? AND o.job_id=?",
+                (self._project_id, job_id),
+            ).fetchone()
+            if row is None:
+                return None
+            snapshot = WorkflowAcceptedSnapshot(
+                self._project_id,
+                (activity,),
+                (self._accepted_anchor(connection, row[2], row[3]),),
+            )
+            return self._accepted_row(connection, row, snapshot)
+
+    def continuation_jobs(self, job_id: str) -> tuple[WorkflowJobRecord, ...]:
+        if not is_uuid_v7(job_id):
+            raise WorkflowQueueProblem("workflow continuation lookup is invalid")
+        with self._transaction() as connection:
+            self._select_job(connection, self._project_id, job_id)
+            rows = connection.execute(
+                """
+                WITH RECURSIVE candidates AS MATERIALIZED (
+                    SELECT j.job_id,j.workflow_run_id,j.activity_type,j.command_fingerprint,j.idempotency_key,
+                           s.snapshot_json,s.record_sha256,d.definition_json,d.record_sha256,
+                           json_extract(s.snapshot_json,'$.continuation.sourceJobId') AS parent_job
+                    FROM workflow_queue_jobs j
+                    JOIN workflow_authority_snapshots s ON s.snapshot_id=j.snapshot_id
+                         AND s.snapshot_revision=j.snapshot_revision
+                    JOIN workflow_definitions d ON d.definition_revision_id=s.definition_revision_id
+                    WHERE j.project_id=?
+                ), lineage(job_id) AS (
+                    SELECT job_id FROM candidates WHERE job_id=?
+                    UNION
+                    SELECT child.job_id FROM candidates child JOIN lineage parent ON child.parent_job=parent.job_id
+                    LIMIT 257
+                ) SELECT candidates.* FROM candidates JOIN lineage USING(job_id)
+                """,
+                (self._project_id, job_id),
+            ).fetchall()
+            if not rows or len(rows) > 256:
+                raise WorkflowQueueProblem("workflow continuation lineage limit")
+            by_id = {row[0]: row for row in rows}
+            try:
+                decoded = {}
+                for row in rows:
+                    snapshot, definition = json.loads(row[5]), json.loads(row[7])
+                    jobs = [item for item in snapshot["jobs"] if item["jobId"] == row[0]]
+                    if (
+                        workflow_snapshot_errors(definition, snapshot)
+                        or _workflow_sha256(snapshot) != row[6]
+                        or _workflow_sha256(definition) != row[8]
+                        or snapshot["projectId"] != self._project_id
+                        or snapshot["workflowRunId"] != row[1]
+                        or len(jobs) != 1
+                        or jobs[0]["commandFingerprint"] != row[3]
+                        or jobs[0]["idempotencyKey"] != row[4]
                     ):
                         raise ValueError
-                    if row[16] != hashlib.sha256(f"{row[13]}\n{digest}".encode("ascii")).hexdigest():
+                    decoded[row[0]] = snapshot
+                root = by_id[job_id]
+                for row in rows:
+                    if row[0] == job_id:
+                        continue
+                    snapshot = decoded[row[0]]
+                    parent = by_id[row[9]]
+                    if (
+                        row[2] != root[2]
+                        or row[7:9] != root[7:9]
+                        or snapshot["continuation"]["sourceWorkflowRunId"] != parent[1]
+                        or any(
+                            snapshot[key] != decoded[parent[0]][key]
+                            for key in ("intent", "policy", "configuration", "executor")
+                        )
+                        or row[3] != _workflow_sha256({"command": "retry-as-continuation", "sourceJobId": parent[0]})
+                        or self._row(self._select_job(connection, self._project_id, parent[0])).state
+                        not in {"failed", "cancelled"}
+                    ):
                         raise ValueError
-                    event = decode_provenance_event(json.loads(row[15]))
-                    if event is None or event["type"] != "org.research-observatory.workflow.job-succeeded.v1":
-                        raise ValueError
-                    data = cast(dict[str, Any], event["data"])
-                    if {(item["entityId"], item["revisionId"], item["contentHash"]) for item in data["outputs"]} != {
-                        (item.artifact_id, item.revision_id, item.content_hash) for item in references
-                    }:
-                        raise ValueError
-                    self._accepted_anchor(connection, row[2], row[3])
-                    self._resolve_outputs(connection, references)
-                except ValueError, KeyError, TypeError:
-                    raise WorkflowQueueCorrupt("workflow inventory output differs") from None
-                outputs.append(
-                    WorkflowAcceptedOutput(
-                        row[0],
-                        row[1],
-                        row[2],
-                        row[3],
-                        digest,
-                        references,
-                        WorkflowAcceptedCursor(snapshot.fingerprint, row[2], row[3]),
-                    )
-                )
-            return tuple(outputs)
+                    visited, current = set(), row[0]
+                    while current != job_id:
+                        if current in visited:
+                            raise ValueError
+                        visited.add(current)
+                        current = by_id[current][9]
+            except ValueError, TypeError, KeyError:
+                raise WorkflowQueueCorrupt("workflow continuation authority differs") from None
+            return tuple(
+                self._row(self._select_job(connection, self._project_id, identity)) for identity in sorted(by_id)
+            )
 
     def latest_continuation(self, job_id: str) -> WorkflowJobRecord | None:
         """Project one leaf across retry branches, preferring still-active work."""

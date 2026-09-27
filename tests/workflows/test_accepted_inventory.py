@@ -1,6 +1,7 @@
 """Accepted-output snapshots enumerate history beyond the Task Center window."""
 
 import hashlib
+import json
 import sqlite3
 import unittest
 from contextlib import closing
@@ -13,6 +14,7 @@ from research_observatory_core.ports.workflow_executor import (
     WorkflowQueueProblem,
 )
 from research_observatory_core.repositories import sqlite_workflow_queue_repository
+from research_observatory_core.workflow_contracts import canonical_workflow_json, workflow_record_sha256
 from research_observatory_core.workflow_executor import prepare_workflow_job
 
 from tests.workflows import test_local_workflow_executor as fixture_module
@@ -49,6 +51,7 @@ class AcceptedInventoryTests(unittest.TestCase):
         if continue_failed:
             self.queue.fail(claim, now="2026-08-30T12:02:00.150Z", error_code="invalid-input")
             failed = self.queue.task_center(limit=1)[0]
+            self.failed_source = failed
             continued = self.queue.retry_as_continuation(
                 job_id,
                 expected_snapshot_revision=failed.snapshot_revision,
@@ -77,6 +80,66 @@ class AcceptedInventoryTests(unittest.TestCase):
         page = self.queue.accepted_page(snapshot, after=None, limit=100)
         self.assertEqual((continued,), tuple(item.job_id for item in page))
         self.assertEqual((), self.queue.accepted_page(snapshot, after=page[0].cursor, limit=100))
+
+    def test_exact_acceptance_and_all_continuation_branches_survive_reopen(self):
+        continued = self.accept(1, continue_failed=True)
+        source = self.failed_source
+        sibling = self.queue.retry_as_continuation(
+            source.jobs[0].job_id,
+            expected_snapshot_revision=source.snapshot_revision,
+            expected_history_sequence=source.revision,
+            idempotency_key="2" * 32,
+            actor=WorkflowActor(new_uuid_v7(), "human", "researcher"),
+            now="2026-08-30T12:02:00.700Z",
+        )
+        reopened = sqlite_workflow_queue_repository(self.fixture.root, fixture_module.PROJECT_ID)
+        self.assertEqual(sibling.jobs[0].job_id, reopened.latest_continuation(source.jobs[0].job_id).job_id)
+        lineage = reopened.continuation_jobs(source.jobs[0].job_id)
+        self.assertEqual({source.jobs[0].job_id, continued, sibling.jobs[0].job_id}, {item.job_id for item in lineage})
+        self.assertIsNone(reopened.accepted_output(source.jobs[0].job_id))
+        self.assertIsNone(reopened.accepted_output(sibling.jobs[0].job_id))
+        accepted = reopened.accepted_output(continued)
+        self.assertEqual((self.output,), accepted.outputs)
+        snapshot = reopened.accepted_snapshot(activity_types=("source-acquisition",))
+        self.assertEqual(accepted.outputs, reopened.accepted_page(snapshot, after=None)[0].outputs)
+        with self.assertRaises(WorkflowQueueProblem):
+            reopened.accepted_output(new_uuid_v7())
+
+    def test_continuation_cannot_substitute_executor_authority(self):
+        continued = self.accept(1, continue_failed=True)
+        with closing(sqlite3.connect(self.fixture.database, autocommit=True)) as raw:
+            snapshot_id, revision = raw.execute(
+                "SELECT snapshot_id,snapshot_revision FROM workflow_queue_jobs WHERE job_id=?", (continued,)
+            ).fetchone()
+            original, digest = raw.execute(
+                "SELECT snapshot_json,record_sha256 FROM workflow_authority_snapshots "
+                "WHERE snapshot_id=? AND snapshot_revision=?",
+                (snapshot_id, revision),
+            ).fetchone()
+            value = json.loads(original)
+            value["executor"]["profile"] = "server"
+            trigger = raw.execute(
+                "SELECT sql FROM sqlite_schema WHERE name='workflow_authority_snapshots_no_update'"
+            ).fetchone()[0]
+            raw.execute("DROP TRIGGER workflow_authority_snapshots_no_update")
+            raw.execute(
+                "UPDATE workflow_authority_snapshots SET snapshot_json=?,record_sha256=? "
+                "WHERE snapshot_id=? AND snapshot_revision=?",
+                (canonical_workflow_json(value), workflow_record_sha256(value), snapshot_id, revision),
+            )
+            raw.execute(trigger)
+            self.assertEqual([], raw.execute("PRAGMA foreign_key_check").fetchall())
+            try:
+                with self.assertRaises(WorkflowQueueProblem):
+                    self.queue.continuation_jobs(self.failed_source.jobs[0].job_id)
+            finally:
+                raw.execute("DROP TRIGGER workflow_authority_snapshots_no_update")
+                raw.execute(
+                    "UPDATE workflow_authority_snapshots SET snapshot_json=?,record_sha256=? "
+                    "WHERE snapshot_id=? AND snapshot_revision=?",
+                    (original, digest, snapshot_id, revision),
+                )
+                raw.execute(trigger)
 
     def test_snapshot_is_exhaustive_frozen_and_reopens_without_time_or_uuid_order_assumptions(self):
         empty = self.queue.accepted_snapshot(activity_types=("source-acquisition",))

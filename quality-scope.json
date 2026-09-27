@@ -384,6 +384,12 @@
     "services/core-api/src/research_observatory_core/reconciliation/feature_cache.py",
     "tests/reconciliation/test_feature_cache.py",
     "tests/workflows/test_accepted_inventory.py",
-    "tests/reconciliation/test_candidate_benchmark.py"
+    "tests/reconciliation/test_candidate_benchmark.py",
+    "services/core-api/src/research_observatory_core/reconciliation/inventory.py",
+    "services/core-api/src/research_observatory_core/reconciliation/batch.py",
+    "tests/reconciliation/test_owner_inventory.py",
+    "tests/reconciliation/test_batch_contracts.py",
+    "services/core-api/src/research_observatory_core/reconciliation/workflow.py",
+    "tests/reconciliation/test_batch_workflow.py"
   ]
 }

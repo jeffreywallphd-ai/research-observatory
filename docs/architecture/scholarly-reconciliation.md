@@ -46,6 +46,21 @@ instead of hiding rows. Later accepted jobs appear only in a newly opened
 snapshot. Inventory addresses still require the source owner's current rights
 checks before content is used.
 
-The durable reconciliation/candidate worker, owner inventory adapters and desktop
-review journey are the remaining CAP-04.S03.T02 integration work. These foundation
+Source owners expand accepted outputs into exact retained record addresses.
+Import inspection checks the accepted attempt's preparation, complete staged
+decisions and effective import identity against its manifest. Identical scientific
+identity can reuse a manifest across requests; a changed draft cannot borrow an
+older output. Streams verify that identity once and re-enter current project and
+source rights for every bounded page. Excluded rows advance the cursor, so an
+empty emitted page does not mean exhaustion.
+
+Connector lookup authenticates the original confirmed operation and all bounded
+continuation branches. Each parent edge preserves definition, Intent, policy,
+configuration and executor authority; each accepted output must match the exact
+invocation result. A newer active branch cannot hide an accepted historical one.
+This local history lookup grants no new network execution or egress consent.
+
+The initial batch input contract freezes the inventory, accepted Intent, privacy,
+session and scoring configuration. The durable reconciliation/candidate worker and
+desktop review journey remain CAP-04.S03.T02 integration work. These foundation
 contracts and development checks do not establish task or Wave completion.

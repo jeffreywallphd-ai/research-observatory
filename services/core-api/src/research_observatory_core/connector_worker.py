@@ -369,15 +369,89 @@ class ConnectorWorkerService:
 
         return self._action(root, inspect)
 
-    def reconciliation_address(self, root, preview_id, ordinal):
+    def _reconciliation_output(self, binding: _WorkerBinding, preview_id: str, *, job_id: str | None = None):
+        from .connectors.workflow import validate_connector_origin
+        from .reconciliation.contracts import ReconciliationProblem
+
+        queue = binding.adapters.queue
+        original = queue.find_idempotency(_fingerprint([ACTIVITY, preview_id]))
+        if original is None:
+            raise ReconciliationProblem("reconciliation-source-unpublished")
+        authority = queue.authority(original.job_id)
+        inputs = self._stored(binding, authority)
+        try:
+            validate_connector_origin(authority, original.job_id, inputs)
+        except ProviderProblem:
+            raise ReconciliationProblem("reconciliation-source-mismatch") from None
+        if inputs.preview.preview_id != preview_id:
+            raise ReconciliationProblem("reconciliation-source-mismatch")
+        rights = inputs.preview.retention.rights
+        if not all(rights.permits(action) for action in ("store", "inspect", "derive", "index")):
+            raise ReconciliationProblem("reconciliation-rights-denied")
+        accepted = []
+        for candidate in queue.continuation_jobs(original.job_id):
+            acceptance = queue.accepted_output(candidate.job_id)
+            if acceptance is not None:
+                accepted.append(acceptance)
+        if not accepted or (job_id is not None and job_id not in {item.job_id for item in accepted}):
+            raise ReconciliationProblem("reconciliation-source-unpublished")
+        output = binding.adapters.pages.output_reference(inputs.preview.request)
+        if any(item.activity_type != ACTIVITY or item.outputs != (output,) for item in accepted):
+            raise ReconciliationProblem("reconciliation-source-mismatch")
+        return inputs, output
+
+    def reconciliation_sources(self, root, job_id, *, after, limit=100):
         from .reconciliation.contracts import ReconciliationProblem, SourceAddress
+        from .reconciliation.inventory import SourcePage, page_bounds
 
         def read(binding: _WorkerBinding):
-            job = binding.adapters.queue.find_idempotency(_fingerprint([ACTIVITY, preview_id]))
-            if job is None or job.state != "succeeded":
+            accepted = binding.adapters.queue.accepted_output(job_id)
+            if accepted is None or accepted.activity_type != ACTIVITY or len(accepted.outputs) != 1:
                 raise ReconciliationProblem("reconciliation-source-unpublished")
-            inputs = self._stored(binding, binding.adapters.queue.authority(job.job_id))
-            output = binding.adapters.pages.output_reference(inputs.preview.request)
+            inputs = self._stored(binding, binding.adapters.queue.authority(job_id))
+            inputs, output = self._reconciliation_output(binding, inputs.preview.preview_id, job_id=job_id)
+            page_bounds(after, limit, 1000)
+            count, records = binding.adapters.pages.source_records(output.revision_id, after=after, limit=limit)
+            page_bounds(after, limit, count)
+            if any(record.provider_id != inputs.preview.request.provider_id for record in records):
+                raise ReconciliationProblem("reconciliation-provider-mismatch")
+            return SourcePage(
+                job_id=job_id,
+                output_revision_id=output.revision_id,
+                record_count=count,
+                selected_count=count,
+                after=after,
+                scanned_through=after + len(records),
+                addresses=tuple(
+                    SourceAddress(
+                        kind="connector-record",
+                        context_id=inputs.preview.preview_id,
+                        revision_id=output.revision_id,
+                        ordinal=after + index,
+                        record_key=None,
+                    )
+                    for index in range(len(records))
+                ),
+            )
+
+        return self._action(root, read)
+
+    def reconciliation_pages(self, root, job_id, *, limit=100, checkpoint=None):
+        after = 0
+        while True:
+            if checkpoint is not None:
+                checkpoint()
+            page = self.reconciliation_sources(root, job_id, after=after, limit=limit)
+            yield page
+            if page.complete:
+                return
+            after = page.scanned_through
+
+    def reconciliation_address(self, root, preview_id, ordinal):
+        from .reconciliation.contracts import SourceAddress
+
+        def read(binding: _WorkerBinding):
+            _, output = self._reconciliation_output(binding, preview_id)
             address = SourceAddress(
                 kind="connector-record",
                 context_id=preview_id,
@@ -391,7 +465,7 @@ class ConnectorWorkerService:
         return self._action(root, read)
 
     def reconciliation_source(self, root, address):
-        """Local derivation consumes an accepted output; it never renews egress consent."""
+        """Local derivation consumes accepted history; it never renews egress consent."""
         from .reconciliation.contracts import ReconciliationProblem, SourceAddress
         from .reconciliation.sources import connector_assertion
 
@@ -400,36 +474,15 @@ class ConnectorWorkerService:
             raise ReconciliationProblem("reconciliation-source-kind-invalid")
 
         def read(binding: _WorkerBinding):
-            queue = binding.adapters.queue
-            job = queue.find_idempotency(_fingerprint([ACTIVITY, address.context_id]))
-            if job is None or job.state != "succeeded":
-                raise ReconciliationProblem("reconciliation-source-unpublished")
-            inputs = self._stored(binding, queue.authority(job.job_id))
-            if inputs.preview.preview_id != address.context_id:
-                raise ReconciliationProblem("reconciliation-source-mismatch")
-            rights = inputs.preview.retention.rights
-            if not all(rights.permits(action) for action in ("store", "inspect", "derive", "index")):
-                raise ReconciliationProblem("reconciliation-rights-denied")
-            output = binding.adapters.pages.output_reference(inputs.preview.request)
-            accepted_hash = _fingerprint(
-                {
-                    "outputs": [
-                        {
-                            "artifactId": output.artifact_id,
-                            "revisionId": output.revision_id,
-                            "contentHash": output.content_hash,
-                            "mediaType": output.media_type,
-                            "provenanceEntityId": output.provenance_entity_id,
-                        }
-                    ]
-                }
-            )
-            if output.revision_id != address.revision_id or accepted_hash != job.committed_output_sha256:
+            inputs, output = self._reconciliation_output(binding, address.context_id)
+            if output.revision_id != address.revision_id:
                 raise ReconciliationProblem("reconciliation-source-mismatch")
             record = binding.adapters.pages.source_record(address.revision_id, address.ordinal)
             if record.provider_id != inputs.preview.request.provider_id:
                 raise ReconciliationProblem("reconciliation-provider-mismatch")
-            return connector_assertion(project_id=binding.project_id, address=address, record=record, rights=rights)
+            return connector_assertion(
+                project_id=binding.project_id, address=address, record=record, rights=inputs.preview.retention.rights
+            )
 
         return self._action(root, read)
 

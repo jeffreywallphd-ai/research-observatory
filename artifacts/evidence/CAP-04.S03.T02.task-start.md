@@ -66,6 +66,18 @@ Add both corruption regressions before remediation; restoration of fixture
 trigger DDL keeps normal schema validation active. This remains advisory review,
 not a task disposition.
 
+The owner-inventory advisory reproduced an accepted job for a newly excluded
+record paired with the older included manifest from the same preview. Generic
+queue acceptance proves canonical output publication, not import-specific command
+meaning. The owner must bind the accepted attempt's preparation and complete
+effective import identity to its stored request and returned manifest. Add the
+changed-inclusion substitution regression and preserve legitimate manifest reuse
+for identical scientific identity across distinct requests or draft revisions.
+The same advisory found that descendant validation omitted executor equality:
+an otherwise valid child snapshot could change from local to server. Preserve
+the full executor binding across each edge, alongside definition, Intent, policy,
+configuration and exact parent job/run. Add the substitution regression first.
+
 Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows
 symlink-token skips remain explicit Wave obligations. No mandatory new approval

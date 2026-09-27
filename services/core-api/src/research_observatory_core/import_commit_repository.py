@@ -172,6 +172,95 @@ class SqliteImportCommitRepository(SqliteImportSummaryRepository):
                 raise PreviewProblem("preview-commit-output-authority-mismatch")
         return self.manifest(revision)
 
+    def accepted_manifest(
+        self, inputs: CommitJobInput, *, job_id: str, checkpoint: Callable[[], None] | None = None
+    ) -> ImportManifest:
+        from .ingestion.commit_workflow import COMMIT_ACTIVITY, validate_commit_origin
+
+        inputs = CommitJobInput.model_validate(inputs)
+        accepted = self._queue.accepted_output(job_id)
+        original = self._queue.find_idempotency(inputs.idempotency_key)
+        if (
+            inputs.project_id != self._project
+            or accepted is None
+            or original is None
+            or accepted.activity_type != COMMIT_ACTIVITY
+            or len(accepted.outputs) != 1
+        ):
+            raise PreviewProblem("preview-commit-output-authority-mismatch")
+        validate_commit_origin(self._queue.authority(original.job_id), original.job_id, inputs)
+        if job_id not in {item.job_id for item in self._queue.continuation_jobs(original.job_id)}:
+            raise PreviewProblem("preview-commit-output-authority-mismatch")
+        attempt = self._queue.get(job_id).current_attempt_id
+        with self._transaction(inputs.preview.preview_id) as connection:
+            state = self._read(connection, inputs.preview.preview_id)
+            draft = self._draft(connection, state, inputs.draft_revision)
+            if (
+                commit_job_input(
+                    state,
+                    draft,
+                    inputs.intent,
+                    inputs.preview.policy_hash,
+                    inputs.preview.resume_epoch,
+                    request_id=inputs.request_id,
+                    previous_manifest_revision_id=inputs.previous_manifest_revision_id,
+                )
+                != inputs
+            ):
+                raise PreviewProblem("preview-commit-input-authority-mismatch")
+            preparation = connection.execute(
+                "SELECT job_id,preview_id,draft_revision,parse_attempt_id,previous_manifest_revision_id "
+                "FROM import_commit_preparations WHERE project_id=? AND attempt_id=?",
+                (self._project, attempt),
+            ).fetchone()
+            if preparation is None or tuple(preparation) != (
+                job_id,
+                inputs.preview.preview_id,
+                inputs.draft_revision,
+                inputs.parse_attempt_id,
+                inputs.previous_manifest_revision_id,
+            ):
+                raise PreviewProblem("preview-commit-preparation-mismatch")
+
+            def decisions():
+                after = 0
+                while after < inputs.record_count:
+                    if checkpoint is not None:
+                        checkpoint()
+                    page = self._draft_rows_with_connection(
+                        connection, inputs.preview.preview_id, revision=inputs.draft_revision, after=after, limit=100
+                    )
+                    if not page:
+                        raise PreviewProblem("preview-commit-incomplete")
+                    staged = connection.execute(
+                        "SELECT ordinal,record_key,included,decision_json,warnings_json,raw_sha256,doi_key "
+                        "FROM import_commit_rows WHERE project_id=? AND attempt_id=? "
+                        "AND ordinal>? AND ordinal<=? ORDER BY ordinal",
+                        (self._project, attempt, after, page[-1].record.ordinal),
+                    ).fetchall()
+                    if len(staged) != len(page):
+                        raise PreviewProblem("preview-commit-incomplete")
+                    for item, row in zip(page, staged, strict=True):
+                        summary = summarize_record(item.record, item.decision, item.warnings, draft.authority.rights)
+                        if tuple(row) != (
+                            item.record.ordinal,
+                            item.record.record_key,
+                            int(item.decision.included),
+                            item.decision.model_dump_json(by_alias=True),
+                            json.dumps(item.warnings, ensure_ascii=True, separators=(",", ":")),
+                            item.record.raw_sha256,
+                            summary.doi_key,
+                        ):
+                            raise PreviewProblem("preview-commit-prepared-row-mismatch")
+                        yield item.decision
+                    after = page[-1].record.ordinal
+
+            expected = import_identity(draft.authority, decisions(), expected_record_count=draft.record_count)
+        manifest = self.manifest(accepted.outputs[0].revision_id)
+        if manifest.project_id != self._project or manifest.identity_sha256 != expected.sha256:
+            raise PreviewProblem("preview-commit-output-authority-mismatch")
+        return manifest
+
     def latest_manifest(self, preview_id: str) -> ImportManifest | None:
         with self._transaction(preview_id) as connection:
             self._active(self._read(connection, preview_id))
