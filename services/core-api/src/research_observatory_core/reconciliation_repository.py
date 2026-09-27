@@ -1654,6 +1654,7 @@ class SqliteReconciliationRepository:
                 raise ReconciliationProblem("reconciliation-integrity-invalid")
             # Check every saved child, including historical continuations; a
             # substituted middle link cannot be hidden by an authentic leaf.
+            saved_effects: set[tuple[object, ...]] = set()
             for run_id in (root_id, *(str(link[2]) for link in links)):
                 seal = connection.execute(
                     "SELECT run_sha256 FROM reconciliation_impact_seals WHERE project_id=? AND run_id=?",
@@ -1662,6 +1663,14 @@ class SqliteReconciliationRepository:
                 if seal is None or seal[0] != self._impact_snapshot_sha256(connection, run_id):
                     raise ReconciliationProblem("reconciliation-integrity-invalid")
                 impacts._verify_saved_run(connection, run_id)
+                saved_effects.update(
+                    tuple(item)
+                    for item in connection.execute(
+                        "SELECT output_revision_id,output_kind,disposition,confidence,review_required "
+                        "FROM dependency_impact_items WHERE project_id=? AND run_id=?",
+                        (self._project, run_id),
+                    ).fetchall()
+                )
                 run = impacts._run_with_connection(connection, run_id)
                 saved = impacts._change_with_connection(connection, run.change_id)
                 bounds = connection.execute(
@@ -1686,6 +1695,19 @@ class SqliteReconciliationRepository:
                 (self._project, leaf_id),
             ).fetchone()[0]
             if preview.graph_sha256 != saved_graph:
+                current_effects = {
+                    (
+                        item.output_revision_id,
+                        item.output_kind,
+                        item.disposition,
+                        item.confidence,
+                        int(item.review_required),
+                    )
+                    for item in preview.impacts
+                    if item.disposition != "informational"
+                }
+                if not saved_effects.issubset(current_effects):
+                    raise ReconciliationProblem("reconciliation-impact-effects-changed")
                 if len(links) >= 128:
                     raise ReconciliationProblem("reconciliation-impact-continuation-limit")
                 change_id, child_id = new_uuid_v7(), new_uuid_v7()

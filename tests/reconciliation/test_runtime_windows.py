@@ -271,5 +271,15 @@ class ReconciliationRuntimeTests(unittest.TestCase):
             "networkRequests": len(calls),
             "networkDuringReconciliation": 0,
         }
-        (directory / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-        print(json.dumps({"report": (directory / "result.json").relative_to(REPO).as_posix()}), flush=True)
+        report_bytes = (json.dumps(report, indent=2) + "\n").encode("utf-8")
+        (directory / "result.json").write_bytes(report_bytes)
+        print(
+            json.dumps(
+                {
+                    "report": (directory / "result.json").relative_to(REPO).as_posix(),
+                    "reportSha256": hashlib.sha256(report_bytes).hexdigest(),
+                    "reportData": report,
+                }
+            ),
+            flush=True,
+        )

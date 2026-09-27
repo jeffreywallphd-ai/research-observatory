@@ -186,3 +186,11 @@ The recovery discriminator itself also needs protection: seal every original and
 continuation run's complete typed snapshot, including graph/preview digests and
 bounds. First reproduce a substituted graph digest without actual growth, then
 require integrity denial. Preserve the legacy impact engine's hash contract.
+
+Final incremental review confirmed that a removed material edge can turn a
+pending effect into an empty completed child, while the original item continues
+denying fresh reads. The missed boundary is retention of the predecessor's
+effects across re-preview. Reproduce removal and non-material weakening before
+repair; require every predecessor output/kind/disposition/confidence/review duty
+in the new preview before appending any continuation or cancellation. Additional
+effects are allowed; lost or weakened effects deny recovery without mutations.

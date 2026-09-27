@@ -91,9 +91,9 @@ python tools/verify.py --profile data
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="e77790ccb33e812b942f576e36c8b2f8890b3a90a74a50de2980030fff7f4049">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="a795eb6ec30d6ed7e491764bbf32febabf72c7ffe2c5fd1c4554bd4fa95e789c">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>e77790ccb33e812b942f576e36c8b2f8890b3a90a74a50de2980030fff7f4049</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>a795eb6ec30d6ed7e491764bbf32febabf72c7ffe2c5fd1c4554bd4fa95e789c</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S03.T02 — duplicate candidates and reversible review
 
 Claim base: `691205f48cf8ee80b323a9971413f7da1d0608e1` on the existing W2
@@ -281,7 +281,15 @@ must deny without publishing a child or changing the predecessor&#x27;s state.
 The recovery discriminator itself also needs protection: seal every original and
 continuation run&#x27;s complete typed snapshot, including graph/preview digests and
 bounds. First reproduce a substituted graph digest without actual growth, then
-require integrity denial. Preserve the legacy impact engine&#x27;s hash contract.</pre></article>
+require integrity denial. Preserve the legacy impact engine&#x27;s hash contract.
+
+Final incremental review confirmed that a removed material edge can turn a
+pending effect into an empty completed child, while the original item continues
+denying fresh reads. The missed boundary is retention of the predecessor&#x27;s
+effects across re-preview. Reproduce removal and non-material weakening before
+repair; require every predecessor output/kind/disposition/confidence/review duty
+in the new preview before appending any continuation or cancellation. Additional
+effects are allowed; lost or weakened effects deny recovery without mutations.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

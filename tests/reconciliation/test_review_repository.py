@@ -713,3 +713,47 @@ class ReviewRepositoryTests(unittest.TestCase):
                             kind="evidence",
                             label="Synthetic independent append",
                         )
+
+    def _assert_graph_effect_corruption_denies_continuation(self, *, delete: bool):
+        assert self.a.work_id is not None
+        with self.repo._transaction(write=True) as (_, aggregates):
+            consumer = self.repo._append(
+                aggregates,
+                sources=(aggregates.get(self.a.work_id),),
+                actor=self.actor,
+                digest="1" * 64,
+                kind="evidence",
+                label="Synthetic dependent",
+            ).revision_id
+        outcome = self.commit(self.command(self.merge_plan()))
+        impacts = sqlite_dependency_impact_repository(self.fixture.database.parent.parent, self.fixture.project)
+        root_id = next(run_id for run_id in outcome.dependency_run_ids if impacts.run(run_id).state == "running")
+        before_run = impacts.run(root_id)
+        with closing(sqlite3.connect(self.fixture.database)) as db, db:
+            trigger = "material_dependencies_no_delete" if delete else "material_dependencies_no_update"
+            ddl = db.execute("SELECT sql FROM sqlite_schema WHERE name=?", (trigger,)).fetchone()[0]
+            db.execute("DROP TRIGGER " + trigger)
+            sql = (
+                "DELETE FROM material_dependencies"
+                if delete
+                else "UPDATE material_dependencies SET relation_type='non-material'"
+            )
+            changed = db.execute(
+                sql + " WHERE dependency_revision_id=? AND output_revision_id=?", (self.a.work_revision_id, consumer)
+            )
+            self.assertEqual(1, changed.rowcount)
+            db.execute(ddl)
+        before = self.counts()
+        with self.assertRaises(ReconciliationProblem):
+            self.repo.advance_review_impacts()
+        self.assertEqual(before, self.counts())
+        self.assertEqual(before_run, impacts.run(root_id))
+        factory = create_sqlite_unit_of_work_factory(self.fixture.database, self.fixture.project)
+        with factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.require_fresh_revision(consumer)
+
+    def test_removed_material_edge_cannot_discard_pending_effect_in_a_continuation(self):
+        self._assert_graph_effect_corruption_denies_continuation(delete=True)
+
+    def test_weakened_material_edge_cannot_discard_pending_effect_in_a_continuation(self):
+        self._assert_graph_effect_corruption_denies_continuation(delete=False)
