@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 25201a7058c517c0b5fa7090b4a863c1a005b1290c6a579b0d14d0f0e750a840
+source_sha256: 5699526635892c1ca579dc1369f0a709f3de961bf11761ac1b1be3f52565ffa9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -45,15 +45,15 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `APPROVED` | 22 |
+| `APPROVED` | 23 |
 | `PENDING` | 94 |
-| `REVIEW` | 1 |
 
 ### Task state
 
 | Status | Count |
 |---|---:|
-| `NOT_STARTED` | 247 |
+| `NOT_STARTED` | 246 |
+| `READY` | 1 |
 | `DONE` | 73 |
 | `DEFERRED` | 36 |
 
@@ -656,7 +656,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 1/11 | 8/35 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `ACTIVE` | `IN_PROGRESS` | 2/11 | 8/35 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -675,7 +675,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | CAP-windows-desktop-runtime (`CAP-01`) — Windows-first desktop shell and supervised local runtime | `PAUSED` | `PAUSED` | 4/5 | 12/15 | - |
 | CAP-local-project-storage (`CAP-02`) — Local projects, durable storage, security, and recovery | `NONE` | `PENDING` | 4/5 | 13/16 | - |
 | CAP-research-domain-workflows (`CAP-03`) — Canonical domain, research intent, provenance, and durable workflows | `NONE` | `PENDING` | 6/6 | 20/20 | - |
-| CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 1/5 | 6/15 | - |
+| CAP-scholarly-ingestion (`CAP-04`) — Scholarly ingestion, connectors, canonicalization, and corpus governance | `NONE` | `PENDING` | 2/5 | 6/15 | - |
 | CAP-document-inspection (`CAP-05`) — Document acquisition, parsing, source inspection, and page anchors | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-search-screening (`CAP-06`) — Local search, discovery, corpus diagnostics, and screening | `NONE` | `PENDING` | 0/6 | 0/18 | - |
 | CAP-model-gateway (`CAP-07`) — Provider-neutral model gateway and governed AI execution | `NONE` | `PENDING` | 1/5 | 3/15 | - |

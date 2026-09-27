@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 25201a7058c517c0b5fa7090b4a863c1a005b1290c6a579b0d14d0f0e750a840
+source_sha256: 5699526635892c1ca579dc1369f0a709f3de961bf11761ac1b1be3f52565ffa9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8083,7 +8083,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** OpenAlex, Crossref, Unpaywall, and Semantic Scholar are available behind stable, observable connector contracts.
 
-**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W2` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -8311,7 +8311,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Multiple provider records resolve to inspectable canonical scholarly entities without flattening uncertainty.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -8319,7 +8319,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S03.T01 - Implement identifier normalization and exact reconciliation
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
