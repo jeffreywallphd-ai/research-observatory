@@ -1,0 +1,616 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S03.T02",
+  "baseCommit": "691205f48cf8ee80b323a9971413f7da1d0608e1",
+  "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    ".gitattributes",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/reconciliation_admission.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/ImportWorkspace.tsx",
+    "apps/desktop/src/app/ReconciliationPane.tsx",
+    "apps/desktop/src/app/ReconciliationReviewPane.tsx",
+    "apps/desktop/src/app/reconciliationReviewModel.test.ts",
+    "apps/desktop/src/app/reconciliationReviewModel.ts",
+    "artifacts/evidence/CAP-04.S03.T02.pre-submission-review-01.md",
+    "artifacts/evidence/CAP-04.S03.T02.pre-submission-review-02.md",
+    "artifacts/evidence/CAP-04.S03.T02.progress-01.md",
+    "artifacts/evidence/CAP-04.S03.T02.progress-02.md",
+    "artifacts/evidence/CAP-04.S03.T02.progress-03.md",
+    "artifacts/evidence/CAP-04.S03.T02.progress-04.md",
+    "artifacts/evidence/CAP-04.S03.T02.progress-05.md",
+    "artifacts/evidence/CAP-04.S03.T02.progress-06.md",
+    "artifacts/evidence/CAP-04.S03.T02.progress-07.md",
+    "artifacts/evidence/CAP-04.S03.T02.task-start.md",
+    "artifacts/evidence/W2.unintegrated-tail-reconstruction-01.md",
+    "artifacts/evidence/ui-change/CAP-04.S03.T02.json",
+    "docs/adr/ADR-0032-document-duplicate-review-under-existing-canonical-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/README.md",
+    "docs/architecture/scholarly-reconciliation.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/README.md",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/core-api/reconciliation.test.ts",
+    "packages/contracts/scholarly-records/README.md",
+    "packages/contracts/scholarly-records/batch-input.schema.json",
+    "packages/contracts/scholarly-records/candidate-explanation.schema.json",
+    "packages/contracts/scholarly-records/candidate-page.schema.json",
+    "packages/contracts/scholarly-records/candidate-set.schema.json",
+    "packages/contracts/scholarly-records/reconciliation-inspection.schema.json",
+    "packages/contracts/scholarly-records/review-command.schema.json",
+    "packages/contracts/scholarly-records/review-context.schema.json",
+    "packages/contracts/scholarly-records/review-outcome.schema.json",
+    "packages/contracts/scholarly-records/review-plan.schema.json",
+    "packages/contracts/scholarly-records/review-preview.schema.json",
+    "packages/contracts/scholarly-records/work-state.schema.json",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S03.T02.html",
+    "planning/review-site/CAP-04/CAP-04.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/connector_repository.py",
+    "services/core-api/src/research_observatory_core/connector_worker.py",
+    "services/core-api/src/research_observatory_core/connectors/workflow.py",
+    "services/core-api/src/research_observatory_core/import_commit_repository.py",
+    "services/core-api/src/research_observatory_core/import_preview_service.py",
+    "services/core-api/src/research_observatory_core/ingestion/commit_workflow.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py",
+    "services/core-api/src/research_observatory_core/ports/connector_runtime.py",
+    "services/core-api/src/research_observatory_core/ports/import_commits.py",
+    "services/core-api/src/research_observatory_core/ports/reconciliation.py",
+    "services/core-api/src/research_observatory_core/ports/workflow_executor.py",
+    "services/core-api/src/research_observatory_core/reconciliation/batch.py",
+    "services/core-api/src/research_observatory_core/reconciliation/batch_inventory.py",
+    "services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py",
+    "services/core-api/src/research_observatory_core/reconciliation/candidate_views.py",
+    "services/core-api/src/research_observatory_core/reconciliation/candidates.py",
+    "services/core-api/src/research_observatory_core/reconciliation/contracts.py",
+    "services/core-api/src/research_observatory_core/reconciliation/decisions.py",
+    "services/core-api/src/research_observatory_core/reconciliation/feature_cache.py",
+    "services/core-api/src/research_observatory_core/reconciliation/inventory.py",
+    "services/core-api/src/research_observatory_core/reconciliation/workflow.py",
+    "services/core-api/src/research_observatory_core/reconciliation_api.py",
+    "services/core-api/src/research_observatory_core/reconciliation_repository.py",
+    "services/core-api/src/research_observatory_core/reconciliation_service.py",
+    "services/core-api/src/research_observatory_core/reconciliation_worker.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "services/core-api/src/research_observatory_core/task_center.py",
+    "tests/data/test_import_commit_migration.py",
+    "tests/data/test_import_preview_migration.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/fixtures/scholarly-duplicates/ACM.csv",
+    "tests/fixtures/scholarly-duplicates/DBLP-ACM_perfectMapping.csv",
+    "tests/fixtures/scholarly-duplicates/DBLP2.csv",
+    "tests/fixtures/scholarly-duplicates/README.md",
+    "tests/fixtures/scholarly-duplicates/benchmark-v1.json",
+    "tests/fixtures/scholarly-duplicates/scoring-cache-bridge-v1.json",
+    "tests/fixtures/scholarly-duplicates/scoring-freeze-v1.json",
+    "tests/fixtures/scholarly-metadata/schema-v14-authority.json",
+    "tests/fixtures/scholarly-metadata/schema-v14-identity-cases.json",
+    "tests/fixtures/scholarly-metadata/schema-v14-populated.json",
+    "tests/reconciliation/build-renderer.mjs",
+    "tests/reconciliation/duplicate_benchmark.py",
+    "tests/reconciliation/native_fixture.py",
+    "tests/reconciliation/predecessor.py",
+    "tests/reconciliation/test_batch_api.py",
+    "tests/reconciliation/test_batch_contracts.py",
+    "tests/reconciliation/test_batch_inventory.py",
+    "tests/reconciliation/test_batch_publication.py",
+    "tests/reconciliation/test_batch_requests.py",
+    "tests/reconciliation/test_batch_worker.py",
+    "tests/reconciliation/test_batch_workflow.py",
+    "tests/reconciliation/test_candidate_benchmark.py",
+    "tests/reconciliation/test_candidate_inspection.py",
+    "tests/reconciliation/test_candidate_metrics.py",
+    "tests/reconciliation/test_candidate_sets.py",
+    "tests/reconciliation/test_candidates.py",
+    "tests/reconciliation/test_client_contract.py",
+    "tests/reconciliation/test_decisions.py",
+    "tests/reconciliation/test_duplicate_fixtures.py",
+    "tests/reconciliation/test_feature_cache.py",
+    "tests/reconciliation/test_migration.py",
+    "tests/reconciliation/test_native_renderer.py",
+    "tests/reconciliation/test_owner_inventory.py",
+    "tests/reconciliation/test_renderer.py",
+    "tests/reconciliation/test_repository.py",
+    "tests/reconciliation/test_review_migration.py",
+    "tests/reconciliation/test_review_repository.py",
+    "tests/reconciliation/test_runtime_windows.py",
+    "tests/reconciliation/verify-client.mjs",
+    "tests/workflows/test_accepted_inventory.py",
+    "tools/core_api_contract.py",
+    "tools/core_api_reconciliation.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh reconciliation check: test_candidate_benchmark authenticates the frozen scoring/configuration and executes the known qualification corpus against the original precision >=0.90 and recall >=0.95 targets. Exact assertions yield 1092 true positives / 1142 returned pairs / 1115 gold pairs, precision 0.9562171628721541 and recall 0.979372197309417; 50 false-positive and 23 missed pairs, 20 overmerged and 23 fragmented derived components. These are previously observed qualification labels, not an unseen holdout or independent multi-source cluster gold. Configuration b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc is unchanged.",
+        "Fresh candidate/domain/review repository, service/API, generated-client, browser/Core and actual native-supervised Core checks prove explainable title/author/year/venue/pages/abstract/identifier features, bounded blocking and revision-keyed cache, human-only ambiguous adjudication, complete merge/split partitions and inbound-alias routing, unassigned assertions, immutable original receipts/conflicting source fields and reversible decisions. Actual native journey consumes accepted import plus retained connector, exercises lost-reply identical-command retry, split/merge and process restart."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh reconciliation, dependency-impacts, upstream-authority, migration-chain, shared-contract, client/desktop and native checks cover happy paths and malformed/substituted identity, stale concurrency, rights/Intent/session denial, cancellation, exhaustive accepted-source inventory, atomic fault seams, restart and retry. Exact-origin and review-origin dependency roots authenticate command and historical Work ownership. Saved run seals/item manifests/audit checkpoints protect continuation; every historical effect survives graph growth or recovery denies before mutation. Tests cover 100-of-102 partial propagation, all continuation seams, lost acknowledgement, repeated graph growth, changed saved snapshot/item/checkpoint, graph-digest substitution, removed/weakened edges, foreign exact roots and original fresh-only denial.",
+        "Literal populated schema14 predecessors plus protected SQLCipher migration tests establish additive schema15, source/decision preservation, backup, interrupted migration rollback/retry and reopen. Actual Windows DPAPI/SQLCipher and native supervisor/client/Core tests use synthetic provider transport, not live external-provider qualification. Browser tests exercise keyboard/focus, themes, measured CSS scaling, current denial clearing and persisted review outcomes; no full-shell native-DPI claim."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Fresh affected Python format/lint/types, generated JSON/OpenAPI/TypeScript, client, desktop/native build/test/format, 70-table storage contracts/trigger inventory, exact build-schema inventory, architecture/repository/fixture/ADR/UI-change and planning checks pass. Dedicated bounded typed JSON fields preserve the no-generic-payload rule. Frozen schema14 bytes remain unchanged. Proposed documentary ADR0032 applies accepted ADR0013/0014/0024/0025/0027 without granting new authority; UI evidence maps reference1.7. No fuzzy auto-merge, external lookup, parallel identity store, T03 version graph or new security grant is introduced.",
+        "Original adverse reviews and failed qualification remain retained. The unintegrated mixed UI/inventory commit was reconstructed with normal commits and the entire original branch preserved; identical final tree and unchanged UI gate were independently checked. Fresh final-candidate UI gate passes. Progress07 and reconstruction review record exact ancestry and limits; frozen approval, tests and integration history were not rewritten."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:reconciliation",
+      "service:unit",
+      "data:unit",
+      "contracts:unit",
+      "search:connectors",
+      "graph:unit",
+      "desktop:application",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:repository-structure",
+      "foundation:fixture-corpus",
+      "foundation:adr",
+      "foundation:ui-change",
+      "foundation:build-manifest",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Selected checks cover the task range: candidate/review semantics, protected source and identity ownership, schema15 predecessor/migration, dependency recovery, strict public contracts/generated client, native admission and governed review UI. Broad upstream checks are selected only for actual accepted-output/connector/task-center and dependency adapter changes. All selected checks run fresh at this clean committed candidate; executable/environment input closure is not established for reuse. Expanded independent task review is required.",
+    "deferred": [
+      "Full unchanged service/data/desktop/security/packaging and repository profiles, T03 version-graph integration, S03 slice review, S01-S03 checkpoint clean build/performance, fresh W2 qualification and release gates remain required. These selected passes do not complete those obligations.",
+      "Affected Python typing covers 61 changed product/new-test files with --follow-imports=silent. Four historical migration test files have target/history expectation changes and actual migration-chain coverage but pre-existing type errors; the earlier 55-error/13-file W2 full-quality observation remains unresolved. Four pre-existing native Clippy warnings and two Windows-token symlink skips remain W2 obligations, not waived checks.",
+      "Desktop tests retain three pre-existing conditional native settings skips; cargo retains one ignored application_lock::tests::renderer_contract_witness. That witness belongs to the separate application-settings contract harness and was not executed by the selected reconciliation native harness. Progress07 wording that it is exercised separately describes its designated harness, not an observed run in this qualification. Full native application-settings integration remains due. Browser CSS scaling is not complete native DPI/shell qualification."
+    ]
+  },
+  "checks": [
+    {
+      "id": "reconciliation",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest discover -v -s tests/reconciliation -p test_*.py",
+      "exitCode": 0,
+      "elapsedSeconds": 371.5091705999803,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-reconciliation-qualification-03.log",
+      "rawOutputSha256": "0b175688b334ef4747503b9511a504b15e478c9d336f71ba99404163402fb5c9",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Ran 146 tests in 369.088s  OK"
+    },
+    {
+      "id": "dependency-impacts",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.graph.test_dependency_impacts",
+      "exitCode": 0,
+      "elapsedSeconds": 2.934618799947202,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-dependency-impacts-qualification-03.log",
+      "rawOutputSha256": "b7cadec863bafea14e5b23a0215f86b218eab16e2ebd7297e28f3d3340a3c551",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Ran 15 tests in 2.196s  OK"
+    },
+    {
+      "id": "upstream-authority",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_import_manifest_access tests.service.test_import_preview_service tests.service.test_import_commit_interruptions tests.service.test_task_center_api tests.connectors.test_connector_workflow tests.connectors.test_connector_inspection tests.connectors.test_connector_authority tests.connectors.test_connector_api tests.workflows.test_accepted_inventory tests.workflows.test_task_center",
+      "exitCode": 0,
+      "elapsedSeconds": 84.72643109993078,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-upstream-authority-qualification-03.log",
+      "rawOutputSha256": "308849ea22a83e8279e2e3a30ec2c33d3921c9f25e259ae1b9f255cdb8979374",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Ran 59 tests in 82.303s  OK"
+    },
+    {
+      "id": "migration-chain",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_migrations tests.data.test_import_preview_migration tests.data.test_import_summary_migration tests.data.test_import_commit_migration",
+      "exitCode": 0,
+      "elapsedSeconds": 36.98905520001426,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-migration-chain-qualification-03.log",
+      "rawOutputSha256": "64e4f6b341e8b2dc02585382741d583b7c591804950cac45bb73c276db55423f",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Ran 31 tests in 35.713s  OK"
+    },
+    {
+      "id": "shared-contracts",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_schema tests.service.test_core_api tests.contracts.test_protected_database_contract tests.foundation.test_architecture_check",
+      "exitCode": 0,
+      "elapsedSeconds": 13.863587100058794,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-shared-contracts-qualification-03.log",
+      "rawOutputSha256": "a5e4d9090d4f970a1f8f2bb9668ef3132f7239f31e75e2e680e9828c654f1c36",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Ran 37 tests in 11.704s  OK"
+    },
+    {
+      "id": "python-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/connector_repository.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connectors/workflow.py services/core-api/src/research_observatory_core/import_commit_repository.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/ingestion/commit_workflow.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py services/core-api/src/research_observatory_core/ports/connector_runtime.py services/core-api/src/research_observatory_core/ports/import_commits.py services/core-api/src/research_observatory_core/ports/reconciliation.py services/core-api/src/research_observatory_core/ports/workflow_executor.py services/core-api/src/research_observatory_core/reconciliation/batch.py services/core-api/src/research_observatory_core/reconciliation/batch_inventory.py services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation/candidate_views.py services/core-api/src/research_observatory_core/reconciliation/candidates.py services/core-api/src/research_observatory_core/reconciliation/contracts.py services/core-api/src/research_observatory_core/reconciliation/decisions.py services/core-api/src/research_observatory_core/reconciliation/feature_cache.py services/core-api/src/research_observatory_core/reconciliation/inventory.py services/core-api/src/research_observatory_core/reconciliation/workflow.py services/core-api/src/research_observatory_core/reconciliation_api.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reconciliation_service.py services/core-api/src/research_observatory_core/reconciliation_worker.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/task_center.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/reconciliation/duplicate_benchmark.py tests/reconciliation/native_fixture.py tests/reconciliation/predecessor.py tests/reconciliation/test_batch_api.py tests/reconciliation/test_batch_contracts.py tests/reconciliation/test_batch_inventory.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_batch_requests.py tests/reconciliation/test_batch_worker.py tests/reconciliation/test_batch_workflow.py tests/reconciliation/test_candidate_benchmark.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_candidate_metrics.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_candidates.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_decisions.py tests/reconciliation/test_duplicate_fixtures.py tests/reconciliation/test_feature_cache.py tests/reconciliation/test_migration.py tests/reconciliation/test_native_renderer.py tests/reconciliation/test_owner_inventory.py tests/reconciliation/test_renderer.py tests/reconciliation/test_repository.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_review_repository.py tests/reconciliation/test_runtime_windows.py tests/workflows/test_accepted_inventory.py tools/core_api_contract.py tools/core_api_reconciliation.py",
+      "exitCode": 0,
+      "elapsedSeconds": 0.12049159989692271,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-python-format-qualification-03.log",
+      "rawOutputSha256": "253ee69cbcd5ea357340793e3de69d89df4b98d4298d8b3ab4056dcfbcf0cbdb",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "python-lint",
+      "command": ".venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/connector_repository.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connectors/workflow.py services/core-api/src/research_observatory_core/import_commit_repository.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/ingestion/commit_workflow.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py services/core-api/src/research_observatory_core/ports/connector_runtime.py services/core-api/src/research_observatory_core/ports/import_commits.py services/core-api/src/research_observatory_core/ports/reconciliation.py services/core-api/src/research_observatory_core/ports/workflow_executor.py services/core-api/src/research_observatory_core/reconciliation/batch.py services/core-api/src/research_observatory_core/reconciliation/batch_inventory.py services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation/candidate_views.py services/core-api/src/research_observatory_core/reconciliation/candidates.py services/core-api/src/research_observatory_core/reconciliation/contracts.py services/core-api/src/research_observatory_core/reconciliation/decisions.py services/core-api/src/research_observatory_core/reconciliation/feature_cache.py services/core-api/src/research_observatory_core/reconciliation/inventory.py services/core-api/src/research_observatory_core/reconciliation/workflow.py services/core-api/src/research_observatory_core/reconciliation_api.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reconciliation_service.py services/core-api/src/research_observatory_core/reconciliation_worker.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/task_center.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/reconciliation/duplicate_benchmark.py tests/reconciliation/native_fixture.py tests/reconciliation/predecessor.py tests/reconciliation/test_batch_api.py tests/reconciliation/test_batch_contracts.py tests/reconciliation/test_batch_inventory.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_batch_requests.py tests/reconciliation/test_batch_worker.py tests/reconciliation/test_batch_workflow.py tests/reconciliation/test_candidate_benchmark.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_candidate_metrics.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_candidates.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_decisions.py tests/reconciliation/test_duplicate_fixtures.py tests/reconciliation/test_feature_cache.py tests/reconciliation/test_migration.py tests/reconciliation/test_native_renderer.py tests/reconciliation/test_owner_inventory.py tests/reconciliation/test_renderer.py tests/reconciliation/test_repository.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_review_repository.py tests/reconciliation/test_runtime_windows.py tests/workflows/test_accepted_inventory.py tools/core_api_contract.py tools/core_api_reconciliation.py",
+      "exitCode": 0,
+      "elapsedSeconds": 0.10968569992110133,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-python-lint-qualification-03.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "python-types",
+      "command": ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/app.py services/core-api/src/research_observatory_core/connector_repository.py services/core-api/src/research_observatory_core/connector_worker.py services/core-api/src/research_observatory_core/connectors/workflow.py services/core-api/src/research_observatory_core/import_commit_repository.py services/core-api/src/research_observatory_core/import_preview_service.py services/core-api/src/research_observatory_core/ingestion/commit_workflow.py services/core-api/src/research_observatory_core/main.py services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py services/core-api/src/research_observatory_core/ports/connector_runtime.py services/core-api/src/research_observatory_core/ports/import_commits.py services/core-api/src/research_observatory_core/ports/reconciliation.py services/core-api/src/research_observatory_core/ports/workflow_executor.py services/core-api/src/research_observatory_core/reconciliation/batch.py services/core-api/src/research_observatory_core/reconciliation/batch_inventory.py services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation/candidate_views.py services/core-api/src/research_observatory_core/reconciliation/candidates.py services/core-api/src/research_observatory_core/reconciliation/contracts.py services/core-api/src/research_observatory_core/reconciliation/decisions.py services/core-api/src/research_observatory_core/reconciliation/feature_cache.py services/core-api/src/research_observatory_core/reconciliation/inventory.py services/core-api/src/research_observatory_core/reconciliation/workflow.py services/core-api/src/research_observatory_core/reconciliation_api.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reconciliation_service.py services/core-api/src/research_observatory_core/reconciliation_worker.py services/core-api/src/research_observatory_core/repositories.py services/core-api/src/research_observatory_core/storage.py services/core-api/src/research_observatory_core/task_center.py tests/reconciliation/duplicate_benchmark.py tests/reconciliation/native_fixture.py tests/reconciliation/predecessor.py tests/reconciliation/test_batch_api.py tests/reconciliation/test_batch_contracts.py tests/reconciliation/test_batch_inventory.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_batch_requests.py tests/reconciliation/test_batch_worker.py tests/reconciliation/test_batch_workflow.py tests/reconciliation/test_candidate_benchmark.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_candidate_metrics.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_candidates.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_decisions.py tests/reconciliation/test_duplicate_fixtures.py tests/reconciliation/test_feature_cache.py tests/reconciliation/test_migration.py tests/reconciliation/test_native_renderer.py tests/reconciliation/test_owner_inventory.py tests/reconciliation/test_renderer.py tests/reconciliation/test_repository.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_review_repository.py tests/reconciliation/test_runtime_windows.py tests/workflows/test_accepted_inventory.py tools/core_api_contract.py tools/core_api_reconciliation.py",
+      "exitCode": 0,
+      "elapsedSeconds": 0.5999718999955803,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-python-types-qualification-03.log",
+      "rawOutputSha256": "94052817dfe271c9180d5fb69d1a5187415e233dec083b3d4a14ff2067e6dba0",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "contract-generation",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/core_api_contract.py --check",
+      "exitCode": 0,
+      "elapsedSeconds": 2.0001036000903696,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-contract-generation-qualification-03.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "client-types",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts run typecheck",
+      "exitCode": 0,
+      "elapsedSeconds": 0.8256238999310881,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-client-types-qualification-03.log",
+      "rawOutputSha256": "70685b4df7789c854b9e1ceab7d78a6d0f9a0831c11eb0010b7b5fdbe0e50c39",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "client-tests",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts run test",
+      "exitCode": 0,
+      "elapsedSeconds": 1.363902600016445,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-client-tests-qualification-03.log",
+      "rawOutputSha256": "5c949fd25ac7987fdec2a97a7ef21b21d6f14ceea7e9d0644464c47a2e580601",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "desktop-types",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run typecheck",
+      "exitCode": 0,
+      "elapsedSeconds": 0.8425145999062806,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-desktop-types-qualification-03.log",
+      "rawOutputSha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "desktop-lint",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run lint",
+      "exitCode": 0,
+      "elapsedSeconds": 0.4119421001523733,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-desktop-lint-qualification-03.log",
+      "rawOutputSha256": "f78ede1982f71d1f223b387397a8ac36d4e569cb5133d0d9e5e7c5292c13513d",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "desktop-tests",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run test",
+      "exitCode": 0,
+      "elapsedSeconds": 1.9852686999365687,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-desktop-tests-qualification-03.log",
+      "rawOutputSha256": "c602beb939727f285425510e58302eadfa569448ebb35bbd8d9fe89ee7faaa77",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "desktop-build",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run build",
+      "exitCode": 0,
+      "elapsedSeconds": 1.4968902999535203,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-desktop-build-qualification-03.log",
+      "rawOutputSha256": "e10439142669864d75a93240dadbecbde0ee5eddee7a0156f0d8aadcb8e5cc26",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "native-format",
+      "command": ".local\\toolchains\\cargo\\bin\\cargo.exe fmt --all -- --check",
+      "exitCode": 0,
+      "elapsedSeconds": 0.5082354999613017,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-native-format-qualification-03.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "python-inventory",
+      "command": ".venv\\Scripts\\python.exe -B -s -c \"from pathlib import Path; from tools.quality_check import load_scope; print(\\\"Governed Python inventory: PASS\\\",len(load_scope(Path.cwd())))\"",
+      "exitCode": 0,
+      "elapsedSeconds": 0.19388319994322956,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-python-inventory-qualification-03.log",
+      "rawOutputSha256": "aa41769877a8b7ccdec84a3749781748bd4d5180e6fd1b1de13e3f1bf5948f25",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 3.019562799949199,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-architecture-qualification-03.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "repository-structure",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 0.1882547999266535,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-repository-structure-qualification-03.log",
+      "rawOutputSha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "fixture-corpus",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/fixture_corpus_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 0.8901629999745637,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-fixture-corpus-qualification-03.log",
+      "rawOutputSha256": "a02b544d217642321204e36197c5d4a74b4d35f3b18b13bd40ded9b9439daa66",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "adr-range",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/adr_check.py --repo . --base 691205f48cf8ee80b323a9971413f7da1d0608e1 --head 5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "exitCode": 0,
+      "elapsedSeconds": 1.6258878000080585,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-adr-range-qualification-03.log",
+      "rawOutputSha256": "696982ec2337e6c322c02ca0f6e02a23275077f64cb24c2d3655c2fe94b8418d",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "ui-change",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/ui_change_gate.py --repo . --base 691205f48cf8ee80b323a9971413f7da1d0608e1 --head 5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "exitCode": 0,
+      "elapsedSeconds": 9.540989700006321,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-ui-change-qualification-03.log",
+      "rawOutputSha256": "a8f9fb34e6d81701089096d89005fbf7b960ad284cf9541b05addf414b382b51",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "backlog-views",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "elapsedSeconds": 2.791406399803236,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-backlog-views-qualification-03.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/build_manifest.py --repo . --output artifacts/tmp/reconciliation-build-manifest-qual-03.json",
+      "exitCode": 0,
+      "elapsedSeconds": 14.683421400142834,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-build-manifest-qualification-03.log",
+      "rawOutputSha256": "1e27033aa0363a77b6d57b184a0970c838b58bf99f34578390ff444b8321673b",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "native-tests",
+      "command": ".local\\toolchains\\cargo\\bin\\cargo.exe test --workspace --locked --lib",
+      "exitCode": 0,
+      "elapsedSeconds": 7.335417700000107,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-native-tests-qualification-03.log",
+      "rawOutputSha256": "b35a4c61dbdf2b5e59c448a80b95a473584f80e1bae281ec23aa4af6fd285482",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    },
+    {
+      "id": "planning-review",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 134.94333470007405,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T02-planning-review-qualification-03.log",
+      "rawOutputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "result": "Selected check passed; raw output retained with exact case/skip details."
+    }
+  ],
+  "producerReceipts": [
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-reconciliation-qualification-03.json",
+      "sha256": "224af665cf50b9a39416ce3f04e4ce7e88c6014661971a56fb672b003c7b4d91"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-authority-qualification-03.json",
+      "sha256": "47503e14ea2c67ab6d96da05fc3f381e1f1041b9859860b43b7960ae8a42655f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-quality-qualification-03.json",
+      "sha256": "8e17fd1b7f44b8a4bbbe1b32a891577c4c29bd5fe1bebf296f8494034895ccac"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-native-qualification-03.json",
+      "sha256": "72b5098048422c5ab51e55699d66890ee2de824b08b7f4084b4b8d4a46b19a8e"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-planning-qualification-03.json",
+      "sha256": "4010887c58ac402a1444d53489b75c47afc0d750aa38f3ae048368cf696e375c"
+    }
+  ],
+  "runtimeReports": {
+    "source": "Producer-published synthetic report data and exact report-byte digests in the fresh reconciliation raw log; assessed with executed assertions, not self-attesting boolean proof. Private fixture ACLs were not relaxed.",
+    "reports": [
+      {
+        "report": "artifacts/tmp/reconciliation-native-bs823zza/result.json",
+        "reportSha256": "7858e442f13bd9c4fbcbe282a190c53d73d83c85371fbc0a9eb36c5eacc0d643",
+        "reportData": {
+          "fixtureKind": "synthetic-accepted-import-and-retained-connector",
+          "nativeSupervisor": true,
+          "generatedClient": true,
+          "productionReviewComponents": true,
+          "dpapiAndSqlcipher": true,
+          "sameCommandRetry": true,
+          "splitAndMerge": true,
+          "restartPreserved": true,
+          "nativeAuthorityInjectionDenied": true,
+          "retainedSourceCount": 3,
+          "providerNetworkDuringNativeReview": 0
+        }
+      },
+      {
+        "report": "artifacts/tmp/reconciliation-runtime-qaoyevig/result.json",
+        "reportSha256": "b47eb90df83e20a2e56f7396bff965aba624f1215732c3b2b866fe5d47f8c3e8",
+        "reportData": {
+          "fixtureKind": "synthetic-import-and-crossref-production-core",
+          "realWindowsPrincipal": true,
+          "dpapiAndSqlcipher": true,
+          "exactSourcesConverged": true,
+          "restartPreserved": true,
+          "currentRightsDenial": true,
+          "sourceUnchanged": true,
+          "networkRequests": 1,
+          "networkDuringReconciliation": 0
+        }
+      }
+    ]
+  },
+  "buildReport": {
+    "path": "artifacts/tmp/reconciliation-build-manifest-qual-03.json",
+    "sha256": "ed1fd13e03abfd9483510825e7826322cbef67013c2faf9090b30ff6d60835d8"
+  },
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/evidence/CAP-04.S03.T02.pre-submission-review-01.md",
+      "sha256": "4cb95bbdfdf559973812d02b6596b9cfe3734254c59b94484490471bc2fd8e29"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S03.T02.pre-submission-review-02.md",
+      "sha256": "a39a6592f786bcf87e0be6c79e0a5497aa44c8c8b91750ef24708fe8231266e6"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S03.T02.progress-06.md",
+      "sha256": "b72922939a431e802744fee0f27551fced18d90be8bd17cdc141a3e97431110d"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S03.T02.progress-07.md",
+      "sha256": "23b48ea76bc50675078d092ea6046e4d1b536817219b7bdae15151eec2dc9dd8"
+    },
+    {
+      "path": "artifacts/evidence/W2.unintegrated-tail-reconstruction-01.md",
+      "sha256": "615c94384aabb95a6a5f4acc83513654080915f9ed5b960bd20fb01f5bbed935"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-ui-change-qualification-02.log",
+      "sha256": "a6157178671b189ff152b6d00278cd906eb07e536799bfe87ba831c563e0c265"
+    },
+    {
+      "path": "artifacts/tmp/reconciliation-effect-retention-before-01.log",
+      "sha256": "187b60e83b45aca78f686f45ce41195d1d996c0380b467a8f0ff1a06752fa632"
+    },
+    {
+      "path": "artifacts/tmp/reconciliation-effect-retention-before-02.log",
+      "sha256": "3bfe506715908738fe5664d1b269b9a535e471090b6fc3aa7492a49cf2f32cfd"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-authority-qualification-01.json",
+      "sha256": "f69650667498801ba093161df33712a63e44f424aa806e0600e158c0fb8c59e1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-matcher-qualification-01.json",
+      "sha256": "c2650b5eaa7bf160d043328e1a5a0dbf8563e70ebbdb805b2582be7f53d8fcf8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-native-qualification-01.json",
+      "sha256": "8842557aad7a9f3f80abd4d9b941829fd28f21bd0f1b085e208e31a264a86470"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-quality-qualification-01.json",
+      "sha256": "03ef1e1ade1fb7f2fc6fd43b14edf9461375b82d0ed7bc81f7e1b0e1b5d8dd40"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-reconciliation-qualification-01.json",
+      "sha256": "a2f27ab8c6257da75301f2c74d9a8a5b3056eb3c35dffdc12c6bbf659ccda0ab"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-authority-qualification-02.json",
+      "sha256": "40c5ce7911013d3a5f67a1b067190cd59935b87a5c7b86b843d0c8f930f0312d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-native-qualification-02.json",
+      "sha256": "8f2c5f32727838d3f6958817b53701ad78414f07714301c01170024880c28d6d"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-planning-qualification-02.json",
+      "sha256": "b6d5c2f80ace0d0363e1e73ed408690ab6e03fc065d1db004c9242a79a0c52be"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-quality-qualification-02.json",
+      "sha256": "f8ef6d393f5f34e3fba4347a7219e25ef716f92eb12c1eb2108d6e1ea4b2a873"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T02-reconciliation-qualification-02.json",
+      "sha256": "67f72fb4a5c77cd3c2582f69c6009800af6739a254584f8739b3a31863c452b8"
+    }
+  ],
+  "scopeDeviation": "None. Ordinary defect restoration and evidence closure within the approved open task; no supplemental refactoring allocation, changed gate, security authority, migration guarantee or governed reference."
+}

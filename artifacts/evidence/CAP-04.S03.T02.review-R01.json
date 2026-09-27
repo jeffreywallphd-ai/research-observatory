@@ -1,0 +1,152 @@
+{
+  "task_id": "CAP-04.S03.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+  "base_commit": "691205f48cf8ee80b323a9971413f7da1d0608e1",
+  "reviewer": "agent:/root/w2_t02_disposition",
+  "result": "changes-requested",
+  "evidence_sha256": "e5fc0258bdadc02585861be6dc2a0e648f5587b9c22a08bcf706ccfca2825532",
+  "packet_sha256": "41fc7e8b70dde1dde722bc33920e45ece132757623ac7c6bd812b6304c4b94ef",
+  "acceptance_criteria_sha256": "69dd8dbac54d02b33cd88ff9bcdcaefcd78a70d1bc45736cb215f7d071fa2b57",
+  "selection_sha256": "063028d705e01d16340b0e1f69cdea2ea51d59e1dd06de19e0b9f7d50453faef",
+  "notes": "Independent expanded task review of the exact frozen R01 candidate under approved CAP-04.S03 section 9.2, immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, accepted ADR-0013/0014/0024/0025/0027 and experience reference RO-UI-ACADEMIC-MINIMAL-1.7. The reviewer is independent of owner codex-w2-implementation and did not implement or commit product changes. Authenticated persisted current_submission, canonical evidence/packet/criteria/selection hashes, exact 131-path base-to-candidate inventory, base ancestry, canonical branch and all 26 selected checks against five producer receipts and raw log hashes. Read-only task_submission_packet_errors and validate_task_evidence returned no errors. Prior expanded source review was reused with incremental inspection of the committed remediation and fresh qualification evidence. The three independently reproduced pre-submission product findings are explicitly closed below at this candidate, while original adverse artifacts and failed observations remain unchanged. R01 is the first controlled taskctl round; those pre-submission findings are not invented prior controlled rounds. One blocking evidence-precision finding remains: C2's narrative asserts an executed foreign exact-root denial that the selected tests do not establish. The owner confirmed that overstatement. Actual positive exact-origin recovery and inspected ownership controls are distinct from an executed negative test. No new product defect or independent need for that additional specific test was identified in this bounded review. Approval is withheld only pending an append-only correction of that evidence claim. This is not slice/checkpoint completion, Wave exit, release approval or permission to change the approved product scope.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The fresh candidate benchmark authenticates the frozen scoring/configuration bridge and executes the known qualification corpus against unchanged precision >=0.90 and recall >=0.95 targets. Assertions establish 1092 true positives, 1142 returned pairs and 1115 gold pairs, giving precision 0.9562171628721541 and recall 0.979372197309417; 50 false positives, 23 missed pairs, 20 overmerged and 23 fragmented derived components remain disclosed. These are known qualification labels and derived pair components, not an unseen holdout or independent multi-source cluster gold. Candidate scores retain missing/conflicting feature state and cannot authorize fuzzy automatic merge. Reviewed repository, service/API, generated-client, browser/Core and native-supervised Core paths preserve source assertions and conflicting fields while complete partitions and inbound alias plans make human merge/split reversible. Fresh tests cover unassigned assertions, historical receipts, current routing, stale decisions, retries and restart."
+    },
+    {
+      "criterion_index": 2,
+      "result": "evidence-correction-required",
+      "assessment": "The executed checks establish the expected path and material denial/failure boundaries: malformed and substituted inputs, current source/Intent/session authority, incomplete accepted inventory, cancellation, atomic publication seams, durable restart, exact-origin and review-origin propagation, partial checkpoints, lost acknowledgement, graph growth, sealed-snapshot corruption and effect removal/weakening. Literal populated v14 and actual SQLCipher migration fixtures cover preserved predecessor rows, verified backup, rollback/retry and reopen. Browser and native checks exercise production review components, generated client, native admission, supervised Core and protected storage with synthetic sources. F-S03-T02-EVIDENCE-01 blocks acceptance of the frozen packet's claimed test coverage because foreign exact-root substitution was not one of the executed negative cases. The actual broad success/failure evidence is not relabeled as failed product execution."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Source and fresh checks support additive v15 authority, preserved frozen predecessor schema, dedicated bounded typed feature/candidate/explanation documents, complete trigger and schema inventories, generated public JSON/OpenAPI/TypeScript contracts and native admission. Provenance, dependencies, outbox and durable ownership remain in canonical transactions. Proposed ADR-0032 documents application of existing accepted authority and grants no new decision. UI implementation maps approved reference 1.7; task-range gate/reference controls are unchanged. The original mixed inventory/UI history and adverse gate result remain preserved, reconstruction has independent control review and exact tree equality, and the final candidate's unchanged gate passes. Full affected quality/native settings/platform and later slice/Wave obligations remain disclosed rather than waived."
+    }
+  ],
+  "verification_review": {
+    "candidate_commit": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+    "selected_check_count": 26,
+    "changed_path_count": 131,
+    "producer_receipts": [
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T02-reconciliation-qualification-03.json",
+        "sha256": "224af665cf50b9a39416ce3f04e4ce7e88c6014661971a56fb672b003c7b4d91"
+      },
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T02-authority-qualification-03.json",
+        "sha256": "47503e14ea2c67ab6d96da05fc3f381e1f1041b9859860b43b7960ae8a42655f"
+      },
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T02-quality-qualification-03.json",
+        "sha256": "8e17fd1b7f44b8a4bbbe1b32a891577c4c29bd5fe1bebf296f8494034895ccac"
+      },
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T02-native-qualification-03.json",
+        "sha256": "72b5098048422c5ab51e55699d66890ee2de824b08b7f4084b4b8d4a46b19a8e"
+      },
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T02-planning-qualification-03.json",
+        "sha256": "4010887c58ac402a1444d53489b75c47afc0d750aa38f3ae048368cf696e375c"
+      }
+    ],
+    "assessment": "All 26 manifest checks match exactly one producer record for candidate, exit code, elapsed time, raw output path/digest and provenance; command comparison normalizes only the repository-root prefix of executable paths. Every raw output and receipt digest matches. Inspected runner qualify-reconciliation-03.py executes subprocesses, captures combined output and return codes, and checks fixed HEAD plus clean tracked/untracked inputs before and after checks. Freeze coordination and unchanged reviewed source supplement those checks; receipt hashes alone are not treated as execution proof. Raw results report 146 reconciliation cases in 369.088 seconds, 15 dependency cases in 2.196 seconds, 59 upstream authority cases in 82.303 seconds, 31 migration-chain cases in 35.713 seconds and 37 shared-contract cases in 11.704 seconds, all passing. The reconciliation process wall time was 371.509 seconds. Client tests report 135 passes; desktop tests report 159 passes and 3 conditional settings skips; native tests report 152 passes and 1 ignored application-settings witness. Affected Python format/lint cover 65 files, narrow typing covers 61, and planning verification reports 492 pages. Generated-contract, types, desktop build/lint, native format, inventories, architecture, repository/fixture, ADR, UI gate and build-manifest checks pass. No unchanged suite was rerun by this reviewer.",
+    "runtime_reports": {
+      "source_log": "artifacts/tmp/CAP-04.S03.T02-reconciliation-qualification-03.log",
+      "source_log_sha256": "0b175688b334ef4747503b9511a504b15e478c9d336f71ba99404163402fb5c9",
+      "reports": [
+        {
+          "path": "artifacts/tmp/reconciliation-native-bs823zza/result.json",
+          "producer_report_sha256": "7858e442f13bd9c4fbcbe282a190c53d73d83c85371fbc0a9eb36c5eacc0d643"
+        },
+        {
+          "path": "artifacts/tmp/reconciliation-runtime-qaoyevig/result.json",
+          "producer_report_sha256": "b47eb90df83e20a2e56f7396bff965aba624f1215732c3b2b866fe5d47f8c3e8"
+        }
+      ],
+      "assessment": "The producer-published reportData and digests in the authenticated raw log exactly match the manifest. Re-serializing that data with the inspected producer's UTF-8 formatting reproduces each published report-byte digest. The protected report files were not independently read by this reviewer, and their booleans are not treated as independent proof. Inspected executed assertions establish accepted import plus retained synthetic connector, three preserved sources, actual native supervisor and generated client, identical-command retry after lost reply, split/merge, restarted Core process replay and injected native authority denial. The companion actual Windows Core test establishes DPAPI/SQLCipher composition, exact convergence, application-session reopen, preserved source and historical receipt, and current Intent/rights denial. Report-publication changes only expose synthetic report data and digest after the existing assertions; they do not weaken them or change ACLs."
+    },
+    "build_report": {
+      "path": "artifacts/tmp/reconciliation-build-manifest-qual-03.json",
+      "sha256": "ed1fd13e03abfd9483510825e7826322cbef67013c2faf9090b30ff6d60835d8",
+      "assessment": "Raw report bytes authenticate. The selected build-manifest output reports clean version 0.1.0+g5d28099. This is build-input manifest validation, not a full packaged-product qualification."
+    }
+  },
+  "findings": [
+    {
+      "id": "F-S03-T02-EVIDENCE-01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Frozen C2 evidence claims a foreign exact-root negative test that was not executed",
+      "reproduction": "Read the bound R01 manifest's second acceptance criterion, the authenticated reconciliation qualification-03 raw log, tests/reconciliation/test_batch_worker.py:test_exact_batch_impacts_finish_after_candidate_publication_and_worker_restart and tests/reconciliation/test_review_repository.py:test_continuation_rejects_substituted_semantics_checkpoint_owner_and_forks. Search tracked tests for reconciliation_exact_impacts and exact/foreign root substitutions. Compare the asserted executed boundary with those actual test bodies and results.",
+      "required_remediation": "Preserve R01, its manifest, raw results and this review. Submit an append-only corrected evidence manifest that removes the unsupported executed-case phrase and explicitly distinguishes the actual positive exact-origin restart test, human-review continuation negative tests, and inspected exact-root ownership controls. Taskctl rejects duplicate attached candidate commits, so use a metadata-only successor with unchanged product/test inputs and a supersedes binding to the exact R01 path/hash/commit. This is an evidence correction, not a reduction of an approved product criterion. No new product change or specific additional negative test is required by this finding. Normal exact-candidate and fresh-evidence rules still apply to the successor; do not label an existing observation as a new execution or infer input closure from unchanged source alone."
+    }
+  ],
+  "closures": [],
+  "pre_submission_closures": [
+    {
+      "finding_id": "F-EXACT-IMPACT-01",
+      "source": "artifacts/evidence/CAP-04.S03.T02.pre-submission-review-01.md",
+      "source_sha256": "4cb95bbdfdf559973812d02b6596b9cfe3734254c59b94484490471bc2fd8e29",
+      "criterion_indexes": [
+        2,
+        3
+      ],
+      "result": "closed",
+      "remediation_candidate": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "evidence": "Exact publication durably records root run ownership in reconciliation_exact_impacts within the canonical command transaction. Worker root selection now includes exact commands as well as human-review outcomes and validates historical Work endpoints, actor, source-version reason, fingerprints and policy before recovery. The fresh test_exact_batch_impacts_finish_after_candidate_publication_and_worker_restart creates an exact dependent, publishes a batch and its later candidate graph, shuts down and reopens the worker, then requires a materialized consumer stale state, non-running original exact runs, retained fresh-only denial and the unchanged original receipt. It passes in the authenticated 146-case reconciliation log. This closure concerns resumed owned exact runs; it does not claim the separately overstated foreign exact-root negative test was executed."
+    },
+    {
+      "finding_id": "F-IMPACT-GRAPH-02",
+      "source": "artifacts/evidence/CAP-04.S03.T02.pre-submission-review-01.md",
+      "source_sha256": "4cb95bbdfdf559973812d02b6596b9cfe3734254c59b94484490471bc2fd8e29",
+      "criterion_indexes": [
+        2,
+        3
+      ],
+      "result": "closed",
+      "remediation_candidate": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "evidence": "Changed graph recovery authenticates exact/review ownership, all saved run seals, item manifests and checkpoint chains, then creates a fresh same-semantics preview/run, seals and links the child, and cancels the predecessor in one writer transaction. The engine's unchanged-graph snapshot and authority checks remain intact; manual terminal states are not revived. Fresh tests test_review_impacts_recover_from_unrelated_graph_growth_without_releasing_stale_outputs, test_partial_impact_continuation_rolls_back_at_every_seam_and_recovers_after_lost_ack, test_repeated_graph_growth_follows_saved_chain_without_forking_or_reviving_terminal_roots, test_real_graph_growth_does_not_turn_corrupted_saved_authority_into_a_continuation and the exact-batch restart case pass. They require stale materialization, completed continuation, preserved denial/history, atomic rollback at all three continuation seams, 100-of-102 partial recovery, lost acknowledgement, repeated growth and saved graph/preview/authority/item/checkpoint corruption denial. The explicit 128-link bound remains a fail-closed resource limit, not a promise of completion during indefinite graph change."
+    },
+    {
+      "finding_id": "F-IMPACT-EDGE-03",
+      "source": "artifacts/evidence/CAP-04.S03.T02.pre-submission-review-02.md",
+      "source_sha256": "a39a6592f786bcf87e0be6c79e0a5497aa44c8c8b91750ef24708fe8231266e6",
+      "criterion_indexes": [
+        2,
+        3
+      ],
+      "result": "closed",
+      "remediation_candidate": "5d28099ae0cfb36602fa7301b9e4228c0c5b072c",
+      "evidence": "After authenticating saved state, recovery gathers output revision/kind, disposition, confidence and review-duty tuples from the root and every historical continuation. All must survive the current preview before any child/link/cancellation is published. Fresh tests test_removed_material_edge_cannot_discard_pending_effect_in_a_continuation and test_weakened_material_edge_cannot_discard_pending_effect_in_a_continuation each modify exactly one material edge in a synthetic database and restore the original schema trigger. They require denial, unchanged table counts and root run, and retained fresh-only denial; both pass in qualification 03. Valid repeated growth and partial/lost-ack recovery tests also pass. The original independent probe showing cancelled(1,0), completed-child(0,0) and no materialized stale cause remains unchanged. This closes effect loss; it does not claim forensic detection of every unrelated graph modification."
+    }
+  ],
+  "adverse_history": {
+    "original_probe_ledger": "artifacts/tmp/CAP-04.S03.T02-pre-submission-independent-findings-01.md",
+    "original_probe_ledger_sha256": "ba80e637bac75fe7a2c3493af1d3b5366bbdb410c4cf45d058136cd080f2c684",
+    "assessment": "Original pre-submission reviews, ignored probe ledgers and all 18 manifest-retained adverse references authenticate unchanged. Genuine failed qualification, pre-fix test failures, setup errors and the old UI mixed-commit failure remain distinct. Original unintegrated history remains reachable at codex/w2-unintegrated-original-b3cba265. No adverse result is relabeled as passing, and R01's new evidence-precision finding remains open."
+  },
+  "limitations": [
+    "Protected native/runtime report files were not independently read. Their producer-published synthetic data and digests were authenticated from raw output and assessed with inspected executed assertions. Synthetic provider transport does not establish live provider availability or external service qualification.",
+    "Browser checks measure rendered text ranges at 1x/2x CSS scaling, operable focused controls and horizontal containment at three viewports in both themes. This is not full native DPI/shell or comprehensive accessibility qualification.",
+    "Plaintext populated-v14 migration fixtures exercise all ten material v15 failpoints. The separate SQLCipher fixture proves encrypted membership-backfill interruption, rollback/retry, verified backup and reopen with in-memory key-fixture authority; actual DPAPI is established by the Windows Core/native tests, not that migration fixture alone.",
+    "Affected typing covers 61 files with follow-imports=silent. Four historical migration-test files retain pre-existing type errors while their behavior is exercised by migration checks. Earlier W2 full-quality errors, four pre-existing native Clippy warnings and Windows-token symlink obligations remain outstanding.",
+    "Desktop's three conditional application-settings skips and cargo's ignored application_lock::tests::renderer_contract_witness were not executed by the reconciliation native harness. The final manifest explicitly corrects the ambiguous earlier progress wording. Full native application-settings integration remains due.",
+    "Known benchmark qualification labels are disclosed; no new unseen holdout, acceptance probability or independently adjudicated multi-source cluster claim is made. Full affected profiles, T03 version-graph integration, S03 review, checkpoint clean build/performance and fresh W2 qualification/release gates remain required."
+  ],
+  "finding_details": [
+    {
+      "finding_id": "F-S03-T02-EVIDENCE-01",
+      "priority": "P2",
+      "status": "open",
+      "location": "artifacts/evidence/CAP-04.S03.T02.json:acceptanceCriteria[1].evidence[0]",
+      "observation": "The frozen narrative says Tests cover ... foreign exact roots. The selected exact-origin regression test_exact_batch_impacts_finish_after_candidate_publication_and_worker_restart exercises positive exact-origin recovery and restart. The selected test_continuation_rejects_substituted_semantics_checkpoint_owner_and_forks creates HUMAN_DECISION review continuations and tests their semantics/checkpoint/ownership; it does not substitute a foreign exact root. Tracked-test searches found no negative insertion or substitution of reconciliation_exact_impacts, and the owner explicitly confirmed that no such executed case was located in qualification 03. The SQL binding trigger and _owned_impact_change provide inspected source authority but cannot substantiate a claimed test execution.",
+      "contract": "CAP-04.S03.T02 C2, the task-start C2/C3 and evidence-truth row, AGENTS.md evidence safeguards and task operations require criterion-linked evidence to describe actual machine checks truthfully. Source inspection is not execution evidence.",
+      "closure_condition": "The next immutable packet supersedes R01 and accurately describes the executed boundary, while preserving all three product-finding closures and adverse history. Independent review authenticates the metadata-only delta, corrected packet and qualifying evidence without inferring a foreign exact-root test from source code. No separate requirement for that specific additional test was established in this bounded review."
+    }
+  ]
+}

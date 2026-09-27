@@ -194,3 +194,11 @@ effects across re-preview. Reproduce removal and non-material weakening before
 repair; require every predecessor output/kind/disposition/confidence/review duty
 in the new preview before appending any continuation or cancellation. Additional
 effects are allowed; lost or weakened effects deny recovery without mutations.
+
+Formal R01 review identified an evidence-writing error: the criterion narrative
+generalized the human-review continuation owner-substitution test into an
+unexecuted foreign exact-root denial test. Bind each claimed execution to its
+actual named case and body. Exact-origin restart completion, human-review
+continuation negative tests, and inspected exact-root ownership controls are
+distinct proof boundaries. Preserve R01 and correct the successor narrative;
+no product behavior or acceptance criterion is reduced by this clarification.
