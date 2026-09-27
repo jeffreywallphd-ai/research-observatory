@@ -247,7 +247,7 @@ class _HeldFileAuthority:
 
     def validate(self) -> None:
         opened = os.fstat(self.descriptor)
-        visible = self.path.stat(follow_symlinks=False)
+        visible = os.stat(storage._native_io_path(self.path), follow_symlinks=False)
         if (
             not stat.S_ISREG(opened.st_mode)
             or opened.st_nlink != 1
@@ -917,12 +917,13 @@ def plan_database_migration(path: Path, *, expected_project_id: str) -> Migratio
 
 
 def _ensure_canonical_directory(path: Path, *, create: bool) -> tuple[int, int]:
+    native = Path(storage._native_io_path(path))
     if create:
         with suppress(FileExistsError):
-            path.mkdir(mode=0o700)
+            native.mkdir(mode=0o700)
     try:
-        status = path.stat(follow_symlinks=False)
-        if not stat.S_ISDIR(status.st_mode) or storage._redirect(path) or path.resolve(strict=True) != path:
+        status = native.stat(follow_symlinks=False)
+        if not stat.S_ISDIR(status.st_mode) or storage._redirect(path) or native.resolve(strict=True) != native:
             raise MigrationProblem("migration-backup-path-invalid")
         return (status.st_dev, status.st_ino)
     except OSError as error:
@@ -970,7 +971,7 @@ def _held_windows_paths(paths: tuple[tuple[Path, bool], ...], *, deny_writes: bo
         for path, directory in paths:
             flags = file_flag_open_reparse_point | (file_flag_backup_semantics if directory else 0)
             share = file_share_read if deny_writes and not directory else file_share_read | file_share_write
-            handle = create_file(str(path), generic_read, share, None, open_existing, flags, None)
+            handle = create_file(storage._native_io_path(path), generic_read, share, None, open_existing, flags, None)
             if handle == invalid_handle:
                 raise ctypes.WinError(ctypes.get_last_error())
             handles.append(handle)
@@ -1013,7 +1014,7 @@ def _exclusive_descriptor(path: Path) -> int:
     file_flag_open_reparse_point = 0x00200000
     invalid_handle = wintypes.HANDLE(-1).value
     handle = create_file(
-        str(path),
+        storage._native_io_path(path),
         generic_read | generic_write | write_dac,
         0,
         None,
@@ -1263,7 +1264,7 @@ def _protect_recovery_directory(path: Path) -> _HeldDirectoryAuthority:
     file_flag_backup_semantics = 0x02000000
     invalid_handle = wintypes.HANDLE(-1).value
     handle = create_file(
-        str(path),
+        storage._native_io_path(path),
         file_read_attributes | read_control | write_dac,
         file_share_read | file_share_write,
         None,
@@ -1295,7 +1296,7 @@ def _create_exclusive_file(path: Path, payload: bytes) -> _HeldFileAuthority:
             offset += os.write(descriptor, payload[offset:])
         os.fsync(descriptor)
         status = os.fstat(descriptor)
-        path_status = path.stat(follow_symlinks=False)
+        path_status = os.stat(storage._native_io_path(path), follow_symlinks=False)
         if (
             not stat.S_ISREG(status.st_mode)
             or status.st_nlink != 1
@@ -1345,7 +1346,7 @@ def _create_verified_backup(
         attempt_id = secrets.token_hex(16)
         attempt = backup_root / f"v{source_profile.schema_version}-to-v{storage.DATABASE_SCHEMA_VERSION}-{attempt_id}"
         try:
-            attempt.mkdir(mode=0o700)
+            Path(storage._native_io_path(attempt)).mkdir(mode=0o700)
         except OSError as error:
             raise MigrationProblem("migration-backup-path-invalid") from error
         attempt_identity = _ensure_canonical_directory(attempt, create=False)
@@ -1354,7 +1355,7 @@ def _create_verified_backup(
                 raise MigrationProblem("migration-backup-path-invalid")
             working = attempt / f".working-{secrets.token_hex(16)}.sqlite3"
             working_descriptor = os.open(
-                working,
+                storage._native_io_path(working),
                 os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
                 0o600,
             )
@@ -1365,7 +1366,7 @@ def _create_verified_backup(
             backup_source: Any | None = None
             try:
                 created = os.fstat(working_descriptor)
-                visible = working.stat(follow_symlinks=False)
+                visible = os.stat(storage._native_io_path(working), follow_symlinks=False)
                 if (
                     not stat.S_ISREG(created.st_mode)
                     or created.st_nlink != 1
@@ -1379,7 +1380,7 @@ def _create_verified_backup(
                 if protected:
                     target = storage._connect_held(working, project_id=expected_project_id)
                 else:
-                    target = sqlite3.connect(working.as_uri() + "?mode=rw", uri=True, autocommit=True)
+                    target = sqlite3.connect(storage._database_uri(working), uri=True, autocommit=True)
                 storage._configure_connection(backup_source, initialize=False, protected=protected)
                 storage._configure_connection(target, initialize=True, protected=protected)
                 if _source_profile(backup_source, expected_project_id) != source_profile:
@@ -1408,7 +1409,7 @@ def _create_verified_backup(
                 target = None
                 _lock_descriptor_writes(working_descriptor)
                 locked = os.fstat(working_descriptor)
-                locked_visible = working.stat(follow_symlinks=False)
+                locked_visible = os.stat(storage._native_io_path(working), follow_symlinks=False)
                 if (
                     locked.st_nlink != 1
                     or locked_visible.st_nlink != 1
@@ -1468,7 +1469,7 @@ def _create_verified_backup(
                 # begins denying child deletion/replacement.
                 os.close(working_descriptor)
                 working_descriptor = -1
-                working.unlink()
+                os.unlink(storage._native_io_path(working))
                 # Anchor every recovery-owned entry up to the canonical state
                 # trust boundary. ADD_FILE/ADD_SUBDIRECTORY remain allowed, so
                 # later failure records and migration attempts can be created;
@@ -1501,7 +1502,7 @@ def _create_verified_backup(
                 if working_descriptor >= 0:
                     os.close(working_descriptor)
                 with suppress(OSError):
-                    working.unlink()
+                    os.unlink(storage._native_io_path(working))
                 if manifest_authority is not None:
                     manifest_authority.close()
                 if backup_authority is not None:

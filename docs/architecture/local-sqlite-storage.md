@@ -172,6 +172,19 @@ The commit repository must additionally validate current rights, draft and worke
 lease, and publish records, manifest, provenance and accepted worker output in one
 transaction. Schema presence alone does not establish that runtime behavior.
 
+### Windows schema-migration backup paths
+
+An admitted canonical source can have recovery paths beyond the ordinary Windows
+path limit. Schema-migration I/O encodes those private derived paths with the
+extended Windows spelling and uses SQLite's locking `win32-longpath` VFS. URI
+filenames are percent-quoted once before fixed read-only/read-write parameters.
+Logical authority paths and published project-relative manifests retain their
+ordinary spelling. Public device-path rejection, redirect/hardlink checks,
+exclusive creation, held identities, WAL, encrypted verified backups and recovery
+ACLs are unchanged. This addresses expanded schema-migration backup paths; it
+does not qualify every project lifecycle, protection-export, rekey or restore
+operation at arbitrary long roots.
+
 ## Repository and transaction boundary
 
 Business modules depend on the dependency-neutral `AggregateRepository`,

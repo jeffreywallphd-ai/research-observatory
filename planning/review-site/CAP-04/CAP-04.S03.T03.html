@@ -237,9 +237,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T03" data-worksheet-sha256="a9de377818ecbe10308a427896d85877093a9a229aeeab8405323c643a091571">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T03" data-worksheet-sha256="1f952fdc92321613d9178e61abe733ca877e62e0532d01308b917e91c9404902">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>a9de377818ecbe10308a427896d85877093a9a229aeeab8405323c643a091571</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>1f952fdc92321613d9178e61abe733ca877e62e0532d01308b917e91c9404902</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S03.T03 — Work versions and sourced status relationships
 
 Claim base: `0738c2543db85af8189bd0948393698b04662de6`, after the approved
@@ -355,7 +355,28 @@ commit. A successful refresh must preserve valid draft choices and explicitly
 invalidate missing source/endpoints rather than silently substitute them.
 The same row includes a Work retired by a concurrent merge: the pre-publication
 refusal must release retry, and the inventory must permit clearing stale selected
-IDs even when those Works no longer appear on the current page.</pre></article>
+IDs even when those Works no longer appear on the current page.
+
+## Admitted-path migration finding
+
+Qualification at `4f5dfbdfe828fdfca54bc233f5c672ef23a2ae73` exposed an
+inherited backup-path failure after a long temporary root was selected. A
+separate literal-v15 probe with the production Windows DPAPI key adapter and
+SQLCipher confirmed it at Core-admitted directories: roots of 120/130 characters
+migrated, while 136/138-character roots failed before migration; all predecessor
+rows, schema fingerprint and integrity remained intact. Admission here means
+the actual Core directory predicate, not a native picker or full historical
+package-open claim. Original failed checks and diagnostic logs remain retained.
+
+The missed C3 boundary is expansion from an admitted canonical database location
+to its private backup/WAL/manifest paths. Add long-path plaintext and protected
+v15 regression cases before repair, including interrupted migration, encrypted
+backup, exact prior rows, retry and reopen. Preserve canonical public admission,
+device-prefix rejection, relative manifest paths, WAL, all held file/directory
+identities, link/redirect denial and immutable backup protection. Any internal
+Windows path encoding must happen at the I/O boundary without broadening caller
+authority. This restores the still-open task&#x27;s approved migration guarantee;
+it is not an automation-maintenance exception or a new product decision.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

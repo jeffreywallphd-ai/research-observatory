@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote
 from uuid import UUID
 
 import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
@@ -3508,7 +3509,8 @@ def _project_identity(value: str) -> tuple[str, str]:
 
 def _redirect(path: Path) -> bool:
     try:
-        return path.is_symlink() or path.is_junction()
+        native = Path(_native_io_path(path))
+        return native.is_symlink() or native.is_junction()
     except OSError as error:
         raise StorageProblem("database path identity cannot be inspected") from error
 
@@ -3543,6 +3545,36 @@ def _canonical_database_path(path: Path, *, must_exist: bool) -> Path:
     return database
 
 
+def _native_io_path(path: Path) -> str:
+    """Encode a logical path for native I/O; never grant or normalize authority.
+
+    Callers retain their canonical-parent, redirect, link and held-identity
+    checks. The private encoding is not accepted as a caller-supplied path and
+    must never enter a project-relative manifest.
+    """
+    raw = str(path)
+    if os.name != "nt":
+        return raw
+    if (
+        not path.is_absolute()
+        or "\x00" in raw
+        or raw.casefold().startswith(("\\\\?\\", "\\\\.\\", "\\??\\", "\\device\\"))
+        or any(part == ".." or part.endswith((" ", ".")) for part in path.parts[1:])
+    ):
+        raise StorageProblem("native database path is not canonical")
+    return "\\\\?\\UNC\\" + raw[2:] if raw.startswith("\\\\") else "\\\\?\\" + raw
+
+
+def _database_uri(database: Path, *, mode: str = "rw") -> str:
+    if mode not in {"ro", "rw"}:
+        raise StorageProblem("database open mode is invalid")
+    if os.name == "nt":
+        # Path.as_uri treats an extended path as a URI authority. Quote the
+        # private native filename instead, retaining the locking Windows VFS.
+        return "file:" + quote(_native_io_path(database), safe="/:") + "?mode=" + mode + "&vfs=win32-longpath"
+    return database.as_uri() + "?mode=" + mode
+
+
 def _open_windows_guards(parent: Path, database: Path) -> list[int]:
     if os.name != "nt":
         return []
@@ -3574,7 +3606,7 @@ def _open_windows_guards(parent: Path, database: Path) -> list[int]:
         (database, file_flag_open_reparse_point),
     ):
         handle = create_file(
-            str(item),
+            _native_io_path(item),
             file_read_attributes,
             file_share_read | file_share_write,
             None,
@@ -3764,8 +3796,8 @@ def _connect_held(
     check_same_thread: bool = True,
     key_lease: DatabaseKeyLease | None = None,
 ) -> Any:
-    parent_before = database.parent.stat(follow_symlinks=False)
-    before = database.stat(follow_symlinks=False)
+    parent_before = os.stat(_native_io_path(database.parent), follow_symlinks=False)
+    before = os.stat(_native_io_path(database), follow_symlinks=False)
     configuration = _database_protection_configuration()
     protected = configuration.profile == SQLCIPHER_PROFILE
     if protected and configuration.provider is None:
@@ -3776,7 +3808,7 @@ def _connect_held(
     handles: list[int] = []
     connection: Any = None
     try:
-        descriptor = os.open(database, os.O_RDONLY | getattr(os, "O_BINARY", 0))
+        descriptor = os.open(_native_io_path(database), os.O_RDONLY | getattr(os, "O_BINARY", 0))
         opened = os.fstat(descriptor)
         if (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino) or opened.st_nlink != 1:
             raise StorageProblem("database identity changed before open")
@@ -3785,12 +3817,12 @@ def _connect_held(
         if protected and not create_key and header == _SQLCIPHER_HEADER:
             raise StorageProblem("production profile rejected a plaintext project database")
         handles = _open_windows_guards(database.parent, database)
-        parent_after = database.parent.stat(follow_symlinks=False)
+        parent_after = os.stat(_native_io_path(database.parent), follow_symlinks=False)
         if (parent_after.st_dev, parent_after.st_ino) != (parent_before.st_dev, parent_before.st_ino) or _redirect(
             database.parent
         ):
             raise StorageProblem("database parent identity changed during open")
-        uri = database.as_uri() + "?mode=rw"
+        uri = _database_uri(database)
         if protected:
             assert configuration.provider is not None
             assert project_id is not None
@@ -3819,7 +3851,7 @@ def _connect_held(
                 check_same_thread=check_same_thread,
             )
             connection.row_factory = sqlite3.Row
-        after = database.stat(follow_symlinks=False)
+        after = os.stat(_native_io_path(database), follow_symlinks=False)
         if (after.st_dev, after.st_ino) != (before.st_dev, before.st_ino) or after.st_nlink != 1 or _redirect(database):
             raise StorageProblem("database identity changed during open")
         connection._guard_descriptor = descriptor

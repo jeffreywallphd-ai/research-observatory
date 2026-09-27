@@ -114,3 +114,24 @@ invalidate missing source/endpoints rather than silently substitute them.
 The same row includes a Work retired by a concurrent merge: the pre-publication
 refusal must release retry, and the inventory must permit clearing stale selected
 IDs even when those Works no longer appear on the current page.
+
+## Admitted-path migration finding
+
+Qualification at `4f5dfbdfe828fdfca54bc233f5c672ef23a2ae73` exposed an
+inherited backup-path failure after a long temporary root was selected. A
+separate literal-v15 probe with the production Windows DPAPI key adapter and
+SQLCipher confirmed it at Core-admitted directories: roots of 120/130 characters
+migrated, while 136/138-character roots failed before migration; all predecessor
+rows, schema fingerprint and integrity remained intact. Admission here means
+the actual Core directory predicate, not a native picker or full historical
+package-open claim. Original failed checks and diagnostic logs remain retained.
+
+The missed C3 boundary is expansion from an admitted canonical database location
+to its private backup/WAL/manifest paths. Add long-path plaintext and protected
+v15 regression cases before repair, including interrupted migration, encrypted
+backup, exact prior rows, retry and reopen. Preserve canonical public admission,
+device-prefix rejection, relative manifest paths, WAL, all held file/directory
+identities, link/redirect denial and immutable backup protection. Any internal
+Windows path encoding must happen at the I/O boundary without broadening caller
+authority. This restores the still-open task's approved migration guarantee;
+it is not an automation-maintenance exception or a new product decision.

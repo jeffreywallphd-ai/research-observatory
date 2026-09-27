@@ -12,6 +12,8 @@ affected_paths:
   - services/core-api/src/research_observatory_core/ports/reconciliation.py
   - services/core-api/src/research_observatory_core/reconciliation*
   - services/core-api/src/research_observatory_core/storage/**
+  - services/core-api/src/research_observatory_core/storage.py
+  - services/core-api/src/research_observatory_core/migrations/runner.py
   - quality-scope.json
   - packaging/build-inputs.json
 supersedes: []

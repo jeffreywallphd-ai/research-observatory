@@ -1,9 +1,13 @@
 """Populated v15 candidate, identity and unfinished impact history survives v16."""
 
+import importlib
+import os
 import sqlite3
 import unittest
 from contextlib import closing
+from pathlib import Path
 from unittest.mock import patch
+from urllib.parse import quote
 
 import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
 from research_observatory_core import storage
@@ -21,6 +25,7 @@ class VersionMigrationTests(unittest.TestCase):
     def setUp(self):
         fixture = fixtures.SqliteMigrationTests()
         fixture.setUp()
+        self.fixture = fixture
         self.addCleanup(fixture.tearDown)
         self.database = fixture.database
         self.before = restore_v15(self.database)
@@ -35,6 +40,74 @@ class VersionMigrationTests(unittest.TestCase):
             self.assertGreater(db.execute("SELECT COUNT(*) FROM reconciliation_exact_impacts").fetchone()[0], 0)
             self.assertEqual(102, len(self.before["dependentRevisionIds"]))
             self.assertEqual("ok", db.execute("PRAGMA quick_check").fetchone()[0])
+
+    @unittest.skipUnless(os.name == "nt", "Windows migration backup path boundary")
+    def test_long_plaintext_backup_preserves_literal_rows_and_relative_authority(self):
+        # Same owned temporary root, encoded so the existing ACL reset/rmtree
+        # cleanup can enumerate the newly exercised long recovery paths.
+        self.fixture.temporary.name = "\\\\?\\" + self.fixture.temporary.name
+        parent = self.database.parents[2]
+        root = parent / ("p" * (210 - len(str(parent)) - 1))
+        database = root / "state/project.sqlite3"
+        before = restore_v15(database)
+        result = runner.migrate_database(database, expected_project_id=self.project)
+        backup = root / str(result.backup_relative_path)
+        self.assertGreater(len(str(backup)), 260)
+        self.assertNotIn("\\", str(result.backup_relative_path))
+        uri = "file:" + quote("\\\\?\\" + str(backup), safe="/:") + "?mode=ro&vfs=win32-longpath"
+        with closing(sqlite3.connect(uri, uri=True, autocommit=True)) as saved:
+            self.assertEqual(SCHEMA_SHA, storage._schema_fingerprint(saved))
+            for table, rows in before["tables"].items():
+                self.assertEqual(rows, [list(row) for row in saved.execute('SELECT * FROM "' + table + '"')], table)
+        with storage.open_canonical_database(database, expected_project_id=self.project) as current:
+            self.assertEqual(16, current.execute("PRAGMA user_version").fetchone()[0])
+
+    @unittest.skipUnless(os.name == "nt", "Windows native filename and locking boundary")
+    def test_native_uri_preserves_literal_names_modes_and_shared_wal_locks(self):
+        parent = self.database.parents[2]
+        for adapter in (sqlite3, sqlcipher):
+            with self.subTest(adapter=adapter.__name__):
+                folder = parent / adapter.__name__ / "réview %23 #&"
+                folder.mkdir(parents=True)
+                database = folder / "literal%20name.sqlite3"
+                with closing(adapter.connect(str(database), isolation_level=None)) as seed:
+                    seed.execute("PRAGMA journal_mode=WAL")
+                    seed.execute("CREATE TABLE probe(value INTEGER)")
+                    seed.execute("INSERT INTO probe VALUES(1)")
+                with (
+                    closing(
+                        adapter.connect(database.as_uri() + "?mode=rw", uri=True, isolation_level=None)
+                    ) as ordinary,
+                    closing(
+                        adapter.connect(storage._database_uri(database), uri=True, isolation_level=None)
+                    ) as extended,
+                    closing(
+                        adapter.connect(storage._database_uri(database, mode="ro"), uri=True, isolation_level=None)
+                    ) as reader,
+                ):
+                    ordinary.execute("PRAGMA busy_timeout=1")
+                    reader.execute("BEGIN")
+                    self.assertEqual(1, reader.execute("SELECT value FROM probe").fetchone()[0])
+                    extended.execute("BEGIN IMMEDIATE")
+                    extended.execute("UPDATE probe SET value=2")
+                    with self.assertRaisesRegex(adapter.OperationalError, "locked"):
+                        ordinary.execute("BEGIN IMMEDIATE")
+                    extended.execute("COMMIT")
+                    self.assertEqual(1, reader.execute("SELECT value FROM probe").fetchone()[0])
+                    reader.execute("COMMIT")
+                    self.assertEqual(2, reader.execute("SELECT value FROM probe").fetchone()[0])
+                    with self.assertRaisesRegex(adapter.OperationalError, "readonly"):
+                        reader.execute("UPDATE probe SET value=3")
+                    ordinary.execute("BEGIN IMMEDIATE")
+                    ordinary.execute("ROLLBACK")
+                missing = folder / "missing.sqlite3"
+                with self.assertRaises(adapter.OperationalError):
+                    adapter.connect(storage._database_uri(missing), uri=True)
+                self.assertFalse(missing.exists())
+                self.assertFalse((folder / "literal name.sqlite3").exists())
+        for value in ("\\\\?\\" + str(self.database), "\\\\.\\" + str(self.database)):
+            with self.subTest(prefix=value[:4]), self.assertRaises(storage.StorageProblem):
+                storage.open_canonical_database(Path(value), expected_project_id=self.project)
 
     def test_migration_preserves_every_prior_row_and_backup_then_resumes_pending_impacts(self):
         plan = runner.plan_database_migration(self.database, expected_project_id=self.project)
@@ -104,6 +177,74 @@ class VersionMigrationTests(unittest.TestCase):
 
 
 class ProtectedVersionMigrationTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Windows migration backup path boundary")
+    def test_long_backup_paths_preserve_encrypted_predecessor_on_failure_retry_and_reopen(self):
+        from research_observatory_core.migrations.versions import v0016_work_versions as migration
+        from research_observatory_core.windows_credentials import create_windows_database_key_provider
+
+        fixture = importlib.import_module("tests.security.test_protected_database").ProtectedDatabaseTests()
+        fixture.setUp()
+        self.addCleanup(fixture.tearDown)
+        fixture.temporary.name = "\\\\?\\" + fixture.temporary.name
+        fixture.keys = create_windows_database_key_provider(fixture.root / "vault")
+        storage.configure_protected_database_provider(fixture.keys)
+        before = restore_v15(fixture.root / "legacy/state/project.sqlite3")
+        identity = before["projectId"]
+        component = "réview %23 #& "
+        root = fixture.root / (component + "p" * (210 - len(str(fixture.root)) - len(component) - 1))
+        (root / "state").mkdir(parents=True)
+        (root / ".tmp").mkdir()
+        database = root / "state/project.sqlite3"
+        with fixture.keys.active_key(identity, create=True) as lease:
+            material = lease.use(bytes)
+        with closing(sqlcipher.connect(str(fixture.root / "legacy/state/project.sqlite3"))) as source:
+            source.execute("ATTACH DATABASE ? AS protected KEY ?", (str(database), f"x'{material.hex()}'"))
+            source.execute("SELECT sqlcipher_export('protected')").fetchone()
+            source.execute(f"PRAGMA protected.application_id={storage.APPLICATION_ID}")
+            source.execute("PRAGMA protected.user_version=15")
+            self.assertEqual("wal", source.execute("PRAGMA protected.journal_mode=WAL").fetchone()[0])
+            source.execute("DETACH DATABASE protected")
+
+        def fail(step):
+            if step == "user-version-advance":
+                raise ValueError("synthetic-long-path-interruption")
+
+        with (
+            patch.object(migration, "_migration_step_completed", side_effect=fail) as injected,
+            self.assertRaises(runner.MigrationProblem),
+        ):
+            runner.migrate_database(database, expected_project_id=identity)
+        injected.assert_any_call("user-version-advance")
+        self.assertEqual(
+            15, runner.plan_database_migration(database, expected_project_id=identity).source_schema_version
+        )
+        result = runner.migrate_database(database, expected_project_id=identity)
+        backup = root / str(result.backup_relative_path)
+        self.assertGreater(len(str(backup)), 260)
+        self.assertNotIn("\\", str(result.backup_relative_path))
+        self.assertFalse(tuple(Path("\\\\?\\" + str(root / "state/migration-backups")).glob("*/.working-*")))
+        for path, version in ((backup, 15), (database, 16), (database, 16)):
+            self.assertNotEqual(b"SQLite format 3\x00", Path("\\\\?\\" + str(path)).read_bytes()[:16])
+            # Independent read-only SQLCipher reader; no production URI helper.
+            uri = "file:" + quote("\\\\?\\" + str(path), safe="/:") + "?mode=ro&vfs=win32-longpath"
+            with closing(sqlcipher.connect(uri, uri=True, isolation_level=None)) as saved:
+                saved.execute(f"PRAGMA key=\"x'{material.hex()}'\"")
+                self.assertEqual(version, saved.execute("PRAGMA user_version").fetchone()[0])
+                if version == 15:
+                    self.assertEqual(SCHEMA_SHA, storage._schema_fingerprint(saved))
+                self.assertEqual([], saved.execute("PRAGMA cipher_integrity_check").fetchall())
+                self.assertEqual("ok", saved.execute("PRAGMA quick_check").fetchone()[0])
+                for table, rows in before["tables"].items():
+                    if version == 15 or table not in {"schema_metadata", "schema_migrations"}:
+                        self.assertEqual(
+                            rows, [list(row) for row in saved.execute('SELECT * FROM "' + table + '"')], table
+                        )
+
+        for _ in range(2):
+            with storage.open_canonical_database(database, expected_project_id=identity) as reopened:
+                self.assertEqual(16, reopened.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual("ok", reopened.execute("PRAGMA quick_check").fetchone()[0])
+
     def test_encrypted_v15_failure_backup_retry_and_reopen_preserves_every_row(self):
         from research_observatory_core.migrations.versions import v0016_work_versions as migration
 
