@@ -1,0 +1,120 @@
+{
+  "task_id": "CAP-04.S03.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+  "base_commit": "0738c2543db85af8189bd0948393698b04662de6",
+  "reviewer": "agent:/root/w2_t03_review",
+  "result": "approved",
+  "evidence_sha256": "5c6991e069104850768da06dcffd901930201250e0e2b32fbd29178963ca4320",
+  "packet_sha256": "59f666cf2404fe4379d802f304bb6a091d340bb28f7a69244ad6336e678cce70",
+  "acceptance_criteria_sha256": "0f619b1058645fcd53c7e5d542e090d6e29948b302b7fabf8f74ab2d249d4140",
+  "selection_sha256": "b13fe747f543f201b6528b8e0259f61343e0b56584ea577163756a86c5b2901a",
+  "notes": "Independent expanded task review approves the exact frozen R01 candidate under approved CAP-04.S03 section 9.3, immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, accepted ADR-0013/0014/0024/0025/0027 and experience reference RO-UI-ACADEMIC-MINIMAL-1.7. The reviewer is independent of owner codex-w2-implementation, authored no implementation or qualification producer, and made no product, test, backlog or Git changes. Prior expanded source review and independently reproduced advisory findings were reused, with incremental review of the stale-publication refusal, retired-Work recovery, authority metadata and shared Windows migration-path restoration. Authenticated the actual persisted REVIEW/current_submission, canonical evidence/packet/criteria/selection hashes, base ancestry, exact 66-path base-to-candidate inventory, all 26 fresh selected checks against three producer receipts and raw output, both runtime report files directly, build report and all 40 manifest-retained adverse references. Read-only task_submission_packet_errors and validate_task_evidence returned no errors. No blocking criterion-bound finding remains. R01 is the first controlled taskctl round; earlier advisory findings and failed qualification attempts remain distinct and are not invented prior controlled rounds. This approves CAP-04.S03.T03 only, not slice/checkpoint completion, Wave exit, release or a change to approved authority.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Reviewed domain/repository, current-source service, public/generated-client, native admission and production renderer paths keep Work, WorkVersion, source assertion, relation and human preference identities distinct. Version and notice taxonomy, exact sourced endpoints, selectors/digests, explicit date precision, preference standing and historical revisions remain visible without an inferred newest-version preference or rights grant. Fresh repository cases test_all_sourced_notice_kinds_and_version_cycles_preserve_exact_history, test_correction_keeps_historical_preference_and_immediately_denies_dependent_reuse and test_preference_state_stays_explicit_and_reselecting_retracted_version_keeps_warning establish sourced warnings, retained prior decisions and immediate fresh-input denial. Preference publication depends materially on its new Work head; changed membership or version status requires explicit review/reselection. Owned impacts retain immutable command history and recover through authenticated continuation. The fresh Windows native supervisor/generated client/production React/Core/DPAPI/SQLCipher test performs version preference, sourced retraction, identical retry, historical reread and process restart with synthetic accepted import/retained connector records. Browser/Core tests additionally establish drafts, focus/keyboard behavior, warning text and recovery."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "All 26 selected checks pass at the exact candidate. Reconciliation executes 189 tests, dependency impacts 15, inherited migration chain 31, protected storage 11 and shared contracts 37. Material executed boundaries include subtype/response identity attacks, source/field/revision substitutions, current supporting-source rights on reads and identical retries, actor/command/context changes, competing writers, atomic publication failures, merge/split placement and preference history, pending/partial impacts and restart. test_version_owned_partial_impacts_recover_after_growth_and_cancellation_stays_terminal exercises the 100-of-102 boundary, graph growth, continuation fault seams and terminal cancellation. Fresh API/browser cases distinguish proven unpublished stale refusal from ambiguous conflicts after actual publication and lost replies. Literal populated v15 migration cases preserve exact predecessor rows/fingerprint, verify backup, inject all eight v16 interruption seams, retry and resume retained impact history. Actual Windows DPAPI/SQLCipher long-backup interruption/retry/reopen, plaintext long backup and mixed ordinary/extended URI locking cases close the observed admitted-source backup expansion failure. No fresh execution by this reviewer is claimed; this disposition authenticates the owner's executed checks and inspected assertions."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The additive v16 migration retains the frozen v15 predecessor and supplies seven version authority tables for a 77-table schema. Existing canonical transaction, provenance/outbox, sealed Work membership and owned impact machinery remain the authority; there is no parallel scholarly store or automatic adjudication. Fresh generated JSON/OpenAPI/TypeScript checks, portable fixture/client checks, affected lint/format/types, desktop/native checks, build, architecture/inventory, ADR/UI-reference and planning checks pass. Documentary proposed ADR-0033 records application of existing accepted decisions and does not grant new authority. Experience metadata binds approved reference 1.7 rather than changing it. The bounded shared Windows repair changes internal I/O spelling/once-quoted locking URI construction while preserving logical public path admission, device-prefix rejection, handle access/share masks, no-reparse/link/identity checks, encrypted backup protection, WAL and project-relative manifests. Source review agrees with the separately documented migration preflight by agent:/root/w2_t02_disposition; its requested exact backup fingerprint and ordinary protected reopen assertions are present and freshly executed. No unrelated scope expansion or refactoring allocation is used."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "pre_submission_closures": [
+    {
+      "boundary": "Distinct canonical subtypes and truthful response identity",
+      "status": "fixed",
+      "criterion_indices": [1, 2, 3],
+      "evidence": "The initial advisory SQL/DTO findings admitted Work genesis reuse as a version and impossible predecessor/placement states. Fresh test_version_storage directly denies Work-to-version, version-to-Work, unrelated-decision-to-preference and Work-to-relation identity reuse. Strict version domain/portable contract tests reject impossible response relationships while accepting JSON arrays without weakening scalar types. Existing v15 fixture identities and history remain unchanged."
+    },
+    {
+      "boundary": "Old preference must not reactivate after a restored membership partition",
+      "status": "fixed",
+      "criterion_indices": [1, 2],
+      "evidence": "test_restoring_original_partition_does_not_reactivate_old_preference passes in qualification05. Preference standing binds its already-stored base Work revision and command decision to the exact published Work lineage, in addition to membership/version/status checks. Merge, restored original partition and restart cannot silently reselect the old preference; explicit reselection is required. The original advisory reproduction remains recorded in the worksheet."
+    },
+    {
+      "boundary": "Preference consumers must immediately lose fresh-input eligibility after membership changes",
+      "status": "fixed",
+      "criterion_indices": [1, 2],
+      "evidence": "Preference now follows and materially depends on the new Work head, selected version and decision; Work does not depend materially on preference, avoiding a cycle. test_preference_consumer_is_denied_atomically_when_work_membership_changes proves immediate denial and restart propagation. test_preference_reselection_rollback_preserves_fresh_consumer_then_retry_recovers_impacts faults actual preference publication seams, requires unchanged counts and predecessor freshness after rollback, then verifies exact retry and recovery. This closes the earlier relation-only fault-proof gap without changing historical receipts."
+    },
+    {
+      "boundary": "Definitively unpublished stale commands must release the retry lock while ambiguous outcomes retain exact retry",
+      "status": "fixed",
+      "criterion_indices": [1, 2],
+      "evidence": "After exact replay finds no saved command, only the narrow unpublished-preview boundary translates predecessor change, expected-preview mismatch or a retired Work into the dedicated 409 non-publication code. Authorization, replay/integrity and publication conflicts remain outside it. Fresh test_stale_unpublished_commit_is_distinct_from_published_command_conflict, test_stale_commit_refresh_preserves_draft_and_requires_new_preview, test_ambiguous_conflict_keeps_exact_command_after_actual_publication and test_retired_work_refusal_proves_no_version_publication pass. The renderer releases only this proven refusal, retains valid draft choices, requires refreshed context/new preview, exposes unavailable selections and permits clearing retired/off-page Work selections. Genuine lost-reply and post-publication generic-conflict retry remain exact. Original stale-red and retired-red logs are retained."
+    },
+    {
+      "boundary": "Approved metadata and precise qualification claims",
+      "status": "fixed",
+      "criterion_indices": [2, 3],
+      "evidence": "Fresh ADR/UI range checks authenticate documentary ADR-0033 and existing approved-reference experience lineage that were missing at the first qualification candidate. The final evidence builder asserts exact candidate/clean tree and exact 5/8/13 check-ID inventories before emitting the manifest. The review independently confirms all 26 entries and hashes, rather than treating narrative or a partial group receipt as execution proof. Original qualification01 governance/native failures and the later qualification02 migration failures remain preserved, with their actual candidate and environment limits."
+    },
+    {
+      "boundary": "Migration backup expansion from admitted logical paths",
+      "status": "fixed",
+      "criterion_indices": [2, 3],
+      "evidence": "Qualification02 and actual Windows DPAPI/SQLCipher probes reproduced backup/native I/O failures at admitted source locations; narrower original-TEMP passes did not waive them. The internal extended native spelling and percent-quoted win32-longpath locking VFS preserve public authority and recovery invariants. Fresh test_long_backup_paths_preserve_encrypted_predecessor_on_failure_retry_and_reopen, test_long_plaintext_backup_preserves_literal_rows_and_relative_authority and test_native_uri_preserves_literal_names_modes_and_shared_wal_locks execute at 99e95a87. They establish exact encrypted predecessor rows/fingerprint, intended interruption, retry, ordinary protected reopen, literal Unicode/percent/punctuation identity, cross-spelling WAL snapshots/writer exclusion, read-only/no-create behavior and unchanged public device-prefix denial. Shared migration-chain and protected-storage checks also pass. This is bounded restoration, not universal path support."
+    }
+  ],
+  "evidence_authentication": {
+    "changed_path_count": 66,
+    "selected_check_count": 26,
+    "producer_receipts": [
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T03.core-qual-05.json",
+        "sha256": "f1f58c0476576a1afdb790ada2ed6cb97ff7d2a3de3a42eac182d2672a7cc46c",
+        "checks": 5
+      },
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T03.desktop-qual-05.json",
+        "sha256": "269648da0cec414e24ab9a47f884a72989d01d02a06977990359497c8c714d01",
+        "checks": 8
+      },
+      {
+        "path": "artifacts/tmp/CAP-04.S03.T03.foundation-qual-05.json",
+        "sha256": "ffdb51b1690390c88152cbc1b5db6d9c0c029883beb82518590b06dbd8230efc",
+        "checks": 13
+      }
+    ],
+    "producer_implementation": {
+      "path": "artifacts/tmp/CAP-04.S03.T03.qualify-05.py",
+      "sha256": "12d730e6fdf379513407e808028bb5905c752715e35fcb7134c9c69a7bd0e2e0"
+    },
+    "runtime_reports": [
+      {
+        "path": "artifacts/tmp/reconciliation-native-bih1r49f/result.json",
+        "sha256": "723055ddb89609035ba37c5a8db8731f3d0c88329df2e8e3ae194e057cb69a14",
+        "authentication": "Independent direct raw-byte digest and parsed-data equality with the fresh producer output; assessed with executed native assertions."
+      },
+      {
+        "path": "artifacts/tmp/reconciliation-runtime-fwtbh2ed/result.json",
+        "sha256": "b47eb90df83e20a2e56f7396bff965aba624f1215732c3b2b866fe5d47f8c3e8",
+        "authentication": "Independent direct raw-byte digest and parsed-data equality with the fresh producer output; assessed with executed runtime assertions."
+      }
+    ],
+    "assessment": "Every selected record matches the exact frozen candidate, exit 0, command and raw output digest. Core summaries are 189/15/31/11/37 tests; client 135 pass, desktop 159 pass with three skips, native 153 pass with one ignored witness. Producer checks clean fixed HEAD before and after each process; only native-library tests receive the confined TEMP override. Subsequent task submission and generated metadata are not represented as product/test changes during qualification. The final manifest's canonical and raw SHA256 are equal."
+  },
+  "adverse_history": {
+    "authenticated_manifest_reference_count": 40,
+    "assessment": "All 40 manifest-retained adverse/reference files authenticate to their exact recorded raw-byte digests; all 17 explicit bindings in pre-submission-review-02.md also authenticate. The foundation worksheet, subtype/preference advisory reproductions, stale/retired-command red tests, qualification01 native ancestry and governance failures, qualification02 migration-path failures, original-TEMP selected replays, protected-path diagnostic probes and cleanup failures remain truthful history. Dirty prototype probes are exploratory and are not relabeled as committed qualification. The new portable work-version fixture's flagged record keys were independently reproduced as synthetic content digests; only its illustrative address placeholders and context digest changed, with documentation. Historical predecessor fixtures and privacy hook/admission authority remain unchanged. No prior controlled review rounds are invented."
+  },
+  "limitations": [
+    "All provider records and transport in these checks are synthetic. The actual native supervisor, generated client, production renderer, Core, Windows principal, DPAPI and SQLCipher boundaries are exercised; live provider availability or external-service qualification is not claimed.",
+    "Browser keyboard/focus/theme/responsive and CSS-scale checks do not establish full native DPI, shell or comprehensive accessibility qualification. Desktop retains three conditional native-settings skips; cargo retains one ignored application_lock::tests::renderer_contract_witness, whose separate settings harness was not executed here.",
+    "The original protected-path probes establish the Core directory predicate and actual protected database behavior, not historical native-picker/full-package admission. Fresh path tests cover schema-migration backup expansion, interrupted recovery and ordinary protected reopen. Universal project-creation, protection-export, rekey or restore long-path support is not claimed; existing ordinary protected-storage tests passing does not extend that claim.",
+    "Affected typing covers 21 changed Python files with follow-imports=silent and excludes historical tests/data migration fixtures. Existing full-quality 55-error/13-file observations and inherited native Clippy warnings remain unresolved Wave obligations, not waived failures.",
+    "The previously delivered T02 review-queue impact/uncertainty ordering obligation remains for its separate lawful correction route. S03 integrated performance and independent slice review, shared-interface checkpoint, full affected/repository profiles, fresh cross-capability W2 security/privacy/rights/accessibility/performance/packaging/platform qualification, independent Wave review and the human release gate remain required.",
+    "This ledger authorizes no scope, security, migration-guarantee, governed-reference or release-criterion change. It is an independent task disposition and does not itself mutate taskctl state, integrate or publish anything."
+  ]
+}

@@ -1,0 +1,642 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S03.T03",
+  "baseCommit": "0738c2543db85af8189bd0948393698b04662de6",
+  "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/reconciliation_admission.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/ReconciliationPane.tsx",
+    "apps/desktop/src/app/ReconciliationVersionsPane.tsx",
+    "artifacts/evidence/CAP-04.S03.T03.foundation-progress.md",
+    "artifacts/evidence/CAP-04.S03.T03.pre-submission-review-01.md",
+    "artifacts/evidence/CAP-04.S03.T03.pre-submission-review-02.md",
+    "artifacts/evidence/CAP-04.S03.T03.task-start.md",
+    "artifacts/evidence/ui-change/CAP-04.S03.T03.json",
+    "docs/adr/ADR-0033-document-work-versions-under-existing-canonical-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/architecture/scholarly-reconciliation.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/scholarly-records/README.md",
+    "packages/contracts/scholarly-records/version-command.schema.json",
+    "packages/contracts/scholarly-records/version-context.schema.json",
+    "packages/contracts/scholarly-records/version-outcome.schema.json",
+    "packages/contracts/scholarly-records/version-plan.schema.json",
+    "packages/contracts/scholarly-records/version-preview.schema.json",
+    "packages/contracts/scholarly-records/version-work-page.schema.json",
+    "packages/contracts/scholarly-records/work-version.schema.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S03.T03.html",
+    "planning/review-site/CAP-04/CAP-04.S03.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py",
+    "services/core-api/src/research_observatory_core/ports/reconciliation.py",
+    "services/core-api/src/research_observatory_core/reconciliation/versions.py",
+    "services/core-api/src/research_observatory_core/reconciliation_api.py",
+    "services/core-api/src/research_observatory_core/reconciliation_repository.py",
+    "services/core-api/src/research_observatory_core/reconciliation_service.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/data/test_import_commit_migration.py",
+    "tests/data/test_import_preview_migration.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/fixtures/scholarly-metadata/README.md",
+    "tests/fixtures/scholarly-metadata/schema-v15-authority.json",
+    "tests/fixtures/scholarly-metadata/schema-v15-populated.json",
+    "tests/fixtures/scholarly-metadata/work-versions.v1.json",
+    "tests/reconciliation/build-renderer.mjs",
+    "tests/reconciliation/test_migration.py",
+    "tests/reconciliation/test_native_renderer.py",
+    "tests/reconciliation/test_renderer.py",
+    "tests/reconciliation/test_review_migration.py",
+    "tests/reconciliation/test_version_api.py",
+    "tests/reconciliation/test_version_client.py",
+    "tests/reconciliation/test_version_migration.py",
+    "tests/reconciliation/test_version_repository.py",
+    "tests/reconciliation/test_version_storage.py",
+    "tests/reconciliation/test_versions.py",
+    "tests/reconciliation/verify-version-client.mjs",
+    "tests/reconciliation/version_predecessor.py",
+    "tools/core_api_contract.py",
+    "tools/core_api_reconciliation.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh reconciliation check executes test_correction_keeps_historical_preference_and_immediately_denies_dependent_reuse, test_preference_state_stays_explicit_and_reselecting_retracted_version_keeps_warning, and test_all_sourced_notice_kinds_and_version_cycles_preserve_exact_history. Explicit citable preference retains warning/status relationships and prior revisions; correction/retraction effects deny fresh-only dependent reuse and propagate through owned impact history rather than deleting source facts.",
+        "Fresh renderer cases exercise classification, precise/missing dates, preference, sourced warning, retained revision inspection and identical lost-reply retry. test_native_review_retry_reversal_and_restart_preserve_protected_history traverses actual Windows native supervisor/generated client/production React/Core/DPAPI/SQLCipher, accepted import plus retained connector, split/merge, version preference, sourced retraction, exact retry, process restart and native authority-injection denial. Provider transport and records are synthetic; this is not a live-provider claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh test_versions, test_version_storage, test_version_repository, test_version_api and test_version_client cases cover distinct exact identities/subtypes, source selector/value-digest and revision substitutions, date precision, notice kind/cycle denial, current rights and actor checks, concurrent decisions, merge/split placement and preference lineage, and atomic publication faults. test_version_owned_partial_impacts_recover_after_growth_and_cancellation_stays_terminal exercises 100-of-102 partial impacts, graph growth, continuation fault seams, restart draining and terminal cancellation. Preference-consumer cases prove immediate denial followed by durable recovery.",
+        "The actual Core stale-command regression distinguishes definitive non-publication from a saved-command conflict. Browser regressions prove draft-preserving refresh/new preview and generic conflict after actual publication followed by exact saved-command retry. The retired-Work repository regression proves unchanged canonical row counts after refusal. Existing renderer denial clearing, late-result clearing, keyboard/Escape/focus, both themes and responsive/CSS-scale cases pass.",
+        "Fresh test_version_migration verifies literal populated v15 rows and fingerprints, verified backup, material interruption restoration/retry, unfinished impact continuation and real Windows SQLCipher backup/reopen. Shared migration-chain/storage/API/dependency and protected-storage tests cover affected inherited boundaries. Three new Windows path cases prove long plaintext/encrypted backup and interrupted recovery, literal URI identity, shared WAL reader/writer locks, read-only/no-create modes and unchanged public device-prefix denial."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Fresh generated JSON/OpenAPI/TypeScript checks, portable version fixture/schema validation, 77-table schema inventory, affected lint/format/types, client/desktop/native tests/build/format, architecture/repository/fixture/ADR/UI-reference/build-input and planning checks pass. v16 extends existing canonical transactions and the reconciliation port without a parallel store, automatic scholarly adjudication or rights grant. Literal v15 predecessor fixtures remain unchanged.",
+        "Proposed documentary ADR0033 records implementation under accepted ADR0013/0014/0024/0025/0027 and frozen W2 approval. Experience lineage binds existing approved reference1.7. Task-start and pre-submission records preserve identity, preference-lineage and stale-recovery findings, original failures and their regressions; original qualification failures are retained. No approved scope, migration guarantee, release criterion or reference was changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:reconciliation",
+      "service:unit",
+      "data:unit",
+      "contracts:unit",
+      "graph:unit",
+      "security-local:unit",
+      "desktop:application",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:repository-structure",
+      "foundation:fixture-corpus",
+      "foundation:adr",
+      "foundation:ui-change",
+      "foundation:build-manifest",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Fresh affected reconciliation, shared migration-chain, protected-storage, dependency and contract checks cover WorkVersion/public contracts, canonical repository/impact ownership, additive v16 historical compatibility, current source authority, generated client/native admission and renderer recovery. The shared Windows storage I/O repair warrants the complete reconciliation selection plus inherited migration substitution/hardlink/ACL, storage-schema and protected backup/rekey/restore checks. Three targeted path cases cover expanded plaintext/protected migration recovery paths and real mixed-spelling locking. Every selected check executes fresh at this fixed clean candidate; native library TEMP alone is confined to ignored repository artifacts. Historical broad failures and exploratory repairs remain retained, not relabeled as passing checks.",
+    "deferred": [
+      "The admitted-source schema-migration backup defect is restored within T03 C3 and independently preflighted. The fresh long-path regression uses actual Windows DPAPI plus SQLCipher, verifies encrypted v15 backup rows/fingerprint, injected rollback, retry, internal cleanup and ordinary protected reopen. Core public device-path rejection remains. This does not claim universal long-path support for project creation, protection-export, rekey or restore operations.",
+      "Full repository/service/data/graph/desktop/security/packaging profiles, S03 performance and slice review, shared-interface checkpoint, fresh W2 qualification and human release gate remain required. The slice preparation review also identified the previously delivered T02 review-queue impact/uncertainty ordering obligation for the separate lawful correction route; it is not claimed complete by T03.",
+      "Affected typing checks changed Python files except historical tests/data migration fixtures, using --follow-imports=silent. The existing full-quality 55-error/13-file observation and inherited native Clippy warnings remain unresolved W2 obligations, not waived failures.",
+      "Desktop tests retain three conditional native-settings skips and cargo retains one ignored application_lock::tests::renderer_contract_witness. Its separate settings harness was not executed here. Browser CSS scaling is not full native DPI/shell/accessibility qualification; LOC/LAB Windows execution does not qualify later platforms or live external providers."
+    ]
+  },
+  "checks": [
+    {
+      "id": "reconciliation",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest discover -v -s tests/reconciliation -p test_*.py",
+      "exitCode": 0,
+      "elapsedSeconds": 619.8958197999746,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.reconciliation-qual-05.log",
+      "rawOutputSha256": "c05d407f14353b62c1913794dec394b9e9771e4f774f50218021ed0f866639c1",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Ran 189 tests in 617.250s OK"
+    },
+    {
+      "id": "dependency-impacts",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.graph.test_dependency_impacts",
+      "exitCode": 0,
+      "elapsedSeconds": 4.341331899864599,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.dependency-impacts-qual-05.log",
+      "rawOutputSha256": "a83b30f9b7891ae35958519413b5d10fa8763b41a163ab9a423a8658c1106368",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Ran 15 tests in 3.682s OK"
+    },
+    {
+      "id": "migration-chain",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_migrations tests.data.test_import_preview_migration tests.data.test_import_summary_migration tests.data.test_import_commit_migration",
+      "exitCode": 0,
+      "elapsedSeconds": 48.58286829991266,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.migration-chain-qual-05.log",
+      "rawOutputSha256": "81ed3df72e1a7311993f56fad5890de1deb0e7e305633bf35230aa0ecae93d4a",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Ran 31 tests in 47.393s OK"
+    },
+    {
+      "id": "protected-storage",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.security.test_protected_database",
+      "exitCode": 0,
+      "elapsedSeconds": 5.1518166998866946,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.protected-storage-qual-05.log",
+      "rawOutputSha256": "314c8c5dfa27f2c03e1d6ef7706e9db8a54845271bc1fe0ae35fc7066d8c6fbe",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Ran 11 tests in 4.005s OK"
+    },
+    {
+      "id": "shared-contracts",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_schema tests.service.test_core_api tests.contracts.test_protected_database_contract tests.foundation.test_architecture_check",
+      "exitCode": 0,
+      "elapsedSeconds": 14.379262099973857,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.shared-contracts-qual-05.log",
+      "rawOutputSha256": "d2d58c99e9f4979120e179cda74319c16991915e00c463981c1cbc25e3a55b6f",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Ran 37 tests in 12.254s OK"
+    },
+    {
+      "id": "client-types",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts run typecheck",
+      "exitCode": 0,
+      "elapsedSeconds": 0.829770099837333,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.client-types-qual-05.log",
+      "rawOutputSha256": "70685b4df7789c854b9e1ceab7d78a6d0f9a0831c11eb0010b7b5fdbe0e50c39",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "client-tests",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir packages/contracts run test",
+      "exitCode": 0,
+      "elapsedSeconds": 1.2749191999901086,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.client-tests-qual-05.log",
+      "rawOutputSha256": "3160530ed87e58a8baf775787ecb1686282f0f2a40242934df742402fe92b7b0",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "desktop-types",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run typecheck",
+      "exitCode": 0,
+      "elapsedSeconds": 0.8434250999707729,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.desktop-types-qual-05.log",
+      "rawOutputSha256": "8366207267355d3e3d5bf3bf6e8c94c5f93f6078c34f08973fa2b38cdda6cc92",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "desktop-lint",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run lint",
+      "exitCode": 0,
+      "elapsedSeconds": 0.37860359996557236,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.desktop-lint-qual-05.log",
+      "rawOutputSha256": "f78ede1982f71d1f223b387397a8ac36d4e569cb5133d0d9e5e7c5292c13513d",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "desktop-tests",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run test",
+      "exitCode": 0,
+      "elapsedSeconds": 1.739178700139746,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.desktop-tests-qual-05.log",
+      "rawOutputSha256": "69f08956c523ba70d45a5024a34de862fc2c48a53e74e79a61bdddba03517483",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "desktop-build",
+      "command": ".local\\toolchains\\node-v24.19.0-win-x64\\corepack.cmd pnpm --dir apps/desktop run build",
+      "exitCode": 0,
+      "elapsedSeconds": 1.3495110000949353,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.desktop-build-qual-05.log",
+      "rawOutputSha256": "c82f4cd61f4082e674d0086561d8ee54a3707e103f7d88cf4e83233ff153f207",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "native-format",
+      "command": ".local\\toolchains\\cargo\\bin\\cargo.exe fmt --all -- --check",
+      "exitCode": 0,
+      "elapsedSeconds": 0.4514758000150323,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.native-format-qual-05.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "native-tests",
+      "command": ".local\\toolchains\\cargo\\bin\\cargo.exe test --workspace --locked --offline --lib",
+      "exitCode": 0,
+      "elapsedSeconds": 5.913618500111625,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.native-tests-qual-05.log",
+      "rawOutputSha256": "54d08a21e4e1f85421df374f6dd1ca6a44208dd1e61923cee94d09bd538707c1",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "python-lint",
+      "command": ".venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py services/core-api/src/research_observatory_core/ports/reconciliation.py services/core-api/src/research_observatory_core/reconciliation/versions.py services/core-api/src/research_observatory_core/reconciliation_api.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reconciliation_service.py services/core-api/src/research_observatory_core/storage.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/reconciliation/test_migration.py tests/reconciliation/test_native_renderer.py tests/reconciliation/test_renderer.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_api.py tests/reconciliation/test_version_client.py tests/reconciliation/test_version_migration.py tests/reconciliation/test_version_repository.py tests/reconciliation/test_version_storage.py tests/reconciliation/test_versions.py tests/reconciliation/version_predecessor.py tools/core_api_contract.py tools/core_api_reconciliation.py",
+      "exitCode": 0,
+      "elapsedSeconds": 0.082141799852252,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.python-lint-qual-05.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "python-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py services/core-api/src/research_observatory_core/ports/reconciliation.py services/core-api/src/research_observatory_core/reconciliation/versions.py services/core-api/src/research_observatory_core/reconciliation_api.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reconciliation_service.py services/core-api/src/research_observatory_core/storage.py tests/data/test_import_commit_migration.py tests/data/test_import_preview_migration.py tests/data/test_import_summary_migration.py tests/data/test_sqlite_migrations.py tests/reconciliation/test_migration.py tests/reconciliation/test_native_renderer.py tests/reconciliation/test_renderer.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_api.py tests/reconciliation/test_version_client.py tests/reconciliation/test_version_migration.py tests/reconciliation/test_version_repository.py tests/reconciliation/test_version_storage.py tests/reconciliation/test_versions.py tests/reconciliation/version_predecessor.py tools/core_api_contract.py tools/core_api_reconciliation.py",
+      "exitCode": 0,
+      "elapsedSeconds": 0.09763649990782142,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.python-format-qual-05.log",
+      "rawOutputSha256": "7715b02781372f8741fb309aee97a6483e689c9039f0d78081dd910f70b0256e",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "python-types",
+      "command": ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/migrations/runner.py services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py services/core-api/src/research_observatory_core/ports/reconciliation.py services/core-api/src/research_observatory_core/reconciliation/versions.py services/core-api/src/research_observatory_core/reconciliation_api.py services/core-api/src/research_observatory_core/reconciliation_repository.py services/core-api/src/research_observatory_core/reconciliation_service.py services/core-api/src/research_observatory_core/storage.py tests/reconciliation/test_migration.py tests/reconciliation/test_native_renderer.py tests/reconciliation/test_renderer.py tests/reconciliation/test_review_migration.py tests/reconciliation/test_version_api.py tests/reconciliation/test_version_client.py tests/reconciliation/test_version_migration.py tests/reconciliation/test_version_repository.py tests/reconciliation/test_version_storage.py tests/reconciliation/test_versions.py tests/reconciliation/version_predecessor.py tools/core_api_contract.py tools/core_api_reconciliation.py",
+      "exitCode": 0,
+      "elapsedSeconds": 1.1196279001887888,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.python-types-qual-05.log",
+      "rawOutputSha256": "a3ee8cc563d620855a76e1c43ed6f1118b5d68435d0c1b38b01ae7646398501f",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "contract-generation",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/core_api_contract.py --check",
+      "exitCode": 0,
+      "elapsedSeconds": 2.1765124001540244,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.contract-generation-qual-05.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "python-inventory",
+      "command": ".venv\\Scripts\\python.exe -B -s -c \"from pathlib import Path; from tools.quality_check import load_scope; print(\\\"Governed Python inventory: PASS\\\",len(load_scope(Path.cwd())))\"",
+      "exitCode": 0,
+      "elapsedSeconds": 0.18172349990345538,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.python-inventory-qual-05.log",
+      "rawOutputSha256": "a1465c7bd517d46e9c406447ff0f9be0b3dfcfdba6b5506db871566947a65bc3",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 3.1702701000031084,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.architecture-qual-05.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "repository-structure",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 0.18618270009756088,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.repository-structure-qual-05.log",
+      "rawOutputSha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "fixture-corpus",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/fixture_corpus_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 0.876096999971196,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.fixture-corpus-qual-05.log",
+      "rawOutputSha256": "a02b544d217642321204e36197c5d4a74b4d35f3b18b13bd40ded9b9439daa66",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "adr-range",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/adr_check.py --repo . --base 0738c2543db85af8189bd0948393698b04662de6 --head 99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "exitCode": 0,
+      "elapsedSeconds": 1.6306334000546485,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.adr-range-qual-05.log",
+      "rawOutputSha256": "95c4cf550ef25517334460e499874d31d8a5def03c0863ca4f04049cf1cc33e8",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "ui-change",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/ui_change_gate.py --repo . --base 0738c2543db85af8189bd0948393698b04662de6 --head 99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "exitCode": 0,
+      "elapsedSeconds": 6.48799500009045,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.ui-change-qual-05.log",
+      "rawOutputSha256": "b85eb9ab22c1faf2cac30fc375fda9323488aa8f5674a9b3a050723541ed1513",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "backlog-views",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "elapsedSeconds": 2.8457570001482964,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.backlog-views-qual-05.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S03.T03.build-manifest-qual-05.json",
+      "exitCode": 0,
+      "elapsedSeconds": 14.936500000068918,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.build-manifest-qual-05.log",
+      "rawOutputSha256": "234e0e40f1072c40e408ab737c8d3d419fdedb78c5bb4590c8c698844124e224",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    },
+    {
+      "id": "planning-review",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 130.85987929999828,
+      "rawOutput": "artifacts/tmp/CAP-04.S03.T03.planning-review-qual-05.log",
+      "rawOutputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output, case inventory and skip reasons retained."
+    }
+  ],
+  "producerReceipts": [
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.core-qual-05.json",
+      "sha256": "f1f58c0476576a1afdb790ada2ed6cb97ff7d2a3de3a42eac182d2672a7cc46c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.desktop-qual-05.json",
+      "sha256": "269648da0cec414e24ab9a47f884a72989d01d02a06977990359497c8c714d01"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.foundation-qual-05.json",
+      "sha256": "ffdb51b1690390c88152cbc1b5db6d9c0c029883beb82518590b06dbd8230efc"
+    }
+  ],
+  "producerImplementations": [
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.qualify-05.py",
+      "sha256": "12d730e6fdf379513407e808028bb5905c752715e35fcb7134c9c69a7bd0e2e0"
+    }
+  ],
+  "runtimeReports": {
+    "source": "Producer-published synthetic report data and exact report-byte digests from fresh executed native/runtime assertions. Embedded booleans alone are not separate boundary proof; private fixture ACLs are unchanged.",
+    "reports": [
+      {
+        "report": "artifacts/tmp/reconciliation-native-bih1r49f/result.json",
+        "reportSha256": "723055ddb89609035ba37c5a8db8731f3d0c88329df2e8e3ae194e057cb69a14",
+        "reportData": {
+          "fixtureKind": "synthetic-accepted-import-and-retained-connector",
+          "nativeSupervisor": true,
+          "generatedClient": true,
+          "productionReviewComponents": true,
+          "dpapiAndSqlcipher": true,
+          "sameCommandRetry": true,
+          "splitAndMerge": true,
+          "restartPreserved": true,
+          "nativeAuthorityInjectionDenied": true,
+          "nativeVersionPreferenceAndRetraction": true,
+          "nativeVersionExactRetryAndRestart": true,
+          "nativeHistoricalVersionRetained": true,
+          "retainedSourceCount": 3,
+          "providerNetworkDuringNativeReview": 0
+        }
+      },
+      {
+        "report": "artifacts/tmp/reconciliation-runtime-fwtbh2ed/result.json",
+        "reportSha256": "b47eb90df83e20a2e56f7396bff965aba624f1215732c3b2b866fe5d47f8c3e8",
+        "reportData": {
+          "fixtureKind": "synthetic-import-and-crossref-production-core",
+          "realWindowsPrincipal": true,
+          "dpapiAndSqlcipher": true,
+          "exactSourcesConverged": true,
+          "restartPreserved": true,
+          "currentRightsDenial": true,
+          "sourceUnchanged": true,
+          "networkRequests": 1,
+          "networkDuringReconciliation": 0
+        }
+      }
+    ]
+  },
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S03.T03.build-manifest-qual-05.json",
+    "sha256": "3e04cfc708659f94871741f08e8a52942d031f4ac7f88ce112bf27382dfaf061"
+  },
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.build-manifest-qual-01.json",
+      "sha256": "589b038f28afd024e3054bdebb1d09efa5719420fbb7543b60fe7fb309bd4779"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.core-qual-01.json",
+      "sha256": "c93ec1490e2114324e284e3187fe2881ca680cf60b42339f34ebd48bc7344b99"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.desktop-qual-01.json",
+      "sha256": "109d61d3f969f8f75ab5bfc5b628c05fed0d42be8416352d7e6eb97cf12de0d3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.foundation-qual-01.json",
+      "sha256": "6666ada0d60df3c8634f66ba6d2bc1316fca725d0e7ec34971bb65804a40152b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.retired-red-01.log",
+      "sha256": "8ba77cb864d6e1866b59fdcec743cb94f8807a28fc390b23cd02618e1d04c376"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.stale-red-01.log",
+      "sha256": "b047ada52c1b2c824c339bb6e4d5f15d852f3b567f4647b927dcb5964f2d7ea3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.retired-green-01.log",
+      "sha256": "6e36b5b5f8a464179926ee335e22f73ce82f82412d9ea3e3890e6fc29c3f59fb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.stale-green-01.log",
+      "sha256": "b633d39f073fb4618493d124ea779a6a09e5f4c1e93cd867e14707ec4ed32b62"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-chain-qual-02.log",
+      "sha256": "8a1e355dc8b19b49bfcc9996b0e57fa2a89ca2627892a028ae976a1ef77882d5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.reconciliation-qual-02.log",
+      "sha256": "39448e07f7d05096985aecc5a4948a260067f3d3389428e41a4a0329ec4b924b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.core-qual-02.json",
+      "sha256": "7dd1f2dc0e31060f455fe3f2abb639a79388eaf826ca33db16d4a53894d24f00"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-chain-01.log",
+      "sha256": "ae8f202fadc10168a2cf74c855e55147db256e783ad591ae124563753ca4ec88"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-chain-qual-01.log",
+      "sha256": "7ce2eb4417110439452605e299ed1658cd8ee044e526d31f0df0b405fa163cc8"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-chain-retry-01.log",
+      "sha256": "06231d9ce9b88f4abb661106543c9d21aa5f3c4d607ad1e86255588f288ae16c"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-default-temp-01.log",
+      "sha256": "e645ced1e8029267beaa67aea4468325d5a0241b336cac5ef69e0901e06cba65"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-temp-cause-01.log",
+      "sha256": "ad1152a477c72de1518172c27027a77f47ebb33b5ea830e2df45ee2c12e0c5a2"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-temp-diagnostic-01.log",
+      "sha256": "4edfbee94340e951d5f8ee7095e637e4236391b59152c77918ab0f57ba10f356"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-temp-length-01.log",
+      "sha256": "904d80190126378abb06b11db72e0f822da7b35e75c74b2beb0d54624ea95003"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-temp-stack-01.log",
+      "sha256": "24ab391b4be88648b20edf8176bb81cb03d3b4c1e23938adb15e949f215664be"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-wal-length-01.log",
+      "sha256": "b42eb7e5d26d60149bbf048afaf64bb852da2e862d128b65166cc28ca7a159c4"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.material-qual-03.json",
+      "sha256": "81984b0d9edb11a5a9d7a28eb2488ff703736ed67de16fea0c8ad9841c3b188b"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.migration-replay-qual-04.json",
+      "sha256": "97c466986e30fb1a44e0f8b4748c8d370619bca1a380360e4c404369cf3d814a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-boundaries-01.log",
+      "sha256": "ce577b631bab1f23b9a303cdd7520ad5af0c0cfe736a9de0cbcbf124c0b0dee3"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-dpapi-green-01.log",
+      "sha256": "cb40d606afdf78375b7f6e10dacc5ef881627c13b76d87cbf8011949630b3c91"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-green-01.log",
+      "sha256": "f1d1db08cb7121a300306cacb4fdfab66b24ad405a74e6fb1e1ba45bddf2f2f0"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-green-02.log",
+      "sha256": "f168ca0e375061ffaec98b278c81328ecd68035e8cf6559664982cec7ccf18ce"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-green-03.log",
+      "sha256": "9b95a6d978b26d903591527c56366e1121111e88eee56e6643a4f20ece5584e5"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-green-04.log",
+      "sha256": "9ed4a25a93baaaf85323001b1d029a3f7f17d58c8bf4447e77875e249e6dcb8f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-plaintext-02.log",
+      "sha256": "0feafc67c3357d7285776be456275b2642da72c0f22b929392898f14c4098a5a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.long-path-red-01.log",
+      "sha256": "51942316069a4b023f6c31520ea6791335972b5815972151323f25cda31e82eb"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.path-security-exploratory-01.log",
+      "sha256": "51620b1b84a0f754a8d3e688e65a62b58d51940abcec3af7fc9c7ddf23b00580"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.protected-path-probe-01.log",
+      "sha256": "cedfd3c38807218e4a16326b9c173833cc96e38f7fb43b4dc5110fb3e273f02a"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.protected-path-probe-02.log",
+      "sha256": "310dccc3f25430a2a52051ef4b472d8159c405d979f39890c836cabbbcb88ec9"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.protected-path-probe-03.log",
+      "sha256": "fbbcb360dc57f8d356bca174938f1fecbdb3b4e76f21d4d5c44116f30395c7f1"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.protected-path-probe-04.log",
+      "sha256": "814d9ff42a6c5392db71bbbedb9f9dc2f14b28ad7f0a12d96c67eb63e0903d65"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.protected-path-probe-01.json",
+      "sha256": "07043cb8b2c1fbe97d6f80ac09130ebefe080112aec99139fb976c3380b5a617"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S03.T03.protected-path-probe-02.json",
+      "sha256": "dd82c28e6a4b615a6bac8c402ed2b6b6c08526038db660e51b89b0859096906c"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S03.T03.foundation-progress.md",
+      "sha256": "e7b7c357249641c10d47d8620fe85c6e7fc6723c886f194cf2902e13e26e6583"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S03.T03.pre-submission-review-01.md",
+      "sha256": "379b859c8971feab341a69f3eb26da57c91710145ad2da6810b21c1439ab7e00"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S03.T03.pre-submission-review-02.md",
+      "sha256": "434591a8d15ecc3edf9bb74f72b519c5fe07b5abb60c2e2b09ddf47c37707a21"
+    }
+  ],
+  "scopeDeviation": "None. Approved T03 implementation and ordinary defect restoration, with no supplemental refactoring allocation or new authority. Slice-wide obligations remain explicitly pending."
+}
