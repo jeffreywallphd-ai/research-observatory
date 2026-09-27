@@ -205,10 +205,13 @@ class SourceInteractionTests(unittest.TestCase):
                         ).to_be_visible()
                         self.preview(page)
                         page.get_by_role("button", name="Send this DOI to unpaywall", exact=True).click()
-                        expect(page.get_by_text("Request running", exact=True)).to_be_visible()
+                        # The global live region repeats job labels for screen readers.
+                        # Assert the visible state in its own request panel.
+                        request_panel = page.locator('section[aria-labelledby="source-test-title"]')
+                        expect(request_panel.get_by_text("Request running", exact=True)).to_be_visible()
                         page.get_by_role("button", name="Refresh request status", exact=True).click()
                         expect(
-                            page.get_by_text("Request failed — no successful coverage implied", exact=True)
+                            request_panel.get_by_text("Request failed — no successful coverage implied", exact=True)
                         ).to_be_visible()
                         self.assertEqual(
                             1,
