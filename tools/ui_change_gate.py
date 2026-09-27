@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import fnmatch
 import hashlib
 import json
 import os
@@ -736,6 +737,151 @@ def reviewed_preimplementation_maintenance_errors(
     return errors
 
 
+def maintenance_proposed_adr_paths(repo: Path, predecessor: str, candidate: str) -> set[str]:
+    """Admit documentary association only inside an authenticated maintenance chain.
+
+    Proposed records confer no architecture authority. Prior decisions, registry
+    entries and the ordinary correction path policy remain immutable.
+    """
+    sequence = git(repo, "rev-list", "--reverse", f"{predecessor}..{candidate}").decode().splitlines()
+    touches = {
+        commit: {path for path in commit_paths(repo, commit) if path.startswith("docs/adr/")} for commit in sequence
+    }
+    touches = {commit: paths for commit, paths in touches.items() if paths}
+    if not touches:
+        return set()
+    if len(touches) != 1:
+        raise ValueError("associated ADR and registry must have one immutable joint introduction")
+    introduction, paths = next(iter(touches.items()))
+    index_path = "docs/adr/index.json"
+    records = paths - {index_path}
+    if index_path not in paths or len(records) != 1:
+        raise ValueError("maintenance may associate only one new Proposed ADR and its index entry")
+    path = next(iter(records))
+    if re.fullmatch(r"docs/adr/ADR-[0-9]{4}-[a-z0-9]+(?:-[a-z0-9]+)*\.md", path) is None:
+        raise ValueError("associated ADR path is not canonical")
+    parents = git(repo, "rev-list", "--parents", "-n", "1", introduction).decode().split()
+    if (
+        len(parents) != 2
+        or tree_entry(repo, predecessor, path) is not None
+        or tree_entry(repo, parents[1], path) is not None
+        or any(tree_entry(repo, introduction, item) != ("100644", "blob") for item in paths)
+        or tree_entry(repo, predecessor, index_path) != ("100644", "blob")
+    ):
+        raise ValueError("associated ADR requires new regular non-executable bytes in a sole-parent commit")
+    before = json_object(blob(repo, predecessor, index_path), "prior ADR index")
+    after = json_object(blob(repo, candidate, index_path), "associated ADR index")
+    prior, current = before.get("records"), after.get("records")
+    if (
+        not isinstance(prior, list)
+        or not isinstance(current, list)
+        or len(current) != len(prior) + 1
+        or current[:-1] != prior
+        or {key: value for key, value in before.items() if key != "records"}
+        != {key: value for key, value in after.items() if key != "records"}
+    ):
+        raise ValueError("associated ADR index must append one entry without altering prior order or metadata")
+    text = blob(repo, candidate, path).decode("utf-8")
+    parts = text.split("---", 2)
+    if len(parts) != 3 or parts[0].strip():
+        raise ValueError("associated ADR lacks canonical front matter")
+    metadata = yaml.safe_load(parts[1])
+    required = {
+        "id",
+        "title",
+        "status",
+        "date",
+        "deciders",
+        "linked_tasks",
+        "decision_scope",
+        "affected_paths",
+        "supersedes",
+        "superseded_by",
+    }
+    if (
+        not isinstance(metadata, dict)
+        or set(metadata) != required
+        or metadata["status"] != "Proposed"
+        or metadata["deciders"] != []
+        or metadata["supersedes"] != []
+        or metadata["superseded_by"] is not None
+        or not isinstance(metadata["title"], str)
+        or not metadata["title"]
+        or not isinstance(metadata["decision_scope"], str)
+        or not metadata["decision_scope"]
+        or re.fullmatch(r"ADR-[0-9]{4}", str(metadata["id"])) is None
+        or not path.startswith(f"docs/adr/{metadata['id']}-")
+        or any(not isinstance(item, dict) or item.get("id") == metadata["id"] for item in prior)
+    ):
+        raise ValueError("associated ADR must be a new Proposed record without decision authority")
+    date.fromisoformat(str(metadata["date"]))
+    expected = {
+        "id": metadata["id"],
+        "path": path,
+        "title": metadata["title"],
+        "status": "Proposed",
+        "linkedTasks": metadata["linked_tasks"],
+    }
+    slug = re.sub(r"[^a-z0-9]+", "-", metadata["title"].lower()).strip("-")
+    if (
+        path != f"docs/adr/{metadata['id']}-{slug}.md"
+        or current[-1] != expected
+        or any(
+            f"## {section}" not in parts[2].splitlines()
+            for section in ("Context", "Candidates", "Decision", "Consequences", "Verification", "Task links")
+        )
+    ):
+        raise ValueError("associated ADR must match its indexed identity and contain all review sections")
+    data = yaml_object(blob(repo, predecessor, "planning/backlog.yaml"), "maintenance predecessor backlog")
+    ordinary_ids = {
+        task["id"]
+        for capability in data.get("capabilities", [])
+        for slice_ in capability.get("slices", [])
+        for task in slice_.get("tasks", [])
+    }
+    links = metadata["linked_tasks"]
+    if (
+        not isinstance(links, list)
+        or not links
+        or any(not isinstance(item, str) for item in links)
+        or (len(links) != len(set(links)) or set(links) - ordinary_ids)
+    ):
+        raise ValueError("associated ADR must link existing ordinary tasks")
+    actual = set(changed_paths(repo, predecessor, candidate)) & LEGACY_GOVERNANCE_CONTROL_PATHS
+    corrections = [
+        task for task in backlog_tasks(data) if task.get("correction") and task.get("status") == "IN_PROGRESS"
+    ]
+    if len(corrections) > 1:
+        raise ValueError("associated ADR cannot select among competing corrections")
+    if corrections:
+        correction = corrections[0]
+        if correction["correction"]["origin_task_id"] not in links or not is_ancestor(
+            repo, correction["base_sha"], predecessor
+        ):
+            raise ValueError("associated ADR must link the active correction's exact origin")
+        actual.update(
+            set(changed_paths(repo, correction["base_sha"], predecessor))
+            & set(correction["correction"]["changed_paths"])
+        )
+    policy = json_object(blob(repo, predecessor, "architecture-protected-paths.json"), "protected path policy")
+    protected = {item for item in actual if any(fnmatch.fnmatchcase(item, rule["pattern"]) for rule in policy["paths"])}
+    affected = metadata["affected_paths"]
+    if (
+        not isinstance(affected, list)
+        or not affected
+        or any(
+            not isinstance(item, str)
+            or re.fullmatch(r"[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)+", item) is None
+            or any(part in {".", ".."} for part in item.split("/"))
+            for item in affected
+        )
+        or len(affected) != len(set(affected))
+        or set(affected) - protected
+    ):
+        raise ValueError("associated ADR affected paths must be exact actually changed protected interfaces")
+    return paths
+
+
 def legacy_control_maintenance_errors(
     repo: Path, commit: str, head: str, cutoff: str, *, authenticated: dict[str, set[str]] | None = None
 ) -> list[str]:
@@ -808,6 +954,8 @@ def legacy_control_maintenance_errors(
         contract_path = str(evidence.get("contract"))
         if not re.fullmatch(re.escape(stem) + r"\.maintenance-[0-9]{2}\.md", contract_path):
             return ["historical control maintenance contract namespace differs"]
+        associated_adr_paths = maintenance_proposed_adr_paths(repo, predecessor, commit)
+        control_paths = LEGACY_GOVERNANCE_CONTROL_PATHS | associated_adr_paths
         source_paths = {commit: commit_paths(repo, commit)}
         if "sourceCommits" in evidence or "sourceCommits" in review:
             rows = evidence.get("sourceCommits")
@@ -830,7 +978,7 @@ def legacy_control_maintenance_errors(
                 if (
                     set(row) != {"commit", "changedFiles"}
                     or git(repo, "rev-list", "--parents", "-n", "1", source).decode().split() != [source, parent]
-                    or paths - (LEGACY_GOVERNANCE_CONTROL_PATHS | {contract_path})
+                    or paths - (control_paths | {contract_path})
                 ):
                     return ["maintenance source sequence is not linear and control-only"]
                 bindings = row["changedFiles"]
@@ -854,7 +1002,7 @@ def legacy_control_maintenance_errors(
         elif git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split() != [commit, predecessor]:
             return ["historical control maintenance requires sole-parent candidate/evidence/review delivery"]
         paths = set().union(*source_paths.values())
-        if contract_path not in paths or paths - (LEGACY_GOVERNANCE_CONTROL_PATHS | {contract_path}):
+        if contract_path not in paths or paths - (control_paths | {contract_path}):
             return ["historical control maintenance must remain control-only"]
         artifacts, declared = review.get("reviewedArtifacts"), evidence.get("changedFiles")
         if not isinstance(artifacts, list) or not isinstance(declared, list):
@@ -875,7 +1023,7 @@ def legacy_control_maintenance_errors(
         if authenticated is not None:
             authenticated.update({**source_paths, delivery: {evidence_path}, introduction: {review_path}})
         return []
-    except (KeyError, TypeError, ValueError, UnicodeError, json.JSONDecodeError) as exc:
+    except (KeyError, TypeError, ValueError, UnicodeError, json.JSONDecodeError, yaml.YAMLError) as exc:
         return [f"invalid historical control maintenance: {exc}"]
 
 

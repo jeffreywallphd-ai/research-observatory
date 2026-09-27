@@ -109,6 +109,20 @@ immutable. Preserve adverse findings and their closures; final acceptance does
 not claim an earlier candidate passed. Without the optional arrays, the original
 single-source-commit rule is unchanged.
 
+Mandatory protected-interface ADR association may accompany that authenticated
+maintenance chain as one new indexed **Proposed** companion. Its regular,
+non-executable document and single appended index entry must be introduced
+together once. Every prior ADR byte, index entry/order and registry metadata
+remains unchanged throughout source history. No accepted status, decider,
+supersession or new architecture authority is admitted. The companion must
+contain the required review sections, link existing tasks including an active
+correction's exact origin, and name only concrete actually changed protected
+control or admitted correction paths. Wildcards, unrelated scope, intermediate
+rewrites/reverts and later unauthenticated touches fail. Existing exact source,
+evidence and independent-review bindings authenticate both new documents.
+This is documentary association under ADR-0001, not an ADR-check exemption,
+general authority-file allowance, or permission to change approved decisions.
+
 ## Resumed amendment restoration (opt-in 1.1)
 
 An immutable amendment task may resume after one separately approved, executed,

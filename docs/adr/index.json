@@ -295,6 +295,16 @@
         "CAP-05.S06.T02",
         "CAP-05.S06.T03"
       ]
+    },
+    {
+      "id": "ADR-0030",
+      "path": "docs/adr/ADR-0030-document-protected-restoration-interfaces-under-existing-authority.md",
+      "title": "Document protected restoration interfaces under existing authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-04.S02.T03",
+        "CAP-00.S02.T03"
+      ]
     }
   ]
 }

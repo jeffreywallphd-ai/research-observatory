@@ -44,8 +44,10 @@ class UiChangeGateTests(unittest.TestCase):
         temporary: str,
         review_gate: str = "human-and-agent-review",
         changed_paths: list[str] | None = None,
+        *,
+        adr_registry: bool = False,
     ) -> tuple[Path, str, dict[str, Any], dict[str, Any]]:
-        root, approval, package = self.prepare(temporary)
+        root, approval, package = self.prepare(temporary, adr_registry=adr_registry)
         origin = {
             "id": "CAP-01.S01.T01",
             "wave": "W1",
@@ -790,7 +792,7 @@ class UiChangeGateTests(unittest.TestCase):
         self, temporary: str, mutation: str = "", *, existing_root: Path | None = None
     ) -> tuple[Path, str, str, str]:
         if existing_root is None:
-            root, predecessor, _ = self.prepare(temporary)
+            root, predecessor, _ = self.prepare(temporary, adr_registry=mutation.startswith("adr-"))
         else:
             root, predecessor = existing_root, self.git(existing_root, "rev-parse", "HEAD")
         stem = "artifacts/evidence/fixture-control"
@@ -808,6 +810,80 @@ class UiChangeGateTests(unittest.TestCase):
             target = root / path
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text("# Bounded synthetic control fixture\n", encoding="utf-8")
+        if mutation.startswith("adr-"):
+            index_path = "docs/adr/index.json"
+            adr_path = "docs/adr/ADR-0002-document-existing-control-association.md"
+            index = json.loads((root / index_path).read_text("utf-8"))
+            metadata: dict[str, Any] = {
+                "id": "ADR-0002",
+                "title": "Document existing control association",
+                "status": "Proposed",
+                "date": "2026-09-27",
+                "deciders": [],
+                "linked_tasks": ["CAP-01.S01.T01"],
+                "decision_scope": "Document existing authority without conferring any decision",
+                "affected_paths": ["tools/ui_conformance.py"],
+                "supersedes": [],
+                "superseded_by": None,
+            }
+            if mutation == "adr-state":
+                metadata["status"] = "Accepted"
+            elif mutation == "adr-decider":
+                metadata["deciders"] = ["human:synthetic-owner"]
+            elif mutation == "adr-supersedes":
+                metadata["supersedes"] = ["ADR-0001"]
+            elif mutation == "adr-successor":
+                metadata["superseded_by"] = "ADR-0001"
+            elif mutation == "adr-authority-field":
+                metadata["approval"] = "synthetic authority"
+            elif mutation == "adr-unknown-task":
+                metadata["linked_tasks"] = ["CAP-99.S99.T99"]
+            elif mutation == "adr-wildcard":
+                metadata["affected_paths"] = ["tools/**"]
+            elif mutation == "adr-traversal":
+                metadata["affected_paths"] = ["tools/../tools/ui_conformance.py"]
+            elif mutation == "adr-unrelated":
+                metadata["affected_paths"] = ["tools/ui_change_gate.py"]
+            elif mutation == "adr-duplicate":
+                metadata["affected_paths"] *= 2
+            entry = {
+                "id": metadata["id"],
+                "path": adr_path,
+                "title": metadata["title"],
+                "status": metadata["status"],
+                "linkedTasks": metadata["linked_tasks"],
+            }
+            index["records"].append(entry)
+            if mutation == "adr-old-index":
+                index["records"][0]["title"] = "changed prior authority"
+            elif mutation == "adr-index-metadata":
+                index["schemaVersion"] = "2.0"
+            elif mutation == "adr-index-mismatch":
+                entry["title"] = "different title"
+            elif mutation == "adr-index-reorder":
+                index["records"].reverse()
+            self.write_json(root / index_path, index)
+            sections = ["Context", "Candidates", "Decision", "Consequences", "Verification", "Task links"]
+            if mutation == "adr-sections":
+                sections.remove("Decision")
+            (root / adr_path).write_text(
+                "---\n"
+                + yaml.safe_dump(metadata, sort_keys=False)
+                + "---\n"
+                + "\n".join(f"## {section}\nSynthetic association; existing authority only.\n" for section in sections),
+                encoding="utf-8",
+            )
+            sources.extend([index_path, adr_path])
+            if mutation == "adr-old-document":
+                previous = "docs/adr/ADR-0001-existing-authority.md"
+                (root / previous).write_text("rewritten accepted authority\n", encoding="utf-8")
+                sources.append(previous)
+            if mutation == "adr-missing-index":
+                (root / index_path).write_bytes(ui_gate.blob(root, predecessor, index_path))
+                sources.remove(index_path)
+            if mutation == "adr-executable":
+                self.git(root, "add", adr_path)
+                self.git(root, "update-index", "--chmod=+x", adr_path)
         candidate = self.commit(root, "legacy control candidate")
 
         def source_binding(commit: str) -> dict[str, Any]:
@@ -824,8 +900,21 @@ class UiChangeGateTests(unittest.TestCase):
             }
 
         source_commits = None
-        if mutation.startswith("source-"):
+        if mutation.startswith("source-") or mutation in {"adr-rewrite-revert", "adr-old-rewrite-revert"}:
             source_commits = [source_binding(candidate)]
+            if mutation in {"adr-rewrite-revert", "adr-old-rewrite-revert"}:
+                document_path = (
+                    "docs/adr/ADR-0001-existing-authority.md"
+                    if mutation == "adr-old-rewrite-revert"
+                    else "docs/adr/ADR-0002-document-existing-control-association.md"
+                )
+                document = root / document_path
+                if document_path not in sources:
+                    sources.append(document_path)
+                original_adr = document.read_bytes()
+                document.write_bytes(original_adr + b"\nintermediate rewrite\n")
+                source_commits.append(source_binding(self.commit(root, "rewrite associated ADR")))
+                document.write_bytes(original_adr)
             if mutation == "source-hidden-product":
                 product = root / "apps/desktop/src/View.tsx"
                 original = product.read_bytes()
@@ -1042,6 +1131,54 @@ class UiChangeGateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root, candidate, cutoff, _ = self.legacy_control_fixture(temporary)
             self.assertEqual([], ui_gate.legacy_control_maintenance_errors(root, candidate, cutoff, cutoff))
+
+    def test_maintenance_proposed_adr_association_preserves_prior_authority(self) -> None:
+        for mutation in (
+            "adr-valid",
+            "adr-state",
+            "adr-decider",
+            "adr-supersedes",
+            "adr-successor",
+            "adr-authority-field",
+            "adr-unknown-task",
+            "adr-wildcard",
+            "adr-traversal",
+            "adr-unrelated",
+            "adr-duplicate",
+            "adr-old-index",
+            "adr-index-metadata",
+            "adr-index-mismatch",
+            "adr-index-reorder",
+            "adr-sections",
+            "adr-old-document",
+            "adr-missing-index",
+            "adr-executable",
+            "adr-rewrite-revert",
+            "adr-old-rewrite-revert",
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as temporary:
+                root, candidate, head, _ = self.legacy_control_fixture(temporary, mutation)
+                errors = ui_gate.legacy_control_maintenance_errors(root, candidate, head, head)
+                self.assertEqual(mutation != "adr-valid", bool(errors), errors)
+
+    def test_linked_correction_accepts_only_review_bound_proposed_adr_delivery(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, data, contract = self.linked_fixture(temporary, adr_registry=True)
+            self.linked_candidate(root, data, contract)
+            _, _, head, _ = self.legacy_control_fixture(temporary, "adr-valid", existing_root=root)
+            result = validate(root, base, head)
+            self.assertTrue(result["ok"], result["errors"])
+            task = data["waves"][0]["campaign"]["corrective_tasks"][0]
+            self.assertEqual([], ui_gate.corrective_scope_errors(root, task, head))
+            # The new document does not become an ordinary task-writable path.
+            adr_path = "docs/adr/ADR-0002-document-existing-control-association.md"
+            self.assertFalse(ui_gate.corrective_path_admitted(task, adr_path))
+            original = (root / adr_path).read_bytes()
+            (root / adr_path).write_bytes(original + b"\nunreviewed follow-up\n")
+            self.commit(root, "unreviewed associated ADR rewrite")
+            (root / adr_path).write_bytes(original)
+            reverted = self.commit(root, "revert associated ADR rewrite")
+            self.assertTrue(ui_gate.corrective_scope_errors(root, task, reverted))
 
     def test_legacy_control_maintenance_rejects_false_or_late_authority(self) -> None:
         for mutation in (
@@ -1991,7 +2128,7 @@ class UiChangeGateTests(unittest.TestCase):
         self.write_yaml(manifest_path, manifest)
         return hashlib.sha256(json.dumps(hashes, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()
 
-    def prepare(self, temporary: str) -> tuple[Path, str, str]:
+    def prepare(self, temporary: str, *, adr_registry: bool = False) -> tuple[Path, str, str]:
         root = Path(temporary) / "repo"
         root.mkdir()
         self.git(root, "init", "-b", "main")
@@ -2028,6 +2165,45 @@ class UiChangeGateTests(unittest.TestCase):
         view.parent.mkdir(parents=True)
         view.write_text("export const View = () => null;\n", encoding="utf-8", newline="\n")
         self.write_yaml(root / "planning" / "backlog.yaml", {"capabilities": []})
+        if adr_registry:
+            self.write_yaml(
+                root / "planning/backlog.yaml",
+                {
+                    "capabilities": [
+                        {
+                            "slices": [
+                                {
+                                    "tasks": [
+                                        {"id": "CAP-01.S01.T01"},
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+            )
+            self.write_json(
+                root / "docs/adr/index.json",
+                {
+                    "schemaVersion": "1.0",
+                    "documentType": "architecture-decision-index",
+                    "allowedStates": ["Proposed", "Accepted", "Rejected", "Superseded"],
+                    "records": [
+                        {
+                            "id": "ADR-0001",
+                            "path": "docs/adr/ADR-0001-existing-authority.md",
+                            "title": "Existing authority",
+                            "status": "Accepted",
+                            "linkedTasks": ["CAP-01.S01.T01"],
+                        }
+                    ],
+                },
+            )
+            (root / "docs/adr/ADR-0001-existing-authority.md").write_text(
+                "# Immutable synthetic accepted authority\n",
+                encoding="utf-8",
+            )
+            shutil.copy2(REPO / "architecture-protected-paths.json", root / "architecture-protected-paths.json")
         base = self.commit(root, "baseline")
         return root, base, package
 
