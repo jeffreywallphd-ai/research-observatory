@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "W2.C02.T01",
+  "changeKind": "defect-restoration",
+  "contractPath": "artifacts/evidence/ui-change/W2.C02.T01.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/SourceManagerWorkspace.tsx",
+    "apps/desktop/src/app/SourceRequestHistory.tsx",
+    "apps/desktop/src/app/SourceTestPane.tsx"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
+    "version": "1.7",
+    "packageSha256": "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878",
+    "approvalCommit": "14b89c07a435a26bf894242a9e5f3e6429065055",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.6"
+  },
+  "restoration": {
+    "defect": "F-SLICE-02: ordinary source requests omitted measured attempts, retries and latency, selected timing limits and explicitly unavailable completion estimates required by CAP-04.S02 sections 11-12 and approved Source Manager health.",
+    "expectedBehavior": "Existing confirmation and inspection regions expose selected limits and matching bounded operational measurements; unavailable remains distinct from zero. Preserve approved navigation, current project/session/preview/rights authority, explicit dispatch, source provenance, safe keyboard/focus/reflow and no automatic request or forecast."
+  },
+  "restorationClassification": {
+    "path": "artifacts/evidence/W2.C02.T01.ui-classification-R01.json",
+    "sha256": "dcabbee396a29a03ff62e1e72c205252a930c89fcfb021e1476811a9149b53f5",
+    "commit": "e69e75ff50b31a0c352415aafebf3f39c2ba7c50"
+  },
+  "focusedEvidence": [
+    {
+      "command": ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C02.T01-capture-02-browser -m unittest -v tests.desktop.test_source_interactions",
+      "result": "passed",
+      "scope": "Producer 4514bc7badf92b3f50ca1ceb58e1ab1567212af9; 18.168 measured seconds; raw log artifacts/tmp/W2.C02.T01.capture-source-browser-02.log SHA-256 2b9a872fe68cf9cf95a8091f45beb8930d204d0747f23114e6552ce9eb3ce17f. Synthetic offline browser proof, with independent visual/classification evidence separately bound."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C02.T01-capture-02-matrix tools/product_style_check.py --repo . --capture artifacts/evidence/W2.C02.T01.captures-01",
+      "result": "passed",
+      "scope": "Producer 4514bc7badf92b3f50ca1ceb58e1ab1567212af9; 116.855 measured seconds; raw log artifacts/tmp/W2.C02.T01.capture-matrix-02.log SHA-256 bab021594e147f8069f9794dd41c4767632c9a9a043512e281724c4ea1a7cae6. Synthetic offline browser proof, with independent visual/classification evidence separately bound."
+    }
+  ]
+}
