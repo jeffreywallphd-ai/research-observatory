@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "source-performance-baseline",
+  "slice": "CAP-04.S02",
+  "method": {
+    "fixtureVersion": "four-scholarly-sources-page-v1",
+    "recordsPerPage": 100,
+    "repetitions": 3,
+    "timer": "time.perf_counter",
+    "cold": "fresh protected project/process, uncached synthetic provider page",
+    "warm": "same scientific page, fresh invocation/confirmation, protected cache hit, no network",
+    "measured": "public API preview/confirmation through terminal durable workflow status; includes real DPAPI and SQLCipher",
+    "excluded": "fixture/configuration/Intent setup, extra repository reads, inspection and normal-close restart",
+    "rateWait": "separate concurrent shared-broker probe with real clock/sleep and synthetic authority/store/HTTP",
+    "distribution": "min/median/max of three repetitions; every raw sample must pass; no discarded samples",
+    "regressionAllowance": 0.2,
+    "osCacheFlushed": false
+  },
+  "hardware": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
+  "maxima": {
+    "openalex:cold": 3.3920939000090584,
+    "openalex:cache": 3.0657525999704376,
+    "crossref:cold": 3.3457566000288352,
+    "crossref:cache": 3.1201019999571145,
+    "unpaywall:cold": 3.215129000018351,
+    "unpaywall:cache": 2.7346579999430105,
+    "semantic-scholar:cold": 3.2385351000120863,
+    "semantic-scholar:cache": 2.7987034999532625,
+    "rateWait": 1.1417519999668002,
+    "peakWorkingSetBytes": 188821504
+  },
+  "calibration": {
+    "commit": "c8a3c3ba7deea9accf24587e4f4674a92ecc68bb",
+    "tool": "tools/source_performance_check.py",
+    "toolSha256": "f18935bbe14ab615ab887c6813cf9d7d39df3bccbfddddf16896d4e949afcd74",
+    "report": "artifacts/tmp/CAP-04.S02.performance-calibration-01.json",
+    "reportSha256": "e07561457bb29d02e264ed5f327d51064f51b54b045420d529d0328608224097",
+    "performanceQualifying": false,
+    "rawMetrics": [
+      {
+        "openalex:cold": 3.285990000003949,
+        "openalex:cache": 3.0657525999704376,
+        "crossref:cold": 3.3457566000288352,
+        "crossref:cache": 3.1201019999571145,
+        "unpaywall:cold": 3.215129000018351,
+        "unpaywall:cache": 2.7346579999430105,
+        "semantic-scholar:cold": 3.2385351000120863,
+        "semantic-scholar:cache": 2.7987034999532625,
+        "rateWait": 1.1417519999668002,
+        "peakWorkingSetBytes": 187052032
+      },
+      {
+        "openalex:cold": 3.3920939000090584,
+        "openalex:cache": 2.6860642000101507,
+        "crossref:cold": 2.9428964001126587,
+        "crossref:cache": 2.755268399952911,
+        "unpaywall:cold": 2.8012978000333533,
+        "unpaywall:cache": 2.56508460000623,
+        "semantic-scholar:cold": 2.922453899984248,
+        "semantic-scholar:cache": 2.641784799983725,
+        "rateWait": 1.129796399967745,
+        "peakWorkingSetBytes": 188821504
+      },
+      {
+        "openalex:cold": 3.16049949999433,
+        "openalex:cache": 2.7564884999301285,
+        "crossref:cold": 2.9433725000126287,
+        "crossref:cache": 2.6916051000589505,
+        "unpaywall:cold": 2.9265149999409914,
+        "unpaywall:cache": 2.6521540000103414,
+        "semantic-scholar:cold": 2.971036499948241,
+        "semantic-scholar:cache": 2.6311157000018284,
+        "rateWait": 1.1373636000789702,
+        "peakWorkingSetBytes": 186462208
+      }
+    ],
+    "sampleBindings": [
+      {
+        "repetition": 1,
+        "report": "artifacts/tmp/source-performance-1ihs6yaw/sample-1/result.json",
+        "reportSha256": "ecd1589d2e8ad8efe98422d40d16c7be71ca5032ca230c6d38b4a232890a038a",
+        "log": "artifacts/tmp/source-performance-1ihs6yaw/sample-1/raw.log",
+        "logSha256": "729364a5ea61813e67a637fc4f08d9d2233917212c421e76634f4a50d55c342b"
+      },
+      {
+        "repetition": 2,
+        "report": "artifacts/tmp/source-performance-1ihs6yaw/sample-2/result.json",
+        "reportSha256": "1d8302c34617128c6080a2db37192dbea83dd7bc5a9d82bbec7a34002939a899",
+        "log": "artifacts/tmp/source-performance-1ihs6yaw/sample-2/raw.log",
+        "logSha256": "fcb540c384087fc84a7478a33905a9476ae04c8fdf38ea4bb39e38c4f4369dbc"
+      },
+      {
+        "repetition": 3,
+        "report": "artifacts/tmp/source-performance-1ihs6yaw/sample-3/result.json",
+        "reportSha256": "c95231d9cec62af6edd081f0795c4be736e4e81324841f37f44e2b36df8d0874",
+        "log": "artifacts/tmp/source-performance-1ihs6yaw/sample-3/raw.log",
+        "logSha256": "f6c557e86da2354ab838d73717843b509b54aea547bc9c015b3ae46f5ed20a2d"
+      }
+    ],
+    "sourceInputCount": 380,
+    "sourceInputSetSha256": "9363f4096dfd34dbfe0238c2311fc26fc9412df0bc5737c3a9976c50bcdbef35"
+  },
+  "limitations": [
+    "Calibration measurements are nonqualifying; a separate fresh run compares every raw sample with the reviewed limits.",
+    "Actual recorded workstation hardware and protected Core/DPAPI/SQLCipher composition, with synthetic HTTP and ASGI/native context.",
+    "Fresh process and protected project for each repetition; OS caches are not flushed and minimum hardware is not claimed.",
+    "The separate shared-broker rate probe uses real clock/sleep with synthetic authority/store/HTTP; it does not establish protected concurrent-runtime performance.",
+    "No live-provider latency, installer-performance, native GUI or screen-reader qualification is inferred."
+  ]
+}

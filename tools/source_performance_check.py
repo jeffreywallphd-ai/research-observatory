@@ -36,7 +36,7 @@ from verification_receipt import runtime_identity
 REPO = Path(__file__).resolve().parents[1]
 TOOL = Path("tools/source_performance_check.py")
 BASELINE = Path("tests/fixtures/scholarly-metadata/source-performance-baseline.json")
-BASELINE_SHA256 = "pending-independent-baseline-review"
+BASELINE_SHA256 = "d21fc40e3fedb71ecf0e0b274055d047b2fec4bb4278a1642894534d3c323822"
 PROVIDERS = ("openalex", "crossref", "unpaywall", "semantic-scholar")
 REPETITIONS = 3
 METHOD = {
