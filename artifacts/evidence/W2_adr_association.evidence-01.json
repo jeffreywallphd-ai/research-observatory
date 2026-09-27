@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-governance-maintenance-evidence",
+  "candidateCommit": "c853f9815f060de8933c6f8150e87856ef1bf7dc",
+  "predecessorCommit": "6854b45999909309c01124279dd104ff2c239d27",
+  "implementer": "agent:codex-w2-implementation",
+  "riskTier": 2,
+  "contract": "artifacts/evidence/W2_adr_association.maintenance-01.md",
+  "selectedChecksStatus": "PASS",
+  "independentReviewStatus": "PENDING",
+  "recordedAt": "2026-09-27T03:12:53.119065+00:00",
+  "changedFiles": [
+    {
+      "path": "artifacts/evidence/W2_adr_association.maintenance-01.md",
+      "blob": "09c9abd943df59aadf7db55afd3dafb8d1807c4c",
+      "sha256": "cb85450afab4b15396097b49be034f0c571a833342772cf50069d721ecb78d24"
+    },
+    {
+      "path": "docs/adr/ADR-0030-document-protected-restoration-interfaces-under-existing-authority.md",
+      "blob": "ec7e382dbbda3ae89b754b62712884c036f67f48",
+      "sha256": "759e280ac3c682ca129c0238180bedb107b01f38da2321e6a3022e3e5f3d2f22"
+    },
+    {
+      "path": "docs/adr/index.json",
+      "blob": "f589192a3e978781663a7e721e5dcc8a117cc99e",
+      "sha256": "f8f02cc0aaded90dbf071c366e3e216597285eeb255992c8de9c3d3b2964dda3"
+    },
+    {
+      "path": "docs/automation/design-first-ui-changes.md",
+      "blob": "a0ff05d257c4765bab20c4cf49f9fe610a4b27e0",
+      "sha256": "703312daf21479f2467e2f6bca5acdd2837d4fbbdf4577f2474175149863934a"
+    },
+    {
+      "path": "tests/foundation/test_ui_change_gate.py",
+      "blob": "8e5d5c8f1aa4818f5a11be21ccdaf63fcc4b2785",
+      "sha256": "818a10af4dd0197dad550e2cd5835934c7b1d1e08efbc26f47c1250b838af190"
+    },
+    {
+      "path": "tools/ui_change_gate.py",
+      "blob": "98367bf199c78e08dba6537595049dcf92a21942",
+      "sha256": "0248f9e1d7cbb3bc12a3fc69fa674d6e7cce568fd9e779d97c995d6ff9ede2d6"
+    }
+  ],
+  "checks": [
+    {
+      "id": "tests",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2_adr_association-qual-01-tests",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.foundation.test_ui_change_gate",
+        "tests.desktop.test_product_style_check.CaptureBundleTests"
+      ],
+      "elapsedSeconds": 342.701,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2_adr_association.tests-qualification-01.log",
+      "rawOutputSha256": "d000a18a9fcae4afff5b8022b3e9bdb57c3c9d8fbf4499715006b9831596cd91"
+    },
+    {
+      "id": "lint",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2_adr_association-qual-01-lint",
+        "-m",
+        "ruff",
+        "check",
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "elapsedSeconds": 0.151,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2_adr_association.lint-qualification-01.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "id": "format",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2_adr_association-qual-01-format",
+        "-m",
+        "ruff",
+        "format",
+        "--check",
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "elapsedSeconds": 0.148,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2_adr_association.format-qualification-01.log",
+      "rawOutputSha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+    },
+    {
+      "id": "types",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2_adr_association-qual-01-types",
+        "-m",
+        "mypy",
+        "--no-namespace-packages",
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py"
+      ],
+      "elapsedSeconds": 0.511,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2_adr_association.types-qualification-01.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2"
+    },
+    {
+      "id": "adr",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2_adr_association-qual-01-adr",
+        "tools/adr_check.py",
+        "--repo",
+        ".",
+        "--base",
+        "fb7e0588b60e3ccd0fb5a6a06efb43b2ed18353d",
+        "--head",
+        "HEAD"
+      ],
+      "elapsedSeconds": 1.73,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2_adr_association.adr-qualification-01.log",
+      "rawOutputSha256": "86fa65e85767d11ed577740025e8ceff4e17f5d41fa923904fa6d1a6fa56945b"
+    },
+    {
+      "id": "ci",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2_adr_association-qual-01-ci",
+        "tools/ci_check.py",
+        "--repo",
+        "."
+      ],
+      "elapsedSeconds": 0.296,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2_adr_association.ci-qualification-01.log",
+      "rawOutputSha256": "9fc35e25bc427d6ad200db820a6d3e00ff4cdeaacaa0933aba2bca44c209527e"
+    }
+  ],
+  "executionReceipt": {
+    "path": "artifacts/tmp/W2_adr_association.qualification-01.json",
+    "sha256": "ec2a5a2cad2895d552743a5cd163da043538f574e0d5d25f50d7d7fbcfffc571"
+  },
+  "initialFailure": {
+    "path": "artifacts/tmp/W2_adr_association.initial-failures-01.log",
+    "sha256": "9145857152f8ecc7420eb82d95b3a73dfbb260fafec7d1b3381de699b8e65569",
+    "meaning": "Two real-Git positive association cases failed under the predecessor adapter; denial cases remained intact."
+  },
+  "authorityPreserved": true,
+  "scope": "Documentary Proposed ADR association within an exact independently reviewed control-only maintenance chain. No original approval, accepted ADR, product, correction spec, reference or release-criteria mutation.",
+  "retainedObligations": [
+    "Independent control review and exact chain attribution remain required.",
+    "W2.C02.T01 still requires current product/reference captures, independent classification and formal corrective evidence/review.",
+    "Slice performance baseline, fresh qualification, remaining W2 work and the separate release gate remain incomplete."
+  ]
+}
