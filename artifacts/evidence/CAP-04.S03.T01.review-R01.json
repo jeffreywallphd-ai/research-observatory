@@ -1,0 +1,77 @@
+{
+  "task_id": "CAP-04.S03.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "c9a39c45b891e0f570bb1aa695464f6be83d8471",
+  "base_commit": "e09d313fdb86ff6ea260f04a56fdaf7063198a57",
+  "reviewer": "agent:/root/w2_c02_review",
+  "result": "approved",
+  "evidence_sha256": "3b9eea0db085d96a6835d4ccd68cf6f540e93e2b963a6074272500ce93c93526",
+  "packet_sha256": "68bdb6f253172f867013fe7b197afbea65acfe470bf044e1f6bbab511522ef22",
+  "acceptance_criteria_sha256": "ee60a12094709848f7d28e5113caedef20f82fc0830e1a940c1d3ec0d0e6dc0d",
+  "selection_sha256": "d9b7309877dcd206834fa4393bdff8868c56cab08fcdf2e1b634022746704f7b",
+  "notes": "Independent expanded task review approves this exact frozen R01 candidate under approved CAP-04.S03 section 9.1, immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55 and accepted ADR-0013/0014/0024/0025/0027. The reviewer is agent:/root/w2_c02_review, independent of owner codex-w2-implementation, and did not implement or commit the product changes. Authenticated the persisted current_submission, canonical evidence/packet/criteria/selection hashes, exact 59-path base-to-candidate inventory and all 19 fresh selected checks. Read-only task_submission_packet_errors and validate_task_evidence returned no errors. The initial expanded source review identified F-S03-T01-01 and F-S03-T01-02 at candidate 157e6d3823979896f40d9ab183bf3c932f35fe08; the adverse review, failed qualification and pre-fix regression remain unchanged. Incremental independent review and fresh committed-candidate proof close both findings below. They were pre-submission findings, not prior taskctl review rounds; R01 has no prior controlled attempt or open finding IDs. No current criterion-bound blocker remains. Exact normalized matches remain inferred associations, never registry verification. Person/container/location/heuristic assertions cannot silently merge Works, incompatible identifiers and multi-Work bridges retain review flags, raw source values and accepted corrections remain separately inspectable, and current local authorization is checked before publication, replay and inspection. Accepted source addresses resolve inside Core and never accept client-supplied grants or provider values. The canonical aggregate transaction includes assertion and Work revisions, provenance, outbox, material dependencies, exact-key links and command receipts; failure leaves no partial canonical publication. The lifecycle fence spans protected source resolution and the subsequent writer snapshot, which fails closed on an unresolved concurrent source. Historical receipts remain immutable while canonicalWork explicitly binds the current field projection to the head read in the same transaction. Schema 14 preserves the literal schema-13 predecessor and source/audit rows through the existing verified-backup migration path. Proposed ADR-0031 documents the application of existing accepted authority; it grants no new architecture or product approval. This disposition approves CAP-04.S03.T01 only, not T02/T03, slice/checkpoint completion, Wave exit or release.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Reviewed versioned DOI, PMID, arXiv, ISBN, ORCID, typed provider-ID, URL and title normalization with exact observed strings, conservative case/encoding distinctions, checksums and entity scope. Exact linking uses unique compatible subject keys without upgrading verification states. All contributing identifiers participate in conflicting-identifier and bridge checks; a reused provider key with incompatible scholarly identifiers is flagged as suspected reassignment, without claiming to discover unreported reassignment. Actual parser-source projections preserve original identifiers across five import formats and keep accepted corrections distinct. Import addresses bind manifest/member/key and connector addresses bind the accepted page/ordinal and durable output. Canonical publication, current-head inspection, source preservation and restart are covered by fresh repository and production Core checks."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh checks cover expected convergence and material malformed-input, namespace, entity-scope, conflicting-match, command/actor collision, concurrent-source, rights, current Intent, source-substitution, closed-project, resource-limit and restart boundaries. Every publication failpoint checks rollback. Migration tests restore literal committed-v13 schema and populated synthetic rows, reject a modified predecessor, exercise all eight material v14 failure seams, preserve historical rows and verify backup/reopen. A separate actual SQLCipher fixture exercises encrypted rollback, retry, backup integrity and reopen. The Windows production composition uses actual DPAPI/SQLCipher and durable source workers, reaches the authenticated Core API, reopens the application session and denies access after current authority changes."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Generated JSON/OpenAPI/TypeScript contracts and client checks agree with the reviewed implementation. The current canonical Work reference is separate from the immutable result, and unresolved assertions expose null. All four scholarly schemas are registered in the exact build-input inventory. Schema-14/profile/recovery changes and historical migration-chain expectations retain predecessor authority and immutable source records. The dedicated SourceAssertion document is bounded, typed and identity checked; the existing no-generic-payload storage tests remain unchanged. Affected quality, full Python inventory, architecture, repository structure, fixture corpus, ADR range, UI-change and planning checks pass. No governed UI, fuzzy adjudication, version graph, remote lookup, new security grant or unrelated scope expansion is introduced."
+    }
+  ],
+  "verification_review": {
+    "candidate_commit": "c9a39c45b891e0f570bb1aa695464f6be83d8471",
+    "selected_check_count": 19,
+    "receipt": {
+      "path": "artifacts/tmp/CAP-04.S03.T01-qualification-02.json",
+      "sha256": "7742b7ada9f180a71175a90455e20e81b98d998aa60c64482d6ddb497eeaee6a"
+    },
+    "assessment": "Authenticated every manifest check against its producer receipt, fixed candidate, raw output digest, exit code and elapsed time. All 19 checks pass. Actual test output reports 27 reconciliation cases in 33.372 seconds, 31 migration-chain cases in 30.935 seconds, 37 shared-contract cases in 10.404 seconds and 38 upstream-authority cases in 40.110 seconds, without skips. The client run reports 132 tests in 15 files. Generated-contract, client type, affected 31-file Ruff/format, narrow 27-file mypy, Python inventory, architecture, repository/fixture, ADR/UI-change, build-manifest and planning checks also pass. Final planning verification reports 492 HTML pages. These are selected checks, not full service/data/security/desktop/packaging or repository profile passes. The reviewer inspected source/tests and authenticated producer execution rather than repeating the unchanged suites.",
+    "runtime_report": {
+      "path": "artifacts/tmp/reconciliation-runtime-ht226f9r/result.json",
+      "sha256": "b232ec7edc0ae7efbe0ec507c080a996861aebae5ba37cd8c82487955e06c786",
+      "reviewer_verification": "The initial sandbox-token read was denied. A subsequently authorized, read-only command under the normal Windows principal independently read and hashed this exact synthetic report; its digest matches the manifest. No ACL or file content changed. The report records source convergence, restart preservation, current-rights denial and source preservation, with one synthetic provider request and zero requests during reconciliation. Its claims are assessed together with the inspected executed test, not treated as independent proof merely because they are booleans."
+    },
+    "build_report": {
+      "path": "artifacts/tmp/CAP-04.S03.T01-build-02.json",
+      "sha256": "eeefabb32bd3b513e55061f5254e2eb0e01ffbbd56ef3eba135bde947e13e32c",
+      "reviewer_verification": "Raw bytes authenticate to the manifest; the selected build-manifest output reports PASS at clean version 0.1.0+gc9a39c4. This is build-input manifest verification, not a fresh packaged/native product build."
+    }
+  },
+  "findings": [],
+  "closures": [],
+  "pre_submission_closures": [
+    {
+      "finding_id": "F-S03-T01-01",
+      "source": "artifacts/evidence/CAP-04.S03.T01.pre-submission-review-01.md",
+      "source_sha256": "04c11556486986d0edd88f93ab59ebd2ed4c7115c85bae58f4b8dd1f32d98c2b",
+      "criterion_indexes": [1, 3],
+      "result": "closed",
+      "remediation_candidate": "c9a39c45b891e0f570bb1aa695464f6be83d8471",
+      "evidence": "Inspection now resolves the aggregate head through the registered unit-of-work connection and assembles contributors within that same read transaction. It checks that the head belongs to the recorded contributing Work revisions, emits a separate canonicalWork containing workId/revisionId, and preserves the original result. Unresolved/no-Work results return null. The regression inspects the first assertion before and after a second contributor, compares the original serialized receipt unchanged, requires the current binding to advance to the second Work revision, verifies both field contributors, repeats after repository reopen and denies inspection when the later contributor loses required rights without publishing facts. The production Windows Core test also inspects the old assertion after application-session restart and verifies its original result alongside the current head and identical current fields. These tests pass in the fresh 27-case reconciliation log with SHA-256 64c89bf93158dc9b77a28288db0895b42913fec6c3d00939fe920c9cdcf63ac6. Generated contract checks pass. The genuine pre-fix AttributeError remains retained at artifacts/tmp/CAP-04.S03.T01-head-binding-regression-before.log, SHA-256 7482bc156a4056c7c45e4f53c356accf288f910624217530e554b6ff61930388."
+    },
+    {
+      "finding_id": "F-S03-T01-02",
+      "source": "artifacts/evidence/CAP-04.S03.T01.pre-submission-review-01.md",
+      "source_sha256": "04c11556486986d0edd88f93ab59ebd2ed4c7115c85bae58f4b8dd1f32d98c2b",
+      "criterion_index": 3,
+      "result": "closed",
+      "remediation_candidate": "c9a39c45b891e0f570bb1aa695464f6be83d8471",
+      "evidence": "packaging/build-inputs.json now registers the exact normalized-identifier, source-assertion, reconciliation-result and reconciliation-inspection schema paths. Existing entries and the exhaustive inventory check are unchanged. The fresh selected build-manifest command passes at the clean remediation candidate; its raw log is artifacts/tmp/CAP-04.S03.T01-build-manifest-qualification-02.log, SHA-256 fa782eeff4f3d73c166e43a79abfe8fb860cbebcde8bad9e59e829cbd422ce77. The original exit-one build failure remains bound by the unchanged adverse review and qualification-01 receipt; it is not relabeled as a pass."
+    }
+  ],
+  "limitations": [
+    "The Windows integration uses real protected storage and Core composition with synthetic HTTP and native-context fixtures. Restart means shutting down and recreating the application session over retained state; it does not establish a separately spawned operating-system process restart, live provider availability or complete native GUI behavior.",
+    "All eight material migration failpoints are exercised against the literal populated-v13 plaintext fixture. The separate real SQLCipher fixture proves encrypted final-step rollback, retry, verified encrypted backup and reopen. These are distinct proof boundaries.",
+    "The selected mypy command covers 27 changed product/new-test files with --follow-imports=silent. Four historical migration test files have target/history expectation changes and are exercised by the migration suite; their preexisting typing issues are not turned into a full-quality pass. Earlier W2 full-quality findings and Windows-token symlink skips remain disclosed Wave obligations.",
+    "Fuzzy scoring and reconciliation review UI belong to CAP-04.S03.T02; version graphs belong to T03. Full affected profiles, S03 integration, the S01-S03 checkpoint clean build, fresh W2 qualification and independent slice/checkpoint/Wave reviews remain due. No new human product, release or external-action approval is inferred."
+  ]
+}
