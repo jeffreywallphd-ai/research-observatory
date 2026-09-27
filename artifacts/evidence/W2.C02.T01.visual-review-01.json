@@ -1,0 +1,265 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-product-visual-disposition",
+  "taskId": "W2.C02.T01",
+  "reviewId": "W2.C02.T01.visual-review-01",
+  "reviewer": "agent:/root/w2_c02_review",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "reviewedAt": "2026-09-27T03:36:18.987130Z",
+  "disposition": "approved",
+  "formalTaskApproval": false,
+  "scope": "Independent visual disposition of the exact current product/reference capture bundle and focused Source Manager capture delivery for the authority-preserving correction of CAP-04.S02.T03. All 144 primary PNGs and 22 supplementary PNGs were decoded and visually inspected. This judgment covers hierarchy, alignment, density, overflow, theme, focus and state composition, with specific attention to restored request-limit and operational-measurement visibility. It is neither formal corrective-task acceptance nor the separately required restoration classification.",
+  "bindings": {
+    "producerCommit": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+    "manifest": "artifacts/evidence/W2.C02.T01.captures-01/manifest.json",
+    "manifestGitBlob": "180efa04b0b1dd7920045a12318c6edee701098f",
+    "manifestSha256": "53a3c18b42a9a98fa44194439e02bf789ea1654a188ccad9ae642f399598ab12",
+    "manifestSerialization": "Exact committed raw JSON bytes; no reserialization before hashing.",
+    "captureDeliveryCommit": "921075181ab9847013f055144309b8583639e8ca",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
+    "referencePackageSha256": "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878",
+    "waveApprovalCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+    "producerInputCount": 590,
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app/SourceManagerWorkspace.tsx",
+        "gitBlob": "1d7447ea48c475b2f19b906827aef491d10d9bc6",
+        "sha256": "73b3fe70a8964ddfb49b5bb28fc48006aee8f695cefbbf86e8715d3bf2685e64",
+        "size": 12975
+      },
+      {
+        "path": "apps/desktop/src/app/SourceRequestHistory.tsx",
+        "gitBlob": "a4927f32cfa9dd8216f804cd4cfbf4d7f452758e",
+        "sha256": "9b4271b1b73dbaa197f7b88a25a2bece6d2537162d3f01ac34e7ce402a488619",
+        "size": 11788
+      },
+      {
+        "path": "apps/desktop/src/app/SourceTestPane.tsx",
+        "gitBlob": "7228e8280abda3e209f59f664b2fe0851171b194",
+        "sha256": "db71b7d4c3a69228b8e390abb092307bdc756aa2f4feb971432ad788c3abc2e9",
+        "size": 9856
+      },
+      {
+        "path": "apps/desktop/src/app/SourceManagerWorkspace.test.tsx",
+        "gitBlob": "d693f4bcab9f98dbea2340fae7cfb5f7b009f85c",
+        "sha256": "da39344b17cc81269d7272708a1f6df72235392fed6c0f22778dd6805b978cb0",
+        "size": 4785
+      },
+      {
+        "path": "tests/desktop/test_source_interactions.py",
+        "gitBlob": "f2013f549e2fd12884ae2d17c991b40972bfbb3f",
+        "sha256": "9079d849403f4f8d9fb5d7c50039353cd6cdd9764750955e94a56f7e0f7d941a",
+        "size": 32069
+      }
+    ],
+    "supplementaryArtifacts": [
+      {
+        "path": "artifacts/evidence/W2.C02.T01.source-captures-01/manifest.json",
+        "gitBlob": "844c4673e92aefa24410e1133f518946ab208a65",
+        "sha256": "ee0587d28aeb4cd4fe1f3d3357171e440e2f586e56c375d1e3bf4dabef8bb0be",
+        "size": 8194
+      },
+      {
+        "path": "artifacts/evidence/W2.C02.T01.source-captures-01/source-browser-report.json",
+        "gitBlob": "62e7161831c86f3e70b0ca06c42b05de654e239a",
+        "sha256": "566eff12b786780a71fb9d101c59bcdbff68f82d5d1d15768251a7e90542d646",
+        "size": 515585
+      },
+      {
+        "path": "artifacts/evidence/W2.C02.T01.source-captures-01/capture-diagnostic.json",
+        "gitBlob": "2debf3827681dc6472a4b49aae8fb49628e2a0d4",
+        "sha256": "259bb485b30695fac74a5db97d8224aa929200196c5e774c626c2b0b537a48d1",
+        "size": 3380
+      },
+      {
+        "path": "artifacts/evidence/W2.C02.T01.source-captures-01/capture-execution.json",
+        "gitBlob": "4702890ff7cc1e5759cedf7f8fe191fe9e02cf88",
+        "sha256": "d6fcbf54a3a159a07ec98e0de0ef684276a3678a7ed1554c91513ff51b3f4ae0",
+        "size": 1940
+      }
+    ]
+  },
+  "authentication": {
+    "deliverySoleParent": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+    "deliveryChangedFiles": 171,
+    "deliveryChangedPngs": 166,
+    "deliveryChangedJsonFiles": 5,
+    "exactPriorReviewedBytesMatch": true,
+    "allProducerInputBlobsMatchProducerAndDelivery": true,
+    "referenceUnchangedAcrossCorrection": true,
+    "method": "Read actual Git parent/tree/blob objects with replacement objects disabled. Compared every delivered artifact path, mode, Git blob, SHA-256 and byte length with the independently reviewed fixed-index inventory. All 590 declared producer input blobs match both producer and delivery. The delivery introduces capture evidence only and its sole parent is the declared producer. Supplemental committed inventory hashes match all 24 listed artifacts; the canonical source-browser JSON also reconstructs the declared original CRLF digest exactly.",
+    "captureVerifier": {
+      "command": ".venv/Scripts/python.exe tools/product_style_check.py --repo . --verify-captures artifacts/evidence/W2.C02.T01.captures-01/manifest.json --delivery-commit 921075181ab9847013f055144309b8583639e8ca",
+      "executedBy": "agent:codex-w2-implementation",
+      "retainedOutput": "artifacts/tmp/W2.C02.T01.capture-delivery-01.log",
+      "retainedOutputSha256": "9507dbe864f1562367821efe88ad27617f8412248729dc907e6ab3a45e22b493",
+      "observedResult": {
+        "ok": true,
+        "captureCount": 144,
+        "deliveryCommit": "921075181ab9847013f055144309b8583639e8ca",
+        "producerCommit": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+        "manifestSha256": "53a3c18b42a9a98fa44194439e02bf789ea1654a188ccad9ae642f399598ab12"
+      },
+      "reviewerMethod": "Independently read and authenticated the retained verifier output and exact artifact bindings; did not rerun the capture producer or claim an independently executed browser session."
+    }
+  },
+  "normativeBasis": [
+    "Approved reference RO-UI-ACADEMIC-MINIMAL-1.7: STYLE_GUIDE sections 1, 1.3, 2-6 and 9; CAPABILITY_COVERAGE source-manager.html requires source/adaptor inventory, rights and permissions and connection health; source-manager.html retains an existing Connector health region. Mock names, values, prose and charts are illustrative.",
+    "WORKFLOW_CATALOG introduction: Source Manager is an existing supporting interaction, preserving source and primary-return context without creating a workflow stage. Inherited workflow identity remains unchanged.",
+    "Approved CAP-04.S02 sections 6, 11 and 12 require source status and inspectability, estimated-duration visibility, and per-provider requests, latency, response size, status/error classes, retries, rate state, cache, warnings and cursor progress. Missing values cannot be invented. The admitted W2.C02.T01 spec restores bounded operational facts and explicitly unavailable completion estimates within existing preview/inspection regions.",
+    "docs/automation/ui-conformance-verification.md: semantic measurements and interaction contracts govern product conformance; reference screenshot hash equality is not required. Independent comparison must explicitly retain variance and may not waive functional or accessibility failure."
+  ],
+  "reviewedMatrix": {
+    "primaryPngs": 144,
+    "productReferencePairs": 72,
+    "workspaceCases": 66,
+    "designatedCases": 6,
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "width": 720,
+        "height": 450
+      }
+    ],
+    "surfaces": [
+      {
+        "surface": "application-lock",
+        "pngCount": 4
+      },
+      {
+        "surface": "application-settings",
+        "pngCount": 12
+      },
+      {
+        "surface": "audit",
+        "pngCount": 12
+      },
+      {
+        "surface": "diagnostics",
+        "pngCount": 12
+      },
+      {
+        "surface": "home",
+        "pngCount": 12
+      },
+      {
+        "surface": "imports",
+        "pngCount": 12
+      },
+      {
+        "surface": "intent",
+        "pngCount": 12
+      },
+      {
+        "surface": "local-service-boundary",
+        "pngCount": 4
+      },
+      {
+        "surface": "models",
+        "pngCount": 12
+      },
+      {
+        "surface": "projects",
+        "pngCount": 12
+      },
+      {
+        "surface": "settings",
+        "pngCount": 12
+      },
+      {
+        "surface": "shortcut-dialog",
+        "pngCount": 4
+      },
+      {
+        "surface": "sources",
+        "pngCount": 12
+      },
+      {
+        "surface": "tasks",
+        "pngCount": 12
+      }
+    ],
+    "supplementaryPngs": 22,
+    "supplementaryComposition": "Inventory, pre-confirmation preview and accepted inspection in both themes at all three sizes: 18 long-element images; two additional narrow element diagnostics and two actual narrow viewport diagnostics. Supplemental examples use explicit synthetic native/Core doubles.",
+    "method": "Inspected decoded contact sheets covering every primary product/reference pair and every supplementary PNG, with entire images retained in the inspection sheets. Examined the exact source changes and JSON measurements to distinguish approved composition differences and screenshot limitations from product behavior. No new live exploratory or human usability study is claimed."
+  },
+  "observations": [
+    {
+      "dimension": "Hierarchy, alignment and density",
+      "disposition": "accepted",
+      "basis": "Product cards, notices, key-value rows and controls retain the quiet academic hierarchy and shared primitives. The new preview rows remain inside Review before sending; the measured values remain inside existing request inspection before scholarly source fields. No new route, page, dialog, sidebar action, consent operation, style system or workflow stage appears."
+    },
+    {
+      "dimension": "Theme, reflow and focus",
+      "disposition": "accepted",
+      "basis": "Both themes retain legible labels, values and action contrast. Long identifiers and explanatory text wrap at 720 effective pixels; the reviewed source views stay within document width. Primary source cases record a visible two-pixel focus outline on Import and review references with target focused, contained and in viewport. The existing browser interaction evidence complements still images; images alone do not prove keyboard or live-region behavior."
+    },
+    {
+      "dimension": "Restored request guidance",
+      "disposition": "accepted",
+      "basis": "The pre-send preview labels Estimated completion as Unavailable and exposes selected timeout per attempt, maximum attempts, each permitted wait and minimum request interval. Adjacent guidance states that these limits are not an end-to-end deadline. Existing explicit send/change actions and permission notices remain intact; no duration predictor or implicit request is introduced."
+    },
+    {
+      "dimension": "Restored measurement inspection",
+      "disposition": "accepted",
+      "basis": "The accepted synthetic inspection visibly distinguishes HTTP attempts, retries, cumulative attempt latency, broker time before storage, last status, sanitized response snapshot size/retention, cache and rate facts, errors, warnings and cursor progress. Scope text explains transport cleanup, excluded storage, sanitized-size limits, cache-only unavailable latency and unavailable old/unmatched measurements. Operational facts remain separate from scholarly title/OA fields and downstream rights disclaimers."
+    }
+  ],
+  "measuredSupport": {
+    "primaryObservedStates": 72,
+    "primaryDocumentHorizontalOverflowCases": 0,
+    "sourcePrimaryFocusOutlinePx": 2,
+    "sourceSupplementSamples": 18,
+    "sourceTextColorSamples": 2334,
+    "sourceMinimumRecordedContrastRatio": 4.7152481724354205,
+    "sourceRecordedContrastThresholdFailures": 0,
+    "sourceGeometryHorizontalOverflowCases": 0,
+    "interpretation": "These are observations recomputed from the exact delivered measurement reports, not new executions or a claim of complete WCAG conformance. The minimum is across the recorded text samples; accessibility and functional requirements remain binding."
+  },
+  "acceptedVariances": [
+    {
+      "variance": "Illustrative fixture and page composition differences",
+      "basis": "Product synthetic projects, counts, available capabilities and structured data differ from static reference mock names, charts and broader future capability examples. The approved contract declares those examples illustrative. Product/reference screenshot equality is not required; no existing required region, authority boundary or interaction is waived."
+    },
+    {
+      "variance": "Ordinary vertical scrolling and captured focus position",
+      "basis": "Tall source pages and designated lock/recovery states can exceed viewport height. Captures retain their real scroll positions; focused controls and headings/actions have separately recorded reachability. This does not permit document horizontal overflow, hidden actions, or a modal escaping its contained-scrolling contract."
+    }
+  ],
+  "findings": [
+    {
+      "id": "W2.C02.T01-visual-01-L01",
+      "classification": "capture-evidence-limitation",
+      "blockingVisualAcceptance": false,
+      "summary": "Long element screenshots at the narrow effective viewport can composite the unfocused offscreen Skip to project home link over the captured content.",
+      "evidence": [
+        "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-light-720.png",
+        "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-dark-720.png",
+        "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.element-light-diagnostic-02.png",
+        "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.element-dark-diagnostic-02.png",
+        "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.viewport-light-diagnostic-02.png",
+        "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.viewport-dark-diagnostic-02.png",
+        "artifacts/evidence/W2.C02.T01.source-captures-01/capture-diagnostic.json"
+      ],
+      "disposition": "Retained as an explicit limitation of the long-element images. Both-theme diagnostics show the active H2 source-history-title and skipFocused false; link bounds remain top -58.599998474121094 and bottom -21.599998474121094 before and after element/viewport capture. Actual viewport images show no overlaid link. Therefore the element composite is not sufficient evidence of a live viewport overlap defect. No focus, contrast, operability or accessibility requirement is waived."
+    }
+  ],
+  "limits": [
+    "Approval covers these exact producer and delivered artifact bytes. Any subsequent product, reference or dependent-input change requires the existing stale-evidence rules and fresh applicable judgment.",
+    "Primary workspace captures alone do not open the new preview and inspection states; the explicitly bound supplementary capture set provides that visual coverage.",
+    "Synthetic browser adapters and still captures do not prove native permissions, Core authentication, actual provider dispatch, protected persistence, real-principal behavior or restart. Separate committed task/integration evidence remains required.",
+    "The visual part of the F-SLICE-02 restoration is supported here. Overall finding closure, task acceptance, restoration classification, slice performance qualification and Wave/release gates remain separate.",
+    "This disposition grants no new product/design authority, privacy exception, release approval or publication authority."
+  ]
+}
