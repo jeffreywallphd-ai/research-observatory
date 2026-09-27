@@ -101,3 +101,14 @@ The source slice has no remaining known criterion-bound finding. Independent
 review must authenticate this complete matrix and its measured evidence before
 taskctl records slice approval. The original task approvals, adverse findings
 and Wave release/qualification obligations remain intact.
+
+## Consolidated artifact-binding correction
+
+Initial index delivery `c53461502fafdfcc65ebbad0d0a15ea0ad4a2c44` recorded the physical checkout hash
+for historical `CAP-04.S02.T03.json`. A pre-review comparison against Git detected
+its CRLF checkout conversion; canonical LF content is identical. The corrected
+index explicitly binds tracked artifacts to their Git blob bytes at the tested
+candidate, and local execution artifacts to raw bytes. The initial mismatch and
+its exact hashes remain in `publicationCorrection`; the original historical
+manifest, approval, product and qualifying inputs are unchanged. This is an
+evidence-index correction, not a rerun or replacement of performance evidence.

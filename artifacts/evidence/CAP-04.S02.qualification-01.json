@@ -149,79 +149,113 @@
   "artifactBindings": [
     {
       "path": "artifacts/evidence/CAP-04.S02.T01.json",
-      "sha256": "b73a60a4e19a57d3320fcaa0a19c191c53d4f5a5ed90266c89d898ff1159aa54"
+      "sha256": "b73a60a4e19a57d3320fcaa0a19c191c53d4f5a5ed90266c89d898ff1159aa54",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.T01.review-R01.json",
-      "sha256": "33a0478a5d9956044a4d6d7f1537dc06665bf878234262ad7023b588771685c1"
+      "sha256": "33a0478a5d9956044a4d6d7f1537dc06665bf878234262ad7023b588771685c1",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.T02.json",
-      "sha256": "dbc27651ea4a1435afb7103b734fb53515c304ef3068c179d6098f6d57302834"
+      "sha256": "dbc27651ea4a1435afb7103b734fb53515c304ef3068c179d6098f6d57302834",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.T02.review-R01.json",
-      "sha256": "a2f241051fe580c154bb7152ec1695289eab36a8d1d87a0662d07c9f4cedbad8"
+      "sha256": "a2f241051fe580c154bb7152ec1695289eab36a8d1d87a0662d07c9f4cedbad8",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.T03.json",
-      "sha256": "76870f5358458073b7fe720673515a28fc7fda73cf9ad0ff4c1897b6e004932c"
+      "sha256": "e7455ced5e7d7495dbb0b28c8b77bf7da3522ef65d946c982e834fa2b1edd88c",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.T03.review-R01.json",
-      "sha256": "fee82735c9c22d2cc0d2bb59d03b6c277cecdc208fb2141bdcca775b2ed2358e"
+      "sha256": "fee82735c9c22d2cc0d2bb59d03b6c277cecdc208fb2141bdcca775b2ed2358e",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.pre-qualification-review-01.md",
-      "sha256": "f094185cd0ac0cd7264c4e3a08e81e62480cab27e3e8f3e0a18d3d4115f9a4df"
+      "sha256": "f094185cd0ac0cd7264c4e3a08e81e62480cab27e3e8f3e0a18d3d4115f9a4df",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.qualification-controls-review-01.md",
-      "sha256": "c46c50ce9edc5b0c59e1a0597002cbcf8944be4796aca752563c24983d2bb636"
+      "sha256": "c46c50ce9edc5b0c59e1a0597002cbcf8944be4796aca752563c24983d2bb636",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/W2.C02.T01.json",
-      "sha256": "fda31dfba93dbd4ab537a9409fc9762ec2bae037f7eee5ff3d5ce9e27a9205d8"
+      "sha256": "fda31dfba93dbd4ab537a9409fc9762ec2bae037f7eee5ff3d5ce9e27a9205d8",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/W2.C02.T01.review-R01.json",
-      "sha256": "2ac5f324cf1df3c485ec2a77d7a2dc84f6f4b248936c0940739aa310d2b9d3d3"
+      "sha256": "2ac5f324cf1df3c485ec2a77d7a2dc84f6f4b248936c0940739aa310d2b9d3d3",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/W2.C02.T01.visual-review-01.json",
-      "sha256": "a09d0f7170516f0f4b8679d60b465f57dd069c7e2c8edc8da0024633e686d9cb"
+      "sha256": "a09d0f7170516f0f4b8679d60b465f57dd069c7e2c8edc8da0024633e686d9cb",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/W2.C02.T01.ui-classification-R01.json",
-      "sha256": "dcabbee396a29a03ff62e1e72c205252a930c89fcfb021e1476811a9149b53f5"
+      "sha256": "dcabbee396a29a03ff62e1e72c205252a930c89fcfb021e1476811a9149b53f5",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "tests/fixtures/scholarly-metadata/source-performance-baseline.json",
-      "sha256": "d21fc40e3fedb71ecf0e0b274055d047b2fec4bb4278a1642894534d3c323822"
+      "sha256": "d21fc40e3fedb71ecf0e0b274055d047b2fec4bb4278a1642894534d3c323822",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.performance-baseline-01.md",
-      "sha256": "0a26338d9644d301e565ebf9e3e19dbcb39ac7dbd396a49e0341ec82da138044"
+      "sha256": "0a26338d9644d301e565ebf9e3e19dbcb39ac7dbd396a49e0341ec82da138044",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/evidence/CAP-04.S02.performance-baseline-review-01.md",
-      "sha256": "4bcfb58849e8721f9abd412d2ff50da5687df327a98c59e0ef95f5eb61585327"
+      "sha256": "4bcfb58849e8721f9abd412d2ff50da5687df327a98c59e0ef95f5eb61585327",
+      "hashMode": "git-blob-bytes",
+      "artifactCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa"
     },
     {
       "path": "artifacts/tmp/CAP-04.S02.baseline-checks-01.json",
-      "sha256": "92b847f282be0433902d5a35f88649d2fc3c64617e36cae55cb1dd7ef12e100f"
+      "sha256": "92b847f282be0433902d5a35f88649d2fc3c64617e36cae55cb1dd7ef12e100f",
+      "hashMode": "raw-bytes"
     },
     {
       "path": "artifacts/tmp/CAP-04.S02.performance-qualification-01.json",
-      "sha256": "17be1883e4813bef9e10546dbdccbd4c3b507fd953426150212a326e84c52721"
+      "sha256": "17be1883e4813bef9e10546dbdccbd4c3b507fd953426150212a326e84c52721",
+      "hashMode": "raw-bytes"
     },
     {
       "path": "artifacts/tmp/CAP-04.S02.performance-qualification-01.execution.json",
-      "sha256": "f857184c4e9e4a0b140def28d8b00bf8508703f6510120cfbe62bab5a9234b08"
+      "sha256": "f857184c4e9e4a0b140def28d8b00bf8508703f6510120cfbe62bab5a9234b08",
+      "hashMode": "raw-bytes"
     },
     {
       "path": "artifacts/tmp/CAP-04.S02.performance-qualification-01.log",
-      "sha256": "86d3e5f9778e60019b4343182464f14f228a13236ba1928ec8a5bfd3b25d3cb5"
+      "sha256": "86d3e5f9778e60019b4343182464f14f228a13236ba1928ec8a5bfd3b25d3cb5",
+      "hashMode": "raw-bytes"
     }
   ],
   "preservedFindings": [
@@ -239,5 +273,18 @@
     "Previously disclosed broad quality failures and Windows-token symlink skips",
     "Fresh full repository/affected profile, required Windows packaging/platform and cross-capability qualification",
     "Independent Wave review and separate human G2 release decision"
-  ]
+  ],
+  "publicationCorrection": {
+    "status": "REPAIRED",
+    "initialDeliveryCommit": "c53461502fafdfcc65ebbad0d0a15ea0ad4a2c44",
+    "findings": [
+      {
+        "path": "artifacts/evidence/CAP-04.S02.T03.json",
+        "initialWorkingCopySha256": "76870f5358458073b7fe720673515a28fc7fda73cf9ad0ff4c1897b6e004932c",
+        "committedSha256": "e7455ced5e7d7495dbb0b28c8b77bf7da3522ef65d946c982e834fa2b1edd88c",
+        "cause": "CRLF working-copy conversion; canonical bytes equal"
+      }
+    ],
+    "scope": "Consolidated index only; original artifact bytes and measured inputs unchanged"
+  }
 }
