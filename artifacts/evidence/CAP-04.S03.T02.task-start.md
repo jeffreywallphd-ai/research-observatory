@@ -30,9 +30,11 @@ identities, accepted decisions, source values and adverse evidence.
 | C1: labeled duplicate retrieval | Before scoring or tuning, freeze the licensed DBLP-ACM archive, exact member hashes/counts/decoding, provenance/attribution, component-disjoint development and qualification split, precision >=0.90 and recall >=0.95, and explicit pair/derived-cluster denominators. Authenticate fixtures offline. Report false positive/negative pairs and cluster overmerge/fragmentation separately; do not treat derived pair components as independent multi-source labels. |
 | Candidate semantics | Deterministic bounded blocking/ranking uses title, authors, year, venue, pages, abstract and typed identifiers. Preserve missing/conflicting feature state, source/assertion/Work revisions, normalizer/scoring/config versions and contributions. Cache features by immutable source revision. Test ordering, absent data, title changes, homonyms, conflicting identifiers and synthetic three-record false bridges; no probability or automatic adjudication claim. |
 | Current identity | Merge/split appends complete current source-membership and alias revisions; exact matching and inspection resolve current membership without rewriting old receipts. Test merge A/B, split, restart and fresh exact input for split-out B; reject alias cycles, stale or substituted predecessors and incomplete/overlapping partitions. |
+| Unassigned assertions and historical aliases | Preserve T01 review-required/null-Work assertions in inventory and candidates. Human assignment binds the exact assertion/address and expected unassigned state. A split must explicitly route every affected inbound alias, including transitive aliases whose historical members span partitions; no survivor/order inference. Revision-qualified history bypasses current routing. Prove this with the additional actual populated v14 two-Work/unassigned-conflict fixture and post-split exact/retry tests. |
 | Decision authority | Commands bind actor, action, exact compared Work/membership/decision revisions, candidate evidence/config, survivor, complete partition, alias plan and conflict dispositions. Current project/Intent/privacy and every contributor's historical/current rights apply to inspection, candidates, decisions and identical retries. Changed command-ID reuse conflicts; denial adds no canonical facts. |
 | Atomic dependencies | Append same-aggregate Work revisions for surviving and retired identities with provenance, outbox and dependency-impact intent in one canonical transaction. Existing impact items deny fresh-only consumption before propagation advances; visible pending/stale state must be honest. Test injected publication failures, idempotent replay, restart during propagation and no nested-writer or post-commit crash gap. |
-| Durable operation | Accepted-source inventory binds exact retained import/connector revisions. Long-running enumeration/reconciliation/candidate generation uses the existing durable queue and authority/cancellation guards. Test cancellation before publication, restart, bounded continuation, changed authority and partial failure without a false-complete result. |
+| Existing affected inputs | New exact/review outputs reject assertions, source revisions and prior human decisions already marked affected, including through bounded provenance manifests. Historical inspection and identical retry retain the original receipt while inspection exposes the review requirement. The read-only dependency preflight reproduced false-fresh output inheritance; add the regression before remediation. |
+| Durable operation | Accepted-source inventory binds exact retained import/connector revisions, job/attempt and completion-event/outbox authority. A missing or substituted acceptance join must deny enumeration rather than hide a row or report false exhaustion. Long-running enumeration/reconciliation/candidate generation uses the existing durable queue and authority/cancellation guards. Test cancellation before publication, restart, bounded continuation, changed authority and partial failure without a false-complete result. |
 | Compatibility | Freeze literal v14 schema plus actual published import and exact-reconciliation rows before new DDL. Prove additive migration, unchanged historical receipts/FKs, verified backup, tamper denial and rollback at material seams; preserve the older v13 fixture. |
 | Real principal boundary | Exercise actual protected Windows project storage, Core, durable worker and generated client/native admission across accepted import/retained connector -> reconciliation -> candidate -> human merge -> split -> restart. Doubles support fault tests but cannot establish this boundary. |
 | Governed journey | Systematic/living-review ingestion follows Source/Search and returns toward Corpus/Screening. Use approved side-by-side source assertions, identifiers, feature contributions, conflicts, affected objects and reversible merge/split decisions with shared tokens. Prove actual durable outcome, keyboard/focus/announcements, light/dark states, stale responses, cancel/return context and clearing on lock/project change. Future steps stay honest about availability. |
@@ -50,6 +52,19 @@ fresh at the committed candidate, not represented by unit doubles.
 Read-only adversarial preflight by `agent:/root/w2_t03_review` is incorporated in
 the current-membership, same-aggregate dependency, inventory, frozen predecessor
 and real-boundary rows. Its advice is not an independent task disposition.
+The subsequent read-only identity preflight by `agent:/root/w2_c02_review`
+adds explicit unassigned and transitive-alias obligations. Historical membership
+backfill follows predecessor chains/numeric revisions, never UUID order. The
+original populated v14 fixture remains unchanged; an additional fixture captures
+two Works and an unassigned identifier bridge before any new DDL.
+
+The accepted-output preflight reproduced two false-exhaustion paths with two
+successful jobs sharing one canonical output: substitution of one completion
+event, and substitution of one attempt. The immediate cause was filtering or
+trusting joined rows before authenticating the exact job's completion binding.
+Add both corruption regressions before remediation; restoration of fixture
+trigger DDL keeps normal schema validation active. This remains advisory review,
+not a task disposition.
 
 Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows

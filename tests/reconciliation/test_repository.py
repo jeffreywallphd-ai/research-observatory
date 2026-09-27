@@ -66,11 +66,13 @@ class ReconciliationRepositoryTests(unittest.TestCase):
                 for table in (
                     "aggregate_revisions",
                     "reconciliation_assertions",
-                    "reconciliation_work_revisions",
+                    "reconciliation_work_states",
                     "reconciliation_identifier_links",
                     "reconciliation_commands",
                     "provenance_events",
                     "outbox_events",
+                    "reconciliation_work_members",
+                    "reconciliation_work_seals",
                 )
             )
 
@@ -285,7 +287,7 @@ class ReconciliationRepositoryTests(unittest.TestCase):
         self.assertEqual(before, self.counts())
 
     def test_every_publication_failpoint_rolls_back(self):
-        for step in ("assertion-created", "work-created", "links-created", "command-created"):
+        for step in ("assertion-created", "work-created", "links-created", "exact-impacts-created", "command-created"):
             with self.subTest(step=step):
                 before = self.counts()
 

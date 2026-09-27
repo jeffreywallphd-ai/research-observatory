@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Literal, Protocol, runtime_checkable
 
 ConcurrencyClass = Literal["interactive", "document", "ai", "maintenance"]
@@ -164,6 +166,44 @@ class WorkflowOutputReference:
 
 
 @dataclass(frozen=True, slots=True)
+class WorkflowAcceptedBoundary:
+    segment_key: str
+    sequence: int
+    checkpoint_id: str
+    chain_sha256: str
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowAcceptedSnapshot:
+    project_id: str
+    activity_types: tuple[str, ...]
+    boundaries: tuple[WorkflowAcceptedBoundary, ...]
+
+    @property
+    def fingerprint(self) -> str:
+        payload = json.dumps(["workflow-accepted-inventory/1", asdict(self)], sort_keys=True, separators=(",", ":"))
+        return "sha256:" + hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowAcceptedCursor:
+    snapshot_sha256: str
+    segment_key: str
+    sequence: int
+
+
+@dataclass(frozen=True, slots=True)
+class WorkflowAcceptedOutput:
+    job_id: str
+    activity_type: str
+    segment_key: str
+    sequence: int
+    output_record_sha256: str
+    outputs: tuple[WorkflowOutputReference, ...]
+    cursor: WorkflowAcceptedCursor
+
+
+@dataclass(frozen=True, slots=True)
 class WorkflowCompletionReceipt:
     job_id: str
     attempt_id: str
@@ -271,6 +311,12 @@ class WorkflowTaskCenterRunRecord:
 
 @runtime_checkable
 class WorkflowQueueRepository(Protocol):
+    def accepted_snapshot(self, *, activity_types: tuple[str, ...]) -> WorkflowAcceptedSnapshot: ...
+
+    def accepted_page(
+        self, snapshot: WorkflowAcceptedSnapshot, *, after: WorkflowAcceptedCursor | None, limit: int = 100
+    ) -> tuple[WorkflowAcceptedOutput, ...]: ...
+
     def register_authority(
         self,
         *,
@@ -392,6 +438,10 @@ class WorkflowQueueRepository(Protocol):
 
 __all__ = [
     "ConcurrencyClass",
+    "WorkflowAcceptedBoundary",
+    "WorkflowAcceptedCursor",
+    "WorkflowAcceptedOutput",
+    "WorkflowAcceptedSnapshot",
     "WorkflowActor",
     "WorkflowActorType",
     "WorkflowArtifactDisposition",

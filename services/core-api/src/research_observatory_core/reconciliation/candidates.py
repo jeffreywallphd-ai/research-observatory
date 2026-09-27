@@ -177,18 +177,29 @@ def prepare_record(record: CandidateRecord) -> PreparedRecord:
     source_bytes += sum(len(item.observed.encode()) for item in identifiers)
     if source_bytes > 1024 * 1024:
         raise ReconciliationProblem("duplicate-feature-limit")
-    fingerprint = _hash(
+    return PreparedRecord(
+        record.key,
+        record.revision,
+        candidate_record_fingerprint(record),
+        tuple(sorted(fields.items())),
+        exact_keys(identifiers),
+    )
+
+
+def candidate_record_fingerprint(record: CandidateRecord) -> str:
+    """Bind prepared features to the exact immutable, already validated input."""
+    return _hash(
         [
             FEATURE_VERSION,
             NORMALIZER_VERSION,
             record.key,
             record.revision,
             record.fields,
-            [item.model_dump(mode="json", by_alias=True) for item in identifiers],
+            [
+                IdentifierAssertion.model_validate(item).model_dump(mode="json", by_alias=True)
+                for item in record.identifiers
+            ],
         ]
-    )
-    return PreparedRecord(
-        record.key, record.revision, fingerprint, tuple(sorted(fields.items())), exact_keys(identifiers)
     )
 
 
@@ -282,6 +293,23 @@ def generate_candidates(
     config: CandidateConfig = DEFAULT_CONFIG,
     checkpoint: Callable[[], None] | None = None,
 ) -> CandidateRetrieval:
+    """Prepare immutable inputs, then use the same retrieval path as the local cache."""
+    if len(records) > config.max_records:
+        raise ReconciliationProblem("duplicate-record-limit")
+    prepared = []
+    for record in records:
+        if checkpoint is not None:
+            checkpoint()
+        prepared.append(prepare_record(record))
+    return generate_prepared_candidates(tuple(prepared), config=config, checkpoint=checkpoint)
+
+
+def generate_prepared_candidates(
+    records: tuple[PreparedRecord, ...],
+    *,
+    config: CandidateConfig = DEFAULT_CONFIG,
+    checkpoint: Callable[[], None] | None = None,
+) -> CandidateRetrieval:
     """Inverted title/identifier blocking with a fail-closed comparison budget.
 
     Common individual words do not form blocks. Exact full titles/identifiers
@@ -290,7 +318,9 @@ def generate_candidates(
     """
     if len(records) > config.max_records:
         raise ReconciliationProblem("duplicate-record-limit")
-    prepared = tuple(sorted((prepare_record(item) for item in records), key=lambda item: item.key))
+    for record in records:
+        _validate_prepared_record(record)
+    prepared = tuple(sorted(records, key=lambda item: item.key))
     if len({item.key for item in prepared}) != len(prepared):
         raise ReconciliationProblem("duplicate-record-identity-conflict")
     postings: dict[tuple[str, str], set[int]] = defaultdict(set)
@@ -347,3 +377,38 @@ def generate_candidates(
         len(prepared),
         config.fingerprint,
     )
+
+
+def _validate_prepared_record(record: PreparedRecord) -> None:
+    if (
+        not isinstance(record, PreparedRecord)
+        or any(not isinstance(value, str) or not 1 <= len(value) <= 512 for value in (record.key, record.revision))
+        or re.fullmatch(r"[0-9a-f]{64}", record.fingerprint) is None
+        or not isinstance(record.fields, tuple)
+        or len(record.fields) > len(FIELD_NAMES)
+        or not isinstance(record.identifiers, frozenset)
+        or len(record.identifiers) > 32768
+    ):
+        raise ReconciliationProblem("duplicate-prepared-record-invalid")
+    seen = set()
+    for name, values in record.fields:
+        if name not in FIELD_NAMES or name in seen or not isinstance(values, tuple) or len(values) > 256:
+            raise ReconciliationProblem("duplicate-prepared-record-invalid")
+        seen.add(name)
+        for value in values:
+            if (
+                not isinstance(value, PreparedValue)
+                or not isinstance(value.text, str)
+                or not 1 <= len(value.text) <= (4096 if name == "title" else 524288)
+                or not isinstance(value.tokens, frozenset)
+                or len(value.tokens) > 4096
+                or value.tokens != frozenset(value.text.split())
+            ):
+                raise ReconciliationProblem("duplicate-prepared-record-invalid")
+    if any(
+        not isinstance(item, tuple)
+        or len(item) != 2
+        or any(not isinstance(part, str) or not 1 <= len(part) <= 65536 for part in item)
+        for item in record.identifiers
+    ):
+        raise ReconciliationProblem("duplicate-prepared-record-invalid")

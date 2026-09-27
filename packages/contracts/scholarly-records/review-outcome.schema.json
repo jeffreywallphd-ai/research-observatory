@@ -1,0 +1,138 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Members": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 256,
+      "type": "array"
+    },
+    "WorkState": {
+      "additionalProperties": false,
+      "properties": {
+        "aliasTarget": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assertionRevisionIds": {
+          "$ref": "#/$defs/Members"
+        },
+        "decisionRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "active",
+            "alias"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "previousRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "workId",
+        "revisionId",
+        "previousRevisionId",
+        "disposition",
+        "aliasTarget",
+        "assertionRevisionIds",
+        "decisionRevisionId"
+      ],
+      "title": "WorkState",
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/review-outcome.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "decisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "decisionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "dependencyRunIds": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 288,
+      "title": "Dependencyrunids",
+      "type": "array"
+    },
+    "planSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "workStates": {
+      "items": {
+        "$ref": "#/$defs/WorkState"
+      },
+      "maxItems": 288,
+      "minItems": 1,
+      "title": "Workstates",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decisionId",
+    "decisionRevisionId",
+    "commandId",
+    "planSha256",
+    "workStates",
+    "dependencyRunIds"
+  ],
+  "title": "ReviewOutcome",
+  "type": "object"
+}

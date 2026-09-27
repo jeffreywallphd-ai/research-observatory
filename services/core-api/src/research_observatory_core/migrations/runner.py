@@ -35,6 +35,7 @@ from research_observatory_core.migrations.versions import (
     v0012_import_summaries,
     v0013_import_commits,
     v0014_scholarly_reconciliation,
+    v0015_reconciliation_review,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -203,6 +204,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.IMPORT_PREVIEW_DATABASE_SCHEMA_VERSION,
             storage.IMPORT_SUMMARY_DATABASE_SCHEMA_VERSION,
             storage.IMPORT_COMMIT_DATABASE_SCHEMA_VERSION,
+            storage.RECONCILIATION_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -218,6 +220,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -365,6 +368,10 @@ _SUPPORTED_PROFILES = {
     storage.IMPORT_COMMIT_DATABASE_SCHEMA_VERSION: (
         storage.IMPORT_COMMIT_PROFILE_SHA256,
         storage.IMPORT_COMMIT_SCHEMA_SHA256,
+    ),
+    storage.RECONCILIATION_DATABASE_SCHEMA_VERSION: (
+        storage.RECONCILIATION_PROFILE_SHA256,
+        storage.RECONCILIATION_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -586,6 +593,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             13,
             14,
             storage.IMPORT_COMMIT_SCHEMA_SHA256,
+            storage.RECONCILIATION_SCHEMA_SHA256,
+        ),
+        (
+            v0015_reconciliation_review.revision,
+            14,
+            15,
+            storage.RECONCILIATION_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -684,9 +698,14 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0013_import_commits.TARGET_PROFILE_SHA256 == storage.IMPORT_COMMIT_PROFILE_SHA256
         and v0014_scholarly_reconciliation.down_revision == v0013_import_commits.revision
         and v0014_scholarly_reconciliation.source_schema_version == storage.IMPORT_COMMIT_DATABASE_SCHEMA_VERSION
-        and v0014_scholarly_reconciliation.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0014_scholarly_reconciliation.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0014_scholarly_reconciliation.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0014_scholarly_reconciliation.target_schema_version == storage.RECONCILIATION_DATABASE_SCHEMA_VERSION
+        and v0014_scholarly_reconciliation.TARGET_SCHEMA_SHA256 == storage.RECONCILIATION_SCHEMA_SHA256
+        and v0014_scholarly_reconciliation.TARGET_PROFILE_SHA256 == storage.RECONCILIATION_PROFILE_SHA256
+        and v0015_reconciliation_review.down_revision == v0014_scholarly_reconciliation.revision
+        and v0015_reconciliation_review.source_schema_version == storage.RECONCILIATION_DATABASE_SCHEMA_VERSION
+        and v0015_reconciliation_review.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0015_reconciliation_review.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0015_reconciliation_review.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -705,6 +724,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0003_object_envelopes.source_schema_version:
         return (
@@ -720,6 +740,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0004_object_envelope_upgrades.source_schema_version:
         return (
@@ -734,6 +755,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0005_object_creation_source.source_schema_version:
         return (
@@ -747,6 +769,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0006_actor_identity.source_schema_version:
         return (
@@ -759,6 +782,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0007_provenance_ledger.source_schema_version:
         return (
@@ -770,6 +794,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0008_workflow_executor.source_schema_version:
         return (
@@ -780,6 +805,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0009_material_dependencies.source_schema_version:
         return (
@@ -789,6 +815,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0010_dependency_impacts.source_schema_version:
         return (
@@ -797,6 +824,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0011_import_previews.source_schema_version:
         return (
@@ -804,16 +832,25 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
             v0012_import_summaries.revision,
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0012_import_summaries.source_schema_version:
-        return (v0012_import_summaries.revision, v0013_import_commits.revision, v0014_scholarly_reconciliation.revision)
+        return (
+            v0012_import_summaries.revision,
+            v0013_import_commits.revision,
+            v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
+        )
     if source_version == v0013_import_commits.source_schema_version:
         return (
             v0013_import_commits.revision,
             v0014_scholarly_reconciliation.revision,
+            v0015_reconciliation_review.revision,
         )
     if source_version == v0014_scholarly_reconciliation.source_schema_version:
-        return (v0014_scholarly_reconciliation.revision,)
+        return (v0014_scholarly_reconciliation.revision, v0015_reconciliation_review.revision)
+    if source_version == v0015_reconciliation_review.source_schema_version:
+        return (v0015_reconciliation_review.revision,)
     raise MigrationProblem("migration-source-version-unsupported")
 
 
@@ -1670,12 +1707,28 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.IMPORT_COMMIT_SCHEMA_SHA256,
-                "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
-                "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
-                "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+                "target_schema_sha256": storage.RECONCILIATION_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.RECONCILIATION_SCHEMA_SHA256,
+                "targetProfileSha256": storage.RECONCILIATION_PROFILE_SHA256,
                 "schemaMetadataDdl": storage.SCHEMA_METADATA_V14_DDL,
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
                 "reconciliationAuthority": storage.RECONCILIATION_DDL,
+            },
+        )
+    if source_schema_version <= storage.RECONCILIATION_DATABASE_SCHEMA_VERSION:
+        v0015_reconciliation_review.apply(
+            operations,
+            {
+                "migration_id": v0015_reconciliation_review.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.RECONCILIATION_SCHEMA_SHA256,
+                "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V15_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+                "reviewAuthority": storage.RECONCILIATION_REVIEW_DDL,
             },
         )
 

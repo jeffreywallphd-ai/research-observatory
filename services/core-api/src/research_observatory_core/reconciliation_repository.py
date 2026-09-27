@@ -17,12 +17,17 @@ from pathlib import Path
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ports.reconciliation import ReconciliationActor, ReconciliationSourceResolver
 from .ports.repositories import (
+    DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+    AggregateKind,
     AggregateRevision,
     AggregateRevisionDraft,
     AtomicRepositoryEvent,
+    DependencyChange,
     MaterialDependency,
+    RepositoryConflict,
     RepositoryProblem,
 )
+from .reconciliation.candidates import DEFAULT_CONFIG, FEATURE_VERSION, PreparedRecord
 from .reconciliation.contracts import (
     CanonicalFieldSelection,
     CanonicalWorkReference,
@@ -33,9 +38,24 @@ from .reconciliation.contracts import (
     SourceAddress,
     SourceAssertion,
 )
+from .reconciliation.decisions import (
+    ReviewCommand,
+    ReviewContext,
+    ReviewOutcome,
+    ReviewPlan,
+    ReviewPreview,
+    ReviewSource,
+    WorkState,
+)
 from .reconciliation.exact import IdentifierAssertion, MatchAssessment, assess_match, exact_keys, select_field
+from .reconciliation.feature_cache import FeatureSnapshot
 from .reconciliation.identifiers import NORMALIZER_VERSION
-from .repositories import _UNIT_OF_WORKS, _projection_content_sha256, _SqliteAggregateRepository
+from .repositories import (
+    _UNIT_OF_WORKS,
+    _projection_content_sha256,
+    _SqliteAggregateRepository,
+    _SqliteDependencyImpactRepository,
+)
 from .storage import (
     _DATABASE_ERRORS,
     CanonicalConnection,
@@ -167,20 +187,142 @@ class SqliteReconciliationRepository:
             raise ReconciliationProblem("reconciliation-source-changed")
         return stored
 
+    def _cached_features(
+        self, connection: CanonicalConnection, revision: str, source: SourceAssertion
+    ) -> PreparedRecord | None:
+        row = connection.execute(
+            "SELECT input_sha256,payload_sha256,payload_json FROM reconciliation_feature_cache "
+            "WHERE project_id=? AND assertion_revision_id=? AND feature_version=? "
+            "AND normalizer_version=? AND configuration_sha256=?",
+            (self._project, revision, FEATURE_VERSION, NORMALIZER_VERSION, DEFAULT_CONFIG.fingerprint),
+        ).fetchone()
+        if row is None:
+            return None
+        snapshot = FeatureSnapshot.model_validate_json(row[2])
+        if row[0] != snapshot.input_sha256 or row[1] != _digest(snapshot.model_dump(mode="json", by_alias=True)):
+            raise ReconciliationProblem("duplicate-feature-cache-mismatch")
+        return snapshot.restore(revision, source)
+
+    def prepared_record(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> PreparedRecord:
+        # Authorize even a cache hit. Never resolve protected objects while holding
+        # the cache writer, because their access audits have their own transaction.
+        with self._transaction(write=False) as (connection, _):
+            source = self._authorized_load(connection, revision_id, resolve).assertion
+            cached = self._cached_features(connection, revision_id, source)
+        if cached is not None:
+            return cached
+        snapshot = FeatureSnapshot.create(revision_id, source)
+        with self._transaction(write=True) as (connection, _):
+            if self._load(connection, revision_id).assertion != source:
+                raise ReconciliationProblem("reconciliation-source-changed")
+            cached = self._cached_features(connection, revision_id, source)
+            if cached is not None:
+                return cached
+            connection.execute(
+                "INSERT INTO reconciliation_feature_cache VALUES (?,?,?,?,?,?,?,?)",
+                (
+                    self._project,
+                    revision_id,
+                    FEATURE_VERSION,
+                    NORMALIZER_VERSION,
+                    DEFAULT_CONFIG.fingerprint,
+                    snapshot.input_sha256,
+                    _digest(snapshot.model_dump(mode="json", by_alias=True)),
+                    snapshot.model_dump_json(by_alias=True),
+                ),
+            )
+        return snapshot.restore(revision_id, source)
+
     def _work_sources(
         self, connection: CanonicalConnection, work_id: str, resolve: ReconciliationSourceResolver
     ) -> tuple[ReconciliationInspection, ...]:
-        rows = connection.execute(
-            "SELECT assertion_revision_id FROM reconciliation_work_revisions "
-            "WHERE project_id=? AND work_id=? ORDER BY revision_id LIMIT 257",
-            (self._project, work_id),
-        ).fetchall()
-        if not 1 <= len(rows) <= 256:
-            raise ReconciliationProblem("reconciliation-work-limit")
-        sources = tuple(self._authorized_load(connection, row[0], resolve) for row in rows)
-        if any(source.result.work_id != work_id for source in sources):
+        state = self._state(connection, work_id)
+        if state.disposition != "active":
+            raise ReconciliationProblem("reconciliation-work-retired")
+        return tuple(self._authorized_load(connection, revision, resolve) for revision in state.assertion_revision_ids)
+
+    def _state(self, connection: CanonicalConnection, work_id: str, revision_id: str | None = None) -> WorkState:
+        # An explicitly addressed historical revision never follows a current alias.
+        row = connection.execute(
+            "SELECT r.revision_id,s.previous_revision_id,s.disposition,s.alias_target,s.decision_revision_id,"
+            "z.member_count,z.state_sha256 FROM aggregate_revisions r "
+            "LEFT JOIN reconciliation_work_states s ON s.revision_id=r.revision_id AND s.project_id=r.project_id "
+            "LEFT JOIN reconciliation_work_seals z ON z.work_revision_id=s.revision_id AND z.project_id=s.project_id "
+            "WHERE r.project_id=? AND r.aggregate_id=? AND (? IS NULL OR r.revision_id=?) "
+            "ORDER BY r.revision DESC LIMIT 1",
+            (self._project, work_id, revision_id, revision_id),
+        ).fetchone()
+        if row is None:
+            raise ReconciliationProblem("reconciliation-not-found")
+        if row[2] is None or row[5] is None:
             raise ReconciliationProblem("reconciliation-integrity-invalid")
-        return sources
+        rows = connection.execute(
+            "SELECT assertion_revision_id FROM reconciliation_work_members "
+            "WHERE project_id=? AND work_revision_id=? ORDER BY ordinal LIMIT 257",
+            (self._project, row[0]),
+        ).fetchall()
+        state = WorkState(
+            work_id=work_id,
+            revision_id=row[0],
+            previous_revision_id=row[1],
+            disposition=row[2],
+            alias_target=row[3],
+            decision_revision_id=row[4],
+            assertion_revision_ids=tuple(item[0] for item in rows),
+        )
+        if len(rows) != row[5] or state.fingerprint != row[6]:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        return state
+
+    def _publish_state(self, connection: CanonicalConnection, state: WorkState) -> None:
+        state = WorkState.model_validate(state)
+        connection.execute(
+            "INSERT INTO reconciliation_work_states (revision_id,project_id,work_id,previous_revision_id,"
+            "disposition,alias_target,decision_revision_id) VALUES (?,?,?,?,?,?,?)",
+            (
+                state.revision_id,
+                self._project,
+                state.work_id,
+                state.previous_revision_id,
+                state.disposition,
+                state.alias_target,
+                state.decision_revision_id,
+            ),
+        )
+        for ordinal, assertion in enumerate(state.assertion_revision_ids, 1):
+            connection.execute(
+                "INSERT INTO reconciliation_work_members VALUES (?,?,?,?)",
+                (state.revision_id, self._project, ordinal, assertion),
+            )
+        connection.execute(
+            "INSERT INTO reconciliation_work_seals VALUES (?,?,?,?)",
+            (state.revision_id, self._project, len(state.assertion_revision_ids), state.fingerprint),
+        )
+
+    def _assignment(self, connection: CanonicalConnection, assertion: str) -> WorkState | None:
+        rows = connection.execute(
+            "SELECT DISTINCT s.work_id FROM reconciliation_work_members m "
+            "JOIN reconciliation_work_states s ON s.revision_id=m.work_revision_id AND s.project_id=m.project_id "
+            "WHERE m.project_id=? AND m.assertion_revision_id=? ORDER BY s.work_id LIMIT 513",
+            (self._project, assertion),
+        ).fetchall()
+        if len(rows) > 512:
+            raise ReconciliationProblem("reconciliation-work-limit")
+        # Validate every formerly assigned identity's current head. An unrelated
+        # or unsealed aggregate revision must not silently unassign its sources.
+        states = [self._state(connection, row[0]) for row in rows]
+        assigned = [state for state in states if assertion in state.assertion_revision_ids]
+        if len(assigned) > 1 or (rows and not assigned):
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        return assigned[0] if assigned else None
+
+    def _authorize_assignment(
+        self, connection: CanonicalConnection, assertion: str, resolve: ReconciliationSourceResolver
+    ) -> WorkState | None:
+        state = self._assignment(connection, assertion)
+        if state is not None:
+            self._work_sources(connection, state.work_id, resolve)
+        return state
 
     def _assessment(
         self, connection: CanonicalConnection, source: SourceAssertion, resolve: ReconciliationSourceResolver
@@ -199,10 +341,11 @@ class SqliteReconciliationRepository:
                 candidate = self._authorized_load(connection, revision, resolve)
                 if (scheme, value) not in _keys(candidate.assertion.identifiers) or work != candidate.result.work_id:
                     raise ReconciliationProblem("reconciliation-integrity-invalid")
-                if work is None:
+                assignment = self._assignment(connection, revision)
+                if assignment is None:
                     unresolved = True
                 else:
-                    works.add(work)
+                    works.add(assignment.work_id)
         if len(works) > 256:
             raise ReconciliationProblem("reconciliation-match-limit")
         existing = {
@@ -234,13 +377,45 @@ class SqliteReconciliationRepository:
         label: str,
         current: AggregateRevision | None = None,
         disputed: bool = False,
+        historical_sources: tuple[AggregateRevision, ...] = (),
+        kind: AggregateKind = "record",
+        adjudicated: bool = False,
+        payload_configuration: str = "assertion-payload",
     ) -> AggregateRevision:
+        # A propagation run has a fixed graph snapshot. Later outputs must not
+        # evade an existing impact by being appended after that snapshot.
+        self._require_fresh_inputs(aggregates, tuple(source.revision_id for source in sources))
+        # Preserve complete, traversable provenance within the common 64-input
+        # envelope. Material and historical-only leaves never share a manifest.
+        if len(sources) + len(historical_sources) > 64:
+
+            def pack(items: tuple[AggregateRevision, ...], *, historical: bool) -> tuple[AggregateRevision, ...]:
+                return tuple(
+                    self._append(
+                        aggregates,
+                        sources=() if historical else items[offset : offset + 64],
+                        historical_sources=items[offset : offset + 64] if historical else (),
+                        actor=actor,
+                        kind="workflow",
+                        label="Scholarly input manifest",
+                        digest=_digest(
+                            [
+                                (item.revision_id, _projection_content_sha256(item))
+                                for item in items[offset : offset + 64]
+                            ]
+                        ),
+                        payload_configuration="input-manifest",
+                    )
+                    for offset in range(0, len(items), 64)
+                )
+
+            sources, historical_sources = pack(sources, historical=False), pack(historical_sources, historical=True)
         revision = new_uuid_v7()
         dependencies = tuple(
             MaterialDependency(
                 new_uuid_v7(),
-                "source-revision",
-                "direct",
+                "human-decision" if source.aggregate_kind == "decision" else "source-revision",
+                "non-material" if source in historical_sources else "direct",
                 source.revision_id,
                 None,
                 None,
@@ -248,10 +423,10 @@ class SqliteReconciliationRepository:
                 "dependency.material.v1",
                 "1.0.0",
             )
-            for source in sources
+            for source in sources + historical_sources
         )
         for name, fingerprint in (
-            ("assertion-payload", digest),
+            (payload_configuration, digest),
             ("current-intent", actor.intent_sha256),
             ("current-privacy", actor.policy_sha256),
             ("normalizer", _digest(NORMALIZER_VERSION)),
@@ -273,21 +448,21 @@ class SqliteReconciliationRepository:
             AggregateRevisionDraft(
                 revision_id=revision,
                 aggregate_id=current.aggregate_id if current else new_uuid_v7(),
-                aggregate_kind="record",
+                aggregate_kind=kind,
                 created_at=current.created_at if current else actor.occurred_at,
                 modified_at=actor.occurred_at,
                 display_label_observed=label,
                 display_label_normalized=None,
-                knowledge_status="disputed" if disputed else "inferred",
+                knowledge_status="adjudicated" if adjudicated else "disputed" if disputed else "inferred",
                 rights_status="unknown",
                 dependency_coverage="complete",
-                provenance_inputs=sources,
+                provenance_inputs=sources + historical_sources,
                 material_dependencies=dependencies,
             ),
             AtomicRepositoryEvent(
                 event_id=new_uuid_v7(),
                 outbox_id=new_uuid_v7(),
-                event_type="record.reconciled",
+                event_type=kind + ".reconciled",
                 occurred_at=actor.occurred_at,
                 available_at=actor.occurred_at,
                 trace_id=actor.trace_id,
@@ -334,9 +509,8 @@ class SqliteReconciliationRepository:
             if previous is None:
                 self._assessment(connection, assertion, collect)
             else:
-                saved = self._authorized_load(connection, previous[0], collect)
-                if saved.result.work_id is not None:
-                    self._work_sources(connection, saved.result.work_id, collect)
+                self._authorized_load(connection, previous[0], collect)
+                self._authorize_assignment(connection, previous[0], collect)
 
         def resolved(address: SourceAddress) -> SourceAssertion:
             key = _digest(address.model_dump(mode="json"))
@@ -355,8 +529,7 @@ class SqliteReconciliationRepository:
                 if command[:2] != (actor.actor_id, command_sha):
                     raise ReconciliationProblem("reconciliation-command-conflict")
                 prior = self._authorized_load(connection, command[2], resolved)
-                if prior.result.work_id is not None:
-                    self._work_sources(connection, prior.result.work_id, resolved)
+                self._authorize_assignment(connection, command[2], resolved)
                 return prior.result
             prior = connection.execute(
                 "SELECT revision_id FROM reconciliation_assertions WHERE project_id=? AND address_sha256=?",
@@ -364,8 +537,7 @@ class SqliteReconciliationRepository:
             ).fetchone()
             if prior is not None:
                 saved = self._authorized_load(connection, prior[0], resolved)
-                if saved.result.work_id is not None:
-                    self._work_sources(connection, saved.result.work_id, resolved)
+                self._authorize_assignment(connection, prior[0], resolved)
                 result = saved.result
             else:
                 assessment = self._assessment(connection, assertion, resolved)
@@ -385,6 +557,7 @@ class SqliteReconciliationRepository:
                 _publication_step("assertion-created")
                 work = None
                 current = aggregates.get(assessment.target) if assessment.target is not None else None
+                current_state = self._state(connection, current.aggregate_id) if current else None
                 if assessment.disposition != "review-required":
                     if (
                         current is not None
@@ -393,7 +566,23 @@ class SqliteReconciliationRepository:
                         raise ReconciliationProblem("reconciliation-work-limit")
                     work = self._append(
                         aggregates,
-                        sources=(created,) + ((current,) if current else ()),
+                        sources=(
+                            created,
+                            *tuple(
+                                aggregates.get_revision(revision)
+                                for revision in (
+                                    current_state.assertion_revision_ids
+                                    + (
+                                        (current_state.decision_revision_id,)
+                                        if current_state.decision_revision_id
+                                        else ()
+                                    )
+                                    if current_state
+                                    else ()
+                                )
+                            ),
+                        ),
+                        historical_sources=(current,) if current else (),
                         actor=actor,
                         digest=payload_sha,
                         label="Canonical scholarly work",
@@ -432,15 +621,21 @@ class SqliteReconciliationRepository:
                     ),
                 )
                 if work is not None:
-                    connection.execute(
-                        "INSERT INTO reconciliation_work_revisions (revision_id, project_id, work_id, "
-                        "assertion_revision_id, previous_revision_id) VALUES (?, ?, ?, ?, ?)",
-                        (
-                            work.revision_id,
-                            self._project,
-                            work.aggregate_id,
-                            created.revision_id,
-                            current.revision_id if current else None,
+                    self._publish_state(
+                        connection,
+                        WorkState(
+                            work_id=work.aggregate_id,
+                            revision_id=work.revision_id,
+                            previous_revision_id=current.revision_id if current else None,
+                            disposition="active",
+                            alias_target=None,
+                            assertion_revision_ids=tuple(
+                                sorted(
+                                    (created.revision_id,)
+                                    + (current_state.assertion_revision_ids if current_state else ())
+                                )
+                            ),
+                            decision_revision_id=current_state.decision_revision_id if current_state else None,
                         ),
                     )
                 for scheme, value in sorted(_keys(assertion.identifiers)):
@@ -456,6 +651,9 @@ class SqliteReconciliationRepository:
                         ),
                     )
                 _publication_step("links-created")
+                if current is not None and work is not None:
+                    self._publish_impacts(connection, (self._change(current, work, actor, human=False),))
+                _publication_step("exact-impacts-created")
             connection.execute(
                 "INSERT INTO reconciliation_commands VALUES (?, ?, ?, ?, ?)",
                 (command_id, self._project, actor.actor_id, command_sha, result.assertion_revision_id),
@@ -469,16 +667,9 @@ class SqliteReconciliationRepository:
         _, collect = self._source_snapshot(resolve)
         with self._transaction(write=False) as (connection, aggregates):
             result = self._authorized_load(connection, revision_id, collect)
-            current = aggregates.get(result.result.work_id) if result.result.work_id else None
-            if result.result.work_id and current is None:
-                raise ReconciliationProblem("reconciliation-integrity-invalid")
-            sources = (
-                self._work_sources(connection, result.result.work_id, collect) if result.result.work_id else (result,)
-            )
-            if current is not None and current.revision_id not in {
-                source.result.work_revision_id for source in sources
-            }:
-                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            state = self._assignment(connection, revision_id)
+            current = aggregates.get(state.work_id) if state else None
+            sources = self._work_sources(connection, state.work_id, collect) if state else (result,)
             values: dict[str, list[FieldObservation]] = {}
             for source in sources:
                 for field in source.assertion.fields:
@@ -504,6 +695,17 @@ class SqliteReconciliationRepository:
                         observations=tuple(observations),
                     )
                 )
+            inspected_revisions = (revision_id,) + ((current.revision_id,) if current else ())
+            if state and state.decision_revision_id:
+                inspected_revisions += (state.decision_revision_id,)
+            impacted = connection.execute(
+                "SELECT 1 FROM dependency_impact_items WHERE project_id=? AND output_revision_id IN ("
+                + ",".join("?" for _ in inspected_revisions)
+                + ") UNION ALL SELECT 1 FROM dependency_impact_runs WHERE project_id=? AND previous_revision_id IN ("
+                + ",".join("?" for _ in inspected_revisions)
+                + ") AND (replacement_fingerprint IS NULL OR replacement_fingerprint<>previous_fingerprint) LIMIT 1",
+                (self._project, *inspected_revisions, self._project, *inspected_revisions),
+            ).fetchone()
             result = ReconciliationInspection(
                 result=result.result,
                 assertion=result.assertion,
@@ -511,7 +713,402 @@ class SqliteReconciliationRepository:
                 if current is not None
                 else None,
                 canonical_fields=tuple(selections),
+                dependency_state="requires-review" if impacted else "unaffected",
             )
             if len(result.model_dump_json(by_alias=True).encode()) > 4 * 1024 * 1024:
                 raise ReconciliationProblem("reconciliation-inspection-limit")
             return result
+
+    @staticmethod
+    def _require_fresh_inputs(aggregates: _SqliteAggregateRepository, revisions: tuple[str, ...]) -> None:
+        try:
+            for revision in revisions:
+                aggregates._require_fresh_revision(revision, include_changed_input=True)
+        except RepositoryConflict:
+            raise ReconciliationProblem("reconciliation-input-requires-review") from None
+
+    def _inbound_aliases(self, connection: CanonicalConnection, work_ids: tuple[str, ...]) -> tuple[WorkState, ...]:
+        pending = list(work_ids)
+        found: dict[str, WorkState] = {}
+        while pending:
+            target = pending.pop()
+            rows = connection.execute(
+                "SELECT s.work_id FROM reconciliation_work_states s WHERE s.project_id=? AND s.alias_target=? "
+                "AND NOT EXISTS (SELECT 1 FROM reconciliation_work_states n WHERE n.project_id=s.project_id "
+                "AND n.previous_revision_id=s.revision_id) ORDER BY s.work_id LIMIT 257",
+                (self._project, target),
+            ).fetchall()
+            for row in rows:
+                if row[0] in found or row[0] in work_ids:
+                    raise ReconciliationProblem("reconciliation-alias-cycle")
+                state = self._state(connection, row[0])
+                if state.disposition != "alias" or state.alias_target != target:
+                    raise ReconciliationProblem("reconciliation-integrity-invalid")
+                found[state.work_id] = state
+                pending.append(state.work_id)
+            if len(found) > 256:
+                raise ReconciliationProblem("reconciliation-alias-limit")
+        return tuple(found[key] for key in sorted(found))
+
+    def _review_context(
+        self,
+        connection: CanonicalConnection,
+        work_ids: tuple[str, ...],
+        unassigned: tuple[str, ...],
+        resolve: ReconciliationSourceResolver,
+    ) -> ReviewContext:
+        if (
+            len(work_ids) > 32
+            or len(unassigned) > 256
+            or len(set(work_ids)) != len(work_ids)
+            or len(set(unassigned)) != len(unassigned)
+            or any(not is_uuid_v7(item) for item in work_ids + unassigned)
+        ):
+            raise ReconciliationProblem("reconciliation-review-inputs-invalid")
+        works = tuple(self._state(connection, work_id) for work_id in sorted(work_ids))
+        if any(work.disposition != "active" for work in works):
+            raise ReconciliationProblem("reconciliation-work-retired")
+        assignments = {member: work.work_id for work in works for member in work.assertion_revision_ids}
+        members = [member for work in works for member in work.assertion_revision_ids] + list(unassigned)
+        if not members or len(members) > 512 or len(set(members)) != len(members):
+            raise ReconciliationProblem("reconciliation-review-inputs-invalid")
+        sources = []
+        for revision in sorted(members):
+            loaded = self._authorized_load(connection, revision, resolve)
+            assigned = self._assignment(connection, revision)
+            if (assigned.work_id if assigned else None) != assignments.get(revision):
+                raise ReconciliationProblem("reconciliation-review-predecessor-changed")
+            sources.append(ReviewSource(assertion_revision_id=revision, assertion=loaded.assertion))
+        context = ReviewContext(
+            works=works,
+            unassigned_assertion_revision_ids=tuple(sorted(unassigned)),
+            inbound_aliases=self._inbound_aliases(connection, work_ids),
+            sources=tuple(sources),
+        )
+        if len(context.model_dump_json(by_alias=True).encode()) > 4 * 1024 * 1024:
+            raise ReconciliationProblem("reconciliation-inspection-limit")
+        return context
+
+    def review_context(
+        self, work_ids: tuple[str, ...], *, unassigned: tuple[str, ...] = (), resolve: ReconciliationSourceResolver
+    ) -> ReviewContext:
+        _, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, _):
+            return self._review_context(connection, work_ids, unassigned, collect)
+
+    @staticmethod
+    def _validate_actor(actor: ReconciliationActor) -> None:
+        if not is_uuid_v7(actor.actor_id) or re.fullmatch(r"[0-9a-f]{32}", actor.trace_id) is None:
+            raise ReconciliationProblem("reconciliation-command-invalid")
+        _normalize_utc_millisecond(actor.occurred_at)
+        if any(re.fullmatch(r"[0-9a-f]{64}", value) is None for value in (actor.intent_sha256, actor.policy_sha256)):
+            raise ReconciliationProblem("reconciliation-authority-invalid")
+
+    @staticmethod
+    def _change(
+        previous: AggregateRevision,
+        replacement: AggregateRevision | None,
+        actor: ReconciliationActor,
+        *,
+        human: bool = True,
+    ) -> DependencyChange:
+        change_id = new_uuid_v7()
+        return DependencyChange(
+            change_id=change_id,
+            idempotency_key="reconciliation-impact-" + change_id,
+            reason="HUMAN_DECISION" if human else "SOURCE_VERSION",
+            dependency_kind="human-decision" if previous.aggregate_kind == "decision" else "source-revision",
+            previous_revision_id=previous.revision_id,
+            replacement_revision_id=replacement.revision_id if replacement else new_uuid_v7(),
+            configuration_id=None,
+            previous_configuration_version=None,
+            replacement_configuration_version=None,
+            previous_fingerprint=_projection_content_sha256(previous),
+            replacement_fingerprint=_projection_content_sha256(replacement)
+            if replacement
+            else "sha256:" + _digest(["prospective-reconciliation", previous.revision_id]),
+            propagation_policy_id="dependency.propagation.v1",
+            propagation_policy_version="1.0.0",
+            actor_id=actor.actor_id,
+            trace_id=actor.trace_id,
+            occurred_at=actor.occurred_at,
+        )
+
+    def _review_preview(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        plan: ReviewPlan,
+        actor: ReconciliationActor,
+        resolve: ReconciliationSourceResolver,
+    ) -> ReviewPreview:
+        context = self._review_context(
+            connection, tuple(work.work_id for work in plan.works), plan.unassigned_assertion_revision_ids, resolve
+        )
+        if (
+            context.works != tuple(sorted(plan.works, key=lambda work: work.work_id))
+            or context.fingerprint != plan.evidence_sha256
+        ):
+            raise ReconciliationProblem("reconciliation-review-predecessor-changed")
+        survivors = {part.existing_work_id for part in plan.partitions}
+        required = {work.work_id: work.revision_id for work in context.inbound_aliases}
+        required.update({work.work_id: work.revision_id for work in plan.works if work.work_id not in survivors})
+        if {alias.work_id: alias.revision_id for alias in plan.aliases} != required:
+            raise ReconciliationProblem("reconciliation-review-alias-plan-incomplete")
+        self._require_fresh_inputs(
+            aggregates,
+            tuple(source.assertion_revision_id for source in context.sources)
+            + tuple(
+                state.decision_revision_id
+                for state in context.works + context.inbound_aliases
+                if state.decision_revision_id
+            ),
+        )
+        impact_repository = _SqliteDependencyImpactRepository(self._database, self._project)
+        graph_hashes: set[str] = set()
+        affected: set[str] = set()
+        unknown: set[str] = set()
+        for state in context.works + context.inbound_aliases:
+            # These exact current Work heads were checked above. The preview
+            # plans a proposed change; publication later verifies actual same-ID
+            # replacements through the ordinary strict impact entry point.
+            preview = impact_repository._plan_with_connection(
+                connection,
+                self._change(aggregates.get_revision(state.revision_id), None, actor),
+                decisions=(),
+                limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+            )
+            graph_hashes.add(preview.graph_sha256)
+            affected.update(preview.affected_output_revision_ids)
+            unknown.update(item.output_revision_id for item in preview.impacts if item.disposition == "unknown-impact")
+        if len(affected) > 20000:
+            raise ReconciliationProblem("reconciliation-review-impact-limit")
+        digest = _digest(
+            [
+                self._project,
+                plan.fingerprint,
+                context.fingerprint,
+                actor.actor_id,
+                actor.intent_sha256,
+                actor.policy_sha256,
+                sorted(graph_hashes),
+                sorted(affected),
+                sorted(unknown),
+            ]
+        )
+        return ReviewPreview(
+            command_id=new_uuid_v7(),
+            plan_sha256=plan.fingerprint,
+            evidence_sha256=context.fingerprint,
+            preview_sha256=digest,
+            affected_output_revision_ids=tuple(sorted(affected)),
+            unknown_impact_revision_ids=tuple(sorted(unknown)),
+        )
+
+    def preview_review(
+        self, plan: ReviewPlan, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> ReviewPreview:
+        plan = ReviewPlan.model_validate(plan)
+        self._validate_actor(actor)
+        _, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, aggregates):
+            return self._review_preview(connection, aggregates, plan, actor, collect)
+
+    def _review_replay(
+        self,
+        connection: CanonicalConnection,
+        command: ReviewCommand,
+        actor: ReconciliationActor,
+        resolve: ReconciliationSourceResolver,
+    ) -> ReviewOutcome | None:
+        row = connection.execute(
+            "SELECT actor_id,command_sha256,plan_sha256,plan_json,outcome_json,revision_id "
+            "FROM reconciliation_review_decisions WHERE project_id=? AND command_id=?",
+            (self._project, command.command_id),
+        ).fetchone()
+        if row is None:
+            return None
+        expected = _digest([self._project, actor.actor_id, command.model_dump(mode="json", by_alias=True)])
+        if row[0] != actor.actor_id or row[1] != expected:
+            raise ReconciliationProblem("reconciliation-command-conflict")
+        plan, outcome = ReviewPlan.model_validate_json(row[3]), ReviewOutcome.model_validate_json(row[4])
+        if (
+            plan != command.plan
+            or plan.fingerprint != row[2]
+            or outcome.plan_sha256 != row[2]
+            or outcome.decision_revision_id != row[5]
+            or outcome.command_id != command.command_id
+        ):
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        binding = connection.execute(
+            "SELECT fingerprint FROM material_dependencies WHERE project_id=? AND output_revision_id=? "
+            "AND configuration_id='scholarly.review-plan'",
+            (self._project, outcome.decision_revision_id),
+        ).fetchall()
+        if [tuple(item) for item in binding] != [("sha256:" + plan.fingerprint,)]:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        for state in outcome.work_states:
+            if self._state(connection, state.work_id, state.revision_id) != state:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+        members = (
+            tuple(member for work in plan.works for member in work.assertion_revision_ids)
+            + plan.unassigned_assertion_revision_ids
+        )
+        for member in members:
+            self._authorized_load(connection, member, resolve)
+            self._authorize_assignment(connection, member, resolve)
+        return outcome
+
+    def _publish_impacts(
+        self, connection: CanonicalConnection, changes: tuple[DependencyChange, ...]
+    ) -> tuple[str, ...]:
+        impact_repository = _SqliteDependencyImpactRepository(self._database, self._project)
+        runs = []
+        for change in changes:
+            preview = impact_repository._preview_with_connection(
+                connection, change, decisions=(), limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS
+            )
+            run_id = new_uuid_v7()
+            impact_repository._begin_with_connection(
+                connection, change, preview_sha256=preview.preview_sha256, run_id=run_id, batch_size=100
+            )
+            runs.append(run_id)
+        return tuple(runs)
+
+    def review(
+        self, command: ReviewCommand, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> ReviewOutcome:
+        command = ReviewCommand.model_validate(command)
+        self._validate_actor(actor)
+        prepared, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, aggregates):
+            if self._review_replay(connection, command, actor, collect) is None:
+                preview = self._review_preview(connection, aggregates, command.plan, actor, collect)
+                if preview.preview_sha256 != command.expected_preview_sha256:
+                    raise ReconciliationProblem("reconciliation-review-preview-stale")
+
+        def resolved(address: SourceAddress) -> SourceAssertion:
+            key = _digest(address.model_dump(mode="json"))
+            if key not in prepared:
+                raise ReconciliationProblem("reconciliation-concurrent-source-change")
+            return prepared[key]
+
+        with self._transaction(write=True) as (connection, aggregates):
+            replay = self._review_replay(connection, command, actor, resolved)
+            if replay is not None:
+                return replay
+            plan = command.plan
+            preview = self._review_preview(connection, aggregates, plan, actor, resolved)
+            if preview.preview_sha256 != command.expected_preview_sha256:
+                raise ReconciliationProblem("reconciliation-review-preview-stale")
+            previous = {state.work_id: aggregates.get_revision(state.revision_id) for state in plan.works}
+            previous.update({alias.work_id: aggregates.get_revision(alias.revision_id) for alias in plan.aliases})
+            states = {work: self._state(connection, work) for work in previous}
+            members = set(plan.unassigned_assertion_revision_ids)
+            members.update(member for state in plan.works for member in state.assertion_revision_ids)
+            prior_decisions = {state.decision_revision_id for state in states.values() if state.decision_revision_id}
+            decision = self._append(
+                aggregates,
+                sources=tuple(aggregates.get_revision(revision) for revision in sorted(members | prior_decisions)),
+                historical_sources=tuple(previous[key] for key in sorted(previous)),
+                actor=actor,
+                digest=plan.fingerprint,
+                label="Scholarly identity decision",
+                kind="decision",
+                adjudicated=True,
+                payload_configuration="review-plan",
+            )
+            _publication_step("review-decision-created")
+            outputs, changes, groups = [], [], {}
+            for part in plan.partitions:
+                current = previous.get(part.existing_work_id) if part.existing_work_id else None
+                published = self._append(
+                    aggregates,
+                    sources=(
+                        decision,
+                        *tuple(aggregates.get_revision(revision) for revision in part.assertion_revision_ids),
+                    ),
+                    historical_sources=(current,) if current else (),
+                    actor=actor,
+                    digest=plan.fingerprint,
+                    label="Canonical scholarly work",
+                    current=current,
+                    adjudicated=True,
+                    payload_configuration="review-plan",
+                )
+                groups[part.group] = published.aggregate_id
+                outputs.append(
+                    WorkState(
+                        work_id=published.aggregate_id,
+                        revision_id=published.revision_id,
+                        previous_revision_id=current.revision_id if current else None,
+                        disposition="active",
+                        alias_target=None,
+                        assertion_revision_ids=part.assertion_revision_ids,
+                        decision_revision_id=decision.revision_id,
+                    )
+                )
+                if current:
+                    changes.append(self._change(current, published, actor))
+            for alias in plan.aliases:
+                current = previous[alias.work_id]
+                published = self._append(
+                    aggregates,
+                    sources=(decision,),
+                    historical_sources=(current,),
+                    actor=actor,
+                    digest=plan.fingerprint,
+                    label="Canonical scholarly alias",
+                    current=current,
+                    adjudicated=True,
+                    payload_configuration="review-plan",
+                )
+                outputs.append(
+                    WorkState(
+                        work_id=published.aggregate_id,
+                        revision_id=published.revision_id,
+                        previous_revision_id=current.revision_id,
+                        disposition="alias",
+                        alias_target=groups[alias.target_group],
+                        assertion_revision_ids=(),
+                        decision_revision_id=decision.revision_id,
+                    )
+                )
+                changes.append(self._change(current, published, actor))
+            _publication_step("review-work-created")
+            for state in outputs:
+                self._publish_state(connection, state)
+            for member in members:
+                if self._assignment(connection, member) is None:
+                    raise ReconciliationProblem("reconciliation-integrity-invalid")
+            _publication_step("review-membership-created")
+            runs = self._publish_impacts(connection, tuple(changes))
+            _publication_step("review-impacts-created")
+            outcome = ReviewOutcome(
+                decision_id=decision.aggregate_id,
+                decision_revision_id=decision.revision_id,
+                command_id=command.command_id,
+                plan_sha256=plan.fingerprint,
+                work_states=tuple(outputs),
+                dependency_run_ids=runs,
+            )
+            command_sha = _digest([self._project, actor.actor_id, command.model_dump(mode="json", by_alias=True)])
+            connection.execute(
+                "INSERT INTO reconciliation_review_decisions "
+                "(revision_id,project_id,command_id,actor_id,command_sha256,"
+                "plan_sha256,intent_sha256,policy_sha256,plan_json,outcome_json) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                (
+                    decision.revision_id,
+                    self._project,
+                    command.command_id,
+                    actor.actor_id,
+                    command_sha,
+                    plan.fingerprint,
+                    actor.intent_sha256,
+                    actor.policy_sha256,
+                    plan.model_dump_json(by_alias=True),
+                    outcome.model_dump_json(by_alias=True),
+                ),
+            )
+            _publication_step("review-command-created")
+            return outcome

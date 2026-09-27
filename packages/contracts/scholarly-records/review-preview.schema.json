@@ -1,0 +1,55 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/review-preview.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "affectedOutputRevisionIds": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 20000,
+      "title": "Affectedoutputrevisionids",
+      "type": "array"
+    },
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "evidenceSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "planSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "previewSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "unknownImpactRevisionIds": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 20000,
+      "title": "Unknownimpactrevisionids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "commandId",
+    "planSha256",
+    "evidenceSha256",
+    "previewSha256",
+    "affectedOutputRevisionIds",
+    "unknownImpactRevisionIds"
+  ],
+  "title": "ReviewPreview",
+  "type": "object"
+}

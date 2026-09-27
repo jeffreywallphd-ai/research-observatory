@@ -19,6 +19,7 @@ from .reconciliation.contracts import (
     ReconciliationResult,
     SourceAddress,
 )
+from .reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
 from .reconciliation_service import ReconciliationService
 from .transport import CoreProblem, problem_detail
 
@@ -38,6 +39,22 @@ class ReconciliationConnectorAddressRequest(DraftValue):
     root: Annotated[str, Field(min_length=1, max_length=4096)]
     preview_id: Identity
     ordinal: Annotated[int, Field(strict=True, ge=0, le=999)]
+
+
+class ReconciliationContextRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    work_ids: Annotated[tuple[Identity, ...], Field(max_length=32)]
+    unassigned_assertion_revision_ids: Annotated[tuple[Identity, ...], Field(max_length=256)]
+
+
+class ReconciliationReviewPreviewRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    plan: ReviewPlan
+
+
+class ReconciliationReviewRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    command: ReviewCommand
 
 
 def _problem(request: Request, status: int, code: str) -> CoreProblem:
@@ -60,8 +77,9 @@ class BoundedReconciliationRoute(APIRoute):
 
         async def bounded(request: Request) -> Response:
             body = bytearray()
+            maximum = 262144 if request.url.path.startswith("/projects/reconciliation/review/") else 32768
             async for chunk in request.stream():
-                if len(body) + len(chunk) > 32768:
+                if len(body) + len(chunk) > maximum:
                     raise _problem(request, 413, "RO-CORE-RECONCILIATION-REQUEST-LIMIT")
                 body.extend(chunk)
             request._body = bytes(body)
@@ -129,6 +147,30 @@ def register_reconciliation_routes(
             lambda runtime: runtime.connector_address(
                 command.root, command.preview_id, command.ordinal, trace_id=request.state.trace_id
             ),
+        )
+
+    @router.post("/review/context", operation_id="inspectScholarlyReviewContext", response_model=ReviewContext)
+    def review_context(request: Request, command: ReconciliationContextRequest) -> ReviewContext:
+        return run(
+            request,
+            lambda runtime: runtime.review_context(
+                command.root,
+                command.work_ids,
+                unassigned=command.unassigned_assertion_revision_ids,
+                trace_id=request.state.trace_id,
+            ),
+        )
+
+    @router.post("/review/preview", operation_id="previewScholarlyReview", response_model=ReviewPreview)
+    def review_preview(request: Request, command: ReconciliationReviewPreviewRequest) -> ReviewPreview:
+        return run(
+            request, lambda runtime: runtime.preview_review(command.root, command.plan, trace_id=request.state.trace_id)
+        )
+
+    @router.post("/review/commit", operation_id="commitScholarlyReview", response_model=ReviewOutcome)
+    def review_commit(request: Request, command: ReconciliationReviewRequest) -> ReviewOutcome:
+        return run(
+            request, lambda runtime: runtime.review(command.root, command.command, trace_id=request.state.trace_id)
         )
 
     app.include_router(router)

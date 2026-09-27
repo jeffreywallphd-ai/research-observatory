@@ -1,0 +1,27 @@
+{
+  "changes": [
+    "Expose validated prepared-input retrieval for a project-local revision-bound cache.",
+    "Poll cancellation while preparing input records.",
+    "Retain the original feature normalization, blocking, ranking, weights and threshold."
+  ],
+  "configurationFingerprint": "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc",
+  "formatVersion": 1,
+  "frozenScoringCommit": "0d60a12d48d1807539f30499491aeec7ac4222e0",
+  "frozenScoringNodes": {
+    "ALGORITHM": "9b6ec99c837236e7ef4730259c1e602605791727e7334119a102143863ec18e0",
+    "CandidateConfig": "a0e3fa889694181fe1587b3e4a83933119548c19b984c85438d2211ded080513",
+    "FEATURE_VERSION": "2d13fb2af7360c3e1f94b2d69adbb91064692f460ac0af93678d61adb400c5a1",
+    "FIELD_NAMES": "b70d4b4678d7f7feb9c38e17d36c653231fb09f4630e5b6b678a3c1e2e0887f4",
+    "_WEIGHTS": "5a089e2d1442c60e17206f8f74136d26ccbaf3de468c66a0a9c4847b76bb7dcd",
+    "_WORDS": "aa33916004ec36e6b708877b62a9cdf4af52f8da9dc2b8f182db607d3ab607d8",
+    "_dice": "230cb69b1303c3be56b185213a761267406ef4e00e75c3f3a6867bb75b28a95e",
+    "_hash": "bc08c62ef645c5e8002218c940f8219d67dd063d1fa1d5e39ff97a2b7114bd43",
+    "_prepare": "e91f3f4ec4bf054cc6ad19b8af633bb485cd7a4f7dd4a304cbe42fe0d3d2d748",
+    "_similarity": "26757287073c477af081fcd3cc7d098ae7ae00615ddd5c1f1e671c4976990baf",
+    "blocking-and-ranking": "1dd80cacee01ee680ed66becdaa5c61844ee2a48a73093c55358bfb766b865e1",
+    "compare_records": "fa968f3985b869e935e182617d1d17fcaa5b934b4d1557acf405492dd2cddba1"
+  },
+  "frozenSourceSha256": "19bc04a8b6edde7c53233c49c5c12df72827a8429ed25e29067b379da8364802",
+  "purpose": "Scoring-preserving cache integration after the first qualification observation; not new held-out evidence.",
+  "qualificationResultsPreviouslyObserved": true
+}

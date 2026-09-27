@@ -2617,6 +2617,14 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
             ReconciliationResult,
             SourceAssertion,
         )
+        from research_observatory_core.reconciliation.decisions import (
+            ReviewCommand,
+            ReviewContext,
+            ReviewOutcome,
+            ReviewPlan,
+            ReviewPreview,
+            WorkState,
+        )
         from research_observatory_core.reconciliation.identifiers import NormalizedIdentifier
         from research_observatory_core.research_intents import approved_workflow_catalog_projection
 
@@ -2683,6 +2691,12 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
                 ("source-assertion.schema.json", SourceAssertion),
                 ("reconciliation-result.schema.json", ReconciliationResult),
                 ("reconciliation-inspection.schema.json", ReconciliationInspection),
+                ("work-state.schema.json", WorkState),
+                ("review-context.schema.json", ReviewContext),
+                ("review-plan.schema.json", ReviewPlan),
+                ("review-preview.schema.json", ReviewPreview),
+                ("review-command.schema.json", ReviewCommand),
+                ("review-outcome.schema.json", ReviewOutcome),
             )
         }
         workflow_profile_projection_bytes = json.dumps(

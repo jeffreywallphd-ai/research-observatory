@@ -35,13 +35,13 @@
       "const": "sqlite-wal-v1"
     },
     "databaseSchemaVersion": {
-      "const": 14
+      "const": 15
     },
     "applicationId": {
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
+      "const": "4f200959ff5c3d51e589d7d4f4818bc2a85b6ba085f9164979b7fcc8cf7ac178"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"
@@ -133,7 +133,12 @@
         "reconciliation_assertions",
         "reconciliation_work_revisions",
         "reconciliation_identifier_links",
-        "reconciliation_commands"
+        "reconciliation_commands",
+        "reconciliation_work_states",
+        "reconciliation_work_members",
+        "reconciliation_work_seals",
+        "reconciliation_review_decisions",
+        "reconciliation_feature_cache"
       ]
     },
     "mutableStateTables": {
@@ -237,7 +242,12 @@
         "reconciliation_assertions",
         "reconciliation_work_revisions",
         "reconciliation_identifier_links",
-        "reconciliation_commands"
+        "reconciliation_commands",
+        "reconciliation_work_states",
+        "reconciliation_work_members",
+        "reconciliation_work_seals",
+        "reconciliation_review_decisions",
+        "reconciliation_feature_cache"
       ]
     }
   }

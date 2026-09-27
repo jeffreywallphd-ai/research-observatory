@@ -613,6 +613,15 @@
       ],
       "default": null
     },
+    "dependencyState": {
+      "default": "unaffected",
+      "enum": [
+        "unaffected",
+        "requires-review"
+      ],
+      "title": "Dependencystate",
+      "type": "string"
+    },
     "normalizedIdentifiers": {
       "items": {
         "$ref": "#/$defs/NormalizedIdentifier"

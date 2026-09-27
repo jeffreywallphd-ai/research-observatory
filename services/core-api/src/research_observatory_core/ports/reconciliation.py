@@ -3,7 +3,9 @@
 from dataclasses import dataclass
 from typing import Protocol
 
+from ..reconciliation.candidates import PreparedRecord
 from ..reconciliation.contracts import ReconciliationInspection, ReconciliationResult, SourceAddress, SourceAssertion
+from ..reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,6 +24,20 @@ class ReconciliationSourceResolver(Protocol):
 
 
 class ReconciliationRepository(Protocol):
+    def prepared_record(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> PreparedRecord: ...
+
+    def review_context(
+        self, work_ids: tuple[str, ...], *, unassigned: tuple[str, ...] = (), resolve: ReconciliationSourceResolver
+    ) -> ReviewContext: ...
+
+    def preview_review(
+        self, plan: ReviewPlan, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> ReviewPreview: ...
+
+    def review(
+        self, command: ReviewCommand, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> ReviewOutcome: ...
+
     def reconcile(
         self,
         source: SourceAddress,

@@ -1,6 +1,27 @@
 {
   "components": {
     "schemas": {
+      "AliasPlan": {
+        "additionalProperties": false,
+        "properties": {
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "targetGroup": {
+            "$ref": "#/components/schemas/GroupName"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "workId",
+          "revisionId",
+          "targetGroup"
+        ],
+        "title": "AliasPlan",
+        "type": "object"
+      },
       "ApiVersion": {
         "maxLength": 128,
         "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
@@ -1586,6 +1607,10 @@
         ],
         "title": "FieldObservation",
         "type": "object"
+      },
+      "GroupName": {
+        "pattern": "^[a-z][a-z0-9-]{0,31}$",
+        "type": "string"
       },
       "HTTPValidationError": {
         "properties": {
@@ -4361,6 +4386,13 @@
         ],
         "type": "string"
       },
+      "Members": {
+        "items": {
+          "$ref": "#/components/schemas/Identity"
+        },
+        "maxItems": 256,
+        "type": "array"
+      },
       "ModelAccelerator": {
         "enum": [
           "none",
@@ -6747,6 +6779,40 @@
         "title": "ReconciliationConnectorAddressRequest",
         "type": "object"
       },
+      "ReconciliationContextRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "unassignedAssertionRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 256,
+            "title": "Unassignedassertionrevisionids",
+            "type": "array"
+          },
+          "workIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 32,
+            "title": "Workids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "root",
+          "workIds",
+          "unassignedAssertionRevisionIds"
+        ],
+        "title": "ReconciliationContextRequest",
+        "type": "object"
+      },
       "ReconciliationInspection": {
         "additionalProperties": false,
         "properties": {
@@ -6771,6 +6837,15 @@
                 "type": "null"
               }
             ]
+          },
+          "dependencyState": {
+            "default": "unaffected",
+            "enum": [
+              "unaffected",
+              "requires-review"
+            ],
+            "title": "Dependencystate",
+            "type": "string"
           },
           "normalizedIdentifiers": {
             "items": {
@@ -6932,6 +7007,46 @@
         "title": "ReconciliationResult",
         "type": "object"
       },
+      "ReconciliationReviewPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/ReviewPlan"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "plan"
+        ],
+        "title": "ReconciliationReviewPreviewRequest",
+        "type": "object"
+      },
+      "ReconciliationReviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "$ref": "#/components/schemas/ReviewCommand"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "command"
+        ],
+        "title": "ReconciliationReviewRequest",
+        "type": "object"
+      },
       "RecordSelection": {
         "additionalProperties": false,
         "properties": {
@@ -7076,6 +7191,94 @@
         "minimum": 0.0,
         "type": "integer"
       },
+      "ReviewCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "expectedPreviewSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/ReviewPlan"
+          }
+        },
+        "required": [
+          "commandId",
+          "plan",
+          "expectedPreviewSha256"
+        ],
+        "title": "ReviewCommand",
+        "type": "object"
+      },
+      "ReviewContext": {
+        "additionalProperties": false,
+        "properties": {
+          "algorithm": {
+            "default": "scholarly-duplicate-ranking/1.0.0",
+            "title": "Algorithm",
+            "type": "string"
+          },
+          "configurationSha256": {
+            "$ref": "#/components/schemas/Digest",
+            "default": "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc"
+          },
+          "evidenceSha256": {
+            "readOnly": true,
+            "title": "Evidencesha256",
+            "type": "string"
+          },
+          "featureVersion": {
+            "default": "scholarly-duplicate-features/1.0.0",
+            "title": "Featureversion",
+            "type": "string"
+          },
+          "inboundAliases": {
+            "items": {
+              "$ref": "#/components/schemas/WorkState"
+            },
+            "maxItems": 256,
+            "title": "Inboundaliases",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewSource"
+            },
+            "maxItems": 512,
+            "minItems": 1,
+            "title": "Sources",
+            "type": "array"
+          },
+          "unassignedAssertionRevisionIds": {
+            "$ref": "#/components/schemas/Members"
+          },
+          "works": {
+            "items": {
+              "$ref": "#/components/schemas/WorkState"
+            },
+            "maxItems": 32,
+            "title": "Works",
+            "type": "array"
+          }
+        },
+        "required": [
+          "works",
+          "unassignedAssertionRevisionIds",
+          "inboundAliases",
+          "sources",
+          "evidenceSha256"
+        ],
+        "title": "ReviewContext",
+        "type": "object"
+      },
       "ReviewDetail": {
         "additionalProperties": false,
         "properties": {
@@ -7187,6 +7390,56 @@
         "title": "ReviewField",
         "type": "object"
       },
+      "ReviewOutcome": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "decisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "decisionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "dependencyRunIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 288,
+            "title": "Dependencyrunids",
+            "type": "array"
+          },
+          "planSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "workStates": {
+            "items": {
+              "$ref": "#/components/schemas/WorkState"
+            },
+            "maxItems": 288,
+            "minItems": 1,
+            "title": "Workstates",
+            "type": "array"
+          }
+        },
+        "required": [
+          "decisionId",
+          "decisionRevisionId",
+          "commandId",
+          "planSha256",
+          "workStates",
+          "dependencyRunIds"
+        ],
+        "title": "ReviewOutcome",
+        "type": "object"
+      },
       "ReviewPage": {
         "additionalProperties": false,
         "properties": {
@@ -7216,6 +7469,140 @@
           "complete"
         ],
         "title": "ReviewPage",
+        "type": "object"
+      },
+      "ReviewPlan": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "merge",
+              "split",
+              "assign"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "aliases": {
+            "items": {
+              "$ref": "#/components/schemas/AliasPlan"
+            },
+            "maxItems": 256,
+            "title": "Aliases",
+            "type": "array"
+          },
+          "conflictDisposition": {
+            "const": "retain-all",
+            "title": "Conflictdisposition",
+            "type": "string"
+          },
+          "evidenceSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "partitions": {
+            "items": {
+              "$ref": "#/components/schemas/SourcePartition"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Partitions",
+            "type": "array"
+          },
+          "rationale": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "title": "Rationale",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "unassignedAssertionRevisionIds": {
+            "$ref": "#/components/schemas/Members"
+          },
+          "works": {
+            "items": {
+              "$ref": "#/components/schemas/WorkState"
+            },
+            "maxItems": 32,
+            "title": "Works",
+            "type": "array"
+          }
+        },
+        "required": [
+          "action",
+          "works",
+          "unassignedAssertionRevisionIds",
+          "partitions",
+          "aliases",
+          "conflictDisposition",
+          "evidenceSha256",
+          "rationale"
+        ],
+        "title": "ReviewPlan",
+        "type": "object"
+      },
+      "ReviewPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "affectedOutputRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 20000,
+            "title": "Affectedoutputrevisionids",
+            "type": "array"
+          },
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "evidenceSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "planSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "previewSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "unknownImpactRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 20000,
+            "title": "Unknownimpactrevisionids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "commandId",
+          "planSha256",
+          "evidenceSha256",
+          "previewSha256",
+          "affectedOutputRevisionIds",
+          "unknownImpactRevisionIds"
+        ],
+        "title": "ReviewPreview",
+        "type": "object"
+      },
+      "ReviewSource": {
+        "additionalProperties": false,
+        "properties": {
+          "assertion": {
+            "$ref": "#/components/schemas/SourceAssertion"
+          },
+          "assertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "assertionRevisionId",
+          "assertion"
+        ],
+        "title": "ReviewSource",
         "type": "object"
       },
       "ReviewSummary": {
@@ -7709,6 +8096,40 @@
         ],
         "type": "string"
       },
+      "SourcePartition": {
+        "additionalProperties": false,
+        "properties": {
+          "assertionRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 256,
+            "minItems": 1,
+            "title": "Assertionrevisionids",
+            "type": "array"
+          },
+          "existingWorkId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "group": {
+            "$ref": "#/components/schemas/GroupName"
+          }
+        },
+        "required": [
+          "group",
+          "existingWorkId",
+          "assertionRevisionIds"
+        ],
+        "title": "SourcePartition",
+        "type": "object"
+      },
       "SourceTerms": {
         "additionalProperties": false,
         "properties": {
@@ -7938,6 +8359,75 @@
         "maxLength": 64,
         "pattern": "^[a-z]+(?:-[a-z]+)*$",
         "type": "string"
+      },
+      "WorkState": {
+        "additionalProperties": false,
+        "properties": {
+          "aliasTarget": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assertionRevisionIds": {
+            "$ref": "#/components/schemas/Members"
+          },
+          "decisionRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "disposition": {
+            "enum": [
+              "active",
+              "alias"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "previousRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "workId",
+          "revisionId",
+          "previousRevisionId",
+          "disposition",
+          "aliasTarget",
+          "assertionRevisionIds",
+          "decisionRevisionId"
+        ],
+        "title": "WorkState",
+        "type": "object"
       },
       "WorkflowCancelRequest": {
         "additionalProperties": false,
@@ -13563,6 +14053,249 @@
           }
         },
         "summary": "Inspect",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/review/commit": {
+      "post": {
+        "operationId": "commitScholarlyReview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewOutcome"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Commit",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/review/context": {
+      "post": {
+        "operationId": "inspectScholarlyReviewContext",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationContextRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewContext"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Context",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/review/preview": {
+      "post": {
+        "operationId": "previewScholarlyReview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationReviewPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Review Preview",
         "tags": [
           "reconciliation"
         ]

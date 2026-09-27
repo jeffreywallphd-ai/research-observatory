@@ -97,6 +97,7 @@ class ReconciliationInspection(DraftValue):
     result: ReconciliationResult
     assertion: SourceAssertion = Field(repr=False)
     canonical_work: CanonicalWorkReference | None = None
+    dependency_state: Literal["unaffected", "requires-review"] = "unaffected"
     canonical_fields: Annotated[tuple[CanonicalFieldSelection, ...], Field(max_length=256)] = Field(
         default=(), repr=False
     )

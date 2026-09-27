@@ -84,6 +84,10 @@ from .ports.repositories import (
 )
 from .ports.workflow_executor import (
     ConcurrencyClass,
+    WorkflowAcceptedBoundary,
+    WorkflowAcceptedCursor,
+    WorkflowAcceptedOutput,
+    WorkflowAcceptedSnapshot,
     WorkflowActor,
     WorkflowArtifactRecord,
     WorkflowArtifactRole,
@@ -2688,6 +2692,31 @@ class _SqliteAggregateRepository:
             return tuple(_projection(row) for row in reversed(rows))
         raise _transaction_failure()
 
+    def _require_fresh_revision(self, revision_id: str, *, include_changed_input: bool = False) -> None:
+        state = self._state()
+        try:
+            row = state.connection.execute(
+                """
+                SELECT 1
+                  FROM dependency_impact_items
+                 WHERE project_id=? AND output_revision_id=?
+                 LIMIT 1
+                """,
+                (state.project_id, revision_id),
+            ).fetchone()
+            if row is None and include_changed_input:
+                row = state.connection.execute(
+                    "SELECT 1 FROM dependency_impact_runs WHERE project_id=? AND previous_revision_id=? "
+                    "AND (replacement_fingerprint IS NULL OR replacement_fingerprint<>previous_fingerprint) LIMIT 1",
+                    (state.project_id, revision_id),
+                ).fetchone()
+        except sqlite3.Error:
+            self._mark_failed()
+            raise _transaction_failure() from None
+        if row is not None:
+            self._mark_failed()
+            raise RepositoryConflict("affected revision cannot be restored as fresh")
+
     def append(
         self,
         draft: AggregateRevisionDraft,
@@ -3087,23 +3116,7 @@ class _SqliteUnitOfWork:
     def require_fresh_revision(self, revision_id: str) -> None:
         if self.__token is None:
             raise RepositoryTransactionFailed("unit of work is not active")
-        state = _UNIT_OF_WORKS.state(self.__token)
-        try:
-            row = state.connection.execute(
-                """
-                SELECT 1
-                  FROM dependency_impact_items
-                 WHERE project_id=? AND output_revision_id=?
-                 LIMIT 1
-                """,
-                (state.project_id, revision_id),
-            ).fetchone()
-        except sqlite3.Error:
-            _UNIT_OF_WORKS.fail(self.__token)
-            raise _transaction_failure() from None
-        if row is not None:
-            _UNIT_OF_WORKS.fail(self.__token)
-            raise RepositoryConflict("affected revision cannot be restored as fresh")
+        _SqliteAggregateRepository(self.__token)._require_fresh_revision(revision_id)
 
     def __enter__(self) -> _SqliteUnitOfWork:
         if self.__token is not None:
@@ -3637,6 +3650,23 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
     ) -> DependencyImpactPreview:
         validate_dependency_impact_limits(limits)
         self._validate_change_authority(connection, change)
+        return self._plan_with_connection(connection, change, decisions=decisions, limits=limits)
+
+    def _plan_with_connection(
+        self,
+        connection: CanonicalConnection,
+        change: DependencyChange,
+        *,
+        decisions: tuple[ConditionalDependencyDecision, ...],
+        limits: DependencyImpactLimits,
+    ) -> DependencyImpactPreview:
+        """Read-only graph planning; callers establish their endpoint authority.
+
+        Persisted changes always enter through _preview_with_connection, which
+        verifies both canonical endpoints. A prospective domain preview may plan
+        from its separately checked current predecessor before minting outputs.
+        """
+        validate_dependency_impact_limits(limits)
         rows = connection.execute(
             """
             SELECT dependency.dependency_id, dependency.dependency_revision_id,
@@ -3756,193 +3786,19 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         decisions: tuple[ConditionalDependencyDecision, ...] = (),
         limits: DependencyImpactLimits = DEFAULT_DEPENDENCY_IMPACT_LIMITS,
     ) -> DependencyPropagationRun:
-        if not is_uuid_v7(run_id) or not re.fullmatch(r"sha256:[0-9a-f]{64}", preview_sha256):
-            raise ValueError("dependency propagation run authority is invalid")
-        if isinstance(batch_size, bool) or not 1 <= batch_size <= 1_000:
-            raise ValueError("dependency propagation batch size is invalid")
         connection: CanonicalConnection | None = None
         try:
             connection = open_canonical_database(self._database, expected_project_id=self._project_id)
             connection.execute("BEGIN IMMEDIATE")
-            preview = self._preview_with_connection(connection, change, decisions=decisions, limits=limits)
-            if preview.preview_sha256 != preview_sha256:
-                raise RepositoryConflict("dependency impact preview is stale or substituted")
-            affected = tuple(item for item in preview.impacts if item.disposition != "informational")
-            authority_sha256 = _impact_sha256(
-                {
-                    "batchSize": batch_size,
-                    "change": dependency_change_authority_document(change),
-                    "decisions": [
-                        conditional_decision_authority_document(item)
-                        for item in sorted(decisions, key=lambda value: value.dependency_id)
-                    ],
-                    "items": [_impact_item_document(item) for item in affected],
-                    "previewSha256": preview.preview_sha256,
-                    "runId": run_id,
-                }
-            )
-            existing = connection.execute(
-                """
-                SELECT run_id, authority_sha256
-                  FROM dependency_impact_runs
-                 WHERE project_id=? AND (run_id=? OR change_id=? OR idempotency_key=?)
-                 ORDER BY run_id
-                """,
-                (self._project_id, run_id, change.change_id, change.idempotency_key),
-            ).fetchall()
-            if existing:
-                if len(existing) != 1 or str(existing[0][0]) != run_id or str(existing[0][1]) != authority_sha256:
-                    raise RepositoryConflict("dependency propagation idempotency authority conflicts")
-                projection = self._run_with_connection(connection, run_id)
-                connection.execute("ROLLBACK")
-                return projection
-            connection.execute(
-                """
-                INSERT INTO dependency_impact_runs (
-                    run_id, project_id, change_id, idempotency_key, reason,
-                    dependency_kind, previous_revision_id, replacement_revision_id,
-                    configuration_id, previous_configuration_version,
-                    replacement_configuration_version, previous_fingerprint,
-                    replacement_fingerprint, propagation_policy_id,
-                    propagation_policy_version, actor_id, trace_id, occurred_at,
-                    graph_sha256, preview_sha256, authority_sha256, batch_size,
-                    total_items, max_nodes, max_edges, max_depth,
-                    max_path_samples, max_legacy_samples, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    run_id,
-                    self._project_id,
-                    change.change_id,
-                    change.idempotency_key,
-                    change.reason,
-                    change.dependency_kind,
-                    change.previous_revision_id,
-                    change.replacement_revision_id,
-                    change.configuration_id,
-                    change.previous_configuration_version,
-                    change.replacement_configuration_version,
-                    change.previous_fingerprint,
-                    change.replacement_fingerprint,
-                    change.propagation_policy_id,
-                    change.propagation_policy_version,
-                    change.actor_id,
-                    change.trace_id,
-                    change.occurred_at,
-                    preview.graph_sha256,
-                    preview.preview_sha256,
-                    authority_sha256,
-                    batch_size,
-                    len(affected),
-                    limits.max_nodes,
-                    limits.max_edges,
-                    limits.max_depth,
-                    limits.max_path_samples,
-                    limits.max_legacy_samples,
-                    change.occurred_at,
-                ),
-            )
-            for decision in sorted(decisions, key=lambda value: value.dependency_id):
-                connection.execute(
-                    """
-                    INSERT INTO dependency_impact_decisions (
-                        run_id, project_id, dependency_id, decision_id,
-                        disposition, governing_policy_id, governing_policy_version,
-                        actor_id, decided_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        run_id,
-                        self._project_id,
-                        decision.dependency_id,
-                        decision.decision_id,
-                        decision.disposition,
-                        decision.governing_policy_id,
-                        decision.governing_policy_version,
-                        decision.actor_id,
-                        decision.decided_at,
-                    ),
-                )
-            for sequence, item in enumerate(affected, start=1):
-                path_json = json.dumps(item.path_revision_ids, ensure_ascii=True, separators=(",", ":"))
-                connection.execute(
-                    """
-                    INSERT INTO dependency_impact_items (
-                        item_id, run_id, item_sequence, project_id,
-                        output_revision_id, output_kind, disposition, depth,
-                        relation_type, path_json, path_sha256, path_length,
-                        path_truncated, cycle_group_id, confidence,
-                        review_required, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        new_uuid_v7(),
-                        run_id,
-                        sequence,
-                        self._project_id,
-                        item.output_revision_id,
-                        item.output_kind,
-                        item.disposition,
-                        item.depth,
-                        item.relation_type,
-                        path_json,
-                        _impact_sha256(
-                            {
-                                "pathLength": item.path_length,
-                                "pathRevisionIds": item.path_revision_ids,
-                                "pathTruncated": item.path_truncated,
-                            }
-                        ),
-                        item.path_length,
-                        int(item.path_truncated),
-                        item.cycle_group_id,
-                        item.confidence,
-                        int(item.review_required),
-                        change.occurred_at,
-                    ),
-                )
-            checkpoint = _impact_checkpoint_sha256(
-                run_id=run_id,
-                sequence=1,
-                event_type="started",
-                processed_items=0,
-                stale_count=0,
-                unknown_count=0,
-                previous_checkpoint_sha256=None,
-            )
-            self._insert_audit(
+            projection = self._begin_with_connection(
                 connection,
+                change,
+                preview_sha256=preview_sha256,
                 run_id=run_id,
-                sequence=1,
-                event_type="started",
-                processed_items=0,
-                stale_count=0,
-                unknown_count=0,
-                checkpoint_sha256=checkpoint,
-                occurred_at=change.occurred_at,
+                batch_size=batch_size,
+                decisions=decisions,
+                limits=limits,
             )
-            if not affected:
-                completed_checkpoint = _impact_checkpoint_sha256(
-                    run_id=run_id,
-                    sequence=2,
-                    event_type="completed",
-                    processed_items=0,
-                    stale_count=0,
-                    unknown_count=0,
-                    previous_checkpoint_sha256=checkpoint,
-                )
-                self._insert_audit(
-                    connection,
-                    run_id=run_id,
-                    sequence=2,
-                    event_type="completed",
-                    processed_items=0,
-                    stale_count=0,
-                    unknown_count=0,
-                    checkpoint_sha256=completed_checkpoint,
-                    occurred_at=change.occurred_at,
-                )
-            projection = self._run_with_connection(connection, run_id)
             connection.execute("COMMIT")
             return projection
         except RepositoryProblem:
@@ -3956,6 +3812,204 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         finally:
             if connection is not None:
                 connection.close()
+
+    def _begin_with_connection(
+        self,
+        connection: CanonicalConnection,
+        change: DependencyChange,
+        *,
+        preview_sha256: str,
+        run_id: str,
+        batch_size: int,
+        decisions: tuple[ConditionalDependencyDecision, ...] = (),
+        limits: DependencyImpactLimits = DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+    ) -> DependencyPropagationRun:
+        """Append propagation intent inside the caller's existing transaction."""
+        if not is_uuid_v7(run_id) or not re.fullmatch(r"sha256:[0-9a-f]{64}", preview_sha256):
+            raise ValueError("dependency propagation run authority is invalid")
+        if isinstance(batch_size, bool) or not 1 <= batch_size <= 1_000:
+            raise ValueError("dependency propagation batch size is invalid")
+        if not connection.in_transaction:
+            raise RepositoryProblem("dependency propagation requires an active transaction")
+        preview = self._preview_with_connection(connection, change, decisions=decisions, limits=limits)
+        if preview.preview_sha256 != preview_sha256:
+            raise RepositoryConflict("dependency impact preview is stale or substituted")
+        affected = tuple(item for item in preview.impacts if item.disposition != "informational")
+        authority_sha256 = _impact_sha256(
+            {
+                "batchSize": batch_size,
+                "change": dependency_change_authority_document(change),
+                "decisions": [
+                    conditional_decision_authority_document(item)
+                    for item in sorted(decisions, key=lambda value: value.dependency_id)
+                ],
+                "items": [_impact_item_document(item) for item in affected],
+                "previewSha256": preview.preview_sha256,
+                "runId": run_id,
+            }
+        )
+        existing = connection.execute(
+            """
+            SELECT run_id, authority_sha256
+              FROM dependency_impact_runs
+             WHERE project_id=? AND (run_id=? OR change_id=? OR idempotency_key=?)
+             ORDER BY run_id
+            """,
+            (self._project_id, run_id, change.change_id, change.idempotency_key),
+        ).fetchall()
+        if existing:
+            if len(existing) != 1 or str(existing[0][0]) != run_id or str(existing[0][1]) != authority_sha256:
+                raise RepositoryConflict("dependency propagation idempotency authority conflicts")
+            projection = self._run_with_connection(connection, run_id)
+            return projection
+        connection.execute(
+            """
+            INSERT INTO dependency_impact_runs (
+                run_id, project_id, change_id, idempotency_key, reason,
+                dependency_kind, previous_revision_id, replacement_revision_id,
+                configuration_id, previous_configuration_version,
+                replacement_configuration_version, previous_fingerprint,
+                replacement_fingerprint, propagation_policy_id,
+                propagation_policy_version, actor_id, trace_id, occurred_at,
+                graph_sha256, preview_sha256, authority_sha256, batch_size,
+                total_items, max_nodes, max_edges, max_depth,
+                max_path_samples, max_legacy_samples, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                run_id,
+                self._project_id,
+                change.change_id,
+                change.idempotency_key,
+                change.reason,
+                change.dependency_kind,
+                change.previous_revision_id,
+                change.replacement_revision_id,
+                change.configuration_id,
+                change.previous_configuration_version,
+                change.replacement_configuration_version,
+                change.previous_fingerprint,
+                change.replacement_fingerprint,
+                change.propagation_policy_id,
+                change.propagation_policy_version,
+                change.actor_id,
+                change.trace_id,
+                change.occurred_at,
+                preview.graph_sha256,
+                preview.preview_sha256,
+                authority_sha256,
+                batch_size,
+                len(affected),
+                limits.max_nodes,
+                limits.max_edges,
+                limits.max_depth,
+                limits.max_path_samples,
+                limits.max_legacy_samples,
+                change.occurred_at,
+            ),
+        )
+        for decision in sorted(decisions, key=lambda value: value.dependency_id):
+            connection.execute(
+                """
+                INSERT INTO dependency_impact_decisions (
+                    run_id, project_id, dependency_id, decision_id,
+                    disposition, governing_policy_id, governing_policy_version,
+                    actor_id, decided_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    run_id,
+                    self._project_id,
+                    decision.dependency_id,
+                    decision.decision_id,
+                    decision.disposition,
+                    decision.governing_policy_id,
+                    decision.governing_policy_version,
+                    decision.actor_id,
+                    decision.decided_at,
+                ),
+            )
+        for sequence, item in enumerate(affected, start=1):
+            path_json = json.dumps(item.path_revision_ids, ensure_ascii=True, separators=(",", ":"))
+            connection.execute(
+                """
+                INSERT INTO dependency_impact_items (
+                    item_id, run_id, item_sequence, project_id,
+                    output_revision_id, output_kind, disposition, depth,
+                    relation_type, path_json, path_sha256, path_length,
+                    path_truncated, cycle_group_id, confidence,
+                    review_required, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    new_uuid_v7(),
+                    run_id,
+                    sequence,
+                    self._project_id,
+                    item.output_revision_id,
+                    item.output_kind,
+                    item.disposition,
+                    item.depth,
+                    item.relation_type,
+                    path_json,
+                    _impact_sha256(
+                        {
+                            "pathLength": item.path_length,
+                            "pathRevisionIds": item.path_revision_ids,
+                            "pathTruncated": item.path_truncated,
+                        }
+                    ),
+                    item.path_length,
+                    int(item.path_truncated),
+                    item.cycle_group_id,
+                    item.confidence,
+                    int(item.review_required),
+                    change.occurred_at,
+                ),
+            )
+        checkpoint = _impact_checkpoint_sha256(
+            run_id=run_id,
+            sequence=1,
+            event_type="started",
+            processed_items=0,
+            stale_count=0,
+            unknown_count=0,
+            previous_checkpoint_sha256=None,
+        )
+        self._insert_audit(
+            connection,
+            run_id=run_id,
+            sequence=1,
+            event_type="started",
+            processed_items=0,
+            stale_count=0,
+            unknown_count=0,
+            checkpoint_sha256=checkpoint,
+            occurred_at=change.occurred_at,
+        )
+        if not affected:
+            completed_checkpoint = _impact_checkpoint_sha256(
+                run_id=run_id,
+                sequence=2,
+                event_type="completed",
+                processed_items=0,
+                stale_count=0,
+                unknown_count=0,
+                previous_checkpoint_sha256=checkpoint,
+            )
+            self._insert_audit(
+                connection,
+                run_id=run_id,
+                sequence=2,
+                event_type="completed",
+                processed_items=0,
+                stale_count=0,
+                unknown_count=0,
+                checkpoint_sha256=completed_checkpoint,
+                occurred_at=change.occurred_at,
+            )
+        projection = self._run_with_connection(connection, run_id)
+        return projection
 
     def _insert_audit(
         self,
@@ -5560,6 +5614,239 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 (self._project_id, activity_type, after or "", limit),
             ).fetchall()
             return tuple(self._row(self._select_job(connection, self._project_id, str(row[0]))) for row in rows)
+
+    def _accepted_anchor(
+        self, connection: CanonicalConnection, segment: str, sequence: int
+    ) -> WorkflowAcceptedBoundary:
+        row = connection.execute(
+            "SELECT e.event_id,e.record_json,e.record_sha256,e.idempotency_sha256,e.previous_chain_sha256,"
+            "e.chain_sha256,c.checkpoint_id,c.chain_sha256,o.revision_id,o.event_type,o.occurred_at,"
+            "o.available_at,o.idempotency_key,o.record_sha256 "
+            "FROM provenance_ledger_events e JOIN provenance_ledger_checkpoints c "
+            "ON c.project_id=e.project_id AND c.event_id=e.event_id "
+            "AND c.segment_key=e.segment_key AND c.sequence=e.sequence "
+            "JOIN outbox_events o ON o.project_id=c.project_id AND o.outbox_id=c.checkpoint_id "
+            "WHERE e.project_id=? AND e.segment_key=? AND e.sequence=?",
+            (self._project_id, segment, sequence),
+        ).fetchone()
+        if row is None:
+            raise WorkflowQueueCorrupt("workflow inventory checkpoint is missing")
+        try:
+            event = decode_provenance_event(json.loads(row[1]))
+            if event is None or canonical_provenance_json(event) != row[1] or provenance_record_sha256(event) != row[2]:
+                raise ValueError
+            if (event["id"], event["projectid"], event["type"], event["time"]) != (
+                row[0],
+                self._project_id,
+                row[9],
+                row[10],
+            ):
+                raise ValueError
+            if row[13] != str(row[2]).removeprefix("sha256:"):
+                raise ValueError
+            predecessor = connection.execute(
+                "SELECT chain_sha256 FROM provenance_ledger_events WHERE project_id=? AND segment_key=? AND sequence=?",
+                (self._project_id, segment, sequence - 1),
+            ).fetchone()
+            if row[4] != (None if sequence == 1 else predecessor[0] if predecessor else "missing"):
+                raise ValueError
+            authority = _outbox_authority_sha256(
+                outbox_id=row[6],
+                project_id=self._project_id,
+                revision_id=row[8],
+                event_type=row[9],
+                occurred_at=row[10],
+                available_at=row[11],
+                idempotency_key=row[12],
+                record_sha256=row[13],
+            )
+            chain = _provenance_chain_sha256(
+                segment_key=segment,
+                previous_chain_sha256=row[4],
+                record_sha256=row[2],
+                idempotency_sha256=row[3],
+                outbox_authority_sha256=authority,
+                sequence=sequence,
+            )
+            if row[5] != chain or row[7] != chain:
+                raise ValueError
+        except TypeError, ValueError, KeyError:
+            raise WorkflowQueueCorrupt("workflow inventory checkpoint differs") from None
+        return WorkflowAcceptedBoundary(segment, sequence, row[6], chain)
+
+    def _accepted_scope_integrity(self, connection: CanonicalConnection, activity_types: tuple[str, ...]) -> None:
+        # LEFT joins are deliberate: an accepted job with a broken completion
+        # reference is a denial, never an invisible gap in inventory coverage.
+        activities = ",".join("?" for _ in activity_types)
+        invalid = connection.execute(
+            "SELECT 1 FROM workflow_queue_jobs j "
+            "LEFT JOIN workflow_committed_outputs o ON o.project_id=j.project_id AND o.job_id=j.job_id "
+            "LEFT JOIN workflow_job_attempts a ON a.attempt_id=o.attempt_id "
+            "LEFT JOIN provenance_ledger_events e ON e.project_id=o.project_id AND e.event_id=o.provenance_event_id "
+            "LEFT JOIN provenance_ledger_checkpoints c ON c.project_id=e.project_id AND c.event_id=e.event_id "
+            "LEFT JOIN outbox_events b ON b.project_id=o.project_id AND b.outbox_id=o.outbox_id "
+            f"WHERE j.project_id=? AND j.activity_type IN ({activities}) AND ("
+            "(j.state<>'succeeded' AND o.job_id IS NOT NULL) OR (j.state='succeeded' AND ("
+            "o.job_id IS NULL OR a.attempt_id IS NULL OR a.job_id IS NOT j.job_id "
+            "OR a.project_id IS NOT j.project_id OR a.state IS NOT 'succeeded' "
+            "OR j.current_attempt_id IS NOT o.attempt_id OR j.committed_output_sha256 IS NOT o.output_record_sha256 "
+            "OR o.idempotency_key IS NOT j.idempotency_key OR o.command_fingerprint IS NOT j.command_fingerprint "
+            "OR e.event_id IS NULL OR e.event_type IS NOT 'org.research-observatory.workflow.job-succeeded.v1' "
+            "OR e.activity_status IS NOT 'succeeded' OR c.checkpoint_id IS NOT o.outbox_id "
+            "OR c.segment_key IS NOT e.segment_key OR c.sequence IS NOT e.sequence "
+            "OR c.chain_sha256 IS NOT e.chain_sha256 OR b.outbox_id IS NULL "
+            "OR b.idempotency_key IS NOT ('workflow-output:' || j.job_id) "
+            "OR b.record_sha256 IS NOT substr(e.record_sha256,8)"
+            "))) LIMIT 1",
+            (self._project_id, *activity_types),
+        ).fetchone()
+        if invalid is not None:
+            raise WorkflowQueueCorrupt("workflow inventory acceptance differs")
+
+    def accepted_snapshot(self, *, activity_types: tuple[str, ...]) -> WorkflowAcceptedSnapshot:
+        if (
+            not isinstance(activity_types, tuple)
+            or not 1 <= len(activity_types) <= 8
+            or any(not _workflow_code(item) or len(item) > 96 for item in activity_types)
+            or len(set(activity_types)) != len(activity_types)
+        ):
+            raise WorkflowQueueProblem("workflow inventory selection is invalid")
+        activity_types = tuple(sorted(activity_types))
+        placeholders = ",".join("?" for _ in activity_types)
+        with self._transaction() as connection:
+            self._accepted_scope_integrity(connection, activity_types)
+            rows = connection.execute(
+                "SELECT e.segment_key,MAX(e.sequence) FROM workflow_committed_outputs o "
+                "JOIN workflow_queue_jobs j USING (job_id,project_id) JOIN provenance_ledger_events e "
+                "ON e.project_id=o.project_id AND e.event_id=o.provenance_event_id "
+                f"WHERE o.project_id=? AND j.activity_type IN ({placeholders}) "
+                "GROUP BY e.segment_key ORDER BY e.segment_key LIMIT 3",
+                (self._project_id, *activity_types),
+            ).fetchall()
+            if len(rows) > 2:
+                raise WorkflowQueueCorrupt("workflow inventory segment is unsupported")
+            return WorkflowAcceptedSnapshot(
+                self._project_id,
+                activity_types,
+                tuple(self._accepted_anchor(connection, str(row[0]), int(row[1])) for row in rows),
+            )
+
+    def accepted_page(
+        self, snapshot: WorkflowAcceptedSnapshot, *, after: WorkflowAcceptedCursor | None, limit: int = 100
+    ) -> tuple[WorkflowAcceptedOutput, ...]:
+        if (
+            not isinstance(snapshot, WorkflowAcceptedSnapshot)
+            or snapshot.project_id != self._project_id
+            or type(limit) is not int
+            or not 1 <= limit <= 100
+            or not isinstance(snapshot.activity_types, tuple)
+            or not 1 <= len(snapshot.activity_types) <= 8
+            or snapshot.activity_types != tuple(sorted(set(snapshot.activity_types)))
+            or any(not _workflow_code(item) or len(item) > 96 for item in snapshot.activity_types)
+            or not isinstance(snapshot.boundaries, tuple)
+            or len(snapshot.boundaries) > 2
+            or any(
+                not isinstance(item, WorkflowAcceptedBoundary)
+                or type(item.sequence) is not int
+                or not 1 <= item.sequence <= MAX_SAFE_INTEGER
+                or item.segment_key not in {_PROVENANCE_SEGMENT_V1, _PROVENANCE_SEGMENT_V2}
+                for item in snapshot.boundaries
+            )
+            or tuple(item.segment_key for item in snapshot.boundaries)
+            != tuple(sorted({item.segment_key for item in snapshot.boundaries}))
+        ):
+            raise WorkflowQueueProblem("workflow inventory snapshot is invalid")
+        if after is not None and (
+            not isinstance(after, WorkflowAcceptedCursor)
+            or after.snapshot_sha256 != snapshot.fingerprint
+            or type(after.sequence) is not int
+            or not any(
+                item.segment_key == after.segment_key and 1 <= after.sequence <= item.sequence
+                for item in snapshot.boundaries
+            )
+        ):
+            raise WorkflowQueueProblem("workflow inventory cursor is invalid")
+        with self._transaction() as connection:
+            self._accepted_scope_integrity(connection, snapshot.activity_types)
+            for boundary in snapshot.boundaries:
+                if self._accepted_anchor(connection, boundary.segment_key, boundary.sequence) != boundary:
+                    raise WorkflowQueueCorrupt("workflow inventory snapshot differs")
+            if not snapshot.boundaries:
+                return ()
+            bounds = " OR ".join("(e.segment_key=? AND e.sequence<=?)" for _ in snapshot.boundaries)
+            activities = ",".join("?" for _ in snapshot.activity_types)
+            parameters: list[object] = [self._project_id, *snapshot.activity_types]
+            for item in snapshot.boundaries:
+                parameters.extend((item.segment_key, item.sequence))
+            cursor_segment, cursor_sequence = (after.segment_key, after.sequence) if after else ("", 0)
+            parameters.extend((cursor_segment, cursor_segment, cursor_sequence, limit))
+            rows = connection.execute(
+                "SELECT o.job_id,j.activity_type,e.segment_key,e.sequence,o.output_manifest_json,"
+                "o.output_record_sha256,o.attempt_id,j.current_attempt_id,j.state,j.committed_output_sha256,"
+                "a.state,o.idempotency_key,j.idempotency_key,"
+                "o.command_fingerprint,j.command_fingerprint,e.record_json,e.idempotency_sha256 "
+                "FROM workflow_committed_outputs o JOIN workflow_queue_jobs j USING (project_id,job_id) "
+                "LEFT JOIN workflow_job_attempts a ON a.attempt_id=o.attempt_id AND a.job_id=o.job_id "
+                "JOIN provenance_ledger_events e ON e.project_id=o.project_id AND e.event_id=o.provenance_event_id "
+                f"WHERE o.project_id=? AND j.activity_type IN ({activities}) AND ({bounds}) "
+                "AND (e.segment_key>? OR (e.segment_key=? AND e.sequence>?)) "
+                "ORDER BY e.segment_key,e.sequence LIMIT ?",
+                tuple(parameters),
+            ).fetchall()
+            outputs = []
+            for row in rows:
+                try:
+                    raw = json.loads(row[4])
+                    if set(raw) != {"outputs"} or not 1 <= len(raw["outputs"]) <= 256:
+                        raise ValueError
+                    references = tuple(
+                        WorkflowOutputReference(
+                            value["artifactId"],
+                            value["revisionId"],
+                            value["contentHash"],
+                            value["mediaType"],
+                            value["provenanceEntityId"],
+                        )
+                        for value in raw["outputs"]
+                    )
+                    manifest, digest = self._output_manifest(references)
+                    if (manifest, digest, row[6], "succeeded", digest, "succeeded", row[11], row[13]) != (
+                        row[4],
+                        row[5],
+                        row[7],
+                        row[8],
+                        row[9],
+                        row[10],
+                        row[12],
+                        row[14],
+                    ):
+                        raise ValueError
+                    if row[16] != hashlib.sha256(f"{row[13]}\n{digest}".encode("ascii")).hexdigest():
+                        raise ValueError
+                    event = decode_provenance_event(json.loads(row[15]))
+                    if event is None or event["type"] != "org.research-observatory.workflow.job-succeeded.v1":
+                        raise ValueError
+                    data = cast(dict[str, Any], event["data"])
+                    if {(item["entityId"], item["revisionId"], item["contentHash"]) for item in data["outputs"]} != {
+                        (item.artifact_id, item.revision_id, item.content_hash) for item in references
+                    }:
+                        raise ValueError
+                    self._accepted_anchor(connection, row[2], row[3])
+                    self._resolve_outputs(connection, references)
+                except ValueError, KeyError, TypeError:
+                    raise WorkflowQueueCorrupt("workflow inventory output differs") from None
+                outputs.append(
+                    WorkflowAcceptedOutput(
+                        row[0],
+                        row[1],
+                        row[2],
+                        row[3],
+                        digest,
+                        references,
+                        WorkflowAcceptedCursor(snapshot.fingerprint, row[2], row[3]),
+                    )
+                )
+            return tuple(outputs)
 
     def latest_continuation(self, job_id: str) -> WorkflowJobRecord | None:
         """Project one leaf across retry branches, preferring still-active work."""

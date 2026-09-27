@@ -21,6 +21,7 @@ from .reconciliation.contracts import (
     ReconciliationResult,
     SourceAddress,
 )
+from .reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
 from .research_intents import validated_workflow_authority
 
 
@@ -100,4 +101,27 @@ class ReconciliationService:
             root,
             trace_id,
             lambda repository, actor, resolve: self._connectors.reconciliation_address(root, preview_id, ordinal),
+        )
+
+    def review_context(
+        self, root: str, work_ids: tuple[str, ...], *, unassigned: tuple[str, ...], trace_id: str
+    ) -> ReviewContext:
+        return self._action(
+            root,
+            trace_id,
+            lambda repository, actor, resolve: repository.review_context(
+                work_ids, unassigned=unassigned, resolve=resolve
+            ),
+        )
+
+    def preview_review(self, root: str, plan: ReviewPlan, *, trace_id: str) -> ReviewPreview:
+        return self._action(
+            root,
+            trace_id,
+            lambda repository, actor, resolve: repository.preview_review(plan, actor=actor, resolve=resolve),
+        )
+
+    def review(self, root: str, command: ReviewCommand, *, trace_id: str) -> ReviewOutcome:
+        return self._action(
+            root, trace_id, lambda repository, actor, resolve: repository.review(command, actor=actor, resolve=resolve)
         )

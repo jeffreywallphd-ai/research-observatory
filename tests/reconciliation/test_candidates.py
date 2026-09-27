@@ -7,6 +7,7 @@ from research_observatory_core.reconciliation.candidates import (
     CandidateRecord,
     compare_records,
     generate_candidates,
+    generate_prepared_candidates,
     prepare_record,
 )
 from research_observatory_core.reconciliation.contracts import ReconciliationProblem
@@ -24,6 +25,19 @@ def record(key, *, title="", authors="", year="", venue="", pages="", abstract="
 
 
 class CandidateTests(unittest.TestCase):
+    def test_prepared_input_path_matches_uncached_retrieval_and_polls_during_preparation(self):
+        records = (
+            record("a", title="Synthetic evidence", authors="Jane Doe"),
+            record("b", title="Synthetic evidence!", authors="Doe, Jane"),
+        )
+        polls = []
+        direct = generate_candidates(records, checkpoint=lambda: polls.append(True))
+        prepared = tuple(prepare_record(item) for item in records)
+        self.assertEqual(direct, generate_prepared_candidates(tuple(reversed(prepared))))
+        self.assertGreaterEqual(len(polls), 2 * len(records))
+        with self.assertRaisesRegex(ReconciliationProblem, "duplicate-record-identity-conflict"):
+            generate_prepared_candidates((prepared[0], prepared[0]))
+
     def test_identical_title_with_punctuation_and_author_order_is_a_review_candidate(self):
         left = record("a", title="A café: records and evidence", authors="Doe, Jane; Lee, Sam", year="2020")
         right = record("b", title="A cafe — records and evidence!", authors="Sam Lee; Jane Doe", year="2020")

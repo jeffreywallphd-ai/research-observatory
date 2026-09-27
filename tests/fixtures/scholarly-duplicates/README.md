@@ -42,3 +42,10 @@ not independently labeled multi-source/version clusters. No universal scholarly
 accuracy claim follows from this benchmark. Pages and abstracts are absent;
 separate explicitly synthetic functional tests cover those features, same-source
 behavior, conflicting identities, and three-record ambiguity.
+
+The first qualification result at `0d60a12d48d1807539f30499491aeec7ac4222e0`
+was observed before feature-cache integration. `scoring-cache-bridge-v1.json`
+discloses that timing and binds the original normalization, blocking, scoring
+and configuration syntax trees. The added prepared-input entry point and
+cancellation polling retain those rules. Subsequent runs use a known
+qualification corpus; they are regressions, not a newly unseen holdout.

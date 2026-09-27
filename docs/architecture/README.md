@@ -10,6 +10,8 @@ For W2's raw-preserving local metadata parser boundary, see
 [reference imports](reference-imports.md).
 For the W2 provider-neutral request, page, cursor and provenance boundary, see
 [scholarly-source connector contracts](connector-contracts.md).
+For retained source identity, reversible human decisions and duplicate features,
+see [scholarly reconciliation](scholarly-reconciliation.md).
 
 ## Runtime shape
 

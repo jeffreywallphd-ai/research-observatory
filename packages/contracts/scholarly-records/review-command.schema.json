@@ -1,0 +1,242 @@
+{
+  "$defs": {
+    "AliasPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "targetGroup": {
+          "$ref": "#/$defs/GroupName"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "workId",
+        "revisionId",
+        "targetGroup"
+      ],
+      "title": "AliasPlan",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "GroupName": {
+      "pattern": "^[a-z][a-z0-9-]{0,31}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Members": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 256,
+      "type": "array"
+    },
+    "ReviewPlan": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "merge",
+            "split",
+            "assign"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "$ref": "#/$defs/AliasPlan"
+          },
+          "maxItems": 256,
+          "title": "Aliases",
+          "type": "array"
+        },
+        "conflictDisposition": {
+          "const": "retain-all",
+          "title": "Conflictdisposition",
+          "type": "string"
+        },
+        "evidenceSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "partitions": {
+          "items": {
+            "$ref": "#/$defs/SourcePartition"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Partitions",
+          "type": "array"
+        },
+        "rationale": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "unassignedAssertionRevisionIds": {
+          "$ref": "#/$defs/Members"
+        },
+        "works": {
+          "items": {
+            "$ref": "#/$defs/WorkState"
+          },
+          "maxItems": 32,
+          "title": "Works",
+          "type": "array"
+        }
+      },
+      "required": [
+        "action",
+        "works",
+        "unassignedAssertionRevisionIds",
+        "partitions",
+        "aliases",
+        "conflictDisposition",
+        "evidenceSha256",
+        "rationale"
+      ],
+      "title": "ReviewPlan",
+      "type": "object"
+    },
+    "SourcePartition": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionIds": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "title": "Assertionrevisionids",
+          "type": "array"
+        },
+        "existingWorkId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "group": {
+          "$ref": "#/$defs/GroupName"
+        }
+      },
+      "required": [
+        "group",
+        "existingWorkId",
+        "assertionRevisionIds"
+      ],
+      "title": "SourcePartition",
+      "type": "object"
+    },
+    "WorkState": {
+      "additionalProperties": false,
+      "properties": {
+        "aliasTarget": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assertionRevisionIds": {
+          "$ref": "#/$defs/Members"
+        },
+        "decisionRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "active",
+            "alias"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "previousRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "workId",
+        "revisionId",
+        "previousRevisionId",
+        "disposition",
+        "aliasTarget",
+        "assertionRevisionIds",
+        "decisionRevisionId"
+      ],
+      "title": "WorkState",
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/review-command.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "expectedPreviewSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "plan": {
+      "$ref": "#/$defs/ReviewPlan"
+    }
+  },
+  "required": [
+    "commandId",
+    "plan",
+    "expectedPreviewSha256"
+  ],
+  "title": "ReviewCommand",
+  "type": "object"
+}

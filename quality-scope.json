@@ -374,6 +374,16 @@
     "services/core-api/src/research_observatory_core/reconciliation/candidates.py",
     "tests/reconciliation/test_candidates.py",
     "tests/reconciliation/duplicate_benchmark.py",
-    "tests/reconciliation/test_candidate_metrics.py"
+    "tests/reconciliation/test_candidate_metrics.py",
+    "tests/reconciliation/predecessor.py",
+    "services/core-api/src/research_observatory_core/reconciliation/decisions.py",
+    "tests/reconciliation/test_decisions.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py",
+    "tests/reconciliation/test_review_migration.py",
+    "tests/reconciliation/test_review_repository.py",
+    "services/core-api/src/research_observatory_core/reconciliation/feature_cache.py",
+    "tests/reconciliation/test_feature_cache.py",
+    "tests/workflows/test_accepted_inventory.py",
+    "tests/reconciliation/test_candidate_benchmark.py"
   ]
 }

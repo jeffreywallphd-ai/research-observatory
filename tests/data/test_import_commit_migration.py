@@ -81,7 +81,9 @@ class ImportCommitMigrationTests(unittest.TestCase):
         create_version_12_fixture(self.database)
         project_id = predecessor.predecessor.predecessor.PROJECT_ID
         plan = runner.plan_database_migration(self.database, expected_project_id=project_id)
-        self.assertEqual(("0013_import_commits", "0014_scholarly_reconciliation"), plan.migration_ids)
+        self.assertEqual(
+            ("0013_import_commits", "0014_scholarly_reconciliation", "0015_reconciliation_review"), plan.migration_ids
+        )
         result = runner.migrate_database(self.database, expected_project_id=project_id)
         self.assertEqual("migrated", result.status)
         self.assertIsNotNone(result.backup_relative_path)
@@ -90,7 +92,7 @@ class ImportCommitMigrationTests(unittest.TestCase):
             self.assertEqual(12, backup.execute("PRAGMA user_version").fetchone()[0])
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=project_id) as connection:
-                self.assertEqual(14, connection.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(15, connection.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(1, connection.execute("SELECT COUNT(*) FROM import_previews").fetchone()[0])
                 for table in COMMIT_TABLES:
                     self.assertEqual(0, connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
@@ -176,7 +178,7 @@ class ProtectedImportCommitMigrationTests(unittest.TestCase):
             saved.close()
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=identity) as current:
-                self.assertEqual(14, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(15, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(
                     predecessor.PREVIEW, current.execute("SELECT preview_id FROM import_previews").fetchone()[0]
                 )

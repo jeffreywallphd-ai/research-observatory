@@ -13,6 +13,8 @@ from pathlib import Path
 from research_observatory_core import storage
 from research_observatory_core.reconciliation.contracts import ReconciliationResult, SourceAssertion
 
+from tests.reconciliation.predecessor import restore_v14
+
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures"
 BENCHMARK = FIXTURES / "scholarly-duplicates"
 METADATA = FIXTURES / "scholarly-metadata"
@@ -21,6 +23,26 @@ V14_PROFILE = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
 
 
 class DuplicateFixtureTests(unittest.TestCase):
+    def test_additional_predecessor_retains_two_works_and_unassigned_conflict(self):
+        with tempfile.TemporaryDirectory(prefix="ro-v14-identities-") as temporary:
+            database = Path(temporary) / "project.sqlite3"
+            document = restore_v14(database)
+            self.assertEqual("0d60a12d48d1807539f30499491aeec7ac4222e0", document["sourceCommit"])
+            with closing(sqlite3.connect(database)) as db:
+                receipts = [
+                    ReconciliationResult.model_validate_json(row[0])
+                    for row in db.execute("SELECT result_json FROM reconciliation_assertions")
+                ]
+                self.assertEqual(4, len(receipts))
+                self.assertEqual(2, len({item.work_id for item in receipts if item.work_id is not None}))
+                unresolved = [item for item in receipts if item.work_id is None]
+                self.assertEqual(1, len(unresolved))
+                self.assertEqual("review-required", unresolved[0].disposition)
+                self.assertEqual(2, len(unresolved[0].candidates))
+                self.assertIn("multiple-work-matches", unresolved[0].flags)
+                self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
+                self.assertEqual("ok", db.execute("PRAGMA quick_check").fetchone()[0])
+
     def test_frozen_source_bytes_labels_and_component_disjoint_split(self):
         raw = (BENCHMARK / "benchmark-v1.json").read_bytes()
         self.assertEqual(
@@ -46,7 +68,7 @@ class DuplicateFixtureTests(unittest.TestCase):
         self.assertEqual(2224, len({pair[0] for pair in pairs}))
         self.assertEqual(2224, len({pair[1] for pair in pairs}))
         self.assertTrue(all(a in left and b in right for a, b in pairs))
-        expected_splits = {"development": set(), "qualification": set()}
+        expected_splits: dict[str, set[str]] = {"development": set(), "qualification": set()}
         matched = {item for pair in pairs for item in pair}
         components = [sorted(pair) for pair in pairs] + [[item] for item in (left | right) - matched]
         for component in components:

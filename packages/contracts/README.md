@@ -20,6 +20,14 @@ repeated fields and normalized candidates remain separate from human mapping and
 canonical identity. See [reference imports](../../docs/architecture/reference-imports.md)
 for the verified-EOF boundary, bounds, error semantics and downstream obligations.
 
+`scholarly-records/` carries exact source assertions, original reconciliation
+receipts, current sealed Work membership and explicit human review plans,
+previews and outcomes. Merge/split decisions preserve competing source values
+and history. Similarity scores propose review without assigning probabilities
+or automatically merging Works. See
+[scholarly reconciliation](../../docs/architecture/scholarly-reconciliation.md)
+for identity, dependency, migration and cache boundaries.
+
 `core-api/` contains the hand-authored runtime/handshake schemas plus the exact,
 deterministically generated OpenAPI document and transport-neutral TypeScript
 client for the local Core process. `python tools/core_api_contract.py --repo .
