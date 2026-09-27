@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "independent-ui-restoration-disposition",
+  "taskId": "W2.C02.T01",
+  "baseCommit": "fb7e0588b60e3ccd0fb5a6a06efb43b2ed18353d",
+  "candidateCommit": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+  "reviewer": "agent:/root/w2_c02_review",
+  "reviewedAt": "2026-09-27T03:39:13.675700Z",
+  "disposition": "approved",
+  "taskDefinitionSha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028",
+  "referencePackageSha256": "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878",
+  "resumedUiFiles": [
+    "apps/desktop/src/app/SourceManagerWorkspace.tsx",
+    "apps/desktop/src/app/SourceRequestHistory.tsx",
+    "apps/desktop/src/app/SourceTestPane.tsx"
+  ],
+  "resumedUiCommits": [
+    "6854b45999909309c01124279dd104ff2c239d27"
+  ],
+  "approvedTaskAllowsRestoration": true,
+  "authorityPreserved": true,
+  "formalTaskApproval": false,
+  "normativeRationale": "The unchanged human-approved W2 packet and CAP-04.S02 slice govern the inherited CAP-04.S02.T03 outcome. Slice section 6 requires provider status and inspectable source/query provenance; section 11 requires duration visibility; section 12 expressly requires per-provider requests, latency, response size, status/error class, retries, rate state, cache, warnings and cursor progress. Approved reference RO-UI-ACADEMIC-MINIMAL-1.7 requires a Source Manager connection-health region and preserves the existing supporting-tool workflow. STYLE_GUIDE sections 1 and 1.3 permit restoration to that contract using existing cards, key-value lists, notices, controls and focus rules; section 9 retains accessible interaction and WCAG 2.2 AA. The admitted correction responds to preserved F-SLICE-02: runtime attempt/latency facts and pre-confirmation duration limits were missing. The three classified UI files wire a read-only, strictly decoded diagnostics client into the existing Source Manager; show only facts matched to the exact selected job and observation; clear obsolete diagnostics on context changes; add scoped measurement labels inside existing request inspection; and add selected timing limits with an explicitly unavailable completion estimate inside the existing send preview. No predictor is invented, missing historical or mismatched values remain unavailable, and cache-only latency is not fabricated. Visible explanations distinguish per-attempt limits from an end-to-end deadline, transport cleanup from storage, and sanitized snapshot size from network bytes. These changes restore the already-approved observability contract. They introduce no new route, workspace, workflow stage, consent action, automatic dispatch, rights grant, secret exposure, reference/token definition, styling system or approval rule. The separate diagnostics interface remains subject to the existing authenticated project/preview and inspection-right boundary and is not a new authority grant. Current product/reference and focused Source Manager captures, measured conformance and the independently committed visual disposition support this classification. The original completed task and its review history, original correction base and approved scope remain unchanged. This ordinary-origin linked-correction classification uses the installed-conformance route; it does not add experience_change or review_gate fields, create an amendment, approve the task, or close the remaining slice/Wave gates.",
+  "captures": {
+    "path": "artifacts/evidence/W2.C02.T01.captures-01/manifest.json",
+    "sha256": "53a3c18b42a9a98fa44194439e02bf789ea1654a188ccad9ae642f399598ab12",
+    "deliveryCommit": "921075181ab9847013f055144309b8583639e8ca"
+  },
+  "visualReview": {
+    "path": "artifacts/evidence/W2.C02.T01.visual-review-01.json",
+    "sha256": "a09d0f7170516f0f4b8679d60b465f57dd069c7e2c8edc8da0024633e686d9cb",
+    "commit": "036043e8201f4078c1b5f6605178fdb8dbe63f96"
+  },
+  "classificationBoundary": {
+    "checkedHead": "036043e8201f4078c1b5f6605178fdb8dbe63f96",
+    "implementationAgent": "agent:codex-w2-implementation",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
+    "changeKind": "defect-restoration",
+    "originalBasePreserved": true,
+    "originalTaskSnapshotPreserved": true,
+    "referenceHistoryUntouched": true,
+    "noExperienceChangeOrReviewGateAddedToTask": true,
+    "noSubsequentProductReferenceOrDependentInputTouchObserved": true,
+    "sourceBindings": [
+      {
+        "path": "apps/desktop/src/app/SourceManagerWorkspace.tsx",
+        "gitBlob": "1d7447ea48c475b2f19b906827aef491d10d9bc6",
+        "sha256": "73b3fe70a8964ddfb49b5bb28fc48006aee8f695cefbbf86e8715d3bf2685e64"
+      },
+      {
+        "path": "apps/desktop/src/app/SourceRequestHistory.tsx",
+        "gitBlob": "a4927f32cfa9dd8216f804cd4cfbf4d7f452758e",
+        "sha256": "9b4271b1b73dbaa197f7b88a25a2bece6d2537162d3f01ac34e7ce402a488619"
+      },
+      {
+        "path": "apps/desktop/src/app/SourceTestPane.tsx",
+        "gitBlob": "7228e8280abda3e209f59f664b2fe0851171b194",
+        "sha256": "db71b7d4c3a69228b8e390abb092307bdc756aa2f4feb971432ad788c3abc2e9"
+      }
+    ],
+    "historyMethod": "Derived the ordered UI commit list and union of touched governed paths using the unchanged ui-change-policy.json and actual per-commit history across the complete base-to-checkedHead range, including intermediate touches. The only UI implementation commit is 6854b45999909309c01124279dd104ff2c239d27. SourceManagerWorkspace.test.tsx is excluded by the explicit test suffix policy; tests/desktop/test_source_interactions.py is outside governed renderer roots. Both remain admitted correction/test dependencies in the captured producer and stale-evidence boundary.",
+    "laterTestRepair": {
+      "commit": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+      "path": "tests/desktop/test_source_interactions.py",
+      "judgment": "Scopes running/failed status visibility assertions to the existing test section so the visible badge and screen-reader live-region duplicate are not an ambiguous global locator. Assertions and transitions remain required; no governed implementation or product behavior changes."
+    },
+    "postProducerEvidenceOnlyCommits": [
+      {
+        "commit": "921075181ab9847013f055144309b8583639e8ca",
+        "soleParent": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+        "changedFiles": 171,
+        "scope": "Exact primary and supplementary capture delivery only."
+      },
+      {
+        "commit": "036043e8201f4078c1b5f6605178fdb8dbe63f96",
+        "soleParent": "921075181ab9847013f055144309b8583639e8ca",
+        "changedFiles": 1,
+        "scope": "Independent visual disposition only."
+      }
+    ],
+    "currentProducerInputCount": 590,
+    "postProducerDependentInputTouches": 0,
+    "postIntroductionControlCheck": "The complete restoration_classification_errors validation needs this record actual immutable introduction and the consuming UI contract. No introduction is invented and no full gate pass is claimed before those records are committed. The implementation agent must run the supported gate after delivery."
+  },
+  "approvedAuthority": {
+    "waveApprovalCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+    "originTaskId": "CAP-04.S02.T03",
+    "originCommit": "035f11a3546658ed9c694acbae1c1a3ac4907724",
+    "originSnapshotSha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028",
+    "slicePlan": "planning/slice-plans/CAP-04/CAP-04.S02-open-scholarly-source-adapters.md",
+    "sliceSections": [
+      "6. User experience and approved reference",
+      "11. Performance and resource budgets",
+      "12. Observability and provenance"
+    ],
+    "adr": "docs/adr/ADR-0027-keep-scholarly-source-replay-separate-from-private-authentication.md",
+    "correctionSpec": "artifacts/evidence/W2.C02.T01.spec.json",
+    "decision": "Existing approved observable connector behavior restored; no new product or design authority."
+  },
+  "evidenceLimits": [
+    "The independently committed visual record approves 144 primary and 22 supplementary PNGs and retains W2.C02.T01-visual-01-L01 as a nonblocking long-element capture limitation. Unfocused skip-link bounds remain above the actual viewport in both-theme diagnostics, and ordinary viewport images show no overlay. This accepts no focus, contrast, operability or accessibility defect.",
+    "Illustrative fixture/page composition differences and ordinary vertical scrolling are accepted under the existing conformance contract. Pixel equality is not required; functional, semantic and WCAG requirements are not waived.",
+    "The complete capture producer includes Core, portable/generated contracts, native bridge, build/checker inputs and all admitted correction product/test paths. Any later touch, including an add/revert, invalidates stale classification under the existing gate.",
+    "This classification is semantic authority judgment supported by committed visual evidence. It does not substitute browser doubles for real-principal native/Core security, protected persistence, provider behavior or restart proof. Fresh criterion-linked task/integration qualification and independent formal task review remain required.",
+    "Overall F-SLICE-02 closure, source-slice performance calibration/qualification, slice completion and Wave/release approval remain outside this classification. Historical approvals and adverse findings stay immutable."
+  ]
+}
