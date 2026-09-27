@@ -78,6 +78,19 @@ an otherwise valid child snapshot could change from local to server. Preserve
 the full executor binding across each edge, alongside definition, Intent, policy,
 configuration and exact parent job/run. Add the substitution regression first.
 
+The batch-publication advisory (`agent:/root/w2_t03_review`, F-BATCH-01)
+identified a one-level provenance packing limit: 4,097 material leaves became
+65 manifest inputs, still exceeding the common 64-input envelope and therefore
+failing below the advertised batch bound. Repeat packing with separate material
+and historical branches. A structural adapter-probe regression traverses 4,097
+material plus 65 historical leaves and checks that none are lost or promoted;
+real smaller batch and review tests cover canonical transaction integration.
+This is not a large-corpus performance measurement. The advisory also identified
+preparation lease exhaustion; a real queue test advances two source reads by
+20 seconds each and verifies live renewal and explicit failed-job continuation.
+Worker integration must still prove complete enumeration against the bound
+snapshot, including omitted members and addresses arriving after the boundary.
+
 Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows
 symlink-token skips remain explicit Wave obligations. No mandatory new approval

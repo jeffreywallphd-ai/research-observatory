@@ -10,8 +10,10 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
+from dataclasses import replace
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from .domain_contracts import is_uuid_v7, new_uuid_v7
@@ -27,7 +29,10 @@ from .ports.repositories import (
     RepositoryConflict,
     RepositoryProblem,
 )
-from .reconciliation.candidates import DEFAULT_CONFIG, FEATURE_VERSION, PreparedRecord
+from .ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference
+from .reconciliation.batch import MAX_AUTHORIZED_BYTES, MAX_AUTHORIZED_SOURCES, MAX_CANDIDATE_BYTES, BatchInput
+from .reconciliation.candidate_sets import CandidateExplanation, CandidateMember, CandidateSetContent, content_digest
+from .reconciliation.candidates import DEFAULT_CONFIG, FEATURE_VERSION, PreparedRecord, generate_prepared_candidates
 from .reconciliation.contracts import (
     CanonicalFieldSelection,
     CanonicalWorkReference,
@@ -50,11 +55,13 @@ from .reconciliation.decisions import (
 from .reconciliation.exact import IdentifierAssertion, MatchAssessment, assess_match, exact_keys, select_field
 from .reconciliation.feature_cache import FeatureSnapshot
 from .reconciliation.identifiers import NORMALIZER_VERSION
+from .reconciliation.workflow import bind_batch_claim
 from .repositories import (
     _UNIT_OF_WORKS,
     _projection_content_sha256,
     _SqliteAggregateRepository,
     _SqliteDependencyImpactRepository,
+    _SqliteWorkflowQueueRepository,
 )
 from .storage import (
     _DATABASE_ERRORS,
@@ -126,21 +133,46 @@ class SqliteReconciliationRepository:
             raise ReconciliationProblem("reconciliation-rights-denied")
         return source
 
+    @contextmanager
+    def _batch_transaction(
+        self,
+        interrupted: Callable[[], bool] | None,
+    ) -> Iterator[tuple[CanonicalConnection, _SqliteAggregateRepository]]:
+        with self._transaction(write=True) as (connection, aggregates):
+            if interrupted is None:
+                yield connection, aggregates
+            else:
+                # SQL progress polling can abort a long statement. Leave rollback
+                # outside the hook so the stop cannot interrupt recovery itself.
+                with connection.interrupt_when(interrupted):
+                    try:
+                        yield connection, aggregates
+                    except Exception:
+                        if interrupted():
+                            raise ReconciliationProblem("reconciliation-batch-interrupted") from None
+                        raise
+
     def _source_snapshot(
-        self, resolve: ReconciliationSourceResolver
+        self,
+        resolve: ReconciliationSourceResolver,
+        *,
+        batch: bool = False,
+        checkpoint: Callable[[], None] | None = None,
     ) -> tuple[dict[str, SourceAssertion], ReconciliationSourceResolver]:
         prepared: dict[str, SourceAssertion] = {}
         byte_length = 0
 
         def collect(address: SourceAddress) -> SourceAssertion:
             nonlocal byte_length
+            if checkpoint is not None:
+                checkpoint()
             key = _digest(address.model_dump(mode="json"))
             if key not in prepared:
-                if len(prepared) >= _MAX_SOURCE_COUNT:
+                if len(prepared) >= (MAX_AUTHORIZED_SOURCES if batch else _MAX_SOURCE_COUNT):
                     raise ReconciliationProblem("reconciliation-source-limit")
                 source = self._resolve(address, resolve)
                 byte_length += len(source.model_dump_json(by_alias=True).encode())
-                if byte_length > _MAX_SOURCE_BYTES:
+                if byte_length > (MAX_AUTHORIZED_BYTES if batch else _MAX_SOURCE_BYTES):
                     raise ReconciliationProblem("reconciliation-source-limit")
                 prepared[key] = source
             return prepared[key]
@@ -381,13 +413,14 @@ class SqliteReconciliationRepository:
         kind: AggregateKind = "record",
         adjudicated: bool = False,
         payload_configuration: str = "assertion-payload",
+        checkpoint: Callable[[], None] | None = None,
     ) -> AggregateRevision:
         # A propagation run has a fixed graph snapshot. Later outputs must not
         # evade an existing impact by being appended after that snapshot.
-        self._require_fresh_inputs(aggregates, tuple(source.revision_id for source in sources))
+        self._require_fresh_inputs(aggregates, tuple(source.revision_id for source in sources), checkpoint=checkpoint)
         # Preserve complete, traversable provenance within the common 64-input
         # envelope. Material and historical-only leaves never share a manifest.
-        if len(sources) + len(historical_sources) > 64:
+        while len(sources) + len(historical_sources) > 64:
 
             def pack(items: tuple[AggregateRevision, ...], *, historical: bool) -> tuple[AggregateRevision, ...]:
                 return tuple(
@@ -405,6 +438,7 @@ class SqliteReconciliationRepository:
                             ]
                         ),
                         payload_configuration="input-manifest",
+                        checkpoint=checkpoint,
                     )
                     for offset in range(0, len(items), 64)
                 )
@@ -444,6 +478,8 @@ class SqliteReconciliationRepository:
                     "1.0.0",
                 ),
             )
+        if checkpoint is not None:
+            checkpoint()
         return aggregates.append(
             AggregateRevisionDraft(
                 revision_id=revision,
@@ -466,7 +502,7 @@ class SqliteReconciliationRepository:
                 occurred_at=actor.occurred_at,
                 available_at=actor.occurred_at,
                 trace_id=actor.trace_id,
-                actor_type="human",
+                actor_type=actor.actor_type,
                 actor_id=actor.actor_id,
                 idempotency_key="reconcile-" + revision,
             ),
@@ -482,6 +518,7 @@ class SqliteReconciliationRepository:
         resolve: ReconciliationSourceResolver,
     ) -> ReconciliationResult:
         source = SourceAddress.model_validate(source)
+        self._validate_actor(actor)
         if (
             not is_uuid_v7(command_id)
             or not is_uuid_v7(actor.actor_id)
@@ -492,7 +529,6 @@ class SqliteReconciliationRepository:
         if any(re.fullmatch(r"[0-9a-f]{64}", item) is None for item in (actor.intent_sha256, actor.policy_sha256)):
             raise ReconciliationProblem("reconciliation-authority-invalid")
         address_sha = _digest(source.model_dump(mode="json"))
-        command_sha = _digest([self._project, actor.actor_id, address_sha, NORMALIZER_VERSION])
         # Protected object reads write access-audit facts on their own database
         # connection. Resolve them before taking the canonical writer, while the
         # caller still holds the lifecycle/rights fence through both phases.
@@ -519,147 +555,501 @@ class SqliteReconciliationRepository:
             return prepared[key]
 
         with self._transaction(write=True) as (connection, aggregates):
-            assertion = self._resolve(source, resolved)
-            command = connection.execute(
-                "SELECT actor_id, command_sha256, assertion_revision_id FROM reconciliation_commands "
-                "WHERE project_id=? AND command_id=?",
-                (self._project, command_id),
-            ).fetchone()
-            if command is not None:
-                if command[:2] != (actor.actor_id, command_sha):
-                    raise ReconciliationProblem("reconciliation-command-conflict")
-                prior = self._authorized_load(connection, command[2], resolved)
-                self._authorize_assignment(connection, command[2], resolved)
-                return prior.result
-            prior = connection.execute(
-                "SELECT revision_id FROM reconciliation_assertions WHERE project_id=? AND address_sha256=?",
-                (self._project, address_sha),
-            ).fetchone()
-            if prior is not None:
-                saved = self._authorized_load(connection, prior[0], resolved)
-                self._authorize_assignment(connection, prior[0], resolved)
-                result = saved.result
-            else:
-                assessment = self._assessment(connection, assertion, resolved)
-                inputs = tuple(
-                    aggregates.get_revision(revision)
-                    for revision in sorted({source.revision_id, assertion.source_revision_id})
-                )
-                payload_sha = _payload(assertion)
-                created = self._append(
+            return self._reconcile_with_connection(
+                connection, aggregates, source, command_id=command_id, actor=actor, resolved=resolved
+            )
+
+    def _reconcile_with_connection(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        source: SourceAddress,
+        *,
+        command_id: str,
+        actor: ReconciliationActor,
+        resolved: ReconciliationSourceResolver,
+    ) -> ReconciliationResult:
+        address_sha = _digest(source.model_dump(mode="json"))
+        command_sha = _digest([self._project, actor.actor_id, address_sha, NORMALIZER_VERSION])
+        assertion = self._resolve(source, resolved)
+        command = connection.execute(
+            "SELECT actor_id, command_sha256, assertion_revision_id FROM reconciliation_commands "
+            "WHERE project_id=? AND command_id=?",
+            (self._project, command_id),
+        ).fetchone()
+        if command is not None:
+            if command[:2] != (actor.actor_id, command_sha):
+                raise ReconciliationProblem("reconciliation-command-conflict")
+            prior = self._authorized_load(connection, command[2], resolved)
+            self._authorize_assignment(connection, command[2], resolved)
+            return prior.result
+        prior = connection.execute(
+            "SELECT revision_id FROM reconciliation_assertions WHERE project_id=? AND address_sha256=?",
+            (self._project, address_sha),
+        ).fetchone()
+        if prior is not None:
+            saved = self._authorized_load(connection, prior[0], resolved)
+            self._authorize_assignment(connection, prior[0], resolved)
+            result = saved.result
+        else:
+            assessment = self._assessment(connection, assertion, resolved)
+            inputs = tuple(
+                aggregates.get_revision(revision)
+                for revision in sorted({source.revision_id, assertion.source_revision_id})
+            )
+            payload_sha = _payload(assertion)
+            created = self._append(
+                aggregates,
+                sources=inputs,
+                actor=actor,
+                digest=payload_sha,
+                label="Scholarly source assertion",
+                disputed=bool(assessment.flags),
+            )
+            _publication_step("assertion-created")
+            work = None
+            current = aggregates.get(assessment.target) if assessment.target is not None else None
+            current_state = self._state(connection, current.aggregate_id) if current else None
+            if assessment.disposition != "review-required":
+                if current is not None and len(self._work_sources(connection, current.aggregate_id, resolved)) >= 256:
+                    raise ReconciliationProblem("reconciliation-work-limit")
+                work = self._append(
                     aggregates,
-                    sources=inputs,
+                    sources=(
+                        created,
+                        *tuple(
+                            aggregates.get_revision(revision)
+                            for revision in (
+                                current_state.assertion_revision_ids
+                                + ((current_state.decision_revision_id,) if current_state.decision_revision_id else ())
+                                if current_state
+                                else ()
+                            )
+                        ),
+                    ),
+                    historical_sources=(current,) if current else (),
                     actor=actor,
                     digest=payload_sha,
-                    label="Scholarly source assertion",
-                    disputed=bool(assessment.flags),
+                    label="Canonical scholarly work",
+                    current=current,
                 )
-                _publication_step("assertion-created")
-                work = None
-                current = aggregates.get(assessment.target) if assessment.target is not None else None
-                current_state = self._state(connection, current.aggregate_id) if current else None
-                if assessment.disposition != "review-required":
-                    if (
-                        current is not None
-                        and len(self._work_sources(connection, current.aggregate_id, resolved)) >= 256
-                    ):
-                        raise ReconciliationProblem("reconciliation-work-limit")
-                    work = self._append(
-                        aggregates,
-                        sources=(
-                            created,
-                            *tuple(
-                                aggregates.get_revision(revision)
-                                for revision in (
-                                    current_state.assertion_revision_ids
-                                    + (
-                                        (current_state.decision_revision_id,)
-                                        if current_state.decision_revision_id
-                                        else ()
-                                    )
-                                    if current_state
-                                    else ()
-                                )
-                            ),
+            _publication_step("work-created")
+            result = ReconciliationResult(
+                project_id=self._project,
+                assertion_revision_id=created.revision_id,
+                source=source,
+                work_id=work.aggregate_id if work else None,
+                work_revision_id=work.revision_id if work else None,
+                disposition=assessment.disposition,
+                candidates=assessment.candidates,
+                flags=assessment.flags,
+                knowledge_status="disputed" if assessment.flags else "inferred",
+                matching_reason="human-review-required"
+                if assessment.flags
+                else "unique-compatible-exact-identifiers"
+                if assessment.target
+                else "no-exact-match",
+            )
+            connection.execute(
+                "INSERT INTO reconciliation_assertions (revision_id, project_id, source_revision_id, "
+                "address_revision_id, address_sha256, payload_sha256, assertion_json, result_json) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    created.revision_id,
+                    self._project,
+                    assertion.source_revision_id,
+                    source.revision_id,
+                    address_sha,
+                    payload_sha,
+                    assertion.model_dump_json(by_alias=True),
+                    result.model_dump_json(by_alias=True),
+                ),
+            )
+            if work is not None:
+                self._publish_state(
+                    connection,
+                    WorkState(
+                        work_id=work.aggregate_id,
+                        revision_id=work.revision_id,
+                        previous_revision_id=current.revision_id if current else None,
+                        disposition="active",
+                        alias_target=None,
+                        assertion_revision_ids=tuple(
+                            sorted(
+                                (created.revision_id,) + (current_state.assertion_revision_ids if current_state else ())
+                            )
                         ),
-                        historical_sources=(current,) if current else (),
-                        actor=actor,
-                        digest=payload_sha,
-                        label="Canonical scholarly work",
-                        current=current,
-                    )
-                _publication_step("work-created")
-                result = ReconciliationResult(
-                    project_id=self._project,
-                    assertion_revision_id=created.revision_id,
-                    source=source,
-                    work_id=work.aggregate_id if work else None,
-                    work_revision_id=work.revision_id if work else None,
-                    disposition=assessment.disposition,
-                    candidates=assessment.candidates,
-                    flags=assessment.flags,
-                    knowledge_status="disputed" if assessment.flags else "inferred",
-                    matching_reason="human-review-required"
-                    if assessment.flags
-                    else "unique-compatible-exact-identifiers"
-                    if assessment.target
-                    else "no-exact-match",
+                        decision_revision_id=current_state.decision_revision_id if current_state else None,
+                    ),
                 )
+            for scheme, value in sorted(_keys(assertion.identifiers)):
                 connection.execute(
-                    "INSERT INTO reconciliation_assertions (revision_id, project_id, source_revision_id, "
-                    "address_revision_id, address_sha256, payload_sha256, assertion_json, result_json) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO reconciliation_identifier_links (assertion_revision_id, project_id, scheme, "
+                    "key_sha256, work_id) VALUES (?, ?, ?, ?, ?)",
                     (
                         created.revision_id,
                         self._project,
-                        assertion.source_revision_id,
-                        source.revision_id,
-                        address_sha,
-                        payload_sha,
-                        assertion.model_dump_json(by_alias=True),
-                        result.model_dump_json(by_alias=True),
+                        scheme,
+                        _digest([NORMALIZER_VERSION, scheme, value]),
+                        result.work_id,
                     ),
                 )
-                if work is not None:
-                    self._publish_state(
+            _publication_step("links-created")
+            if current is not None and work is not None:
+                self._publish_impacts(connection, (self._change(current, work, actor, human=False),))
+            _publication_step("exact-impacts-created")
+        connection.execute(
+            "INSERT INTO reconciliation_commands VALUES (?, ?, ?, ?, ?)",
+            (command_id, self._project, actor.actor_id, command_sha, result.assertion_revision_id),
+        )
+        _publication_step("command-created")
+        return result
+
+    @staticmethod
+    def _batch_output(revision: AggregateRevision) -> WorkflowOutputReference:
+        return WorkflowOutputReference(
+            revision.aggregate_id,
+            revision.revision_id,
+            _projection_content_sha256(revision),
+            "application/vnd.research-observatory.duplicate-candidate-set+json",
+            revision.aggregate_id,
+        )
+
+    def _candidate_content(self, connection: CanonicalConnection, revision_id: str) -> CandidateSetContent:
+        row = connection.execute(
+            "SELECT request_id,request_sha256,payload_sha256,payload_json FROM reconciliation_candidate_sets "
+            "WHERE project_id=? AND revision_id=?",
+            (self._project, revision_id),
+        ).fetchone()
+        if row is None:
+            raise ReconciliationProblem("reconciliation-not-found")
+        content = CandidateSetContent.model_validate_json(row[3])
+        binding = connection.execute(
+            "SELECT fingerprint FROM material_dependencies WHERE project_id=? AND output_revision_id=? "
+            "AND configuration_id='scholarly.duplicate-candidate-set'",
+            (self._project, revision_id),
+        ).fetchall()
+        count, first, last = connection.execute(
+            "SELECT COUNT(*),MIN(ordinal),MAX(ordinal) FROM reconciliation_candidate_pairs "
+            "WHERE project_id=? AND set_revision_id=?",
+            (self._project, revision_id),
+        ).fetchone()
+        if (
+            content.project_id != self._project
+            or (content.request_id, content.request_sha256, content_digest(content)) != tuple(row[:3])
+            or [tuple(item) for item in binding] != [("sha256:" + row[2],)]
+            or count != len(content.pair_sha256)
+            or (count and (first != 0 or last != count - 1))
+        ):
+            raise ReconciliationProblem("duplicate-set-integrity-invalid")
+        return content
+
+    def candidate_set(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> CandidateSetContent:
+        if not is_uuid_v7(revision_id):
+            raise ReconciliationProblem("reconciliation-command-invalid")
+        _, collect = self._source_snapshot(resolve, batch=True)
+        with self._transaction(write=False) as (connection, _):
+            content = self._candidate_content(connection, revision_id)
+            for member in content.members:
+                source = self._authorized_load(connection, member.assertion_revision_id, collect).assertion
+                # The cached fingerprint remains bound to the immutable source;
+                # current permissions are required even for historical inspection.
+                prepared = FeatureSnapshot.create(member.assertion_revision_id, source).restore(
+                    member.assertion_revision_id, source
+                )
+                if (prepared.revision, prepared.fingerprint) != (member.source_revision_id, member.input_sha256):
+                    raise ReconciliationProblem("duplicate-set-source-mismatch")
+                self._authorize_assignment(connection, member.assertion_revision_id, collect)
+            return content
+
+    def candidate_pairs(
+        self,
+        revision_id: str,
+        *,
+        after: int,
+        limit: int,
+        resolve: ReconciliationSourceResolver,
+    ) -> tuple[CandidateExplanation, ...]:
+        if type(after) is not int or type(limit) is not int or after < 0 or not 1 <= limit <= 100:
+            raise ReconciliationProblem("duplicate-set-page-invalid")
+        content = self.candidate_set(revision_id, resolve=resolve)
+        if after > len(content.pair_sha256):
+            raise ReconciliationProblem("duplicate-set-page-invalid")
+        with self._transaction(write=False) as (connection, _):
+            rows = connection.execute(
+                "SELECT ordinal,payload_sha256,payload_json FROM reconciliation_candidate_pairs "
+                "WHERE project_id=? AND set_revision_id=? AND ordinal>=? ORDER BY ordinal LIMIT ?",
+                (self._project, revision_id, after, limit),
+            ).fetchall()
+            pairs = []
+            for ordinal, digest, payload in rows:
+                pair = CandidateExplanation.model_validate_json(payload)
+                content.validate_pair(ordinal, pair)
+                if digest != content_digest(pair):
+                    raise ReconciliationProblem("duplicate-set-integrity-invalid")
+                pairs.append(pair)
+            if len(pairs) != min(limit, len(content.pair_sha256) - after):
+                raise ReconciliationProblem("duplicate-set-incomplete")
+            return tuple(pairs)
+
+    def publish_batch(
+        self,
+        inputs: BatchInput,
+        addresses: tuple[SourceAddress, ...],
+        *,
+        claim: WorkflowJobClaim,
+        actor: ReconciliationActor,
+        resolve: ReconciliationSourceResolver,
+        now: Callable[[], str],
+        interrupted: Callable[[], bool] | None = None,
+        lease_duration_ms: int = 30000,
+    ) -> WorkflowOutputReference:
+        """Caller fences current authority; stop hints can only abort this transaction."""
+        inputs = BatchInput.model_validate(inputs)
+        self._validate_actor(actor)
+        if (inputs.project_id, inputs.actor_id, inputs.intent.content_hash, inputs.policy_sha256) != (
+            self._project,
+            actor.actor_id,
+            "sha256:" + actor.intent_sha256,
+            "sha256:" + actor.policy_sha256,
+        ):
+            raise ReconciliationProblem("reconciliation-batch-authority-invalid")
+        queue = _SqliteWorkflowQueueRepository(self._database, self._project)
+        authority = queue.authority(claim.job_id)
+        continuation = json.loads(authority.snapshot_json).get("continuation")
+        predecessor = (
+            (queue.get(continuation["sourceJobId"]), queue.authority(continuation["sourceJobId"]))
+            if continuation
+            else None
+        )
+        bind_batch_claim(authority, claim, inputs, predecessor=predecessor)
+        accepted = queue.accepted_output(claim.job_id)
+        addresses = tuple(SourceAddress.model_validate(address) for address in addresses)
+        keys = tuple(_digest(address.model_dump(mode="json")) for address in addresses)
+        if len(addresses) > DEFAULT_CONFIG.max_records or len(keys) != len(set(keys)):
+            raise ReconciliationProblem("duplicate-record-limit")
+
+        def checkpoint() -> None:
+            if interrupted is not None and interrupted():
+                raise ReconciliationProblem("reconciliation-batch-interrupted")
+
+        preparation_heartbeat = datetime.fromisoformat(now())
+
+        def prepare_checkpoint() -> None:
+            nonlocal claim, preparation_heartbeat
+            checkpoint()
+            instant = now()
+            current = datetime.fromisoformat(instant)
+            if accepted is None and current >= preparation_heartbeat:
+                # Queue-only writes here precede the canonical publication writer.
+                claim = queue.heartbeat(
+                    claim,
+                    now=instant,
+                    lease_duration_ms=lease_duration_ms,
+                    progress={"kind": "unknown", "unit": "records", "completedUnits": None, "totalUnits": None},
+                )
+                if queue.get(claim.job_id).cancellation_requested_at is not None:
+                    raise ReconciliationProblem("reconciliation-batch-interrupted")
+                preparation_heartbeat = current + timedelta(milliseconds=min(5000, lease_duration_ms // 3))
+
+        prepared, collect = self._source_snapshot(resolve, batch=True, checkpoint=prepare_checkpoint)
+        # Reads of encrypted source objects can publish access audits. Complete
+        # every such read before acquiring the canonical writer.
+        with self._transaction(write=False) as (connection, _):
+            for address in addresses:
+                source = collect(address)
+                previous = connection.execute(
+                    "SELECT revision_id FROM reconciliation_assertions WHERE project_id=? AND address_sha256=?",
+                    (self._project, _digest(address.model_dump(mode="json"))),
+                ).fetchone()
+                if previous is None:
+                    self._assessment(connection, source, collect)
+                else:
+                    self._authorized_load(connection, previous[0], collect)
+                    self._authorize_assignment(connection, previous[0], collect)
+
+        def resolved(address: SourceAddress) -> SourceAssertion:
+            checkpoint()
+            key = _digest(address.model_dump(mode="json"))
+            if key not in prepared:
+                raise ReconciliationProblem("reconciliation-concurrent-source-change")
+            return prepared[key]
+
+        with self._batch_transaction(interrupted) as (connection, aggregates):
+            queue._verify_attempt_capability(connection, claim)
+            existing = connection.execute(
+                "SELECT revision_id,request_sha256 FROM reconciliation_candidate_sets "
+                "WHERE project_id=? AND request_id=?",
+                (self._project, inputs.request_id),
+            ).fetchone()
+            if existing is not None:
+                content = self._candidate_content(connection, existing[0])
+                if existing[1] != inputs.configuration_hash.removeprefix("sha256:"):
+                    raise ReconciliationProblem("reconciliation-batch-command-conflict")
+                stored_keys = set()
+                for member in content.members:
+                    stored = self._authorized_load(connection, member.assertion_revision_id, resolved)
+                    self._authorize_assignment(connection, member.assertion_revision_id, resolved)
+                    stored_keys.add(_digest(stored.assertion.address.model_dump(mode="json")))
+                output = self._batch_output(aggregates.get_revision(existing[0]))
+                if stored_keys != set(keys) or accepted is None or accepted.outputs != (output,):
+                    raise ReconciliationProblem("reconciliation-batch-output-mismatch")
+                queue._complete_with_connection(connection, claim, now=now(), outputs=(output,))
+                return output
+            if accepted is not None:
+                raise ReconciliationProblem("reconciliation-batch-output-mismatch")
+            next_heartbeat = datetime.fromisoformat(now())
+
+            def maintain(*, force: bool = False) -> None:
+                nonlocal claim, next_heartbeat
+                checkpoint()
+                instant = now()
+                current = datetime.fromisoformat(instant)
+                if force or current >= next_heartbeat:
+                    row = queue._lease_row(connection, claim, instant, states=("running",))
+                    if row[3] is not None or row[4] != "running":
+                        raise ReconciliationProblem("reconciliation-batch-interrupted")
+                    claim = queue._heartbeat_with_connection(
                         connection,
-                        WorkState(
-                            work_id=work.aggregate_id,
-                            revision_id=work.revision_id,
-                            previous_revision_id=current.revision_id if current else None,
-                            disposition="active",
-                            alias_target=None,
-                            assertion_revision_ids=tuple(
-                                sorted(
-                                    (created.revision_id,)
-                                    + (current_state.assertion_revision_ids if current_state else ())
-                                )
-                            ),
-                            decision_revision_id=current_state.decision_revision_id if current_state else None,
-                        ),
+                        claim,
+                        now=instant,
+                        lease_duration_ms=lease_duration_ms,
+                        progress={"kind": "unknown", "unit": "records", "completedUnits": None, "totalUnits": None},
                     )
-                for scheme, value in sorted(_keys(assertion.identifiers)):
+                    next_heartbeat = current + timedelta(milliseconds=min(5000, lease_duration_ms // 3))
+
+            maintain(force=True)
+            worker = replace(actor, actor_id=claim.worker_id, actor_type="worker", occurred_at=now())
+            results = []
+            features = []
+            for address in addresses:
+                maintain()
+                result = self._reconcile_with_connection(
+                    connection,
+                    aggregates,
+                    address,
+                    command_id=new_uuid_v7(),
+                    actor=worker,
+                    resolved=resolved,
+                )
+                results.append(result)
+                source = self._authorized_load(connection, result.assertion_revision_id, resolved).assertion
+                cached = self._cached_features(connection, result.assertion_revision_id, source)
+                if cached is None:
+                    snapshot = FeatureSnapshot.create(result.assertion_revision_id, source)
                     connection.execute(
-                        "INSERT INTO reconciliation_identifier_links (assertion_revision_id, project_id, scheme, "
-                        "key_sha256, work_id) VALUES (?, ?, ?, ?, ?)",
+                        "INSERT INTO reconciliation_feature_cache VALUES (?,?,?,?,?,?,?,?)",
                         (
-                            created.revision_id,
                             self._project,
-                            scheme,
-                            _digest([NORMALIZER_VERSION, scheme, value]),
-                            result.work_id,
+                            result.assertion_revision_id,
+                            FEATURE_VERSION,
+                            NORMALIZER_VERSION,
+                            DEFAULT_CONFIG.fingerprint,
+                            snapshot.input_sha256,
+                            content_digest(snapshot),
+                            snapshot.model_dump_json(by_alias=True),
                         ),
                     )
-                _publication_step("links-created")
-                if current is not None and work is not None:
-                    self._publish_impacts(connection, (self._change(current, work, actor, human=False),))
-                _publication_step("exact-impacts-created")
-            connection.execute(
-                "INSERT INTO reconciliation_commands VALUES (?, ?, ?, ?, ?)",
-                (command_id, self._project, actor.actor_id, command_sha, result.assertion_revision_id),
+                    cached = snapshot.restore(result.assertion_revision_id, source)
+                features.append(cached)
+            _publication_step("batch-exact-complete")
+            retrieval = generate_prepared_candidates(tuple(features), checkpoint=maintain)
+            pairs = tuple(CandidateExplanation.from_kernel(pair) for pair in retrieval.pairs)
+            if sum(len(pair.model_dump_json(by_alias=True).encode()) for pair in pairs) > MAX_CANDIDATE_BYTES:
+                raise ReconciliationProblem("duplicate-set-size-limit")
+            by_assertion = {item.key: item for item in features}
+            members = []
+            source_revisions = set()
+            for result in sorted(results, key=lambda item: item.assertion_revision_id):
+                maintain()
+                state = self._authorize_assignment(connection, result.assertion_revision_id, resolved)
+                feature = by_assertion[result.assertion_revision_id]
+                members.append(
+                    CandidateMember(
+                        assertion_revision_id=result.assertion_revision_id,
+                        source_revision_id=feature.revision,
+                        input_sha256=feature.fingerprint,
+                        canonical_work=CanonicalWorkReference(work_id=state.work_id, revision_id=state.revision_id)
+                        if state
+                        else None,
+                    )
+                )
+                source_revisions.add(result.assertion_revision_id)
+                if state is not None:
+                    source_revisions.add(state.revision_id)
+                    if state.decision_revision_id:
+                        source_revisions.add(state.decision_revision_id)
+            content = CandidateSetContent(
+                project_id=self._project,
+                request_id=inputs.request_id,
+                request_sha256=inputs.configuration_hash.removeprefix("sha256:"),
+                inventory_sha256=inputs.inventory.queue_snapshot().fingerprint.removeprefix("sha256:"),
+                members=tuple(members),
+                compared_pairs=retrieval.compared_pairs,
+                pair_sha256=tuple(content_digest(pair) for pair in pairs),
             )
-            _publication_step("command-created")
-            return result
+            payload = content.model_dump_json(by_alias=True)
+            if len(payload.encode()) > 8 * 1024 * 1024:
+                raise ReconciliationProblem("duplicate-set-size-limit")
+            revision = self._append(
+                aggregates,
+                sources=tuple(aggregates.get_revision(item) for item in sorted(source_revisions)),
+                actor=replace(worker, occurred_at=now()),
+                digest=content_digest(content),
+                label="Scholarly duplicate candidates",
+                kind="workflow",
+                payload_configuration="duplicate-candidate-set",
+                checkpoint=maintain,
+            )
+            connection.execute(
+                "INSERT INTO reconciliation_candidate_sets "
+                "(revision_id,project_id,request_id,request_sha256,payload_sha256,payload_json) VALUES (?,?,?,?,?,?)",
+                (
+                    revision.revision_id,
+                    self._project,
+                    inputs.request_id,
+                    content.request_sha256,
+                    content_digest(content),
+                    payload,
+                ),
+            )
+            for ordinal, pair in enumerate(pairs):
+                maintain()
+                content.validate_pair(ordinal, pair)
+                connection.execute(
+                    "INSERT INTO reconciliation_candidate_pairs VALUES (?,?,?,?,?)",
+                    (
+                        revision.revision_id,
+                        self._project,
+                        ordinal,
+                        content_digest(pair),
+                        pair.model_dump_json(by_alias=True),
+                    ),
+                )
+            _publication_step("batch-candidates-created")
+            output = self._batch_output(revision)
+            completed_at = now()
+            connection.execute(
+                "INSERT INTO workflow_attempt_artifacts VALUES "
+                "(?, ?, ?, ?, ?, 'output', 'retained-incomplete', ?, ?, ?, ?, ?)",
+                (
+                    claim.attempt_id,
+                    self._project,
+                    claim.job_id,
+                    output.artifact_id,
+                    output.revision_id,
+                    output.content_hash,
+                    output.media_type,
+                    output.provenance_entity_id,
+                    completed_at,
+                    completed_at,
+                ),
+            )
+            _publication_step("batch-before-completion")
+            maintain(force=True)
+            queue._complete_with_connection(connection, claim, now=now(), outputs=(output,))
+            checkpoint()
+            return output
 
     def inspect(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> ReconciliationInspection:
         if not is_uuid_v7(revision_id):
@@ -720,9 +1110,16 @@ class SqliteReconciliationRepository:
             return result
 
     @staticmethod
-    def _require_fresh_inputs(aggregates: _SqliteAggregateRepository, revisions: tuple[str, ...]) -> None:
+    def _require_fresh_inputs(
+        aggregates: _SqliteAggregateRepository,
+        revisions: tuple[str, ...],
+        *,
+        checkpoint: Callable[[], None] | None = None,
+    ) -> None:
         try:
             for revision in revisions:
+                if checkpoint is not None:
+                    checkpoint()
                 aggregates._require_fresh_revision(revision, include_changed_input=True)
         except RepositoryConflict:
             raise ReconciliationProblem("reconciliation-input-requires-review") from None
@@ -798,7 +1195,11 @@ class SqliteReconciliationRepository:
 
     @staticmethod
     def _validate_actor(actor: ReconciliationActor) -> None:
-        if not is_uuid_v7(actor.actor_id) or re.fullmatch(r"[0-9a-f]{32}", actor.trace_id) is None:
+        if (
+            actor.actor_type != "human"
+            or not is_uuid_v7(actor.actor_id)
+            or re.fullmatch(r"[0-9a-f]{32}", actor.trace_id) is None
+        ):
             raise ReconciliationProblem("reconciliation-command-invalid")
         _normalize_utc_millisecond(actor.occurred_at)
         if any(re.fullmatch(r"[0-9a-f]{64}", value) is None for value in (actor.intent_sha256, actor.policy_sha256)):

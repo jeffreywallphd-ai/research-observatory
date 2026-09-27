@@ -60,7 +60,31 @@ configuration and executor authority; each accepted output must match the exact
 invocation result. A newer active branch cannot hide an accepted historical one.
 This local history lookup grants no new network execution or egress consent.
 
-The initial batch input contract freezes the inventory, accepted Intent, privacy,
-session and scoring configuration. The durable reconciliation/candidate worker and
-desktop review journey remain CAP-04.S03.T02 integration work. These foundation
-contracts and development checks do not establish task or Wave completion.
+The batch input contract freezes the inventory, accepted Intent, privacy, session
+and scoring configuration. The repository publication transaction binds the exact
+queue attempt and appends exact reconciliation results, source feature caches,
+the candidate-set revision, ordered pair rows and accepted workflow output
+together. Failure or an observed stop rolls this unit back. Current source rights
+are collected before the writer; index decisions are repeated inside it and a
+newly required source outside that authorized snapshot causes a conflict. Live
+leases renew during preparation and inside publication without a nested writer.
+
+Candidate manifests bind immutable source/assertion fingerprints and final Work
+membership/decision heads after all exact additions. Intermediate Work receipts
+remain history. Recursive provenance manifests retain every material leaf within
+the common 64-input event limit. The set's canonical payload digest binds ordered
+pair digests; pair reads check their position, source identities, frozen feature
+weights/configuration and score. Fuzzy candidates remain review-only, including
+conflicting identifiers. Historical reads and identical replay check current
+source rights. Schema 15 adds two immutable candidate metadata tables alongside
+the sealed Work/review tables; it retains the exact schema-14 migration source.
+
+The batch enumerator exhausts the same authenticated queue snapshot and every
+owner output stream. It checks page continuity, output/job identity, declared
+selected totals, completion, and cumulative scanned-row/job/unique-source limits.
+Empty excluded pages are not exhaustion. Later accepted arrivals remain outside
+the frozen boundary; a new snapshot can include them. This enumerator still needs
+to be wired into the durable worker before publication. The worker's current
+authority/stop wiring, freshness projection and desktop review journey remain
+CAP-04.S03.T02 integration work. These development checks do not establish task
+or Wave completion.

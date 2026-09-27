@@ -13,8 +13,8 @@ revision = "0015_reconciliation_review"
 down_revision = "0014_scholarly_reconciliation"
 source_schema_version = 14
 target_schema_version = 15
-TARGET_SCHEMA_SHA256 = "4f200959ff5c3d51e589d7d4f4818bc2a85b6ba085f9164979b7fcc8cf7ac178"
-TARGET_PROFILE_SHA256 = "59e35e778a137c97a47f474bb0b4abed30fb3dbbbace86677865a28aa2a59c60"
+TARGET_SCHEMA_SHA256 = "e24b701d534932df7c67fb01bf07636416731509530c40de9dec4d9cd80307d3"
+TARGET_PROFILE_SHA256 = "b1875252bc7c489b9cb85f601a2bed3644b990147a8106459f0cf9af3193e4c2"
 MATERIAL_MIGRATION_STEPS = (
     "review-authority-create",
     "membership-backfill-row",

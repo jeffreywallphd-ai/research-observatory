@@ -107,6 +107,8 @@ RECONCILIATION_REVIEW_TABLES = (
     "reconciliation_work_seals",
     "reconciliation_review_decisions",
     "reconciliation_feature_cache",
+    "reconciliation_candidate_sets",
+    "reconciliation_candidate_pairs",
 )
 
 EXPECTED_TABLES = (
@@ -290,7 +292,7 @@ IMPORT_PREVIEW_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b9149952
 IMPORT_SUMMARY_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
 IMPORT_COMMIT_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
 RECONCILIATION_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
-EXPECTED_SCHEMA_SHA256 = "4f200959ff5c3d51e589d7d4f4818bc2a85b6ba085f9164979b7fcc8cf7ac178"
+EXPECTED_SCHEMA_SHA256 = "e24b701d534932df7c67fb01bf07636416731509530c40de9dec4d9cd80307d3"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -353,7 +355,7 @@ IMPORT_PREVIEW_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9
 IMPORT_SUMMARY_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
 IMPORT_COMMIT_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
 RECONCILIATION_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
-EXPECTED_PROFILE_SHA256 = "59e35e778a137c97a47f474bb0b4abed30fb3dbbbace86677865a28aa2a59c60"
+EXPECTED_PROFILE_SHA256 = "b1875252bc7c489b9cb85f601a2bed3644b990147a8106459f0cf9af3193e4c2"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -2826,6 +2828,55 @@ RECONCILIATION_REVIEW_DDL = (
                 REFERENCES reconciliation_assertions (revision_id, project_id),
             PRIMARY KEY (project_id, assertion_revision_id, feature_version, normalizer_version, configuration_sha256)
         ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_candidate_sets (
+            revision_id TEXT PRIMARY KEY NOT NULL CHECK ({_uuid_check("revision_id", "7")}),
+            project_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'workflow' CHECK (aggregate_kind='workflow'),
+            request_id TEXT NOT NULL CHECK ({_uuid_check("request_id", "7")}),
+            request_sha256 TEXT NOT NULL CHECK ({_sha256_check("request_sha256")}),
+            payload_sha256 TEXT NOT NULL CHECK ({_sha256_check("payload_sha256")}),
+            payload_json TEXT NOT NULL CHECK (json_valid(payload_json)
+                AND length(CAST(payload_json AS BLOB)) BETWEEN 2 AND 8388608
+                AND json_type(payload_json) IS 'object'
+                AND json_extract(payload_json,'$.schemaVersion') IS '1.0'
+                AND json_extract(payload_json,'$.projectId') IS project_id
+                AND json_extract(payload_json,'$.requestId') IS request_id
+                AND json_extract(payload_json,'$.requestSha256') IS request_sha256
+                AND json_type(payload_json,'$.members') IS 'array'
+                AND json_array_length(payload_json,'$.members') BETWEEN 0 AND 10000
+                AND json_type(payload_json,'$.pairSha256') IS 'array'
+                AND json_array_length(payload_json,'$.pairSha256') BETWEEN 0 AND 20000),
+            FOREIGN KEY (revision_id, aggregate_kind, project_id)
+                REFERENCES aggregate_revisions (revision_id, aggregate_kind, project_id),
+            UNIQUE (project_id, request_id),
+            UNIQUE (revision_id, project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_candidate_pairs (
+            set_revision_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 0 AND 19999),
+            payload_sha256 TEXT NOT NULL CHECK ({_sha256_check("payload_sha256")}),
+            payload_json TEXT NOT NULL CHECK (json_valid(payload_json)
+                AND length(CAST(payload_json AS BLOB)) BETWEEN 2 AND 65536
+                AND json_type(payload_json) IS 'object'
+                AND json_extract(payload_json,'$.disposition') IS 'human-review-required'),
+            FOREIGN KEY (set_revision_id, project_id)
+                REFERENCES reconciliation_candidate_sets (revision_id, project_id),
+            PRIMARY KEY (set_revision_id, ordinal)
+        ) STRICT
+    """,
+    """
+        CREATE TRIGGER reconciliation_candidate_pair_binding BEFORE INSERT ON reconciliation_candidate_pairs
+        WHEN NOT EXISTS (
+            SELECT 1 FROM reconciliation_candidate_sets s
+            WHERE s.revision_id=NEW.set_revision_id AND s.project_id=NEW.project_id
+              AND json_extract(s.payload_json,'$.pairSha256[' || NEW.ordinal || ']') IS NEW.payload_sha256
+        )
+        BEGIN SELECT RAISE(ABORT, 'scholarly candidate pair binding denied'); END
     """,
     *(
         statement

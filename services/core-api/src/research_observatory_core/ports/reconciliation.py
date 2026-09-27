@@ -2,7 +2,7 @@
 
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol
 
 from ..reconciliation.candidates import PreparedRecord
 from ..reconciliation.contracts import ReconciliationInspection, ReconciliationResult, SourceAddress, SourceAssertion
@@ -17,6 +17,7 @@ class ReconciliationActor:
     occurred_at: str
     intent_sha256: str
     policy_sha256: str
+    actor_type: Literal["human", "worker"] = "human"
 
 
 class ReconciliationSourceResolver(Protocol):
