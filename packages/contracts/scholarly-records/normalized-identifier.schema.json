@@ -1,0 +1,91 @@
+{
+  "$defs": {
+    "IdentifierScope": {
+      "enum": [
+        "work",
+        "work-version",
+        "person",
+        "organization",
+        "container",
+        "location",
+        "heuristic",
+        "unknown"
+      ],
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/normalized-identifier.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canonical": {
+      "anyOf": [
+        {
+          "maxLength": 65536,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Canonical"
+    },
+    "issues": {
+      "items": {
+        "enum": [
+          "invalid-identifier",
+          "unsupported-scheme"
+        ],
+        "type": "string"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "normalizerVersion": {
+      "const": "scholarly-identifiers/1.0.0",
+      "default": "scholarly-identifiers/1.0.0",
+      "title": "Normalizerversion",
+      "type": "string"
+    },
+    "observed": {
+      "maxLength": 65536,
+      "title": "Observed",
+      "type": "string"
+    },
+    "registryVerified": {
+      "const": false,
+      "default": false,
+      "title": "Registryverified",
+      "type": "boolean"
+    },
+    "scheme": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Scheme",
+      "type": "string"
+    },
+    "scope": {
+      "$ref": "#/$defs/IdentifierScope"
+    },
+    "status": {
+      "enum": [
+        "valid",
+        "invalid",
+        "unsupported"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "scheme",
+    "observed",
+    "canonical",
+    "scope",
+    "status",
+    "issues"
+  ],
+  "title": "NormalizedIdentifier",
+  "type": "object"
+}

@@ -609,6 +609,50 @@ class ImportPreviewService:
 
         return self._action(root, read)
 
+    def reconciliation_source(self, root, address):
+        """Resolve one complete manifest/member and recheck current local-use rights."""
+        from .reconciliation.contracts import ReconciliationProblem, SourceAddress
+        from .reconciliation.sources import import_assertion
+
+        address = SourceAddress.model_validate(address)
+        if address.kind != "import-member":
+            raise ReconciliationProblem("reconciliation-source-kind-invalid")
+
+        def read(binding: _Binding):
+            repository = binding.adapters.previews
+            manifest = repository.manifest(address.revision_id)
+            if manifest.preview_id != address.context_id:
+                raise ReconciliationProblem("reconciliation-source-mismatch")
+            members = repository.manifest_members(address.revision_id, after=address.ordinal - 1, limit=1)
+            if (
+                len(members) != 1
+                or members[0].ordinal != address.ordinal
+                or members[0].record_key != address.record_key
+            ):
+                raise ReconciliationProblem("reconciliation-source-mismatch")
+            member = members[0]
+            historical = repository.draft(address.context_id, revision=manifest.draft_revision)
+            current = repository.draft(address.context_id)
+            selected = repository.draft_selection(
+                address.context_id, revision=current.revision, ordinals=(address.ordinal,)
+            )
+            if len(selected) != 1:
+                raise ReconciliationProblem("reconciliation-source-mismatch")
+            old_rights = member.decision.rights or historical.authority.rights
+            current_rights = selected[0].decision.rights or current.authority.rights
+            for rights in (old_rights, current_rights):
+                if not all(rights.permits(action) for action in ("store", "inspect", "derive", "index")):
+                    raise ReconciliationProblem("reconciliation-rights-denied")
+            return import_assertion(
+                project_id=binding.project_id,
+                address=address,
+                record=selected[0].record,
+                member=member,
+                rights=old_rights,
+            )
+
+        return self._action(root, read)
+
     def import_manifest_members(self, root: str, preview_id: str, *, revision_id: str, after: int, limit: int):
         def read(binding: _Binding):
             manifest = binding.adapters.previews.manifest(revision_id)

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5699526635892c1ca579dc1369f0a709f3de961bf11761ac1b1be3f52565ffa9
+source_sha256: 5e4bb5f02eafcc61d61940bddefe34c5fc8cb30e831bd44465d75824989615f7
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8319,13 +8319,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S03.T01 - Implement identifier normalization and exact reconciliation
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S01.T03`, `CAP-04.S02.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Normalization for DOI, PMID, arXiv, ISBN, ORCID, provider IDs, URLs, and title fingerprints with source precedence rules.
 

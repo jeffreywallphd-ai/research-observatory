@@ -351,6 +351,24 @@
     "tests/foundation/test_verification_receipt.py",
     "tests/ai/__init__.py",
     "tests/service/__init__.py",
-    "tests/desktop/__init__.py"
+    "tests/desktop/__init__.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0014_scholarly_reconciliation.py",
+    "services/core-api/src/research_observatory_core/ports/reconciliation.py",
+    "services/core-api/src/research_observatory_core/reconciliation/__init__.py",
+    "services/core-api/src/research_observatory_core/reconciliation/contracts.py",
+    "services/core-api/src/research_observatory_core/reconciliation/exact.py",
+    "services/core-api/src/research_observatory_core/reconciliation/identifiers.py",
+    "services/core-api/src/research_observatory_core/reconciliation/sources.py",
+    "services/core-api/src/research_observatory_core/reconciliation_api.py",
+    "services/core-api/src/research_observatory_core/reconciliation_repository.py",
+    "services/core-api/src/research_observatory_core/reconciliation_service.py",
+    "tests/reconciliation/__init__.py",
+    "tests/reconciliation/test_exact.py",
+    "tests/reconciliation/test_identifiers.py",
+    "tests/reconciliation/test_migration.py",
+    "tests/reconciliation/test_repository.py",
+    "tests/reconciliation/test_runtime_windows.py",
+    "tests/reconciliation/test_sources.py",
+    "tests/reconciliation/test_contracts.py"
   ]
 }

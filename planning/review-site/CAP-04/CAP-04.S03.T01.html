@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S03.html">SLICE-canonical-work-version-and-identity-reconciliation</a><span>/</span><span aria-current="page">CAP-04.S03.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S03.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S03.T01 · task 1 of 3</span><h1>Implement identifier normalization and exact reconciliation</h1><p>Normalization for DOI, PMID, arXiv, ISBN, ORCID, provider IDs, URLs, and title fingerprints with source precedence rules.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S03.T01 · task 1 of 3</span><h1>Implement identifier normalization and exact reconciliation</h1><p>Normalization for DOI, PMID, arXiv, ISBN, ORCID, provider IDs, URLs, and title fingerprints with source precedence rules.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S03.html">SLICE-canonical-work-version-and-identity-reconciliation</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li></ul>
-  <p data-task-claim="CAP-04.S03.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S03.T01" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="e09d313fdb86ff6ea260f04a56fdaf7063198a57"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>e09d313fdb86ff6ea260f04a56fdaf7063198a57</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S03.T01" data-task-plan-sha256="4196b424d61fbf8fad05917bddd00b91256c11953a98428053d424218cda1426"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-04.S03.T01` - Implement identifier normalization and exact reconciliation
 **Objective:** Normalization for DOI, PMID, arXiv, ISBN, ORCID, provider IDs, URLs, and title fingerprints with source precedence rules.
@@ -88,13 +88,91 @@ python tools/verify.py --profile service
 python tools/verify.py --profile data
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S03.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T01" data-worksheet-sha256="8a942bf407c20f7bdc0987e50802b301d782746c1ef01fceebcdf19885d3d91e">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>8a942bf407c20f7bdc0987e50802b301d782746c1ef01fceebcdf19885d3d91e</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S03.T01 — conservative identifiers and exact reconciliation
+
+Claim base: `e09d313fdb86ff6ea260f04a56fdaf7063198a57`. The unchanged approved
+W2 packet at `c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`, CAP-04.S03 section 9.1,
+and accepted ADR-0013/0024/0025/0027 govern this implementation. Both task
+dependencies are DONE and CAP-04.S02 has independent slice approval.
+
+## Material acceptance closure
+
+| Boundary | Intended behavior and prospective proof |
+|---|---|
+| Identifier equivalence | Versioned, typed DOI, PMID, arXiv, ISBN, ORCID, provider-ID, URL and title normalization preserves observed strings. Table-driven tests exercise wrappers, checksums, ASCII-only DOI case folding, reserved URL characters, arXiv versions, leading zeros and malformed Unicode/control input. Syntax validity never claims registry verification. |
+| Identity and conflict | Exact reconciliation distinguishes scholarly work identifiers from person, organization, container and heuristic title keys. A unique compatible exact match links assertions; multiple matches, conflicting IDs, reassignment observations and invalid IDs retain explicit review flags. Titles and ORCID cannot silently merge Works. Tests challenge transitive bridges, namespace substitution and deterministic order. |
+| Source precedence | Human-accepted corrections remain distinct from raw imported/provider assertions. No provider ranking silently declares disputed metadata true. All competing values and exact source addresses survive, with field selection and reasons inspectable. Source bytes, IDs and previous decisions remain immutable. |
+| Current authority | Core resolves exact import-manifest/member or connector-page/ordinal addresses in the current project; callers cannot submit trusted provider values or grants. Current inspect/store/derive/index rights and project/Intent/privacy restrictions guard writes and replay/read. Cross-project, replaced revision, revoked rights, closed project and stale-source substitutions fail closed. |
+| Durable aggregate boundary | Canonical UUIDv7 record identities/revisions reuse existing repositories and append-only source links. Publication, exact-ID lookup, idempotency, provenance/outbox and material dependencies commit together. A conflicting retry or injected failure leaves no partial canonical change. Restart recovers the same result and audit links. |
+| Compatibility and migration | Preserve the exact committed schema-v13 predecessor before any additive schema change. Test upgrade, rejection of invalid predecessor state, immutable source rows, rollback/verified backup and protected database restart. Do not approximate an old schema using new DDL. |
+| Real principal | A focused production-composition test must resolve actual retained import and connector sources through Core authority and the real project database/object store, then reconcile and reopen. Pure matcher tests alone do not qualify persistence, rights or application wiring. |
+| Experience | T01 introduces the Core/domain contract and persistence path; CAP-04.S03.T02 owns the approved reconciliation review UI. No governed page, workflow, style or navigation is changed by this task. Public API/schema consumers receive explicit bounded states and immutable IDs. |
+| Evidence | Select normalization, exact-engine, public-contract, affected repository/migration/service and real-boundary checks plus affected static/schema/architecture checks. Bind final passing results to a committed candidate. Full repository/profile and cross-capability qualification remain the S01–S03 checkpoint and fresh Wave exit obligations. |
+
+First tests precede product edits where practical. Negative cases include invalid
+checksums, Unicode DOI collisions, person-ID/work-ID substitution, conflicting
+verified identifiers, source preservation, denied current authority, duplicate
+command collision, concurrent publication, rollback and process restart.
+
+The implementation must not add fuzzy scoring, merge/split adjudication, version
+graph semantics, remote identity lookup, inferred permissions or new infrastructure.
+Those are either later approved tasks or explicit non-goals. Long-running/batch
+work must use the existing durable workflow fabric; a bounded single-source
+transaction is not a replacement scheduler. Read-only independent preflight is
+requested for the identity, current-authority and migration boundaries. No
+mandatory new gate has been demonstrated.
+
+## Implementation closure and proof limits
+
+The independent read-only preflight identified the exact source address, entity
+scope, full-candidate conflict, current local-action rights and genuine predecessor
+boundaries. Those observations are incorporated into the source resolvers,
+normalizer, transactional repository and tests. Syntax validity remains separate
+from registry verification; no registry lookup or invented verification is added.
+
+Protected source reads append access audit facts using their own connection.
+Resolving them while holding a writer would deadlock. The lifecycle fence therefore
+spans a source-resolution phase and a subsequent writer transaction that rechecks
+the complete candidate set against the resolved snapshot. A newly encountered
+concurrent source fails closed without partial publication. Concurrent tests retry
+that bounded conflict and prove convergence to one Work.
+
+The exact v13 schema and a populated synthetic committed-import database were
+frozen before DDL changes. Migration tests restore those literal objects/rows,
+verify their fingerprints, preserve source/audit facts, and exercise rollback,
+verified encrypted backup and reopen. Existing predecessor migration expectations
+advance their target to v14 while retaining their old source fingerprints, data
+and failure assertions. SQL formatting changes to the new uncommitted DDL require
+recomputing only the new target&#x27;s actual schema/profile fingerprints.
+
+Primary DOI syntax review corrected initial development assumptions about prefix
+length/subdivision and suffix spaces. The normalizer and regression cases preserve
+these valid distinctions; malformed controls remain rejected. Original source
+representations and accepted corrections stay independently inspectable across
+DOI-list, RIS, BibTeX, CSL-JSON and CSV handoffs.
+
+`tests/reconciliation` covers normalization/conflicts, actual parser projections,
+portable JSON/API contracts, real canonical publication, concurrency, atomic
+failpoints, migration and Windows production composition. The production test uses
+real DPAPI/SQLCipher and durable acquisition workers with synthetic provider HTTP,
+then shuts down and recreates the application session, reopens the project and
+checks replay, disputed fields and revoked contributor rights. It does not claim
+a separately spawned OS process, live external API qualification or review UI
+coverage. CAP-04.S03.T02/T03 and the S01–S03 checkpoint retain their approved scope.
+
+Qualifying checks will run afresh against the committed candidate. Development
+failures remain in local logs; they are not passing evidence or independent review.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S03.T01" data-review-mode="latest-review-only">
   <h3>CAP-04.S03.T01 — Implement identifier normalization and exact reconciliation</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S03.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S03.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S03.html">Previous</a><a class="button button-primary" href="CAP-04.S03.T02.html">Next</a></nav>

@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 13,
+  "databaseSchemaVersion": 14,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064",
+  "schemaFingerprintSha256": "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -78,7 +78,11 @@
     "import_source_records",
     "import_manifests",
     "import_manifest_members",
-    "import_manifest_seals"
+    "import_manifest_seals",
+    "reconciliation_assertions",
+    "reconciliation_work_revisions",
+    "reconciliation_identifier_links",
+    "reconciliation_commands"
   ],
   "mutableStateTables": [
     "object_records",
@@ -168,6 +172,10 @@
     "import_source_records",
     "import_manifests",
     "import_manifest_members",
-    "import_manifest_seals"
+    "import_manifest_seals",
+    "reconciliation_assertions",
+    "reconciliation_work_revisions",
+    "reconciliation_identifier_links",
+    "reconciliation_commands"
   ]
 }

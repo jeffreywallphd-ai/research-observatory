@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 13
+DATABASE_SCHEMA_VERSION = 14
+IMPORT_COMMIT_DATABASE_SCHEMA_VERSION = 13
 IMPORT_SUMMARY_DATABASE_SCHEMA_VERSION = 12
 IMPORT_PREVIEW_DATABASE_SCHEMA_VERSION = 11
 DEPENDENCY_IMPACT_DATABASE_SCHEMA_VERSION = 10
@@ -93,6 +94,12 @@ IMPORT_COMMIT_TABLES = (
     "import_manifest_members",
     "import_manifest_seals",
 )
+RECONCILIATION_TABLES = (
+    "reconciliation_assertions",
+    "reconciliation_work_revisions",
+    "reconciliation_identifier_links",
+    "reconciliation_commands",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -135,6 +142,7 @@ EXPECTED_TABLES = (
     *IMPORT_PREVIEW_TABLES,
     *IMPORT_SUMMARY_TABLES,
     *IMPORT_COMMIT_TABLES,
+    *RECONCILIATION_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -171,6 +179,7 @@ IMMUTABLE_ROW_TABLES = (
     *IMPORT_PREVIEW_TABLES,
     *IMPORT_SUMMARY_TABLES,
     *IMPORT_COMMIT_TABLES,
+    *RECONCILIATION_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -207,6 +216,7 @@ EXPECTED_TRIGGERS = tuple(
             "import_manifest_binding",
             "import_manifest_member_binding",
             "import_manifest_seal_binding",
+            "reconciliation_work_binding",
         ]
     )
 )
@@ -244,6 +254,8 @@ EXPECTED_INDEXES = (
     "import_manifest_raw",
     "import_manifest_doi",
     "import_manifest_source_record",
+    "reconciliation_identifier_lookup",
+    "reconciliation_work_sources",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -263,7 +275,8 @@ MATERIAL_DEPENDENCY_SCHEMA_SHA256 = "a1f8087eda44532e269d19adfc6ee90591e00ca7a69
 DEPENDENCY_IMPACT_SCHEMA_SHA256 = "49459b9ca8e54d27ad45abf16615946107a8d73e1ba8e211f1c45bc8fa230187"
 IMPORT_PREVIEW_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0"
 IMPORT_SUMMARY_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
-EXPECTED_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
+IMPORT_COMMIT_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
+EXPECTED_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -324,7 +337,8 @@ MATERIAL_DEPENDENCY_PROFILE_SHA256 = "4761d833e7d8a25e969e79ea9c740f501ae2a4c119
 DEPENDENCY_IMPACT_PROFILE_SHA256 = "0641cf38a63226c98c9df55093f4c696687b14a2baddfb17f7986aa85efad8fb"
 IMPORT_PREVIEW_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9fd6d98595a7888c91"
 IMPORT_SUMMARY_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
-EXPECTED_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
+IMPORT_COMMIT_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
+EXPECTED_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -2599,13 +2613,108 @@ IMPORT_COMMIT_DDL = (
     "(project_id, manifest_revision_id, source_record_revision_id) WHERE included=1",
 )
 
+RECONCILIATION_DDL = (
+    f"""
+        CREATE TABLE reconciliation_assertions (
+            revision_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'record' CHECK (aggregate_kind = 'record'),
+            source_revision_id TEXT NOT NULL,
+            address_revision_id TEXT NOT NULL,
+            address_sha256 TEXT NOT NULL CHECK ({_sha256_check("address_sha256")}),
+            payload_sha256 TEXT NOT NULL CHECK ({_sha256_check("payload_sha256")}),
+            assertion_json TEXT NOT NULL
+                CHECK (json_valid(assertion_json) AND length(CAST(assertion_json AS BLOB)) <= 1048576
+                    AND json_type(assertion_json) IS 'object'
+                    AND json_extract(assertion_json, '$.schemaVersion') IS '1.0'
+                    AND json_extract(assertion_json, '$.projectId') IS project_id
+                    AND json_extract(assertion_json, '$.sourceRevisionId') IS source_revision_id
+                    AND json_extract(assertion_json, '$.address.revisionId') IS address_revision_id),
+            result_json TEXT NOT NULL CHECK (json_valid(result_json) AND length(CAST(result_json AS BLOB)) <= 65536),
+            FOREIGN KEY (revision_id, aggregate_kind, project_id)
+                REFERENCES aggregate_revisions (revision_id, aggregate_kind, project_id),
+            FOREIGN KEY (source_revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id),
+            FOREIGN KEY (address_revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id),
+            UNIQUE (project_id, address_sha256),
+            UNIQUE (revision_id, project_id)
+        ) STRICT
+    """,
+    """
+        CREATE TABLE reconciliation_work_revisions (
+            revision_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            work_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'record' CHECK (aggregate_kind = 'record'),
+            assertion_revision_id TEXT NOT NULL UNIQUE,
+            previous_revision_id TEXT,
+            FOREIGN KEY (revision_id, aggregate_kind, project_id)
+                REFERENCES aggregate_revisions (revision_id, aggregate_kind, project_id),
+            FOREIGN KEY (work_id, project_id, aggregate_kind)
+                REFERENCES aggregate_identities (aggregate_id, project_id, aggregate_kind),
+            FOREIGN KEY (assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id),
+            FOREIGN KEY (previous_revision_id, project_id, work_id)
+                REFERENCES reconciliation_work_revisions (revision_id, project_id, work_id),
+            UNIQUE (revision_id, project_id, work_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_identifier_links (
+            assertion_revision_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            scheme TEXT NOT NULL CHECK ({_identifier_check("scheme", 64)}),
+            key_sha256 TEXT NOT NULL CHECK ({_sha256_check("key_sha256")}),
+            work_id TEXT,
+            aggregate_kind TEXT NOT NULL DEFAULT 'record' CHECK (aggregate_kind = 'record'),
+            FOREIGN KEY (assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id),
+            FOREIGN KEY (work_id, project_id, aggregate_kind)
+                REFERENCES aggregate_identities (aggregate_id, project_id, aggregate_kind),
+            PRIMARY KEY (assertion_revision_id, scheme, key_sha256)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_commands (
+            command_id TEXT NOT NULL CHECK ({_uuid_check("command_id", "7")}),
+            project_id TEXT NOT NULL,
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            command_sha256 TEXT NOT NULL CHECK ({_sha256_check("command_sha256")}),
+            assertion_revision_id TEXT NOT NULL,
+            FOREIGN KEY (assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id),
+            PRIMARY KEY (project_id, command_id)
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in RECONCILIATION_TABLES
+        for statement in _immutable_triggers(table, "scholarly reconciliation history is append-only")
+    ),
+    "CREATE INDEX reconciliation_identifier_lookup ON reconciliation_identifier_links (project_id, scheme, key_sha256)",
+    "CREATE INDEX reconciliation_work_sources ON reconciliation_work_revisions (project_id, work_id)",
+    """
+        CREATE TRIGGER reconciliation_work_binding BEFORE INSERT ON reconciliation_work_revisions
+        WHEN NOT EXISTS (
+            SELECT 1 FROM aggregate_revisions r WHERE r.revision_id=NEW.revision_id
+            AND r.project_id=NEW.project_id AND r.aggregate_id=NEW.work_id AND r.aggregate_kind='record'
+            AND ((r.revision=0 AND NEW.previous_revision_id IS NULL) OR EXISTS (
+                SELECT 1 FROM aggregate_revisions p WHERE p.revision_id=NEW.previous_revision_id
+                AND p.aggregate_id=r.aggregate_id AND p.revision=r.revision-1
+            ))
+        )
+        BEGIN SELECT RAISE(ABORT, 'scholarly work revision binding denied'); END
+    """,
+)
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
 )
 
+SCHEMA_METADATA_V14_DDL = SCHEMA_METADATA_V13_DDL.replace("schema_version = 13", "schema_version = 14")
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V13_DDL,
+    SCHEMA_METADATA_V14_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -2621,6 +2730,7 @@ _DDL_STATEMENTS = (
     *IMPORT_PREVIEW_DDL,
     *IMPORT_SUMMARY_DDL,
     *IMPORT_COMMIT_DDL,
+    *RECONCILIATION_DDL,
 )
 
 

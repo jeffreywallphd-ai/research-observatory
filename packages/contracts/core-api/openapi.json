@@ -173,6 +173,66 @@
         "title": "CacheClearState",
         "type": "string"
       },
+      "CanonicalFieldSelection": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            "title": "Name",
+            "type": "string"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/FieldObservation"
+            },
+            "maxItems": 32768,
+            "title": "Observations",
+            "type": "array"
+          },
+          "reason": {
+            "enum": [
+              "consistent-source-values",
+              "accepted-correction",
+              "competing-assertions",
+              "no-assertion"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "selected": {
+            "anyOf": [
+              {
+                "maxLength": 65536,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected"
+          },
+          "status": {
+            "enum": [
+              "observed",
+              "adjudicated",
+              "disputed",
+              "not-reported"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "selected",
+          "status",
+          "reason",
+          "observations"
+        ],
+        "title": "CanonicalFieldSelection",
+        "type": "object"
+      },
       "CapabilitiesResponse": {
         "additionalProperties": false,
         "properties": {
@@ -1486,6 +1546,30 @@
         "minimum": 0.0,
         "type": "integer"
       },
+      "FieldObservation": {
+        "additionalProperties": false,
+        "properties": {
+          "assertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/SourceOrigin"
+          },
+          "value": {
+            "maxLength": 65536,
+            "minLength": 1,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "assertionRevisionId",
+          "value",
+          "origin"
+        ],
+        "title": "FieldObservation",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1539,6 +1623,87 @@
         ],
         "title": "HealthResponse",
         "type": "object"
+      },
+      "IdentifierAssertion": {
+        "additionalProperties": false,
+        "properties": {
+          "activeForMatching": {
+            "default": true,
+            "title": "Activeformatching",
+            "type": "boolean"
+          },
+          "observed": {
+            "maxLength": 65536,
+            "title": "Observed",
+            "type": "string"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/SourceOrigin",
+            "default": "observed"
+          },
+          "reassignmentObserved": {
+            "default": false,
+            "title": "Reassignmentobserved",
+            "type": "boolean"
+          },
+          "role": {
+            "default": "subject",
+            "enum": [
+              "subject",
+              "person",
+              "organization",
+              "container",
+              "location"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "scheme": {
+            "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            "title": "Scheme",
+            "type": "string"
+          },
+          "sourceEncoding": {
+            "default": "text",
+            "enum": [
+              "text",
+              "json-string",
+              "bibtex-literal"
+            ],
+            "title": "Sourceencoding",
+            "type": "string"
+          },
+          "sourceSelector": {
+            "default": "observed-value",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Sourceselector",
+            "type": "string"
+          },
+          "verificationState": {
+            "$ref": "#/components/schemas/VerificationState",
+            "default": "unverified"
+          }
+        },
+        "required": [
+          "scheme",
+          "observed"
+        ],
+        "title": "IdentifierAssertion",
+        "type": "object"
+      },
+      "IdentifierScope": {
+        "enum": [
+          "work",
+          "work-version",
+          "person",
+          "organization",
+          "container",
+          "location",
+          "heuristic",
+          "unknown"
+        ],
+        "type": "string"
       },
       "IdentifierValue": {
         "maxLength": 4096,
@@ -4167,6 +4332,18 @@
         ],
         "type": "string"
       },
+      "MatchFlag": {
+        "enum": [
+          "invalid-identifier",
+          "disputed-identifier",
+          "identifier-reassigned",
+          "identifier-reassignment-suspected",
+          "conflicting-identifiers",
+          "multiple-work-matches",
+          "incompatible-version"
+        ],
+        "type": "string"
+      },
       "ModelAccelerator": {
         "enum": [
           "none",
@@ -4753,6 +4930,80 @@
         "maximum": 2147483646.0,
         "minimum": 1.0,
         "type": "integer"
+      },
+      "NormalizedIdentifier": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical": {
+            "anyOf": [
+              {
+                "maxLength": 65536,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonical"
+          },
+          "issues": {
+            "items": {
+              "enum": [
+                "invalid-identifier",
+                "unsupported-scheme"
+              ],
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "normalizerVersion": {
+            "const": "scholarly-identifiers/1.0.0",
+            "default": "scholarly-identifiers/1.0.0",
+            "title": "Normalizerversion",
+            "type": "string"
+          },
+          "observed": {
+            "maxLength": 65536,
+            "title": "Observed",
+            "type": "string"
+          },
+          "registryVerified": {
+            "const": false,
+            "default": false,
+            "title": "Registryverified",
+            "type": "boolean"
+          },
+          "scheme": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Scheme",
+            "type": "string"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/IdentifierScope"
+          },
+          "status": {
+            "enum": [
+              "valid",
+              "invalid",
+              "unsupported"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scheme",
+          "observed",
+          "canonical",
+          "scope",
+          "status",
+          "issues"
+        ],
+        "title": "NormalizedIdentifier",
+        "type": "object"
       },
       "OaQuery": {
         "additionalProperties": false,
@@ -6452,6 +6703,208 @@
         "title": "RecommendationQuery",
         "type": "object"
       },
+      "ReconciliationConnectorAddressRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "ordinal": {
+            "maximum": 999.0,
+            "minimum": 0.0,
+            "title": "Ordinal",
+            "type": "integer"
+          },
+          "previewId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId",
+          "ordinal"
+        ],
+        "title": "ReconciliationConnectorAddressRequest",
+        "type": "object"
+      },
+      "ReconciliationInspection": {
+        "additionalProperties": false,
+        "properties": {
+          "assertion": {
+            "$ref": "#/components/schemas/SourceAssertion"
+          },
+          "canonicalFields": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CanonicalFieldSelection"
+            },
+            "maxItems": 256,
+            "title": "Canonicalfields",
+            "type": "array"
+          },
+          "normalizedIdentifiers": {
+            "items": {
+              "$ref": "#/components/schemas/NormalizedIdentifier"
+            },
+            "readOnly": true,
+            "title": "Normalizedidentifiers",
+            "type": "array"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ReconciliationResult"
+          }
+        },
+        "required": [
+          "result",
+          "assertion",
+          "normalizedIdentifiers"
+        ],
+        "title": "ReconciliationInspection",
+        "type": "object"
+      },
+      "ReconciliationReadRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "assertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "assertionRevisionId"
+        ],
+        "title": "ReconciliationReadRequest",
+        "type": "object"
+      },
+      "ReconciliationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceAddress"
+          }
+        },
+        "required": [
+          "root",
+          "commandId",
+          "source"
+        ],
+        "title": "ReconciliationRequest",
+        "type": "object"
+      },
+      "ReconciliationResult": {
+        "additionalProperties": false,
+        "properties": {
+          "assertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 256,
+            "title": "Candidates",
+            "type": "array"
+          },
+          "disposition": {
+            "enum": [
+              "new-work",
+              "exact-linked",
+              "review-required"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "flags": {
+            "items": {
+              "$ref": "#/components/schemas/MatchFlag"
+            },
+            "maxItems": 16,
+            "title": "Flags",
+            "type": "array"
+          },
+          "knowledgeStatus": {
+            "enum": [
+              "inferred",
+              "disputed"
+            ],
+            "title": "Knowledgestatus",
+            "type": "string"
+          },
+          "matchingReason": {
+            "enum": [
+              "no-exact-match",
+              "unique-compatible-exact-identifiers",
+              "human-review-required"
+            ],
+            "title": "Matchingreason",
+            "type": "string"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceAddress"
+          },
+          "workId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "projectId",
+          "assertionRevisionId",
+          "source",
+          "workId",
+          "workRevisionId",
+          "disposition",
+          "candidates",
+          "flags",
+          "knowledgeStatus",
+          "matchingReason"
+        ],
+        "title": "ReconciliationResult",
+        "type": "object"
+      },
       "RecordSelection": {
         "additionalProperties": false,
         "properties": {
@@ -6833,6 +7286,39 @@
         "title": "RuntimeState",
         "type": "string"
       },
+      "ScholarlyField": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            "title": "Name",
+            "type": "string"
+          },
+          "observed": {
+            "maxLength": 65536,
+            "minLength": 1,
+            "title": "Observed",
+            "type": "string"
+          },
+          "origin": {
+            "$ref": "#/components/schemas/SourceOrigin"
+          },
+          "sourceSelector": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Sourceselector",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "observed",
+          "origin",
+          "sourceSelector"
+        ],
+        "title": "ScholarlyField",
+        "type": "object"
+      },
       "ScientificQuery": {
         "discriminator": {
           "mapping": {
@@ -7020,6 +7506,109 @@
         "title": "ShortValue",
         "type": "object"
       },
+      "SourceAddress": {
+        "additionalProperties": false,
+        "properties": {
+          "contextId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "kind": {
+            "enum": [
+              "import-member",
+              "connector-record"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "ordinal": {
+            "maximum": 200000.0,
+            "minimum": 0.0,
+            "title": "Ordinal",
+            "type": "integer"
+          },
+          "recordKey": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Digest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "kind",
+          "contextId",
+          "revisionId",
+          "ordinal",
+          "recordKey"
+        ],
+        "title": "SourceAddress",
+        "type": "object"
+      },
+      "SourceAssertion": {
+        "additionalProperties": false,
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/SourceAddress"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ScholarlyField"
+            },
+            "maxItems": 256,
+            "title": "Fields",
+            "type": "array"
+          },
+          "identifiers": {
+            "items": {
+              "$ref": "#/components/schemas/IdentifierAssertion"
+            },
+            "maxItems": 128,
+            "title": "Identifiers",
+            "type": "array"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "provider": {
+            "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            "title": "Provider",
+            "type": "string"
+          },
+          "rights": {
+            "$ref": "#/components/schemas/ImportRights"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sourceRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "sourceSha256": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        },
+        "required": [
+          "projectId",
+          "address",
+          "sourceRevisionId",
+          "provider",
+          "identifiers",
+          "fields",
+          "rights",
+          "sourceSha256"
+        ],
+        "title": "SourceAssertion",
+        "type": "object"
+      },
       "SourceField": {
         "additionalProperties": false,
         "properties": {
@@ -7085,6 +7674,13 @@
         ],
         "title": "SourceObservation",
         "type": "object"
+      },
+      "SourceOrigin": {
+        "enum": [
+          "observed",
+          "correction"
+        ],
+        "type": "string"
       },
       "SourceTerms": {
         "additionalProperties": false,
@@ -7259,6 +7855,15 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "VerificationState": {
+        "enum": [
+          "unverified",
+          "verified",
+          "disputed",
+          "invalid"
+        ],
+        "type": "string"
       },
       "Version": {
         "maxLength": 128,
@@ -12690,6 +13295,249 @@
         "summary": "Schedule Recalculation",
         "tags": [
           "recalculation"
+        ]
+      }
+    },
+    "/projects/reconciliation/connector-address": {
+      "post": {
+        "operationId": "resolveScholarlyConnectorAddress",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationConnectorAddressRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceAddress"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Connector Address",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/exact": {
+      "post": {
+        "operationId": "reconcileScholarlySource",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Exact",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/inspect": {
+      "post": {
+        "operationId": "inspectScholarlyReconciliation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationReadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationInspection"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Inspect",
+        "tags": [
+          "reconciliation"
         ]
       }
     },

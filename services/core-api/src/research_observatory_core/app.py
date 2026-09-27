@@ -91,6 +91,8 @@ from .ports.import_previews import PreviewProblem
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .provenance import ProvenanceProblem, ProvenanceService
+from .reconciliation_api import register_reconciliation_routes
+from .reconciliation_service import ReconciliationService
 from .research_intents import IntentProblem, ResearchIntentService
 from .selective_recalculation import RecalculationControlProblem, RecalculationControlService
 from .task_center import TaskCenterProblem, TaskCenterService
@@ -116,6 +118,7 @@ class RuntimeContext:
     recalculation: RecalculationControlService
     imports: ImportPreviewService | None = None
     connectors: ConnectorWorkerService | None = None
+    reconciliation: ReconciliationService | None = None
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -135,6 +138,7 @@ def create_app(
     recalculation: RecalculationControlService | None = None,
     imports: ImportPreviewService | None = None,
     connectors: ConnectorWorkerService | None = None,
+    reconciliation: ReconciliationService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -177,6 +181,7 @@ def create_app(
             recalculation=resolved_recalculation,
             imports=imports,
             connectors=connectors,
+            reconciliation=reconciliation,
         )
         app.state.runtime = context
         if context.imports is not None:
@@ -315,6 +320,7 @@ def create_app(
     register_import_routes(app, lambda request: runtime(request).imports, project_problem)
     register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
     register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
+    register_reconciliation_routes(app, lambda request: runtime(request).reconciliation, project_problem)
 
     def run_project_action(request: Request, action: Callable[[], ProjectProjection]) -> ProjectProjection:
         try:

@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-12 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-14 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -11,7 +11,7 @@ The profile is not an API for issuing SQL. Core owns the SQLite adapter, the
 desktop never opens the database, and downstream modules consume repository
 ports introduced by the storage slice. Ordinary connections deny schema DDL.
 The separately constructed T02 Alembic authority is never returned to ordinary
-callers: it checkpoints and validates exact supported version-1 through version-11 fixtures, reserves the
+callers: it checkpoints and validates exact supported version-1 through version-13 fixtures, reserves the
 writer, creates and verifies an online backup, and only then replaces the
 affected controls in one transaction. `sqlite-migration-recovery.schema.json`
 binds the immutable backup manifest to exact backup bytes, the reviewed revision,
@@ -69,6 +69,16 @@ indexed duplicate groups and completion receipts. It retains no extra raw source
 copies, invents no prior summaries and leaves canonical scholarly records alone.
 Results require current draft/rights checks and accepted durable worker output;
 the presence of projection rows is not completion or permission.
+
+Version 13 adds immutable import-commit preparation, source records, manifests,
+ordered members and completion seals. Version 14 adds exact scholarly source
+assertions, canonical Work revision links, indexed identifier hashes and command
+receipts. Source records and accepted decisions remain unchanged. Reconciliation
+reuses canonical revisions and atomic provenance/outbox/dependency publication;
+the lookup index is not independent identity or access authority. See the
+[scholarly contract](../scholarly-records/README.md) for current-source checks,
+bounded matching and public handoff. The populated exact v13 predecessor fixture
+is retained with a digest, including source and audit rows, for migration proof.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and

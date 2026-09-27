@@ -1,0 +1,168 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "MatchFlag": {
+      "enum": [
+        "invalid-identifier",
+        "disputed-identifier",
+        "identifier-reassigned",
+        "identifier-reassignment-suspected",
+        "conflicting-identifiers",
+        "multiple-work-matches",
+        "incompatible-version"
+      ],
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "SourceAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "contextId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "kind": {
+          "enum": [
+            "import-member",
+            "connector-record"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 200000,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "recordKey": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "kind",
+        "contextId",
+        "revisionId",
+        "ordinal",
+        "recordKey"
+      ],
+      "title": "SourceAddress",
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/reconciliation-result.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assertionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "candidates": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 256,
+      "title": "Candidates",
+      "type": "array"
+    },
+    "disposition": {
+      "enum": [
+        "new-work",
+        "exact-linked",
+        "review-required"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "flags": {
+      "items": {
+        "$ref": "#/$defs/MatchFlag"
+      },
+      "maxItems": 16,
+      "title": "Flags",
+      "type": "array"
+    },
+    "knowledgeStatus": {
+      "enum": [
+        "inferred",
+        "disputed"
+      ],
+      "title": "Knowledgestatus",
+      "type": "string"
+    },
+    "matchingReason": {
+      "enum": [
+        "no-exact-match",
+        "unique-compatible-exact-identifiers",
+        "human-review-required"
+      ],
+      "title": "Matchingreason",
+      "type": "string"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "#/$defs/SourceAddress"
+    },
+    "workId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "workRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "projectId",
+    "assertionRevisionId",
+    "source",
+    "workId",
+    "workRevisionId",
+    "disposition",
+    "candidates",
+    "flags",
+    "knowledgeStatus",
+    "matchingReason"
+  ],
+  "title": "ReconciliationResult",
+  "type": "object"
+}

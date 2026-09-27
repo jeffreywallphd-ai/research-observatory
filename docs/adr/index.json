@@ -305,6 +305,15 @@
         "CAP-04.S02.T03",
         "CAP-00.S02.T03"
       ]
+    },
+    {
+      "id": "ADR-0031",
+      "path": "docs/adr/ADR-0031-document-exact-scholarly-reconciliation-under-existing-canonical-authority.md",
+      "title": "Document exact scholarly reconciliation under existing canonical authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-04.S03.T01"
+      ]
     }
   ]
 }

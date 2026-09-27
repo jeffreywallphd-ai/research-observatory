@@ -14550,7 +14550,7 @@
             {
               "task_id": "CAP-04.S03.T01",
               "title": "Implement identifier normalization and exact reconciliation",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -14591,19 +14591,22 @@
             {
               "task_id": "CAP-04.S03.T01",
               "title": "Implement identifier normalization and exact reconciliation",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S03.T01.html",
               "dependencies": [
                 "CAP-04.S01.T03",
                 "CAP-04.S02.T03"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "e09d313fdb86ff6ea260f04a56fdaf7063198a57"
               },
               "plan_section_sha256": "4196b424d61fbf8fad05917bddd00b91256c11953a98428053d424218cda1426",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-04.S03.T01.task-start.md",
+                "sha256": "8a942bf407c20f7bdc0987e50802b301d782746c1ef01fceebcdf19885d3d91e"
+              }
             },
             {
               "task_id": "CAP-04.S03.T02",

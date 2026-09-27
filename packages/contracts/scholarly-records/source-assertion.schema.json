@@ -1,0 +1,293 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "IdentifierAssertion": {
+      "additionalProperties": false,
+      "properties": {
+        "activeForMatching": {
+          "default": true,
+          "title": "Activeformatching",
+          "type": "boolean"
+        },
+        "observed": {
+          "maxLength": 65536,
+          "title": "Observed",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/SourceOrigin",
+          "default": "observed"
+        },
+        "reassignmentObserved": {
+          "default": false,
+          "title": "Reassignmentobserved",
+          "type": "boolean"
+        },
+        "role": {
+          "default": "subject",
+          "enum": [
+            "subject",
+            "person",
+            "organization",
+            "container",
+            "location"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "scheme": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Scheme",
+          "type": "string"
+        },
+        "sourceEncoding": {
+          "default": "text",
+          "enum": [
+            "text",
+            "json-string",
+            "bibtex-literal"
+          ],
+          "title": "Sourceencoding",
+          "type": "string"
+        },
+        "sourceSelector": {
+          "default": "observed-value",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sourceselector",
+          "type": "string"
+        },
+        "verificationState": {
+          "$ref": "#/$defs/VerificationState",
+          "default": "unverified"
+        }
+      },
+      "required": [
+        "scheme",
+        "observed"
+      ],
+      "title": "IdentifierAssertion",
+      "type": "object"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ImportPermission": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "default": "not-reported",
+          "enum": [
+            "not-reported",
+            "researcher-confirmed"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "value": {
+          "default": "unknown",
+          "enum": [
+            "permitted",
+            "denied",
+            "unknown"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "title": "ImportPermission",
+      "type": "object"
+    },
+    "ImportRights": {
+      "additionalProperties": false,
+      "properties": {
+        "derive": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "export": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "index": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "inspect": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "model-use": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "quote": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "share": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "store": {
+          "$ref": "#/$defs/ImportPermission"
+        }
+      },
+      "title": "ImportRights",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ScholarlyField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "observed": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Observed",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/SourceOrigin"
+        },
+        "sourceSelector": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sourceselector",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "observed",
+        "origin",
+        "sourceSelector"
+      ],
+      "title": "ScholarlyField",
+      "type": "object"
+    },
+    "SourceAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "contextId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "kind": {
+          "enum": [
+            "import-member",
+            "connector-record"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 200000,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "recordKey": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "kind",
+        "contextId",
+        "revisionId",
+        "ordinal",
+        "recordKey"
+      ],
+      "title": "SourceAddress",
+      "type": "object"
+    },
+    "SourceOrigin": {
+      "enum": [
+        "observed",
+        "correction"
+      ],
+      "type": "string"
+    },
+    "VerificationState": {
+      "enum": [
+        "unverified",
+        "verified",
+        "disputed",
+        "invalid"
+      ],
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/source-assertion.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "address": {
+      "$ref": "#/$defs/SourceAddress"
+    },
+    "fields": {
+      "items": {
+        "$ref": "#/$defs/ScholarlyField"
+      },
+      "maxItems": 256,
+      "title": "Fields",
+      "type": "array"
+    },
+    "identifiers": {
+      "items": {
+        "$ref": "#/$defs/IdentifierAssertion"
+      },
+      "maxItems": 128,
+      "title": "Identifiers",
+      "type": "array"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "provider": {
+      "pattern": "^[a-z][a-z0-9-]{0,63}$",
+      "title": "Provider",
+      "type": "string"
+    },
+    "rights": {
+      "$ref": "#/$defs/ImportRights"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "sourceRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "sourceSha256": {
+      "$ref": "#/$defs/Digest"
+    }
+  },
+  "required": [
+    "projectId",
+    "address",
+    "sourceRevisionId",
+    "provider",
+    "identifiers",
+    "fields",
+    "rights",
+    "sourceSha256"
+  ],
+  "title": "SourceAssertion",
+  "type": "object"
+}

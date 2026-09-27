@@ -2612,6 +2612,12 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
         from research_observatory_core.contract import canonical_openapi_bytes
         from research_observatory_core.model_registry_contracts import ModelManifest
         from research_observatory_core.model_routing_contracts import RoutingPolicy
+        from research_observatory_core.reconciliation.contracts import (
+            ReconciliationInspection,
+            ReconciliationResult,
+            SourceAssertion,
+        )
+        from research_observatory_core.reconciliation.identifiers import NormalizedIdentifier
         from research_observatory_core.research_intents import approved_workflow_catalog_projection
 
         openapi = canonical_openapi_bytes()
@@ -2659,6 +2665,26 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
             )
         }
         workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)
+        reconciliation_schemas = {
+            repo / "packages/contracts/scholarly-records" / filename: (
+                json.dumps(
+                    model.model_json_schema(by_alias=True, mode="serialization")
+                    | {
+                        "$id": f"https://research-observatory.local/contracts/scholarly-records/{filename}",
+                        "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n"
+            ).encode()
+            for filename, model in (
+                ("normalized-identifier.schema.json", NormalizedIdentifier),
+                ("source-assertion.schema.json", SourceAssertion),
+                ("reconciliation-result.schema.json", ReconciliationResult),
+                ("reconciliation-inspection.schema.json", ReconciliationInspection),
+            )
+        }
         workflow_profile_projection_bytes = json.dumps(
             workflow_profile_projection,
             ensure_ascii=True,
@@ -2669,6 +2695,7 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
     finally:
         sys.path.remove(str(source))
     return {
+        **reconciliation_schemas,
         **connector_schemas,
         repo / "packages" / "contracts" / "model-gateway" / "model-manifest.schema.json": manifest_schema,
         repo / "packages" / "contracts" / "model-gateway" / "routing-policy.schema.json": routing_schema,

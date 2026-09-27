@@ -168,7 +168,11 @@ def create_runtime_app(
             ),
         )
 
+    from .reconciliation_repository import SqliteReconciliationRepository
+    from .reconciliation_service import ReconciliationService
+
     imports = None
+    reconciliation = None
     connectors = None
     if workflow_context is not None and resolved_actor_id is not None and resolved_provider is not None:
         imports = ImportPreviewService(
@@ -230,6 +234,17 @@ def create_runtime_app(
             local_actor_id=resolved_actor_id,
             settings=resolved_connector_settings,
         )
+        reconciliation = ReconciliationService(
+            projects,
+            privacy,
+            imports=imports,
+            connectors=connectors,
+            repository_factory=lambda path, identity: SqliteReconciliationRepository(
+                path / "state/project.sqlite3", identity
+            ),
+            intent_factory=sqlite_intent_revision_repository,
+            actor_id=resolved_actor_id,
+        )
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
@@ -238,6 +253,7 @@ def create_runtime_app(
         privacy=privacy,
         imports=imports,
         connectors=connectors,
+        reconciliation=reconciliation,
         model_gateway=ProjectModelGatewayService(
             projects,
             privacy,

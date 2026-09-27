@@ -1,0 +1,607 @@
+{
+  "$defs": {
+    "CanonicalFieldSelection": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "observations": {
+          "items": {
+            "$ref": "#/$defs/FieldObservation"
+          },
+          "maxItems": 32768,
+          "title": "Observations",
+          "type": "array"
+        },
+        "reason": {
+          "enum": [
+            "consistent-source-values",
+            "accepted-correction",
+            "competing-assertions",
+            "no-assertion"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "selected": {
+          "anyOf": [
+            {
+              "maxLength": 65536,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Selected"
+        },
+        "status": {
+          "enum": [
+            "observed",
+            "adjudicated",
+            "disputed",
+            "not-reported"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "selected",
+        "status",
+        "reason",
+        "observations"
+      ],
+      "title": "CanonicalFieldSelection",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "FieldObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "origin": {
+          "$ref": "#/$defs/SourceOrigin"
+        },
+        "value": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "assertionRevisionId",
+        "value",
+        "origin"
+      ],
+      "title": "FieldObservation",
+      "type": "object"
+    },
+    "IdentifierAssertion": {
+      "additionalProperties": false,
+      "properties": {
+        "activeForMatching": {
+          "default": true,
+          "title": "Activeformatching",
+          "type": "boolean"
+        },
+        "observed": {
+          "maxLength": 65536,
+          "title": "Observed",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/SourceOrigin",
+          "default": "observed"
+        },
+        "reassignmentObserved": {
+          "default": false,
+          "title": "Reassignmentobserved",
+          "type": "boolean"
+        },
+        "role": {
+          "default": "subject",
+          "enum": [
+            "subject",
+            "person",
+            "organization",
+            "container",
+            "location"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "scheme": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Scheme",
+          "type": "string"
+        },
+        "sourceEncoding": {
+          "default": "text",
+          "enum": [
+            "text",
+            "json-string",
+            "bibtex-literal"
+          ],
+          "title": "Sourceencoding",
+          "type": "string"
+        },
+        "sourceSelector": {
+          "default": "observed-value",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sourceselector",
+          "type": "string"
+        },
+        "verificationState": {
+          "$ref": "#/$defs/VerificationState",
+          "default": "unverified"
+        }
+      },
+      "required": [
+        "scheme",
+        "observed"
+      ],
+      "title": "IdentifierAssertion",
+      "type": "object"
+    },
+    "IdentifierScope": {
+      "enum": [
+        "work",
+        "work-version",
+        "person",
+        "organization",
+        "container",
+        "location",
+        "heuristic",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ImportPermission": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "default": "not-reported",
+          "enum": [
+            "not-reported",
+            "researcher-confirmed"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "value": {
+          "default": "unknown",
+          "enum": [
+            "permitted",
+            "denied",
+            "unknown"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "title": "ImportPermission",
+      "type": "object"
+    },
+    "ImportRights": {
+      "additionalProperties": false,
+      "properties": {
+        "derive": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "export": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "index": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "inspect": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "model-use": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "quote": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "share": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "store": {
+          "$ref": "#/$defs/ImportPermission"
+        }
+      },
+      "title": "ImportRights",
+      "type": "object"
+    },
+    "MatchFlag": {
+      "enum": [
+        "invalid-identifier",
+        "disputed-identifier",
+        "identifier-reassigned",
+        "identifier-reassignment-suspected",
+        "conflicting-identifiers",
+        "multiple-work-matches",
+        "incompatible-version"
+      ],
+      "type": "string"
+    },
+    "NormalizedIdentifier": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical": {
+          "anyOf": [
+            {
+              "maxLength": 65536,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Canonical"
+        },
+        "issues": {
+          "items": {
+            "enum": [
+              "invalid-identifier",
+              "unsupported-scheme"
+            ],
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "normalizerVersion": {
+          "const": "scholarly-identifiers/1.0.0",
+          "default": "scholarly-identifiers/1.0.0",
+          "title": "Normalizerversion",
+          "type": "string"
+        },
+        "observed": {
+          "maxLength": 65536,
+          "title": "Observed",
+          "type": "string"
+        },
+        "registryVerified": {
+          "const": false,
+          "default": false,
+          "title": "Registryverified",
+          "type": "boolean"
+        },
+        "scheme": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Scheme",
+          "type": "string"
+        },
+        "scope": {
+          "$ref": "#/$defs/IdentifierScope"
+        },
+        "status": {
+          "enum": [
+            "valid",
+            "invalid",
+            "unsupported"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme",
+        "observed",
+        "canonical",
+        "scope",
+        "status",
+        "issues"
+      ],
+      "title": "NormalizedIdentifier",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ReconciliationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 256,
+          "title": "Candidates",
+          "type": "array"
+        },
+        "disposition": {
+          "enum": [
+            "new-work",
+            "exact-linked",
+            "review-required"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "flags": {
+          "items": {
+            "$ref": "#/$defs/MatchFlag"
+          },
+          "maxItems": 16,
+          "title": "Flags",
+          "type": "array"
+        },
+        "knowledgeStatus": {
+          "enum": [
+            "inferred",
+            "disputed"
+          ],
+          "title": "Knowledgestatus",
+          "type": "string"
+        },
+        "matchingReason": {
+          "enum": [
+            "no-exact-match",
+            "unique-compatible-exact-identifiers",
+            "human-review-required"
+          ],
+          "title": "Matchingreason",
+          "type": "string"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceAddress"
+        },
+        "workId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "projectId",
+        "assertionRevisionId",
+        "source",
+        "workId",
+        "workRevisionId",
+        "disposition",
+        "candidates",
+        "flags",
+        "knowledgeStatus",
+        "matchingReason"
+      ],
+      "title": "ReconciliationResult",
+      "type": "object"
+    },
+    "ScholarlyField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "observed": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Observed",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/SourceOrigin"
+        },
+        "sourceSelector": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sourceselector",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "observed",
+        "origin",
+        "sourceSelector"
+      ],
+      "title": "ScholarlyField",
+      "type": "object"
+    },
+    "SourceAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "contextId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "kind": {
+          "enum": [
+            "import-member",
+            "connector-record"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 200000,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "recordKey": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "kind",
+        "contextId",
+        "revisionId",
+        "ordinal",
+        "recordKey"
+      ],
+      "title": "SourceAddress",
+      "type": "object"
+    },
+    "SourceAssertion": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "$ref": "#/$defs/SourceAddress"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/ScholarlyField"
+          },
+          "maxItems": 256,
+          "title": "Fields",
+          "type": "array"
+        },
+        "identifiers": {
+          "items": {
+            "$ref": "#/$defs/IdentifierAssertion"
+          },
+          "maxItems": 128,
+          "title": "Identifiers",
+          "type": "array"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "provider": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Provider",
+          "type": "string"
+        },
+        "rights": {
+          "$ref": "#/$defs/ImportRights"
+        },
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "sourceRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "projectId",
+        "address",
+        "sourceRevisionId",
+        "provider",
+        "identifiers",
+        "fields",
+        "rights",
+        "sourceSha256"
+      ],
+      "title": "SourceAssertion",
+      "type": "object"
+    },
+    "SourceOrigin": {
+      "enum": [
+        "observed",
+        "correction"
+      ],
+      "type": "string"
+    },
+    "VerificationState": {
+      "enum": [
+        "unverified",
+        "verified",
+        "disputed",
+        "invalid"
+      ],
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/reconciliation-inspection.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "assertion": {
+      "$ref": "#/$defs/SourceAssertion"
+    },
+    "canonicalFields": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/CanonicalFieldSelection"
+      },
+      "maxItems": 256,
+      "title": "Canonicalfields",
+      "type": "array"
+    },
+    "normalizedIdentifiers": {
+      "items": {
+        "$ref": "#/$defs/NormalizedIdentifier"
+      },
+      "readOnly": true,
+      "title": "Normalizedidentifiers",
+      "type": "array"
+    },
+    "result": {
+      "$ref": "#/$defs/ReconciliationResult"
+    }
+  },
+  "required": [
+    "result",
+    "assertion",
+    "normalizedIdentifiers"
+  ],
+  "title": "ReconciliationInspection",
+  "type": "object"
+}

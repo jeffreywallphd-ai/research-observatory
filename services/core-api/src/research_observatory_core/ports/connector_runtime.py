@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Literal, Protocol
 
-from ..connectors.contracts import ConnectorRequest, ConnectorResultPage
+from ..connectors.contracts import ConnectorRecord, ConnectorRequest, ConnectorResultPage
 
 if TYPE_CHECKING:
     from ..connectors.workflow import ConnectorJobInput
@@ -95,6 +95,8 @@ class ConnectorPageRepository(Protocol):
 
 
 class ConnectorOperationRepository(ConnectorPageRepository, Protocol):
+    def source_record(self, revision_id: str, ordinal: int) -> ConnectorRecord: ...
+
     def save_operation(self, inputs: ConnectorJobInput, *, actor_id: str, now: str) -> None: ...
 
     def operation(self, revision_id: str) -> ConnectorJobInput: ...
