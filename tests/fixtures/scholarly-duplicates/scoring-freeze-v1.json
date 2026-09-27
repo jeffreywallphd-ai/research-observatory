@@ -1,0 +1,31 @@
+{
+  "algorithm": "scholarly-duplicate-ranking/1.0.0",
+  "benchmarkManifestSha256": "6b77da6f8aef1fe669bcfa607cfda184e357ae7742333a74588d224a69ef6d8c",
+  "configuration": {
+    "max_candidates": 20000,
+    "max_comparisons": 250000,
+    "max_posting": 200,
+    "max_records": 10000,
+    "minimum_score": 8200,
+    "rare_title_tokens": 4
+  },
+  "configurationFingerprint": "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc",
+  "developmentAttempts": 1,
+  "developmentCounts": {
+    "fragmentedComponents": 19,
+    "goldPairs": 1109,
+    "overmergedComponents": 10,
+    "returnedPairs": 1149,
+    "truePositives": 1090
+  },
+  "developmentDiagnosticSha256": "90c2edd1f330fdc84e1db6818fc210bea9e900dffccfd33cbd7ec2b92d0d3672",
+  "featureVersion": "scholarly-duplicate-features/1.0.0",
+  "fixtureCommit": "bf602912d71d25901bcc4bd3cfcfefb69983e95d",
+  "formatVersion": 1,
+  "purpose": "Pre-qualification scoring freeze; not task completion evidence.",
+  "qualificationResultsObserved": false,
+  "sourceSha256": {
+    "services/core-api/src/research_observatory_core/reconciliation/candidates.py": "19bc04a8b6edde7c53233c49c5c12df72827a8429ed25e29067b379da8364802",
+    "tests/reconciliation/duplicate_benchmark.py": "b385439ed51a9b94f2057e3381dc5ca489a3dc521c1f9f552943842ec89c3c0a"
+  }
+}

@@ -370,6 +370,10 @@
     "tests/reconciliation/test_runtime_windows.py",
     "tests/reconciliation/test_sources.py",
     "tests/reconciliation/test_contracts.py",
-    "tests/reconciliation/test_duplicate_fixtures.py"
+    "tests/reconciliation/test_duplicate_fixtures.py",
+    "services/core-api/src/research_observatory_core/reconciliation/candidates.py",
+    "tests/reconciliation/test_candidates.py",
+    "tests/reconciliation/duplicate_benchmark.py",
+    "tests/reconciliation/test_candidate_metrics.py"
   ]
 }
