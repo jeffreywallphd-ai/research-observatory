@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "VersionDate": {
+      "additionalProperties": false,
+      "properties": {
+        "precision": {
+          "enum": [
+            "unknown",
+            "not-reported",
+            "year",
+            "month",
+            "day"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "minLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "precision",
+        "value"
+      ],
+      "title": "VersionDate",
+      "type": "object"
+    },
+    "VersionDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionIds": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "title": "Assertionrevisionids",
+          "type": "array"
+        },
+        "date": {
+          "$ref": "#/$defs/VersionDate"
+        },
+        "kind": {
+          "enum": [
+            "preprint",
+            "accepted-manuscript",
+            "version-of-record",
+            "erratum",
+            "correction",
+            "expression-of-concern",
+            "retraction",
+            "not-reported"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "assertionRevisionIds",
+        "date"
+      ],
+      "title": "VersionDefinition",
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/work-version.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "decisionRevisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "definition": {
+      "$ref": "#/$defs/VersionDefinition"
+    },
+    "previousRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revisionId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "statusSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "versionId": {
+      "$ref": "#/$defs/Identity"
+    }
+  },
+  "required": [
+    "versionId",
+    "revisionId",
+    "previousRevisionId",
+    "definition",
+    "decisionRevisionId",
+    "statusSha256"
+  ],
+  "title": "WorkVersion",
+  "type": "object"
+}

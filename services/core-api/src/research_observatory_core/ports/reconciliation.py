@@ -11,6 +11,15 @@ from ..reconciliation.candidates import PreparedRecord
 from ..reconciliation.contracts import ReconciliationInspection, ReconciliationResult, SourceAddress, SourceAssertion
 from ..reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
 from ..reconciliation.inventory import SourcePage
+from ..reconciliation.versions import (
+    VersionCommand,
+    VersionContext,
+    VersionOutcome,
+    VersionPlan,
+    VersionPreview,
+    VersionWorkPage,
+    WorkVersion,
+)
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
 
 
@@ -31,6 +40,24 @@ class ReconciliationSourceResolver(Protocol):
 
 
 class ReconciliationRepository(Protocol):
+    def version_works(
+        self, *, after: str | None, limit: int, resolve: ReconciliationSourceResolver
+    ) -> VersionWorkPage: ...
+
+    def version_context(
+        self, work_ids: tuple[str, ...], *, resolve: ReconciliationSourceResolver
+    ) -> VersionContext: ...
+
+    def inspect_version(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> WorkVersion: ...
+
+    def preview_versions(
+        self, plan: VersionPlan, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> VersionPreview: ...
+
+    def decide_versions(
+        self, command: VersionCommand, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> VersionOutcome: ...
+
     def advance_review_impacts(self) -> bool:
         """Advance one persisted review-impact checkpoint under the project fence."""
         ...

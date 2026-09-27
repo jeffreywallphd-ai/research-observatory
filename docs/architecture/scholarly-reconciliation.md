@@ -106,3 +106,34 @@ Native admission and client decoding enforce the same bounded wire contract;
 inspection/context/preview permit 4 MiB responses, while other routes retain
 their smaller transport limit. Browser/adapter development proofs do not replace
 fresh protected native qualification or independent task/Wave disposition.
+
+## Work versions and status history
+
+Schema 16 adds seven immutable tables for manifestations, their source membership,
+directed update relations and source anchors, preferred-version decisions,
+version commands and their owned dependency impacts. Version, Work, source,
+relation and decision identities remain distinct canonical aggregates. Dates
+retain reported precision; absent dates stay unknown or not reported. Relations
+bind exact historical endpoint revisions and retained field/identifier evidence.
+Human adjudication or dispute never becomes a fabricated provider observation.
+
+The bounded version API exposes active Work pages even when no duplicate pair
+exists. Context resolves current source membership and a connected relation
+neighborhood under current project, Intent, privacy and source rights. Inspection,
+preview, publication and identical replay reauthorize material source support,
+including correction/retraction notices. Protected content is never implicit in
+an identifier or stored receipt.
+
+Preferred citable status is an explicit decision tied to a selected revision,
+membership and status fingerprints, and its exact Work publication lineage.
+Merge/split or changed status requires review; restoring old membership cannot
+reactivate an old preference. A new selection can retain a retracted version,
+but cannot clear its sourced warning. Preferences materially depend on their
+published Work head, so membership changes immediately deny downstream reuse.
+Version/status updates, Work heads, provenance, outbox and authenticated impact
+intent commit together; the existing worker resumes bounded impact checkpoints.
+
+The v15 migration source and populated fixture remain byte-exact. Migration 0016
+creates no invented historical classifications. It retains all predecessor rows,
+uses the existing verified-backup/rollback protocol, and preserves unfinished
+exact/review impact ownership and continuation history.

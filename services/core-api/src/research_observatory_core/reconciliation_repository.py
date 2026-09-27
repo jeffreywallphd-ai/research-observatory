@@ -62,6 +62,25 @@ from .reconciliation.decisions import (
 from .reconciliation.exact import IdentifierAssertion, MatchAssessment, assess_match, exact_keys, select_field
 from .reconciliation.feature_cache import FeatureSnapshot
 from .reconciliation.identifiers import NORMALIZER_VERSION
+from .reconciliation.versions import (
+    UpdateRelationDraft,
+    VersionCommand,
+    VersionContext,
+    VersionDate,
+    VersionDefinition,
+    VersionEvidence,
+    VersionOutcome,
+    VersionPlacement,
+    VersionPlan,
+    VersionPreference,
+    VersionPreview,
+    VersionReference,
+    VersionRelation,
+    VersionWorkPage,
+    WorkVersion,
+    preference_standing,
+    status_fingerprint,
+)
 from .reconciliation.workflow import bind_batch_claim
 from .repositories import (
     _UNIT_OF_WORKS,
@@ -1528,9 +1547,16 @@ class SqliteReconciliationRepository:
             "WHERE x.project_id=? AND x.run_id=?",
             (self._project, root_id),
         ).fetchall()
-        if len(row) + len(exact) != 1:
+        version_owner = connection.execute(
+            "SELECT decision_revision_id,previous_revision_id,replacement_revision_id FROM "
+            "reconciliation_version_impacts WHERE project_id=? AND run_id=?",
+            (self._project, root_id),
+        ).fetchall()
+        if len(row) + len(exact) + len(version_owner) != 1:
             raise ReconciliationProblem("reconciliation-integrity-invalid")
-        if row:
+        if version_owner:
+            self._owned_version_impact(connection, aggregates, root_id, change, tuple(version_owner[0]))
+        elif row:
             owner = row[0]
             plan, outcome = ReviewPlan.model_validate_json(owner[3]), ReviewOutcome.model_validate_json(owner[4])
             states = [
@@ -1578,7 +1604,12 @@ class SqliteReconciliationRepository:
         if (
             change.previous_revision_id is None
             or change.replacement_revision_id is None
-            or change.dependency_kind != "source-revision"
+            or change.dependency_kind
+            != (
+                "human-decision"
+                if version_owner and aggregates.get_revision(change.previous_revision_id).aggregate_kind == "decision"
+                else "source-revision"
+            )
             or change.configuration_id is not None
             or change.previous_configuration_version is not None
             or change.replacement_configuration_version is not None
@@ -1614,6 +1645,7 @@ class SqliteReconciliationRepository:
         with self._transaction(write=True) as (connection, aggregates):
             row = connection.execute(
                 "WITH roots(root_id) AS (SELECT run_id FROM reconciliation_exact_impacts WHERE project_id=? "
+                "UNION SELECT run_id FROM reconciliation_version_impacts WHERE project_id=? "
                 "UNION SELECT owned.value FROM reconciliation_review_decisions d, "
                 "json_each(d.outcome_json,'$.dependencyRunIds') owned WHERE d.project_id=?), "
                 "leaves AS (SELECT root_id,COALESCE((SELECT c.run_id FROM reconciliation_impact_continuations c "
@@ -1621,7 +1653,7 @@ class SqliteReconciliationRepository:
                 "FROM roots) SELECT root_id,leaf FROM leaves WHERE (SELECT event_type "
                 "FROM dependency_impact_audit_events a WHERE a.run_id=leaf AND a.project_id=? "
                 "ORDER BY sequence DESC LIMIT 1) IN ('started','checkpoint','failed-attempt') ORDER BY root_id LIMIT 1",
-                (self._project, self._project, self._project, self._project),
+                (self._project, self._project, self._project, self._project, self._project),
             ).fetchone()
             if row is None:
                 return False
@@ -1892,4 +1924,938 @@ class SqliteReconciliationRepository:
                 ),
             )
             _publication_step("review-command-created")
+            return outcome
+
+    def _version(self, connection: CanonicalConnection, revision_id: str) -> WorkVersion:
+        row = connection.execute(
+            "SELECT version_id,previous_revision_id,version_kind,date_precision,date_value,decision_revision_id,"
+            "source_count,status_sha256,content_sha256 FROM reconciliation_versions WHERE project_id=? AND "
+            "revision_id=?",
+            (self._project, revision_id),
+        ).fetchone()
+        if row is None:
+            raise ReconciliationProblem("reconciliation-version-not-found")
+        sources = tuple(
+            item[0]
+            for item in connection.execute(
+                "SELECT assertion_revision_id FROM reconciliation_version_sources WHERE project_id=? AND "
+                "version_revision_id=? ORDER BY ordinal",
+                (self._project, revision_id),
+            )
+        )
+        value = WorkVersion(
+            version_id=row[0],
+            revision_id=revision_id,
+            previous_revision_id=row[1],
+            definition=VersionDefinition(
+                kind=row[2], assertion_revision_ids=sources, date=VersionDate(precision=row[3], value=row[4])
+            ),
+            decision_revision_id=row[5],
+            status_sha256=row[7],
+        )
+        digest = _digest(
+            [
+                value.definition.model_dump(mode="json", by_alias=True),
+                value.previous_revision_id,
+                value.decision_revision_id,
+                value.status_sha256,
+            ]
+        )
+        self._version_payload_binding(connection, revision_id, "version-content", digest)
+        if row[6] != len(sources) or row[8] != digest:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        return value
+
+    def _owned_version_impact(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        root_id: str,
+        change: DependencyChange,
+        owner: tuple[str, ...],
+    ) -> None:
+        row = connection.execute(
+            "SELECT command_id,actor_id,plan_sha256,plan_json,outcome_json FROM "
+            "reconciliation_version_decisions WHERE project_id=? AND revision_id=?",
+            (self._project, owner[0]),
+        ).fetchone()
+        if (
+            row is None
+            or (change.previous_revision_id, change.replacement_revision_id) != owner[1:]
+            or change.reason != "HUMAN_DECISION"
+            or change.actor_id != row[1]
+        ):
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        plan, outcome = VersionPlan.model_validate_json(row[3]), VersionOutcome.model_validate_json(row[4])
+        if (
+            outcome.command_id != row[0]
+            or outcome.decision_revision_id != owner[0]
+            or outcome.plan_sha256 != row[2]
+            or plan.fingerprint != row[2]
+            or root_id not in outcome.dependency_run_ids
+            or aggregates.get_revision(owner[0]).aggregate_id != outcome.decision_id
+        ):
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        self._version_payload_binding(connection, owner[0], "version-plan", plan.fingerprint)
+        old, new = aggregates.get_revision(owner[1]), aggregates.get_revision(owner[2])
+        if (
+            old.aggregate_id != new.aggregate_id
+            or old.aggregate_kind != new.aggregate_kind
+            or new.revision != old.revision + 1
+        ):
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        matched = 0
+        for state in outcome.work_states:
+            if state.revision_id == owner[2]:
+                if (
+                    state.previous_revision_id != owner[1]
+                    or state.decision_revision_id != owner[0]
+                    or self._state(connection, state.work_id, state.revision_id) != state
+                ):
+                    raise ReconciliationProblem("reconciliation-integrity-invalid")
+                matched += 1
+        for reference in outcome.version_revisions:
+            if reference.revision_id == owner[2]:
+                version = self._version(connection, reference.revision_id)
+                if (
+                    version.version_id != reference.version_id
+                    or version.previous_revision_id != owner[1]
+                    or version.decision_revision_id != owner[0]
+                ):
+                    raise ReconciliationProblem("reconciliation-integrity-invalid")
+                matched += 1
+        if outcome.preference_revision_id == owner[2]:
+            preference = self._version_preference(connection, owner[2])
+            decision = connection.execute(
+                "SELECT decision_revision_id FROM reconciliation_version_preferences WHERE project_id=? AND "
+                "revision_id=?",
+                (self._project, owner[2]),
+            ).fetchone()
+            if preference.previous_revision_id != owner[1] or decision is None or decision[0] != owner[0]:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            matched += 1
+        if matched != 1:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+
+    def _version_payload_binding(
+        self, connection: CanonicalConnection, revision_id: str, name: str, digest: str
+    ) -> None:
+        rows = connection.execute(
+            "SELECT fingerprint FROM material_dependencies WHERE project_id=? AND output_revision_id=? AND "
+            "configuration_id=?",
+            (self._project, revision_id, "scholarly." + name),
+        ).fetchall()
+        if [tuple(row) for row in rows] != [("sha256:" + digest,)]:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+
+    def _current_version(self, connection: CanonicalConnection, version_id: str) -> WorkVersion:
+        row = connection.execute(
+            "SELECT revision_id FROM aggregate_revisions WHERE project_id=? AND aggregate_id=? ORDER BY "
+            "revision DESC LIMIT 1",
+            (self._project, version_id),
+        ).fetchone()
+        if row is None:
+            raise ReconciliationProblem("reconciliation-version-not-found")
+        return self._version(connection, row[0])
+
+    def _version_relation(self, connection: CanonicalConnection, revision_id: str) -> VersionRelation:
+        row = connection.execute(
+            "SELECT relation_id,decision_revision_id,source_revision_id,target_revision_id,relation_kind,"
+            "knowledge_status,"
+            "date_precision,date_value,evidence_count,content_sha256 FROM reconciliation_version_relations "
+            "WHERE project_id=? AND revision_id=?",
+            (self._project, revision_id),
+        ).fetchone()
+        if row is None:
+            raise ReconciliationProblem("reconciliation-version-not-found")
+        evidence = tuple(
+            VersionEvidence(assertion_revision_id=item[0], category=item[1], selector=item[2], value_sha256=item[3])
+            for item in connection.execute(
+                "SELECT assertion_revision_id,category,selector,value_sha256 FROM reconciliation_relation_evidence "
+                "WHERE project_id=? AND relation_revision_id=? ORDER BY ordinal",
+                (self._project, revision_id),
+            )
+        )
+        source, target = self._version(connection, row[2]), self._version(connection, row[3])
+        assertion = UpdateRelationDraft(
+            kind=row[4],
+            source=VersionReference(version_id=source.version_id, revision_id=source.revision_id),
+            target=VersionReference(version_id=target.version_id, revision_id=target.revision_id),
+            evidence=evidence,
+            date=VersionDate(precision=row[6], value=row[7]),
+            knowledge_status=row[5],
+        )
+        digest = _digest(assertion.model_dump(mode="json", by_alias=True))
+        self._version_payload_binding(connection, revision_id, "version-relation", digest)
+        if len(evidence) != row[8] or digest != row[9]:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        return VersionRelation(
+            relation_id=row[0], revision_id=revision_id, decision_revision_id=row[1], assertion=assertion
+        )
+
+    def _version_preference(self, connection: CanonicalConnection, revision_id: str) -> VersionPreference:
+        row = connection.execute(
+            "SELECT preference_id,previous_revision_id,work_id,selected_revision_id,membership_sha256,"
+            "status_sha256,work_revision_id,decision_revision_id "
+            "FROM reconciliation_version_preferences WHERE project_id=? AND revision_id=?",
+            (self._project, revision_id),
+        ).fetchone()
+        if row is None:
+            raise ReconciliationProblem("reconciliation-version-not-found")
+        selected = self._version(connection, row[3])
+        value = VersionPreference(
+            decision_id=row[0],
+            revision_id=revision_id,
+            previous_revision_id=row[1],
+            work_id=row[2],
+            work_revision_id=row[6],
+            command_decision_revision_id=row[7],
+            selected=VersionReference(version_id=selected.version_id, revision_id=selected.revision_id),
+            membership_sha256=row[4],
+            status_sha256=row[5],
+        )
+        self._version_payload_binding(
+            connection,
+            revision_id,
+            "version-preference",
+            _digest(
+                [
+                    value.work_id,
+                    value.selected.model_dump(mode="json", by_alias=True),
+                    value.membership_sha256,
+                    value.status_sha256,
+                    value.previous_revision_id,
+                    value.work_revision_id,
+                    value.command_decision_revision_id,
+                ]
+            ),
+        )
+        return value
+
+    def _version_evidence(
+        self, connection: CanonicalConnection, evidence: VersionEvidence, resolve: ReconciliationSourceResolver
+    ) -> None:
+        source = self._authorized_load(connection, evidence.assertion_revision_id, resolve).assertion
+        values = source.fields if evidence.category == "field" else source.identifiers
+        selected = [item.observed for item in values if item.source_selector == evidence.selector]
+        if len(selected) != 1 or hashlib.sha256(selected[0].encode()).hexdigest() != evidence.value_sha256:
+            raise ReconciliationProblem("reconciliation-version-evidence-mismatch")
+
+    def _version_context(
+        self, connection: CanonicalConnection, work_ids: tuple[str, ...], resolve: ReconciliationSourceResolver
+    ) -> VersionContext:
+        if not work_ids or len(work_ids) > 8:
+            raise ReconciliationProblem("reconciliation-version-scope-invalid")
+        review = self._review_context(connection, work_ids, (), resolve)
+        members = {item.assertion_revision_id for item in review.sources}
+        version_ids = {
+            row[0]
+            for row in connection.execute(
+                "SELECT DISTINCT v.version_id FROM reconciliation_versions v JOIN "
+                "reconciliation_version_sources s ON s.version_revision_id=v.revision_id "
+                "WHERE v.project_id=? AND s.assertion_revision_id IN (SELECT value FROM json_each(?))",
+                (self._project, json.dumps(sorted(members))),
+            )
+        }
+        # Bounded connected neighborhood: notice evidence and exact historical
+        # endpoints remain authorized even after their current membership changes.
+        relations: dict[str, VersionRelation] = {}
+        while True:
+            if len(version_ids) > 256:
+                raise ReconciliationProblem("reconciliation-version-limit")
+            rows = connection.execute(
+                "SELECT r.revision_id FROM reconciliation_version_relations r "
+                "JOIN reconciliation_versions s ON s.revision_id=r.source_revision_id JOIN "
+                "reconciliation_versions t ON t.revision_id=r.target_revision_id "
+                "WHERE r.project_id=? AND (s.version_id IN (SELECT value FROM json_each(?)) OR t.version_id IN "
+                "(SELECT value FROM json_each(?))) LIMIT 513",
+                (self._project, json.dumps(sorted(version_ids)), json.dumps(sorted(version_ids))),
+            ).fetchall()
+            if len(rows) > 512:
+                raise ReconciliationProblem("reconciliation-version-limit")
+            previous = len(version_ids)
+            for row in rows:
+                relation = self._version_relation(connection, row[0])
+                relations[relation.revision_id] = relation
+                version_ids.update((relation.assertion.source.version_id, relation.assertion.target.version_id))
+            if len(version_ids) == previous:
+                break
+        versions = tuple(self._current_version(connection, identity) for identity in sorted(version_ids))
+        needed = set(members)
+        placements = []
+        for version in versions:
+            needed.update(version.definition.assertion_revision_ids)
+            assignments = tuple(
+                self._assignment(connection, member) for member in version.definition.assertion_revision_ids
+            )
+            if any(state is None for state in assignments):
+                raise ReconciliationProblem("reconciliation-version-membership-invalid")
+            ids = tuple(sorted({state.work_id for state in assignments if state is not None}))
+            placements.append(
+                VersionPlacement(
+                    version_id=version.version_id,
+                    work_ids=ids,
+                    state="assigned" if len(ids) == 1 else "requires-review",
+                )
+            )
+            for state in assignments:
+                assert state is not None
+                needed.update(state.assertion_revision_ids)
+        for relation in relations.values():
+            for reference in (relation.assertion.source, relation.assertion.target):
+                needed.update(self._version(connection, reference.revision_id).definition.assertion_revision_ids)
+            for evidence in relation.assertion.evidence:
+                self._version_evidence(connection, evidence, resolve)
+                needed.add(evidence.assertion_revision_id)
+        preference_rows = connection.execute(
+            "SELECT p.revision_id FROM reconciliation_version_preferences p "
+            "JOIN aggregate_revisions r ON r.revision_id=p.revision_id WHERE p.project_id=? "
+            "AND (p.work_id IN (SELECT value FROM json_each(?)) OR p.selected_revision_id IN "
+            "(SELECT revision_id FROM reconciliation_versions WHERE project_id=? AND version_id IN (SELECT "
+            "value FROM json_each(?)))) "
+            "ORDER BY r.revision,p.revision_id LIMIT 65",
+            (self._project, json.dumps(sorted(work_ids)), self._project, json.dumps(sorted(version_ids))),
+        ).fetchall()
+        if len(needed) > 512 or len(preference_rows) > 64:
+            raise ReconciliationProblem("reconciliation-version-limit")
+        preferences = tuple(self._version_preference(connection, row[0]) for row in preference_rows)
+        for preference in preferences:
+            needed.update(self._version(connection, preference.selected.revision_id).definition.assertion_revision_ids)
+        needed.update(
+            self._authorize_version_support(
+                connection,
+                tuple(item.revision_id for item in versions)
+                + tuple(relations)
+                + tuple(item.revision_id for item in preferences),
+                resolve,
+            )
+        )
+        if len(needed) > 512:
+            raise ReconciliationProblem("reconciliation-version-limit")
+        sources = tuple(
+            ReviewSource(
+                assertion_revision_id=identity, assertion=self._authorized_load(connection, identity, resolve).assertion
+            )
+            for identity in sorted(needed)
+        )
+        ordered_relations = tuple(relations[key] for key in sorted(relations))
+        context = VersionContext(
+            project_id=self._project,
+            works=review.works,
+            versions=versions,
+            placements=tuple(placements),
+            relations=ordered_relations,
+            preferences=preferences,
+            sources=sources,
+            preference_states=preference_standing(
+                review.works, versions, tuple(placements), ordered_relations, preferences
+            ),
+        )
+        if len(context.model_dump_json(by_alias=True).encode()) > 4 * 1024 * 1024:
+            raise ReconciliationProblem("reconciliation-inspection-limit")
+        return context
+
+    def version_works(self, *, after: str | None, limit: int, resolve: ReconciliationSourceResolver) -> VersionWorkPage:
+        if (after is not None and not is_uuid_v7(after)) or type(limit) is not int or not 1 <= limit <= 32:
+            raise ReconciliationProblem("reconciliation-version-page-invalid")
+        _, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, _):
+            rows = connection.execute(
+                "SELECT DISTINCT work_id FROM reconciliation_work_states WHERE project_id=? AND work_id>? "
+                "ORDER BY work_id LIMIT ?",
+                (self._project, after or "", limit + 1),
+            ).fetchall()
+            states = tuple(self._state(connection, row[0]) for row in rows[:limit])
+            active = tuple(state for state in states if state.disposition == "active")
+            for state in active:
+                self._work_sources(connection, state.work_id, collect)
+            return VersionWorkPage(
+                project_id=self._project,
+                after=after,
+                next_after=rows[limit - 1][0] if len(rows) > limit else None,
+                items=active,
+            )
+
+    def version_context(self, work_ids: tuple[str, ...], *, resolve: ReconciliationSourceResolver) -> VersionContext:
+        _, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, _):
+            return self._version_context(connection, work_ids, collect)
+
+    def inspect_version(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> WorkVersion:
+        _, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, _):
+            version = self._version(connection, revision_id)
+            self._authorize_version_support(connection, (revision_id,), collect)
+            return version
+
+    def _authorize_version_support(
+        self, connection: CanonicalConnection, roots: tuple[str, ...], resolve: ReconciliationSourceResolver
+    ) -> set[str]:
+        # Follow material provenance, including the human decision's supporting
+        # notice. Historical comparisons are retained facts, not new authority.
+        pending, visited, edge_count = set(roots), set(), 0
+        assertions: set[str] = set()
+        while pending:
+            revision = pending.pop()
+            if revision in visited:
+                continue
+            visited.add(revision)
+            if len(visited) > 4096:
+                raise ReconciliationProblem("reconciliation-version-limit")
+            assertion = connection.execute(
+                "SELECT revision_id FROM reconciliation_assertions WHERE project_id=? AND revision_id=?",
+                (self._project, revision),
+            ).fetchone()
+            if assertion is not None:
+                self._authorized_load(connection, revision, resolve)
+                self._authorize_assignment(connection, revision, resolve)
+                assertions.add(revision)
+                continue
+            dependencies = connection.execute(
+                "SELECT dependency_revision_id FROM material_dependencies WHERE project_id=? AND "
+                "output_revision_id=? AND dependency_revision_id IS NOT NULL LIMIT 4097",
+                (self._project, revision),
+            ).fetchall()
+            edge_count += len(dependencies)
+            if len(dependencies) > 4096 or edge_count > 32768:
+                raise ReconciliationProblem("reconciliation-version-limit")
+            pending.update(row[0] for row in dependencies if row[0] not in visited)
+        return assertions
+
+    def _version_plan(
+        self, connection: CanonicalConnection, plan: VersionPlan, resolve: ReconciliationSourceResolver
+    ) -> tuple[VersionContext, tuple[str, ...], tuple[str, ...]]:
+        context = self._version_context(connection, plan.work_ids, resolve)
+        if context.fingerprint != plan.context_sha256:
+            raise ReconciliationProblem("reconciliation-version-predecessor-changed")
+        versions = {version.version_id: version for version in context.versions}
+        placements = {item.version_id: item for item in context.placements}
+        changed_versions: set[str] = set()
+        affected_works: set[str] = set()
+        if plan.version is not None:
+            selected = versions.get(plan.version.version_id)
+            if selected is None or selected.revision_id != plan.version.revision_id:
+                raise ReconciliationProblem("reconciliation-version-predecessor-changed")
+        if plan.definition is not None:
+            allowed = {source.assertion_revision_id for source in context.sources}
+            if not set(plan.definition.assertion_revision_ids) <= allowed:
+                raise ReconciliationProblem("reconciliation-version-source-mismatch")
+            assignments = tuple(
+                self._assignment(connection, member) for member in plan.definition.assertion_revision_ids
+            )
+            if any(state is None for state in assignments):
+                raise ReconciliationProblem("reconciliation-version-membership-invalid")
+            ids = {state.work_id for state in assignments if state is not None}
+            if len(ids) != 1:
+                raise ReconciliationProblem("reconciliation-version-membership-invalid")
+            affected_works.update(ids)
+            if plan.version is not None:
+                changed_versions.add(plan.version.version_id)
+                affected_works.update(placements[plan.version.version_id].work_ids)
+        if plan.relation is not None:
+            for reference in (plan.relation.source, plan.relation.target):
+                selected = versions.get(reference.version_id)
+                if selected is None or selected.revision_id != reference.revision_id:
+                    raise ReconciliationProblem("reconciliation-version-predecessor-changed")
+                if placements[reference.version_id].state != "assigned":
+                    raise ReconciliationProblem("reconciliation-version-membership-invalid")
+                changed_versions.add(reference.version_id)
+                affected_works.update(placements[reference.version_id].work_ids)
+            for evidence in plan.relation.evidence:
+                self._version_evidence(connection, evidence, resolve)
+                if evidence.assertion_revision_id not in {source.assertion_revision_id for source in context.sources}:
+                    raise ReconciliationProblem("reconciliation-version-source-mismatch")
+            notice_kind = {
+                "corrects": "correction",
+                "erratum-for": "erratum",
+                "retracts": "retraction",
+                "expresses-concern": "expression-of-concern",
+            }.get(plan.relation.kind)
+            if notice_kind and versions[plan.relation.source.version_id].definition.kind != notice_kind:
+                raise ReconciliationProblem("reconciliation-version-notice-kind-invalid")
+            if plan.relation.kind in {"is-version-of", "supersedes"}:
+                edges = [
+                    (item.assertion.source.version_id, item.assertion.target.version_id)
+                    for item in context.relations
+                    if item.assertion.kind in {"is-version-of", "supersedes"}
+                ]
+                pending, visited = [plan.relation.target.version_id], set()
+                while pending:
+                    identity = pending.pop()
+                    if identity == plan.relation.source.version_id:
+                        raise ReconciliationProblem("reconciliation-version-cycle")
+                    if identity not in visited:
+                        visited.add(identity)
+                        pending.extend(target for source, target in edges if source == identity)
+        if plan.action == "prefer":
+            assert plan.version is not None
+            if placements[plan.version.version_id].work_ids != plan.work_ids:
+                raise ReconciliationProblem("reconciliation-version-membership-invalid")
+            previous = [item for item in context.preferences if item.work_id == plan.work_ids[0]]
+            if (previous[-1].revision_id if previous else None) != plan.previous_preference_revision_id:
+                raise ReconciliationProblem("reconciliation-version-preference-changed")
+            affected_works.add(plan.work_ids[0])
+        if not affected_works <= set(plan.work_ids):
+            raise ReconciliationProblem("reconciliation-version-scope-incomplete")
+        return context, tuple(sorted(affected_works)), tuple(sorted(changed_versions))
+
+    def _version_preview(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        plan: VersionPlan,
+        actor: ReconciliationActor,
+        resolve: ReconciliationSourceResolver,
+    ) -> VersionPreview:
+        context, work_ids, version_ids = self._version_plan(connection, plan, resolve)
+        previous = [state.revision_id for state in context.works if state.work_id in work_ids]
+        previous.extend(version.revision_id for version in context.versions if version.version_id in version_ids)
+        if plan.action == "prefer" and plan.previous_preference_revision_id is not None:
+            previous.append(plan.previous_preference_revision_id)
+        self._require_fresh_inputs(aggregates, tuple(source.assertion_revision_id for source in context.sources))
+        impacts = _SqliteDependencyImpactRepository(self._database, self._project)
+        graphs: set[str] = set()
+        affected: set[str] = set()
+        for revision in previous:
+            preview = impacts._plan_with_connection(
+                connection,
+                self._change(aggregates.get_revision(revision), None, actor),
+                decisions=(),
+                limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS,
+            )
+            graphs.add(preview.graph_sha256)
+            affected.update(preview.affected_output_revision_ids)
+        digest = _digest(
+            [
+                self._project,
+                plan.fingerprint,
+                context.fingerprint,
+                actor.actor_id,
+                actor.intent_sha256,
+                actor.policy_sha256,
+                sorted(graphs),
+                sorted(affected),
+            ]
+        )
+        return VersionPreview(
+            command_id=new_uuid_v7(),
+            plan_sha256=plan.fingerprint,
+            context_sha256=context.fingerprint,
+            preview_sha256=digest,
+            affected_count=len(affected),
+        )
+
+    def preview_versions(
+        self, plan: VersionPlan, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> VersionPreview:
+        plan = VersionPlan.model_validate(plan)
+        self._validate_actor(actor)
+        _, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, aggregates):
+            return self._version_preview(connection, aggregates, plan, actor, collect)
+
+    @staticmethod
+    def _version_status(context: VersionContext, work_id: str) -> str:
+        return status_fingerprint(context.versions, context.placements, context.relations, work_id)
+
+    def _persist_version(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        definition: VersionDefinition,
+        decision: AggregateRevision,
+        actor: ReconciliationActor,
+        previous: WorkVersion | None,
+    ) -> AggregateRevision:
+        current = aggregates.get_revision(previous.revision_id) if previous else None
+        relations = (
+            []
+            if previous is None
+            else [
+                row[0]
+                for row in connection.execute(
+                    "SELECT r.revision_id FROM reconciliation_version_relations r JOIN reconciliation_versions "
+                    "s ON s.revision_id=r.source_revision_id "
+                    "JOIN reconciliation_versions t ON t.revision_id=r.target_revision_id WHERE r.project_id=? "
+                    "AND (s.version_id=? OR t.version_id=?) ORDER BY r.revision_id",
+                    (self._project, previous.version_id, previous.version_id),
+                )
+            ]
+        )
+        status = _digest(relations)
+        digest = _digest(
+            [
+                definition.model_dump(mode="json", by_alias=True),
+                previous.revision_id if previous else None,
+                decision.revision_id,
+                status,
+            ]
+        )
+        sources = (decision, *(aggregates.get_revision(identity) for identity in definition.assertion_revision_ids))
+        published = self._append(
+            aggregates,
+            sources=sources,
+            historical_sources=(current,) if current else (),
+            actor=actor,
+            digest=digest,
+            label="Scholarly work version",
+            current=current,
+            adjudicated=True,
+            payload_configuration="version-content",
+        )
+        connection.execute(
+            "INSERT INTO reconciliation_versions (revision_id,project_id,version_id,previous_revision_id,"
+            "version_kind,date_precision,date_value,decision_revision_id,source_count,status_sha256,"
+            "content_sha256) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                published.revision_id,
+                self._project,
+                published.aggregate_id,
+                previous.revision_id if previous else None,
+                definition.kind,
+                definition.date.precision,
+                definition.date.value,
+                decision.revision_id,
+                len(definition.assertion_revision_ids),
+                status,
+                digest,
+            ),
+        )
+        for ordinal, identity in enumerate(definition.assertion_revision_ids, 1):
+            connection.execute(
+                "INSERT INTO reconciliation_version_sources VALUES (?,?,?,?)",
+                (published.revision_id, self._project, ordinal, identity),
+            )
+        return published
+
+    def _persist_relation(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        assertion: UpdateRelationDraft,
+        decision: AggregateRevision,
+        actor: ReconciliationActor,
+    ) -> AggregateRevision:
+        digest = _digest(assertion.model_dump(mode="json", by_alias=True))
+        published = self._append(
+            aggregates,
+            sources=(
+                decision,
+                *(
+                    aggregates.get_revision(identity)
+                    for identity in sorted({item.assertion_revision_id for item in assertion.evidence})
+                ),
+            ),
+            historical_sources=(
+                aggregates.get_revision(assertion.source.revision_id),
+                aggregates.get_revision(assertion.target.revision_id),
+            ),
+            actor=actor,
+            digest=digest,
+            label="Sourced scholarly version relationship",
+            adjudicated=assertion.knowledge_status == "adjudicated",
+            disputed=assertion.knowledge_status == "disputed",
+            payload_configuration="version-relation",
+        )
+        connection.execute(
+            "INSERT INTO reconciliation_version_relations (revision_id,project_id,relation_id,"
+            "decision_revision_id,source_revision_id,target_revision_id,relation_kind,knowledge_status,"
+            "date_precision,date_value,evidence_count,content_sha256) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                published.revision_id,
+                self._project,
+                published.aggregate_id,
+                decision.revision_id,
+                assertion.source.revision_id,
+                assertion.target.revision_id,
+                assertion.kind,
+                assertion.knowledge_status,
+                assertion.date.precision,
+                assertion.date.value,
+                len(assertion.evidence),
+                digest,
+            ),
+        )
+        for ordinal, item in enumerate(assertion.evidence, 1):
+            connection.execute(
+                "INSERT INTO reconciliation_relation_evidence VALUES (?,?,?,?,?,?,?)",
+                (
+                    published.revision_id,
+                    self._project,
+                    ordinal,
+                    item.assertion_revision_id,
+                    item.category,
+                    item.selector,
+                    item.value_sha256,
+                ),
+            )
+        return published
+
+    def _version_replay(
+        self,
+        connection: CanonicalConnection,
+        command: VersionCommand,
+        actor: ReconciliationActor,
+        resolve: ReconciliationSourceResolver,
+    ) -> VersionOutcome | None:
+        row = connection.execute(
+            "SELECT actor_id,command_sha256,plan_sha256,plan_json,outcome_json,revision_id FROM "
+            "reconciliation_version_decisions WHERE project_id=? AND command_id=?",
+            (self._project, command.command_id),
+        ).fetchone()
+        if row is None:
+            return None
+        if row[0] != actor.actor_id or row[1] != _digest(
+            [self._project, actor.actor_id, command.model_dump(mode="json", by_alias=True)]
+        ):
+            raise ReconciliationProblem("reconciliation-command-conflict")
+        plan, outcome = VersionPlan.model_validate_json(row[3]), VersionOutcome.model_validate_json(row[4])
+        if (
+            plan != command.plan
+            or plan.fingerprint != row[2]
+            or outcome.plan_sha256 != row[2]
+            or outcome.decision_revision_id != row[5]
+            or outcome.command_id != command.command_id
+        ):
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        self._version_payload_binding(connection, outcome.decision_revision_id, "version-plan", plan.fingerprint)
+        self._authorize_version_support(connection, (outcome.decision_revision_id,), resolve)
+        members = set(plan.definition.assertion_revision_ids) if plan.definition else set()
+        for state in outcome.work_states:
+            if self._state(connection, state.work_id, state.revision_id) != state:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            members.update(state.assertion_revision_ids)
+        for reference in outcome.version_revisions:
+            version = self._version(connection, reference.revision_id)
+            if (
+                version.version_id != reference.version_id
+                or version.decision_revision_id != outcome.decision_revision_id
+            ):
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            members.update(version.definition.assertion_revision_ids)
+        if outcome.relation_revision_id is not None:
+            relation = self._version_relation(connection, outcome.relation_revision_id)
+            if relation.assertion != plan.relation or relation.decision_revision_id != outcome.decision_revision_id:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            for evidence in relation.assertion.evidence:
+                self._version_evidence(connection, evidence, resolve)
+                members.add(evidence.assertion_revision_id)
+            for reference in (relation.assertion.source, relation.assertion.target):
+                members.update(self._version(connection, reference.revision_id).definition.assertion_revision_ids)
+        if outcome.preference_revision_id is not None:
+            preference = self._version_preference(connection, outcome.preference_revision_id)
+            if (
+                preference.selected != plan.version
+                or preference.previous_revision_id != plan.previous_preference_revision_id
+            ):
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            members.update(self._version(connection, preference.selected.revision_id).definition.assertion_revision_ids)
+        for identity in sorted(members):
+            self._authorized_load(connection, identity, resolve)
+            self._authorize_assignment(connection, identity, resolve)
+        return outcome
+
+    def decide_versions(
+        self, command: VersionCommand, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
+    ) -> VersionOutcome:
+        command = VersionCommand.model_validate(command)
+        self._validate_actor(actor)
+        prepared, collect = self._source_snapshot(resolve)
+        with self._transaction(write=False) as (connection, aggregates):
+            if self._version_replay(connection, command, actor, collect) is None:
+                preview = self._version_preview(connection, aggregates, command.plan, actor, collect)
+                if preview.preview_sha256 != command.expected_preview_sha256:
+                    raise ReconciliationProblem("reconciliation-version-preview-stale")
+
+        def resolved(address: SourceAddress) -> SourceAssertion:
+            key = _digest(address.model_dump(mode="json"))
+            if key not in prepared:
+                raise ReconciliationProblem("reconciliation-concurrent-source-change")
+            return prepared[key]
+
+        with self._transaction(write=True) as (connection, aggregates):
+            replay = self._version_replay(connection, command, actor, resolved)
+            if replay is not None:
+                return replay
+            plan = command.plan
+            preview = self._version_preview(connection, aggregates, plan, actor, resolved)
+            if preview.preview_sha256 != command.expected_preview_sha256:
+                raise ReconciliationProblem("reconciliation-version-preview-stale")
+            context, work_ids, changed_versions = self._version_plan(connection, plan, resolved)
+            states = {state.work_id: state for state in context.works if state.work_id in work_ids}
+            versions = {version.version_id: version for version in context.versions}
+            prior = {state.revision_id for state in states.values()} | {
+                versions[identity].revision_id for identity in changed_versions
+            }
+            if plan.previous_preference_revision_id is not None:
+                prior.add(plan.previous_preference_revision_id)
+            sources = {source.assertion_revision_id for source in context.sources}
+            sources.update(
+                state.decision_revision_id for state in states.values() if state.decision_revision_id is not None
+            )
+            decision = self._append(
+                aggregates,
+                sources=tuple(aggregates.get_revision(identity) for identity in sorted(sources)),
+                historical_sources=tuple(aggregates.get_revision(identity) for identity in sorted(prior)),
+                actor=actor,
+                digest=plan.fingerprint,
+                label="Scholarly version decision",
+                kind="decision",
+                adjudicated=True,
+                payload_configuration="version-plan",
+            )
+            _publication_step("version-decision-created")
+            changes: list[DependencyChange] = []
+            published_versions: list[AggregateRevision] = []
+            relation = None
+            preference = None
+            if plan.relation is not None:
+                relation = self._persist_relation(connection, aggregates, plan.relation, decision, actor)
+            if plan.action == "register":
+                assert plan.definition is not None
+                published_versions.append(
+                    self._persist_version(connection, aggregates, plan.definition, decision, actor, None)
+                )
+            for identity in changed_versions:
+                old = versions[identity]
+                definition = plan.definition if plan.action == "revise" else old.definition
+                assert definition is not None
+                value = self._persist_version(connection, aggregates, definition, decision, actor, old)
+                published_versions.append(value)
+                changes.append(self._change(aggregates.get_revision(old.revision_id), value, actor))
+            _publication_step("version-facts-created")
+            current = self._version_context(connection, plan.work_ids, resolved)
+            outputs = []
+            for work_id in work_ids:
+                state = states[work_id]
+                placed = {item.version_id for item in current.placements if item.work_ids == (work_id,)}
+                material = {decision.revision_id, *state.assertion_revision_ids}
+                material.update(item.revision_id for item in current.versions if item.version_id in placed)
+                old_work = aggregates.get_revision(state.revision_id)
+                value = self._append(
+                    aggregates,
+                    sources=tuple(aggregates.get_revision(identity) for identity in sorted(material)),
+                    historical_sources=(old_work,),
+                    actor=actor,
+                    digest=_digest([plan.fingerprint, state.fingerprint, self._version_status(current, work_id)]),
+                    label="Canonical scholarly work",
+                    current=old_work,
+                    adjudicated=True,
+                    payload_configuration="version-work",
+                )
+                output = WorkState(
+                    work_id=work_id,
+                    revision_id=value.revision_id,
+                    previous_revision_id=state.revision_id,
+                    disposition="active",
+                    alias_target=None,
+                    assertion_revision_ids=state.assertion_revision_ids,
+                    decision_revision_id=decision.revision_id,
+                )
+                self._publish_state(connection, output)
+                outputs.append(output)
+                changes.append(self._change(old_work, value, actor))
+            _publication_step("version-work-created")
+            if plan.action == "prefer":
+                assert plan.version is not None
+                state = states[plan.work_ids[0]]
+                membership = _digest(list(state.assertion_revision_ids))
+                status = self._version_status(context, state.work_id)
+                prior_preference = (
+                    aggregates.get_revision(plan.previous_preference_revision_id)
+                    if plan.previous_preference_revision_id
+                    else None
+                )
+                digest = _digest(
+                    [
+                        state.work_id,
+                        plan.version.model_dump(mode="json", by_alias=True),
+                        membership,
+                        status,
+                        plan.previous_preference_revision_id,
+                        state.revision_id,
+                        decision.revision_id,
+                    ]
+                )
+                preference = self._append(
+                    aggregates,
+                    sources=(
+                        decision,
+                        aggregates.get_revision(plan.version.revision_id),
+                        aggregates.get_revision(outputs[0].revision_id),
+                    ),
+                    historical_sources=(prior_preference,) if prior_preference else (),
+                    actor=actor,
+                    digest=digest,
+                    label="Preferred citable version",
+                    kind="decision",
+                    current=prior_preference,
+                    adjudicated=True,
+                    payload_configuration="version-preference",
+                )
+                connection.execute(
+                    "INSERT INTO reconciliation_version_preferences (revision_id,project_id,preference_id,"
+                    "previous_revision_id,decision_revision_id,work_revision_id,work_id,selected_revision_id,"
+                    "membership_sha256,status_sha256) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                    (
+                        preference.revision_id,
+                        self._project,
+                        preference.aggregate_id,
+                        plan.previous_preference_revision_id,
+                        decision.revision_id,
+                        state.revision_id,
+                        state.work_id,
+                        plan.version.revision_id,
+                        membership,
+                        status,
+                    ),
+                )
+                if prior_preference is not None:
+                    changes.append(self._change(prior_preference, preference, actor))
+            _publication_step("version-preference-created")
+            runs = self._publish_impacts(connection, tuple(changes))
+            _publication_step("version-impacts-created")
+            outcome = VersionOutcome(
+                command_id=command.command_id,
+                decision_id=decision.aggregate_id,
+                decision_revision_id=decision.revision_id,
+                plan_sha256=plan.fingerprint,
+                version_revisions=tuple(
+                    VersionReference(version_id=value.aggregate_id, revision_id=value.revision_id)
+                    for value in published_versions
+                ),
+                relation_revision_id=relation.revision_id if relation else None,
+                preference_revision_id=preference.revision_id if preference else None,
+                work_states=tuple(outputs),
+                dependency_run_ids=runs,
+            )
+            connection.execute(
+                "INSERT INTO reconciliation_version_decisions (revision_id,project_id,command_id,actor_id,"
+                "command_sha256,plan_sha256,intent_sha256,policy_sha256,plan_json,outcome_json) VALUES (?,?,?,"
+                "?,?,?,?,?,?,?)",
+                (
+                    decision.revision_id,
+                    self._project,
+                    command.command_id,
+                    actor.actor_id,
+                    _digest([self._project, actor.actor_id, command.model_dump(mode="json", by_alias=True)]),
+                    plan.fingerprint,
+                    actor.intent_sha256,
+                    actor.policy_sha256,
+                    plan.model_dump_json(by_alias=True),
+                    outcome.model_dump_json(by_alias=True),
+                ),
+            )
+            for run_id, change in zip(runs, changes, strict=True):
+                connection.execute(
+                    "INSERT INTO reconciliation_version_impacts VALUES (?,?,?,?,?)",
+                    (
+                        run_id,
+                        self._project,
+                        decision.revision_id,
+                        change.previous_revision_id,
+                        change.replacement_revision_id,
+                    ),
+                )
+            _publication_step("version-command-created")
             return outcome

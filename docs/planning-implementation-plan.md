@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cdf24849e364df9098c61232cbc4b0f803460fb22b40fd50b1c8dc162cc49947
+source_sha256: e9b94372f07b434f156afaf7a24fb043a5afa4d5e27ec4cae3a0dad778ffd6b4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8497,13 +8497,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S03.T03 - Implement work-version, correction, and retraction relationships
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S03.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Version graph for preprint, accepted manuscript, version of record, erratum, correction, expression of concern, and retraction.
 

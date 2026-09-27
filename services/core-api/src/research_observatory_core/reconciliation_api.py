@@ -21,6 +21,15 @@ from .reconciliation.contracts import (
     SourceAddress,
 )
 from .reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
+from .reconciliation.versions import (
+    VersionCommand,
+    VersionContext,
+    VersionOutcome,
+    VersionPlan,
+    VersionPreview,
+    VersionWorkPage,
+    WorkVersion,
+)
 from .reconciliation_service import ReconciliationService
 from .transport import CoreProblem, problem_detail
 
@@ -56,6 +65,32 @@ class ReconciliationReviewPreviewRequest(DraftValue):
 class ReconciliationReviewRequest(DraftValue):
     root: Annotated[str, Field(min_length=1, max_length=4096)]
     command: ReviewCommand
+
+
+class VersionWorksRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    after: Identity | None
+    limit: Annotated[int, Field(strict=True, ge=1, le=32)]
+
+
+class VersionContextRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    work_ids: Annotated[tuple[Identity, ...], Field(strict=False, min_length=1, max_length=8)]
+
+
+class VersionInspectRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    revision_id: Identity
+
+
+class VersionPreviewRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    plan: VersionPlan
+
+
+class VersionCommitRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    command: VersionCommand
 
 
 class ReconciliationBatchPrepareRequest(DraftValue):
@@ -115,7 +150,13 @@ class BoundedReconciliationRoute(APIRoute):
 
         async def bounded(request: Request) -> Response:
             body = bytearray()
-            maximum = 262144 if request.url.path.startswith("/projects/reconciliation/review/") else 32768
+            maximum = (
+                262144
+                if request.url.path.startswith(
+                    ("/projects/reconciliation/review/", "/projects/reconciliation/versions/")
+                )
+                else 32768
+            )
             async for chunk in request.stream():
                 if len(body) + len(chunk) > maximum:
                     raise _problem(request, 413, "RO-CORE-RECONCILIATION-REQUEST-LIMIT")
@@ -209,6 +250,43 @@ def register_reconciliation_routes(
     def review_commit(request: Request, command: ReconciliationReviewRequest) -> ReviewOutcome:
         return run(
             request, lambda runtime: runtime.review(command.root, command.command, trace_id=request.state.trace_id)
+        )
+
+    @router.post("/versions/works", operation_id="listScholarlyVersionWorks", response_model=VersionWorkPage)
+    def version_works(request: Request, command: VersionWorksRequest) -> VersionWorkPage:
+        return run(
+            request,
+            lambda runtime: runtime.version_works(
+                command.root, after=command.after, limit=command.limit, trace_id=request.state.trace_id
+            ),
+        )
+
+    @router.post("/versions/context", operation_id="inspectScholarlyVersionContext", response_model=VersionContext)
+    def version_context(request: Request, command: VersionContextRequest) -> VersionContext:
+        return run(
+            request,
+            lambda runtime: runtime.version_context(command.root, command.work_ids, trace_id=request.state.trace_id),
+        )
+
+    @router.post("/versions/inspect", operation_id="inspectScholarlyVersion", response_model=WorkVersion)
+    def version_inspect(request: Request, command: VersionInspectRequest) -> WorkVersion:
+        return run(
+            request,
+            lambda runtime: runtime.inspect_version(command.root, command.revision_id, trace_id=request.state.trace_id),
+        )
+
+    @router.post("/versions/preview", operation_id="previewScholarlyVersionDecision", response_model=VersionPreview)
+    def version_preview(request: Request, command: VersionPreviewRequest) -> VersionPreview:
+        return run(
+            request,
+            lambda runtime: runtime.preview_versions(command.root, command.plan, trace_id=request.state.trace_id),
+        )
+
+    @router.post("/versions/commit", operation_id="commitScholarlyVersionDecision", response_model=VersionOutcome)
+    def version_commit(request: Request, command: VersionCommitRequest) -> VersionOutcome:
+        return run(
+            request,
+            lambda runtime: runtime.decide_versions(command.root, command.command, trace_id=request.state.trace_id),
         )
 
     def batch_projection(request_id, job, output=None):

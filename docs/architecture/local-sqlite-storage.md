@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-13 authority
+## Current version-16 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=13`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=16`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -86,6 +86,9 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `import_summary_attempts`, `import_summary_rows`, `import_summary_groups`, `import_summary_completions` | append-only fixed-draft inspection projections, bounded metadata and indexed candidate membership; visibility requires the exact accepted worker attempt and current rights, not merely stored rows |
 | `provenance_events` | append-only typed event metadata, stable canonical/UUIDv7 actor authority, and record digest |
 | `settings` | append-only versioned, exactly-one-of typed scalar project settings |
+| `reconciliation_versions`, `reconciliation_version_sources` | canonical manifestation identity/revision, explicit date precision, retained assertion membership and status fingerprint |
+| `reconciliation_version_relations`, `reconciliation_relation_evidence` | exact directed version endpoints, human knowledge status and retained source selector/value anchors |
+| `reconciliation_version_preferences`, `reconciliation_version_decisions`, `reconciliation_version_impacts` | immutable citable preference and command lineage, current-authority replay and exact publication-owned dependency invalidation |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
 
 Object bytes, document content, indexes, models, caches, and other derived

@@ -46,7 +46,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 15
+DATABASE_SCHEMA_VERSION = 16
+RECONCILIATION_REVIEW_DATABASE_SCHEMA_VERSION = 15
 RECONCILIATION_DATABASE_SCHEMA_VERSION = 14
 IMPORT_COMMIT_DATABASE_SCHEMA_VERSION = 13
 IMPORT_SUMMARY_DATABASE_SCHEMA_VERSION = 12
@@ -113,6 +114,15 @@ RECONCILIATION_REVIEW_TABLES = (
     "reconciliation_impact_continuations",
     "reconciliation_impact_seals",
 )
+WORK_VERSION_TABLES = (
+    "reconciliation_versions",
+    "reconciliation_version_sources",
+    "reconciliation_version_relations",
+    "reconciliation_relation_evidence",
+    "reconciliation_version_preferences",
+    "reconciliation_version_decisions",
+    "reconciliation_version_impacts",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -157,6 +167,7 @@ EXPECTED_TABLES = (
     *IMPORT_COMMIT_TABLES,
     *RECONCILIATION_TABLES,
     *RECONCILIATION_REVIEW_TABLES,
+    *WORK_VERSION_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -195,6 +206,7 @@ IMMUTABLE_ROW_TABLES = (
     *IMPORT_COMMIT_TABLES,
     *RECONCILIATION_TABLES,
     *RECONCILIATION_REVIEW_TABLES,
+    *WORK_VERSION_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -239,6 +251,16 @@ EXPECTED_TRIGGERS = tuple(
             "reconciliation_legacy_history_closed",
             "reconciliation_exact_impact_binding",
             "reconciliation_impact_continuation_binding",
+            "reconciliation_version_binding",
+            "reconciliation_version_source_binding",
+            "reconciliation_relation_binding",
+            "reconciliation_relation_evidence_binding",
+            "reconciliation_preference_binding",
+            "reconciliation_version_impact_binding",
+            "reconciliation_version_work_exclusion",
+            "reconciliation_version_import_exclusion",
+            "reconciliation_version_assertion_exclusion",
+            "reconciliation_version_decision_binding",
         ]
     )
 )
@@ -282,6 +304,10 @@ EXPECTED_INDEXES = (
     "reconciliation_state_predecessor",
     "reconciliation_alias_target",
     "dependency_impact_project_identity",
+    "reconciliation_version_source_lookup",
+    "reconciliation_version_relation_target",
+    "reconciliation_version_relation_source",
+    "reconciliation_version_preference_work",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -303,7 +329,8 @@ IMPORT_PREVIEW_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b9149952
 IMPORT_SUMMARY_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
 IMPORT_COMMIT_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
 RECONCILIATION_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
-EXPECTED_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
+RECONCILIATION_REVIEW_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
+EXPECTED_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -366,7 +393,8 @@ IMPORT_PREVIEW_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9
 IMPORT_SUMMARY_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
 IMPORT_COMMIT_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
 RECONCILIATION_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
-EXPECTED_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391ab69246f62696623d067cd37"
+RECONCILIATION_REVIEW_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391ab69246f62696623d067cd37"
+EXPECTED_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172dd790050bdafda72"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3081,6 +3109,345 @@ RECONCILIATION_REVIEW_DDL = (
     """,
 )
 
+
+def _version_date_check() -> str:
+    return """(date_precision IN ('unknown','not-reported') AND date_value IS NULL)
+        OR (date_precision='year' AND length(date_value)=4 AND date_value NOT GLOB '*[^0-9]*'
+            AND CAST(date_value AS INTEGER) BETWEEN 1 AND 9999)
+        OR (date_precision='month' AND length(date_value)=7 AND date_value GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]'
+            AND CAST(substr(date_value,1,4) AS INTEGER) BETWEEN 1 AND 9999
+            AND CAST(substr(date_value,6,2) AS INTEGER) BETWEEN 1 AND 12)
+        OR (date_precision='day' AND length(date_value)=10 AND date_value GLOB
+            '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'
+            AND CAST(substr(date_value,1,4) AS INTEGER) BETWEEN 1 AND 9999
+            AND date(date_value) IS date_value)"""
+
+
+# Additive v16 authority. The v15 DDL above remains the exact historical target.
+WORK_VERSION_DDL = (
+    f"""
+        CREATE TABLE reconciliation_versions (
+            revision_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            version_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'record' CHECK (aggregate_kind='record'),
+            previous_revision_id TEXT,
+            version_kind TEXT NOT NULL CHECK (version_kind IN ('preprint','accepted-manuscript','version-of-record',
+                'erratum','correction','expression-of-concern','retraction','not-reported')),
+            date_precision TEXT NOT NULL CHECK (date_precision IN ('unknown','not-reported','year','month','day')),
+            date_value TEXT,
+            decision_revision_id TEXT NOT NULL,
+            decision_kind TEXT NOT NULL DEFAULT 'decision' CHECK (decision_kind='decision'),
+            source_count INTEGER NOT NULL CHECK (source_count BETWEEN 1 AND 256),
+            status_sha256 TEXT NOT NULL CHECK ({_sha256_check("status_sha256")}),
+            content_sha256 TEXT NOT NULL CHECK ({_sha256_check("content_sha256")}),
+            CHECK ((date_precision IN ('unknown','not-reported')) IS (date_value IS NULL)),
+            CHECK ({_version_date_check()}),
+            FOREIGN KEY (revision_id,aggregate_kind,project_id) REFERENCES aggregate_revisions (revision_id,
+                aggregate_kind,project_id),
+            FOREIGN KEY (version_id,project_id,aggregate_kind) REFERENCES aggregate_identities (aggregate_id,
+                project_id,aggregate_kind),
+            FOREIGN KEY (previous_revision_id,project_id,version_id) REFERENCES reconciliation_versions
+                (revision_id,project_id,version_id),
+            FOREIGN KEY (decision_revision_id,decision_kind,project_id) REFERENCES aggregate_revisions
+                (revision_id,aggregate_kind,project_id),
+            UNIQUE (revision_id,project_id,version_id),
+            UNIQUE (revision_id,project_id)
+        ) STRICT
+    """,
+    """
+        CREATE TABLE reconciliation_version_sources (
+            version_revision_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 256),
+            assertion_revision_id TEXT NOT NULL,
+            FOREIGN KEY (version_revision_id,project_id) REFERENCES reconciliation_versions (revision_id,project_id),
+            FOREIGN KEY (assertion_revision_id,project_id) REFERENCES reconciliation_assertions (revision_id,
+                project_id),
+            PRIMARY KEY (version_revision_id,project_id,ordinal),
+            UNIQUE (version_revision_id,project_id,assertion_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_version_relations (
+            revision_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            relation_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'record' CHECK (aggregate_kind='record'),
+            decision_revision_id TEXT NOT NULL,
+            decision_kind TEXT NOT NULL DEFAULT 'decision' CHECK (decision_kind='decision'),
+            source_revision_id TEXT NOT NULL,
+            target_revision_id TEXT NOT NULL CHECK (target_revision_id<>source_revision_id),
+            relation_kind TEXT NOT NULL CHECK (relation_kind IN ('is-version-of','supersedes','erratum-for',
+                'corrects','expresses-concern','retracts')),
+            knowledge_status TEXT NOT NULL CHECK (knowledge_status IN ('adjudicated','disputed')),
+            date_precision TEXT NOT NULL CHECK (date_precision IN ('unknown','not-reported','year','month','day')),
+            date_value TEXT,
+            evidence_count INTEGER NOT NULL CHECK (evidence_count BETWEEN 1 AND 32),
+            content_sha256 TEXT NOT NULL CHECK ({_sha256_check("content_sha256")}),
+            CHECK ((date_precision IN ('unknown','not-reported')) IS (date_value IS NULL)),
+            CHECK ({_version_date_check()}),
+            FOREIGN KEY (revision_id,aggregate_kind,project_id) REFERENCES aggregate_revisions (revision_id,
+                aggregate_kind,project_id),
+            FOREIGN KEY (relation_id,project_id,aggregate_kind) REFERENCES aggregate_identities (aggregate_id,
+                project_id,aggregate_kind),
+            FOREIGN KEY (decision_revision_id,decision_kind,project_id) REFERENCES aggregate_revisions
+                (revision_id,aggregate_kind,project_id),
+            FOREIGN KEY (source_revision_id,project_id) REFERENCES reconciliation_versions (revision_id,project_id),
+            FOREIGN KEY (target_revision_id,project_id) REFERENCES reconciliation_versions (revision_id,project_id),
+            UNIQUE (revision_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_relation_evidence (
+            relation_revision_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 32),
+            assertion_revision_id TEXT NOT NULL,
+            category TEXT NOT NULL CHECK (category IN ('field','identifier')),
+            selector TEXT NOT NULL CHECK (length(selector) BETWEEN 1 AND 128),
+            value_sha256 TEXT NOT NULL CHECK ({_sha256_check("value_sha256")}),
+            FOREIGN KEY (relation_revision_id,project_id) REFERENCES reconciliation_version_relations
+                (revision_id,project_id),
+            FOREIGN KEY (assertion_revision_id,project_id) REFERENCES reconciliation_assertions (revision_id,
+                project_id),
+            PRIMARY KEY (relation_revision_id,project_id,ordinal),
+            UNIQUE (relation_revision_id,project_id,assertion_revision_id,category,selector)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_version_preferences (
+            revision_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            preference_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'decision' CHECK (aggregate_kind='decision'),
+            previous_revision_id TEXT,
+            decision_revision_id TEXT NOT NULL,
+            work_revision_id TEXT NOT NULL,
+            work_id TEXT NOT NULL,
+            selected_revision_id TEXT NOT NULL,
+            membership_sha256 TEXT NOT NULL CHECK ({_sha256_check("membership_sha256")}),
+            status_sha256 TEXT NOT NULL CHECK ({_sha256_check("status_sha256")}),
+            FOREIGN KEY (revision_id,aggregate_kind,project_id) REFERENCES aggregate_revisions (revision_id,
+                aggregate_kind,project_id),
+            FOREIGN KEY (preference_id,project_id,aggregate_kind) REFERENCES aggregate_identities
+                (aggregate_id,project_id,aggregate_kind),
+            FOREIGN KEY (previous_revision_id,project_id,preference_id) REFERENCES
+                reconciliation_version_preferences (revision_id,project_id,preference_id),
+            FOREIGN KEY (decision_revision_id,aggregate_kind,project_id) REFERENCES aggregate_revisions
+                (revision_id,aggregate_kind,project_id),
+            FOREIGN KEY (work_revision_id,project_id,work_id) REFERENCES reconciliation_work_states
+                (revision_id,project_id,work_id),
+            FOREIGN KEY (selected_revision_id,project_id) REFERENCES reconciliation_versions (revision_id,project_id),
+            UNIQUE (revision_id,project_id,preference_id),
+            UNIQUE (revision_id,project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE reconciliation_version_decisions (
+            revision_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'decision' CHECK (aggregate_kind='decision'),
+            command_id TEXT NOT NULL CHECK ({_uuid_check("command_id", "7")}),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            command_sha256 TEXT NOT NULL CHECK ({_sha256_check("command_sha256")}),
+            plan_sha256 TEXT NOT NULL CHECK ({_sha256_check("plan_sha256")}),
+            intent_sha256 TEXT NOT NULL CHECK ({_sha256_check("intent_sha256")}),
+            policy_sha256 TEXT NOT NULL CHECK ({_sha256_check("policy_sha256")}),
+            plan_json TEXT NOT NULL CHECK (json_valid(plan_json)
+                AND length(CAST(plan_json AS BLOB)) BETWEEN 2 AND 1048576 AND json_type(plan_json) IS 'object'
+                AND json_extract(plan_json,'$.schemaVersion') IS '1.0'
+                AND json_extract(plan_json,'$.action') IN ('register','revise','relate','prefer')
+                AND json_type(plan_json,'$.action') IS 'text'
+                AND json_type(plan_json,'$.workIds') IS 'array' AND json_array_length(plan_json,'$.workIds')
+                    BETWEEN 1 AND 8
+                AND json_type(plan_json,'$.contextSha256') IS 'text'
+                AND json_type(plan_json,'$.rationale') IS 'text'
+                AND json_remove(plan_json,'$.schemaVersion','$.action','$.workIds','$.contextSha256','$.rationale',
+                    '$.definition','$.version','$.relation','$.previousPreferenceRevisionId')='{{}}'),
+            outcome_json TEXT NOT NULL CHECK (json_valid(outcome_json)
+                AND length(CAST(outcome_json AS BLOB)) BETWEEN 2 AND 4194304 AND json_type(outcome_json) IS 'object'
+                AND json_extract(outcome_json,'$.decisionRevisionId') IS revision_id
+                AND json_extract(outcome_json,'$.commandId') IS command_id
+                AND json_extract(outcome_json,'$.planSha256') IS plan_sha256
+                AND json_type(outcome_json,'$.versionRevisions') IS 'array'
+                AND json_array_length(outcome_json,'$.versionRevisions') BETWEEN 0 AND 256
+                AND json_type(outcome_json,'$.workStates') IS 'array'
+                AND json_array_length(outcome_json,'$.workStates') BETWEEN 0 AND 8
+                AND json_type(outcome_json,'$.dependencyRunIds') IS 'array'
+                AND json_array_length(outcome_json,'$.dependencyRunIds') BETWEEN 0 AND 264
+                AND json_remove(outcome_json,'$.commandId','$.decisionId','$.decisionRevisionId','$.planSha256',
+                    '$.versionRevisions','$.relationRevisionId','$.preferenceRevisionId','$.workStates',
+                        '$.dependencyRunIds')='{{}}'),
+            FOREIGN KEY (revision_id,aggregate_kind,project_id) REFERENCES aggregate_revisions (revision_id,
+                aggregate_kind,project_id),
+            UNIQUE (project_id,command_id),
+            UNIQUE (revision_id,project_id)
+        ) STRICT
+    """,
+    """
+        CREATE TABLE reconciliation_version_impacts (
+            run_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            decision_revision_id TEXT NOT NULL,
+            previous_revision_id TEXT NOT NULL,
+            replacement_revision_id TEXT NOT NULL,
+            FOREIGN KEY (run_id,project_id) REFERENCES dependency_impact_runs (run_id,project_id),
+            FOREIGN KEY (decision_revision_id,project_id) REFERENCES reconciliation_version_decisions
+                (revision_id,project_id),
+            FOREIGN KEY (previous_revision_id,project_id) REFERENCES aggregate_revisions (revision_id,project_id),
+            FOREIGN KEY (replacement_revision_id,project_id) REFERENCES aggregate_revisions (revision_id,project_id)
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in WORK_VERSION_TABLES
+        for statement in _immutable_triggers(table, "scholarly version history is append-only")
+    ),
+    "CREATE INDEX reconciliation_version_source_lookup "
+    "ON reconciliation_version_sources (project_id,assertion_revision_id)",
+    "CREATE INDEX reconciliation_version_relation_target "
+    "ON reconciliation_version_relations (project_id,target_revision_id)",
+    "CREATE INDEX reconciliation_version_relation_source "
+    "ON reconciliation_version_relations (project_id,source_revision_id)",
+    "CREATE INDEX reconciliation_version_preference_work ON reconciliation_version_preferences (project_id,work_id)",
+    *(
+        f"""
+        CREATE TRIGGER reconciliation_version_{name}_exclusion BEFORE INSERT ON {table}
+        WHEN EXISTS (SELECT 1 FROM reconciliation_versions v WHERE v.project_id=NEW.project_id AND
+            v.version_id={identity})
+          OR EXISTS (SELECT 1 FROM reconciliation_version_relations r WHERE r.project_id=NEW.project_id AND
+              r.relation_id={identity})
+        BEGIN SELECT RAISE(ABORT, 'scholarly version subtype identity denied'); END
+        """
+        for name, table, identity in (
+            ("work", "reconciliation_work_states", "NEW.work_id"),
+            ("import", "import_source_records", "NEW.aggregate_id"),
+            (
+                "assertion",
+                "reconciliation_assertions",
+                "(SELECT aggregate_id FROM aggregate_revisions "
+                "WHERE project_id=NEW.project_id AND revision_id=NEW.revision_id)",
+            ),
+        )
+    ),
+    """
+        CREATE TRIGGER reconciliation_version_decision_binding BEFORE INSERT ON reconciliation_version_decisions
+        WHEN NOT EXISTS (SELECT 1 FROM material_dependencies m WHERE m.project_id=NEW.project_id
+            AND m.output_revision_id=NEW.revision_id AND m.configuration_id='scholarly.version-plan'
+            AND m.fingerprint='sha256:' || NEW.plan_sha256)
+          OR EXISTS (SELECT 1 FROM aggregate_revisions a JOIN reconciliation_version_preferences p ON
+              p.preference_id=a.aggregate_id
+            WHERE a.revision_id=NEW.revision_id AND a.project_id=NEW.project_id AND p.project_id=NEW.project_id)
+          OR EXISTS (SELECT 1 FROM aggregate_revisions a JOIN aggregate_revisions b ON b.aggregate_id=a.aggregate_id
+            JOIN reconciliation_review_decisions d ON d.revision_id=b.revision_id
+            WHERE a.revision_id=NEW.revision_id AND a.project_id=NEW.project_id AND d.project_id=NEW.project_id)
+        BEGIN SELECT RAISE(ABORT, 'scholarly version command identity denied'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_version_binding BEFORE INSERT ON reconciliation_versions
+        WHEN NOT EXISTS (SELECT 1 FROM material_dependencies m WHERE m.project_id=NEW.project_id
+            AND m.output_revision_id=NEW.revision_id AND m.configuration_id='scholarly.version-content'
+            AND m.fingerprint='sha256:' || NEW.content_sha256)
+        OR EXISTS (SELECT 1 FROM reconciliation_work_states WHERE project_id=NEW.project_id AND work_id=NEW.version_id)
+        OR EXISTS (SELECT 1 FROM reconciliation_assertions a JOIN aggregate_revisions r ON r.revision_id=a.revision_id
+            WHERE r.project_id=NEW.project_id AND r.aggregate_id=NEW.version_id)
+        OR EXISTS (SELECT 1 FROM import_source_records WHERE project_id=NEW.project_id AND aggregate_id=NEW.version_id)
+        OR EXISTS (SELECT 1 FROM reconciliation_version_relations WHERE project_id=NEW.project_id AND
+            relation_id=NEW.version_id)
+        OR NOT EXISTS (SELECT 1 FROM aggregate_revisions r WHERE r.revision_id=NEW.revision_id
+            AND r.project_id=NEW.project_id AND r.aggregate_id=NEW.version_id AND r.aggregate_kind='record'
+            AND ((r.revision=0 AND NEW.previous_revision_id IS NULL) OR EXISTS (
+                SELECT 1 FROM aggregate_revisions p JOIN reconciliation_versions v ON v.revision_id=p.revision_id
+                WHERE p.revision_id=NEW.previous_revision_id AND p.project_id=r.project_id
+                    AND p.aggregate_id=r.aggregate_id AND p.revision=r.revision-1)))
+        BEGIN SELECT RAISE(ABORT,'scholarly version revision binding denied'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_version_source_binding BEFORE INSERT ON reconciliation_version_sources
+        WHEN NEW.ordinal<>(SELECT COUNT(*)+1 FROM reconciliation_version_sources WHERE
+            version_revision_id=NEW.version_revision_id)
+            OR NEW.ordinal>(SELECT source_count FROM reconciliation_versions WHERE revision_id=NEW.version_revision_id)
+            OR EXISTS (SELECT 1 FROM reconciliation_version_sources WHERE version_revision_id=NEW.version_revision_id
+                AND assertion_revision_id>=NEW.assertion_revision_id)
+        BEGIN SELECT RAISE(ABORT,'scholarly version source binding denied'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_relation_binding BEFORE INSERT ON reconciliation_version_relations
+        WHEN NOT EXISTS (SELECT 1 FROM material_dependencies m WHERE m.project_id=NEW.project_id
+            AND m.output_revision_id=NEW.revision_id AND m.configuration_id='scholarly.version-relation'
+            AND m.fingerprint='sha256:' || NEW.content_sha256)
+        OR EXISTS (SELECT 1 FROM reconciliation_work_states WHERE project_id=NEW.project_id AND work_id=NEW.relation_id)
+        OR EXISTS (SELECT 1 FROM reconciliation_versions WHERE project_id=NEW.project_id AND version_id=NEW.relation_id)
+        OR EXISTS (SELECT 1 FROM reconciliation_assertions a JOIN aggregate_revisions r ON r.revision_id=a.revision_id
+            WHERE r.project_id=NEW.project_id AND r.aggregate_id=NEW.relation_id)
+        OR EXISTS (SELECT 1 FROM import_source_records WHERE project_id=NEW.project_id AND aggregate_id=NEW.relation_id)
+        OR NOT EXISTS (SELECT 1 FROM aggregate_revisions r WHERE r.revision_id=NEW.revision_id
+            AND r.project_id=NEW.project_id AND r.aggregate_id=NEW.relation_id AND r.aggregate_kind='record'
+                AND r.revision=0)
+            OR EXISTS (SELECT 1 FROM reconciliation_versions s JOIN reconciliation_versions t ON
+                s.version_id=t.version_id
+                WHERE s.revision_id=NEW.source_revision_id AND t.revision_id=NEW.target_revision_id)
+        BEGIN SELECT RAISE(ABORT,'scholarly version relation binding denied'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_relation_evidence_binding BEFORE INSERT ON reconciliation_relation_evidence
+        WHEN NEW.ordinal<>(SELECT COUNT(*)+1 FROM reconciliation_relation_evidence WHERE
+            relation_revision_id=NEW.relation_revision_id)
+            OR NEW.ordinal>(SELECT evidence_count FROM reconciliation_version_relations WHERE
+                revision_id=NEW.relation_revision_id)
+        BEGIN SELECT RAISE(ABORT,'scholarly version evidence binding denied'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_preference_binding BEFORE INSERT ON reconciliation_version_preferences
+        WHEN NOT EXISTS (SELECT 1 FROM material_dependencies m WHERE m.project_id=NEW.project_id
+            AND m.output_revision_id=NEW.revision_id AND m.configuration_id='scholarly.version-preference')
+        OR EXISTS (SELECT 1 FROM reconciliation_review_decisions d JOIN aggregate_revisions r ON
+            r.revision_id=d.revision_id
+            WHERE r.project_id=NEW.project_id AND r.aggregate_id=NEW.preference_id)
+        OR EXISTS (SELECT 1 FROM reconciliation_version_decisions d JOIN aggregate_revisions r ON
+            r.revision_id=d.revision_id
+            WHERE r.project_id=NEW.project_id AND r.aggregate_id=NEW.preference_id)
+        OR NOT EXISTS (SELECT 1 FROM aggregate_revisions r WHERE r.revision_id=NEW.revision_id
+            AND r.project_id=NEW.project_id AND r.aggregate_id=NEW.preference_id AND r.aggregate_kind='decision'
+            AND ((r.revision=0 AND NEW.previous_revision_id IS NULL) OR EXISTS (
+                SELECT 1 FROM aggregate_revisions p JOIN reconciliation_version_preferences v ON
+                    v.revision_id=p.revision_id
+                WHERE p.revision_id=NEW.previous_revision_id AND p.project_id=r.project_id
+                    AND v.work_id=NEW.work_id AND p.aggregate_id=r.aggregate_id AND p.revision=r.revision-1)))
+        BEGIN SELECT RAISE(ABORT,'scholarly version preference binding denied'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_version_impact_binding BEFORE INSERT ON reconciliation_version_impacts
+        WHEN NOT EXISTS (SELECT 1 FROM dependency_impact_runs r JOIN reconciliation_version_decisions d ON
+            d.project_id=r.project_id
+            WHERE r.run_id=NEW.run_id AND r.project_id=NEW.project_id AND d.revision_id=NEW.decision_revision_id
+                AND r.previous_revision_id=NEW.previous_revision_id AND
+                    r.replacement_revision_id=NEW.replacement_revision_id
+                AND r.reason='HUMAN_DECISION' AND r.actor_id=d.actor_id
+                AND r.dependency_kind=(SELECT CASE aggregate_kind WHEN 'decision' THEN 'human-decision' ELSE
+                    'source-revision' END
+                    FROM aggregate_revisions WHERE revision_id=NEW.previous_revision_id AND project_id=NEW.project_id)
+                AND EXISTS (SELECT 1 FROM json_each(d.outcome_json,'$.dependencyRunIds') WHERE value=NEW.run_id))
+            OR EXISTS (SELECT 1 FROM reconciliation_exact_impacts WHERE run_id=NEW.run_id)
+            OR EXISTS (SELECT 1 FROM reconciliation_review_decisions d,json_each(d.outcome_json,
+                '$.dependencyRunIds') WHERE value=NEW.run_id)
+        BEGIN SELECT RAISE(ABORT,'scholarly version impact binding denied'); END
+    """,
+    "DROP TRIGGER reconciliation_impact_continuation_binding",
+    next(
+        statement
+        for statement in RECONCILIATION_REVIEW_DDL
+        if "CREATE TRIGGER reconciliation_impact_continuation_binding" in statement
+    ).replace(
+        "EXISTS (SELECT 1 FROM reconciliation_exact_impacts x WHERE x.project_id=NEW.project_id",
+        "EXISTS (SELECT 1 FROM reconciliation_version_impacts v "
+        "WHERE v.project_id=NEW.project_id AND v.run_id=NEW.root_run_id) "
+        "OR EXISTS (SELECT 1 FROM reconciliation_exact_impacts x WHERE x.project_id=NEW.project_id",
+    ),
+)
+
+
 _V6_BASE_DDL_STATEMENTS = tuple(
     PROVENANCE_EVENTS_V6_DDL if "CREATE TABLE provenance_events" in statement else statement
     for statement in _V1_DDL_STATEMENTS[1:]
@@ -3089,8 +3456,10 @@ _V6_BASE_DDL_STATEMENTS = tuple(
 SCHEMA_METADATA_V14_DDL = SCHEMA_METADATA_V13_DDL.replace("schema_version = 13", "schema_version = 14")
 SCHEMA_METADATA_V15_DDL = SCHEMA_METADATA_V14_DDL.replace("schema_version = 14", "schema_version = 15")
 
+SCHEMA_METADATA_V16_DDL = SCHEMA_METADATA_V15_DDL.replace("schema_version = 15", "schema_version = 16")
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V15_DDL,
+    SCHEMA_METADATA_V16_DDL,
     *_V6_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -3108,6 +3477,7 @@ _DDL_STATEMENTS = (
     *IMPORT_COMMIT_DDL,
     *RECONCILIATION_DDL,
     *RECONCILIATION_REVIEW_DDL,
+    *WORK_VERSION_DDL,
 )
 
 

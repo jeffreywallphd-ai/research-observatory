@@ -39,6 +39,22 @@ durable and does not imply downstream recalculation is already complete.
 
 ## Public handoff
 
+CAP-04.S03.T03 adds `versions/works`, `versions/context`, `versions/inspect`,
+`versions/preview` and `versions/commit`. Work pages use an exclusive UUID cursor
+and a 1–32 limit; a page can contain fewer active Works than the scanned identity
+window, so continue while `nextAfter` is non-null. Context accepts 1–8 Works and
+returns at most 256 versions, 512 relations, 64 historical preferences and 512
+authorized sources. Limits fail explicitly rather than truncating facts.
+
+Register/revise/relate/prefer plans bind the exact context digest, rationale and
+action-specific fields. Preview supplies a Core-generated command ID, plan and
+context digests, impact count and publication precondition. Retain that command
+for uncertain-outcome retry. Preferred-version standing is separate from sourced
+warnings and never removes a correction or retraction. Current standing also
+requires the exact preference publication's Work lineage; restoring a previous
+membership does not renew an old human decision. Context has a 4 MiB response
+limit; request bodies are bounded to 256 KiB and other responses to 1 MiB.
+
 1. Commit an accepted import draft through the existing durable workflow. Use its
    manifest revision, preview context, included member ordinal and record key as
    an `import-member` SourceAddress. A source-record ID alone is insufficient.

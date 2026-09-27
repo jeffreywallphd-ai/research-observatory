@@ -1,0 +1,846 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "IdentifierAssertion": {
+      "additionalProperties": false,
+      "properties": {
+        "activeForMatching": {
+          "default": true,
+          "title": "Activeformatching",
+          "type": "boolean"
+        },
+        "observed": {
+          "maxLength": 65536,
+          "title": "Observed",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/SourceOrigin",
+          "default": "observed"
+        },
+        "reassignmentObserved": {
+          "default": false,
+          "title": "Reassignmentobserved",
+          "type": "boolean"
+        },
+        "role": {
+          "default": "subject",
+          "enum": [
+            "subject",
+            "person",
+            "organization",
+            "container",
+            "location"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "scheme": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Scheme",
+          "type": "string"
+        },
+        "sourceEncoding": {
+          "default": "text",
+          "enum": [
+            "text",
+            "json-string",
+            "bibtex-literal"
+          ],
+          "title": "Sourceencoding",
+          "type": "string"
+        },
+        "sourceSelector": {
+          "default": "observed-value",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sourceselector",
+          "type": "string"
+        },
+        "verificationState": {
+          "$ref": "#/$defs/VerificationState",
+          "default": "unverified"
+        }
+      },
+      "required": [
+        "scheme",
+        "observed"
+      ],
+      "title": "IdentifierAssertion",
+      "type": "object"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ImportPermission": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "default": "not-reported",
+          "enum": [
+            "not-reported",
+            "researcher-confirmed"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "value": {
+          "default": "unknown",
+          "enum": [
+            "permitted",
+            "denied",
+            "unknown"
+          ],
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "title": "ImportPermission",
+      "type": "object"
+    },
+    "ImportRights": {
+      "additionalProperties": false,
+      "properties": {
+        "derive": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "export": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "index": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "inspect": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "model-use": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "quote": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "share": {
+          "$ref": "#/$defs/ImportPermission"
+        },
+        "store": {
+          "$ref": "#/$defs/ImportPermission"
+        }
+      },
+      "title": "ImportRights",
+      "type": "object"
+    },
+    "Members": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 256,
+      "type": "array"
+    },
+    "PreferenceState": {
+      "additionalProperties": false,
+      "properties": {
+        "preferenceRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selected": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VersionReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "not-reported",
+            "current",
+            "requires-review"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "workId",
+        "state",
+        "preferenceRevisionId",
+        "selected"
+      ],
+      "title": "PreferenceState",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ReviewSource": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "$ref": "#/$defs/SourceAssertion"
+        },
+        "assertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "assertionRevisionId",
+        "assertion"
+      ],
+      "title": "ReviewSource",
+      "type": "object"
+    },
+    "ScholarlyField": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "observed": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Observed",
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/$defs/SourceOrigin"
+        },
+        "sourceSelector": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sourceselector",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "observed",
+        "origin",
+        "sourceSelector"
+      ],
+      "title": "ScholarlyField",
+      "type": "object"
+    },
+    "SourceAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "contextId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "kind": {
+          "enum": [
+            "import-member",
+            "connector-record"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "ordinal": {
+          "maximum": 200000,
+          "minimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "recordKey": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "kind",
+        "contextId",
+        "revisionId",
+        "ordinal",
+        "recordKey"
+      ],
+      "title": "SourceAddress",
+      "type": "object"
+    },
+    "SourceAssertion": {
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "$ref": "#/$defs/SourceAddress"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/ScholarlyField"
+          },
+          "maxItems": 256,
+          "title": "Fields",
+          "type": "array"
+        },
+        "identifiers": {
+          "items": {
+            "$ref": "#/$defs/IdentifierAssertion"
+          },
+          "maxItems": 128,
+          "title": "Identifiers",
+          "type": "array"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "provider": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "title": "Provider",
+          "type": "string"
+        },
+        "rights": {
+          "$ref": "#/$defs/ImportRights"
+        },
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "sourceRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "projectId",
+        "address",
+        "sourceRevisionId",
+        "provider",
+        "identifiers",
+        "fields",
+        "rights",
+        "sourceSha256"
+      ],
+      "title": "SourceAssertion",
+      "type": "object"
+    },
+    "SourceOrigin": {
+      "enum": [
+        "observed",
+        "correction"
+      ],
+      "type": "string"
+    },
+    "UpdateRelationDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/VersionDate"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/VersionEvidence"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "is-version-of",
+            "supersedes",
+            "erratum-for",
+            "corrects",
+            "expresses-concern",
+            "retracts"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "knowledgeStatus": {
+          "enum": [
+            "adjudicated",
+            "disputed"
+          ],
+          "title": "Knowledgestatus",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/VersionReference"
+        },
+        "target": {
+          "$ref": "#/$defs/VersionReference"
+        }
+      },
+      "required": [
+        "kind",
+        "source",
+        "target",
+        "evidence",
+        "date",
+        "knowledgeStatus"
+      ],
+      "title": "UpdateRelationDraft",
+      "type": "object"
+    },
+    "VerificationState": {
+      "enum": [
+        "unverified",
+        "verified",
+        "disputed",
+        "invalid"
+      ],
+      "type": "string"
+    },
+    "VersionDate": {
+      "additionalProperties": false,
+      "properties": {
+        "precision": {
+          "enum": [
+            "unknown",
+            "not-reported",
+            "year",
+            "month",
+            "day"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "minLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "precision",
+        "value"
+      ],
+      "title": "VersionDate",
+      "type": "object"
+    },
+    "VersionDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionIds": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "title": "Assertionrevisionids",
+          "type": "array"
+        },
+        "date": {
+          "$ref": "#/$defs/VersionDate"
+        },
+        "kind": {
+          "enum": [
+            "preprint",
+            "accepted-manuscript",
+            "version-of-record",
+            "erratum",
+            "correction",
+            "expression-of-concern",
+            "retraction",
+            "not-reported"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "assertionRevisionIds",
+        "date"
+      ],
+      "title": "VersionDefinition",
+      "type": "object"
+    },
+    "VersionEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "category": {
+          "enum": [
+            "field",
+            "identifier"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "selector": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Selector",
+          "type": "string"
+        },
+        "valueSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "assertionRevisionId",
+        "category",
+        "selector",
+        "valueSha256"
+      ],
+      "title": "VersionEvidence",
+      "type": "object"
+    },
+    "VersionPlacement": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "assigned",
+            "requires-review"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workIds": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "title": "Workids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "versionId",
+        "workIds",
+        "state"
+      ],
+      "title": "VersionPlacement",
+      "type": "object"
+    },
+    "VersionPreference": {
+      "additionalProperties": false,
+      "properties": {
+        "commandDecisionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "decisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "membershipSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "previousRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "selected": {
+          "$ref": "#/$defs/VersionReference"
+        },
+        "statusSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workRevisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "decisionId",
+        "revisionId",
+        "previousRevisionId",
+        "workId",
+        "workRevisionId",
+        "commandDecisionRevisionId",
+        "selected",
+        "membershipSha256",
+        "statusSha256"
+      ],
+      "title": "VersionPreference",
+      "type": "object"
+    },
+    "VersionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "versionId",
+        "revisionId"
+      ],
+      "title": "VersionReference",
+      "type": "object"
+    },
+    "VersionRelation": {
+      "additionalProperties": false,
+      "properties": {
+        "assertion": {
+          "$ref": "#/$defs/UpdateRelationDraft"
+        },
+        "decisionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "relationId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "relationId",
+        "revisionId",
+        "decisionRevisionId",
+        "assertion"
+      ],
+      "title": "VersionRelation",
+      "type": "object"
+    },
+    "WorkState": {
+      "additionalProperties": false,
+      "properties": {
+        "aliasTarget": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assertionRevisionIds": {
+          "$ref": "#/$defs/Members"
+        },
+        "decisionRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "active",
+            "alias"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "previousRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "schemaVersion": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schemaversion",
+          "type": "string"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "workId",
+        "revisionId",
+        "previousRevisionId",
+        "disposition",
+        "aliasTarget",
+        "assertionRevisionIds",
+        "decisionRevisionId"
+      ],
+      "title": "WorkState",
+      "type": "object"
+    },
+    "WorkVersion": {
+      "additionalProperties": false,
+      "properties": {
+        "decisionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "definition": {
+          "$ref": "#/$defs/VersionDefinition"
+        },
+        "previousRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "statusSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "versionId",
+        "revisionId",
+        "previousRevisionId",
+        "definition",
+        "decisionRevisionId",
+        "statusSha256"
+      ],
+      "title": "WorkVersion",
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/version-context.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "contextSha256": {
+      "readOnly": true,
+      "title": "Contextsha256",
+      "type": "string"
+    },
+    "placements": {
+      "items": {
+        "$ref": "#/$defs/VersionPlacement"
+      },
+      "maxItems": 256,
+      "title": "Placements",
+      "type": "array"
+    },
+    "preferenceStates": {
+      "items": {
+        "$ref": "#/$defs/PreferenceState"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Preferencestates",
+      "type": "array"
+    },
+    "preferences": {
+      "items": {
+        "$ref": "#/$defs/VersionPreference"
+      },
+      "maxItems": 64,
+      "title": "Preferences",
+      "type": "array"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "relations": {
+      "items": {
+        "$ref": "#/$defs/VersionRelation"
+      },
+      "maxItems": 512,
+      "title": "Relations",
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/ReviewSource"
+      },
+      "maxItems": 512,
+      "title": "Sources",
+      "type": "array"
+    },
+    "versions": {
+      "items": {
+        "$ref": "#/$defs/WorkVersion"
+      },
+      "maxItems": 256,
+      "title": "Versions",
+      "type": "array"
+    },
+    "works": {
+      "items": {
+        "$ref": "#/$defs/WorkState"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Works",
+      "type": "array"
+    }
+  },
+  "required": [
+    "projectId",
+    "works",
+    "versions",
+    "placements",
+    "relations",
+    "preferences",
+    "preferenceStates",
+    "sources",
+    "contextSha256"
+  ],
+  "title": "VersionContext",
+  "type": "object"
+}

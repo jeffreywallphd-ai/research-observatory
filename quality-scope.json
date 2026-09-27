@@ -406,6 +406,15 @@
     "tests/reconciliation/test_client_contract.py",
     "tests/reconciliation/test_renderer.py",
     "tests/reconciliation/native_fixture.py",
-    "tests/reconciliation/test_native_renderer.py"
+    "tests/reconciliation/test_native_renderer.py",
+    "services/core-api/src/research_observatory_core/reconciliation/versions.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py",
+    "tests/reconciliation/test_versions.py",
+    "tests/reconciliation/version_predecessor.py",
+    "tests/reconciliation/test_version_migration.py",
+    "tests/reconciliation/test_version_api.py",
+    "tests/reconciliation/test_version_client.py",
+    "tests/reconciliation/test_version_repository.py",
+    "tests/reconciliation/test_version_storage.py"
   ]
 }

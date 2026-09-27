@@ -1,0 +1,279 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "UpdateRelationDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/VersionDate"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/VersionEvidence"
+          },
+          "maxItems": 32,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "is-version-of",
+            "supersedes",
+            "erratum-for",
+            "corrects",
+            "expresses-concern",
+            "retracts"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "knowledgeStatus": {
+          "enum": [
+            "adjudicated",
+            "disputed"
+          ],
+          "title": "Knowledgestatus",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/VersionReference"
+        },
+        "target": {
+          "$ref": "#/$defs/VersionReference"
+        }
+      },
+      "required": [
+        "kind",
+        "source",
+        "target",
+        "evidence",
+        "date",
+        "knowledgeStatus"
+      ],
+      "title": "UpdateRelationDraft",
+      "type": "object"
+    },
+    "VersionDate": {
+      "additionalProperties": false,
+      "properties": {
+        "precision": {
+          "enum": [
+            "unknown",
+            "not-reported",
+            "year",
+            "month",
+            "day"
+          ],
+          "title": "Precision",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 10,
+              "minLength": 4,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "precision",
+        "value"
+      ],
+      "title": "VersionDate",
+      "type": "object"
+    },
+    "VersionDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionIds": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 256,
+          "minItems": 1,
+          "title": "Assertionrevisionids",
+          "type": "array"
+        },
+        "date": {
+          "$ref": "#/$defs/VersionDate"
+        },
+        "kind": {
+          "enum": [
+            "preprint",
+            "accepted-manuscript",
+            "version-of-record",
+            "erratum",
+            "correction",
+            "expression-of-concern",
+            "retraction",
+            "not-reported"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "assertionRevisionIds",
+        "date"
+      ],
+      "title": "VersionDefinition",
+      "type": "object"
+    },
+    "VersionEvidence": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "category": {
+          "enum": [
+            "field",
+            "identifier"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "selector": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Selector",
+          "type": "string"
+        },
+        "valueSha256": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "assertionRevisionId",
+        "category",
+        "selector",
+        "valueSha256"
+      ],
+      "title": "VersionEvidence",
+      "type": "object"
+    },
+    "VersionReference": {
+      "additionalProperties": false,
+      "properties": {
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "versionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "versionId",
+        "revisionId"
+      ],
+      "title": "VersionReference",
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/version-plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "register",
+        "revise",
+        "relate",
+        "prefer"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "contextSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "definition": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VersionDefinition"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "previousPreferenceRevisionId": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Identity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "rationale": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "relation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UpdateRelationDraft"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "version": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VersionReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "workIds": {
+      "items": {
+        "$ref": "#/$defs/Identity"
+      },
+      "maxItems": 8,
+      "minItems": 1,
+      "title": "Workids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "action",
+    "workIds",
+    "contextSha256",
+    "rationale"
+  ],
+  "title": "VersionPlan",
+  "type": "object"
+}

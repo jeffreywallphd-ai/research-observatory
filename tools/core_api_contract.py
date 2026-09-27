@@ -1328,7 +1328,7 @@ async function requestJsonResponse<T>(
   }
   if (response.status !== 200 || response.contentType !== "application/json") throw new Error("RO-CORE-RESPONSE-INVALID");
   const maximumBytes = ["/projects/reconciliation/inspect", "/projects/reconciliation/review/context",
-    "/projects/reconciliation/review/preview"].includes(request.path) ? 4_194_304 : 1_048_576;
+    "/projects/reconciliation/review/preview", "/projects/reconciliation/versions/context"].includes(request.path) ? 4_194_304 : 1_048_576;
   const value = parseJson(response.body, maximumBytes);
   const decoded = decode(value);
   if (!decoded) throw new Error("RO-CORE-RESPONSE-INVALID");
@@ -2638,6 +2638,15 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
             WorkState,
         )
         from research_observatory_core.reconciliation.identifiers import NormalizedIdentifier
+        from research_observatory_core.reconciliation.versions import (
+            VersionCommand,
+            VersionContext,
+            VersionOutcome,
+            VersionPlan,
+            VersionPreview,
+            VersionWorkPage,
+            WorkVersion,
+        )
         from research_observatory_core.research_intents import approved_workflow_catalog_projection
 
         openapi = canonical_openapi_bytes()
@@ -2704,6 +2713,13 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
                 ("reconciliation-result.schema.json", ReconciliationResult),
                 ("reconciliation-inspection.schema.json", ReconciliationInspection),
                 ("work-state.schema.json", WorkState),
+                ("work-version.schema.json", WorkVersion),
+                ("version-context.schema.json", VersionContext),
+                ("version-plan.schema.json", VersionPlan),
+                ("version-preview.schema.json", VersionPreview),
+                ("version-command.schema.json", VersionCommand),
+                ("version-outcome.schema.json", VersionOutcome),
+                ("version-work-page.schema.json", VersionWorkPage),
                 ("review-context.schema.json", ReviewContext),
                 ("review-plan.schema.json", ReviewPlan),
                 ("review-preview.schema.json", ReviewPreview),

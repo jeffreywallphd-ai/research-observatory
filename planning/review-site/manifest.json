@@ -15177,7 +15177,7 @@
             {
               "task_id": "CAP-04.S03.T03",
               "title": "Implement work-version, correction, and retraction relationships",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -15231,18 +15231,21 @@
             {
               "task_id": "CAP-04.S03.T03",
               "title": "Implement work-version, correction, and retraction relationships",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S03.T03.html",
               "dependencies": [
                 "CAP-04.S03.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "0738c2543db85af8189bd0948393698b04662de6"
               },
               "plan_section_sha256": "8327190b7932b231a54f291d28debf3b5b81b0a28f6e4fd3cf9882afeae5963f",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-04.S03.T03.task-start.md",
+                "sha256": "e6dee9f71b0e20975888e75dafa0b5bf1c0b9d7aee8931f01a1ca65c5903de0b"
+              }
             }
           ]
         },

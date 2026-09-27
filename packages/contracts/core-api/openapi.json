@@ -5532,6 +5532,51 @@
         "minimum": 1.0,
         "type": "integer"
       },
+      "PreferenceState": {
+        "additionalProperties": false,
+        "properties": {
+          "preferenceRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "selected": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VersionReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "not-reported",
+              "current",
+              "requires-review"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "workId",
+          "state",
+          "preferenceRevisionId",
+          "selected"
+        ],
+        "title": "PreferenceState",
+        "type": "object"
+      },
       "PrivacyNetworkPolicy": {
         "enum": [
           "offline",
@@ -8713,6 +8758,59 @@
         "minLength": 1,
         "type": "string"
       },
+      "UpdateRelationDraft": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/VersionDate"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/VersionEvidence"
+            },
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Evidence",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "is-version-of",
+              "supersedes",
+              "erratum-for",
+              "corrects",
+              "expresses-concern",
+              "retracts"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "knowledgeStatus": {
+            "enum": [
+              "adjudicated",
+              "disputed"
+            ],
+            "title": "Knowledgestatus",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/VersionReference"
+          },
+          "target": {
+            "$ref": "#/components/schemas/VersionReference"
+          }
+        },
+        "required": [
+          "kind",
+          "source",
+          "target",
+          "evidence",
+          "date",
+          "knowledgeStatus"
+        ],
+        "title": "UpdateRelationDraft",
+        "type": "object"
+      },
       "UtcInstant": {
         "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
         "type": "string"
@@ -8771,6 +8869,628 @@
         "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$",
         "type": "string"
       },
+      "VersionCommand": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "expectedPreviewSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/VersionPlan"
+          }
+        },
+        "required": [
+          "commandId",
+          "plan",
+          "expectedPreviewSha256"
+        ],
+        "title": "VersionCommand",
+        "type": "object"
+      },
+      "VersionCommitRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "command": {
+            "$ref": "#/components/schemas/VersionCommand"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "command"
+        ],
+        "title": "VersionCommitRequest",
+        "type": "object"
+      },
+      "VersionContext": {
+        "additionalProperties": false,
+        "properties": {
+          "contextSha256": {
+            "readOnly": true,
+            "title": "Contextsha256",
+            "type": "string"
+          },
+          "placements": {
+            "items": {
+              "$ref": "#/components/schemas/VersionPlacement"
+            },
+            "maxItems": 256,
+            "title": "Placements",
+            "type": "array"
+          },
+          "preferenceStates": {
+            "items": {
+              "$ref": "#/components/schemas/PreferenceState"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Preferencestates",
+            "type": "array"
+          },
+          "preferences": {
+            "items": {
+              "$ref": "#/components/schemas/VersionPreference"
+            },
+            "maxItems": 64,
+            "title": "Preferences",
+            "type": "array"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "relations": {
+            "items": {
+              "$ref": "#/components/schemas/VersionRelation"
+            },
+            "maxItems": 512,
+            "title": "Relations",
+            "type": "array"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewSource"
+            },
+            "maxItems": 512,
+            "title": "Sources",
+            "type": "array"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/WorkVersion"
+            },
+            "maxItems": 256,
+            "title": "Versions",
+            "type": "array"
+          },
+          "works": {
+            "items": {
+              "$ref": "#/components/schemas/WorkState"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Works",
+            "type": "array"
+          }
+        },
+        "required": [
+          "projectId",
+          "works",
+          "versions",
+          "placements",
+          "relations",
+          "preferences",
+          "preferenceStates",
+          "sources",
+          "contextSha256"
+        ],
+        "title": "VersionContext",
+        "type": "object"
+      },
+      "VersionContextRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "workIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Workids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "root",
+          "workIds"
+        ],
+        "title": "VersionContextRequest",
+        "type": "object"
+      },
+      "VersionDate": {
+        "additionalProperties": false,
+        "properties": {
+          "precision": {
+            "enum": [
+              "unknown",
+              "not-reported",
+              "year",
+              "month",
+              "day"
+            ],
+            "title": "Precision",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "maxLength": 10,
+                "minLength": 4,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "precision",
+          "value"
+        ],
+        "title": "VersionDate",
+        "type": "object"
+      },
+      "VersionDefinition": {
+        "additionalProperties": false,
+        "properties": {
+          "assertionRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 256,
+            "minItems": 1,
+            "title": "Assertionrevisionids",
+            "type": "array"
+          },
+          "date": {
+            "$ref": "#/components/schemas/VersionDate"
+          },
+          "kind": {
+            "enum": [
+              "preprint",
+              "accepted-manuscript",
+              "version-of-record",
+              "erratum",
+              "correction",
+              "expression-of-concern",
+              "retraction",
+              "not-reported"
+            ],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "assertionRevisionIds",
+          "date"
+        ],
+        "title": "VersionDefinition",
+        "type": "object"
+      },
+      "VersionEvidence": {
+        "additionalProperties": false,
+        "properties": {
+          "assertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "category": {
+            "enum": [
+              "field",
+              "identifier"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "selector": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Selector",
+            "type": "string"
+          },
+          "valueSha256": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        },
+        "required": [
+          "assertionRevisionId",
+          "category",
+          "selector",
+          "valueSha256"
+        ],
+        "title": "VersionEvidence",
+        "type": "object"
+      },
+      "VersionInspectRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "revisionId"
+        ],
+        "title": "VersionInspectRequest",
+        "type": "object"
+      },
+      "VersionOutcome": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "decisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "decisionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "dependencyRunIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 264,
+            "title": "Dependencyrunids",
+            "type": "array"
+          },
+          "planSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "preferenceRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "relationRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "versionRevisions": {
+            "items": {
+              "$ref": "#/components/schemas/VersionReference"
+            },
+            "maxItems": 256,
+            "title": "Versionrevisions",
+            "type": "array"
+          },
+          "workStates": {
+            "items": {
+              "$ref": "#/components/schemas/WorkState"
+            },
+            "maxItems": 8,
+            "title": "Workstates",
+            "type": "array"
+          }
+        },
+        "required": [
+          "commandId",
+          "decisionId",
+          "decisionRevisionId",
+          "planSha256",
+          "versionRevisions",
+          "relationRevisionId",
+          "preferenceRevisionId",
+          "workStates",
+          "dependencyRunIds"
+        ],
+        "title": "VersionOutcome",
+        "type": "object"
+      },
+      "VersionPlacement": {
+        "additionalProperties": false,
+        "properties": {
+          "state": {
+            "enum": [
+              "assigned",
+              "requires-review"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "versionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 256,
+            "minItems": 1,
+            "title": "Workids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "versionId",
+          "workIds",
+          "state"
+        ],
+        "title": "VersionPlacement",
+        "type": "object"
+      },
+      "VersionPlan": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "register",
+              "revise",
+              "relate",
+              "prefer"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "contextSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "definition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VersionDefinition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previousPreferenceRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rationale": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Rationale",
+            "type": "string"
+          },
+          "relation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UpdateRelationDraft"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VersionReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "workIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Workids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "action",
+          "workIds",
+          "contextSha256",
+          "rationale"
+        ],
+        "title": "VersionPlan",
+        "type": "object"
+      },
+      "VersionPreference": {
+        "additionalProperties": false,
+        "properties": {
+          "commandDecisionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "decisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "membershipSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "previousRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "selected": {
+            "$ref": "#/components/schemas/VersionReference"
+          },
+          "statusSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "decisionId",
+          "revisionId",
+          "previousRevisionId",
+          "workId",
+          "workRevisionId",
+          "commandDecisionRevisionId",
+          "selected",
+          "membershipSha256",
+          "statusSha256"
+        ],
+        "title": "VersionPreference",
+        "type": "object"
+      },
+      "VersionPreview": {
+        "additionalProperties": false,
+        "properties": {
+          "affectedCount": {
+            "maximum": 9007199254740991.0,
+            "minimum": 0.0,
+            "title": "Affectedcount",
+            "type": "integer"
+          },
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "contextSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "planSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "previewSha256": {
+            "$ref": "#/components/schemas/Digest"
+          }
+        },
+        "required": [
+          "commandId",
+          "planSha256",
+          "contextSha256",
+          "previewSha256",
+          "affectedCount"
+        ],
+        "title": "VersionPreview",
+        "type": "object"
+      },
+      "VersionPreviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/VersionPlan"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "plan"
+        ],
+        "title": "VersionPreviewRequest",
+        "type": "object"
+      },
+      "VersionReference": {
+        "additionalProperties": false,
+        "properties": {
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "versionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "versionId",
+          "revisionId"
+        ],
+        "title": "VersionReference",
+        "type": "object"
+      },
+      "VersionRelation": {
+        "additionalProperties": false,
+        "properties": {
+          "assertion": {
+            "$ref": "#/components/schemas/UpdateRelationDraft"
+          },
+          "decisionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "relationId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "relationId",
+          "revisionId",
+          "decisionRevisionId",
+          "assertion"
+        ],
+        "title": "VersionRelation",
+        "type": "object"
+      },
       "VersionResponse": {
         "additionalProperties": false,
         "properties": {
@@ -8806,6 +9526,84 @@
           }
         },
         "title": "VersionResponse",
+        "type": "object"
+      },
+      "VersionWorkPage": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WorkState"
+            },
+            "maxItems": 32,
+            "title": "Items",
+            "type": "array"
+          },
+          "nextAfter": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          }
+        },
+        "required": [
+          "projectId",
+          "after",
+          "nextAfter",
+          "items"
+        ],
+        "title": "VersionWorkPage",
+        "type": "object"
+      },
+      "VersionWorksRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limit": {
+            "maximum": 32.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "after",
+          "limit"
+        ],
+        "title": "VersionWorksRequest",
         "type": "object"
       },
       "WarningCode": {
@@ -8880,6 +9678,46 @@
           "decisionRevisionId"
         ],
         "title": "WorkState",
+        "type": "object"
+      },
+      "WorkVersion": {
+        "additionalProperties": false,
+        "properties": {
+          "decisionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/VersionDefinition"
+          },
+          "previousRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "statusSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "versionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "versionId",
+          "revisionId",
+          "previousRevisionId",
+          "definition",
+          "decisionRevisionId",
+          "statusSha256"
+        ],
+        "title": "WorkVersion",
         "type": "object"
       },
       "WorkflowCancelRequest": {
@@ -15154,6 +15992,411 @@
           }
         },
         "summary": "Review Preview",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/versions/commit": {
+      "post": {
+        "operationId": "commitScholarlyVersionDecision",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionCommitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOutcome"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Version Commit",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/versions/context": {
+      "post": {
+        "operationId": "inspectScholarlyVersionContext",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionContextRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionContext"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Version Context",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/versions/inspect": {
+      "post": {
+        "operationId": "inspectScholarlyVersion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInspectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkVersion"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Version Inspect",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/versions/preview": {
+      "post": {
+        "operationId": "previewScholarlyVersionDecision",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionPreview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Version Preview",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/versions/works": {
+      "post": {
+        "operationId": "listScholarlyVersionWorks",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionWorksRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionWorkPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Version Works",
         "tags": [
           "reconciliation"
         ]

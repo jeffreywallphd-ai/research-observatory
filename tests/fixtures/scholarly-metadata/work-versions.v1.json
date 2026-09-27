@@ -1,0 +1,374 @@
+{
+  "fixtureKind": "synthetic-version-history",
+  "context": {
+    "schemaVersion": "1.0",
+    "projectId": "2abe0e74-eac9-463e-93cd-9a3ea45ab198",
+    "works": [
+      {
+        "schemaVersion": "1.0",
+        "workId": "01a0e3ac-3a70-7363-862f-3f7916740859",
+        "revisionId": "01a0e3ac-3f19-70b3-b1f2-8f0891bad954",
+        "previousRevisionId": "01a0e3ac-3eac-77e3-9a5a-0a7a7769030c",
+        "disposition": "active",
+        "aliasTarget": null,
+        "assertionRevisionIds": [
+          "01a0e3ac-3a6c-7eca-89d1-d712e74cb466"
+        ],
+        "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e"
+      },
+      {
+        "schemaVersion": "1.0",
+        "workId": "01a0e3ac-3dee-7bea-9645-b5b506706d8c",
+        "revisionId": "01a0e3ac-3f1e-7c6c-b131-f29218cf87f2",
+        "previousRevisionId": "01a0e3ac-3e6d-7946-88ee-cf511826bcb1",
+        "disposition": "active",
+        "aliasTarget": null,
+        "assertionRevisionIds": [
+          "01a0e3ac-3de9-7956-845d-a312823c9bed"
+        ],
+        "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e"
+      }
+    ],
+    "versions": [
+      {
+        "versionId": "01a0e3ac-3e22-7032-b6f4-3299d4a1d90a",
+        "revisionId": "01a0e3ac-3f0d-7e1c-8712-1246275d410a",
+        "previousRevisionId": "01a0e3ac-3e22-735a-af31-fd0bc415fe22",
+        "definition": {
+          "kind": "version-of-record",
+          "assertionRevisionIds": [
+            "01a0e3ac-3a6c-7eca-89d1-d712e74cb466"
+          ],
+          "date": {
+            "precision": "not-reported",
+            "value": null
+          }
+        },
+        "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e",
+        "statusSha256": "8f2f680c34158129eab56f493ef4f5968de05ca73449a429a8b441f52ac653e4"
+      },
+      {
+        "versionId": "01a0e3ac-3e67-77a3-8113-41be20bbe25e",
+        "revisionId": "01a0e3ac-3f11-7a43-b02a-cc1b8e9762f3",
+        "previousRevisionId": "01a0e3ac-3e67-7f62-bc29-ec7d6740deba",
+        "definition": {
+          "kind": "retraction",
+          "assertionRevisionIds": [
+            "01a0e3ac-3de9-7956-845d-a312823c9bed"
+          ],
+          "date": {
+            "precision": "not-reported",
+            "value": null
+          }
+        },
+        "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e",
+        "statusSha256": "8f2f680c34158129eab56f493ef4f5968de05ca73449a429a8b441f52ac653e4"
+      }
+    ],
+    "placements": [
+      {
+        "versionId": "01a0e3ac-3e22-7032-b6f4-3299d4a1d90a",
+        "workIds": [
+          "01a0e3ac-3a70-7363-862f-3f7916740859"
+        ],
+        "state": "assigned"
+      },
+      {
+        "versionId": "01a0e3ac-3e67-77a3-8113-41be20bbe25e",
+        "workIds": [
+          "01a0e3ac-3dee-7bea-9645-b5b506706d8c"
+        ],
+        "state": "assigned"
+      }
+    ],
+    "relations": [
+      {
+        "relationId": "01a0e3ac-3f07-7ed3-8422-f712821ff3ba",
+        "revisionId": "01a0e3ac-3f07-7ef6-addb-dffe3cf3a7d7",
+        "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e",
+        "assertion": {
+          "kind": "retracts",
+          "source": {
+            "versionId": "01a0e3ac-3e67-77a3-8113-41be20bbe25e",
+            "revisionId": "01a0e3ac-3e67-7f62-bc29-ec7d6740deba"
+          },
+          "target": {
+            "versionId": "01a0e3ac-3e22-7032-b6f4-3299d4a1d90a",
+            "revisionId": "01a0e3ac-3e22-735a-af31-fd0bc415fe22"
+          },
+          "evidence": [
+            {
+              "assertionRevisionId": "01a0e3ac-3de9-7956-845d-a312823c9bed",
+              "category": "identifier",
+              "selector": "observed-value",
+              "valueSha256": "05d27db621e974b6bcdac15462a3a45d96b546c89832e5926065896275591dbb"
+            }
+          ],
+          "date": {
+            "precision": "year",
+            "value": "2026"
+          },
+          "knowledgeStatus": "adjudicated"
+        }
+      }
+    ],
+    "preferences": [
+      {
+        "decisionId": "01a0e3ac-3eb1-7d51-867c-15997f6ce3fd",
+        "revisionId": "01a0e3ac-3eb1-7ec9-8051-f563467fcedb",
+        "previousRevisionId": null,
+        "workId": "01a0e3ac-3a70-7363-862f-3f7916740859",
+        "workRevisionId": "01a0e3ac-3e28-78fc-a576-a558c3982a33",
+        "commandDecisionRevisionId": "01a0e3ac-3ea4-7abf-81e2-a04d826ed816",
+        "selected": {
+          "versionId": "01a0e3ac-3e22-7032-b6f4-3299d4a1d90a",
+          "revisionId": "01a0e3ac-3e22-735a-af31-fd0bc415fe22"
+        },
+        "membershipSha256": "59da2cbc51396f6186629b11b46aba26373d1dd81d33361333c8249c748ddbc2",
+        "statusSha256": "a3a462b568e328c0c08a960f9ca9c294704df253d22654119e5f8d61f2738e38"
+      }
+    ],
+    "preferenceStates": [
+      {
+        "workId": "01a0e3ac-3a70-7363-862f-3f7916740859",
+        "state": "requires-review",
+        "preferenceRevisionId": "01a0e3ac-3eb1-7ec9-8051-f563467fcedb",
+        "selected": {
+          "versionId": "01a0e3ac-3e22-7032-b6f4-3299d4a1d90a",
+          "revisionId": "01a0e3ac-3e22-735a-af31-fd0bc415fe22"
+        }
+      },
+      {
+        "workId": "01a0e3ac-3dee-7bea-9645-b5b506706d8c",
+        "state": "not-reported",
+        "preferenceRevisionId": null,
+        "selected": null
+      }
+    ],
+    "sources": [
+      {
+        "assertionRevisionId": "01a0e3ac-3a6c-7eca-89d1-d712e74cb466",
+        "assertion": {
+          "schemaVersion": "1.0",
+          "projectId": "2abe0e74-eac9-463e-93cd-9a3ea45ab198",
+          "address": {
+            "kind": "import-member",
+            "contextId": "01a0e3ac-361b-77ac-91f9-d70b3b7db8b8",
+            "revisionId": "01a0e3ac-3a48-7fa8-869a-d9ca7385edb7",
+            "ordinal": 2,
+            "recordKey": "1111111111111111111111111111111111111111111111111111111111111111"
+          },
+          "sourceRevisionId": "01a0e3ac-3a44-786e-a283-a60df77e158f",
+          "provider": "local-import",
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "observed": "10.99999/synthetic-a",
+              "role": "subject",
+              "verificationState": "unverified",
+              "reassignmentObserved": false,
+              "origin": "observed",
+              "activeForMatching": true,
+              "sourceSelector": "observed-value",
+              "sourceEncoding": "text"
+            }
+          ],
+          "fields": [],
+          "rights": {
+            "store": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "inspect": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "index": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "derive": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "model-use": {
+              "value": "unknown",
+              "basis": "not-reported"
+            },
+            "quote": {
+              "value": "unknown",
+              "basis": "not-reported"
+            },
+            "export": {
+              "value": "unknown",
+              "basis": "not-reported"
+            },
+            "share": {
+              "value": "unknown",
+              "basis": "not-reported"
+            }
+          },
+          "sourceSha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      },
+      {
+        "assertionRevisionId": "01a0e3ac-3de9-7956-845d-a312823c9bed",
+        "assertion": {
+          "schemaVersion": "1.0",
+          "projectId": "2abe0e74-eac9-463e-93cd-9a3ea45ab198",
+          "address": {
+            "kind": "import-member",
+            "contextId": "01a0e3ac-3a79-7faa-a21c-adf2b8727e53",
+            "revisionId": "01a0e3ac-3dc5-7f5e-bb39-769932268bec",
+            "ordinal": 2,
+            "recordKey": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "sourceRevisionId": "01a0e3ac-3dc1-7178-9d02-3c449f36c16a",
+          "provider": "local-import",
+          "identifiers": [
+            {
+              "scheme": "doi",
+              "observed": "10.99999/synthetic-b",
+              "role": "subject",
+              "verificationState": "unverified",
+              "reassignmentObserved": false,
+              "origin": "observed",
+              "activeForMatching": true,
+              "sourceSelector": "observed-value",
+              "sourceEncoding": "text"
+            }
+          ],
+          "fields": [],
+          "rights": {
+            "store": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "inspect": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "index": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "derive": {
+              "value": "permitted",
+              "basis": "researcher-confirmed"
+            },
+            "model-use": {
+              "value": "unknown",
+              "basis": "not-reported"
+            },
+            "quote": {
+              "value": "unknown",
+              "basis": "not-reported"
+            },
+            "export": {
+              "value": "unknown",
+              "basis": "not-reported"
+            },
+            "share": {
+              "value": "unknown",
+              "basis": "not-reported"
+            }
+          },
+          "sourceSha256": "2222222222222222222222222222222222222222222222222222222222222222"
+        }
+      }
+    ],
+    "contextSha256": "27e0d9e93f191dfa837acb3bf1cbebbdc60bd8ecd4661707ade47445bae08b84"
+  },
+  "command": {
+    "commandId": "01a0e3ac-3edf-77a9-933a-3fa64e4f1d5e",
+    "plan": {
+      "schemaVersion": "1.0",
+      "action": "relate",
+      "workIds": [
+        "01a0e3ac-3a70-7363-862f-3f7916740859",
+        "01a0e3ac-3dee-7bea-9645-b5b506706d8c"
+      ],
+      "contextSha256": "a5d21560556c60ca5278c78b37360ce4ade7ff7a7e8e36b99f21262f6fb0966c",
+      "rationale": "Synthetic human version decision",
+      "definition": null,
+      "version": null,
+      "relation": {
+        "kind": "retracts",
+        "source": {
+          "versionId": "01a0e3ac-3e67-77a3-8113-41be20bbe25e",
+          "revisionId": "01a0e3ac-3e67-7f62-bc29-ec7d6740deba"
+        },
+        "target": {
+          "versionId": "01a0e3ac-3e22-7032-b6f4-3299d4a1d90a",
+          "revisionId": "01a0e3ac-3e22-735a-af31-fd0bc415fe22"
+        },
+        "evidence": [
+          {
+            "assertionRevisionId": "01a0e3ac-3de9-7956-845d-a312823c9bed",
+            "category": "identifier",
+            "selector": "observed-value",
+            "valueSha256": "05d27db621e974b6bcdac15462a3a45d96b546c89832e5926065896275591dbb"
+          }
+        ],
+        "date": {
+          "precision": "year",
+          "value": "2026"
+        },
+        "knowledgeStatus": "adjudicated"
+      },
+      "previousPreferenceRevisionId": null
+    },
+    "expectedPreviewSha256": "c21e3d40c17091c58660d7f7f93381b7fd0ea5fa44b4a8df77dac96d6868929e"
+  },
+  "outcome": {
+    "commandId": "01a0e3ac-3edf-77a9-933a-3fa64e4f1d5e",
+    "decisionId": "01a0e3ac-3eff-70c9-97e4-b447499e517e",
+    "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e",
+    "planSha256": "d691f377409a758c4c54eb0d5906c08f4b8de2d56b20f66f123db521bf7673a0",
+    "versionRevisions": [
+      {
+        "versionId": "01a0e3ac-3e22-7032-b6f4-3299d4a1d90a",
+        "revisionId": "01a0e3ac-3f0d-7e1c-8712-1246275d410a"
+      },
+      {
+        "versionId": "01a0e3ac-3e67-77a3-8113-41be20bbe25e",
+        "revisionId": "01a0e3ac-3f11-7a43-b02a-cc1b8e9762f3"
+      }
+    ],
+    "relationRevisionId": "01a0e3ac-3f07-7ef6-addb-dffe3cf3a7d7",
+    "preferenceRevisionId": null,
+    "workStates": [
+      {
+        "schemaVersion": "1.0",
+        "workId": "01a0e3ac-3a70-7363-862f-3f7916740859",
+        "revisionId": "01a0e3ac-3f19-70b3-b1f2-8f0891bad954",
+        "previousRevisionId": "01a0e3ac-3eac-77e3-9a5a-0a7a7769030c",
+        "disposition": "active",
+        "aliasTarget": null,
+        "assertionRevisionIds": [
+          "01a0e3ac-3a6c-7eca-89d1-d712e74cb466"
+        ],
+        "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e"
+      },
+      {
+        "schemaVersion": "1.0",
+        "workId": "01a0e3ac-3dee-7bea-9645-b5b506706d8c",
+        "revisionId": "01a0e3ac-3f1e-7c6c-b131-f29218cf87f2",
+        "previousRevisionId": "01a0e3ac-3e6d-7946-88ee-cf511826bcb1",
+        "disposition": "active",
+        "aliasTarget": null,
+        "assertionRevisionIds": [
+          "01a0e3ac-3de9-7956-845d-a312823c9bed"
+        ],
+        "decisionRevisionId": "01a0e3ac-3eff-7403-aec5-eb4480106a5e"
+      }
+    ],
+    "dependencyRunIds": [
+      "01a0e3ac-3f24-7f05-812c-692ddbbb52ad",
+      "01a0e3ac-3f28-72a3-8fa0-6c651d6e74d1",
+      "01a0e3ac-3f2b-777c-9b89-f89dbcb974b6",
+      "01a0e3ac-3f2e-78da-a391-8c0dd4a7151d"
+    ]
+  },
+  "fixtureNote": "Illustrative portable history. Source address record keys use distinct synthetic placeholders, not exact parser output. Historical database fixtures and runtime tests retain actual keys."
+}

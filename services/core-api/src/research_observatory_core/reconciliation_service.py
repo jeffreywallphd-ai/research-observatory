@@ -22,6 +22,15 @@ from .reconciliation.contracts import (
     SourceAddress,
 )
 from .reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
+from .reconciliation.versions import (
+    VersionCommand,
+    VersionContext,
+    VersionOutcome,
+    VersionPlan,
+    VersionPreview,
+    VersionWorkPage,
+    WorkVersion,
+)
 from .reconciliation_worker import ReconciliationBatchAdapters, ReconciliationBatchWorker
 from .research_intents import validated_workflow_authority
 from .task_center import TaskCenterService
@@ -224,4 +233,35 @@ class ReconciliationService:
     def review(self, root: str, command: ReviewCommand, *, trace_id: str) -> ReviewOutcome:
         return self._action(
             root, trace_id, lambda repository, actor, resolve: repository.review(command, actor=actor, resolve=resolve)
+        )
+
+    def version_works(self, root: str, *, after: str | None, limit: int, trace_id: str) -> VersionWorkPage:
+        return self._action(
+            root,
+            trace_id,
+            lambda repository, actor, resolve: repository.version_works(after=after, limit=limit, resolve=resolve),
+        )
+
+    def version_context(self, root: str, work_ids: tuple[str, ...], *, trace_id: str) -> VersionContext:
+        return self._action(
+            root, trace_id, lambda repository, actor, resolve: repository.version_context(work_ids, resolve=resolve)
+        )
+
+    def inspect_version(self, root: str, revision_id: str, *, trace_id: str) -> WorkVersion:
+        return self._action(
+            root, trace_id, lambda repository, actor, resolve: repository.inspect_version(revision_id, resolve=resolve)
+        )
+
+    def preview_versions(self, root: str, plan: VersionPlan, *, trace_id: str) -> VersionPreview:
+        return self._action(
+            root,
+            trace_id,
+            lambda repository, actor, resolve: repository.preview_versions(plan, actor=actor, resolve=resolve),
+        )
+
+    def decide_versions(self, root: str, command: VersionCommand, *, trace_id: str) -> VersionOutcome:
+        return self._action(
+            root,
+            trace_id,
+            lambda repository, actor, resolve: repository.decide_versions(command, actor=actor, resolve=resolve),
         )

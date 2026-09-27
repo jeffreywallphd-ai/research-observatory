@@ -1,0 +1,44 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/version-preview.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "affectedCount": {
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "title": "Affectedcount",
+      "type": "integer"
+    },
+    "commandId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "contextSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "planSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "previewSha256": {
+      "$ref": "#/$defs/Digest"
+    }
+  },
+  "required": [
+    "commandId",
+    "planSha256",
+    "contextSha256",
+    "previewSha256",
+    "affectedCount"
+  ],
+  "title": "VersionPreview",
+  "type": "object"
+}

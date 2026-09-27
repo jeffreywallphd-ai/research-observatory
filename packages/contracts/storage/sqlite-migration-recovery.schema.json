@@ -60,11 +60,12 @@
         11,
         12,
         13,
-        14
+        14,
+        15
       ]
     },
     "targetSchemaVersion": {
-      "const": 15
+      "const": 16
     },
     "migrationIds": {
       "oneOf": [
@@ -83,7 +84,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -100,7 +102,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -116,7 +119,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -131,7 +135,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -145,7 +150,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -158,7 +164,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -170,7 +177,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -181,7 +189,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -191,7 +200,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -200,7 +210,8 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
@@ -208,25 +219,34 @@
             "0012_import_summaries",
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
           "const": [
             "0013_import_commits",
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
           "const": [
             "0014_scholarly_reconciliation",
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
           ]
         },
         {
           "const": [
-            "0015_reconciliation_review"
+            "0015_reconciliation_review",
+            "0016_work_versions"
+          ]
+        },
+        {
+          "const": [
+            "0016_work_versions"
           ]
         }
       ]
@@ -246,11 +266,12 @@
         "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b91499525adad40bc5a8f5c0",
         "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa",
         "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064",
-        "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
+        "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2",
+        "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
       ]
     },
     "targetSchemaSha256": {
-      "const": "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
+      "const": "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
     },
     "checkpoint": {
       "type": "object",
@@ -288,7 +309,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v(?:[1-9]|10|11|12|13|14)-to-v15-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v(?:[1-9]|10|11|12|13|14|15)-to-v16-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {
           "type": "string",
@@ -331,7 +352,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -364,7 +386,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -396,7 +419,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -427,7 +451,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -457,7 +482,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -486,7 +512,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -514,7 +541,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -541,7 +569,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -567,7 +596,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -592,7 +622,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -616,7 +647,8 @@
               "0012_import_summaries",
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -639,7 +671,8 @@
             "const": [
               "0013_import_commits",
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -661,7 +694,8 @@
           "migrationIds": {
             "const": [
               "0014_scholarly_reconciliation",
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
@@ -682,11 +716,33 @@
         "properties": {
           "migrationIds": {
             "const": [
-              "0015_reconciliation_review"
+              "0015_reconciliation_review",
+              "0016_work_versions"
             ]
           },
           "sourceSchemaSha256": {
             "const": "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "sourceSchemaVersion": {
+            "const": 15
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "migrationIds": {
+            "const": [
+              "0016_work_versions"
+            ]
+          },
+          "sourceSchemaSha256": {
+            "const": "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
           }
         }
       }

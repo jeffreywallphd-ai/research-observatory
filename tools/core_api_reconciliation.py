@@ -42,6 +42,11 @@ OPERATIONS = (
     ("inspectScholarlyReviewContext", "review/context", "ReconciliationContextRequest", "ReviewContext"),
     ("previewScholarlyReview", "review/preview", "ReconciliationReviewPreviewRequest", "ReviewPreview"),
     ("commitScholarlyReview", "review/commit", "ReconciliationReviewRequest", "ReviewOutcome"),
+    ("listScholarlyVersionWorks", "versions/works", "VersionWorksRequest", "VersionWorkPage"),
+    ("inspectScholarlyVersionContext", "versions/context", "VersionContextRequest", "VersionContext"),
+    ("inspectScholarlyVersion", "versions/inspect", "VersionInspectRequest", "WorkVersion"),
+    ("previewScholarlyVersionDecision", "versions/preview", "VersionPreviewRequest", "VersionPreview"),
+    ("commitScholarlyVersionDecision", "versions/commit", "VersionCommitRequest", "VersionOutcome"),
 )
 
 
@@ -135,13 +140,13 @@ def render_reconciliation(openapi: dict[str, Any]) -> tuple[str, str]:
       const command = reconciliationOwned(value);
       if (!reconciliationShape{request}(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
       const body = JSON.stringify(command);
-      if (new TextEncoder().encode(body).length > {262144 if route.startswith("review/") else 32768}) throw new Error("RO-CORE-REQUEST-INVALID");
+      if (new TextEncoder().encode(body).length > {262144 if route.startswith(("review/", "versions/")) else 32768}) throw new Error("RO-CORE-REQUEST-INVALID");
       const result = await requestJson(transport, {{ method: "POST", path: "{path}", body, ifMatch: null, idempotencyKey: null }}, decode{response});
       if (!await reconciliationReply("{route}", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
     }},''')
     decoders = []
-    for name in sorted({response for _, _, _, response in OPERATIONS} | {"ReviewPlan"}):
+    for name in sorted({response for _, _, _, response in OPERATIONS} | {"ReviewPlan", "VersionPlan"}):
         decoders.append(f"""export function decode{name}(value: unknown): {name} | null {{
   const owned = reconciliationOwned(value);
   return reconciliationShape{name}(owned) ? owned : null;
@@ -182,6 +187,80 @@ function reconciliationSameAddress(left: SourceAddress, right: SourceAddress): b
 function reconciliationSemantics(name: string, value: unknown): boolean {
   // These cases run only after the complete generated structural guard passes.
   switch (name) {
+    case "VersionDate": {
+      const item = value as VersionDate;
+      if (item.precision === "unknown" || item.precision === "not-reported") return item.value === null;
+      const pattern = item.precision === "year" ? /^\d{4}$/ : item.precision === "month" ? /^\d{4}-\d{2}$/ : /^\d{4}-\d{2}-\d{2}$/;
+      if (item.value === null || !pattern.test(item.value)) return false;
+      const full = item.value + (item.precision === "year" ? "-01-01" : item.precision === "month" ? "-01" : "");
+      const parsed = new Date(full + "T00:00:00Z");
+      return Number(full.slice(0, 4)) >= 1 && Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === full;
+    }
+    case "VersionReference": return (value as VersionReference).versionId !== (value as VersionReference).revisionId;
+    case "VersionDefinition": return reconciliationSorted((value as VersionDefinition).assertionRevisionIds);
+    case "UpdateRelationDraft": {
+      const item = value as UpdateRelationDraft;
+      return new Set([item.source.versionId, item.source.revisionId, item.target.versionId, item.target.revisionId]).size === 4
+        && new Set(item.evidence.map((e) => JSON.stringify([e.assertionRevisionId, e.category, e.selector]))).size === item.evidence.length;
+    }
+    case "WorkVersion": {
+      const item = value as WorkVersion, ids = [item.versionId, item.revisionId, item.decisionRevisionId];
+      return new Set(ids).size === 3 && (item.previousRevisionId === null || !ids.includes(item.previousRevisionId));
+    }
+    case "VersionRelation": {
+      const item = value as VersionRelation, own = [item.relationId, item.revisionId, item.decisionRevisionId];
+      const endpoints = [item.assertion.source.versionId, item.assertion.source.revisionId, item.assertion.target.versionId, item.assertion.target.revisionId];
+      return new Set(own).size === 3 && own.every((id) => !endpoints.includes(id));
+    }
+    case "VersionPreference": {
+      const item = value as VersionPreference, ids = [item.decisionId, item.revisionId, item.workId, item.workRevisionId, item.commandDecisionRevisionId, item.selected.versionId, item.selected.revisionId];
+      return new Set(ids).size === ids.length && (item.previousRevisionId === null || !ids.includes(item.previousRevisionId));
+    }
+    case "VersionPlacement": {
+      const item = value as VersionPlacement;
+      return reconciliationSorted(item.workIds) && !item.workIds.includes(item.versionId) && (item.state === "assigned") === (item.workIds.length === 1);
+    }
+    case "PreferenceState": {
+      const item = value as PreferenceState;
+      return item.state === "not-reported" ? item.preferenceRevisionId === null && item.selected === null : item.preferenceRevisionId !== null && item.selected !== null;
+    }
+    case "VersionPlan": {
+      const item = value as VersionPlan;
+      if (!reconciliationSorted(item.workIds)) return false;
+      if (item.action !== "prefer" && item.previousPreferenceRevisionId !== null) return false;
+      return item.action === "register" ? item.definition !== null && item.version === null && item.relation === null
+        : item.action === "revise" ? item.definition !== null && item.version !== null && item.relation === null
+          : item.action === "relate" ? item.definition === null && item.version === null && item.relation !== null
+            : item.workIds.length === 1 && item.definition === null && item.version !== null && item.relation === null;
+    }
+    case "VersionContext": {
+      const item = value as VersionContext;
+      const groups = [item.works.map((w) => w.workId), item.versions.map((v) => v.versionId), item.placements.map((p) => p.versionId),
+        item.relations.map((r) => r.revisionId), item.preferences.map((p) => p.revisionId), item.sources.map((s) => s.assertionRevisionId)];
+      return importDigest(item.contextSha256) && groups.every((ids) => new Set(ids).size === ids.length)
+        && item.works.every((w) => w.disposition === "active")
+        && reconciliationSameSet(groups[1]!, groups[2]!) && reconciliationSameSet(groups[0]!, item.preferenceStates.map((p) => p.workId))
+        && item.versions.every((v) => v.definition.assertionRevisionIds.every((id) => groups[5]!.includes(id)))
+        && item.relations.every((r) => groups[1]!.includes(r.assertion.source.versionId) && groups[1]!.includes(r.assertion.target.versionId)
+          && r.assertion.evidence.every((e) => groups[5]!.includes(e.assertionRevisionId)))
+        && item.sources.every((s) => s.assertion.projectId === item.projectId)
+        && item.preferenceStates.every((s) => s.state === "not-reported" || item.preferences.some((p) => p.revisionId === s.preferenceRevisionId
+          && p.selected.versionId === s.selected?.versionId && p.selected.revisionId === s.selected?.revisionId));
+    }
+    case "VersionOutcome": {
+      const item = value as VersionOutcome, own = [item.commandId, item.decisionId, item.decisionRevisionId];
+      const revisions = [...item.versionRevisions.map((v) => v.revisionId), ...item.workStates.map((w) => w.revisionId),
+        ...[item.relationRevisionId, item.preferenceRevisionId].filter((id) => id !== null)];
+      return new Set(own).size === own.length && new Set(revisions).size === revisions.length && own.every((id) => !revisions.includes(id))
+        && [item.versionRevisions.map((v) => v.versionId), item.workStates.map((w) => w.workId), item.dependencyRunIds].every((ids) => new Set(ids).size === ids.length)
+        && item.workStates.length > 0 && item.workStates.every((w) => w.disposition === "active" && w.decisionRevisionId === item.decisionRevisionId);
+    }
+    case "VersionWorkPage": {
+      const item = value as VersionWorkPage, ids = item.items.map((w) => w.workId);
+      return reconciliationSorted(ids) && item.items.every((w) => w.disposition === "active")
+        && (item.after === null || ids.every((id) => id > item.after!) && (item.nextAfter === null || item.nextAfter > item.after))
+        && (item.nextAfter === null || ids.every((id) => id <= item.nextAfter!));
+    }
     case "ImportPermission": {
       const item = value as ImportPermission;
       return item.value === "unknown" || item.basis === "researcher-confirmed";
@@ -337,6 +416,47 @@ function reconciliationOutcome(plan: ReviewPlan, reply: ReviewOutcome): boolean 
 
 async function reconciliationReply(route: string, command: unknown, result: unknown): Promise<boolean> {
   switch (route) {
+    case "versions/works": {
+      const request = command as VersionWorksRequest, reply = result as VersionWorkPage;
+      return request.after === reply.after && reply.items.length <= request.limit;
+    }
+    case "versions/inspect": return (command as VersionInspectRequest).revisionId === (result as WorkVersion).revisionId;
+    case "versions/context": {
+      const request = command as VersionContextRequest, reply = result as VersionContext;
+      const {contextSha256, ...context} = reply;
+      if (!reconciliationSameSet(request.workIds, reply.works.map((w) => w.workId)) || contextSha256 !== await reconciliationFingerprint(context)) return false;
+      for (const work of reply.works) {
+        const placed = new Set(reply.placements.filter((p) => p.workIds.includes(work.workId)).map((p) => p.versionId));
+        const own = reply.preferences.filter((p) => p.workId === work.workId);
+        const candidates = own.length ? own : reply.preferences.filter((p) => placed.has(p.selected.versionId));
+        const preference = candidates.at(-1), standing = reply.preferenceStates.find((p) => p.workId === work.workId)!;
+        if (!preference) { if (standing.state !== "not-reported") return false; continue; }
+        const status = await reconciliationFingerprint([reply.versions.filter((v) => placed.has(v.versionId)),
+          reply.placements.filter((p) => placed.has(p.versionId)), reply.relations.filter((r) => placed.has(r.assertion.source.versionId) || placed.has(r.assertion.target.versionId))]);
+        const valid = own.length > 0 && reply.placements.some((p) => p.versionId === preference.selected.versionId && p.workIds.length === 1 && p.workIds[0] === work.workId)
+          && work.previousRevisionId === preference.workRevisionId && work.decisionRevisionId === preference.commandDecisionRevisionId
+          && reply.versions.some((v) => v.versionId === preference.selected.versionId && v.revisionId === preference.selected.revisionId)
+          && preference.membershipSha256 === await reconciliationFingerprint(work.assertionRevisionIds) && preference.statusSha256 === status;
+        if (standing.state !== (valid ? "current" : "requires-review") || standing.preferenceRevisionId !== preference.revisionId) return false;
+      }
+      return true;
+    }
+    case "versions/preview": {
+      const request = command as VersionPreviewRequest, reply = result as VersionPreview;
+      return request.plan.contextSha256 === reply.contextSha256 && reply.planSha256 === await reconciliationFingerprint(request.plan);
+    }
+    case "versions/commit": {
+      const request = (command as VersionCommitRequest).command, reply = result as VersionOutcome, plan = request.plan;
+      if (request.commandId !== reply.commandId || reply.planSha256 !== await reconciliationFingerprint(plan)
+        || reply.workStates.some((w) => !plan.workIds.includes(w.workId))
+        || (reply.relationRevisionId !== null) !== (plan.action === "relate") || (reply.preferenceRevisionId !== null) !== (plan.action === "prefer")) return false;
+      const changed = plan.action === "relate" ? [plan.relation!.source, plan.relation!.target] : plan.action === "revise" ? [plan.version!] : [];
+      if (plan.action === "register" ? reply.versionRevisions.length !== 1 || reply.workStates.length !== 1
+        : !reconciliationSameSet(changed.map((v) => v.versionId), reply.versionRevisions.map((v) => v.versionId))
+          || changed.some((v) => reply.versionRevisions.some((r) => r.revisionId === v.revisionId))) return false;
+      return reply.dependencyRunIds.length === reply.workStates.length + changed.length + (plan.previousPreferenceRevisionId !== null ? 1 : 0)
+        && (plan.action !== "prefer" || reply.workStates.length === 1);
+    }
     case "batches/prepare": return true;
     case "batches/schedule": return (result as ReconciliationBatchStatus).requestId === (command as ReconciliationBatchRequest).requestId;
     case "batches/status": case "batches/cancel": {

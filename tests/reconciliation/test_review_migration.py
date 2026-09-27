@@ -30,7 +30,13 @@ class ReviewMigrationTests(unittest.TestCase):
 
     def test_populated_history_membership_order_unassigned_and_backup(self):
         plan = runner.plan_database_migration(self.database, expected_project_id=self.identity)
-        self.assertEqual(("0015_reconciliation_review",), plan.migration_ids)
+        self.assertEqual(
+            (
+                "0015_reconciliation_review",
+                "0016_work_versions",
+            ),
+            plan.migration_ids,
+        )
         result = runner.migrate_database(self.database, expected_project_id=self.identity)
         self.assertEqual("migrated", result.status)
         assert result.backup_relative_path is not None
@@ -39,7 +45,7 @@ class ReviewMigrationTests(unittest.TestCase):
             self.assertEqual(14, backup.execute("PRAGMA user_version").fetchone()[0])
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=self.identity) as db:
-                self.assertEqual(15, db.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(16, db.execute("PRAGMA user_version").fetchone()[0])
                 for table, rows in self.before["tables"].items():
                     if table not in {"schema_metadata", "schema_migrations"}:
                         self.assertEqual(
@@ -236,7 +242,7 @@ class ProtectedReviewMigrationTests(unittest.TestCase):
                 self.assertEqual(rows, [list(row) for row in saved.execute('SELECT * FROM "' + table + '"')], table)
         for _ in range(2):
             with storage.open_canonical_database(fixture.database, expected_project_id=identity) as current:
-                self.assertEqual(15, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(16, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual([], current.execute("PRAGMA foreign_key_check").fetchall())
                 self.assertEqual("ok", current.execute("PRAGMA quick_check").fetchone()[0])
                 self.assertEqual(3, current.execute("SELECT COUNT(*) FROM reconciliation_work_states").fetchone()[0])
