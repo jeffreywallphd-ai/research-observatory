@@ -1,0 +1,243 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-04.S02",
+  "approvalCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "candidateCommit": "c01247db9badded2d098ad86a17c9e454f00d5fa",
+  "qualificationStatus": "PASS",
+  "independentSliceDisposition": "separate-required-record",
+  "taskCandidates": {
+    "CAP-04.S02.T01": "e5c57e9784d7f06957d9e5e850a916002110d87f",
+    "CAP-04.S02.T02": "16b1524278b9e9ad9e52c322aa4b0fba0bb6fef0",
+    "CAP-04.S02.T03": "1e68cab433f194bf5d834bedc974bdac5a4f7cb6"
+  },
+  "correctionCandidate": "b17bc9d868e4e9ee672dbac7b765514403949b9d",
+  "performance": {
+    "fresh": true,
+    "performanceQualifying": true,
+    "candidate": "c01247db9badded2d098ad86a17c9e454f00d5fa",
+    "report": "artifacts/tmp/CAP-04.S02.performance-qualification-01.json",
+    "reportSha256": "17be1883e4813bef9e10546dbdccbd4c3b507fd953426150212a326e84c52721",
+    "toolSha256": "08139bc4f503b42c5fbae9ed2f550a24a7da3738ad8d172a4a353c014f955346",
+    "baselineSha256": "d21fc40e3fedb71ecf0e0b274055d047b2fec4bb4278a1642894534d3c323822",
+    "sourceInputCount": 381,
+    "producerElapsedSeconds": 203.16890079993755,
+    "limits": {
+      "openalex:cold": 4.07051268001087,
+      "openalex:cache": 3.678903119964525,
+      "crossref:cold": 4.014907920034602,
+      "crossref:cache": 3.7441223999485373,
+      "unpaywall:cold": 3.858154800022021,
+      "unpaywall:cache": 3.2815895999316127,
+      "semantic-scholar:cold": 3.8862421200145034,
+      "semantic-scholar:cache": 3.3584441999439147,
+      "rateWait": 1.3701023999601603,
+      "peakWorkingSetBytes": 226585804.79999998
+    },
+    "distributions": {
+      "openalex:cold": {
+        "min": 2.9978654000442475,
+        "median": 3.0120797998970374,
+        "max": 3.060325799975544
+      },
+      "openalex:cache": {
+        "min": 2.6928916999604553,
+        "median": 2.7633183000143617,
+        "max": 2.778798400075175
+      },
+      "crossref:cold": {
+        "min": 2.9163823999697343,
+        "median": 2.9225917999865487,
+        "max": 2.9628820000216365
+      },
+      "crossref:cache": {
+        "min": 2.7008128999732435,
+        "median": 2.707357299979776,
+        "max": 2.709722700063139
+      },
+      "unpaywall:cold": {
+        "min": 2.8019916999619454,
+        "median": 2.836910800077021,
+        "max": 2.933384499978274
+      },
+      "unpaywall:cache": {
+        "min": 2.513258900027722,
+        "median": 2.555456000030972,
+        "max": 2.6097941000480205
+      },
+      "semantic-scholar:cold": {
+        "min": 2.9398964000865817,
+        "median": 2.993724499945529,
+        "max": 3.077802999992855
+      },
+      "semantic-scholar:cache": {
+        "min": 2.63117870001588,
+        "median": 2.6455069000367075,
+        "max": 2.6650509999599308
+      },
+      "rateWait": {
+        "min": 1.1334249000065029,
+        "median": 1.1336959999753162,
+        "max": 1.1478734998963773
+      },
+      "peakWorkingSetBytes": {
+        "min": 188366848,
+        "median": 188416000,
+        "max": 189566976
+      }
+    },
+    "samples": [
+      {
+        "repetition": 1,
+        "metrics": {
+          "openalex:cold": 3.0120797998970374,
+          "openalex:cache": 2.6928916999604553,
+          "crossref:cold": 2.9163823999697343,
+          "crossref:cache": 2.7008128999732435,
+          "unpaywall:cold": 2.8019916999619454,
+          "unpaywall:cache": 2.6097941000480205,
+          "semantic-scholar:cold": 3.077802999992855,
+          "semantic-scholar:cache": 2.6650509999599308,
+          "rateWait": 1.1478734998963773,
+          "peakWorkingSetBytes": 189566976
+        },
+        "report": "artifacts/tmp/source-performance-sjp58yev/sample-1/result.json",
+        "reportSha256": "a35882ba55b4e02d4c444ca9c78d91ebb0a24bb8dac2b3faccfcf126d37b1ff8",
+        "log": "artifacts/tmp/source-performance-sjp58yev/sample-1/raw.log",
+        "logSha256": "8d48d2caad0dd72af2d4aacc7b2958c2cfaa9a2dd8e719d69efd9c7c34cbf253"
+      },
+      {
+        "repetition": 2,
+        "metrics": {
+          "openalex:cold": 3.060325799975544,
+          "openalex:cache": 2.778798400075175,
+          "crossref:cold": 2.9225917999865487,
+          "crossref:cache": 2.707357299979776,
+          "unpaywall:cold": 2.933384499978274,
+          "unpaywall:cache": 2.555456000030972,
+          "semantic-scholar:cold": 2.993724499945529,
+          "semantic-scholar:cache": 2.6455069000367075,
+          "rateWait": 1.1334249000065029,
+          "peakWorkingSetBytes": 188416000
+        },
+        "report": "artifacts/tmp/source-performance-sjp58yev/sample-2/result.json",
+        "reportSha256": "08ddd96200132edc92490e6759b67ffc341432b4edef03d4e9db76427257ceaa",
+        "log": "artifacts/tmp/source-performance-sjp58yev/sample-2/raw.log",
+        "logSha256": "567f24aaf1657f4faec5d07c10f0e3c1309a0cdcc76b975707bd2dc4c03e955e"
+      },
+      {
+        "repetition": 3,
+        "metrics": {
+          "openalex:cold": 2.9978654000442475,
+          "openalex:cache": 2.7633183000143617,
+          "crossref:cold": 2.9628820000216365,
+          "crossref:cache": 2.709722700063139,
+          "unpaywall:cold": 2.836910800077021,
+          "unpaywall:cache": 2.513258900027722,
+          "semantic-scholar:cold": 2.9398964000865817,
+          "semantic-scholar:cache": 2.63117870001588,
+          "rateWait": 1.1336959999753162,
+          "peakWorkingSetBytes": 188366848
+        },
+        "report": "artifacts/tmp/source-performance-sjp58yev/sample-3/result.json",
+        "reportSha256": "981b88a3f1695f880624881b99b6fe4363320477254e5ad819eec262422d6faf",
+        "log": "artifacts/tmp/source-performance-sjp58yev/sample-3/raw.log",
+        "logSha256": "587c941217e55c5e66a403a6c1b3fcdb286a8fa87420b632c5e628c680e37699"
+      }
+    ]
+  },
+  "artifactBindings": [
+    {
+      "path": "artifacts/evidence/CAP-04.S02.T01.json",
+      "sha256": "b73a60a4e19a57d3320fcaa0a19c191c53d4f5a5ed90266c89d898ff1159aa54"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.T01.review-R01.json",
+      "sha256": "33a0478a5d9956044a4d6d7f1537dc06665bf878234262ad7023b588771685c1"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.T02.json",
+      "sha256": "dbc27651ea4a1435afb7103b734fb53515c304ef3068c179d6098f6d57302834"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.T02.review-R01.json",
+      "sha256": "a2f241051fe580c154bb7152ec1695289eab36a8d1d87a0662d07c9f4cedbad8"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.T03.json",
+      "sha256": "76870f5358458073b7fe720673515a28fc7fda73cf9ad0ff4c1897b6e004932c"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.T03.review-R01.json",
+      "sha256": "fee82735c9c22d2cc0d2bb59d03b6c277cecdc208fb2141bdcca775b2ed2358e"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.pre-qualification-review-01.md",
+      "sha256": "f094185cd0ac0cd7264c4e3a08e81e62480cab27e3e8f3e0a18d3d4115f9a4df"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.qualification-controls-review-01.md",
+      "sha256": "c46c50ce9edc5b0c59e1a0597002cbcf8944be4796aca752563c24983d2bb636"
+    },
+    {
+      "path": "artifacts/evidence/W2.C02.T01.json",
+      "sha256": "fda31dfba93dbd4ab537a9409fc9762ec2bae037f7eee5ff3d5ce9e27a9205d8"
+    },
+    {
+      "path": "artifacts/evidence/W2.C02.T01.review-R01.json",
+      "sha256": "2ac5f324cf1df3c485ec2a77d7a2dc84f6f4b248936c0940739aa310d2b9d3d3"
+    },
+    {
+      "path": "artifacts/evidence/W2.C02.T01.visual-review-01.json",
+      "sha256": "a09d0f7170516f0f4b8679d60b465f57dd069c7e2c8edc8da0024633e686d9cb"
+    },
+    {
+      "path": "artifacts/evidence/W2.C02.T01.ui-classification-R01.json",
+      "sha256": "dcabbee396a29a03ff62e1e72c205252a930c89fcfb021e1476811a9149b53f5"
+    },
+    {
+      "path": "tests/fixtures/scholarly-metadata/source-performance-baseline.json",
+      "sha256": "d21fc40e3fedb71ecf0e0b274055d047b2fec4bb4278a1642894534d3c323822"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.performance-baseline-01.md",
+      "sha256": "0a26338d9644d301e565ebf9e3e19dbcb39ac7dbd396a49e0341ec82da138044"
+    },
+    {
+      "path": "artifacts/evidence/CAP-04.S02.performance-baseline-review-01.md",
+      "sha256": "4bcfb58849e8721f9abd412d2ff50da5687df327a98c59e0ef95f5eb61585327"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.baseline-checks-01.json",
+      "sha256": "92b847f282be0433902d5a35f88649d2fc3c64617e36cae55cb1dd7ef12e100f"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.performance-qualification-01.json",
+      "sha256": "17be1883e4813bef9e10546dbdccbd4c3b507fd953426150212a326e84c52721"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.performance-qualification-01.execution.json",
+      "sha256": "f857184c4e9e4a0b140def28d8b00bf8508703f6510120cfbe62bab5a9234b08"
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S02.performance-qualification-01.log",
+      "sha256": "86d3e5f9778e60019b4343182464f14f228a13236ba1928ec8a5bfd3b25d3cb5"
+    }
+  ],
+  "preservedFindings": [
+    {
+      "id": "F-SLICE-01",
+      "closure": "artifacts/evidence/CAP-04.S02.qualification-controls-review-01.md"
+    },
+    {
+      "id": "F-SLICE-02",
+      "closure": "artifacts/evidence/W2.C02.T01.review-R01.json"
+    }
+  ],
+  "evidenceUse": "Compose authenticated historical task/native/visual/functional proof at its original candidate with separately fresh benchmark qualification; no cached execution or fresh whole-profile claim.",
+  "deferredWaveObligations": [
+    "Previously disclosed broad quality failures and Windows-token symlink skips",
+    "Fresh full repository/affected profile, required Windows packaging/platform and cross-capability qualification",
+    "Independent Wave review and separate human G2 release decision"
+  ]
+}
