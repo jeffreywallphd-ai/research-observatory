@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 753301b0ca4ec7554217691ea0d862f4d72a293242c72e101737311fc2081d24
+source_sha256: f79b273dd5337d5c30c326008424d8615ea052b22c077e90292795a3f85aa434
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2722,6 +2722,54 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:w2-s01-final-review at `2026-09-23T23:05:28+00:00`
 
 **Latest notes:** Independent focused disposition approves the exact frozen R01 correction candidate. Read-only packet, manifest and evidence-reference validation returned no errors; independently recomputed packet, evidence, criteria and selection hashes and authenticated the exact 18-path base-to-candidate inventory. The current original CAP-04.S01.T03 snapshot equals the immutable correction origin hash, inherited criteria are identical, and no original approval or history is rewritten. The product correction retains its prior independent code disposition and authenticated 66-case focused execution at e663f32743b35556936327e95ef61288b96bb55d. Complete fresh protected 100k performance qualification at 7ef91f94a4213972960e9321142c0e7138e90984 passed the unchanged baseline and limits: six parser measurements, two review and two commit samples, complete traversal/replay/reopen, and no retry. The reviewer independently authenticated the aggregate and console hashes and inspected the aggregate's retained metrics and embedded raw-sample structure; direct hashing of protected child report paths was access-denied, so their bindings remain those retained by the authenticated producer aggregate rather than a claimed separate reviewer execution or child-file authentication. Later changes are only the independently accepted four-path interruption-note control repair and its exact evidence/review deliveries. Authenticated 24 linked-gate and 14 corrective-workflow passing logs at control candidate 53b20e4e59396778453dbd985f50d172d0b89d8c; the maintenance review-only delivery is the current candidate. All 173 recorded benchmark source/tool/contract input hashes were independently matched, and the final candidate adds no product or benchmark-input changes. No new runtime suites were executed. The first benchmark failure, owner-interrupted second invocation, pre-edit regression failure and control setup failure remain adverse observations. No reproducible material correction-level blocker remains. This approves the linked correction only; final CAP-04.S01 matrix/disposition, campaign transitions, local integration and Wave/release qualification remain separate.
+
+**Currently open findings:** -
+
+### W2.C02.T01 — Implement Unpaywall and Semantic Scholar adapters
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+
+**Reproduction:** Independent slice preflight F-SLICE-02 at 035f11a3546658ed9c694acbae1c1a3ac4907724 (unchanged product 1e68cab433f194bf5d834bedc974bdac5a4f7cb6) found that broker requests produce no retained measured latency or actual HTTP attempt/retry count, and Source Manager confirmation/inspection exposes neither these facts nor explicit unavailable completion estimates and selected timing limits. CAP-04.S02 sections 11-12 and approved reference 1.7 connection health require this visibility. Existing benchmark timings are qualification measurements and do not repair ordinary runtime observability. The original task and its R01 approval remain immutable; F-SLICE-01 timeout/reset evidence was separately closed by the control increment.
+
+**Inherited criteria:**
+
+- OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- apps/desktop/src-tauri/src/connector_configuration.rs
+- apps/desktop/src/app/SourceManagerWorkspace.test.tsx
+- apps/desktop/src/app/SourceManagerWorkspace.tsx
+- apps/desktop/src/app/SourceRequestHistory.tsx
+- apps/desktop/src/app/SourceTestPane.tsx
+- packages/contracts/connectors/connector-page.schema.json
+- packages/contracts/core-api/connector-diagnostics.test.ts
+- packages/contracts/core-api/connector-diagnostics.ts
+- packages/contracts/core-api/generated.ts
+- packages/contracts/core-api/openapi.json
+- packages/contracts/package.json
+- services/core-api/src/research_observatory_core/connector_api.py
+- services/core-api/src/research_observatory_core/connector_worker.py
+- services/core-api/src/research_observatory_core/connectors/broker.py
+- services/core-api/src/research_observatory_core/connectors/contracts.py
+- services/core-api/src/research_observatory_core/connectors/inspection.py
+- tests/connectors/test_connector_broker.py
+- tests/connectors/test_connector_inspection.py
+- tests/connectors/test_connector_persistence.py
+- tests/connectors/test_source_slice_runtime.py
+- tests/contracts/test_connector_contracts.py
+- tests/desktop/test_source_interactions.py
+#### Review history — W2.C02.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 
