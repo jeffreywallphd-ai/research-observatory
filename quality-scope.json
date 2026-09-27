@@ -401,6 +401,11 @@
     "tests/reconciliation/test_batch_worker.py",
     "services/core-api/src/research_observatory_core/reconciliation/candidate_views.py",
     "tests/reconciliation/test_candidate_inspection.py",
-    "tests/reconciliation/test_batch_api.py"
+    "tests/reconciliation/test_batch_api.py",
+    "tools/core_api_reconciliation.py",
+    "tests/reconciliation/test_client_contract.py",
+    "tests/reconciliation/test_renderer.py",
+    "tests/reconciliation/native_fixture.py",
+    "tests/reconciliation/test_native_renderer.py"
   ]
 }
