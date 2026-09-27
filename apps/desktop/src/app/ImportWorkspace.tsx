@@ -4,6 +4,7 @@ import { Button, Notification, Panel, StatusBadge, Typography } from "@research-
 import { packagedProjectTransport } from "./ProjectsWorkspace";
 import { chooseImportSource, type ImportIntakeOptions } from "./importIntake";
 import { ImportReviewPane, importFailure, importStatusLabel } from "./ImportReviewPane";
+import { ReconciliationPane } from "./ReconciliationPane";
 
 export interface ImportWorkspaceProps {
   readonly project: ProjectProjection | null;
@@ -35,6 +36,7 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
   const pendingList = useRef<{ generation: number; updates: Map<string, ImportPreviewItem> } | null>(null);
   const intake = useRef<AbortController | null>(null);
   const chooseButton = useRef<HTMLButtonElement>(null);
+  const reconciliationHeading = useRef<HTMLHeadingElement>(null);
 
   async function load(cursor: string | null): Promise<void> {
     const generation = ++libraryGeneration.current;
@@ -93,7 +95,8 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
 
   return <div className="ro-page-region" data-import-workspace>
     <header className="page-header"><Typography as="h1" variant="page-title">Ingestion &amp; Reconciliation</Typography>
-      <Typography className="page-subtitle">Import references, inspect original values, and review mappings and exclusions before committing anything to the corpus.</Typography></header>
+      <Typography className="page-subtitle">Import references, inspect original values, and review mappings, source rights and reversible Work identity decisions.</Typography>
+      <Button onClick={() => { reconciliationHeading.current?.focus(); reconciliationHeading.current?.scrollIntoView({ block: "start" }); }}>Review canonical works</Button></header>
     <Notification tone="info" title="Preview first — researcher decisions stay explicit">Files remain local. Import previews do not create canonical source records or resolve works and versions.</Notification>
     <Panel title="Import records"><div className="ro-form ro-stack">
       <div className="ro-grid import-options">
@@ -121,5 +124,6 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
       </Panel>
       {selected ? <ImportReviewPane key={selected.previewId} root={project.root} projectId={project.projectId} initial={selected} client={client} announce={announce} onStatus={updateStatus} /> : <Panel title="Select a batch to review"><p>Compare raw fields with normalized candidates, correct mappings, and exclude unwanted records. Saved previews are retained in this project.</p></Panel>}
     </div>
+    <ReconciliationPane root={project.root} projectId={project.projectId} client={client} announce={announce} headingRef={reconciliationHeading} />
   </div>;
 }

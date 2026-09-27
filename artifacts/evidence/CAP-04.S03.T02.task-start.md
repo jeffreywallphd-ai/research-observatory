@@ -116,6 +116,37 @@ and disclose newly accepted inputs outside it. Add an unrelated accepted import
 after publication and verify that historical scores remain unchanged while the
 inventory comparison changes. These findings do not change the approved scope.
 
+The client/native advisory by `agent:/root/w2_t03_review` reproduced acceptance
+of an unrelated returned Work for a two-partition split when only command and
+plan digests matched. Require exact returned membership, survivor/predecessor
+identity, new-identity separation, alias destinations and dependency-run count.
+It also reproduced rejection of a valid 20,000-affected/20,000-unknown impact
+preview at the client's/native transport's smaller response bound. Add both
+regressions first; align inspection/context/preview response allowances with
+Core's bounded 4 MiB inspection contract while retaining other route limits.
+
+The UI advisory by `agent:/root/w2_c02_review` found that Back and a failed
+parent refresh could discard a reply-lost decision's exact retry command;
+changing a displayed contributor left the original pair's score ambiguously
+associated with the new pair; and identical title/provider labels prevented
+identifying split members. Add browser regressions for both navigation paths,
+score/source association and distinct immutable source labels with explicit
+preview partitions. Preserve the original scoring evidence and same-command
+retry. These restore the approved decision and recovery contract.
+
+The first real browser/Core review-context request returned 422: FastAPI parses
+JSON arrays as Python lists, while strict tuple containers rejected the valid
+wire representation before the route ran. Permit array-to-immutable-tuple
+conversion only on the affected bounded containers; retain strict scalar types,
+unknown-field denial and full partition validation. Keep the failed browser
+run and add malformed-container/scalar/authority denial checks.
+
+The actual browser/current-rights regression additionally requires the parent
+candidate evidence to clear when a child comparison receives a denial. Clearing
+only comparison fields leaves a score and review action from revoked evidence.
+Change the effective record rights (not an overridden batch default), establish
+Core's 403, then verify both regions clear without publishing a decision.
+
 Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows
 symlink-token skips remain explicit Wave obligations. No mandatory new approval

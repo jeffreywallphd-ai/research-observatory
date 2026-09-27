@@ -31,6 +31,10 @@ class ReconciliationSourceResolver(Protocol):
 
 
 class ReconciliationRepository(Protocol):
+    def advance_review_impacts(self) -> bool:
+        """Advance one persisted review-impact checkpoint under the project fence."""
+        ...
+
     def batch_request(self, request_id: str) -> BatchInput | None: ...
 
     def save_batch_request(self, inputs: BatchInput, *, actor: ReconciliationActor) -> BatchInput: ...

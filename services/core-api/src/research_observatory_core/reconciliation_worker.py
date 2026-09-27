@@ -586,6 +586,14 @@ class ReconciliationBatchWorker:
                     binding.drained.clear()
                 try:
                     self._run(binding)
+                    try:
+                        self._guard(binding, binding.adapters.repository.advance_review_impacts)
+                    except ReconciliationProblem as error:
+                        if error.code != "reconciliation-runtime-stopped":
+                            raise
+                        # Close may have stopped the completed batch before
+                        # the next checkpoint acquires the lifecycle fence.
+                        # No new checkpoint starts; the drain still succeeds.
                 finally:
                     binding.drained.set()
 

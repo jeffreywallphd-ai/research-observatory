@@ -10,7 +10,7 @@ from ..ingestion.import_drafts import Digest, DraftValue, Identity
 from .candidates import ALGORITHM, DEFAULT_CONFIG, FEATURE_VERSION
 from .contracts import SourceAssertion
 
-type Members = Annotated[tuple[Identity, ...], Field(max_length=256)]
+type Members = Annotated[tuple[Identity, ...], Field(strict=False, max_length=256)]
 type GroupName = Annotated[str, Field(pattern=r"^[a-z][a-z0-9-]{0,31}$")]
 
 
@@ -62,7 +62,7 @@ class WorkState(DraftValue):
 class SourcePartition(DraftValue):
     group: GroupName
     existing_work_id: Identity | None
-    assertion_revision_ids: Annotated[tuple[Identity, ...], Field(min_length=1, max_length=256)]
+    assertion_revision_ids: Annotated[tuple[Identity, ...], Field(strict=False, min_length=1, max_length=256)]
 
     @model_validator(mode="after")
     def unique_members(self) -> Self:
@@ -80,10 +80,10 @@ class AliasPlan(DraftValue):
 class ReviewPlan(DraftValue):
     schema_version: Literal["1.0"] = "1.0"
     action: Literal["merge", "split", "assign"]
-    works: Annotated[tuple[WorkState, ...], Field(max_length=32)]
+    works: Annotated[tuple[WorkState, ...], Field(strict=False, max_length=32)]
     unassigned_assertion_revision_ids: Members
-    partitions: Annotated[tuple[SourcePartition, ...], Field(min_length=1, max_length=32)]
-    aliases: Annotated[tuple[AliasPlan, ...], Field(max_length=256)]
+    partitions: Annotated[tuple[SourcePartition, ...], Field(strict=False, min_length=1, max_length=32)]
+    aliases: Annotated[tuple[AliasPlan, ...], Field(strict=False, max_length=256)]
     conflict_disposition: Literal["retain-all"]
     evidence_sha256: Digest
     rationale: Annotated[str, Field(min_length=1, max_length=2048)] = Field(repr=False)

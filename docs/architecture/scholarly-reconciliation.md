@@ -83,8 +83,26 @@ The batch enumerator exhausts the same authenticated queue snapshot and every
 owner output stream. It checks page continuity, output/job identity, declared
 selected totals, completion, and cumulative scanned-row/job/unique-source limits.
 Empty excluded pages are not exhaustion. Later accepted arrivals remain outside
-the frozen boundary; a new snapshot can include them. This enumerator still needs
-to be wired into the durable worker before publication. The worker's current
-authority/stop wiring, freshness projection and desktop review journey remain
-CAP-04.S03.T02 integration work. These development checks do not establish task
-or Wave completion.
+the frozen boundary; a new snapshot can include them. The composed durable worker
+binds that snapshot to current Intent, policy, actor and native session authority.
+Status reads authenticate accepted output in a read-only WAL snapshot. Cancellation
+can interrupt publication before atomic commit; close signals all workers before
+draining them and retains the open project if a drain cannot finish safely.
+
+The existing worker also advances one bounded dependency checkpoint from a
+committed review per pass. Only decision-bound runs with authenticated historical
+Work endpoints are eligible. Existing impact snapshot validation, checkpoint CAS
+and append-only audit handle failure and restart. This materializes already-saved
+invalidation intent; it neither recalculates outputs nor grants new source rights.
+
+The ingestion workspace exposes candidate generation and comparison, complete
+source partitions, explicit alias destinations, affected-object preview and
+reversal as a new human decision. Historical scores are shown only for the exact
+scored pair. Current inventory, membership and dependency warnings remain separate
+from those scores. An uncertain commit retains its exact command and preview for
+retry; protected project/lock transitions clear renderer state. The generated
+client binds returned membership, identities and aliases to the submitted plan.
+Native admission and client decoding enforce the same bounded wire contract;
+inspection/context/preview permit 4 MiB responses, while other routes retain
+their smaller transport limit. Browser/adapter development proofs do not replace
+fresh protected native qualification or independent task/Wave disposition.

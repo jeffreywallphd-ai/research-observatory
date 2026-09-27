@@ -12,6 +12,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from core_api_reconciliation import render_reconciliation
+
 GENERATOR_VERSION = "1.0.0"
 HTTP_METHODS = ("get", "post", "put", "patch", "delete")
 
@@ -989,8 +991,8 @@ function decodeDeletionDisclosure(value: unknown): DeletionDisclosure | null {
   return candidate as unknown as DeletionDisclosure;
 }
 
-function registryOwnedValue(value: unknown): unknown {
-  let remaining = 80000;
+function registryOwnedValue(value: unknown, maximumArray = 1000, maximumNodes = 80000): unknown {
+  let remaining = maximumNodes;
   function own(item: unknown, depth: number): unknown {
     if (--remaining < 0 || depth > 12) throw new Error("registry-value-bound");
     if (item === null || typeof item === "string" || typeof item === "boolean") return item;
@@ -998,7 +1000,7 @@ function registryOwnedValue(value: unknown): unknown {
     if (typeof item !== "object" || item === null) throw new Error("registry-value-type");
     const prototype = Object.getPrototypeOf(item);
     if (Array.isArray(item)) {
-      if (prototype !== Array.prototype || item.length > 1000) throw new Error("registry-array-bound");
+      if (prototype !== Array.prototype || item.length > maximumArray) throw new Error("registry-array-bound");
       const descriptors = Object.getOwnPropertyDescriptors(item);
       if (Reflect.ownKeys(item).length !== item.length + 1) throw new Error("registry-array-shape");
       return Object.freeze(Array.from({ length: item.length }, (_, index) => {
@@ -1295,8 +1297,8 @@ export function evaluateCoreApiCompatibility(version: VersionResponse): Compatib
     };
 }
 
-function parseJson(body: string): unknown {
-  if (body.length > 1_048_576) throw new Error("RO-CORE-RESPONSE-INVALID");
+function parseJson(body: string, maximumBytes = 1_048_576): unknown {
+  if (body.length > maximumBytes || new TextEncoder().encode(body).length > maximumBytes) throw new Error("RO-CORE-RESPONSE-INVALID");
   try { return JSON.parse(body) as unknown; } catch { throw new Error("RO-CORE-RESPONSE-INVALID"); }
 }
 
@@ -1325,7 +1327,9 @@ async function requestJsonResponse<T>(
     throw new CoreApiClientError(problem);
   }
   if (response.status !== 200 || response.contentType !== "application/json") throw new Error("RO-CORE-RESPONSE-INVALID");
-  const value = parseJson(response.body);
+  const maximumBytes = ["/projects/reconciliation/inspect", "/projects/reconciliation/review/context",
+    "/projects/reconciliation/review/preview"].includes(request.path) ? 4_194_304 : 1_048_576;
+  const value = parseJson(response.body, maximumBytes);
   const decoded = decode(value);
   if (!decoded) throw new Error("RO-CORE-RESPONSE-INVALID");
   return { value: decoded, response };
@@ -2597,7 +2601,12 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
         'export const CORE_API_CLIENT_VERSION = "1.0.0" as const;\n'
         f"export type CoreApiOperationId = {operation_union};\n\n"
     )
-    return (header + _interfaces(openapi) + "\n" + CLIENT_RUNTIME.strip() + "\n").encode()
+    reconciliation, methods = render_reconciliation(openapi)
+    runtime = CLIENT_RUNTIME.replace(
+        "export function createCoreApiClient(transport: CoreApiTransport) {\n  return Object.freeze({",
+        "export function createCoreApiClient(transport: CoreApiTransport) {\n  return Object.freeze({\n" + methods,
+    )
+    return (header + _interfaces(openapi) + "\n" + runtime.strip() + "\n" + reconciliation + "\n").encode()
 
 
 def generated_artifacts(repo: Path) -> dict[Path, bytes]:

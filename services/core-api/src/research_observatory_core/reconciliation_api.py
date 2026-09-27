@@ -44,8 +44,8 @@ class ReconciliationConnectorAddressRequest(DraftValue):
 
 class ReconciliationContextRequest(DraftValue):
     root: Annotated[str, Field(min_length=1, max_length=4096)]
-    work_ids: Annotated[tuple[Identity, ...], Field(max_length=32)]
-    unassigned_assertion_revision_ids: Annotated[tuple[Identity, ...], Field(max_length=256)]
+    work_ids: Annotated[tuple[Identity, ...], Field(strict=False, max_length=32)]
+    unassigned_assertion_revision_ids: Annotated[tuple[Identity, ...], Field(strict=False, max_length=256)]
 
 
 class ReconciliationReviewPreviewRequest(DraftValue):

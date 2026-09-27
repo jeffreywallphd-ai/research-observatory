@@ -15,13 +15,23 @@ from research_observatory_core.config import CoreSettings
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights
 from research_observatory_core.ports.import_previews import PreviewDraftChange
-from research_observatory_core.ports.workflow_executor import WorkflowQueueConflict, WorkflowQueueProblem
+from research_observatory_core.ports.repositories import RepositoryConflict, RepositoryProblem
+from research_observatory_core.ports.workflow_executor import (
+    WorkflowQueueConflict,
+    WorkflowQueueProblem,
+    WorkflowTaskCenterRunRecord,
+)
 from research_observatory_core.reconciliation.batch_inventory import collect_batch_sources
 from research_observatory_core.reconciliation.contracts import ReconciliationProblem
+from research_observatory_core.reconciliation.decisions import ReviewCommand, ReviewPlan, SourcePartition
 from research_observatory_core.reconciliation_repository import SqliteReconciliationRepository
 from research_observatory_core.reconciliation_service import ReconciliationService
 from research_observatory_core.reconciliation_worker import ReconciliationBatchAdapters
-from research_observatory_core.repositories import sqlite_intent_revision_repository
+from research_observatory_core.repositories import (
+    create_sqlite_unit_of_work_factory,
+    sqlite_dependency_impact_repository,
+    sqlite_intent_revision_repository,
+)
 from research_observatory_core.storage import open_canonical_database
 from research_observatory_core.task_center import TaskCenterService
 
@@ -113,6 +123,97 @@ class BatchWorkerTests(unittest.TestCase):
         self.assertEqual("cancelled", state.state)
         self.assertEqual(0, state.attempt_count)
 
+    def test_review_dependency_checkpoints_resume_after_worker_restart(self):
+        request = self.service.prepare_batch(self.root, trace_id="a" * 32)
+        job = self.service.schedule_batch(self.root, request, trace_id="a" * 32)
+        self.service.run_pending()
+        output = self.queue.accepted_output(job.job_id).outputs[0]
+        page = self.service.inspect_candidates(self.root, output.revision_id, after=0, limit=25, trace_id="a" * 32)
+        inspection = self.service.inspect(self.root, page.items[0].left, trace_id="a" * 32)
+        context = self.service.review_context(
+            self.root, (inspection.canonical_work.work_id,), unassigned=(), trace_id="a" * 32
+        )
+        work = context.works[0]
+
+        def dependents(repository, actor, resolve):
+            with repository._transaction(write=True) as (_, aggregates):
+                return tuple(
+                    repository._append(
+                        aggregates,
+                        sources=(aggregates.get(work.work_id),),
+                        actor=actor,
+                        digest="1" * 64,
+                        kind="evidence",
+                        label="Synthetic dependent",
+                    ).revision_id
+                    for _ in range(102)
+                )
+
+        consumers = self.service._action(self.root, "a" * 32, dependents)
+        plan = ReviewPlan(
+            action="split",
+            works=context.works,
+            unassigned_assertion_revision_ids=(),
+            partitions=(
+                SourcePartition(
+                    group="retained",
+                    existing_work_id=work.work_id,
+                    assertion_revision_ids=work.assertion_revision_ids[:1],
+                ),
+                SourcePartition(
+                    group="separate", existing_work_id=None, assertion_revision_ids=work.assertion_revision_ids[1:]
+                ),
+            ),
+            aliases=(),
+            conflict_disposition="retain-all",
+            evidence_sha256=context.evidence_sha256,
+            rationale="Synthetic human split with checkpointed dependent review.",
+        )
+        preview = self.service.preview_review(self.root, plan, trace_id="a" * 32)
+        outcome = self.service.review(
+            self.root,
+            ReviewCommand(command_id=preview.command_id, plan=plan, expected_preview_sha256=preview.preview_sha256),
+            trace_id="a" * 32,
+        )
+        impacts = sqlite_dependency_impact_repository(Path(self.root), self.f.project_id)
+        (run_id,) = outcome.dependency_run_ids
+        before = impacts.run(run_id)
+        self.assertGreater(before.total_items, 100)
+        factory = create_sqlite_unit_of_work_factory(Path(self.root) / "state/project.sqlite3", self.f.project_id)
+        with factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.require_fresh_revision(consumers[-1])
+        self.service.run_pending()
+        checkpoint = impacts.run(run_id)
+        self.assertEqual(100, checkpoint.processed_items)
+        self.assertEqual("running", checkpoint.state)
+        with (
+            patch(
+                "research_observatory_core.repositories._record_dependency_stale_batch",
+                side_effect=RuntimeError("synthetic interrupted checkpoint"),
+            ),
+            self.assertRaises(RepositoryProblem),
+        ):
+            self.service.run_pending()
+        failed = impacts.run(run_id)
+        self.assertEqual(100, failed.processed_items)
+        self.assertEqual("running", failed.state)
+        self.assertNotEqual(checkpoint.checkpoint_sha256, failed.checkpoint_sha256)
+        self.service.shutdown()
+        self.service.run_pending()
+        self.assertEqual(failed, impacts.run(run_id))
+        self.service = self.runtime("2" * 32)
+        self.addCleanup(self.service.shutdown)
+        self.service.attach(self.root)
+        self.service.run_pending()
+        completed = impacts.run(run_id)
+        self.assertEqual("completed", completed.state)
+        self.assertEqual(completed.total_items, completed.processed_items)
+        self.assertTrue(set(consumers) <= {item.output_revision_id for item in impacts.stale_states()})
+        with factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.require_fresh_revision(consumers[-1])
+        self.service.run_pending()
+        self.assertEqual(completed, impacts.run(run_id))
+
     def test_candidate_page_discloses_later_accepted_inventory_without_changing_scores(self):
         request = self.service.prepare_batch(self.root, trace_id="a" * 32)
         job = self.service.schedule_batch(self.root, request, trace_id="a" * 32)
@@ -174,7 +275,7 @@ class BatchWorkerTests(unittest.TestCase):
         job = self.service.schedule_batch(self.root, request, trace_id="a" * 32)
         entered = threading.Event()
         released = threading.Event()
-        runs = []
+        runs: list[WorkflowTaskCenterRunRecord] = []
         reconcile = SqliteReconciliationRepository._reconcile_with_connection
 
         def advancing(repository, *args, **kwargs):

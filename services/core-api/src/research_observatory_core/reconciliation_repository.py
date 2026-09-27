@@ -1493,6 +1493,55 @@ class SqliteReconciliationRepository:
             self._authorize_assignment(connection, member, resolve)
         return outcome
 
+    def advance_review_impacts(self) -> bool:
+        # This is continuation of committed invalidation intent, not a new
+        # derivation or recalculation. Only this owner's decision-bound runs
+        # are eligible. The caller retains the open project's write fence.
+        impacts = _SqliteDependencyImpactRepository(self._database, self._project)
+        with self._transaction(write=False) as (connection, aggregates):
+            row = connection.execute(
+                "SELECT d.revision_id,d.command_id,d.plan_sha256,d.plan_json,d.outcome_json,"
+                "r.run_id,r.previous_revision_id,r.replacement_revision_id,r.actor_id,d.actor_id "
+                "FROM reconciliation_review_decisions d, json_each(d.outcome_json,'$.dependencyRunIds') owned "
+                "JOIN dependency_impact_runs r ON r.run_id=owned.value AND r.project_id=d.project_id "
+                "WHERE d.project_id=? AND (SELECT event_type FROM dependency_impact_audit_events a "
+                "WHERE a.project_id=r.project_id AND a.run_id=r.run_id ORDER BY sequence DESC LIMIT 1) "
+                "IN ('started','checkpoint','failed-attempt') ORDER BY r.run_id LIMIT 1",
+                (self._project,),
+            ).fetchone()
+            if row is None:
+                return False
+            plan, outcome = ReviewPlan.model_validate_json(row[3]), ReviewOutcome.model_validate_json(row[4])
+            states = [
+                state
+                for state in outcome.work_states
+                if (state.previous_revision_id, state.revision_id) == (row[6], row[7])
+            ]
+            binding = connection.execute(
+                "SELECT fingerprint FROM material_dependencies WHERE project_id=? AND output_revision_id=? "
+                "AND configuration_id='scholarly.review-plan'",
+                (self._project, row[0]),
+            ).fetchall()
+            if (
+                outcome.decision_revision_id != row[0]
+                or outcome.command_id != row[1]
+                or plan.fingerprint != row[2]
+                or outcome.plan_sha256 != row[2]
+                or row[5] not in outcome.dependency_run_ids
+                or row[8] != row[9]
+                or len(states) != 1
+                or states[0].decision_revision_id != row[0]
+                or self._state(connection, states[0].work_id, states[0].revision_id) != states[0]
+                or [tuple(item) for item in binding] != [("sha256:" + plan.fingerprint,)]
+                or aggregates.get_revision(outcome.decision_revision_id).aggregate_id != outcome.decision_id
+            ):
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            current = impacts._run_with_connection(connection, row[5])
+        # Existing snapshot validation, checkpoint CAS, bounded batch and
+        # append-only audit remain the authority for the actual advancement.
+        impacts.advance(current.run_id, expected_checkpoint_sha256=current.checkpoint_sha256)
+        return True
+
     def _publish_impacts(
         self, connection: CanonicalConnection, changes: tuple[DependencyChange, ...]
     ) -> tuple[str, ...]:

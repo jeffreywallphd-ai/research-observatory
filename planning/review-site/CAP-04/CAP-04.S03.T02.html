@@ -91,9 +91,9 @@ python tools/verify.py --profile data
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="5db890e164bb6ac3b1349c7efc622299a951c5a4898020c6bf5224311cb3d821">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="22334c25f796ce2ab86d43cf30104076e4b2a85682f86438e1cb787f893f79b5">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>5db890e164bb6ac3b1349c7efc622299a951c5a4898020c6bf5224311cb3d821</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>22334c25f796ce2ab86d43cf30104076e4b2a85682f86438e1cb787f893f79b5</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S03.T02 — duplicate candidates and reversible review
 
 Claim base: `691205f48cf8ee80b323a9971413f7da1d0608e1` on the existing W2
@@ -211,6 +211,37 @@ Historical candidate pages must also identify their authenticated frozen invento
 and disclose newly accepted inputs outside it. Add an unrelated accepted import
 after publication and verify that historical scores remain unchanged while the
 inventory comparison changes. These findings do not change the approved scope.
+
+The client/native advisory by `agent:/root/w2_t03_review` reproduced acceptance
+of an unrelated returned Work for a two-partition split when only command and
+plan digests matched. Require exact returned membership, survivor/predecessor
+identity, new-identity separation, alias destinations and dependency-run count.
+It also reproduced rejection of a valid 20,000-affected/20,000-unknown impact
+preview at the client&#x27;s/native transport&#x27;s smaller response bound. Add both
+regressions first; align inspection/context/preview response allowances with
+Core&#x27;s bounded 4 MiB inspection contract while retaining other route limits.
+
+The UI advisory by `agent:/root/w2_c02_review` found that Back and a failed
+parent refresh could discard a reply-lost decision&#x27;s exact retry command;
+changing a displayed contributor left the original pair&#x27;s score ambiguously
+associated with the new pair; and identical title/provider labels prevented
+identifying split members. Add browser regressions for both navigation paths,
+score/source association and distinct immutable source labels with explicit
+preview partitions. Preserve the original scoring evidence and same-command
+retry. These restore the approved decision and recovery contract.
+
+The first real browser/Core review-context request returned 422: FastAPI parses
+JSON arrays as Python lists, while strict tuple containers rejected the valid
+wire representation before the route ran. Permit array-to-immutable-tuple
+conversion only on the affected bounded containers; retain strict scalar types,
+unknown-field denial and full partition validation. Keep the failed browser
+run and add malformed-container/scalar/authority denial checks.
+
+The actual browser/current-rights regression additionally requires the parent
+candidate evidence to clear when a child comparison receives a denial. Clearing
+only comparison fields leaves a score and review action from revoked evidence.
+Change the effective record rights (not an overridden batch default), establish
+Core&#x27;s 403, then verify both regions clear without publishing a decision.
 
 Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows

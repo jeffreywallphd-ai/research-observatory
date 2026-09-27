@@ -2721,8 +2721,8 @@ function decodeDeletionDisclosure(value: unknown): DeletionDisclosure | null {
   return candidate as unknown as DeletionDisclosure;
 }
 
-function registryOwnedValue(value: unknown): unknown {
-  let remaining = 80000;
+function registryOwnedValue(value: unknown, maximumArray = 1000, maximumNodes = 80000): unknown {
+  let remaining = maximumNodes;
   function own(item: unknown, depth: number): unknown {
     if (--remaining < 0 || depth > 12) throw new Error("registry-value-bound");
     if (item === null || typeof item === "string" || typeof item === "boolean") return item;
@@ -2730,7 +2730,7 @@ function registryOwnedValue(value: unknown): unknown {
     if (typeof item !== "object" || item === null) throw new Error("registry-value-type");
     const prototype = Object.getPrototypeOf(item);
     if (Array.isArray(item)) {
-      if (prototype !== Array.prototype || item.length > 1000) throw new Error("registry-array-bound");
+      if (prototype !== Array.prototype || item.length > maximumArray) throw new Error("registry-array-bound");
       const descriptors = Object.getOwnPropertyDescriptors(item);
       if (Reflect.ownKeys(item).length !== item.length + 1) throw new Error("registry-array-shape");
       return Object.freeze(Array.from({ length: item.length }, (_, index) => {
@@ -3027,8 +3027,8 @@ export function evaluateCoreApiCompatibility(version: VersionResponse): Compatib
     };
 }
 
-function parseJson(body: string): unknown {
-  if (body.length > 1_048_576) throw new Error("RO-CORE-RESPONSE-INVALID");
+function parseJson(body: string, maximumBytes = 1_048_576): unknown {
+  if (body.length > maximumBytes || new TextEncoder().encode(body).length > maximumBytes) throw new Error("RO-CORE-RESPONSE-INVALID");
   try { return JSON.parse(body) as unknown; } catch { throw new Error("RO-CORE-RESPONSE-INVALID"); }
 }
 
@@ -3057,7 +3057,9 @@ async function requestJsonResponse<T>(
     throw new CoreApiClientError(problem);
   }
   if (response.status !== 200 || response.contentType !== "application/json") throw new Error("RO-CORE-RESPONSE-INVALID");
-  const value = parseJson(response.body);
+  const maximumBytes = ["/projects/reconciliation/inspect", "/projects/reconciliation/review/context",
+    "/projects/reconciliation/review/preview"].includes(request.path) ? 4_194_304 : 1_048_576;
+  const value = parseJson(response.body, maximumBytes);
   const decoded = decode(value);
   if (!decoded) throw new Error("RO-CORE-RESPONSE-INVALID");
   return { value: decoded, response };
@@ -3727,6 +3729,105 @@ export function decodeConnectorInspection(value: unknown): ConnectorInspection |
 
 export function createCoreApiClient(transport: CoreApiTransport) {
   return Object.freeze({
+    async prepareScholarlyReconciliationBatch(value: ReconciliationBatchPrepareRequest): Promise<ReconciliationBatchPrepared> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationBatchPrepareRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/batches/prepare", body, ifMatch: null, idempotencyKey: null }, decodeReconciliationBatchPrepared);
+      if (!await reconciliationReply("batches/prepare", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async scheduleScholarlyReconciliationBatch(value: ReconciliationBatchRequest): Promise<ReconciliationBatchStatus> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationBatchRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/batches/schedule", body, ifMatch: null, idempotencyKey: null }, decodeReconciliationBatchStatus);
+      if (!await reconciliationReply("batches/schedule", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async inspectScholarlyReconciliationBatch(value: ReconciliationBatchJobRequest): Promise<ReconciliationBatchStatus> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationBatchJobRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/batches/status", body, ifMatch: null, idempotencyKey: null }, decodeReconciliationBatchStatus);
+      if (!await reconciliationReply("batches/status", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async cancelScholarlyReconciliationBatch(value: ReconciliationBatchJobRequest): Promise<ReconciliationBatchStatus> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationBatchJobRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/batches/cancel", body, ifMatch: null, idempotencyKey: null }, decodeReconciliationBatchStatus);
+      if (!await reconciliationReply("batches/cancel", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async inspectScholarlyDuplicateCandidates(value: ReconciliationCandidateRequest): Promise<CandidatePage> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationCandidateRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/candidates", body, ifMatch: null, idempotencyKey: null }, decodeCandidatePage);
+      if (!await reconciliationReply("candidates", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async reconcileScholarlySource(value: ReconciliationRequest): Promise<ReconciliationResult> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/exact", body, ifMatch: null, idempotencyKey: null }, decodeReconciliationResult);
+      if (!await reconciliationReply("exact", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async inspectScholarlyReconciliation(value: ReconciliationReadRequest): Promise<ReconciliationInspection> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationReadRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/inspect", body, ifMatch: null, idempotencyKey: null }, decodeReconciliationInspection);
+      if (!await reconciliationReply("inspect", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async resolveScholarlyConnectorAddress(value: ReconciliationConnectorAddressRequest): Promise<SourceAddress> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationConnectorAddressRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/connector-address", body, ifMatch: null, idempotencyKey: null }, decodeSourceAddress);
+      if (!await reconciliationReply("connector-address", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async inspectScholarlyReviewContext(value: ReconciliationContextRequest): Promise<ReviewContext> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationContextRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 262144) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/review/context", body, ifMatch: null, idempotencyKey: null }, decodeReviewContext);
+      if (!await reconciliationReply("review/context", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async previewScholarlyReview(value: ReconciliationReviewPreviewRequest): Promise<ReviewPreview> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationReviewPreviewRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 262144) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/review/preview", body, ifMatch: null, idempotencyKey: null }, decodeReviewPreview);
+      if (!await reconciliationReply("review/preview", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async commitScholarlyReview(value: ReconciliationReviewRequest): Promise<ReviewOutcome> {
+      const command = reconciliationOwned(value);
+      if (!reconciliationShapeReconciliationReviewRequest(command) || !projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 262144) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/reconciliation/review/commit", body, ifMatch: null, idempotencyKey: null }, decodeReviewOutcome);
+      if (!await reconciliationReply("review/commit", command, result)) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
     async recentSourceRequests(command: ConnectorProjectRequest): Promise<ConnectorRecentRuns> {
       if (!projectRoot(command.root)) throw new Error("RO-CORE-REQUEST-INVALID");
       return await requestJson(transport, { method: "POST", path: "/projects/connectors/recent", body: JSON.stringify({ root: command.root }), ifMatch: null, idempotencyKey: null }, decodeConnectorRecentRuns);
@@ -4277,4 +4378,456 @@ export function createCoreApiClient(transport: CoreApiTransport) {
       return events;
     },
   });
+}
+
+function reconciliationOwned(value: unknown): unknown {
+  try {
+    const owned = registryOwnedValue(value, 32768, 1000000);
+    return new TextEncoder().encode(JSON.stringify(owned)).length <= 4194304 ? owned : null;
+  } catch { return null; }
+}
+
+function reconciliationObject(value: unknown, check: (item: Readonly<Record<string, unknown>>) => boolean): boolean {
+  const item = record(value);
+  return item !== null && check(item);
+}
+
+const RECONCILIATION_CONFIGURATION = "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc";
+const RECONCILIATION_ALGORITHM = "scholarly-duplicate-ranking/1.0.0";
+const RECONCILIATION_FEATURES = "scholarly-duplicate-features/1.0.0";
+const RECONCILIATION_NORMALIZER = "scholarly-identifiers/1.0.0";
+
+function reconciliationSorted(values: readonly string[]): boolean {
+  return values.every((value, index) => index === 0 || values[index - 1]! < value);
+}
+function reconciliationSameSet(left: readonly string[], right: readonly string[]): boolean {
+  return left.length === right.length && new Set(left).size === left.length
+    && new Set(right).size === right.length && left.every((item) => right.includes(item));
+}
+function reconciliationSameAddress(left: SourceAddress, right: SourceAddress): boolean {
+  return left.kind === right.kind && left.contextId === right.contextId && left.revisionId === right.revisionId
+    && left.ordinal === right.ordinal && left.recordKey === right.recordKey;
+}
+
+function reconciliationSemantics(name: string, value: unknown): boolean {
+  // These cases run only after the complete generated structural guard passes.
+  switch (name) {
+    case "ImportPermission": {
+      const item = value as ImportPermission;
+      return item.value === "unknown" || item.basis === "researcher-confirmed";
+    }
+    case "SourceAddress": {
+      const item = value as SourceAddress;
+      return item.kind === "import-member" ? item.ordinal >= 1 && item.recordKey !== null : item.ordinal <= 999 && item.recordKey === null;
+    }
+    case "SourceAssertion": return new TextEncoder().encode(JSON.stringify(value)).length <= 1048576;
+    case "NormalizedIdentifier": {
+      const item = value as NormalizedIdentifier;
+      return (item.status === "valid") === (item.canonical !== null) && item.issues.length <= 1
+        && (item.status === "valid" ? item.issues.length === 0 : item.issues[0] === (item.status === "invalid" ? "invalid-identifier" : "unsupported-scheme"));
+    }
+    case "ReconciliationBatchStatus": {
+      const item = value as ReconciliationBatchStatus;
+      return (item.state === "succeeded") === (item.setRevisionId !== null);
+    }
+    case "ReconciliationResult": {
+      const item = value as ReconciliationResult, review = item.disposition === "review-required";
+      return review === (item.workId === null) && review === (item.workRevisionId === null)
+        && review === Boolean(item.flags.length) && review === (item.knowledgeStatus === "disputed");
+    }
+    case "ReconciliationInspection": {
+      const item = value as ReconciliationInspection;
+      return item.result.projectId === item.assertion.projectId && reconciliationSameAddress(item.result.source, item.assertion.address)
+        && item.normalizedIdentifiers.length === item.assertion.identifiers.length
+        && item.normalizedIdentifiers.every((identifier, index) => identifier.observed === item.assertion.identifiers[index]!.observed
+          && identifier.scheme === item.assertion.identifiers[index]!.scheme);
+    }
+    case "WorkState": {
+      const item = value as WorkState;
+      return reconciliationSorted(item.assertionRevisionIds) && item.previousRevisionId !== item.revisionId && item.workId !== item.revisionId
+        && (item.disposition === "active" ? item.assertionRevisionIds.length > 0 && item.aliasTarget === null
+          : item.assertionRevisionIds.length === 0 && item.aliasTarget !== null && item.aliasTarget !== item.workId
+            && item.previousRevisionId !== null && item.decisionRevisionId !== null);
+    }
+    case "SourcePartition": return reconciliationSorted((value as SourcePartition).assertionRevisionIds);
+    case "ReviewPlan": return reconciliationPlan(value as ReviewPlan);
+    case "ReviewContext": {
+      const item = value as ReviewContext;
+      const members = [...item.works.flatMap((work) => work.assertionRevisionIds), ...item.unassignedAssertionRevisionIds];
+      const aliases = new Map(item.inboundAliases.map((work) => [work.workId, work.aliasTarget!]));
+      const workIds = item.works.map((work) => work.workId);
+      return item.algorithm === RECONCILIATION_ALGORITHM && item.featureVersion === RECONCILIATION_FEATURES
+        && item.configurationSha256 === RECONCILIATION_CONFIGURATION && importDigest(item.evidenceSha256)
+        && reconciliationSorted(item.unassignedAssertionRevisionIds) && new Set(workIds).size === workIds.length
+        && item.works.every((work) => work.disposition === "active")
+        && item.inboundAliases.every((work) => work.disposition === "alias" && !workIds.includes(work.workId))
+        && aliases.size === item.inboundAliases.length && [...aliases.keys()].every((id) => {
+          const seen = new Set<string>();
+          while (aliases.has(id)) { if (seen.has(id)) return false; seen.add(id); id = aliases.get(id)!; }
+          return workIds.includes(id);
+        })
+        && reconciliationSameSet(members, item.sources.map((source) => source.assertionRevisionId))
+        && item.sources.every((source) => source.assertion.projectId === item.sources[0]!.assertion.projectId);
+    }
+    case "ReviewOutcome": {
+      const item = value as ReviewOutcome;
+      return new Set(item.workStates.map((work) => work.workId)).size === item.workStates.length
+        && new Set(item.dependencyRunIds).size === item.dependencyRunIds.length
+        && item.workStates.every((work) => work.decisionRevisionId === item.decisionRevisionId);
+    }
+    case "ReviewPreview": {
+      const item = value as ReviewPreview;
+      return reconciliationSorted(item.affectedOutputRevisionIds) && reconciliationSorted(item.unknownImpactRevisionIds);
+    }
+    case "CandidateFeature": {
+      const item = value as CandidateFeature;
+      return !(item.state === "available" && item.score === null || item.state === "not-reported" && (item.score !== null || item.conflict)
+        || item.state === "disputed" && !item.conflict)
+        && (item.name === "identifiers" || item.conflict === (item.state === "disputed" || item.score !== null && item.score < 10000));
+    }
+    case "CandidateExplanation": return reconciliationCandidate(value as CandidateExplanation);
+    case "CandidatePage": {
+      const item = value as CandidatePage, end = item.after + item.items.length;
+      return item.configurationSha256 === RECONCILIATION_CONFIGURATION && item.identifierNormalizer === RECONCILIATION_NORMALIZER
+        && end <= item.candidateCount && item.candidateCount <= item.comparedPairs && item.comparedPairs <= item.recordCount * (item.recordCount - 1) / 2
+        && item.nextAfter === (end < item.candidateCount ? end : null) && (item.nextAfter === null || item.items.length > 0)
+        && item.inventoryState === (item.inventorySha256 === item.currentInventorySha256 ? "unchanged" : "changed")
+        && new Set(item.items.map((pair) => `${pair.left}/${pair.right}`)).size === item.items.length;
+    }
+    default: return true;
+  }
+}
+
+function reconciliationPlan(plan: ReviewPlan): boolean {
+  const workIds = plan.works.map((work) => work.workId), workSet = new Set(workIds);
+  const members = [...plan.works.flatMap((work) => work.assertionRevisionIds), ...plan.unassignedAssertionRevisionIds];
+  const partitions = plan.partitions.flatMap((part) => part.assertionRevisionIds);
+  const groups = new Map(plan.partitions.map((part) => [part.group, part]));
+  const survivors = plan.partitions.flatMap((part) => part.existingWorkId ? [part.existingWorkId] : []);
+  const aliases = new Map(plan.aliases.map((alias) => [alias.workId, alias]));
+  if (workSet.size !== workIds.length || plan.works.some((work) => work.disposition !== "active")
+    || !reconciliationSorted(plan.unassignedAssertionRevisionIds) || members.length < 1 || members.length > 512
+    || !reconciliationSameSet(members, partitions) || groups.size !== plan.partitions.length || new Set(survivors).size !== survivors.length
+    || survivors.some((id) => !workSet.has(id) || aliases.has(id)) || aliases.size !== plan.aliases.length
+    || workIds.some((id) => !survivors.includes(id) && !aliases.has(id)) || plan.aliases.some((alias) => {
+      const target = groups.get(alias.targetGroup), source = plan.works.find((work) => work.workId === alias.workId);
+      return !target || target.existingWorkId === alias.workId || source !== undefined && source.revisionId !== alias.revisionId;
+    })) return false;
+  return plan.action === "merge" ? plan.works.length + plan.unassignedAssertionRevisionIds.length >= 2 && plan.partitions.length === 1
+    : plan.action === "split" ? plan.works.length === 1 && plan.unassignedAssertionRevisionIds.length === 0 && plan.partitions.length >= 2
+      : plan.works.length <= 1 && plan.unassignedAssertionRevisionIds.length > 0 && plan.partitions.length === 1;
+}
+
+function reconciliationCandidate(item: CandidateExplanation): boolean {
+  const names = ["title", "authors", "year", "venue", "pages", "abstract", "identifiers"], weights = [7000, 1500, 800, 400, 200, 100, 2000];
+  if (item.left >= item.right || item.configurationFingerprint !== RECONCILIATION_CONFIGURATION || item.identifierNormalizer !== RECONCILIATION_NORMALIZER
+    || item.features.some((feature, index) => feature.name !== names[index] || feature.weight !== weights[index])) return false;
+  const denominator = item.features.reduce((sum, feature) => sum + (feature.score === null ? 0 : feature.weight), 0);
+  const score = denominator ? Math.floor(item.features.reduce((sum, feature) => sum + (feature.score ?? 0) * feature.weight, 0) / denominator) : 0;
+  const flags = [item.features.slice(0, -1).some((feature) => feature.state === "disputed") ? "competing-source-fields" : null,
+    item.features[2]!.score === 0 ? "year-disagreement" : null, item.features[6]!.conflict ? "conflicting-identifiers" : null].filter((flag) => flag !== null).sort();
+  return item.score === score && item.flags.length === flags.length && item.flags.every((flag, index) => flag === flags[index]);
+}
+
+async function reconciliationFingerprint(value: unknown): Promise<string> {
+  function canonical(item: unknown): string {
+    if (Array.isArray(item)) return "[" + item.map(canonical).join(",") + "]";
+    const object = record(item);
+    if (object) return "{" + Object.keys(object).sort().map((key) => canonical(key) + ":" + canonical(object[key])).join(",") + "}";
+    return JSON.stringify(item).replace(/[\u007f-\uffff]/g, (char) => "\\u" + char.charCodeAt(0).toString(16).padStart(4, "0"));
+  }
+  const bytes = await globalThis.crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonical(value)));
+  return Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function reconciliationOutcome(plan: ReviewPlan, reply: ReviewOutcome): boolean {
+  const active = reply.workStates.filter((work) => work.disposition === "active");
+  const aliases = reply.workStates.filter((work) => work.disposition === "alias");
+  const previous = new Map(plan.works.map((work) => [work.workId, work]));
+  const priorIds = new Set([...previous.keys(), ...plan.aliases.map((alias) => alias.workId)]);
+  const priorRevisions = new Set([...plan.works.map((work) => work.revisionId), ...plan.aliases.map((alias) => alias.revisionId)]);
+  const groups = new Map<string, string>();
+  if (active.length !== plan.partitions.length || aliases.length !== plan.aliases.length
+    || new Set(reply.workStates.map((work) => work.revisionId)).size !== reply.workStates.length
+    || reply.workStates.some((work) => priorRevisions.has(work.revisionId) || work.revisionId === reply.decisionRevisionId)
+    || reply.dependencyRunIds.length !== plan.partitions.filter((part) => part.existingWorkId !== null).length + plan.aliases.length) return false;
+  for (const part of plan.partitions) {
+    const state = active.find((work) => reconciliationSameSet(work.assertionRevisionIds, part.assertionRevisionIds));
+    if (!state) return false;
+    if (part.existingWorkId !== null) {
+      if (state.workId !== part.existingWorkId || state.previousRevisionId !== previous.get(part.existingWorkId)?.revisionId) return false;
+    } else if (state.previousRevisionId !== null || priorIds.has(state.workId)) return false;
+    groups.set(part.group, state.workId);
+  }
+  return plan.aliases.every((alias) => {
+    const state = aliases.find((work) => work.workId === alias.workId);
+    return state !== undefined && state.previousRevisionId === alias.revisionId && state.aliasTarget === groups.get(alias.targetGroup);
+  });
+}
+
+async function reconciliationReply(route: string, command: unknown, result: unknown): Promise<boolean> {
+  switch (route) {
+    case "batches/prepare": return true;
+    case "batches/schedule": return (result as ReconciliationBatchStatus).requestId === (command as ReconciliationBatchRequest).requestId;
+    case "batches/status": case "batches/cancel": {
+      const request = command as ReconciliationBatchJobRequest, reply = result as ReconciliationBatchStatus;
+      return request.requestId === reply.requestId && request.jobId === reply.jobId;
+    }
+    case "candidates": {
+      const request = command as ReconciliationCandidateRequest, reply = result as CandidatePage;
+      return request.setRevisionId === reply.setRevisionId && request.after === reply.after && reply.items.length <= request.limit;
+    }
+    case "exact": return reconciliationSameAddress((command as ReconciliationRequest).source, (result as ReconciliationResult).source);
+    case "inspect": return (command as ReconciliationReadRequest).assertionRevisionId === (result as ReconciliationInspection).result.assertionRevisionId;
+    case "connector-address": {
+      const request = command as ReconciliationConnectorAddressRequest, reply = result as SourceAddress;
+      return reply.kind === "connector-record" && reply.contextId === request.previewId && reply.ordinal === request.ordinal;
+    }
+    case "review/context": {
+      const request = command as ReconciliationContextRequest, reply = result as ReviewContext;
+      const { evidenceSha256, ...evidence } = reply;
+      return reconciliationSameSet(request.workIds, reply.works.map((work) => work.workId))
+        && reconciliationSameSet(request.unassignedAssertionRevisionIds, reply.unassignedAssertionRevisionIds)
+        && evidenceSha256 === await reconciliationFingerprint(evidence);
+    }
+    case "review/preview": {
+      const request = command as ReconciliationReviewPreviewRequest, reply = result as ReviewPreview;
+      return reply.evidenceSha256 === request.plan.evidenceSha256 && reply.planSha256 === await reconciliationFingerprint(request.plan);
+    }
+    case "review/commit": {
+      const request = (command as ReconciliationReviewRequest).command, reply = result as ReviewOutcome;
+      return reply.commandId === request.commandId && reply.planSha256 === await reconciliationFingerprint(request.plan)
+        && reconciliationOutcome(request.plan, reply);
+    }
+    default: return false;
+  }
+}
+
+function reconciliationShapeAliasPlan(value: unknown): value is AliasPlan {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["revisionId", "targetGroup", "workId"])) && (reconciliationShapeIdentity(item["revisionId"])) && (reconciliationShapeGroupName(item["targetGroup"])) && (reconciliationShapeIdentity(item["workId"])))) && reconciliationSemantics("AliasPlan", value);
+}
+
+function reconciliationShapeCandidateExplanation(value: unknown): value is CandidateExplanation {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["algorithm", "configurationFingerprint", "disposition", "featureVersion", "features", "flags", "identifierNormalizer", "left", "leftFingerprint", "leftRevision", "right", "rightFingerprint", "rightRevision", "score"])) && (item["algorithm"] === "scholarly-duplicate-ranking/1.0.0") && (reconciliationShapeDigest(item["configurationFingerprint"])) && (item["disposition"] === "human-review-required") && (item["featureVersion"] === "scholarly-duplicate-features/1.0.0") && ((Array.isArray(item["features"]) && item["features"].length >= 7 && item["features"].length <= 7 && item["features"].every((element: unknown) => reconciliationShapeCandidateFeature(element)))) && ((Array.isArray(item["flags"]) && item["flags"].length >= 0 && item["flags"].length <= 3 && item["flags"].every((element: unknown) => reconciliationShapeCandidateFlag(element)))) && ((importText(item["identifierNormalizer"], 65536, 0))) && (reconciliationShapeIdentity(item["left"])) && (reconciliationShapeDigest(item["leftFingerprint"])) && (reconciliationShapeIdentity(item["leftRevision"])) && (reconciliationShapeIdentity(item["right"])) && (reconciliationShapeDigest(item["rightFingerprint"])) && (reconciliationShapeIdentity(item["rightRevision"])) && (reconciliationShapeScore(item["score"])))) && reconciliationSemantics("CandidateExplanation", value);
+}
+
+function reconciliationShapeCandidateFeature(value: unknown): value is CandidateFeature {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["conflict", "name", "score", "state", "weight"])) && (typeof item["conflict"] === 'boolean') && ((item["name"] === "title" || item["name"] === "authors" || item["name"] === "year" || item["name"] === "venue" || item["name"] === "pages" || item["name"] === "abstract" || item["name"] === "identifiers")) && ((reconciliationShapeScore(item["score"]) || item["score"] === null)) && ((item["state"] === "available" || item["state"] === "not-reported" || item["state"] === "disputed")) && (integer(item["weight"], 1.0, 10000.0)))) && reconciliationSemantics("CandidateFeature", value);
+}
+
+function reconciliationShapeCandidateFlag(value: unknown): value is CandidateFlag {
+  return ((value === "competing-source-fields" || value === "year-disagreement" || value === "conflicting-identifiers")) && reconciliationSemantics("CandidateFlag", value);
+}
+
+function reconciliationShapeCandidatePage(value: unknown): value is CandidatePage {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["after", "algorithm", "candidateCount", "comparedPairs", "configurationSha256", "currentInventorySha256", "dependencyState", "featureVersion", "identifierNormalizer", "inventorySha256", "inventoryState", "items", "membershipState", "nextAfter", "projectId", "recordCount", "requestId", "schemaVersion", "setRevisionId"])) && (integer(item["after"], 0.0, 20000.0)) && (item["algorithm"] === "scholarly-duplicate-ranking/1.0.0") && (integer(item["candidateCount"], 0.0, 20000.0)) && (integer(item["comparedPairs"], 0.0, 250000.0)) && (reconciliationShapeDigest(item["configurationSha256"])) && (reconciliationShapeDigest(item["currentInventorySha256"])) && ((item["dependencyState"] === "unaffected" || item["dependencyState"] === "requires-review")) && (item["featureVersion"] === "scholarly-duplicate-features/1.0.0") && ((importText(item["identifierNormalizer"], 65536, 0))) && (reconciliationShapeDigest(item["inventorySha256"])) && ((item["inventoryState"] === "unchanged" || item["inventoryState"] === "changed")) && ((Array.isArray(item["items"]) && item["items"].length >= 0 && item["items"].length <= 100 && item["items"].every((element: unknown) => reconciliationShapeCandidateExplanation(element)))) && ((item["membershipState"] === "unchanged" || item["membershipState"] === "changed")) && ((integer(item["nextAfter"], 1.0, 20000.0) || item["nextAfter"] === null)) && (reconciliationShapeProjectIdentity(item["projectId"])) && (integer(item["recordCount"], 0.0, 10000.0)) && (reconciliationShapeIdentity(item["requestId"])) && (item["schemaVersion"] === "1.0") && (reconciliationShapeIdentity(item["setRevisionId"])))) && reconciliationSemantics("CandidatePage", value);
+}
+
+function reconciliationShapeCanonicalFieldSelection(value: unknown): value is CanonicalFieldSelection {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["name", "observations", "reason", "selected", "status"])) && ((importText(item["name"], 65536, 0) && new RegExp("^[a-z][a-z0-9-]{0,63}$", 'u').test(item["name"] as string))) && ((Array.isArray(item["observations"]) && item["observations"].length >= 0 && item["observations"].length <= 32768 && item["observations"].every((element: unknown) => reconciliationShapeFieldObservation(element)))) && ((item["reason"] === "consistent-source-values" || item["reason"] === "accepted-correction" || item["reason"] === "competing-assertions" || item["reason"] === "no-assertion")) && (((importText(item["selected"], 65536, 1)) || item["selected"] === null)) && ((item["status"] === "observed" || item["status"] === "adjudicated" || item["status"] === "disputed" || item["status"] === "not-reported")))) && reconciliationSemantics("CanonicalFieldSelection", value);
+}
+
+function reconciliationShapeCanonicalWorkReference(value: unknown): value is CanonicalWorkReference {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["revisionId", "workId"])) && (reconciliationShapeIdentity(item["revisionId"])) && (reconciliationShapeIdentity(item["workId"])))) && reconciliationSemantics("CanonicalWorkReference", value);
+}
+
+function reconciliationShapeDigest(value: unknown): value is Digest {
+  return ((importText(value, 65536, 0) && new RegExp("^[0-9a-f]{64}$", 'u').test(value as string))) && reconciliationSemantics("Digest", value);
+}
+
+function reconciliationShapeFieldObservation(value: unknown): value is FieldObservation {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["assertionRevisionId", "origin", "value"])) && (reconciliationShapeIdentity(item["assertionRevisionId"])) && (reconciliationShapeSourceOrigin(item["origin"])) && ((importText(item["value"], 65536, 1))))) && reconciliationSemantics("FieldObservation", value);
+}
+
+function reconciliationShapeGroupName(value: unknown): value is GroupName {
+  return ((importText(value, 65536, 0) && new RegExp("^[a-z][a-z0-9-]{0,31}$", 'u').test(value as string))) && reconciliationSemantics("GroupName", value);
+}
+
+function reconciliationShapeIdentifierAssertion(value: unknown): value is IdentifierAssertion {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["activeForMatching", "observed", "origin", "reassignmentObserved", "role", "scheme", "sourceEncoding", "sourceSelector", "verificationState"])) && (typeof item["activeForMatching"] === 'boolean') && ((importText(item["observed"], 65536, 0))) && (reconciliationShapeSourceOrigin(item["origin"])) && (typeof item["reassignmentObserved"] === 'boolean') && ((item["role"] === "subject" || item["role"] === "person" || item["role"] === "organization" || item["role"] === "container" || item["role"] === "location")) && ((importText(item["scheme"], 65536, 0) && new RegExp("^[a-z][a-z0-9-]{0,63}$", 'u').test(item["scheme"] as string))) && ((item["sourceEncoding"] === "text" || item["sourceEncoding"] === "json-string" || item["sourceEncoding"] === "bibtex-literal")) && ((importText(item["sourceSelector"], 128, 1))) && (reconciliationShapeVerificationState(item["verificationState"])))) && reconciliationSemantics("IdentifierAssertion", value);
+}
+
+function reconciliationShapeIdentifierScope(value: unknown): value is IdentifierScope {
+  return ((value === "work" || value === "work-version" || value === "person" || value === "organization" || value === "container" || value === "location" || value === "heuristic" || value === "unknown")) && reconciliationSemantics("IdentifierScope", value);
+}
+
+function reconciliationShapeIdentity(value: unknown): value is Identity {
+  return ((importText(value, 65536, 0) && new RegExp("^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", 'u').test(value as string))) && reconciliationSemantics("Identity", value);
+}
+
+function reconciliationShapeImportPermission(value: unknown): value is ImportPermission {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["basis", "value"])) && ((item["basis"] === "not-reported" || item["basis"] === "researcher-confirmed")) && ((item["value"] === "permitted" || item["value"] === "denied" || item["value"] === "unknown")))) && reconciliationSemantics("ImportPermission", value);
+}
+
+function reconciliationShapeImportRights(value: unknown): value is ImportRights {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["derive", "export", "index", "inspect", "model-use", "quote", "share", "store"])) && (reconciliationShapeImportPermission(item["derive"])) && (reconciliationShapeImportPermission(item["export"])) && (reconciliationShapeImportPermission(item["index"])) && (reconciliationShapeImportPermission(item["inspect"])) && (reconciliationShapeImportPermission(item["model-use"])) && (reconciliationShapeImportPermission(item["quote"])) && (reconciliationShapeImportPermission(item["share"])) && (reconciliationShapeImportPermission(item["store"])))) && reconciliationSemantics("ImportRights", value);
+}
+
+function reconciliationShapeMatchFlag(value: unknown): value is MatchFlag {
+  return ((value === "invalid-identifier" || value === "disputed-identifier" || value === "identifier-reassigned" || value === "identifier-reassignment-suspected" || value === "conflicting-identifiers" || value === "multiple-work-matches" || value === "incompatible-version")) && reconciliationSemantics("MatchFlag", value);
+}
+
+function reconciliationShapeMembers(value: unknown): value is Members {
+  return ((Array.isArray(value) && value.length >= 0 && value.length <= 256 && value.every((element: unknown) => reconciliationShapeIdentity(element)))) && reconciliationSemantics("Members", value);
+}
+
+function reconciliationShapeNormalizedIdentifier(value: unknown): value is NormalizedIdentifier {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["canonical", "issues", "normalizerVersion", "observed", "registryVerified", "scheme", "scope", "status"])) && (((importText(item["canonical"], 65536, 1)) || item["canonical"] === null)) && ((Array.isArray(item["issues"]) && item["issues"].length >= 0 && item["issues"].length <= 32768 && item["issues"].every((element: unknown) => (element === "invalid-identifier" || element === "unsupported-scheme")))) && (item["normalizerVersion"] === "scholarly-identifiers/1.0.0") && ((importText(item["observed"], 65536, 0))) && (item["registryVerified"] === false) && ((importText(item["scheme"], 64, 1))) && (reconciliationShapeIdentifierScope(item["scope"])) && ((item["status"] === "valid" || item["status"] === "invalid" || item["status"] === "unsupported")))) && reconciliationSemantics("NormalizedIdentifier", value);
+}
+
+function reconciliationShapeProjectIdentity(value: unknown): value is ProjectIdentity {
+  return ((importText(value, 65536, 0) && new RegExp("^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", 'u').test(value as string))) && reconciliationSemantics("ProjectIdentity", value);
+}
+
+function reconciliationShapeReconciliationBatchJobRequest(value: unknown): value is ReconciliationBatchJobRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["jobId", "requestId", "root"])) && (reconciliationShapeIdentity(item["jobId"])) && (reconciliationShapeIdentity(item["requestId"])) && ((importText(item["root"], 4096, 1))))) && reconciliationSemantics("ReconciliationBatchJobRequest", value);
+}
+
+function reconciliationShapeReconciliationBatchPrepareRequest(value: unknown): value is ReconciliationBatchPrepareRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["root"])) && ((importText(item["root"], 4096, 1))))) && reconciliationSemantics("ReconciliationBatchPrepareRequest", value);
+}
+
+function reconciliationShapeReconciliationBatchPrepared(value: unknown): value is ReconciliationBatchPrepared {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["requestId"])) && (reconciliationShapeIdentity(item["requestId"])))) && reconciliationSemantics("ReconciliationBatchPrepared", value);
+}
+
+function reconciliationShapeReconciliationBatchRequest(value: unknown): value is ReconciliationBatchRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["requestId", "root"])) && (reconciliationShapeIdentity(item["requestId"])) && ((importText(item["root"], 4096, 1))))) && reconciliationSemantics("ReconciliationBatchRequest", value);
+}
+
+function reconciliationShapeReconciliationBatchStatus(value: unknown): value is ReconciliationBatchStatus {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["diagnosticCode", "jobId", "requestId", "setRevisionId", "state", "workflowRunId"])) && (((importText(item["diagnosticCode"], 65536, 0) && new RegExp("^[a-z][a-z0-9-]{0,95}$", 'u').test(item["diagnosticCode"] as string)) || item["diagnosticCode"] === null)) && (reconciliationShapeIdentity(item["jobId"])) && (reconciliationShapeIdentity(item["requestId"])) && ((reconciliationShapeIdentity(item["setRevisionId"]) || item["setRevisionId"] === null)) && ((item["state"] === "runnable" || item["state"] === "claimed" || item["state"] === "running" || item["state"] === "retry-scheduled" || item["state"] === "cancelling" || item["state"] === "cancelled" || item["state"] === "failed" || item["state"] === "succeeded")) && (reconciliationShapeIdentity(item["workflowRunId"])))) && reconciliationSemantics("ReconciliationBatchStatus", value);
+}
+
+function reconciliationShapeReconciliationCandidateRequest(value: unknown): value is ReconciliationCandidateRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["after", "limit", "root", "setRevisionId"])) && (integer(item["after"], 0.0, 20000.0)) && (integer(item["limit"], 1.0, 100.0)) && ((importText(item["root"], 4096, 1))) && (reconciliationShapeIdentity(item["setRevisionId"])))) && reconciliationSemantics("ReconciliationCandidateRequest", value);
+}
+
+function reconciliationShapeReconciliationConnectorAddressRequest(value: unknown): value is ReconciliationConnectorAddressRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["ordinal", "previewId", "root"])) && (integer(item["ordinal"], 0.0, 999.0)) && (reconciliationShapeIdentity(item["previewId"])) && ((importText(item["root"], 4096, 1))))) && reconciliationSemantics("ReconciliationConnectorAddressRequest", value);
+}
+
+function reconciliationShapeReconciliationContextRequest(value: unknown): value is ReconciliationContextRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["root", "unassignedAssertionRevisionIds", "workIds"])) && ((importText(item["root"], 4096, 1))) && ((Array.isArray(item["unassignedAssertionRevisionIds"]) && item["unassignedAssertionRevisionIds"].length >= 0 && item["unassignedAssertionRevisionIds"].length <= 256 && item["unassignedAssertionRevisionIds"].every((element: unknown) => reconciliationShapeIdentity(element)))) && ((Array.isArray(item["workIds"]) && item["workIds"].length >= 0 && item["workIds"].length <= 32 && item["workIds"].every((element: unknown) => reconciliationShapeIdentity(element)))))) && reconciliationSemantics("ReconciliationContextRequest", value);
+}
+
+function reconciliationShapeReconciliationInspection(value: unknown): value is ReconciliationInspection {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["assertion", "canonicalFields", "canonicalWork", "dependencyState", "normalizedIdentifiers", "result"])) && (reconciliationShapeSourceAssertion(item["assertion"])) && ((Array.isArray(item["canonicalFields"]) && item["canonicalFields"].length >= 0 && item["canonicalFields"].length <= 256 && item["canonicalFields"].every((element: unknown) => reconciliationShapeCanonicalFieldSelection(element)))) && ((reconciliationShapeCanonicalWorkReference(item["canonicalWork"]) || item["canonicalWork"] === null)) && ((item["dependencyState"] === "unaffected" || item["dependencyState"] === "requires-review")) && ((Array.isArray(item["normalizedIdentifiers"]) && item["normalizedIdentifiers"].length >= 0 && item["normalizedIdentifiers"].length <= 32768 && item["normalizedIdentifiers"].every((element: unknown) => reconciliationShapeNormalizedIdentifier(element)))) && (reconciliationShapeReconciliationResult(item["result"])))) && reconciliationSemantics("ReconciliationInspection", value);
+}
+
+function reconciliationShapeReconciliationReadRequest(value: unknown): value is ReconciliationReadRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["assertionRevisionId", "root"])) && (reconciliationShapeIdentity(item["assertionRevisionId"])) && ((importText(item["root"], 4096, 1))))) && reconciliationSemantics("ReconciliationReadRequest", value);
+}
+
+function reconciliationShapeReconciliationRequest(value: unknown): value is ReconciliationRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["commandId", "root", "source"])) && (reconciliationShapeIdentity(item["commandId"])) && ((importText(item["root"], 4096, 1))) && (reconciliationShapeSourceAddress(item["source"])))) && reconciliationSemantics("ReconciliationRequest", value);
+}
+
+function reconciliationShapeReconciliationResult(value: unknown): value is ReconciliationResult {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["assertionRevisionId", "candidates", "disposition", "flags", "knowledgeStatus", "matchingReason", "projectId", "schemaVersion", "source", "workId", "workRevisionId"])) && (reconciliationShapeIdentity(item["assertionRevisionId"])) && ((Array.isArray(item["candidates"]) && item["candidates"].length >= 0 && item["candidates"].length <= 256 && item["candidates"].every((element: unknown) => reconciliationShapeIdentity(element)))) && ((item["disposition"] === "new-work" || item["disposition"] === "exact-linked" || item["disposition"] === "review-required")) && ((Array.isArray(item["flags"]) && item["flags"].length >= 0 && item["flags"].length <= 16 && item["flags"].every((element: unknown) => reconciliationShapeMatchFlag(element)))) && ((item["knowledgeStatus"] === "inferred" || item["knowledgeStatus"] === "disputed")) && ((item["matchingReason"] === "no-exact-match" || item["matchingReason"] === "unique-compatible-exact-identifiers" || item["matchingReason"] === "human-review-required")) && (reconciliationShapeProjectIdentity(item["projectId"])) && (item["schemaVersion"] === "1.0") && (reconciliationShapeSourceAddress(item["source"])) && ((reconciliationShapeIdentity(item["workId"]) || item["workId"] === null)) && ((reconciliationShapeIdentity(item["workRevisionId"]) || item["workRevisionId"] === null)))) && reconciliationSemantics("ReconciliationResult", value);
+}
+
+function reconciliationShapeReconciliationReviewPreviewRequest(value: unknown): value is ReconciliationReviewPreviewRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["plan", "root"])) && (reconciliationShapeReviewPlan(item["plan"])) && ((importText(item["root"], 4096, 1))))) && reconciliationSemantics("ReconciliationReviewPreviewRequest", value);
+}
+
+function reconciliationShapeReconciliationReviewRequest(value: unknown): value is ReconciliationReviewRequest {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["command", "root"])) && (reconciliationShapeReviewCommand(item["command"])) && ((importText(item["root"], 4096, 1))))) && reconciliationSemantics("ReconciliationReviewRequest", value);
+}
+
+function reconciliationShapeReviewCommand(value: unknown): value is ReviewCommand {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["commandId", "expectedPreviewSha256", "plan"])) && (reconciliationShapeIdentity(item["commandId"])) && (reconciliationShapeDigest(item["expectedPreviewSha256"])) && (reconciliationShapeReviewPlan(item["plan"])))) && reconciliationSemantics("ReviewCommand", value);
+}
+
+function reconciliationShapeReviewContext(value: unknown): value is ReviewContext {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["algorithm", "configurationSha256", "evidenceSha256", "featureVersion", "inboundAliases", "schemaVersion", "sources", "unassignedAssertionRevisionIds", "works"])) && ((importText(item["algorithm"], 65536, 0))) && (reconciliationShapeDigest(item["configurationSha256"])) && ((importText(item["evidenceSha256"], 65536, 0))) && ((importText(item["featureVersion"], 65536, 0))) && ((Array.isArray(item["inboundAliases"]) && item["inboundAliases"].length >= 0 && item["inboundAliases"].length <= 256 && item["inboundAliases"].every((element: unknown) => reconciliationShapeWorkState(element)))) && (item["schemaVersion"] === "1.0") && ((Array.isArray(item["sources"]) && item["sources"].length >= 1 && item["sources"].length <= 512 && item["sources"].every((element: unknown) => reconciliationShapeReviewSource(element)))) && (reconciliationShapeMembers(item["unassignedAssertionRevisionIds"])) && ((Array.isArray(item["works"]) && item["works"].length >= 0 && item["works"].length <= 32 && item["works"].every((element: unknown) => reconciliationShapeWorkState(element)))))) && reconciliationSemantics("ReviewContext", value);
+}
+
+function reconciliationShapeReviewOutcome(value: unknown): value is ReviewOutcome {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["commandId", "decisionId", "decisionRevisionId", "dependencyRunIds", "planSha256", "schemaVersion", "workStates"])) && (reconciliationShapeIdentity(item["commandId"])) && (reconciliationShapeIdentity(item["decisionId"])) && (reconciliationShapeIdentity(item["decisionRevisionId"])) && ((Array.isArray(item["dependencyRunIds"]) && item["dependencyRunIds"].length >= 0 && item["dependencyRunIds"].length <= 288 && item["dependencyRunIds"].every((element: unknown) => reconciliationShapeIdentity(element)))) && (reconciliationShapeDigest(item["planSha256"])) && (item["schemaVersion"] === "1.0") && ((Array.isArray(item["workStates"]) && item["workStates"].length >= 1 && item["workStates"].length <= 288 && item["workStates"].every((element: unknown) => reconciliationShapeWorkState(element)))))) && reconciliationSemantics("ReviewOutcome", value);
+}
+
+function reconciliationShapeReviewPlan(value: unknown): value is ReviewPlan {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["action", "aliases", "conflictDisposition", "evidenceSha256", "partitions", "rationale", "schemaVersion", "unassignedAssertionRevisionIds", "works"])) && ((item["action"] === "merge" || item["action"] === "split" || item["action"] === "assign")) && ((Array.isArray(item["aliases"]) && item["aliases"].length >= 0 && item["aliases"].length <= 256 && item["aliases"].every((element: unknown) => reconciliationShapeAliasPlan(element)))) && (item["conflictDisposition"] === "retain-all") && (reconciliationShapeDigest(item["evidenceSha256"])) && ((Array.isArray(item["partitions"]) && item["partitions"].length >= 1 && item["partitions"].length <= 32 && item["partitions"].every((element: unknown) => reconciliationShapeSourcePartition(element)))) && ((importText(item["rationale"], 2048, 1))) && (item["schemaVersion"] === "1.0") && (reconciliationShapeMembers(item["unassignedAssertionRevisionIds"])) && ((Array.isArray(item["works"]) && item["works"].length >= 0 && item["works"].length <= 32 && item["works"].every((element: unknown) => reconciliationShapeWorkState(element)))))) && reconciliationSemantics("ReviewPlan", value);
+}
+
+function reconciliationShapeReviewPreview(value: unknown): value is ReviewPreview {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["affectedOutputRevisionIds", "commandId", "evidenceSha256", "planSha256", "previewSha256", "unknownImpactRevisionIds"])) && ((Array.isArray(item["affectedOutputRevisionIds"]) && item["affectedOutputRevisionIds"].length >= 0 && item["affectedOutputRevisionIds"].length <= 20000 && item["affectedOutputRevisionIds"].every((element: unknown) => reconciliationShapeIdentity(element)))) && (reconciliationShapeIdentity(item["commandId"])) && (reconciliationShapeDigest(item["evidenceSha256"])) && (reconciliationShapeDigest(item["planSha256"])) && (reconciliationShapeDigest(item["previewSha256"])) && ((Array.isArray(item["unknownImpactRevisionIds"]) && item["unknownImpactRevisionIds"].length >= 0 && item["unknownImpactRevisionIds"].length <= 20000 && item["unknownImpactRevisionIds"].every((element: unknown) => reconciliationShapeIdentity(element)))))) && reconciliationSemantics("ReviewPreview", value);
+}
+
+function reconciliationShapeReviewSource(value: unknown): value is ReviewSource {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["assertion", "assertionRevisionId"])) && (reconciliationShapeSourceAssertion(item["assertion"])) && (reconciliationShapeIdentity(item["assertionRevisionId"])))) && reconciliationSemantics("ReviewSource", value);
+}
+
+function reconciliationShapeScholarlyField(value: unknown): value is ScholarlyField {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["name", "observed", "origin", "sourceSelector"])) && ((importText(item["name"], 65536, 0) && new RegExp("^[a-z][a-z0-9-]{0,63}$", 'u').test(item["name"] as string))) && ((importText(item["observed"], 65536, 1))) && (reconciliationShapeSourceOrigin(item["origin"])) && ((importText(item["sourceSelector"], 128, 1))))) && reconciliationSemantics("ScholarlyField", value);
+}
+
+function reconciliationShapeScore(value: unknown): value is Score {
+  return (integer(value, 0.0, 10000.0)) && reconciliationSemantics("Score", value);
+}
+
+function reconciliationShapeSourceAddress(value: unknown): value is SourceAddress {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["contextId", "kind", "ordinal", "recordKey", "revisionId"])) && (reconciliationShapeIdentity(item["contextId"])) && ((item["kind"] === "import-member" || item["kind"] === "connector-record")) && (integer(item["ordinal"], 0.0, 200000.0)) && ((reconciliationShapeDigest(item["recordKey"]) || item["recordKey"] === null)) && (reconciliationShapeIdentity(item["revisionId"])))) && reconciliationSemantics("SourceAddress", value);
+}
+
+function reconciliationShapeSourceAssertion(value: unknown): value is SourceAssertion {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["address", "fields", "identifiers", "projectId", "provider", "rights", "schemaVersion", "sourceRevisionId", "sourceSha256"])) && (reconciliationShapeSourceAddress(item["address"])) && ((Array.isArray(item["fields"]) && item["fields"].length >= 0 && item["fields"].length <= 256 && item["fields"].every((element: unknown) => reconciliationShapeScholarlyField(element)))) && ((Array.isArray(item["identifiers"]) && item["identifiers"].length >= 0 && item["identifiers"].length <= 128 && item["identifiers"].every((element: unknown) => reconciliationShapeIdentifierAssertion(element)))) && (reconciliationShapeProjectIdentity(item["projectId"])) && ((importText(item["provider"], 65536, 0) && new RegExp("^[a-z][a-z0-9-]{0,63}$", 'u').test(item["provider"] as string))) && (reconciliationShapeImportRights(item["rights"])) && (item["schemaVersion"] === "1.0") && (reconciliationShapeIdentity(item["sourceRevisionId"])) && (reconciliationShapeDigest(item["sourceSha256"])))) && reconciliationSemantics("SourceAssertion", value);
+}
+
+function reconciliationShapeSourceOrigin(value: unknown): value is SourceOrigin {
+  return ((value === "observed" || value === "correction")) && reconciliationSemantics("SourceOrigin", value);
+}
+
+function reconciliationShapeSourcePartition(value: unknown): value is SourcePartition {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["assertionRevisionIds", "existingWorkId", "group"])) && ((Array.isArray(item["assertionRevisionIds"]) && item["assertionRevisionIds"].length >= 1 && item["assertionRevisionIds"].length <= 256 && item["assertionRevisionIds"].every((element: unknown) => reconciliationShapeIdentity(element)))) && ((reconciliationShapeIdentity(item["existingWorkId"]) || item["existingWorkId"] === null)) && (reconciliationShapeGroupName(item["group"])))) && reconciliationSemantics("SourcePartition", value);
+}
+
+function reconciliationShapeVerificationState(value: unknown): value is VerificationState {
+  return ((value === "unverified" || value === "verified" || value === "disputed" || value === "invalid")) && reconciliationSemantics("VerificationState", value);
+}
+
+function reconciliationShapeWorkState(value: unknown): value is WorkState {
+  return (reconciliationObject(value, (item) => (exactKeys(item, ["aliasTarget", "assertionRevisionIds", "decisionRevisionId", "disposition", "previousRevisionId", "revisionId", "schemaVersion", "workId"])) && ((reconciliationShapeIdentity(item["aliasTarget"]) || item["aliasTarget"] === null)) && (reconciliationShapeMembers(item["assertionRevisionIds"])) && ((reconciliationShapeIdentity(item["decisionRevisionId"]) || item["decisionRevisionId"] === null)) && ((item["disposition"] === "active" || item["disposition"] === "alias")) && ((reconciliationShapeIdentity(item["previousRevisionId"]) || item["previousRevisionId"] === null)) && (reconciliationShapeIdentity(item["revisionId"])) && (item["schemaVersion"] === "1.0") && (reconciliationShapeIdentity(item["workId"])))) && reconciliationSemantics("WorkState", value);
+}
+
+export function decodeCandidatePage(value: unknown): CandidatePage | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeCandidatePage(owned) ? owned : null;
+}
+export function decodeReconciliationBatchPrepared(value: unknown): ReconciliationBatchPrepared | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReconciliationBatchPrepared(owned) ? owned : null;
+}
+export function decodeReconciliationBatchStatus(value: unknown): ReconciliationBatchStatus | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReconciliationBatchStatus(owned) ? owned : null;
+}
+export function decodeReconciliationInspection(value: unknown): ReconciliationInspection | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReconciliationInspection(owned) ? owned : null;
+}
+export function decodeReconciliationResult(value: unknown): ReconciliationResult | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReconciliationResult(owned) ? owned : null;
+}
+export function decodeReviewContext(value: unknown): ReviewContext | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReviewContext(owned) ? owned : null;
+}
+export function decodeReviewOutcome(value: unknown): ReviewOutcome | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReviewOutcome(owned) ? owned : null;
+}
+export function decodeReviewPlan(value: unknown): ReviewPlan | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReviewPlan(owned) ? owned : null;
+}
+export function decodeReviewPreview(value: unknown): ReviewPreview | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeReviewPreview(owned) ? owned : null;
+}
+export function decodeSourceAddress(value: unknown): SourceAddress | null {
+  const owned = reconciliationOwned(value);
+  return reconciliationShapeSourceAddress(owned) ? owned : null;
 }

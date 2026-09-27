@@ -2500,7 +2500,7 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
     }
 }
 
-fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
+pub(crate) fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
     }
@@ -2572,6 +2572,11 @@ fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
         && request.idempotency_key.is_none()
         && request.body.as_deref().is_some_and(|body| {
             validate_import_review_request(&request.path, body)
+                || crate::reconciliation_admission::validate_public_request(
+                    &request.path,
+                    body,
+                    canonical_project_root,
+                )
                 || crate::connector_configuration::validate_public_request(&request.path, body)
         })
     {
@@ -2805,6 +2810,17 @@ fn authenticated_api_request_bytes(
     if cancellation.is_some_and(|flag| flag.load(Ordering::Acquire)) {
         return Err("RO-CORE-API-CANCELLED");
     }
+    let response_limit = match api_request.path.as_str() {
+        "/projects/reconciliation/inspect"
+        | "/projects/reconciliation/review/context"
+        | "/projects/reconciliation/review/preview" => 4_194_304,
+        _ => 1_048_576,
+    };
+    let wire_limit = if response_limit > 1_048_576 {
+        response_limit + 65_536
+    } else {
+        response_limit
+    };
     let mut response = Vec::new();
     let deadline = Instant::now() + Duration::from_secs(2);
     let mut chunk = [0_u8; 8192];
@@ -2815,7 +2831,7 @@ fn authenticated_api_request_bytes(
         match stream.read(&mut chunk) {
             Ok(0) => break,
             Ok(count) => {
-                if response.len().saturating_add(count) > 1_048_576 {
+                if response.len().saturating_add(count) > wire_limit {
                     return Err("RO-CORE-API-RESPONSE-INVALID");
                 }
                 response.extend_from_slice(&chunk[..count]);
@@ -2831,12 +2847,21 @@ fn authenticated_api_request_bytes(
             return Err("RO-CORE-API-RESPONSE-INVALID");
         }
     }
-    parse_api_response(&response, &trace_id)
+    parse_api_response_with_limit(&response, &trace_id, response_limit)
 }
 
+#[cfg(test)]
 fn parse_api_response(
     response: &[u8],
     expected_trace: &str,
+) -> Result<CoreApiResponse, &'static str> {
+    parse_api_response_with_limit(response, expected_trace, 1_048_576)
+}
+
+fn parse_api_response_with_limit(
+    response: &[u8],
+    expected_trace: &str,
+    maximum_bytes: usize,
 ) -> Result<CoreApiResponse, &'static str> {
     let split = response
         .windows(4)
@@ -2889,7 +2914,7 @@ fn parse_api_response(
             transfer_encoding = Some(value);
         } else if name.eq_ignore_ascii_case("content-length") {
             if content_length.is_some()
-                || !canonical_unsigned(value, 0, 1_048_576)
+                || !canonical_unsigned(value, 0, maximum_bytes as u64)
                 || value.parse::<usize>().is_err()
             {
                 return Err("RO-CORE-API-RESPONSE-INVALID");
@@ -2905,7 +2930,7 @@ fn parse_api_response(
         return Err("RO-CORE-API-RESPONSE-INVALID");
     }
     let body_bytes = if transfer_encoding.is_some() {
-        decode_chunked(raw_body)?
+        decode_chunked(raw_body, maximum_bytes)?
     } else {
         if content_length != Some(raw_body.len()) {
             return Err("RO-CORE-API-RESPONSE-INVALID");
@@ -2922,7 +2947,7 @@ fn parse_api_response(
     })
 }
 
-fn decode_chunked(body: &[u8]) -> Result<Vec<u8>, &'static str> {
+fn decode_chunked(body: &[u8], maximum_bytes: usize) -> Result<Vec<u8>, &'static str> {
     let mut offset = 0;
     let mut decoded = Vec::new();
     loop {
@@ -2952,7 +2977,7 @@ fn decode_chunked(body: &[u8]) -> Result<Vec<u8>, &'static str> {
             .checked_add(size)
             .filter(|end| *end <= body.len())
             .ok_or("RO-CORE-API-RESPONSE-INVALID")?;
-        if decoded.len() + size > 1_048_576 || body.get(end..end + 2) != Some(b"\r\n") {
+        if decoded.len() + size > maximum_bytes || body.get(end..end + 2) != Some(b"\r\n") {
             return Err("RO-CORE-API-RESPONSE-INVALID");
         }
         decoded.extend_from_slice(&body[offset..end]);
@@ -5027,6 +5052,101 @@ mod tests {
                 .body,
             "hello"
         );
+    }
+
+    #[test]
+    fn reconciliation_response_limits_cover_admitted_previews_only() {
+        use std::io::Write;
+        for (path, length, chunked, accepted) in [
+            (
+                "/projects/reconciliation/review/preview",
+                1_560_358,
+                false,
+                true,
+            ),
+            (
+                "/projects/reconciliation/review/context",
+                4_194_304,
+                false,
+                true,
+            ),
+            ("/projects/reconciliation/inspect", 4_194_304, true, true),
+            (
+                "/projects/reconciliation/review/preview",
+                4_194_305,
+                false,
+                false,
+            ),
+            ("/projects/reconciliation/inspect", 4_194_305, true, false),
+            (
+                "/projects/reconciliation/review/commit",
+                1_560_358,
+                false,
+                false,
+            ),
+            ("/health", 1_560_358, false, false),
+        ] {
+            let listener = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+            let port = listener.local_addr().unwrap().port();
+            let token = CapabilityToken::generate().unwrap();
+            let server = std::thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(2)))
+                    .unwrap();
+                let mut headers = Vec::new();
+                while !headers.ends_with(b"\r\n\r\n") {
+                    let mut byte = [0];
+                    stream.read_exact(&mut byte).unwrap();
+                    headers.push(byte[0]);
+                    assert!(headers.len() <= 8192);
+                }
+                let headers = String::from_utf8(headers).unwrap();
+                let trace = headers
+                    .lines()
+                    .find_map(|line| line.strip_prefix("X-Trace-Id: "))
+                    .unwrap();
+                let framing = if chunked {
+                    "Transfer-Encoding: chunked".to_owned()
+                } else {
+                    format!("Content-Length: {length}")
+                };
+                let mut response = format!(
+                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nX-Trace-Id: {trace}\r\n{framing}\r\n\r\n"
+                );
+                if chunked {
+                    response.push_str(&format!("{length:x}\r\n"));
+                }
+                response.push_str(&" ".repeat(length - 2));
+                response.push_str("{}");
+                if chunked {
+                    response.push_str("\r\n0\r\n\r\n");
+                }
+                // Rejection may close the stream while the oversized reply is sent.
+                let _ = stream.write_all(response.as_bytes());
+            });
+            let result = super::authenticated_api_request_with_cancellation(
+                port,
+                &token,
+                &CoreApiRequest {
+                    method: "POST".into(),
+                    path: path.into(),
+                    body: None,
+                    if_match: None,
+                    idempotency_key: None,
+                },
+                None,
+            );
+            server.join().unwrap();
+            assert_eq!(
+                result.is_ok(),
+                accepted,
+                "{path} length={length} chunked={chunked}"
+            );
+            if let Ok(response) = result {
+                assert_eq!(response.body.len(), length);
+            }
+        }
     }
 
     #[test]
