@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9ebb2841eaad05683d42b8882d629e8f772287968dbbcce857f27af64d493485
+source_sha256: c6effdb2ca5293a261a619db1ea5666ee7136b216ea1fb47bfda9080907fc183
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2727,7 +2727,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C02.T01 — Implement Unpaywall and Semantic Scholar adapters
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `approved`.
 
 **Reproduction:** Independent slice preflight F-SLICE-02 at 035f11a3546658ed9c694acbae1c1a3ac4907724 (unchanged product 1e68cab433f194bf5d834bedc974bdac5a4f7cb6) found that broker requests produce no retained measured latency or actual HTTP attempt/retry count, and Source Manager confirmation/inspection exposes neither these facts nor explicit unavailable completion estimates and selected timing limits. CAP-04.S02 sections 11-12 and approved reference 1.7 connection health require this visibility. Existing benchmark timings are qualification measurements and do not repair ordinary runtime observability. The original task and its R01 approval remain immutable; F-SLICE-01 timeout/reset evidence was separately closed by the control increment.
 
@@ -2763,9 +2763,11 @@ Original tasks and approvals remain unchanged.
 - tests/desktop/test_source_interactions.py
 #### Review history — W2.C02.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `7b144fc1e54ce9acf39e3dcea77cc5ddbbbd44c633191fb9d6034716ba4b86fb`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `7b144fc1e54ce9acf39e3dcea77cc5ddbbbd44c633191fb9d6034716ba4b86fb`
 
 - Candidate / base / branch: `b17bc9d868e4e9ee672dbac7b765514403949b9d` / `fb7e0588b60e3ccd0fb5a6a06efb43b2ed18353d` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-09-27T03:43:27+00:00`
@@ -2779,9 +2781,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_c02_review / `2026-09-27T03:54:53+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C02.T01.review-R01.json` / `2ac5f324cf1df3c485ec2a77d7a2dc84f6f4b248936c0940739aa310d2b9d3d3`
+
+**Review notes:** Independent expanded task review approves this exact frozen R01 correction candidate. The reviewer is agent:/root/w2_c02_review, independent of owner codex-w2-implementation, and did not implement or commit the reviewed product or control changes. This review authenticates the actual current_submission, canonical packet/criteria/selection/evidence hashes, exact 210-path base-to-candidate inventory, and the subsequent six-file evidence/submission/generated-view delivery. Read-only task_submission_packet_errors and validate_task_evidence returned no errors. The review covers the 22 admitted product paths and the separately authenticated bounded maintenance/evidence chains, under immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, the original CAP-04.S02.T03 contract, approved CAP-04.S02 sections 6, 11 and 12, ADR-0027, and existing reference 1.7 authority. No criterion-bound blocker remains. The measurements are optional operational observations, not scientific identity, performance estimates, new execution permission, or substitutes for required performance qualification. Actual transport dispatches and retries are counted at the dispatch boundary; accumulated exchange elapsed time and invocation-local broker elapsed time are distinct. No-dispatch cache reads have zero attempts and unavailable exchange latency/status. Historical records without measurements remain unavailable rather than receiving invented zeroes. Same-invocation replay retains the original observation and measurements, and the persistence regression checks original serialized bytes, pointer/hash and revision count after reopening. Protected diagnostics resolve only the current project/session's stored preview/job and retained observation, require inspect rights, expose bounded operational fields, and neither dispatch nor create confirmation authority. Exact native path/body admission and strict client envelope/identity/count decoding reject widened or substituted requests. Renderer matching and generation/lifetime guards prevent foreign or late diagnostics from repopulating inspected facts, and unavailable diagnostics preserve scholarly inspection. No new migration, domain identity, security permission, release criterion, approved reference or accepted ADR decision is introduced. This is W2.C02.T01 correction approval and affected integration review only; it is not CAP-04.S02 slice, Wave exit, performance-baseline, release or live-provider approval.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-27T03:54:53+00:00`
+
+**Latest notes:** Independent expanded task review approves this exact frozen R01 correction candidate. The reviewer is agent:/root/w2_c02_review, independent of owner codex-w2-implementation, and did not implement or commit the reviewed product or control changes. This review authenticates the actual current_submission, canonical packet/criteria/selection/evidence hashes, exact 210-path base-to-candidate inventory, and the subsequent six-file evidence/submission/generated-view delivery. Read-only task_submission_packet_errors and validate_task_evidence returned no errors. The review covers the 22 admitted product paths and the separately authenticated bounded maintenance/evidence chains, under immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, the original CAP-04.S02.T03 contract, approved CAP-04.S02 sections 6, 11 and 12, ADR-0027, and existing reference 1.7 authority. No criterion-bound blocker remains. The measurements are optional operational observations, not scientific identity, performance estimates, new execution permission, or substitutes for required performance qualification. Actual transport dispatches and retries are counted at the dispatch boundary; accumulated exchange elapsed time and invocation-local broker elapsed time are distinct. No-dispatch cache reads have zero attempts and unavailable exchange latency/status. Historical records without measurements remain unavailable rather than receiving invented zeroes. Same-invocation replay retains the original observation and measurements, and the persistence regression checks original serialized bytes, pointer/hash and revision count after reopening. Protected diagnostics resolve only the current project/session's stored preview/job and retained observation, require inspect rights, expose bounded operational fields, and neither dispatch nor create confirmation authority. Exact native path/body admission and strict client envelope/identity/count decoding reject widened or substituted requests. Renderer matching and generation/lifetime guards prevent foreign or late diagnostics from repopulating inspected facts, and unavailable diagnostics preserve scholarly inspection. No new migration, domain identity, security permission, release criterion, approved reference or accepted ADR decision is introduced. This is W2.C02.T01 correction approval and affected integration review only; it is not CAP-04.S02 slice, Wave exit, performance-baseline, release or live-provider approval.
 
 **Currently open findings:** -
 

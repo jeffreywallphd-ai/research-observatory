@@ -1,0 +1,78 @@
+{
+  "task_id": "W2.C02.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "b17bc9d868e4e9ee672dbac7b765514403949b9d",
+  "base_commit": "fb7e0588b60e3ccd0fb5a6a06efb43b2ed18353d",
+  "reviewer": "agent:/root/w2_c02_review",
+  "result": "approved",
+  "evidence_sha256": "fda31dfba93dbd4ab537a9409fc9762ec2bae037f7eee5ff3d5ce9e27a9205d8",
+  "packet_sha256": "7b144fc1e54ce9acf39e3dcea77cc5ddbbbd44c633191fb9d6034716ba4b86fb",
+  "acceptance_criteria_sha256": "da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999",
+  "selection_sha256": "5697ad4e441bc6235f7140a5cb2ed43e403a2f493d21786a97d89842965ba5dd",
+  "evidence_delivery_commit": "39b00c9986339575fe4b6225ef9d241fbb778e42",
+  "notes": "Independent expanded task review approves this exact frozen R01 correction candidate. The reviewer is agent:/root/w2_c02_review, independent of owner codex-w2-implementation, and did not implement or commit the reviewed product or control changes. This review authenticates the actual current_submission, canonical packet/criteria/selection/evidence hashes, exact 210-path base-to-candidate inventory, and the subsequent six-file evidence/submission/generated-view delivery. Read-only task_submission_packet_errors and validate_task_evidence returned no errors. The review covers the 22 admitted product paths and the separately authenticated bounded maintenance/evidence chains, under immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, the original CAP-04.S02.T03 contract, approved CAP-04.S02 sections 6, 11 and 12, ADR-0027, and existing reference 1.7 authority. No criterion-bound blocker remains. The measurements are optional operational observations, not scientific identity, performance estimates, new execution permission, or substitutes for required performance qualification. Actual transport dispatches and retries are counted at the dispatch boundary; accumulated exchange elapsed time and invocation-local broker elapsed time are distinct. No-dispatch cache reads have zero attempts and unavailable exchange latency/status. Historical records without measurements remain unavailable rather than receiving invented zeroes. Same-invocation replay retains the original observation and measurements, and the persistence regression checks original serialized bytes, pointer/hash and revision count after reopening. Protected diagnostics resolve only the current project/session's stored preview/job and retained observation, require inspect rights, expose bounded operational fields, and neither dispatch nor create confirmation authority. Exact native path/body admission and strict client envelope/identity/count decoding reject widened or substituted requests. Renderer matching and generation/lifetime guards prevent foreign or late diagnostics from repopulating inspected facts, and unavailable diagnostics preserve scholarly inspection. No new migration, domain identity, security permission, release criterion, approved reference or accepted ADR decision is introduced. This is W2.C02.T01 correction approval and affected integration review only; it is not CAP-04.S02 slice, Wave exit, performance-baseline, release or live-provider approval.",
+  "corrective_integration": {
+    "evidence_sha256": "fda31dfba93dbd4ab537a9409fc9762ec2bae037f7eee5ff3d5ce9e27a9205d8",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Authenticated the exact final manifest and both raw qualification receipts, including every check's fixed candidate, command, exit status, retained output digest and timing. Reviewed the broker-to-protected-persistence-to-Core-inspection path, exact native/client boundary, renderer identity and stale-response behavior, full-history correction scope, control maintenance chain, visual disposition and restoration classification. The original ordinary-task snapshot remains f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028. Existing approvals, findings and historical evidence remain immutable. The ADR association repair is a separately accepted six-path control maintenance chain beginning at c853f9815f060de8933c6f8150e87856ef1bf7dc, with immediate evidence child 50043d1acaed68bc63aa473fec191b79fa038911 and independent review child fa6a185de23fccc30524efaa3ea1d03b5e5ac02b. Its single Proposed companion ADR documents existing authority; it does not accept a new architecture decision or generally admit ADR edits. Existing ADR/index entries and metadata, exact path restrictions, independent evidence/review bindings and full-history rejection rules remain enforced. The final whole-range ADR and UI gates pass without waiving the earlier failure. Capture and classification records retain their actual producer and introduction commits, and final validation establishes unchanged captured inputs rather than claiming a new capture run at the final candidate. Later CAP-04.S02 performance and slice-wide qualification remain due after correction integration."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The fresh 100-case connector suite and 20-case connector-contract suite preserve OA license/host metadata, graph direction/source and provider-degradation behavior. Inspected broker and persistence tests distinguish actual dispatch, retries, timeout/reset, denied pre-dispatch configuration/authority, cache reuse and same-invocation replay. The four-provider runtime test executes authenticated Core requests with real DPAPI/SQLCipher protected storage and durable jobs, matching diagnostics to stored observations across cold/cache and reopened-runtime paths. Cancellation and failure leave accepted observations and checkpoints intact. These tests use synthetic provider transport; no live-provider result is inferred."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh client, native configuration/supervisor, renderer and source-browser checks cover exact route/body admission, malformed and substituted envelopes, invalid numeric values, protected preview and inspect rights, foreign observation/job identities, unavailable historical measurements and late workspace responses. The source browser exercises explicit confirmation, request status transitions, inspection pagination, unavailable diagnostics without loss of scholarly records, focus restoration and no additional confirmation dispatch. The scoped status locator repair selects the existing visible request panel and retains visibility and transition assertions; it does not weaken the product contract. Failure, denial, cancellation and persistence/reopen cases are executable checks rather than screenshot claims."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Generated API and optional portable observation contracts agree with the handwritten strict client. Historical serialization omits absent measurements, and no data migration or domain identity change is required. Fresh affected Python quality, desktop type/lint, architecture, protected-interface ADR association, style, whole-range UI gate and capture validation pass. Independently reviewed control maintenance and the exact restoration classification preserve current approval authority. Exactly three governed UI files changed, all at 6854b45999909309c01124279dd104ff2c239d27; later 4514bc7badf92b3f50ca1ceb58e1ab1567212af9 changes the browser test only. No approved reference or unrelated product scope changes are admitted."
+    }
+  ],
+  "verification_review": {
+    "candidate_commit": "b17bc9d868e4e9ee672dbac7b765514403949b9d",
+    "selected_check_count": 19,
+    "backend_receipt": {
+      "path": "artifacts/tmp/W2.C02.T01.backend-qualification-02.json",
+      "sha256": "4ad95cd6e4a6b344abe7e7724f869de246de06ae67014c7e08fc589eac8b4733"
+    },
+    "technical_receipt": {
+      "path": "artifacts/tmp/W2.C02.T01.technical-qualification-02.json",
+      "sha256": "863e295bdcf008a77022d8970cf542f8a5d113172afe191960f3505bb514fc36"
+    },
+    "assessment": "All 19 manifest checks match the retained producer receipts and raw output digests, with exit code zero at the frozen final candidate. Actual output reports 100 connector tests in 117.175 seconds and 20 connector-contract tests in 2.210 seconds, without skips; 54 client tests; four renderer tests; eight native configuration tests; 29 native supervisor tests; and three source-browser tests. Affected Ruff/format/mypy, generated API, client/desktop type checks, desktop lint, architecture, ADR, style, whole-range UI gate and capture-delivery validation also pass. These are selected checks, not full-domain or full-repository profile passes. The reviewer authenticated existing execution evidence and inspected relevant source/tests rather than repeating unchanged expensive suites."
+  },
+  "visual_and_classification_review": {
+    "producer_commit": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+    "capture_delivery_commit": "921075181ab9847013f055144309b8583639e8ca",
+    "manifest": "artifacts/evidence/W2.C02.T01.captures-01/manifest.json",
+    "manifest_sha256": "53a3c18b42a9a98fa44194439e02bf789ea1654a188ccad9ae642f399598ab12",
+    "visual_review_introduction_commit": "036043e8201f4078c1b5f6605178fdb8dbe63f96",
+    "classification_introduction_commit": "e69e75ff50b31a0c352415aafebf3f39c2ba7c50",
+    "reference_package_sha256": "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878",
+    "assessment": "The separate independent visual disposition reviewed all 144 primary and 22 supplementary PNGs and accepted documented fixture composition and ordinary vertical-scroll variance under approved reference 1.7. Exact delivery bytes and verifier output authenticate. The source report checks both themes at three widths, visible content, no horizontal overflow and measured text contrast; minimum measured text contrast is 4.7152481724354205. The restoration classification binds the exact three UI files, original task snapshot, actual capture delivery and actual visual introduction. Its prior formalTaskApproval false remains accurate: this ledger supplies the separate task disposition. The narrow tall-element screenshot skip-link artifact remains the documented nonblocking capture limitation W2.C02.T01-visual-01-L01; viewport captures and before/after DOM geometry show the unfocused link entirely above the viewport. No functional, focus or accessibility obligation is waived."
+  },
+  "findings": [],
+  "closures": [],
+  "pre_submission_closures": [
+    {
+      "finding_id": "F-SLICE-02",
+      "source": "artifacts/evidence/CAP-04.S02.pre-qualification-review-01.md",
+      "criterion_indexes": [2, 3],
+      "result": "closed",
+      "remediation_candidate": "b17bc9d868e4e9ee672dbac7b765514403949b9d",
+      "evidence": "The approved source-plan sections 11 and 12 now map to concrete bounded preview and protected inspection behavior. Preview shows the selected limits and explicitly unavailable estimated duration instead of inventing a prediction or substituting a deadline. Inspection exposes actual HTTP request/retry counts, accumulated exchange elapsed time, invocation-local broker elapsed time, response bytes, last HTTP status, provider outcome, cache/rate information, safe errors/warnings and cursor/continuation facts from the matching protected observation. Worker attempt count is not treated as HTTP request count. Historical missing measurements remain unavailable, cache no-dispatch is explicitly zero, and same-invocation replay preserves original measurements and serialized history. Focused broker/persistence/Core/client/native/renderer/browser tests and independently authenticated visual/restoration evidence close the visibility and proof gap. The original adverse finding remains unchanged; this is its append-only corrective disposition. Performance calibration/baseline/qualification remains a separate unmet slice obligation and is not replaced by these operational measurements."
+    }
+  ],
+  "limitations": [
+    "The final protected runtime result file artifacts/tmp/source-slice-2v0j68jz/result.json was not directly readable under this reviewer's token. The reviewer inspected the executed runtime test assertions and authenticated the complete 100-test raw log, including the runtime test's passing result, instead of claiming direct access to that protected report or independently traversing its protected files.",
+    "The protected runtime test uses actual DPAPI/SQLCipher and Core composition with synthetic HTTP/native-context fixtures. Its restart path reopens a Core composition over retained state; it is not an operating-system process-kill or a fresh complete native GUI integration. Native admission/supervisor tests and browser doubles prove their respective boundaries separately.",
+    "The earlier ADR qualification failure and ambiguous global status-locator failure remain preserved in the manifest. The separately reviewed maintenance and scoped test repair close their causes without relabeling failed runs as passes.",
+    "Fresh CAP-04.S02 performance calibration, independent baseline review, qualification and final slice-wide disposition follow correction integration. Full repository/profile, packaging, required Windows platform, cross-capability/recovery and independent Wave review remain W2 exit obligations. Previously disclosed full-quality failures and Windows-token symlink skips are not converted to passes. No live-provider availability or minimum-hardware result is claimed."
+  ]
+}
