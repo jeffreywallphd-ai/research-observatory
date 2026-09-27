@@ -109,6 +109,9 @@ RECONCILIATION_REVIEW_TABLES = (
     "reconciliation_feature_cache",
     "reconciliation_candidate_sets",
     "reconciliation_candidate_pairs",
+    "reconciliation_exact_impacts",
+    "reconciliation_impact_continuations",
+    "reconciliation_impact_seals",
 )
 
 EXPECTED_TABLES = (
@@ -229,6 +232,13 @@ EXPECTED_TRIGGERS = tuple(
             "import_manifest_member_binding",
             "import_manifest_seal_binding",
             "reconciliation_work_binding",
+            "reconciliation_candidate_pair_binding",
+            "reconciliation_state_binding",
+            "reconciliation_membership_binding",
+            "reconciliation_seal_binding",
+            "reconciliation_legacy_history_closed",
+            "reconciliation_exact_impact_binding",
+            "reconciliation_impact_continuation_binding",
         ]
     )
 )
@@ -271,6 +281,7 @@ EXPECTED_INDEXES = (
     "reconciliation_current_membership",
     "reconciliation_state_predecessor",
     "reconciliation_alias_target",
+    "dependency_impact_project_identity",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -292,7 +303,7 @@ IMPORT_PREVIEW_SCHEMA_SHA256 = "33f607dea1a2b20e0d1b451cafdbcaa5d1bb58e1b9149952
 IMPORT_SUMMARY_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
 IMPORT_COMMIT_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
 RECONCILIATION_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
-EXPECTED_SCHEMA_SHA256 = "e24b701d534932df7c67fb01bf07636416731509530c40de9dec4d9cd80307d3"
+EXPECTED_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -355,7 +366,7 @@ IMPORT_PREVIEW_PROFILE_SHA256 = "c751146ae0301c14716e8fa1f0c29b9929a1dd4caa9a3b9
 IMPORT_SUMMARY_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c36eee4e25b02d863f"
 IMPORT_COMMIT_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
 RECONCILIATION_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
-EXPECTED_PROFILE_SHA256 = "b1875252bc7c489b9cb85f601a2bed3644b990147a8106459f0cf9af3193e4c2"
+EXPECTED_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391ab69246f62696623d067cd37"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -2724,6 +2735,42 @@ RECONCILIATION_DDL = (
 )
 
 RECONCILIATION_REVIEW_DDL = (
+    "CREATE UNIQUE INDEX dependency_impact_project_identity ON dependency_impact_runs (run_id, project_id)",
+    f"""
+        CREATE TABLE reconciliation_impact_seals (
+            run_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            run_sha256 TEXT NOT NULL CHECK ({_sha256_check("run_sha256")}),
+            FOREIGN KEY (run_id, project_id) REFERENCES dependency_impact_runs (run_id, project_id)
+        ) STRICT
+    """,
+    """
+        CREATE TABLE reconciliation_exact_impacts (
+            run_id TEXT PRIMARY KEY,
+            project_id TEXT NOT NULL,
+            command_id TEXT NOT NULL,
+            FOREIGN KEY (run_id, project_id) REFERENCES dependency_impact_runs (run_id, project_id),
+            FOREIGN KEY (project_id, command_id) REFERENCES reconciliation_commands (project_id, command_id),
+            UNIQUE (project_id, command_id)
+        ) STRICT
+    """,
+    """
+        CREATE TABLE reconciliation_impact_continuations (
+            root_run_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            sequence INTEGER NOT NULL CHECK (sequence BETWEEN 1 AND 128),
+            previous_run_id TEXT NOT NULL UNIQUE,
+            run_id TEXT PRIMARY KEY,
+            previous_checkpoint_sha256 TEXT NOT NULL CHECK (
+                length(previous_checkpoint_sha256)=71 AND substr(previous_checkpoint_sha256,1,7)='sha256:'
+                AND substr(previous_checkpoint_sha256,8) NOT GLOB '*[^0-9a-f]*'),
+            CHECK (run_id<>root_run_id AND run_id<>previous_run_id),
+            FOREIGN KEY (root_run_id, project_id) REFERENCES dependency_impact_runs (run_id, project_id),
+            FOREIGN KEY (previous_run_id, project_id) REFERENCES dependency_impact_runs (run_id, project_id),
+            FOREIGN KEY (run_id, project_id) REFERENCES dependency_impact_runs (run_id, project_id),
+            UNIQUE (root_run_id, sequence)
+        ) STRICT
+    """,
     """
         CREATE TABLE reconciliation_work_states (
             revision_id TEXT PRIMARY KEY,
@@ -2815,15 +2862,27 @@ RECONCILIATION_REVIEW_DDL = (
             configuration_sha256 TEXT NOT NULL CHECK ({_sha256_check("configuration_sha256")}),
             input_sha256 TEXT NOT NULL CHECK ({_sha256_check("input_sha256")}),
             payload_sha256 TEXT NOT NULL CHECK ({_sha256_check("payload_sha256")}),
-            payload_json TEXT NOT NULL CHECK (json_valid(payload_json)
-                AND length(CAST(payload_json AS BLOB)) BETWEEN 2 AND 2097152
-                AND json_type(payload_json) IS 'object'
-                AND json_extract(payload_json,'$.schemaVersion') IS '1.0'
-                AND json_extract(payload_json,'$.assertionRevisionId') IS assertion_revision_id
-                AND json_extract(payload_json,'$.featureVersion') IS feature_version
-                AND json_extract(payload_json,'$.identifierNormalizer') IS normalizer_version
-                AND json_extract(payload_json,'$.configurationSha256') IS configuration_sha256
-                AND json_extract(payload_json,'$.inputSha256') IS input_sha256),
+            feature_json TEXT NOT NULL CHECK (json_valid(feature_json)
+                AND length(CAST(feature_json AS BLOB)) BETWEEN 2 AND 2097152
+                AND json_type(feature_json) IS 'object'
+                AND json_extract(feature_json,'$.schemaVersion') IS '1.0'
+                AND json_extract(feature_json,'$.assertionRevisionId') IS assertion_revision_id
+                AND json_extract(feature_json,'$.featureVersion') IS feature_version
+                AND json_extract(feature_json,'$.identifierNormalizer') IS normalizer_version
+                AND json_extract(feature_json,'$.configurationSha256') IS configuration_sha256
+                AND json_extract(feature_json,'$.inputSha256') IS input_sha256
+                AND json_extract(feature_json,'$.algorithm') IS 'scholarly-duplicate-ranking/1.0.0'
+                AND json_type(feature_json,'$.sourceRevisionId') IS 'text'
+                AND length(json_extract(feature_json,'$.sourceRevisionId')) = 36
+                AND json_type(feature_json,'$.sourceSha256') IS 'text'
+                AND length(json_extract(feature_json,'$.sourceSha256')) = 64
+                AND json_type(feature_json,'$.fields') IS 'array'
+                AND json_array_length(feature_json,'$.fields') BETWEEN 0 AND 6
+                AND json_type(feature_json,'$.identifiers') IS 'array'
+                AND json_array_length(feature_json,'$.identifiers') BETWEEN 0 AND 128
+                AND json_remove(feature_json,'$.schemaVersion','$.algorithm','$.featureVersion',
+                    '$.identifierNormalizer','$.configurationSha256','$.assertionRevisionId',
+                    '$.sourceRevisionId','$.sourceSha256','$.inputSha256','$.fields','$.identifiers') = '{{}}'),
             FOREIGN KEY (assertion_revision_id, project_id)
                 REFERENCES reconciliation_assertions (revision_id, project_id),
             PRIMARY KEY (project_id, assertion_revision_id, feature_version, normalizer_version, configuration_sha256)
@@ -2837,17 +2896,29 @@ RECONCILIATION_REVIEW_DDL = (
             request_id TEXT NOT NULL CHECK ({_uuid_check("request_id", "7")}),
             request_sha256 TEXT NOT NULL CHECK ({_sha256_check("request_sha256")}),
             payload_sha256 TEXT NOT NULL CHECK ({_sha256_check("payload_sha256")}),
-            payload_json TEXT NOT NULL CHECK (json_valid(payload_json)
-                AND length(CAST(payload_json AS BLOB)) BETWEEN 2 AND 8388608
-                AND json_type(payload_json) IS 'object'
-                AND json_extract(payload_json,'$.schemaVersion') IS '1.0'
-                AND json_extract(payload_json,'$.projectId') IS project_id
-                AND json_extract(payload_json,'$.requestId') IS request_id
-                AND json_extract(payload_json,'$.requestSha256') IS request_sha256
-                AND json_type(payload_json,'$.members') IS 'array'
-                AND json_array_length(payload_json,'$.members') BETWEEN 0 AND 10000
-                AND json_type(payload_json,'$.pairSha256') IS 'array'
-                AND json_array_length(payload_json,'$.pairSha256') BETWEEN 0 AND 20000),
+            candidate_set_json TEXT NOT NULL CHECK (json_valid(candidate_set_json)
+                AND length(CAST(candidate_set_json AS BLOB)) BETWEEN 2 AND 8388608
+                AND json_type(candidate_set_json) IS 'object'
+                AND json_extract(candidate_set_json,'$.schemaVersion') IS '1.0'
+                AND json_extract(candidate_set_json,'$.projectId') IS project_id
+                AND json_extract(candidate_set_json,'$.requestId') IS request_id
+                AND json_extract(candidate_set_json,'$.requestSha256') IS request_sha256
+                AND json_type(candidate_set_json,'$.members') IS 'array'
+                AND json_array_length(candidate_set_json,'$.members') BETWEEN 0 AND 10000
+                AND json_type(candidate_set_json,'$.pairSha256') IS 'array'
+                AND json_array_length(candidate_set_json,'$.pairSha256') BETWEEN 0 AND 20000
+                AND json_extract(candidate_set_json,'$.algorithm') IS 'scholarly-duplicate-ranking/1.0.0'
+                AND json_extract(candidate_set_json,'$.featureVersion') IS 'scholarly-duplicate-features/1.0.0'
+                AND json_extract(candidate_set_json,'$.identifierNormalizer') IS 'scholarly-identifiers/1.0.0'
+                AND json_type(candidate_set_json,'$.configurationSha256') IS 'text'
+                AND length(json_extract(candidate_set_json,'$.configurationSha256')) = 64
+                AND json_type(candidate_set_json,'$.inventorySha256') IS 'text'
+                AND length(json_extract(candidate_set_json,'$.inventorySha256')) = 64
+                AND json_type(candidate_set_json,'$.comparedPairs') IS 'integer'
+                AND json_extract(candidate_set_json,'$.comparedPairs') BETWEEN 0 AND 250000
+                AND json_remove(candidate_set_json,'$.schemaVersion','$.projectId','$.requestId',
+                    '$.requestSha256','$.inventorySha256','$.members','$.comparedPairs','$.pairSha256',
+                    '$.algorithm','$.featureVersion','$.configurationSha256','$.identifierNormalizer') = '{{}}'),
             FOREIGN KEY (revision_id, aggregate_kind, project_id)
                 REFERENCES aggregate_revisions (revision_id, aggregate_kind, project_id),
             UNIQUE (project_id, request_id),
@@ -2860,10 +2931,30 @@ RECONCILIATION_REVIEW_DDL = (
             project_id TEXT NOT NULL,
             ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 0 AND 19999),
             payload_sha256 TEXT NOT NULL CHECK ({_sha256_check("payload_sha256")}),
-            payload_json TEXT NOT NULL CHECK (json_valid(payload_json)
-                AND length(CAST(payload_json AS BLOB)) BETWEEN 2 AND 65536
-                AND json_type(payload_json) IS 'object'
-                AND json_extract(payload_json,'$.disposition') IS 'human-review-required'),
+            explanation_json TEXT NOT NULL CHECK (json_valid(explanation_json)
+                AND length(CAST(explanation_json AS BLOB)) BETWEEN 2 AND 65536
+                AND json_type(explanation_json) IS 'object'
+                AND json_extract(explanation_json,'$.disposition') IS 'human-review-required'
+                AND json_extract(explanation_json,'$.algorithm') IS 'scholarly-duplicate-ranking/1.0.0'
+                AND json_extract(explanation_json,'$.featureVersion') IS 'scholarly-duplicate-features/1.0.0'
+                AND json_extract(explanation_json,'$.identifierNormalizer') IS 'scholarly-identifiers/1.0.0'
+                AND json_type(explanation_json,'$.score') IS 'integer'
+                AND json_extract(explanation_json,'$.score') BETWEEN 0 AND 10000
+                AND json_type(explanation_json,'$.features') IS 'array'
+                AND json_array_length(explanation_json,'$.features') = 7
+                AND json_type(explanation_json,'$.flags') IS 'array'
+                AND json_array_length(explanation_json,'$.flags') BETWEEN 0 AND 3
+                AND json_type(explanation_json,'$.left') IS 'text'
+                AND json_type(explanation_json,'$.right') IS 'text'
+                AND json_type(explanation_json,'$.leftRevision') IS 'text'
+                AND json_type(explanation_json,'$.rightRevision') IS 'text'
+                AND json_type(explanation_json,'$.leftFingerprint') IS 'text'
+                AND json_type(explanation_json,'$.rightFingerprint') IS 'text'
+                AND json_type(explanation_json,'$.configurationFingerprint') IS 'text'
+                AND json_remove(explanation_json,'$.left','$.right','$.leftRevision','$.rightRevision',
+                    '$.leftFingerprint','$.rightFingerprint','$.score','$.features','$.flags',
+                    '$.configurationFingerprint','$.algorithm','$.featureVersion',
+                    '$.identifierNormalizer','$.disposition') = '{{}}'),
             FOREIGN KEY (set_revision_id, project_id)
                 REFERENCES reconciliation_candidate_sets (revision_id, project_id),
             PRIMARY KEY (set_revision_id, ordinal)
@@ -2874,7 +2965,7 @@ RECONCILIATION_REVIEW_DDL = (
         WHEN NOT EXISTS (
             SELECT 1 FROM reconciliation_candidate_sets s
             WHERE s.revision_id=NEW.set_revision_id AND s.project_id=NEW.project_id
-              AND json_extract(s.payload_json,'$.pairSha256[' || NEW.ordinal || ']') IS NEW.payload_sha256
+              AND json_extract(s.candidate_set_json,'$.pairSha256[' || NEW.ordinal || ']') IS NEW.payload_sha256
         )
         BEGIN SELECT RAISE(ABORT, 'scholarly candidate pair binding denied'); END
     """,
@@ -2929,6 +3020,64 @@ RECONCILIATION_REVIEW_DDL = (
     """
         CREATE TRIGGER reconciliation_legacy_history_closed BEFORE INSERT ON reconciliation_work_revisions
         BEGIN SELECT RAISE(ABORT, 'use sealed scholarly work states'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_exact_impact_binding BEFORE INSERT ON reconciliation_exact_impacts
+        WHEN NOT EXISTS (
+            SELECT 1 FROM reconciliation_commands c
+            JOIN reconciliation_assertions a ON a.revision_id=c.assertion_revision_id AND a.project_id=c.project_id
+            JOIN reconciliation_work_states s ON s.revision_id=json_extract(a.result_json,'$.workRevisionId')
+                AND s.project_id=c.project_id
+            JOIN reconciliation_work_members m ON m.work_revision_id=s.revision_id AND m.project_id=c.project_id
+                AND m.assertion_revision_id=c.assertion_revision_id
+            JOIN dependency_impact_runs r ON r.run_id=NEW.run_id AND r.project_id=c.project_id
+            WHERE c.command_id=NEW.command_id AND c.project_id=NEW.project_id
+                AND r.actor_id=c.actor_id AND r.reason='SOURCE_VERSION' AND r.dependency_kind='source-revision'
+                AND r.previous_revision_id=s.previous_revision_id AND r.replacement_revision_id=s.revision_id
+        )
+        BEGIN SELECT RAISE(ABORT, 'scholarly exact impact owner denied'); END
+    """,
+    """
+        CREATE TRIGGER reconciliation_impact_continuation_binding BEFORE INSERT ON reconciliation_impact_continuations
+        WHEN NOT (
+            (NEW.sequence=1 AND NEW.previous_run_id=NEW.root_run_id) OR EXISTS (
+                SELECT 1 FROM reconciliation_impact_continuations p WHERE p.project_id=NEW.project_id
+                    AND p.root_run_id=NEW.root_run_id AND p.run_id=NEW.previous_run_id AND p.sequence=NEW.sequence-1
+            )
+        ) OR NOT (
+            EXISTS (SELECT 1 FROM reconciliation_exact_impacts x WHERE x.project_id=NEW.project_id
+                AND x.run_id=NEW.root_run_id) OR EXISTS (
+                SELECT 1 FROM reconciliation_review_decisions d,json_each(d.outcome_json,'$.dependencyRunIds') owned
+                WHERE d.project_id=NEW.project_id AND owned.value=NEW.root_run_id
+            )
+        ) OR EXISTS (SELECT 1 FROM reconciliation_impact_continuations p
+            WHERE p.previous_run_id=NEW.run_id OR p.root_run_id=NEW.run_id)
+        OR NOT EXISTS (
+            SELECT 1 FROM dependency_impact_audit_events a WHERE a.run_id=NEW.previous_run_id
+                AND a.project_id=NEW.project_id AND a.checkpoint_sha256=NEW.previous_checkpoint_sha256
+                AND a.event_type IN ('started','checkpoint','failed-attempt')
+                AND a.sequence=(SELECT MAX(sequence) FROM dependency_impact_audit_events
+                    WHERE run_id=a.run_id AND project_id=a.project_id)
+        ) OR NOT EXISTS (
+            SELECT 1 FROM dependency_impact_runs p JOIN dependency_impact_runs c ON c.project_id=p.project_id
+            WHERE p.run_id=NEW.previous_run_id AND c.run_id=NEW.run_id AND p.project_id=NEW.project_id
+                AND c.reason IS p.reason AND c.dependency_kind IS p.dependency_kind
+                AND c.previous_revision_id IS p.previous_revision_id
+                AND c.replacement_revision_id IS p.replacement_revision_id
+                AND c.configuration_id IS p.configuration_id
+                AND c.previous_configuration_version IS p.previous_configuration_version
+                AND c.replacement_configuration_version IS p.replacement_configuration_version
+                AND c.previous_fingerprint IS p.previous_fingerprint
+                AND c.replacement_fingerprint IS p.replacement_fingerprint
+                AND c.propagation_policy_id IS p.propagation_policy_id
+                AND c.propagation_policy_version IS p.propagation_policy_version
+                AND c.actor_id IS p.actor_id AND c.trace_id IS p.trace_id AND c.occurred_at IS p.occurred_at
+                AND c.batch_size=p.batch_size AND c.max_nodes=p.max_nodes AND c.max_edges=p.max_edges
+                AND c.max_depth=p.max_depth AND c.max_path_samples=p.max_path_samples
+                AND c.max_legacy_samples=p.max_legacy_samples
+                AND NOT EXISTS (SELECT 1 FROM dependency_impact_decisions d WHERE d.run_id IN (p.run_id,c.run_id))
+        )
+        BEGIN SELECT RAISE(ABORT, 'scholarly impact continuation authority denied'); END
     """,
 )
 

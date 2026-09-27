@@ -11,7 +11,10 @@ from ..ports.workflow_executor import WorkflowAcceptedBoundary, WorkflowAccepted
 from .candidates import ALGORITHM, DEFAULT_CONFIG, FEATURE_VERSION
 from .identifiers import NORMALIZER_VERSION
 
-SOURCE_ACTIVITIES = ("local-import-commit", "scholarly-connector-page")
+SOURCE_ACTIVITIES: tuple[Literal["local-import-commit", "scholarly-connector-page"], ...] = (
+    "local-import-commit",
+    "scholarly-connector-page",
+)
 BATCH_ACTIVITY = "scholarly-reconciliation-batch"
 # Counts include excluded rows and authorization closure. Exhaustion is a failed
 # bounded run, never a claim that the remaining project inventory is empty.

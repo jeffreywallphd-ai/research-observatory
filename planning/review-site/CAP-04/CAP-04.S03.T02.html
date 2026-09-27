@@ -91,9 +91,9 @@ python tools/verify.py --profile data
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="22334c25f796ce2ab86d43cf30104076e4b2a85682f86438e1cb787f893f79b5">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="e77790ccb33e812b942f576e36c8b2f8890b3a90a74a50de2980030fff7f4049">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>22334c25f796ce2ab86d43cf30104076e4b2a85682f86438e1cb787f893f79b5</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>e77790ccb33e812b942f576e36c8b2f8890b3a90a74a50de2980030fff7f4049</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S03.T02 — duplicate candidates and reversible review
 
 Claim base: `691205f48cf8ee80b323a9971413f7da1d0608e1` on the existing W2
@@ -247,7 +247,41 @@ Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows
 symlink-token skips remain explicit Wave obligations. No mandatory new approval
 gate has been discovered. Approved implementation adds no supplemental refactoring
-budget allocation; any later unrelated refactoring requires its accounting route.</pre></article>
+budget allocation; any later unrelated refactoring requires its accounting route.
+
+The first complete task-range quality pass at `3998d9c6` found three new tables
+using the prohibited generic `payload_json` name and five new triggers missing
+from the expected inventory. Preserve the existing scalar-storage assertions.
+Use dedicated bounded feature, candidate-set and explanation documents, with
+direct SQL rejection of unknown/missing fields, wrong types and exceeded bounds;
+refresh only unreleased v15 authority and preserve frozen v14 bytes. The same
+pass exposed missing build-schema inventory, documentary ADR/UI evidence and
+test annotations. These are acceptance closure, not scope changes.
+
+Independent pre-submission review additionally reproduced exact-link dependency
+impacts left pending because worker continuation selected human-review runs only.
+Authenticate exact-command-owned runs, preserve current invalidation authority,
+and prove dependent stale-state publication through worker restart. Keep the
+failed reproduction and distinguish it from the already-passing review-origin
+propagation test.
+
+The same independent review reproduced a second recovery failure: material graph
+growth after publication invalidates the frozen propagation preview. Preserve the
+engine&#x27;s snapshot check. Authenticate each owner-bound root and append a fresh,
+same-semantics continuation, its predecessor checkpoint, and predecessor
+cancellation atomically. Prove restart, partial propagation, failed publication,
+lost acknowledgement, substituted ownership and bounded repeated graph growth.
+Old impact items and stale causes must continue denying fresh-only consumption.
+
+Incremental continuation review found that graph growth could mask corruption of
+the saved preview, run authority, item manifest or checkpoint. Add graph-independent
+validation of saved run authority and audit history before considering recovery,
+including each historical continuation. A corruption-plus-real-growth regression
+must deny without publishing a child or changing the predecessor&#x27;s state.
+The recovery discriminator itself also needs protection: seal every original and
+continuation run&#x27;s complete typed snapshot, including graph/preview digests and
+bounds. First reproduce a substituted graph digest without actual growth, then
+require integrity denial. Preserve the legacy impact engine&#x27;s hash contract.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

@@ -164,17 +164,32 @@ class ReconciliationRendererTests(RendererHarness):
             self.assertGreaterEqual(
                 self.page.get_by_label("Source 1", exact=True).evaluate("e => e.getBoundingClientRect().height"), 40
             )
-        self.page.set_viewport_size({"width": 720, "height": 1000})
-        for zoom in ("100%", "200%"):
-            self.page.evaluate("zoom => document.documentElement.style.zoom = zoom", zoom)
-            self.assertFalse(
-                self.page.evaluate("() => document.documentElement.getBoundingClientRect().width > innerWidth + 1")
-            )
-            self.assertFalse(
-                self.page.evaluate("() => document.documentElement.scrollWidth > document.documentElement.clientWidth")
-            )
-            self.assertTrue(self.page.get_by_role("button", name="Apply reviewed decision", exact=True).is_visible())
-        self.page.evaluate("() => document.documentElement.style.zoom = '100%'")
+        label = self.page.get_by_role("button", name="Back to decision", exact=True)
+        text_height = (
+            "e => { const r = document.createRange(); r.selectNodeContents(e); "
+            "return r.getBoundingClientRect().height; }"
+        )
+        baseline = label.evaluate(text_height)
+        for width, height in ((1440, 900), (1280, 720), (720, 1000)):
+            self.page.set_viewport_size({"width": width, "height": height})
+            for theme in ("light", "dark"):
+                self.page.evaluate("theme => document.documentElement.dataset.theme = theme", theme)
+                for scale in (1, 2):
+                    self.page.evaluate("scale => document.documentElement.style.zoom = String(scale)", scale)
+                    measured = label.evaluate(text_height)
+                    self.assertAlmostEqual(baseline * scale, measured, delta=1)
+                    self.assertFalse(
+                        self.page.evaluate(
+                            "() => document.documentElement.scrollWidth > document.documentElement.clientWidth"
+                        )
+                    )
+                    for name in ("Back to decision", "Apply reviewed decision"):
+                        control = self.page.get_by_role("button", name=name, exact=True)
+                        control.focus()
+                        expect(control).to_be_focused()
+                        self.assertTrue(control.evaluate("e => e.scrollHeight <= e.clientHeight + 1"))
+                    self.assertIn(second, preview.inner_text())
+        self.page.evaluate("() => document.documentElement.style.zoom = '1'")
         self.page.keyboard.press("Escape")
         expect(
             self.page.get_by_role("button", name="Preview decision and affected objects", exact=True)

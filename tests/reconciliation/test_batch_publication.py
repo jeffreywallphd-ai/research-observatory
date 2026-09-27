@@ -1,9 +1,12 @@
 """One real queue/SQLite commit for exact reconciliation and candidate publication."""
 
+import json
+import sqlite3
 import unittest
 from contextlib import closing
 from dataclasses import replace
 from datetime import datetime, timedelta
+from typing import cast
 from unittest.mock import patch
 
 from research_observatory_core.domain_contracts import new_uuid_v7
@@ -19,6 +22,7 @@ from research_observatory_core.reconciliation.contracts import ReconciliationPro
 from research_observatory_core.reconciliation.exact import IdentifierAssertion
 from research_observatory_core.reconciliation.workflow import build_batch_job
 from research_observatory_core.reconciliation_repository import SqliteReconciliationRepository
+from research_observatory_core.repositories import _SqliteAggregateRepository
 from research_observatory_core.storage import open_canonical_database
 
 from tests.reconciliation.test_repository import ReconciliationRepositoryTests
@@ -72,13 +76,59 @@ class BatchPublicationTests(unittest.TestCase):
         self.assertEqual("succeeded", self.queue.get(self.job.job_id).state)
         content = self.f.repository.candidate_set(output.revision_id, resolve=self.f.resolve)
         self.assertEqual(2, len(content.members))
-        self.assertEqual(1, len({item.canonical_work.revision_id for item in content.members}))
+        heads = set()
+        for item in content.members:
+            assert item.canonical_work is not None
+            heads.add(item.canonical_work.revision_id)
+        self.assertEqual(1, len(heads))
         self.assertEqual(1, len(content.pair_sha256))
         before = self.f.counts()
         self.f.repository = SqliteReconciliationRepository(self.f.database, self.f.project)
         self.assertEqual(output, self.publish())
         self.assertEqual(before, self.f.counts())
         self.assertEqual(content, self.f.repository.candidate_set(output.revision_id, resolve=self.f.resolve))
+
+    def test_storage_checks_reject_untyped_feature_set_and_explanation_documents(self):
+        self.publish()
+        # Exercise each actual table's CHECK authority directly, independently
+        # of adapter decoding. Real publication above supplies valid domain rows;
+        # other tests exercise parent foreign keys and immutable publication.
+        for table, collection, maximum in (
+            ("reconciliation_feature_cache", "fields", 6),
+            ("reconciliation_candidate_sets", "members", 10000),
+            ("reconciliation_candidate_pairs", "features", 7),
+        ):
+            with open_canonical_database(self.f.database, expected_project_id=self.f.project) as source:
+                ddl = source.execute("SELECT sql FROM sqlite_schema WHERE name=?", (table,)).fetchone()[0]
+                columns = [row[1] for row in source.execute(f'PRAGMA table_info("{table}")')]
+                original = list(source.execute(f'SELECT * FROM "{table}" LIMIT 1').fetchone())
+            position = next(index for index, name in enumerate(columns) if name.endswith("_json"))
+            document = json.loads(original[position])
+            missing = {key: value for key, value in document.items() if key != "algorithm"}
+            malformed: tuple[dict[str, object], ...] = (
+                {**document, "unexpectedContent": "untyped"},
+                missing,
+                {**document, "algorithm": "unrecognized"},
+                {**document, collection: {}},
+                {**document, collection: [{}] * (maximum + 1)},
+            )
+            if table == "reconciliation_candidate_pairs":
+                malformed += ({**document, "score": True}, {**document, "score": 10001})
+            with closing(sqlite3.connect(":memory:")) as isolated:
+                isolated.execute(ddl)
+                insert = f'INSERT INTO "{table}" VALUES ({",".join("?" for _ in columns)})'
+                isolated.execute(insert, original)
+                self.assertEqual(1, isolated.execute(f'SELECT count(*) FROM "{table}"').fetchone()[0])
+                isolated.execute(f'DELETE FROM "{table}"')
+                for value in malformed:
+                    isolated.execute(f'DELETE FROM "{table}"')
+                    changed = original.copy()
+                    changed[position] = json.dumps(value)
+                    with (
+                        self.subTest(table=table, fields=tuple(value)),
+                        self.assertRaisesRegex(sqlite3.IntegrityError, "CHECK constraint failed"),
+                    ):
+                        isolated.execute(insert, changed)
 
     def test_large_dependency_manifest_preserves_all_material_and_historical_leaves(self):
         with self.f.repository._transaction(write=False) as (_, repository):
@@ -103,7 +153,7 @@ class BatchPublicationTests(unittest.TestCase):
                 )
 
         output = self.f.repository._append(
-            AggregateProbe(),
+            cast(_SqliteAggregateRepository, AggregateProbe()),
             sources=sources,
             historical_sources=historical,
             actor=self.f.actor,
@@ -111,7 +161,8 @@ class BatchPublicationTests(unittest.TestCase):
             label="Synthetic bounded manifest",
             kind="workflow",
         )
-        material, retained = set(), set()
+        material: set[str] = set()
+        retained: set[str] = set()
 
         def visit(revision, historical=False):
             if revision not in drafts:
@@ -215,7 +266,11 @@ class BatchPublicationTests(unittest.TestCase):
             )
         output = self.publish()
         content = self.f.repository.candidate_set(output.revision_id, resolve=self.f.resolve)
-        self.assertEqual(2, len({member.canonical_work.work_id for member in content.members}))
+        works = set()
+        for member in content.members:
+            assert member.canonical_work is not None
+            works.add(member.canonical_work.work_id)
+        self.assertEqual(2, len(works))
         pairs = self.f.repository.candidate_pairs(output.revision_id, after=0, limit=100, resolve=self.f.resolve)
         self.assertEqual(1, len(pairs))
         self.assertIn("conflicting-identifiers", pairs[0].flags)
@@ -317,12 +372,13 @@ class BatchPublicationTests(unittest.TestCase):
             ).fetchone()[0]
             db.execute("DROP TRIGGER reconciliation_candidate_pairs_no_update")
             db.execute(
-                "UPDATE reconciliation_candidate_pairs SET payload_json=json_set(payload_json,'$.leftFingerprint',?) "
+                "UPDATE reconciliation_candidate_pairs "
+                "SET explanation_json=json_set(explanation_json,'$.leftFingerprint',?) "
                 "WHERE set_revision_id=?",
                 ("f" * 64, output.revision_id),
             )
             db.execute(ddl)
         with self.assertRaises(ReconciliationProblem):
             self.f.repository.candidate_pairs(output.revision_id, after=0, limit=1, resolve=self.f.resolve)
-        with open_canonical_database(self.f.database, expected_project_id=self.f.project) as db:
-            self.assertEqual(1, db.execute("SELECT COUNT(*) FROM reconciliation_candidate_sets").fetchone()[0])
+        with open_canonical_database(self.f.database, expected_project_id=self.f.project) as canonical:
+            self.assertEqual(1, canonical.execute("SELECT COUNT(*) FROM reconciliation_candidate_sets").fetchone()[0])

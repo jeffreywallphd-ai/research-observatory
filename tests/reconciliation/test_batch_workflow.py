@@ -50,6 +50,7 @@ class BatchWorkflowTests(unittest.TestCase):
             lease_duration_ms=30000,
             activity_types=(BATCH_ACTIVITY,),
         )
+        assert claim is not None
         self.assertEqual(inputs, bind_batch_claim(queue.authority(job.job_id), claim, inputs))
         for forged in (
             replace(claim, project_id=new_uuid_v7()),
@@ -76,6 +77,7 @@ class BatchWorkflowTests(unittest.TestCase):
             lease_duration_ms=30000,
             activity_types=(BATCH_ACTIVITY,),
         )
+        assert child is not None
         self.assertEqual(continued.jobs[0].job_id, child.job_id)
         authority = queue.authority(child.job_id)
         with self.assertRaises(ReconciliationProblem):

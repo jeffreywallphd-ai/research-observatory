@@ -314,6 +314,15 @@
       "linkedTasks": [
         "CAP-04.S03.T01"
       ]
+    },
+    {
+      "id": "ADR-0032",
+      "path": "docs/adr/ADR-0032-document-duplicate-review-under-existing-canonical-authority.md",
+      "title": "Document duplicate review under existing canonical authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-04.S03.T02"
+      ]
     }
   ]
 }

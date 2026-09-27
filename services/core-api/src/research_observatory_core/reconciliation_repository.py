@@ -13,7 +13,7 @@ import re
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import replace
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from .domain_contracts import is_uuid_v7, new_uuid_v7
@@ -80,6 +80,13 @@ from .storage import (
 
 _MAX_SOURCE_BYTES = 16 * 1024 * 1024
 _MAX_SOURCE_COUNT = 512
+_IMPACT_SNAPSHOT_COLUMNS = (
+    "run_id,project_id,change_id,idempotency_key,reason,dependency_kind,previous_revision_id,replacement_revision_id,"
+    "configuration_id,previous_configuration_version,replacement_configuration_version,previous_fingerprint,"
+    "replacement_fingerprint,propagation_policy_id,propagation_policy_version,actor_id,trace_id,occurred_at,"
+    "graph_sha256,preview_sha256,authority_sha256,batch_size,total_items,max_nodes,max_edges,max_depth,"
+    "max_path_samples,max_legacy_samples,created_at"
+)
 
 
 def _digest(value: object) -> str:
@@ -282,7 +289,7 @@ class SqliteReconciliationRepository:
         self, connection: CanonicalConnection, revision: str, source: SourceAssertion
     ) -> PreparedRecord | None:
         row = connection.execute(
-            "SELECT input_sha256,payload_sha256,payload_json FROM reconciliation_feature_cache "
+            "SELECT input_sha256,payload_sha256,feature_json FROM reconciliation_feature_cache "
             "WHERE project_id=? AND assertion_revision_id=? AND feature_version=? "
             "AND normalizer_version=? AND configuration_sha256=?",
             (self._project, revision, FEATURE_VERSION, NORMALIZER_VERSION, DEFAULT_CONFIG.fingerprint),
@@ -646,6 +653,7 @@ class SqliteReconciliationRepository:
             "SELECT revision_id FROM reconciliation_assertions WHERE project_id=? AND address_sha256=?",
             (self._project, address_sha),
         ).fetchone()
+        exact_runs: tuple[str, ...] = ()
         if prior is not None:
             saved = self._authorized_load(connection, prior[0], resolved)
             self._authorize_assignment(connection, prior[0], resolved)
@@ -755,12 +763,16 @@ class SqliteReconciliationRepository:
                 )
             _publication_step("links-created")
             if current is not None and work is not None:
-                self._publish_impacts(connection, (self._change(current, work, actor, human=False),))
+                exact_runs = self._publish_impacts(connection, (self._change(current, work, actor, human=False),))
             _publication_step("exact-impacts-created")
         connection.execute(
             "INSERT INTO reconciliation_commands VALUES (?, ?, ?, ?, ?)",
             (command_id, self._project, actor.actor_id, command_sha, result.assertion_revision_id),
         )
+        for run_id in exact_runs:
+            connection.execute(
+                "INSERT INTO reconciliation_exact_impacts VALUES (?,?,?)", (run_id, self._project, command_id)
+            )
         _publication_step("command-created")
         return result
 
@@ -776,7 +788,7 @@ class SqliteReconciliationRepository:
 
     def _candidate_content(self, connection: CanonicalConnection, revision_id: str) -> CandidateSetContent:
         row = connection.execute(
-            "SELECT request_id,request_sha256,payload_sha256,payload_json FROM reconciliation_candidate_sets "
+            "SELECT request_id,request_sha256,payload_sha256,candidate_set_json FROM reconciliation_candidate_sets "
             "WHERE project_id=? AND revision_id=?",
             (self._project, revision_id),
         ).fetchone()
@@ -836,7 +848,7 @@ class SqliteReconciliationRepository:
             raise ReconciliationProblem("duplicate-set-page-invalid")
         with self._transaction(write=False) as (connection, _):
             rows = connection.execute(
-                "SELECT ordinal,payload_sha256,payload_json FROM reconciliation_candidate_pairs "
+                "SELECT ordinal,payload_sha256,explanation_json FROM reconciliation_candidate_pairs "
                 "WHERE project_id=? AND set_revision_id=? AND ordinal>=? ORDER BY ordinal LIMIT ?",
                 (self._project, revision_id, after, limit),
             ).fetchall()
@@ -1136,7 +1148,8 @@ class SqliteReconciliationRepository:
             )
             connection.execute(
                 "INSERT INTO reconciliation_candidate_sets "
-                "(revision_id,project_id,request_id,request_sha256,payload_sha256,payload_json) VALUES (?,?,?,?,?,?)",
+                "(revision_id,project_id,request_id,request_sha256,payload_sha256,candidate_set_json) "
+                "VALUES (?,?,?,?,?,?)",
                 (
                     revision.revision_id,
                     self._project,
@@ -1493,52 +1506,214 @@ class SqliteReconciliationRepository:
             self._authorize_assignment(connection, member, resolve)
         return outcome
 
-    def advance_review_impacts(self) -> bool:
-        # This is continuation of committed invalidation intent, not a new
-        # derivation or recalculation. Only this owner's decision-bound runs
-        # are eligible. The caller retains the open project's write fence.
-        impacts = _SqliteDependencyImpactRepository(self._database, self._project)
-        with self._transaction(write=False) as (connection, aggregates):
-            row = connection.execute(
-                "SELECT d.revision_id,d.command_id,d.plan_sha256,d.plan_json,d.outcome_json,"
-                "r.run_id,r.previous_revision_id,r.replacement_revision_id,r.actor_id,d.actor_id "
-                "FROM reconciliation_review_decisions d, json_each(d.outcome_json,'$.dependencyRunIds') owned "
-                "JOIN dependency_impact_runs r ON r.run_id=owned.value AND r.project_id=d.project_id "
-                "WHERE d.project_id=? AND (SELECT event_type FROM dependency_impact_audit_events a "
-                "WHERE a.project_id=r.project_id AND a.run_id=r.run_id ORDER BY sequence DESC LIMIT 1) "
-                "IN ('started','checkpoint','failed-attempt') ORDER BY r.run_id LIMIT 1",
-                (self._project,),
-            ).fetchone()
-            if row is None:
-                return False
-            plan, outcome = ReviewPlan.model_validate_json(row[3]), ReviewOutcome.model_validate_json(row[4])
+    def _owned_impact_change(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        impacts: _SqliteDependencyImpactRepository,
+        root_id: str,
+    ) -> DependencyChange:
+        root = impacts._run_with_connection(connection, root_id)
+        change = impacts._change_with_connection(connection, root.change_id)
+        row = connection.execute(
+            "SELECT d.revision_id,d.command_id,d.plan_sha256,d.plan_json,d.outcome_json,d.actor_id "
+            "FROM reconciliation_review_decisions d,json_each(d.outcome_json,'$.dependencyRunIds') owned "
+            "WHERE d.project_id=? AND owned.value=?",
+            (self._project, root_id),
+        ).fetchall()
+        exact = connection.execute(
+            "SELECT c.actor_id,c.assertion_revision_id,a.result_json FROM reconciliation_exact_impacts x "
+            "JOIN reconciliation_commands c ON c.command_id=x.command_id AND c.project_id=x.project_id "
+            "JOIN reconciliation_assertions a ON a.revision_id=c.assertion_revision_id AND a.project_id=c.project_id "
+            "WHERE x.project_id=? AND x.run_id=?",
+            (self._project, root_id),
+        ).fetchall()
+        if len(row) + len(exact) != 1:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        if row:
+            owner = row[0]
+            plan, outcome = ReviewPlan.model_validate_json(owner[3]), ReviewOutcome.model_validate_json(owner[4])
             states = [
                 state
                 for state in outcome.work_states
-                if (state.previous_revision_id, state.revision_id) == (row[6], row[7])
+                if (state.previous_revision_id, state.revision_id)
+                == (change.previous_revision_id, change.replacement_revision_id)
             ]
             binding = connection.execute(
                 "SELECT fingerprint FROM material_dependencies WHERE project_id=? AND output_revision_id=? "
                 "AND configuration_id='scholarly.review-plan'",
-                (self._project, row[0]),
+                (self._project, owner[0]),
             ).fetchall()
             if (
-                outcome.decision_revision_id != row[0]
-                or outcome.command_id != row[1]
-                or plan.fingerprint != row[2]
-                or outcome.plan_sha256 != row[2]
-                or row[5] not in outcome.dependency_run_ids
-                or row[8] != row[9]
+                outcome.decision_revision_id != owner[0]
+                or outcome.command_id != owner[1]
+                or plan.fingerprint != owner[2]
+                or outcome.plan_sha256 != owner[2]
+                or root_id not in outcome.dependency_run_ids
+                or change.actor_id != owner[5]
+                or change.reason != "HUMAN_DECISION"
                 or len(states) != 1
-                or states[0].decision_revision_id != row[0]
+                or states[0].decision_revision_id != owner[0]
                 or self._state(connection, states[0].work_id, states[0].revision_id) != states[0]
                 or [tuple(item) for item in binding] != [("sha256:" + plan.fingerprint,)]
                 or aggregates.get_revision(outcome.decision_revision_id).aggregate_id != outcome.decision_id
             ):
                 raise ReconciliationProblem("reconciliation-integrity-invalid")
-            current = impacts._run_with_connection(connection, row[5])
-        # Existing snapshot validation, checkpoint CAS, bounded batch and
-        # append-only audit remain the authority for the actual advancement.
+        else:
+            owner = exact[0]
+            result = ReconciliationResult.model_validate_json(owner[2])
+            if result.work_id is None or result.work_revision_id is None:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            state = self._state(connection, result.work_id, result.work_revision_id)
+            if (
+                result.project_id != self._project
+                or result.assertion_revision_id != owner[1]
+                or change.actor_id != owner[0]
+                or change.reason != "SOURCE_VERSION"
+                or state.previous_revision_id != change.previous_revision_id
+                or state.revision_id != change.replacement_revision_id
+                or owner[1] not in state.assertion_revision_ids
+            ):
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+        if (
+            change.previous_revision_id is None
+            or change.replacement_revision_id is None
+            or change.dependency_kind != "source-revision"
+            or change.configuration_id is not None
+            or change.previous_configuration_version is not None
+            or change.replacement_configuration_version is not None
+            or change.propagation_policy_id != "dependency.propagation.v1"
+            or change.propagation_policy_version != "1.0.0"
+            or change.previous_fingerprint
+            != _projection_content_sha256(aggregates.get_revision(change.previous_revision_id))
+            or change.replacement_fingerprint
+            != _projection_content_sha256(aggregates.get_revision(change.replacement_revision_id))
+        ):
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        return change
+
+    def _impact_snapshot_sha256(self, connection: CanonicalConnection, run_id: str) -> str:
+        row = connection.execute(
+            "SELECT " + _IMPACT_SNAPSHOT_COLUMNS + " FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
+            (self._project, run_id),
+        ).fetchone()
+        if row is None:
+            raise ReconciliationProblem("reconciliation-integrity-invalid")
+        return _digest(["reconciliation-impact-snapshot/1.0", tuple(row)])
+
+    def _seal_impact(self, connection: CanonicalConnection, run_id: str) -> None:
+        connection.execute(
+            "INSERT INTO reconciliation_impact_seals VALUES (?,?,?)",
+            (run_id, self._project, self._impact_snapshot_sha256(connection, run_id)),
+        )
+
+    def advance_review_impacts(self) -> bool:
+        # The project lifecycle fence remains held by the worker. Root ownership,
+        # chain validation and any replacement intent share one writer snapshot.
+        impacts = _SqliteDependencyImpactRepository(self._database, self._project)
+        with self._transaction(write=True) as (connection, aggregates):
+            row = connection.execute(
+                "WITH roots(root_id) AS (SELECT run_id FROM reconciliation_exact_impacts WHERE project_id=? "
+                "UNION SELECT owned.value FROM reconciliation_review_decisions d, "
+                "json_each(d.outcome_json,'$.dependencyRunIds') owned WHERE d.project_id=?), "
+                "leaves AS (SELECT root_id,COALESCE((SELECT c.run_id FROM reconciliation_impact_continuations c "
+                "WHERE c.root_run_id=roots.root_id AND c.project_id=? ORDER BY c.sequence DESC LIMIT 1),root_id) leaf "
+                "FROM roots) SELECT root_id,leaf FROM leaves WHERE (SELECT event_type "
+                "FROM dependency_impact_audit_events a WHERE a.run_id=leaf AND a.project_id=? "
+                "ORDER BY sequence DESC LIMIT 1) IN ('started','checkpoint','failed-attempt') ORDER BY root_id LIMIT 1",
+                (self._project, self._project, self._project, self._project),
+            ).fetchone()
+            if row is None:
+                return False
+            root_id, leaf_id = str(row[0]), str(row[1])
+            root_change = self._owned_impact_change(connection, aggregates, impacts, root_id)
+            links = connection.execute(
+                "SELECT sequence,previous_run_id,run_id,previous_checkpoint_sha256 "
+                "FROM reconciliation_impact_continuations "
+                "WHERE project_id=? AND root_run_id=? ORDER BY sequence",
+                (self._project, root_id),
+            ).fetchall()
+            previous_id = root_id
+            for sequence, link in enumerate(links, 1):
+                parent = impacts._run_with_connection(connection, previous_id)
+                checkpoint = connection.execute(
+                    "SELECT checkpoint_sha256 FROM dependency_impact_audit_events WHERE project_id=? AND run_id=? "
+                    "ORDER BY sequence DESC LIMIT 1 OFFSET 1",
+                    (self._project, previous_id),
+                ).fetchone()
+                if (
+                    link[0] != sequence
+                    or link[1] != previous_id
+                    or parent.state != "cancelled"
+                    or checkpoint is None
+                    or checkpoint[0] != link[3]
+                ):
+                    raise ReconciliationProblem("reconciliation-integrity-invalid")
+                previous_id = str(link[2])
+            if previous_id != leaf_id:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
+            # Check every saved child, including historical continuations; a
+            # substituted middle link cannot be hidden by an authentic leaf.
+            for run_id in (root_id, *(str(link[2]) for link in links)):
+                seal = connection.execute(
+                    "SELECT run_sha256 FROM reconciliation_impact_seals WHERE project_id=? AND run_id=?",
+                    (self._project, run_id),
+                ).fetchone()
+                if seal is None or seal[0] != self._impact_snapshot_sha256(connection, run_id):
+                    raise ReconciliationProblem("reconciliation-integrity-invalid")
+                impacts._verify_saved_run(connection, run_id)
+                run = impacts._run_with_connection(connection, run_id)
+                saved = impacts._change_with_connection(connection, run.change_id)
+                bounds = connection.execute(
+                    "SELECT batch_size,max_nodes,max_edges,max_depth,max_path_samples,max_legacy_samples "
+                    "FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
+                    (self._project, run_id),
+                ).fetchone()
+                if (
+                    replace(saved, change_id=root_change.change_id, idempotency_key=root_change.idempotency_key)
+                    != root_change
+                    or tuple(bounds) != (100, 20000, 100000, 128, 64, 100)
+                    or impacts._decisions_with_connection(connection, run_id)
+                ):
+                    raise ReconciliationProblem("reconciliation-integrity-invalid")
+            current = impacts._run_with_connection(connection, leaf_id)
+            change = impacts._change_with_connection(connection, current.change_id)
+            preview = impacts._preview_with_connection(
+                connection, change, decisions=(), limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS
+            )
+            saved_graph = connection.execute(
+                "SELECT graph_sha256 FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
+                (self._project, leaf_id),
+            ).fetchone()[0]
+            if preview.graph_sha256 != saved_graph:
+                if len(links) >= 128:
+                    raise ReconciliationProblem("reconciliation-impact-continuation-limit")
+                change_id, child_id = new_uuid_v7(), new_uuid_v7()
+                fresh = replace(change, change_id=change_id, idempotency_key="reconciliation-impact-" + change_id)
+                fresh_preview = impacts._preview_with_connection(
+                    connection, fresh, decisions=(), limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS
+                )
+                impacts._begin_with_connection(
+                    connection, fresh, preview_sha256=fresh_preview.preview_sha256, run_id=child_id, batch_size=100
+                )
+                self._seal_impact(connection, child_id)
+                _publication_step("impact-continuation-created")
+                connection.execute(
+                    "INSERT INTO reconciliation_impact_continuations VALUES (?,?,?,?,?,?)",
+                    (root_id, self._project, len(links) + 1, leaf_id, child_id, current.checkpoint_sha256),
+                )
+                _publication_step("impact-continuation-linked")
+                impacts._cancel_with_connection(
+                    connection,
+                    leaf_id,
+                    expected_checkpoint_sha256=current.checkpoint_sha256,
+                    occurred_at=datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
+                )
+                _publication_step("impact-predecessor-cancelled")
+                return True
+            # Preserve the engine's authority/preview validation even when the
+            # graph is unchanged. Never translate a different conflict into retry.
+            impacts._verify_run_snapshot(connection, leaf_id)
         impacts.advance(current.run_id, expected_checkpoint_sha256=current.checkpoint_sha256)
         return True
 
@@ -1555,6 +1730,7 @@ class SqliteReconciliationRepository:
             impact_repository._begin_with_connection(
                 connection, change, preview_sha256=preview.preview_sha256, run_id=run_id, batch_size=100
             )
+            self._seal_impact(connection, run_id)
             runs.append(run_id)
         return tuple(runs)
 

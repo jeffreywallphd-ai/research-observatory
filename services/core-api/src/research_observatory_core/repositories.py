@@ -4217,6 +4217,102 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
             ).fetchall()
         )
 
+    def _verify_saved_run(self, connection: CanonicalConnection, run_id: str) -> None:
+        """Authenticate persisted intent independently of subsequent graph growth."""
+        row = connection.execute(
+            "SELECT change_id,batch_size,preview_sha256,authority_sha256,total_items "
+            "FROM dependency_impact_runs WHERE project_id=? AND run_id=?",
+            (self._project_id, run_id),
+        ).fetchone()
+        if row is None:
+            raise RepositoryNotFound("dependency propagation run was not found")
+        change = self._change_with_connection(connection, str(row[0]))
+        decisions = self._decisions_with_connection(connection, run_id)
+        items = []
+        for sequence, item in enumerate(
+            connection.execute(
+                "SELECT item_sequence,output_revision_id,output_kind,disposition,depth,relation_type,path_json,"
+                "path_sha256,path_length,path_truncated,cycle_group_id,confidence,review_required "
+                "FROM dependency_impact_items WHERE project_id=? AND run_id=? ORDER BY item_sequence",
+                (self._project_id, run_id),
+            ).fetchall(),
+            1,
+        ):
+            path = json.loads(item[6])
+            if item[0] != sequence or item[7] != _impact_sha256(
+                {
+                    "pathLength": item[8],
+                    "pathRevisionIds": path,
+                    "pathTruncated": bool(item[9]),
+                }
+            ):
+                raise RepositoryConflict("dependency propagation saved item authority conflicts")
+            items.append(
+                {
+                    "confidence": item[11],
+                    "cycleGroupId": item[10],
+                    "depth": item[4],
+                    "disposition": item[3],
+                    "outputKind": item[2],
+                    "outputRevisionId": item[1],
+                    "pathLength": item[8],
+                    "pathRevisionIds": path,
+                    "pathTruncated": bool(item[9]),
+                    "relationType": item[5],
+                    "reviewRequired": bool(item[12]),
+                }
+            )
+        authority = _impact_sha256(
+            {
+                "batchSize": row[1],
+                "change": dependency_change_authority_document(change),
+                "decisions": [conditional_decision_authority_document(item) for item in decisions],
+                "items": items,
+                "previewSha256": row[2],
+                "runId": run_id,
+            }
+        )
+        if authority != row[3] or len(items) != row[4]:
+            raise RepositoryConflict("dependency propagation saved run authority conflicts")
+        previous_checkpoint: str | None = None
+        processed, stale, unknown, terminal = 0, 0, 0, False
+        audits = connection.execute(
+            "SELECT sequence,event_type,processed_items,stale_count,unknown_count,checkpoint_sha256 "
+            "FROM dependency_impact_audit_events WHERE project_id=? AND run_id=? ORDER BY sequence",
+            (self._project_id, run_id),
+        ).fetchall()
+        if not audits:
+            raise RepositoryConflict("dependency propagation saved audit is missing")
+        for sequence, audit in enumerate(audits, 1):
+            event_type = str(audit[1])
+            expected = _impact_checkpoint_sha256(
+                run_id=run_id,
+                sequence=sequence,
+                event_type=event_type,
+                processed_items=int(audit[2]),
+                stale_count=int(audit[3]),
+                unknown_count=int(audit[4]),
+                previous_checkpoint_sha256=previous_checkpoint,
+            )
+            if (
+                terminal
+                or audit[0] != sequence
+                or audit[5] != expected
+                or not processed <= audit[2] <= min(processed + row[1], len(items))
+                or audit[3] < stale
+                or audit[4] < unknown
+                or audit[3] + audit[4] != audit[2]
+                or (sequence == 1 and (event_type != "started" or audit[2] != 0))
+                or (sequence > 1 and event_type == "started")
+                or (event_type in {"cancelled", "failed-attempt"} and tuple(audit[2:5]) != (processed, stale, unknown))
+                or (event_type == "checkpoint" and not processed < audit[2] < len(items))
+                or (event_type == "completed" and audit[2] != len(items))
+            ):
+                raise RepositoryConflict("dependency propagation saved checkpoint authority conflicts")
+            previous_checkpoint = str(audit[5])
+            processed, stale, unknown = int(audit[2]), int(audit[3]), int(audit[4])
+            terminal = event_type in {"completed", "cancelled"}
+
     def _verify_run_snapshot(self, connection: CanonicalConnection, run_id: str) -> None:
         row = connection.execute(
             """
@@ -4329,39 +4425,9 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         try:
             connection = open_canonical_database(self._database, expected_project_id=self._project_id)
             connection.execute("BEGIN IMMEDIATE")
-            current = self._run_with_connection(connection, run_id)
-            if current.checkpoint_sha256 != expected_checkpoint_sha256 or current.state != "running":
-                raise RepositoryConflict("dependency propagation cancellation authority conflicts")
-            sequence = (
-                int(
-                    connection.execute(
-                        "SELECT max(sequence) FROM dependency_impact_audit_events WHERE project_id=? AND run_id=?",
-                        (self._project_id, run_id),
-                    ).fetchone()[0]
-                )
-                + 1
+            projection = self._cancel_with_connection(
+                connection, run_id, expected_checkpoint_sha256=expected_checkpoint_sha256, occurred_at=occurred_at
             )
-            checkpoint = _impact_checkpoint_sha256(
-                run_id=run_id,
-                sequence=sequence,
-                event_type="cancelled",
-                processed_items=current.processed_items,
-                stale_count=current.stale_count,
-                unknown_count=current.unknown_count,
-                previous_checkpoint_sha256=current.checkpoint_sha256,
-            )
-            self._insert_audit(
-                connection,
-                run_id=run_id,
-                sequence=sequence,
-                event_type="cancelled",
-                processed_items=current.processed_items,
-                stale_count=current.stale_count,
-                unknown_count=current.unknown_count,
-                checkpoint_sha256=checkpoint,
-                occurred_at=occurred_at,
-            )
-            projection = self._run_with_connection(connection, run_id)
             connection.execute("COMMIT")
             return projection
         except RepositoryProblem:
@@ -4375,6 +4441,47 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         finally:
             if connection is not None:
                 connection.close()
+
+    def _cancel_with_connection(
+        self, connection: CanonicalConnection, run_id: str, *, expected_checkpoint_sha256: str, occurred_at: str
+    ) -> DependencyPropagationRun:
+        """Append cancellation inside an owner's atomic continuation transaction."""
+        if not connection.in_transaction:
+            raise RepositoryProblem("dependency cancellation requires an active transaction")
+        current = self._run_with_connection(connection, run_id)
+        if current.checkpoint_sha256 != expected_checkpoint_sha256 or current.state != "running":
+            raise RepositoryConflict("dependency propagation cancellation authority conflicts")
+        sequence = (
+            int(
+                connection.execute(
+                    "SELECT max(sequence) FROM dependency_impact_audit_events WHERE project_id=? AND run_id=?",
+                    (self._project_id, run_id),
+                ).fetchone()[0]
+            )
+            + 1
+        )
+        checkpoint = _impact_checkpoint_sha256(
+            run_id=run_id,
+            sequence=sequence,
+            event_type="cancelled",
+            processed_items=current.processed_items,
+            stale_count=current.stale_count,
+            unknown_count=current.unknown_count,
+            previous_checkpoint_sha256=current.checkpoint_sha256,
+        )
+        self._insert_audit(
+            connection,
+            run_id=run_id,
+            sequence=sequence,
+            event_type="cancelled",
+            processed_items=current.processed_items,
+            stale_count=current.stale_count,
+            unknown_count=current.unknown_count,
+            checkpoint_sha256=checkpoint,
+            occurred_at=occurred_at,
+        )
+        projection = self._run_with_connection(connection, run_id)
+        return projection
 
     def run(self, run_id: str) -> DependencyPropagationRun:
         try:
@@ -4392,52 +4499,55 @@ class _SqliteDependencyImpactRepository(DependencyImpactRepository):
         try:
             connection = open_canonical_database(self._database, expected_project_id=self._project_id)
             try:
-                rows = connection.execute(
-                    """
-                    SELECT idempotency_key, reason, dependency_kind,
-                           previous_revision_id, replacement_revision_id,
-                           configuration_id, previous_configuration_version,
-                           replacement_configuration_version, previous_fingerprint,
-                           replacement_fingerprint, propagation_policy_id,
-                           propagation_policy_version, actor_id, trace_id, occurred_at
-                      FROM dependency_impact_runs
-                     WHERE project_id=? AND change_id=?
-                     ORDER BY run_id
-                    """,
-                    (self._project_id, change_id),
-                ).fetchall()
-                if not rows:
-                    raise RepositoryNotFound("dependency change was not found")
-                projections = tuple(
-                    DependencyChange(
-                        change_id=change_id,
-                        idempotency_key=str(row[0]),
-                        reason=cast(StalenessReason, row[1]),
-                        dependency_kind=cast(Any, row[2]),
-                        previous_revision_id=None if row[3] is None else str(row[3]),
-                        replacement_revision_id=None if row[4] is None else str(row[4]),
-                        configuration_id=None if row[5] is None else str(row[5]),
-                        previous_configuration_version=None if row[6] is None else str(row[6]),
-                        replacement_configuration_version=None if row[7] is None else str(row[7]),
-                        previous_fingerprint=str(row[8]),
-                        replacement_fingerprint=None if row[9] is None else str(row[9]),
-                        propagation_policy_id=str(row[10]),
-                        propagation_policy_version=str(row[11]),
-                        actor_id=str(row[12]),
-                        trace_id=str(row[13]),
-                        occurred_at=str(row[14]),
-                    )
-                    for row in rows
-                )
-                if any(candidate != projections[0] for candidate in projections[1:]):
-                    raise RepositoryConflict("dependency change authority differs across propagation runs")
-                return projections[0]
+                return self._change_with_connection(connection, change_id)
             finally:
                 connection.close()
         except RepositoryProblem:
             raise
         except (sqlite3.Error, StorageProblem, TypeError, ValueError) as error:
             raise RepositoryProblem("dependency change read failed") from error
+
+    def _change_with_connection(self, connection: CanonicalConnection, change_id: str) -> DependencyChange:
+        rows = connection.execute(
+            """
+            SELECT idempotency_key, reason, dependency_kind,
+                   previous_revision_id, replacement_revision_id,
+                   configuration_id, previous_configuration_version,
+                   replacement_configuration_version, previous_fingerprint,
+                   replacement_fingerprint, propagation_policy_id,
+                   propagation_policy_version, actor_id, trace_id, occurred_at
+              FROM dependency_impact_runs
+             WHERE project_id=? AND change_id=?
+             ORDER BY run_id
+            """,
+            (self._project_id, change_id),
+        ).fetchall()
+        if not rows:
+            raise RepositoryNotFound("dependency change was not found")
+        projections = tuple(
+            DependencyChange(
+                change_id=change_id,
+                idempotency_key=str(row[0]),
+                reason=cast(StalenessReason, row[1]),
+                dependency_kind=cast(Any, row[2]),
+                previous_revision_id=None if row[3] is None else str(row[3]),
+                replacement_revision_id=None if row[4] is None else str(row[4]),
+                configuration_id=None if row[5] is None else str(row[5]),
+                previous_configuration_version=None if row[6] is None else str(row[6]),
+                replacement_configuration_version=None if row[7] is None else str(row[7]),
+                previous_fingerprint=str(row[8]),
+                replacement_fingerprint=None if row[9] is None else str(row[9]),
+                propagation_policy_id=str(row[10]),
+                propagation_policy_version=str(row[11]),
+                actor_id=str(row[12]),
+                trace_id=str(row[13]),
+                occurred_at=str(row[14]),
+            )
+            for row in rows
+        )
+        if any(candidate != projections[0] for candidate in projections[1:]):
+            raise RepositoryConflict("dependency change authority differs across propagation runs")
+        return projections[0]
 
     def decisions(self, run_id: str) -> tuple[ConditionalDependencyDecision, ...]:
         try:

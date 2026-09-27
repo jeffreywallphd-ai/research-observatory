@@ -152,3 +152,37 @@ qualification; they are not waived. Existing historical type errors and Windows
 symlink-token skips remain explicit Wave obligations. No mandatory new approval
 gate has been discovered. Approved implementation adds no supplemental refactoring
 budget allocation; any later unrelated refactoring requires its accounting route.
+
+The first complete task-range quality pass at `3998d9c6` found three new tables
+using the prohibited generic `payload_json` name and five new triggers missing
+from the expected inventory. Preserve the existing scalar-storage assertions.
+Use dedicated bounded feature, candidate-set and explanation documents, with
+direct SQL rejection of unknown/missing fields, wrong types and exceeded bounds;
+refresh only unreleased v15 authority and preserve frozen v14 bytes. The same
+pass exposed missing build-schema inventory, documentary ADR/UI evidence and
+test annotations. These are acceptance closure, not scope changes.
+
+Independent pre-submission review additionally reproduced exact-link dependency
+impacts left pending because worker continuation selected human-review runs only.
+Authenticate exact-command-owned runs, preserve current invalidation authority,
+and prove dependent stale-state publication through worker restart. Keep the
+failed reproduction and distinguish it from the already-passing review-origin
+propagation test.
+
+The same independent review reproduced a second recovery failure: material graph
+growth after publication invalidates the frozen propagation preview. Preserve the
+engine's snapshot check. Authenticate each owner-bound root and append a fresh,
+same-semantics continuation, its predecessor checkpoint, and predecessor
+cancellation atomically. Prove restart, partial propagation, failed publication,
+lost acknowledgement, substituted ownership and bounded repeated graph growth.
+Old impact items and stale causes must continue denying fresh-only consumption.
+
+Incremental continuation review found that graph growth could mask corruption of
+the saved preview, run authority, item manifest or checkpoint. Add graph-independent
+validation of saved run authority and audit history before considering recovery,
+including each historical continuation. A corruption-plus-real-growth regression
+must deny without publishing a child or changing the predecessor's state.
+The recovery discriminator itself also needs protection: seal every original and
+continuation run's complete typed snapshot, including graph/preview digests and
+bounds. First reproduce a substituted graph digest without actual growth, then
+require integrity denial. Preserve the legacy impact engine's hash contract.

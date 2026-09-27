@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-14 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-15 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -11,7 +11,7 @@ The profile is not an API for issuing SQL. Core owns the SQLite adapter, the
 desktop never opens the database, and downstream modules consume repository
 ports introduced by the storage slice. Ordinary connections deny schema DDL.
 The separately constructed T02 Alembic authority is never returned to ordinary
-callers: it checkpoints and validates exact supported version-1 through version-13 fixtures, reserves the
+callers: it checkpoints and validates exact supported version-1 through version-14 fixtures, reserves the
 writer, creates and verifies an online backup, and only then replaces the
 affected controls in one transaction. `sqlite-migration-recovery.schema.json`
 binds the immutable backup manifest to exact backup bytes, the reviewed revision,
@@ -79,6 +79,15 @@ the lookup index is not independent identity or access authority. See the
 [scholarly contract](../scholarly-records/README.md) for current-source checks,
 bounded matching and public handoff. The populated exact v13 predecessor fixture
 is retained with a digest, including source and audit rows, for migration proof.
+
+Version 15 adds sealed current Work membership and aliases, immutable human
+review decisions, and bounded feature/candidate-set/explanation documents.
+Exact commands and review outcomes bind dependency runs to their owners. Sealed
+run snapshots, append-only continuation links and checkpoint-bound cancellation
+permit recovery after material graph growth without changing previous impact
+items or stale causes. The existing graph validator remains authoritative.
+Populated plaintext and encrypted v14 predecessors exercise backup, additive
+migration, interruption rollback and unchanged historical receipts.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and

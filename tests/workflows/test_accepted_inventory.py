@@ -30,7 +30,9 @@ class AcceptedInventoryTests(unittest.TestCase):
 
     def accept(self, index, *, continue_failed=False):
         definition, snapshot, job_id = fixture_module.runnable_contracts(identity_variant=True)
-        snapshot["jobs"][0]["idempotencyKey"] = "sha256:" + hashlib.sha256(str(index).encode()).hexdigest()
+        jobs = snapshot["jobs"]
+        assert isinstance(jobs, list) and isinstance(jobs[0], dict)
+        jobs[0]["idempotencyKey"] = "sha256:" + hashlib.sha256(str(index).encode()).hexdigest()
         submission = prepare_workflow_job(
             definition,
             snapshot,
@@ -47,6 +49,7 @@ class AcceptedInventoryTests(unittest.TestCase):
             lease_duration_ms=30000,
         )
         self.assertIsNotNone(claim)
+        assert claim is not None
         self.queue.start(claim, now="2026-08-30T12:02:00.100Z")
         if continue_failed:
             self.queue.fail(claim, now="2026-08-30T12:02:00.150Z", error_code="invalid-input")
@@ -68,6 +71,7 @@ class AcceptedInventoryTests(unittest.TestCase):
                 lease_duration_ms=30000,
             )
             self.assertIsNotNone(claim)
+            assert claim is not None
             job_id = claim.job_id
             self.queue.start(claim, now="2026-08-30T12:02:00.400Z")
         self.queue.stage_artifact(claim, artifact=self.output, role="output", now="2026-08-30T12:02:00.500Z")
@@ -93,12 +97,15 @@ class AcceptedInventoryTests(unittest.TestCase):
             now="2026-08-30T12:02:00.700Z",
         )
         reopened = sqlite_workflow_queue_repository(self.fixture.root, fixture_module.PROJECT_ID)
-        self.assertEqual(sibling.jobs[0].job_id, reopened.latest_continuation(source.jobs[0].job_id).job_id)
+        latest = reopened.latest_continuation(source.jobs[0].job_id)
+        assert latest is not None
+        self.assertEqual(sibling.jobs[0].job_id, latest.job_id)
         lineage = reopened.continuation_jobs(source.jobs[0].job_id)
         self.assertEqual({source.jobs[0].job_id, continued, sibling.jobs[0].job_id}, {item.job_id for item in lineage})
         self.assertIsNone(reopened.accepted_output(source.jobs[0].job_id))
         self.assertIsNone(reopened.accepted_output(sibling.jobs[0].job_id))
         accepted = reopened.accepted_output(continued)
+        assert accepted is not None
         self.assertEqual((self.output,), accepted.outputs)
         snapshot = reopened.accepted_snapshot(activity_types=("source-acquisition",))
         self.assertEqual(accepted.outputs, reopened.accepted_page(snapshot, after=None)[0].outputs)
@@ -148,7 +155,8 @@ class AcceptedInventoryTests(unittest.TestCase):
         later = self.accept(101)
         self.assertEqual((), self.queue.accepted_page(empty, after=None, limit=10))
         reopened = sqlite_workflow_queue_repository(self.fixture.root, fixture_module.PROJECT_ID)
-        found, cursor = [], None
+        found: list[str] = []
+        cursor = None
         while page := reopened.accepted_page(snapshot, after=cursor, limit=17):
             self.assertTrue(all(item.outputs == (self.output,) for item in page))
             found.extend(item.job_id for item in page)

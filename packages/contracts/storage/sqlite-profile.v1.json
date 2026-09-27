@@ -4,7 +4,7 @@
   "profileId": "sqlite-wal-v1",
   "databaseSchemaVersion": 15,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "e24b701d534932df7c67fb01bf07636416731509530c40de9dec4d9cd80307d3",
+  "schemaFingerprintSha256": "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -89,7 +89,10 @@
     "reconciliation_review_decisions",
     "reconciliation_feature_cache",
     "reconciliation_candidate_sets",
-    "reconciliation_candidate_pairs"
+    "reconciliation_candidate_pairs",
+    "reconciliation_exact_impacts",
+    "reconciliation_impact_continuations",
+    "reconciliation_impact_seals"
   ],
   "mutableStateTables": [
     "object_records",
@@ -190,6 +193,9 @@
     "reconciliation_review_decisions",
     "reconciliation_feature_cache",
     "reconciliation_candidate_sets",
-    "reconciliation_candidate_pairs"
+    "reconciliation_candidate_pairs",
+    "reconciliation_exact_impacts",
+    "reconciliation_impact_continuations",
+    "reconciliation_impact_seals"
   ]
 }

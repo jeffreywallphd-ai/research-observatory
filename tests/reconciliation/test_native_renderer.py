@@ -207,3 +207,7 @@ class NativeReconciliationRendererTests(RendererHarness):
             except subprocess.TimeoutExpired:
                 process.kill()
                 process.wait(timeout=5)
+        if process.stdin is not None:
+            process.stdin.close()
+        if process.stdout is not None:
+            process.stdout.close()

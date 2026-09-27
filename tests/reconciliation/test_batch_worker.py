@@ -123,6 +123,49 @@ class BatchWorkerTests(unittest.TestCase):
         self.assertEqual("cancelled", state.state)
         self.assertEqual(0, state.attempt_count)
 
+    def test_exact_batch_impacts_finish_after_candidate_publication_and_worker_restart(self):
+        snapshot = self.queue.accepted_snapshot(activity_types=("local-import-commit",))
+        accepted = self.queue.accepted_page(snapshot, after=None, limit=100)[0]
+        address = self.f.service.reconciliation_sources(self.root, accepted.job_id, after=0, limit=100).addresses[0]
+        original = self.service.reconcile(self.root, address, command_id=new_uuid_v7(), trace_id="a" * 32)
+
+        def dependent(repository, actor, resolve):
+            with repository._transaction(write=True) as (_, aggregates):
+                return repository._append(
+                    aggregates,
+                    sources=(aggregates.get(original.work_id),),
+                    actor=actor,
+                    digest="1" * 64,
+                    kind="evidence",
+                    label="Synthetic exact dependent",
+                ).revision_id
+
+        consumer = self.service._action(self.root, "a" * 32, dependent)
+        request = self.service.prepare_batch(self.root, trace_id="a" * 32)
+        job = self.service.schedule_batch(self.root, request, trace_id="a" * 32)
+        self.service.run_pending()
+        self.assertEqual("succeeded", self.queue.get(job.job_id).state)
+        self.service.shutdown()
+        self.service = self.runtime("2" * 32)
+        self.addCleanup(self.service.shutdown)
+        self.service.attach(self.root)
+        for _ in range(4):
+            self.service.run_pending()
+        impacts = sqlite_dependency_impact_repository(Path(self.root), self.f.project_id)
+        self.assertIn(consumer, {item.output_revision_id for item in impacts.stale_states()})
+        with self.queue._transaction(write=False) as connection:
+            runs = connection.execute(
+                "SELECT run_id FROM dependency_impact_runs WHERE reason='SOURCE_VERSION'"
+            ).fetchall()
+        self.assertTrue(runs)
+        self.assertTrue(all(impacts.run(row[0]).state != "running" for row in runs))
+        factory = create_sqlite_unit_of_work_factory(Path(self.root) / "state/project.sqlite3", self.f.project_id)
+        with factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.require_fresh_revision(consumer)
+        self.assertEqual(
+            original, self.service.inspect(self.root, original.assertion_revision_id, trace_id="a" * 32).result
+        )
+
     def test_review_dependency_checkpoints_resume_after_worker_restart(self):
         request = self.service.prepare_batch(self.root, trace_id="a" * 32)
         job = self.service.schedule_batch(self.root, request, trace_id="a" * 32)

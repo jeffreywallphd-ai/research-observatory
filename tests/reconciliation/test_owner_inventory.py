@@ -167,6 +167,7 @@ class ConnectorOwnerInventoryTests(ConnectorWorkflowFixture):
             lease_duration_ms=30000,
             activity_types=(ACTIVITY,),
         )
+        assert claim is not None
         self.queue.start(claim, now=self.clock.now())
         self.queue.fail(claim, now=self.clock.now(), error_code="invalid-input")
         failed = self.queue.task_center()[0]
@@ -185,6 +186,7 @@ class ConnectorOwnerInventoryTests(ConnectorWorkflowFixture):
             lease_duration_ms=30000,
             activity_types=(ACTIVITY,),
         )
+        assert claim is not None
         self.queue.start(claim, now=self.clock.now())
         output = self.repository.output_reference(self.request)
         self.queue.stage_artifact(claim, artifact=output, role="output", now=self.clock.now())
@@ -230,6 +232,7 @@ class ConnectorOwnerInventoryTests(ConnectorWorkflowFixture):
         self.assertEqual(source, self.worker.reconciliation_source(self.root, page.addresses[0]))
         self.assertEqual(1, len(self.calls))
         accepted = self.queue.accepted_output(job.job_id)
+        assert accepted is not None
         self.assertEqual(ACTIVITY, accepted.activity_type)
         with self.assertRaises(ReconciliationProblem):
             self.worker.reconciliation_source(

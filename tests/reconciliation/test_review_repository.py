@@ -1,7 +1,9 @@
 """Human review publishes reversible identity, history, and dependency intent atomically."""
 
+import sqlite3
 import unittest
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 from dataclasses import replace
 from unittest.mock import patch
 
@@ -16,7 +18,7 @@ from research_observatory_core.repositories import (
     create_sqlite_unit_of_work_factory,
     sqlite_dependency_impact_repository,
 )
-from research_observatory_core.storage import open_canonical_database
+from research_observatory_core.storage import _DATABASE_ERRORS, open_canonical_database
 
 from tests.reconciliation import test_repository as fixture_module
 
@@ -446,6 +448,7 @@ class ReviewRepositoryTests(unittest.TestCase):
         factory = create_sqlite_unit_of_work_factory(self.fixture.database, self.fixture.project)
         with factory() as unit, self.assertRaises(RepositoryConflict):
             unit.require_fresh_revision(derived.revision_id)
+
         with self.repo._transaction(write=True) as (connection, aggregates):
             revised = self.repo._append(
                 aggregates,
@@ -462,3 +465,251 @@ class ReviewRepositoryTests(unittest.TestCase):
                 "SELECT output_revision_id FROM dependency_impact_items WHERE run_id=?", (run_ids[0],)
             ).fetchall()
             self.assertIn(derived.revision_id, {row[0] for row in affected})
+
+    def test_review_impacts_recover_from_unrelated_graph_growth_without_releasing_stale_outputs(self):
+        assert self.a.work_id is not None
+        with self.repo._transaction(write=True) as (_, aggregates):
+            consumer = self.repo._append(
+                aggregates,
+                sources=(aggregates.get(self.a.work_id),),
+                actor=self.actor,
+                digest="1" * 64,
+                kind="evidence",
+                label="Synthetic dependent",
+            ).revision_id
+        outcome = self.commit(self.command(self.merge_plan()))
+        with self.repo._transaction(write=True) as (_, aggregates):
+            self.repo._append(
+                aggregates,
+                sources=(),
+                actor=self.actor,
+                digest="2" * 64,
+                kind="evidence",
+                label="Synthetic independent append",
+            )
+        self.repo = SqliteReconciliationRepository(self.fixture.database, self.fixture.project)
+        factory = create_sqlite_unit_of_work_factory(self.fixture.database, self.fixture.project)
+        for _ in range(4):
+            with factory() as unit, self.assertRaises(RepositoryConflict):
+                unit.require_fresh_revision(consumer)
+            self.repo.advance_review_impacts()
+        impacts = sqlite_dependency_impact_repository(self.fixture.database.parent.parent, self.fixture.project)
+        self.assertIn(consumer, {item.output_revision_id for item in impacts.stale_states()})
+        self.assertTrue(all(impacts.run(run_id).state != "running" for run_id in outcome.dependency_run_ids))
+
+    def test_partial_impact_continuation_rolls_back_at_every_seam_and_recovers_after_lost_ack(self):
+        assert self.a.work_id is not None
+        with self.repo._transaction(write=True) as (_, aggregates):
+            consumers = tuple(
+                self.repo._append(
+                    aggregates,
+                    sources=(aggregates.get(self.a.work_id),),
+                    actor=self.actor,
+                    digest="1" * 64,
+                    kind="evidence",
+                    label="Synthetic dependent",
+                ).revision_id
+                for _ in range(102)
+            )
+        outcome = self.commit(self.command(self.merge_plan()))
+        impacts = sqlite_dependency_impact_repository(self.fixture.database.parent.parent, self.fixture.project)
+        root_id = next(run_id for run_id in outcome.dependency_run_ids if impacts.run(run_id).total_items >= 102)
+        root = impacts.run(root_id)
+        partial = impacts.advance(root_id, expected_checkpoint_sha256=root.checkpoint_sha256)
+        self.assertEqual(100, partial.processed_items)
+        with self.repo._transaction(write=True) as (_, aggregates):
+            self.repo._append(
+                aggregates,
+                sources=(),
+                actor=self.actor,
+                digest="2" * 64,
+                kind="evidence",
+                label="Synthetic independent append",
+            )
+        factory = create_sqlite_unit_of_work_factory(self.fixture.database, self.fixture.project)
+        for step in ("impact-continuation-created", "impact-continuation-linked", "impact-predecessor-cancelled"):
+            with self.subTest(step=step):
+                before = self.counts()
+
+                def fail(observed, expected=step):
+                    if observed == expected:
+                        raise ReconciliationProblem("synthetic-continuation-interruption")
+
+                with (
+                    patch("research_observatory_core.reconciliation_repository._publication_step", side_effect=fail),
+                    self.assertRaises(ReconciliationProblem),
+                ):
+                    self.repo.advance_review_impacts()
+                self.assertEqual(before, self.counts())
+                self.assertEqual(partial, impacts.run(root_id))
+                with factory() as unit, self.assertRaises(RepositoryConflict):
+                    unit.require_fresh_revision(consumers[-1])
+        self.repo.advance_review_impacts()  # Committed continuation; caller loses acknowledgement.
+        self.repo = SqliteReconciliationRepository(self.fixture.database, self.fixture.project)
+        with open_canonical_database(self.fixture.database, expected_project_id=self.fixture.project) as db:
+            links = db.execute(
+                "SELECT run_id,previous_checkpoint_sha256 FROM reconciliation_impact_continuations"
+            ).fetchall()
+        self.assertEqual(1, len(links))
+        self.assertEqual(partial.checkpoint_sha256, links[0][1])
+        self.assertEqual("cancelled", impacts.run(root_id).state)
+        for _ in range(4):
+            self.repo.advance_review_impacts()
+        self.assertEqual("completed", impacts.run(links[0][0]).state)
+        self.assertTrue(set(consumers) <= {item.output_revision_id for item in impacts.stale_states()})
+        self.assertFalse(self.repo.advance_review_impacts())
+        with factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.require_fresh_revision(consumers[-1])
+
+    def test_continuation_rejects_substituted_semantics_checkpoint_owner_and_forks(self):
+        assert self.a.work_id is not None
+        with self.repo._transaction(write=True) as (_, aggregates):
+            self.repo._append(
+                aggregates,
+                sources=(aggregates.get(self.a.work_id),),
+                actor=self.actor,
+                digest="1" * 64,
+                kind="evidence",
+                label="Synthetic dependent",
+            )
+        outcome = self.commit(self.command(self.merge_plan()))
+        impacts = sqlite_dependency_impact_repository(self.fixture.database.parent.parent, self.fixture.project)
+        root_id = next(run_id for run_id in outcome.dependency_run_ids if impacts.run(run_id).state == "running")
+        root = impacts.run(root_id)
+        change = impacts.change(root.change_id)
+        from research_observatory_core.repositories import _SqliteDependencyImpactRepository
+
+        adapter = _SqliteDependencyImpactRepository(self.fixture.database, self.fixture.project)
+        for substituted in (
+            change,
+            replace(change, actor_id=new_uuid_v7()),
+            replace(change, propagation_policy_version="2.0.0"),
+            replace(change, reason="SOURCE_VERSION"),
+        ):
+            with self.subTest(change=substituted):
+                change_id, child_id = new_uuid_v7(), new_uuid_v7()
+                fresh = replace(substituted, change_id=change_id, idempotency_key="reconciliation-impact-" + change_id)
+                with self.repo._transaction(write=True) as (db, _):
+                    from research_observatory_core.ports.repositories import DEFAULT_DEPENDENCY_IMPACT_LIMITS
+
+                    preview = adapter._preview_with_connection(
+                        db, fresh, decisions=(), limits=DEFAULT_DEPENDENCY_IMPACT_LIMITS
+                    )
+                    adapter._begin_with_connection(
+                        db, fresh, preview_sha256=preview.preview_sha256, run_id=child_id, batch_size=100
+                    )
+                    checkpoint = "sha256:" + "0" * 64 if substituted == change else root.checkpoint_sha256
+                    with self.assertRaises(_DATABASE_ERRORS):
+                        db.execute(
+                            "INSERT INTO reconciliation_impact_continuations VALUES (?,?,?,?,?,?)",
+                            (root_id, self.fixture.project, 1, root_id, child_id, checkpoint),
+                        )
+        # Manual cancellation stays terminal and does not acquire an automatic child.
+        impacts.cancel(root_id, expected_checkpoint_sha256=root.checkpoint_sha256, occurred_at=self.actor.occurred_at)
+        self.assertFalse(self.repo.advance_review_impacts())
+        with open_canonical_database(self.fixture.database, expected_project_id=self.fixture.project) as db:
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM reconciliation_impact_continuations").fetchone()[0])
+
+    def test_repeated_graph_growth_follows_saved_chain_without_forking_or_reviving_terminal_roots(self):
+        assert self.a.work_id is not None
+        with self.repo._transaction(write=True) as (_, aggregates):
+            self.repo._append(
+                aggregates,
+                sources=(aggregates.get(self.a.work_id),),
+                actor=self.actor,
+                digest="1" * 64,
+                kind="evidence",
+                label="Synthetic dependent",
+            )
+        outcome = self.commit(self.command(self.merge_plan()))
+        impacts = sqlite_dependency_impact_repository(self.fixture.database.parent.parent, self.fixture.project)
+        root_id = next(run_id for run_id in outcome.dependency_run_ids if impacts.run(run_id).state == "running")
+        previous = root_id
+        for sequence in range(1, 4):
+            with self.repo._transaction(write=True) as (_, aggregates):
+                self.repo._append(
+                    aggregates,
+                    sources=(),
+                    actor=self.actor,
+                    digest="2" * 64,
+                    kind="evidence",
+                    label="Synthetic independent append",
+                )
+            self.assertTrue(self.repo.advance_review_impacts())
+            with open_canonical_database(self.fixture.database, expected_project_id=self.fixture.project) as db:
+                links = db.execute(
+                    "SELECT sequence,previous_run_id,run_id FROM reconciliation_impact_continuations "
+                    "WHERE root_run_id=? ORDER BY sequence",
+                    (root_id,),
+                ).fetchall()
+                self.assertEqual(sequence, len(links))
+                self.assertEqual((sequence, previous), tuple(links[-1])[:2])
+                with self.assertRaises(_DATABASE_ERRORS):
+                    db.execute(
+                        "INSERT INTO reconciliation_impact_continuations VALUES (?,?,?,?,?,?)",
+                        (
+                            root_id,
+                            self.fixture.project,
+                            sequence + 1,
+                            previous,
+                            root_id,
+                            impacts.run(previous).checkpoint_sha256,
+                        ),
+                    )
+            previous = links[-1][2]
+            self.repo = SqliteReconciliationRepository(self.fixture.database, self.fixture.project)
+        self.assertTrue(self.repo.advance_review_impacts())
+        self.assertFalse(self.repo.advance_review_impacts())
+        self.assertEqual("completed", impacts.run(previous).state)
+
+    def test_real_graph_growth_does_not_turn_corrupted_saved_authority_into_a_continuation(self):
+        assert self.a.work_id is not None
+        with self.repo._transaction(write=True) as (_, aggregates):
+            self.repo._append(
+                aggregates,
+                sources=(aggregates.get(self.a.work_id),),
+                actor=self.actor,
+                digest="1" * 64,
+                kind="evidence",
+                label="Synthetic dependent",
+            )
+        outcome = self.commit(self.command(self.merge_plan()))
+        impacts = sqlite_dependency_impact_repository(self.fixture.database.parent.parent, self.fixture.project)
+        root_id = next(run_id for run_id in outcome.dependency_run_ids if impacts.run(run_id).state == "running")
+        for table, column, value in (
+            ("dependency_impact_runs", "graph_sha256", "sha256:" + "0" * 64),
+            ("dependency_impact_runs", "preview_sha256", "sha256:" + "0" * 64),
+            ("dependency_impact_runs", "authority_sha256", "sha256:" + "0" * 64),
+            ("dependency_impact_items", "path_sha256", "sha256:" + "0" * 64),
+            ("dependency_impact_audit_events", "checkpoint_sha256", "sha256:" + "0" * 64),
+        ):
+            with self.subTest(table=table, column=column):
+
+                def substitute(new_value, table=table, column=column):
+                    with closing(sqlite3.connect(self.fixture.database)) as db, db:
+                        trigger = table + "_no_update"
+                        ddl = db.execute("SELECT sql FROM sqlite_schema WHERE name=?", (trigger,)).fetchone()[0]
+                        prior = db.execute(f"SELECT {column} FROM {table} WHERE run_id=?", (root_id,)).fetchone()[0]
+                        db.execute(f"DROP TRIGGER {trigger}")
+                        db.execute(f"UPDATE {table} SET {column}=? WHERE run_id=?", (new_value, root_id))
+                        db.execute(ddl)
+                        return prior
+
+                original = substitute(value)
+                try:
+                    before = self.counts()
+                    with self.assertRaises(ReconciliationProblem):
+                        self.repo.advance_review_impacts()
+                    self.assertEqual(before, self.counts())
+                finally:
+                    substitute(original)
+                if column == "graph_sha256":
+                    with self.repo._transaction(write=True) as (_, aggregates):
+                        self.repo._append(
+                            aggregates,
+                            sources=(),
+                            actor=self.actor,
+                            digest="2" * 64,
+                            kind="evidence",
+                            label="Synthetic independent append",
+                        )

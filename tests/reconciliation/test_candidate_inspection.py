@@ -33,7 +33,9 @@ class CandidateInspectionTests(unittest.TestCase):
         self.assertEqual(1, before.candidate_count)
         self.assertIsNone(before.next_after)
         content = repository.candidate_set(self.output.revision_id, resolve=fixture.resolve)
-        work = content.members[0].canonical_work.work_id
+        canonical_work = content.members[0].canonical_work
+        assert canonical_work is not None
+        work = canonical_work.work_id
         context = repository.review_context((work,), resolve=fixture.resolve)
         members = context.works[0].assertion_revision_ids
         plan = ReviewPlan(
