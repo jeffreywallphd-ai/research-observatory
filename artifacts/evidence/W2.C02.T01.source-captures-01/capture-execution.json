@@ -1,0 +1,65 @@
+{
+  "candidate": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+  "status": "PASS",
+  "checks": [
+    {
+      "id": "capture-build",
+      "command": [
+        ".local/toolchains/node-v24.19.0-win-x64/corepack.cmd",
+        "pnpm",
+        "--dir",
+        "apps/desktop",
+        "run",
+        "build"
+      ],
+      "startedUnix": 1790479018.3512716,
+      "elapsedSeconds": 1.115,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C02.T01.capture-build-02.log",
+      "rawOutputSha256": "75856379d01a6e432fcf523fcc4e2dfa7bd99b20d2954233d3e975486438bf0f"
+    },
+    {
+      "id": "capture-source-browser",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2.C02.T01-capture-02-browser",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.desktop.test_source_interactions"
+      ],
+      "startedUnix": 1790479019.5641627,
+      "elapsedSeconds": 18.168,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C02.T01.capture-source-browser-02.log",
+      "rawOutputSha256": "2b9a872fe68cf9cf95a8091f45beb8930d204d0747f23114e6552ce9eb3ce17f"
+    },
+    {
+      "id": "capture-matrix",
+      "command": [
+        ".venv/Scripts/python.exe",
+        "-B",
+        "-s",
+        "-X",
+        "pycache_prefix=artifacts/tmp/W2.C02.T01-capture-02-matrix",
+        "tools/product_style_check.py",
+        "--repo",
+        ".",
+        "--capture",
+        "artifacts/evidence/W2.C02.T01.captures-01"
+      ],
+      "startedUnix": 1790479037.8275235,
+      "elapsedSeconds": 116.855,
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C02.T01.capture-matrix-02.log",
+      "rawOutputSha256": "bab021594e147f8069f9794dd41c4767632c9a9a043512e281724c4ea1a7cae6"
+    }
+  ],
+  "rawReceipt": {
+    "path": "artifacts/tmp/W2.C02.T01.capture-02.json",
+    "sha256": "03f6f2634b204c2d89a6e001ad4caad463f1b29a1bf352db229dc4ee93be0ec2"
+  }
+}

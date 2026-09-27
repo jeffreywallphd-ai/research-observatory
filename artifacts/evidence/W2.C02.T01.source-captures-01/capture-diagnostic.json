@@ -1,0 +1,106 @@
+{
+  "candidate": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+  "scope": "Supplemental offline browser capture diagnostic, synthetic native/Core doubles",
+  "samples": [
+    {
+      "theme": "light",
+      "rows": [
+        {
+          "stage": "before",
+          "activeTag": "H2",
+          "activeId": "source-history-title",
+          "skipFocused": false,
+          "skipTop": -58.599998474121094,
+          "skipBottom": -21.599998474121094,
+          "skipTransform": "matrix(1, 0, 0, 1, 0, -66.6)",
+          "scrollY": 3713,
+          "viewport": 450
+        },
+        {
+          "stage": "after-element-capture",
+          "activeTag": "H2",
+          "activeId": "source-history-title",
+          "skipFocused": false,
+          "skipTop": -58.599998474121094,
+          "skipBottom": -21.599998474121094,
+          "skipTransform": "matrix(1, 0, 0, 1, 0, -66.6)",
+          "scrollY": 5020,
+          "viewport": 450
+        },
+        {
+          "stage": "after-viewport-capture",
+          "activeTag": "H2",
+          "activeId": "source-history-title",
+          "skipFocused": false,
+          "skipTop": -58.599998474121094,
+          "skipBottom": -21.599998474121094,
+          "skipTransform": "matrix(1, 0, 0, 1, 0, -66.6)",
+          "scrollY": 5020,
+          "viewport": 450
+        }
+      ],
+      "errors": [],
+      "captures": [
+        {
+          "path": "artifacts/tmp/W2.C02.T01.element-light-diagnostic-02.png",
+          "sha256": "d7a7cc92e7e633fe6ae32f196117a7ac82004433eb258155e636bc83fe034a59"
+        },
+        {
+          "path": "artifacts/tmp/W2.C02.T01.viewport-light-diagnostic-02.png",
+          "sha256": "3cf64dd80d9790ff9c903d9f700627a7715290dddc4f5ba24dfbd22965219738"
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "rows": [
+        {
+          "stage": "before",
+          "activeTag": "H2",
+          "activeId": "source-history-title",
+          "skipFocused": false,
+          "skipTop": -58.599998474121094,
+          "skipBottom": -21.599998474121094,
+          "skipTransform": "matrix(1, 0, 0, 1, 0, -66.6)",
+          "scrollY": 3713,
+          "viewport": 450
+        },
+        {
+          "stage": "after-element-capture",
+          "activeTag": "H2",
+          "activeId": "source-history-title",
+          "skipFocused": false,
+          "skipTop": -58.599998474121094,
+          "skipBottom": -21.599998474121094,
+          "skipTransform": "matrix(1, 0, 0, 1, 0, -66.6)",
+          "scrollY": 5020,
+          "viewport": 450
+        },
+        {
+          "stage": "after-viewport-capture",
+          "activeTag": "H2",
+          "activeId": "source-history-title",
+          "skipFocused": false,
+          "skipTop": -58.599998474121094,
+          "skipBottom": -21.599998474121094,
+          "skipTransform": "matrix(1, 0, 0, 1, 0, -66.6)",
+          "scrollY": 5020,
+          "viewport": 450
+        }
+      ],
+      "errors": [],
+      "captures": [
+        {
+          "path": "artifacts/tmp/W2.C02.T01.element-dark-diagnostic-02.png",
+          "sha256": "04b496ad70e9eb683ba689c359f0c128c3ae1f846536c131d5a475891b4fafd9"
+        },
+        {
+          "path": "artifacts/tmp/W2.C02.T01.viewport-dark-diagnostic-02.png",
+          "sha256": "2bb848e087f111c140ba7a064b58570653063fe63181aac3730b6e248d676570"
+        }
+      ]
+    }
+  ],
+  "browser": "145.0.7632.6",
+  "status": "PASS"
+}

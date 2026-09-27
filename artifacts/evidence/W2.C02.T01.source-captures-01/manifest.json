@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "focused-source-browser-capture-delivery",
+  "taskId": "W2.C02.T01",
+  "producerCommit": "4514bc7badf92b3f50ca1ceb58e1ab1567212af9",
+  "scope": "Built Source Manager using explicit synthetic native/Core doubles; no actual provider, native dialog or protected persistence claim.",
+  "inventory": [
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inventory-light-1440.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inventory-light-1440.png",
+      "sha256": "e35cc7d7670d291bc71ed71d2a74aeb5bc9d2822f7fab9f390d0d8e1eaf100a6"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inventory-light-1280.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inventory-light-1280.png",
+      "sha256": "4c6e204638d2b28c04bc69255a3f8000c9b8b47c6711ac5e83b6ccde26459d5f"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inventory-light-720.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inventory-light-720.png",
+      "sha256": "775e35f102972a51d8a70933d7b66c642c11ea27f2a83cbb42f0e88accf36670"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/preview-light-1440.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/preview-light-1440.png",
+      "sha256": "52fcce880eee6fdee403b31468a8b1c8c51600a0e75155494fd308324b408e5c"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/preview-light-1280.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/preview-light-1280.png",
+      "sha256": "7f8594cd1dd1b9198c58bbdc92fcf0be5b77f46ad12332053d2f7a784e4fc460"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/preview-light-720.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/preview-light-720.png",
+      "sha256": "37974794a21bd2739727b4acf53bfa226e19d0ae9c6ea3a7a9c871d47f483565"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inspection-light-1440.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-light-1440.png",
+      "sha256": "a2c009c1524c42bd7df577f5c303a972f68ec234dc687236eaa6161478ddd10e"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inspection-light-1280.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-light-1280.png",
+      "sha256": "9701daf48f1c3888ff5e2db6a3f73ba7d265de95cd9d866be389833a96f1a293"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inspection-light-720.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-light-720.png",
+      "sha256": "e7c64cb28d829bbd1e69add0971cf6da72aab3989beb0aacc31e009aaf41fa30"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inventory-dark-1440.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inventory-dark-1440.png",
+      "sha256": "d086c3fdf2c132cc9f7c312fe50e00bbc53bb4c4158f1cb865cb4fb63c1c1933"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inventory-dark-1280.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inventory-dark-1280.png",
+      "sha256": "5e509aa96f22ec835e8de318f0921eaf5d330ec7f30a7dcd78513ae5485f6855"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inventory-dark-720.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inventory-dark-720.png",
+      "sha256": "01fb54a400e2b3bc5bfe0eeee8849fe6d2a208a1fb22149dac5fbde40f8eaeac"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/preview-dark-1440.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/preview-dark-1440.png",
+      "sha256": "97e22675070b2b7c4c01b4fe7cdfa5f85086513d25839d36b69c1010041d77a7"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/preview-dark-1280.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/preview-dark-1280.png",
+      "sha256": "28791d899e5750285ed3de1bdf1c1e805faa4dff40880e5e873c9521dc628a37"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/preview-dark-720.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/preview-dark-720.png",
+      "sha256": "5db53c7d04ccab104a7e16d68f4d3ae0e1678eabe312dab214bd476fc9ac640e"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inspection-dark-1440.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-dark-1440.png",
+      "sha256": "bf697ad42c34091c7e790fa38dfb9c89cc9348b723c0fe7e9ecf1b0944ee109d"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inspection-dark-1280.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-dark-1280.png",
+      "sha256": "c649e387c33d92bfbf9f5252eb81c7e7b6f3c291e64593a09ab16c9df5f73cb8"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/inspection-dark-720.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/inspection-dark-720.png",
+      "sha256": "4ba53a6fcd0ed72532c3ae43c4cf0819cb8a83f61b8eea3cf678e1a9acf9cddf"
+    },
+    {
+      "originalPath": "artifacts/tmp/W2.C02.T01.element-light-diagnostic-02.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.element-light-diagnostic-02.png",
+      "sha256": "d7a7cc92e7e633fe6ae32f196117a7ac82004433eb258155e636bc83fe034a59"
+    },
+    {
+      "originalPath": "artifacts/tmp/W2.C02.T01.viewport-light-diagnostic-02.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.viewport-light-diagnostic-02.png",
+      "sha256": "3cf64dd80d9790ff9c903d9f700627a7715290dddc4f5ba24dfbd22965219738"
+    },
+    {
+      "originalPath": "artifacts/tmp/W2.C02.T01.element-dark-diagnostic-02.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.element-dark-diagnostic-02.png",
+      "sha256": "04b496ad70e9eb683ba689c359f0c128c3ae1f846536c131d5a475891b4fafd9"
+    },
+    {
+      "originalPath": "artifacts/tmp/W2.C02.T01.viewport-dark-diagnostic-02.png",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/W2.C02.T01.viewport-dark-diagnostic-02.png",
+      "sha256": "2bb848e087f111c140ba7a064b58570653063fe63181aac3730b6e248d676570"
+    },
+    {
+      "originalPath": "artifacts/tmp/source-visual-aldli4wh/result.json",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/source-browser-report.json",
+      "sha256": "566eff12b786780a71fb9d101c59bcdbff68f82d5d1d15768251a7e90542d646",
+      "originalSha256": "f40527e71cfb3f720049522f341fea0c9f159dd16dfa8558f7fda0660c6bd64d",
+      "serialization": "Git-canonical LF; original raw producer bytes retained at originalPath and bound by originalSha256"
+    },
+    {
+      "originalPath": "artifacts/tmp/W2.C02.T01.capture-diagnostic-02.json",
+      "path": "artifacts/evidence/W2.C02.T01.source-captures-01/capture-diagnostic.json",
+      "sha256": "259bb485b30695fac74a5db97d8224aa929200196c5e774c626c2b0b537a48d1",
+      "originalSha256": "259bb485b30695fac74a5db97d8224aa929200196c5e774c626c2b0b537a48d1",
+      "serialization": "Git-canonical LF; original raw producer bytes retained at originalPath and bound by originalSha256"
+    }
+  ],
+  "coverage": "Inventory, preview timing limits and accepted measurement inspection in both themes at 1440x900, 1280x720 and 720x450; separate actual viewport diagnostics at 720x450.",
+  "captureLimitation": "Long element screenshots can composite the offscreen skip link. Diagnostic DOM records and ordinary viewport PNGs establish its actual offscreen unfocused position; element images alone are not viewport-overlap proof.",
+  "priorFailure": {
+    "receipt": "artifacts/tmp/W2.C02.T01.capture-01.json",
+    "log": "artifacts/tmp/W2.C02.T01.capture-source-browser.log",
+    "cause": "Ambiguous global running-status locator matched both visible badge and screen-reader live announcement; scoped visible assertion repaired in 4514bc7badf92b3f50ca1ceb58e1ab1567212af9."
+  },
+  "independentVisualReview": "pending separate committed disposition"
+}
