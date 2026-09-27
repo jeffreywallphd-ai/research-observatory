@@ -25,6 +25,7 @@ affected_paths:
   - tools/architecture_check.py
   - quality-scope.json
   - verification-profiles.json
+  - packaging/build-inputs.json
 supersedes: []
 superseded_by: null
 ---

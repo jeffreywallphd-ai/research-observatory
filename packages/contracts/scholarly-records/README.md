@@ -19,6 +19,10 @@ Consumers use the public API and these portable values, never SQLite internals.
 4. POST root and assertionRevisionId to `/projects/reconciliation/inspect`. The
    result preserves raw assertions, normalization/version, source selectors,
    competing field observations and selection reasons. Conflicts remain disputed.
+   `result` is the original immutable reconciliation receipt. `canonicalWork`
+   binds the current `canonicalFields` projection to its Work ID and exact
+   canonical revision ID in one read snapshot, even when inspecting an older
+   assertion. It is null for an unresolved assertion with no Work association.
 
 The native authenticated Core session and current open project are mandatory.
 Core resolves source values and rights itself; client-supplied grants are rejected.

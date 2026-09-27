@@ -9,7 +9,12 @@ from unittest.mock import patch
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights
 from research_observatory_core.ports.reconciliation import ReconciliationActor
-from research_observatory_core.reconciliation.contracts import ReconciliationProblem, SourceAddress, SourceAssertion
+from research_observatory_core.reconciliation.contracts import (
+    ReconciliationProblem,
+    ScholarlyField,
+    SourceAddress,
+    SourceAssertion,
+)
 from research_observatory_core.reconciliation.exact import IdentifierAssertion
 from research_observatory_core.reconciliation_repository import SqliteReconciliationRepository
 from research_observatory_core.storage import open_canonical_database
@@ -130,12 +135,11 @@ class ReconciliationRepositoryTests(unittest.TestCase):
         self.assertEqual((first.work_id,), result.candidates)
         self.assertIn("conflicting-identifiers", result.flags)
         self.assertEqual(1, self.counts()[2])
-        self.assertEqual(
-            result,
-            SqliteReconciliationRepository(self.database, self.project)
-            .inspect(result.assertion_revision_id, resolve=self.resolve)
-            .result,
+        inspection = SqliteReconciliationRepository(self.database, self.project).inspect(
+            result.assertion_revision_id, resolve=self.resolve
         )
+        self.assertEqual(result, inspection.result)
+        self.assertIsNone(inspection.canonical_work)
 
     def test_total_source_budget_denies_publication_and_inspection_without_partial_facts(self):
         first = self.repository.reconcile(
@@ -207,6 +211,60 @@ class ReconciliationRepositoryTests(unittest.TestCase):
                     (result.assertion_revision_id, result.work_revision_id),
                 ).fetchone()[0],
             )
+
+    def test_current_projection_binds_its_revision_without_rewriting_the_original_receipt(self):
+        self.source = self.source.model_copy(
+            update={
+                "fields": (
+                    ScholarlyField(
+                        name="title", observed="First synthetic title", origin="observed", source_selector="title"
+                    ),
+                )
+            }
+        )
+        self.resolved[self.address.revision_id] = self.source
+        first = self.repository.reconcile(
+            self.address, command_id=new_uuid_v7(), actor=self.actor, resolve=self.resolve
+        )
+        original_receipt = first.model_dump_json(by_alias=True)
+        initial = self.repository.inspect(first.assertion_revision_id, resolve=self.resolve)
+        assert initial.canonical_work is not None
+        self.assertEqual(first.work_id, initial.canonical_work.work_id)
+        self.assertEqual(first.work_revision_id, initial.canonical_work.revision_id)
+        second_address = self.another_source()
+        self.resolved[second_address.revision_id] = self.resolved[second_address.revision_id].model_copy(
+            update={
+                "fields": (
+                    ScholarlyField(
+                        name="title", observed="Second synthetic title", origin="observed", source_selector="title"
+                    ),
+                )
+            }
+        )
+        second = self.repository.reconcile(
+            second_address, command_id=new_uuid_v7(), actor=self.actor, resolve=self.resolve
+        )
+        reopened = SqliteReconciliationRepository(self.database, self.project)
+        for repository in (self.repository, reopened):
+            inspection = repository.inspect(first.assertion_revision_id, resolve=self.resolve)
+            assert inspection.canonical_work is not None
+            self.assertEqual(original_receipt, inspection.result.model_dump_json(by_alias=True))
+            self.assertEqual(first.work_id, inspection.canonical_work.work_id)
+            self.assertEqual(second.work_revision_id, inspection.canonical_work.revision_id)
+            self.assertNotEqual(first.work_revision_id, inspection.canonical_work.revision_id)
+            title = next(field for field in inspection.canonical_fields if field.name == "title")
+            self.assertEqual("disputed", title.status)
+            self.assertEqual(
+                {first.assertion_revision_id, second.assertion_revision_id},
+                {observation.assertion_revision_id for observation in title.observations},
+            )
+        before = self.counts()
+        self.resolved[second_address.revision_id] = self.resolved[second_address.revision_id].model_copy(
+            update={"rights": ImportRights()}
+        )
+        with self.assertRaisesRegex(ReconciliationProblem, "reconciliation-rights-denied"):
+            reopened.inspect(first.assertion_revision_id, resolve=self.resolve)
+        self.assertEqual(before, self.counts())
 
     def test_conflicting_actor_retry_and_current_rights_denial_leave_state_unchanged(self):
         command = new_uuid_v7()

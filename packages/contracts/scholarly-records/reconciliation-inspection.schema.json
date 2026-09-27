@@ -60,6 +60,23 @@
       "title": "CanonicalFieldSelection",
       "type": "object"
     },
+    "CanonicalWorkReference": {
+      "additionalProperties": false,
+      "properties": {
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "workId",
+        "revisionId"
+      ],
+      "title": "CanonicalWorkReference",
+      "type": "object"
+    },
     "Digest": {
       "pattern": "^[0-9a-f]{64}$",
       "type": "string"
@@ -584,6 +601,17 @@
       "maxItems": 256,
       "title": "Canonicalfields",
       "type": "array"
+    },
+    "canonicalWork": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CanonicalWorkReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "normalizedIdentifiers": {
       "items": {

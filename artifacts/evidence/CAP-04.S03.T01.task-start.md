@@ -72,3 +72,18 @@ coverage. CAP-04.S03.T02/T03 and the S01–S03 checkpoint retain their approved 
 
 Qualifying checks will run afresh against the committed candidate. Development
 failures remain in local logs; they are not passing evidence or independent review.
+
+## First adverse review closure
+
+Candidate `157e6d3823979896f40d9ab183bf3c932f35fe08` exposed two missed
+acceptance rows. Inspection combined current contributors with an original
+receipt but omitted the current canonical revision identity. Preserve that
+immutable receipt and bind the field projection to the current Work/revision
+resolved in the same database snapshot. The regression inspects the first
+assertion before and after a second contributor, after reopen, and after
+revocation of the later contributor's rights; denial must publish no facts.
+
+The generated scholarly schemas were omitted from the governed build input
+inventory. Register all four exact paths and rerun the existing build-manifest
+check without changing its exhaustive inventory rule. These are criterion 1/3
+identity and packaging closures, not additional scope or new authority.

@@ -25,6 +25,7 @@ from .ports.repositories import (
 )
 from .reconciliation.contracts import (
     CanonicalFieldSelection,
+    CanonicalWorkReference,
     FieldObservation,
     ReconciliationInspection,
     ReconciliationProblem,
@@ -466,11 +467,18 @@ class SqliteReconciliationRepository:
         if not is_uuid_v7(revision_id):
             raise ReconciliationProblem("reconciliation-address-invalid")
         _, collect = self._source_snapshot(resolve)
-        with self._transaction(write=False) as (connection, _):
+        with self._transaction(write=False) as (connection, aggregates):
             result = self._authorized_load(connection, revision_id, collect)
+            current = aggregates.get(result.result.work_id) if result.result.work_id else None
+            if result.result.work_id and current is None:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
             sources = (
                 self._work_sources(connection, result.result.work_id, collect) if result.result.work_id else (result,)
             )
+            if current is not None and current.revision_id not in {
+                source.result.work_revision_id for source in sources
+            }:
+                raise ReconciliationProblem("reconciliation-integrity-invalid")
             values: dict[str, list[FieldObservation]] = {}
             for source in sources:
                 for field in source.assertion.fields:
@@ -497,7 +505,12 @@ class SqliteReconciliationRepository:
                     )
                 )
             result = ReconciliationInspection(
-                result=result.result, assertion=result.assertion, canonical_fields=tuple(selections)
+                result=result.result,
+                assertion=result.assertion,
+                canonical_work=CanonicalWorkReference(work_id=current.aggregate_id, revision_id=current.revision_id)
+                if current is not None
+                else None,
+                canonical_fields=tuple(selections),
             )
             if len(result.model_dump_json(by_alias=True).encode()) > 4 * 1024 * 1024:
                 raise ReconciliationProblem("reconciliation-inspection-limit")

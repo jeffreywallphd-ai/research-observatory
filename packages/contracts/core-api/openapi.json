@@ -233,6 +233,23 @@
         "title": "CanonicalFieldSelection",
         "type": "object"
       },
+      "CanonicalWorkReference": {
+        "additionalProperties": false,
+        "properties": {
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "workId",
+          "revisionId"
+        ],
+        "title": "CanonicalWorkReference",
+        "type": "object"
+      },
       "CapabilitiesResponse": {
         "additionalProperties": false,
         "properties": {
@@ -6744,6 +6761,16 @@
             "maxItems": 256,
             "title": "Canonicalfields",
             "type": "array"
+          },
+          "canonicalWork": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CanonicalWorkReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "normalizedIdentifiers": {
             "items": {

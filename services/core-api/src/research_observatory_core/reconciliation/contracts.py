@@ -88,9 +88,15 @@ class CanonicalFieldSelection(DraftValue):
     observations: Annotated[tuple[FieldObservation, ...], Field(max_length=32768)] = Field(repr=False)
 
 
+class CanonicalWorkReference(DraftValue):
+    work_id: Identity
+    revision_id: Identity
+
+
 class ReconciliationInspection(DraftValue):
     result: ReconciliationResult
     assertion: SourceAssertion = Field(repr=False)
+    canonical_work: CanonicalWorkReference | None = None
     canonical_fields: Annotated[tuple[CanonicalFieldSelection, ...], Field(max_length=256)] = Field(
         default=(), repr=False
     )

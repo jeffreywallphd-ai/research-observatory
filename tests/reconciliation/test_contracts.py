@@ -9,6 +9,7 @@ from pydantic import ValidationError
 from research_observatory_core.domain_contracts import new_uuid_v7
 from research_observatory_core.ingestion.import_drafts import ImportRights
 from research_observatory_core.reconciliation.contracts import (
+    CanonicalWorkReference,
     ReconciliationInspection,
     ReconciliationResult,
     SourceAddress,
@@ -48,7 +49,12 @@ class ReconciliationContractTests(unittest.TestCase):
             knowledge_status="inferred",
             matching_reason="no-exact-match",
         )
-        inspection = ReconciliationInspection(result=result, assertion=source)
+        assert result.work_id is not None and result.work_revision_id is not None
+        inspection = ReconciliationInspection(
+            result=result,
+            assertion=source,
+            canonical_work=CanonicalWorkReference(work_id=result.work_id, revision_id=result.work_revision_id),
+        )
         for filename, value in (
             ("normalized-identifier", normalize_identifier("doi", "10.1234/SYNTHETIC")),
             ("source-assertion", source),

@@ -205,6 +205,17 @@ class ReconciliationRuntimeTests(unittest.TestCase):
                 self.assertEqual("disputed", title["status"])
                 self.assertIsNone(title["selected"])
                 self.assertEqual(2, len(title["observations"]))
+                original_inspection = post(
+                    client,
+                    "/projects/reconciliation/inspect",
+                    {"root": root, "assertionRevisionId": first["assertionRevisionId"]},
+                )
+                self.assertEqual(first, original_inspection["result"])
+                self.assertEqual(
+                    {"workId": first["workId"], "revisionId": second["workRevisionId"]},
+                    original_inspection["canonicalWork"],
+                )
+                self.assertEqual(inspection["canonicalFields"], original_inspection["canonicalFields"])
                 authority.service = restarted.state.runtime.intents
                 current_intent = authority.service.workspace(root).current
                 assert current_intent is not None
