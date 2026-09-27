@@ -137,3 +137,14 @@ The v15 migration source and populated fixture remain byte-exact. Migration 0016
 creates no invented historical classifications. It retains all predecessor rows,
 uses the existing verified-backup/rollback protocol, and preserves unfinished
 exact/review impact ownership and continuation history.
+
+The existing Ingestion Review version-cluster and Retractions & corrections
+regions expose bounded Work selection, explicit source-backed classification,
+precise or missing dates, sourced directed relations, citable preference and
+retained history. The native bridge admits five strict version routes without
+actor/policy overrides; version context alone permits the bounded 4 MiB response.
+Preview shows exact selected revisions, evidence, rationale and affected count.
+An unconfirmed save keeps the exact command and blocks Back/Escape until retry
+confirms it. Recoverable failures preserve drafts; rights denial and project
+clearing remove protected state and late replies cannot restore it. These are
+supporting Ingestion Review controls, preserving the current primary workflow.

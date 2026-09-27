@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "ui-change-evidence",
+  "taskId": "CAP-04.S03.T03",
+  "changeKind": "approved-reference-implementation",
+  "contractPath": "artifacts/evidence/ui-change/CAP-04.S03.T03.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/ReconciliationPane.tsx",
+    "apps/desktop/src/app/ReconciliationVersionsPane.tsx"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
+    "version": "1.7",
+    "packageSha256": "dcf31147ee386d48e8ac95725d648ee2b08c74ef0dd42c139c5f78508a90f878",
+    "approvalCommit": "14b89c07a435a26bf894242a9e5f3e6429065055",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.6"
+  },
+  "implementationScope": "Implement approved Ingestion Review version-cluster and Retractions & corrections regions. Use existing shared components, explicit source-backed version and preferred-citable decisions, retained warnings/history, preview, retry, keyboard/focus, theme and protected clearing behavior. Preserve the current primary workflow and unchanged reference.",
+  "focusedEvidence": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.reconciliation.test_renderer.VersionRendererTests",
+      "result": "passed",
+      "scope": "Exploratory five-case run: production React/generated client and actual TestClient Core with explicit browser transport double; classification/revision/date/history, preference and warning, identical lost-reply retry, source-rights denial, draft retention, keyboard/Escape/focus in both themes, 720/1440 widths and browser CSS scaling, late-result protected clearing. Light/dark preview images inspected. Not full-shell or native-DPI qualification; fresh committed-candidate checks follow."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.reconciliation.test_native_renderer",
+      "result": "passed",
+      "scope": "Exploratory actual Windows native supervisor, generated client, production renderer, Core and DPAPI/SQLCipher: version classification, preferred choice, sourced retraction, lost-reply retry, restart, historical read and native authority-injection denial, alongside prior split/merge flow. Fixture uses accepted synthetic import and retained connector records; no live provider claim. Later preview-detail display change is covered by browser tests; fresh native candidate qualification remains required."
+    }
+  ]
+}

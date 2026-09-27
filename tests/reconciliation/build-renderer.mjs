@@ -23,7 +23,11 @@ window.requests = []; window.flags = {};
 const client = createCoreApiClient(async request => {
   window.requests.push(request);
   if (window.flags.failStatus && request.path.endsWith("batches/status")) throw new Error("Synthetic status failure");
+  if (window.flags.failVersionPreview && request.path.endsWith("versions/preview")) throw new Error("Synthetic version preview failure");
   const response = await window.coreExchange(request);
+  if (window.flags.dropVersionCommit && request.path.endsWith("versions/commit")) {
+    window.flags.dropVersionCommit = false; throw new Error("Synthetic lost version reply");
+  }
   if (window.flags.dropCommit && request.path.endsWith("review/commit")) {
     window.flags.dropCommit = false; throw new Error("Synthetic lost commit reply");
   }

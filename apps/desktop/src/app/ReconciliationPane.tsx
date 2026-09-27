@@ -3,6 +3,7 @@ import { createCoreApiClient, type CandidateExplanation, type CandidatePage, typ
   type ReconciliationInspection, type ReviewContext } from "@research-observatory/contracts/core-api";
 import { Button, DataTable, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
 import { ReconciliationReviewPane } from "./ReconciliationReviewPane";
+import { ReconciliationVersionsPane } from "./ReconciliationVersionsPane";
 
 type Client = ReturnType<typeof createCoreApiClient>;
 const active = (status: ReconciliationBatchStatus | null): boolean => Boolean(status && !["succeeded", "failed", "cancelled"].includes(status.state));
@@ -17,6 +18,8 @@ export function ReconciliationPane({ root, projectId, client, announce, headingR
   const [selected, setSelected] = useState<{ candidate: CandidateExplanation; inspections: readonly ReconciliationInspection[]; context: ReviewContext } | null>(null);
   const live = useRef(true), generation = useRef(0), pendingRef = useRef<"status" | "action" | null>(null), lastState = useRef<string | null>(null);
   const compareButton = useRef<HTMLButtonElement | null>(null);
+  const [versionOpen, setVersionOpen] = useState(false);
+  const versionButton = useRef<HTMLButtonElement | null>(null);
   const lastCandidate = useRef<string | null>(null), restoreFocus = useRef(false);
   const current = (ticket: number): boolean => live.current && generation.current === ticket;
   const address = useMemo(() => ({ root }), [root]);
@@ -74,10 +77,10 @@ export function ReconciliationPane({ root, projectId, client, announce, headingR
     });
   }
   useEffect(() => {
-    if (pending || failure || !active(status)) return;
+    if (pending || failure || versionOpen || !active(status)) return;
     const timer = globalThis.setTimeout(() => void refresh(), 1500);
     return () => globalThis.clearTimeout(timer);
-  }, [status, pending, failure]);
+  }, [status, pending, failure, versionOpen]);
 
   async function compare(candidate: CandidateExplanation): Promise<void> {
     await perform("action", async (ticket) => {
@@ -109,10 +112,11 @@ export function ReconciliationPane({ root, projectId, client, announce, headingR
       {status?.diagnosticCode ? <p>Diagnostic: {status.diagnosticCode}</p> : null}
       {status?.state === "failed" || status?.state === "cancelled" ? <p>This job has stopped. Its history remains in Task Center. A new generation captures current accepted sources and current authority.</p> : null}
       <div className="ro-action-row">
-        <Button tone="primary" disabled={pending !== null || active(status) || selected !== null} onClick={() => void schedule(null)}>Generate duplicate candidates</Button>
-        {requestId && !status ? <Button disabled={pending !== null} onClick={() => void schedule(requestId)}>Resume saved generation request</Button> : null}
-        {status ? <Button disabled={pending !== null || selected !== null} onClick={() => void refresh()}>Refresh reconciliation status</Button> : null}
-        {active(status) ? <Button disabled={pending === "action"} onClick={() => void cancel()}>Cancel candidate generation</Button> : null}
+        <Button tone="primary" disabled={pending !== null || active(status) || selected !== null || versionOpen} onClick={() => void schedule(null)}>Generate duplicate candidates</Button>
+        {requestId && !status ? <Button disabled={pending !== null || versionOpen} onClick={() => void schedule(requestId)}>Resume saved generation request</Button> : null}
+        {status ? <Button disabled={pending !== null || selected !== null || versionOpen} onClick={() => void refresh()}>Refresh reconciliation status</Button> : null}
+        {active(status) ? <Button disabled={pending === "action" || versionOpen} onClick={() => void cancel()}>Cancel candidate generation</Button> : null}
+        <Button ref={versionButton} disabled={pending !== null || selected !== null || versionOpen || active(status)} onClick={() => setVersionOpen(true)}>Open Work versions</Button>
       </div>
       {page ? <>
         <p>{page.recordCount} source assertion(s) in this snapshot; {page.candidateCount} candidate pair(s) from {page.comparedPairs} compared pair(s). Missing fields stay missing, and scores are not acceptance probabilities.</p>
@@ -122,10 +126,13 @@ export function ReconciliationPane({ root, projectId, client, announce, headingR
         <details><summary>Candidate set and inventory provenance</summary><dl className="import-rights">{Object.entries({ "Candidate revision": page.setRevisionId, "Frozen inventory": page.inventorySha256, "Current inventory": page.currentInventorySha256 }).map(([label, value]) => <div key={label}><dt>{label}</dt><dd className="ro-wrap-anywhere">{value}</dd></div>)}</dl></details>
         {page.candidateCount === 0 ? <p>No candidate pair met the configured ranking threshold in this bounded snapshot. This does not establish that the corpus has no duplicates.</p> : <DataTable caption="Duplicate candidates — historical comparison, current page" columns={[{ id: "pair", label: "Candidate" }, { id: "score", label: "Score / 10,000" }, { id: "signals", label: "Signals and conflicts" }, { id: "review", label: "Researcher review" }]}
           rows={page.items.map((candidate, index) => ({ pair: page.after + index + 1, score: candidate.score, signals: candidate.flags.join(", ") || "No conflict flag reported",
-            review: <Button ref={(button) => { if (lastCandidate.current === `${candidate.left}/${candidate.right}`) compareButton.current = button; }} disabled={pending !== null || selected !== null} onClick={(event) => { lastCandidate.current = `${candidate.left}/${candidate.right}`; compareButton.current = event.currentTarget; void compare(candidate); }}>Compare candidate {page.after + index + 1}</Button> }))} rowKey={(row) => String(row.pair)} />}
-        <nav className="ro-action-row" aria-label="Duplicate candidate pages"><Button disabled={pending !== null || selected !== null || cursors.length < 2} onClick={() => void refresh(cursors.slice(0, -1))}>Previous candidates</Button><Button disabled={pending !== null || selected !== null || page.nextAfter === null} onClick={() => page.nextAfter !== null && void refresh([...cursors, page.nextAfter])}>Next candidates</Button></nav>
+            review: <Button ref={(button) => { if (lastCandidate.current === `${candidate.left}/${candidate.right}`) compareButton.current = button; }} disabled={pending !== null || selected !== null || versionOpen} onClick={(event) => { lastCandidate.current = `${candidate.left}/${candidate.right}`; compareButton.current = event.currentTarget; void compare(candidate); }}>Compare candidate {page.after + index + 1}</Button> }))} rowKey={(row) => String(row.pair)} />}
+        <nav className="ro-action-row" aria-label="Duplicate candidate pages"><Button disabled={pending !== null || selected !== null || versionOpen || cursors.length < 2} onClick={() => void refresh(cursors.slice(0, -1))}>Previous candidates</Button><Button disabled={pending !== null || selected !== null || versionOpen || page.nextAfter === null} onClick={() => page.nextAfter !== null && void refresh([...cursors, page.nextAfter])}>Next candidates</Button></nav>
       </> : null}
     </div></Panel>
+    {versionOpen ? <ReconciliationVersionsPane root={root} projectId={projectId} client={client} announce={announce}
+      onClose={() => { setVersionOpen(false); globalThis.requestAnimationFrame(() => { if (live.current) versionButton.current?.focus(); }); }}
+      onDenied={() => { setPage(null); setSelected(null); }} /> : null}
     {selected ? <ReconciliationReviewPane key={`${selected.candidate.left}/${selected.candidate.right}`} root={root} projectId={projectId} client={client} initial={selected.context} inspections={selected.inspections} candidate={selected.candidate} announce={announce} onClose={closeComparison} onCommitted={() => { void refresh(); }}
       onDenied={() => { setPage(null); setSelected(null); setFailure("Current source or project access was denied. Check Intent and source rights before reopening reconciliation evidence."); restoreFocus.current = true; }} /> : null}
   </section>;

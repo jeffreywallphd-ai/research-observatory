@@ -2,6 +2,7 @@
 
 import hashlib
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from unittest.mock import patch
 
@@ -24,6 +25,7 @@ from research_observatory_core.repositories import (
     create_sqlite_unit_of_work_factory,
     sqlite_dependency_impact_repository,
 )
+from research_observatory_core.storage import open_canonical_database
 
 from tests.reconciliation import test_review_repository as fixtures
 
@@ -90,6 +92,186 @@ class VersionRepositoryTests(unittest.TestCase):
             date=VersionDate(precision="year", value="2026"),
             knowledge_status="adjudicated",
         )
+
+    def test_concurrent_version_decisions_have_one_winner_and_preserve_the_losing_draft(self):
+        version = self.register(self.f.a.assertion_revision_id, "version-of-record")
+        first = self.command(self.plan("prefer", work_ids=(self.f.a.work_id,), version=version))
+        second = first.model_copy(update={"command_id": new_uuid_v7()})
+
+        def submit(command):
+            try:
+                return self.commit(command)
+            except ReconciliationProblem as error:
+                return error
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = tuple(pool.map(submit, (first, second)))
+        self.assertEqual(1, sum(isinstance(item, ReconciliationProblem) for item in results))
+        self.assertEqual(1, len(self.context().preferences))
+        winner = next(
+            command
+            for command, result in zip((first, second), results, strict=True)
+            if not isinstance(result, ReconciliationProblem)
+        )
+        self.assertEqual(
+            next(result for result in results if not isinstance(result, ReconciliationProblem)), self.commit(winner)
+        )
+
+    def test_all_sourced_notice_kinds_and_version_cycles_preserve_exact_history(self):
+        target = self.register(self.f.a.assertion_revision_id, "preprint")
+        accepted = self.register(self.f.b.assertion_revision_id, "accepted-manuscript")
+        self.commit(self.command(self.plan("relate", relation=self.relation(accepted, target, kind="supersedes"))))
+        versions = {
+            item.version_id: VersionReference(version_id=item.version_id, revision_id=item.revision_id)
+            for item in self.context().versions
+        }
+        before = self.f.counts()
+        with self.assertRaisesRegex(ReconciliationProblem, "reconciliation-version-cycle"):
+            self.command(
+                self.plan(
+                    "relate",
+                    relation=self.relation(
+                        versions[target.version_id], versions[accepted.version_id], kind="is-version-of"
+                    ),
+                )
+            )
+        self.assertEqual(before, self.f.counts())
+        for notice_kind, relation_kind in (
+            ("erratum", "erratum-for"),
+            ("correction", "corrects"),
+            ("expression-of-concern", "expresses-concern"),
+            ("retraction", "retracts"),
+        ):
+            with self.subTest(kind=notice_kind):
+                notice = self.register(self.f.b.assertion_revision_id, notice_kind)
+                current = next(item for item in self.context().versions if item.version_id == target.version_id)
+                relation = self.relation(
+                    notice,
+                    VersionReference(version_id=current.version_id, revision_id=current.revision_id),
+                    kind=relation_kind,
+                )
+                self.commit(
+                    self.command(
+                        self.plan("relate", relation=relation.model_copy(update={"knowledge_status": "disputed"}))
+                    )
+                )
+                self.assertEqual(
+                    "preprint", self.repo.inspect_version(target.revision_id, resolve=self.resolve).definition.kind
+                )
+        context = self.context()
+        self.assertEqual(
+            {"supersedes", "erratum-for", "corrects", "expresses-concern", "retracts"},
+            {item.assertion.kind for item in context.relations},
+        )
+        self.assertEqual(4, sum(item.assertion.knowledge_status == "disputed" for item in context.relations))
+        before = self.f.counts()
+        versions = {
+            item.version_id: VersionReference(version_id=item.version_id, revision_id=item.revision_id)
+            for item in context.versions
+        }
+        with self.assertRaisesRegex(ReconciliationProblem, "reconciliation-version-notice-kind-invalid"):
+            self.command(
+                self.plan(
+                    "relate",
+                    relation=self.relation(versions[accepted.version_id], versions[target.version_id], kind="retracts"),
+                )
+            )
+        self.assertEqual(before, self.f.counts())
+
+    def test_version_owned_partial_impacts_recover_after_growth_and_cancellation_stays_terminal(self):
+        target = self.register(self.f.a.assertion_revision_id, "version-of-record")
+        source = self.register(self.f.b.assertion_revision_id, "correction")
+        # Drain earlier unrelated version registration intents before this boundary.
+        for _ in range(8):
+            if not self.repo.advance_review_impacts():
+                break
+        with self.repo._transaction(write=True) as (_, aggregates):
+            consumers = tuple(
+                self.repo._append(
+                    aggregates,
+                    sources=(aggregates.get_revision(target.revision_id),),
+                    actor=self.actor,
+                    digest="3" * 64,
+                    kind="evidence",
+                    label="Synthetic version consumer",
+                ).revision_id
+                for _ in range(102)
+            )
+        outcome = self.commit(self.command(self.plan("relate", relation=self.relation(source, target))))
+        impacts = sqlite_dependency_impact_repository(self.f.fixture.database.parent.parent, self.f.fixture.project)
+        root_id = next(run_id for run_id in outcome.dependency_run_ids if impacts.run(run_id).total_items >= 102)
+        root = impacts.run(root_id)
+        partial = impacts.advance(root_id, expected_checkpoint_sha256=root.checkpoint_sha256)
+        self.assertEqual(100, partial.processed_items)
+        with self.repo._transaction(write=True) as (_, aggregates):
+            self.repo._append(
+                aggregates,
+                sources=(),
+                actor=self.actor,
+                digest="4" * 64,
+                kind="evidence",
+                label="Synthetic independent graph growth",
+            )
+        factory = create_sqlite_unit_of_work_factory(self.f.fixture.database, self.f.fixture.project)
+        for step in ("impact-continuation-created", "impact-continuation-linked", "impact-predecessor-cancelled"):
+            with self.subTest(step=step):
+                before = self.f.counts()
+
+                def fail(observed, expected=step):
+                    if observed == expected:
+                        raise ReconciliationProblem("synthetic-version-impact-interruption")
+
+                with (
+                    patch("research_observatory_core.reconciliation_repository._publication_step", side_effect=fail),
+                    self.assertRaises(ReconciliationProblem),
+                ):
+                    self.repo.advance_review_impacts()
+                self.assertEqual(before, self.f.counts())
+                self.assertEqual(partial, impacts.run(root_id))
+                with factory() as unit, self.assertRaises(RepositoryConflict):
+                    unit.require_fresh_revision(consumers[-1])
+        self.repo.advance_review_impacts()
+        self.repo = SqliteReconciliationRepository(self.f.fixture.database, self.f.fixture.project)
+        for _ in range(12):
+            if not self.repo.advance_review_impacts():
+                break
+        self.assertTrue(set(consumers) <= {item.output_revision_id for item in impacts.stale_states()})
+        with open_canonical_database(self.f.fixture.database, expected_project_id=self.f.fixture.project) as db:
+            child = db.execute(
+                "SELECT run_id FROM reconciliation_impact_continuations WHERE root_run_id=?", (root_id,)
+            ).fetchone()[0]
+        self.assertEqual("completed", impacts.run(child).state)
+        self.assertEqual("cancelled", impacts.run(root_id).state)
+        current = next(item for item in self.context().versions if item.version_id == target.version_id)
+        with self.repo._transaction(write=True) as (_, aggregates):
+            consumer = self.repo._append(
+                aggregates,
+                sources=(aggregates.get_revision(current.revision_id),),
+                actor=self.actor,
+                digest="5" * 64,
+                kind="evidence",
+                label="Synthetic cancelled consumer",
+            ).revision_id
+        revised = self.commit(
+            self.command(
+                self.plan(
+                    "revise",
+                    version=VersionReference(version_id=current.version_id, revision_id=current.revision_id),
+                    definition=current.definition.model_copy(
+                        update={"date": VersionDate(precision="year", value="2025")}
+                    ),
+                )
+            )
+        )
+        for run_id in revised.dependency_run_ids:
+            run = impacts.run(run_id)
+            if run.state == "running":
+                impacts.cancel(
+                    run_id, expected_checkpoint_sha256=run.checkpoint_sha256, occurred_at=self.actor.occurred_at
+                )
+        self.assertFalse(self.repo.advance_review_impacts())
+        with factory() as unit, self.assertRaises(RepositoryConflict):
+            unit.require_fresh_revision(consumer)
 
     def test_correction_keeps_historical_preference_and_immediately_denies_dependent_reuse(self):
         original = self.register(self.f.a.assertion_revision_id, "preprint")

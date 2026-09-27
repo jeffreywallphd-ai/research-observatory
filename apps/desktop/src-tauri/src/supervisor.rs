@@ -2812,6 +2812,7 @@ fn authenticated_api_request_bytes(
     }
     let response_limit = match api_request.path.as_str() {
         "/projects/reconciliation/inspect"
+        | "/projects/reconciliation/versions/context"
         | "/projects/reconciliation/review/context"
         | "/projects/reconciliation/review/preview" => 4_194_304,
         _ => 1_048_576,
@@ -5071,6 +5072,24 @@ mod tests {
                 true,
             ),
             ("/projects/reconciliation/inspect", 4_194_304, true, true),
+            (
+                "/projects/reconciliation/versions/context",
+                4_194_304,
+                true,
+                true,
+            ),
+            (
+                "/projects/reconciliation/versions/context",
+                4_194_305,
+                false,
+                false,
+            ),
+            (
+                "/projects/reconciliation/versions/commit",
+                1_560_358,
+                false,
+                false,
+            ),
             (
                 "/projects/reconciliation/review/preview",
                 4_194_305,

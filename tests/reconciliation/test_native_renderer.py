@@ -177,6 +177,89 @@ class NativeReconciliationRendererTests(RendererHarness):
                     }
                 )["kind"],
             )
+            page.evaluate(
+                "project => window.mount(project)", {"root": project["root"], "projectId": project["projectId"]}
+            )
+            page.get_by_role("button", name="Open Work versions", exact=True).click()
+            page.get_by_role("checkbox", name="Select Work", exact=False).first.check()
+            page.get_by_role("button", name="Review selected Work versions", exact=True).click()
+            expect(page.get_by_role("heading", name="Review Work versions", exact=True)).to_be_focused()
+
+            def apply_version():
+                page.get_by_label("Version decision rationale", exact=True).fill("Synthetic native version decision.")
+                page.get_by_role("button", name="Preview version decision", exact=True).click()
+                page.get_by_role("button", name="Apply version decision", exact=True).click()
+                expect(page.get_by_role("heading", name="Version decision saved", exact=True)).to_be_focused()
+                page.get_by_role("button", name="Review updated versions", exact=True).click()
+
+            def register_version(kind):
+                page.get_by_label("Version action", exact=True).select_option("register")
+                page.get_by_label("Version kind", exact=True).select_option(kind)
+                page.get_by_role("checkbox", name="Version source:", exact=False).first.check()
+                apply_version()
+
+            register_version("version-of-record")
+            page.get_by_label("Version action", exact=True).select_option("prefer")
+            page.get_by_label("Selected version", exact=True).select_option(index=1)
+            apply_version()
+            expect(page.get_by_text("Preferred citable version · current", exact=True)).to_be_visible()
+            register_version("retraction")
+            page.get_by_label("Version action", exact=True).select_option("relate")
+            page.get_by_label("Relationship", exact=True).select_option("retracts")
+            page.get_by_label("From version", exact=True).select_option(label="Retraction · version 2")
+            page.get_by_label("To version", exact=True).select_option(label="Version of record · version 1")
+            page.get_by_label("Retained source evidence", exact=True).select_option(index=1)
+            page.get_by_label("Version decision rationale", exact=True).fill("Synthetic native sourced warning.")
+            page.get_by_role("button", name="Preview version decision", exact=True).click()
+            page.evaluate("() => { window.flags.dropVersionCommit = true; }")
+            page.get_by_role("button", name="Apply version decision", exact=True).click()
+            expect(page.get_by_role("button", name="Back to Works", exact=True)).to_be_disabled()
+            page.get_by_role("button", name="Retry same version decision", exact=True).click()
+            page.get_by_role("button", name="Review updated versions", exact=True).click()
+            expect(page.get_by_text("Retraction linked", exact=True)).to_be_visible()
+            expect(page.get_by_text("Preferred citable version · requires review", exact=True)).to_be_visible()
+            version_commands = [
+                json.loads(request["body"])["command"]
+                for request in requests
+                if request["path"].endswith("versions/commit")
+            ]
+            self.assertEqual(version_commands[-2], version_commands[-1])
+            saved_version = page.evaluate(
+                "async value => await window.reconciliationClient.commitScholarlyVersionDecision(value)",
+                {"root": project["root"], "command": version_commands[-1]},
+            )
+            page.evaluate("() => window.clearProtectedState()")
+            self.assertEqual("restarted", exchange({"control": "restart"})["kind"])
+            post("/projects/open", {"root": project["root"]})
+            version_replay = page.evaluate(
+                "async value => await window.reconciliationClient.commitScholarlyVersionDecision(value)",
+                {"root": project["root"], "command": version_commands[-1]},
+            )
+            self.assertEqual(saved_version, version_replay)
+            versions = post(
+                "/projects/reconciliation/versions/context", {"root": project["root"], "workIds": [active["workId"]]}
+            )
+            self.assertEqual("retracts", versions["relations"][0]["assertion"]["kind"])
+            self.assertEqual("requires-review", versions["preferenceStates"][0]["state"])
+            historical = post(
+                "/projects/reconciliation/versions/inspect",
+                {"root": project["root"], "revisionId": versions["preferences"][0]["selected"]["revisionId"]},
+            )
+            self.assertEqual("version-of-record", historical["definition"]["kind"])
+            self.assertEqual(
+                "error",
+                exchange(
+                    {
+                        "method": "POST",
+                        "path": "/projects/reconciliation/versions/commit",
+                        "body": json.dumps(
+                            {"root": project["root"], "command": version_commands[-1], "actorId": active["workId"]}
+                        ),
+                        "ifMatch": None,
+                        "idempotencyKey": None,
+                    }
+                )["kind"],
+            )
             page.screenshot(path=str(directory / "post-restart-cleared.png"))
             browser.close()
         post("/projects/close", {"root": project["root"]})
@@ -193,6 +276,9 @@ class NativeReconciliationRendererTests(RendererHarness):
             "splitAndMerge": True,
             "restartPreserved": True,
             "nativeAuthorityInjectionDenied": True,
+            "nativeVersionPreferenceAndRetraction": True,
+            "nativeVersionExactRetryAndRestart": True,
+            "nativeHistoricalVersionRetained": True,
             "retainedSourceCount": len(context["sources"]),
             "providerNetworkDuringNativeReview": 0,
         }

@@ -53,6 +53,223 @@ class RendererHarness(unittest.TestCase):
         threading.Thread(target=cls.server.serve_forever, daemon=True).start()
 
 
+class VersionRendererTests(RendererHarness):
+    """Actual renderer and Core; the Python transport is an explicit test double."""
+
+    def setUp(self):
+        self.fixture = fixtures.BatchWorkerTests(methodName="runTest")
+        self.fixture.setUp()
+        self.addCleanup(self.fixture.doCleanups)
+        self.client = self.enterContext(self.fixture.client())
+        request = self.fixture.service.prepare_batch(self.fixture.root, trace_id="a" * 32)
+        self.fixture.service.schedule_batch(self.fixture.root, request, trace_id="a" * 32)
+        self.fixture.service.run_pending()
+        self.playwright = self.enterContext(sync_playwright())
+        self.browser = self.playwright.chromium.launch(headless=True)
+        self.addCleanup(self.browser.close)
+        self.page = self.browser.new_page(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
+        self.page.set_default_timeout(5000)
+        self.replies: list[tuple[str, int, str]] = []
+        self.page.expose_function("coreExchange", self.exchange)
+        self.page.goto(f"http://127.0.0.1:{self.server.server_port}/")
+        self.page.evaluate(
+            "project => window.mount(project)", {"root": self.fixture.root, "projectId": self.fixture.f.project_id}
+        )
+
+    def exchange(self, request):
+        response = self.client.request(
+            request["method"],
+            request["path"],
+            content=request["body"],
+            headers={"Content-Type": "application/json", "X-Trace-Id": "a" * 32},
+        )
+        self.replies.append(
+            (request["path"], response.status_code, response.text if response.status_code >= 400 else "success")
+        )
+        return {
+            "status": response.status_code,
+            "contentType": response.headers["content-type"],
+            "traceId": response.headers["x-trace-id"],
+            "etag": response.headers.get("etag"),
+            "body": response.text,
+        }
+
+    def open_versions(self):
+        self.page.get_by_role("button", name="Open Work versions", exact=True).click()
+        self.page.get_by_role("checkbox", name="Select Work", exact=False).first.check()
+        self.page.get_by_role("button", name="Review selected Work versions", exact=True).click()
+        expect(self.page.get_by_role("heading", name="Review Work versions", exact=True)).to_be_focused()
+
+    def apply(self, rationale):
+        self.page.get_by_label("Version decision rationale", exact=True).fill(rationale)
+        self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+        expect(self.page.get_by_role("heading", name="Version decision preview", exact=True)).to_be_focused()
+        self.page.get_by_role("button", name="Apply version decision", exact=True).click()
+        expect(self.page.get_by_role("heading", name="Version decision saved", exact=True)).to_be_focused()
+        self.page.get_by_role("button", name="Review updated versions", exact=True).click()
+
+    def register(self, kind):
+        self.page.get_by_label("Version action", exact=True).select_option("register")
+        self.page.get_by_label("Version kind", exact=True).select_option(kind)
+        self.page.get_by_role("checkbox", name="Version source:", exact=False).first.check()
+        self.apply("Synthetic explicit version classification.")
+
+    def test_versions_preference_warning_retry_and_retained_history(self):
+        self.open_versions()
+        expect(self.page.get_by_text("No preferred citable version recorded.", exact=True)).to_be_visible()
+        self.register("version-of-record")
+        self.page.get_by_label("Version action", exact=True).select_option("prefer")
+        self.page.get_by_label("Selected version", exact=True).select_option(index=1)
+        self.apply("Synthetic preferred citable version.")
+        expect(self.page.get_by_text("Preferred citable version · current", exact=True)).to_be_visible()
+        self.register("retraction")
+        self.page.get_by_label("Version action", exact=True).select_option("relate")
+        self.page.get_by_label("Relationship", exact=True).select_option("retracts")
+        self.page.get_by_label("From version", exact=True).select_option(label="Retraction · version 2")
+        self.page.get_by_label("To version", exact=True).select_option(label="Version of record · version 1")
+        self.page.get_by_label("Retained source evidence", exact=True).select_option(index=1)
+        self.page.get_by_label("Version decision rationale", exact=True).fill("Synthetic sourced retraction.")
+        self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+        self.page.evaluate("() => { window.flags.dropVersionCommit = true; }")
+        self.page.get_by_role("button", name="Apply version decision", exact=True).click()
+        expect(self.page.get_by_role("button", name="Back to Works", exact=True)).to_be_disabled()
+        self.page.keyboard.press("Escape")
+        self.page.get_by_role("button", name="Retry same version decision", exact=True).click()
+        self.page.get_by_role("button", name="Review updated versions", exact=True).click()
+        expect(self.page.get_by_text("Retraction linked", exact=True)).to_be_visible()
+        expect(self.page.get_by_text("Preferred citable version · requires review", exact=True)).to_be_visible()
+        bodies = self.page.evaluate(
+            "() => window.requests.filter(r => r.path.endsWith('versions/commit')).map(r => r.body)"
+        )
+        self.assertEqual(bodies[-2], bodies[-1])
+        self.assertEqual(2, self.page.get_by_role("table", name="Current Work versions").locator("tbody tr").count())
+        self.page.get_by_role("button", name="Inspect version history", exact=True).first.click()
+        expect(self.page.get_by_role("heading", name="Retained version revision", exact=True)).to_be_visible()
+        self.page.evaluate("() => window.clearProtectedState()")
+        expect(self.page.get_by_text("Retraction linked", exact=True)).to_have_count(0)
+
+    def test_version_keyboard_themes_cancel_and_recoverable_draft(self):
+        for theme in ("light", "dark"):
+            with self.subTest(theme=theme):
+                self.page.locator("html").evaluate("(element, theme) => element.dataset.theme = theme", theme)
+                self.open_versions()
+                self.page.get_by_label("Version decision rationale", exact=True).fill("Keep this synthetic draft.")
+                self.page.get_by_label("Version kind", exact=True).select_option("preprint")
+                self.page.get_by_role("checkbox", name="Version source:", exact=False).first.check()
+                self.page.evaluate("() => { window.flags.failVersionPreview = true; }")
+                self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+                expect(self.page.get_by_label("Version decision rationale", exact=True)).to_have_value(
+                    "Keep this synthetic draft."
+                )
+                self.page.evaluate("() => { window.flags.failVersionPreview = false; }")
+                self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+                expect(self.page.get_by_role("heading", name="Version decision preview", exact=True)).to_be_focused()
+                self.page.keyboard.press("Escape")
+                expect(self.page.get_by_role("button", name="Preview version decision", exact=True)).to_be_focused()
+                self.page.keyboard.press("Shift+Tab")
+                expect(self.page.get_by_label("Version decision rationale", exact=True)).to_be_focused()
+                self.page.keyboard.press("Tab")
+                expect(self.page.get_by_role("button", name="Preview version decision", exact=True)).to_be_focused()
+                self.assertNotEqual(
+                    "none", self.page.evaluate("() => getComputedStyle(document.activeElement).outlineStyle")
+                )
+                self.page.keyboard.press("Escape")
+                expect(
+                    self.page.get_by_role("button", name="Review selected Work versions", exact=True)
+                ).to_be_focused()
+                self.page.get_by_role("button", name="Close Work versions", exact=True).click()
+                expect(self.page.get_by_role("button", name="Open Work versions", exact=True)).to_be_focused()
+
+    def test_version_denial_clears_protected_evidence_and_draft(self):
+        self.open_versions()
+        self.register("preprint")
+        self.page.get_by_label("Version decision rationale", exact=True).fill("Protected synthetic rationale.")
+        repository = self.fixture.f.adapters(Path(self.fixture.root), self.fixture.f.project_id).previews
+        decisions = tuple(
+            item.decision.model_copy(
+                update={
+                    "rights": item.decision.rights.model_copy(
+                        update={"derive": ImportPermission(value="denied", basis="researcher-confirmed")}
+                    )
+                }
+            )
+            for item in repository.draft_page(self.fixture.preview, revision=2, after=0, limit=100)
+            if item.decision.included
+        )
+        repository.revise_draft(
+            self.fixture.preview,
+            PreviewDraftChange(expected_revision=2, actor=self.fixture.f.service.actor("a" * 32), decisions=decisions),
+        )
+        self.page.get_by_role("button", name="Refresh version evidence", exact=True).click()
+        expect(
+            self.page.get_by_text(
+                "Current project or source access was denied. "
+                "Check accepted Intent and source rights before reopening evidence.",
+                exact=True,
+            )
+        ).to_be_visible()
+        expect(self.page.get_by_role("heading", name="Review Work versions", exact=True)).to_have_count(0)
+        expect(self.page.get_by_label("Version decision rationale", exact=True)).to_have_count(0)
+        self.assertNotIn("Synthetic duplicate", self.page.locator("body").inner_text())
+
+    def test_version_revision_date_history_and_responsive_preview(self):
+        self.open_versions()
+        self.register("preprint")
+        self.page.get_by_label("Version action", exact=True).select_option("revise")
+        self.page.get_by_label("Selected version", exact=True).select_option(index=1)
+        self.page.get_by_label("Version kind", exact=True).select_option("accepted-manuscript")
+        self.page.get_by_label("Reported date precision", exact=True).select_option("month")
+        self.page.get_by_label("Reported date (YYYY-MM)", exact=True).fill("2025-02")
+        self.page.get_by_label("Version decision rationale", exact=True).fill("Synthetic revised manifestation date.")
+        self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+        preview = self.page.get_by_role("region", name="Version decision preview", exact=True)
+        expect(preview.get_by_text("Reported date: 2025-02 (month)", exact=True)).to_be_visible()
+        for theme in ("light", "dark"):
+            self.page.locator("html").evaluate("(element, theme) => element.dataset.theme = theme", theme)
+            for width, scale in ((1440, 1), (720, 1), (720, 2)):
+                self.page.set_viewport_size({"width": width, "height": 1000})
+                self.page.evaluate("scale => document.documentElement.style.zoom = String(scale)", scale)
+                self.assertFalse(
+                    self.page.evaluate(
+                        "() => document.documentElement.scrollWidth > document.documentElement.clientWidth"
+                    )
+                )
+                button = preview.get_by_role("button", name="Apply version decision", exact=True)
+                button.focus()
+                expect(button).to_be_focused()
+                self.assertTrue(button.evaluate("e => e.scrollHeight <= e.clientHeight + 1"))
+            self.page.evaluate("() => document.documentElement.style.zoom = '1'")
+            self.page.set_viewport_size({"width": 1440, "height": 1000})
+            preview.scroll_into_view_if_needed()
+            self.page.screenshot(path=str(REPO / f"artifacts/tmp/CAP-04.S03.T03.preview-{theme}.png"))
+        preview.get_by_role("button", name="Apply version decision", exact=True).click()
+        self.page.get_by_role("button", name="Review updated versions", exact=True).click()
+        self.page.get_by_role("button", name="Inspect version history", exact=True).first.click()
+        self.page.get_by_role("button", name="Inspect earlier revision", exact=True).click()
+        expect(self.page.get_by_text("Preprint · Not reported", exact=True)).to_be_visible()
+
+    def test_version_late_preview_cannot_restore_cleared_project(self):
+        self.open_versions()
+        self.page.get_by_role("checkbox", name="Version source:", exact=False).first.check()
+        self.page.get_by_label("Version decision rationale", exact=True).fill("Synthetic delayed draft.")
+        self.page.evaluate("""() => {
+            const original = window.coreExchange;
+            window.coreExchange = async request => {
+                const reply = await original(request);
+                if (request.path.endsWith('versions/preview')) {
+                    await new Promise(resolve => { window.releaseVersionReply = resolve; });
+                }
+                return reply;
+            };
+        }""")
+        self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+        self.page.wait_for_function("() => typeof window.releaseVersionReply === 'function'")
+        self.page.evaluate("() => { window.clearProtectedState(); window.releaseVersionReply(); }")
+        expect(self.page.get_by_role("heading", name="Version decision preview", exact=True)).to_have_count(0)
+        self.page.evaluate("() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))")
+        self.assertEqual("", self.page.locator("main").inner_text())
+
+
 class ReconciliationRendererTests(RendererHarness):
     def setUp(self):
         self.fixture = fixtures.BatchWorkerTests(methodName="runTest")
