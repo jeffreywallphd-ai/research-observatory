@@ -19906,7 +19906,7 @@ capabilities:
     depends_on:
     - CAP-04.S01.T01
     - CAP-07.S01.T01
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-04.S02.T01
       capability_id: CAP-04
@@ -20712,11 +20712,18 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-04.S02.qualification-01.md
+      - artifacts/evidence/CAP-04.S02.qualification-01.json
+      - artifacts/evidence/CAP-04.S02.qualification-review-01.md
+      notes: Integrated source slice evidence at c53e45037bb712e6b46eb8b1f7d4ccfd002a3918; independent approval artifacts/evidence/CAP-04.S02.qualification-review-01.md
+        SHA256 d3425257280963a6cd48450f46f97c77bc5a33de8bde7ac5d4762157a1f207b7 committed at 285b2049. Fresh three-process
+        performance qualification at c01247db9badded2d098ad86a17c9e454f00d5fa; latest approved product correction b17bc9d868e4e9ee672dbac7b765514403949b9d.
+        Prior findings closed and retained. Wave-wide full profiles, packaging, cross-capability qualification and human G2
+        remain pending.
   - id: CAP-04.S03
     title: Canonical work, version, and identity reconciliation
     outcome: Multiple provider records resolve to inspectable canonical scholarly entities without flattening uncertainty.

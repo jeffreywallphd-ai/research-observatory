@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: dbd6715a523eb7fb87c7df991a7c4f5a4f1bb8afc747f064eead8609b28aaecd
+source_sha256: 25201a7058c517c0b5fa7090b4a863c1a005b1290c6a579b0d14d0f0e750a840
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8083,7 +8083,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** OpenAlex, Crossref, Unpaywall, and Semantic Scholar are available behind stable, observable connector contracts.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
