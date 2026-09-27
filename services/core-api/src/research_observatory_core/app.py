@@ -88,9 +88,11 @@ from .operations import (
     OperationReplayGap,
 )
 from .ports.import_previews import PreviewProblem
+from .ports.workflow_executor import WorkflowQueueConflict
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .provenance import ProvenanceProblem, ProvenanceService
+from .reconciliation.contracts import ReconciliationProblem
 from .reconciliation_api import register_reconciliation_routes
 from .reconciliation_service import ReconciliationService
 from .research_intents import IntentProblem, ResearchIntentService
@@ -188,12 +190,17 @@ def create_app(
             context.imports.start()
         if context.connectors is not None:
             context.connectors.start()
+        if context.reconciliation is not None:
+            context.reconciliation.start()
         context.state = RuntimeState.READY
         emit_log_record("runtime.started", level=resolved_settings.log_level, fields={"state": context.state.value})
         try:
             yield
         finally:
             context.state = RuntimeState.STOPPING
+            signal_workers(context)
+            if context.reconciliation is not None:
+                context.reconciliation.shutdown()
             if context.connectors is not None:
                 context.connectors.shutdown()
             if context.imports is not None:
@@ -322,6 +329,15 @@ def create_app(
     register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
     register_reconciliation_routes(app, lambda request: runtime(request).reconciliation, project_problem)
 
+    def signal_workers(context: RuntimeContext, root: str | None = None) -> None:
+        # No lifecycle locks or waits until every worker has received its signal.
+        if context.imports is not None:
+            context.imports.signal_stop(root)
+        if context.connectors is not None:
+            context.connectors.signal_stop(root)
+        if context.reconciliation is not None:
+            context.reconciliation.signal_stop(root)
+
     def run_project_action(request: Request, action: Callable[[], ProjectProjection]) -> ProjectProjection:
         try:
             return action()
@@ -329,6 +345,8 @@ def create_app(
             raise project_problem(request, error) from error
         except ProviderProblem as error:
             raise connector_problem(request, error.code) from None
+        except ReconciliationProblem:
+            raise reconciliation_drain_problem(request) from None
         except PreviewProblem:
             raise CoreProblem(
                 problem_detail(
@@ -344,6 +362,19 @@ def create_app(
                     remediation="Wait briefly and retry the project action.",
                 )
             ) from None
+
+    def reconciliation_drain_problem(request: Request) -> CoreProblem:
+        return CoreProblem(
+            problem_detail(
+                status=409,
+                code="RO-CORE-RECONCILIATION-WORKER-PENDING",
+                title="Reconciliation is stopping",
+                detail="The local reconciliation worker has not yet reached a safe stopping point.",
+                trace_id=request.state.trace_id,
+                retryable=True,
+                remediation="Keep the project open, inspect Task Center, and retry shortly.",
+            )
+        )
 
     def run_model_catalog_action(request: Request, action: Callable[[], _ACTION_RESULT]) -> _ACTION_RESULT:
         try:
@@ -446,6 +477,20 @@ def create_app(
             return action()
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
+        except ReconciliationProblem:
+            raise reconciliation_drain_problem(request) from None
+        except WorkflowQueueConflict:
+            raise CoreProblem(
+                problem_detail(
+                    status=412,
+                    code="RO-CORE-WORKFLOW-PRECONDITION-FAILED",
+                    title="Workflow authority changed",
+                    detail="The workflow changed since this cancellation was prepared.",
+                    trace_id=request.state.trace_id,
+                    retryable=True,
+                    remediation="Refresh Task Center and review the current state before retrying.",
+                )
+            ) from None
         except TaskCenterProblem as error:
             raise CoreProblem(
                 problem_detail(
@@ -651,9 +696,14 @@ def create_app(
                     context.imports.attach(projection.root)
                 if context.connectors is not None and projection.access_mode.value == "read-write":
                     context.connectors.attach(projection.root)
+                if context.reconciliation is not None and projection.access_mode.value == "read-write":
+                    context.reconciliation.attach(projection.root)
             except Exception:
                 # This call acquired the new session; do not strand it on a
                 # failed worker binding and then reject the user's open retry.
+                signal_workers(context, projection.root)
+                if context.reconciliation is not None:
+                    context.reconciliation.detach(projection.root)
                 if context.connectors is not None:
                     context.connectors.detach(projection.root)
                 if context.imports is not None:
@@ -673,6 +723,9 @@ def create_app(
     def close_project(request: Request, command: ProjectRootRequest) -> ProjectProjection:
         def drain_and_close() -> ProjectProjection:
             context = runtime(request)
+            signal_workers(context, command.root)
+            if context.reconciliation is not None:
+                context.reconciliation.detach(command.root)
             if context.connectors is not None:
                 context.connectors.detach(command.root)
             if context.imports is not None:
@@ -986,7 +1039,16 @@ def create_app(
         limit: int = Query(default=50, ge=1, le=100),
     ) -> WorkflowTaskCenterPage:
         response.headers["Cache-Control"] = "no-store"
-        return run_task_center_action(request, lambda: runtime(request).task_center.list(root=root, limit=limit))
+
+        def read() -> WorkflowTaskCenterPage:
+            context = runtime(request)
+            if context.reconciliation is not None:
+                page = context.reconciliation.active_task_center(root, limit=limit)
+                if page is not None:
+                    return page
+            return context.task_center.list(root=root, limit=limit)
+
+        return run_task_center_action(request, read)
 
     @app.post(
         "/projects/workflows/jobs/{job_id}/cancel",
@@ -1009,16 +1071,34 @@ def create_app(
         if_match: str | None = Header(default=None, alias="If-Match"),
     ) -> WorkflowTaskCenterRun:
         run_id, revision, snapshot_revision = workflow_precondition(request, if_match)
-        projection = run_task_center_action(
-            request,
-            lambda: runtime(request).task_center.cancel(
-                root=command.root,
+
+        def cancel() -> WorkflowTaskCenterRun:
+            context = runtime(request)
+
+            def action() -> WorkflowTaskCenterRun:
+                return context.task_center.cancel(
+                    root=command.root,
+                    job_id=job_id,
+                    expected_run_id=run_id,
+                    expected_snapshot_revision=snapshot_revision,
+                    expected_revision=revision,
+                    reason_code=command.reason_code,
+                )
+
+            if context.reconciliation is None:
+                return action()
+            return context.reconciliation.cancel_workflow(
+                command.root,
                 job_id=job_id,
-                expected_run_id=run_id,
+                workflow_run_id=run_id,
                 expected_snapshot_revision=snapshot_revision,
                 expected_revision=revision,
-                reason_code=command.reason_code,
-            ),
+                action=action,
+            )
+
+        projection = run_task_center_action(
+            request,
+            cancel,
         )
         set_workflow_etag(response, projection)
         return projection

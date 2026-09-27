@@ -4,10 +4,14 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
+from ..reconciliation.batch import BatchInput
+from ..reconciliation.candidate_sets import CandidateExplanation, CandidateSetContent
+from ..reconciliation.candidate_views import CandidatePage
 from ..reconciliation.candidates import PreparedRecord
 from ..reconciliation.contracts import ReconciliationInspection, ReconciliationResult, SourceAddress, SourceAssertion
 from ..reconciliation.decisions import ReviewCommand, ReviewContext, ReviewOutcome, ReviewPlan, ReviewPreview
 from ..reconciliation.inventory import SourcePage
+from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,6 +31,38 @@ class ReconciliationSourceResolver(Protocol):
 
 
 class ReconciliationRepository(Protocol):
+    def batch_request(self, request_id: str) -> BatchInput | None: ...
+
+    def save_batch_request(self, inputs: BatchInput, *, actor: ReconciliationActor) -> BatchInput: ...
+
+    def publish_batch(
+        self,
+        inputs: BatchInput,
+        addresses: tuple[SourceAddress, ...],
+        *,
+        claim: WorkflowJobClaim,
+        actor: ReconciliationActor,
+        resolve: ReconciliationSourceResolver,
+        now: Callable[[], str],
+        interrupted: Callable[[], bool] | None = None,
+        lease_duration_ms: int = 30000,
+    ) -> WorkflowOutputReference: ...
+
+    def candidate_set(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> CandidateSetContent: ...
+
+    def inspect_candidates(
+        self, revision_id: str, *, after: int, limit: int, resolve: ReconciliationSourceResolver
+    ) -> CandidatePage: ...
+
+    def candidate_pairs(
+        self,
+        revision_id: str,
+        *,
+        after: int,
+        limit: int,
+        resolve: ReconciliationSourceResolver,
+    ) -> tuple[CandidateExplanation, ...]: ...
+
     def prepared_record(self, revision_id: str, *, resolve: ReconciliationSourceResolver) -> PreparedRecord: ...
 
     def review_context(

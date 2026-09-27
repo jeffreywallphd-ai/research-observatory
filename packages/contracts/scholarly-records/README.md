@@ -1,9 +1,41 @@
-# Exact scholarly reconciliation
+# Scholarly reconciliation and duplicate review
 
 CAP-04.S03.T01 exposes bounded local reconciliation under ADR-0013/0024/0025/0027.
 The source of a fact remains separate from its inferred Work association. Generated
 JSON schemas and Core OpenAPI/TypeScript come from `tools/core_api_contract.py`.
 Consumers use the public API and these portable values, never SQLite internals.
+
+## Durable candidate batches
+
+CAP-04.S03.T02 adds `batches/prepare`, `batches/schedule`, `batches/status`,
+`batches/cancel` and `candidates` under `/projects/reconciliation`. Prepare binds
+the complete accepted import/connector inventory, current accepted Intent and
+policy to a Core-issued request ID. Schedule reuses that immutable request;
+it never adopts records accepted after the snapshot. Retry a failed enqueue with
+the same request ID. Failed or cancelled jobs use the existing explicit Task
+Center continuation; an ordinary restart preserves the request and a changed
+security session cancels old authority. No source lookup uses the network.
+
+The batch atomically appends exact associations, cached features, candidate-set
+and pair evidence, provenance and accepted workflow output. A cancelled or failed
+publication contributes none of those partial facts. Task Center refresh/cancel
+remains available during the writer. Every close/shutdown signals all local
+workers before waiting for their drains; failed drain preserves the open project.
+
+`candidates` takes an immutable set revision plus bounded `after` and `limit`
+(1–100). Scores, weights, missing/disputed features, source fingerprints and
+algorithm/configuration versions are historical evidence, not probabilities or
+automatic merge authority. `membershipState` separately reports changes since
+publication; `dependencyState` reports existing or pending review impacts. Current
+source rights are rechecked even for historical pages. Zero candidates means only
+that the bounded frozen retrieval generated no pairs, not proof of no duplicates.
+
+Human review uses `review/context`, `review/preview` and `review/commit`. It binds
+complete current Work/source membership, all affected aliases, explicit survivor
+and partitions, an evidence digest, retained conflicts, rationale and the exact
+preview digest. Merge/split/assignment appends immutable decisions and new Work
+revisions; original assertions and receipts remain. Dependency impact work is
+durable and does not imply downstream recalculation is already complete.
 
 ## Public handoff
 
@@ -62,6 +94,12 @@ the original inactive key and are the only field-precedence authority; no arbitr
 provider ranking resolves conflicting values.
 
 ## Persistence, limits and recovery
+
+Candidate inspection exposes the authenticated frozen and current accepted-source
+inventory fingerprints. `inventoryState: changed` means the historical set does
+not represent the current accepted inventory; generate a new batch to cover it.
+Historical scores remain unchanged. Membership and dependency warnings describe
+their separate current-state comparisons.
 
 Schema 14 appends source assertions, Work revisions, exact-key lookup links and
 command receipts to existing canonical record authority. One transaction includes

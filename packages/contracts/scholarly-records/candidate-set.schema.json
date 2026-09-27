@@ -1,0 +1,142 @@
+{
+  "$defs": {
+    "CandidateMember": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "canonicalWork": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CanonicalWorkReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "inputSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "sourceRevisionId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "assertionRevisionId",
+        "sourceRevisionId",
+        "inputSha256",
+        "canonicalWork"
+      ],
+      "title": "CandidateMember",
+      "type": "object"
+    },
+    "CanonicalWorkReference": {
+      "additionalProperties": false,
+      "properties": {
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "workId": {
+          "$ref": "#/$defs/Identity"
+        }
+      },
+      "required": [
+        "workId",
+        "revisionId"
+      ],
+      "title": "CanonicalWorkReference",
+      "type": "object"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/candidate-set.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "algorithm": {
+      "const": "scholarly-duplicate-ranking/1.0.0",
+      "default": "scholarly-duplicate-ranking/1.0.0",
+      "title": "Algorithm",
+      "type": "string"
+    },
+    "comparedPairs": {
+      "maximum": 250000,
+      "minimum": 0,
+      "title": "Comparedpairs",
+      "type": "integer"
+    },
+    "configurationSha256": {
+      "$ref": "#/$defs/Digest",
+      "default": "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc"
+    },
+    "featureVersion": {
+      "const": "scholarly-duplicate-features/1.0.0",
+      "default": "scholarly-duplicate-features/1.0.0",
+      "title": "Featureversion",
+      "type": "string"
+    },
+    "identifierNormalizer": {
+      "default": "scholarly-identifiers/1.0.0",
+      "title": "Identifiernormalizer",
+      "type": "string"
+    },
+    "inventorySha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "members": {
+      "items": {
+        "$ref": "#/$defs/CandidateMember"
+      },
+      "maxItems": 10000,
+      "title": "Members",
+      "type": "array"
+    },
+    "pairSha256": {
+      "items": {
+        "$ref": "#/$defs/Digest"
+      },
+      "maxItems": 20000,
+      "title": "Pairsha256",
+      "type": "array"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "requestId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "requestSha256": {
+      "$ref": "#/$defs/Digest"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectId",
+    "requestId",
+    "requestSha256",
+    "inventorySha256",
+    "members",
+    "comparedPairs",
+    "pairSha256"
+  ],
+  "title": "CandidateSetContent",
+  "type": "object"
+}

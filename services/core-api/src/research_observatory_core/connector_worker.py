@@ -654,6 +654,7 @@ class ConnectorWorkerService:
             self._wake.wait(timeout=0.5)
 
     def detach(self, root: str) -> None:
+        self.signal_stop(root)
         with self._mutex:
             binding = self._bindings.get(Path(root))
             if binding is not None:
@@ -666,9 +667,18 @@ class ConnectorWorkerService:
                 if self._bindings.get(binding.path) is binding:
                     self._bindings.pop(binding.path)
 
+    def signal_stop(self, root: str | None = None) -> None:
+        if root is None:
+            self._stopped.set()
+            self._wake.set()
+        path = Path(root) if root is not None else None
+        with self._mutex:
+            for binding in self._bindings.values():
+                if path is None or binding.path == path:
+                    binding.stopped.set()
+
     def shutdown(self) -> None:
-        self._stopped.set()
-        self._wake.set()
+        self.signal_stop()
         self.consent.shutdown()
         with self._mutex:
             bindings = tuple(self._bindings.values())

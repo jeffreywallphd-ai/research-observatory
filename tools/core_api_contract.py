@@ -2612,6 +2612,9 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
         from research_observatory_core.contract import canonical_openapi_bytes
         from research_observatory_core.model_registry_contracts import ModelManifest
         from research_observatory_core.model_routing_contracts import RoutingPolicy
+        from research_observatory_core.reconciliation.batch import BatchInput
+        from research_observatory_core.reconciliation.candidate_sets import CandidateExplanation, CandidateSetContent
+        from research_observatory_core.reconciliation.candidate_views import CandidatePage
         from research_observatory_core.reconciliation.contracts import (
             ReconciliationInspection,
             ReconciliationResult,
@@ -2697,6 +2700,10 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
                 ("review-preview.schema.json", ReviewPreview),
                 ("review-command.schema.json", ReviewCommand),
                 ("review-outcome.schema.json", ReviewOutcome),
+                ("batch-input.schema.json", BatchInput),
+                ("candidate-explanation.schema.json", CandidateExplanation),
+                ("candidate-set.schema.json", CandidateSetContent),
+                ("candidate-page.schema.json", CandidatePage),
             )
         }
         workflow_profile_projection_bytes = json.dumps(

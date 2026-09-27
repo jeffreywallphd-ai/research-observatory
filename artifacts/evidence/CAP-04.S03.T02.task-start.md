@@ -91,6 +91,31 @@ preparation lease exhaustion; a real queue test advances two source reads by
 Worker integration must still prove complete enumeration against the bound
 snapshot, including omitted members and addresses arriving after the boundary.
 
+Worker-lifecycle advisory by `agent:/root/w2_c02_review` added three concrete
+integration obligations. A stale Task Center cancellation must be rejected before
+rolling back provisional lease renewals; a valid cancellation persists independently
+of the expired pre-writer lease and converges through existing queue recovery.
+Task Center refresh must obtain a current committed revision while publication
+holds the lifecycle fence. The read-only projection pins that already-authorized
+fence; it does not introduce a mutation authority. Finally, project close, failed
+open cleanup and shutdown must signal every composed worker before draining any
+of them, including an active import with idle reconciliation. Retained failing
+API tests preceded these fixes. Additional cases cover close before registration,
+failed drain retaining the open project, exact Intent changes after enumeration,
+saved request/enqueue failure across restart, and accepted commit/lost response.
+These are development proofs, not a task disposition or protected-runtime/UI
+qualification. The full generated client/native and protected Windows journey
+remains required.
+
+The candidate/API advisory by `agent:/root/w2_t03_review` identified two missed
+projection boundaries. Batch polling must read job state and accepted output in
+one read-only snapshot while publication owns the writer; a writer transaction
+in that path blocks the stop mutex. Add a real status-poll-then-cancel regression.
+Historical candidate pages must also identify their authenticated frozen inventory
+and disclose newly accepted inputs outside it. Add an unrelated accepted import
+after publication and verify that historical scores remain unchanged while the
+inventory comparison changes. These findings do not change the approved scope.
+
 Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows
 symlink-token skips remain explicit Wave obligations. No mandatory new approval

@@ -1006,6 +1006,7 @@ class ImportPreviewService:
             self._wake.wait(0.5)
 
     def detach(self, root: str) -> None:
+        self.signal_stop(root)
         self.request_publication_stop(root, closing=True)
 
         # Resolve while still open, then signal/drain outside lifecycle locks.
@@ -1027,9 +1028,23 @@ class ImportPreviewService:
             if self._bindings.get(binding.path) is binding:
                 self._bindings.pop(binding.path, None)
 
+    def signal_stop(self, root: str | None = None) -> None:
+        """Signal before any composed worker waits for the shared project lock."""
+        if root is None:
+            self._stopped.set()
+            self._wake.set()
+        path = Path(root) if root is not None else None
+        with self._mutex:
+            for binding in self._bindings.values():
+                if path is None or binding.path == path:
+                    binding.stopped.set()
+            for active in self._publications.values():
+                if path is None or active.binding.path == path:
+                    active.reason = active.reason or "close"
+                    active.requested.set()
+
     def shutdown(self) -> None:
-        self._stopped.set()
-        self._wake.set()
+        self.signal_stop()
         if self._thread is not None:
             self._thread.join(timeout=2.0)
             if self._thread.is_alive():

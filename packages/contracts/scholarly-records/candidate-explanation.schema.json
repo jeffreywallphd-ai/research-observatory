@@ -1,0 +1,164 @@
+{
+  "$defs": {
+    "CandidateFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "conflict": {
+          "title": "Conflict",
+          "type": "boolean"
+        },
+        "name": {
+          "enum": [
+            "title",
+            "authors",
+            "year",
+            "venue",
+            "pages",
+            "abstract",
+            "identifiers"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Score"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "available",
+            "not-reported",
+            "disputed"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "weight": {
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Weight",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "state",
+        "score",
+        "weight",
+        "conflict"
+      ],
+      "title": "CandidateFeature",
+      "type": "object"
+    },
+    "CandidateFlag": {
+      "enum": [
+        "competing-source-fields",
+        "year-disagreement",
+        "conflicting-identifiers"
+      ],
+      "type": "string"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Score": {
+      "maximum": 10000,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/candidate-explanation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "algorithm": {
+      "const": "scholarly-duplicate-ranking/1.0.0",
+      "title": "Algorithm",
+      "type": "string"
+    },
+    "configurationFingerprint": {
+      "$ref": "#/$defs/Digest"
+    },
+    "disposition": {
+      "const": "human-review-required",
+      "title": "Disposition",
+      "type": "string"
+    },
+    "featureVersion": {
+      "const": "scholarly-duplicate-features/1.0.0",
+      "title": "Featureversion",
+      "type": "string"
+    },
+    "features": {
+      "items": {
+        "$ref": "#/$defs/CandidateFeature"
+      },
+      "maxItems": 7,
+      "minItems": 7,
+      "title": "Features",
+      "type": "array"
+    },
+    "flags": {
+      "items": {
+        "$ref": "#/$defs/CandidateFlag"
+      },
+      "maxItems": 3,
+      "title": "Flags",
+      "type": "array"
+    },
+    "identifierNormalizer": {
+      "title": "Identifiernormalizer",
+      "type": "string"
+    },
+    "left": {
+      "$ref": "#/$defs/Identity"
+    },
+    "leftFingerprint": {
+      "$ref": "#/$defs/Digest"
+    },
+    "leftRevision": {
+      "$ref": "#/$defs/Identity"
+    },
+    "right": {
+      "$ref": "#/$defs/Identity"
+    },
+    "rightFingerprint": {
+      "$ref": "#/$defs/Digest"
+    },
+    "rightRevision": {
+      "$ref": "#/$defs/Identity"
+    },
+    "score": {
+      "$ref": "#/$defs/Score"
+    }
+  },
+  "required": [
+    "left",
+    "right",
+    "leftRevision",
+    "rightRevision",
+    "leftFingerprint",
+    "rightFingerprint",
+    "score",
+    "features",
+    "flags",
+    "configurationFingerprint",
+    "algorithm",
+    "featureVersion",
+    "identifierNormalizer",
+    "disposition"
+  ],
+  "title": "CandidateExplanation",
+  "type": "object"
+}

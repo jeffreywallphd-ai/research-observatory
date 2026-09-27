@@ -1,0 +1,193 @@
+{
+  "$defs": {
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Fingerprint": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "InventoryBoundary": {
+      "additionalProperties": false,
+      "properties": {
+        "chainSha256": {
+          "$ref": "#/$defs/Fingerprint"
+        },
+        "checkpointId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "segmentKey": {
+          "enum": [
+            "rfc8785.sha256.v1",
+            "rfc8785.sha256.v2"
+          ],
+          "title": "Segmentkey",
+          "type": "string"
+        },
+        "sequence": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "segmentKey",
+        "sequence",
+        "checkpointId",
+        "chainSha256"
+      ],
+      "title": "InventoryBoundary",
+      "type": "object"
+    },
+    "InventorySnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "activityTypes": {
+          "items": {
+            "enum": [
+              "local-import-commit",
+              "scholarly-connector-page"
+            ],
+            "type": "string"
+          },
+          "title": "Activitytypes",
+          "type": "array"
+        },
+        "boundaries": {
+          "items": {
+            "$ref": "#/$defs/InventoryBoundary"
+          },
+          "maxItems": 2,
+          "title": "Boundaries",
+          "type": "array"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        }
+      },
+      "required": [
+        "projectId",
+        "activityTypes",
+        "boundaries"
+      ],
+      "title": "InventorySnapshot",
+      "type": "object"
+    },
+    "PreviewIntentContext": {
+      "additionalProperties": false,
+      "properties": {
+        "contentHash": {
+          "$ref": "#/$defs/Fingerprint"
+        },
+        "domainProjectId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "intentId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "accepted"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "projectId",
+        "domainProjectId",
+        "intentId",
+        "revisionId",
+        "contentHash",
+        "status"
+      ],
+      "title": "PreviewIntentContext",
+      "type": "object"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ResumeEpoch": {
+      "pattern": "^[0-9a-f]{32}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/scholarly-records/batch-input.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actorId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "algorithm": {
+      "const": "scholarly-duplicate-ranking/1.0.0",
+      "default": "scholarly-duplicate-ranking/1.0.0",
+      "title": "Algorithm",
+      "type": "string"
+    },
+    "featureVersion": {
+      "const": "scholarly-duplicate-features/1.0.0",
+      "default": "scholarly-duplicate-features/1.0.0",
+      "title": "Featureversion",
+      "type": "string"
+    },
+    "identifierNormalizer": {
+      "default": "scholarly-identifiers/1.0.0",
+      "title": "Identifiernormalizer",
+      "type": "string"
+    },
+    "intent": {
+      "$ref": "#/$defs/PreviewIntentContext"
+    },
+    "inventory": {
+      "$ref": "#/$defs/InventorySnapshot"
+    },
+    "policySha256": {
+      "$ref": "#/$defs/Fingerprint"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectIdentity"
+    },
+    "requestId": {
+      "$ref": "#/$defs/Identity"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "scoringSha256": {
+      "$ref": "#/$defs/Digest",
+      "default": "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc"
+    },
+    "sessionEpoch": {
+      "$ref": "#/$defs/ResumeEpoch"
+    }
+  },
+  "required": [
+    "requestId",
+    "projectId",
+    "actorId",
+    "intent",
+    "policySha256",
+    "sessionEpoch",
+    "inventory"
+  ],
+  "title": "BatchInput",
+  "type": "object"
+}

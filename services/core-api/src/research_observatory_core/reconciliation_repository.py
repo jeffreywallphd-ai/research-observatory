@@ -30,8 +30,15 @@ from .ports.repositories import (
     RepositoryProblem,
 )
 from .ports.workflow_executor import WorkflowJobClaim, WorkflowOutputReference
-from .reconciliation.batch import MAX_AUTHORIZED_BYTES, MAX_AUTHORIZED_SOURCES, MAX_CANDIDATE_BYTES, BatchInput
+from .reconciliation.batch import (
+    MAX_AUTHORIZED_BYTES,
+    MAX_AUTHORIZED_SOURCES,
+    MAX_CANDIDATE_BYTES,
+    SOURCE_ACTIVITIES,
+    BatchInput,
+)
 from .reconciliation.candidate_sets import CandidateExplanation, CandidateMember, CandidateSetContent, content_digest
+from .reconciliation.candidate_views import CandidatePage
 from .reconciliation.candidates import DEFAULT_CONFIG, FEATURE_VERSION, PreparedRecord, generate_prepared_candidates
 from .reconciliation.contracts import (
     CanonicalFieldSelection,
@@ -132,6 +139,58 @@ class SqliteReconciliationRepository:
         if not all(source.rights.permits(action) for action in ("store", "inspect", "derive", "index")):
             raise ReconciliationProblem("reconciliation-rights-denied")
         return source
+
+    def _batch_request(self, connection: CanonicalConnection, request_id: str) -> BatchInput | None:
+        if not is_uuid_v7(request_id):
+            raise ReconciliationProblem("reconciliation-batch-request-invalid")
+        rows = connection.execute(
+            "SELECT revision,value_type,text_value FROM settings WHERE project_id=? AND setting_key=? LIMIT 2",
+            (self._project, "reconciliation.batch-request." + request_id),
+        ).fetchall()
+        if not rows:
+            return None
+        if len(rows) != 1 or tuple(rows[0][:2]) != (0, "text") or len(rows[0][2].encode()) > 65536:
+            raise ReconciliationProblem("reconciliation-batch-request-invalid")
+        inputs = BatchInput.model_validate_json(rows[0][2])
+        if inputs.project_id != self._project or inputs.request_id != request_id:
+            raise ReconciliationProblem("reconciliation-batch-request-invalid")
+        return inputs
+
+    def batch_request(self, request_id: str) -> BatchInput | None:
+        with self._transaction(write=False) as (connection, _):
+            return self._batch_request(connection, request_id)
+
+    def save_batch_request(self, inputs: BatchInput, *, actor: ReconciliationActor) -> BatchInput:
+        inputs = BatchInput.model_validate(inputs)
+        self._validate_actor(actor)
+        if (inputs.project_id, inputs.actor_id, inputs.intent.content_hash, inputs.policy_sha256) != (
+            self._project,
+            actor.actor_id,
+            "sha256:" + actor.intent_sha256,
+            "sha256:" + actor.policy_sha256,
+        ):
+            raise ReconciliationProblem("reconciliation-batch-authority-invalid")
+        payload = inputs.model_dump_json(by_alias=True)
+        if len(payload.encode()) > 65536:
+            raise ReconciliationProblem("reconciliation-batch-request-limit")
+        with self._transaction(write=True) as (connection, _):
+            previous = self._batch_request(connection, inputs.request_id)
+            if previous is not None:
+                if previous != inputs:
+                    raise ReconciliationProblem("reconciliation-batch-command-conflict")
+                return previous
+            connection.execute(
+                "INSERT INTO settings VALUES (?,?,?,0,'text',?,NULL,NULL,NULL,?,?)",
+                (
+                    new_uuid_v7(),
+                    self._project,
+                    "reconciliation.batch-request." + inputs.request_id,
+                    payload,
+                    actor.occurred_at,
+                    actor.occurred_at,
+                ),
+            )
+            return inputs
 
     @contextmanager
     def _batch_transaction(
@@ -791,6 +850,80 @@ class SqliteReconciliationRepository:
             if len(pairs) != min(limit, len(content.pair_sha256) - after):
                 raise ReconciliationProblem("duplicate-set-incomplete")
             return tuple(pairs)
+
+    def inspect_candidates(
+        self,
+        revision_id: str,
+        *,
+        after: int,
+        limit: int,
+        resolve: ReconciliationSourceResolver,
+    ) -> CandidatePage:
+        _, collect = self._source_snapshot(resolve, batch=True)
+        content = self.candidate_set(revision_id, resolve=collect)
+        pairs = self.candidate_pairs(revision_id, after=after, limit=limit, resolve=collect)
+        inventory = (
+            _SqliteWorkflowQueueRepository(self._database, self._project)
+            .accepted_snapshot(activity_types=SOURCE_ACTIVITIES)
+            .fingerprint.removeprefix("sha256:")
+        )
+        changed = False
+        revisions = {revision_id}
+        with self._transaction(write=False) as (connection, _):
+            for member in content.members:
+                current = self._authorize_assignment(connection, member.assertion_revision_id, collect)
+                reference = (
+                    CanonicalWorkReference(work_id=current.work_id, revision_id=current.revision_id)
+                    if current
+                    else None
+                )
+                changed |= reference != member.canonical_work
+                revisions.update((member.assertion_revision_id, member.source_revision_id))
+                if member.canonical_work is not None:
+                    revisions.add(member.canonical_work.revision_id)
+                if current is not None:
+                    revisions.add(current.revision_id)
+                    if current.decision_revision_id is not None:
+                        revisions.add(current.decision_revision_id)
+            affected = False
+            ordered = sorted(revisions)
+            # Include pending direct changes before downstream propagation has
+            # advanced, not only already materialized output impact items.
+            for offset in range(0, len(ordered), 256):
+                chunk = ordered[offset : offset + 256]
+                markers = ",".join("?" for _ in chunk)
+                if (
+                    connection.execute(
+                        "SELECT 1 FROM dependency_impact_items WHERE project_id=? AND output_revision_id IN ("
+                        + markers
+                        + ") "
+                        "UNION ALL SELECT 1 FROM dependency_impact_runs "
+                        "WHERE project_id=? AND previous_revision_id IN (" + markers + ") "
+                        "AND (replacement_fingerprint IS NULL OR replacement_fingerprint<>previous_fingerprint) "
+                        "LIMIT 1",
+                        (self._project, *chunk, self._project, *chunk),
+                    ).fetchone()
+                    is not None
+                ):
+                    affected = True
+                    break
+        end = after + len(pairs)
+        return CandidatePage(
+            project_id=self._project,
+            set_revision_id=revision_id,
+            request_id=content.request_id,
+            inventory_sha256=content.inventory_sha256,
+            current_inventory_sha256=inventory,
+            inventory_state="unchanged" if inventory == content.inventory_sha256 else "changed",
+            record_count=len(content.members),
+            candidate_count=len(content.pair_sha256),
+            compared_pairs=content.compared_pairs,
+            membership_state="changed" if changed else "unchanged",
+            dependency_state="requires-review" if affected else "unaffected",
+            after=after,
+            next_after=end if end < len(content.pair_sha256) else None,
+            items=pairs,
+        )
 
     def publish_batch(
         self,

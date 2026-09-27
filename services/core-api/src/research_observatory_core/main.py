@@ -170,6 +170,7 @@ def create_runtime_app(
 
     from .reconciliation_repository import SqliteReconciliationRepository
     from .reconciliation_service import ReconciliationService
+    from .reconciliation_worker import ReconciliationBatchAdapters
 
     imports = None
     reconciliation = None
@@ -234,6 +235,20 @@ def create_runtime_app(
             local_actor_id=resolved_actor_id,
             settings=resolved_connector_settings,
         )
+
+        def reconciliation_adapters(path: Path, identity: str) -> ReconciliationBatchAdapters:
+            queue = sqlite_workflow_queue_repository(path, identity)
+            demand = document_demand
+            return ReconciliationBatchAdapters(
+                SqliteReconciliationRepository(path / "state/project.sqlite3", identity),
+                queue,
+                sqlite_workflow_admission_binding(
+                    queue,
+                    controller=controller,
+                    policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+                ),
+            )
+
         reconciliation = ReconciliationService(
             projects,
             privacy,
@@ -244,6 +259,8 @@ def create_runtime_app(
             ),
             intent_factory=sqlite_intent_revision_repository,
             actor_id=resolved_actor_id,
+            batch_adapter_factory=reconciliation_adapters,
+            resume_epoch=workflow_context.resume_epoch,
         )
     return create_app(
         settings=settings,

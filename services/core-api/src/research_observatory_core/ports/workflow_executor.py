@@ -313,6 +313,10 @@ class WorkflowTaskCenterRunRecord:
 class WorkflowQueueRepository(Protocol):
     def accepted_output(self, job_id: str) -> WorkflowAcceptedOutput | None: ...
 
+    def accepted_status(self, job_id: str) -> tuple[WorkflowJobRecord, WorkflowAcceptedOutput | None]:
+        """Consistent authenticated job/output projection without taking a writer lock."""
+        ...
+
     def continuation_jobs(self, job_id: str) -> tuple[WorkflowJobRecord, ...]:
         """Root and all authenticated descendants; deny beyond the bounded lineage."""
         ...

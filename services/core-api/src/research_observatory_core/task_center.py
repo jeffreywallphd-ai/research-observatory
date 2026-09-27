@@ -222,16 +222,19 @@ class TaskCenterService:
 
     def list(self, *, root: str, limit: int) -> WorkflowTaskCenterPage:
         def read(path: Path, project_id: str) -> WorkflowTaskCenterPage:
-            try:
-                return WorkflowTaskCenterPage(
-                    items=tuple(
-                        _projection(item) for item in self._repository(path, project_id).task_center(limit=limit)
-                    )
-                )
-            except WorkflowQueueProblem as error:
-                raise _task_problem(error) from error
+            return self.page_from_authorized_queue(self._repository(path, project_id), limit=limit)
 
         return self._projects.perform_open_project_action(root=root, require_write=False, action=read)
+
+    @staticmethod
+    def page_from_authorized_queue(repository: WorkflowQueueRepository, *, limit: int) -> WorkflowTaskCenterPage:
+        """Read under a current project fence supplied by the composition owner."""
+        try:
+            return WorkflowTaskCenterPage(
+                items=tuple(_projection(item) for item in repository.task_center(limit=limit))
+            )
+        except WorkflowQueueProblem as error:
+            raise _task_problem(error) from error
 
     def cancel(
         self,

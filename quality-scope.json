@@ -395,6 +395,12 @@
     "tests/reconciliation/test_candidate_sets.py",
     "tests/reconciliation/test_batch_publication.py",
     "services/core-api/src/research_observatory_core/reconciliation/batch_inventory.py",
-    "tests/reconciliation/test_batch_inventory.py"
+    "tests/reconciliation/test_batch_inventory.py",
+    "tests/reconciliation/test_batch_requests.py",
+    "services/core-api/src/research_observatory_core/reconciliation_worker.py",
+    "tests/reconciliation/test_batch_worker.py",
+    "services/core-api/src/research_observatory_core/reconciliation/candidate_views.py",
+    "tests/reconciliation/test_candidate_inspection.py",
+    "tests/reconciliation/test_batch_api.py"
   ]
 }

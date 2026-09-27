@@ -5,14 +5,15 @@ from typing import Annotated
 
 from fastapi import APIRouter, FastAPI, Request, Response
 from fastapi.routing import APIRoute
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from .connectors.providers import ProviderProblem
 from .ingestion.import_drafts import DraftValue, Identity
 from .models import ProblemDetail
 from .ports.import_previews import PreviewProblem
-from .ports.workflow_executor import WorkflowQueueProblem
+from .ports.workflow_executor import WorkflowJobState, WorkflowQueueProblem
 from .projects import ProjectLifecycleProblem
+from .reconciliation.candidate_views import CandidatePage
 from .reconciliation.contracts import (
     ReconciliationInspection,
     ReconciliationProblem,
@@ -55,6 +56,43 @@ class ReconciliationReviewPreviewRequest(DraftValue):
 class ReconciliationReviewRequest(DraftValue):
     root: Annotated[str, Field(min_length=1, max_length=4096)]
     command: ReviewCommand
+
+
+class ReconciliationBatchPrepareRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+
+
+class ReconciliationBatchPrepared(DraftValue):
+    request_id: Identity
+
+
+class ReconciliationBatchRequest(ReconciliationBatchPrepareRequest):
+    request_id: Identity
+
+
+class ReconciliationBatchJobRequest(ReconciliationBatchRequest):
+    job_id: Identity
+
+
+class ReconciliationBatchStatus(DraftValue):
+    request_id: Identity
+    job_id: Identity
+    workflow_run_id: Identity
+    state: WorkflowJobState
+    set_revision_id: Identity | None
+    diagnostic_code: Annotated[str, Field(pattern=r"^[a-z][a-z0-9-]{0,95}$")] | None
+
+    @model_validator(mode="after")
+    def accepted_output(self):
+        if (self.state == "succeeded") != (self.set_revision_id is not None):
+            raise ValueError("reconciliation-batch-status-invalid")
+        return self
+
+
+class ReconciliationCandidateRequest(ReconciliationBatchPrepareRequest):
+    set_revision_id: Identity
+    after: Annotated[int, Field(strict=True, ge=0, le=20000)]
+    limit: Annotated[int, Field(strict=True, ge=1, le=100)]
 
 
 def _problem(request: Request, status: int, code: str) -> CoreProblem:
@@ -171,6 +209,84 @@ def register_reconciliation_routes(
     def review_commit(request: Request, command: ReconciliationReviewRequest) -> ReviewOutcome:
         return run(
             request, lambda runtime: runtime.review(command.root, command.command, trace_id=request.state.trace_id)
+        )
+
+    def batch_projection(request_id, job, output=None):
+        return ReconciliationBatchStatus(
+            request_id=request_id,
+            job_id=job.job_id,
+            workflow_run_id=job.workflow_run_id,
+            state=job.state,
+            set_revision_id=output.revision_id if output is not None else None,
+            diagnostic_code=job.diagnostic_code,
+        )
+
+    @router.post(
+        "/batches/prepare",
+        operation_id="prepareScholarlyReconciliationBatch",
+        response_model=ReconciliationBatchPrepared,
+    )
+    def prepare_batch(request: Request, command: ReconciliationBatchPrepareRequest) -> ReconciliationBatchPrepared:
+        return run(
+            request,
+            lambda runtime: ReconciliationBatchPrepared(
+                request_id=runtime.prepare_batch(command.root, trace_id=request.state.trace_id)
+            ),
+        )
+
+    @router.post(
+        "/batches/schedule",
+        operation_id="scheduleScholarlyReconciliationBatch",
+        response_model=ReconciliationBatchStatus,
+    )
+    def schedule_batch(request: Request, command: ReconciliationBatchRequest) -> ReconciliationBatchStatus:
+        def schedule(runtime):
+            job = runtime.schedule_batch(command.root, command.request_id, trace_id=request.state.trace_id)
+            if job.state == "succeeded":
+                return batch_projection(
+                    command.request_id,
+                    *runtime.batch_status(command.root, request_id=command.request_id, job_id=job.job_id),
+                )
+            return batch_projection(command.request_id, job)
+
+        return run(request, schedule)
+
+    @router.post(
+        "/batches/status", operation_id="inspectScholarlyReconciliationBatch", response_model=ReconciliationBatchStatus
+    )
+    def batch_status(request: Request, command: ReconciliationBatchJobRequest) -> ReconciliationBatchStatus:
+        return run(
+            request,
+            lambda runtime: batch_projection(
+                command.request_id,
+                *runtime.batch_status(command.root, request_id=command.request_id, job_id=command.job_id),
+            ),
+        )
+
+    @router.post(
+        "/batches/cancel", operation_id="cancelScholarlyReconciliationBatch", response_model=ReconciliationBatchStatus
+    )
+    def cancel_batch(request: Request, command: ReconciliationBatchJobRequest) -> ReconciliationBatchStatus:
+        def cancel(runtime):
+            runtime.cancel_batch(command.root, request_id=command.request_id, job_id=command.job_id)
+            return batch_projection(
+                command.request_id,
+                *runtime.batch_status(command.root, request_id=command.request_id, job_id=command.job_id),
+            )
+
+        return run(request, cancel)
+
+    @router.post("/candidates", operation_id="inspectScholarlyDuplicateCandidates", response_model=CandidatePage)
+    def candidates(request: Request, command: ReconciliationCandidateRequest) -> CandidatePage:
+        return run(
+            request,
+            lambda runtime: runtime.inspect_candidates(
+                command.root,
+                command.set_revision_id,
+                after=command.after,
+                limit=command.limit,
+                trace_id=request.state.trace_id,
+            ),
         )
 
     app.include_router(router)

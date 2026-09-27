@@ -4915,11 +4915,11 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         return open_canonical_database(self._database, expected_project_id=self._project_id)
 
     @contextmanager
-    def _transaction(self) -> Iterator[CanonicalConnection]:
+    def _transaction(self, *, write: bool = True) -> Iterator[CanonicalConnection]:
         connection: CanonicalConnection | None = None
         try:
             connection = self._open()
-            connection.execute("BEGIN IMMEDIATE")
+            connection.execute("BEGIN IMMEDIATE" if write else "BEGIN")
             yield connection
             connection.execute("COMMIT")
         except WorkflowQueueProblem:
@@ -5715,7 +5715,7 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
             raise WorkflowQueueProblem("workflow inventory selection is invalid")
         activity_types = tuple(sorted(activity_types))
         placeholders = ",".join("?" for _ in activity_types)
-        with self._transaction() as connection:
+        with self._transaction(write=False) as connection:
             self._accepted_scope_integrity(connection, activity_types)
             rows = connection.execute(
                 "SELECT e.segment_key,MAX(e.sequence) FROM workflow_committed_outputs o "
@@ -5851,10 +5851,14 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
         )
 
     def accepted_output(self, job_id: str) -> WorkflowAcceptedOutput | None:
+        return self.accepted_status(job_id)[1]
+
+    def accepted_status(self, job_id: str) -> tuple[WorkflowJobRecord, WorkflowAcceptedOutput | None]:
+        """Authenticate state and output in one committed, read-only WAL snapshot."""
         if not is_uuid_v7(job_id):
             raise WorkflowQueueProblem("workflow accepted job identity is invalid")
-        with self._transaction() as connection:
-            self._select_job(connection, self._project_id, job_id)
+        with self._transaction(write=False) as connection:
+            job = self._row(self._select_job(connection, self._project_id, job_id))
             activity = connection.execute(
                 "SELECT activity_type FROM workflow_queue_jobs WHERE project_id=? AND job_id=?",
                 (self._project_id, job_id),
@@ -5872,13 +5876,13 @@ class _SqliteWorkflowQueueRepository(WorkflowQueueRepository):
                 (self._project_id, job_id),
             ).fetchone()
             if row is None:
-                return None
+                return job, None
             snapshot = WorkflowAcceptedSnapshot(
                 self._project_id,
                 (activity,),
                 (self._accepted_anchor(connection, row[2], row[3]),),
             )
-            return self._accepted_row(connection, row, snapshot)
+            return job, self._accepted_row(connection, row, snapshot)
 
     def continuation_jobs(self, job_id: str) -> tuple[WorkflowJobRecord, ...]:
         if not is_uuid_v7(job_id):

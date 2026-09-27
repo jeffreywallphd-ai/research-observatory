@@ -194,6 +194,287 @@
         "title": "CacheClearState",
         "type": "string"
       },
+      "CandidateExplanation": {
+        "additionalProperties": false,
+        "properties": {
+          "algorithm": {
+            "const": "scholarly-duplicate-ranking/1.0.0",
+            "title": "Algorithm",
+            "type": "string"
+          },
+          "configurationFingerprint": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "disposition": {
+            "const": "human-review-required",
+            "title": "Disposition",
+            "type": "string"
+          },
+          "featureVersion": {
+            "const": "scholarly-duplicate-features/1.0.0",
+            "title": "Featureversion",
+            "type": "string"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateFeature"
+            },
+            "maxItems": 7,
+            "minItems": 7,
+            "title": "Features",
+            "type": "array"
+          },
+          "flags": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateFlag"
+            },
+            "maxItems": 3,
+            "title": "Flags",
+            "type": "array"
+          },
+          "identifierNormalizer": {
+            "title": "Identifiernormalizer",
+            "type": "string"
+          },
+          "left": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "leftFingerprint": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "leftRevision": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "right": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "rightFingerprint": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "rightRevision": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "score": {
+            "$ref": "#/components/schemas/Score"
+          }
+        },
+        "required": [
+          "left",
+          "right",
+          "leftRevision",
+          "rightRevision",
+          "leftFingerprint",
+          "rightFingerprint",
+          "score",
+          "features",
+          "flags",
+          "configurationFingerprint",
+          "algorithm",
+          "featureVersion",
+          "identifierNormalizer",
+          "disposition"
+        ],
+        "title": "CandidateExplanation",
+        "type": "object"
+      },
+      "CandidateFeature": {
+        "additionalProperties": false,
+        "properties": {
+          "conflict": {
+            "title": "Conflict",
+            "type": "boolean"
+          },
+          "name": {
+            "enum": [
+              "title",
+              "authors",
+              "year",
+              "venue",
+              "pages",
+              "abstract",
+              "identifiers"
+            ],
+            "title": "Name",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Score"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "available",
+              "not-reported",
+              "disputed"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "weight": {
+            "maximum": 10000.0,
+            "minimum": 1.0,
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "state",
+          "score",
+          "weight",
+          "conflict"
+        ],
+        "title": "CandidateFeature",
+        "type": "object"
+      },
+      "CandidateFlag": {
+        "enum": [
+          "competing-source-fields",
+          "year-disagreement",
+          "conflicting-identifiers"
+        ],
+        "type": "string"
+      },
+      "CandidatePage": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "maximum": 20000.0,
+            "minimum": 0.0,
+            "title": "After",
+            "type": "integer"
+          },
+          "algorithm": {
+            "const": "scholarly-duplicate-ranking/1.0.0",
+            "default": "scholarly-duplicate-ranking/1.0.0",
+            "title": "Algorithm",
+            "type": "string"
+          },
+          "candidateCount": {
+            "maximum": 20000.0,
+            "minimum": 0.0,
+            "title": "Candidatecount",
+            "type": "integer"
+          },
+          "comparedPairs": {
+            "maximum": 250000.0,
+            "minimum": 0.0,
+            "title": "Comparedpairs",
+            "type": "integer"
+          },
+          "configurationSha256": {
+            "$ref": "#/components/schemas/Digest",
+            "default": "b3e04c16bcfbb8588a718d55a94217a21a02ba1877fa9ea6ba187ebcdfc98dfc"
+          },
+          "currentInventorySha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "dependencyState": {
+            "enum": [
+              "unaffected",
+              "requires-review"
+            ],
+            "title": "Dependencystate",
+            "type": "string"
+          },
+          "featureVersion": {
+            "const": "scholarly-duplicate-features/1.0.0",
+            "default": "scholarly-duplicate-features/1.0.0",
+            "title": "Featureversion",
+            "type": "string"
+          },
+          "identifierNormalizer": {
+            "default": "scholarly-identifiers/1.0.0",
+            "title": "Identifiernormalizer",
+            "type": "string"
+          },
+          "inventorySha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "inventoryState": {
+            "enum": [
+              "unchanged",
+              "changed"
+            ],
+            "title": "Inventorystate",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateExplanation"
+            },
+            "maxItems": 100,
+            "title": "Items",
+            "type": "array"
+          },
+          "membershipState": {
+            "enum": [
+              "unchanged",
+              "changed"
+            ],
+            "title": "Membershipstate",
+            "type": "string"
+          },
+          "nextAfter": {
+            "anyOf": [
+              {
+                "maximum": 20000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextafter"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "recordCount": {
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Recordcount",
+            "type": "integer"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "setRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "projectId",
+          "setRevisionId",
+          "requestId",
+          "inventorySha256",
+          "currentInventorySha256",
+          "inventoryState",
+          "recordCount",
+          "candidateCount",
+          "comparedPairs",
+          "membershipState",
+          "dependencyState",
+          "after",
+          "nextAfter",
+          "items"
+        ],
+        "title": "CandidatePage",
+        "type": "object"
+      },
       "CanonicalFieldSelection": {
         "additionalProperties": false,
         "properties": {
@@ -6752,6 +7033,173 @@
         "title": "RecommendationQuery",
         "type": "object"
       },
+      "ReconciliationBatchJobRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "requestId",
+          "jobId"
+        ],
+        "title": "ReconciliationBatchJobRequest",
+        "type": "object"
+      },
+      "ReconciliationBatchPrepareRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root"
+        ],
+        "title": "ReconciliationBatchPrepareRequest",
+        "type": "object"
+      },
+      "ReconciliationBatchPrepared": {
+        "additionalProperties": false,
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "requestId"
+        ],
+        "title": "ReconciliationBatchPrepared",
+        "type": "object"
+      },
+      "ReconciliationBatchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "requestId"
+        ],
+        "title": "ReconciliationBatchRequest",
+        "type": "object"
+      },
+      "ReconciliationBatchStatus": {
+        "additionalProperties": false,
+        "properties": {
+          "diagnosticCode": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9-]{0,95}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnosticcode"
+          },
+          "jobId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "setRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "enum": [
+              "runnable",
+              "claimed",
+              "running",
+              "retry-scheduled",
+              "cancelling",
+              "cancelled",
+              "failed",
+              "succeeded"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "workflowRunId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "requestId",
+          "jobId",
+          "workflowRunId",
+          "state",
+          "setRevisionId",
+          "diagnosticCode"
+        ],
+        "title": "ReconciliationBatchStatus",
+        "type": "object"
+      },
+      "ReconciliationCandidateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "maximum": 20000.0,
+            "minimum": 0.0,
+            "title": "After",
+            "type": "integer"
+          },
+          "limit": {
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "setRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "root",
+          "setRevisionId",
+          "after",
+          "limit"
+        ],
+        "title": "ReconciliationCandidateRequest",
+        "type": "object"
+      },
       "ReconciliationConnectorAddressRequest": {
         "additionalProperties": false,
         "properties": {
@@ -7761,6 +8209,11 @@
             "$ref": "#/components/schemas/OaQuery"
           }
         ]
+      },
+      "Score": {
+        "maximum": 10000.0,
+        "minimum": 0.0,
+        "type": "integer"
       },
       "SearchFilter": {
         "additionalProperties": false,
@@ -13812,6 +14265,411 @@
         "summary": "Schedule Recalculation",
         "tags": [
           "recalculation"
+        ]
+      }
+    },
+    "/projects/reconciliation/batches/cancel": {
+      "post": {
+        "operationId": "cancelScholarlyReconciliationBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationBatchJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationBatchStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Cancel Batch",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/batches/prepare": {
+      "post": {
+        "operationId": "prepareScholarlyReconciliationBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationBatchPrepareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationBatchPrepared"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Prepare Batch",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/batches/schedule": {
+      "post": {
+        "operationId": "scheduleScholarlyReconciliationBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationBatchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationBatchStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Schedule Batch",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/batches/status": {
+      "post": {
+        "operationId": "inspectScholarlyReconciliationBatch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationBatchJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationBatchStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Batch Status",
+        "tags": [
+          "reconciliation"
+        ]
+      }
+    },
+    "/projects/reconciliation/candidates": {
+      "post": {
+        "operationId": "inspectScholarlyDuplicateCandidates",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationCandidateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidatePage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Candidates",
+        "tags": [
+          "reconciliation"
         ]
       }
     },

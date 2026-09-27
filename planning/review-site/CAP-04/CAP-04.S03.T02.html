@@ -91,9 +91,9 @@ python tools/verify.py --profile data
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="576a7feaef6c493dc6356af0afd31ec83d1fe921a8b9f85bf3f4623847e1058c">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T02" data-worksheet-sha256="5db890e164bb6ac3b1349c7efc622299a951c5a4898020c6bf5224311cb3d821">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>576a7feaef6c493dc6356af0afd31ec83d1fe921a8b9f85bf3f4623847e1058c</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>5db890e164bb6ac3b1349c7efc622299a951c5a4898020c6bf5224311cb3d821</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S03.T02 — duplicate candidates and reversible review
 
 Claim base: `691205f48cf8ee80b323a9971413f7da1d0608e1` on the existing W2
@@ -186,6 +186,31 @@ preparation lease exhaustion; a real queue test advances two source reads by
 20 seconds each and verifies live renewal and explicit failed-job continuation.
 Worker integration must still prove complete enumeration against the bound
 snapshot, including omitted members and addresses arriving after the boundary.
+
+Worker-lifecycle advisory by `agent:/root/w2_c02_review` added three concrete
+integration obligations. A stale Task Center cancellation must be rejected before
+rolling back provisional lease renewals; a valid cancellation persists independently
+of the expired pre-writer lease and converges through existing queue recovery.
+Task Center refresh must obtain a current committed revision while publication
+holds the lifecycle fence. The read-only projection pins that already-authorized
+fence; it does not introduce a mutation authority. Finally, project close, failed
+open cleanup and shutdown must signal every composed worker before draining any
+of them, including an active import with idle reconciliation. Retained failing
+API tests preceded these fixes. Additional cases cover close before registration,
+failed drain retaining the open project, exact Intent changes after enumeration,
+saved request/enqueue failure across restart, and accepted commit/lost response.
+These are development proofs, not a task disposition or protected-runtime/UI
+qualification. The full generated client/native and protected Windows journey
+remains required.
+
+The candidate/API advisory by `agent:/root/w2_t03_review` identified two missed
+projection boundaries. Batch polling must read job state and accepted output in
+one read-only snapshot while publication owns the writer; a writer transaction
+in that path blocks the stop mutex. Add a real status-poll-then-cancel regression.
+Historical candidate pages must also identify their authenticated frozen inventory
+and disclose newly accepted inputs outside it. Add an unrelated accepted import
+after publication and verify that historical scores remain unchanged while the
+inventory comparison changes. These findings do not change the approved scope.
 
 Full unchanged deployment profiles are deferred to the S03 checkpoint/Wave
 qualification; they are not waived. Existing historical type errors and Windows
