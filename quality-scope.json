@@ -369,6 +369,7 @@
     "tests/reconciliation/test_repository.py",
     "tests/reconciliation/test_runtime_windows.py",
     "tests/reconciliation/test_sources.py",
-    "tests/reconciliation/test_contracts.py"
+    "tests/reconciliation/test_contracts.py",
+    "tests/reconciliation/test_duplicate_fixtures.py"
   ]
 }

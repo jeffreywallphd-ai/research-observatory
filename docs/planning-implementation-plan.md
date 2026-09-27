@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6f13ac6bfbd82d8b73cef297325cc9d189b4b14e28432d7808b9e3802303aae1
+source_sha256: d664aae595f5a8781c7d16b6dbb9820af0a2fcf78023fefa6f35bc7c997524ed
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8392,13 +8392,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S03.T02 - Implement probabilistic duplicate candidate generation and review
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S03.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Fuzzy candidate scoring using title, authors, year, venue, pages, abstract, and identifiers plus merge/split review UI.
 
