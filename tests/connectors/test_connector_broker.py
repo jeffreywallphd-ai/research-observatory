@@ -151,6 +151,108 @@ class ConnectorBrokerFixture(unittest.IsolatedAsyncioTestCase):
 
 
 class ConnectorBrokerTests(ConnectorBrokerFixture):
+    async def test_attempt_measurements_and_fresh_cache_do_not_change_scientific_identity(self):
+        def respond(wire):
+            self.clock.seconds += 0.125
+            return httpx2.Response(200, json=fixture("openalex"))
+
+        broker = self.broker([respond])
+        value = request("openalex", query=search())
+        value = value.model_copy(
+            update={
+                "policy": value.policy.model_copy(
+                    update={
+                        "cache_mode": "allow-fresh",
+                        "maximum_fresh_age_ms": 5000,
+                    }
+                )
+            }
+        )
+        first = await broker.fetch(value, cancellation=self.cancel)
+        self.assertEqual(
+            (1, 0, 125, 125, 200),
+            (
+                first.measurements.http_requests,
+                first.measurements.http_retries,
+                first.measurements.exchange_elapsed_ms,
+                first.measurements.broker_elapsed_ms,
+                first.measurements.last_http_status,
+            ),
+        )
+        next_request = value.model_copy(update={"invocation_id": "0190a000-0000-7000-8000-000000000098"})
+        cached = await broker.fetch(next_request, cancellation=self.cancel)
+        self.assertEqual("hit", cached.cache.state)
+        self.assertEqual(
+            (0, 0, None, None),
+            (
+                cached.measurements.http_requests,
+                cached.measurements.http_retries,
+                cached.measurements.exchange_elapsed_ms,
+                cached.measurements.last_http_status,
+            ),
+        )
+        self.assertEqual(1, len(self.calls))
+        self.assertEqual(value.scientific_sha256(), cached.request.scientific_sha256())
+        self.assertEqual(value.page_sha256(), cached.request.page_sha256())
+        self.assertNotEqual(first.observation_id, cached.observation_id)
+
+    async def test_retry_and_failed_transport_measure_actual_attempts(self):
+        def unavailable(wire):
+            self.clock.seconds += 0.125
+            return httpx2.Response(503)
+
+        def recovered(wire):
+            self.clock.seconds += 0.125
+            return httpx2.Response(200, json=fixture("openalex"))
+
+        value = request("openalex", query=search())
+        value = value.model_copy(update={"policy": value.policy.model_copy(update={"maximum_attempts": 2})})
+        page = await self.broker([unavailable, recovered]).fetch(value, cancellation=self.cancel)
+        self.assertEqual("complete", page.outcome)
+        self.assertEqual(
+            (2, 1, 250, 200),
+            (
+                page.measurements.http_requests,
+                page.measurements.http_retries,
+                page.measurements.exchange_elapsed_ms,
+                page.measurements.last_http_status,
+            ),
+        )
+        self.assertGreaterEqual(page.measurements.broker_elapsed_ms, 1250)
+
+        def timeout(wire):
+            self.clock.seconds += 0.125
+            raise httpx2.ReadTimeout("synthetic transport timeout")
+
+        value = value.model_copy(update={"policy": value.policy.model_copy(update={"maximum_attempts": 1})})
+        failed = await self.broker([timeout]).fetch(value, cancellation=self.cancel)
+        self.assertEqual("timeout", failed.errors[0].code)
+        self.assertEqual(
+            (1, 0, 125, None),
+            (
+                failed.measurements.http_requests,
+                failed.measurements.http_retries,
+                failed.measurements.exchange_elapsed_ms,
+                failed.measurements.last_http_status,
+            ),
+        )
+
+    async def test_denial_before_transport_has_zero_attempts_and_unavailable_latency(self):
+        self.authority.denied = True
+        page = await self.broker([]).fetch(request("openalex"), cancellation=self.cancel)
+        self.assertEqual("policy-denied", page.errors[0].code)
+        self.assertEqual(
+            (0, 0, None, None),
+            (
+                page.measurements.http_requests,
+                page.measurements.http_retries,
+                page.measurements.exchange_elapsed_ms,
+                page.measurements.last_http_status,
+            ),
+        )
+        self.assertEqual([], self.calls)
+        self.assertEqual([], self.repository.pages)
+
     async def test_denial_before_secret_cache_and_network(self):
         self.authority.denied = True
         secrets = Secrets()
@@ -164,6 +266,43 @@ class ConnectorBrokerTests(ConnectorBrokerFixture):
         self.assertEqual([], self.calls)
         self.assertEqual([], secrets.contexts)
         self.assertEqual([], self.repository.pages)
+
+    async def test_missing_configuration_and_transport_denial_have_distinct_counts(self):
+        missing = await self.broker([]).fetch(
+            request(
+                "unpaywall",
+                sourceApiVersion="2",
+                query={
+                    "kind": "oa-resolution",
+                    "identifier": {
+                        "scheme": "doi",
+                        "value": "10.99999/synthetic-adapter",
+                    },
+                },
+            ),
+            cancellation=self.cancel,
+        )
+        self.assertEqual("not-configured", missing.errors[0].code)
+        self.assertEqual(0, missing.measurements.http_requests)
+        self.assertIsNone(missing.measurements.exchange_elapsed_ms)
+        self.assertEqual([], self.calls)
+
+        def denied(wire):
+            self.clock.seconds += 0.125
+            raise ProviderProblem("policy-denied")
+
+        failed = await self.broker([denied]).fetch(request("openalex"), cancellation=self.cancel)
+        self.assertEqual("policy-denied", failed.errors[0].code)
+        self.assertEqual(
+            (1, 0, 125, None),
+            (
+                failed.measurements.http_requests,
+                failed.measurements.http_retries,
+                failed.measurements.exchange_elapsed_ms,
+                failed.measurements.last_http_status,
+            ),
+        )
+        self.assertEqual(1, len(self.calls))
 
     async def test_overflowing_json_number_is_a_typed_failure(self):
         broker = self.broker(

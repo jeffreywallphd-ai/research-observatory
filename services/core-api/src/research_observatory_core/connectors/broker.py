@@ -39,6 +39,7 @@ from .contracts import (
     CacheObservation,
     ConnectorCapabilities,
     ConnectorError,
+    ConnectorMeasurements,
     ConnectorRequest,
     ConnectorResultPage,
     ErrorCode,
@@ -135,6 +136,13 @@ class _Received:
     interval: float
 
 
+@dataclass(slots=True)
+class _ExchangeMeasurements:
+    requests: int = 0
+    seconds: float = 0.0
+    last_status: int | None = None
+
+
 class ConnectorBroker:
     def __init__(
         self,
@@ -207,6 +215,7 @@ class ConnectorBroker:
         plan: WireQuery,
         stamp: ConnectorAuthorityStamp,
         cache: ConnectorCacheEntry | None,
+        measurements: _ExchangeMeasurements,
     ) -> _Received:
         with ExitStack() as stack, private_wire():
             headers = {
@@ -270,9 +279,17 @@ class ConnectorBroker:
                 extensions={"timeout": {key: seconds for key in ("connect", "read", "write", "pool")}},
             )
             response = None
+            started = None
             try:
                 async with asyncio.timeout(seconds):
+                    # Count entry to the transport, not authorization or secret access.
+                    # A transport attempt can fail before reaching the provider.
+                    started = self._rates.clock()
+                    measurements.requests += 1
+                    measurements.last_status = None
                     response = await self._transport.handle_async_request(wire)
+                    if 100 <= response.status_code <= 999:
+                        measurements.last_status = response.status_code
                     if response.status_code == 200:
                         body = await read_response(response, request.policy.maximum_response_bytes)
                         value, applied = sanitize(bounded_json(body), tuple(private_values))
@@ -314,6 +331,8 @@ class ConnectorBroker:
                 except httpx2.HTTPError, httpcore2.NetworkError, httpcore2.ProtocolError, OSError, TimeoutError:
                     raise ProviderProblem("provider-unavailable") from None
                 finally:
+                    if started is not None:
+                        measurements.seconds += max(0.0, self._rates.clock() - started)
                     headers.clear()
                     pairs.clear()
                     private_values.clear()
@@ -394,6 +413,19 @@ class ConnectorBroker:
 
     async def fetch(self, request: ConnectorRequest, *, cancellation: ConnectorCancellation) -> ConnectorResultPage:
         request = ConnectorRequest.model_validate(request)
+        started = self._rates.clock()
+        measurements = _ExchangeMeasurements()
+
+        def measured(page: ConnectorResultPage) -> ConnectorResultPage:
+            facts = ConnectorMeasurements(
+                http_requests=measurements.requests,
+                http_retries=max(0, measurements.requests - 1),
+                exchange_elapsed_ms=math.ceil(measurements.seconds * 1000) if measurements.requests else None,
+                broker_elapsed_ms=math.ceil(max(0.0, self._rates.clock() - started) * 1000),
+                last_http_status=measurements.last_status,
+            )
+            return ConnectorResultPage.model_validate(page.model_dump() | {"measurements": facts})
+
         bucket = self._rates.bucket(request.provider_id)
         stamp = None
         locked = False
@@ -496,7 +528,9 @@ class ConnectorBroker:
                     bucket.next_start = clock() + max(bucket.interval, request.policy.minimum_interval_ms / 1000)
                     received = None
                     try:
-                        received = await _cancellable(self._exchange(request, plan, stamp, cache), cancellation)
+                        received = await _cancellable(
+                            self._exchange(request, plan, stamp, cache, measurements), cancellation
+                        )
                         bucket.interval = max(bucket.interval, received.interval)
                         bucket.next_start = max(bucket.next_start, clock() + bucket.interval)
                         status = received.status
@@ -600,6 +634,7 @@ class ConnectorBroker:
                         )
                     }
                 )
+            page = measured(page)
             saved = self._guard(
                 request,
                 "publication",
@@ -615,7 +650,7 @@ class ConnectorBroker:
             )
             return ConnectorResultPage.model_validate(saved)
         except ProviderProblem as problem:
-            return self._page(request, bucket, error=problem.code)
+            return measured(self._page(request, bucket, error=problem.code))
         finally:
             if locked:
                 bucket.lock.release()

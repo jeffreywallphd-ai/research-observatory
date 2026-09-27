@@ -12,6 +12,50 @@ from tests.connectors.test_connector_workflow import ConnectorWorkflowFixture
 
 
 class ConnectorInspectionTests(ConnectorWorkflowFixture):
+    def test_diagnostics_bind_the_protected_observation_and_survive_restart_without_send(self):
+        preview, job = self.schedule()
+        pending = self.worker.diagnostics(self.root, preview.preview_id)
+        self.assertEqual(job.job_id, pending.job.job_id)
+        self.assertIsNone(pending.observation)
+        self.assertEqual([], self.calls)
+        self.worker.run_pending()
+        original = self.worker.diagnostics(self.root, preview.preview_id)
+        inspection = self.worker.inspect(self.root, preview.preview_id, 0)
+        self.assertEqual(inspection.observation.observation_id, original.observation.observation_id)
+        self.assertEqual(1, original.observation.measurements.http_requests)
+        self.assertEqual(0, original.observation.measurements.http_retries)
+        self.assertGreaterEqual(original.observation.measurements.exchange_elapsed_ms, 0)
+        for forbidden in ("queryJson", "scientificRequestSha256", "records", "confirmation", "sessionEpoch"):
+            self.assertNotIn(forbidden, original.model_dump_json(by_alias=True))
+        self.worker.shutdown()
+        self.connectors = self.consent_service()
+        self.worker = self.worker_service()
+        self.assertEqual(original, self.worker.diagnostics(self.root, preview.preview_id))
+        self.assertEqual(1, len(self.calls))
+        self.assertIsNone(self.worker.diagnostics(self.root, new_uuid_v7()))
+
+    def test_diagnostics_deny_missing_inspect_right_and_substituted_preview(self):
+        preview, _ = self.schedule()
+        stored = self.repository.operation(preview.preview_id)
+        rights = self.rights.rights.model_copy(
+            update={
+                "inspect": self.rights.rights.inspect.model_copy(update={"value": "unknown", "basis": "not-reported"}),
+            }
+        )
+        denied = stored.model_copy(
+            update={
+                "preview": preview.model_copy(update={"retention": self.rights.model_copy(update={"rights": rights})}),
+            }
+        )
+        foreign = stored.model_copy(update={"preview": preview.model_copy(update={"preview_id": new_uuid_v7()})})
+        for substituted in (denied, foreign):
+            with (
+                patch.object(self.repository, "operation", return_value=substituted),
+                self.assertRaises(ProviderProblem),
+            ):
+                self.worker.diagnostics(self.root, preview.preview_id)
+        self.assertEqual([], self.calls)
+
     def test_task_center_retry_does_not_duplicate_exact_source_preview(self):
         preview, job = self.schedule()
         self.worker.cancel(self.root, job.job_id)

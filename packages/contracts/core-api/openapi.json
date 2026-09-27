@@ -441,6 +441,79 @@
         "title": "ConnectorCursor",
         "type": "object"
       },
+      "ConnectorDiagnostics": {
+        "additionalProperties": false,
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/ConnectorRunSummary"
+          },
+          "observation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorObservationDiagnostics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "job",
+          "observation"
+        ],
+        "title": "ConnectorDiagnostics",
+        "type": "object"
+      },
+      "ConnectorDiagnosticsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "previewId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "previewId"
+        ],
+        "title": "ConnectorDiagnosticsRequest",
+        "type": "object"
+      },
+      "ConnectorError": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "retryAfterMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RetryAfter"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "retryable",
+          "retryAfterMs"
+        ],
+        "title": "ConnectorError",
+        "type": "object"
+      },
       "ConnectorInspection": {
         "additionalProperties": false,
         "properties": {
@@ -586,6 +659,204 @@
           "diagnosticCode"
         ],
         "title": "ConnectorJobStatus",
+        "type": "object"
+      },
+      "ConnectorMeasurements": {
+        "additionalProperties": false,
+        "description": "Local operation facts, separate from source assertions and scientific identity.",
+        "properties": {
+          "brokerElapsedMs": {
+            "$ref": "#/components/schemas/research_observatory_core__connectors__contracts__Count"
+          },
+          "exchangeElapsedMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/research_observatory_core__connectors__contracts__Count"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "httpRequests": {
+            "maximum": 3.0,
+            "minimum": 0.0,
+            "title": "Httprequests",
+            "type": "integer"
+          },
+          "httpRetries": {
+            "maximum": 2.0,
+            "minimum": 0.0,
+            "title": "Httpretries",
+            "type": "integer"
+          },
+          "lastHttpStatus": {
+            "anyOf": [
+              {
+                "maximum": 999.0,
+                "minimum": 100.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lasthttpstatus"
+          },
+          "scope": {
+            "const": "transport-attempts-and-broker-before-publication",
+            "default": "transport-attempts-and-broker-before-publication",
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "required": [
+          "httpRequests",
+          "httpRetries",
+          "exchangeElapsedMs",
+          "brokerElapsedMs",
+          "lastHttpStatus"
+        ],
+        "title": "ConnectorMeasurements",
+        "type": "object"
+      },
+      "ConnectorObservationDiagnostics": {
+        "additionalProperties": false,
+        "properties": {
+          "cacheAgeMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/research_observatory_core__connectors__contracts__Count"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cacheState": {
+            "enum": [
+              "disabled",
+              "miss",
+              "hit",
+              "revalidated",
+              "not-permitted"
+            ],
+            "title": "Cachestate",
+            "type": "string"
+          },
+          "continuation": {
+            "enum": [
+              "exhausted",
+              "next-page",
+              "retry-current",
+              "unavailable"
+            ],
+            "title": "Continuation",
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectorError"
+            },
+            "maxItems": 16,
+            "title": "Errors",
+            "type": "array"
+          },
+          "measurements": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConnectorMeasurements"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextPageIndex": {
+            "anyOf": [
+              {
+                "maximum": 1000000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextpageindex"
+          },
+          "observationId": {
+            "$ref": "#/components/schemas/InvocationId"
+          },
+          "observedAt": {
+            "$ref": "#/components/schemas/UtcInstant"
+          },
+          "outcome": {
+            "enum": [
+              "complete",
+              "partial",
+              "failed"
+            ],
+            "title": "Outcome",
+            "type": "string"
+          },
+          "pageIndex": {
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Pageindex",
+            "type": "integer"
+          },
+          "rate": {
+            "$ref": "#/components/schemas/RateLimitState"
+          },
+          "responseBodyState": {
+            "enum": [
+              "retained",
+              "permitted-fields-only",
+              "unavailable"
+            ],
+            "title": "Responsebodystate",
+            "type": "string"
+          },
+          "responseByteLength": {
+            "anyOf": [
+              {
+                "maximum": 10485760.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsebytelength"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderId"
+            },
+            "maxItems": 32,
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "observationId",
+          "observedAt",
+          "outcome",
+          "continuation",
+          "pageIndex",
+          "nextPageIndex",
+          "measurements",
+          "responseBodyState",
+          "responseByteLength",
+          "cacheState",
+          "cacheAgeMs",
+          "rate",
+          "errors",
+          "warnings"
+        ],
+        "title": "ConnectorObservationDiagnostics",
         "type": "object"
       },
       "ConnectorObservationSummary": {
@@ -1056,11 +1327,6 @@
         "title": "ConnectorRunSummary",
         "type": "object"
       },
-      "Count": {
-        "maximum": 200000.0,
-        "minimum": 0.0,
-        "type": "integer"
-      },
       "CsvDelimiter": {
         "enum": [
           ",",
@@ -1177,6 +1443,25 @@
           "require-task-preview"
         ],
         "title": "EgressEnforcement",
+        "type": "string"
+      },
+      "ErrorCode": {
+        "enum": [
+          "authentication",
+          "permission-denied",
+          "rate-limit",
+          "provider-unavailable",
+          "timeout",
+          "invalid-query",
+          "incompatible-response",
+          "policy-denied",
+          "cancelled",
+          "not-configured",
+          "unsupported-operation",
+          "invalid-cursor",
+          "partial-response",
+          "response-too-large"
+        ],
         "type": "string"
       },
       "FieldCorrection": {
@@ -5500,6 +5785,56 @@
         "title": "ProviderIdentifier",
         "type": "object"
       },
+      "RateLimitState": {
+        "additionalProperties": false,
+        "properties": {
+          "circuit": {
+            "enum": [
+              "closed",
+              "open",
+              "half-open",
+              "unknown"
+            ],
+            "title": "Circuit",
+            "type": "string"
+          },
+          "observedAt": {
+            "$ref": "#/components/schemas/UtcInstant"
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/ProviderId"
+          },
+          "remaining": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/research_observatory_core__connectors__contracts__Count"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retryAfterMs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RetryAfter"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "providerId",
+          "observedAt",
+          "remaining",
+          "retryAfterMs",
+          "circuit"
+        ],
+        "title": "RateLimitState",
+        "type": "object"
+      },
       "ReadinessResponse": {
         "additionalProperties": false,
         "properties": {
@@ -6783,34 +7118,34 @@
         "additionalProperties": false,
         "properties": {
           "candidateRecords": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "contextRows": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "coverage": {
             "$ref": "#/components/schemas/SummaryCoverage"
           },
           "doiDuplicateGroups": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "excludedRecords": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "includedRecords": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "malformedRows": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "rawDuplicateGroups": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "recordRows": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "sourceRows": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "warningCount": {
             "maximum": 12800000.0,
@@ -6819,7 +7154,7 @@
             "type": "integer"
           },
           "warningRows": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           }
         },
         "required": [
@@ -6843,19 +7178,19 @@
         "additionalProperties": false,
         "properties": {
           "author": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "container": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "doi": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "title": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           },
           "year": {
-            "$ref": "#/components/schemas/Count"
+            "$ref": "#/components/schemas/research_observatory_core__ingestion__import_summaries__Count"
           }
         },
         "required": [
@@ -8481,6 +8816,16 @@
         ],
         "title": "WorkflowTaskCenterStep",
         "type": "object"
+      },
+      "research_observatory_core__connectors__contracts__Count": {
+        "maximum": 9007199254740991.0,
+        "minimum": 0.0,
+        "type": "integer"
+      },
+      "research_observatory_core__ingestion__import_summaries__Count": {
+        "maximum": 200000.0,
+        "minimum": 0.0,
+        "type": "integer"
       }
     }
   },
@@ -8813,6 +9158,75 @@
           }
         },
         "summary": "Confirm",
+        "tags": [
+          "connectors"
+        ]
+      }
+    },
+    "/projects/connectors/diagnostics": {
+      "post": {
+        "operationId": "diagnostics_projects_connectors_diagnostics_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorDiagnosticsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ConnectorDiagnostics"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Diagnostics Projects Connectors Diagnostics Post"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          }
+        },
+        "summary": "Diagnostics",
         "tags": [
           "connectors"
         ]

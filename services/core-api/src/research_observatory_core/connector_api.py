@@ -19,7 +19,7 @@ from .connectors.contracts import (
     ProjectId,
     ProviderId,
 )
-from .connectors.inspection import ConnectorInspection, ConnectorRecentRuns
+from .connectors.inspection import ConnectorDiagnostics, ConnectorInspection, ConnectorRecentRuns
 from .connectors.providers import HOSTS, ProviderProblem
 from .connectors.settings import ConnectorConnectionStatus
 from .models import ProblemDetail
@@ -50,6 +50,10 @@ class ConnectorJobRequest(ConnectorProjectRequest):
 class ConnectorInspectionRequest(ConnectorProjectRequest):
     preview_id: InvocationId
     record_offset: Annotated[int, Field(strict=True, ge=0, le=999)]
+
+
+class ConnectorDiagnosticsRequest(ConnectorProjectRequest):
+    preview_id: InvocationId
 
 
 class ConnectorJobStatus(ConnectorModel):
@@ -188,6 +192,10 @@ def register_connector_routes(
     @router.post("/inspect", response_model=ConnectorInspection | None)
     def inspect(request: Request, command: ConnectorInspectionRequest) -> ConnectorInspection | None:
         return run(request, lambda runtime: runtime.inspect(command.root, command.preview_id, command.record_offset))
+
+    @router.post("/diagnostics", response_model=ConnectorDiagnostics | None)
+    def diagnostics(request: Request, command: ConnectorDiagnosticsRequest) -> ConnectorDiagnostics | None:
+        return run(request, lambda runtime: runtime.diagnostics(command.root, command.preview_id))
 
     @router.post("/jobs/cancel", response_model=ConnectorJobStatus)
     def cancel(request: Request, command: ConnectorJobRequest) -> ConnectorJobStatus:

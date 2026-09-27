@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { createCoreApiClient, decodeConnectorCapabilities, SCHOLARLY_PROVIDER_TERMS, type ConnectorCapabilitiesPage, type CoreApiTransport, type ProjectProjection } from "@research-observatory/contracts/core-api";
+import { createConnectorDiagnosticsClient } from "@research-observatory/contracts/connector-diagnostics";
 import { Button, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 import { packagedProjectTransport } from "./ProjectsWorkspace";
 import { configureSource, configurationMessage, openSourceTerms, type ConfigurationOutcome, type ScholarlyProvider } from "./sourceConfiguration";
@@ -31,6 +32,7 @@ export function SourceManagerWorkspace(props: SourceManagerProps): ReactNode {
 
 function SourceProject({ project, announce, transport = packagedProjectTransport, initialCapabilities, onNavigate, active = true }: SourceManagerProps & { readonly project: ProjectProjection }): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
+  const diagnostics = useMemo(() => createConnectorDiagnosticsClient(transport), [transport]);
   const initial = initialCapabilities ? decodeConnectorCapabilities(initialCapabilities) : null;
   const [page, setPage] = useState<ConnectorCapabilitiesPage | null>(initial);
   const [loading, setLoading] = useState(initial === null);
@@ -118,7 +120,7 @@ function SourceProject({ project, announce, transport = packagedProjectTransport
       })}</div>
     </section>
     {testing && page?.items.find((item) => item.providerId === testing) ? <SourceTestPane key={testing} project={project} provider={page.items.find((item) => item.providerId === testing)!} client={client} announce={announce} active={active} onInspect={(previewId) => setInspectionSelection({ previewId })} onTasks={onNavigate ? () => onNavigate("tasks") : undefined} onClose={() => { const provider = testing; setTesting(null); requestAnimationFrame(() => { if (live.current) testControls.current.get(provider)?.focus(); }); }} /> : null}
-    <SourceRequestHistory root={project.root} client={client} active={active} selection={inspectionSelection} />
+    <SourceRequestHistory root={project.root} client={client} diagnosticsClient={diagnostics} active={active} selection={inspectionSelection} />
     <div className="status-grid ro-grid">
       <Panel title="Connection health"><Typography>No provider request is made when this page opens or when settings are saved. Configuration readiness does not establish provider availability, coverage or a last successful call.</Typography><Button disabled={!onNavigate || !!busy} onClick={() => onNavigate?.("tasks")}>Inspect source tasks</Button></Panel>
       <Panel title="Project permissions"><Typography>The accepted Research Intent and current privacy policy must both permit each destination. Every request needs a preview and explicit confirmation. Public metadata does not grant unrestricted downstream rights.</Typography><div className="ro-action-row"><Button disabled={!onNavigate || !!busy} onClick={() => onNavigate?.("intent")}>Review Research Intent</Button><Button disabled={!onNavigate || !!busy} onClick={() => onNavigate?.("settings")}>Review privacy policy</Button><Button disabled={!onNavigate || !!busy} onClick={() => onNavigate?.("models")}>Model &amp; Privacy Center</Button></div></Panel>

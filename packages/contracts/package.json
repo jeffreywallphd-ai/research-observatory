@@ -23,6 +23,7 @@
   },
   "exports": {
     "./core-api": "./core-api/generated.ts",
+    "./connector-diagnostics": "./core-api/connector-diagnostics.ts",
     "./domain": "./domain/generated.ts",
     "./domain-compatibility": "./domain/compatibility.generated.ts",
     "./domain-lifecycle": "./domain/lifecycle.generated.ts",

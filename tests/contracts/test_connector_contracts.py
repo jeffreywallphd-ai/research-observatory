@@ -55,6 +55,40 @@ def capabilities_document() -> dict[str, Any]:
 
 
 class ConnectorContractTests(unittest.TestCase):
+    def test_optional_measurements_preserve_historical_pages_and_reject_contradictions(self):
+        document = page_document()
+        historical = ConnectorResultPage.model_validate(document)
+        self.assertEqual(document, historical.model_dump(mode="json", by_alias=True))
+        measurement = {
+            "httpRequests": 1,
+            "httpRetries": 0,
+            "exchangeElapsedMs": 125,
+            "brokerElapsedMs": 200,
+            "lastHttpStatus": 200,
+            "scope": "transport-attempts-and-broker-before-publication",
+        }
+        measured = ConnectorResultPage.model_validate(document | {"measurements": measurement})
+        self.assertEqual(measurement, measured.model_dump(mode="json", by_alias=True)["measurements"])
+        self.assertEqual(historical.request.scientific_sha256(), measured.request.scientific_sha256())
+        self.assertEqual(historical.request.page_sha256(), measured.request.page_sha256())
+        for delta in (
+            {"httpRequests": True},
+            {"httpRequests": 4},
+            {"httpRetries": 1},
+            {"httpRequests": 0},
+            {"exchangeElapsedMs": None},
+            {"exchangeElapsedMs": -1},
+            {"brokerElapsedMs": 10},
+            {"brokerElapsedMs": float("nan")},
+            {"brokerElapsedMs": float("inf")},
+            {"brokerElapsedMs": 0.5},
+            {"lastHttpStatus": 99},
+            {"lastHttpStatus": 1000},
+            {"secret": "not-a-diagnostic-field"},
+        ):
+            with self.subTest(delta=delta), self.assertRaises(ValidationError):
+                ConnectorResultPage.model_validate(document | {"measurements": measurement | delta})
+
     def test_source_test_fixture_and_terms_bind_core_and_generated_client(self):
         from research_observatory_core.connector_api import ConnectorPreviewRequest
         from research_observatory_core.connectors.providers import TERMS, compile_request

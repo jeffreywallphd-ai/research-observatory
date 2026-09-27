@@ -122,6 +122,47 @@ class ConnectorPersistenceTests(unittest.TestCase):
                 self.assertNotIn(b"synthetic topic", path.read_bytes())
                 self.assertNotIn(b"synthetic-adapter", path.read_bytes())
 
+    def test_historical_observation_bytes_and_revision_survive_measured_broker_replay(self):
+        page, body = self.page()
+        self.assertNotIn("measurements", page.model_dump(mode="json", by_alias=True))
+        self.publish(page, body)
+        with self.repo._transaction() as (connection, _):
+            pointer = self.repo._pointer(connection, self.repo._key("invocation", page.request.invocation_id))
+            revision_count = connection.execute("SELECT count(*) FROM aggregate_revisions").fetchone()[0]
+        raw = self.repo._read_object(pointer.object_sha256)
+        self.assertNotIn(b'"measurements"', raw)
+        self.assertEqual(pointer.object_sha256, hashlib.sha256(raw).hexdigest())
+        self.repo = self.repository()
+        calls = []
+
+        async def unexpected(wire):
+            calls.append(wire)
+            raise AssertionError("replaying the same invocation must not send")
+
+        clock = Clock()
+        clock.seconds = 20
+        broker = ConnectorBroker(
+            authority=self.authority,
+            repository=self.repo,
+            rates=ProviderRateController(clock=clock.monotonic),
+            transport=httpx2.MockTransport(unexpected),
+            now=clock.now,
+            sleep=clock.sleep,
+        )
+        replayed = asyncio.run(broker.fetch(page.request, cancellation=Cancellation()))
+        self.assertEqual(page, replayed)
+        self.assertIsNone(replayed.measurements)
+        self.assertEqual(raw, self.repo._read_object(pointer.object_sha256))
+        with self.repo._transaction() as (connection, _):
+            self.assertEqual(
+                pointer, self.repo._pointer(connection, self.repo._key("invocation", page.request.invocation_id))
+            )
+            self.assertEqual(
+                revision_count, connection.execute("SELECT count(*) FROM aggregate_revisions").fetchone()[0]
+            )
+        self.assertEqual([], calls)
+        asyncio.run(broker.aclose())
+
     def test_cache_hits_do_not_renew_remote_validation_and_preserve_redaction(self):
         calls = []
         document = fixture("openalex") | {"echo": "private-key-sentinel"}
@@ -152,6 +193,16 @@ class ConnectorPersistenceTests(unittest.TestCase):
         )
         first = asyncio.run(broker.fetch(value, cancellation=Cancellation()))
         self.assertEqual("applied", first.response.redaction)
+        # Reusing the same invocation preserves its measured observation, even
+        # after the repository adapter is reopened; it is not a new cache hit.
+        self.repo = self.repository()
+        broker._repository = self.repo
+        clock.seconds = 2
+        replayed = asyncio.run(broker.fetch(value, cancellation=Cancellation()))
+        self.assertEqual(first, replayed)
+        assert replayed.measurements is not None
+        self.assertEqual(1, replayed.measurements.http_requests)
+        self.assertEqual(1, len(calls))
         for seconds, expected in ((4, "hit"), (8, "revalidated"), (12, "hit")):
             with self.subTest(seconds=seconds):
                 clock.seconds = seconds

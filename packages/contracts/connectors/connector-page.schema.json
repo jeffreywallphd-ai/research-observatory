@@ -153,6 +153,65 @@
       "title": "ConnectorError",
       "type": "object"
     },
+    "ConnectorMeasurements": {
+      "additionalProperties": false,
+      "description": "Local operation facts, separate from source assertions and scientific identity.",
+      "properties": {
+        "brokerElapsedMs": {
+          "$ref": "#/$defs/Count"
+        },
+        "exchangeElapsedMs": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Count"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "httpRequests": {
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Httprequests",
+          "type": "integer"
+        },
+        "httpRetries": {
+          "maximum": 2,
+          "minimum": 0,
+          "title": "Httpretries",
+          "type": "integer"
+        },
+        "lastHttpStatus": {
+          "anyOf": [
+            {
+              "maximum": 999,
+              "minimum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lasthttpstatus"
+        },
+        "scope": {
+          "const": "transport-attempts-and-broker-before-publication",
+          "default": "transport-attempts-and-broker-before-publication",
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "httpRequests",
+        "httpRetries",
+        "exchangeElapsedMs",
+        "brokerElapsedMs",
+        "lastHttpStatus"
+      ],
+      "title": "ConnectorMeasurements",
+      "type": "object"
+    },
     "ConnectorPolicy": {
       "additionalProperties": false,
       "description": "Ceilings and requested behavior, never a current policy/rights grant.",
@@ -906,6 +965,17 @@
       "maxItems": 16,
       "title": "Errors",
       "type": "array"
+    },
+    "measurements": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConnectorMeasurements"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "nextCursor": {
       "anyOf": [

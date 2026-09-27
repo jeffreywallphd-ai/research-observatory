@@ -41,7 +41,7 @@ class SourceInteractionTests(unittest.TestCase):
           const state = window.__SOURCE_TEST__ = { requests: [], configurations: [], cancels: [],
             pending: [], uncertain: false, status: 'failed', previewDenied: false,
             submitted: false, query: null, invocationId: null, observed: false,
-            intentCommands: [], currentIntent: null };
+            intentCommands: [], currentIntent: null, diagnosticsMode: 'matching', pendingDiagnostics: [] };
           const response = body => ({ status: 200, contentType: 'application/json',
             traceId: 'a'.repeat(32), etag: null, body: JSON.stringify(body) });
           const jobId = '01900000-0000-7000-8000-000000000031';
@@ -90,6 +90,22 @@ class SourceInteractionTests(unittest.TestCase):
               updatedAt:'2026-09-24T12:00:00.000Z',diagnosticCode:state.observed?null:'connector-provider-unavailable'});
             if (args.request.path.endsWith('/recent')) return response({items:state.submitted ? [run()] : [],
               scope:'latest-20-source-jobs-within-100-workflows'});
+            if (args.request.path.endsWith('/diagnostics')) {
+              if (state.diagnosticsMode === 'unavailable') throw Error('synthetic unavailable diagnostics');
+              const value = state.submitted ? {job:run(), observation:state.observed ? {
+                observationId:state.diagnosticsMode === 'foreign-observation'
+                  ? '01900000-0000-7000-8000-000000000032' : jobId,
+                observedAt:'2026-09-24T12:00:00.000Z',outcome:'complete',continuation:'exhausted',
+                pageIndex:0,nextPageIndex:null,measurements:{httpRequests:1,httpRetries:0,
+                  exchangeElapsedMs:125,brokerElapsedMs:130,lastHttpStatus:200,
+                  scope:'transport-attempts-and-broker-before-publication'},
+                responseBodyState:'retained',responseByteLength:230,cacheState:'disabled',cacheAgeMs:null,
+                rate:{providerId:'unpaywall',observedAt:'2026-09-24T12:00:00.000Z',remaining:null,
+                  retryAfterMs:null,circuit:'closed'},errors:[],warnings:[] } : null} : null;
+              if (state.diagnosticsMode === 'delayed')
+                return new Promise(resolve => state.pendingDiagnostics.push(() => resolve(response(value))));
+              return response(value);
+            }
             if (args.request.path.endsWith('/inspect')) return response(state.submitted ? {
               job:run(),queryJson:JSON.stringify(state.query),scientificRequestSha256:'sha256:'+'a'.repeat(64),
               observation:state.observed ? {observationId:jobId,observedAt:'2026-09-24T12:00:00.000Z',
@@ -144,6 +160,12 @@ class SourceInteractionTests(unittest.TestCase):
         page.get_by_role("checkbox", name="I have permission to store and inspect", exact=False).check()
         preview.click()
         expect(page.get_by_role("button", name="Send this DOI to unpaywall", exact=True)).to_be_visible()
+        guidance = page.locator('section[aria-labelledby="source-test-title"]')
+        expect(guidance.get_by_text("Estimated completion", exact=True)).to_be_visible()
+        expect(guidance.get_by_text("Unavailable", exact=True)).to_be_visible()
+        for label in ("Timeout per attempt", "Maximum attempts", "Each permitted wait", "Minimum request interval"):
+            expect(guidance.get_by_text(label, exact=True)).to_be_visible()
+        expect(guidance.get_by_text("These limits are not an end-to-end deadline.", exact=False)).to_be_visible()
         self.assertEqual([], page.evaluate("__SOURCE_TEST__.requests.filter(r => r.path.endsWith('/confirmations'))"))
 
     def test_built_source_journey_and_late_configuration_focus(self) -> None:
@@ -222,16 +244,46 @@ class SourceInteractionTests(unittest.TestCase):
                         self.assertEqual(0, inspected.locator("b").count())
                         expect(inspected.get_by_text('"hostType":"repository"', exact=False)).to_be_visible()
                         expect(inspected.get_by_text("2 — not a total for the source", exact=True)).to_be_visible()
+                        measurements = page.locator("[data-source-diagnostics]")
+                        expect(measurements.get_by_text("125 ms", exact=True)).to_be_visible()
+                        expect(measurements.get_by_text("130 ms", exact=True)).to_be_visible()
+                        expect(measurements.get_by_text("230 bytes", exact=True)).to_be_visible()
                         page.get_by_role("button", name="Next source record", exact=True).click()
                         expect(page.get_by_role("heading", name="Source record 2 of 2", exact=True)).to_be_visible()
                         page.get_by_role("button", name="Previous source record", exact=True).click()
                         expect(page.get_by_role("heading", name="Source record 1 of 2", exact=True)).to_be_visible()
+                        for mode in ("foreign-observation", "unavailable"):
+                            page.evaluate("mode => { __SOURCE_TEST__.diagnosticsMode = mode; }", mode)
+                            page.get_by_role("button", name="Inspect this source request", exact=True).click()
+                            expect(
+                                page.get_by_role("button", name="Inspect exact source request", exact=True)
+                            ).to_be_enabled()
+                            expect(measurements.get_by_text("125 ms", exact=True)).to_have_count(0)
+                            self.assertEqual(14, measurements.get_by_text("Unavailable", exact=True).count())
+                            expect(inspected.get_by_text("<b>Synthetic title 0</b>", exact=True)).to_be_visible()
+                        # A late response from the old workspace lifetime cannot repopulate facts.
+                        page.evaluate("__SOURCE_TEST__.diagnosticsMode = 'delayed'")
+                        page.get_by_role("button", name="Inspect this source request", exact=True).click()
+                        page.wait_for_function("__SOURCE_TEST__.pendingDiagnostics.length === 1")
+                        self.open_supporting_tool(page, "Application settings")
+                        page.evaluate("__SOURCE_TEST__.diagnosticsMode = 'unavailable'")
+                        self.open_supporting_tool(page, "Source Manager")
+                        page.get_by_role("button", name="Inspect exact source request", exact=True).click()
+                        expect(
+                            page.get_by_role("button", name="Inspect exact source request", exact=True)
+                        ).to_be_enabled()
+                        page.evaluate("__SOURCE_TEST__.pendingDiagnostics[0]()")
+                        page.evaluate("() => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))")
+                        expect(measurements.get_by_text("125 ms", exact=True)).to_have_count(0)
+                        self.assertEqual(14, measurements.get_by_text("Unavailable", exact=True).count())
                         self.assertEqual(
                             1,
                             page.evaluate(
                                 "__SOURCE_TEST__.requests.filter(r => r.path.endsWith('/confirmations')).length"
                             ),
                         )
+                        # Returning to the tool clears the old test panel; open a fresh panel for Escape.
+                        region.get_by_role("button", name="Test Unpaywall", exact=True).click()
                         page.get_by_role("button", name="Close test panel", exact=True).focus()
                         page.keyboard.press("Escape")
                         expect(region.get_by_role("button", name="Test Unpaywall", exact=True)).to_be_focused()
@@ -279,9 +331,10 @@ class SourceInteractionTests(unittest.TestCase):
                         expect(page.locator("html")).to_have_attribute("data-theme", theme)
                         report["fonts"] = {font: font_face_available(page, font) for font in visual["requiredFonts"]}
                         self.assertTrue(all(report["fonts"].values()))
-                        for state in ("inventory", "inspection"):
-                            if state == "inspection":
+                        for state in ("inventory", "preview", "inspection"):
+                            if state == "preview":
                                 self.preview(page)
+                            if state == "inspection":
                                 page.evaluate("__SOURCE_TEST__.uncertain = true")
                                 page.get_by_role("button", name="Send this DOI to unpaywall", exact=True).click()
                                 expect(
@@ -291,6 +344,9 @@ class SourceInteractionTests(unittest.TestCase):
                                 page.get_by_role("button", name="Inspect this source request", exact=True).click()
                                 expect(
                                     page.get_by_role("heading", name="Source record 1 of 2", exact=True)
+                                ).to_be_visible()
+                                expect(
+                                    page.locator("[data-source-diagnostics]").get_by_text("125 ms", exact=True)
                                 ).to_be_visible()
                             for width, height in ((1440, 900), (1280, 720), (720, 450)):
                                 page.set_viewport_size({"width": width, "height": height})
@@ -321,7 +377,15 @@ class SourceInteractionTests(unittest.TestCase):
                                     all(color["ratio"] >= color["minimum"] for color in colors),
                                     [color for color in colors if color["ratio"] < color["minimum"]],
                                 )
-                                target = region if state == "inventory" else page.locator("[data-source-inspection]")
+                                target = (
+                                    region
+                                    if state == "inventory"
+                                    else page.locator(
+                                        'section[aria-labelledby="source-test-title"]'
+                                        if state == "preview"
+                                        else "[data-source-inspection]"
+                                    )
+                                )
                                 capture = fixture / f"{state}-{theme}-{width}.png"
                                 target.screenshot(path=str(capture), animations="disabled")
                                 report["screenshots"].append(

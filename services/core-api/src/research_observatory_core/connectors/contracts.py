@@ -411,6 +411,32 @@ class CacheObservation(ConnectorModel):
     request_sha256: RequestDigest | None
 
 
+class ConnectorMeasurements(ConnectorModel):
+    """Local operation facts, separate from source assertions and scientific identity."""
+
+    http_requests: Annotated[int, Field(strict=True, ge=0, le=3)]
+    http_retries: Annotated[int, Field(strict=True, ge=0, le=2)]
+    exchange_elapsed_ms: Count | None
+    broker_elapsed_ms: Count
+    last_http_status: Annotated[int, Field(strict=True, ge=100, le=999)] | None
+    scope: Literal["transport-attempts-and-broker-before-publication"] = (
+        "transport-attempts-and-broker-before-publication"
+    )
+
+    @model_validator(mode="after")
+    def coherent_measurements(self) -> Self:
+        if self.http_retries != max(0, self.http_requests - 1):
+            raise ValueError("connector-measurement-attempts-invalid")
+        if (self.http_requests == 0) != (self.exchange_elapsed_ms is None):
+            raise ValueError("connector-measurement-latency-invalid")
+        if self.http_requests == 0 and self.last_http_status is not None:
+            raise ValueError("connector-measurement-status-invalid")
+        # Durations are rounded up independently from monotonic seconds.
+        if self.exchange_elapsed_ms is not None and self.exchange_elapsed_ms > self.broker_elapsed_ms + 1:
+            raise ValueError("connector-measurement-duration-invalid")
+        return self
+
+
 class ConnectorResultPage(BoundedDocument):
     schema_version: Literal["1.0"]
     observation_id: InvocationId
@@ -427,9 +453,16 @@ class ConnectorResultPage(BoundedDocument):
     rate: RateLimitState
     response: ResponseRetention
     cache: CacheObservation
+    # Historical documents must serialize exactly as before, without a new null.
+    measurements: ConnectorMeasurements | None = Field(default=None, exclude_if=lambda value: value is None)
 
     @model_validator(mode="after")
     def coherent_page(self) -> Self:
+        if self.measurements is not None and (
+            self.measurements.http_requests > self.request.policy.maximum_attempts
+            or (self.cache.state == "hit" and self.measurements.http_requests != 0)
+        ):
+            raise ValueError("connector-page-measurements-invalid")
         if len(self.records) > self.request.page_size or self.rate.provider_id != self.request.provider_id:
             raise ValueError("connector-page-provider-or-bound-invalid")
         if self.observation_id == self.request.invocation_id:

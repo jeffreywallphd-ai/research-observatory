@@ -5,7 +5,19 @@ from typing import Annotated, Literal
 from pydantic import Field
 
 from ..ports.workflow_executor import WorkflowJobState
-from .contracts import ConnectorModel, ConnectorRecord, InvocationId, Operation, ProviderId, RequestDigest, UtcInstant
+from .contracts import (
+    ConnectorError,
+    ConnectorMeasurements,
+    ConnectorModel,
+    ConnectorRecord,
+    Count,
+    InvocationId,
+    Operation,
+    ProviderId,
+    RateLimitState,
+    RequestDigest,
+    UtcInstant,
+)
 
 
 class ConnectorRunSummary(ConnectorModel):
@@ -43,3 +55,25 @@ class ConnectorInspection(ConnectorModel):
     observation: ConnectorObservationSummary | None
     record_offset: Annotated[int, Field(strict=True, ge=0, le=999)]
     next_record_offset: Annotated[int, Field(strict=True, ge=1, le=999)] | None
+
+
+class ConnectorObservationDiagnostics(ConnectorModel):
+    observation_id: InvocationId
+    observed_at: UtcInstant
+    outcome: Literal["complete", "partial", "failed"]
+    continuation: Literal["exhausted", "next-page", "retry-current", "unavailable"]
+    page_index: Annotated[int, Field(strict=True, ge=0, le=1000000)]
+    next_page_index: Annotated[int, Field(strict=True, ge=1, le=1000000)] | None
+    measurements: ConnectorMeasurements | None
+    response_body_state: Literal["retained", "permitted-fields-only", "unavailable"]
+    response_byte_length: Annotated[int, Field(strict=True, ge=0, le=10 * 1024 * 1024)] | None
+    cache_state: Literal["disabled", "miss", "hit", "revalidated", "not-permitted"]
+    cache_age_ms: Count | None
+    rate: RateLimitState
+    errors: Annotated[tuple[ConnectorError, ...], Field(max_length=16)]
+    warnings: Annotated[tuple[ProviderId, ...], Field(max_length=32)]
+
+
+class ConnectorDiagnostics(ConnectorModel):
+    job: ConnectorRunSummary
+    observation: ConnectorObservationDiagnostics | None

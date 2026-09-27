@@ -242,6 +242,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                     },
                 )
             check.assertEqual([], calls)
+            diagnostic_snapshots = {}
             for provider in PROVIDERS:
                 for phase, cache in (("cold", False), ("cache", True)):
                     value = source_request(provider, identity, count, cache=cache)
@@ -254,6 +255,32 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                     check.assertEqual(before if cache else before + 1, len(calls))
                     check.assertNotIn(CONTACT, saved.model_dump_json())
                     check.assertNotIn(KEY, saved.model_dump_json())
+                    diagnostic = post(
+                        client, "/projects/connectors/diagnostics", {"root": root, "previewId": item["previewId"]}
+                    )
+                    diagnostic_snapshots[item["previewId"]] = diagnostic
+                    check.assertEqual(saved.observation_id, diagnostic["observation"]["observationId"])
+                    measured = diagnostic["observation"]["measurements"]
+                    check.assertEqual(0 if cache else 1, measured["httpRequests"])
+                    check.assertEqual(0, measured["httpRetries"])
+                    if cache:
+                        check.assertIsNone(measured["exchangeElapsedMs"])
+                        check.assertIsNone(measured["lastHttpStatus"])
+                    else:
+                        check.assertGreaterEqual(measured["exchangeElapsedMs"], 0)
+                        check.assertEqual(200, measured["lastHttpStatus"])
+                    check.assertEqual(saved.response.byte_length, diagnostic["observation"]["responseByteLength"])
+                    for forbidden in (
+                        "queryJson",
+                        "scientificRequestSha256",
+                        "records",
+                        "sessionEpoch",
+                        "confirmation",
+                        CONTACT,
+                        KEY,
+                    ):
+                        check.assertNotIn(forbidden, json.dumps(diagnostic))
+                    check.assertEqual(before if cache else before + 1, len(calls))
                     samples.append(
                         {
                             "provider": provider,
@@ -261,6 +288,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                             "seconds": seconds,
                             "records": len(saved.records),
                             "networkCalls": len(calls) - before,
+                            "operationalMeasurements": measured,
                         }
                     )
                     if phase == "cold":
@@ -316,6 +344,12 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                     check.assertEqual("unavailable", failed_page.response.body_state)
                     check.assertEqual(checkpoint, repository.checkpoint(value))
                     failed_exchanges.append((value, failed_page, item, job, checkpoint))
+                    diagnostic = post(
+                        client, "/projects/connectors/diagnostics", {"root": root, "previewId": item["previewId"]}
+                    )
+                    diagnostic_snapshots[item["previewId"]] = diagnostic
+                    check.assertEqual(1, diagnostic["observation"]["measurements"]["httpRequests"])
+                    check.assertEqual(code, diagnostic["observation"]["errors"][0]["code"])
                     state["fault"] = None
                 state["hold"], state["entered"] = True, False
                 cancelled_request = source_request("crossref", identity, count)
@@ -334,11 +368,24 @@ def run_workload(check, directory, *, count=100, boundaries=True):
                 check.assertIsNone(runtime.connectors._adapters(Path(root), identity).pages.replay(cancelled_request))
                 cancelled = (cancelled_request, cancelled_preview, pending, preceding_checkpoint)
             post(client, "/projects/close", {"root": root})
+            closed = client.post(
+                "/projects/connectors/diagnostics", json={"root": root, "previewId": next(iter(diagnostic_snapshots))}
+            )
+            check.assertIn(closed.status_code, (403, 404, 409), closed.text)
         second = application("d")
         with helper.client(second) as client:
             second.state.runtime.connectors._transport_factory = lambda: httpx2.MockTransport(respond)
             post(client, "/projects/open", {"root": root})
             before = len(calls)
+            for preview_id, expected in diagnostic_snapshots.items():
+                check.assertEqual(
+                    expected, post(client, "/projects/connectors/diagnostics", {"root": root, "previewId": preview_id})
+                )
+            invalid = client.post(
+                "/projects/connectors/diagnostics",
+                json={"root": root, "previewId": next(iter(diagnostic_snapshots)), "confirmation": "synthetic"},
+            )
+            check.assertEqual(422, invalid.status_code, invalid.text)
             for value, saved, item, job in retained.values():
                 check.assertEqual(
                     saved, second.state.runtime.connectors._adapters(Path(root), identity).pages.replay(value)
@@ -400,6 +447,7 @@ def run_workload(check, directory, *, count=100, boundaries=True):
         "networkCalls": len(calls),
         "boundariesExercised": boundaries,
         "restartPreserved": True,
+        "diagnosticsPreservedAfterRestart": len(diagnostic_snapshots),
         "cancelledStatePreserved": cancelled is not None,
         "failedExchangeCodes": [page.errors[0].code for _, page, _, _, _ in failed_exchanges],
         "observedConcurrentRequests": state["maximumActive"],

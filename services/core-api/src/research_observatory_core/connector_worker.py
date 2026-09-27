@@ -16,7 +16,9 @@ import httpx2
 from .connector_service import ConnectorConsentService, _fingerprint, _Pending
 from .connectors.broker import ConnectorBroker, ProviderRateController, utc_now
 from .connectors.inspection import (
+    ConnectorDiagnostics,
     ConnectorInspection,
+    ConnectorObservationDiagnostics,
     ConnectorObservationSummary,
     ConnectorRecentRuns,
     ConnectorRunSummary,
@@ -364,6 +366,44 @@ class ConnectorWorkerService:
                 record_offset=record_offset,
                 next_record_offset=record_offset + 1 if record_offset + 1 < count else None,
             )
+
+        return self._action(root, inspect)
+
+    def diagnostics(self, root: str, preview_id: str) -> ConnectorDiagnostics | None:
+        if not is_uuid_v7(preview_id):
+            raise ProviderProblem("invalid-query")
+
+        def inspect(binding: _WorkerBinding) -> ConnectorDiagnostics | None:
+            queue = binding.adapters.queue
+            job = queue.find_idempotency(_fingerprint([ACTIVITY, preview_id]))
+            if job is None:
+                return None
+            inputs = self._stored(binding, queue.authority(job.job_id))
+            if inputs.preview.preview_id != preview_id:
+                raise ProviderProblem("policy-denied")
+            if not inputs.preview.retention.rights.permits("inspect"):
+                raise ProviderProblem("permission-denied")
+            # Same protected historical authority as scholarly inspection; no egress.
+            page = binding.adapters.pages.replay(inputs.preview.request)
+            observation = None
+            if page is not None:
+                observation = ConnectorObservationDiagnostics(
+                    observation_id=page.observation_id,
+                    observed_at=page.observed_at,
+                    outcome=page.outcome,
+                    continuation=page.continuation,
+                    page_index=page.request.cursor.page_index if page.request.cursor else 0,
+                    next_page_index=page.next_cursor.page_index if page.next_cursor else None,
+                    measurements=page.measurements,
+                    response_body_state=page.response.body_state,
+                    response_byte_length=page.response.byte_length,
+                    cache_state=page.cache.state,
+                    cache_age_ms=page.cache.age_ms,
+                    rate=page.rate,
+                    errors=page.errors,
+                    warnings=page.warnings,
+                )
+            return ConnectorDiagnostics(job=self._summary(inputs, job), observation=observation)
 
         return self._action(root, inspect)
 

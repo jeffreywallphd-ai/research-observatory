@@ -80,6 +80,12 @@ pub(crate) fn validate_public_request(path: &str, body: &str) -> bool {
     }
     match path {
         "/projects/connectors/recent" => exact(&value, &["root"]),
+        "/projects/connectors/diagnostics" => {
+            exact(&value, &["root", "previewId"])
+                && value["previewId"]
+                    .as_str()
+                    .is_some_and(crate::supervisor::canonical_uuid_v7)
+        }
         "/projects/connectors/inspect" => {
             exact(&value, &["root", "previewId", "recordOffset"])
                 && value["previewId"]
@@ -545,6 +551,39 @@ mod tests {
         ] {
             assert!(!validate_public_request(route, &fixture.to_string()));
         }
+    }
+
+    #[test]
+    fn source_diagnostics_accepts_only_exact_read_address() {
+        let command = serde_json::json!({"root":"C:/Research/synthetic","previewId":"01900000-0000-7000-8000-000000000001"});
+        assert!(validate_public_request(
+            "/projects/connectors/diagnostics",
+            &command.to_string()
+        ));
+        for key in ["confirmation", "recordOffset", "projectId", "key", "rights"] {
+            let mut changed = command.clone();
+            changed[key] = serde_json::json!("caller-authority");
+            assert!(!validate_public_request(
+                "/projects/connectors/diagnostics",
+                &changed.to_string()
+            ));
+        }
+        for invalid in [
+            serde_json::json!(null),
+            serde_json::json!(true),
+            serde_json::json!("not-a-preview"),
+        ] {
+            let mut changed = command.clone();
+            changed["previewId"] = invalid;
+            assert!(!validate_public_request(
+                "/projects/connectors/diagnostics",
+                &changed.to_string()
+            ));
+        }
+        assert!(!validate_public_request(
+            "/projects/connectors/diagnostics/extra",
+            &command.to_string()
+        ));
     }
 
     #[test]
