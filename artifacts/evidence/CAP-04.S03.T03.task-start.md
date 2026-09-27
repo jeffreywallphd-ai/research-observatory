@@ -98,3 +98,19 @@ consumer denial followed by restart recovery. Preference publication follows its
 new Work head and materially depends on it, preventing a cycle while preserving
 old preference receipts. These observations remain advisory and exploratory until
 the stable committed candidate is independently reviewed.
+
+## Stale commit recovery finding
+
+Read-only review of `13e1038eeb44fdd5b1a074afc065e6f885f12ec2` found that a
+definitively refused stale version commit entered the same unresolved retry state
+as a lost reply. The missed C1/C2 recovery row is: a proved unpublished stale
+command releases its retry lock, retains the researcher's draft, and requires a
+fresh context and preview; an ambiguous conflict still preserves the exact saved
+command. The immediate cause was a generic conflict response with no authoritative
+non-publication distinction. Add actual Core/API and renderer regressions before
+repairing that distinction, including an authentic generic conflict after a saved
+commit. A successful refresh must preserve valid draft choices and explicitly
+invalidate missing source/endpoints rather than silently substitute them.
+The same row includes a Work retired by a concurrent merge: the pre-publication
+refusal must release retry, and the inventory must permit clearing stale selected
+IDs even when those Works no longer appear on the current page.

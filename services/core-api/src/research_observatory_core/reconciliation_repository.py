@@ -2655,6 +2655,26 @@ class SqliteReconciliationRepository:
             self._authorize_assignment(connection, identity, resolve)
         return outcome
 
+    def _unpublished_version_preview(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        command: VersionCommand,
+        actor: ReconciliationActor,
+        resolve: ReconciliationSourceResolver,
+    ) -> VersionPreview:
+        # Call only after replay proves this command has not been published.
+        # Replay/integrity/authorization and publication failures remain ambiguous.
+        try:
+            preview = self._version_preview(connection, aggregates, command.plan, actor, resolve)
+        except ReconciliationProblem as error:
+            if error.code not in {"reconciliation-version-predecessor-changed", "reconciliation-work-retired"}:
+                raise
+            raise ReconciliationProblem("reconciliation-version-not-applied") from None
+        if preview.preview_sha256 != command.expected_preview_sha256:
+            raise ReconciliationProblem("reconciliation-version-not-applied")
+        return preview
+
     def decide_versions(
         self, command: VersionCommand, *, actor: ReconciliationActor, resolve: ReconciliationSourceResolver
     ) -> VersionOutcome:
@@ -2663,9 +2683,7 @@ class SqliteReconciliationRepository:
         prepared, collect = self._source_snapshot(resolve)
         with self._transaction(write=False) as (connection, aggregates):
             if self._version_replay(connection, command, actor, collect) is None:
-                preview = self._version_preview(connection, aggregates, command.plan, actor, collect)
-                if preview.preview_sha256 != command.expected_preview_sha256:
-                    raise ReconciliationProblem("reconciliation-version-preview-stale")
+                self._unpublished_version_preview(connection, aggregates, command, actor, collect)
 
         def resolved(address: SourceAddress) -> SourceAssertion:
             key = _digest(address.model_dump(mode="json"))
@@ -2678,9 +2696,7 @@ class SqliteReconciliationRepository:
             if replay is not None:
                 return replay
             plan = command.plan
-            preview = self._version_preview(connection, aggregates, plan, actor, resolved)
-            if preview.preview_sha256 != command.expected_preview_sha256:
-                raise ReconciliationProblem("reconciliation-version-preview-stale")
+            self._unpublished_version_preview(connection, aggregates, command, actor, resolved)
             context, work_ids, changed_versions = self._version_plan(connection, plan, resolved)
             states = {state.work_id: state for state in context.works if state.work_id in work_ids}
             versions = {version.version_id: version for version in context.versions}

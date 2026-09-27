@@ -25,6 +25,12 @@ const client = createCoreApiClient(async request => {
   if (window.flags.failStatus && request.path.endsWith("batches/status")) throw new Error("Synthetic status failure");
   if (window.flags.failVersionPreview && request.path.endsWith("versions/preview")) throw new Error("Synthetic version preview failure");
   const response = await window.coreExchange(request);
+  if (window.flags.conflictVersionCommit && request.path.endsWith("versions/commit")) {
+    window.flags.conflictVersionCommit = false;
+    const changed = JSON.parse(request.body);
+    changed.command.plan.rationale += " Synthetic conflicting retry.";
+    return await window.coreExchange({ ...request, body: JSON.stringify(changed) });
+  }
   if (window.flags.dropVersionCommit && request.path.endsWith("versions/commit")) {
     window.flags.dropVersionCommit = false; throw new Error("Synthetic lost version reply");
   }

@@ -1,6 +1,7 @@
 """Production React/generated client/Core interactions; browser transport is explicit."""
 
 import functools
+import json
 import shutil
 import subprocess
 import tempfile
@@ -179,6 +180,85 @@ class VersionRendererTests(RendererHarness):
                 ).to_be_focused()
                 self.page.get_by_role("button", name="Close Work versions", exact=True).click()
                 expect(self.page.get_by_role("button", name="Open Work versions", exact=True)).to_be_focused()
+
+    def test_stale_commit_refresh_preserves_draft_and_requires_new_preview(self):
+        self.open_versions()
+        self.page.get_by_label("Version kind", exact=True).select_option("preprint")
+        self.page.get_by_role("checkbox", name="Version source:", exact=False).first.check()
+        self.page.get_by_label("Reported date precision", exact=True).select_option("month")
+        self.page.get_by_label("Reported date (YYYY-MM)", exact=True).fill("2025-02")
+        self.page.get_by_label("Version decision rationale", exact=True).fill("Retain this synthetic draft.")
+        self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+        expect(self.page.get_by_role("heading", name="Version decision preview", exact=True)).to_be_focused()
+        body = json.loads(
+            self.page.evaluate("() => window.requests.find(r => r.path.endsWith('versions/preview')).body")
+        )
+        body["plan"]["rationale"] = "Synthetic competing classification."
+        preview = self.client.post("/projects/reconciliation/versions/preview", json=body)
+        self.assertEqual(200, preview.status_code, preview.text)
+        saved = self.client.post(
+            "/projects/reconciliation/versions/commit",
+            json={
+                "root": self.fixture.root,
+                "command": {
+                    "commandId": preview.json()["commandId"],
+                    "plan": body["plan"],
+                    "expectedPreviewSha256": preview.json()["previewSha256"],
+                },
+            },
+        )
+        self.assertEqual(200, saved.status_code, saved.text)
+        self.page.get_by_role("button", name="Apply version decision", exact=True).click()
+        expect(
+            self.page.get_by_text(
+                "This decision was not applied because its evidence changed. "
+                "Refresh version evidence, then prepare a new preview.",
+                exact=True,
+            )
+        ).to_be_visible()
+        expect(self.page.get_by_role("button", name="Back to Works", exact=True)).to_be_enabled()
+        refresh = self.page.get_by_role("button", name="Refresh version evidence", exact=True)
+        expect(refresh).to_be_focused()
+        expect(self.page.get_by_role("button", name="Preview version decision", exact=True)).to_be_disabled()
+        refresh.click()
+        expect(self.page.get_by_role("heading", name="Review Work versions", exact=True)).to_be_focused()
+        expect(self.page.get_by_label("Version kind", exact=True)).to_have_value("preprint")
+        expect(self.page.get_by_label("Reported date precision", exact=True)).to_have_value("month")
+        expect(self.page.get_by_label("Reported date (YYYY-MM)", exact=True)).to_have_value("2025-02")
+        expect(self.page.get_by_label("Version decision rationale", exact=True)).to_have_value(
+            "Retain this synthetic draft."
+        )
+        expect(self.page.get_by_role("checkbox", name="Version source:", exact=False).first).to_be_checked()
+        self.apply("Retain this synthetic draft.")
+        expect(self.page.get_by_role("table", name="Current Work versions").locator("tbody tr")).to_have_count(2)
+        self.page.get_by_role("button", name="Back to Works", exact=True).click()
+        self.page.get_by_role("button", name="Clear Work selection", exact=True).click()
+        expect(self.page.get_by_role("button", name="Review selected Work versions", exact=True)).to_be_disabled()
+        expect(self.page.get_by_role("checkbox", name="Select Work", exact=False).first).not_to_be_checked()
+
+    def test_ambiguous_conflict_keeps_exact_command_after_actual_publication(self):
+        self.open_versions()
+        self.page.get_by_role("checkbox", name="Version source:", exact=False).first.check()
+        self.page.get_by_label("Version decision rationale", exact=True).fill("Synthetic ambiguous reply.")
+        self.page.get_by_role("button", name="Preview version decision", exact=True).click()
+        expect(self.page.get_by_role("heading", name="Version decision preview", exact=True)).to_be_focused()
+        self.page.evaluate("() => { window.flags.conflictVersionCommit = true; }")
+        self.page.get_by_role("button", name="Apply version decision", exact=True).click()
+        retry = self.page.get_by_role("button", name="Retry same version decision", exact=True)
+        expect(retry).to_be_enabled()
+        expect(self.page.get_by_role("button", name="Back to Works", exact=True)).to_be_disabled()
+        expect(self.page.get_by_role("button", name="Refresh version evidence", exact=True)).to_be_disabled()
+        self.page.keyboard.press("Escape")
+        retry.click()
+        self.page.get_by_role("button", name="Review updated versions", exact=True).click()
+        expect(self.page.get_by_role("table", name="Current Work versions").locator("tbody tr")).to_have_count(1)
+        bodies = self.page.evaluate(
+            "() => window.requests.filter(r => r.path.endsWith('versions/commit')).map(r => r.body)"
+        )
+        self.assertEqual(bodies[-2], bodies[-1])
+        self.assertTrue(
+            any(status == 409 and "RO-CORE-RECONCILIATION-CONFLICT" in text for _, status, text in self.replies)
+        )
 
     def test_version_denial_clears_protected_evidence_and_draft(self):
         self.open_versions()

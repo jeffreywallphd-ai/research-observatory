@@ -80,3 +80,37 @@ class VersionApiTests(unittest.TestCase):
         self.assertEqual(422, self.post("works", after=None, limit=33).status_code)
         self.f.f.projects.close(root=self.f.root, trace_id="a" * 32)
         self.assertNotEqual(200, self.post("context", workIds=[work["workId"]]).status_code)
+
+    def test_stale_unpublished_commit_is_distinct_from_published_command_conflict(self):
+        work = self.ok("works", after=None, limit=1)["items"][0]
+        context = self.ok("context", workIds=[work["workId"]])
+        plan = dict(
+            schemaVersion="1.0",
+            action="register",
+            workIds=[work["workId"]],
+            contextSha256=context["contextSha256"],
+            rationale="Synthetic stale draft.",
+            definition=dict(
+                kind="preprint",
+                assertionRevisionIds=work["assertionRevisionIds"],
+                date=dict(precision="month", value="2025-02"),
+            ),
+            version=None,
+            relation=None,
+            previousPreferenceRevisionId=None,
+        )
+        preview = self.ok("preview", plan=plan)
+        stale = dict(commandId=preview["commandId"], plan=plan, expectedPreviewSha256=preview["previewSha256"])
+        other = dict(plan, rationale="Synthetic competing classification.")
+        preview = self.ok("preview", plan=other)
+        saved = dict(commandId=preview["commandId"], plan=other, expectedPreviewSha256=preview["previewSha256"])
+        outcome = self.ok("commit", command=saved)
+        refused = self.post("commit", command=stale)
+        self.assertEqual(409, refused.status_code)
+        self.assertEqual("RO-CORE-RECONCILIATION-VERSION-NOT-APPLIED", refused.json()["code"])
+        conflict = self.post("commit", command=dict(saved, plan=plan))
+        self.assertEqual(409, conflict.status_code)
+        self.assertEqual("RO-CORE-RECONCILIATION-CONFLICT", conflict.json()["code"])
+        self.assertEqual(outcome, self.ok("commit", command=saved))
+        current = self.ok("context", workIds=[work["workId"]])
+        self.assertEqual(1, len(current["versions"]))

@@ -323,6 +323,15 @@
       "linkedTasks": [
         "CAP-04.S03.T02"
       ]
+    },
+    {
+      "id": "ADR-0033",
+      "path": "docs/adr/ADR-0033-document-work-versions-under-existing-canonical-authority.md",
+      "title": "Document work versions under existing canonical authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-04.S03.T03"
+      ]
     }
   ]
 }

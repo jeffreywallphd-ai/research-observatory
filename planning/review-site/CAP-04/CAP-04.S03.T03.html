@@ -237,9 +237,9 @@ These sources constrain implementation choices but do not replace repository-spe
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T03" data-worksheet-sha256="e6dee9f71b0e20975888e75dafa0b5bf1c0b9d7aee8931f01a1ca65c5903de0b">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S03.T03" data-worksheet-sha256="a9de377818ecbe10308a427896d85877093a9a229aeeab8405323c643a091571">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>e6dee9f71b0e20975888e75dafa0b5bf1c0b9d7aee8931f01a1ca65c5903de0b</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S03.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>a9de377818ecbe10308a427896d85877093a9a229aeeab8405323c643a091571</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S03.T03 — Work versions and sourced status relationships
 
 Claim base: `0738c2543db85af8189bd0948393698b04662de6`, after the approved
@@ -339,7 +339,23 @@ now require explicit reselection after membership history changes and immediate
 consumer denial followed by restart recovery. Preference publication follows its
 new Work head and materially depends on it, preventing a cycle while preserving
 old preference receipts. These observations remain advisory and exploratory until
-the stable committed candidate is independently reviewed.</pre></article>
+the stable committed candidate is independently reviewed.
+
+## Stale commit recovery finding
+
+Read-only review of `13e1038eeb44fdd5b1a074afc065e6f885f12ec2` found that a
+definitively refused stale version commit entered the same unresolved retry state
+as a lost reply. The missed C1/C2 recovery row is: a proved unpublished stale
+command releases its retry lock, retains the researcher&#x27;s draft, and requires a
+fresh context and preview; an ambiguous conflict still preserves the exact saved
+command. The immediate cause was a generic conflict response with no authoritative
+non-publication distinction. Add actual Core/API and renderer regressions before
+repairing that distinction, including an authentic generic conflict after a saved
+commit. A successful refresh must preserve valid draft choices and explicitly
+invalidate missing source/endpoints rather than silently substitute them.
+The same row includes a Work retired by a concurrent merge: the pre-publication
+refusal must release retry, and the inventory must permit clearing stale selected
+IDs even when those Works no longer appear on the current page.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 

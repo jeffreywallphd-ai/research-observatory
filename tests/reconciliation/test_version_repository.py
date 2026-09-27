@@ -117,6 +117,26 @@ class VersionRepositoryTests(unittest.TestCase):
             next(result for result in results if not isinstance(result, ReconciliationProblem)), self.commit(winner)
         )
 
+    def test_retired_work_refusal_proves_no_version_publication(self):
+        assert self.f.a.work_id is not None
+        command = self.command(
+            self.plan(
+                "register",
+                definition=VersionDefinition(
+                    kind="preprint",
+                    assertion_revision_ids=(self.f.b.assertion_revision_id,),
+                    date=VersionDate(precision="not-reported", value=None),
+                ),
+            )
+        )
+        self.f.commit(self.f.command(self.f.merge_plan()))
+        before = self.f.counts()
+        with self.assertRaisesRegex(ReconciliationProblem, "reconciliation-version-not-applied"):
+            self.commit(command)
+        self.assertEqual(before, self.f.counts())
+        self.work_ids = (self.f.a.work_id,)
+        self.assertEqual((), self.context().versions)
+
     def test_all_sourced_notice_kinds_and_version_cycles_preserve_exact_history(self):
         target = self.register(self.f.a.assertion_revision_id, "preprint")
         accepted = self.register(self.f.b.assertion_revision_id, "accepted-manuscript")

@@ -32,10 +32,12 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
   const [preview, setPreview] = useState<{ plan: VersionPlan; value: VersionPreview } | null>(null);
   const [command, setCommand] = useState<VersionCommand | null>(null), [outcome, setOutcome] = useState<VersionOutcome | null>(null);
   const [historical, setHistorical] = useState<WorkVersion | null>(null);
+  const [needsRefresh, setNeedsRefresh] = useState(false);
   const live = useRef(true), generation = useRef(0), pending = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null), previewHeading = useRef<HTMLHeadingElement>(null), resultHeading = useRef<HTMLHeadingElement>(null), historyHeading = useRef<HTMLHeadingElement>(null);
   const reviewButton = useRef<HTMLButtonElement>(null), previewButton = useRef<HTMLButtonElement>(null);
   const inventoryHeading = useRef<HTMLHeadingElement>(null);
+  const refreshButton = useRef<HTMLButtonElement>(null);
   const unresolved = command !== null && outcome === null, disabled = busy || preview !== null || command !== null || outcome !== null;
   const current = (ticket: number): boolean => live.current && generation.current === ticket;
   useEffect(() => { live.current = true; void loadPage([null]); return () => { live.current = false; generation.current += 1; }; }, []);
@@ -44,6 +46,7 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
   useEffect(() => { if (preview) previewHeading.current?.focus(); }, [preview]);
   useEffect(() => { if (outcome) resultHeading.current?.focus(); }, [outcome]);
   useEffect(() => { if (historical) historyHeading.current?.focus(); }, [historical]);
+  useEffect(() => { if (needsRefresh && !busy) refreshButton.current?.focus(); }, [needsRefresh, busy]);
 
   async function perform(operation: (ticket: number) => Promise<void>): Promise<void> {
     if (pending.current) return;
@@ -54,11 +57,16 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
     catch (error) {
       if (current(ticket)) {
         const denied = error instanceof CoreApiClientError && error.problem.status === 403;
+        const notApplied = error instanceof CoreApiClientError && error.problem.status === 409
+          && error.problem.code === "RO-CORE-RECONCILIATION-VERSION-NOT-APPLIED";
         if (denied) {
           setPage(null); setSelected([]); setContext(null); setPreview(null); setCommand(null); setOutcome(null); setHistorical(null);
           setRationale(""); setSources([]); setVersionId(""); setTargetId(""); setEvidenceKey(""); setDateValue(""); onDenied();
+          setNeedsRefresh(false);
         }
+        if (notApplied) { setCommand(null); setPreview(null); setNeedsRefresh(true); }
         setFailure(denied ? "Current project or source access was denied. Check accepted Intent and source rights before reopening evidence."
+          : notApplied ? "This decision was not applied because its evidence changed. Refresh version evidence, then prepare a new preview."
           : "The version reply could not be confirmed. Your draft is retained. Check current evidence before preparing a new decision, or retry the same saved decision if its reply was lost.");
         announce(denied ? "Version evidence access denied." : "Version review needs attention.");
       }
@@ -71,20 +79,37 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
       if (current(ticket)) { setPage(result); setCursors(next); }
     });
   }
-  async function loadContext(ids = selected): Promise<void> {
+  async function loadContext(ids = selected, preserveDraft = false): Promise<void> {
     await perform(async (ticket) => {
       const result = await client.inspectScholarlyVersionContext({ root, workIds: [...ids].sort() });
       if (result.projectId !== projectId) throw new Error("RO-CORE-RESPONSE-INVALID");
       if (current(ticket)) {
         setContext(result); setPreview(null); setCommand(null); setOutcome(null); setHistorical(null);
-        setAction("register"); setKind("not-reported"); setSources([]); setVersionId(""); setTargetId(""); setEvidenceKey("");
-        setPrecision("not-reported"); setDateValue(""); setRationale("");
+        setNeedsRefresh(false);
+        if (preserveDraft) {
+          const members = new Set(result.works.flatMap((work) => work.assertionRevisionIds));
+          const available = new Set(result.versions.map((version) => version.versionId));
+          const anchors = new Set(result.sources.flatMap((source) => (["field", "identifier"] as const).flatMap((category) =>
+            (category === "field" ? source.assertion.fields : source.assertion.identifiers).map((item) => JSON.stringify([source.assertionRevisionId, category, item.sourceSelector])))));
+          const missingSources = sources.some((id) => !members.has(id));
+          const missingVersion = Boolean(versionId && !available.has(versionId)), missingTarget = Boolean(targetId && !available.has(targetId));
+          const missingAnchor = Boolean(evidenceKey && !anchors.has(evidenceKey));
+          if (missingSources) setSources([]);
+          if (missingVersion) setVersionId("");
+          if (missingTarget) setTargetId("");
+          if (missingAnchor) setEvidenceKey("");
+          if (missingSources || missingVersion || missingTarget || missingAnchor) setFailure("Some selected evidence is no longer available in these Works. Review and select the affected sources or versions again; your rationale and classification are retained.");
+        } else {
+          setAction("register"); setKind("not-reported"); setSources([]); setVersionId(""); setTargetId(""); setEvidenceKey("");
+          setPrecision("not-reported"); setDateValue(""); setRationale("");
+        }
         announce("Current versions, preference and source warnings loaded.");
       }
     });
   }
   function backToWorks(): void {
     setContext(null); setHistorical(null); setPreview(null); setCommand(null); setOutcome(null); setFailure(null);
+    setNeedsRefresh(false);
     globalThis.requestAnimationFrame(() => { if (live.current) reviewButton.current?.focus(); });
   }
   function backToDraft(): void {
@@ -109,7 +134,7 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
   const target = context?.versions.find((item) => item.versionId === targetId);
   const anchor = evidence.find((item) => item.key === evidenceKey);
   const validDate = precision === "unknown" || precision === "not-reported" || dateValue.trim().length >= 4;
-  const canPreview = Boolean(context && rationale.trim() && (action === "prefer" || validDate)
+  const canPreview = Boolean(context && !needsRefresh && rationale.trim() && (action === "prefer" || validDate)
     && (!definitionAction || sources.length > 0) && (action === "register" || action === "relate" || chosen)
     && (action !== "prefer" || context.works.length === 1)
     && (action !== "relate" || chosen && target && chosen.versionId !== target.versionId && anchor));
@@ -157,6 +182,7 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
       <h3 ref={inventoryHeading} tabIndex={-1} className="ro-typography ro-typography--card-title">Select canonical Works</h3>
       <p>Review versions independently of duplicate suggestions. Select up to eight Works for a relationship; select one Work to choose its preferred citable version.</p>
       <Button disabled={busy} onClick={onClose}>Close Work versions</Button>
+      <Button disabled={busy || !selected.length} onClick={() => { setSelected([]); setFailure(null); }}>Clear Work selection</Button>
       {page?.items.map((work) => <label key={work.workId} className="ro-cluster ro-wrap-anywhere"><input type="checkbox" checked={selected.includes(work.workId)} disabled={busy || !selected.includes(work.workId) && selected.length >= 8}
         onChange={(event) => { const checked = event.currentTarget.checked; setSelected((saved) => checked ? [...saved, work.workId] : saved.filter((id) => id !== work.workId)); }} />Select Work {work.workId} · {work.assertionRevisionIds.length} source assertion(s)</label>)}
       {page && !page.items.length ? <p>No active Works on this page. Reconcile accepted sources to create canonical Works, or continue to the next page.</p> : null}
@@ -168,7 +194,7 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
       <h3 ref={heading} tabIndex={-1} className="ro-typography ro-typography--card-title">Review Work versions</h3>
       <p>Version classifications, relationships and citable preferences are researcher decisions. Original assertions and competing status evidence stay available. A preference does not remove a warning or grant source rights.</p>
       <div className="ro-action-row"><Button disabled={busy || unresolved} onClick={backToWorks}>Back to Works</Button>
-        <Button disabled={busy || command !== null} onClick={() => void loadContext(context.works.map((work) => work.workId))}>Refresh version evidence</Button></div>
+        <Button ref={refreshButton} disabled={busy || command !== null} onClick={() => void loadContext(context.works.map((work) => work.workId), true)}>Refresh version evidence</Button></div>
       {context.preferenceStates.map((state) => <section key={state.workId} className="ro-stack" aria-label={`Citable preference for Work ${state.workId}`}>
         <p className="ro-wrap-anywhere">Work {state.workId}</p>
         {state.selected ? <><StatusBadge>Preferred citable version · {state.state.replaceAll("-", " ")}</StatusBadge><p>{versionLabel(context, state.selected.versionId)}</p>

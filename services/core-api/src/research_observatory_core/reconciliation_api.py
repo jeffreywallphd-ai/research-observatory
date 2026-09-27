@@ -131,15 +131,24 @@ class ReconciliationCandidateRequest(ReconciliationBatchPrepareRequest):
 
 
 def _problem(request: Request, status: int, code: str) -> CoreProblem:
+    not_applied = code == "RO-CORE-RECONCILIATION-VERSION-NOT-APPLIED"
     return CoreProblem(
         problem_detail(
             status=status,
             code=code,
             title="Scholarly reconciliation is unavailable",
-            detail="The requested local action could not be completed under current project and source authority.",
+            detail=(
+                "The version decision was not applied because its evidence changed."
+                if not_applied
+                else "The requested local action could not be completed under current project and source authority."
+            ),
             trace_id=request.state.trace_id,
             retryable=False,
-            remediation="Inspect current project, Intent and source rights before retrying the same command.",
+            remediation=(
+                "Refresh version evidence and prepare a new preview."
+                if not_applied
+                else "Inspect current project, Intent and source rights before retrying the same command."
+            ),
         )
     )
 
@@ -190,6 +199,8 @@ def register_reconciliation_routes(
         except ProjectLifecycleProblem as error:
             raise project_problem(request, error) from error
         except ReconciliationProblem as error:
+            if error.code == "reconciliation-version-not-applied":
+                raise _problem(request, 409, "RO-CORE-RECONCILIATION-VERSION-NOT-APPLIED") from None
             denied = any(item in error.code for item in ("rights", "authority", "intent", "policy"))
             raise _problem(
                 request,

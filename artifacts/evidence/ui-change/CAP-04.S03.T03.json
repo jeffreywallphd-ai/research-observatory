@@ -28,6 +28,11 @@
       "command": ".venv/Scripts/python.exe -m unittest -v tests.reconciliation.test_native_renderer",
       "result": "passed",
       "scope": "Exploratory actual Windows native supervisor, generated client, production renderer, Core and DPAPI/SQLCipher: version classification, preferred choice, sourced retraction, lost-reply retry, restart, historical read and native authority-injection denial, alongside prior split/merge flow. Fixture uses accepted synthetic import and retained connector records; no live provider claim. Later preview-detail display change is covered by browser tests; fresh native candidate qualification remains required."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s -m unittest -v tests.reconciliation.test_version_api tests.reconciliation.test_renderer.VersionRendererTests",
+      "result": "passed",
+      "scope": "Exploratory nine-case actual Core/browser run includes stale unpublished refusal followed by draft-preserving refresh/new preview and an authentic generic conflict after actual publication followed by exact retry. Existing lost-reply, rights denial, keyboard/themes/history and protected clearing cases passed. Formal proof uses the subsequent fixed committed candidate."
     }
   ]
 }

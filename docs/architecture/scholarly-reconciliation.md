@@ -148,3 +148,11 @@ An unconfirmed save keeps the exact command and blocks Back/Escape until retry
 confirms it. Recoverable failures preserve drafts; rights denial and project
 clearing remove protected state and late replies cannot restore it. These are
 supporting Ingestion Review controls, preserving the current primary workflow.
+
+Version commits distinguish a proved unpublished stale decision from an ambiguous
+reply. Only a stale predecessor/preview found after absence of a saved command and
+before publication returns `RO-CORE-RECONCILIATION-VERSION-NOT-APPLIED`. The
+renderer then retains valid draft input and requires fresh evidence and a new
+preview. Generic conflicts, integrity failures and lost replies retain the exact
+command for retry; they do not establish non-publication. Current authorization
+still applies to every retry.
