@@ -1490,20 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: f19f674235381506366d56fc2952786c78add5a4
+    base_sha: 8bef1782c8e433b326d7cb710a2f771e0e4c6f5b
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-09-27T18:03:09+00:00'
-    pause_reason: CAP-04.S03 cannot yet satisfy its approved impact-and-uncertainty review-order requirement with score-only
-      publication. Clean integrated boundary for the linked CAP-04.S03.T02 correction; no new human approval gate.
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-09-30T11:27:51+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-09-30T11:27:51+00:00'
+      expires_at: '2026-10-01T11:27:51+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -2408,9 +2410,21 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-09-27T04:10:55+00:00'
+    - id: W2.R03
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 8bef1782c8e433b326d7cb710a2f771e0e4c6f5b
+      prior_campaign_sha256: ebbfda4c603a9042325dd24e2e90a4837fb8a6a7c5e985cf2192f74f143b3366
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-09-30T11:27:51+00:00'
   checkpoints: []
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
