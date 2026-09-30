@@ -37,7 +37,14 @@ from .reconciliation.batch import (
     SOURCE_ACTIVITIES,
     BatchInput,
 )
-from .reconciliation.candidate_sets import CandidateExplanation, CandidateMember, CandidateSetContent, content_digest
+from .reconciliation.candidate_sets import (
+    REVIEW_PRIORITY_FINGERPRINT,
+    CandidateExplanation,
+    CandidateMember,
+    CandidateSetContent,
+    content_digest,
+    prioritize_candidates,
+)
 from .reconciliation.candidate_views import CandidatePage
 from .reconciliation.candidates import DEFAULT_CONFIG, FEATURE_VERSION, PreparedRecord, generate_prepared_candidates
 from .reconciliation.contracts import (
@@ -498,6 +505,7 @@ class SqliteReconciliationRepository:
         kind: AggregateKind = "record",
         adjudicated: bool = False,
         payload_configuration: str = "assertion-payload",
+        extra_parameter: tuple[str, str, str] | None = None,
         checkpoint: Callable[[], None] | None = None,
     ) -> AggregateRevision:
         # A propagation run has a fixed graph snapshot. Later outputs must not
@@ -558,6 +566,21 @@ class SqliteReconciliationRepository:
                     None,
                     "scholarly." + name,
                     "1.0.0",
+                    "sha256:" + fingerprint,
+                    "dependency.material.v1",
+                    "1.0.0",
+                ),
+            )
+        if extra_parameter is not None:
+            name, version, fingerprint = extra_parameter
+            dependencies += (
+                MaterialDependency(
+                    new_uuid_v7(),
+                    "parameter-set",
+                    "direct",
+                    None,
+                    "scholarly." + name,
+                    version,
                     "sha256:" + fingerprint,
                     "dependency.material.v1",
                     "1.0.0",
@@ -1123,10 +1146,14 @@ class SqliteReconciliationRepository:
                 raise ReconciliationProblem("duplicate-set-size-limit")
             by_assertion = {item.key: item for item in features}
             members = []
+            memberships: dict[str, tuple[str, ...]] = {}
             source_revisions = set()
             for result in sorted(results, key=lambda item: item.assertion_revision_id):
                 maintain()
                 state = self._authorize_assignment(connection, result.assertion_revision_id, resolved)
+                memberships[result.assertion_revision_id] = (
+                    state.assertion_revision_ids if state is not None else (result.assertion_revision_id,)
+                )
                 feature = by_assertion[result.assertion_revision_id]
                 members.append(
                     CandidateMember(
@@ -1143,6 +1170,7 @@ class SqliteReconciliationRepository:
                     source_revisions.add(state.revision_id)
                     if state.decision_revision_id:
                         source_revisions.add(state.decision_revision_id)
+            pairs = prioritize_candidates(pairs, memberships)
             content = CandidateSetContent(
                 project_id=self._project,
                 request_id=inputs.request_id,
@@ -1163,6 +1191,7 @@ class SqliteReconciliationRepository:
                 label="Scholarly duplicate candidates",
                 kind="workflow",
                 payload_configuration="duplicate-candidate-set",
+                extra_parameter=("review-priority", "1.0.0", REVIEW_PRIORITY_FINGERPRINT),
                 checkpoint=maintain,
             )
             connection.execute(

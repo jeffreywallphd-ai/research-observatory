@@ -12,7 +12,8 @@ from pathlib import Path
 from typing import ClassVar
 
 from playwright.sync_api import expect, sync_playwright
-from research_observatory_core.ingestion.import_drafts import ImportPermission
+from research_observatory_core.domain_contracts import new_uuid_v7
+from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights
 from research_observatory_core.ports.import_previews import PreviewDraftChange
 
 from tests.reconciliation import test_batch_worker as fixtures
@@ -362,6 +363,7 @@ class ReconciliationRendererTests(RendererHarness):
         self.page = self.browser.new_page(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
         self.page.set_default_timeout(5000)
         self.replies: list[tuple[str, int, str]] = []
+        self.candidate_replies: list[dict] = []
         self.page.expose_function("coreExchange", self.exchange)
         self.page.goto(f"http://127.0.0.1:{self.server.server_port}/")
         self.page.evaluate(
@@ -388,6 +390,8 @@ class ReconciliationRendererTests(RendererHarness):
         self.replies.append(
             (request["path"], response.status_code, response.text if response.status_code >= 400 else "success")
         )
+        if request["path"].endswith("/reconciliation/candidates") and response.status_code == 200:
+            self.candidate_replies.append(response.json())
         return {
             "status": response.status_code,
             "contentType": response.headers["content-type"],
@@ -403,6 +407,42 @@ class ReconciliationRendererTests(RendererHarness):
         )
         self.page.get_by_role("button", name="Preview decision and affected objects", exact=True).click()
         expect(self.page.get_by_role("heading", name="Apply this reviewed decision", exact=True)).to_be_focused()
+
+    def test_real_renderer_shows_stored_priority_before_higher_similarity(self):
+        self.page.get_by_role("button", name="Back to candidates", exact=True).click()
+        source = self.fixture.f
+        preview = source.intake(b"title,doi\nSynthetic duplicates,\nSynthetic duplicates,\n")
+        source.service.schedule(self.fixture.root, preview)
+        source.service.run_pending()
+        repository = source.adapters(Path(self.fixture.root), source.project_id).previews
+        actor = source.service.actor("a" * 32)
+        repository.revise_draft(preview, PreviewDraftChange(expected_revision=0, actor=actor))
+        grant = ImportPermission(value="permitted", basis="researcher-confirmed")
+        rights = ImportRights(store=grant, inspect=grant, derive=grant, index=grant)
+        decisions = tuple(
+            item.decision.model_copy(update={"rights": rights})
+            for item in repository.draft_page(preview, revision=1, after=0, limit=100)
+            if item.decision.included
+        )
+        self.assertEqual(2, len(decisions))
+        repository.revise_draft(preview, PreviewDraftChange(expected_revision=1, actor=actor, decisions=decisions))
+        source.service.schedule_commit(self.fixture.root, preview, revision=2, request_id=new_uuid_v7())
+        source.service.run_pending()
+
+        self.page.get_by_role("button", name="Generate duplicate candidates", exact=True).click()
+        table = self.page.get_by_role("table", name="Duplicate candidates — historical comparison, current page")
+        expect(table.locator("tbody tr")).to_have_count(6)
+        actual = self.candidate_replies[-1]["items"]
+        scores = [item["score"] for item in actual]
+        self.assertTrue(any(score < later for index, score in enumerate(scores) for later in scores[index + 1 :]))
+        self.assertEqual(
+            scores,
+            [int(value) for value in table.locator("tbody tr td:nth-child(2)").all_inner_texts()],
+        )
+        self.assertEqual(
+            [f"Compare candidate {index}" for index in range(1, len(actual) + 1)],
+            table.get_by_role("button", name="Compare candidate", exact=False).all_inner_texts(),
+        )
 
     def test_uncertain_decision_survives_back_and_parent_refresh_then_retries_exact_command(self):
         self.prepare_split()

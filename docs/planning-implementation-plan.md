@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4ae40ce46336d65277a0aa46bbaf021fcd2d7ea9577f50e066f46c14074149e5
+source_sha256: c63caef41e625b72affa0f882c8f57a92a67d61053738194788b07e89ddc08be
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2800,6 +2800,39 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-27T03:54:53+00:00`
 
 **Latest notes:** Independent expanded task review approves this exact frozen R01 correction candidate. The reviewer is agent:/root/w2_c02_review, independent of owner codex-w2-implementation, and did not implement or commit the reviewed product or control changes. This review authenticates the actual current_submission, canonical packet/criteria/selection/evidence hashes, exact 210-path base-to-candidate inventory, and the subsequent six-file evidence/submission/generated-view delivery. Read-only task_submission_packet_errors and validate_task_evidence returned no errors. The review covers the 22 admitted product paths and the separately authenticated bounded maintenance/evidence chains, under immutable W2 approval c85a59f3a293f8e3f2eaf6454682c9a14b1efa55, the original CAP-04.S02.T03 contract, approved CAP-04.S02 sections 6, 11 and 12, ADR-0027, and existing reference 1.7 authority. No criterion-bound blocker remains. The measurements are optional operational observations, not scientific identity, performance estimates, new execution permission, or substitutes for required performance qualification. Actual transport dispatches and retries are counted at the dispatch boundary; accumulated exchange elapsed time and invocation-local broker elapsed time are distinct. No-dispatch cache reads have zero attempts and unavailable exchange latency/status. Historical records without measurements remain unavailable rather than receiving invented zeroes. Same-invocation replay retains the original observation and measurements, and the persistence regression checks original serialized bytes, pointer/hash and revision count after reopening. Protected diagnostics resolve only the current project/session's stored preview/job and retained observation, require inspect rights, expose bounded operational fields, and neither dispatch nor create confirmation authority. Exact native path/body admission and strict client envelope/identity/count decoding reject widened or substituted requests. Renderer matching and generation/lifetime guards prevent foreign or late diagnostics from repopulating inspected facts, and unavailable diagnostics preserve scholarly inspection. No new migration, domain identity, security permission, release criterion, approved reference or accepted ADR decision is introduced. This is W2.C02.T01 correction approval and affected integration review only; it is not CAP-04.S02 slice, Wave exit, performance-baseline, release or live-provider approval.
+
+**Currently open findings:** -
+
+### W2.C03.T01 — Implement probabilistic duplicate candidate generation and review
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S03.T02`. **Latest review:** `-`.
+
+**Reproduction:** Independent S03 slice preparation at the unchanged frozen W2 authority found that section11 requires review queues prioritized by expected impact and uncertainty, while generate_prepared_candidates sorts only by similarity score and batch publication persists that sequence unchanged. Retrieval accuracy is independently approved and remains intact; user review ordering is a separate missing behavior. Original T02 status, evidence, adverse findings and R02 approval remain immutable.
+
+**Inherited criteria:**
+
+- Gold duplicate fixtures meet declared precision/recall thresholds; ambiguous clusters require review; merges are reversible and preserve conflicting fields.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py
+- services/core-api/src/research_observatory_core/reconciliation_repository.py
+- tests/reconciliation/test_batch_publication.py
+- tests/reconciliation/test_candidate_inspection.py
+- tests/reconciliation/test_candidate_sets.py
+- tests/reconciliation/test_client_contract.py
+- tests/reconciliation/test_renderer.py
+#### Review history — W2.C03.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

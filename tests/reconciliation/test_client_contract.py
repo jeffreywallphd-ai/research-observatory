@@ -15,6 +15,49 @@ from tests.reconciliation import test_batch_publication as fixtures
 
 
 class ReconciliationClientContractTests(unittest.TestCase):
+    def test_generated_client_preserves_persisted_review_order_and_original_scores(self):
+        fixture = fixtures.BatchPublicationTests(methodName="runTest")
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        output, pairs = fixture.publish_prioritized_batch()
+        page = fixture.f.repository.inspect_candidates(output.revision_id, after=0, limit=25, resolve=fixture.f.resolve)
+        self.assertEqual(pairs, page.items)
+        self.assertTrue(
+            any(earlier.score < later.score for index, earlier in enumerate(pairs) for later in pairs[index + 1 :])
+        )
+        repo = Path(__file__).resolve().parents[2]
+        bundled_node = repo / ".local/toolchains/node-v24.19.0-win-x64/node.exe"
+        node = str(bundled_node) if bundled_node.exists() else shutil.which("node") or "node"
+        script = """
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { createCoreApiClient, decodeCandidatePage } from './packages/contracts/core-api/generated.ts';
+const original = JSON.parse(readFileSync(process.argv[1], 'utf8'));
+assert.deepEqual(JSON.parse(JSON.stringify(decodeCandidatePage(original))), original);
+const client = createCoreApiClient(async () => ({status: 200, contentType: 'application/json',
+  traceId: 'a'.repeat(32), etag: null, body: JSON.stringify(original)}));
+const received = await client.inspectScholarlyDuplicateCandidates({root: 'C:/Research/synthetic',
+  setRevisionId: original.setRevisionId, after: 0, limit: 25});
+assert.deepEqual(received.items.map(item => [item.left, item.right, item.score]),
+  original.items.map(item => [item.left, item.right, item.score]));
+assert.ok(received.items.some((item, index) =>
+  received.items.slice(index + 1).some(later => item.score < later.score)));
+"""
+        with tempfile.TemporaryDirectory(
+            prefix="reconciliation-priority-client-", dir=repo / "artifacts/tmp"
+        ) as directory:
+            path = Path(directory) / "actual-priority-page.json"
+            path.write_text(json.dumps(page.model_dump(mode="json", by_alias=True)), encoding="utf-8")
+            result = subprocess.run(
+                [node, "--input-type=module", "-e", script, str(path)],
+                cwd=repo,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                env={**os.environ, "NODE_NO_WARNINGS": "1"},
+            )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+
     def test_generated_client_checks_actual_candidates_inspection_and_reversible_review(self):
         fixture = fixtures.BatchPublicationTests(methodName="runTest")
         fixture.setUp()

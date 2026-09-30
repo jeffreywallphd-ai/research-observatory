@@ -17,6 +17,7 @@ from research_observatory_core.reconciliation.batch import (
     BatchInput,
     InventorySnapshot,
 )
+from research_observatory_core.reconciliation.candidate_sets import REVIEW_PRIORITY_FINGERPRINT, content_digest
 from research_observatory_core.reconciliation.candidates import generate_prepared_candidates
 from research_observatory_core.reconciliation.contracts import ReconciliationProblem, ScholarlyField
 from research_observatory_core.reconciliation.exact import IdentifierAssertion
@@ -87,6 +88,175 @@ class BatchPublicationTests(unittest.TestCase):
         self.assertEqual(output, self.publish())
         self.assertEqual(before, self.f.counts())
         self.assertEqual(content, self.f.repository.candidate_set(output.revision_id, resolve=self.f.resolve))
+
+    def test_new_candidate_set_binds_review_priority_as_atomic_material_configuration(self):
+        output = self.publish()
+        with open_canonical_database(self.f.database, expected_project_id=self.f.project) as db:
+            rows = db.execute(
+                "SELECT dependency_kind,relation_type,configuration_version,fingerprint FROM material_dependencies "
+                "WHERE project_id=? AND output_revision_id=? AND configuration_id='scholarly.review-priority'",
+                (self.f.project, output.revision_id),
+            ).fetchall()
+        self.assertEqual(
+            [("parameter-set", "direct", "1.0.0", "sha256:" + REVIEW_PRIORITY_FINGERPRINT)],
+            [tuple(row) for row in rows],
+        )
+
+    def test_legacy_publication_without_priority_marker_replays_original_accepted_output(self):
+        # Reproduce the pre-correction publication shape through the real queue,
+        # aggregate and candidate tables, then read/retry it with current code.
+        append = SqliteReconciliationRepository._append
+
+        def legacy_append(repository, *args, **kwargs):
+            if kwargs.get("payload_configuration") == "duplicate-candidate-set":
+                kwargs.pop("extra_parameter")
+            return append(repository, *args, **kwargs)
+
+        with (
+            patch(
+                "research_observatory_core.reconciliation_repository.prioritize_candidates",
+                side_effect=lambda pairs, _: pairs,
+            ),
+            patch.object(SqliteReconciliationRepository, "_append", legacy_append),
+        ):
+            output = self.publish()
+        original_content = self.f.repository.candidate_set(output.revision_id, resolve=self.f.resolve)
+        original_page = self.f.repository.inspect_candidates(
+            output.revision_id, after=0, limit=1, resolve=self.f.resolve
+        )
+        with open_canonical_database(self.f.database, expected_project_id=self.f.project) as db:
+            self.assertEqual(
+                0,
+                db.execute(
+                    "SELECT COUNT(*) FROM material_dependencies "
+                    "WHERE project_id=? AND output_revision_id=? AND configuration_id='scholarly.review-priority'",
+                    (self.f.project, output.revision_id),
+                ).fetchone()[0],
+            )
+        counts = self.f.counts()
+        self.f.repository = SqliteReconciliationRepository(self.f.database, self.f.project)
+        self.assertEqual(output, self.publish())
+        self.assertEqual(counts, self.f.counts())
+        self.assertEqual(original_content, self.f.repository.candidate_set(output.revision_id, resolve=self.f.resolve))
+        self.assertEqual(
+            original_page,
+            self.f.repository.inspect_candidates(output.revision_id, after=0, limit=1, resolve=self.f.resolve),
+        )
+
+    def publish_prioritized_batch(self):
+        # Establish one Work with two real source assertions. The next batch
+        # requests only its first source, so the second must still affect priority.
+        for address in self.addresses:
+            source = self.f.resolved[address.revision_id]
+            self.f.resolved[address.revision_id] = source.model_copy(
+                update={
+                    "fields": (
+                        ScholarlyField(
+                            name="title",
+                            observed="Synthetic marine cells study",
+                            origin="observed",
+                            source_selector="title",
+                        ),
+                    )
+                }
+            )
+        first = self.publish()
+        original_set = self.f.repository.candidate_set(first.revision_id, resolve=self.f.resolve)
+        self.assertEqual(2, len(original_set.members))
+        original_second_assertion = original_set.members[1].assertion_revision_id
+
+        new_addresses = tuple(self.f.another_source() for _ in range(2))
+        for address in new_addresses:
+            source = self.f.resolved[address.revision_id]
+            self.f.resolved[address.revision_id] = source.model_copy(
+                update={
+                    "identifiers": (),
+                    "fields": (
+                        ScholarlyField(
+                            name="title",
+                            observed="Synthetic marine cell study",
+                            origin="observed",
+                            source_selector="title",
+                        ),
+                    ),
+                }
+            )
+        self.addresses = (self.addresses[0], *new_addresses)
+        self.inputs = self.inputs.model_copy(
+            update={
+                "request_id": new_uuid_v7(),
+                "inventory": InventorySnapshot.from_queue(
+                    self.queue.accepted_snapshot(activity_types=SOURCE_ACTIVITIES)
+                ),
+            }
+        )
+        actor = WorkflowActor(self.f.actor.actor_id, "human", "researcher")
+        self.job = self.queue.enqueue(
+            build_batch_job(self.inputs, actor=actor, now=self.f.actor.occurred_at), actor=actor
+        )
+        self.claim = self.queue.claim_next(
+            worker_id=new_uuid_v7(),
+            concurrency_classes=("document",),
+            now=self.f.actor.occurred_at,
+            lease_duration_ms=30000,
+            activity_types=(BATCH_ACTIVITY,),
+        )
+        self.queue.start(self.claim, now=self.f.actor.occurred_at)
+
+        output = self.publish()
+        content = self.f.repository.candidate_set(output.revision_id, resolve=self.f.resolve)
+        pairs = self.f.repository.candidate_pairs(output.revision_id, after=0, limit=100, resolve=self.f.resolve)
+        self.assertEqual(3, len(content.members))
+        self.assertEqual(3, len(pairs))
+        first_work = original_set.members[0].canonical_work
+        assert first_work is not None
+        context = self.f.repository.review_context((first_work.work_id,), resolve=self.f.resolve)
+        self.assertEqual(2, len(context.works[0].assertion_revision_ids))
+        self.assertEqual(
+            1,
+            sum(
+                member.canonical_work is not None and member.canonical_work.work_id == first_work.work_id
+                for member in content.members
+            ),
+        )
+        self.assertNotIn(original_second_assertion, {member.assertion_revision_id for member in content.members})
+        other_assertions = {
+            member.assertion_revision_id
+            for member in content.members
+            if member.canonical_work is None or member.canonical_work.work_id != first_work.work_id
+        }
+        self.assertEqual(2, len(other_assertions))
+        within_other = next(pair for pair in pairs if {pair.left, pair.right} == other_assertions)
+        self.assertTrue(any(pair.score < within_other.score for pair in pairs[: pairs.index(within_other)]))
+        self.assertEqual(
+            tuple(content.pair_sha256),
+            tuple(content_digest(pair) for pair in pairs),
+        )
+        pages = list(pairs[:0])
+        after = 0
+        while True:
+            page = self.f.repository.inspect_candidates(
+                output.revision_id, after=after, limit=1, resolve=self.f.resolve
+            )
+            pages.extend(page.items)
+            if page.next_after is None:
+                break
+            after = page.next_after
+        self.assertEqual(pairs, tuple(pages))
+        counts = self.f.counts()
+        self.f.repository = SqliteReconciliationRepository(self.f.database, self.f.project)
+        self.assertEqual(output, self.publish())
+        self.assertEqual(counts, self.f.counts())
+        self.assertEqual(
+            pairs, self.f.repository.candidate_pairs(output.revision_id, after=0, limit=100, resolve=self.f.resolve)
+        )
+        self.assertEqual(
+            pairs[1:2], self.f.repository.candidate_pairs(output.revision_id, after=1, limit=1, resolve=self.f.resolve)
+        )
+        return output, pairs
+
+    def test_priority_uses_complete_sealed_work_membership_and_preserves_exact_replay(self):
+        self.publish_prioritized_batch()
 
     def test_storage_checks_reject_untyped_feature_set_and_explanation_documents(self):
         self.publish()
@@ -233,6 +403,15 @@ class BatchPublicationTests(unittest.TestCase):
                 self.publish()
             self.assertEqual(before, self.f.counts())
             self.assertEqual("running", self.queue.get(self.job.job_id).state)
+            with open_canonical_database(self.f.database, expected_project_id=self.f.project) as db:
+                self.assertEqual(
+                    0,
+                    db.execute(
+                        "SELECT COUNT(*) FROM material_dependencies "
+                        "WHERE project_id=? AND configuration_id='scholarly.review-priority'",
+                        (self.f.project,),
+                    ).fetchone()[0],
+                )
         polls = 0
 
         def interrupted():
@@ -286,6 +465,8 @@ class BatchPublicationTests(unittest.TestCase):
         )
         with self.assertRaises(ReconciliationProblem):
             self.f.repository.candidate_pairs(output.revision_id, after=0, limit=100, resolve=self.f.resolve)
+        with self.assertRaises(ReconciliationProblem):
+            self.f.repository.inspect_candidates(output.revision_id, after=0, limit=1, resolve=self.f.resolve)
         with self.assertRaises(ReconciliationProblem):
             self.publish()
 

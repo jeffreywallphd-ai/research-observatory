@@ -3,6 +3,7 @@
 import hashlib
 import json
 from bisect import bisect_left
+from collections.abc import Mapping
 from dataclasses import asdict
 from typing import Annotated, Literal, Self
 
@@ -15,6 +16,23 @@ from .identifiers import NORMALIZER_VERSION
 
 type Score = Annotated[int, Field(strict=True, ge=0, le=10000)]
 type CandidateFlag = Literal["competing-source-fields", "year-disagreement", "conflicting-identifiers"]
+
+REVIEW_PRIORITY_VERSION = "scholarly-review-priority/1.0.0"
+REVIEW_PRIORITY_FINGERPRINT = hashlib.sha256(
+    json.dumps(
+        {
+            "version": REVIEW_PRIORITY_VERSION,
+            "order": [
+                "descending-complete-work-assertion-union",
+                "descending-disputed-feature-count",
+                "descending-not-reported-feature-count",
+                "original-retrieval-order",
+            ],
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode()
+).hexdigest()
 
 
 def content_digest(value: DraftValue) -> str:
@@ -96,6 +114,27 @@ class CandidateExplanation(DraftValue):
     @classmethod
     def from_kernel(cls, value: CandidatePair) -> Self:
         return cls.model_validate(asdict(value))
+
+
+def prioritize_candidates(
+    pairs: tuple[CandidateExplanation, ...], memberships: Mapping[str, tuple[str, ...]]
+) -> tuple[CandidateExplanation, ...]:
+    """Order a new review set once; scores and explanations remain retrieval evidence."""
+    for key, members in memberships.items():
+        if not members or key not in members or len(members) > 256 or members != tuple(sorted(set(members))):
+            raise ValueError("duplicate-review-membership-invalid")
+
+    def priority(indexed: tuple[int, CandidateExplanation]) -> tuple[int, int, int, int]:
+        index, pair = indexed
+        try:
+            impact = len(set(memberships[pair.left]) | set(memberships[pair.right]))
+        except KeyError as error:
+            raise ValueError("duplicate-review-membership-missing") from error
+        disputed = sum(feature.state == "disputed" for feature in pair.features)
+        missing = sum(feature.state == "not-reported" for feature in pair.features)
+        return -impact, -disputed, -missing, index
+
+    return tuple(pair for _, pair in sorted(enumerate(pairs), key=priority))
 
 
 class CandidateMember(DraftValue):
