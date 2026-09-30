@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8ebfcd50e9cedb70cf3d43d3099587946d8aacd2f1b1bc7e18592cb9761312aa
+source_sha256: b71be7ab29b1dd2a3b95d8ae2f8acdbde679024874a9a08692ee51cb9719704a
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2992,7 +2992,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C06.T01 — Create import preview, mapping, and conflict UI
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `approved`.
 
 **Reproduction:** The exact W2 S01-S03 checkpoint candidate c7108dc4eb8107c2d0ee1a01441a7ff1fcac6a59 fails desktop:application when pinned Rust 1.96.1 cargo clippy --workspace --all-targets --locked -- -D warnings reports an unused NativeImportAction::Status variant in apps/desktop/src-tauri/src/supervisor.rs. The failed checkpoint report is artifacts/tmp/W2.S01-S03.checkpoint-union-03.json (SHA-256 70b6baf3342e88a215df0f05741e26023cb31ceedda2bbfe6ed783b0f0f1a590). The original approved CAP-04.S01.T02 task, evidence, review and frozen W2 scope remain unchanged.
 
@@ -3007,13 +3007,43 @@ Original tasks and approvals remain unchanged.
 - apps/desktop/src-tauri/src/supervisor.rs
 #### Review history — W2.C06.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `e27a7ca495962f8016fc59f57881efde3bce77be447d49cd1bd0d5e5980f2013`
+
+- Candidate / base / branch: `1118bcbd41afc7bd8ffad307395c8b9e19986d11` / `033db72380903964a307bf47fb565deb7a3ddec3` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-30T22:42:43+00:00`
+- Evidence: `artifacts/evidence/W2.C06.T01.json` / `cff9e6d278bdc96b56befbc9301f913fa76d6a73dc514a2df28a8fd2c91e7249` / `1118bcbd41afc7bd8ffad307395c8b9e19986d11`
+- Acceptance-criteria SHA-256: `15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770`
+- Verification-selection SHA-256: `4c5560473216315a18d46a7f109150e7b4f4c8aeb9c9910e741ff58645b5b5a3`
+- Changed paths: `apps/desktop/src-tauri/src/supervisor.rs`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`
+- Selected checks: `cargo test -p research-observatory-desktop --lib native_import_private_routes_are_not_renderer_bridge_capabilities --locked`, `cargo fmt --all -- --check`, `cargo build -p research-observatory-desktop --lib --locked`, `python tools/taskctl.py --file planning/backlog.yaml validate`, `python tools/backlog_views.py --repo . --check`
+- Deferred checks: `The strict all-target Clippy run at this candidate exits 101 with seven remaining S02/S03 warnings; raw log artifacts/tmp/W2.C06.T01.candidate-clippy-01.log SHA-256 75450bcffdd9a532e87041adafb69443c3b52f7658a7900a6db2c8523fe5f340. The desktop:application plan exits 1 after its passing frontend/format stages and the same Clippy barrier; raw report artifacts/tmp/W2.C06.T01.candidate-desktop-01.json SHA-256 b9c11bfb22bf217ba23df3d625eccad7553fd565e6a689988871b711d42401e5. W2.C07.T01 and W2.C08.T01 own these residuals; no PASS is claimed for either full command.`, `Fresh integrated S01-S03 checkpoint evidence and full affected/repository/platform qualification are required after all three linked native corrections and at W2 exit. Historical CAP-04.S01.T02 evidence supports only unchanged original behavior at its own candidate.`
+- Selection rationale: One private native supervisor enum variant was used only by a denial test. Run that test, production Rust build, format, strict all-target Clippy and the desktop application plan, plus backlog/view checks, on the fixed clean commit. The strict checks still fail solely on seven already inventoried S02/S03 diagnostics; this correction removes the S01 diagnostic without suppressing the check or changing public route admission.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_c06_reviewer / `2026-09-30T22:49:00+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C06.T01.review-R01.json` / `cca44c5fa27dfd4363829bd72debd1fa6b78fee59e329cbf219c8b1de93ae6e3`
+
+**Review notes:** Independent review authenticates the frozen R01 packet, exact candidate, committed correction spec, original CAP-04.S01.T02 DONE snapshot, five passing check logs and two reused original evidence files. Read-only packet, evidence, review-control and backlog validation returned no errors. The only implementation change removes the unused private Status action/path arm and replaces its enum-based test with an explicit literal /native/imports/status renderer-denial assertion; the Core status route and other native actions remain intact. Focused private-route test, cargo format, Rust library build, taskctl validation and generated-view check pass. Strict all-target Clippy still exits 101 on seven separate S02/S03 lints, and desktop:application exits 1 at that barrier; both adverse reports are retained and neither is a pass. This approval closes only the S01 diagnostic and affected integration, not the S01-S03 checkpoint, full desktop qualification or W2 release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w2_c06_reviewer at `2026-09-30T22:49:00+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independent review authenticates the frozen R01 packet, exact candidate, committed correction spec, original CAP-04.S01.T02 DONE snapshot, five passing check logs and two reused original evidence files. Read-only packet, evidence, review-control and backlog validation returned no errors. The only implementation change removes the unused private Status action/path arm and replaces its enum-based test with an explicit literal /native/imports/status renderer-denial assertion; the Core status route and other native actions remain intact. Focused private-route test, cargo format, Rust library build, taskctl validation and generated-view check pass. Strict all-target Clippy still exits 101 on seven separate S02/S03 lints, and desktop:application exits 1 at that barrier; both adverse reports are retained and neither is a pass. This approval closes only the S01 diagnostic and affected integration, not the S01-S03 checkpoint, full desktop qualification or W2 release.
 
 **Currently open findings:** -
 

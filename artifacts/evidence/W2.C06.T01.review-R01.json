@@ -1,0 +1,38 @@
+{
+  "task_id": "W2.C06.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+  "base_commit": "033db72380903964a307bf47fb565deb7a3ddec3",
+  "reviewer": "agent:/root/w2_c06_reviewer",
+  "result": "approved",
+  "evidence_sha256": "cff9e6d278bdc96b56befbc9301f913fa76d6a73dc514a2df28a8fd2c91e7249",
+  "packet_sha256": "e27a7ca495962f8016fc59f57881efde3bce77be447d49cd1bd0d5e5980f2013",
+  "acceptance_criteria_sha256": "15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770",
+  "selection_sha256": "4c5560473216315a18d46a7f109150e7b4f4c8aeb9c9910e741ff58645b5b5a3",
+  "notes": "Independent review authenticates the frozen R01 packet, exact candidate, committed correction spec, original CAP-04.S01.T02 DONE snapshot, five passing check logs and two reused original evidence files. Read-only packet, evidence, review-control and backlog validation returned no errors. The only implementation change removes the unused private Status action/path arm and replaces its enum-based test with an explicit literal /native/imports/status renderer-denial assertion; the Core status route and other native actions remain intact. Focused private-route test, cargo format, Rust library build, taskctl validation and generated-view check pass. Strict all-target Clippy still exits 101 on seven separate S02/S03 lints, and desktop:application exits 1 at that barrier; both adverse reports are retained and neither is a pass. This approval closes only the S01 diagnostic and affected integration, not the S01-S03 checkpoint, full desktop qualification or W2 release.",
+  "corrective_integration": {
+    "evidence_sha256": "cff9e6d278bdc96b56befbc9301f913fa76d6a73dc514a2df28a8fd2c91e7249",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Spec at 033db72380903964a307bf47fb565deb7a3ddec3 authenticates to SHA-256 72fac36b20c68dc486e7d66aa49fcbe34ae6bbf960fcff6a8904068ad43f068b. Original CAP-04.S01.T02 DONE snapshot remains SHA-256 4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a with unchanged original evidence/review digests f07ab09ac1c5cbd96bedfe1ddaed73e9ed53a1f8b0bf73604508675cf3aa7444 and 517ce9160ca35413a5f0296ff36d860ec007cbc8051d1baf0143de6332ba691c. Base-to-candidate diff is the one admitted supervisor file plus five taskctl/generated tracking paths. Native denial test and production Rust library build pass. Fresh strict Clippy output has seven residual errors in connector configuration, reconciliation admission and an unrelated egress-policy block in supervisor, with no unused Status diagnostic. The residual Clippy/desktop failures are disclosed, not counted as passing checks."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Approved preview, mapping, exclusion, report and cancellation behavior is unchanged; the removed Status enum arm had no production caller. A new literal-path assertion preserves public renderer denial of /native/imports/status. Original task evidence remains historical proof at its own candidate."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "At the exact candidate, the private-route test executes one pass with zero failures and Rust library builds. Strict Clippy shows the S01 unused-variant warning gone; its seven unrelated S02/S03 warnings remain open, so desktop:application is not qualified."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Correction stays within the committed one-file spec plus generated claim/tracking views. No Core status route, schema, migration, credential, rights, audit, approved UI reference or frozen Wave authority changed. Cargo format, backlog and generated-view checks pass; broader checkpoint and Wave checks remain pending."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}

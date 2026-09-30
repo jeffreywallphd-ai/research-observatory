@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C06.T01",
+  "baseCommit": "033db72380903964a307bf47fb565deb7a3ddec3",
+  "commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The approved CAP-04.S01.T02 import preview, mapping, exclusion, error-report and cancellation behavior is unchanged. This correction removes only an unused private supervisor enum variant and retains an explicit renderer-bridge denial assertion for the Core /native/imports/status route.",
+        "The focused committed-candidate native test passes the private-route denial, and the production desktop Rust library builds. The original independently approved task evidence remains historical proof for the unchanged import workflow; this correction does not requalify that workflow or claim the S01-S03 checkpoint."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact committed candidate passes supervisor::tests::native_import_private_routes_are_not_renderer_bridge_capabilities: one executed test, 153 filtered out, zero failures. The test still checks each active private import action plus the literal status route against public renderer admission.",
+        "Strict all-target Clippy and desktop:application were run and remain adverse with seven warnings from CAP-04.S02.T03 and CAP-04.S03.T03; the original unused NativeImportAction::Status diagnostic is absent. Their raw outputs are retained for W2.C07.T01 and W2.C08.T01, and neither check is called a pass here."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The only product/test path changed is the correction-spec-admitted supervisor.rs; all other base-to-candidate paths are the taskctl claim and generated planning views. No Core route, schema, migration, fixture, contract, credential, rights, audit, governed experience reference or approved Wave decision changed.",
+        "Fresh cargo format, Rust library build, backlog validation and generated-view check pass at the clean committed candidate. The seven remaining native lints and broader S01-S03 checkpoint and W2 exit qualification are explicitly open."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "One private native supervisor enum variant was used only by a denial test. Run that test, production Rust build, format, strict all-target Clippy and the desktop application plan, plus backlog/view checks, on the fixed clean commit. The strict checks still fail solely on seven already inventoried S02/S03 diagnostics; this correction removes the S01 diagnostic without suppressing the check or changing public route admission.",
+    "deferred": [
+      "The strict all-target Clippy run at this candidate exits 101 with seven remaining S02/S03 warnings; raw log artifacts/tmp/W2.C06.T01.candidate-clippy-01.log SHA-256 75450bcffdd9a532e87041adafb69443c3b52f7658a7900a6db2c8523fe5f340. The desktop:application plan exits 1 after its passing frontend/format stages and the same Clippy barrier; raw report artifacts/tmp/W2.C06.T01.candidate-desktop-01.json SHA-256 b9c11bfb22bf217ba23df3d625eccad7553fd565e6a689988871b711d42401e5. W2.C07.T01 and W2.C08.T01 own these residuals; no PASS is claimed for either full command.",
+      "Fresh integrated S01-S03 checkpoint evidence and full affected/repository/platform qualification are required after all three linked native corrections and at W2 exit. Historical CAP-04.S01.T02 evidence supports only unchanged original behavior at its own candidate."
+    ]
+  },
+  "checks": [
+    {
+      "id": "native-private-route",
+      "command": "cargo test -p research-observatory-desktop --lib native_import_private_routes_are_not_renderer_bridge_capabilities --locked",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C06.T01.candidate-private-route-01.log",
+      "rawOutputSha256": "c99bcaf4d1d519436e139ea62aff99b739069d9bbe0937dab00a8363ee85b05d",
+      "commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "One private-route admission test passes, including explicit /native/imports/status denial."
+    },
+    {
+      "id": "rust-format",
+      "command": "cargo fmt --all -- --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C06.T01.candidate-fmt-01.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Workspace Rust formatting passes."
+    },
+    {
+      "id": "native-library-build",
+      "command": "cargo build -p research-observatory-desktop --lib --locked",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C06.T01.candidate-build-01.log",
+      "rawOutputSha256": "8170a7b6f9e40057a9d51c393ef0f400016ecf1635f7eb3084e986293f3d084f",
+      "commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Production desktop Rust library builds."
+    },
+    {
+      "id": "taskctl",
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C06.T01.candidate-taskctl-01.log",
+      "rawOutputSha256": "e4af30b17d80fc8c59d223446652c04365d45956249cc8e6dc4778ec8c411a8a",
+      "commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Canonical backlog validates with W2.C06.T01 IN_PROGRESS."
+    },
+    {
+      "id": "backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C06.T01.candidate-views-01.log",
+      "rawOutputSha256": "0cfb1254748d4c63a89dee38351ecf639cec4e272a8688c38c365f42ef06316f",
+      "commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Generated backlog views match the claimed ledger."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "cargo test -p research-observatory-desktop --lib native_import_private_routes_are_not_renderer_bridge_capabilities --locked",
+      "cargo fmt --all -- --check",
+      "cargo build -p research-observatory-desktop --lib --locked",
+      "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "python tools/backlog_views.py --repo . --check"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S01.T02.json",
+        "sha256": "f07ab09ac1c5cbd96bedfe1ddaed73e9ed53a1f8b0bf73604508675cf3aa7444",
+        "commit": "552eae1c03bf3d63c44620981a49e8c344de86f1"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S01.T02.review-R01.json",
+        "sha256": "517ce9160ca35413a5f0296ff36d860ec007cbc8051d1baf0143de6332ba691c",
+        "commit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a"
+      }
+    ],
+    "rationale": "Restore a strict native quality gate while preserving the original import behavior and renderer/Core authority boundary. Fresh targeted native execution proves status-route denial and production Rust compilation; the seven separate S02/S03 diagnostics remain visible and are assigned to sequential linked corrections before the checkpoint is retried."
+  },
+  "scopeDeviation": "None. One admitted native source/test file plus taskctl-generated claim and tracking views."
+}

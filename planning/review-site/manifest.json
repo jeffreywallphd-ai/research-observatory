@@ -2050,7 +2050,7 @@
         {
           "task_id": "W2.C06.T01",
           "title": "Create import preview, mapping, and conflict UI",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2079,17 +2079,105 @@
           "task_review": {
             "task_id": "W2.C06.T01",
             "title": "Create import preview, mapping, and conflict UI",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/w2_c06_reviewer",
+              "result": "approved",
+              "reviewed_at": "2026-09-30T22:49:00+00:00",
+              "notes": "Independent review authenticates the frozen R01 packet, exact candidate, committed correction spec, original CAP-04.S01.T02 DONE snapshot, five passing check logs and two reused original evidence files. Read-only packet, evidence, review-control and backlog validation returned no errors. The only implementation change removes the unused private Status action/path arm and replaces its enum-based test with an explicit literal /native/imports/status renderer-denial assertion; the Core status route and other native actions remain intact. Focused private-route test, cargo format, Rust library build, taskctl validation and generated-view check pass. Strict all-target Clippy still exits 101 on seven separate S02/S03 lints, and desktop:application exits 1 at that barrier; both adverse reports are retained and neither is a pass. This approval closes only the S01 diagnostic and affected integration, not the S01-S03 checkpoint, full desktop qualification or W2 release."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-09-30T22:42:43+00:00",
+                    "candidate_commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+                    "base_commit": "033db72380903964a307bf47fb565deb7a3ddec3",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C06.T01.json",
+                      "sha256": "cff9e6d278bdc96b56befbc9301f913fa76d6a73dc514a2df28a8fd2c91e7249",
+                      "commit": "1118bcbd41afc7bd8ffad307395c8b9e19986d11",
+                      "recorded_at": "2026-09-30T22:42:43+00:00"
+                    },
+                    "acceptance_criteria_sha256": "15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770",
+                    "changed_paths": [
+                      "apps/desktop/src-tauri/src/supervisor.rs",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md"
+                    ],
+                    "selected_checks": [
+                      "cargo test -p research-observatory-desktop --lib native_import_private_routes_are_not_renderer_bridge_capabilities --locked",
+                      "cargo fmt --all -- --check",
+                      "cargo build -p research-observatory-desktop --lib --locked",
+                      "python tools/taskctl.py --file planning/backlog.yaml validate",
+                      "python tools/backlog_views.py --repo . --check"
+                    ],
+                    "deferred_checks": [
+                      "The strict all-target Clippy run at this candidate exits 101 with seven remaining S02/S03 warnings; raw log artifacts/tmp/W2.C06.T01.candidate-clippy-01.log SHA-256 75450bcffdd9a532e87041adafb69443c3b52f7658a7900a6db2c8523fe5f340. The desktop:application plan exits 1 after its passing frontend/format stages and the same Clippy barrier; raw report artifacts/tmp/W2.C06.T01.candidate-desktop-01.json SHA-256 b9c11bfb22bf217ba23df3d625eccad7553fd565e6a689988871b711d42401e5. W2.C07.T01 and W2.C08.T01 own these residuals; no PASS is claimed for either full command.",
+                      "Fresh integrated S01-S03 checkpoint evidence and full affected/repository/platform qualification are required after all three linked native corrections and at W2 exit. Historical CAP-04.S01.T02 evidence supports only unchanged original behavior at its own candidate."
+                    ],
+                    "selection_rationale": "One private native supervisor enum variant was used only by a denial test. Run that test, production Rust build, format, strict all-target Clippy and the desktop application plan, plus backlog/view checks, on the fixed clean commit. The strict checks still fail solely on seven already inventoried S02/S03 diagnostics; this correction removes the S01 diagnostic without suppressing the check or changing public route admission.",
+                    "selection_sha256": "4c5560473216315a18d46a7f109150e7b4f4c8aeb9c9910e741ff58645b5b5a3",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "packet_sha256": "e27a7ca495962f8016fc59f57881efde3bce77be447d49cd1bd0d5e5980f2013"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/w2_c06_reviewer",
+                    "result": "approved",
+                    "reviewed_at": "2026-09-30T22:49:00+00:00",
+                    "notes": "Independent review authenticates the frozen R01 packet, exact candidate, committed correction spec, original CAP-04.S01.T02 DONE snapshot, five passing check logs and two reused original evidence files. Read-only packet, evidence, review-control and backlog validation returned no errors. The only implementation change removes the unused private Status action/path arm and replaces its enum-based test with an explicit literal /native/imports/status renderer-denial assertion; the Core status route and other native actions remain intact. Focused private-route test, cargo format, Rust library build, taskctl validation and generated-view check pass. Strict all-target Clippy still exits 101 on seven separate S02/S03 lints, and desktop:application exits 1 at that barrier; both adverse reports are retained and neither is a pass. This approval closes only the S01 diagnostic and affected integration, not the S01-S03 checkpoint, full desktop qualification or W2 release."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C06.T01.review-R01.json",
+                    "sha256": "cca44c5fa27dfd4363829bd72debd1fa6b78fee59e329cbf219c8b1de93ae6e3"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C06.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-09-30T22:42:43+00:00",
+                    "reviewed_at": "2026-09-30T22:49:00+00:00",
+                    "duration_seconds": 377,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }
