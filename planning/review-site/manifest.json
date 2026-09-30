@@ -2181,6 +2181,54 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C07.T01",
+          "title": "Implement Unpaywall and Semantic Scholar adapters",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S02.T03",
+            "origin_commit": "035f11a3546658ed9c694acbae1c1a3ac4907724",
+            "paused_state_sha256": "ad34bd58685d332974e4b528f3e0748f1c8ae84e766799053fdb5a5390b26982",
+            "origin_sha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028",
+            "origin_contract_sha256": "a11832ad4e39fb547c2712fd83a70cf2908187548368998f317006d993993e6e",
+            "origin_history_sha256": "18171ad3c36da6087fc305544ff41a80dd5456f1736b6de5191c5c798c00f581",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C07.T01.spec.json",
+              "sha256": "0853cab229846eea0c107326a2c77a19c09b40e4846bccc2f130ed6be4a31b40",
+              "commit": "94c27270d19ce2b14cd25dd7085b404149be4096"
+            },
+            "reproduction": "After the independently reviewed W2.C06.T01 repair, the exact committed-candidate strict Clippy log artifacts/tmp/W2.C06.T01.candidate-clippy-01.log (raw SHA-256 75450bcffdd9a532e87041adafb69443c3b52f7658a7900a6db2c8523fe5f340) retains seven compile-as-error warnings. Three originate in completed CAP-04.S02.T03: two manual parity checks in connector_configuration_dialog.rs and a collapsible nested optional egressPolicy condition in supervisor.rs. The C06 desktop application report artifacts/tmp/W2.C06.T01.candidate-desktop-01.json (raw SHA-256 b9c11bfb22bf217ba23df3d625eccad7553fd565e6a689988871b711d42401e5) stops at those and four separate S03 warnings. The original CAP-04.S02.T03 DONE state, independent review and W2 approval remain unchanged.",
+            "changed_paths": [
+              "apps/desktop/src-tauri/src/connector_configuration_dialog.rs",
+              "apps/desktop/src-tauri/src/supervisor.rs"
+            ],
+            "impact_analysis": "Restore the approved source-configuration native desktop quality proof without changing secret handling, provider configuration, renderer/Core authority or optional Intent egress semantics. Replace the two odd-UTF-16-word checks with equivalent is_multiple_of parity checks and collapse the nested non-null egressPolicy branch without changing its validation body. Run focused native template alignment/provider and optional egress-policy tests, production Rust build, format and strict all-target Clippy at the committed candidate. Keep any remaining S03 Clippy diagnostics adverse for W2.C08.T01; do not suppress lints or claim the full desktop/checkpoint pass early. No schema, migration, rights, credential, approved experience or release authority changes are authorized."
+          },
+          "task_review": {
+            "task_id": "W2.C07.T01",
+            "title": "Implement Unpaywall and Semantic Scholar adapters",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

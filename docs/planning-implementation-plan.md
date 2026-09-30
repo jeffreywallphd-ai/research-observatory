@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b71be7ab29b1dd2a3b95d8ae2f8acdbde679024874a9a08692ee51cb9719704a
+source_sha256: 6d3af205d76683b7a8c09202703291ad127d9217ef52d894ecfa5babee887d65
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3044,6 +3044,34 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w2_c06_reviewer at `2026-09-30T22:49:00+00:00`
 
 **Latest notes:** Independent review authenticates the frozen R01 packet, exact candidate, committed correction spec, original CAP-04.S01.T02 DONE snapshot, five passing check logs and two reused original evidence files. Read-only packet, evidence, review-control and backlog validation returned no errors. The only implementation change removes the unused private Status action/path arm and replaces its enum-based test with an explicit literal /native/imports/status renderer-denial assertion; the Core status route and other native actions remain intact. Focused private-route test, cargo format, Rust library build, taskctl validation and generated-view check pass. Strict all-target Clippy still exits 101 on seven separate S02/S03 lints, and desktop:application exits 1 at that barrier; both adverse reports are retained and neither is a pass. This approval closes only the S01 diagnostic and affected integration, not the S01-S03 checkpoint, full desktop qualification or W2 release.
+
+**Currently open findings:** -
+
+### W2.C07.T01 — Implement Unpaywall and Semantic Scholar adapters
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S02.T03`. **Latest review:** `-`.
+
+**Reproduction:** After the independently reviewed W2.C06.T01 repair, the exact committed-candidate strict Clippy log artifacts/tmp/W2.C06.T01.candidate-clippy-01.log (raw SHA-256 75450bcffdd9a532e87041adafb69443c3b52f7658a7900a6db2c8523fe5f340) retains seven compile-as-error warnings. Three originate in completed CAP-04.S02.T03: two manual parity checks in connector_configuration_dialog.rs and a collapsible nested optional egressPolicy condition in supervisor.rs. The C06 desktop application report artifacts/tmp/W2.C06.T01.candidate-desktop-01.json (raw SHA-256 b9c11bfb22bf217ba23df3d625eccad7553fd565e6a689988871b711d42401e5) stops at those and four separate S03 warnings. The original CAP-04.S02.T03 DONE state, independent review and W2 approval remain unchanged.
+
+**Inherited criteria:**
+
+- OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- apps/desktop/src-tauri/src/connector_configuration_dialog.rs
+- apps/desktop/src-tauri/src/supervisor.rs
+#### Review history — W2.C07.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 
