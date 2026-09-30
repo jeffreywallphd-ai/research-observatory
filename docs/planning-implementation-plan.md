@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b37ed1c11bf80217d851cb6f2f4c8a8dafe3c59a6f106a788834f14f889fa9bd
+source_sha256: 8ebfcd50e9cedb70cf3d43d3099587946d8aacd2f1b1bc7e18592cb9761312aa
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2987,6 +2987,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-30T15:41:18+00:00`
 
 **Latest notes:** Independent expanded review authenticated the frozen W2.C05.T01 R01 submission, committed correction specification, original approved CAP-04.S01.T03 task and review, complete base-to-candidate diff, seven selected check logs, full quality report and protected process report. Submission-packet, evidence, review-control and corrective-task validators returned no errors. The candidate changes exactly six admitted test files plus five task-claim/generated-view paths; no product source, schema, migration implementation, fixture, quality inventory, security permission, approved reference or frozen product authority changes. typing.cast(int, count) performs no runtime conversion: the existing -1, True, 200001 and 3.0 values still reach the strict production validator under unchanged ValueError assertions. Inherited SQLCipher fixture annotations match actual attributes; FastAPI narrowing validates the app before accessing the existing publication seam; process-pipe aliases retain handshake, shutdown, child wait and cleanup with explicit failure for missing pipes. Fresh integration reports 18 cases, one opt-in scale skip and 17 executed passes in 21.111 seconds. The migration cases use actual SQLCipher with synthetic in-memory keys; the separate Windows process journey uses DPAPI/SQLCipher across three spawned processes. That journey proves ordinary-close rollback, restart recovery and replay without duplicate accepted output; it does not establish abrupt-kill recovery, native GUI execution or a frozen packaged host. Fresh opt-in frozen-package and 100k scale cases were not run; historical evidence is not represented as fresh qualification. Full affected checkpoint and Wave verification remain required. Reviewer agent:/root/w2_c02_review made no edits or taskctl/Git mutation.
+
+**Currently open findings:** -
+
+### W2.C06.T01 — Create import preview, mapping, and conflict UI
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+
+**Reproduction:** The exact W2 S01-S03 checkpoint candidate c7108dc4eb8107c2d0ee1a01441a7ff1fcac6a59 fails desktop:application when pinned Rust 1.96.1 cargo clippy --workspace --all-targets --locked -- -D warnings reports an unused NativeImportAction::Status variant in apps/desktop/src-tauri/src/supervisor.rs. The failed checkpoint report is artifacts/tmp/W2.S01-S03.checkpoint-union-03.json (SHA-256 70b6baf3342e88a215df0f05741e26023cb31ceedda2bbfe6ed783b0f0f1a590). The original approved CAP-04.S01.T02 task, evidence, review and frozen W2 scope remain unchanged.
+
+**Inherited criteria:**
+
+- User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- apps/desktop/src-tauri/src/supervisor.rs
+#### Review history — W2.C06.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 
