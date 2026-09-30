@@ -3,7 +3,7 @@
   "kind": "authority-preserving-correction",
   "origin": {
     "taskId": "CAP-04.S01.T02",
-    "commit": "552eae1c03bf3d63c44620981a49e8c344de86f1",
+    "commit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a",
     "sha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a"
   },
   "reproduction": "The W2 S01-S03 checkpoint on the unchanged approved campaign found 29 mypy errors in five CAP-04.S01.T02 preview/summary test files after separately reviewed privacy-control and package-inventory maintenance. A focused protected migration run also failed because the v10 preview protection test expects only migrations 0011/0012 and final schema v12, while the current additive chain reaches v16. The exact failed quality and migration logs are retained locally under artifacts/tmp/W2.checkpoint-security-package-01.*. The original CAP-04.S01.T02 status, evidence, review and frozen W2 approval remain unchanged.",
