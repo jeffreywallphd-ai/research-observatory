@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 56ea32419ff432a98932a6e61355d48b0450f6b79b2ad1ce4022ccf04a34cf9f
+source_sha256: fffc2f914d540ed0d08f39673ab7de46a9da65f62efbe0bc68847e1c945975ea
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3102,6 +3102,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w2_c07_preflight at `2026-09-30T23:20:25+00:00`
 
 **Latest notes:** Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S02.T03 origin, exact candidate diff, six passing check logs and their canonical hashes, and retained strict Clippy failure. Only two admitted native Rust source files change: odd UTF-16-word alignment checks use equivalent parity predicates, and the optional non-null egress-policy branch is collapsed without changing validation. Source inspection confirms absent policy still takes the unchanged exact-object path and skips validation; the fresh filtered egress test covers null, valid and invalid policies. An existing separate transport test exercises absent policy but was not rerun for this correction. Native template tests cover all four providers. Rust format and production library build pass, as do backlog and generated-view checks. Strict all-target Clippy exits 101 only on four CAP-04.S03.T03 reconciliation-admission warnings assigned to W2.C08.T01; desktop:application and the S01-S03 checkpoint are not qualified by this review. No secret, provider, renderer/Core, rights, migration, governed reference or frozen Wave authority change is introduced. No criterion-bound blocker remains; this approval covers W2.C07.T01 affected integration only, not Wave exit or release.
+
+**Currently open findings:** -
+
+### W2.C08.T01 — Implement work-version, correction, and retraction relationships
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S03.T03`. **Latest review:** `-`.
+
+**Reproduction:** After independently approved W2.C06.T01 and W2.C07.T01 corrections, strict all-target Clippy at exact candidate 96ca6047e06477883e69fe6c863eb1b0f6117c52 still exits 101 with four warnings solely in completed CAP-04.S03.T03 reconciliation_admission.rs: three manual leap-year divisibility expressions and one nonminimal empty/missing workIds boolean expression. Raw log artifacts/tmp/W2.C07.T01.candidate-clippy-01.log has SHA-256 e7c93730290a3e8d55e4ca253c3f8309b69b5898c5ceef72a8746085e6a54b9f. Original CAP-04.S03.T03 DONE evidence, independent review and frozen W2 approval remain unchanged.
+
+**Inherited criteria:**
+
+- Users can identify the preferred citable version and see status warnings; a retraction or correction marks dependent outputs for review rather than deleting history.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- apps/desktop/src-tauri/src/reconciliation_admission.rs
+#### Review history — W2.C08.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

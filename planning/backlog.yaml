@@ -3114,6 +3114,85 @@ waves:
           Rust build, format and strict all-target Clippy at the committed candidate. Keep any remaining S03 Clippy diagnostics
           adverse for W2.C08.T01; do not suppress lints or claim the full desktop/checkpoint pass early. No schema, migration,
           rights, credential, approved experience or release authority changes are authorized.
+    - title: Implement work-version, correction, and retraction relationships
+      objective: Version graph for preprint, accepted manuscript, version of record, erratum, correction, expression of concern,
+        and retraction.
+      dependencies:
+      - CAP-04.S03.T02
+      acceptance_criteria:
+      - Users can identify the preferred citable version and see status warnings; a retraction or correction marks dependent
+        outputs for review rather than deleting history.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile data
+      - python tools/verify.py --profile graph
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - service
+      - data
+      - graph
+      id: W2.C08.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: c9c1e720581983f84cf4e854a9fc698dbb52b12a
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-09-30T23:30:22+00:00'
+        expires_at: '2026-10-01T07:30:22+00:00'
+      started_at: '2026-09-30T23:30:22+00:00'
+      updated_at: '2026-09-30T23:30:22+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S03.T03
+        origin_commit: a349aaab078069ea08bbf21298f3c141134c260d
+        paused_state_sha256: ad34bd58685d332974e4b528f3e0748f1c8ae84e766799053fdb5a5390b26982
+        origin_sha256: 93982d6381ce67c7b89c3db992f69d66175153188eac54000e5a5a3bbe881784
+        origin_contract_sha256: 9e8104c3edc5becdfbc1c9377dd27c1ffb9a306ec73cefef4adbc205e82e6a83
+        origin_history_sha256: aa8010435b05d9a9e94391c407b5ec5d531618727d982b1eaabaca521ed6f48d
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C08.T01.spec.json
+          sha256: 21b377091361203912c3a893e8d5e758dbaaf7f25639e6c46f93714d32f98b86
+          commit: c9c1e720581983f84cf4e854a9fc698dbb52b12a
+        reproduction: 'After independently approved W2.C06.T01 and W2.C07.T01 corrections, strict all-target Clippy at exact
+          candidate 96ca6047e06477883e69fe6c863eb1b0f6117c52 still exits 101 with four warnings solely in completed CAP-04.S03.T03
+          reconciliation_admission.rs: three manual leap-year divisibility expressions and one nonminimal empty/missing workIds
+          boolean expression. Raw log artifacts/tmp/W2.C07.T01.candidate-clippy-01.log has SHA-256 e7c93730290a3e8d55e4ca253c3f8309b69b5898c5ceef72a8746085e6a54b9f.
+          Original CAP-04.S03.T03 DONE evidence, independent review and frozen W2 approval remain unchanged.'
+        changed_paths:
+        - apps/desktop/src-tauri/src/reconciliation_admission.rs
+        impact_analysis: Restore strict native desktop quality for the approved work-version admission path without changing
+          shape, identity or Core authority. Replace leap-year remainder checks with equivalent nonzero-divisor is_multiple_of
+          predicates and replace negated nonempty workIds logic with equivalent is_none_or(empty). Preserve all existing invalid/missing/empty
+          denial behavior, preferred-version and correction/retraction semantics. Run focused native version-admission tests,
+          cargo format, strict all-target Clippy and the desktop application/build check against the committed candidate,
+          with fresh backlog and generated-view checks. No schema, migration, rights, approved experience, public contract
+          or release criterion change is authorized. The S01-S03 checkpoint and W2 exit remain separate gates.
     resume_records:
     - id: W2.R01
       wave_id: W2
