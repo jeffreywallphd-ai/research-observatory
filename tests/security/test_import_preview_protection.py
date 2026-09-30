@@ -39,7 +39,17 @@ class ImportPreviewProtectionTests(unittest.TestCase):
             source.close()
         result = migrate_database(self.database, expected_project_id=fixture.PROJECT_ID)
         self.assertEqual("migrated", result.status)
-        self.assertEqual(("0011_import_previews", "0012_import_summaries"), result.migration_ids)
+        self.assertEqual(
+            (
+                "0011_import_previews",
+                "0012_import_summaries",
+                "0013_import_commits",
+                "0014_scholarly_reconciliation",
+                "0015_reconciliation_review",
+                "0016_work_versions",
+            ),
+            result.migration_ids[:6],
+        )
         backup = self.root / str(result.backup_relative_path)
         self.assertNotEqual(b"SQLite format 3\x00", backup.read_bytes()[:16])
         self.assertNotEqual(b"SQLite format 3\x00", self.database.read_bytes()[:16])
@@ -56,7 +66,7 @@ class ImportPreviewProtectionTests(unittest.TestCase):
         for _ in range(2):
             current = storage.open_canonical_database(self.database, expected_project_id=fixture.PROJECT_ID)
             try:
-                self.assertEqual(12, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(storage.DATABASE_SCHEMA_VERSION, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(0, current.execute("SELECT COUNT(*) FROM import_summary_completions").fetchone()[0])
                 self.assertEqual("dark", current.execute("SELECT text_value FROM settings").fetchone()[0])
                 self.assertEqual([], current.execute("PRAGMA foreign_key_check").fetchall())

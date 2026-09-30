@@ -271,7 +271,12 @@ class ImportIntakeApiTests(unittest.TestCase):
         cancelled = self.client.post("/projects/imports/cancel", json={"root": self.fixture.root, "previewId": ids[0]})
         self.assertEqual(200, cancelled.status_code)
         self.assertEqual("cancelled", cancelled.json()["state"])
-        for invalid in [{"after": "bogus", "limit": 2}, {"after": None, "limit": 26}, {"after": None, "limit": True}]:
+        invalid_requests: tuple[dict[str, object], ...] = (
+            {"after": "bogus", "limit": 2},
+            {"after": None, "limit": 26},
+            {"after": None, "limit": True},
+        )
+        for invalid in invalid_requests:
             self.assertEqual(
                 422, self.client.post("/projects/imports/list", json={"root": self.fixture.root, **invalid}).status_code
             )

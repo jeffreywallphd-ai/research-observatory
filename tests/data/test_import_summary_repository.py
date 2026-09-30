@@ -55,8 +55,17 @@ class ImportSummaryRepositoryTests(unittest.TestCase):
             )
             revision = 2
         definition, snapshot, job = workers.runnable_contracts()
-        definition["steps"][0]["activityType"] = SUMMARY_ACTIVITY
-        snapshot["definition"]["contentHash"] = workflow_record_sha256(definition)
+        steps = definition["steps"]
+        self.assertIsInstance(steps, list)
+        assert isinstance(steps, list)
+        first_step = steps[0]
+        self.assertIsInstance(first_step, dict)
+        assert isinstance(first_step, dict)
+        first_step["activityType"] = SUMMARY_ACTIVITY
+        snapshot_definition = snapshot["definition"]
+        self.assertIsInstance(snapshot_definition, dict)
+        assert isinstance(snapshot_definition, dict)
+        snapshot_definition["contentHash"] = workflow_record_sha256(definition)
         snapshot["projectId"] = PROJECT_ID
         self.queue.enqueue(
             prepare_workflow_job(
@@ -68,6 +77,7 @@ class ImportSummaryRepositoryTests(unittest.TestCase):
             worker_id=workers.WORKER_A, concurrency_classes=("document",), now=NOW, lease_duration_ms=30000
         )
         self.assertIsNotNone(claim)
+        assert claim is not None
         self.queue.start(claim, now=NOW)
         actor = PreviewActor(actor_id=claim.worker_id, trace_id="3" * 32, occurred_at=NOW)
         self.repository().begin_summary(preview, revision=revision, claim=claim, actor=actor)
@@ -327,6 +337,7 @@ class ImportSummaryRepositoryTests(unittest.TestCase):
             lease_duration_ms=30000,
         )
         self.assertIsNotNone(second)
+        assert second is not None
         self.assertNotEqual(first.attempt_id, second.attempt_id)
         self.queue.start(second, now="2026-08-30T12:04:00.000Z")
         fresh_actor = actor.model_copy(update={"actor_id": second.worker_id, "occurred_at": "2026-08-30T12:04:00.000Z"})

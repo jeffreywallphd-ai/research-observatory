@@ -13,6 +13,7 @@ from research_observatory_core import storage
 from research_observatory_core.migrations import runner
 
 from tests.data import test_import_preview_migration as predecessor
+from tests.database_key_fixtures import InMemoryDatabaseKeyProvider
 from tests.security import test_protected_database as protected_fixture
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/imports/schema-v11-authority.json"
@@ -168,6 +169,9 @@ class ImportSummaryMigrationTests(unittest.TestCase):
 class ProtectedImportSummaryMigrationTests(unittest.TestCase):
     setUp = protected_fixture.ProtectedDatabaseTests.setUp
     tearDown = protected_fixture.ProtectedDatabaseTests.tearDown
+    root: Path
+    database: Path
+    keys: InMemoryDatabaseKeyProvider
 
     def protected_source(self):
         legacy = self.root / "legacy/state/project.sqlite3"

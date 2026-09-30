@@ -40,9 +40,10 @@ class ImportSummaryWorkflowTests(unittest.TestCase):
         job = self.service.schedule_summary(self.root, self.preview, revision=1)
         self.assertEqual(job.job_id, self.service.schedule_summary(self.root, self.preview, revision=1).job_id)
         snapshot = json.loads(self.queue.authority(job.job_id).snapshot_json)
-        self.assertEqual(
-            self.fixture.intents.workspace(self.root).current.revision_id, snapshot["intent"]["revisionId"]
-        )
+        current_intent = self.fixture.intents.workspace(self.root).current
+        self.assertIsNotNone(current_intent)
+        assert current_intent is not None
+        self.assertEqual(current_intent.revision_id, snapshot["intent"]["revisionId"])
         self.assertIsNone(self.repository.summary(self.preview, revision=1))
         self.service.run_pending()
         self.assertEqual("succeeded", self.queue.get(job.job_id).state)

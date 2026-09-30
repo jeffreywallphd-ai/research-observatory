@@ -38,6 +38,7 @@ class ImportSummaryStorageTests(unittest.TestCase):
             worker_id=worker_fixture.WORKER_A, concurrency_classes=("document",), now=NOW, lease_duration_ms=30000
         )
         self.assertIsNotNone(claim)
+        assert claim is not None
         connection = open_canonical_database(project / "state/project.sqlite3", expected_project_id=PROJECT_ID)
         try:
             attempt = (preview, PROJECT_ID, claim.attempt_id, job, draft.attempt_id, 1, "draft-summary/1", NOW)
