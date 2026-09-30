@@ -282,7 +282,9 @@ fn version_date(value: &Value) -> bool {
     let day = *values.get(2).unwrap_or(&1);
     let days = match month {
         4 | 6 | 9 | 11 => 30,
-        2 if year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) => 29,
+        2 if year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400)) => {
+            29
+        }
         2 => 28,
         1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
         _ => 0,
@@ -393,9 +395,9 @@ fn version_plan(value: &Value) -> bool {
     ) || value["schemaVersion"] != "1.0"
         || !digest(&value["contextSha256"])
         || !identities(&value["workIds"], 8, true)
-        || !value["workIds"]
+        || value["workIds"]
             .as_array()
-            .is_some_and(|items| !items.is_empty())
+            .is_none_or(|items| items.is_empty())
         || !value["rationale"]
             .as_str()
             .is_some_and(|text| (1..=4000).contains(&text.chars().count()))
@@ -576,6 +578,39 @@ mod tests {
             crate::supervisor::validate_api_request(&request(
                 "versions/preview",
                 json!({"root":"C:/Research/synthetic","plan":cycle})
+            ))
+            .is_err()
+        );
+        for (day, admitted) in [("2000-02-29", true), ("1900-02-29", false)] {
+            let mut dated = fixture["command"]["plan"].clone();
+            dated["relation"]["date"] = json!({"precision":"day","value":day});
+            assert_eq!(
+                crate::supervisor::validate_api_request(&request(
+                    "versions/preview",
+                    json!({"root":"C:/Research/synthetic","plan":dated})
+                ))
+                .is_ok(),
+                admitted,
+                "{day}"
+            );
+        }
+        for work_ids in [json!([]), Value::Null] {
+            let mut empty = fixture["command"]["plan"].clone();
+            empty["workIds"] = work_ids;
+            assert!(
+                crate::supervisor::validate_api_request(&request(
+                    "versions/preview",
+                    json!({"root":"C:/Research/synthetic","plan":empty})
+                ))
+                .is_err()
+            );
+        }
+        let mut missing = fixture["command"]["plan"].clone();
+        missing.as_object_mut().unwrap().remove("workIds");
+        assert!(
+            crate::supervisor::validate_api_request(&request(
+                "versions/preview",
+                json!({"root":"C:/Research/synthetic","plan":missing})
             ))
             .is_err()
         );
