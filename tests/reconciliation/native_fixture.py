@@ -21,7 +21,9 @@ from tests.connectors.test_connector_transport import BytesStream
 from tests.service import test_import_preview_service as runtime_fixture
 
 
-def prepare(directory: Path) -> dict[str, str]:
+def prepare(directory: Path, *, records: int = 2) -> dict[str, str]:
+    if records not in (2, 202):
+        raise ValueError("unsupported synthetic reconciliation fixture size")
     document = source_fixture.documents(1)["crossref"]
     calls = []
 
@@ -78,8 +80,14 @@ def prepare(directory: Path) -> dict[str, str]:
         text = io.StringIO(newline="")
         writer = csv.writer(text)
         writer.writerow(("title", "doi"))
-        for _ in range(2):
-            writer.writerow((source["title"][0], source["DOI"]))
+        for index in range(records):
+            cluster = index // 2
+            writer.writerow(
+                (
+                    source["title"][0] if cluster == 0 else f"Synthetic reconciliation cluster {cluster:03d}",
+                    source["DOI"] if cluster == 0 else f"10.99999/reconcile-{cluster:03d}",
+                )
+            )
         raw, preview = text.getvalue().encode(), new_uuid_v7()
         imports = runtime.imports
         imports.create(
@@ -108,17 +116,16 @@ def prepare(directory: Path) -> dict[str, str]:
         imports.schedule_commit(root, preview, revision=draft.revision, request_id=new_uuid_v7())
         imports.run_pending()
         manifest = imports.import_manifest(root, preview)
-        if (
-            manifest is None
-            or len(
-                [
-                    member
-                    for member in repository.manifest_members(manifest.revision_id, after=0, limit=10)
-                    if member.decision.included
-                ]
-            )
-            != 2
-        ):
+        included = 0
+        if manifest is not None:
+            after = 0
+            while True:
+                page = repository.manifest_members(manifest.revision_id, after=after, limit=100)
+                included += sum(member.decision.included for member in page)
+                if len(page) < 100:
+                    break
+                after = page[-1].ordinal
+        if included != records:
             raise AssertionError("Synthetic accepted import is incomplete")
         request = source_fixture.source_request("crossref", identity, 1)
         confirmed = post(
