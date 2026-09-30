@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S01.T03",
+    "commit": "f850468ef679651b34af44611aa39c8d147c6074",
+    "sha256": "6d85631ed208673dbc0e545727edce310b1c328d4374fea1605e441b705f546a"
+  },
+  "reproduction": "The W2 S01–S03 checkpoint quality check failed with 55 mypy errors in 13 existing W2 test files. Two privacy-control errors and 31 CAP-04.S01.T02-related errors were resolved by bounded maintenance and independently approved linked correction W2.C04.T01. The exact W2.C04.T01 committed-candidate broad quality report, artifacts/tmp/W2.C04.T01.candidate-quality-01.json (SHA-256 13b3032b8033a03add5b6a2fa14164e70691ee946a7a12c6851c613d7ddeb08a), retains 22 errors exclusively in six CAP-04.S01.T03 commit/packaging test files; format and lint pass. The original CAP-04.S01.T03 DONE status, independent review, evidence and frozen W2 approval remain unchanged.",
+  "changedPaths": [
+    "tests/service/test_import_commit_identity.py",
+    "tests/packaging/test_import_frozen_windows.py",
+    "tests/data/test_import_commit_migration.py",
+    "tests/service/test_import_commit_workflow.py",
+    "tests/service/test_import_commit_scale_windows.py",
+    "tests/service/test_import_commit_process_windows.py"
+  ],
+  "impactAnalysis": "Restore the approved import commit, protected migration, frozen packaging, workflow, scale and process-restart test proof without product, schema, security, rights, fixture, UI or approval changes. Type inherited protected-fixture attributes, preserve every negative count/input case with a typed test value, narrow actual subprocess streams and internal runtime publication handles after explicit assertions, and give heterogeneous test reports precise types. Do not change expected durable behavior, remove failure assertions or weaken real-process/SQLCipher boundaries. Run the six affected test modules and focused Core-plus-test mypy, changed-file lint/format, then full governed quality and appropriate checkpoint checks; retain any remaining failures and obtain independent corrective review. This is test/control repair, not supplemental refactoring or new product scope."
+}
