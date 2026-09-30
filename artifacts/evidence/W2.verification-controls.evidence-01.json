@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "bounded-maintenance-evidence",
+  "predecessorCommit": "9542e472d87af3dc177f3d7b2dfd40abc3f74f15",
+  "candidateCommit": "20cb2f06a5e2d5d392d5c117d52f9671a106495d",
+  "branch": "codex/w2-implementation",
+  "maintenanceNote": "artifacts/evidence/W2.verification-controls.maintenance-01.md",
+  "changedPaths": [
+    "artifacts/evidence/W2.verification-controls.maintenance-01.md",
+    "docs/automation/verification-profiles.md",
+    "tests/foundation/test_benchmark_registry.py",
+    "tests/foundation/test_verify_runner.py",
+    "tools/benchmark_registry.py",
+    "tools/verify.py",
+    "verification/affected-selection.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_benchmark_registry -v",
+      "result": "PASS: 25 tests, 461.279 seconds; two complete real-repository history walks",
+      "log": "artifacts/tmp/W2.verification-controls.candidate-benchmark-tests-01.log",
+      "sha256Canonical": "f04eb5728fd70083c06408ad998061f8d3b8aaa771081b990df89cf5298ccbb2"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.foundation.test_verify_runner -v",
+      "result": "PASS: 26 tests, 2.491 seconds",
+      "log": "artifacts/tmp/W2.verification-controls.candidate-selection-tests-01.log",
+      "sha256Canonical": "ee608bea15c51cc96e73c8be291730001b2b73444215e0cc95b1cac6660df70f"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/quality_check.py --repo . --report artifacts/tmp/W2.verification-controls.candidate-quality-01.json",
+      "result": "PASS: format, lint, and types for 410 governed source files",
+      "log": "artifacts/tmp/W2.verification-controls.candidate-quality-01.log",
+      "sha256Canonical": "d07f36322dbe8ff4e97c7d8a0a8bd84df6810ccd5cbb3e0c86b33ddd01b4f003",
+      "report": "artifacts/tmp/W2.verification-controls.candidate-quality-01.json",
+      "reportSha256Canonical": "cb2db7f9be6c5e27f1f59dc1e51f9e1f206c67e550759dea46dd17ae4d75afd8"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/verify.py --wave-exit W1 --selection-only --report artifacts/tmp/W2.verification-controls.candidate-W1-selection-01.json",
+      "result": "PASS: unchanged W1 profile union; selection only, no commands executed",
+      "report": "artifacts/tmp/W2.verification-controls.candidate-W1-selection-01.json",
+      "sha256Canonical": "938e8946a6f2f3dbeba6222367bf9af2c24b18c778a0a7d4ab5bce585d8b88a3"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/verify.py --wave-exit W2 --selection-only --report artifacts/tmp/W2.verification-controls.candidate-W2-selection-01.json",
+      "result": "PASS: 38 active commands, two inactive optional commands, no deferrals; selection only",
+      "report": "artifacts/tmp/W2.verification-controls.candidate-W2-selection-01.json",
+      "sha256Canonical": "d74d589578dfa8e3c218955455a271ef7d6dd2bc2c8f154b5c89bf4e771567c0"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/verify.py --profile data --profile desktop --profile documents --profile e2e-local --profile foundation --profile graph --profile search --profile security-local --profile service --affected-base 9542e472d87af3dc177f3d7b2dfd40abc3f74f15 --deferred-gate W2-exit --selection-only --report artifacts/tmp/W2.verification-controls.candidate-W2-affected-01.json",
+      "result": "PASS: W2-exit affected selection resolves and partitions the active inventory; selection only",
+      "report": "artifacts/tmp/W2.verification-controls.candidate-W2-affected-01.json",
+      "sha256Canonical": "6ac80f3e8b31956059c320df428a4aeca99d571858931a648b0e26990bf88d0f"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "PASS: 20 capabilities, 117 slices, 381 tasks, 12 release gates",
+      "log": "artifacts/tmp/W2.verification-controls.candidate-taskctl-validate-01.log",
+      "sha256Canonical": "26c207f1b441e290b662743618a15f8960a1e1166528a51258c556e2642e9fc6"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/backlog_views.py --repo . --check",
+      "result": "PASS: no changes",
+      "log": "artifacts/tmp/W2.verification-controls.candidate-backlog-views-01.log",
+      "sha256Canonical": "0cfb1254748d4c63a89dee38351ecf639cec4e272a8688c38c365f42ef06316f"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B -s tools/plan_review_check.py --repo .",
+      "result": "PASS: 492 HTML pages",
+      "log": "artifacts/tmp/W2.verification-controls.candidate-plan-review-01.log",
+      "sha256Canonical": "9594cb483fbef05d1a9efc2ad8b9964fde4f881bf97db4e4df519b1385b49494"
+    }
+  ],
+  "selectionRationale": "The changed paths are confined to benchmark-history and verifier-selection controls, their focused tests, policy, and guidance. Real Git history plus fail-closed fixtures prove the affected evidence boundary. Full quality and policy selection guard shared verification behavior. The interrupted S01-S03 profile/checkpoint and future fresh W2 Wave qualification are separate, still-required executions.",
+  "deferredCoverage": [
+    "S01-S03 affected profile union, security and clean build/smoke checkpoint still requires an uninterrupted fixed-commit run and independent checkpoint review.",
+    "The 38-command W2 Wave-exit report here is selection-only; no full W2 profile command was executed by that report.",
+    "Opt-in packaged and 100k import journeys and later W2 cross-capability/release qualification are not established by this maintenance increment."
+  ],
+  "unverifiedItems": []
+}
