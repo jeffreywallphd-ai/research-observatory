@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f6e2d01955773e6c1241e24386bf8a118f5035bf53ef9792e521586abf0cecbb
+source_sha256: 4ac05282116314bbe59c662199862891c6fc9706a6ba70194d7e51459924cd45
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2930,7 +2930,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C05.T01 — Implement idempotent import commits and import manifests
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `approved`.
 
 **Reproduction:** The W2 S01–S03 checkpoint quality check failed with 55 mypy errors in 13 existing W2 test files. Two privacy-control errors and 31 CAP-04.S01.T02-related errors were resolved by bounded maintenance and independently approved linked correction W2.C04.T01. The exact W2.C04.T01 committed-candidate broad quality report, artifacts/tmp/W2.C04.T01.candidate-quality-01.json (SHA-256 13b3032b8033a03add5b6a2fa14164e70691ee946a7a12c6851c613d7ddeb08a), retains 22 errors exclusively in six CAP-04.S01.T03 commit/packaging test files; format and lint pass. The original CAP-04.S01.T03 DONE status, independent review, evidence and frozen W2 approval remain unchanged.
 
@@ -2950,13 +2950,43 @@ Original tasks and approvals remain unchanged.
 - tests/service/test_import_commit_workflow.py
 #### Review history — W2.C05.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `9a58ac078a7fee760162e76e0c09c470e18384f65625bdad5555f3e27af62723`
+
+- Candidate / base / branch: `73e8962d888811deba8e433ac036ae205d845edd` / `c7fb6070f82b27997e49e6c13182e9246f0e89bb` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-30T15:33:13+00:00`
+- Evidence: `artifacts/evidence/W2.C05.T01.json` / `6b0478f0c54f539f3f2ceb2fd9fe346e564b7dfa91a52c77305ad9f40a068c14` / `73e8962d888811deba8e433ac036ae205d845edd`
+- Acceptance-criteria SHA-256: `fe917b4a62e8911a8945521ecf9282a0f3ee20bd4e45db9a30c42ac914608921`
+- Verification-selection SHA-256: `14e636986b3fde15366f09cd30984482fbdc77ce8b524e37fa9b98a4144ce088`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/data/test_import_commit_migration.py`, `tests/packaging/test_import_frozen_windows.py`, `tests/service/test_import_commit_identity.py`, `tests/service/test_import_commit_process_windows.py`, `tests/service/test_import_commit_scale_windows.py`, `tests/service/test_import_commit_workflow.py`
+- Selected checks: `$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\Scripts\python.exe -m unittest tests.service.test_import_commit_identity tests.data.test_import_commit_migration tests.service.test_import_commit_workflow tests.service.test_import_commit_scale_windows tests.service.test_import_commit_process_windows -v`, `.venv\Scripts\python.exe -B -s tools/quality_check.py --repo . --report artifacts/tmp/W2.C05.T01.candidate-quality-01.json`, `.venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tools tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py`, `.venv\Scripts\python.exe -m ruff check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py`, `.venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py`, `.venv\Scripts\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe -B -s tools/backlog_views.py --repo . --check`
+- Deferred checks: `Opt-in frozen packaged Core journey and 100k protected scale case were not invoked in this test-only correction. The runtime suite log records the one scale skip; original reviewed packaging/scale evidence is historical and does not substitute for fresh W2 exit qualification.`, `The interrupted S01–S03 checkpoint broad profile attempt is not qualifying. Rerun the full affected checkpoint union after both linked corrections, followed by the remaining W2 slices and fresh Wave exit matrix.`
+- Selection rationale: The correction touches only tests for import identity/authority, exact v12 migration, frozen-process pipe handling, workflow claims, diagnostics and Windows process restart. Run affected non-opt-in modules against actual Core/SQLCipher/DPAPI, full governed quality, focused Core/tools/test mypy, changed-file lint/format, backlog validation and views on the fixed commit. The packaged journey and 100k scale cases require their separate opt-in conditions and remain Wave qualification, not a claimed pass here.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_c02_review / `2026-09-30T15:41:18+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C05.T01.review-R01.json` / `a10e33612ca94e7e8dcf26732e7e422a4c830a7a298ace22335921c979de72b9`
+
+**Review notes:** Independent expanded review authenticated the frozen W2.C05.T01 R01 submission, committed correction specification, original approved CAP-04.S01.T03 task and review, complete base-to-candidate diff, seven selected check logs, full quality report and protected process report. Submission-packet, evidence, review-control and corrective-task validators returned no errors. The candidate changes exactly six admitted test files plus five task-claim/generated-view paths; no product source, schema, migration implementation, fixture, quality inventory, security permission, approved reference or frozen product authority changes. typing.cast(int, count) performs no runtime conversion: the existing -1, True, 200001 and 3.0 values still reach the strict production validator under unchanged ValueError assertions. Inherited SQLCipher fixture annotations match actual attributes; FastAPI narrowing validates the app before accessing the existing publication seam; process-pipe aliases retain handshake, shutdown, child wait and cleanup with explicit failure for missing pipes. Fresh integration reports 18 cases, one opt-in scale skip and 17 executed passes in 21.111 seconds. The migration cases use actual SQLCipher with synthetic in-memory keys; the separate Windows process journey uses DPAPI/SQLCipher across three spawned processes. That journey proves ordinary-close rollback, restart recovery and replay without duplicate accepted output; it does not establish abrupt-kill recovery, native GUI execution or a frozen packaged host. Fresh opt-in frozen-package and 100k scale cases were not run; historical evidence is not represented as fresh qualification. Full affected checkpoint and Wave verification remain required. Reviewer agent:/root/w2_c02_review made no edits or taskctl/Git mutation.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-30T15:41:18+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independent expanded review authenticated the frozen W2.C05.T01 R01 submission, committed correction specification, original approved CAP-04.S01.T03 task and review, complete base-to-candidate diff, seven selected check logs, full quality report and protected process report. Submission-packet, evidence, review-control and corrective-task validators returned no errors. The candidate changes exactly six admitted test files plus five task-claim/generated-view paths; no product source, schema, migration implementation, fixture, quality inventory, security permission, approved reference or frozen product authority changes. typing.cast(int, count) performs no runtime conversion: the existing -1, True, 200001 and 3.0 values still reach the strict production validator under unchanged ValueError assertions. Inherited SQLCipher fixture annotations match actual attributes; FastAPI narrowing validates the app before accessing the existing publication seam; process-pipe aliases retain handshake, shutdown, child wait and cleanup with explicit failure for missing pipes. Fresh integration reports 18 cases, one opt-in scale skip and 17 executed passes in 21.111 seconds. The migration cases use actual SQLCipher with synthetic in-memory keys; the separate Windows process journey uses DPAPI/SQLCipher across three spawned processes. That journey proves ordinary-close rollback, restart recovery and replay without duplicate accepted output; it does not establish abrupt-kill recovery, native GUI execution or a frozen packaged host. Fresh opt-in frozen-package and 100k scale cases were not run; historical evidence is not represented as fresh qualification. Full affected checkpoint and Wave verification remain required. Reviewer agent:/root/w2_c02_review made no edits or taskctl/Git mutation.
 
 **Currently open findings:** -
 

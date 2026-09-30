@@ -1899,7 +1899,7 @@
         {
           "task_id": "W2.C05.T01",
           "title": "Implement idempotent import commits and import manifests",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "Re-importing the same file does not duplicate records; changed files create a new manifest and explain additions, updates, and unresolved conflicts.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -1933,17 +1933,116 @@
           "task_review": {
             "task_id": "W2.C05.T01",
             "title": "Implement idempotent import commits and import manifests",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/w2_c02_review",
+              "result": "approved",
+              "reviewed_at": "2026-09-30T15:41:18+00:00",
+              "notes": "Independent expanded review authenticated the frozen W2.C05.T01 R01 submission, committed correction specification, original approved CAP-04.S01.T03 task and review, complete base-to-candidate diff, seven selected check logs, full quality report and protected process report. Submission-packet, evidence, review-control and corrective-task validators returned no errors. The candidate changes exactly six admitted test files plus five task-claim/generated-view paths; no product source, schema, migration implementation, fixture, quality inventory, security permission, approved reference or frozen product authority changes. typing.cast(int, count) performs no runtime conversion: the existing -1, True, 200001 and 3.0 values still reach the strict production validator under unchanged ValueError assertions. Inherited SQLCipher fixture annotations match actual attributes; FastAPI narrowing validates the app before accessing the existing publication seam; process-pipe aliases retain handshake, shutdown, child wait and cleanup with explicit failure for missing pipes. Fresh integration reports 18 cases, one opt-in scale skip and 17 executed passes in 21.111 seconds. The migration cases use actual SQLCipher with synthetic in-memory keys; the separate Windows process journey uses DPAPI/SQLCipher across three spawned processes. That journey proves ordinary-close rollback, restart recovery and replay without duplicate accepted output; it does not establish abrupt-kill recovery, native GUI execution or a frozen packaged host. Fresh opt-in frozen-package and 100k scale cases were not run; historical evidence is not represented as fresh qualification. Full affected checkpoint and Wave verification remain required. Reviewer agent:/root/w2_c02_review made no edits or taskctl/Git mutation."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-09-30T15:33:13+00:00",
+                    "candidate_commit": "73e8962d888811deba8e433ac036ae205d845edd",
+                    "base_commit": "c7fb6070f82b27997e49e6c13182e9246f0e89bb",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C05.T01.json",
+                      "sha256": "6b0478f0c54f539f3f2ceb2fd9fe346e564b7dfa91a52c77305ad9f40a068c14",
+                      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+                      "recorded_at": "2026-09-30T15:33:13+00:00"
+                    },
+                    "acceptance_criteria_sha256": "fe917b4a62e8911a8945521ecf9282a0f3ee20bd4e45db9a30c42ac914608921",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "tests/data/test_import_commit_migration.py",
+                      "tests/packaging/test_import_frozen_windows.py",
+                      "tests/service/test_import_commit_identity.py",
+                      "tests/service/test_import_commit_process_windows.py",
+                      "tests/service/test_import_commit_scale_windows.py",
+                      "tests/service/test_import_commit_workflow.py"
+                    ],
+                    "selected_checks": [
+                      "$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\\Scripts\\python.exe -m unittest tests.service.test_import_commit_identity tests.data.test_import_commit_migration tests.service.test_import_commit_workflow tests.service.test_import_commit_scale_windows tests.service.test_import_commit_process_windows -v",
+                      ".venv\\Scripts\\python.exe -B -s tools/quality_check.py --repo . --report artifacts/tmp/W2.C05.T01.candidate-quality-01.json",
+                      ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tools tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+                      ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+                      ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+                      ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+                      ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check"
+                    ],
+                    "deferred_checks": [
+                      "Opt-in frozen packaged Core journey and 100k protected scale case were not invoked in this test-only correction. The runtime suite log records the one scale skip; original reviewed packaging/scale evidence is historical and does not substitute for fresh W2 exit qualification.",
+                      "The interrupted S01–S03 checkpoint broad profile attempt is not qualifying. Rerun the full affected checkpoint union after both linked corrections, followed by the remaining W2 slices and fresh Wave exit matrix."
+                    ],
+                    "selection_rationale": "The correction touches only tests for import identity/authority, exact v12 migration, frozen-process pipe handling, workflow claims, diagnostics and Windows process restart. Run affected non-opt-in modules against actual Core/SQLCipher/DPAPI, full governed quality, focused Core/tools/test mypy, changed-file lint/format, backlog validation and views on the fixed commit. The packaged journey and 100k scale cases require their separate opt-in conditions and remain Wave qualification, not a claimed pass here.",
+                    "selection_sha256": "14e636986b3fde15366f09cd30984482fbdc77ce8b524e37fa9b98a4144ce088",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "service:unit",
+                      "data:unit",
+                      "foundation:quality",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "packet_sha256": "9a58ac078a7fee760162e76e0c09c470e18384f65625bdad5555f3e27af62723"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/w2_c02_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-09-30T15:41:18+00:00",
+                    "notes": "Independent expanded review authenticated the frozen W2.C05.T01 R01 submission, committed correction specification, original approved CAP-04.S01.T03 task and review, complete base-to-candidate diff, seven selected check logs, full quality report and protected process report. Submission-packet, evidence, review-control and corrective-task validators returned no errors. The candidate changes exactly six admitted test files plus five task-claim/generated-view paths; no product source, schema, migration implementation, fixture, quality inventory, security permission, approved reference or frozen product authority changes. typing.cast(int, count) performs no runtime conversion: the existing -1, True, 200001 and 3.0 values still reach the strict production validator under unchanged ValueError assertions. Inherited SQLCipher fixture annotations match actual attributes; FastAPI narrowing validates the app before accessing the existing publication seam; process-pipe aliases retain handshake, shutdown, child wait and cleanup with explicit failure for missing pipes. Fresh integration reports 18 cases, one opt-in scale skip and 17 executed passes in 21.111 seconds. The migration cases use actual SQLCipher with synthetic in-memory keys; the separate Windows process journey uses DPAPI/SQLCipher across three spawned processes. That journey proves ordinary-close rollback, restart recovery and replay without duplicate accepted output; it does not establish abrupt-kill recovery, native GUI execution or a frozen packaged host. Fresh opt-in frozen-package and 100k scale cases were not run; historical evidence is not represented as fresh qualification. Full affected checkpoint and Wave verification remain required. Reviewer agent:/root/w2_c02_review made no edits or taskctl/Git mutation."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C05.T01.review-R01.json",
+                    "sha256": "a10e33612ca94e7e8dcf26732e7e422a4c830a7a298ace22335921c979de72b9"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C05.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-09-30T15:33:13+00:00",
+                    "reviewed_at": "2026-09-30T15:41:18+00:00",
+                    "duration_seconds": 485,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "service:unit",
+                      "data:unit",
+                      "foundation:quality",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }

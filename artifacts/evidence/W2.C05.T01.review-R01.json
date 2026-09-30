@@ -1,0 +1,73 @@
+{
+  "task_id": "W2.C05.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "73e8962d888811deba8e433ac036ae205d845edd",
+  "base_commit": "c7fb6070f82b27997e49e6c13182e9246f0e89bb",
+  "reviewer": "agent:/root/w2_c02_review",
+  "result": "approved",
+  "evidence_sha256": "6b0478f0c54f539f3f2ceb2fd9fe346e564b7dfa91a52c77305ad9f40a068c14",
+  "packet_sha256": "9a58ac078a7fee760162e76e0c09c470e18384f65625bdad5555f3e27af62723",
+  "acceptance_criteria_sha256": "fe917b4a62e8911a8945521ecf9282a0f3ee20bd4e45db9a30c42ac914608921",
+  "selection_sha256": "14e636986b3fde15366f09cd30984482fbdc77ce8b524e37fa9b98a4144ce088",
+  "notes": "Independent expanded review authenticated the frozen W2.C05.T01 R01 submission, committed correction specification, original approved CAP-04.S01.T03 task and review, complete base-to-candidate diff, seven selected check logs, full quality report and protected process report. Submission-packet, evidence, review-control and corrective-task validators returned no errors. The candidate changes exactly six admitted test files plus five task-claim/generated-view paths; no product source, schema, migration implementation, fixture, quality inventory, security permission, approved reference or frozen product authority changes. typing.cast(int, count) performs no runtime conversion: the existing -1, True, 200001 and 3.0 values still reach the strict production validator under unchanged ValueError assertions. Inherited SQLCipher fixture annotations match actual attributes; FastAPI narrowing validates the app before accessing the existing publication seam; process-pipe aliases retain handshake, shutdown, child wait and cleanup with explicit failure for missing pipes. Fresh integration reports 18 cases, one opt-in scale skip and 17 executed passes in 21.111 seconds. The migration cases use actual SQLCipher with synthetic in-memory keys; the separate Windows process journey uses DPAPI/SQLCipher across three spawned processes. That journey proves ordinary-close rollback, restart recovery and replay without duplicate accepted output; it does not establish abrupt-kill recovery, native GUI execution or a frozen packaged host. Fresh opt-in frozen-package and 100k scale cases were not run; historical evidence is not represented as fresh qualification. Full affected checkpoint and Wave verification remain required. Reviewer agent:/root/w2_c02_review made no edits or taskctl/Git mutation.",
+  "corrective_integration": {
+    "evidence_sha256": "6b0478f0c54f539f3f2ceb2fd9fe346e564b7dfa91a52c77305ad9f40a068c14",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Correction spec at c7fb6070f82b27997e49e6c13182e9246f0e89bb authenticates to SHA-256 23a38e30b68495610c61212b563027e477db8a5f6c2a50b9e950682f36f569c5, and its six admitted test paths match the candidate. Original CAP-04.S01.T03 DONE snapshot and history remain equal to the preserved origin at f850468ef679651b34af44611aa39c8d147c6074, snapshot SHA-256 6d85631ed208673dbc0e545727edce310b1c328d4374fea1605e441b705f546a. Original evidence/review canonical SHA-256 values remain 1e65135bb6951efc3b2ebee43231b196da97575c6fb9271f868132c683a64748 and 3c8ca801656b628e59a053b1ef50ed59b9d75f93df1446eb406e8fef19d1d93f. Reviewed affected integration covers scientific import identity, protected migration rollback/retry, durable workflow claims, retry diagnostics, Windows process restart/replay and frozen-host pipe handling. Fresh executed and deferred opt-in proof are distinguished."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Scientific import identity and immutable manifest behavior remain unchanged. The invalid-count cast preserves exact runtime rejection. Fresh identity, workflow and Windows process tests retain idempotent accepted output, changed-input boundaries and replay without duplicate publication. The authenticated process report contains exactly one accepted commit output and one manifest after interruption, recovery and replay."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Seventeen affected cases execute successfully, with one explicit opt-in scale skip. Fresh coverage includes strict invalid counts, identity changes, protected v12 predecessor migration, backup/rollback/retry, workflow claims, retry diagnostics and three-process DPAPI/SQLCipher recovery. Type narrowing preserves operations and assertions. Focused Core/tools/test mypy passes 193 files; changed-file lint and format pass. Complete governed quality passes format, lint and types over the unchanged 410-file inventory."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Six test changes remain inside the committed correction specification; other paths are task claim state and generated views. Product contracts, migration implementation, fixtures, rights, audit behavior, frozen approval and original adverse/review history remain unchanged. Backlog and generated-view checks pass. The full quality inventory equals its predecessor with no exclusions or weakened policy. Frozen-package execution, 100k scale and checkpoint/Wave qualification are explicitly deferred."
+    }
+  ],
+  "evidence_authentication": {
+    "declared_check_hash_mode": "taskctl.evidence_sha256 normalizes text CRLF and CR to LF before SHA-256; physical file-byte hashes are separately recorded",
+    "all_seven_declared_check_hashes_match": true,
+    "physical_raw_log_sha256": {
+      "artifacts/tmp/W2.C05.T01.candidate-tests-01.log": "28f2b9fca47cf3999cc73f6d195840742692b8214577bf8ce1fbe83a9092bc0b",
+      "artifacts/tmp/W2.C05.T01.candidate-quality-01.log": "8f50fc78bc0247f69e72ce4716a71f9eba7e6157791e3a5dcd716aa0e6d81953",
+      "artifacts/tmp/W2.C05.T01.candidate-mypy-01.log": "773005ab7525c5e2069061c7a7cc422b9508b3922446f7a5bbb73c993c26842c",
+      "artifacts/tmp/W2.C05.T01.candidate-ruff-01.log": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "artifacts/tmp/W2.C05.T01.candidate-format-01.log": "f57152af69ed696672a20f7a07dc500ce85005053092505a680768f611957e48",
+      "artifacts/tmp/W2.C05.T01.candidate-taskctl-01.log": "45b28ce7af92c4105e73d5fa02a7bc9c5a7ff5be7a6d38b5ad77b2c000317f03",
+      "artifacts/tmp/W2.C05.T01.candidate-views-01.log": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+    },
+    "full_quality_report": {
+      "path": "artifacts/tmp/W2.C05.T01.candidate-quality-01.json",
+      "sha256": "59492bde063d19d6a24cc0cfe3f113c2221d488fd2945900c0b6253fb3c6454d",
+      "status": "PASS",
+      "governed_python_files": 410,
+      "inventory_equal_to_predecessor": true,
+      "format": "PASS",
+      "lint": "PASS",
+      "types": "PASS"
+    },
+    "protected_process_report": {
+      "path": "artifacts/tmp/import-commit-process-brk4hvx3/result.json",
+      "sha256": "9461d6042b533748d6571ed05df55f349cf52427e47edaf374e0079b6ac753cc",
+      "candidate_commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "outcome": "passed",
+      "distinct_processes": 3,
+      "all_phase_exit_codes": 0,
+      "accepted_commit_outputs": 1,
+      "import_manifests": 1
+    },
+    "fresh_integration": {"reported_cases": 18, "executed_cases": 17, "skipped_cases": 1, "elapsed_seconds": 21.111},
+    "deferred": ["Opt-in frozen packaged Core journey", "Opt-in 100k protected scale case", "Full S01-S03 checkpoint union", "Remaining W2 and fresh Wave exit qualification"]
+  },
+  "findings": [],
+  "closures": []
+}

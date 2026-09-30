@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C05.T01",
+  "baseCommit": "c7fb6070f82b27997e49e6c13182e9246f0e89bb",
+  "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/data/test_import_commit_migration.py",
+    "tests/packaging/test_import_frozen_windows.py",
+    "tests/service/test_import_commit_identity.py",
+    "tests/service/test_import_commit_process_windows.py",
+    "tests/service/test_import_commit_scale_windows.py",
+    "tests/service/test_import_commit_workflow.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The independently approved CAP-04.S01.T03 manifest and review remain the historical proof for idempotent source-record/import-manifest publication, changed-file manifests and unresolved comparison behavior. This correction changes only six test files and taskctl-generated claim views; no product, schema, fixture, public contract, approval or governed experience change occurs.",
+        "Fresh committed-candidate identity, workflow, protected v12 migration and actual three-process restart tests retain complete source/parser/mapping identity, invalid count denial, claim/replay controls, no partial publication after interrupted commit, and exactly-once recovery. These are affected regression checks, not a fresh full 100k/package qualification."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact committed candidate passes 18 tests across five affected modules in 21.111 seconds; one opt-in 100k scale case is explicitly skipped, leaving 17 executed cases. The executed cases include real SQLCipher protected rollback/reopen and a real Windows DPAPI/SQLCipher three-process interruption, recovery and replay fixture. Negative count, changed authority, cancelled predecessor, failure reporting and retry visibility tests remain active.",
+        "Full governed Python quality passes format, lint and mypy for 410 files; focused mypy covers Core, tools and the six changed tests in 193 files with no issues. Ruff lint and format pass on all six changed files. The frozen packaged Core journey is opt-in and was not invoked for this typing-only correction; its original approved evidence is reused only for unchanged behavior, and fresh packaging qualification remains a checkpoint/Wave obligation."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The six test paths are exactly admitted by W2.C05.T01's committed correction specification. The five other base-to-candidate changed paths are taskctl claim state and generated views. Protected-fixture attribute types, typed invalid input, subprocess pipe narrowing, a runtime FastAPI app assertion, and heterogeneous report annotations preserve existing test behavior and failure assertions.",
+        "Fresh taskctl backlog validation and generated-view checks pass. Original CAP-04.S01.T03 task status/history, approved W2 packet, product code, schemas, migration implementation, contracts, security/rights authority, fixtures and audit behavior are unchanged. No supplemental refactoring is performed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "data:unit",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "The correction touches only tests for import identity/authority, exact v12 migration, frozen-process pipe handling, workflow claims, diagnostics and Windows process restart. Run affected non-opt-in modules against actual Core/SQLCipher/DPAPI, full governed quality, focused Core/tools/test mypy, changed-file lint/format, backlog validation and views on the fixed commit. The packaged journey and 100k scale cases require their separate opt-in conditions and remain Wave qualification, not a claimed pass here.",
+    "deferred": [
+      "Opt-in frozen packaged Core journey and 100k protected scale case were not invoked in this test-only correction. The runtime suite log records the one scale skip; original reviewed packaging/scale evidence is historical and does not substitute for fresh W2 exit qualification.",
+      "The interrupted S01–S03 checkpoint broad profile attempt is not qualifying. Rerun the full affected checkpoint union after both linked corrections, followed by the remaining W2 slices and fresh Wave exit matrix."
+    ]
+  },
+  "checks": [
+    {
+      "id": "import-commit-integration",
+      "command": "$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\\Scripts\\python.exe -m unittest tests.service.test_import_commit_identity tests.data.test_import_commit_migration tests.service.test_import_commit_workflow tests.service.test_import_commit_scale_windows tests.service.test_import_commit_process_windows -v",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C05.T01.candidate-tests-01.log",
+      "rawOutputSha256": "5ba959432be1185812de0d678f0d5016c8a87201e37edd12c1cc91ea86cc9522",
+      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "18 tests OK in 21.111 seconds, one explicit opt-in scale skip; actual three-process protected restart and SQLCipher migration pass."
+    },
+    {
+      "id": "foundation-quality",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/quality_check.py --repo . --report artifacts/tmp/W2.C05.T01.candidate-quality-01.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C05.T01.candidate-quality-01.log",
+      "rawOutputSha256": "d07f36322dbe8ff4e97c7d8a0a8bd84df6810ccd5cbb3e0c86b33ddd01b4f003",
+      "reportPath": "artifacts/tmp/W2.C05.T01.candidate-quality-01.json",
+      "reportSha256": "59492bde063d19d6a24cc0cfe3f113c2221d488fd2945900c0b6253fb3c6454d",
+      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Format, lint and mypy PASS across 410 governed Python files."
+    },
+    {
+      "id": "python-types",
+      "command": ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tools tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C05.T01.candidate-mypy-01.log",
+      "rawOutputSha256": "7c04d2220edb6c4c9abe500fb22d101adfd8dcd85cc852a616a0ee2bed0f8c5d",
+      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "No issues in 193 source files."
+    },
+    {
+      "id": "python-lint",
+      "command": ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C05.T01.candidate-ruff-01.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "All six changed test files pass Ruff lint."
+    },
+    {
+      "id": "python-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C05.T01.candidate-format-01.log",
+      "rawOutputSha256": "ef7d13d02214e98ca902b05257cdbe6a8e84f3b4714508efdc19766460b54209",
+      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "All six changed test files pass Ruff format."
+    },
+    {
+      "id": "taskctl",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C05.T01.candidate-taskctl-01.log",
+      "rawOutputSha256": "26c207f1b441e290b662743618a15f8960a1e1166528a51258c556e2642e9fc6",
+      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Canonical backlog validates with W2.C05.T01 IN_PROGRESS."
+    },
+    {
+      "id": "backlog-views",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C05.T01.candidate-views-01.log",
+      "rawOutputSha256": "0cfb1254748d4c63a89dee38351ecf639cec4e272a8688c38c365f42ef06316f",
+      "commit": "73e8962d888811deba8e433ac036ae205d845edd",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Generated backlog views unchanged."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "6d85631ed208673dbc0e545727edce310b1c328d4374fea1605e441b705f546a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\\Scripts\\python.exe -m unittest tests.service.test_import_commit_identity tests.data.test_import_commit_migration tests.service.test_import_commit_workflow tests.service.test_import_commit_scale_windows tests.service.test_import_commit_process_windows -v",
+      ".venv\\Scripts\\python.exe -B -s tools/quality_check.py --repo . --report artifacts/tmp/W2.C05.T01.candidate-quality-01.json",
+      ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tools tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+      ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+      ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tests/service/test_import_commit_identity.py tests/packaging/test_import_frozen_windows.py tests/data/test_import_commit_migration.py tests/service/test_import_commit_workflow.py tests/service/test_import_commit_scale_windows.py tests/service/test_import_commit_process_windows.py",
+      ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+      ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S01.T03.json",
+        "sha256": "1e65135bb6951efc3b2ebee43231b196da97575c6fb9271f868132c683a64748",
+        "commit": "f850468ef679651b34af44611aa39c8d147c6074"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S01.T03.review-R01.json",
+        "sha256": "3c8ca801656b628e59a053b1ef50ed59b9d75f93df1446eb406e8fef19d1d93f",
+        "commit": "f850468ef679651b34af44611aa39c8d147c6074"
+      }
+    ],
+    "rationale": "Restore the original approved commit/manifest test proof while preserving product and approval authority. Fresh affected checks cover real protected migration and process recovery plus all 410 governed Python files; original reviewed evidence supports unchanged import and packaged behavior at its historical candidate. Opt-in frozen packaging and scale are explicitly deferred to checkpoint/Wave qualification and are not claimed by this test-only correction."
+  },
+  "scopeDeviation": "None. Six admitted test files plus taskctl-generated correction claim views only."
+}
