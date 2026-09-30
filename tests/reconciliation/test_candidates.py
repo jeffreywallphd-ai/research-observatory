@@ -1,6 +1,7 @@
 """Explainable candidate retrieval must never adjudicate scholarly identity."""
 
 import unittest
+from copy import deepcopy
 
 from research_observatory_core.reconciliation.candidates import (
     CandidateConfig,
@@ -105,6 +106,95 @@ class CandidateTests(unittest.TestCase):
         )
         self.assertEqual("disputed", feature.state)
         self.assertTrue(feature.conflict)
+
+    def test_named_identity_ambiguities_preserve_distinct_sources_for_review(self):
+        def doi(value):
+            return (IdentifierAssertion(scheme="doi", observed=value),)
+
+        scenarios = (
+            (
+                "homonymous authors",
+                record(
+                    "a",
+                    title="Quasar opacity measurement",
+                    authors="Alex Morgan",
+                    year="2021",
+                    identifiers=doi("10.1234/quasar"),
+                ),
+                record(
+                    "b",
+                    title="Tidal sediment mapping",
+                    authors="Alex Morgan",
+                    year="2024",
+                    identifiers=doi("10.1234/tidal"),
+                ),
+                False,
+            ),
+            (
+                "translated titles",
+                record("a", title="Forest isotope evidence", authors="Jane Doe", identifiers=doi("10.1234/forest")),
+                record(
+                    "b", title="Evidencia isotópica forestal", authors="Jane Doe", identifiers=doi("10.1234/forest")
+                ),
+                False,
+            ),
+            (
+                "conference and journal versions",
+                record(
+                    "a",
+                    title="Finite graph provenance",
+                    authors="Jane Doe",
+                    year="2021",
+                    venue="Synthetic Signals Conference Proceedings",
+                    identifiers=doi("10.1234/conference"),
+                ),
+                record(
+                    "b",
+                    title="Finite graph provenance",
+                    authors="Jane Doe",
+                    year="2021",
+                    venue="Synthetic Signals Journal Proceedings",
+                    identifiers=doi("10.1234/journal"),
+                ),
+                True,
+            ),
+            (
+                "group authors",
+                record(
+                    "a",
+                    title="Observatory baseline report",
+                    authors="Research Observatory Consortium",
+                    year="2021",
+                    identifiers=doi("10.1234/group-a"),
+                ),
+                record(
+                    "b",
+                    title="Observatory baseline report",
+                    authors="Research Observatory Consortium",
+                    year="2021",
+                    identifiers=doi("10.1234/group-b"),
+                ),
+                True,
+            ),
+        )
+        for name, left, right, expected_retrieval in scenarios:
+            with self.subTest(scenario=name):
+                original_sources = deepcopy((left, right))
+                pair = compare_records(prepare_record(left), prepare_record(right))
+                self.assertEqual(
+                    ("a", "b", "a-revision", "b-revision"),
+                    (pair.left, pair.right, pair.left_revision, pair.right_revision),
+                )
+                self.assertEqual("human-review-required", pair.disposition)
+                self.assertEqual(original_sources, (left, right))
+                self.assertEqual(expected_retrieval, pair in generate_candidates((left, right)).pairs)
+                if name == "homonymous authors":
+                    self.assertEqual((), generate_candidates((left, right)).pairs)
+                    self.assertEqual(10000, next(item.score for item in pair.features if item.name == "authors"))
+                elif name == "translated titles":
+                    self.assertTrue(next(item.conflict for item in pair.features if item.name == "title"))
+                else:
+                    self.assertIn("conflicting-identifiers", pair.flags)
 
     def test_namespaced_identifiers_can_block_missing_title_but_person_ids_cannot(self):
         doi = IdentifierAssertion(scheme="doi", observed="10.1234/synthetic")
