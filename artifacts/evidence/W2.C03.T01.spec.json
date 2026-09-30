@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S03.T02",
+    "commit": "0738c2543db85af8189bd0948393698b04662de6",
+    "sha256": "06cc1904cca215b590e108424047799dbbee70ffbdc7d5966a5e14fef5fd03c5"
+  },
+  "reproduction": "Independent S03 slice preparation at the unchanged frozen W2 authority found that section11 requires review queues prioritized by expected impact and uncertainty, while generate_prepared_candidates sorts only by similarity score and batch publication persists that sequence unchanged. Retrieval accuracy is independently approved and remains intact; user review ordering is a separate missing behavior. Original T02 status, evidence, adverse findings and R02 approval remain immutable.",
+  "changedPaths": [
+    "services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py",
+    "services/core-api/src/research_observatory_core/reconciliation_repository.py",
+    "tests/reconciliation/test_candidate_sets.py",
+    "tests/reconciliation/test_batch_publication.py",
+    "tests/reconciliation/test_candidate_inspection.py",
+    "tests/reconciliation/test_client_contract.py",
+    "tests/reconciliation/test_renderer.py"
+  ],
+  "impactAnalysis": "Restore the approved review-order requirement in the existing backend without changing matcher scoring, thresholds, candidate membership, comparison counts, feature cache, source identities, rights authority, wire schemas or renderer implementation. Order a newly published set once using the number of distinct source assertions potentially affected across exact complete sealed Work revisions as a bounded impact proxy, followed by disputed-feature count, missing-feature count and original retrieval order. These are explicit review-priority proxies, not probabilities or scientific-importance estimates. Bind a separate versioned review-order configuration as a typed material parameter-set dependency in the same canonical transaction. Preserve legacy accepted sets, pair digests, sealed ordinal paging, original receipts, historical Work bindings and atomic provenance/outbox/cancellation semantics. Never dynamically resort pages or rewrite old candidates. Add behavioral tests for lower-score/higher-impact ordering, uncertainty/ties, unchanged retrieval membership/explanations, complete historical membership, multi-page identity continuity/reopen, legacy/exact retry, rollback and current-rights denial. Prove the existing generated-client/production renderer displays the stored order and original scores. Run focused affected public contract, repository, rights/atomicity, client/browser checks and independent correction disposition before normal Wave resume. No migration, schema/reference change, security grant, new criteria, external action or supplemental refactoring allocation."
+}
