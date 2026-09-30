@@ -21,6 +21,7 @@ import unittest
 from contextlib import contextmanager
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 from unittest.mock import patch
 
 from research_observatory_core.import_commit_repository import SqliteImportCommitRepository
@@ -147,7 +148,7 @@ class ImportCommitDiagnosticReportingTests(unittest.TestCase):
         self.assertGreaterEqual(after["totalSeconds"], 0)
 
     def test_success_on_a_retry_cannot_hide_the_first_attempt_failure(self):
-        report = {}
+        report: dict[str, Any] = {}
         job = SimpleNamespace(state="succeeded", attempt_count=2, diagnostic_code=None, interruption_kind=None)
         with self.assertRaisesRegex(AssertionError, "retry observed"):
             _observe_job(report, job)

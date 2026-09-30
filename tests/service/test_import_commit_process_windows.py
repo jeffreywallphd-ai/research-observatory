@@ -13,8 +13,10 @@ import traceback
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
+from fastapi import FastAPI
 from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights
 
 from tests.service import test_import_review_scale_windows as scale
@@ -123,7 +125,9 @@ def _run_phase(fixture, phase, state):
                     entered.set()
                     # Test scheduling seam only. The actual close route supplies
                     # the stop signal and the real protected writer rolls back.
-                    active = client.app.state.runtime.imports._publications[Path(state["root"])]
+                    app = client.app
+                    assert isinstance(app, FastAPI)
+                    active = app.state.runtime.imports._publications[Path(state["root"])]
                     assert active.requested.wait(5), "close did not signal publication"
 
             with patch(
@@ -187,8 +191,9 @@ class ImportCommitProcessWindowsTests(unittest.TestCase):
         fixture = Path(tempfile.mkdtemp(prefix="import-commit-process-", dir=scratch))
         (fixture / "vault").mkdir()
         (fixture / "projects").mkdir()
-        state, pids = {"epoch": secrets.token_hex(16)}, []
-        report = {"outcome": "running", "head": scale._head(), "phases": [], "fixturesRetained": True}
+        state: dict[str, Any] = {"epoch": secrets.token_hex(16)}
+        pids: list[int] = []
+        report: dict[str, Any] = {"outcome": "running", "head": scale._head(), "phases": [], "fixturesRetained": True}
         report_path = fixture / "result.json"
         started = time.monotonic()
         try:

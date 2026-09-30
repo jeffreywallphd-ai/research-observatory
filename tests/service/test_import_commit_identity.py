@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import unittest
+from typing import cast
 
 from research_observatory_core.ingestion.import_commits import ImportIdentity, import_identity, source_assertion_key
 from research_observatory_core.ingestion.import_drafts import (
@@ -106,7 +107,7 @@ class ImportCommitIdentityTests(unittest.TestCase):
                 self.identity(decisions=decisions)
         for count in (-1, True, 200001, 3.0):
             with self.subTest(count=count), self.assertRaises(ValueError):
-                import_identity(self.authority, iter(self.decisions), expected_record_count=count)
+                import_identity(self.authority, iter(self.decisions), expected_record_count=cast(int, count))
         empty = import_identity(self.authority, iter(()), expected_record_count=0)
         self.assertEqual((0, 0), (empty.record_count, empty.selected_count))
 

@@ -14,6 +14,7 @@ from research_observatory_core import storage
 from research_observatory_core.migrations import runner
 
 from tests.data import test_import_summary_migration as predecessor
+from tests.database_key_fixtures import InMemoryDatabaseKeyProvider
 
 FIXTURE = Path(__file__).resolve().parents[1] / "fixtures/imports/schema-v12-authority.json"
 V12_SCHEMA = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf624178d4f281840fa"
@@ -135,6 +136,9 @@ class ProtectedImportCommitMigrationTests(unittest.TestCase):
 
     setUp = predecessor.protected_fixture.ProtectedDatabaseTests.setUp
     tearDown = predecessor.protected_fixture.ProtectedDatabaseTests.tearDown
+    root: Path
+    database: Path
+    keys: InMemoryDatabaseKeyProvider
 
     def protected_source(self):
         legacy = self.root / "legacy/state/project.sqlite3"

@@ -62,14 +62,14 @@ class ImportCommitWorkflowTests(unittest.TestCase):
         for change in ({"activity_type": "local-import-draft-summary"}, {"command_fingerprint": "sha256:" + "f" * 64}):
             with self.subTest(change=change), self.assertRaises(PreviewProblem):
                 bind_commit_claim(authority, replace(claim, **change), self.inputs)
-        for change in (
+        for input_change in (
             {"draft_revision": self.inputs.draft_revision + 1},
             {"previous_manifest_revision_id": new_uuid_v7()},
             {"request_id": new_uuid_v7()},
             {"parse_attempt_id": new_uuid_v7()},
         ):
-            with self.subTest(change=change), self.assertRaises(PreviewProblem):
-                bind_commit_claim(authority, claim, self.inputs.model_copy(update=change))
+            with self.subTest(change=input_change), self.assertRaises(PreviewProblem):
+                bind_commit_claim(authority, claim, self.inputs.model_copy(update=input_change))
 
     def test_continuation_requires_exact_cancelled_predecessor(self):
         original = self.enqueue()

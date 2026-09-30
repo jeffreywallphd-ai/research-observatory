@@ -119,11 +119,14 @@ def supervised(executable, fixture, phase, epoch):
             stderr=error_log,
             creationflags=subprocess.CREATE_NO_WINDOW,
         )
+        stdin, stdout = process.stdin, process.stdout
         try:
+            if stdin is None or stdout is None:
+                raise AssertionError("frozen Core pipes unavailable")
             token = secrets.token_hex(32)
-            process.stdin.write(f"auth {token} workflow {epoch} {secrets.token_hex(16)}\n".encode())
-            process.stdin.flush()
-            raw = read_line(process.stdout, 10)
+            stdin.write(f"auth {token} workflow {epoch} {secrets.token_hex(16)}\n".encode())
+            stdin.flush()
+            raw = read_line(stdout, 10)
             if len(raw) > 4096 or not raw.endswith(b"\n"):
                 raise AssertionError("invalid bounded handshake")
             handshake = json.loads(raw)
@@ -135,8 +138,8 @@ def supervised(executable, fixture, phase, epoch):
                     raise AssertionError("frozen Core unavailable")
                 time.sleep(0.05)
             yield client
-            process.stdin.write(b"shutdown\n")
-            process.stdin.flush()
+            stdin.write(b"shutdown\n")
+            stdin.flush()
             process.wait(timeout=5)
             if process.returncode != 0:
                 raise AssertionError("frozen Core shutdown failed")
@@ -144,8 +147,9 @@ def supervised(executable, fixture, phase, epoch):
             if process.poll() is None:
                 process.kill()  # Exact child owned by this invocation only.
                 process.wait(timeout=5)
-            for stream in (process.stdin, process.stdout):
-                stream.close()
+            for stream in (stdin, stdout):
+                if stream is not None:
+                    stream.close()
 
 
 def intake(client, project):
