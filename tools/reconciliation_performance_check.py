@@ -120,6 +120,10 @@ def sample_metrics(sample: dict) -> dict[str, float]:
         and (protected["acceptedImportRecords"], protected["retainedConnectorRecords"]) == (202, 1)
         and (protected["recordCount"], protected["candidateCount"]) == (203, 103)
         and protected["actualDPAPIAndSQLCipher"] is True
+        and protected["coldWarmCandidateContentEqual"] is True
+        and isinstance(protected["candidateDigestSha256"], str)
+        and len(protected["candidateDigestSha256"]) == 64
+        and all(char in "0123456789abcdef" for char in protected["candidateDigestSha256"])
         and protected["providerNetworkDuringMeasurement"] == 0
         and protected["workerCapacitySubstitutedDuringSetup"] is True
         and protected["workerCapacitySubstitutedDuringMeasurement"] is False,

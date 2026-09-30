@@ -13,6 +13,10 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import Mock, patch
 
+from research_observatory_core.reconciliation import candidates, feature_cache
+
+from tests.reconciliation import performance_workload
+
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
@@ -42,6 +46,8 @@ def sample():
             "retainedConnectorRecords": 1,
             "recordCount": 203,
             "candidateCount": 103,
+            "candidateDigestSha256": "a" * 64,
+            "coldWarmCandidateContentEqual": True,
             "batches": [
                 {"phase": "cold", "seconds": 1.0, "newJob": True, "newRequest": True, "featureComputations": None},
                 {"phase": "warm", "seconds": 1.0, "newJob": True, "newRequest": True, "featureComputations": 0},
@@ -181,3 +187,28 @@ class ReconciliationPerformanceCheckTests(unittest.TestCase):
             result = json.loads(destination.read_text("utf-8"))
             self.assertEqual("FAIL", result["status"])
             self.assertFalse(result["performanceQualifying"])
+
+    def test_warm_observer_catches_computation_during_enqueue(self):
+        record = candidates.CandidateRecord("synthetic:1", "revision-1", (("title", ("Synthetic title",)),))
+
+        def post(route, **_body):
+            if route == "batches/prepare":
+                return {"requestId": "request-2"}
+            if route == "batches/schedule":
+                feature_cache.prepare_record(record)
+                return {"jobId": "job-2"}
+            return {"state": "succeeded", "setRevisionId": "set-2"}
+
+        with self.assertRaisesRegex(AssertionError, "warm batch recomputed"):
+            performance_workload._run_batch(post, Mock(run_pending=Mock()), "warm")
+
+    def test_paged_output_rejects_repeats_and_substitution_at_exact_ordinal(self):
+        expected = tuple(hashlib.sha256(str(index).encode()).hexdigest() for index in range(103))
+        pages = ((0, expected[:100]), (100, expected[100:]))
+        self.assertIsInstance(performance_workload._verify_page_digests(pages, expected), str)
+        with self.assertRaisesRegex(AssertionError, "candidate page"):
+            performance_workload._verify_page_digests(((0, expected[:100]), (100, expected[:3])), expected)
+        with self.assertRaisesRegex(AssertionError, "candidate page"):
+            performance_workload._verify_page_digests(
+                ((0, expected[:100]), (100, (expected[100], expected[101], expected[0]))), expected
+            )
