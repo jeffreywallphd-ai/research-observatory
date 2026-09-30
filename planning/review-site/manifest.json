@@ -1745,6 +1745,58 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C04.T01",
+          "title": "Create import preview, mapping, and conflict UI",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S01.T02",
+            "origin_commit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a",
+            "paused_state_sha256": "e508904eabdbc4ac317a4f53c1748acaabb4a8f9fe08abc574329b61d8d430fa",
+            "origin_sha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a",
+            "origin_contract_sha256": "b55b20fcd5e92a1f3ca25029b6d6fe1e477cc8811dcf8e092a0a9ece431e6574",
+            "origin_history_sha256": "7f8d5314e0952d2af87bec9435fcd426160bbfbc72997b6cc8e70b4d69e9eb27",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C04.T01.spec.json",
+              "sha256": "5ad6f6e4c72dcb0c9bbf566e26ab3e0561a1271e08aa62b3c1325398cd6e2e28",
+              "commit": "ba9cdc9e7c3b5bae4bf281a04855ffe50379a00e"
+            },
+            "reproduction": "The W2 S01-S03 checkpoint on the unchanged approved campaign found 29 mypy errors in five CAP-04.S01.T02 preview/summary test files after separately reviewed privacy-control and package-inventory maintenance. A focused protected migration run also failed because the v10 preview protection test expects only migrations 0011/0012 and final schema v12, while the current additive chain reaches v16. The exact failed quality and migration logs are retained locally under artifacts/tmp/W2.checkpoint-security-package-01.*. The original CAP-04.S01.T02 status, evidence, review and frozen W2 approval remain unchanged.",
+            "changed_paths": [
+              "tests/data/test_import_summary_migration.py",
+              "tests/data/test_import_summary_repository.py",
+              "tests/data/test_import_summary_storage.py",
+              "tests/security/test_import_preview_protection.py",
+              "tests/service/test_import_intake_api.py",
+              "tests/service/test_import_summary_workflow.py"
+            ],
+            "impact_analysis": "Restore the approved import preview, mapping, cancellation, protected summary and migration proof without changing product code, security authority, persisted data, migration implementation, test expectations for historical backup bytes or any acceptance criterion. Replace implicit Optional assumptions with explicit fail-closed assertions/narrowing, give existing fixture attributes precise types, and preserve invalid-input cases while typing their request dictionaries. Update the v10 protected migration test to require the complete current additive migration chain through v16 while still checking exact v10 encrypted backup, settings, foreign-key integrity, repeated reopen and idempotent retry; do not weaken the earlier v11/v12 assertions. Run focused real SQLCipher migration/summary/service/API tests plus full governed format/lint/type diagnostic comparison, then independent corrective review. The remaining CAP-04.S01.T03 commit/packaging test typing debt is a separate linked correction. No new source, schema, right, UI, approval or refactoring scope is authorized."
+          },
+          "task_review": {
+            "task_id": "W2.C04.T01",
+            "title": "Create import preview, mapping, and conflict UI",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

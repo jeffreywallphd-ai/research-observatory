@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 5a334692c4cdb125869467357de3ab1e575127b063cd897a2b180e150f61eaae
+source_sha256: 3cc337e7b40f95b328fb152925a29351c38d4a6450afbce92a4e28f091102de1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2863,6 +2863,38 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-30T11:06:06+00:00`
 
 **Latest notes:** Independent review approves the exact frozen W2.C03.T01 R01 candidate under the original CAP-04.S03.T02 contract and approved S03 sections 11, 12 and 14. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no product, test, planning or Git mutation. Authenticated the persisted REVIEW packet, line-ending-canonical evidence hash, criteria and selection hashes, exact twelve-path base-to-candidate inventory, original-task admission and all eleven retained check-log hashes. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The seven admitted product/test files match the candidate; the other five changed files are taskctl planning state and generated views. The correction orders newly published candidate sets by the union of complete authorized sealed Work source memberships, then disputed-feature count, missing-feature count and original retrieval position. These are bounded review-priority proxies, not probabilities or scholarly-importance estimates. Matcher scoring, thresholds, candidate membership, feature-cache semantics, explanation bytes, public schemas, migrations, renderer implementation and approved reference remain unchanged. A separate versioned direct parameter-set dependency records the priority policy in the canonical publication transaction. Historical reads use sealed ordinals and accepted-output retry returns before new ordering. Current-source authorization, dependency warnings, failure rollback and cancellation publication guards remain enforced. The earlier advisory proof gaps are closed by the committed tests and their observed passing results; they were pre-submission observations, not prior controlled review rounds. No criterion-bound blocker remains. This approval covers the linked correction and its affected integration only; it does not approve S03 slice completion, performance qualification, Wave exit or release.
+
+**Currently open findings:** -
+
+### W2.C04.T01 — Create import preview, mapping, and conflict UI
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+
+**Reproduction:** The W2 S01-S03 checkpoint on the unchanged approved campaign found 29 mypy errors in five CAP-04.S01.T02 preview/summary test files after separately reviewed privacy-control and package-inventory maintenance. A focused protected migration run also failed because the v10 preview protection test expects only migrations 0011/0012 and final schema v12, while the current additive chain reaches v16. The exact failed quality and migration logs are retained locally under artifacts/tmp/W2.checkpoint-security-package-01.*. The original CAP-04.S01.T02 status, evidence, review and frozen W2 approval remain unchanged.
+
+**Inherited criteria:**
+
+- User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/data/test_import_summary_migration.py
+- tests/data/test_import_summary_repository.py
+- tests/data/test_import_summary_storage.py
+- tests/security/test_import_preview_protection.py
+- tests/service/test_import_intake_api.py
+- tests/service/test_import_summary_workflow.py
+#### Review history — W2.C04.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

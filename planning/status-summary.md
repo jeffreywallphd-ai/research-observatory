@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 5a334692c4cdb125869467357de3ab1e575127b063cd897a2b180e150f61eaae
+source_sha256: 3cc337e7b40f95b328fb152925a29351c38d4a6450afbce92a4e28f091102de1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -654,13 +654,14 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C01.T01` | `append-only v1` | 1 | `-` | approved / agent:w2-s01-final-review | - |
 | `W2.C02.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c02_review | - |
 | `W2.C03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c02_review | - |
+| `W2.C04.T01` | `append-only v1` | 0 | `-` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 3/11 | 12/36 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 3/11 | 12/37 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -715,7 +716,9 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-No task is currently active.
+| Task | Status | Owner | Branch |
+|---|---|---|---|
+| `W2.C04.T01` Create import preview, mapping, and conflict UI | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -752,4 +755,8 @@ Original tasks and approvals remain unchanged.
 ### W2.C03.T01 — Implement probabilistic duplicate candidate generation and review
 
 **Status:** `DONE`. **Original task:** `CAP-04.S03.T02`. **Latest review:** `approved`.
+
+### W2.C04.T01 — Create import preview, mapping, and conflict UI
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
 
