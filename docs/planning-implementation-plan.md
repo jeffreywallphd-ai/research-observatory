@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: c63caef41e625b72affa0f882c8f57a92a67d61053738194788b07e89ddc08be
+source_sha256: 3244645b63cd8646d7df8568db7c194515e15bcbcc8cb1a2f34bae07f715ac25
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2805,7 +2805,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C03.T01 — Implement probabilistic duplicate candidate generation and review
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S03.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S03.T02`. **Latest review:** `approved`.
 
 **Reproduction:** Independent S03 slice preparation at the unchanged frozen W2 authority found that section11 requires review queues prioritized by expected impact and uncertainty, while generate_prepared_candidates sorts only by similarity score and batch publication persists that sequence unchanged. Retrieval accuracy is independently approved and remains intact; user review ordering is a separate missing behavior. Original T02 status, evidence, adverse findings and R02 approval remain immutable.
 
@@ -2826,13 +2826,43 @@ Original tasks and approvals remain unchanged.
 - tests/reconciliation/test_renderer.py
 #### Review history — W2.C03.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `d19f1f8df845a29d32dd7d9ba8e3208410003ccd2f265a15867d4bd0f035700d`
+
+- Candidate / base / branch: `c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2` / `63b77589f206f0d7e7e65c35bf88f0167a9c588f` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-30T10:57:22+00:00`
+- Evidence: `artifacts/evidence/W2.C03.T01.json` / `454ee91f9425b012b22588a5c3e81d380419bf16e8168740f7028c8860fe3278` / `c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2`
+- Acceptance-criteria SHA-256: `69dd8dbac54d02b33cd88ff9bcdcaefcd78a70d1bc45736cb215f7d071fa2b57`
+- Verification-selection SHA-256: `da8ca9b9c683ac22d930a9b1dd27c68d961d56e8ab9997a09bc0c652412587d3`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py`, `services/core-api/src/research_observatory_core/reconciliation_repository.py`, `tests/reconciliation/test_batch_publication.py`, `tests/reconciliation/test_candidate_inspection.py`, `tests/reconciliation/test_candidate_sets.py`, `tests/reconciliation/test_client_contract.py`, `tests/reconciliation/test_renderer.py`
+- Selected checks: `.venv\Scripts\python.exe -B -s -m unittest discover -v -s tests/reconciliation -p test_*.py`, `.venv\Scripts\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe -B -s tools/backlog_views.py --repo . --check`, `.venv\Scripts\python.exe -B -s tools/plan_review_check.py --repo .`, `.venv\Scripts\python.exe -m ruff check services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py`, `.venv\Scripts\python.exe -m ruff format --check services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py`, `$env:PYTHONPATH='services/core-api/src'; .venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py`, `.venv\Scripts\python.exe -B -s tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe -B -s tools/architecture_check.py --repo .`, `.venv\Scripts\python.exe -B -s tools/ui_change_gate.py --repo .`, `.venv\Scripts\python.exe -B -s tools/fixture_corpus_check.py --repo .`
+- Deferred checks: `S03 slice performance and independent integrated slice review remain separate from this linked correction.`, `Full W2 cross-capability, security/privacy/rights/accessibility/performance/packaging and repository qualification, independent Wave review and human release gate remain pending until their own criteria are met.`
+- Selection rationale: A backend publication-order change affects persisted candidate ordinals and actual generated-client/browser consumers. Run the full reconciliation suite rather than only the new cases, plus exact candidate type/format/lint, scope/authority, and planning-state checks. W2's old affected-selection helper authorizes only W1-exit as a deferred owner, so its preview is not used as a W2 selection authority.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_c02_review / `2026-09-30T11:06:06+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C03.T01.review-R01.json` / `8dc6e26b71ea5d26c0659777960498a05f3160a9eb87f2e65c58362e9d82c606`
+
+**Review notes:** Independent review approves the exact frozen W2.C03.T01 R01 candidate under the original CAP-04.S03.T02 contract and approved S03 sections 11, 12 and 14. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no product, test, planning or Git mutation. Authenticated the persisted REVIEW packet, line-ending-canonical evidence hash, criteria and selection hashes, exact twelve-path base-to-candidate inventory, original-task admission and all eleven retained check-log hashes. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The seven admitted product/test files match the candidate; the other five changed files are taskctl planning state and generated views. The correction orders newly published candidate sets by the union of complete authorized sealed Work source memberships, then disputed-feature count, missing-feature count and original retrieval position. These are bounded review-priority proxies, not probabilities or scholarly-importance estimates. Matcher scoring, thresholds, candidate membership, feature-cache semantics, explanation bytes, public schemas, migrations, renderer implementation and approved reference remain unchanged. A separate versioned direct parameter-set dependency records the priority policy in the canonical publication transaction. Historical reads use sealed ordinals and accepted-output retry returns before new ordering. Current-source authorization, dependency warnings, failure rollback and cancellation publication guards remain enforced. The earlier advisory proof gaps are closed by the committed tests and their observed passing results; they were pre-submission observations, not prior controlled review rounds. No criterion-bound blocker remains. This approval covers the linked correction and its affected integration only; it does not approve S03 slice completion, performance qualification, Wave exit or release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-30T11:06:06+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independent review approves the exact frozen W2.C03.T01 R01 candidate under the original CAP-04.S03.T02 contract and approved S03 sections 11, 12 and 14. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no product, test, planning or Git mutation. Authenticated the persisted REVIEW packet, line-ending-canonical evidence hash, criteria and selection hashes, exact twelve-path base-to-candidate inventory, original-task admission and all eleven retained check-log hashes. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The seven admitted product/test files match the candidate; the other five changed files are taskctl planning state and generated views. The correction orders newly published candidate sets by the union of complete authorized sealed Work source memberships, then disputed-feature count, missing-feature count and original retrieval position. These are bounded review-priority proxies, not probabilities or scholarly-importance estimates. Matcher scoring, thresholds, candidate membership, feature-cache semantics, explanation bytes, public schemas, migrations, renderer implementation and approved reference remain unchanged. A separate versioned direct parameter-set dependency records the priority policy in the canonical publication transaction. Historical reads use sealed ordinals and accepted-output retry returns before new ordering. Current-source authorization, dependency warnings, failure rollback and cancellation publication guards remain enforced. The earlier advisory proof gaps are closed by the committed tests and their observed passing results; they were pre-submission observations, not prior controlled review rounds. No criterion-bound blocker remains. This approval covers the linked correction and its affected integration only; it does not approve S03 slice completion, performance qualification, Wave exit or release.
 
 **Currently open findings:** -
 

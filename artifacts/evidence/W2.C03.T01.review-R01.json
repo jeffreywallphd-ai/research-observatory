@@ -1,0 +1,114 @@
+{
+  "task_id": "W2.C03.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+  "base_commit": "63b77589f206f0d7e7e65c35bf88f0167a9c588f",
+  "reviewer": "agent:/root/w2_c02_review",
+  "result": "approved",
+  "evidence_sha256": "454ee91f9425b012b22588a5c3e81d380419bf16e8168740f7028c8860fe3278",
+  "packet_sha256": "d19f1f8df845a29d32dd7d9ba8e3208410003ccd2f265a15867d4bd0f035700d",
+  "acceptance_criteria_sha256": "69dd8dbac54d02b33cd88ff9bcdcaefcd78a70d1bc45736cb215f7d071fa2b57",
+  "selection_sha256": "da8ca9b9c683ac22d930a9b1dd27c68d961d56e8ab9997a09bc0c652412587d3",
+  "notes": "Independent review approves the exact frozen W2.C03.T01 R01 candidate under the original CAP-04.S03.T02 contract and approved S03 sections 11, 12 and 14. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no product, test, planning or Git mutation. Authenticated the persisted REVIEW packet, line-ending-canonical evidence hash, criteria and selection hashes, exact twelve-path base-to-candidate inventory, original-task admission and all eleven retained check-log hashes. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The seven admitted product/test files match the candidate; the other five changed files are taskctl planning state and generated views. The correction orders newly published candidate sets by the union of complete authorized sealed Work source memberships, then disputed-feature count, missing-feature count and original retrieval position. These are bounded review-priority proxies, not probabilities or scholarly-importance estimates. Matcher scoring, thresholds, candidate membership, feature-cache semantics, explanation bytes, public schemas, migrations, renderer implementation and approved reference remain unchanged. A separate versioned direct parameter-set dependency records the priority policy in the canonical publication transaction. Historical reads use sealed ordinals and accepted-output retry returns before new ordering. Current-source authorization, dependency warnings, failure rollback and cancellation publication guards remain enforced. The earlier advisory proof gaps are closed by the committed tests and their observed passing results; they were pre-submission observations, not prior controlled review rounds. No criterion-bound blocker remains. This approval covers the linked correction and its affected integration only; it does not approve S03 slice completion, performance qualification, Wave exit or release.",
+  "corrective_integration": {
+    "evidence_sha256": "454ee91f9425b012b22588a5c3e81d380419bf16e8168740f7028c8860fe3278",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "Authenticated the original task snapshot 06cc1904cca215b590e108424047799dbbee70ffbdc7d5966a5e14fef5fd03c5, exact committed correction spec/admission and inherited criteria. Reviewed the new pure ordering function, complete Work-state membership collection, canonical aggregate/material-dependency publication, immutable pair hashes/ordinals, current-rights reads, replay branch, generated-client consumption and production React/Core browser assertions. The original T02 R02 manifest and independent ledger retain their declared hashes and original-origin bytes; they support unchanged behavior at their own candidates and are not substituted for fresh correction proof. All eleven manifest check logs authenticate to their declared hashes; the completed reconciliation log reports 197 tests OK in 700.054 seconds. Existing UI gate reports the exact correction base/candidate, no governed UI implementation files and no errors. No control bypass, migration, new security authority, altered approval, reference edit, source-identity change or new acceptance criterion is introduced. S03 performance and integrated slice review remain separate obligations after correction integration."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Fresh reconciliation qualification includes the frozen scoring/blocking AST bridge and the known DBLP-ACM qualification-corpus precision/recall test. Their approved configuration and fixture bytes are unchanged. New pure and real-publication cases demonstrate that a lower similarity score can precede a higher score because its pair affects more complete Work source assertions, including an authorized assertion absent from the current candidate inventory. Equal-impact disputed/missing features and original-order ties are tested. Candidate membership and content digests are preserved; similarity remains human-review evidence and does not authorize a fuzzy merge. Existing reversible merge/split and conflict-retention cases also pass in the fresh suite."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh tests verify the separate direct parameter-set dependency, publication and its exact accepted-output retry, three-page ordinal continuity, reopening, and a later split that changes membership while historical pages and root content remain unchanged and expose requires-review. The legacy-shaped fixture disables only the two newly introduced publication additions, commits through the real queue/aggregate/candidate tables without a priority marker, then reads and retries using current code with unchanged output, content, page and table counts. The prior incorrect source-versus-assertion exclusion assertion now uses an actual assertion revision. Fault seams assert rollback of the priority dependency together with canonical facts and queue acceptance; source rights denial rejects pair and inspection reads. Generated-client decoding preserves persisted order and scores, and the actual production renderer through Core exchange displays a non-descending-score sequence matching the stored response. Existing cancellation, authority, recovery and protected-runtime cases pass in the completed suite."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The correction is confined to the two admitted backend files and five admitted test files, plus taskctl planning state/generated views. The priority version/configuration is stored through the existing typed material-dependency mechanism with no JSON schema or migration change. Work revision references and complete provenance remain part of candidate publication, including existing bounded manifest packing. Inspection does not recompute priority from current state. Fresh seven-file Python lint, format and type checks, repository structure, architecture, fixture corpus, backlog/views, planning-site and UI-change checks pass. The original task, evidence, independent approvals, frozen matcher/configuration/fixtures and governed reference are preserved. No unrelated implementation or authority expansion is present."
+    }
+  ],
+  "verification_review": {
+    "candidate_commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+    "selected_check_count": 11,
+    "authenticated_logs": [
+      {
+        "id": "reconciliation",
+        "path": "artifacts/tmp/W2.C03.T01.reconciliation-qual.log",
+        "sha256": "d38b94a700e261e8169f245e2c6c1e4866c83d1042f61badc8b86926b0b3789a"
+      },
+      {
+        "id": "taskctl",
+        "path": "artifacts/tmp/W2.C03.T01.taskctl-qual.log",
+        "sha256": "c3cdc8b08c57672ccf1052bfd00d0c41236cc714c29e325a06af1ba44af875e4"
+      },
+      {
+        "id": "backlog-views",
+        "path": "artifacts/tmp/W2.C03.T01.views-qual.log",
+        "sha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+      },
+      {
+        "id": "plan-site",
+        "path": "artifacts/tmp/W2.C03.T01.plan-site-qual.log",
+        "sha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7"
+      },
+      {
+        "id": "python-lint",
+        "path": "artifacts/tmp/W2.C03.T01.python-lint-qual.log",
+        "sha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0"
+      },
+      {
+        "id": "python-format",
+        "path": "artifacts/tmp/W2.C03.T01.python-format-qual.log",
+        "sha256": "9fa2e30088122b883ebbf1c300359d4a0c9d09c988b20631e8625a40425a9723"
+      },
+      {
+        "id": "python-types",
+        "path": "artifacts/tmp/W2.C03.T01.python-types-qual.log",
+        "sha256": "e2702f9afc4c0f80ff1e8624f77af7a7d2689ca184512114aae5967a76229ba8"
+      },
+      {
+        "id": "repository-structure",
+        "path": "artifacts/tmp/W2.C03.T01.repo-structure-qual.log",
+        "sha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d"
+      },
+      {
+        "id": "architecture",
+        "path": "artifacts/tmp/W2.C03.T01.architecture-qual.log",
+        "sha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+      },
+      {
+        "id": "ui-change",
+        "path": "artifacts/tmp/W2.C03.T01.ui-change-qual.log",
+        "sha256": "d691a2233cc1ce1f82c057be4d9a2c3e18194616c566c2fad06937314a07bf73"
+      },
+      {
+        "id": "fixture-corpus",
+        "path": "artifacts/tmp/W2.C03.T01.fixture-corpus-qual.log",
+        "sha256": "a02b544d217642321204e36197c5d4a74b4d35f3b18b13bd40ded9b9439daa66"
+      }
+    ],
+    "reconciliation_tests": 197,
+    "reconciliation_elapsed_seconds": 700.054,
+    "assessment": "Every retained raw log matches its manifest SHA-256. The complete reconciliation output ends in OK without a suite skip qualification. The reviewer observed the unchanged committed candidate during the run and inspected the final logs, relevant source and test assertions; no expensive suite was replayed for this review. Checks are selected affected coverage, not full repository/profile qualification. The fixture-corpus checker concerns its declared CC0 corpus; the separate frozen DBLP-ACM benchmark test supplies duplicate-retrieval evidence."
+  },
+  "advisory_follow_through": [
+    "The pre-submission legacy and post-membership-change paging proof gap is closed by test_legacy_publication_without_priority_marker_replays_original_accepted_output and test_prioritized_pages_keep_original_order_after_membership_split_and_reopen, both observed passing in the final log.",
+    "The source/address revision mistakenly compared against assertion IDs was replaced by original_set.members[1].assertion_revision_id; complete Work membership outside the candidate inventory is checked using the actual assertion namespace.",
+    "The material-configuration test now asserts dependency_kind parameter-set, relation_type direct, version 1.0.0 and the exact priority fingerprint. Earlier advisory notes remain historical and do not invent a prior controlled RNN attempt."
+  ],
+  "findings": [],
+  "closures": [],
+  "limitations": [
+    "Legacy compatibility uses a real persisted fixture with the two new additions suppressed, not execution of a separately retained old binary. Current-code exact replay is exercised after that fixture is committed.",
+    "Browser proof uses production React/generated-client/Core behavior with test exchange/native-context and source fixtures; it is not a new packaged desktop or complete native accessibility qualification. The suite includes existing Windows protected-runtime/native coverage at its stated boundaries.",
+    "Protected child result files were not independently traversed in this review. The reviewer authenticated the complete raw suite log and inspected the relevant executable assertions rather than claiming direct access to every protected runtime artifact.",
+    "The added sort is bounded by existing 10000-source, 20000-pair and 256-member-per-Work limits. Its maximum-workload cancellation latency and performance are not established by these task checks; surrounding publication checkpoints remain intact and no excessive latency was demonstrated. S03 measured calibration, independently reviewed baseline, fresh performance qualification and integrated slice disposition remain pending.",
+    "The manifest and persisted current_submission were authenticated in the authorized working submission state while HEAD remained the exact candidate. This ledger does not invent a later evidence-delivery commit. Formal taskctl review, integration, full W2 qualification and human release authority remain separate actions."
+  ]
+}

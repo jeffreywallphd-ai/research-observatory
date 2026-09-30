@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C03.T01",
+  "baseCommit": "63b77589f206f0d7e7e65c35bf88f0167a9c588f",
+  "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py",
+    "services/core-api/src/research_observatory_core/reconciliation_repository.py",
+    "tests/reconciliation/test_batch_publication.py",
+    "tests/reconciliation/test_candidate_inspection.py",
+    "tests/reconciliation/test_candidate_sets.py",
+    "tests/reconciliation/test_client_contract.py",
+    "tests/reconciliation/test_renderer.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The unchanged frozen matcher and gold corpus remain governed by the original CAP-04.S03.T02 evidence and review. Fresh full reconciliation qualification at this exact candidate includes the frozen benchmark and candidate-contract tests. New test_review_priority_can_place_lower_similarity_above_low_impact_pair and the real batch/renderer/client cases show a lower similarity score ahead of a higher one solely for review priority; pair membership, original scores, explanations and content digests stay unchanged. Ambiguous pairs still require human review, and merge/split reversibility is covered by the retained original evidence and fresh suite.",
+        "Impact is the distinct union of complete authorized, sealed Work source assertions, including an assertion outside the candidate inventory. Disputed and not-reported feature counts break equal-impact ties, then original retrieval order remains stable. These bounded proxies are not probabilities or scholarly-importance claims."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh full reconciliation suite covers expected publication, real Work membership, exact accepted-output retry, three-page ordinal continuity and reopening, later split with changed-membership/dependency warnings, original hash/score preservation, generated client decoding and production React/Core display. A real SQLite/queue legacy-shaped publication without the new marker replays unchanged through current readers and accepted-output retry.",
+        "Fault-seam tests now assert that the review-priority material dependency rolls back with canonical facts and queue acceptance; current-rights denial blocks pair and inspection reads. Existing suite covers cancellation, source authority, recovery and other repository/API boundaries."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Only two admitted backend files and five admitted test files change besides generated taskctl planning state. The review policy is a separate versioned direct parameter-set material dependency in the same aggregate transaction; the frozen matcher, thresholds, feature cache, public schemas, migrations, renderer implementation, approved reference, and original task evidence/history are unchanged.",
+        "Fresh affected Python lint/format/types, repository structure, architecture, fixture corpus, UI-change gate, backlog validation/views and planning review-site checks pass at the exact candidate. No new security grant, external action, supplemental refactoring allocation or governed-reference change is claimed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:reconciliation",
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:fixture-corpus",
+      "foundation:ui-change"
+    ],
+    "riskAnalysis": "A backend publication-order change affects persisted candidate ordinals and actual generated-client/browser consumers. Run the full reconciliation suite rather than only the new cases, plus exact candidate type/format/lint, scope/authority, and planning-state checks. W2's old affected-selection helper authorizes only W1-exit as a deferred owner, so its preview is not used as a W2 selection authority.",
+    "deferred": [
+      "S03 slice performance and independent integrated slice review remain separate from this linked correction.",
+      "Full W2 cross-capability, security/privacy/rights/accessibility/performance/packaging and repository qualification, independent Wave review and human release gate remain pending until their own criteria are met."
+    ]
+  },
+  "checks": [
+    {
+      "id": "reconciliation",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest discover -v -s tests/reconciliation -p test_*.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.reconciliation-qual.log",
+      "rawOutputSha256": "d38b94a700e261e8169f245e2c6c1e4866c83d1042f61badc8b86926b0b3789a",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "taskctl",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.taskctl-qual.log",
+      "rawOutputSha256": "c3cdc8b08c57672ccf1052bfd00d0c41236cc714c29e325a06af1ba44af875e4",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "backlog-views",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.views-qual.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "plan-site",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.plan-site-qual.log",
+      "rawOutputSha256": "f16ff7f34dda71aaba23ced9c6c081e43af4046c263de481b172d9dc185560f7",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "python-lint",
+      "command": ".venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.python-lint-qual.log",
+      "rawOutputSha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "python-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.python-format-qual.log",
+      "rawOutputSha256": "9fa2e30088122b883ebbf1c300359d4a0c9d09c988b20631e8625a40425a9723",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "python-types",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.python-types-qual.log",
+      "rawOutputSha256": "e2702f9afc4c0f80ff1e8624f77af7a7d2689ca184512114aae5967a76229ba8",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "repository-structure",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.repo-structure-qual.log",
+      "rawOutputSha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.architecture-qual.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "ui-change",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/ui_change_gate.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.ui-change-qual.log",
+      "rawOutputSha256": "d691a2233cc1ce1f82c057be4d9a2c3e18194616c566c2fad06937314a07bf73",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    },
+    {
+      "id": "fixture-corpus",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/fixture_corpus_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C03.T01.fixture-corpus-qual.log",
+      "rawOutputSha256": "a02b544d217642321204e36197c5d4a74b4d35f3b18b13bd40ded9b9439daa66",
+      "commit": "c3d4ae5a4b9c44f857749dcb25a4ebd9989461e2",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Selected check passed; exact output retained."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "06cc1904cca215b590e108424047799dbbee70ffbdc7d5966a5e14fef5fd03c5",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      ".venv\\Scripts\\python.exe -B -s -m unittest discover -v -s tests/reconciliation -p test_*.py",
+      ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+      ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check",
+      ".venv\\Scripts\\python.exe -B -s tools/plan_review_check.py --repo .",
+      ".venv\\Scripts\\python.exe -m ruff check services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py",
+      ".venv\\Scripts\\python.exe -m ruff format --check services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py",
+      "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages --follow-imports=silent services/core-api/src/research_observatory_core/reconciliation/candidate_sets.py services/core-api/src/research_observatory_core/reconciliation_repository.py tests/reconciliation/test_candidate_sets.py tests/reconciliation/test_batch_publication.py tests/reconciliation/test_candidate_inspection.py tests/reconciliation/test_client_contract.py tests/reconciliation/test_renderer.py",
+      ".venv\\Scripts\\python.exe -B -s tools/repository_structure_check.py --repo .",
+      ".venv\\Scripts\\python.exe -B -s tools/architecture_check.py --repo .",
+      ".venv\\Scripts\\python.exe -B -s tools/ui_change_gate.py --repo .",
+      ".venv\\Scripts\\python.exe -B -s tools/fixture_corpus_check.py --repo ."
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S03.T02.R02.json",
+        "sha256": "78217af8fd1dddbfc281a7ce2c2b392a1db4b5f0fef233a2dc21acb34a10ff27",
+        "commit": "1672dc85aef627443cbcd49425873bf364023273"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S03.T02.review-R02.json",
+        "sha256": "bce2e6c977fb05898230a1aa62db3836fbb7cc136b57126d4f5aa963d4e9ce80",
+        "commit": "0738c2543db85af8189bd0948393698b04662de6"
+      }
+    ],
+    "rationale": "Restore the approved review-order obligation while retaining the independently approved retrieval algorithm and original task history. The fresh correction checks bind the material configuration, exact historical pages and real consumers; reused original evidence supports unchanged gold retrieval and reversible human review, not the newly repaired behavior."
+  },
+  "scopeDeviation": "None. Generated planning views follow the taskctl corrective claim."
+}
