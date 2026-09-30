@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 495631570b03ed151999000f1a8298ee8dd6b82606be399a4a947fa88ed11424
+source_sha256: 3943358707b41a261fde33c617439219f5911f36a7701c3e24aa8b84d43a9a8c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8374,7 +8374,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Multiple provider records resolve to inspectable canonical scholarly entities without flattening uncertainty.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

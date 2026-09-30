@@ -20963,7 +20963,7 @@ capabilities:
     depends_on:
     - CAP-04.S01.T03
     - CAP-04.S02.T03
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-04.S03.T01
       capability_id: CAP-04
@@ -22258,11 +22258,12 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-04.S03.qualification-02.md
+      notes: Integrated S03 qualification at 608d5383; independent approval in artifacts/evidence/CAP-04.S03.qualification-review-02.md.
   - id: CAP-04.S04
     title: Corpus membership, discovery path, and rights governance
     outcome: Corpus state is a deliberate scholarly decision with complete acquisition and inclusion provenance.
