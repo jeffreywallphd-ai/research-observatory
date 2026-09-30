@@ -20963,7 +20963,7 @@ capabilities:
     depends_on:
     - CAP-04.S01.T03
     - CAP-04.S02.T03
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-04.S03.T01
       capability_id: CAP-04
@@ -22258,12 +22258,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: APPROVED
+      reviewer: agent:/root/w2_c02_review
+      reviewed_at: '2026-09-30T13:30:15+00:00'
       evidence:
       - artifacts/evidence/CAP-04.S03.qualification-02.md
-      notes: Integrated S03 qualification at 608d5383; independent approval in artifacts/evidence/CAP-04.S03.qualification-review-02.md.
+      notes: 'Independent R02 approval: artifacts/evidence/CAP-04.S03.qualification-review-02.md; R01 evidence findings closed,
+        no open slice blocker.'
   - id: CAP-04.S04
     title: Corpus membership, discovery path, and rights governance
     outcome: Corpus state is a deliberate scholarly decision with complete acquisition and inclusion provenance.
@@ -22276,7 +22277,7 @@ capabilities:
     depends_on:
     - CAP-04.S03.T03
     - CAP-03.S02.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-04.S04.T01
       capability_id: CAP-04
@@ -22307,11 +22308,11 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile data
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-09-30T13:30:15+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
