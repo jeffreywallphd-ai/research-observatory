@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S01.T02",
+    "commit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a",
+    "sha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a"
+  },
+  "reproduction": "The exact W2 S01-S03 checkpoint candidate c7108dc4eb8107c2d0ee1a01441a7ff1fcac6a59 fails desktop:application when pinned Rust 1.96.1 cargo clippy --workspace --all-targets --locked -- -D warnings reports an unused NativeImportAction::Status variant in apps/desktop/src-tauri/src/supervisor.rs. The failed checkpoint report is artifacts/tmp/W2.S01-S03.checkpoint-union-03.json (SHA-256 70b6baf3342e88a215df0f05741e26023cb31ceedda2bbfe6ed783b0f0f1a590). The original approved CAP-04.S01.T02 task, evidence, review and frozen W2 scope remain unchanged.",
+  "changedPaths": [
+    "apps/desktop/src-tauri/src/supervisor.rs"
+  ],
+  "impactAnalysis": "Restore the existing strict native desktop check without changing import behavior or renderer authority. Remove the unused production Status enum variant and its match arm while retaining explicit test denial of the private /native/imports/status route. Run the focused native private-route test, fresh cargo format/Clippy and desktop application/build checks on the committed candidate; preserve the other checkpoint failures for their own linked corrections. No schema, migration, credential, rights, approved reference or release criterion changes are authorized. Broader checkpoint and Wave qualification remain separate."
+}
