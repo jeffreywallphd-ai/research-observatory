@@ -15,6 +15,7 @@ from unittest.mock import patch
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
+import benchmark_registry  # noqa: E402
 from benchmark_registry import (  # noqa: E402
     REGISTRY_PATH,
     approval_errors,
@@ -461,6 +462,124 @@ class BenchmarkRegistryTests(unittest.TestCase):
 
         self.assertEqual(["cannot inspect governed Git history in this checkout"], errors)
 
+    def test_complete_history_enumeration_failure_is_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            self.add_unrelated_followup(root)
+            head = subprocess.run(
+                ["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, check=True
+            ).stdout.strip()
+            git = benchmark_registry.run_git
+            for payload in (None, b"", head + b"\n", head + b" " + b"1" * 40 + b"\n", head + b"\n" + head + b"\n"):
+                with self.subTest(payload=payload):
+
+                    def fail_enumeration(repo: Path, arguments: list[str], payload: bytes | None = payload) -> Any:
+                        if arguments[0] == "rev-list":
+                            return None if payload is None else subprocess.CompletedProcess(arguments, 0, payload, b"")
+                        return git(repo, arguments)
+
+                    with patch("benchmark_registry.run_git", side_effect=fail_enumeration):
+                        errors = git_history_errors(root, self.load_manifest(root))
+
+                    self.assertEqual(["cannot enumerate complete reachable benchmark history"], errors)
+
+    def test_repeated_history_objects_are_read_once_without_skipping_commit_checks(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            for _ in range(3):
+                self.add_unrelated_followup(root)
+            git = benchmark_registry.run_git
+            blob_reads: list[str] = []
+
+            def observe(repo: Path, arguments: list[str]) -> Any:
+                result = git(repo, arguments)
+                if arguments[0] in {"show", "cat-file"} and result is not None and result.returncode == 0:
+                    blob_reads.append(hashlib.sha256(result.stdout).hexdigest())
+                return result
+
+            with (
+                patch("benchmark_registry.run_git", side_effect=observe),
+                patch(
+                    "benchmark_registry.historical_asset_errors", wraps=benchmark_registry.historical_asset_errors
+                ) as assets,
+                patch(
+                    "benchmark_registry.historical_registry_schema_errors",
+                    wraps=benchmark_registry.historical_registry_schema_errors,
+                ) as schemas,
+            ):
+                errors = git_history_errors(root, self.load_manifest(root))
+
+            self.assertEqual([], errors)
+            self.assertEqual(4, assets.call_count)
+            self.assertEqual(4, schemas.call_count)
+            self.assertTrue(blob_reads)
+            self.assertEqual(len(set(blob_reads)), len(blob_reads), "unchanged immutable blobs need only one read")
+
+    def test_unchanged_registry_cannot_hide_repaired_historical_asset_or_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            manifest = self.load_manifest(root)
+            dataset = root / manifest["benchmarks"][0]["dataset"]["path"]
+            original = dataset.read_bytes()
+            dataset.write_bytes(original + b"tampered")
+            self.commit_all(root, "change asset without registry change")
+            dataset.write_bytes(original)
+            self.commit_all(root, "restore asset")
+            schema_path = root / "evaluation/registry.schema.json"
+            schema_bytes = schema_path.read_bytes()
+            schema = json.loads(schema_bytes)
+            schema["properties"]["registryVersion"] = {"const": "invalid-for-this-registry"}
+            schema_path.write_text(json.dumps(schema), encoding="utf-8")
+            self.commit_all(root, "change only contemporaneous schema")
+            schema_path.write_bytes(schema_bytes)
+            self.commit_all(root, "restore schema")
+
+            errors = git_history_errors(root, manifest)
+
+            self.assertTrue(any("governed registry asset SHA-256 mismatch" in error for error in errors))
+            self.assertTrue(any("registry.registryVersion" in error for error in errors))
+
+    def test_historical_object_read_failure_is_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            self.initialize_git(root)
+            git = benchmark_registry.run_git
+            for failing_command in ("ls-tree", "cat-file"):
+                with self.subTest(command=failing_command):
+
+                    def fail_read(repo: Path, arguments: list[str], command: str = failing_command) -> Any:
+                        if arguments[0] == command:
+                            return None
+                        return git(repo, arguments)
+
+                    with patch("benchmark_registry.run_git", side_effect=fail_read) as observed:
+                        errors = git_history_errors(root, self.load_manifest(root))
+                    self.assertTrue(any(call.args[1][0] == failing_command for call in observed.call_args_list))
+                    self.assertTrue(errors, "a failed tree/blob read must not become missing history")
+
+    def test_history_cache_preserves_literal_and_noncanonical_path_semantics(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = self.temporary_repo(temporary)
+            manifest = self.load_manifest(root)
+            specification = manifest["benchmarks"][0]["dataset"]
+            original = root / specification["path"]
+            literal_path = "evaluation/cases/réview %23 #&.json"
+            (root / literal_path).write_bytes(original.read_bytes())
+            specification["path"] = literal_path
+            self.write_manifest(root, manifest)
+            self.initialize_git(root)
+            self.assertEqual([], git_history_errors(root, manifest))
+
+            specification["path"] = literal_path.replace("/cases/", "//cases/")
+            self.write_manifest(root, manifest)
+            self.commit_all(root, "record an invalid noncanonical Git path")
+            errors = git_history_errors(root, manifest)
+
+            self.assertTrue(any("cannot read Git blob" in error for error in errors))
+
     def test_rewrite_revert_branch_hidden_by_treesame_merge_remains_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -487,7 +606,13 @@ class BenchmarkRegistryTests(unittest.TestCase):
                 check=True,
             )
 
-            errors = git_history_errors(root, {})
+            with patch("benchmark_registry.run_git", wraps=benchmark_registry.run_git) as observed_git:
+                errors = git_history_errors(root, {})
+
+            enumeration = [call.args[1] for call in observed_git.call_args_list if call.args[1][0] == "rev-list"]
+            self.assertEqual(1, len(enumeration), "parent discovery must not spawn a process for every commit")
+            self.assertIn("--parents", enumeration[0])
+            self.assertNotIn("--", enumeration[0], "path simplification can hide a reverted side branch")
 
         self.assertTrue(any("immutable baseline approval record" in error for error in errors))
         self.assertTrue(any("multiple reachable blob identities" in error for error in errors))

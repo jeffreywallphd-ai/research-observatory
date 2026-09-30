@@ -97,7 +97,74 @@ def run_git(repo: Path, arguments: list[str]) -> subprocess.CompletedProcess[byt
         return None
 
 
-def git_blob(repo: Path, revision: str, path: str) -> tuple[bytes | None, str | None]:
+class _HistoricalGitObjects:
+    """One history walk's immutable objects; never cache worktree reads or verdicts."""
+
+    def __init__(self, repo: Path) -> None:
+        self.repo = repo
+        self.trees: dict[str, dict[bytes, tuple[str, str]]] = {}
+        self.blobs: dict[str, bytes] = {}
+
+    def tree(self, revision: str) -> dict[bytes, tuple[str, str]] | None:
+        if revision not in self.trees:
+            result = run_git(self.repo, ["ls-tree", "-z", revision])
+            if result is None or result.returncode != 0:
+                return None
+            entries: dict[bytes, tuple[str, str]] = {}
+            if result.stdout and not result.stdout.endswith(b"\0"):
+                return None
+            for record in result.stdout.split(b"\0")[:-1]:
+                metadata, separator, name = record.partition(b"\t")
+                fields = metadata.split()
+                if (
+                    not separator
+                    or not name
+                    or name in entries
+                    or len(fields) != 3
+                    or fields[1] not in {b"blob", b"tree", b"commit"}
+                    or len(fields[2]) not in {40, 64}
+                    or any(value not in b"0123456789abcdef" for value in fields[2])
+                ):
+                    return None
+                entries[name] = (fields[1].decode("ascii"), fields[2].decode("ascii"))
+            self.trees[revision] = entries
+        return self.trees[revision]
+
+    def blob(self, revision: str, path: str) -> tuple[bytes | None, str | None]:
+        parts = PurePosixPath(path).parts
+        if not parts or PurePosixPath(path).is_absolute() or ".." in parts or "\\" in path:
+            return None, f"cannot inspect Git tree {revision} for {path}"
+        if PurePosixPath(path).as_posix() != path:
+            # Preserve Git's exact handling of noncanonical spellings rather
+            # than silently making a previously missing historical path valid.
+            return git_blob(self.repo, revision, path)
+        object_id = revision
+        for index, part in enumerate(parts):
+            entries = self.tree(object_id)
+            if entries is None:
+                return None, f"cannot inspect Git tree {revision} for {path}"
+            entry = entries.get(part.encode("utf-8"))
+            if entry is None:
+                return None, None
+            kind, object_id = entry
+            if index < len(parts) - 1:
+                if kind != "tree":
+                    return None, None
+            elif kind != "blob":
+                return None, f"cannot read Git blob {revision}:{path}"
+        if object_id not in self.blobs:
+            result = run_git(self.repo, ["cat-file", "blob", object_id])
+            if result is None or result.returncode != 0:
+                return None, f"cannot read Git blob {revision}:{path}"
+            self.blobs[object_id] = result.stdout
+        return self.blobs[object_id], None
+
+
+def git_blob(
+    repo: Path, revision: str, path: str, *, objects: _HistoricalGitObjects | None = None
+) -> tuple[bytes | None, str | None]:
+    if objects is not None:
+        return objects.blob(revision, path)
     present = run_git(repo, ["ls-tree", "--name-only", revision, "--", path])
     if present is None or present.returncode != 0:
         return None, f"cannot inspect Git tree {revision} for {path}"
@@ -109,8 +176,10 @@ def git_blob(repo: Path, revision: str, path: str) -> tuple[bytes | None, str | 
     return blob.stdout, None
 
 
-def git_registry(repo: Path, revision: str) -> tuple[dict[str, Any] | None, str | None]:
-    payload, read_error = git_blob(repo, revision, REGISTRY_PATH)
+def git_registry(
+    repo: Path, revision: str, *, objects: _HistoricalGitObjects | None = None
+) -> tuple[dict[str, Any] | None, str | None]:
+    payload, read_error = git_blob(repo, revision, REGISTRY_PATH, objects=objects)
     if read_error or payload is None:
         return None, read_error
     value, parse_error = parse_json(payload, f"{revision}:{REGISTRY_PATH}")
@@ -264,10 +333,12 @@ def approval_diff_errors(payload: bytes, context: str) -> list[str]:
     return errors
 
 
-def historical_asset_errors(repo: Path, commit: str, registry: dict[str, Any]) -> list[str]:
+def historical_asset_errors(
+    repo: Path, commit: str, registry: dict[str, Any], *, objects: _HistoricalGitObjects | None = None
+) -> list[str]:
     errors: list[str] = []
     for path, expected_hash in registry_asset_specs(registry):
-        payload, read_error = git_blob(repo, commit, path)
+        payload, read_error = git_blob(repo, commit, path, objects=objects)
         if read_error:
             errors.append(read_error)
         elif payload is None:
@@ -277,8 +348,10 @@ def historical_asset_errors(repo: Path, commit: str, registry: dict[str, Any]) -
     return errors
 
 
-def historical_registry_schema_errors(repo: Path, commit: str, registry: dict[str, Any]) -> list[str]:
-    schema_payload, read_error = git_blob(repo, commit, REGISTRY_SCHEMA_PATH)
+def historical_registry_schema_errors(
+    repo: Path, commit: str, registry: dict[str, Any], *, objects: _HistoricalGitObjects | None = None
+) -> list[str]:
+    schema_payload, read_error = git_blob(repo, commit, REGISTRY_SCHEMA_PATH, objects=objects)
     if read_error:
         return [read_error]
     if schema_payload is None:
@@ -320,37 +393,51 @@ def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str
         return ["cannot resolve HEAD while validating governed Git history"]
     head = head_result.stdout.decode("ascii", errors="replace").strip()
 
-    commits_result = run_git(repo, ["rev-list", "--reverse", "--topo-order", head])
+    commits_result = run_git(repo, ["rev-list", "--reverse", "--topo-order", "--parents", head])
     if commits_result is None or commits_result.returncode != 0:
+        return ["cannot enumerate complete reachable benchmark history"]
+    parents_by_commit: dict[str, list[str]] = {}
+    for raw_commit in commits_result.stdout.splitlines():
+        fields = raw_commit.decode("ascii", errors="replace").split()
+        if (
+            not fields
+            or any(len(field) not in {40, 64} or any(c not in "0123456789abcdef" for c in field) for field in fields)
+            or fields[0] in parents_by_commit
+            or any(parent not in parents_by_commit for parent in fields[1:])
+        ):
+            return ["cannot enumerate complete reachable benchmark history"]
+        parents_by_commit[fields[0]] = fields[1:]
+    if head not in parents_by_commit:
+        return ["cannot enumerate complete reachable benchmark history"]
+    head_parents = run_git(repo, ["rev-parse", f"{head}^@"])
+    if (
+        head_parents is None
+        or head_parents.returncode != 0
+        or head_parents.stdout.decode("ascii", errors="replace").split() != parents_by_commit[head]
+    ):
         return ["cannot enumerate complete reachable benchmark history"]
 
     errors: list[str] = []
     historical_paths = {path for path, _ in registry_asset_specs(current_registry)}
     registry_cache: dict[str, tuple[dict[str, Any] | None, list[str], bool]] = {}
     approval_identities: dict[str, dict[str, str]] = {}
+    objects = _HistoricalGitObjects(repo)
 
     def cached_registry(revision: str) -> tuple[dict[str, Any] | None, list[str], bool]:
         if revision not in registry_cache:
-            registry, parse_error = git_registry(repo, revision)
+            registry, parse_error = git_registry(repo, revision, objects=objects)
             snapshot_errors = [parse_error] if parse_error else []
             if registry is not None and not snapshot_errors:
-                snapshot_errors.extend(historical_registry_schema_errors(repo, revision, registry))
+                snapshot_errors.extend(historical_registry_schema_errors(repo, revision, registry, objects=objects))
             registry_cache[revision] = (registry, snapshot_errors, not snapshot_errors)
         return registry_cache[revision]
 
-    for raw_commit in commits_result.stdout.splitlines():
-        commit = raw_commit.decode("ascii", errors="replace")
-        parents_result = run_git(repo, ["rev-list", "--parents", "-n", "1", commit])
-        if parents_result is None or parents_result.returncode != 0:
-            errors.append(f"cannot inspect parents of governed commit {commit}")
-            continue
-        parent_fields = parents_result.stdout.decode("ascii", errors="replace").split()
-        parents = parent_fields[1:]
+    for commit, parents in parents_by_commit.items():
         current_at_commit, current_errors, current_valid = cached_registry(commit)
         errors.extend(current_errors)
         if current_at_commit is not None and current_valid:
             historical_paths.update(path for path, _ in registry_asset_specs(current_at_commit))
-            errors.extend(historical_asset_errors(repo, commit, current_at_commit))
+            errors.extend(historical_asset_errors(repo, commit, current_at_commit, objects=objects))
 
         transition_parents: list[str | None] = [*parents]
         if not transition_parents:
@@ -411,7 +498,7 @@ def git_history_errors(repo: Path, current_registry: dict[str, Any]) -> list[str
     if status_result is None or status_result.returncode != 0:
         errors.append("cannot inspect governed benchmark worktree state")
     elif status_result.stdout.strip():
-        head_registry, head_registry_error = git_registry(repo, head)
+        head_registry, head_registry_error = git_registry(repo, head, objects=objects)
         if head_registry_error:
             errors.append(head_registry_error)
         else:

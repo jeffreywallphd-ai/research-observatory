@@ -205,35 +205,49 @@ def validate_selection_policy(policy: dict[str, Any], contract: dict[str, Any]) 
     ):
         errors.append("unknownPathFallback is invalid")
     deferred_owners = policy.get("affectedDeferredOwners")
-    if deferred_owners != ["W1-exit"]:
-        errors.append("affectedDeferredOwners must authorize exactly W1-exit")
-    elif not all(CONTROLLED_GATE.fullmatch(owner) for owner in deferred_owners):
-        errors.append("affectedDeferredOwners contains an invalid gate identifier")
+    expected_owners = ["W1-exit", "W2-exit"]
+    if deferred_owners != expected_owners:
+        errors.append("affectedDeferredOwners must authorize exactly W1-exit and W2-exit")
     expected_gate_bound = [
         "desktop:performance",
         "data:project-lifecycle-performance",
         "data:storage-maintenance-performance",
     ]
     gate_bound = policy.get("gateBoundCommandIds")
-    if not isinstance(gate_bound, dict) or set(gate_bound) != {"W1-exit"}:
-        errors.append("gateBoundCommandIds must define exactly W1-exit")
-    elif gate_bound.get("W1-exit") != expected_gate_bound:
-        errors.append(f"W1-exit gate-bound command IDs must be exactly {expected_gate_bound}")
+    if not isinstance(gate_bound, dict) or set(gate_bound) != set(expected_owners):
+        errors.append("gateBoundCommandIds must define exactly W1-exit and W2-exit")
     else:
-        for command_id in gate_bound["W1-exit"]:
-            if command_id not in contract.get("commands", {}):
-                errors.append(f"W1-exit references unknown gate-bound command {command_id!r}")
+        for owner in expected_owners:
+            if gate_bound[owner] != expected_gate_bound:
+                errors.append(f"{owner} gate-bound command IDs must be exactly {expected_gate_bound}")
+            for command_id in expected_gate_bound:
+                if command_id not in contract.get("commands", {}):
+                    errors.append(f"{owner} references unknown gate-bound command {command_id!r}")
     wave_profiles = policy.get("waveExitProfiles")
-    if not isinstance(wave_profiles, dict) or set(wave_profiles) != {"W1"}:
-        errors.append("waveExitProfiles must define exactly W1")
+    expected_waves = {
+        "W1": ["ai", "data", "desktop", "e2e-local", "foundation", "graph", "security-local", "service"],
+        "W2": [
+            "data",
+            "desktop",
+            "documents",
+            "e2e-local",
+            "foundation",
+            "graph",
+            "search",
+            "security-local",
+            "service",
+        ],
+    }
+    if not isinstance(wave_profiles, dict) or set(wave_profiles) != set(expected_waves):
+        errors.append("waveExitProfiles must define exactly W1 and W2")
     else:
-        expected_w1 = ["ai", "data", "desktop", "e2e-local", "foundation", "graph", "security-local", "service"]
-        if wave_profiles.get("W1") != expected_w1:
-            errors.append(f"W1 Wave-exit profiles must be exactly {expected_w1}")
-        for profile_name in wave_profiles.get("W1") or []:
-            profile = contract.get("profiles", {}).get(profile_name)
-            if not isinstance(profile, dict) or not profile.get("enabled", True):
-                errors.append(f"W1 Wave-exit profile {profile_name!r} must exist and be enabled")
+        for wave, expected_profiles in expected_waves.items():
+            if wave_profiles[wave] != expected_profiles:
+                errors.append(f"{wave} Wave-exit profiles must be exactly {expected_profiles}")
+            for profile_name in expected_profiles:
+                profile = contract.get("profiles", {}).get(profile_name)
+                if not isinstance(profile, dict) or not profile.get("enabled", True):
+                    errors.append(f"{wave} Wave-exit profile {profile_name!r} must exist and be enabled")
     return errors
 
 
@@ -394,7 +408,10 @@ def _controlled_gate(value: str, policy: dict[str, Any]) -> str:
         raise ValueError("deferred gate must be a controlled non-empty identifier such as W1-exit")
     authorized = policy.get("affectedDeferredOwners") or []
     if value not in authorized:
-        raise ValueError(f"deferred gate {value!r} is not authorized by the affected-selection policy; choose W1-exit")
+        raise ValueError(
+            f"deferred gate {value!r} is not authorized by the affected-selection policy; "
+            f"choose {', '.join(authorized)}"
+        )
     return value
 
 

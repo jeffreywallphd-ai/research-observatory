@@ -31,6 +31,7 @@ empty or unsafe path set fails closed. `HEAD` is the default affected head.
 ```powershell
 python tools/verify.py --profile foundation --affected-base <40-character-base> --deferred-gate W1-exit --selection-only --report artifacts/tmp/affected-selection.json
 python tools/verify.py --profile service --profile data --affected-base <40-character-base> --affected-head <40-character-head> --deferred-gate W1-exit --report artifacts/tmp/affected-verification.json
+python tools/verify.py --profile service --profile data --affected-base <40-character-base> --deferred-gate W2-exit --selection-only --report artifacts/tmp/W2-affected-selection.json
 ```
 
 The separate `verification/affected-selection.json` policy maps canonical
@@ -44,12 +45,16 @@ A matched rule that maps outside the requested profiles fails closed before any
 unknown or safety fallback and names the missing command coverage; fallback can
 never suppress a mapped security, migration, dependency, or threshold command.
 
-The W1 policy authorizes only `W1-exit` as an affected-selection deferred owner;
-generic names and later gates such as `G2` are rejected by both the API and CLI.
+The policy authorizes `W1-exit` and `W2-exit` as affected-selection deferred owners;
+generic names, unconfigured Waves and human release gates such as `G2` are rejected
+by both the API and CLI. Use the owner for the task's Wave. These labels record
+deferred verification ownership; they do not approve a Wave or its release gate.
 `desktop:performance`, `data:project-lifecycle-performance`, and
 `data:storage-maintenance-performance` are gate-bound and therefore always
 remain in `deferredCommandIds` during affected selection, including unknown and
-safety fallback. They are retained for one serial execution at W1 exit.
+safety fallback. They are retained for one serial execution at the named Wave
+exit. Explicit task or slice benchmark requirements still need their own proof;
+affected selection is an impact aid, not complete acceptance coverage.
 
 Affected reports use schema `1.1` and include the exact base/head commits,
 changed paths, requested profiles, selected and deferred command IDs, matched
@@ -79,17 +84,35 @@ See `workflow-efficiency.md` for the complete reuse/trust conditions.
 
 ## Wave-exit union
 
-The W1 exit matrix is a governed, deduplicated union of `ai`, `data`, `desktop`,
-`e2e-local`, `foundation`, `graph`, `security-local`, and `service`. It executes
-each active canonical command ID once and cannot be narrowed with `--profile` or
-combined with affected mode. Disabled `server` and `cloud` profiles remain
-release-gated and are not enabled by this union. All three governed performance
-commands remain selected exactly once in the active W1 union.
+The governed profile unions are:
+
+- W1: `ai`, `data`, `desktop`, `e2e-local`, `foundation`, `graph`, `security-local`,
+  and `service`.
+- W2: `data`, `desktop`, `documents`, `e2e-local`, `foundation`, `graph`, `search`,
+  `security-local`, and `service`. This is the task-profile union in the frozen W2
+  packet approved at `c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`.
+
+Each union executes every active canonical command ID once, with no deferrals,
+and cannot be narrowed with `--profile` or combined with affected mode. Disabled
+`server` and `cloud` profiles remain release-gated. All three governed performance
+commands remain selected exactly once when active in either union. Optional
+commands activate through their existing paths/globs; inactive commands remain
+reported as such, not as executed proof.
 
 ```powershell
 python tools/verify.py --wave-exit W1 --selection-only --report artifacts/tmp/W1-wave-exit-selection.json
 python tools/verify.py --wave-exit W1 --report artifacts/tmp/W1-wave-exit-verification.json
+python tools/verify.py --wave-exit W2 --selection-only --report artifacts/tmp/W2-wave-exit-selection.json
+python tools/verify.py --wave-exit W2 --report artifacts/tmp/W2-wave-exit-verification.json
 ```
+
+The W2 profile union does not replace the approved slice/checkpoint matrix,
+opt-in packaged and scale journeys, or separate workload performance checks.
+Fresh Windows x64 cross-capability, rights/privacy, accessibility, packaging,
+restart/recovery and clean-build proof, independent Wave review and the separate
+human G2 decision remain required. See the approved
+[W2 checkpoint clusters](../../planning/W2-initiation.md#execution-checkpoints-not-human-gates)
+and [verification breadth](project-automation-guide.md#81-verification-breadth-by-workflow-stage).
 
 ## Profile ownership
 

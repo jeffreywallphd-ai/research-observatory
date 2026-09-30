@@ -17,6 +17,17 @@ GATE_BOUND_PERFORMANCE = [
     "data:project-lifecycle-performance",
     "data:storage-maintenance-performance",
 ]
+W2_PROFILES = [
+    "data",
+    "desktop",
+    "documents",
+    "e2e-local",
+    "foundation",
+    "graph",
+    "search",
+    "security-local",
+    "service",
+]
 sys.path.insert(0, str(REPO / "tools"))
 
 from verify import (  # noqa: E402
@@ -491,6 +502,146 @@ class VerificationRunnerTests(unittest.TestCase):
         self.assertEqual("wave-exit", report["mode"])
         self.assertEqual("W1", report["selection"]["wave"])
         self.assertEqual([], report["selection"]["deferredCommandIds"])
+
+    def test_w2_union_includes_all_active_commands_and_preserves_inventory(self) -> None:
+        before_bytes = (REPO / "verification-profiles.json").read_bytes()
+        before_contract = copy.deepcopy(self.contract)
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            inactive, _ = resolve_wave_exit_selection(repo, self.contract, self.policy, "W2")
+            self.assertIn("documents:unit", inactive["inactiveOptionalCommands"])
+            self.assertNotIn("documents:unit", inactive["selectedCommandIds"])
+            expected: set[str] = set()
+            for name in W2_PROFILES:
+                expected.update(expand_profile(self.contract, name))
+                for optional in self.contract["profiles"][name].get("optionalCommands", []):
+                    activation = optional.get("activationPath") or optional["activationGlob"].replace("*", "fixture")
+                    path = repo / activation
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text("{}\n", encoding="utf-8")
+                    expected.add(optional["command"])
+            selection, skipped = resolve_wave_exit_selection(repo, self.contract, self.policy, "W2")
+
+        self.assertEqual(W2_PROFILES, selection["requestedProfiles"])
+        self.assertEqual(
+            [command_id for command_id in self.contract["commands"] if command_id in expected],
+            selection["selectedCommandIds"],
+        )
+        self.assertEqual([], selection["deferredCommandIds"])
+        self.assertEqual([], skipped)
+        self.assertEqual(GATE_BOUND_PERFORMANCE, selection["gateBoundSelectedCommandIds"])
+        for command_id in ("service:reconciliation", "search:connectors", "documents:unit"):
+            self.assertEqual(1, selection["selectedCommandIds"].count(command_id))
+        self.assertEqual(before_contract, self.contract)
+        self.assertEqual(before_bytes, (REPO / "verification-profiles.json").read_bytes())
+
+    def test_w2_affected_partition_matches_w1_without_changing_coverage(self) -> None:
+        for path, fallback in (
+            ("tests/data/test_storage.py", "none"),
+            ("unknown/new-surface.xyz", "unknown-path"),
+            ("tools/verify.py", "safety-sensitive"),
+        ):
+            with self.subTest(path=path):
+                arguments = (REPO, self.contract, self.policy, ["data", "desktop", "service"], [path])
+                w1, _ = select_affected_commands(*arguments, "W1-exit")
+                w2, _ = select_affected_commands(*arguments, "W2-exit")
+                self.assertEqual(json.loads(json.dumps(w1).replace("W1-exit", "W2-exit")), w2)
+                self.assertEqual(fallback, w2["fallback"])
+                self.assertFalse(set(w2["selectedCommandIds"]) & set(w2["deferredCommandIds"]))
+                self.assertEqual(GATE_BOUND_PERFORMANCE, w2["gateBoundDeferredCommandIds"])
+        with self.assertRaisesRegex(ValueError, "outside the requested profiles"):
+            select_affected_commands(
+                REPO, self.contract, self.policy, ["foundation"], ["tools/security_check.py"], "W2-exit"
+            )
+
+    def test_w2_task_preview_and_exit_cli_select_without_executing(self) -> None:
+        from taskctl import task_check_guidance
+
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            base, head = self.git_diff_fixture(repo, include_contract=True)
+            task = {"verification_profiles": ["foundation"], "base_sha": base, "wave": "W2"}
+            command = next(line for line in task_check_guidance(task) if line.startswith("python tools/verify.py"))
+            preview = ["verify.py", *command.split()[2:]]
+            for mode, arguments in (
+                ("affected", preview),
+                ("wave-exit", ["verify.py", "--wave-exit", "W2", "--selection-only"]),
+            ):
+                with self.subTest(mode=mode):
+                    report_path = repo / f"{mode}.json"
+                    argv = [*arguments, "--repo", str(repo), "--report", str(report_path)]
+                    with (
+                        patch.object(sys, "argv", argv),
+                        patch("verify.execute_command_set") as execute,
+                        redirect_stdout(io.StringIO()),
+                        redirect_stderr(io.StringIO()),
+                    ):
+                        self.assertEqual(0, verify_main())
+                    execute.assert_not_called()
+                    report = json.loads(report_path.read_text(encoding="utf-8"))
+                    self.assertEqual(mode, report["mode"])
+                    self.assertTrue(report["selectionOnly"])
+                    if mode == "affected":
+                        self.assertEqual("W2-exit", report["selection"]["deferredOwner"])
+                        self.assertEqual(base, report["selection"]["baseCommit"])
+                        self.assertEqual(head, report["selection"]["headCommit"])
+                    else:
+                        self.assertEqual(W2_PROFILES, report["selection"]["requestedProfiles"])
+                        self.assertEqual([], report["selection"]["deferredCommandIds"])
+
+    def test_w2_exit_cannot_be_narrowed_or_replaced_with_unauthorized_gate(self) -> None:
+        for extra in (["--profile", "service"], ["--affected-base", "1" * 40, "--deferred-gate", "W2-exit"]):
+            with (
+                self.subTest(extra=extra),
+                patch.object(sys, "argv", ["verify.py", "--wave-exit", "W2", *extra]),
+                patch("verify.execute_command_set") as execute,
+                redirect_stderr(io.StringIO()),
+                self.assertRaises(SystemExit),
+            ):
+                verify_main()
+            execute.assert_not_called()
+        for wave in ("G2", "W3"):
+            with self.subTest(wave=wave), self.assertRaisesRegex(ValueError, "no governed"):
+                resolve_wave_exit_selection(REPO, self.contract, self.policy, wave)
+        for owner in ("G2", "W3-exit"):
+            with self.subTest(owner=owner), self.assertRaisesRegex(ValueError, "not authorized"):
+                select_affected_commands(REPO, self.contract, self.policy, ["foundation"], ["docs/README.md"], owner)
+
+    def test_w2_policy_corruption_fails_closed(self) -> None:
+        for key, value in (
+            ("affectedDeferredOwners", ["W1-exit"]),
+            ("affectedDeferredOwners", ["W1-exit", "W2-exit", "W2-exit"]),
+            ("affectedDeferredOwners", ["W1-exit", "G2"]),
+            ("gateBoundCommandIds", {"W1-exit": GATE_BOUND_PERFORMANCE}),
+            ("waveExitProfiles", {"W1": self.policy["waveExitProfiles"]["W1"]}),
+        ):
+            with self.subTest(key=key, value=value):
+                policy = copy.deepcopy(self.policy)
+                policy[key] = value
+                self.assertTrue(validate_selection_policy(policy, self.contract))
+        for key, name, values in (
+            ("waveExitProfiles", "W2", (W2_PROFILES[:-1], [*W2_PROFILES, "service"], ["cloud"], ["unknown"], None)),
+            (
+                "gateBoundCommandIds",
+                "W2-exit",
+                (GATE_BOUND_PERFORMANCE[:-1], [*GATE_BOUND_PERFORMANCE, "graph:dependency-impact-performance"], None),
+            ),
+        ):
+            for nested_value in values:
+                with self.subTest(key=key, value=nested_value):
+                    policy = copy.deepcopy(self.policy)
+                    policy[key][name] = nested_value
+                    self.assertTrue(validate_selection_policy(policy, self.contract))
+        for alteration in ("missing-profile", "disabled-profile", "missing-command"):
+            with self.subTest(alteration=alteration):
+                contract = copy.deepcopy(self.contract)
+                if alteration == "missing-profile":
+                    del contract["profiles"]["documents"]
+                elif alteration == "disabled-profile":
+                    contract["profiles"]["documents"]["enabled"] = False
+                else:
+                    del contract["commands"]["desktop:performance"]
+                self.assertTrue(validate_selection_policy(self.policy, contract))
 
     def test_malformed_affected_policy_is_rejected(self) -> None:
         policy = copy.deepcopy(self.policy)

@@ -2,10 +2,16 @@
   "schemaVersion": "1.0",
   "documentType": "affected-verification-selection-policy",
   "affectedDeferredOwners": [
-    "W1-exit"
+    "W1-exit",
+    "W2-exit"
   ],
   "gateBoundCommandIds": {
     "W1-exit": [
+      "desktop:performance",
+      "data:project-lifecycle-performance",
+      "data:storage-maintenance-performance"
+    ],
+    "W2-exit": [
       "desktop:performance",
       "data:project-lifecycle-performance",
       "data:storage-maintenance-performance"
@@ -253,6 +259,17 @@
       "e2e-local",
       "foundation",
       "graph",
+      "security-local",
+      "service"
+    ],
+    "W2": [
+      "data",
+      "desktop",
+      "documents",
+      "e2e-local",
+      "foundation",
+      "graph",
+      "search",
       "security-local",
       "service"
     ]
