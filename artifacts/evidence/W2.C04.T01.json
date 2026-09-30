@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C04.T01",
+  "baseCommit": "ba9cdc9e7c3b5bae4bf281a04855ffe50379a00e",
+  "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_import_summary_repository.py",
+    "tests/data/test_import_summary_storage.py",
+    "tests/security/test_import_preview_protection.py",
+    "tests/service/test_import_intake_api.py",
+    "tests/service/test_import_summary_workflow.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The original independently approved CAP-04.S01.T02 evidence and review remain authoritative for the unchanged preview/mapping/correction/exclusion/download/cancellation product path. This correction changes only six test files and generated taskctl claim views; no product implementation, public contract or approved UI reference changes.",
+        "Fresh 42-case focused execution on the exact correction candidate covers the protected preview and summary repository/API paths, source/rights authority, cancellation and restart. The v10 protected migration test now requires exact 0011–0016 predecessor steps, original encrypted v10 backup bytes, source settings, foreign-key integrity, repeated reopen and current schema version. Its former fixed-v12 final-state assertion failed after additive W2 migrations; later migrations are allowed without dropping the exact historical prefix."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The 42 committed-candidate tests pass, including v10/v11 SQLCipher backup and rollback, interrupted migration retry, incomplete/partial summary denial, changed privacy and draft revision, worker restart, and invalid native intake input. The repaired v10 test was FAIL on the predecessor (expected only migration IDs 0011/0012 while the current runner reached 0016) and PASS on this committed candidate.",
+        "Focused mypy covers 131 Core and changed-test source files with no issues; six changed files also pass Ruff lint and format. The broad governed quality report is retained as FAIL with 22 errors only in the six separate CAP-04.S01.T03 commit/packaging test files, down from 51 at the claim predecessor. No broad PASS is claimed."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The exact six changed test paths match the admitted corrective specification. Product source, contracts, migrations, schemas, fixtures, security permissions, audit behavior, immutable original task/history and W2 approval are unchanged. The five other changed paths are taskctl-generated claim planning views.",
+        "Fresh taskctl backlog validation and generated-view checks pass on the exact candidate. Full repository/profile and S01–S03 checkpoint quality cannot pass until the separately scoped CAP-04.S01.T03 correction closes its 22 known type errors; this is disclosed rather than reported as verified. No supplemental refactoring was performed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:unit",
+      "data:unit",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Test-only restoration affects exact protected migration expectations, fixture typing, summary/queue assertions and native intake invalid-input coverage. Run all six affected modules against real Core/SQLCipher, focused Core-plus-test mypy, changed-file lint/format, and backlog/view validation. A full service/data/desktop profile would repeat expensive unrelated benchmarks and stop at known CAP-04.S01.T03 type debt; this packet claims only the named passing checks.",
+    "deferred": [
+      "Full foundation:quality remains FAIL with 22 mypy errors solely in six CAP-04.S01.T03 commit/packaging test files; repair through a separate linked correction before checkpoint/W2 exit qualification.",
+      "The interrupted S01–S03 broad profile attempt is not qualifying checkpoint evidence. The complete affected profile union, clean build/smoke, cross-capability and full W2 exit matrix remain pending after linked corrections."
+    ]
+  },
+  "checks": [
+    {
+      "id": "preview-summary-integration",
+      "command": "$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\\Scripts\\python.exe -m unittest tests.security.test_import_preview_protection tests.data.test_import_summary_migration tests.data.test_import_summary_storage tests.data.test_import_summary_repository tests.service.test_import_summary_workflow tests.service.test_import_intake_api -v",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C04.T01.candidate-tests-01.log",
+      "rawOutputSha256": "73a97115b2131a8dd2c17aa1094c0d5a93eed7a68f642186fa41f4bc127b4c9c",
+      "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "42 tests passed across six affected modules with real protected storage and Core boundaries."
+    },
+    {
+      "id": "python-types",
+      "command": ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C04.T01.candidate-mypy-02.log",
+      "rawOutputSha256": "5367630f76544670703a5514e62b641f6cd932249892372c781fc34b627fde27",
+      "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "No issues in 131 source files; full quality is separately disclosed as FAIL."
+    },
+    {
+      "id": "python-lint",
+      "command": ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C04.T01.candidate-ruff-01.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "All six changed test files passed Ruff lint."
+    },
+    {
+      "id": "python-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C04.T01.candidate-format-01.log",
+      "rawOutputSha256": "ef7d13d02214e98ca902b05257cdbe6a8e84f3b4714508efdc19766460b54209",
+      "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "All six changed test files passed Ruff format."
+    },
+    {
+      "id": "taskctl",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C04.T01.candidate-taskctl-01.log",
+      "rawOutputSha256": "a498e402d34223a8968aaa02618ccfb906c0b820239c69de586949c91a1de932",
+      "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Canonical backlog validates with the linked correction IN_PROGRESS."
+    },
+    {
+      "id": "backlog-views",
+      "command": ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C04.T01.candidate-views-01.log",
+      "rawOutputSha256": "0cfb1254748d4c63a89dee38351ecf639cec4e272a8688c38c365f42ef06316f",
+      "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Generated backlog views unchanged."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\\Scripts\\python.exe -m unittest tests.security.test_import_preview_protection tests.data.test_import_summary_migration tests.data.test_import_summary_storage tests.data.test_import_summary_repository tests.service.test_import_summary_workflow tests.service.test_import_intake_api -v",
+      ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+      ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+      ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+      ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+      ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S01.T02.json",
+        "sha256": "f07ab09ac1c5cbd96bedfe1ddaed73e9ed53a1f8b0bf73604508675cf3aa7444",
+        "commit": "552eae1c03bf3d63c44620981a49e8c344de86f1"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S01.T02.review-R01.json",
+        "sha256": "517ce9160ca35413a5f0296ff36d860ec007cbc8051d1baf0143de6332ba691c",
+        "commit": "b55c1285b33d17fca7b8ef37ed8ce16d1c83610a"
+      }
+    ],
+    "rationale": "Restore the original approved preview/summary test proof while preserving product and approval authority. Fresh real-boundary checks cover the repaired expectation and typed assertions; original reviewed evidence supports unchanged UI and import behavior. The separate T03 quality failures remain explicit checkpoint debt, not an implied full-profile pass."
+  },
+  "scopeDeviation": "None. Six admitted test files plus taskctl-generated correction claim views only."
+}

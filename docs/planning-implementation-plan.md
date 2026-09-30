@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3cc337e7b40f95b328fb152925a29351c38d4a6450afbce92a4e28f091102de1
+source_sha256: d5eba58b75ecf154f761afb9cb9f481d0e6e83350ca435b7a409009860260108
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2868,7 +2868,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C04.T01 — Create import preview, mapping, and conflict UI
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S01.T02`. **Latest review:** `approved`.
 
 **Reproduction:** The W2 S01-S03 checkpoint on the unchanged approved campaign found 29 mypy errors in five CAP-04.S01.T02 preview/summary test files after separately reviewed privacy-control and package-inventory maintenance. A focused protected migration run also failed because the v10 preview protection test expects only migrations 0011/0012 and final schema v12, while the current additive chain reaches v16. The exact failed quality and migration logs are retained locally under artifacts/tmp/W2.checkpoint-security-package-01.*. The original CAP-04.S01.T02 status, evidence, review and frozen W2 approval remain unchanged.
 
@@ -2888,13 +2888,43 @@ Original tasks and approvals remain unchanged.
 - tests/service/test_import_summary_workflow.py
 #### Review history — W2.C04.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `a10c42398fbd3ec253f428e108393125163e436eea517b45a177eb82247fa9f7`
+
+- Candidate / base / branch: `6cda4061a08f37acd2be12494d2d7950a03c890e` / `ba9cdc9e7c3b5bae4bf281a04855ffe50379a00e` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-30T14:54:05+00:00`
+- Evidence: `artifacts/evidence/W2.C04.T01.json` / `2648585065413fd934cd8d00e2bd7ae9e5269702bcd3dc0f569ff56c2c3f7617` / `6cda4061a08f37acd2be12494d2d7950a03c890e`
+- Acceptance-criteria SHA-256: `15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770`
+- Verification-selection SHA-256: `4011d23380625e911d50033affd14590faaad4d71f8a30f1629ef0eefc74437c`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/data/test_import_summary_migration.py`, `tests/data/test_import_summary_repository.py`, `tests/data/test_import_summary_storage.py`, `tests/security/test_import_preview_protection.py`, `tests/service/test_import_intake_api.py`, `tests/service/test_import_summary_workflow.py`
+- Selected checks: `$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\Scripts\python.exe -m unittest tests.security.test_import_preview_protection tests.data.test_import_summary_migration tests.data.test_import_summary_storage tests.data.test_import_summary_repository tests.service.test_import_summary_workflow tests.service.test_import_intake_api -v`, `.venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py`, `.venv\Scripts\python.exe -m ruff check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py`, `.venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py`, `.venv\Scripts\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe -B -s tools/backlog_views.py --repo . --check`
+- Deferred checks: `Full foundation:quality remains FAIL with 22 mypy errors solely in six CAP-04.S01.T03 commit/packaging test files; repair through a separate linked correction before checkpoint/W2 exit qualification.`, `The interrupted S01–S03 broad profile attempt is not qualifying checkpoint evidence. The complete affected profile union, clean build/smoke, cross-capability and full W2 exit matrix remain pending after linked corrections.`
+- Selection rationale: Test-only restoration affects exact protected migration expectations, fixture typing, summary/queue assertions and native intake invalid-input coverage. Run all six affected modules against real Core/SQLCipher, focused Core-plus-test mypy, changed-file lint/format, and backlog/view validation. A full service/data/desktop profile would repeat expensive unrelated benchmarks and stop at known CAP-04.S01.T03 type debt; this packet claims only the named passing checks.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_c02_review / `2026-09-30T15:01:35+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C04.T01.review-R01.json` / `8cbc16880ff583816da58b4ffc306c4fc678802a315172dce8a921fe460b98d6`
+
+**Review notes:** Independent review approves the frozen W2.C04.T01 R01 correction under the inherited CAP-04.S01.T02 contract. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no source, evidence, planning, taskctl or Git mutation. The reviewer authenticated the persisted REVIEW packet, canonical evidence hash, original DONE snapshot and history, inherited criteria, correction specification, six admitted test paths and five claim/generated-view paths. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The diff adds explicit type narrowing, accurate protected-fixture attributes and typed invalid-request dictionaries without removing negative inputs or weakening assertions. The protected v10 migration test retains fixed 0011–0016 historical steps, verifies the current schema version and preserves encrypted predecessor schema/version, retained settings, empty summary state, foreign-key integrity, repeated reopen and retry assertions. Product code, migration implementation, source fixtures, contracts, rights, privacy policy and approved experience are unchanged. All six check-log hashes authenticate under taskctl's LF-canonical text convention. The fresh affected suite reports 42 tests in 48.686 seconds, OK without skips; focused mypy reports no issues in 131 files; changed-file lint/format and backlog/view checks pass. This approval covers the correction and affected integration only. Full checkpoint quality, broader profiles, Wave qualification and release remain pending.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-30T15:01:35+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independent review approves the frozen W2.C04.T01 R01 correction under the inherited CAP-04.S01.T02 contract. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no source, evidence, planning, taskctl or Git mutation. The reviewer authenticated the persisted REVIEW packet, canonical evidence hash, original DONE snapshot and history, inherited criteria, correction specification, six admitted test paths and five claim/generated-view paths. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The diff adds explicit type narrowing, accurate protected-fixture attributes and typed invalid-request dictionaries without removing negative inputs or weakening assertions. The protected v10 migration test retains fixed 0011–0016 historical steps, verifies the current schema version and preserves encrypted predecessor schema/version, retained settings, empty summary state, foreign-key integrity, repeated reopen and retry assertions. Product code, migration implementation, source fixtures, contracts, rights, privacy policy and approved experience are unchanged. All six check-log hashes authenticate under taskctl's LF-canonical text convention. The fresh affected suite reports 42 tests in 48.686 seconds, OK without skips; focused mypy reports no issues in 131 files; changed-file lint/format and backlog/view checks pass. This approval covers the correction and affected integration only. Full checkpoint quality, broader profiles, Wave qualification and release remain pending.
 
 **Currently open findings:** -
 

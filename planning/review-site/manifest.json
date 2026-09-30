@@ -1749,7 +1749,7 @@
         {
           "task_id": "W2.C04.T01",
           "title": "Create import preview, mapping, and conflict UI",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "User can correct mapping before commit, exclude records, and download an error report; cancellation leaves no partial canonical import.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -1783,17 +1783,115 @@
           "task_review": {
             "task_id": "W2.C04.T01",
             "title": "Create import preview, mapping, and conflict UI",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/w2_c02_review",
+              "result": "approved",
+              "reviewed_at": "2026-09-30T15:01:35+00:00",
+              "notes": "Independent review approves the frozen W2.C04.T01 R01 correction under the inherited CAP-04.S01.T02 contract. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no source, evidence, planning, taskctl or Git mutation. The reviewer authenticated the persisted REVIEW packet, canonical evidence hash, original DONE snapshot and history, inherited criteria, correction specification, six admitted test paths and five claim/generated-view paths. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The diff adds explicit type narrowing, accurate protected-fixture attributes and typed invalid-request dictionaries without removing negative inputs or weakening assertions. The protected v10 migration test retains fixed 0011–0016 historical steps, verifies the current schema version and preserves encrypted predecessor schema/version, retained settings, empty summary state, foreign-key integrity, repeated reopen and retry assertions. Product code, migration implementation, source fixtures, contracts, rights, privacy policy and approved experience are unchanged. All six check-log hashes authenticate under taskctl's LF-canonical text convention. The fresh affected suite reports 42 tests in 48.686 seconds, OK without skips; focused mypy reports no issues in 131 files; changed-file lint/format and backlog/view checks pass. This approval covers the correction and affected integration only. Full checkpoint quality, broader profiles, Wave qualification and release remain pending."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-09-30T14:54:05+00:00",
+                    "candidate_commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+                    "base_commit": "ba9cdc9e7c3b5bae4bf281a04855ffe50379a00e",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C04.T01.json",
+                      "sha256": "2648585065413fd934cd8d00e2bd7ae9e5269702bcd3dc0f569ff56c2c3f7617",
+                      "commit": "6cda4061a08f37acd2be12494d2d7950a03c890e",
+                      "recorded_at": "2026-09-30T14:54:05+00:00"
+                    },
+                    "acceptance_criteria_sha256": "15ee48a45cf083283a8e716af99da052949cc64f73724a31810bd6a93b293770",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "tests/data/test_import_summary_migration.py",
+                      "tests/data/test_import_summary_repository.py",
+                      "tests/data/test_import_summary_storage.py",
+                      "tests/security/test_import_preview_protection.py",
+                      "tests/service/test_import_intake_api.py",
+                      "tests/service/test_import_summary_workflow.py"
+                    ],
+                    "selected_checks": [
+                      "$env:PYTHONPATH = (Resolve-Path services/core-api/src).Path; .venv\\Scripts\\python.exe -m unittest tests.security.test_import_preview_protection tests.data.test_import_summary_migration tests.data.test_import_summary_storage tests.data.test_import_summary_repository tests.service.test_import_summary_workflow tests.service.test_import_intake_api -v",
+                      ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- services/core-api/src/research_observatory_core tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+                      ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+                      ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tests/security/test_import_preview_protection.py tests/data/test_import_summary_migration.py tests/data/test_import_summary_storage.py tests/data/test_import_summary_repository.py tests/service/test_import_summary_workflow.py tests/service/test_import_intake_api.py",
+                      ".venv\\Scripts\\python.exe -B -s tools/taskctl.py --file planning/backlog.yaml validate",
+                      ".venv\\Scripts\\python.exe -B -s tools/backlog_views.py --repo . --check"
+                    ],
+                    "deferred_checks": [
+                      "Full foundation:quality remains FAIL with 22 mypy errors solely in six CAP-04.S01.T03 commit/packaging test files; repair through a separate linked correction before checkpoint/W2 exit qualification.",
+                      "The interrupted S01–S03 broad profile attempt is not qualifying checkpoint evidence. The complete affected profile union, clean build/smoke, cross-capability and full W2 exit matrix remain pending after linked corrections."
+                    ],
+                    "selection_rationale": "Test-only restoration affects exact protected migration expectations, fixture typing, summary/queue assertions and native intake invalid-input coverage. Run all six affected modules against real Core/SQLCipher, focused Core-plus-test mypy, changed-file lint/format, and backlog/view validation. A full service/data/desktop profile would repeat expensive unrelated benchmarks and stop at known CAP-04.S01.T03 type debt; this packet claims only the named passing checks.",
+                    "selection_sha256": "4011d23380625e911d50033affd14590faaad4d71f8a30f1629ef0eefc74437c",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "service:unit",
+                      "data:unit",
+                      "foundation:quality",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "packet_sha256": "a10c42398fbd3ec253f428e108393125163e436eea517b45a177eb82247fa9f7"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/w2_c02_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-09-30T15:01:35+00:00",
+                    "notes": "Independent review approves the frozen W2.C04.T01 R01 correction under the inherited CAP-04.S01.T02 contract. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no source, evidence, planning, taskctl or Git mutation. The reviewer authenticated the persisted REVIEW packet, canonical evidence hash, original DONE snapshot and history, inherited criteria, correction specification, six admitted test paths and five claim/generated-view paths. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The diff adds explicit type narrowing, accurate protected-fixture attributes and typed invalid-request dictionaries without removing negative inputs or weakening assertions. The protected v10 migration test retains fixed 0011–0016 historical steps, verifies the current schema version and preserves encrypted predecessor schema/version, retained settings, empty summary state, foreign-key integrity, repeated reopen and retry assertions. Product code, migration implementation, source fixtures, contracts, rights, privacy policy and approved experience are unchanged. All six check-log hashes authenticate under taskctl's LF-canonical text convention. The fresh affected suite reports 42 tests in 48.686 seconds, OK without skips; focused mypy reports no issues in 131 files; changed-file lint/format and backlog/view checks pass. This approval covers the correction and affected integration only. Full checkpoint quality, broader profiles, Wave qualification and release remain pending."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C04.T01.review-R01.json",
+                    "sha256": "8cbc16880ff583816da58b4ffc306c4fc678802a315172dce8a921fe460b98d6"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C04.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-09-30T14:54:05+00:00",
+                    "reviewed_at": "2026-09-30T15:01:35+00:00",
+                    "duration_seconds": 450,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "service:unit",
+                      "data:unit",
+                      "foundation:quality",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }
