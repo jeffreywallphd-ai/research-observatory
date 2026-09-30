@@ -1013,8 +1013,14 @@ print(len(fields))
         )
         for raw in advertisements:
 
-            def fake(repo: Path, *args: str, raw: bytes = raw, **kwargs: object) -> bytes:
-                return raw if args[0] == "ls-remote" else original(repo, *args, **kwargs)
+            def fake(
+                repo: Path,
+                *args: str,
+                raw: bytes = raw,
+                data: bytes | None = None,
+                timeout: float | None = None,
+            ) -> bytes:
+                return raw if args[0] == "ls-remote" else original(repo, *args, data=data, timeout=timeout)
 
             with patch.object(guard, "git", side_effect=fake), self.assertRaises(ValueError):
                 guard.remote_commit_tips(self.repo, "synthetic-remote", update)
