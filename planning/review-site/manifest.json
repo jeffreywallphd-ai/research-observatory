@@ -2185,7 +2185,7 @@
         {
           "task_id": "W2.C07.T01",
           "title": "Implement Unpaywall and Semantic Scholar adapters",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "OA URLs retain license and host metadata; recommendation/citation results record direction and source; provider unavailability degrades without corrupting the search run.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2215,17 +2215,107 @@
           "task_review": {
             "task_id": "W2.C07.T01",
             "title": "Implement Unpaywall and Semantic Scholar adapters",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/w2_c07_preflight",
+              "result": "approved",
+              "reviewed_at": "2026-09-30T23:20:25+00:00",
+              "notes": "Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S02.T03 origin, exact candidate diff, six passing check logs and their canonical hashes, and retained strict Clippy failure. Only two admitted native Rust source files change: odd UTF-16-word alignment checks use equivalent parity predicates, and the optional non-null egress-policy branch is collapsed without changing validation. Source inspection confirms absent policy still takes the unchanged exact-object path and skips validation; the fresh filtered egress test covers null, valid and invalid policies. An existing separate transport test exercises absent policy but was not rerun for this correction. Native template tests cover all four providers. Rust format and production library build pass, as do backlog and generated-view checks. Strict all-target Clippy exits 101 only on four CAP-04.S03.T03 reconciliation-admission warnings assigned to W2.C08.T01; desktop:application and the S01-S03 checkpoint are not qualified by this review. No secret, provider, renderer/Core, rights, migration, governed reference or frozen Wave authority change is introduced. No criterion-bound blocker remains; this approval covers W2.C07.T01 affected integration only, not Wave exit or release."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-09-30T23:14:28+00:00",
+                    "candidate_commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+                    "base_commit": "94c27270d19ce2b14cd25dd7085b404149be4096",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C07.T01.json",
+                      "sha256": "f78e7df4f16e1e9d18b8d3cdfe0edf7c35e90eff103d8281a26bd01d5f6e0fbc",
+                      "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+                      "recorded_at": "2026-09-30T23:14:28+00:00"
+                    },
+                    "acceptance_criteria_sha256": "da6250e28360c4881c7bdb40244de051d7a1bbda9d8dc54b3be88b1cf0505999",
+                    "changed_paths": [
+                      "apps/desktop/src-tauri/src/connector_configuration_dialog.rs",
+                      "apps/desktop/src-tauri/src/supervisor.rs",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md"
+                    ],
+                    "selected_checks": [
+                      "cargo test -p research-observatory-desktop --lib native_templates_are_aligned_bounded_and_provider_specific --locked",
+                      "cargo test -p research-observatory-desktop --lib native_intent_egress_matches_optional_core_contract --locked",
+                      "cargo fmt --all -- --check",
+                      "cargo build -p research-observatory-desktop --lib --locked",
+                      "python tools/taskctl.py --file planning/backlog.yaml validate",
+                      "python tools/backlog_views.py --repo . --check"
+                    ],
+                    "deferred_checks": [
+                      "Strict all-target Clippy exits 101 with only four CAP-04.S03.T03 reconciliation admission warnings at artifacts/tmp/W2.C07.T01.candidate-clippy-01.log (raw SHA-256 e7c93730290a3e8d55e4ca253c3f8309b69b5898c5ceef72a8746085e6a54b9f). W2.C08.T01 must repair them before a fresh desktop:application pass can be claimed. The desktop application plan is not represented as passing for this candidate.",
+                      "Fresh integrated S01-S03 checkpoint checks, full affected/repository/profile qualification and human W2 exit gate are separate later obligations. The original source-adapter evidence is reused only for unchanged behavior at its historical candidate."
+                    ],
+                    "selection_rationale": "The native dialog word-alignment guard and optional supervisor egress-policy branch are the only changed behaviors. Run focused existing tests for every provider template and optional policy cases, production Rust build, formatting, strict all-target Clippy, and claim/view integrity on the exact candidate. Service/search adapter behavior and full profiles have no changed input at this correction and remain under prior task and later checkpoint/Wave proof.",
+                    "selection_sha256": "10e97d50b219a13cbde856eaa98c4a975e8eb1784b5c1f2ee42ba2cd6cc514c4",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "packet_sha256": "5d5a00456765f6a2dd95dc13934bc89cfa6923a185ee6eae40d77c492d12ad0a"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/w2_c07_preflight",
+                    "result": "approved",
+                    "reviewed_at": "2026-09-30T23:20:25+00:00",
+                    "notes": "Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S02.T03 origin, exact candidate diff, six passing check logs and their canonical hashes, and retained strict Clippy failure. Only two admitted native Rust source files change: odd UTF-16-word alignment checks use equivalent parity predicates, and the optional non-null egress-policy branch is collapsed without changing validation. Source inspection confirms absent policy still takes the unchanged exact-object path and skips validation; the fresh filtered egress test covers null, valid and invalid policies. An existing separate transport test exercises absent policy but was not rerun for this correction. Native template tests cover all four providers. Rust format and production library build pass, as do backlog and generated-view checks. Strict all-target Clippy exits 101 only on four CAP-04.S03.T03 reconciliation-admission warnings assigned to W2.C08.T01; desktop:application and the S01-S03 checkpoint are not qualified by this review. No secret, provider, renderer/Core, rights, migration, governed reference or frozen Wave authority change is introduced. No criterion-bound blocker remains; this approval covers W2.C07.T01 affected integration only, not Wave exit or release."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C07.T01.review-R01.json",
+                    "sha256": "49c2dc2d06fc389c67a5fdcbd45fd469d93333a60868a7f550247a70bc13c74e"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C07.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-09-30T23:14:28+00:00",
+                    "reviewed_at": "2026-09-30T23:20:25+00:00",
+                    "duration_seconds": 357,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }

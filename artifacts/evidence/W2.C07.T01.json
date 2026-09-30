@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C07.T01",
+  "baseCommit": "94c27270d19ce2b14cd25dd7085b404149be4096",
+  "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/connector_configuration_dialog.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The independently approved CAP-04.S02.T03 OA URL license/host, directed graph result and provider-unavailable integrity behavior is unchanged. The correction changes only parity syntax in the native configuration dialog and equivalent optional egress-policy branching in the supervisor; provider adapters and Core contracts are untouched.",
+        "Focused native tests at the committed candidate confirm provider-specific dialog templates stay aligned and bounded, while optional Intent egress admission retains absent, null, valid and invalid policy handling. Original CAP-04.S02.T03 reviewed evidence remains historical proof for the unchanged source adapter workflow, not fresh checkpoint qualification."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The committed candidate passes native_templates_are_aligned_bounded_and_provider_specific and native_intent_egress_matches_optional_core_contract: one executed case per filtered invocation, zero failures. Production Rust library build and format checks also pass.",
+        "Strict all-target Clippy was run and remains adverse solely on four CAP-04.S03.T03 reconciliation_admission.rs warnings. The two dialog parity and supervisor collapsible-if diagnostics from S02 are absent. W2.C08.T01 owns the four remaining diagnostics; this manifest does not call strict Clippy or desktop:application a pass."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The only product paths changed are the two correction-spec-admitted native Rust files; five other base-to-candidate paths are the taskctl claim and generated views. No provider transport, secret store, schema, migration, fixture, rights, audit, public contract, approved experience reference or frozen W2 decision changed.",
+        "Fresh backlog validation and generated-view check pass at the clean committed candidate. Full S01-S03 checkpoint proof and W2 exit qualification remain required after C08."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "The native dialog word-alignment guard and optional supervisor egress-policy branch are the only changed behaviors. Run focused existing tests for every provider template and optional policy cases, production Rust build, formatting, strict all-target Clippy, and claim/view integrity on the exact candidate. Service/search adapter behavior and full profiles have no changed input at this correction and remain under prior task and later checkpoint/Wave proof.",
+    "deferred": [
+      "Strict all-target Clippy exits 101 with only four CAP-04.S03.T03 reconciliation admission warnings at artifacts/tmp/W2.C07.T01.candidate-clippy-01.log (raw SHA-256 e7c93730290a3e8d55e4ca253c3f8309b69b5898c5ceef72a8746085e6a54b9f). W2.C08.T01 must repair them before a fresh desktop:application pass can be claimed. The desktop application plan is not represented as passing for this candidate.",
+      "Fresh integrated S01-S03 checkpoint checks, full affected/repository/profile qualification and human W2 exit gate are separate later obligations. The original source-adapter evidence is reused only for unchanged behavior at its historical candidate."
+    ]
+  },
+  "checks": [
+    {
+      "id": "native-dialog-templates",
+      "command": "cargo test -p research-observatory-desktop --lib native_templates_are_aligned_bounded_and_provider_specific --locked",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C07.T01.candidate-template-01.log",
+      "rawOutputSha256": "e0b99469d2789c4adad6f8718b1dcf9cb53434463798dcc9d2d6fbc9cbb3c767",
+      "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "All four provider dialog templates retain bounded aligned native layout."
+    },
+    {
+      "id": "native-optional-egress",
+      "command": "cargo test -p research-observatory-desktop --lib native_intent_egress_matches_optional_core_contract --locked",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C07.T01.candidate-egress-01.log",
+      "rawOutputSha256": "088ca4722627eeb401929ea9880736e662fc5bfd22c092a0e1a95d9a94c33deb",
+      "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Optional policy admission and invalid-policy denial remain covered."
+    },
+    {
+      "id": "rust-format",
+      "command": "cargo fmt --all -- --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C07.T01.candidate-fmt-01.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Workspace Rust formatting passes."
+    },
+    {
+      "id": "native-library-build",
+      "command": "cargo build -p research-observatory-desktop --lib --locked",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C07.T01.candidate-build-01.log",
+      "rawOutputSha256": "ad8f8cf9a2c437a1a3e0b7e517c0efdf036de9d4d420f5c25692da9dfcb4b099",
+      "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Production desktop Rust library builds."
+    },
+    {
+      "id": "taskctl",
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C07.T01.candidate-taskctl-01.log",
+      "rawOutputSha256": "95fc37f61ad9b1bf57e53025ef445c223aa98d497859e82427f9b977826015d7",
+      "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Canonical backlog validates with W2.C07.T01 IN_PROGRESS."
+    },
+    {
+      "id": "backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C07.T01.candidate-views-01.log",
+      "rawOutputSha256": "0cfb1254748d4c63a89dee38351ecf639cec4e272a8688c38c365f42ef06316f",
+      "commit": "96ca6047e06477883e69fe6c863eb1b0f6117c52",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Generated backlog views match the claimed ledger."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "cargo test -p research-observatory-desktop --lib native_templates_are_aligned_bounded_and_provider_specific --locked",
+      "cargo test -p research-observatory-desktop --lib native_intent_egress_matches_optional_core_contract --locked",
+      "cargo fmt --all -- --check",
+      "cargo build -p research-observatory-desktop --lib --locked",
+      "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "python tools/backlog_views.py --repo . --check"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S02.T03.json",
+        "sha256": "e7455ced5e7d7495dbb0b28c8b77bf7da3522ef65d946c982e834fa2b1edd88c",
+        "commit": "1e68cab433f194bf5d834bedc974bdac5a4f7cb6"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S02.T03.review-R01.json",
+        "sha256": "fee82735c9c22d2cc0d2bb59d03b6c277cecdc208fb2141bdcca775b2ed2358e",
+        "commit": "035f11a3546658ed9c694acbae1c1a3ac4907724"
+      }
+    ],
+    "rationale": "Restore strict native quality for the approved source-configuration paths while preserving dialog layout, credential isolation and optional egress admission. Fresh focused native tests, Rust build and claim integrity pass; four unrelated S03 admission warnings remain adverse for W2.C08.T01."
+  },
+  "scopeDeviation": "None. Two admitted native Rust files plus taskctl-generated claim and tracking views."
+}
