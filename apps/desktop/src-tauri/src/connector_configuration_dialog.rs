@@ -32,7 +32,7 @@ impl Template {
         self.word(0);
     }
     fn control(&mut self, id: i32, class: u16, style: u32, bounds: [u16; 4], text: &str) {
-        if self.0.len() % 2 != 0 {
+        if !self.0.len().is_multiple_of(2) {
             self.word(0);
         }
         self.dword(WS_CHILD | WS_VISIBLE | style);
@@ -137,7 +137,7 @@ impl Template {
             "Cancel",
         );
         t.0[4] = t.1;
-        if t.0.len() % 2 != 0 {
+        if !t.0.len().is_multiple_of(2) {
             t.word(0);
         }
         // DLGTEMPLATE must be DWORD aligned, including each DLGITEMTEMPLATE.

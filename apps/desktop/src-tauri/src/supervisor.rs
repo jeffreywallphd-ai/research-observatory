@@ -1527,34 +1527,33 @@ fn intent_object_with_egress(
     extended.push("egressPolicy");
     let mut object = exact_json_object(body, keys, maximum)
         .or_else(|| exact_json_object(body, &extended, maximum))?;
-    if let Some(policy) = object.remove("egressPolicy") {
-        if !policy.is_null() {
-            let policy = policy.as_object()?;
-            if policy.len() != 2 {
-                return None;
-            }
-            let mode = policy.get("mode")?.as_str()?;
-            let destinations = policy.get("approvedDestinationIds")?.as_array()?;
-            if !["local-only", "approved-redacted", "approved-content"].contains(&mode)
-                || destinations.len() > 32
-                || (mode == "local-only") != destinations.is_empty()
+    if let Some(policy) = object.remove("egressPolicy")
+        && !policy.is_null()
+    {
+        let policy = policy.as_object()?;
+        if policy.len() != 2 {
+            return None;
+        }
+        let mode = policy.get("mode")?.as_str()?;
+        let destinations = policy.get("approvedDestinationIds")?.as_array()?;
+        if !["local-only", "approved-redacted", "approved-content"].contains(&mode)
+            || destinations.len() > 32
+            || (mode == "local-only") != destinations.is_empty()
+        {
+            return None;
+        }
+        let mut seen = std::collections::BTreeSet::new();
+        for value in destinations {
+            let name = value.as_str()?;
+            if name.is_empty()
+                || name.len() > 100
+                || !name.as_bytes()[0].is_ascii_lowercase() && !name.as_bytes()[0].is_ascii_digit()
+                || !name
+                    .bytes()
+                    .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b"._-".contains(&b))
+                || !seen.insert(name)
             {
                 return None;
-            }
-            let mut seen = std::collections::BTreeSet::new();
-            for value in destinations {
-                let name = value.as_str()?;
-                if name.is_empty()
-                    || name.len() > 100
-                    || !name.as_bytes()[0].is_ascii_lowercase()
-                        && !name.as_bytes()[0].is_ascii_digit()
-                    || !name.bytes().all(|b| {
-                        b.is_ascii_lowercase() || b.is_ascii_digit() || b"._-".contains(&b)
-                    })
-                    || !seen.insert(name)
-                {
-                    return None;
-                }
             }
         }
     }
