@@ -406,7 +406,6 @@ pub(crate) enum NativeImportAction {
     Chunk,
     Seal,
     Schedule,
-    Status,
     Cancel,
     Report,
 }
@@ -419,7 +418,6 @@ impl NativeImportAction {
             Self::Chunk => "/native/imports/chunk",
             Self::Seal => "/native/imports/seal",
             Self::Schedule => "/native/imports/schedule",
-            Self::Status => "/native/imports/status",
             Self::Cancel => "/native/imports/cancel",
             Self::Report => "/native/imports/report",
         }
@@ -3526,7 +3524,6 @@ mod tests {
             super::NativeImportAction::Chunk,
             super::NativeImportAction::Seal,
             super::NativeImportAction::Schedule,
-            super::NativeImportAction::Status,
             super::NativeImportAction::Cancel,
             super::NativeImportAction::Report,
         ] {
@@ -3541,6 +3538,16 @@ mod tests {
                 .is_err()
             );
         }
+        assert!(
+            super::validate_api_request(&super::CoreApiRequest {
+                method: "POST".into(),
+                path: "/native/imports/status".into(),
+                body: Some("{}".into()),
+                if_match: None,
+                idempotency_key: None,
+            })
+            .is_err()
+        );
     }
 
     #[cfg(windows)]
