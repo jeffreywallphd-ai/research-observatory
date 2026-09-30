@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S01.T02",
+    "commit": "552eae1c03bf3d63c44620981a49e8c344de86f1",
+    "sha256": "4951e92589c98d802968fb07d51402ddcbe4c2d60068c4a20ed5c4c91801133a"
+  },
+  "reproduction": "The W2 S01-S03 checkpoint on the unchanged approved campaign found 29 mypy errors in five CAP-04.S01.T02 preview/summary test files after separately reviewed privacy-control and package-inventory maintenance. A focused protected migration run also failed because the v10 preview protection test expects only migrations 0011/0012 and final schema v12, while the current additive chain reaches v16. The exact failed quality and migration logs are retained locally under artifacts/tmp/W2.checkpoint-security-package-01.*. The original CAP-04.S01.T02 status, evidence, review and frozen W2 approval remain unchanged.",
+  "changedPaths": [
+    "tests/security/test_import_preview_protection.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_import_summary_storage.py",
+    "tests/data/test_import_summary_repository.py",
+    "tests/service/test_import_summary_workflow.py",
+    "tests/service/test_import_intake_api.py"
+  ],
+  "impactAnalysis": "Restore the approved import preview, mapping, cancellation, protected summary and migration proof without changing product code, security authority, persisted data, migration implementation, test expectations for historical backup bytes or any acceptance criterion. Replace implicit Optional assumptions with explicit fail-closed assertions/narrowing, give existing fixture attributes precise types, and preserve invalid-input cases while typing their request dictionaries. Update the v10 protected migration test to require the complete current additive migration chain through v16 while still checking exact v10 encrypted backup, settings, foreign-key integrity, repeated reopen and idempotent retry; do not weaken the earlier v11/v12 assertions. Run focused real SQLCipher migration/summary/service/API tests plus full governed format/lint/type diagnostic comparison, then independent corrective review. The remaining CAP-04.S01.T03 commit/packaging test typing debt is a separate linked correction. No new source, schema, right, UI, approval or refactoring scope is authorized."
+}
