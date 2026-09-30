@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S03.T03",
+    "commit": "a349aaab078069ea08bbf21298f3c141134c260d",
+    "sha256": "93982d6381ce67c7b89c3db992f69d66175153188eac54000e5a5a3bbe881784"
+  },
+  "reproduction": "After independently approved W2.C06.T01 and W2.C07.T01 corrections, strict all-target Clippy at exact candidate 96ca6047e06477883e69fe6c863eb1b0f6117c52 still exits 101 with four warnings solely in completed CAP-04.S03.T03 reconciliation_admission.rs: three manual leap-year divisibility expressions and one nonminimal empty/missing workIds boolean expression. Raw log artifacts/tmp/W2.C07.T01.candidate-clippy-01.log has SHA-256 e7c93730290a3e8d55e4ca253c3f8309b69b5898c5ceef72a8746085e6a54b9f. Original CAP-04.S03.T03 DONE evidence, independent review and frozen W2 approval remain unchanged.",
+  "changedPaths": [
+    "apps/desktop/src-tauri/src/reconciliation_admission.rs"
+  ],
+  "impactAnalysis": "Restore strict native desktop quality for the approved work-version admission path without changing shape, identity or Core authority. Replace leap-year remainder checks with equivalent nonzero-divisor is_multiple_of predicates and replace negated nonempty workIds logic with equivalent is_none_or(empty). Preserve all existing invalid/missing/empty denial behavior, preferred-version and correction/retraction semantics. Run focused native version-admission tests, cargo format, strict all-target Clippy and the desktop application/build check against the committed candidate, with fresh backlog and generated-view checks. No schema, migration, rights, approved experience, public contract or release criterion change is authorized. The S01-S03 checkpoint and W2 exit remain separate gates."
+}
