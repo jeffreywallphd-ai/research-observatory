@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S02.T03",
+    "commit": "035f11a3546658ed9c694acbae1c1a3ac4907724",
+    "sha256": "f963a91d00aff8748b2eb0f8606d9b86193c4a072463c81998e27b8eb8772028"
+  },
+  "reproduction": "After the independently reviewed W2.C06.T01 repair, the exact committed-candidate strict Clippy log artifacts/tmp/W2.C06.T01.candidate-clippy-01.log (raw SHA-256 75450bcffdd9a532e87041adafb69443c3b52f7658a7900a6db2c8523fe5f340) retains seven compile-as-error warnings. Three originate in completed CAP-04.S02.T03: two manual parity checks in connector_configuration_dialog.rs and a collapsible nested optional egressPolicy condition in supervisor.rs. The C06 desktop application report artifacts/tmp/W2.C06.T01.candidate-desktop-01.json (raw SHA-256 b9c11bfb22bf217ba23df3d625eccad7553fd565e6a689988871b711d42401e5) stops at those and four separate S03 warnings. The original CAP-04.S02.T03 DONE state, independent review and W2 approval remain unchanged.",
+  "changedPaths": [
+    "apps/desktop/src-tauri/src/connector_configuration_dialog.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs"
+  ],
+  "impactAnalysis": "Restore the approved source-configuration native desktop quality proof without changing secret handling, provider configuration, renderer/Core authority or optional Intent egress semantics. Replace the two odd-UTF-16-word checks with equivalent is_multiple_of parity checks and collapse the nested non-null egressPolicy branch without changing its validation body. Run focused native template alignment/provider and optional egress-policy tests, production Rust build, format and strict all-target Clippy at the committed candidate. Keep any remaining S03 Clippy diagnostics adverse for W2.C08.T01; do not suppress lints or claim the full desktop/checkpoint pass early. No schema, migration, rights, credential, approved experience or release authority changes are authorized."
+}
