@@ -1490,21 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 8bef1782c8e433b326d7cb710a2f771e0e4c6f5b
+    base_sha: 1ac0737474f1e94faeb4da3e184af0322507e4e3
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-09-30T14:12:24+00:00'
-    pause_reason: 'S01-S03 integration checkpoint cannot pass full governed Python quality: 29 preview/summary test type errors
-      and a stale protected v10 migration expectation remain in completed CAP-04.S01.T02. Clean boundary for the linked W2.C04.T01
-      correction; no new human gate.'
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-09-30T16:03:19+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-09-30T16:03:19+00:00'
+      expires_at: '2026-10-01T16:03:19+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -2811,9 +2812,21 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-09-30T11:27:51+00:00'
+    - id: W2.R04
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 1ac0737474f1e94faeb4da3e184af0322507e4e3
+      prior_campaign_sha256: 68e04ffa34f34a8625c01644ac6c847c3185f34cb6ea395b9498d7e775bfe2db
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-09-30T16:03:19+00:00'
   checkpoints: []
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
