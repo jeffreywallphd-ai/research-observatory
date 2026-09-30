@@ -14,24 +14,6 @@ from adr_check import validate_change_set, validate_registry  # noqa: E402
 from adr_new import create_adr  # noqa: E402
 
 
-def copy_fixture_ignore(directory: str, names: list[str]) -> set[str]:
-    ignored = set(
-        shutil.ignore_patterns(
-            ".git",
-            ".venv",
-            ".local",
-            "__pycache__",
-            "dist",
-            "node_modules",
-            "product-dist",
-            "target",
-        )(directory, names)
-    )
-    if Path(directory).resolve() == (REPO / "artifacts").resolve():
-        ignored.add("tmp")
-    return ignored
-
-
 class ArchitectureDecisionWorkflowTests(unittest.TestCase):
     def test_repository_adr_registry_and_task_links_are_valid(self) -> None:
         errors, records = validate_registry(REPO)
@@ -65,6 +47,13 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
                 "ADR-0024",
                 "ADR-0025",
                 "ADR-0026",
+                "ADR-0027",
+                "ADR-0028",
+                "ADR-0029",
+                "ADR-0030",
+                "ADR-0031",
+                "ADR-0032",
+                "ADR-0033",
             },
             set(records),
         )
@@ -85,15 +74,24 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
         self.assertIn("CAP-07.S01.T01", records["ADR-0021"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-03.S02.T01", records["ADR-0022"]["metadata"]["linked_tasks"])
         self.assertIn("CAP-03.S02.T03", records["ADR-0023"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-04.S02.T01", records["ADR-0027"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-04.S05.T01", records["ADR-0028"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-05.S02.T01", records["ADR-0029"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-04.S02.T03", records["ADR-0030"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-04.S03.T01", records["ADR-0031"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-04.S03.T02", records["ADR-0032"]["metadata"]["linked_tasks"])
+        self.assertIn("CAP-04.S03.T03", records["ADR-0033"]["metadata"]["linked_tasks"])
 
     def test_unindexed_adr_file_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             checkout = Path(temporary) / "repo"
-            shutil.copytree(
-                REPO,
-                checkout,
-                ignore=copy_fixture_ignore,
-            )
+            # Complete validator inputs; local caches and protected fixtures are
+            # unrelated to registry validation and must not enter this copy.
+            shutil.copytree(REPO / "docs" / "adr", checkout / "docs" / "adr")
+            (checkout / "planning").mkdir()
+            shutil.copy2(REPO / "planning" / "backlog.yaml", checkout / "planning" / "backlog.yaml")
+            shutil.copy2(REPO / "architecture-protected-paths.json", checkout / "architecture-protected-paths.json")
+            self.assertEqual([], validate_registry(checkout)[0])
             sample = checkout / "docs" / "adr" / "ADR-9999-unindexed.md"
             sample.write_text("---\nid: ADR-9999\n---\n", encoding="utf-8")
 

@@ -3573,11 +3573,53 @@ class TaskctlWorkflowTests(unittest.TestCase):
         payload = taskctl_module.git_blob(repo, predecessor, "planning/backlog.yaml")
         self.assertIsNotNone(payload)
         assert payload is not None
-        # Relocate only the active execution bindings into the owned test root;
-        # retained task evidence and historical approvals are not rewritten.
+        # Retain task evidence and approvals from the canonical predecessor,
+        # but give this synthetic campaign real, local PAUSED Git boundaries.
+        # Neither an old checkout identity nor an unauthenticated replacement
+        # may serve as the active authority in the owned fixture repository.
         document = taskctl_module.yaml.safe_load(payload)
         context = taskctl_module.index_backlog(document)
-        taskctl_module.wave_map(document)["W1"]["campaign"]["worktree"] = repo.as_posix()
+        campaign = taskctl_module.wave_map(document)["W1"]["campaign"]
+        for index, record in enumerate(campaign["resume_records"]):
+            prior = taskctl_module.historical_backlog_document(repo, record["pre_resume_commit"])
+            self.assertIsNotNone(prior)
+            assert prior is not None
+            prior_campaign = taskctl_module.wave_map(prior)["W1"]["campaign"]
+            self.assertEqual("PAUSED", prior_campaign["status"])
+            prior_campaign["worktree"] = repo.as_posix()
+            prior_campaign["resume_records"] = copy.deepcopy(campaign["resume_records"][:index])
+            if index:
+                prior_campaign["base_sha"] = campaign["resume_records"][index - 1]["pre_resume_commit"]
+            (repo / "planning/backlog.yaml").write_text(
+                taskctl_module.yaml.safe_dump(prior, sort_keys=False, allow_unicode=True, width=120),
+                encoding="utf-8",
+            )
+            subprocess.run(["git", "add", "planning/backlog.yaml"], cwd=repo, check=True, capture_output=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=Fixture",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "-c",
+                    "core.hooksPath=" + str(repo / "empty-hooks"),
+                    "commit",
+                    "-m",
+                    f"fixture: synthetic paused boundary for {record['id']}",
+                ],
+                cwd=repo,
+                check=True,
+                capture_output=True,
+            )
+            record.update(
+                worktree=".",
+                pre_resume_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
+                prior_campaign_sha256=canonical_json_sha256(prior_campaign),
+            )
+        campaign.update(worktree=repo.as_posix(), base_sha=campaign["resume_records"][-1]["pre_resume_commit"])
+        campaign_worktree = campaign["worktree"]
+        resume_history = wave_resume_history_snapshot(document)
         context[3]["CAP-03.S02.T02"]["worktree"] = repo.as_posix()
         payload = taskctl_module.yaml.safe_dump(
             taskctl_module.serializable_backlog(document), sort_keys=False, allow_unicode=True, width=120
@@ -3612,6 +3654,8 @@ class TaskctlWorkflowTests(unittest.TestCase):
                 command_reopen(args, *context)
 
             persisted = load(str(backlog_path))
+            self.assertEqual(campaign_worktree, taskctl_module.wave_map(persisted[0])["W1"]["campaign"]["worktree"])
+            self.assertEqual(resume_history, wave_resume_history_snapshot(persisted[0]))
             self.assertEqual("IN_PROGRESS", persisted[3]["CAP-03.S02.T02"]["status"])
             dependent = persisted[3]["CAP-03.S02.T03"]
             self.assertEqual("NOT_STARTED", dependent["status"])

@@ -89,9 +89,14 @@ class BacklogSchemaTests(unittest.TestCase):
     def corrective_document(self) -> tuple[dict[str, Any], dict[str, Any]]:
         from argparse import Namespace
 
-        data = copy.deepcopy(self.canonical)
+        # Admission belongs to this actual unreleased, quiescent predecessor;
+        # the live campaign can advance beyond W1 without changing this fixture.
+        data = taskctl.historical_backlog_document(REPO, "1d61b328780abfa6c385f6f0bf6f8c1636a3d048")
+        self.assertIsNotNone(data, "The exact corrective-admission predecessor must be available")
+        assert data is not None
         campaign = next(w for w in data["waves"] if w["id"] == "W1")["campaign"]
-        campaign.update(status="PAUSED", lease=None)
+        self.assertEqual("PAUSED", campaign["status"])
+        self.assertIsNone(campaign["lease"])
         corrections = campaign.setdefault("corrective_tasks", [])
         correction_id = f"W1.C{len(corrections) + 1:02d}.T01"
         indexed = taskctl.index_backlog(data)

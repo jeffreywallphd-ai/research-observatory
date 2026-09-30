@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import io
 import json
 import re
 import shutil
@@ -9,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from typing import Any, ClassVar
 from unittest.mock import patch
@@ -312,6 +314,38 @@ def controlled_adoption_waves() -> list[dict[str, Any]]:
     ]
 
 
+def controlled_recovery_record() -> dict[str, Any]:
+    return {
+        "request_id": "GRR-9999",
+        "hold_id": "HOLD-FIXTURE",
+        "target_wave": "W1",
+        "hold_status": "RELEASED",
+        "bootstrap": {"id": "GRR-9999.B00", "status": "APPROVED"},
+        "post_bootstrap": {},
+        "release_conditions": [],
+        "authority_chain": {},
+        "packet_path": "planning/recovery/frozen packet.json",
+        "packet_sha256": "a" * 64,
+        "packet_commit": "b" * 40,
+        "proposal_path": "planning/recovery/proposal.md",
+        "review_path": "planning/recovery/review.html",
+        "approval_path": "planning/recovery/approval.json",
+        "approval_sha256": "c" * 64,
+        "approval_commit": "d" * 40,
+        "supplements": [
+            {
+                "id": "GRR-9999.S01",
+                "bootstrap_id": "GRR-9999.B01",
+                "bootstrap_status": "APPROVED",
+                "packet_path": "planning/recovery/supplement #1.json",
+                "packet_sha256": "e" * 64,
+                "approval_path": "planning/recovery/supplement approval.json",
+                "approval_sha256": "f" * 64,
+            }
+        ],
+    }
+
+
 class PlanReviewSourceLinkPortabilityTests(unittest.TestCase):
     def test_governed_source_links_are_portable_encoded_and_keep_git_identity(self) -> None:
         relative = "planning/proposals/source #1% é.md"
@@ -337,35 +371,7 @@ class PlanReviewSourceLinkPortabilityTests(unittest.TestCase):
                 governed_experience_html(Path("checkout-one"), {"files": [{"path": unsafe}]})
 
     def test_recovery_source_links_are_identical_across_checkout_roots(self) -> None:
-        record: dict[str, Any] = {
-            "request_id": "GRR-9999",
-            "hold_id": "HOLD-FIXTURE",
-            "target_wave": "W1",
-            "hold_status": "RELEASED",
-            "bootstrap": {"id": "GRR-9999.B00", "status": "APPROVED"},
-            "post_bootstrap": {},
-            "release_conditions": [],
-            "authority_chain": {},
-            "packet_path": "planning/recovery/frozen packet.json",
-            "packet_sha256": "a" * 64,
-            "packet_commit": "b" * 40,
-            "proposal_path": "planning/recovery/proposal.md",
-            "review_path": "planning/recovery/review.html",
-            "approval_path": "planning/recovery/approval.json",
-            "approval_sha256": "c" * 64,
-            "approval_commit": "d" * 40,
-            "supplements": [
-                {
-                    "id": "GRR-9999.S01",
-                    "bootstrap_id": "GRR-9999.B01",
-                    "bootstrap_status": "APPROVED",
-                    "packet_path": "planning/recovery/supplement #1.json",
-                    "packet_sha256": "e" * 64,
-                    "approval_path": "planning/recovery/supplement approval.json",
-                    "approval_sha256": "f" * 64,
-                }
-            ],
-        }
+        record = controlled_recovery_record()
         before = copy.deepcopy(record)
         pages = []
         with tempfile.TemporaryDirectory() as temporary:
@@ -413,13 +419,14 @@ class PlanReviewAmendmentTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.temporary = tempfile.TemporaryDirectory()
-        cls.site = Path(cls.temporary.name) / "review-site"
+        # Portable source links assume a site two components below the repository.
+        # Keep that layout in ignored, isolated output, with real source targets.
+        local = REPO / ".local"
+        local.mkdir(exist_ok=True)
+        cls.temporary = tempfile.TemporaryDirectory(prefix="plan-review-test-", dir=local)
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.site = Path(cls.temporary.name)
         cls.manifest = build_site(REPO, cls.site)
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        cls.temporary.cleanup()
 
     def test_ecr_register_preserves_states_and_wave_authority(self) -> None:
         entry = next(
@@ -583,24 +590,41 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         self.assertFalse([line for line in detail.splitlines() if line.rstrip() != line])
 
     def test_interrupted_approved_wave_suppresses_repeat_commands_but_future_wave_keeps_approval(self) -> None:
-        wave_one = (self.site / "waves/W1.html").read_text(encoding="utf-8")
-        backlog = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
-        active = [
-            hold
-            for hold in backlog["control_plane"]["recovery_holds"]
-            if hold.get("status") == "ACTIVE" and hold.get("target_wave") == "W1"
-        ]
-        if active:
+        # Exercise both authority branches regardless of the live campaign state.
+        recovery = controlled_recovery_record()
+        recovery["hold_status"] = "ACTIVE"
+        backlog = {
+            "waves": [
+                {"id": "W1", "approval": {"status": "APPROVED"}, "campaign": {"status": "PAUSED"}},
+                {"id": "W2", "approval": {"status": "PENDING"}},
+            ]
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "planning").mkdir()
+            source = root / "planning/backlog.yaml"
+            source.write_text(yaml.safe_dump(backlog), encoding="utf-8")
+            original = source.read_bytes()
+            site = root / "planning/review-site"
+            with (
+                patch("plan_review_site.load_enabler_change_requests", return_value=[]),
+                patch("plan_review_site.load_recovery_holds", return_value=[recovery]),
+            ):
+                build_site(root, site)
+            wave_one = (site / "waves/W1.html").read_text(encoding="utf-8")
             self.assertIn("W1 ordinary execution is interrupted", wave_one)
-            self.assertIn(f"../recoveries/{active[0]['recovery_request_id']}.html", wave_one)
+            self.assertIn("../recoveries/GRR-9999.html", wave_one)
             self.assertIn("bootstrap-only", wave_one)
             self.assertIn("Exact ordinary resume condition", wave_one)
-        self.assertNotIn("wave approve W1", wave_one)
-        self.assertNotIn("wave start W1", wave_one)
+            self.assertNotIn("wave approve W1", wave_one)
+            self.assertNotIn("wave start W1", wave_one)
+            self.assertIn("Do not repeat this approval", wave_one)
 
-        wave_two = (self.site / "waves/W2.html").read_text(encoding="utf-8")
-        self.assertIn("wave approve W2", wave_two)
-        self.assertIn("Approval command after review", wave_two)
+            wave_two = (site / "waves/W2.html").read_text(encoding="utf-8")
+            self.assertIn("wave approve W2", wave_two)
+            self.assertIn("Approval command after review", wave_two)
+            self.assertNotIn("W2 ordinary execution is interrupted", wave_two)
+            self.assertEqual(original, source.read_bytes())
 
     def test_review_checker_validates_enabler_hashes_pages_and_links(self) -> None:
         with patch.object(
@@ -615,6 +639,38 @@ class PlanReviewAmendmentTests(unittest.TestCase):
             ],
         ):
             self.assertEqual(0, check_review_site())
+            # Mutate only generated fixture files; never remove or alter source authority.
+            manifest_path = self.site / "manifest.json"
+            source_page = self.site / "recoveries/GRR-0001.html"
+            missing_page = self.site / "enablers/ECR-0002.html"
+            originals = {path: path.read_bytes() for path in (manifest_path, source_page, missing_page)}
+            changed = json.loads(originals[manifest_path])
+            entry = next(item for item in changed["enabler_change_requests"] if item["change_request_id"] == "ECR-0001")
+            entry["packet_sha256"] = "0" * 64
+            missing_source = self.site / "absent-source-fixture.json"
+            self.assertFalse(missing_source.exists())
+            missing_href = f"../../../.local/{self.site.name}/{missing_source.name}"
+            page_text = originals[source_page].decode("utf-8")
+            source_href = "../../../planning/governance-recovery-requests/GRR-0001.packet.json"
+            self.assertIn(source_href, page_text)
+            try:
+                manifest_path.write_text(json.dumps(changed), encoding="utf-8")
+                source_page.write_text(page_text.replace(source_href, missing_href), encoding="utf-8")
+                missing_page.unlink()
+                output = io.StringIO()
+                with redirect_stdout(output), redirect_stderr(output):
+                    self.assertEqual(1, check_review_site())
+                diagnostics = output.getvalue()
+                for expected in (
+                    "ECR-0001: packet path/hash differs from generated site manifest",
+                    "ECR-0002: missing enabler detail page",
+                    f"broken local reference {missing_href}",
+                ):
+                    with self.subTest(diagnostic=expected):
+                        self.assertIn(expected, diagnostics)
+            finally:
+                for path, original in originals.items():
+                    path.write_bytes(original)
 
     def test_ecr_loader_fails_closed_when_declared_source_bytes_change(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
