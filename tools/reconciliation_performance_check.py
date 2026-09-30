@@ -36,7 +36,7 @@ from verification_receipt import runtime_identity
 REPO = Path(__file__).resolve().parents[1]
 TOOL = Path("tools/reconciliation_performance_check.py")
 BASELINE = Path("tests/fixtures/scholarly-duplicates/reconciliation-performance-baseline.json")
-BASELINE_SHA256 = "PENDING-INDEPENDENT-BASELINE-REVIEW"
+BASELINE_SHA256 = "214292cf8f636a2d8ebecd31d4f0e9f7b618d928f7efaf1bbaeae0a78b627d9f"
 REPETITIONS = 3
 METHOD = {
     "fixtureVersion": "dblp-acm-benchmark-v1/qualification+synthetic-protected-reconciliation-202-v1",

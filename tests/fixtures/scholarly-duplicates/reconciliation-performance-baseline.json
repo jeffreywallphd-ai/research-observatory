@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "reconciliation-performance-baseline",
+  "slice": "CAP-04.S03",
+  "method": {
+    "fixtureVersion": "dblp-acm-benchmark-v1/qualification+synthetic-protected-reconciliation-202-v1",
+    "repetitions": 3,
+    "timer": "time.perf_counter",
+    "kernelCold": "all 2463 frozen records; feature preparation plus candidate retrieval",
+    "kernelPrepared": "separate feature preparation and exact prepared-input candidate retrieval",
+    "protectedCold": "fresh protected project/process, 202 accepted import and one retained connector record",
+    "protectedWarm": "new request and worker job over unchanged sources; revision-bound feature cache reuse",
+    "protectedPages": "fresh authorized first and later <=100-item candidate pages",
+    "measured": "public batch prepare/schedule through durable worker status, real DPAPI/SQLCipher and worker admission",
+    "excluded": "synthetic project/import/connector setup and project reopen/close; memory includes entire child",
+    "setupSubstitution": "synthetic Crossref transport and ASGI/native context; setup alone patches worker capacity",
+    "distribution": "min/median/max of three repetitions; every raw sample must pass; no discarded samples",
+    "regressionAllowance": 0.2,
+    "osCacheFlushed": false
+  },
+  "hardware": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
+  "maxima": {
+    "kernelColdSeconds": 8.98001219984144,
+    "kernelPreparationSeconds": 0.05943619995377958,
+    "kernelPreparedRetrievalSeconds": 9.15264099999331,
+    "protectedColdSeconds": 34.43647990003228,
+    "protectedWarmSeconds": 29.7280005000066,
+    "firstPageSeconds": 13.473082200158387,
+    "laterPageSeconds": 13.548108899965882,
+    "peakWorkingSetBytes": 213217280
+  },
+  "calibration": {
+    "commit": "81930fe594f754bf4f0d43e0e7405af8a8a8bcfe",
+    "tool": "tools/reconciliation_performance_check.py",
+    "toolSha256": "e18f95682e79f7a432280d37c9343d3046e7c559f6ff11d005df340dff547466",
+    "report": "artifacts/tmp/CAP-04.S03.performance-calibration-02.json",
+    "reportSha256": "f73eb2cbb07ad01da7daa32145ce9e10d45e125baabc4f30e17ba7ac6dd0475d",
+    "performanceQualifying": false,
+    "rawMetrics": [
+      {
+        "kernelColdSeconds": 8.809283800190315,
+        "kernelPreparationSeconds": 0.059245500015094876,
+        "kernelPreparedRetrievalSeconds": 8.997602100018412,
+        "protectedColdSeconds": 33.971097300061956,
+        "protectedWarmSeconds": 29.7280005000066,
+        "firstPageSeconds": 13.177210900001228,
+        "laterPageSeconds": 13.376048699952662,
+        "peakWorkingSetBytes": 211894272
+      },
+      {
+        "kernelColdSeconds": 8.68448149994947,
+        "kernelPreparationSeconds": 0.05943619995377958,
+        "kernelPreparedRetrievalSeconds": 8.821019999915734,
+        "protectedColdSeconds": 34.43647990003228,
+        "protectedWarmSeconds": 29.69372530002147,
+        "firstPageSeconds": 13.370219300035387,
+        "laterPageSeconds": 13.548108899965882,
+        "peakWorkingSetBytes": 213217280
+      },
+      {
+        "kernelColdSeconds": 8.98001219984144,
+        "kernelPreparationSeconds": 0.058848500018939376,
+        "kernelPreparedRetrievalSeconds": 9.15264099999331,
+        "protectedColdSeconds": 33.981564899906516,
+        "protectedWarmSeconds": 29.542372799944133,
+        "firstPageSeconds": 13.473082200158387,
+        "laterPageSeconds": 13.416703900089487,
+        "peakWorkingSetBytes": 213188608
+      }
+    ],
+    "sampleBindings": [
+      {
+        "repetition": 1,
+        "report": "artifacts/tmp/reconciliation-performance-d7g5o3qn/sample-1/result.json",
+        "reportSha256": "ad1b1c7e1cc09639c24dfacd3c6629555fe834bdb90aa37049c5254082d386e2",
+        "log": "artifacts/tmp/reconciliation-performance-d7g5o3qn/sample-1/raw.log",
+        "logSha256": "3ce5b9eda714400b7c00ca7440466f0fc59e6c2b40d15d83269e21854d56d74d"
+      },
+      {
+        "repetition": 2,
+        "report": "artifacts/tmp/reconciliation-performance-d7g5o3qn/sample-2/result.json",
+        "reportSha256": "1a347806137c4bfba149a69e10921c4c35c2e3470f399bd43be2be67b817177f",
+        "log": "artifacts/tmp/reconciliation-performance-d7g5o3qn/sample-2/raw.log",
+        "logSha256": "08cfa59e387b80feaf04e492ea586ecea7e0ed95cd1767d073a994ec2f15f586"
+      },
+      {
+        "repetition": 3,
+        "report": "artifacts/tmp/reconciliation-performance-d7g5o3qn/sample-3/result.json",
+        "reportSha256": "cd30944cdd54a13291a19b681af3fc50981ddb4be69743536b50d948fb9f6b85",
+        "log": "artifacts/tmp/reconciliation-performance-d7g5o3qn/sample-3/raw.log",
+        "logSha256": "3f3c12df83e2b189ae2c78c15ae3b1eed8b273065822edb50762c0c797d14455"
+      }
+    ],
+    "sourceInputCount": 481,
+    "sourceInputSetSha256": "6b69b35ee10358bc4b681cb88237580530e22fc2fbb8d89fe5bf5ac33d3720f3",
+    "runtimeSha256": "d40cf9d823bcbafeeab9282683c6b8dec4f2958a534c1066ba5b8ac0be5cd546",
+    "installedDependenciesSha256": "682e199239f88ccb2935e6a8a41da2b739042216ddc528e2de7506bab6f20121"
+  },
+  "limitations": [
+    "Calibration is nonqualifying; a separate fresh three-process run must pass every reviewed and absolute ceiling.",
+    "Measured on the recorded Windows workstation with real DPAPI/SQLCipher and worker admission; project data and provider transport are synthetic.",
+    "Setup substitutes worker capacity and ASGI/native context; measured batch execution does not substitute worker admission.",
+    "OS caches are not flushed; live provider, native GUI, installer and minimum-hardware performance are not claimed.",
+    "Researcher agreement and error-correction rates are unavailable from this benchmark."
+  ]
+}
