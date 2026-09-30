@@ -2578,6 +2578,90 @@ waves:
           tests plus full governed format/lint/type diagnostic comparison, then independent corrective review. The remaining
           CAP-04.S01.T03 commit/packaging test typing debt is a separate linked correction. No new source, schema, right,
           UI, approval or refactoring scope is authorized.
+    - title: Implement idempotent import commits and import manifests
+      objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
+        canonical IDs.
+      dependencies:
+      - CAP-04.S01.T02
+      acceptance_criteria:
+      - Re-importing the same file does not duplicate records; changed files create a new manifest and explain additions,
+        updates, and unresolved conflicts.
+      - Automated tests cover the expected path and at least one material failure or boundary condition.
+      - Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+      verification_commands:
+      - python tools/verify.py --profile service
+      - python tools/verify.py --profile data
+      deployment_profiles:
+      - LOC
+      - LAB
+      - ALL
+      platform_targets:
+      - windows-x64
+      verification_profiles:
+      - service
+      - data
+      id: W2.C05.T01
+      wave: W2
+      priority: P0
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      base_sha: c7fb6070f82b27997e49e6c13182e9246f0e89bb
+      worktree: .
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-09-30T15:15:28+00:00'
+        expires_at: '2026-09-30T23:15:28+00:00'
+      started_at: '2026-09-30T15:15:28+00:00'
+      updated_at: '2026-09-30T15:15:28+00:00'
+      completed_at: null
+      blocker: null
+      implementation_notes: ''
+      evidence: []
+      verification_state: null
+      review:
+        reviewer: null
+        result: null
+        reviewed_at: null
+        notes: null
+      review_control:
+        version: 1
+        attempts: []
+        current_submission: null
+      correction:
+        origin_task_id: CAP-04.S01.T03
+        origin_commit: f850468ef679651b34af44611aa39c8d147c6074
+        paused_state_sha256: e508904eabdbc4ac317a4f53c1748acaabb4a8f9fe08abc574329b61d8d430fa
+        origin_sha256: 6d85631ed208673dbc0e545727edce310b1c328d4374fea1605e441b705f546a
+        origin_contract_sha256: dbac1a5556e303c3c9c583cacb3138912c371ae5e56fe5fe08da3e84143ac9e3
+        origin_history_sha256: 084ddd9256947ec42034c77b2553d22efd6c7b3eac4ec76a4fb9d22a8e2453da
+        origin_amendment_id: null
+        authority_sha256: c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5
+        spec:
+          path: artifacts/evidence/W2.C05.T01.spec.json
+          sha256: 23a38e30b68495610c61212b563027e477db8a5f6c2a50b9e950682f36f569c5
+          commit: c7fb6070f82b27997e49e6c13182e9246f0e89bb
+        reproduction: The W2 S01–S03 checkpoint quality check failed with 55 mypy errors in 13 existing W2 test files. Two
+          privacy-control errors and 31 CAP-04.S01.T02-related errors were resolved by bounded maintenance and independently
+          approved linked correction W2.C04.T01. The exact W2.C04.T01 committed-candidate broad quality report, artifacts/tmp/W2.C04.T01.candidate-quality-01.json
+          (SHA-256 13b3032b8033a03add5b6a2fa14164e70691ee946a7a12c6851c613d7ddeb08a), retains 22 errors exclusively in six
+          CAP-04.S01.T03 commit/packaging test files; format and lint pass. The original CAP-04.S01.T03 DONE status, independent
+          review, evidence and frozen W2 approval remain unchanged.
+        changed_paths:
+        - tests/data/test_import_commit_migration.py
+        - tests/packaging/test_import_frozen_windows.py
+        - tests/service/test_import_commit_identity.py
+        - tests/service/test_import_commit_process_windows.py
+        - tests/service/test_import_commit_scale_windows.py
+        - tests/service/test_import_commit_workflow.py
+        impact_analysis: Restore the approved import commit, protected migration, frozen packaging, workflow, scale and process-restart
+          test proof without product, schema, security, rights, fixture, UI or approval changes. Type inherited protected-fixture
+          attributes, preserve every negative count/input case with a typed test value, narrow actual subprocess streams and
+          internal runtime publication handles after explicit assertions, and give heterogeneous test reports precise types.
+          Do not change expected durable behavior, remove failure assertions or weaken real-process/SQLCipher boundaries.
+          Run the six affected test modules and focused Core-plus-test mypy, changed-file lint/format, then full governed
+          quality and appropriate checkpoint checks; retain any remaining failures and obtain independent corrective review.
+          This is test/control repair, not supplemental refactoring or new product scope.
     resume_records:
     - id: W2.R01
       wave_id: W2

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d5eba58b75ecf154f761afb9cb9f481d0e6e83350ca435b7a409009860260108
+source_sha256: f6e2d01955773e6c1241e24386bf8a118f5035bf53ef9792e521586abf0cecbb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2925,6 +2925,38 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w2_c02_review at `2026-09-30T15:01:35+00:00`
 
 **Latest notes:** Independent review approves the frozen W2.C04.T01 R01 correction under the inherited CAP-04.S01.T02 contract. Reviewer agent:/root/w2_c02_review is independent of owner codex-w2-implementation and made no source, evidence, planning, taskctl or Git mutation. The reviewer authenticated the persisted REVIEW packet, canonical evidence hash, original DONE snapshot and history, inherited criteria, correction specification, six admitted test paths and five claim/generated-view paths. Read-only task_submission_packet_errors, validate_task_evidence, task_review_control_errors and corrective_task_errors returned no errors. The diff adds explicit type narrowing, accurate protected-fixture attributes and typed invalid-request dictionaries without removing negative inputs or weakening assertions. The protected v10 migration test retains fixed 0011–0016 historical steps, verifies the current schema version and preserves encrypted predecessor schema/version, retained settings, empty summary state, foreign-key integrity, repeated reopen and retry assertions. Product code, migration implementation, source fixtures, contracts, rights, privacy policy and approved experience are unchanged. All six check-log hashes authenticate under taskctl's LF-canonical text convention. The fresh affected suite reports 42 tests in 48.686 seconds, OK without skips; focused mypy reports no issues in 131 files; changed-file lint/format and backlog/view checks pass. This approval covers the correction and affected integration only. Full checkpoint quality, broader profiles, Wave qualification and release remain pending.
+
+**Currently open findings:** -
+
+### W2.C05.T01 — Implement idempotent import commits and import manifests
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S01.T03`. **Latest review:** `-`.
+
+**Reproduction:** The W2 S01–S03 checkpoint quality check failed with 55 mypy errors in 13 existing W2 test files. Two privacy-control errors and 31 CAP-04.S01.T02-related errors were resolved by bounded maintenance and independently approved linked correction W2.C04.T01. The exact W2.C04.T01 committed-candidate broad quality report, artifacts/tmp/W2.C04.T01.candidate-quality-01.json (SHA-256 13b3032b8033a03add5b6a2fa14164e70691ee946a7a12c6851c613d7ddeb08a), retains 22 errors exclusively in six CAP-04.S01.T03 commit/packaging test files; format and lint pass. The original CAP-04.S01.T03 DONE status, independent review, evidence and frozen W2 approval remain unchanged.
+
+**Inherited criteria:**
+
+- Re-importing the same file does not duplicate records; changed files create a new manifest and explain additions, updates, and unresolved conflicts.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/data/test_import_commit_migration.py
+- tests/packaging/test_import_frozen_windows.py
+- tests/service/test_import_commit_identity.py
+- tests/service/test_import_commit_process_windows.py
+- tests/service/test_import_commit_scale_windows.py
+- tests/service/test_import_commit_workflow.py
+#### Review history — W2.C05.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 
