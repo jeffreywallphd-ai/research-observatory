@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e93c2a51a7076504030e386485ee5098df4dd0f0f7b59a0bd8924f9041168f24
+source_sha256: 839dcb67414c6b1c900361d81905491d63f604b38ba907c41be8d3c9b05d902e
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8989,7 +8989,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Corpus state is a deliberate scholarly decision with complete acquisition and inclusion provenance.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

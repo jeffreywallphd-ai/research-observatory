@@ -23406,7 +23406,7 @@ capabilities:
     depends_on:
     - CAP-04.S03.T03
     - CAP-03.S02.T03
-    status: IN_PROGRESS
+    status: REVIEW
     tasks:
     - id: CAP-04.S04.T01
       capability_id: CAP-04
@@ -24499,11 +24499,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: PENDING
+      status: REVIEW
       reviewer: null
       reviewed_at: null
-      evidence: []
-      notes: null
+      evidence:
+      - artifacts/evidence/CAP-04.S04.qualification-01.md
+      notes: Integrated S04 evidence binds reviewed T01-T03 and C09, affected functional/contract/security/restart/UX checks,
+        and protected benchmark at c4d18111; future monitoring owner mismatch is recorded without dependent implementation.
   - id: CAP-04.S05
     title: Connector SDK and controlled extensibility
     outcome: New data sources can be added without bypassing provenance, rights, security, or canonicalization.
