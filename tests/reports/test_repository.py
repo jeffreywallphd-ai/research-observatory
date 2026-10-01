@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import unittest
+from contextlib import closing
+from datetime import UTC, datetime
 from typing import cast
 from unittest.mock import patch
 
@@ -65,6 +68,22 @@ class CorpusReportRepositoryTests(unittest.TestCase):
                     "outbox_events",
                 )
             )
+
+    def _read_attempt_state(self) -> tuple[int, tuple[tuple[str, str, str, str, str], ...]]:
+        with closing(
+            open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project)
+        ) as connection:
+            decisions = int(connection.execute("SELECT COUNT(*) FROM rights_use_decisions").fetchone()[0])
+            events = tuple(
+                tuple(str(value) for value in row)
+                for row in connection.execute(
+                    "SELECT event_type,occurred_at,trace_id,actor_id,record_sha256 "
+                    "FROM provenance_events WHERE project_id=? AND event_type LIKE 'corpus.report-%-read-denied' "
+                    "ORDER BY event_id",
+                    (self.corpus.project,),
+                )
+            )
+            return decisions, cast(tuple[tuple[str, str, str, str, str], ...], events)
 
     def test_missing_report_purpose_denies_without_partial_snapshot(self) -> None:
         before = self._counts()
@@ -228,6 +247,68 @@ class CorpusReportRepositoryTests(unittest.TestCase):
             reopened.page(
                 summary.snapshot_id, filter=CorpusReportFilter(kind="all"), after=None, limit=1, actor=self.corpus.actor
             )
+
+    def test_expired_retained_report_rights_deny_and_durably_audit_without_a_use_decision(self) -> None:
+        self.rights._publish(self._policy())
+        summary = self.repository.create(command_id=new_uuid_v7(), command_sha256="a" * 64, actor=self.corpus.actor)
+        before_counts = self._counts()
+        before_decisions, before_events = self._read_attempt_state()
+        expired_at = datetime(2030, 10, 1, tzinfo=UTC)
+        with (
+            patch("research_observatory_core.corpus_report_repository._now_utc", return_value=expired_at),
+            self.assertRaisesRegex(CorpusReportProblem, "corpus-report-rights-denied"),
+        ):
+            self.repository.summary(summary.snapshot_id, actor=self.corpus.actor)
+        after_counts = self._counts()
+        after_decisions, after_events = self._read_attempt_state()
+        self.assertEqual(before_counts[:4], after_counts[:4])
+        self.assertEqual(before_counts[4] + 1, after_counts[4])
+        self.assertEqual(before_counts[5], after_counts[5])
+        self.assertEqual(before_decisions, after_decisions)
+        self.assertEqual(
+            (
+                *before_events,
+                (
+                    "corpus.report-expired-read-denied",
+                    "2030-10-01T00:00:00.000Z",
+                    self.corpus.actor.trace_id,
+                    self.corpus.actor.actor_id,
+                    hashlib.sha256(summary.snapshot_id.encode("utf-8")).hexdigest(),
+                ),
+            ),
+            after_events,
+        )
+
+    def test_allowing_policy_change_denies_stale_report_without_persisting_false_allow(self) -> None:
+        retained = self.rights._publish(self._policy())
+        summary = self.repository.create(command_id=new_uuid_v7(), command_sha256="a" * 64, actor=self.corpus.actor)
+        self.rights._publish(self._policy(previous=retained.revision_id))
+        before_counts = self._counts()
+        before_decisions, before_events = self._read_attempt_state()
+        with self.assertRaisesRegex(CorpusReportProblem, "corpus-report-rights-denied"):
+            self.repository.page(
+                summary.snapshot_id,
+                filter=CorpusReportFilter(kind="all"),
+                after=None,
+                limit=1,
+                actor=self.corpus.actor,
+            )
+        after_counts = self._counts()
+        after_decisions, after_events = self._read_attempt_state()
+        self.assertEqual(before_counts[:4], after_counts[:4])
+        self.assertEqual(before_counts[4] + 1, after_counts[4])
+        self.assertEqual(before_counts[5], after_counts[5])
+        self.assertEqual(before_decisions, after_decisions)
+        self.assertEqual(len(before_events) + 1, len(after_events))
+        self.assertEqual(
+            (
+                "corpus.report-stale-witness-read-denied",
+                self.corpus.actor.trace_id,
+                self.corpus.actor.actor_id,
+                hashlib.sha256(summary.snapshot_id.encode("utf-8")).hexdigest(),
+            ),
+            (after_events[-1][0], after_events[-1][2], after_events[-1][3], after_events[-1][4]),
+        )
 
     def test_cursor_is_bound_to_snapshot_and_filter_and_foreign_project_denies(self) -> None:
         self.corpus._create()

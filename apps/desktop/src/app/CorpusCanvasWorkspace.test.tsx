@@ -146,6 +146,19 @@ describe("Corpus Canvas", () => {
     expect(html).not.toContain("58%");
   });
 
+  it("does not present a capped value-list remainder as a separately drillable aggregate", () => {
+    const capped = {
+      ...snapshot,
+      valueDistributions: snapshot.valueDistributions.map((distribution) => distribution.dimension === "year"
+        ? { ...distribution, otherKnownCount: 1, truncated: true }
+        : distribution),
+    } as CorpusReportSnapshot;
+    const html = renderToStaticMarkup(<CorpusCanvasWorkspace project={project} announce={() => undefined} initialSnapshot={capped} initialDrill={drill} />);
+    expect(html).toContain("Known value list is capped");
+    expect(html).toContain("Inspect all known records");
+    expect(html).not.toContain("Additional known values:");
+  });
+
   it("qualifies per-path metadata authority without treating it as full-text copy permission", () => {
     const retained = drill.members[0]!.paths[0]!;
     const allowed = renderToStaticMarkup(<ReportPathStatus path={retained} />);

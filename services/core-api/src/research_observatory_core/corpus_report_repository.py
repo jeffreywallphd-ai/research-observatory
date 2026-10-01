@@ -63,6 +63,16 @@ class _Denied(Exception):
         self.actor = actor
 
 
+class _StaleReadDenied(Exception):
+    """A retained report witness failed after the read transaction began."""
+
+    def __init__(self, snapshot_id: str, actor: CorpusActor, event_type: str, occurred_at: datetime) -> None:
+        self.snapshot_id = snapshot_id
+        self.actor = actor
+        self.event_type = event_type
+        self.occurred_at = occurred_at.astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+
+
 def _canonical(value: object) -> str:
     return json.dumps(value, sort_keys=True, ensure_ascii=True, separators=(",", ":"), allow_nan=False)
 
@@ -73,6 +83,12 @@ def _sha(value: str) -> str:
 
 def _step(_name: str) -> None:
     """Deterministic rollback seam for migration/restart tests."""
+
+
+def _now_utc() -> datetime:
+    """Clock seam for retained report witness expiry and its audit timestamp."""
+
+    return datetime.now(UTC)
 
 
 class SqliteCorpusReportRepository:
@@ -104,6 +120,20 @@ class SqliteCorpusReportRepository:
             except RightsProblem:
                 raise CorpusReportProblem("corpus-report-rights-integrity-invalid") from None
             raise CorpusReportProblem("corpus-report-rights-denied") from None
+        except _StaleReadDenied as denied:
+            # The attempted allow decision (if any) belongs to the aborted
+            # read. A separate content-free provenance event records the
+            # stale snapshot denial without inventing a RightsDecision.
+            if connection is not None and connection.in_transaction:
+                connection.rollback()
+            if connection is not None:
+                connection.close()
+                connection = None
+            try:
+                self._append_stale_read_denial(denied)
+            except (*_DATABASE_ERRORS, StorageProblem, OSError):
+                raise CorpusReportProblem("corpus-report-rights-integrity-invalid") from None
+            raise CorpusReportProblem("corpus-report-rights-denied") from None
         except CorpusReportProblem:
             raise
         except RightsProblem as error:
@@ -121,6 +151,30 @@ class SqliteCorpusReportRepository:
                 if connection.in_transaction:
                     connection.rollback()
                 connection.close()
+
+    def _append_stale_read_denial(self, denied: _StaleReadDenied) -> None:
+        connection = open_canonical_database(self._database, expected_project_id=self._project)
+        try:
+            connection.execute("BEGIN IMMEDIATE")
+            connection.execute(
+                "INSERT INTO provenance_events (event_id,project_id,revision_id,event_type,occurred_at,"
+                "trace_id,actor_type,actor_id,record_sha256) VALUES (?, ?, NULL, ?, ?, ?, ?, ?, ?)",
+                (
+                    new_uuid_v7(),
+                    self._project,
+                    denied.event_type,
+                    denied.occurred_at,
+                    denied.actor.trace_id,
+                    denied.actor.actor_type,
+                    denied.actor.actor_id,
+                    _sha(denied.snapshot_id),
+                ),
+            )
+            connection.execute("COMMIT")
+        finally:
+            if connection.in_transaction:
+                connection.rollback()
+            connection.close()
 
     def _authority(self, connection: CanonicalConnection, actor: CorpusActor) -> None:
         if (
@@ -376,15 +430,16 @@ class SqliteCorpusReportRepository:
             (self._project, snapshot_id),
         )
         for source_id, source_sha, subject_sha, policy_id, policy_sha, expiry, raw in cursor:
-            if expiry is not None and datetime.fromisoformat(str(expiry).replace("Z", "+00:00")) <= datetime.now(UTC):
-                raise CorpusReportProblem("corpus-report-rights-denied")
+            now = _now_utc()
+            if expiry is not None and datetime.fromisoformat(str(expiry).replace("Z", "+00:00")) <= now:
+                raise _StaleReadDenied(snapshot_id, actor, "corpus.report-expired-read-denied", now)
             try:
                 source = SourceAssertion.model_validate_json(str(raw))
             except ValidationError:
                 raise CorpusReportProblem("corpus-report-integrity-invalid") from None
             observed = self._authorize_source(connection, rights, source, actor, actions=("inspect",))
             if observed[:5] != (source_id, source_sha, subject_sha, policy_id, policy_sha):
-                raise CorpusReportProblem("corpus-report-rights-denied")
+                raise _StaleReadDenied(snapshot_id, actor, "corpus.report-stale-witness-read-denied", _now_utc())
 
     def create(self, *, command_id: str, command_sha256: str, actor: CorpusActor) -> CorpusReportSnapshot:
         if not is_uuid_v7(command_id) or _HASH.fullmatch(command_sha256) is None:

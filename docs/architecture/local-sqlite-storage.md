@@ -213,8 +213,11 @@ outbox events; any rights denial, limit, or interrupted write leaves no partial
 snapshot. Report-purpose `derive` and `inspect` use current explicit rights
 policy, never the older corpus-membership import bridge. Protected summary and
 drill reads recheck current policy and the sealed member digest, including after
-restart. The frozen target-v18 recovery schema and populated v18 fixtures remain
-available for exact predecessor recovery.
+restart. An expired retained witness or changed policy denies the historical
+read, rolls back its transient use decision, and records a content-free denial
+provenance event in a separate protected transaction. The frozen target-v18
+recovery schema and populated v18 fixtures remain available for exact
+predecessor recovery.
 
 ### Windows schema-migration backup paths
 
