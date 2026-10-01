@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S04.T03",
+  "baseCommit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+  "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S04.T03.R02.json",
+    "artifacts/evidence/CAP-04.S04.T03.review-R02.json",
+    "artifacts/evidence/CAP-04.S04.T03.task-start.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S04.T03.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/data/test_sqlite_schema.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "R02 independently reviewed the exact protected report arithmetic and mounted production Corpus Canvas drill, focus, denial clearing and saved-report recovery at 00553b30, and explicitly closed R01 finding CAP-04.S04.T03-R01-F01. R03 changes only the storage guide, criterion-3 task-start note, one documentation/contract parity test, and append-only review/tracking artifacts; the report, rights, renderer and v20 projection product bytes remain unchanged.",
+        "The corrected guide describes source projection totals as rebuildable derived state, not rights authority or a replacement for immutable sealed report snapshots. It preserves distinct canonical-item counts and exact source/path evidence as established by the R02 24-report/46-corpus checks and authenticated Windows boundary."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh final-candidate schema module (12 cases), populated v19-to-v20 migration/backup/interruption/retry, architecture, ADR, Python quality, build, repository structure and backlog-view checks pass. The new parity case first failed on the predecessor guide's stale v18 current heading, then passed after all current-version, predecessor-backup and mutable-projection statements were corrected.",
+        "R02's independently authenticated browser, report, corpus, migration and Windows protection evidence remains append-only and is not presented as a fresh R03 execution. Because R03 changes no product code or test harness behavior for those boundaries, R03 replays the closed R01 finding through the R02 review record and targets the new criterion-3 documentation failure directly."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The SQLite guide now derives its current version-20 authority and user_version=20 from the exact compiled/profile contract. It states that a current v20 database opens idempotently without migration backup and that a v19 source receives a verified backup before v20 migration. It names all three mutable, rebuildable corpus source projection tables and their non-authoritative rights/sealed-report role, removing the false exclusivity claim.",
+        "The new documentation parity regression checks the guide against DATABASE_SCHEMA_VERSION, APPLICATION_ID, sqlite-profile.v1.json and CORPUS_SOURCE_PROJECTION_TABLES, rejects duplicate stale current-version declarations, and binds the mutable projection inventory. The R02 adverse ledger and R01 closure remain immutable; no approved scope, migration guarantee, security authority or reference was changed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "data:unit",
+      "foundation:architecture",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:build-manifest",
+      "foundation:repository-structure",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "R03 directly remediates open finding CAP-04.S04.T03-R02-F01: the v20 architecture/recovery guide contradicted executable version, backup and mutable projection facts. The missed acceptance row and red-before-fix parity regression now close that documentation/contract boundary. Exact final-candidate tests recheck schema/profile agreement and the real populated v19 backup/retry path, plus affected architecture, ADR, quality, build and planning projections. Product/renderer/rights bytes are unchanged from the independently reviewed R02 candidate, so unchanged full desktop/service/search profile replay is deferred under verification section 8.1 rather than repeated for this document-only correction.",
+    "deferred": [
+      "The S04 slice still requires an independently reviewed warm/cold representative performance baseline and qualification for incremental source projection; direct report-suite registration in service/affected verification profiles; full affected slice profiles; integrated end-to-end, security, privacy, accessibility, migration/restart/recovery and independent slice review. W2 Wave and separate human release gates remain pending.",
+      "The R02 precursor broad desktop checker run's two DevelopmentEntry fixture cleanup errors and initial default-temp Rust fixture failures remain recorded as failed diagnostic attempts. The later built product capture passed with workspace-local test temp, and final R02 mounted browser/UI-gate checks passed. R03 does not relabel any precursor failure as a fresh pass."
+    ]
+  },
+  "checks": [
+    {
+      "id": "schema",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_schema",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.schema.log",
+      "rawOutputSha256": "1c8f43888ec18a32e8e3293c2f932ca18b0168bd0223d5df9641dd02e0913830",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "12 v20 schema cases pass, including guide/profile parity and source projection inventory",
+      "elapsedSeconds": 1.991
+    },
+    {
+      "id": "migration",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v19_projection_backfill_interruption_and_backup_recovery",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.migration.log",
+      "rawOutputSha256": "977df09e15fb376f1ee4fa4e32d2261c07afa494434bf48c477122149e0420e5",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Populated v19 source migrates to v20 with verified backup; interruption and retry pass",
+      "elapsedSeconds": 6.284
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.architecture.log",
+      "rawOutputSha256": "8149d8ace2f286db88d8c09afb2f12448ce31d35a8fe956725d4fdf6c65bceef",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Protected architecture boundary passes",
+      "elapsedSeconds": 3.191
+    },
+    {
+      "id": "adr",
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 00553b30714a1f00e584ee2d6d9b182528a4a82d --head HEAD",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.adr.log",
+      "rawOutputSha256": "e5a2303a596dd0f4c32782e8eb8a7a1febdfcf3d74102eabb2791d9c5950ce04",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Accepted ADR registry and incremental documentation scope pass",
+      "elapsedSeconds": 1.671
+    },
+    {
+      "id": "quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.quality.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.quality.log",
+      "rawOutputSha256": "765af43da5c6468e239202c059d68a28363ee5f66579156532e06ce0b50d9aca",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "459 governed Python files pass format, lint, and typing",
+      "elapsedSeconds": 0.821
+    },
+    {
+      "id": "build",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.build.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.build.log",
+      "rawOutputSha256": "69dda6334bbffdc6563b5fc42787b999c64798662b0833279d731c924976ff36",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Clean exact-candidate build inventory passes",
+      "elapsedSeconds": 26.42
+    },
+    {
+      "id": "structure",
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.structure.log",
+      "rawOutputSha256": "7a39d029b3edd0624c18b0406317a62a72c04bedaa52b42432f2cb2712d3a9f3",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Repository structure passes",
+      "elapsedSeconds": 0.204
+    },
+    {
+      "id": "views",
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.views.log",
+      "rawOutputSha256": "bed8018f7c54f537241e18a08dc5a3e05a9cb2a7a137424d09889dd26bb2bd03",
+      "commit": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Generated backlog views agree with the R02 review state",
+      "elapsedSeconds": 2.785
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.build.json",
+    "sha256": "b513bc101e7ad5e053d94f5ae6d868e779a27c0ea75c4e397460e96c19df2e11"
+  },
+  "scopeDeviation": "R03 is a documentation/contract-parity correction and append-only review-state update only. No product behavior, approved task/slice scope, governed UX reference, security authority, migration guarantee or release criterion changes.",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-04.S04.T03.R02.json",
+    "sha256": "078c2315cc45631df925456ed87355219cb81a3a1dbe51c9ea2e044f73e10955",
+    "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d"
+  },
+  "reviewerDisposition": {
+    "openFindingIds": [
+      "CAP-04.S04.T03-R02-F01"
+    ],
+    "rootCauseAnalysis": "The v20 implementation changed the storage/profile authority and added a new projection-table row, but the documentation pass edited the new section without checking older version-18 heading/identity, version-19 current/no-backup, and exclusive mutable-table prose. The R02 review found the v19 and mutability contradiction; remediation also searched the whole guide and found the older v18 declaration. There was no test tying the prose to executable/profile values. The new parity regression derives current version, application/profile identity, predecessor backup rule, and projection table names from those authorities."
+  }
+}

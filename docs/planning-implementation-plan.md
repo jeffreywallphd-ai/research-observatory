@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6b89bf70baac67376a0d51d968645aa9e7891a8d1867c04182b07f52950ee723
+source_sha256: a7d5d58fefffc81fbb9930ff69c089acaadd644635a5cac069e29a1d91aa0dd9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9084,15 +9084,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-04.S04.T03 - Build corpus provenance and source-overlap reports
+#### - [x] CAP-04.S04.T03 - Build corpus provenance and source-overlap reports
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T02`
 
-**Owner / review:** codex-w2-implementation / agent:/root/t03_r02_independent_review (`changes-requested`)
+**Owner / review:** codex-w2-implementation / agent:/root/t03_r02_independent_review (`approved`)
 
 **Objective:** Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues, disciplines, languages, and discovery routes.
 
@@ -9116,10 +9116,11 @@ Original tasks and approvals remain unchanged.
 
 - `artifacts/evidence/CAP-04.S04.T03.json` at `22e184e5095441b2ed8122f62bb715ebb197d470`
 - `artifacts/evidence/CAP-04.S04.T03.R02.json` at `00553b30714a1f00e584ee2d6d9b182528a4a82d`
+- `artifacts/evidence/CAP-04.S04.T03.R03.json` at `6da2ed0e88fe41ba1c22e7b984aef4870545ead0`
 
 ##### Review history — CAP-04.S04.T03
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -9181,13 +9182,43 @@ Original tasks and approvals remain unchanged.
 
 - `CAP-04.S04.T03-R01-F01` `fixed` — tests/desktop/test_corpus_report_interactions.py mounts the built production Corpus Canvas in Chromium. The exact-candidate browser log records its passing keyboard source-aggregate activation, saved snapshot/source filter/cursor/limit POST, visible matching record, drill-heading focus and live announcement. A later 403 clears the protected label and revision ID from the DOM, focuses the saved-report control, and a permitted retry reloads the report. The exact-candidate authenticated Windows check retains Core/DPAPI/SQLCipher restart and revoked historical-report denial. This directly supplies the mounted interaction and failure/recovery proof absent in R01.
 
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `4a2cd0231951dbd2742d6a381d2037e142723c0de44ace5439a7e0e7184bba17`
+
+- Candidate / base / branch: `6da2ed0e88fe41ba1c22e7b984aef4870545ead0` / `00553b30714a1f00e584ee2d6d9b182528a4a82d` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-01T08:17:13+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S04.T03.R03.json` / `783fb41dee879a519a1632b964f18b6b72fe03176511c585a4ac6559a1c2479b` / `6da2ed0e88fe41ba1c22e7b984aef4870545ead0`
+- Acceptance-criteria SHA-256: `386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1`
+- Verification-selection SHA-256: `8760800a55a10ab623a4951c53445f93a1dc195dcdec9e49fd2846b3662c5da5`
+- Changed paths: `artifacts/evidence/CAP-04.S04.T03.R02.json`, `artifacts/evidence/CAP-04.S04.T03.review-R02.json`, `artifacts/evidence/CAP-04.S04.T03.task-start.md`, `docs/architecture/local-sqlite-storage.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S04.T03.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/data/test_sqlite_schema.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -B -s -m unittest -v tests.data.test_sqlite_schema`, `$env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -B -s -m unittest -v tests.reports.test_migration.CorpusReportMigrationTests.test_populated_v19_projection_backfill_interruption_and_backup_recovery`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .`, `.venv\Scripts\python.exe tools/adr_check.py --repo . --base 00553b30714a1f00e584ee2d6d9b182528a4a82d --head HEAD`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.quality.json`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T03.R03.20261001T081532Z-616560.build.json`, `.venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools/backlog_views.py --repo . --check`
+- Deferred checks: `The S04 slice still requires an independently reviewed warm/cold representative performance baseline and qualification for incremental source projection; direct report-suite registration in service/affected verification profiles; full affected slice profiles; integrated end-to-end, security, privacy, accessibility, migration/restart/recovery and independent slice review. W2 Wave and separate human release gates remain pending.`, `The R02 precursor broad desktop checker run's two DevelopmentEntry fixture cleanup errors and initial default-temp Rust fixture failures remain recorded as failed diagnostic attempts. The later built product capture passed with workspace-local test temp, and final R02 mounted browser/UI-gate checks passed. R03 does not relabel any precursor failure as a fresh pass.`
+- Selection rationale: R03 directly remediates open finding CAP-04.S04.T03-R02-F01: the v20 architecture/recovery guide contradicted executable version, backup and mutable projection facts. The missed acceptance row and red-before-fix parity regression now close that documentation/contract boundary. Exact final-candidate tests recheck schema/profile agreement and the real populated v19 backup/retry path, plus affected architecture, ADR, quality, build and planning projections. Product/renderer/rights bytes are unchanged from the independently reviewed R02 candidate, so unchanged full desktop/service/search profile replay is deferred under verification section 8.1 rather than repeated for this document-only correction.
+- Prior round / replayed open findings: `R02` / `CAP-04.S04.T03-R02-F01`
+- Root-cause escalation: The v20 implementation changed the storage/profile authority and added a new projection-table row, but the documentation pass edited the new section without checking older version-18 heading/identity, version-19 current/no-backup, and exclusive mutable-table prose. The R02 review found the v19 and mutability contradiction; remediation also searched the whole guide and found the older v18 declaration. There was no test tying the prose to executable/profile values. The new parity regression derives current version, application/profile identity, predecessor backup rule, and projection table names from those authorities.
+
+**Disposition / reviewer / time:** `approved` / agent:/root/t03_r02_independent_review / `2026-10-01T08:23:50+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S04.T03.review-R03.json` / `04b04bd07fcaabd38020504c653e515d491b85b8b1ee20172b5e4ef98cc7c35e`
+
+**Review notes:** Independent focused R03 review of the exact 6da2ed0e candidate closes CAP-04.S04.T03-R02-F01 and finds no remaining task-level blocker. The SQLite architecture guide now agrees with executable/profile v20 authority: one current version-20 heading and user_version=20, idempotent current-v20 open, verified backup before v19-to-v20 migration, and explicit mutable/rebuildable corpus source projection tables that grant no rights and do not replace sealed reports. The new parity regression derives version, application/profile identity and projection-table inventory from storage.py and sqlite-profile.v1.json. Independent read-only replay against the exact 00553b30 predecessor guide makes that test fail; the committed guide passes. No retained receipt establishes the historical order of the implementer's red run, so this review relies on the independently reproduced regression and fresh final-candidate pass. The populated-v19 migration test proves interruption rollback, verified predecessor backup, retry and exact projection after reopen. The required third-round root-cause analysis identifies stale copied version/mutability prose and the missing parity check, with a corrected criterion-3 task-start row. The R03 manifest hash matches the REVIEW backlog projection, all 10 declared paths equal the exact Git diff, eight canonical raw-log digests and zero exits reproduce, the build report binds a clean 6da2ed0e source, and patch hygiene passes. No report, rights, renderer or v20 projection product bytes changed after the independently reviewed R02 candidate; R01-F01 remains closed by its immutable R02 ledger. Representative warm/cold performance, report-suite verification-profile registration, full affected profiles and integrated S04/W2 qualification remain separate later gates, not this task disposition.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-04.S04.T03-R02-F01` `fixed` — docs/architecture/local-sqlite-storage.md:37-41 now gives the single current version-20 heading and user_version=20 from storage.py and sqlite-profile.v1.json; lines 112-117 list the three current mutable source-projection tables and state their rebuildable, non-authoritative role; lines 129-131 distinguish current-v20 idempotence from a verified v19 backup before v20 migration. tests/data/test_sqlite_schema.py:test_architecture_guide_tracks_current_profile_recovery_and_mutable_projection is bound in the fresh 12-case exact-candidate schema log, and independent read-only injection of the predecessor guide makes it fail. The fresh populated-v19 migration log passes backup, interruption, retry and exact projection. The criterion-3 task-start row and third-round root-cause analysis identify and prevent the copied-prose mismatch.
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `changes-requested` by agent:/root/t03_r02_independent_review at `2026-10-01T07:59:52+00:00`
+**Current latest-review projection:** `approved` by agent:/root/t03_r02_independent_review at `2026-10-01T08:23:50+00:00`
 
-**Latest notes:** Independent R02 review of the exact 00553b30 candidate and frozen submission closes CAP-04.S04.T03-R01-F01. A mounted Chromium test uses the built production Corpus Canvas to activate a source aggregate by keyboard, asserts the exact saved-snapshot/filter/cursor/limit request and matching record, checks heading focus and live announcement, then proves a 403 clears protected content and the visible saved-report action restores interaction. The authenticated Windows Core/DPAPI/SQLCipher restart and revocation check also passes. The R02 manifest hash matches the REVIEW backlog projection; its 40 paths equal the base-to-candidate Git diff, all 12 cited canonical raw-log digests and zero exits reproduce, the build report binds a clean 00553b30 source, the frozen v19 recovery schema equals its predecessor, and architecture-maintenance predecessor hashes match. Focused v20 migration, projection, rights-aware member reconciliation and report-seal review found no product blocker. Approval remains unavailable because the changed SQLite architecture guide still states that v19 is current and never backed up, contradicting the committed v20 migration and verified v19 backup; it also omits the new mutable projection tables from its mutability prose. This violates the third task criterion's documentation/recovery accuracy. Representative warm/cold performance, report-suite profile registration, full affected profiles and integrated slice/W2 qualification remain later gates; no unchanged full profile was replayed in this review.
+**Latest notes:** Independent focused R03 review of the exact 6da2ed0e candidate closes CAP-04.S04.T03-R02-F01 and finds no remaining task-level blocker. The SQLite architecture guide now agrees with executable/profile v20 authority: one current version-20 heading and user_version=20, idempotent current-v20 open, verified backup before v19-to-v20 migration, and explicit mutable/rebuildable corpus source projection tables that grant no rights and do not replace sealed reports. The new parity regression derives version, application/profile identity and projection-table inventory from storage.py and sqlite-profile.v1.json. Independent read-only replay against the exact 00553b30 predecessor guide makes that test fail; the committed guide passes. No retained receipt establishes the historical order of the implementer's red run, so this review relies on the independently reproduced regression and fresh final-candidate pass. The populated-v19 migration test proves interruption rollback, verified predecessor backup, retry and exact projection after reopen. The required third-round root-cause analysis identifies stale copied version/mutability prose and the missing parity check, with a corrected criterion-3 task-start row. The R03 manifest hash matches the REVIEW backlog projection, all 10 declared paths equal the exact Git diff, eight canonical raw-log digests and zero exits reproduce, the build report binds a clean 6da2ed0e source, and patch hygiene passes. No report, rights, renderer or v20 projection product bytes changed after the independently reviewed R02 candidate; R01-F01 remains closed by its immutable R02 ledger. Representative warm/cold performance, report-suite verification-profile registration, full affected profiles and integrated S04/W2 qualification remain separate later gates, not this task disposition.
 
-**Currently open findings:** `CAP-04.S04.T03-R02-F01`
+**Currently open findings:** -
 
 ### SLICE-connector-sdk-and-controlled-extensibility (`CAP-04.S05`) - Connector SDK and controlled extensibility
 
