@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 9d968c8dc6721bb63f77efee1445e2874bd9d7b0c8146e6c7043467144cb49f8
+source_sha256: 9c05258174e227aced4a653d0f3409b9aa98ecf872fd34b5e3a205b80d7404bb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9086,13 +9086,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S04.T03 - Build corpus provenance and source-overlap reports
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues, disciplines, languages, and discovery routes.
 

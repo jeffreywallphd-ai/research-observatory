@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S04.html">SLICE-corpus-membership-discovery-path-and-rights-governance</a><span>/</span><span aria-current="page">CAP-04.S04.T03</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S04.T03">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S04.T03 · task 3 of 3</span><h1>Build corpus provenance and source-overlap reports</h1><p>Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues, disciplines, languages, and discovery routes.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S04.T03 · task 3 of 3</span><h1>Build corpus provenance and source-overlap reports</h1><p>Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues, disciplines, languages, and discovery routes.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S04.html">SLICE-corpus-membership-discovery-path-and-rights-governance</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>desktop</li><li>service</li><li>search</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile desktop</li><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile search</li></ul>
-  <p data-task-claim="CAP-04.S04.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S04.T03" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="77fe987e16c9bb4b5878538ddf25cce5f24d68c9"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>77fe987e16c9bb4b5878538ddf25cce5f24d68c9</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S04.T03" data-task-plan-sha256="fcdf9845e59d4917f98bfc7472e67d80b09f67d62670b92e1272c54c117dd284"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S04.T03` - Build corpus provenance and source-overlap reports
 **Objective:** Reports of source contribution, duplicate overlap, missing identifiers, OA/full-text status, years, venues, disciplines, languages, and discovery routes.
@@ -235,13 +235,31 @@ These sources constrain implementation choices but do not replace repository-spe
 **Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S04.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S04.T03" data-worksheet-sha256="9d89d31669b7b0864049be9c7ccd81c7a7da0f5603fae9c28f61202a2347ee18">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S04.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>9d89d31669b7b0864049be9c7ccd81c7a7da0f5603fae9c28f61202a2347ee18</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S04.T03 task-start acceptance closure
+
+Claim base: `77fe987e16c9bb4b5878538ddf25cce5f24d68c9` on `codex/w2-implementation` in the approved W2 campaign. Dependency `CAP-04.S04.T02` is independently approved and integrated into local `main`. Authority: approved CAP-04.S04 §9.3, backlog criteria, accepted ADR-0027, current v18 CorpusItem/discovery/rights contracts, and approved `RO-UI-ACADEMIC-MINIMAL-1.7` Corpus Canvas/workflow reference. This task reports the canonical corpus; it does not infer field coverage, implement semantic clusters or citation neighborhoods, grant rights, acquire full text, or decide inclusion.
+
+| Material dimension | Required outcome and first proof |
+|---|---|
+| Counts and overlap | At one immutable report snapshot, distinct canonical item revisions are the denominator; source/route overlap uses retained discovery paths, with explicit definitions for duplicate paths and one item discovered by multiple sources. A two-source/one-item and one-source/two-item fixture must catch path-versus-item overcount. |
+| Snapshot identity and drill | A snapshot ID binds project, governing Intent/protocol, selected corpus revision heads, source assertion/work/version and path identities, and report rule version. Summary and paged drill return the same counted item revision IDs after later membership changes or restart; another project and stale/mismatched cursor deny. |
+| Missingness and epistemic limits | DOI/identifier, year, venue, language, discipline, OA and full-text counts distinguish known, not-reported, unknown and unavailable when supported. Missing values never become zero or imputed values. Connector terms/access may be used only from an exact retained, rights-authorized observation; permitted inspect or CorpusItem availability is not an OA/full-text witness. |
+| Authority, privacy and failure | Authenticated project/Core action and protected local storage enforce project/Intent/privacy/rights boundaries; report creation and its rows commit atomically with provenance or leave no partial snapshot. Test wrong project, denied rights, interruption, retry and reopen at the narrow real SQLite/Core boundary. No source query or external egress occurs during reporting. |
+| Experience | Populate the approved Corpus Canvas source-overlap, coverage/missingness and source-linked inspection regions with truthful values and exact drill, using existing tokens/workflow route. Keep unimplemented cluster/boundary features visibly unavailable rather than fabricating data. Test keyboard/focus/announcements, light/dark, loading, empty, denied, error, retry and project close/lock state. If a material layout/workflow change is needed, follow reference-first governance before that edit. |
+| Evidence | First write negative and positive contract/repository tests, then one real Core-to-protected-store and desktop interaction proof. Run narrow affected contract, corpus-report, API, desktop and architecture checks; reserve full desktop/service/search and integrated S04 profiles for their documented gates. |
+
+Preflight found no unmet approval gate. Retained SourceAssertion currently lacks language, discipline and OA fields for many records. Reports must disclose those limits and may not derive absent attributes from provider names, availability state, or license/permission alone. The first implementation pass will check the existing canonical schema and exact reference regions before finalizing the snapshot representation.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S04.T03" data-review-mode="latest-review-only">
   <h3>CAP-04.S04.T03 — Build corpus provenance and source-overlap reports</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S04.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S04.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S04.T02.html">Previous</a><a class="button button-primary" href="CAP-04.S04.html">Next</a></nav>
