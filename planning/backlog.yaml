@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,13 +1499,11 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-01T00:34:48+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-01T00:13:56+00:00'
-      expires_at: '2026-10-02T00:13:56+00:00'
+    updated_at: '2026-10-01T09:20:05+00:00'
+    pause_reason: S04 exact-Git-byte qualification exposed a completed T03 test pinning never-committed CRLF bytes; linked
+      correction W2.C09.T01 is required before slice review.
+    pause_category: infeasible
+    lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -3364,7 +3362,7 @@ waves:
     notes: CAP-04.S01-S03 import, four-source and reconciliation cluster independently approved at exact candidate 9a319a1b;
       targeted checks and native smoke pass; full W2 exit qualification remains due.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "authority-preserving-correction",
+  "origin": {
+    "taskId": "CAP-04.S04.T03",
+    "commit": "52a71525d7655a94043582b8805e585b3372c92d",
+    "sha256": "8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975"
+  },
+  "reproduction": "At the clean committed S04 candidate 063a3b07712bbdd134e67b6cd34440ccfdd23226, tests/reports/test_migration.py::CorpusReportMigrationTests::test_frozen_v18_recovery_contract_survives_successor fails. The test expects SHA-256 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e for packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json, but its exact Git LF blob at creation commit 6dec0c7 and at current HEAD is SHA-256 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661. The expected digest is the LF-to-CRLF working-copy conversion and was never a committed snapshot. The failing direct report-suite log is artifacts/tmp/CAP-04.S04.reports-suite.log; the original CAP-04.S04.T03 approval and frozen W2 packet remain unchanged.",
+  "changedPaths": [
+    "tests/reports/test_migration.py"
+  ],
+  "impactAnalysis": "Restore exact committed-byte verification of the frozen v18 recovery contract while preserving the historical CRLF digest as an explicit serialization witness. Change only the test assertion; do not change the frozen snapshot, migration implementation, line-ending policy, schema, rights, report behavior, approved experience, or release criteria. Run the focused migration/recovery regression and affected report suite, then refresh exact-commit S04 benchmark and slice checks because this test is in their input closure. Preserve the earlier calibration, failed check, and qualifying predecessor report as historical evidence. Obtain independent correction review before ordinary W2 resume."
+}
