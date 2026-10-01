@@ -25,6 +25,7 @@ from desktop_app_check import (  # noqa: E402
     DIRECTORY_PICKER_FIXTURE,
     QUALIFICATION_NEUTRAL_SURFACE_BACKGROUND,
     QUALIFICATION_STATE_WITNESS,
+    QUALIFICATION_TOOL_LABELS,
     choose_fixture_directory,
     command_plan,
     component_catalog_browser_errors,
@@ -220,6 +221,7 @@ def valid_product_style_qualification_matrix() -> dict[str, Any]:
         ("home", "Project home", ["index.html"], "project-ready"),
         ("intent", "Research intent", ["intent-contract.html"], "accepted-intent"),
         ("imports", "Ingestion & Reconciliation", ["ingestion-reconciliation.html"], "retained-draft-review"),
+        ("corpus", "Corpus Canvas", ["corpus-canvas.html"], "populated-corpus-report"),
         ("sources", "Source Manager", ["source-manager.html"], "loaded-source-configuration"),
         ("tasks", "Task Center", ["task-center.html"], "populated-task-center"),
         ("audit", "Audit & lineage", ["audit-lineage.html"], "populated-lineage"),
@@ -565,9 +567,30 @@ class DesktopAppCheckTests(unittest.TestCase):
                 browser.close()
 
     def test_product_style_qualification_contract_is_exact_and_rejects_matrix_gaps(self) -> None:
+        self.assertEqual(
+            (
+                "Local projects",
+                "Project home",
+                "Research intent",
+                "Ingestion & Reconciliation",
+                "Corpus Canvas",
+                "Source Manager",
+                "Task Center",
+                "Audit & lineage",
+                "Model & Privacy Center",
+                "Project settings",
+                "Application settings",
+                "Diagnostics & support",
+            ),
+            QUALIFICATION_TOOL_LABELS,
+        )
         capture_contract = qualification_capture_contract(REPO)
-        self.assertEqual(144, len(capture_contract))
-        self.assertEqual(72, len({item["caseId"] for item in capture_contract}))
+        self.assertEqual(156, len(capture_contract))
+        self.assertEqual(78, len({item["caseId"] for item in capture_contract}))
+        corpus_cases = [item for item in capture_contract if item["surfaceId"] == "corpus"]
+        self.assertEqual(12, len(corpus_cases))
+        self.assertEqual({"corpus-canvas.html"}, {item["referencePage"] for item in corpus_cases})
+        self.assertEqual({"light", "dark"}, {item["theme"] for item in corpus_cases})
         self.assertEqual({"product", "reference"}, {item["role"] for item in capture_contract})
         self.assertTrue(
             all(

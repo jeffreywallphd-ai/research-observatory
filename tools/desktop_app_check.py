@@ -117,6 +117,7 @@ IMPLEMENTED_PRODUCT_PAGE_CONTRACTS = frozenset(
     {
         "application-settings.html",
         "audit-lineage.html",
+        "corpus-canvas.html",
         "help-onboarding.html",
         "index.html",
         "ingestion-reconciliation.html",
@@ -980,6 +981,7 @@ QUALIFICATION_WORKSPACES = (
     ("home", "Project home", ("index.html",), "project-ready"),
     ("intent", "Research intent", ("intent-contract.html",), "accepted-intent"),
     ("imports", "Ingestion & Reconciliation", ("ingestion-reconciliation.html",), "retained-draft-review"),
+    ("corpus", "Corpus Canvas", ("corpus-canvas.html",), "populated-corpus-report"),
     ("sources", "Source Manager", ("source-manager.html",), "loaded-source-configuration"),
     ("tasks", "Task Center", ("task-center.html",), "populated-task-center"),
     ("audit", "Audit & lineage", ("audit-lineage.html",), "populated-lineage"),
@@ -993,6 +995,7 @@ QUALIFICATION_WORKSPACES = (
     ),
     ("diagnostics", "Diagnostics & support", ("help-onboarding.html",), "populated-diagnostics"),
 )
+QUALIFICATION_TOOL_LABELS = tuple(label for _, label, _, _ in QUALIFICATION_WORKSPACES)
 QUALIFICATION_DESIGNATED_STATES = (
     ("application-lock", "locked", "application-settings.html"),
     ("local-service-boundary", "recovery-required", "application-settings.html"),
@@ -1004,6 +1007,7 @@ QUALIFICATION_REQUIRED_PRIMITIVES = {
     "home": {"card", "control", "grid"},
     "intent": {"card", "form", "control", "action", "grid", "notice"},
     "imports": {"card", "form", "control", "action", "grid", "notice", "table"},
+    "corpus": {"card", "control", "action", "grid", "table"},
     "sources": {"card", "control", "action", "grid", "notice"},
     "tasks": {"card", "control", "action", "grid"},
     "audit": {"card", "form", "control", "table", "notice"},
@@ -1039,6 +1043,16 @@ QUALIFICATION_STATE_WITNESS = r"""element => {
         && visible(table.querySelector('caption'))
         && table.querySelector('caption').textContent === 'Source records — current page'
         && [...table.querySelectorAll('tbody tr')].some(visible));
+  })(),
+  corpus: (() => {
+    const report = element.querySelector('.corpus-report-content');
+    const drill = element.querySelector('.corpus-drill');
+    return Boolean(visible(report) && visible(drill)
+      && [...drill.querySelectorAll('tbody tr')].some(row => visible(row) && row.textContent.includes('Study 1'))
+      && [...report.querySelectorAll('table caption')].some(node => visible(node)
+        && node.textContent === 'Source contributions')
+      && [...report.querySelectorAll('table caption')].some(node => visible(node)
+        && node.textContent === 'Coverage across distinct canonical items'));
   })(),
   sources: ['OpenAlex', 'Crossref', 'Semantic Scholar', 'Unpaywall'].every(name => {
     const configure = element.querySelector(`button[aria-label="Configure ${name}"]`);
@@ -2087,7 +2101,7 @@ class ProductStyleQualification:
                       nodes.push(...document.querySelectorAll('main > [data-workflow-context] button'));
                     }
                     for (const node of [...new Set(nodes)].filter(node => node.getClientRects().length
-                      && getComputedStyle(node).visibility === 'visible')) {
+                      && node.checkVisibility({opacityProperty: true, visibilityProperty: true}))) {
                       const s = getComputedStyle(node), r = node.getBoundingClientRect();
                       semantic.push({kind, padding: parseFloat(s.paddingInlineStart),
                         cardControl: node.matches('button.ro-card'),
@@ -3134,19 +3148,7 @@ def runtime_frame_errors(
             choose_fixture_directory(projects, "project-parent-directory", "C:/Research")
             projects.locator("#project-display-name").fill("Study One")
             projects.locator("#project-research-objective").fill("Explain a bounded evidence-first workflow.")
-            implemented_tool_labels = [
-                "Local projects",
-                "Project home",
-                "Research intent",
-                "Ingestion & Reconciliation",
-                "Source Manager",
-                "Task Center",
-                "Audit & lineage",
-                "Model & Privacy Center",
-                "Project settings",
-                "Application settings",
-                "Diagnostics & support",
-            ]
+            implemented_tool_labels = list(QUALIFICATION_TOOL_LABELS)
             workflow_profile_rows = []
             for profile in workflow_catalog["profiles"]:
                 projects.locator("#project-primary-use-case").select_option(profile["profileId"])
@@ -3255,6 +3257,46 @@ def runtime_frame_errors(
             open_desktop_tool(projects, "Ingestion & Reconciliation")
             projects.locator(".import-batches button").first.click()
             qualification.record(projects, "imports", "[data-import-workspace]")
+            corpus_snapshot = json_object(repo / "packages/contracts/corpus-reports/fixtures/valid-snapshot.v1.json")
+            corpus_drill = json_object(repo / "packages/contracts/corpus-reports/fixtures/valid-drill-page.v1.json")
+            corpus_snapshot["projectId"] = "11111111-1111-4111-8111-111111111111"
+            corpus_drill["projectId"] = corpus_snapshot["projectId"]
+            for member in corpus_drill["members"]:
+                member["projectId"] = corpus_snapshot["projectId"]
+            projects.evaluate(
+                """fixtures => {
+                  const original = window.__TAURI_INTERNALS__.invoke;
+                  window.__CORPUS_QUALIFICATION_ORIGINAL__ = original;
+                  window.__TAURI_INTERNALS__.invoke = async (command, args) => {
+                    const request = args?.request;
+                    if (command !== 'core_api_request'
+                      || !request?.path?.startsWith('/projects/corpus/reports/')) return original(command, args);
+                    const body = JSON.parse(request.body);
+                    const inspect = request.path === '/projects/corpus/reports/inspect';
+                    const drill = request.path === '/projects/corpus/reports/drill';
+                    if (!inspect && !drill || request.method !== 'POST'
+                      || request.ifMatch !== null || request.idempotencyKey !== null
+                      || body.root !== 'C:/Research/study-one'
+                      || body.snapshotId !== fixtures.snapshot.snapshotId
+                      || drill && (body.cursor !== null || body.limit !== 50
+                        || Object.keys(body.filter).length !== Object.keys(fixtures.drill.filter).length
+                        || Object.entries(fixtures.drill.filter).some(([key, value]) => body.filter[key] !== value))) {
+                      throw new Error('unexpected corpus qualification request');
+                    }
+                    return {status: 200, contentType: 'application/json',
+                      traceId: '0123456789abcdef0123456789abcdef', etag: null,
+                      body: JSON.stringify(inspect ? fixtures.snapshot : fixtures.drill)};
+                  };
+                }""",
+                {"snapshot": corpus_snapshot, "drill": corpus_drill},
+            )
+            open_desktop_tool(projects, "Corpus Canvas")
+            corpus = projects.locator("[data-corpus-canvas]")
+            corpus.get_by_label("Open saved report by snapshot ID").fill(corpus_snapshot["snapshotId"])
+            corpus.get_by_role("button", name="Open saved report", exact=True).click()
+            corpus.locator(".corpus-drill tbody tr").first.wait_for(state="visible", timeout=5_000)
+            qualification.record(projects, "corpus", "[data-corpus-canvas]")
+            projects.evaluate("() => { window.__TAURI_INTERNALS__.invoke = window.__CORPUS_QUALIFICATION_ORIGINAL__; delete window.__CORPUS_QUALIFICATION_ORIGINAL__; }")
             open_desktop_tool(projects, "Source Manager")
             qualification.record(projects, "sources", "[data-source-manager]")
             projects.evaluate("() => { window.__TAURI_INTERNALS__.invoke = window.__INTAKE_QUALIFICATION_ORIGINAL__; }")
@@ -4163,7 +4205,7 @@ def runtime_frame_errors(
             lock_reconciliation.locator("[data-current-project]").wait_for(timeout=5_000)
             lock_reconciliation.locator("[data-workflow-nav]").wait_for(timeout=5_000)
             initial_adaptive_navigation = lock_reconciliation.evaluate(
-                """() => {
+                """expectedToolCount => {
                   const profile = window.__EXPECTED_CATALOG__.profiles.find(
                     (candidate) => candidate.profileId === 'theory-synthesis');
                   const actual = Array.from(document.querySelectorAll('[data-workflow-stage-key]'))
@@ -4176,9 +4218,10 @@ def runtime_frame_errors(
                     && context.includes(profile.stages[0].rationale)
                     && profile.expectedOutputs.every((output) => context.includes(output))
                     && context.includes('Quality gate · Unknown')
-                    && document.querySelectorAll('[data-all-tools] li').length === 11
+                    && document.querySelectorAll('[data-all-tools] li').length === expectedToolCount
                     && !document.querySelector('a[href$=".html"]');
-                }"""
+                }""",
+                len(QUALIFICATION_TOOL_LABELS),
             )
             open_desktop_tool(lock_reconciliation, "Research intent")
             try:
