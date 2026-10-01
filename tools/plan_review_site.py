@@ -220,22 +220,26 @@ def corrective_task_html(wave: dict[str, Any]) -> str:
     for task in tasks:
         origin = task.get("correction") or {}
         cards.append(
-            f'<article class="plan-details" data-corrective-task="{esc(task["id"])}" '
+            f'<details class="wave-slice-card corrective-task-card" data-corrective-task="{esc(task["id"])}" '
             f'data-correction-origin="{esc(origin.get("origin_task_id"))}" '
             f'data-correction-status="{esc(task.get("status"))}">'
+            f'<summary><span><strong>{esc(task["id"])}</strong>'
+            f'<small>{esc(task.get("title"))} · Original {esc(origin.get("origin_task_id"))}</small></span>'
+            f'{status_badge(task.get("status"))}</summary>'
+            '<div class="wave-card-body">'
             f"<h3>{esc(task['id'])} — {esc(task.get('title'))}</h3>"
             f"<p>Original task: <code>{esc(origin.get('origin_task_id'))}</code>. "
             f"Status: {esc(task.get('status'))}.</p>"
             f"<p>Reproduction: {esc(origin.get('reproduction'))}</p>"
             f"<h4>Inherited acceptance criteria</h4>{task_values_html(task.get('acceptance_criteria'))}"
             f"<h4>Bounded changed paths</h4>{task_values_html(origin.get('changed_paths'))}"
-            f"{task_review_history_html(task)}</article>"
+            f"{task_review_history_html(task)}</div></details>"
         )
     return (
         '<section id="linked-corrective-tasks"><h2>Linked corrective tasks</h2>'
         "<p>Original tasks and approvals remain unchanged. Every correction needs independent "
         "regression and affected-integration review before ordinary execution or Wave exit.</p>"
-        + "".join(cards)
+        + '<div class="wave-slice-list">' + "".join(cards) + "</div>"
         + "</section>"
     )
 

@@ -180,6 +180,15 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
             self.assertIn('<details class="wave-capability"', text, wave_id)
             self.assertIn('<details class="wave-slice-card"', text, wave_id)
             self.assertIn('<details class="wave-task-card"', text, wave_id)
+            for corrective in wave.get("corrective_tasks", []):
+                task_id = str(corrective["task_id"])
+                card = re.search(
+                    rf'<details class="wave-slice-card corrective-task-card" data-corrective-task="{re.escape(task_id)}"[^>]*>',
+                    text,
+                )
+                self.assertIsNotNone(card, task_id)
+                assert card is not None
+                self.assertNotRegex(card.group(0), r"\sopen(?:\s|>)", task_id)
 
     def test_capability_to_slice_to_task_links_are_generated_from_manifest_data(self) -> None:
         for capability in self.manifest["capabilities"]:
@@ -300,6 +309,16 @@ class CorrectiveTaskProjectionTests(unittest.TestCase):
         self.assertIn("W1.C01.T01", text)
         self.assertIn("W1.A09.T03", text)
         self.assertIn("Restore &lt;approved&gt; behavior", text)
+        card = re.search(
+            r'<details class="wave-slice-card corrective-task-card" data-corrective-task="W1.C01.T01"[^>]*>',
+            text,
+        )
+        self.assertIsNotNone(card)
+        assert card is not None
+        self.assertNotRegex(card.group(0), r"\sopen(?:\s|>)")
+        self.assertIn("<summary><span><strong>W1.C01.T01</strong>", text)
+        self.assertIn('<div class="wave-card-body">', text)
+        self.assertIn("Retry &lt;button&gt;", text)
         self.assertNotIn("data-wave-slice=", text)
         self.assertTrue(corrective_task_errors(wave, [], text))
         self.assertTrue(corrective_task_errors(wave, projection, text.replace("W1.C01.T01", "W1.C02.T01")))
