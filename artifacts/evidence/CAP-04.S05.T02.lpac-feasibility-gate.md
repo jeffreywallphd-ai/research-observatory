@@ -67,7 +67,8 @@ test-owned unrelated read, outside write, and direct loopback attempts were
 denied in R24. R26 and R27 also denied a synthetic parent environment-secret
 sentinel. A public egress request was not made; public egress remains unproven.
 
-Two mandatory conditions remain failed:
+Through R28, two mandatory conditions remained failed; the R29a–e native
+follow-up below updates the second condition for its tested fixture only:
 
 1. The packaged PyInstaller/Python 3.14 worker exits before user code with
    `LoadLibrary: Access is denied` on its hash-verified `python314.dll` (R04).
@@ -80,7 +81,7 @@ Two mandatory conditions remain failed:
    module handle, so the unresolved denial is in loader/import/CRT startup,
    not a proved Python-code permission request. No exact denied dependency
    or read-only resource has been identified for a safe ACL fix.
-2. No approved no-plaintext-write boundary has passed. The real LPAC native
+2. Through R28, no no-plaintext-write boundary had passed. The real LPAC native
    probe created files in its redirected `AC` profile and `AC/Temp` despite
    package-SID `DENY(W)` and explicit `DENY(WD,AD,DC)` on those directories
    (R23/R24). An ordinary-user-SID write deny on just the three directories
@@ -138,6 +139,130 @@ existing files and the runtime image, but the process never launched. The
 R28 CreateProcess failure may reflect a loader access request denied on that
 image or an ancestor; its exact requested access was not traced.
 
+## R29a–e separate-runtime native follow-up
+
+These ignored diagnostics used fresh, disposable AppContainer profiles and a
+separate test-owned native runtime copy. All ACL changes applied only to those
+test-owned trees; each run restored any saved DACLs, deleted its profile with
+`DeleteAppContainerProfile` (HRESULT 0), removed its runtime copy, and left no
+matching residual directory. R29a stopped before launch because the trusted
+runtime-root restoration handle unnecessarily requested `WRITE_OWNER` (Win32 5).
+R29b used `READ_CONTROL|WRITE_DAC` and launched the separate image, but an early
+worker `is_dir` check returned false on AC/Temp, so no adversarial matrix ran.
+R29c retrieved the worker's AppContainer token SID but its in-worker
+`GetAppContainerFolderPath` call returned `0x80070005`; no matrix ran.
+R29d used the parent's verified `GetAppContainerFolderPath` result to supply
+exact disposable AC/Temp/runtime *adversarial targets* in its ignored test
+frame. Every worker denial probe completed, but the parent attempted its
+independent file-integrity read while the disposable DACLs were still locked,
+receiving `PermissionError`. It did not qualify file integrity. This test-only
+target frame is not the approved production IPC contract, which remains
+path-free.
+
+R29e repeated the **same R29d native image and adversarial operations**, moving
+only the trusted parent integrity checks to after worker exit, job termination,
+and restoration of saved disposable DACLs but before deletion. On Windows 11
+x64 build 26200, the parent verified the launched LPAC token: exact created
+AppContainer SID, zero capabilities, and an access decision denying
+ALL_APPLICATION_PACKAGES. Worker SID and test targets matched the parent's
+fresh `GetAppContainerFolderPath` AC path, its Temp child, and the staged image
+directory. For each of AC, Temp, and runtime, create, append, overwrite, ADS,
+subdirectory, delete, and rename attempts were denied. The runtime EXE's
+append/overwrite/ADS attempts were denied. Owner and DACL change attempts on
+AC, Temp, runtime directory, and image returned Win32 5; follow-up creates
+remained denied. The unrelated-read sentinel, outside-write sentinel, direct
+loopback, and synthetic parent environment-secret checks denied. After DACL
+restoration, all seeded contents and names were intact, ADS was absent, and
+the staged runtime matched its exact package inventory. All 12 profile and six
+runtime DACL restorations returned 0; both disposable roots were absent.
+The R29e harness returned `qualified: true` for this **native test-owned
+boundary probe**, not for CAP-04.S05.T02 or the Python connector worker.
+
+The ignored inputs and logs below are local diagnostic evidence, not a
+commit-bound acceptance receipt. R29a/b share the R29 image; R29d/e share the
+R29d image. All hashes are SHA-256. The run-specific harness and log basename
+is under `artifacts/tmp/CAP-04.S05.T02.`; the native source is each ignored
+`r29*-worker/src/main.rs`, and the inventory is the corresponding ignored
+`r29*-package.json` (R29c uses `r29c-tokenprofile-package.json`). The harness
+basenames, in run order, are `r29_probe.py`, `r29b_probe.py`, `r29c_probe.py`,
+`r29d_probe.py`, and `r29e_probe.py`. R29e ran under the normal Windows user
+identity with `.venv\Scripts\python.exe artifacts/tmp/CAP-04.S05.T02.r29e_probe.py`
+against the hash-verified ignored R29d package.
+
+| Run | Harness SHA-256 | Worker source SHA-256 | Packaged EXE SHA-256 | Inventory SHA-256 | Log basename and SHA-256 |
+|---|---|---|---|---|---|
+| R29a | `4438d90195c0de7b10bfd93f3920654d4f533d0e9d12becaf3d06914603c5c50` | `0ceae0e9631391bb8a543aad7de5f1e218a1272f0b5efe96f2a328f7ad988003` | `208cbc4b92294341114c0bcdcc1618f99f6210a635322bf7a7d35da44788bc47` | `6c152714a10042d979e5c670dbab12dcadcd85b5bb1d0e8ee0efa3a1f9521597` | `r29-separate-runtime-readonly.log` `7be9f531a68713a6f21f03c79c78b6073e80b50542464260c8be172436e6e07f` |
+| R29b | `0417596affc0d5eeadec7d41ce245785f264c4845f6e6033c3eaddf3bdd13ec8e` | same R29 source | same R29 EXE | same R29 inventory | `r29b-separate-runtime-readonly.log` `74d580d26c2f0f5ab5dc270c10ef588bdb245aedb5961b1cb2bb007773f2a753` |
+| R29c | `4999c2c5e94ecf5ff7dfceacd7bb0e46c0e026dc75f6ba111070393e6440ff22` | `de31e001a079defb869bf838e346108dbaf5cae09603f92feaab2e0e2c545242` | `6b3a9500dde484b05dc4a6a3539959476a8fbcf2c842eea8fbc97cc08b2f37ef2` | `7d11c1d77daa09361a471cb2b523604c1c99ec99e0db4d4d0541c373f90dd9b8` | `r29c-tokenprofile-separate-runtime.log` `1a4c323a115725b33fb4ec73d96a391c3ac61a117d3f8232aab6d5d737d65c39` |
+| R29d | `c8df905d1b8b8b477f6a9e2164b7032851eab12713bf7b7036cb1c654a85ffb4` | `ff3db5d9112260f0c6e14d1a5624f14f8c8f157b08a2f79da287f16e54ec0d04` | `1d045e6ea27ad9ccb17296bd8043c8f929622fef317d5412239146b299927e64` | `8319f74d751194d30f31c9d9a0f98cfc5ff6960379d692e84a18c3c876f85a1c` | `r29d-targeted-matrix.log` `5f6467a3a141de3960bbb6c2c285c22e07a1931b1522184b129ad8d684542859` |
+| R29e | `5722f682dfbeac1bf66d759558fdd0525fc905380b8f386b68ae49bf3fd49dc8` | same R29d source | same R29d EXE | same R29d inventory | `r29e-postrestore-integrity.log` `5fd0ac3c947f12a84de3651ea25127d4cbb45c9680510ea0c6d5caa3cd9df508` |
+
+The launcher configured a three-handle allowlist and assigned the suspended
+worker to a kill-on-close Job Object before resume; R29e did not independently
+enumerate child handles or test parent-death killing. It did not test public
+internet egress, every ambient filesystem location, other-job IPC, binary
+input/output frames, hostile connector execution, broker authorization,
+resource exhaustion, cancellation/restart, or production runtime signing.
+Inside the locked AC/Temp, `is_dir` and canonicalization returned false/null
+even though the raw target and environment paths matched the parent-queried
+profile; canonical equivalence remains unproved. The Python 3.14 packaged DLL
+still fails under LPAC, so native R29e cannot qualify the approved Python
+connector execution or its no-write invariant.
+
+## Matched Python DLL loader diagnostic after R29e
+
+One bounded follow-up compared a copy of the packaged Python 3.14.6
+`python314.dll` with a copy of the host-installed Python 3.14.3 DLL. Version
+resources identified both versions, and their source digests were verified
+before staging. A local PE import check found the same 19 direct DLL names and
+no delay imports in either image. Two ignored, two-file packages used the
+**same native framed loader EXE**, relative layout, per-object read-only
+runtime ACL sequence, LPAC launcher, and recursive disposable-profile no-write
+ACLs; only `python314.dll` bytes differed. Each package ran in its own fresh
+LPAC process and AppContainer profile. The original installed DLL and existing
+security settings were not changed.
+
+Both runs verified a zero-capability LPAC token with ALL_APPLICATION_PACKAGES
+denied. The DLL could be opened for read and `GENERIC_EXECUTE` in each worker,
+but absolute-path `LoadLibraryW` failed with immediate `GetLastError=5` for
+**both** 3.14.6 and 3.14.3. After each process exited, the parent verified the
+profile content and runtime inventory were intact, restored all 12 profile and
+four runtime DACLs, received `DeleteAppContainerProfile` HRESULT 0, and found
+both disposable roots absent. This matched-layout result does not support a
+3.14.6-specific DLL regression as the sole cause. It does not identify the
+denied dependency/resource or prove a Python worker can start: the minimal
+two-file package is not the full PyInstaller runtime, and no Python code ran.
+No ordinary-AppContainer fallback is authorized.
+
+### Next diagnostic requiring host authorization
+
+The exact resource behind the Python DLL's LPAC `LoadLibraryW` error 5 is
+still unknown. A bounded next diagnostic is one fresh, synthetic-only worker
+launch under [Microsoft Process Monitor](https://learn.microsoft.com/en-us/troubleshoot/windows-client/shell-experience/troubleshoot-apps-start-failure-use-process-monitor),
+filtered to the unique test worker process and stopped immediately after the
+load failure. Process Monitor requires elevation and may load a system driver;
+its raw trace can include unrelated local file, registry, and process activity
+even when the later view is filtered. It is not covered by the existing W2
+product approval. Obtain explicit host-owner authorization before downloading
+or running it. Keep the binary and trace in ignored local files, do not upload
+the trace, and remove the test-owned trace and any temporary diagnostic setup
+after extracting only the denied resource and minimal content-free finding.
+Any proposed permission change must then be checked against ADR-0028 before
+another worker run; registry/COM or broader profile authority needs an approved
+amendment, not a diagnostic shortcut.
+
+| Ignored diagnostic input/output | SHA-256 |
+|---|---|
+| Packaged 3.14.6 source DLL | `dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7` |
+| Host-installed 3.14.3 source DLL | `1ac15e2224581fc678bbd17728b9aa538d47b891b72c76499ef07e54cd74f151` |
+| `artifacts/tmp/CAP-04.S05.T02.dllpair-worker/src/main.rs` | `4d671749cc81ffa17aa6f55d3ebb35fa31b14f99b5418878c80f6ce52d1bb4f4` |
+| DLL-pair worker `Cargo.toml` / `Cargo.lock` | `8efee4b9962868608744caca26512d33283f6f12d9e904c9e900644baaf09d17` / `03419592143215c267fb3b2a7d12878ba8a1c9c31cc47f93ccfab71b69506840` |
+| Shared native EXE in both packages | `797e0a7d58e0288605d3642b102d11319597a62e62118d6529a52e7d8745306e` |
+| `artifacts/tmp/CAP-04.S05.T02.make_dllpair_packages.py` | `3c9c188a026f91c0e480b60a979439521b41ab2e1e372a737293f3a84c5080c1` |
+| 3.14.6 / 3.14.3 package inventory JSON | `aa13b42a7e3833be5e19f947b2cfc420f02fcea96ec11acad72feb76ffca71d8` / `1ab849e8c83e00163f429ad01d293e5a59dabca65d81d4339010657ad91ae91` |
+| `artifacts/tmp/CAP-04.S05.T02.dllpair_probe.py` | `8a41804df12a132efd9dd067c0c0dda62793ca52110d1ccd57acdee69a339ff1` |
+| `artifacts/tmp/CAP-04.S05.T02.dllpair-lpac-3146-vs-3143.log` | `1de9d6e934ee7d463563f0ba1132f8b98edb93dc18aba415fa0651568bf773a7` |
+
 ## Selected partial checks
 
 The focused grant, trust, broker, v21/legacy-migration, and sidecar package
@@ -151,17 +276,20 @@ packaged sidecar build and artifact verification passed in the original run.
 passed. The focused real LPAC test cannot create a profile under the default
 Codex sandbox token (`0x80070002`); the separate normal-user R24/R27 probes
 reached the worker and failed the approved no-write invariant, while R28
-failed at process creation. These checks validate
+failed at process creation. The later native R29e matrix passed its specified
+no-write and direct-denial checks; it did not load Python or execute a
+connector. These checks validate
 partial components only, not T02 acceptance. The full `service` and
 `security-local` profiles are deferred until the affected boundary can run
 and the task has a complete candidate.
 
 ## Decision and exact resume condition
 
-CAP-04.S05.T02 cannot be submitted as complete. The native fixture proves a
-real Windows LPAC launch and some denials, but executes no connector package,
-does not reach brokered plugin calls, and has no qualifying no-plaintext-write
-proof. The project grant, trust, broker, migration, and recovery code on
+CAP-04.S05.T02 cannot be submitted as complete. R29e proves the specified
+test-owned native LPAC no-write and direct-denial matrix, but the approved
+Python connector image still fails before user code. The native fixture
+executes no connector package and does not reach brokered plugin calls. The
+project grant, trust, broker, migration, and recovery code on
 the branch remains partial work; none substitutes for the real worker proof.
 
 Resume within the approved design only after a reproducible Windows x64
@@ -172,7 +300,8 @@ integrate exact verified package bytes, bounded data/control IPC, current
 grant and publisher-trust revalidation (or immediate cancellation of workers
 affected by trust revocation), broker policy checks, cancellation/restart
 behavior, and independent
-commit-bound task review. If the two failed invariants cannot be met without
-weaker isolation or writable scratch, use the append-only ADR/scope amendment
+commit-bound task review. If a packaged Python LPAC worker cannot meet the
+required no-write and no-egress invariants without weaker isolation or writable
+scratch, use the append-only ADR/scope amendment
 route and explicit human approval before changing that boundary. Do not fall
 back to ordinary AppContainer or same-user execution.
