@@ -468,6 +468,10 @@
     "tools/rights_test_check.py",
     "services/core-api/src/research_observatory_core/corpus_source_projection.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0020_corpus_source_projection.py",
-    "tests/desktop/test_corpus_report_interactions.py"
+    "tests/desktop/test_corpus_report_interactions.py",
+    "tests/contracts/test_corpus_public_handoff.py",
+    "tests/corpus_reports/performance_workload.py",
+    "tests/corpus_reports/test_performance_check.py",
+    "tools/corpus_report_performance_check.py"
   ]
 }

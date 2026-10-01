@@ -75,7 +75,8 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                     runtime = first.state.runtime
                     authority = ConnectorAuthorityFixture()
                     authority.root, authority.service, authority.privacy = root, runtime.intents, runtime.privacy
-                    self.assertEqual("accepted", authority.intent("local-only").status)
+                    accepted = authority.intent("local-only")
+                    self.assertEqual("accepted", accepted.status)
 
                     grant = ImportPermission(value="permitted", basis="researcher-confirmed")
                     imports = runtime.imports
@@ -239,16 +240,88 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                     }
                     item = post(client, "/projects/corpus/create", create)
                     self.assertEqual("candidate", item["membership"])
+                    included = runtime.corpus.decide(
+                        root,
+                        item["itemId"],
+                        expected_revision_id=item["revisionId"],
+                        command_id=new_uuid_v7(),
+                        dimension="membership",
+                        command="include",
+                        next_value="included",
+                        reason_code="screened-in",
+                        protocol_revision_id=accepted.revision_id,
+                        evidence_revision_ids=(assertion_id,),
+                        trace_id="5" * 32,
+                    )
+                    self.assertEqual("included", included.membership)
                     report_request = {"root": root, "commandId": new_uuid_v7()}
                     report = post(client, "/projects/corpus/reports/create", report_request)
                     self.assertEqual(1, report["memberCount"])
-                    self.assertEqual(report, post(client, "/projects/corpus/reports/create", report_request))
                     self.assertEqual(
-                        item["revisionId"],
+                        1,
+                        next(row["itemCount"] for row in report["membershipCounts"] if row["membership"] == "included"),
+                    )
+                    self.assertEqual(report, post(client, "/projects/corpus/reports/create", report_request))
+                    drill_request = {
+                        "root": root,
+                        "snapshotId": report["snapshotId"],
+                        "filter": {"kind": "all"},
+                        "limit": 10,
+                    }
+                    drill = post(client, "/projects/corpus/reports/drill", drill_request)
+                    self.assertEqual((1, 1), (drill["total"], len(drill["members"])))
+                    report_member = drill["members"][0]
+                    self.assertEqual(
+                        (item["itemId"], included.revision_id, work["workRevisionId"], "included"),
+                        (
+                            report_member["itemId"],
+                            report_member["itemRevisionId"],
+                            report_member["workRevisionId"],
+                            report_member["membership"],
+                        ),
+                    )
+                    self.assertEqual(1, len(report_member["paths"]))
+                    self.assertEqual(
+                        (member.source_record_revision_id, manifest.revision_id, initial["revisionId"], "allowed"),
+                        (
+                            report_member["paths"][0]["sourceRevisionId"],
+                            report_member["paths"][0]["contextRevisionId"],
+                            report_member["paths"][0]["rightsPolicyRevisionId"],
+                            report_member["paths"][0]["reportInspectStatus"],
+                        ),
+                    )
+                    reconsidered = runtime.corpus.decide(
+                        root,
+                        item["itemId"],
+                        expected_revision_id=included.revision_id,
+                        command_id=new_uuid_v7(),
+                        dimension="membership",
+                        command="reconsider",
+                        next_value="candidate",
+                        reason_code="screen-reversed",
+                        protocol_revision_id=accepted.revision_id,
+                        evidence_revision_ids=(assertion_id,),
+                        trace_id="6" * 32,
+                    )
+                    self.assertEqual("candidate", reconsidered.membership)
+                    reconsidered_report = post(
+                        client, "/projects/corpus/reports/create", {"root": root, "commandId": new_uuid_v7()}
+                    )
+                    self.assertNotEqual(report["snapshotId"], reconsidered_report["snapshotId"])
+                    self.assertEqual(
+                        1,
+                        next(
+                            row["itemCount"]
+                            for row in reconsidered_report["membershipCounts"]
+                            if row["membership"] == "candidate"
+                        ),
+                    )
+                    self.assertEqual(
+                        reconsidered.revision_id,
                         post(
                             client,
                             "/projects/corpus/reports/drill",
-                            {"root": root, "snapshotId": report["snapshotId"], "filter": {"kind": "all"}, "limit": 10},
+                            drill_request | {"snapshotId": reconsidered_report["snapshotId"]},
                         )["members"][0]["itemRevisionId"],
                     )
                     self.assertNotEqual(
@@ -265,12 +338,62 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                     )
                     self.assertEqual("allow", post(client, "/projects/corpus/rights/evaluate", evaluation)["code"])
                     self.assertEqual(
+                        reconsidered.model_dump(mode="json", by_alias=True),
+                        post(client, "/projects/corpus/inspect", {"root": root, "itemId": item["itemId"]}),
+                    )
+                    history = restarted.state.runtime.corpus.history(root, item["itemId"], trace_id="7" * 32)
+                    self.assertEqual(3, len(history))
+                    self.assertEqual(
+                        ["candidate", "included", "candidate"],
+                        [entry[0].membership for entry in history],
+                    )
+                    self.assertEqual(
+                        ["screened-in", "screen-reversed"],
+                        [entry[2].reason_code for entry in history[1:]],
+                    )
+                    self.assertEqual(
+                        [item["revisionId"], included.revision_id],
+                        [entry[2].previous_revision_id for entry in history[1:]],
+                    )
+                    self.assertEqual(
+                        [accepted.revision_id, accepted.revision_id],
+                        [entry[2].protocol_revision_id for entry in history[1:]],
+                    )
+                    self.assertTrue(all(entry[2].evidence_revision_ids == (assertion_id,) for entry in history[1:]))
+                    self.assertEqual(
                         report,
                         post(
                             client,
                             "/projects/corpus/reports/inspect",
                             {"root": root, "snapshotId": report["snapshotId"]},
                         ),
+                    )
+                    self.assertEqual(
+                        report_member,
+                        post(client, "/projects/corpus/reports/drill", drill_request)["members"][0],
+                    )
+                    self.assertEqual(
+                        reconsidered_report,
+                        post(
+                            client,
+                            "/projects/corpus/reports/inspect",
+                            {"root": root, "snapshotId": reconsidered_report["snapshotId"]},
+                        ),
+                    )
+                    with closing(
+                        open_canonical_database(Path(root) / "state/project.sqlite3", expected_project_id=project_id)
+                    ) as connection:
+                        sealed_reports = tuple(
+                            tuple(row)
+                            for row in connection.execute(
+                                "SELECT snapshot_id,member_count FROM corpus_report_snapshots "
+                                "WHERE project_id=? ORDER BY snapshot_id",
+                                (project_id,),
+                            ).fetchall()
+                        )
+                    self.assertEqual(
+                        {report["snapshotId"], reconsidered_report["snapshotId"]},
+                        {snapshot_id for snapshot_id, _count in sealed_reports},
                     )
                     revoked_permissions = [
                         permission | {"value": "denied"} if permission["use"]["action"] == "index" else permission
@@ -299,6 +422,20 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                         "RO-CORE-CORPUS-DENIED",
                         post(client, "/projects/corpus/reports/create", report_request, 403)["code"],
                     )
+                    with closing(
+                        open_canonical_database(Path(root) / "state/project.sqlite3", expected_project_id=project_id)
+                    ) as connection:
+                        self.assertEqual(
+                            sealed_reports,
+                            tuple(
+                                tuple(row)
+                                for row in connection.execute(
+                                    "SELECT snapshot_id,member_count FROM corpus_report_snapshots "
+                                    "WHERE project_id=? ORDER BY snapshot_id",
+                                    (project_id,),
+                                ).fetchall()
+                            ),
+                        )
                     revoked_scope = post(
                         client, "/projects/corpus/rights/recheck-scope", {"root": root, "subject": subject}
                     )
@@ -406,7 +543,7 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                         self.assertEqual(denied_audit[0][8], "policy")
                         self.assertEqual(denied_audit[0][9], denied_audit[0][10])
                         self.assertEqual(
-                            1,
+                            3,
                             connection.execute(
                                 "SELECT COUNT(*) FROM corpus_item_states WHERE project_id=?", (project_id,)
                             ).fetchone()[0],
