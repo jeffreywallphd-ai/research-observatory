@@ -277,10 +277,75 @@ out a transient write during worker execution.
 | Packaged `python314.dll` | `dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7` |
 | Raw log `artifacts/tmp/CAP-04.S05.T02.loaderdiag-control-matched.log` | `6cd5576736325a7990754ff2dfa3d9a8b0b3f828a86ffefe2992fe41266ecf60` |
 
-### Next diagnostic requiring host authorization
+## R31–R32 embedded-manifest discriminators
+
+The packaged Python 3.14.6 DLL contains an embedded `RT_MANIFEST` resource at
+ID 2. Its XML specifies `asInvoker`, supported Windows versions and
+`longPathAware`, and depends on Microsoft.Windows.Common-Controls v6. Microsoft's
+[side-by-side resource guidance](https://learn.microsoft.com/en-us/windows/win32/sbscs/using-side-by-side-assemblies-as-a-resource)
+states that DLL manifest ID 2 participates in loader activation. These facts
+motivated two fresh, ignored, test-owned DLL-copy comparisons. Neither copy is
+a production artifact or a signed-plugin/runtime qualification.
+
+- **R31, manifest hidden from the loader:** one four-byte PE resource-type ID
+  field was changed from 24 to `0x7fff` on a disposable DLL copy. Its size,
+  executable code and imports were unchanged; only two byte positions in the
+  file differed from the original (offsets 6526488 and 6526489). With the
+  same R30 native EXE, zero-capability LPAC token, read-only runtime and
+  disposable-profile no-write ACL sequence, `LoadLibraryW` **succeeded** and
+  eight loader notifications included `python314.dll`. This strongly associates
+  the original pre-notification denial with processing the embedded manifest,
+  but does not identify a denied resource or prove Python initialization.
+- **R32, Common-Controls dependency removed only:** Microsoft `mt.exe` embedded
+  a manifest retaining ID 2, `asInvoker`, supported-OS entries and
+  `longPathAware` while removing only the Common-Controls dependency. PE code
+  and imports were unchanged. The same LPAC load **still failed** with Win32
+  error 5 and zero pre-control notifications. Thus the Common-Controls
+  dependency alone does not explain the denial. Suppressing the manifest as a
+  loader manifest, rather than removing that one dependency, distinguished R31.
+
+Both runs verified zero-capability LPAC with ALL_APPLICATION_PACKAGES denied,
+restored all 12 profile and four runtime DACLs, confirmed post-restore profile
+and runtime integrity, deleted the disposable AppContainer profile successfully
+and found the disposable roots absent. Neither ran Python code or repeated the
+hostile no-write/egress matrix; post-run integrity cannot rule out transient
+writes. No original runtime DLL, installed Python, host security setting or
+tracked product file was altered. A source-built Python 3.14.6 runtime without
+the DLL manifest is now a bounded ADR-0028-conforming *candidate to test*, not
+an approved worker. The package's native extension DLLs also require their
+own manifest/load qualification.
+
+| R31–R32 ignored input/output | SHA-256 |
+|---|---|
+| Original Python 3.14.6 DLL / shared native EXE | `dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7` / `fe264b53e7210720d4ceb65502c23191dcb3c5cabe2f6d4855ea5f9b2874671a` |
+| R31 modified DLL / inventory / runner / log | `79c7ec3f33315683099933ede83783bb0740c085a603e8b79fa0eb6f6dc4d68b` / `9e186f9ad674eb7dd8b9f5fd13c5d376ea2d9d6ef24126980d2f2690c1fea3f1` / `1610b9c0611548241d2c3ceebda4dfff16b6cff95686499e9bcf200c5e36cef5` / `692fa85690aad2a4838ec455fa61ebfb4d1bb5160cf6eddfb44c8c1b1e14f224` |
+| R32 no-dependency manifest / modified DLL / inventory | `48ff4a9ec1b2b31f2940351fe58a78e3b1a5d36ede558d4370633ed3f3a235ed` / `0ba28292c108a9b42f5e599286d9c65fb4a0e521a2f3a2a6106e6b24f6c8a07c` / `9e334ceedb5dc4841159d8e57e1573842df65541358702316c0aff0709889d2a` |
+| R32 runner / log | `86e317ee1ecd6ad047e3833995e524e006f5c64c3e2c0bb20df5e81fcaca9b85` / `6481a63debe01eb75aaf8aaa5b3f8567353a68699b09fdba86a4ac040fa2ffa` |
+
+## R33 strict dependency-search comparison
+
+A separate fresh package retained the **unmodified**, hash-verified Python
+3.14.6 DLL and invoked absolute-path `LoadLibraryExW` with only
+`LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32` (`0x900`).
+Unlike R13's broader `0x1100` search, this excluded ordinary application/user
+search locations for dependencies. Under the same verified zero-capability
+LPAC and disposable read-only/no-write setup, it still returned Win32 error 5
+with zero notifications before a successful `VERSION.dll` callback control.
+Profile/runtime post-restore integrity, all saved DACL restorations, profile
+deletion and disposable-root absence passed. This rules out a simple standard
+dependency-search-path correction; it does not identify the denied resource
+or qualify the worker. No Python or plugin code ran.
+
+| R33 ignored input/output | SHA-256 |
+|---|---|
+| Worker source `artifacts/tmp/CAP-04.S05.T02.loaderstrict-worker/src/main.rs` | `b447c8afe776bb7993e3e3423aeb278d9f76021abe3068a4c5c2f602d18f5cad` |
+| Package builder / inventory | `fc39e5d7fdd867bb64f55032c3f3dc2084d77ef1c258e0ded2d316d3285dafb6` / `b84f62988fdf594d8c1635ff9ef01099437ad73ff0ae6cda7cdddbb26d9299e2` |
+| Runner / raw log | `5a32fbe580303f899a2af76af09d397640a0c91647e08740968190b4643f9f31` / `99a182b68c9232067e1b3918f4c8e63ca9539430f7a689fcee15b89e57327318` |
+
+### Host-authorized resource trace if the source-build route fails
 
 The exact resource behind the Python DLL's LPAC `LoadLibraryW` error 5 is
-still unknown after R30. A bounded next diagnostic is one fresh, synthetic-only worker
+still unknown after R33. A bounded fallback diagnostic is one fresh, synthetic-only worker
 launch under [Microsoft Process Monitor](https://learn.microsoft.com/en-us/troubleshoot/windows-client/shell-experience/troubleshoot-apps-start-failure-use-process-monitor),
 filtered to the unique test worker process and stopped immediately after the
 load failure. Process Monitor requires elevation and may load a system driver;
@@ -331,11 +396,12 @@ and the task has a complete candidate.
 CAP-04.S05.T02 cannot be submitted as complete. R29e proves the specified
 test-owned native LPAC no-write and direct-denial matrix, but the approved
 Python connector image still fails before user code. R30 narrows the observed
-loader stage without identifying the denied resource or changing that gate.
-The native fixture
-executes no connector package and does not reach brokered plugin calls. The
-project grant, trust, broker, migration, and recovery code on
-the branch remains partial work; none substitutes for the real worker proof.
+loader stage. R31 makes a manifest-free source build a credible test candidate,
+while R32 and R33 preserve the adverse dependency-only and strict-search
+results. None identifies the denied resource or changes the gate. The native
+fixture executes no connector package and does not reach brokered plugin calls.
+The project grant, trust, broker, migration, and recovery code on the branch
+remains partial work; none substitutes for the real worker proof.
 
 Resume within the approved design only after a reproducible Windows x64
 package loads the approved Python connector runtime under verified LPAC,
