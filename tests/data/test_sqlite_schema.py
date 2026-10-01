@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sqlite3
 import sys
 import tempfile
@@ -18,6 +19,7 @@ sys.path.insert(0, str(SERVICE_SRC))
 
 from research_observatory_core.storage import (  # noqa: E402
     APPLICATION_ID,
+    CORPUS_SOURCE_PROJECTION_TABLES,
     DATABASE_SCHEMA_VERSION,
     EXPECTED_TABLES,
     EXPECTED_TRIGGERS,
@@ -182,6 +184,43 @@ class SqliteSchemaTests(unittest.TestCase):
         hostile = dict(profile)
         hostile["unexpectedOverride"] = True
         self.assertNotEqual([], list(Draft202012Validator(schema).iter_errors(hostile)))
+
+    def test_architecture_guide_tracks_current_profile_recovery_and_mutable_projection(self) -> None:
+        profile = json.loads((REPO / "packages/contracts/storage/sqlite-profile.v1.json").read_text(encoding="utf-8"))
+        guide = (REPO / "docs/architecture/local-sqlite-storage.md").read_text(encoding="utf-8")
+        normalized_guide = " ".join(guide.split())
+        version = DATABASE_SCHEMA_VERSION
+        self.assertEqual(version, profile["databaseSchemaVersion"])
+        self.assertEqual([str(version)], re.findall(r"^## Current version-(\d+) authority$", guide, re.MULTILINE))
+        self.assertIn(
+            f"| Database identity | application ID `0x{APPLICATION_ID:08x}`, "
+            f"`user_version={version}`, profile `{profile['profileId']}` |",
+            guide,
+        )
+        self.assertIn(
+            f"A current version-{version} database is detected idempotently and is never backed up or rewritten.",
+            normalized_guide,
+        )
+        self.assertEqual([str(version)], re.findall(r"A current version-(\d+) database", normalized_guide))
+        self.assertIn(
+            f"A version-{version - 1} source receives a verified backup before migration to v{version}.",
+            normalized_guide,
+        )
+
+        projection_tables = set(CORPUS_SOURCE_PROJECTION_TABLES)
+        self.assertEqual(
+            projection_tables,
+            {table for table in profile["mutableStateTables"] if table.startswith("corpus_source_")},
+        )
+        mutable_prose = " ".join(
+            guide.split("Every row in ", 1)[1].split("## Evolution and recovery boundary", 1)[0].split()
+        )
+        self.assertIn("`mutableStateTables`", mutable_prose)
+        for table in projection_tables:
+            self.assertIn(f"`{table}`", mutable_prose)
+        self.assertIn("rebuildable", mutable_prose)
+        self.assertIn("never grant rights or replace immutable sealed report snapshots", mutable_prose)
+        self.assertNotIn("These are the only intentionally mutable current-profile tables.", mutable_prose)
 
     def test_initializes_exact_strict_wal_schema_and_reopens_after_restart(self) -> None:
         self.initialize()

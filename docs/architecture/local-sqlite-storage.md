@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-18 authority
+## Current version-20 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=18`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=20`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -108,8 +108,13 @@ copy-on-write recovery phases, and `outbox_events` may advance delivery state.
 The outbox's identity, project, revision, type, occurrence/scheduling time,
 idempotency key, and record digest remain immutable transaction authority even
 though the row carries mutable dispatch state; aggregate replay and lineage
-verification fail closed if any of those authority fields diverge. These are the
-only intentionally mutable current-profile tables.
+verification fail closed if any of those authority fields diverge. The exact
+current mutable-table inventory is `mutableStateTables` in the portable profile.
+Alongside object and outbox state, workflow queue/attempt/artifact state and
+`corpus_source_item_heads`, `corpus_source_totals`, and
+`corpus_source_overlap_totals` are intentionally mutable. The source projection
+rows are rebuildable from immutable corpus history; they never grant rights or
+replace immutable sealed report snapshots.
 
 ## Evolution and recovery boundary
 
@@ -121,8 +126,10 @@ runner validates and checkpoints the source, reserves SQLite's writer lock, crea
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-19 database is detected
-idempotently and is never backed up or rewritten. Committed v3 history is never
+verified backup remains available. A current version-20 database is detected
+idempotently and is never backed up or rewritten.
+A version-19 source receives a verified backup before migration to v20.
+Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
 creation routes. Version 6 rebuilds only the provenance table so a stable
