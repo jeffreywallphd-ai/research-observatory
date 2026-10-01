@@ -183,7 +183,8 @@ class PlanReviewTaskDrilldownTests(unittest.TestCase):
             for corrective in wave.get("corrective_tasks", []):
                 task_id = str(corrective["task_id"])
                 card = re.search(
-                    rf'<details class="wave-slice-card corrective-task-card" data-corrective-task="{re.escape(task_id)}"[^>]*>',
+                    rf'<details class="wave-slice-card corrective-task-card" '
+                    rf'data-corrective-task="{re.escape(task_id)}"[^>]*>',
                     text,
                 )
                 self.assertIsNotNone(card, task_id)

@@ -223,9 +223,9 @@ def corrective_task_html(wave: dict[str, Any]) -> str:
             f'<details class="wave-slice-card corrective-task-card" data-corrective-task="{esc(task["id"])}" '
             f'data-correction-origin="{esc(origin.get("origin_task_id"))}" '
             f'data-correction-status="{esc(task.get("status"))}">'
-            f'<summary><span><strong>{esc(task["id"])}</strong>'
-            f'<small>{esc(task.get("title"))} · Original {esc(origin.get("origin_task_id"))}</small></span>'
-            f'{status_badge(task.get("status"))}</summary>'
+            f"<summary><span><strong>{esc(task['id'])}</strong>"
+            f"<small>{esc(task.get('title'))} · Original {esc(origin.get('origin_task_id'))}</small></span>"
+            f"{status_badge(task.get('status'))}</summary>"
             '<div class="wave-card-body">'
             f"<h3>{esc(task['id'])} — {esc(task.get('title'))}</h3>"
             f"<p>Original task: <code>{esc(origin.get('origin_task_id'))}</code>. "
@@ -239,7 +239,9 @@ def corrective_task_html(wave: dict[str, Any]) -> str:
         '<section id="linked-corrective-tasks"><h2>Linked corrective tasks</h2>'
         "<p>Original tasks and approvals remain unchanged. Every correction needs independent "
         "regression and affected-integration review before ordinary execution or Wave exit.</p>"
-        + '<div class="wave-slice-list">' + "".join(cards) + "</div>"
+        + '<div class="wave-slice-list">'
+        + "".join(cards)
+        + "</div>"
         + "</section>"
     )
 
