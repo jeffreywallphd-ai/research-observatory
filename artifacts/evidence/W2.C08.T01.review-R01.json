@@ -1,0 +1,38 @@
+{
+  "task_id": "W2.C08.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "f14c14b8e4833358892696475786af62f73b2212",
+  "base_commit": "c9c1e720581983f84cf4e854a9fc698dbb52b12a",
+  "reviewer": "agent:/root/w2_c08_preflight",
+  "result": "approved",
+  "evidence_sha256": "41d808c512a0c5ccda4a5c4f3087a45556333cbfbbe76ecefe7949369fe6aff9",
+  "packet_sha256": "2ff75eefc4cf4fa8915aae4bea0aeaae12ee9ec41771fe19913ede594d7ae2a3",
+  "acceptance_criteria_sha256": "0f619b1058645fcd53c7e5d542e090d6e29948b302b7fabf8f74ab2d249d4140",
+  "selection_sha256": "a0d881ad8938a20fea4b17f3c233cbcf396e189b1802d055260ff1b6d7945eb5",
+  "notes": "Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S03.T03 origin, exact one-file candidate patch plus taskctl/generated tracking views, seven passing canonical check receipts, and two reused original evidence references. The Rust leap-year predicate and empty/missing workIds predicate are logically equivalent to their predecessors. Fresh public-route assertions cover valid year 2000 and invalid year 1900 leap dates and deny empty, null and missing workIds, while the existing test denies forged authority. Strict all-target Clippy, cargo format and workspace tests pass; workspace tests report 153 passed, zero failed and one intentional ignored. The pinned desktop application report passes nine frontend/native stages and browser style/workflow qualification with zero errors and critical violations. Initial default-TEMP Rust-test ancestor denial and separate global-Python Playwright-version failure remain adverse and distinct from the final pinned/confined PASS; source protections and assertions were not weakened. This approves W2.C08.T01 affected integration only; S01-S03 checkpoint, complete W2 qualification and human release decision remain separate.",
+  "corrective_integration": {
+    "evidence_sha256": "41d808c512a0c5ccda4a5c4f3087a45556333cbfbbe76ecefe7949369fe6aff9",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The committed spec binds original CAP-04.S03.T03 DONE/approved snapshot SHA-256 93982d6381ce67c7b89c3db992f69d66175153188eac54000e5a5a3bbe881784. Only the spec-admitted native admission source/test file changes; Core project, rights and decision authority, schema, migration, public contract and approved reference remain unchanged. Fresh focused native admission, strict Clippy, Rust workspace tests, complete pinned desktop application/build/browser path and planning-integrity checks pass. The two earlier runner-environment failures remain retained; historical original-task evidence is not used as fresh checkpoint or Wave qualification."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Approved WorkVersion/preference/correction/retraction behavior and warning/impact authority are unchanged. The native request guard preserves leap-date and nonempty Work-ID semantics; Core remains authoritative. Public-route tests include valid/invalid century dates and missing, null and empty IDs."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "At the exact committed candidate, the focused version-admission test, full Rust workspace tests, strict all-target Clippy, and pinned desktop application/build/browser qualification pass. Prior default-TEMP and global-Python attempts remain disclosed as failures; the final run uses confined process-local TEMP/TMP and repository Python with approved Playwright 1.58.0."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Exact diff is one spec-admitted Rust file plus taskctl/generated claim and tracking views. No contract, migration, rights, audit, governed UX or frozen W2 authority changed. Backlog and generated-view checks pass; checkpoint and Wave gates remain open."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}

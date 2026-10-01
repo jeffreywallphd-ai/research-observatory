@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: fffc2f914d540ed0d08f39673ab7de46a9da65f62efbe0bc68847e1c945975ea
+source_sha256: f8f3e44d15170c06e789661175bf4c4d5fc9c08055039501c46e63b32981c5d9
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3107,7 +3107,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C08.T01 — Implement work-version, correction, and retraction relationships
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S03.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S03.T03`. **Latest review:** `approved`.
 
 **Reproduction:** After independently approved W2.C06.T01 and W2.C07.T01 corrections, strict all-target Clippy at exact candidate 96ca6047e06477883e69fe6c863eb1b0f6117c52 still exits 101 with four warnings solely in completed CAP-04.S03.T03 reconciliation_admission.rs: three manual leap-year divisibility expressions and one nonminimal empty/missing workIds boolean expression. Raw log artifacts/tmp/W2.C07.T01.candidate-clippy-01.log has SHA-256 e7c93730290a3e8d55e4ca253c3f8309b69b5898c5ceef72a8746085e6a54b9f. Original CAP-04.S03.T03 DONE evidence, independent review and frozen W2 approval remain unchanged.
 
@@ -3122,13 +3122,43 @@ Original tasks and approvals remain unchanged.
 - apps/desktop/src-tauri/src/reconciliation_admission.rs
 #### Review history — W2.C08.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
+
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `2ff75eefc4cf4fa8915aae4bea0aeaae12ee9ec41771fe19913ede594d7ae2a3`
+
+- Candidate / base / branch: `f14c14b8e4833358892696475786af62f73b2212` / `c9c1e720581983f84cf4e854a9fc698dbb52b12a` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-09-30T23:52:37+00:00`
+- Evidence: `artifacts/evidence/W2.C08.T01.json` / `41d808c512a0c5ccda4a5c4f3087a45556333cbfbbe76ecefe7949369fe6aff9` / `f14c14b8e4833358892696475786af62f73b2212`
+- Acceptance-criteria SHA-256: `0f619b1058645fcd53c7e5d542e090d6e29948b302b7fabf8f74ab2d249d4140`
+- Verification-selection SHA-256: `a0d881ad8938a20fea4b17f3c233cbcf396e189b1802d055260ff1b6d7945eb5`
+- Changed paths: `apps/desktop/src-tauri/src/reconciliation_admission.rs`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`
+- Selected checks: `cargo test -p research-observatory-desktop --lib version_admission_accepts_decisions_and_denies_forged_authority --locked`, `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets --locked -- -D warnings`, `$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; cargo test --workspace --locked`, `$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; .venv\Scripts\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/W2.C08.T01.candidate-desktop-pinned-01.json`, `python tools/taskctl.py --file planning/backlog.yaml validate`, `python tools/backlog_views.py --repo . --check`
+- Deferred checks: `The first desktop application attempt at this candidate failed at cargo test because six import source/report tests could not open an ancestor of the default user temp path: artifacts/tmp/W2.C08.T01.candidate-desktop-01.json raw SHA-256 2cfb1dd2c6e061cbe3dbcd80a84ca052b37843e529e61f9467d316162bd3c774. A second attempt with confined TEMP/TMP passed Rust tests/build but failed browser qualification because global Python had Playwright 1.62 rather than the approved .venv 1.58: artifacts/tmp/W2.C08.T01.candidate-desktop-confined-01.json raw SHA-256 8da38f2d893927b4c51115f22fea0804322405a86dca1aae4e979406a11157a0. The final pinned/confined invocation passes; the adverse reports are not relabeled as passes.`, `The S01-S03 shared-interface checkpoint and complete W2 affected/repository/platform qualification remain required after ordinary Wave resume. Original CAP-04.S03.T03 evidence is reused only for unchanged version behavior at its historical candidate.`
+- Selection rationale: The one-file change affects native version-date and workIds shape admission. Test century leap boundaries, malformed/missing workIds and forged authority through the public renderer route, then run strict all-target Clippy and the full pinned desktop application/build path because C08 removes the last known native blocker. Use the process-local ignored workspace TEMP/TMP needed by the pre-existing ancestor-pinning tests; retain the failed default-temp and wrong-Python attempts for transparency. Broader Python service/data/graph and cross-slice checks have no changed input in this correction and remain checkpoint/Wave qualification.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_c08_preflight / `2026-09-30T23:58:28+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/W2.C08.T01.review-R01.json` / `f30f336a16ca5776d13fb2c9e068a01a8f6f2047fb9f52bcac880acd4e7ec7ce`
+
+**Review notes:** Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S03.T03 origin, exact one-file candidate patch plus taskctl/generated tracking views, seven passing canonical check receipts, and two reused original evidence references. The Rust leap-year predicate and empty/missing workIds predicate are logically equivalent to their predecessors. Fresh public-route assertions cover valid year 2000 and invalid year 1900 leap dates and deny empty, null and missing workIds, while the existing test denies forged authority. Strict all-target Clippy, cargo format and workspace tests pass; workspace tests report 153 passed, zero failed and one intentional ignored. The pinned desktop application report passes nine frontend/native stages and browser style/workflow qualification with zero errors and critical violations. Initial default-TEMP Rust-test ancestor denial and separate global-Python Playwright-version failure remain adverse and distinct from the final pinned/confined PASS; source protections and assertions were not weakened. This approves W2.C08.T01 affected integration only; S01-S03 checkpoint, complete W2 qualification and human release decision remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
 
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `-` by - at `-`
+**Current latest-review projection:** `approved` by agent:/root/w2_c08_preflight at `2026-09-30T23:58:28+00:00`
 
-**Latest notes:** -
+**Latest notes:** Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S03.T03 origin, exact one-file candidate patch plus taskctl/generated tracking views, seven passing canonical check receipts, and two reused original evidence references. The Rust leap-year predicate and empty/missing workIds predicate are logically equivalent to their predecessors. Fresh public-route assertions cover valid year 2000 and invalid year 1900 leap dates and deny empty, null and missing workIds, while the existing test denies forged authority. Strict all-target Clippy, cargo format and workspace tests pass; workspace tests report 153 passed, zero failed and one intentional ignored. The pinned desktop application report passes nine frontend/native stages and browser style/workflow qualification with zero errors and critical violations. Initial default-TEMP Rust-test ancestor denial and separate global-Python Playwright-version failure remain adverse and distinct from the final pinned/confined PASS; source protections and assertions were not weakened. This approves W2.C08.T01 affected integration only; S01-S03 checkpoint, complete W2 qualification and human release decision remain separate.
 
 **Currently open findings:** -
 

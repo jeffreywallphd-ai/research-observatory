@@ -2323,7 +2323,7 @@
         {
           "task_id": "W2.C08.T01",
           "title": "Implement work-version, correction, and retraction relationships",
-          "status": "IN_PROGRESS",
+          "status": "DONE",
           "acceptance_criteria": [
             "Users can identify the preferred citable version and see status warnings; a retraction or correction marks dependent outputs for review rather than deleting history.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2352,17 +2352,107 @@
           "task_review": {
             "task_id": "W2.C08.T01",
             "title": "Implement work-version, correction, and retraction relationships",
-            "status": "IN_PROGRESS",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/w2_c08_preflight",
+              "result": "approved",
+              "reviewed_at": "2026-09-30T23:58:28+00:00",
+              "notes": "Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S03.T03 origin, exact one-file candidate patch plus taskctl/generated tracking views, seven passing canonical check receipts, and two reused original evidence references. The Rust leap-year predicate and empty/missing workIds predicate are logically equivalent to their predecessors. Fresh public-route assertions cover valid year 2000 and invalid year 1900 leap dates and deny empty, null and missing workIds, while the existing test denies forged authority. Strict all-target Clippy, cargo format and workspace tests pass; workspace tests report 153 passed, zero failed and one intentional ignored. The pinned desktop application report passes nine frontend/native stages and browser style/workflow qualification with zero errors and critical violations. Initial default-TEMP Rust-test ancestor denial and separate global-Python Playwright-version failure remain adverse and distinct from the final pinned/confined PASS; source protections and assertions were not weakened. This approves W2.C08.T01 affected integration only; S01-S03 checkpoint, complete W2 qualification and human release decision remain separate."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-09-30T23:52:37+00:00",
+                    "candidate_commit": "f14c14b8e4833358892696475786af62f73b2212",
+                    "base_commit": "c9c1e720581983f84cf4e854a9fc698dbb52b12a",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C08.T01.json",
+                      "sha256": "41d808c512a0c5ccda4a5c4f3087a45556333cbfbbe76ecefe7949369fe6aff9",
+                      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+                      "recorded_at": "2026-09-30T23:52:37+00:00"
+                    },
+                    "acceptance_criteria_sha256": "0f619b1058645fcd53c7e5d542e090d6e29948b302b7fabf8f74ab2d249d4140",
+                    "changed_paths": [
+                      "apps/desktop/src-tauri/src/reconciliation_admission.rs",
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md"
+                    ],
+                    "selected_checks": [
+                      "cargo test -p research-observatory-desktop --lib version_admission_accepts_decisions_and_denies_forged_authority --locked",
+                      "cargo fmt --all -- --check",
+                      "cargo clippy --workspace --all-targets --locked -- -D warnings",
+                      "$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; cargo test --workspace --locked",
+                      "$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/W2.C08.T01.candidate-desktop-pinned-01.json",
+                      "python tools/taskctl.py --file planning/backlog.yaml validate",
+                      "python tools/backlog_views.py --repo . --check"
+                    ],
+                    "deferred_checks": [
+                      "The first desktop application attempt at this candidate failed at cargo test because six import source/report tests could not open an ancestor of the default user temp path: artifacts/tmp/W2.C08.T01.candidate-desktop-01.json raw SHA-256 2cfb1dd2c6e061cbe3dbcd80a84ca052b37843e529e61f9467d316162bd3c774. A second attempt with confined TEMP/TMP passed Rust tests/build but failed browser qualification because global Python had Playwright 1.62 rather than the approved .venv 1.58: artifacts/tmp/W2.C08.T01.candidate-desktop-confined-01.json raw SHA-256 8da38f2d893927b4c51115f22fea0804322405a86dca1aae4e979406a11157a0. The final pinned/confined invocation passes; the adverse reports are not relabeled as passes.",
+                      "The S01-S03 shared-interface checkpoint and complete W2 affected/repository/platform qualification remain required after ordinary Wave resume. Original CAP-04.S03.T03 evidence is reused only for unchanged version behavior at its historical candidate."
+                    ],
+                    "selection_rationale": "The one-file change affects native version-date and workIds shape admission. Test century leap boundaries, malformed/missing workIds and forged authority through the public renderer route, then run strict all-target Clippy and the full pinned desktop application/build path because C08 removes the last known native blocker. Use the process-local ignored workspace TEMP/TMP needed by the pre-existing ancestor-pinning tests; retain the failed default-temp and wrong-Python attempts for transparency. Broader Python service/data/graph and cross-slice checks have no changed input in this correction and remain checkpoint/Wave qualification.",
+                    "selection_sha256": "a0d881ad8938a20fea4b17f3c233cbcf396e189b1802d055260ff1b6d7945eb5",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "desktop:application",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "packet_sha256": "2ff75eefc4cf4fa8915aae4bea0aeaae12ee9ec41771fe19913ede594d7ae2a3"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/w2_c08_preflight",
+                    "result": "approved",
+                    "reviewed_at": "2026-09-30T23:58:28+00:00",
+                    "notes": "Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S03.T03 origin, exact one-file candidate patch plus taskctl/generated tracking views, seven passing canonical check receipts, and two reused original evidence references. The Rust leap-year predicate and empty/missing workIds predicate are logically equivalent to their predecessors. Fresh public-route assertions cover valid year 2000 and invalid year 1900 leap dates and deny empty, null and missing workIds, while the existing test denies forged authority. Strict all-target Clippy, cargo format and workspace tests pass; workspace tests report 153 passed, zero failed and one intentional ignored. The pinned desktop application report passes nine frontend/native stages and browser style/workflow qualification with zero errors and critical violations. Initial default-TEMP Rust-test ancestor denial and separate global-Python Playwright-version failure remain adverse and distinct from the final pinned/confined PASS; source protections and assertions were not weakened. This approves W2.C08.T01 affected integration only; S01-S03 checkpoint, complete W2 qualification and human release decision remain separate."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C08.T01.review-R01.json",
+                    "sha256": "f30f336a16ca5776d13fb2c9e068a01a8f6f2047fb9f52bcac880acd4e7ec7ce"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C08.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-09-30T23:52:37+00:00",
+                    "reviewed_at": "2026-09-30T23:58:28+00:00",
+                    "duration_seconds": 351,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "desktop:application",
+                      "foundation:backlog",
+                      "foundation:backlog-views"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
               "current_submission": null
             }
           }

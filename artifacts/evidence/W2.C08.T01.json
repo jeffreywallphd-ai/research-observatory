@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C08.T01",
+  "baseCommit": "c9c1e720581983f84cf4e854a9fc698dbb52b12a",
+  "commit": "f14c14b8e4833358892696475786af62f73b2212",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/reconciliation_admission.rs",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The approved CAP-04.S03.T03 work-version, correction, retraction, preferred-citable-version and dependent-output review behavior is unchanged. The only source change is native shape admission: equivalent leap-year and empty/missing workIds predicates in the renderer-to-Core request guard; Core remains the decision authority.",
+        "The committed-candidate native admission test passes public-route version decisions and forged-authority denial, including 2000-02-29 admitted, 1900-02-29 denied, and empty/null/missing workIds denied. The full pinned desktop application plan also passes its native and browser-based checks. Original reviewed S03 evidence remains historical proof for unchanged Core version behavior, not a replacement for fresh checkpoint qualification."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The existing focused native test was extended with meaningful century-date and workIds denial cases before the production expression change; that characterization passed on the old implementation. At the exact committed candidate, the focused test, strict all-target Clippy and the complete Rust workspace test command pass. The workspace run reports 153 passed, zero failed, one intentional ignored case.",
+        "The pinned desktop application plan passes all nine frontend/native command stages and browser style/workflow qualification with zero critical violations. Its execution used the repository .venv Playwright 1.58 and process-local TEMP/TMP in ignored artifacts/tmp. Two earlier adverse invocations remain disclosed: default user temp denied an ancestor handle in six source/report tests; global Python Playwright 1.62 differed from the approved pin. Neither product guard nor test expectation was weakened."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The only product/test path changed is the spec-admitted reconciliation_admission.rs; all other base-to-candidate paths are taskctl claim and generated planning views. No source, rights, credential, Core schema, migration, public contract, governed UX reference, audit or frozen W2 decision changed.",
+        "Fresh cargo format, strict Clippy, pinned desktop application/build, backlog validation and generated-view checks pass at the clean committed candidate. S01-S03 checkpoint evidence and W2 exit qualification remain separate obligations."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "desktop:application",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "The one-file change affects native version-date and workIds shape admission. Test century leap boundaries, malformed/missing workIds and forged authority through the public renderer route, then run strict all-target Clippy and the full pinned desktop application/build path because C08 removes the last known native blocker. Use the process-local ignored workspace TEMP/TMP needed by the pre-existing ancestor-pinning tests; retain the failed default-temp and wrong-Python attempts for transparency. Broader Python service/data/graph and cross-slice checks have no changed input in this correction and remain checkpoint/Wave qualification.",
+    "deferred": [
+      "The first desktop application attempt at this candidate failed at cargo test because six import source/report tests could not open an ancestor of the default user temp path: artifacts/tmp/W2.C08.T01.candidate-desktop-01.json raw SHA-256 2cfb1dd2c6e061cbe3dbcd80a84ca052b37843e529e61f9467d316162bd3c774. A second attempt with confined TEMP/TMP passed Rust tests/build but failed browser qualification because global Python had Playwright 1.62 rather than the approved .venv 1.58: artifacts/tmp/W2.C08.T01.candidate-desktop-confined-01.json raw SHA-256 8da38f2d893927b4c51115f22fea0804322405a86dca1aae4e979406a11157a0. The final pinned/confined invocation passes; the adverse reports are not relabeled as passes.",
+      "The S01-S03 shared-interface checkpoint and complete W2 affected/repository/platform qualification remain required after ordinary Wave resume. Original CAP-04.S03.T03 evidence is reused only for unchanged version behavior at its historical candidate."
+    ]
+  },
+  "checks": [
+    {
+      "id": "native-version-admission",
+      "command": "cargo test -p research-observatory-desktop --lib version_admission_accepts_decisions_and_denies_forged_authority --locked",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C08.T01.candidate-version-admission-01.log",
+      "rawOutputSha256": "12a822e30a3e5dc18d86bb558aed07a517735f452b46681aa0bbcec7a09a9416",
+      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "One native version-route test passes, including century leap and invalid workIds denial cases."
+    },
+    {
+      "id": "rust-format",
+      "command": "cargo fmt --all -- --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C08.T01.candidate-fmt-01.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Workspace Rust formatting passes."
+    },
+    {
+      "id": "rust-strict-clippy",
+      "command": "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C08.T01.candidate-clippy-01.log",
+      "rawOutputSha256": "2a418e37962681b7c9c52ab6af2aee69931cf49dc892d067f67c7834b045665c",
+      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Strict all-target workspace Clippy passes with warnings denied."
+    },
+    {
+      "id": "rust-workspace-tests-confined",
+      "command": "$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; cargo test --workspace --locked",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C08.T01.candidate-cargo-workspace-confined-01.log",
+      "rawOutputSha256": "0f5954c198dd30884270ec118a6f01e326997cdc856eb2886b6a67825944f34f",
+      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+      "provenance": "fresh execution at fixed clean committed candidate with process-local ignored workspace TEMP/TMP",
+      "result": "153 native tests pass, zero fail, one intentional ignore."
+    },
+    {
+      "id": "desktop-application-pinned",
+      "command": "$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/W2.C08.T01.candidate-desktop-pinned-01.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C08.T01.candidate-desktop-pinned-01.log",
+      "rawOutputSha256": "d6af2e3286c197d9a69f6c30506eb3d49fdb3ad312b0b62bf0e50d98867c3eb7",
+      "reportPath": "artifacts/tmp/W2.C08.T01.candidate-desktop-pinned-01.json",
+      "reportSha256": "d6af2e3286c197d9a69f6c30506eb3d49fdb3ad312b0b62bf0e50d98867c3eb7",
+      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+      "provenance": "fresh execution at fixed clean committed candidate with pinned repository Python and process-local ignored workspace TEMP/TMP",
+      "result": "Nine command stages and browser style/workflow qualification PASS with zero critical violations."
+    },
+    {
+      "id": "taskctl",
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C08.T01.candidate-taskctl-01.log",
+      "rawOutputSha256": "50cb6937944d53344942c7ba11246e14e8188ceadb1476bad917b10ce9d7381f",
+      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Canonical backlog validates with W2.C08.T01 IN_PROGRESS."
+    },
+    {
+      "id": "backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C08.T01.candidate-views-01.log",
+      "rawOutputSha256": "0cfb1254748d4c63a89dee38351ecf639cec4e272a8688c38c365f42ef06316f",
+      "commit": "f14c14b8e4833358892696475786af62f73b2212",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Generated backlog views match the claimed ledger."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "93982d6381ce67c7b89c3db992f69d66175153188eac54000e5a5a3bbe881784",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "cargo test -p research-observatory-desktop --lib version_admission_accepts_decisions_and_denies_forged_authority --locked",
+      "cargo fmt --all -- --check",
+      "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; cargo test --workspace --locked",
+      "$env:TEMP = (Resolve-Path artifacts/tmp).Path; $env:TMP = $env:TEMP; .venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/W2.C08.T01.candidate-desktop-pinned-01.json",
+      "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "python tools/backlog_views.py --repo . --check"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S03.T03.json",
+        "sha256": "5c6991e069104850768da06dcffd901930201250e0e2b32fbd29178963ca4320",
+        "commit": "99e95a8735d2cf4a3935a070b5cfe6ad6404d9b3"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S03.T03.review-R01.json",
+        "sha256": "87a6c4720a5cde81fc2cadbb3631040e410d0fe5762261ec843afb7ce9911a20",
+        "commit": "a349aaab078069ea08bbf21298f3c141134c260d"
+      }
+    ],
+    "rationale": "Restore strict native desktop qualification while preserving approved S03 version admission and Core authority. Fresh public-route boundary test, all-target Clippy, complete Rust workspace tests, pinned desktop application/build/browser qualification and claim integrity pass. The two earlier runner-environment failures are preserved as adverse reports, with no relaxation of source ancestor pinning or version admission."
+  },
+  "scopeDeviation": "None. One admitted native source/test file plus taskctl-generated claim and tracking views."
+}
