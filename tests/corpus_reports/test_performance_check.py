@@ -62,7 +62,7 @@ class CorpusReportPerformanceControls(unittest.TestCase):
     def test_baseline_binds_reviewed_bytes_every_raw_sample_and_hard_ceiling(self) -> None:
         value = self.baseline()
         self.assertEqual(value, self.validated(value))
-        with self.assertRaisesRegex(ValueError, "independent review"):
+        with self.assertRaisesRegex(ValueError, "baseline differs"):
             check.validate_baseline(json.dumps(value).encode())
         for mutate in (
             lambda item: item["maxima"].update(repeatReportSeconds=float("nan")),

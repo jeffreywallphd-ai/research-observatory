@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "corpus-report-performance-baseline",
+  "slice": "CAP-04.S04",
+  "method": {
+    "fixtureVersion": "synthetic-protected-corpus-overlap-64-v1",
+    "canonicalItems": 64,
+    "discoveryPaths": 67,
+    "sourceRoots": 4,
+    "sourceOverlapPairs": 6,
+    "repetitions": 3,
+    "timer": "time.perf_counter_ns",
+    "firstReportState": "first report after project reopen and a measured incremental source-path update",
+    "repeatReportState": "new command and snapshot over unchanged canonical corpus in same process",
+    "measured": "Core corpus update; authenticated report seal, inspect and complete paged drill over DPAPI/SQLCipher",
+    "excluded": "synthetic setup, project reopen/close, and post-timing verification",
+    "memoryScope": "peak working set includes the entire child process and synthetic setup",
+    "distribution": "min/median/max of three fresh processes; every raw sample must pass; no samples discarded",
+    "regressionAllowance": 0.2,
+    "osCacheFlushed": false,
+    "providerNetworkDuringMeasurement": 0
+  },
+  "hardware": {
+    "operatingSystem": "Windows-11-10.0.26200-SP0",
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.26200",
+    "machine": "AMD64",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "logicalCpuCount": 20,
+    "physicalMemoryBytes": 16984227840
+  },
+  "maxima": {
+    "incrementalUpdateSeconds": 0.3724796,
+    "firstReportAfterReopenAndUpdateSeconds": 0.3548492,
+    "repeatReportSeconds": 0.3777,
+    "inspectSeconds": 0.2965144,
+    "firstDrillPageSeconds": 0.3369335,
+    "laterDrillPageSeconds": 0.2844903,
+    "peakWorkingSetBytes": 205946880,
+    "databaseGrowthBytes": 970752.0
+  },
+  "calibration": {
+    "commit": "92be1b98779236418e614158f18f7af5cf82b404",
+    "tool": "tools/corpus_report_performance_check.py",
+    "toolSha256": "d4be5f67b69ba58e5840e7137043e5b12d9d6364de511b306210e7f9578b4036",
+    "workload": "tests/corpus_reports/performance_workload.py",
+    "workloadSha256": "5827654568f38f9146d172c3fbdb23eeead36102e8047396a37761afbf5c5474",
+    "report": "artifacts/tmp/CAP-04.S04.performance-calibration-02.json",
+    "reportSha256": "d8fc6e7369ecbc5a0ab32db51d3f008e1f098fa85416e3fbaad86c898ca146ae",
+    "performanceQualifying": false,
+    "rawMetrics": [
+      {
+        "firstDrillPageSeconds": 0.3369335,
+        "firstReportAfterReopenAndUpdateSeconds": 0.3285823,
+        "incrementalUpdateSeconds": 0.366024,
+        "inspectSeconds": 0.2888187,
+        "laterDrillPageSeconds": 0.2844903,
+        "repeatReportSeconds": 0.3777,
+        "peakWorkingSetBytes": 205373440,
+        "databaseGrowthBytes": 958464.0
+      },
+      {
+        "firstDrillPageSeconds": 0.287243,
+        "firstReportAfterReopenAndUpdateSeconds": 0.3548492,
+        "incrementalUpdateSeconds": 0.3639502,
+        "inspectSeconds": 0.2935919,
+        "laterDrillPageSeconds": 0.283888,
+        "repeatReportSeconds": 0.3676968,
+        "peakWorkingSetBytes": 205434880,
+        "databaseGrowthBytes": 970752.0
+      },
+      {
+        "firstDrillPageSeconds": 0.2816432,
+        "firstReportAfterReopenAndUpdateSeconds": 0.3524786,
+        "incrementalUpdateSeconds": 0.3724796,
+        "inspectSeconds": 0.2965144,
+        "laterDrillPageSeconds": 0.2107733,
+        "repeatReportSeconds": 0.3638133,
+        "peakWorkingSetBytes": 205946880,
+        "databaseGrowthBytes": 962560.0
+      }
+    ],
+    "sampleBindings": [
+      {
+        "repetition": 1,
+        "report": "artifacts/tmp/corpus-report-performance-y5x0z9u_/sample-1/result.json",
+        "reportSha256": "e34644ec1015685826f0ad7ca8d7306bd069bf5685824e6a7998f9b5f675d59a",
+        "log": "artifacts/tmp/corpus-report-performance-y5x0z9u_/sample-1/raw.log",
+        "logSha256": "4795b5006db30a1d6ba414fa62256ddd9cb61c60124bac174ff8ad5a345be122"
+      },
+      {
+        "repetition": 2,
+        "report": "artifacts/tmp/corpus-report-performance-y5x0z9u_/sample-2/result.json",
+        "reportSha256": "f63a6591e492f850f7e0a35222068c1fc17dc524c1324c06377d07e9d1db7396",
+        "log": "artifacts/tmp/corpus-report-performance-y5x0z9u_/sample-2/raw.log",
+        "logSha256": "49207aa5251b08bfffb218e0df9d0d8a01d14e7a7bb4df88cc0872024de2dea6"
+      },
+      {
+        "repetition": 3,
+        "report": "artifacts/tmp/corpus-report-performance-y5x0z9u_/sample-3/result.json",
+        "reportSha256": "fdcd83ee140d97087d34759d5bb158644ea444ad303251ac10210848fe11bc0c",
+        "log": "artifacts/tmp/corpus-report-performance-y5x0z9u_/sample-3/raw.log",
+        "logSha256": "f9b5d4fd206d8f4319a7fa77dd8c91ff217f068cd418d742d47e1976e6a69230"
+      }
+    ],
+    "inputCount": 525
+  }
+}

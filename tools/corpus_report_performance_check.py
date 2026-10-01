@@ -42,7 +42,7 @@ TOOL = Path("tools/corpus_report_performance_check.py")
 WORKLOAD = Path("tests/corpus_reports/performance_workload.py")
 BASELINE = Path("tests/fixtures/corpus-reports/performance-baseline.json")
 # Replaced only after independent review of raw nonqualifying calibration.
-BASELINE_SHA256 = "PENDING-INDEPENDENT-BASELINE-REVIEW"
+BASELINE_SHA256 = "6658a04b314e91c8f164c45f512aeeb1eedba96d22b881f3c97004674b7fdcaf"
 REPETITIONS = 3
 METHOD = {
     "fixtureVersion": "synthetic-protected-corpus-overlap-64-v1",

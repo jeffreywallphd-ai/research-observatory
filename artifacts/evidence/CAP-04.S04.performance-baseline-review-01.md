@@ -1,0 +1,26 @@
+# CAP-04.S04 independent source-overlap baseline review 01
+
+- Reviewer: `agent:/root/s04_baseline_review`, independent of the benchmark implementer and Wave campaign owner.
+- Disposition: **approved for pinning the exact proposed baseline bytes**; no blocking baseline finding.
+- Scope: CAP-04.S04 section 11 and `docs/automation/project-automation-guide.md` section 8.3. This is a pre-pin input review, not a commit-bound qualifying run, slice disposition, Wave exit, or release decision.
+- Calibration commit and current pre-pin HEAD: `92be1b98779236418e614158f18f7af5cf82b404`.
+
+The approved baseline input is exactly `tests/fixtures/corpus-reports/performance-baseline.json`, SHA-256 `6658a04b314e91c8f164c45f512aeeb1eedba96d22b881f3c97004674b7fdcaf`. The revised owner proposal `artifacts/evidence/CAP-04.S04.performance-baseline-01.md` has SHA-256 `0c5586ff9cb6d0650d70b20de7031a99ed6dbd1bf0392a3b6add14401b5cd446`. The calibration producer `tools/corpus_report_performance_check.py` has SHA-256 `d4be5f67b69ba58e5840e7137043e5b12d9d6364de511b306210e7f9578b4036`; its workload `tests/corpus_reports/performance_workload.py` has SHA-256 `5827654568f38f9146d172c3fbdb23eeead36102e8047396a37761afbf5c5474`. I matched both producer hashes to the corresponding exact Git blobs at the calibration commit.
+
+The retained report `artifacts/tmp/CAP-04.S04.performance-calibration-02.json`, SHA-256 `d8fc6e7369ecbc5a0ab32db51d3f008e1f098fa85416e3fbaad86c898ca146ae`, records `MEASURED`, calibration mode, `performanceQualifying: false`, disabled evidence reuse, no baseline comparison, and all three fresh child-process repetitions. I independently matched every one of its 525 selected input names and SHA-256 values to both the physical checkout bytes and the exact calibration-commit Git blobs. Current hardware, Python runtime identity, and the installed dependency record (6,218 files) also equal the report. The runtime record explicitly leaves standard-library and OS closure unauthenticated; no result reuse follows from this review.
+
+Each original child result and log was independently read and hashed. Child JSON equals the corresponding complete `rawSample` in the aggregate report, and each baseline sample binding equals its aggregate binding:
+
+| Repetition | Child result SHA-256 | Raw log SHA-256 |
+|---|---|---|
+| 1 | `e34644ec1015685826f0ad7ca8d7306bd069bf5685824e6a7998f9b5f675d59a` | `4795b5006db30a1d6ba414fa62256ddd9cb61c60124bac174ff8ad5a345be122` |
+| 2 | `f63a6591e492f850f7e0a35222068c1fc17dc524c1324c06377d07e9d1db7396` | `49207aa5251b08bfffb218e0df9d0d8a01d14e7a7bb4df88cc0872024de2dea6` |
+| 3 | `fdcd83ee140d97087d34759d5bb158644ea444ad303251ac10210848fe11bc0c` | `f9b5d4fd206d8f4319a7fa77dd8c91ff217f068cd418d742d47e1976e6a69230` |
+
+I independently recomputed all eight metric values from every original child result, all eight maxima, and all min/median/max distributions; they agree with the aggregate report and baseline's three `rawMetrics` rows. Every metric is finite and below its unchanged hard ceiling. The future per-sample gate is the smaller of the reviewed observed maximum multiplied by 1.2 and the fixed ceiling, with no averaging away a failing sample. The 20% allowance is a fixed regression threshold for this exact host and fixture, not a measured uncertainty bound or a relaxed absolute budget.
+
+The fixture contains 64 canonical items, 67 paths, four source roots and six exact overlap pairs; all three samples report actual current-user Windows DPAPI and SQLCipher, complete two-page drill, and no provider transport during measurement. The first report is after project reopen **and** a measured incremental update; OS caches were not flushed. The measured host is Windows 11 build 10.0.26200, AMD64, Intel64 Family 6 Model 183, 20 logical CPUs and 16,984,227,840 bytes of memory. Only one item carries the four-source overlap. This source-based synthetic workload does not independently establish large-corpus scaling, minimum-hardware, installed-package, live-provider, researcher-workflow, or worker-throughput performance. Worker-availability warnings appear in setup/reopen logs outside timed Core operations; the logs contain no error-level entries. These are scope limits, not baseline blockers.
+
+The earlier invocation `artifacts/tmp/CAP-04.S04.performance-calibration-01.json`, SHA-256 `70269b671635875b4313660f17b864819647725b40dbc8964d534fafbf49fad4`, remains `FAIL`, nonqualifying and without samples. It records the first named committed-input byte mismatch. The owner's CRLF interpretation of historical physical bytes was not independently reproduced; the successful calibration's 525-blob authentication establishes its own exact input closure. No failed sample was relabeled or included in the measured baseline.
+
+The owner may pin only the exact approved baseline hash in the runner, commit the baseline, proposal, review and hash-pin change, and verify the final candidate's bounded diff and controls. A separate **fresh** three-process qualifying invocation against that committed candidate and immutable baseline is still required. CAP-04.S04 integrated evidence and independent slice review remain separate requirements; this review does not complete either.
