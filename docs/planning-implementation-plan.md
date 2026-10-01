@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f1f32147942c952be642c66ebad97fd7c222ce8db734142a87ee0a5d0000bfd2
+source_sha256: a1ce3e9524b5198e3f5649aa6457ad6f7841369f6ebb3e3f95adf434a5d9d932
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9363,13 +9363,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T02 - Implement plugin isolation, configuration, and secret access controls
 
-**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S05.T01`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Restricted execution boundary, allowlisted network destinations, scoped credentials, timeouts, quotas, and redacted logging.
 

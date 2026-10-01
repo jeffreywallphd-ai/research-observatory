@@ -17547,7 +17547,7 @@
             {
               "task_id": "CAP-04.S05.T02",
               "title": "Implement plugin isolation, configuration, and secret access controls",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -17592,15 +17592,15 @@
             {
               "task_id": "CAP-04.S05.T02",
               "title": "Implement plugin isolation, configuration, and secret access controls",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S05.T02.html",
               "dependencies": [
                 "CAP-04.S05.T01"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "6e9df6409c0cdcae12464dc47d2a809f6c39d2e3"
               },
               "plan_section_sha256": "0b72c1fdc2dfaab468e09e8a7a144d23a273ebf1f9d8de67f6e4f8bcabe1d31a",
               "worksheet": null
