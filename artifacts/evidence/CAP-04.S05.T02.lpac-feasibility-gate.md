@@ -342,6 +342,110 @@ or qualify the worker. No Python or plugin code ran.
 | Package builder / inventory | `fc39e5d7fdd867bb64f55032c3f3dc2084d77ef1c258e0ded2d316d3285dafb6` / `b84f62988fdf594d8c1635ff9ef01099437ad73ff0ae6cda7cdddbb26d9299e2` |
 | Runner / raw log | `5a32fbe580303f899a2af76af09d397640a0c91647e08740968190b4643f9f31` / `99a182b68c9232067e1b3918f4c8e63ca9539430f7a689fcee15b89e57327318` |
 
+## R34 source-built runtime and packaged-worker comparison
+
+The official CPython 3.14.6 source archive was verified against its published
+SHA-256 (`143b1dddefaec3bd2e21e3b839b34a2b7fb9842272883c576420d605e9f30c63`).
+An ignored, isolated source variant removes only the `2 RT_MANIFEST
+"python.manifest"` resource line from `PC/python_nt.rc`; the source manifest
+file itself is unchanged. Comparing all 5,100 extracted source files by hash
+found exactly that one source difference. The variant sits inside this Git
+checkout, so CPython build metadata can incorporate changing checkout state;
+these local diagnostic binaries are source-input-reproducible, not yet
+bit-reproducible production outputs. The x64 Release `pythoncore` build used local MSVC
+BuildTools and CPython's pinned `zlib-ng-2.2.4` source dependency at commit
+`a502e047655c31db29601def76ad6539acacf43d`. Its `python314.dll` is
+6,860,288 bytes, SHA-256
+`c8fccb6977142f060aab4de5b8b9ec371a9422b8b3468a4566abc0b26f7c561b`,
+and has VERSION resource type 16 but no `RT_MANIFEST` type 24. An initial build
+without zlib headers failed; the later bounded build succeeded. Neither result
+is production packaging or a task receipt.
+
+One fresh R30-style load probe gave that exact DLL read/execute-only runtime
+access and the same disposable, read-only/no-write profile setup under a queried
+zero-capability LPAC token. `LoadLibraryW` returned success and eight loader
+notifications ending in `python314.dll`; `VERSION.dll` remained a positive
+control. All 12 profile and four runtime DACLs were restored, both disposable
+roots were absent, and profile deletion succeeded. This proves the core DLL
+loads under the tested boundary, not Python initialization or connector safety.
+The raw ignored host log is
+`artifacts/tmp/cpython-3.14.6-manifest-variant/loader-lpac-host.log`
+(SHA-256 `404312f066da122eb79b8f7ee1af92ee54c27ecbbc4a6eedcdabdf273ea1e18d`).
+
+The R34 full PyInstaller probe then copied the original 58-file diagnostic
+package, replacing only that exact core DLL. Under fresh zero-capability LPAC
+and R29e-style no-write ACLs, execution reached Python module imports but
+stopped at `socket.py`: importing the original `_socket.pyd` raised `DLL load
+failed ... Access is denied`. That `.pyd`, like all nine included CPython
+extensions, still embeds `RT_MANIFEST` type 24. The worker exited 1 with no
+framed response. The harness verified no outside write, an intact read sentinel,
+restoration of all 12 profile and 64 runtime DACLs, profile/runtime integrity,
+successful profile deletion and absence of both disposable roots. The error is
+preserved as adverse evidence; a core-DLL-only substitution does not qualify a
+connector or prove full egress/write denial. No real project or credential was
+used.
+
+| R34 ignored input/output | SHA-256 |
+|---|---|
+| Source variant `PC/python_nt.rc` / unchanged `PC/python.manifest` | `47a869fe938a2bb7c0ef8d5a4ed2fcf5d182faa52aea5ad347203c7fbbb86b3e` / `7193b1d7f106dea927ec1687ff840302d88f6d352452c7207c68446454a22ba2` |
+| Full-worker harness / prepared package inventory | `a76c63fd8de608de9857b63b47327f8ddbeaac73b55e2047af9ca0aa67ec5494` / `e625ad99e941584e837cdad4eb9f2f33a60201a74e39f9bd4d618033cc01fa47` |
+| Raw launch failure / LPAC run log | `4d9fd53e30d9355310be4b25eea0906d9ced08dd48ee7be15349d191e2f0876a` / `b3f31a5bcc0ed5c9d398db2ac310390a44c220c1166b4daa2d8df6fdebe324ca` |
+
+## R35 source-built `_socket` and Winsock initialization
+
+The same isolated CPython variant built a manifest-free x64 `_socket.pyd`
+(SHA-256 `cbf865e599e543ef3b28383691827f1a16d0f32c4a98873df7cf0a348790b652`,
+VERSION resource only, `PyInit__socket` export). A fresh 58-file package
+substituted this extension and the immutable R34 core DLL; its inventory SHA-256
+is `34d6d45094aa2ec63c0a94ff262f7d5df011e20df10ddd2b04dc2b6633e57e52`.
+An earlier R35 preflight raced a concurrent MSBuild reference rebuild of the
+active source DLL and stopped at a file read before profile creation. It did not
+launch LPAC; the successful later preflight used the separately snapshotted,
+hash-verified R34 core DLL. No host-wide ACL was changed.
+
+In the bounded R35 LPAC run, the replacement `_socket.pyd` loaded, removing
+R34's DLL-load denial. CPython `socket.py` then failed during Winsock startup
+with `ImportError: WSAStartup failed: error code 10107`. The worker exited 1
+without a framed response. [Microsoft's documented `WSASYSCALLFAILURE` 10107](https://learn.microsoft.com/en-us/windows/win32/winsock/windows-sockets-error-codes-2) is
+a generic system-call failure, not proof of a particular denied capability or
+direct egress. The pre-imported `socket` in this test worker prevents its other
+probes from running. All 12 profile and 64 runtime DACLs were restored;
+profile/runtime integrity and outside-write/read sentinels passed, profile
+deletion succeeded, and both disposable roots were absent. This is an adverse
+runtime result, not no-write or no-egress qualification. The approved LPAC
+capability set and ACLs were not broadened.
+
+| R35 ignored input/output | SHA-256 |
+|---|---|
+| Harness / package inventory | `2ca747f623bfc2000001f12510b848b6369a219bf03622604b1ae332ea531456` / `34d6d45094aa2ec63c0a94ff262f7d5df011e20df10ddd2b04dc2b6633e57e52` |
+| Raw launch failure / LPAC run log | `607e93b647b065c411e225a6eb0d07b6a5c10fda463af8dff01613db539394c4` / `dcaf3b9a5381b33b652cbf0d46992ce7498f41291cf657619a949fe6128f78fe` |
+
+## R36 isolated Python probe without eager socket import
+
+A separate, test-only PyInstaller worker deferred its `socket` import until the
+direct-network probe. It retained the synthetic framed control, token query,
+unrelated-read, outside-write, profile/temp-write and parent-secret sentinel
+checks. The fresh 58-file package contained the hash-verified manifest-free
+R34 core and R35 `_socket` extension. It was not a connector or signed
+production runtime.
+
+The R36 LPAC worker returned a valid frame: queried AppContainer/LPAC identity,
+zero capabilities and ALL_APPLICATION_PACKAGES denial all passed. Unrelated
+read, outside write, profile write, temp write and synthetic parent secret were
+denied. `socket` initialization again failed with 10107; the worker reported
+`directLoopback: not-tested`, so R36 explicitly did **not** qualify direct
+egress. The trusted harness independently found no outside write and an intact
+read sentinel, restored all 12 profile and 64 runtime DACLs, verified
+profile/runtime integrity, deleted the disposable profile and found both roots
+absent. This provides a narrow packaged-Python no-write/read/secret observation,
+not a full hostile-connector or public-egress proof.
+
+| R36 ignored input/output | SHA-256 |
+|---|---|
+| Test worker source / packaged EXE | `92dcd59fb9237b154be50c35b9c49c55b862c66e225d54723629ad742a2be37c` / `a28124206fc3e44bbd1c5ff5b1f0952292ce3fc733315f2928c163008ae72a5e` |
+| Base inventory / exact replacement inventory | `620d444c3a6067c08f4dbdfa5ca7c19268cd9ae4e41ccb602765ef4226c5ca4d` / `f521c927a52e273a204ad9f62eec0e5a7e0592a6b53d367d11e94cfbf5ea9e29` |
+| Runner / LPAC run log | `1d0bf09048adbdc6b0d3c8aff8924bbf8b3706ded5d27c3f8353cc911e6576f4` / `84e570a0c6f1802db8eda5360226abcaba84ee4b0d1725729251dec95b2f2950` |
+
 ### Host-authorized resource trace if the source-build route fails
 
 The exact resource behind the Python DLL's LPAC `LoadLibraryW` error 5 is
@@ -394,12 +498,15 @@ and the task has a complete candidate.
 ## Decision and exact resume condition
 
 CAP-04.S05.T02 cannot be submitted as complete. R29e proves the specified
-test-owned native LPAC no-write and direct-denial matrix, but the approved
-Python connector image still fails before user code. R30 narrows the observed
-loader stage. R31 makes a manifest-free source build a credible test candidate,
-while R32 and R33 preserve the adverse dependency-only and strict-search
-results. None identifies the denied resource or changes the gate. The native
-fixture executes no connector package and does not reach brokered plugin calls.
+test-owned native LPAC no-write and direct-denial matrix. The original Python
+connector image fails before user code; R30 narrows that loader stage. R31
+made a manifest-free source build a credible test candidate; R34 proved its
+core DLL loads and reaches Python imports, while R35 proved a matching
+`_socket.pyd` loads before Winsock initialization fails. R32 and R33 preserve
+the adverse dependency-only and strict-search results. No packaged Python
+connector has completed the hostile matrix, and no run identifies the exact
+original manifest resource denial or proves direct public egress denial. The
+native fixture executes no connector package and does not reach brokered calls.
 The project grant, trust, broker, migration, and recovery code on the branch
 remains partial work; none substitutes for the real worker proof.
 
