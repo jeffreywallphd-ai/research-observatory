@@ -128,10 +128,24 @@
       "safetySensitive": false
     },
     {
-      "id": "service-contract-packaging",
+      "id": "core-api-and-portable-contracts",
       "patterns": [
         "packages/contracts/**",
-        "services/core-api/**",
+        "services/core-api/**"
+      ],
+      "commands": [
+        "foundation:quality",
+        "packaging:unit",
+        "service:corpus",
+        "service:unit",
+        "contracts:unit"
+      ],
+      "rationaleCode": "core-api-contract-corpus",
+      "safetySensitive": false
+    },
+    {
+      "id": "service-contract-packaging",
+      "patterns": [
         "tests/contracts/**",
         "tests/packaging/**",
         "tests/service/**"
@@ -143,6 +157,19 @@
         "contracts:unit"
       ],
       "rationaleCode": "service-contract-packaging",
+      "safetySensitive": false
+    },
+    {
+      "id": "corpus-tests",
+      "patterns": [
+        "tests/corpus/**",
+        "tools/corpus_test_check.py"
+      ],
+      "commands": [
+        "foundation:quality",
+        "service:corpus"
+      ],
+      "rationaleCode": "corpus-tests",
       "safetySensitive": false
     },
     {

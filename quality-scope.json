@@ -94,6 +94,7 @@
     "tools/core_api_contract.py",
     "tools/core_sidecar_build.py",
     "tools/core_sidecar_performance_check.py",
+    "tools/corpus_test_check.py",
     "tools/desktop_app_check.py",
     "tools/desktop_performance_check.py",
     "tools/dependency_impact_performance_check.py",

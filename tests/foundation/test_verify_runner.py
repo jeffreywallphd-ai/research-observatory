@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import io
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -30,7 +31,9 @@ W2_PROFILES = [
 ]
 sys.path.insert(0, str(REPO / "tools"))
 
+from corpus_test_check import main as corpus_test_main  # noqa: E402
 from verify import (  # noqa: E402
+    active_profile_commands,
     changed_paths_from_git,
     execute_profile,
     expand_profile,
@@ -123,6 +126,54 @@ class VerificationRunnerTests(unittest.TestCase):
             [item["command"] for item in self.contract["profiles"]["service"]["optionalCommands"]],
         )
         self.assertEqual(len(commands), len(set(commands)))
+
+    def test_corpus_command_activation_and_w2_union(self) -> None:
+        self.assertEqual(
+            ["{python}", "tools/corpus_test_check.py"],
+            self.contract["commands"]["service:corpus"]["argv"],
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            inactive, skipped = active_profile_commands(repo, self.contract, "service")
+            self.assertNotIn("service:corpus", inactive)
+            self.assertIn("service:corpus", [item["command"] for item in skipped])
+
+            test_file = repo / "tests" / "corpus" / "test_example.py"
+            test_file.parent.mkdir(parents=True)
+            test_file.write_text("import unittest\n", encoding="utf-8")
+            active, skipped = active_profile_commands(repo, self.contract, "service")
+            self.assertEqual(1, active.count("service:corpus"))
+            self.assertNotIn("service:corpus", [item["command"] for item in skipped])
+            w2, _ = resolve_wave_exit_selection(repo, self.contract, self.policy, "W2")
+            self.assertEqual(1, w2["selectedCommandIds"].count("service:corpus"))
+            self.assertEqual([], w2["deferredCommandIds"])
+
+    def test_corpus_launcher_sets_only_checkout_import_paths_and_preserves_failure(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary, redirect_stderr(io.StringIO()):
+            repo = Path(temporary)
+            test_file = repo / "tests" / "corpus" / "test_example.py"
+            test_file.parent.mkdir(parents=True)
+            test_file.write_text("import unittest\n", encoding="utf-8")
+            self.assertEqual(2, corpus_test_main(repo))
+            test_file.unlink()
+            (repo / "services" / "core-api" / "src").mkdir(parents=True)
+            self.assertEqual(2, corpus_test_main(repo))
+        with patch("corpus_test_check.subprocess.run") as runner:
+            runner.return_value.returncode = 19
+            self.assertEqual(19, corpus_test_main(REPO))
+        command = runner.call_args.args[0]
+        self.assertEqual(sys.executable, command[0])
+        self.assertEqual(
+            ["-B", "-s", "-m", "unittest", "discover", "-v", "-s", "tests/corpus", "-p", "test_*.py"],
+            command[1:],
+        )
+        options = runner.call_args.kwargs
+        self.assertEqual(REPO, options["cwd"])
+        self.assertFalse(options["check"])
+        self.assertEqual(
+            os.pathsep.join((str(REPO / "services" / "core-api" / "src"), str(REPO))),
+            options["env"]["PYTHONPATH"],
+        )
 
     def test_direct_full_profile_cli_warns_without_blocking_execution(self) -> None:
         error_output = io.StringIO()
@@ -315,6 +366,49 @@ class VerificationRunnerTests(unittest.TestCase):
             "W1-exit",
         )
         self.assertEqual(first, second)
+
+    def test_corpus_affected_selection_keeps_test_changes_narrow(self) -> None:
+        for path in (
+            "services/core-api/src/research_observatory_core/corpus_service.py",
+            "services/core-api/src/research_observatory_core/app.py",
+            "packages/contracts/corpus/corpus-membership.schema.json",
+            "packages/contracts/core-api/openapi.json",
+        ):
+            with self.subTest(path=path):
+                selection, _ = select_affected_commands(
+                    REPO, self.contract, self.policy, ["service"], [path], "W2-exit"
+                )
+                self.assertEqual("none", selection["fallback"])
+                self.assertIn("core-api-and-portable-contracts", selection["matchedRuleIds"])
+                self.assertIn("service:corpus", selection["selectedCommandIds"])
+
+        corpus, _ = select_affected_commands(
+            REPO, self.contract, self.policy, ["service"], ["tests/corpus/test_service.py"], "W2-exit"
+        )
+        self.assertEqual("none", corpus["fallback"])
+        self.assertIn("corpus-tests", corpus["matchedRuleIds"])
+        self.assertEqual(["foundation:quality", "service:corpus"], corpus["selectedCommandIds"])
+        launcher, _ = select_affected_commands(
+            REPO, self.contract, self.policy, ["service"], ["tools/corpus_test_check.py"], "W2-exit"
+        )
+        self.assertEqual("none", launcher["fallback"])
+        self.assertIn("corpus-tests", launcher["matchedRuleIds"])
+        self.assertIn("service:corpus", launcher["selectedCommandIds"])
+        for path in ("tests/service/test_import_preview_service.py", "docs/automation/verification-profiles.md"):
+            with self.subTest(unrelated=path):
+                selection, _ = select_affected_commands(
+                    REPO, self.contract, self.policy, ["service"], [path], "W2-exit"
+                )
+                self.assertEqual("none", selection["fallback"])
+                self.assertNotIn("service:corpus", selection["selectedCommandIds"])
+
+        with tempfile.TemporaryDirectory() as temporary:
+            inactive, skipped = select_affected_commands(
+                Path(temporary), self.contract, self.policy, ["service"], ["tests/corpus/test_service.py"], "W2-exit"
+            )
+        self.assertIn("service:corpus", [item["command"] for item in skipped])
+        self.assertNotIn("service:corpus", inactive["selectedCommandIds"])
+        self.assertNotIn("service:corpus", inactive["deferredCommandIds"])
 
     def test_unsafe_or_empty_changed_paths_and_gate_are_rejected(self) -> None:
         for paths in (
@@ -530,7 +624,7 @@ class VerificationRunnerTests(unittest.TestCase):
         self.assertEqual([], selection["deferredCommandIds"])
         self.assertEqual([], skipped)
         self.assertEqual(GATE_BOUND_PERFORMANCE, selection["gateBoundSelectedCommandIds"])
-        for command_id in ("service:reconciliation", "search:connectors", "documents:unit"):
+        for command_id in ("service:reconciliation", "service:corpus", "search:connectors", "documents:unit"):
             self.assertEqual(1, selection["selectedCommandIds"].count(command_id))
         self.assertEqual(before_contract, self.contract)
         self.assertEqual(before_bytes, (REPO / "verification-profiles.json").read_bytes())

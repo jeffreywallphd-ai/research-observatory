@@ -45,6 +45,17 @@ A matched rule that maps outside the requested profiles fails closed before any
 unknown or safety fallback and names the missing command coverage; fallback can
 never suppress a mapped security, migration, dependency, or threshold command.
 
+The service profile activates `service:corpus` when `tests/corpus/test_*.py`
+exists. Core API or portable-contract changes select that command in affected
+service verification. Changes confined to `tests/corpus/**` select the corpus
+suite and Python quality without pulling in unrelated service or packaging
+suites; a change to its launcher also selects the suite. The corpus command
+runs standard unittest discovery through
+`tools/corpus_test_check.py`, which sets the child process's import paths to
+this checkout's Core source and repository root and returns its actual exit
+status. It needs no ambient `PYTHONPATH`; its Windows DPAPI/SQLCipher case must
+execute on the required Windows x64 qualification platform.
+
 The policy authorizes `W1-exit` and `W2-exit` as affected-selection deferred owners;
 generic names, unconfigured Waves and human release gates such as `G2` are rejected
 by both the API and CLI. Use the owner for the task's Wave. These labels record
@@ -98,6 +109,8 @@ and cannot be narrowed with `--profile` or combined with affected mode. Disabled
 commands remain selected exactly once when active in either union. Optional
 commands activate through their existing paths/globs; inactive commands remain
 reported as such, not as executed proof.
+The W2 union includes the active `service:corpus` suite exactly once through its
+service profile.
 
 ```powershell
 python tools/verify.py --wave-exit W1 --selection-only --report artifacts/tmp/W1-wave-exit-selection.json
