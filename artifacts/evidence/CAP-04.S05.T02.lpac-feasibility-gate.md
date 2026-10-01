@@ -446,6 +446,145 @@ not a full hostile-connector or public-egress proof.
 | Base inventory / exact replacement inventory | `620d444c3a6067c08f4dbdfa5ca7c19268cd9ae4e41ccb602765ef4226c5ca4d` / `f521c927a52e273a204ad9f62eec0e5a7e0592a6b53d367d11e94cfbf5ea9e29` |
 | Runner / LPAC run log | `1d0bf09048adbdc6b0d3c8aff8924bbf8b3706ded5d27c3f8353cc911e6576f4` / `84e570a0c6f1802db8eda5360226abcaba84ee4b0d1725729251dec95b2f2950` |
 
+## R37 local-only network-startup discriminator
+
+R29e's native `directLoopback: denied` had grouped Winsock-startup failure
+with `connect` failure, so it could not establish which operation denied.
+A fresh native fixture separated `WSAStartup`, `connectAttempted`, connect
+outcome and local-listener acceptance. Its ordinary-user control initialized
+Winsock and connected to a disposable `127.0.0.1` listener, which accepted.
+Under a queried zero-capability LPAC token, `WSAStartup` returned 10107,
+`connectAttempted` was false and the listener did not accept. This confirms
+no loopback connection happened in this fixture, but **does not** prove a
+`connect` denial or public egress denial. No external address was contacted
+or host network setting changed. All 12 profile and six runtime DACLs were
+restored, post-restore integrity passed, and disposable profile/runtime roots
+were absent after cleanup. R29e's other no-write/read/secret observations are
+unaffected; its network result remains historically preserved with this
+correction.
+
+| R37 ignored input/output | SHA-256 |
+|---|---|
+| Native EXE / inventory | `21b5be1e0df5b14c6cc4c428b5dbd9fa784a9eb3237f857895a385420f266b1d` / `e41efae908c2545552c126a69dbff14e9780b87ff9f52cc3a5fe75908861fc3d` |
+| Runner / LPAC run log | `25fa4d7bf7615572bc60efbd4f02b59910e62e70df39a7e1f63dc77d63293697` / `0af7a76b7980f974bec7b9474efc8a04591b24a460dea15b9e712fa37ba23b49` |
+
+## R38 coherent source-built extension import matrix
+
+The same one-line CPython source variant produced manifest-free x64 builds of
+all nine `.pyd` modules in the diagnostic Python package. Pinned CPython
+external sources supplied bzip2, mpdecimal, OpenSSL, xz and zstd; zlib-ng was
+already pinned for the core. A fresh 60-file PyInstaller package included the
+immutable R34 core, all nine rebuilt extensions and the two dependency-named
+OpenSSL DLLs alongside the original package files. Exact inventory rehash
+passed. These local source-built binaries are unsigned diagnostics; the added
+OpenSSL DLLs have valid PSF Authenticode signatures. No production signing or
+installation was performed.
+
+| CPython-pinned ignored external source | Verified Git commit |
+|---|---|
+| `bzip2-1.0.8` | `05301997b2f9590f49c672cf3dfd3d3dfa7ad521` |
+| `mpdecimal-4.0.0` | `48316ec025c1ebe500854c332be0a12c640c7301` |
+| `openssl-bin-3.5.7` | `3217be5a2a7e20dbc5f5b5160ef21a9c84de7138` |
+| `xz-5.2.5` | `c6bc0c612605622aaef101a33a751f9de2ecc193` |
+| `zstd-1.5.7` | `eef946ae8cf1591c0e5cc5f43486210768647c2e` |
+
+An ordinary-user control imported all nine extensions. In a fresh LPAC run,
+seven imported: `_bz2`, `_decimal`, `_hashlib`, `_lzma`, `_zstd`, `select` and
+`unicodedata`. `_socket` failed at Winsock startup 10107, and `_ssl` failed
+transitively because it could not import `_socket`. Neither was a PE load-denied
+result. The worker made no socket, listener or network connection. Its framed
+token proved zero-capability LPAC/AAP denial; unrelated read, outside write,
+profile/temp writes and synthetic parent secret were denied. All 12 profile
+and 66 runtime DACLs were restored, post-restore integrity passed, and the
+disposable profile/runtime/sentinels were absent. This strengthens the
+manifest-free packaging candidate, but leaves connector execution, network
+egress, production signing and task qualification open.
+
+ADR-0028 specifies a signed runtime, while the current disposable probe builder
+and trusted Core sidecar build record exact hashes without a worker signing
+stage. The local Windows SDK has SignTool, but no release signing identity or
+credential hookup is selected in the repository. The R38 package contains
+unsigned source-built PE files and is not release-qualified. Detached Ed25519
+plugin-manifest signatures address publisher trust and do not supply Windows
+runtime code signing. This is a separate packaging/release gap, not a reason
+to weaken the LPAC or no-write boundary.
+
+| R38 ignored input/output | SHA-256 |
+|---|---|
+| Source worker / EXE / base library | `0457635b9f3f0cd43d0dc3314396efb5724dfdfab6557c1b3a854f354c4806d2` / `d91fc6f9528537233358f20a9664501da4a15e86ff5cdc3f2eac6bc0f63bab48` / `853017d7f3423c633ba20849010fb799684acb93cbc8aabf70f812a9470ac950` |
+| Exact 60-file package inventory / runner | `d3f2eafa39de3d9919db7ea0f6937280987884dd1d227202bb2d44367072ae18` / `7c63f124a13e830473a5db3b282d0ff284e13c9ee92a6db7007a689c31809465` |
+| LPAC run log | `a3c9fcbd29b6f010baac89fdc95fe959e5048f0fec306c0dbfa91c9dd0b2fb64` |
+
+## R39 local-only multi-API network diagnostic
+
+A new native fixture tried raw Winsock, WinHTTP with explicit no-proxy mode,
+and WinINet in direct/no-cache/no-cookie mode against only a disposable
+`127.0.0.1` listener. The ordinary-user controls each reached that listener.
+Under a verified zero-capability LPAC token, Winsock failed at `WSAStartup`
+10107 before `connect`; WinHTTP failed at `WinHttpOpen` 12004; WinINet failed
+at `InternetOpenW` 1008. The listener accepted zero LPAC connections. Thus
+three local API paths failed closed before transport in this fixture, but no
+LPAC `connect` or public-address send was attempted. The numeric errors do
+not, by themselves, identify the exact denied resource. No external address,
+proxy discovery or host network-setting change was used. All 12 profile and
+six runtime DACLs were restored; profile/runtime integrity and cleanup passed.
+
+| R39 ignored input/output | SHA-256 |
+|---|---|
+| Native source / EXE / inventory | `da8abe3da7668cacc9172e31f37f0c3be0fd4b47165048dbc851b5a0e58e3a87` / `6fcb073c95af3d6fedbc307cbb59f527ee1a7cc4d882badda167ea5d148a292b` / `059567e752d961a727d661f955399d6cdf4ce8851b2be07ebe7a9c58ff8274a2` |
+| Runner / LPAC run log | `1b038d2e7899b563135c4304d9913035f8450fa27a6c9ae9240a971174812939` / `782bbb5bbdd23b4e360e1da3e3966d7212694230599b50e418549ae989e1f386` |
+
+## R40 no-transport network-isolation policy query
+
+A fresh native LPAC fixture called Microsoft's
+[`NetworkIsolationDiagnoseConnectFailure`](https://learn.microsoft.com/en-us/windows/win32/api/networkisolation/nf-networkisolation-networkisolationdiagnoseconnectfailure)
+and detailed variant for numeric TEST-NET-2/public and RFC1918/private
+addresses. It made no DNS, socket or connection call. The ordinary-user
+control returned raw success with no error type. Under verified zero-capability
+LPAC, the basic query still returned raw success, while the detailed query
+returned raw status 14 and error type 0. The API therefore did not identify a
+missing capability or provide a usable public-egress denial witness. The
+result is **inconclusive**, preserved rather than promoted to a pass. All 12
+profile and six runtime DACLs were restored; integrity and disposable cleanup
+passed.
+
+| R40 ignored input/output | SHA-256 |
+|---|---|
+| Native source / EXE / inventory | `fe0e9130a6f7782c0b85df3f8e84474e62695bffc46317de4bb500eb0cb6e56b` / `9a18eef2bc5a6b7ac8392d0924605e0b4c1465716f44aa28d84f6313dfe5d69c` / `4c4c64f2b0ed2c80e3bf2983f022055c738122ba5389164db6c3df7727829a07` |
+| Runner / LPAC run log | `e9d191c991547ea6f72ee17f3d9bea1ecc9b492bccc84280fbf4f49499174fa7` / `3a48e077ace13f1f49dff7442e9f70d5f4209e1c8cd33a5ab827c61eb714c455` |
+
+## R41 offline test-signing and exact signed-byte LPAC probe
+
+A bounded offline signing experiment copied the R38 60-file package, generated
+a disposable self-signed code-signing test identity without installing it in a
+Windows certificate store, and used local SignTool with no timestamp service
+to sign exactly the worker EXE, source-built Python DLL and nine `.pyd` files.
+The post-sign 60-file inventory matched every staged file; only the eleven
+intended PE hashes changed. The Python runtime binaries remained x64 and
+manifest-free with the same imports/exports. Authenticode showed the matching
+test signer but an untrusted root, as expected; a one-byte tamper caused a
+distinct signature hash mismatch. The private PFX was overwritten and removed
+from the ignored fixture, and no matching certificate was found in the checked
+CurrentUser/LocalMachine My, Root or TrustedPeople stores. Persistence of any
+orphaned provider key container was not independently checked. The test signer
+is **not** a production trust identity.
+
+One fresh LPAC probe used those exact signed bytes. Its ordinary-user control
+imported all nine extensions; LPAC imported the same seven as R38, while
+`_socket` failed at Winsock startup 10107 and `_ssl` failed transitively.
+Framed protocol, token and the focused no-write/read/secret probes passed;
+all 12 profile and 66 runtime DACLs were restored, post-restore integrity
+passed, and disposable roots/sentinels were absent. The signed-byte result
+shows the offline signature did not change this diagnostic LPAC behavior.
+It does not qualify a production signer, connector execution or public egress.
+
+| R41 ignored input/output | SHA-256 |
+|---|---|
+| Signing staging script / SignTool driver | `a3cfe17b85c4c803161f89b1eaeddcd2c253904f04fff6adb2632e3c27835326` / `c9af1e4af33b4429fd3ffbcefb390b1c05d87ccfb5d77e3748152d15ba33c331` |
+| Signed package inventory / sanitized signing results | `78c269289cf5117acaf253b5cbc56011e977430db88ed6727fd5ea4a0336a357` / `7d372fda3bbc2c136e8f9d3840b54190d27876970bb1c3dbe8ea515bfee9cb8f` |
+| Tamper-control result / projected LPAC inventory | `5f473220ff8f1781473f909d6ae947f86d5df8eef13e72f0ced260308fffe987` / `7fdafdf69131ee075c7bddf158cd46e02cebe17f7ccc5ac88c54a769a25ad008` |
+| LPAC wrapper / run log | `93b30cfefbe0fd3a81b844b6cc0051f22e3e54657c2bf43a2272505c7beff1a4` / `1a8a231428e6964403630fb7eeba896bbbcf62f8fba7e7280825c618dddae220` |
+
 ### Host-authorized resource trace if the source-build route fails
 
 The exact resource behind the Python DLL's LPAC `LoadLibraryW` error 5 is
@@ -498,14 +637,20 @@ and the task has a complete candidate.
 ## Decision and exact resume condition
 
 CAP-04.S05.T02 cannot be submitted as complete. R29e proves the specified
-test-owned native LPAC no-write and direct-denial matrix. The original Python
+test-owned native LPAC no-write/read/secret matrix; R37 clarifies that its
+loopback result stopped before `connect`. The original Python
 connector image fails before user code; R30 narrows that loader stage. R31
 made a manifest-free source build a credible test candidate; R34 proved its
 core DLL loads and reaches Python imports, while R35 proved a matching
-`_socket.pyd` loads before Winsock initialization fails. R32 and R33 preserve
+`_socket.pyd` loads before Winsock initialization fails. R36 proved narrow
+packaged-Python read/write/secret denials; R38 imported seven rebuilt
+extensions, with `_socket`/`_ssl` still failing during initialization. R32 and R33 preserve
 the adverse dependency-only and strict-search results. No packaged Python
 connector has completed the hostile matrix, and no run identifies the exact
-original manifest resource denial or proves direct public egress denial. The
+original manifest resource denial or proves a direct `connect`/public egress
+denial. R39 adds three local API startup denials, R40's policy query is
+inconclusive, and R41 confirms the same import behavior on test-signed bytes
+without satisfying release signing. The
 native fixture executes no connector package and does not reach brokered calls.
 The project grant, trust, broker, migration, and recovery code on the branch
 remains partial work; none substitutes for the real worker proof.
