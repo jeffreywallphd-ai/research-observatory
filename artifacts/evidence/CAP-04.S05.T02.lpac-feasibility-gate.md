@@ -837,6 +837,57 @@ sets and cleanup, and agreed no public-egress criterion was met.
 | Runner / reused one-file inventory / native EXE | `006e6e850d732e317f8b3b66e730e9ca7d2e57c313f18e3c251de7ec7f6b1eea` / `4c4c64f2b0ed2c80e3bf2983f022055c738122ba5389164db6c3df7727829a07` / `9a18eef2bc5a6b7ac8392d0924605e0b4c1465716f44aa28d84f6313dfe5d69c` |
 | Final no-transport run log | `ab3e77a1d59bb7b826dd89f22bbe979d9ea82e437fc96b391f25e9c3b558c7c6` |
 
+## R48 local-only Winsock socket-creation discriminator
+
+A fixed native image attempted only `127.0.0.1` against a disposable listener.
+The ordinary-user control initialized Winsock, created a socket, connected,
+and produced exactly one accepted listener connection. Verified zero-capability
+LPAC stopped at `WSAStartup` 10107 with no socket or `connect`. A separate
+**test-only** LPAC carrying `registryRead` alone initialized Winsock but socket
+creation returned 10013 (`WSAEACCES`) before `connect`; its listener had zero
+receipts. Token capability sets and All Application Packages opt-out were
+checked before resume. This is real-principal socket-creation denial under a
+more permissive diagnostic token, plus fail-closed startup under the exact
+product zero-capability token. It is **not** a destination-specific loopback
+`connect` denial or a public-route observation. There was no DNS, public
+address or external traffic and no product-token change. Both LPAC cases
+restored eight profile and four runtime DACLs with exact owner/DACL SDDL and
+content matches, deleted profiles and runtime roots.
+
+| R48 ignored input/output | SHA-256 |
+|---|---|
+| Runner / one-file inventory / native EXE | `cb314741ac4d89b19170cc5f00cdb9b71d67177abe9b78760b3b2a4548516145` / `e41efae908c2545552c126a69dbff14e9780b87ff9f52cc3a5fe75908861fc3d` / `21b5be1e0df5b14c6cc4c428b5dbd9fa784a9eb3237f857895a385420f266b1d` |
+| Final local-only run log | `7cc19a798fdc0474301885443b95eeecc511fea8d472d393aad7a9661baee76c` |
+
+## R49 no-transport socket-capability positive control
+
+The same one-file test-owned native EXE called only `WSAStartup`,
+`socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)`, `closesocket` on success and
+`WSACleanup`. It never called `connect`, listen, send, receive or DNS. The
+ordinary control created and closed a socket. Verified zero-capability LPAC
+again stopped at `WSAStartup` 10107 before socket creation. A separate
+test-only `registryRead` LPAC initialized Winsock but `socket` returned 10013
+(`WSAEACCES`). Adding `internetClient` **only to that diagnostic token** made
+socket creation and close succeed. This is a matched real-principal positive
+control showing network capability affected socket creation after the
+registry-dependent startup prerequisite on this host. It strengthens the
+fail-closed direct-network feasibility case for the exact zero-capability
+worker; it does not claim a destination-specific `connect` or public packet.
+All token SID/count and LPAC opt-out checks passed. Each of the three
+disposable LPAC arms restored eight profile and four runtime DACLs, matched
+exact owner/DACL SDDL and content snapshots, and removed profiles/runtimes.
+No product capability or host network setting changed. An independent
+read-only security audit matched the exact source/EXE/inventory/log hashes,
+token sets and cleanup, and agreed this supports **reopening T02 for
+implementation only** under ADR-0028's fail-closed direct-network boundary.
+It did not treat this as a public-route verdict, task acceptance or release
+qualification.
+
+| R49 ignored input/output | SHA-256 |
+|---|---|
+| Native source / EXE / inventory / runner | `59cc49efde9aa7debb83b4b2d2e441005c1952e32839a01b4061a270c58e410e` / `a2097794aa92959210d509ae50967c6762601526bfa187f6ad66c9c8a4f607fb` / `7acfa09eb43180dfb3fd786ffd28accc6d6191a36e66af22ead31423762fdc8c` / `dad915810706d496133eaf72d3b6060b01cc9674b58c90d22da665c82ec1ec64` |
+| Final no-transport run log | `3fa6a00aa346532060c819f6d5a4d325c31ba0a2f986c173c184a6ef3ec8e40e` |
+
 ### Host-authorized resource trace if the source-build route fails
 
 The exact resource behind the Python DLL's LPAC `LoadLibraryW` error 5 is
@@ -913,7 +964,13 @@ signing. R45 shows `internetClient` alone does not repair LPAC
 `WSAStartup`; R46 shows test-only `registryRead` alone does, strongly
 localizing the startup prerequisite without authorizing it for the product or
 proving public transport denial. R47's registry-capability policy-query
-controls still gave no target-specific public-route verdict. R43 corrected the
+controls still gave no target-specific public-route verdict. R48 observed
+socket-creation denial 10013 in test-only `registryRead` LPAC after successful
+Winsock initialization, while the zero-capability LPAC stopped earlier; it
+did not observe a public address or destination-specific `connect`. R49
+confirmed the same test-only `registryRead` socket failure becomes a successful
+socket creation only when `internetClient` is added in a positive-control
+token, without network traffic. R43 corrected the
 checked-in probe's network-stage reporting but retained its real profile/temp
 write failure. The product worker has not reached brokered calls or durable
 dispatch, and the test-harness audits do not qualify product audit integration.
@@ -933,3 +990,28 @@ required no-write and no-egress invariants without weaker isolation or writable
 scratch, use the append-only ADR/scope amendment
 route and explicit human approval before changing that boundary. Do not fall
 back to ordinary AppContainer or same-user execution.
+
+### R49 feasibility disposition for task continuation
+
+R42c2 established connector-originated denial and post-run integrity for the
+seeded no-write matrix under the source-built zero-capability LPAC worker.
+R46/R49 separated the registry-dependent Winsock initialization prerequisite
+from the network capability: the zero-capability worker fails closed before
+socket creation; a test-only `registryRead` LPAC reaches `socket` but gets
+10013; adding `internetClient` **only in the positive control** permits socket
+creation. R39 also observed local-only WinHTTP/WinINet startup denials. An
+independent security reviewer read ADR-0028's direct-network-denial criterion
+as permitting these real OS pre-transport denials for **early feasibility and
+taskctl reopening**, without requiring a public packet or destination-specific
+`connect` at this stage. That disposition does not amend ADR-0028, grant
+`registryRead`/`internetClient` to product code, or qualify the final task.
+
+On reopening, implement and verify the **exact product** signed worker and
+private broker path with zero network/registry capabilities and the R29e/R42c2
+no-write controls. Preserve the remaining public-route observation limit in
+the task security review; do not convert it into a claim of a tested public
+`connect`. If final independent review concludes the approved direct-internet
+criterion needs a destination-specific observation rather than a proven
+pre-transport denial, stop submission and use the decision/amendment route
+before changing any verification obligation. Product broker/audit, resource
+limits, cancellation and restart/recovery remain entirely open.
