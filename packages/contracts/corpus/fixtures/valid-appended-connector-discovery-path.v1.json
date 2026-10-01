@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "contractVersion": "1.0.0",
+  "documentType": "research-observatory-discovery-path",
+  "pathId": "01a0f503-66c0-7b21-8a12-f873a2cbad11",
+  "projectId": "02e2e404-5b49-438e-9b59-ed562626b658",
+  "itemId": "01a0f503-65f9-763e-af00-aacc9aca6494",
+  "kind": "connector-record",
+  "sourceRevisionId": "01a0f503-66c1-7a65-b94c-05f6417ed142",
+  "direction": "source-to-corpus-item",
+  "occurredAt": "2026-09-30T20:15:00.000Z",
+  "predecessorItemRevisionId": "01a0f503-66b0-731c-8e38-3266c225a178",
+  "contextId": "01a0f503-66c2-75a4-a132-7338664dac88",
+  "contextRevisionId": "01a0f503-66c1-7a65-b94c-05f6417ed142",
+  "ordinal": 0,
+  "recordKeySha256": null,
+  "queryRevisionId": "01a0f503-66c2-75a4-a132-7338664dac88",
+  "citingWorkRevisionId": null,
+  "recommendationRevisionId": null,
+  "manualDecisionRevisionId": null
+}

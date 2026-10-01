@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import sqlite3
 import tempfile
 import unittest
 from contextlib import closing
@@ -290,6 +291,51 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                             report_member["paths"][0]["reportInspectStatus"],
                         ),
                     )
+
+                    def source_report_rows(connection):
+                        source = tuple(
+                            tuple(row)
+                            for row in connection.execute(
+                                "SELECT * FROM import_source_records WHERE project_id=? AND revision_id=?",
+                                (project_id, member.source_record_revision_id),
+                            ).fetchall()
+                        )
+                        discovery = tuple(
+                            tuple(row)
+                            for row in connection.execute(
+                                "SELECT * FROM corpus_discovery_paths WHERE project_id=? AND source_revision_id=?",
+                                (project_id, member.source_record_revision_id),
+                            ).fetchall()
+                        )
+                        sealed = tuple(
+                            tuple(
+                                tuple(row)
+                                for row in connection.execute(
+                                    f"SELECT * FROM {table} WHERE project_id=? AND snapshot_id=?",
+                                    (project_id, report["snapshotId"]),
+                                ).fetchall()
+                            )
+                            for table in (
+                                "corpus_report_snapshots",
+                                "corpus_report_members",
+                                "corpus_report_sources",
+                                "corpus_report_paths",
+                            )
+                        )
+                        return (source, discovery, *sealed)
+
+                    with closing(
+                        open_canonical_database(Path(root) / "state/project.sqlite3", expected_project_id=project_id)
+                    ) as connection:
+                        source_report_before_delete = source_report_rows(connection)
+                        self.assertEqual((1,) * 6, tuple(len(rows) for rows in source_report_before_delete))
+                        with self.assertRaisesRegex(sqlite3.DatabaseError, "protected database operation failed"):
+                            connection.execute(
+                                "DELETE FROM import_source_records WHERE project_id=? AND revision_id=?",
+                                (project_id, member.source_record_revision_id),
+                            )
+                        self.assertEqual(source_report_before_delete, source_report_rows(connection))
+
                     reconsidered = runtime.corpus.decide(
                         root,
                         item["itemId"],
@@ -383,6 +429,7 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                     with closing(
                         open_canonical_database(Path(root) / "state/project.sqlite3", expected_project_id=project_id)
                     ) as connection:
+                        self.assertEqual(source_report_before_delete, source_report_rows(connection))
                         sealed_reports = tuple(
                             tuple(row)
                             for row in connection.execute(

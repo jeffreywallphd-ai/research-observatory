@@ -52,6 +52,45 @@ def membership_handoff(item: dict, path: dict, decision: dict) -> dict:
     }
 
 
+def appended_connector_discovery_handoff(
+    item: dict,
+    path: dict,
+    *,
+    observed_source_revision_id: str,
+    accepted_query_revision_id: str,
+) -> dict:
+    """Prepare a public path witness; Core must authorize any actual append."""
+    validate("corpus", "corpus-membership.schema.json", item)
+    validate("corpus", "corpus-membership.schema.json", path)
+    if not (
+        path["kind"] == "connector-record"
+        and path["direction"] == "source-to-corpus-item"
+        and path["projectId"] == item["projectId"]
+        and path["itemId"] == item["itemId"]
+        and path["predecessorItemRevisionId"] == item["revisionId"]
+        and path["pathId"] not in item["discoveryPathIds"]
+        and path["pathId"] not in (item["itemId"], item["revisionId"], path["sourceRevisionId"])
+        and path["sourceRevisionId"] == path["contextRevisionId"] == observed_source_revision_id
+        and path["contextId"] == path["queryRevisionId"] == accepted_query_revision_id
+        and path["ordinal"] is not None
+        and path["recordKeySha256"] is None
+        and all(
+            path[key] is None
+            for key in ("citingWorkRevisionId", "recommendationRevisionId", "manualDecisionRevisionId")
+        )
+    ):
+        raise ValueError("unbound-appended-discovery-path")
+    return {
+        "projectId": item["projectId"],
+        "itemId": item["itemId"],
+        "priorItemRevisionId": item["revisionId"],
+        "pathId": path["pathId"],
+        "sourceRevisionId": path["sourceRevisionId"],
+        "queryRevisionId": path["queryRevisionId"],
+        "requiresCurrentCoreAuthorization": True,
+    }
+
+
 def rights_handoff(policy: dict, decision: dict) -> dict:
     for document in (policy, decision):
         validate("rights", "rights-policy.schema.json", document)
@@ -151,6 +190,50 @@ class CorpusPublicHandoffTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(ValueError, "unbound-membership-history"):
             membership_handoff(item, path, decision | {"previousRevisionId": path["pathId"]})
+
+    def test_appended_connector_path_preserves_existing_item_and_requires_core_authorization(self) -> None:
+        item = fixture("corpus", "valid-corpus-item-revision.v1.json")
+        path = fixture("corpus", "valid-appended-connector-discovery-path.v1.json")
+        prior_item = copy.deepcopy(item)
+        # Synthetic accepted observation identities are independent of the path under test.
+        source_revision_id = "01a0f503-66c1-7a65-b94c-05f6417ed142"
+        query_revision_id = "01a0f503-66c2-75a4-a132-7338664dac88"
+
+        def handoff(candidate: dict) -> dict:
+            return appended_connector_discovery_handoff(
+                item,
+                candidate,
+                observed_source_revision_id=source_revision_id,
+                accepted_query_revision_id=query_revision_id,
+            )
+
+        witness = handoff(path)
+        self.assertEqual(
+            (item["projectId"], item["itemId"], item["revisionId"], path["pathId"]),
+            (witness["projectId"], witness["itemId"], witness["priorItemRevisionId"], witness["pathId"]),
+        )
+        self.assertEqual(
+            (source_revision_id, query_revision_id), (witness["sourceRevisionId"], witness["queryRevisionId"])
+        )
+        self.assertTrue(witness["requiresCurrentCoreAuthorization"])
+        self.assertEqual(prior_item, item)
+        self.assertEqual("candidate", item["membership"])
+        self.assertNotIn(path["pathId"], item["discoveryPathIds"])
+
+        substitutions = {
+            "project": {"projectId": query_revision_id},
+            "item": {"itemId": item["workId"]},
+            "predecessor": {"predecessorItemRevisionId": item["workRevisionId"]},
+            "reused path": {"pathId": item["discoveryPathIds"][0]},
+            "source revision": {
+                "sourceRevisionId": item["workRevisionId"],
+                "contextRevisionId": item["workRevisionId"],
+            },
+            "query revision": {"contextId": item["workRevisionId"], "queryRevisionId": item["workRevisionId"]},
+        }
+        for name, change in substitutions.items():
+            with self.subTest(substitution=name), self.assertRaisesRegex(ValueError, "unbound-appended-discovery-path"):
+                handoff(path | change)
 
     def test_cap05_receives_exact_source_copy_action_and_historical_rights(self) -> None:
         policy = fixture("rights", "valid-policy.v1.json")
