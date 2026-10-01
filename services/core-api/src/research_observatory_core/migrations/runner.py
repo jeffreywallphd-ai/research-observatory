@@ -41,6 +41,7 @@ from research_observatory_core.migrations.versions import (
     v0018_rights_policy,
     v0019_corpus_reports,
     v0020_corpus_source_projection,
+    v0021_plugin_grants,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -220,6 +221,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.CORPUS_DATABASE_SCHEMA_VERSION,
             storage.RIGHTS_DATABASE_SCHEMA_VERSION,
             storage.CORPUS_REPORT_DATABASE_SCHEMA_VERSION,
+            storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -241,6 +243,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0018_rights_policy.revision,
             v0019_corpus_reports.revision,
             v0020_corpus_source_projection.revision,
+            v0021_plugin_grants.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -412,6 +415,10 @@ _SUPPORTED_PROFILES = {
     storage.CORPUS_REPORT_DATABASE_SCHEMA_VERSION: (
         storage.CORPUS_REPORT_PROFILE_SHA256,
         storage.CORPUS_REPORT_SCHEMA_SHA256,
+    ),
+    storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
+        storage.PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256,
+        storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -675,6 +682,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             19,
             20,
             storage.CORPUS_REPORT_SCHEMA_SHA256,
+            storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+        ),
+        (
+            v0021_plugin_grants.revision,
+            20,
+            21,
+            storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -803,9 +817,14 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0019_corpus_reports.TARGET_PROFILE_SHA256 == storage.CORPUS_REPORT_PROFILE_SHA256
         and v0020_corpus_source_projection.down_revision == v0019_corpus_reports.revision
         and v0020_corpus_source_projection.source_schema_version == storage.CORPUS_REPORT_DATABASE_SCHEMA_VERSION
-        and v0020_corpus_source_projection.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0020_corpus_source_projection.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0020_corpus_source_projection.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0020_corpus_source_projection.target_schema_version == storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0020_corpus_source_projection.TARGET_SCHEMA_SHA256 == storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256
+        and v0020_corpus_source_projection.TARGET_PROFILE_SHA256 == storage.PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256
+        and v0021_plugin_grants.down_revision == v0020_corpus_source_projection.revision
+        and v0021_plugin_grants.source_schema_version == storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0021_plugin_grants.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0021_plugin_grants.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0021_plugin_grants.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -829,6 +848,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         v0018_rights_policy,
         v0019_corpus_reports,
         v0020_corpus_source_projection,
+        v0021_plugin_grants,
     )
     for index, migration in enumerate(chain):
         if source_version == migration.source_schema_version:
@@ -1800,11 +1820,27 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.CORPUS_REPORT_SCHEMA_SHA256,
+                "target_schema_sha256": storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                "targetProfileSha256": storage.PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256,
+                "projectionAuthority": storage.CORPUS_SOURCE_PROJECTION_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V20_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
+    if source_schema_version <= storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION:
+        v0021_plugin_grants.apply(
+            operations,
+            {
+                "migration_id": v0021_plugin_grants.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
                 "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
-                "projectionAuthority": storage.CORPUS_SOURCE_PROJECTION_DDL,
-                "schemaMetadataDdl": storage.SCHEMA_METADATA_V20_DDL,
+                "pluginGrantAuthority": storage.PLUGIN_GRANT_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V21_DDL,
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )

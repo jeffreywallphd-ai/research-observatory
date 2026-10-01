@@ -2817,6 +2817,7 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
             ConnectorRequest,
             ConnectorResultPage,
         )
+        from research_observatory_core.connectors.plugin_broker import PluginBrokerCall, PluginRepositoryMetadata
         from research_observatory_core.connectors.plugin_manifest import (
             PluginAuthorizationProvenance,
             PluginInvocationPlan,
@@ -2902,6 +2903,8 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
                 ("connector-plugin-invocation-request.schema.json", PluginInvocationRequest),
                 ("connector-plugin-invocation-plan.schema.json", PluginInvocationPlan),
                 ("connector-plugin-authorization-provenance.schema.json", PluginAuthorizationProvenance),
+                ("connector-plugin-broker-call.schema.json", PluginBrokerCall),
+                ("connector-plugin-repository-metadata.schema.json", PluginRepositoryMetadata),
             )
         }
         workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)

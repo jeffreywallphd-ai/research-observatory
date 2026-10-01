@@ -1,0 +1,15 @@
+[package]
+name = "research-observatory-lpac-probe"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "research-observatory-plugin-probe-x86_64-pc-windows-msvc"
+path = "src/main.rs"
+
+[dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"

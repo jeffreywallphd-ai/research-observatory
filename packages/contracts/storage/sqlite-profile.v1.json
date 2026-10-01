@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 20,
+  "databaseSchemaVersion": 21,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6",
+  "schemaFingerprintSha256": "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -118,7 +118,8 @@
     "corpus_report_snapshots",
     "corpus_report_members",
     "corpus_report_paths",
-    "corpus_report_sources"
+    "corpus_report_sources",
+    "plugin_grant_events"
   ],
   "mutableStateTables": [
     "object_records",
@@ -254,6 +255,7 @@
     "corpus_report_sources",
     "corpus_source_item_heads",
     "corpus_source_totals",
-    "corpus_source_overlap_totals"
+    "corpus_source_overlap_totals",
+    "plugin_grant_events"
   ]
 }

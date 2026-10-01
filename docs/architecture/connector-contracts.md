@@ -243,3 +243,92 @@ obtain a secret, authorize a scientific query or persist consent. CAP-04.S05.T02
 owns durable enablement, dispatch through an LPAC worker and narrow broker,
 current policy/rights rechecks, denial/audit and restart qualification. A caller
 must never accept a plugin-supplied grant or plan as Core authority.
+
+## Plugin network broker — CAP-04.S05.T02
+
+Implementation status: this is a tested, unconnected Core component while
+`CAP-04.S05.T02` is blocked on the packaged LPAC/no-plaintext-write boundary.
+No production caller currently binds it to a workflow job, worker IPC, current
+grant, or durable audit. The required runtime composition described below is
+not yet implemented or qualified.
+Live composition must also recheck current publisher trust before each broker
+call, or cancel every affected worker immediately on trust revocation; a grant
+check alone would leave an already-running worker with stale publisher authority.
+
+`connectors/plugin_broker.py` accepts only a Core-owned plan and the strict
+`PluginBrokerCall` operation parameters. Its generated JSON Schema is the
+cross-process call shape; it has no arbitrary URL, HTTP method, header, body,
+filesystem path or secret field. The schema fixes field types and bounds; the
+Core model additionally enforces operation-specific combinations. An IPC reader
+must enforce ADR-0028 framing/job binding before validating this call and must
+not treat a worker-supplied plan as authority.
+
+Before each request, Core loads the authoritative invocation request by its
+job-bound identity and re-derives authorization from that request, the verified
+package and the **current** project grant. It compares the entire plan, then
+invokes the required current project/intent/rights policy
+callback with the concrete scientific parameters. It repeats those checks after
+rate waiting and before any optional Core-side scoped secret lease. No callback,
+stale grant, unauthorized scope or changed operation denies. Broker instances
+must share one Core-owned `PluginBrokerRates` instance so the
+one-request-per-second and single-in-flight budget cannot be reset by creating
+another broker. Before a secret lease, a separate Core-owned scope binding must
+match the destination's exact HTTPS scheme, host and port; merely signing two
+destinations does not make a credential valid at both.
+
+Construction also requires a synchronous Core-bound denial-audit callback that durably
+records a content-free reason code against the authoritative job. If that audit
+fails or returns an awaitable, the broker surfaces `audit-unavailable` and does not turn the call into
+success. Frame-level denials occur before this broker and require audit in the
+LPAC runtime wrapper.
+
+The broker expands only signed HTTPS scheme/host/port/path templates and derives
+fixed query keys from the operation. It makes GET requests only, never follows
+redirects, checks every DNS answer for public routability, and dials the checked
+numeric address while retaining the signed hostname as the TLS identity. The
+wire target is capped after percent encoding, before transport construction.
+The request has normal TLS validation, no environment proxy, and a 30-second
+deadline. Responses are limited to 10 MiB on wire and after decompression;
+error bodies and wire metadata are never returned. A scoped credential stays
+in Core and is injected as an Authorization header only for the exact request;
+echoes in successful JSON are sanitized before the bounded body is returned.
+The broker response is not an accepted source record or a rights decision.
+
+`repository-metadata` is restricted further to the generated
+`connector-plugin-repository-metadata.schema.json` public assertion: exact
+requested repository ID, bounded display name and optional bounded description.
+Unknown fields and a changed repository ID fail. It carries no arbitrary link,
+download instruction, credential or source-rights grant. The worker and Core
+publication path still need their separate output/provenance validation.
+
+## Local plugin trust and project grants — CAP-04.S05.T02
+
+Implementation status: the persistence and authorization components below are
+partial task groundwork. No production native/UI caller authenticates the
+researcher's trust and project-permission actions or dispatches a plugin through
+the LPAC worker. These components do not authorize plugin execution on their own.
+
+`connectors/plugin_trust.py` stores local publisher-key decisions in the existing
+profile-scoped `SIGNING_TRUST` credential port. An authenticated human action
+binds the exact key ID and public-key fingerprint. Immutable, chained events and
+a compare-and-swap head retain trust, revoke and explicit post-revocation key
+rotation history. An unknown, revoked, corrupt, unavailable or interrupted trust
+record fails closed. Package-provided key material cannot add local trust.
+Removing local trust stops authorization for that publisher across every project
+without rewriting historical project grants.
+
+`plugin_grant_repository.py` stores exact, project-scoped enable/revoke decisions
+and content-free denials in protected SQLite v21, bound to immutable provenance
+events. A grant pins package and manifest digests, version, publisher, permissions,
+destinations, the reviewed operations/data classes/credential scopes, and the
+local trust key fingerprint and revision. The same plugin ID cannot switch publisher within a
+project's grant history; a revoked or superseded action replay cannot reactivate
+historical permission. Re-signing an identical package after key rotation, or
+retrusting a revoked key, requires a new project decision. `PluginGrantService.enable` verifies signed bytes against
+current local trust before persisting an exact researcher confirmation.
+`PluginGrantService.current_authorization` repeats signature/file verification,
+active trust and current grant lookup on every dispatch before returning a Core
+plan. Its request must come from the existing authoritative workflow job; the
+broker separately rechecks current project/intent/rights policy. The native/UI
+caller owns actor authentication and the two distinct visible decisions: local
+publisher trust and exact per-project permission.

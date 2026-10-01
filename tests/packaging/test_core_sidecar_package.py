@@ -64,6 +64,10 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.connectors.providers",
                     "research_observatory_core.connectors.settings",
                     "research_observatory_core.connectors.inspection",
+                    "research_observatory_core.connectors.plugin_broker",
+                    "research_observatory_core.connectors.plugin_grants",
+                    "research_observatory_core.connectors.plugin_manifest",
+                    "research_observatory_core.connectors.plugin_trust",
                     "research_observatory_core.connectors.transport",
                     "research_observatory_core.connectors.workflow",
                     "research_observatory_core.ports.connector_runtime",
@@ -89,6 +93,8 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.migrations.versions.v0013_import_commits",
                     "research_observatory_core.migrations.versions.v0019_corpus_reports",
                     "research_observatory_core.migrations.versions.v0020_corpus_source_projection",
+                    "research_observatory_core.migrations.versions.v0021_plugin_grants",
+                    "research_observatory_core.plugin_grant_repository",
                     "research_observatory_core.import_preview_repository",
                     "research_observatory_core.import_commit_repository",
                     "research_observatory_core.import_draft_repository",
@@ -125,6 +131,10 @@ class CoreSidecarPackageTests(unittest.TestCase):
             "research_observatory_core.corpus_source_projection",
             "research_observatory_core.migrations.versions.v0019_corpus_reports",
             "research_observatory_core.migrations.versions.v0020_corpus_source_projection",
+            "research_observatory_core.migrations.versions.v0021_plugin_grants",
+            "research_observatory_core.plugin_grant_repository",
+            "research_observatory_core.connectors.plugin_broker",
+            "research_observatory_core.connectors.plugin_trust",
         ):
             self.assertIn(module, contract["requiredModules"])
         self.assertIn("research_observatory_core.dependency_impacts", contract["requiredModules"])

@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 20
+DATABASE_SCHEMA_VERSION = 21
+PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 20
 CORPUS_REPORT_DATABASE_SCHEMA_VERSION = 19
 RIGHTS_DATABASE_SCHEMA_VERSION = 18
 CORPUS_DATABASE_SCHEMA_VERSION = 17
@@ -139,6 +140,7 @@ CORPUS_SOURCE_PROJECTION_TABLES = (
     "corpus_source_totals",
     "corpus_source_overlap_totals",
 )
+PLUGIN_GRANT_TABLES = ("plugin_grant_events",)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -201,6 +203,7 @@ EXPECTED_TABLES = (
     "rights_use_decisions",
     *CORPUS_REPORT_TABLES,
     *CORPUS_SOURCE_PROJECTION_TABLES,
+    *PLUGIN_GRANT_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -256,6 +259,7 @@ IMMUTABLE_ROW_TABLES = (
     "rights_legacy_output_rechecks",
     "rights_use_decisions",
     *CORPUS_REPORT_TABLES,
+    *PLUGIN_GRANT_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -326,6 +330,8 @@ EXPECTED_TRIGGERS = tuple(
             "corpus_report_member_binding",
             "corpus_report_path_binding",
             "corpus_report_source_binding",
+            "plugin_grant_revision_binding",
+            "plugin_grant_event_binding",
         ]
     )
 )
@@ -389,6 +395,7 @@ EXPECTED_INDEXES = (
     "corpus_discovery_paths_source",
     "corpus_discovery_paths_search_run",
     "corpus_report_snapshots_project_time",
+    "plugin_grant_events_current",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -415,7 +422,8 @@ WORK_VERSION_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f
 CORPUS_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
 RIGHTS_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
 CORPUS_REPORT_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
-EXPECTED_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
+PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
+EXPECTED_SCHEMA_SHA256 = "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -483,7 +491,8 @@ WORK_VERSION_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172d
 CORPUS_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
 RIGHTS_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149cbdfb4ed30"
 CORPUS_REPORT_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416911a2f805db4a50f"
-EXPECTED_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4c3639678c26860fc317e1e11515"
+PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4c3639678c26860fc317e1e11515"
+EXPECTED_PROFILE_SHA256 = "74ed7818d261958b0039aef90c00b42ed5f97b3558cc61818fcca93a862a9822"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3550,6 +3559,7 @@ SCHEMA_METADATA_V17_DDL = SCHEMA_METADATA_V16_DDL.replace("schema_version = 16",
 SCHEMA_METADATA_V18_DDL = SCHEMA_METADATA_V17_DDL.replace("schema_version = 17", "schema_version = 18")
 SCHEMA_METADATA_V19_DDL = SCHEMA_METADATA_V18_DDL.replace("schema_version = 18", "schema_version = 19")
 SCHEMA_METADATA_V20_DDL = SCHEMA_METADATA_V19_DDL.replace("schema_version = 19", "schema_version = 20")
+SCHEMA_METADATA_V21_DDL = SCHEMA_METADATA_V20_DDL.replace("schema_version = 20", "schema_version = 21")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -4851,8 +4861,148 @@ CORPUS_SOURCE_PROJECTION_DDL = (
 )
 
 
+PLUGIN_GRANT_DDL = (
+    f"""
+        CREATE TABLE plugin_grant_events (
+            audit_sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("event_id", "7")}),
+            project_id TEXT NOT NULL,
+            plugin_id TEXT NOT NULL CHECK (
+                length(plugin_id) BETWEEN 1 AND 121
+                AND plugin_id = lower(plugin_id)
+                AND substr(plugin_id,1,1) GLOB '[a-z]'
+                AND plugin_id NOT GLOB '*[^a-z0-9.-]*'
+            ),
+            event_kind TEXT NOT NULL CHECK (event_kind IN ('enabled','revoked','denied')),
+            reason_code TEXT NOT NULL CHECK (
+                length(reason_code) BETWEEN 1 AND 64
+                AND substr(reason_code,1,1) GLOB '[a-z]'
+                AND reason_code NOT GLOB '*[^a-z0-9-]*'
+            ),
+            revision INTEGER CHECK (revision IS NULL OR revision BETWEEN 1 AND {MAX_SAFE_INTEGER}),
+            predecessor_event_id TEXT,
+            action_id TEXT CHECK (action_id IS NULL OR ({_uuid_check("action_id", "7")})),
+            action_sha256 TEXT CHECK (action_sha256 IS NULL OR ({_sha256_check("action_sha256")})),
+            publisher_key_id TEXT CHECK (publisher_key_id IS NULL OR length(publisher_key_id) BETWEEN 1 AND 128),
+            package_sha256 TEXT CHECK (package_sha256 IS NULL OR (
+                length(package_sha256)=71 AND substr(package_sha256,1,7)='sha256:'
+                AND substr(package_sha256,8) NOT GLOB '*[^0-9a-f]*'
+            )),
+            manifest_sha256 TEXT CHECK (manifest_sha256 IS NULL OR (
+                length(manifest_sha256)=71 AND substr(manifest_sha256,1,7)='sha256:'
+                AND substr(manifest_sha256,8) NOT GLOB '*[^0-9a-f]*'
+            )),
+            trusted_key_sha256 TEXT CHECK (trusted_key_sha256 IS NULL OR (
+                length(trusted_key_sha256)=71 AND substr(trusted_key_sha256,1,7)='sha256:'
+                AND substr(trusted_key_sha256,8) NOT GLOB '*[^0-9a-f]*'
+            )),
+            trusted_key_revision INTEGER CHECK (
+                trusted_key_revision IS NULL OR trusted_key_revision BETWEEN 1 AND {MAX_SAFE_INTEGER}
+            ),
+            review_json TEXT CHECK (review_json IS NULL OR (
+                json_valid(review_json) AND json_type(review_json)='object'
+                AND json_type(review_json,'$.operations')='array'
+                AND json_type(review_json,'$.dataClasses')='array'
+                AND json_type(review_json,'$.credentialScopes')='array'
+                AND length(CAST(review_json AS BLOB)) BETWEEN 2 AND 16384
+            )),
+            grant_json TEXT CHECK (grant_json IS NULL OR (
+                json_valid(grant_json) AND json_type(grant_json)='object'
+                AND length(CAST(grant_json AS BLOB)) BETWEEN 2 AND 16384
+            )),
+            invocation_id TEXT CHECK (invocation_id IS NULL OR ({_uuid_check("invocation_id", "7")})),
+            record_sha256 TEXT NOT NULL CHECK ({_sha256_check("record_sha256")}),
+            provenance_event_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("provenance_event_id", "7")}),
+            outbox_id TEXT UNIQUE CHECK (outbox_id IS NULL OR ({_uuid_check("outbox_id", "7")})),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (length(trace_id)=32 AND trace_id=lower(trace_id)
+                AND trace_id NOT GLOB '*[^0-9a-f]*'),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            CHECK (
+                (event_kind='enabled' AND revision IS NOT NULL AND action_id IS NOT NULL
+                    AND action_sha256 IS NOT NULL AND publisher_key_id IS NOT NULL
+                    AND package_sha256 IS NOT NULL AND manifest_sha256 IS NOT NULL
+                    AND trusted_key_sha256 IS NOT NULL AND trusted_key_revision IS NOT NULL
+                    AND review_json IS NOT NULL AND grant_json IS NOT NULL
+                    AND outbox_id IS NOT NULL AND invocation_id IS NULL)
+                OR (event_kind='revoked' AND revision IS NOT NULL AND action_id IS NOT NULL
+                    AND action_sha256 IS NOT NULL AND publisher_key_id IS NOT NULL
+                    AND package_sha256 IS NOT NULL AND grant_json IS NULL
+                    AND trusted_key_sha256 IS NULL AND trusted_key_revision IS NULL
+                    AND review_json IS NULL
+                    AND outbox_id IS NOT NULL AND invocation_id IS NULL)
+                OR (event_kind='denied' AND revision IS NULL AND predecessor_event_id IS NULL
+                    AND action_id IS NULL AND action_sha256 IS NULL AND grant_json IS NULL
+                    AND trusted_key_sha256 IS NULL AND trusted_key_revision IS NULL
+                    AND review_json IS NULL
+                    AND outbox_id IS NULL)
+            ),
+            FOREIGN KEY (project_id) REFERENCES projects(project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (predecessor_event_id) REFERENCES plugin_grant_events(event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (provenance_event_id) REFERENCES provenance_events(event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (outbox_id) REFERENCES outbox_events(outbox_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (project_id,plugin_id,revision),
+            UNIQUE (project_id,action_id)
+        ) STRICT
+    """,
+    *_immutable_triggers("plugin_grant_events", "plugin grant and denial history is append-only"),
+    "CREATE INDEX plugin_grant_events_current ON plugin_grant_events(project_id,plugin_id,revision DESC)",
+    """
+        CREATE TRIGGER plugin_grant_revision_binding BEFORE INSERT ON plugin_grant_events
+        WHEN NEW.revision IS NOT NULL AND (
+            (NEW.revision=1 AND (
+                NEW.event_kind<>'enabled' OR NEW.predecessor_event_id IS NOT NULL
+                OR EXISTS (SELECT 1 FROM plugin_grant_events prior
+                    WHERE prior.project_id=NEW.project_id AND prior.plugin_id=NEW.plugin_id
+                    AND prior.revision IS NOT NULL)
+            )) OR (NEW.revision>1 AND NOT EXISTS (
+                SELECT 1 FROM plugin_grant_events prior
+                WHERE prior.project_id=NEW.project_id AND prior.plugin_id=NEW.plugin_id
+                    AND prior.revision=NEW.revision-1
+                    AND prior.event_id=NEW.predecessor_event_id
+                    AND prior.publisher_key_id=NEW.publisher_key_id
+                    AND (NEW.event_kind<>'revoked' OR prior.event_kind='enabled')
+                    AND NOT EXISTS (SELECT 1 FROM plugin_grant_events later
+                        WHERE later.project_id=NEW.project_id AND later.plugin_id=NEW.plugin_id
+                        AND later.revision>=NEW.revision)
+            ))
+        ) BEGIN SELECT RAISE(ABORT,'plugin grant revision binding denied'); END
+    """,
+    """
+        CREATE TRIGGER plugin_grant_event_binding BEFORE INSERT ON plugin_grant_events
+        WHEN NOT EXISTS (
+            SELECT 1 FROM provenance_events p WHERE p.event_id=NEW.provenance_event_id
+                AND p.project_id=NEW.project_id AND p.revision_id IS NULL
+                AND p.event_type='connector.plugin-' || NEW.event_kind
+                AND p.record_sha256=NEW.record_sha256
+                AND p.actor_id=NEW.actor_id
+                AND p.actor_type IN ('human','system')
+                AND (NEW.event_kind='denied' OR p.actor_type='human')
+                AND p.trace_id=NEW.trace_id AND p.occurred_at=NEW.occurred_at
+        ) OR (NEW.outbox_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM outbox_events o WHERE o.outbox_id=NEW.outbox_id
+                AND o.project_id=NEW.project_id AND o.revision_id IS NULL
+                AND o.event_type='connector.plugin-' || NEW.event_kind
+                AND o.record_sha256=NEW.record_sha256
+                AND o.idempotency_key='plugin-grant-' || NEW.action_id
+        )) OR (NEW.event_kind='enabled' AND (
+            json_extract(NEW.grant_json,'$.projectId') IS NOT NEW.project_id
+            OR json_extract(NEW.grant_json,'$.pluginId') IS NOT NEW.plugin_id
+            OR json_extract(NEW.grant_json,'$.revision') IS NOT NEW.revision
+            OR json_extract(NEW.grant_json,'$.publisherKeyId') IS NOT NEW.publisher_key_id
+            OR json_extract(NEW.grant_json,'$.packageSha256') IS NOT NEW.package_sha256
+            OR json_extract(NEW.grant_json,'$.manifestSha256') IS NOT NEW.manifest_sha256
+        ))
+        BEGIN SELECT RAISE(ABORT,'plugin grant audit binding denied'); END
+    """,
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V20_DDL,
+    SCHEMA_METADATA_V21_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -4875,6 +5025,7 @@ _DDL_STATEMENTS = (
     *RIGHTS_POLICY_DDL,
     *CORPUS_REPORT_DDL,
     *CORPUS_SOURCE_PROJECTION_DDL,
+    *PLUGIN_GRANT_DDL,
 )
 
 

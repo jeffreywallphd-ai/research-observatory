@@ -65,12 +65,11 @@
         16,
         17,
         18,
-        19,
-        20
+        19
       ]
     },
     "targetSchemaVersion": {
-      "const": 21
+      "const": 20
     },
     "migrationIds": {
       "oneOf": [
@@ -94,8 +93,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -117,8 +115,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -139,8 +136,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -160,8 +156,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -180,8 +175,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -199,8 +193,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -217,8 +210,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -234,8 +226,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -250,8 +241,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -265,8 +255,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -279,8 +268,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -292,8 +280,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -304,8 +291,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -315,8 +301,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -325,8 +310,7 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
@@ -334,34 +318,25 @@
             "0017_corpus_items",
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
           "const": [
             "0018_rights_policy",
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
           "const": [
             "0019_corpus_reports",
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         },
         {
           "const": [
-            "0020_corpus_source_projection",
-            "0021_plugin_grants"
-          ]
-        },
-        {
-          "const": [
-            "0021_plugin_grants"
+            "0020_corpus_source_projection"
           ]
         }
       ]
@@ -386,12 +361,11 @@
         "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5",
         "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945",
         "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503",
-        "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba",
-        "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
+        "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
       ]
     },
     "targetSchemaSha256": {
-      "const": "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
+      "const": "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
     },
     "checkpoint": {
       "type": "object",
@@ -429,7 +403,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v(?:[1-9]|1[0-9]|20)-to-v21-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v(?:[1-9]|1[0-9])-to-v20-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {
           "type": "string",
@@ -477,8 +451,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -516,8 +489,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -554,8 +526,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -591,8 +562,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -627,8 +597,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -662,8 +631,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -696,8 +664,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -729,8 +696,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -761,8 +727,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -792,8 +757,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -822,8 +786,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -851,8 +814,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -879,8 +841,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -906,8 +867,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -932,8 +892,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -957,8 +916,7 @@
               "0017_corpus_items",
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -981,8 +939,7 @@
             "const": [
               "0018_rights_policy",
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -1004,8 +961,7 @@
           "migrationIds": {
             "const": [
               "0019_corpus_reports",
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
@@ -1026,33 +982,11 @@
         "properties": {
           "migrationIds": {
             "const": [
-              "0020_corpus_source_projection",
-              "0021_plugin_grants"
+              "0020_corpus_source_projection"
             ]
           },
           "sourceSchemaSha256": {
             "const": "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "sourceSchemaVersion": {
-            "const": 20
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "migrationIds": {
-            "const": [
-              "0021_plugin_grants"
-            ]
-          },
-          "sourceSchemaSha256": {
-            "const": "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
           }
         }
       }

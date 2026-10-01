@@ -1,0 +1,39 @@
+{
+  "$id": "https://research-observatory.local/contracts/connectors/connector-plugin-repository-metadata.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The only accepted repository-metadata response assertion.",
+  "properties": {
+    "description": {
+      "anyOf": [
+        {
+          "maxLength": 2048,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "displayName": {
+      "maxLength": 512,
+      "minLength": 1,
+      "title": "Displayname",
+      "type": "string"
+    },
+    "repositoryId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Repositoryid",
+      "type": "string"
+    }
+  },
+  "required": [
+    "repositoryId",
+    "displayName"
+  ],
+  "title": "PluginRepositoryMetadata",
+  "type": "object"
+}
