@@ -10,6 +10,7 @@ from fastapi.routing import APIRoute
 from pydantic import Field, field_validator
 
 from .corpus.membership import CorpusItemRevision, CorpusProblem
+from .corpus_report_model import CorpusReportDrillPage, CorpusReportFilter, CorpusReportSnapshot
 from .corpus_service import CorpusService
 from .ingestion.import_drafts import DraftValue, Identity
 from .models import ProblemDetail
@@ -35,6 +36,22 @@ class CorpusCreateRequest(DraftValue):
 class CorpusReadRequest(DraftValue):
     root: Annotated[str, Field(min_length=1, max_length=4096)]
     item_id: Identity
+
+
+class CorpusReportCreateRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    command_id: Identity
+
+
+class CorpusReportReadRequest(DraftValue):
+    root: Annotated[str, Field(min_length=1, max_length=4096)]
+    snapshot_id: Identity
+
+
+class CorpusReportDrillRequest(CorpusReportReadRequest):
+    filter: CorpusReportFilter = Field(default_factory=lambda: CorpusReportFilter(kind="all"))
+    cursor: Annotated[str, Field(min_length=1, max_length=512)] | None = None
+    limit: Annotated[int, Field(strict=True, ge=1, le=100)] = 50
 
 
 class RightsPublishRequest(DraftValue):
@@ -90,9 +107,9 @@ def _problem(request: Request, error: CorpusProblem | RightsProblem | None) -> C
         "rights-policy-invalid",
         "rights-request-invalid",
     }
-    unavailable = error is None or code == "corpus-actor-unavailable"
+    unavailable = error is None or code in {"corpus-actor-unavailable", "corpus-report-unavailable"}
     integrity = "integrity" in code or code in {"corpus-storage-invalid", "rights-storage-invalid"}
-    not_found = code == "corpus-item-not-found"
+    not_found = code in {"corpus-item-not-found", "corpus-report-not-found"}
     conflict = code.endswith("-conflict") or code in {"rights-predecessor-stale", "rights-impact-limit"}
     denied = any(part in code for part in ("authority", "source", "rights", "query")) or code in {
         "corpus-intent-unavailable",
@@ -122,6 +139,8 @@ def _problem(request: Request, error: CorpusProblem | RightsProblem | None) -> C
         403: "RO-CORE-CORPUS-DENIED",
         409: "RO-CORE-CORPUS-CONFLICT",
     }[status]
+    if code == "corpus-report-limit":
+        public_code = "RO-CORE-CORPUS-REPORT-LIMIT"
     return CoreProblem(
         problem_detail(
             status=status,
@@ -203,6 +222,36 @@ def register_corpus_routes(app: FastAPI, service: Callable[[Request], CorpusServ
     def inspect(request: Request, command: CorpusReadRequest) -> CorpusItemRevision:
         return run(
             request, lambda runtime: runtime.inspect(command.root, command.item_id, trace_id=request.state.trace_id)
+        )
+
+    @router.post("/reports/create", operation_id="createCorpusReport", response_model=CorpusReportSnapshot)
+    def create_report(request: Request, command: CorpusReportCreateRequest) -> CorpusReportSnapshot:
+        return run(
+            request,
+            lambda runtime: runtime.create_report(
+                command.root, command_id=command.command_id, trace_id=request.state.trace_id
+            ),
+        )
+
+    @router.post("/reports/inspect", operation_id="inspectCorpusReport", response_model=CorpusReportSnapshot)
+    def inspect_report(request: Request, command: CorpusReportReadRequest) -> CorpusReportSnapshot:
+        return run(
+            request,
+            lambda runtime: runtime.inspect_report(command.root, command.snapshot_id, trace_id=request.state.trace_id),
+        )
+
+    @router.post("/reports/drill", operation_id="drillCorpusReport", response_model=CorpusReportDrillPage)
+    def drill_report(request: Request, command: CorpusReportDrillRequest) -> CorpusReportDrillPage:
+        return run(
+            request,
+            lambda runtime: runtime.drill_report(
+                command.root,
+                command.snapshot_id,
+                filter=command.filter,
+                cursor=command.cursor,
+                limit=command.limit,
+                trace_id=request.state.trace_id,
+            ),
         )
 
     @router.post("/rights/publish", operation_id="publishCorpusRightsPolicy", response_model=RightsPolicyRevision)

@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 18
+DATABASE_SCHEMA_VERSION = 19
+RIGHTS_DATABASE_SCHEMA_VERSION = 18
 CORPUS_DATABASE_SCHEMA_VERSION = 17
 WORK_VERSION_DATABASE_SCHEMA_VERSION = 16
 RECONCILIATION_REVIEW_DATABASE_SCHEMA_VERSION = 15
@@ -126,6 +127,12 @@ WORK_VERSION_TABLES = (
     "reconciliation_version_decisions",
     "reconciliation_version_impacts",
 )
+CORPUS_REPORT_TABLES = (
+    "corpus_report_snapshots",
+    "corpus_report_members",
+    "corpus_report_paths",
+    "corpus_report_sources",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -186,6 +193,7 @@ EXPECTED_TABLES = (
     "rights_policy_generic_rechecks",
     "rights_legacy_output_rechecks",
     "rights_use_decisions",
+    *CORPUS_REPORT_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -240,6 +248,7 @@ IMMUTABLE_ROW_TABLES = (
     "rights_policy_generic_rechecks",
     "rights_legacy_output_rechecks",
     "rights_use_decisions",
+    *CORPUS_REPORT_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -305,6 +314,10 @@ EXPECTED_TRIGGERS = tuple(
             "rights_policy_generic_recheck_binding",
             "rights_legacy_output_recheck_binding",
             "rights_use_decision_binding",
+            "corpus_report_snapshot_seal_binding",
+            "corpus_report_member_binding",
+            "corpus_report_path_binding",
+            "corpus_report_source_binding",
         ]
     )
 )
@@ -359,6 +372,9 @@ EXPECTED_INDEXES = (
     "rights_policy_rechecks_output",
     "rights_policy_generic_rechecks_output",
     "rights_legacy_output_rechecks_project",
+    "corpus_report_member_item",
+    "corpus_report_path_source",
+    "corpus_report_source_policy",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -383,7 +399,8 @@ RECONCILIATION_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968e
 RECONCILIATION_REVIEW_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
 WORK_VERSION_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
 CORPUS_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
-EXPECTED_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
+RIGHTS_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
+EXPECTED_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -449,7 +466,8 @@ RECONCILIATION_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f70
 RECONCILIATION_REVIEW_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391ab69246f62696623d067cd37"
 WORK_VERSION_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172dd790050bdafda72"
 CORPUS_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
-EXPECTED_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149cbdfb4ed30"
+RIGHTS_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149cbdfb4ed30"
+EXPECTED_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416911a2f805db4a50f"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3514,6 +3532,7 @@ SCHEMA_METADATA_V15_DDL = SCHEMA_METADATA_V14_DDL.replace("schema_version = 14",
 SCHEMA_METADATA_V16_DDL = SCHEMA_METADATA_V15_DDL.replace("schema_version = 15", "schema_version = 16")
 SCHEMA_METADATA_V17_DDL = SCHEMA_METADATA_V16_DDL.replace("schema_version = 16", "schema_version = 17")
 SCHEMA_METADATA_V18_DDL = SCHEMA_METADATA_V17_DDL.replace("schema_version = 17", "schema_version = 18")
+SCHEMA_METADATA_V19_DDL = SCHEMA_METADATA_V18_DDL.replace("schema_version = 18", "schema_version = 19")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -4547,8 +4566,220 @@ RIGHTS_POLICY_DDL = (
 )
 
 
+CORPUS_REPORT_DDL = (
+    f"""
+        CREATE TABLE corpus_report_snapshots (
+            snapshot_id TEXT PRIMARY KEY CHECK ({_uuid_check("snapshot_id", "7")}),
+            project_id TEXT NOT NULL,
+            command_id TEXT NOT NULL CHECK ({_uuid_check("command_id", "7")}),
+            command_sha256 TEXT NOT NULL CHECK ({_sha256_check("command_sha256")}),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (length(trace_id)=32 AND trace_id=lower(trace_id)
+                AND trace_id NOT GLOB '*[^0-9a-f]*'),
+            intent_revision_id TEXT NOT NULL CHECK ({_uuid_check("intent_revision_id", "7")}),
+            intent_sha256 TEXT NOT NULL CHECK ({_sha256_check("intent_sha256")}),
+            privacy_sha256 TEXT NOT NULL CHECK ({_sha256_check("privacy_sha256")}),
+            protocol_revision_id TEXT NOT NULL CHECK ({_uuid_check("protocol_revision_id", "7")}),
+            rule_version TEXT NOT NULL CHECK (rule_version='corpus-report/1.0.0'),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            member_count INTEGER NOT NULL CHECK (member_count BETWEEN 0 AND 100000),
+            path_count INTEGER NOT NULL CHECK (path_count BETWEEN 0 AND 100000000),
+            source_count INTEGER NOT NULL CHECK (source_count BETWEEN 0 AND 100000),
+            members_sha256 TEXT NOT NULL CHECK ({_sha256_check("members_sha256")}),
+            summary_json TEXT NOT NULL CHECK (json_valid(summary_json)
+                AND length(CAST(summary_json AS BLOB)) BETWEEN 2 AND 8388608
+                AND json_type(summary_json)='object'
+                AND json_extract(summary_json,'$.snapshotId') IS snapshot_id
+                AND json_extract(summary_json,'$.projectId') IS project_id
+                AND json_extract(summary_json,'$.intentRevisionId') IS intent_revision_id
+                AND json_extract(summary_json,'$.protocolRevisionId') IS protocol_revision_id
+                AND json_extract(summary_json,'$.memberCount') IS member_count
+                AND json_extract(summary_json,'$.discoveryPathCount') IS path_count
+                AND json_extract(summary_json,'$.membersSha256') IS members_sha256),
+            summary_sha256 TEXT NOT NULL CHECK ({_sha256_check("summary_sha256")}),
+            provenance_event_id TEXT NOT NULL CHECK ({_uuid_check("provenance_event_id", "7")}),
+            outbox_id TEXT NOT NULL CHECK ({_uuid_check("outbox_id", "7")}),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (provenance_event_id) REFERENCES provenance_events (event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (outbox_id) REFERENCES outbox_events (outbox_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (snapshot_id, project_id),
+            UNIQUE (project_id, command_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_report_members (
+            snapshot_id TEXT NOT NULL CHECK ({_uuid_check("snapshot_id", "7")}),
+            project_id TEXT NOT NULL,
+            ordinal INTEGER NOT NULL CHECK (ordinal BETWEEN 1 AND 100000),
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            item_revision_id TEXT NOT NULL CHECK ({_uuid_check("item_revision_id", "7")}),
+            work_id TEXT NOT NULL CHECK ({_uuid_check("work_id", "7")}),
+            work_revision_id TEXT NOT NULL CHECK ({_uuid_check("work_revision_id", "7")}),
+            member_json TEXT NOT NULL CHECK (json_valid(member_json)
+                AND length(CAST(member_json AS BLOB)) BETWEEN 2 AND 262144
+                AND json_type(member_json)='object'
+                AND json_extract(member_json,'$.snapshotId') IS snapshot_id
+                AND json_extract(member_json,'$.projectId') IS project_id
+                AND json_extract(member_json,'$.itemId') IS item_id
+                AND json_extract(member_json,'$.itemRevisionId') IS item_revision_id
+                AND json_extract(member_json,'$.workId') IS work_id
+                AND json_extract(member_json,'$.workRevisionId') IS work_revision_id
+                AND json_array_length(member_json,'$.paths') BETWEEN 1 AND 1000
+                AND json_array_length(member_json,'$.fields')=7),
+            member_sha256 TEXT NOT NULL CHECK ({_sha256_check("member_sha256")}),
+            FOREIGN KEY (snapshot_id, project_id)
+                REFERENCES corpus_report_snapshots (snapshot_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED,
+            FOREIGN KEY (item_revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (work_revision_id, project_id, work_id)
+                REFERENCES reconciliation_work_states (revision_id, project_id, work_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            PRIMARY KEY (snapshot_id, ordinal),
+            UNIQUE (snapshot_id, item_id),
+            UNIQUE (snapshot_id, item_revision_id),
+            UNIQUE (snapshot_id, project_id, item_id, item_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_report_sources (
+            snapshot_id TEXT NOT NULL CHECK ({_uuid_check("snapshot_id", "7")}),
+            project_id TEXT NOT NULL,
+            source_assertion_revision_id TEXT NOT NULL CHECK (
+                {_uuid_check("source_assertion_revision_id", "7")}),
+            source_assertion_sha256 TEXT NOT NULL CHECK ({_sha256_check("source_assertion_sha256")}),
+            subject_sha256 TEXT NOT NULL CHECK ({_sha256_check("subject_sha256")}),
+            policy_revision_id TEXT NOT NULL CHECK ({_uuid_check("policy_revision_id", "7")}),
+            policy_sha256 TEXT NOT NULL CHECK ({_sha256_check("policy_sha256")}),
+            expires_at TEXT CHECK (expires_at IS NULL OR ({_timestamp_check("expires_at")})),
+            FOREIGN KEY (snapshot_id, project_id)
+                REFERENCES corpus_report_snapshots (snapshot_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED,
+            FOREIGN KEY (source_assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (project_id, policy_revision_id, subject_sha256)
+                REFERENCES rights_policy_revisions (project_id, revision_id, subject_sha256)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            PRIMARY KEY (snapshot_id, source_assertion_revision_id),
+            UNIQUE (snapshot_id, project_id, source_assertion_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_report_paths (
+            snapshot_id TEXT NOT NULL CHECK ({_uuid_check("snapshot_id", "7")}),
+            project_id TEXT NOT NULL,
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            item_revision_id TEXT NOT NULL CHECK ({_uuid_check("item_revision_id", "7")}),
+            path_id TEXT NOT NULL CHECK ({_uuid_check("path_id", "7")}),
+            source_assertion_revision_id TEXT CHECK (source_assertion_revision_id IS NULL OR (
+                {_uuid_check("source_assertion_revision_id", "7")})),
+            source_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_revision_id", "7")}),
+            source_key TEXT CHECK (source_key IS NULL OR length(source_key) BETWEEN 1 AND 90),
+            route TEXT NOT NULL CHECK (route IN (
+                'import-member','connector-record','citation','recommendation','manual')),
+            FOREIGN KEY (snapshot_id, project_id, item_id, item_revision_id)
+                REFERENCES corpus_report_members (snapshot_id, project_id, item_id, item_revision_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (item_revision_id, path_id)
+                REFERENCES corpus_item_discovery_paths (revision_id, path_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (snapshot_id, project_id, source_assertion_revision_id)
+                REFERENCES corpus_report_sources (snapshot_id, project_id, source_assertion_revision_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            PRIMARY KEY (snapshot_id, item_revision_id, path_id)
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in CORPUS_REPORT_TABLES
+        for statement in _immutable_triggers(table, "corpus report history is append-only")
+    ),
+    "CREATE INDEX corpus_report_member_item ON corpus_report_members (snapshot_id,item_id)",
+    "CREATE INDEX corpus_report_path_source ON corpus_report_paths (snapshot_id,source_key,item_id)",
+    "CREATE INDEX corpus_report_source_policy ON corpus_report_sources (project_id,subject_sha256,policy_revision_id)",
+    """
+        CREATE TRIGGER corpus_report_member_binding BEFORE INSERT ON corpus_report_members
+        WHEN EXISTS (SELECT 1 FROM corpus_report_snapshots WHERE snapshot_id=NEW.snapshot_id)
+            OR NOT EXISTS (SELECT 1 FROM aggregate_revisions r
+                JOIN corpus_item_states s ON s.revision_id=r.revision_id AND s.project_id=r.project_id
+                WHERE r.project_id=NEW.project_id AND r.aggregate_id=NEW.item_id
+                  AND r.revision_id=NEW.item_revision_id AND r.aggregate_kind='corpus-item'
+                  AND s.work_id=NEW.work_id AND s.work_revision_id=NEW.work_revision_id
+                  AND s.membership=json_extract(NEW.member_json,'$.membership')
+                  AND s.duplicate_of_item_id IS json_extract(NEW.member_json,'$.duplicateOfItemId')
+                  AND r.revision=(SELECT MAX(x.revision) FROM aggregate_revisions x
+                    WHERE x.project_id=r.project_id AND x.aggregate_id=r.aggregate_id))
+        BEGIN SELECT RAISE(ABORT,'corpus report member binding denied'); END
+    """,
+    """
+        CREATE TRIGGER corpus_report_source_binding BEFORE INSERT ON corpus_report_sources
+        WHEN EXISTS (SELECT 1 FROM corpus_report_snapshots WHERE snapshot_id=NEW.snapshot_id)
+            OR NOT EXISTS (SELECT 1 FROM reconciliation_assertions a
+                JOIN rights_policy_revisions r ON r.revision_id=NEW.policy_revision_id
+                    AND r.project_id=a.project_id AND r.subject_sha256=NEW.subject_sha256
+                JOIN rights_policy_subjects s ON s.project_id=r.project_id
+                    AND s.subject_sha256=r.subject_sha256
+                WHERE a.project_id=NEW.project_id AND a.revision_id=NEW.source_assertion_revision_id
+                    AND a.payload_sha256=NEW.source_assertion_sha256
+                    AND r.policy_sha256=NEW.policy_sha256
+                    AND s.source_assertion_revision_id=a.revision_id
+                    AND s.copy_id=a.revision_id AND s.copy_location='local-source'
+                    AND s.resource_class='metadata')
+        BEGIN SELECT RAISE(ABORT,'corpus report source binding denied'); END
+    """,
+    """
+        CREATE TRIGGER corpus_report_path_binding BEFORE INSERT ON corpus_report_paths
+        WHEN EXISTS (SELECT 1 FROM corpus_report_snapshots WHERE snapshot_id=NEW.snapshot_id)
+            OR NOT EXISTS (SELECT 1 FROM corpus_discovery_paths p
+                JOIN corpus_item_discovery_paths m ON m.path_id=p.path_id
+                    AND m.revision_id=NEW.item_revision_id
+                LEFT JOIN reconciliation_assertions a ON a.revision_id=NEW.source_assertion_revision_id
+                    AND a.project_id=p.project_id
+                WHERE p.project_id=NEW.project_id AND p.item_id=NEW.item_id
+                    AND p.path_id=NEW.path_id AND p.source_revision_id=NEW.source_revision_id
+                    AND p.kind=NEW.route
+                    AND ((p.kind IN ('import-member','connector-record')
+                        AND a.source_revision_id=p.source_revision_id
+                        AND json_extract(a.assertion_json,'$.address.kind')=p.kind
+                        AND json_extract(a.assertion_json,'$.address.revisionId')=p.context_revision_id
+                        AND json_extract(a.assertion_json,'$.address.contextId')=p.context_id
+                        AND json_extract(a.assertion_json,'$.address.ordinal') IS p.ordinal
+                        AND json_extract(a.assertion_json,'$.address.recordKey') IS p.record_key_sha256)
+                        OR (p.kind='citation' AND a.revision_id=p.source_revision_id)
+                        OR (p.kind IN ('recommendation','manual')
+                            AND NEW.source_assertion_revision_id IS NULL AND NEW.source_key IS NULL)))
+        BEGIN SELECT RAISE(ABORT,'corpus report path binding denied'); END
+    """,
+    """
+        CREATE TRIGGER corpus_report_snapshot_seal_binding BEFORE INSERT ON corpus_report_snapshots
+        WHEN NEW.member_count<>(SELECT COUNT(*) FROM corpus_report_members WHERE snapshot_id=NEW.snapshot_id)
+            OR NEW.path_count<>(SELECT COUNT(*) FROM corpus_report_paths WHERE snapshot_id=NEW.snapshot_id)
+            OR NEW.source_count<>(SELECT COUNT(*) FROM corpus_report_sources WHERE snapshot_id=NEW.snapshot_id)
+            OR (NEW.member_count>0 AND NEW.member_count<>(SELECT MAX(ordinal) FROM corpus_report_members
+                WHERE snapshot_id=NEW.snapshot_id))
+            OR EXISTS (SELECT 1 FROM corpus_report_members m WHERE m.snapshot_id=NEW.snapshot_id
+                AND json_array_length(m.member_json,'$.paths')<>
+                    (SELECT COUNT(*) FROM corpus_report_paths p WHERE p.snapshot_id=m.snapshot_id
+                        AND p.item_revision_id=m.item_revision_id))
+            OR NOT EXISTS (SELECT 1 FROM provenance_events p JOIN outbox_events o
+                ON o.outbox_id=NEW.outbox_id AND o.project_id=p.project_id
+                WHERE p.event_id=NEW.provenance_event_id AND p.project_id=NEW.project_id
+                    AND p.revision_id IS NULL AND o.revision_id IS NULL
+                    AND p.event_type='corpus.report-created' AND o.event_type=p.event_type
+                    AND p.record_sha256=NEW.summary_sha256 AND o.record_sha256=p.record_sha256
+                    AND p.actor_id=NEW.actor_id AND p.trace_id=NEW.trace_id
+                    AND o.idempotency_key='corpus-report-' || NEW.command_id)
+        BEGIN SELECT RAISE(ABORT,'corpus report seal binding denied'); END
+    """,
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V18_DDL,
+    SCHEMA_METADATA_V19_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -4569,6 +4800,7 @@ _DDL_STATEMENTS = (
     *WORK_VERSION_DDL,
     *CORPUS_DDL,
     *RIGHTS_POLICY_DDL,
+    *CORPUS_REPORT_DDL,
 )
 
 

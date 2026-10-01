@@ -1884,6 +1884,549 @@
         "title": "CorpusReadRequest",
         "type": "object"
       },
+      "CorpusReportCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "commandId"
+        ],
+        "title": "CorpusReportCreateRequest",
+        "type": "object"
+      },
+      "CorpusReportDrillPage": {
+        "additionalProperties": false,
+        "properties": {
+          "contractVersion": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "documentType": {
+            "const": "research-observatory-corpus-report-drill-page",
+            "default": "research-observatory-corpus-report-drill-page",
+            "title": "Documenttype",
+            "type": "string"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/CorpusReportFilter"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/CorpusReportMember"
+            },
+            "maxItems": 100,
+            "title": "Members",
+            "type": "array"
+          },
+          "nextCursor": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextcursor"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "snapshotId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "total": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          }
+        },
+        "required": [
+          "snapshotId",
+          "projectId",
+          "filter",
+          "members",
+          "nextCursor",
+          "total"
+        ],
+        "title": "CorpusReportDrillPage",
+        "type": "object"
+      },
+      "CorpusReportDrillRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "cursor": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cursor"
+          },
+          "filter": {
+            "$ref": "#/components/schemas/CorpusReportFilter"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "snapshotId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "root",
+          "snapshotId"
+        ],
+        "title": "CorpusReportDrillRequest",
+        "type": "object"
+      },
+      "CorpusReportFilter": {
+        "additionalProperties": false,
+        "description": "One exact drill predicate; absent dimensions cannot broaden a selector.",
+        "properties": {
+          "dimension": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportDimension"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ReportFilterKind"
+          },
+          "leftRoute": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportRoute"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "leftSourceKey": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "membership": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportMembership"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rightRoute": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportRoute"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rightSourceKey": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "route": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportRoute"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceKey": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportState"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "CorpusReportFilter",
+        "type": "object"
+      },
+      "CorpusReportMember": {
+        "additionalProperties": false,
+        "description": "One counted current canonical item revision frozen into a snapshot.",
+        "properties": {
+          "contractVersion": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "displayLabel": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displaylabel"
+          },
+          "documentType": {
+            "const": "research-observatory-corpus-report-member",
+            "default": "research-observatory-corpus-report-member",
+            "title": "Documenttype",
+            "type": "string"
+          },
+          "duplicateOfItemId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ReportField"
+            },
+            "maxItems": 7,
+            "minItems": 7,
+            "title": "Fields",
+            "type": "array"
+          },
+          "itemId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "itemRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "membership": {
+            "$ref": "#/components/schemas/ReportMembership"
+          },
+          "paths": {
+            "items": {
+              "$ref": "#/components/schemas/ReportPath"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "title": "Paths",
+            "type": "array"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "snapshotId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "snapshotId",
+          "projectId",
+          "itemId",
+          "itemRevisionId",
+          "workId",
+          "workRevisionId",
+          "membership",
+          "duplicateOfItemId",
+          "displayLabel",
+          "paths",
+          "fields"
+        ],
+        "title": "CorpusReportMember",
+        "type": "object"
+      },
+      "CorpusReportReadRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "snapshotId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "root",
+          "snapshotId"
+        ],
+        "title": "CorpusReportReadRequest",
+        "type": "object"
+      },
+      "CorpusReportSnapshot": {
+        "additionalProperties": false,
+        "description": "Immutable summary of one bounded, exact canonical member set.",
+        "properties": {
+          "contractVersion": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "coverage": {
+            "items": {
+              "$ref": "#/components/schemas/CoverageSummary"
+            },
+            "maxItems": 7,
+            "minItems": 7,
+            "title": "Coverage",
+            "type": "array"
+          },
+          "createdAt": {
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+            "title": "Createdat",
+            "type": "string"
+          },
+          "discoveryPathCount": {
+            "$ref": "#/components/schemas/DiscoveryPathCount"
+          },
+          "documentType": {
+            "const": "research-observatory-corpus-report-snapshot",
+            "default": "research-observatory-corpus-report-snapshot",
+            "title": "Documenttype",
+            "type": "string"
+          },
+          "duplicateLinkedItemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "intentRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "memberCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "membersSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "membershipCounts": {
+            "items": {
+              "$ref": "#/components/schemas/MembershipCount"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Membershipcounts",
+            "type": "array"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "protocolRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "routeContributions": {
+            "items": {
+              "$ref": "#/components/schemas/RouteContribution"
+            },
+            "maxItems": 5,
+            "minItems": 5,
+            "title": "Routecontributions",
+            "type": "array"
+          },
+          "routeOverlaps": {
+            "items": {
+              "$ref": "#/components/schemas/RouteOverlap"
+            },
+            "maxItems": 10,
+            "title": "Routeoverlaps",
+            "type": "array"
+          },
+          "ruleVersion": {
+            "const": "corpus-report/1.0.0",
+            "default": "corpus-report/1.0.0",
+            "title": "Ruleversion",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "snapshotId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "sourceContributions": {
+            "items": {
+              "$ref": "#/components/schemas/SourceContribution"
+            },
+            "maxItems": 512,
+            "title": "Sourcecontributions",
+            "type": "array"
+          },
+          "sourceOverlaps": {
+            "items": {
+              "$ref": "#/components/schemas/SourceOverlap"
+            },
+            "maxItems": 20000,
+            "title": "Sourceoverlaps",
+            "type": "array"
+          },
+          "unattributedDiscoveryPathCount": {
+            "$ref": "#/components/schemas/DiscoveryPathCount"
+          },
+          "unattributedItemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "valueDistributions": {
+            "items": {
+              "$ref": "#/components/schemas/ValueDistribution"
+            },
+            "maxItems": 6,
+            "minItems": 6,
+            "title": "Valuedistributions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "snapshotId",
+          "projectId",
+          "intentRevisionId",
+          "protocolRevisionId",
+          "createdAt",
+          "memberCount",
+          "discoveryPathCount",
+          "membersSha256",
+          "membershipCounts",
+          "duplicateLinkedItemCount",
+          "unattributedItemCount",
+          "unattributedDiscoveryPathCount",
+          "sourceContributions",
+          "sourceOverlaps",
+          "routeContributions",
+          "routeOverlaps",
+          "coverage",
+          "valueDistributions"
+        ],
+        "title": "CorpusReportSnapshot",
+        "type": "object"
+      },
+      "CoverageSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "dimension": {
+            "$ref": "#/components/schemas/ReportDimension"
+          },
+          "known": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "notReported": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "unavailable": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "unknown": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          }
+        },
+        "required": [
+          "dimension",
+          "known",
+          "notReported",
+          "unknown",
+          "unavailable"
+        ],
+        "title": "CoverageSummary",
+        "type": "object"
+      },
       "CsvDelimiter": {
         "enum": [
           ",",
@@ -1996,6 +2539,16 @@
       "Digest": {
         "pattern": "^[0-9a-f]{64}$",
         "type": "string"
+      },
+      "DiscoveryPathCount": {
+        "maximum": 100000000.0,
+        "minimum": 0.0,
+        "type": "integer"
+      },
+      "DiscoveryPathPairCount": {
+        "maximum": 49950000000.0,
+        "minimum": 0.0,
+        "type": "integer"
       },
       "DocumentRetentionPolicy": {
         "enum": [
@@ -4879,6 +5432,23 @@
           "withdrawn"
         ],
         "type": "string"
+      },
+      "MembershipCount": {
+        "additionalProperties": false,
+        "properties": {
+          "itemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "membership": {
+            "$ref": "#/components/schemas/ReportMembership"
+          }
+        },
+        "required": [
+          "membership",
+          "itemCount"
+        ],
+        "title": "MembershipCount",
+        "type": "object"
       },
       "ModelAccelerator": {
         "enum": [
@@ -7897,6 +8467,188 @@
         "title": "RemoteModelApproval",
         "type": "string"
       },
+      "ReportDimension": {
+        "enum": [
+          "identifier",
+          "year",
+          "venue",
+          "language",
+          "discipline",
+          "oa",
+          "full-text"
+        ],
+        "type": "string"
+      },
+      "ReportField": {
+        "additionalProperties": false,
+        "description": "A report classification, never a permission or an inferred value.",
+        "properties": {
+          "dimension": {
+            "$ref": "#/components/schemas/ReportDimension"
+          },
+          "state": {
+            "$ref": "#/components/schemas/ReportState"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "witnessRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "dimension",
+          "state",
+          "value",
+          "witnessRevisionId"
+        ],
+        "title": "ReportField",
+        "type": "object"
+      },
+      "ReportFilterKind": {
+        "enum": [
+          "all",
+          "membership",
+          "duplicate-linked",
+          "unattributed",
+          "source",
+          "route",
+          "source-overlap",
+          "route-overlap",
+          "coverage"
+        ],
+        "type": "string"
+      },
+      "ReportMembership": {
+        "enum": [
+          "candidate",
+          "included",
+          "excluded",
+          "withdrawn"
+        ],
+        "type": "string"
+      },
+      "ReportPath": {
+        "additionalProperties": false,
+        "description": "One exact retained discovery edge, plus a source root if attested.",
+        "properties": {
+          "contextRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "metadataAssertionStatus": {
+            "enum": [
+              "retained",
+              "no-external-assertion"
+            ],
+            "title": "Metadataassertionstatus",
+            "type": "string"
+          },
+          "pathId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "reportInspectStatus": {
+            "enum": [
+              "allowed",
+              "unassessed"
+            ],
+            "title": "Reportinspectstatus",
+            "type": "string"
+          },
+          "rightsExpiresAt": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rightsexpiresat"
+          },
+          "rightsPolicyRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "route": {
+            "$ref": "#/components/schemas/ReportRoute"
+          },
+          "sourceCopyAvailability": {
+            "const": "unknown",
+            "title": "Sourcecopyavailability",
+            "type": "string"
+          },
+          "sourceKey": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceKey"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "pathId",
+          "sourceRevisionId",
+          "contextRevisionId",
+          "sourceKey",
+          "route",
+          "metadataAssertionStatus",
+          "reportInspectStatus",
+          "rightsPolicyRevisionId",
+          "rightsExpiresAt",
+          "sourceCopyAvailability"
+        ],
+        "title": "ReportPath",
+        "type": "object"
+      },
+      "ReportRoute": {
+        "enum": [
+          "import-member",
+          "connector-record",
+          "citation",
+          "recommendation",
+          "manual"
+        ],
+        "type": "string"
+      },
+      "ReportState": {
+        "enum": [
+          "known",
+          "not-reported",
+          "unknown",
+          "unavailable"
+        ],
+        "type": "string"
+      },
       "RequestDigest": {
         "pattern": "^sha256:[0-9a-f]{64}$",
         "type": "string"
@@ -9273,6 +10025,52 @@
         "title": "RightsUse",
         "type": "object"
       },
+      "RouteContribution": {
+        "additionalProperties": false,
+        "properties": {
+          "discoveryPathCount": {
+            "$ref": "#/components/schemas/DiscoveryPathCount"
+          },
+          "itemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "route": {
+            "$ref": "#/components/schemas/ReportRoute"
+          }
+        },
+        "required": [
+          "route",
+          "itemCount",
+          "discoveryPathCount"
+        ],
+        "title": "RouteContribution",
+        "type": "object"
+      },
+      "RouteOverlap": {
+        "additionalProperties": false,
+        "properties": {
+          "discoveryPathPairCount": {
+            "$ref": "#/components/schemas/DiscoveryPathPairCount"
+          },
+          "itemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "leftRoute": {
+            "$ref": "#/components/schemas/ReportRoute"
+          },
+          "rightRoute": {
+            "$ref": "#/components/schemas/ReportRoute"
+          }
+        },
+        "required": [
+          "leftRoute",
+          "rightRoute",
+          "itemCount",
+          "discoveryPathPairCount"
+        ],
+        "title": "RouteOverlap",
+        "type": "object"
+      },
       "RuntimeState": {
         "enum": [
           "starting",
@@ -9611,6 +10409,27 @@
         "title": "SourceAssertion",
         "type": "object"
       },
+      "SourceContribution": {
+        "additionalProperties": false,
+        "properties": {
+          "discoveryPathCount": {
+            "$ref": "#/components/schemas/DiscoveryPathCount"
+          },
+          "itemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "sourceKey": {
+            "$ref": "#/components/schemas/SourceKey"
+          }
+        },
+        "required": [
+          "sourceKey",
+          "itemCount",
+          "discoveryPathCount"
+        ],
+        "title": "SourceContribution",
+        "type": "object"
+      },
       "SourceField": {
         "additionalProperties": false,
         "properties": {
@@ -9644,6 +10463,11 @@
         ],
         "title": "SourceField",
         "type": "object"
+      },
+      "SourceKey": {
+        "maxLength": 90,
+        "pattern": "^(?:import:[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|connector:[a-z][a-z0-9-]{0,63})$",
+        "type": "string"
       },
       "SourceObservation": {
         "additionalProperties": false,
@@ -9683,6 +10507,31 @@
           "correction"
         ],
         "type": "string"
+      },
+      "SourceOverlap": {
+        "additionalProperties": false,
+        "properties": {
+          "discoveryPathPairCount": {
+            "$ref": "#/components/schemas/DiscoveryPathPairCount"
+          },
+          "itemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "leftSourceKey": {
+            "$ref": "#/components/schemas/SourceKey"
+          },
+          "rightSourceKey": {
+            "$ref": "#/components/schemas/SourceKey"
+          }
+        },
+        "required": [
+          "leftSourceKey",
+          "rightSourceKey",
+          "itemCount",
+          "discoveryPathPairCount"
+        ],
+        "title": "SourceOverlap",
+        "type": "object"
       },
       "SourcePartition": {
         "additionalProperties": false,
@@ -9943,6 +10792,57 @@
           "type"
         ],
         "title": "ValidationError",
+        "type": "object"
+      },
+      "ValueBucket": {
+        "additionalProperties": false,
+        "properties": {
+          "itemCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "value": {
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "itemCount"
+        ],
+        "title": "ValueBucket",
+        "type": "object"
+      },
+      "ValueDistribution": {
+        "additionalProperties": false,
+        "properties": {
+          "buckets": {
+            "items": {
+              "$ref": "#/components/schemas/ValueBucket"
+            },
+            "maxItems": 50,
+            "title": "Buckets",
+            "type": "array"
+          },
+          "dimension": {
+            "$ref": "#/components/schemas/ReportDimension"
+          },
+          "otherKnownCount": {
+            "$ref": "#/components/schemas/research_observatory_core__corpus_report_model__Count"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "dimension",
+          "buckets",
+          "otherKnownCount",
+          "truncated"
+        ],
+        "title": "ValueDistribution",
         "type": "object"
       },
       "VerificationState": {
@@ -12325,6 +13225,11 @@
         "minimum": 0.0,
         "type": "integer"
       },
+      "research_observatory_core__corpus_report_model__Count": {
+        "maximum": 100000.0,
+        "minimum": 0.0,
+        "type": "integer"
+      },
       "research_observatory_core__ingestion__import_summaries__Count": {
         "maximum": 200000.0,
         "minimum": 0.0,
@@ -13245,6 +14150,309 @@
           }
         },
         "summary": "Inspect",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/reports/create": {
+      "post": {
+        "operationId": "createCorpusReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorpusReportCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorpusReportSnapshot"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Create Report",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/reports/drill": {
+      "post": {
+        "operationId": "drillCorpusReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorpusReportDrillRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorpusReportDrillPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Drill Report",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/reports/inspect": {
+      "post": {
+        "operationId": "inspectCorpusReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorpusReportReadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorpusReportSnapshot"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Inspect Report",
         "tags": [
           "corpus"
         ]

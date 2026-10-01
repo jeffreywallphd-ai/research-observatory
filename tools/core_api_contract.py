@@ -1327,8 +1327,11 @@ async function requestJsonResponse<T>(
     throw new CoreApiClientError(problem);
   }
   if (response.status !== 200 || response.contentType !== "application/json") throw new Error("RO-CORE-RESPONSE-INVALID");
-  const maximumBytes = ["/projects/reconciliation/inspect", "/projects/reconciliation/review/context",
-    "/projects/reconciliation/review/preview", "/projects/reconciliation/versions/context"].includes(request.path) ? 4_194_304 : 1_048_576;
+  const maximumBytes = ["/projects/corpus/reports/create", "/projects/corpus/reports/inspect",
+    "/projects/corpus/reports/drill"].includes(request.path) ? 33_554_432
+    : ["/projects/reconciliation/inspect", "/projects/reconciliation/review/context",
+      "/projects/reconciliation/review/preview", "/projects/reconciliation/versions/context"].includes(request.path)
+      ? 4_194_304 : 1_048_576;
   const value = parseJson(response.body, maximumBytes);
   const decoded = decode(value);
   if (!decoded) throw new Error("RO-CORE-RESPONSE-INVALID");
@@ -2558,6 +2561,85 @@ function corpusOwned(value: unknown): unknown {
   try { return registryOwnedValue(value, 1000, 5000); } catch { return null; }
 }
 
+function corpusReportFilter(value: unknown): value is CorpusReportFilter {
+  const filter = record(value);
+  if (filter === null || typeof filter.kind !== "string" || ![
+    "all", "source", "route", "source-overlap", "route-overlap", "coverage",
+    "membership", "duplicate-linked", "unattributed",
+  ].includes(filter.kind)) return false;
+  const allowed = ["kind", "sourceKey", "leftSourceKey", "rightSourceKey", "route", "leftRoute",
+    "rightRoute", "dimension", "state", "value", "membership"];
+  if (!Object.keys(filter).every((key) => allowed.includes(key))) return false;
+  const present = (key: string): boolean => filter[key] !== null && filter[key] !== undefined;
+  const required: Record<string, readonly string[]> = {
+    all: [], source: ["sourceKey"], route: ["route"], "source-overlap": ["leftSourceKey", "rightSourceKey"],
+    "route-overlap": ["leftRoute", "rightRoute"], coverage: ["dimension", "state"],
+    membership: ["membership"], "duplicate-linked": [], unattributed: [],
+  };
+  const expected = required[filter.kind];
+  if (!expected || !expected.every(present)) return false;
+  if (Object.keys(filter).some((key) => key !== "kind" && present(key)
+    && !expected.includes(key) && !(filter.kind === "coverage" && key === "value" && filter.state === "known")))
+    return false;
+  const sourceKey = /^(?:import:[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|connector:[a-z][a-z0-9-]{0,63})$/;
+  for (const key of ["sourceKey", "leftSourceKey", "rightSourceKey"]) {
+    if (present(key) && (typeof filter[key] !== "string" || !sourceKey.test(filter[key] as string))) return false;
+  }
+  for (const key of ["route", "leftRoute", "rightRoute"]) {
+    if (present(key) && !["import-member", "connector-record", "citation", "recommendation", "manual"]
+      .includes(String(filter[key]))) return false;
+  }
+  if (present("dimension") && !["identifier", "year", "venue", "language", "discipline", "oa", "full-text"]
+    .includes(String(filter.dimension))) return false;
+  if (present("state") && !["known", "not-reported", "unknown", "unavailable"].includes(String(filter.state))) return false;
+  if (present("membership") && !["candidate", "included", "excluded", "withdrawn"]
+    .includes(String(filter.membership))) return false;
+  if (present("value") && (typeof filter.value !== "string" || filter.value.length < 1
+    || filter.value.length > 512)) return false;
+  if (filter.kind === "source-overlap" && String(filter.leftSourceKey) >= String(filter.rightSourceKey)) return false;
+  if (filter.kind === "route-overlap" && String(filter.leftRoute) >= String(filter.rightRoute)) return false;
+  return true;
+}
+
+function corpusReportFilterKey(value: CorpusReportFilter): string {
+  const filter = value as unknown as Record<string, unknown>;
+  return JSON.stringify(["kind", "sourceKey", "leftSourceKey", "rightSourceKey", "route", "leftRoute",
+    "rightRoute", "dimension", "state", "value", "membership"].map((key) => filter[key] ?? null));
+}
+
+function corpusReportCreateRequest(value: unknown): value is CorpusReportCreateRequest {
+  const command = record(value);
+  return command !== null && exactKeys(command, ["root", "commandId"])
+    && projectRoot(command.root) && canonicalUuid7(command.commandId);
+}
+
+function corpusReportReadRequest(value: unknown): value is CorpusReportReadRequest {
+  const command = record(value);
+  return command !== null && exactKeys(command, ["root", "snapshotId"])
+    && projectRoot(command.root) && canonicalUuid7(command.snapshotId);
+}
+
+function corpusReportDrillRequest(value: unknown): value is CorpusReportDrillRequest {
+  const command = record(value);
+  return command !== null && exactKeys(command, ["root", "snapshotId", "filter", "cursor", "limit"])
+    && projectRoot(command.root) && canonicalUuid7(command.snapshotId) && corpusReportFilter(command.filter)
+    && (command.cursor === null || (typeof command.cursor === "string"
+      && command.cursor.length >= 1 && command.cursor.length <= 512))
+    && Number.isInteger(command.limit) && Number(command.limit) >= 1 && Number(command.limit) <= 100;
+}
+
+export function decodeCorpusReportSnapshot(value: unknown): CorpusReportSnapshot | null {
+  const decoded = decodeCorpusReportDocument(value);
+  return decoded?.documentType === "research-observatory-corpus-report-snapshot"
+    ? decoded as unknown as CorpusReportSnapshot : null;
+}
+
+export function decodeCorpusReportDrillPage(value: unknown): CorpusReportDrillPage | null {
+  const decoded = decodeCorpusReportDocument(value);
+  return decoded?.documentType === "research-observatory-corpus-report-drill-page"
+    ? decoded as unknown as CorpusReportDrillPage : null;
+}
+
 function corpusCreateRequest(value: unknown): value is CorpusCreateRequest {
   const command = record(value);
   return command !== null && exactKeys(command, ["root", "commandId", "workId", "workRevisionId", "source"])
@@ -2618,6 +2700,36 @@ CORPUS_METHODS = r"""    async createCorpusItem(value: CorpusCreateRequest): Pro
         ifMatch: null, idempotencyKey: null }, decodeCorpusItemRevision);
       if (result.itemId !== command.itemId) throw new Error("RO-CORE-RESPONSE-INVALID");
       return result;
+    },
+    async createCorpusReport(value: CorpusReportCreateRequest): Promise<CorpusReportSnapshot> {
+      const command = corpusOwned(value);
+      if (!corpusReportCreateRequest(command)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      return await requestJson(transport, { method: "POST", path: "/projects/corpus/reports/create", body,
+        ifMatch: null, idempotencyKey: null }, decodeCorpusReportSnapshot);
+    },
+    async inspectCorpusReport(value: CorpusReportReadRequest): Promise<CorpusReportSnapshot> {
+      const command = corpusOwned(value);
+      if (!corpusReportReadRequest(command)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/corpus/reports/inspect", body,
+        ifMatch: null, idempotencyKey: null }, decodeCorpusReportSnapshot);
+      if (result.snapshotId !== command.snapshotId) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async drillCorpusReport(value: CorpusReportDrillRequest): Promise<CorpusReportDrillPage> {
+      const command = corpusOwned(value);
+      if (!corpusReportDrillRequest(command)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/corpus/reports/drill", body,
+        ifMatch: null, idempotencyKey: null }, decodeCorpusReportDrillPage);
+      if (result.snapshotId !== command.snapshotId
+        || corpusReportFilterKey(result.filter) !== corpusReportFilterKey(command.filter))
+        throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
     },"""
 
 
@@ -2655,6 +2767,9 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
         "decide_workflow_human_task_projects_workflows_human_tasks__human_task_id__decide_post",
         "createCorpusItem",
         "inspectCorpusItem",
+        "createCorpusReport",
+        "inspectCorpusReport",
+        "drillCorpusReport",
     }
     if not required.issubset(operation_ids):
         raise ValueError(
@@ -2664,6 +2779,7 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
     operation_union = " | ".join(json.dumps(item) for item in operation_ids)
     header = (
         "// Generated by tools/core_api_contract.py; DO NOT EDIT.\n"
+        'import { decodeCorpusReportDocument } from "../corpus-reports/generated";\n'
         f"export const CORE_API_GENERATOR_VERSION = {json.dumps(GENERATOR_VERSION)} as const;\n"
         f"const schemaDigest = {json.dumps(digest)} as const;\n"
         "export const CORE_API_OPENAPI_SHA256 = schemaDigest;\n"

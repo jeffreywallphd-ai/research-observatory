@@ -11,5 +11,5 @@
     "skipLibCheck": false,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["core-api", "corpus", "rights", "domain", "intent", "model-gateway", "project", "provenance", "workflow", "workflow-profile"]
+  "include": ["core-api", "corpus", "corpus-reports", "rights", "domain", "intent", "model-gateway", "project", "provenance", "workflow", "workflow-profile"]
 }

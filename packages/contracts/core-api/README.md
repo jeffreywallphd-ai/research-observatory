@@ -68,6 +68,15 @@ the fallback markers do not impersonate a completed dependency-impact run.
 Pending recheck scopes remain inspectable after restart and fail closed until
 their affected outputs have a verified completion receipt.
 
+CAP-04.S04.T03 adds bounded `/projects/corpus/reports/create`, `inspect`, and
+`drill` calls. Creation takes a stable UUIDv7 command ID so an uncertain retry
+returns the same immutable snapshot. Inspection and paged drill bind to its exact
+snapshot ID; the drill filter and cursor cannot broaden a counted aggregate.
+The response uses the versioned corpus-report contract and preserves distinct
+unknown, not-reported, and unavailable field states. Core rechecks current
+project and source authority before releasing report content; a corpus
+membership permission does not itself grant report derivation.
+
 Model catalog calls are authenticated POST `/projects/models` (read) and
 `/projects/models/refresh` (write, mandatory 32-hex `Idempotency-Key`). They use
 the native route allowlist and existing lifecycle/compatibility boundary. Reads

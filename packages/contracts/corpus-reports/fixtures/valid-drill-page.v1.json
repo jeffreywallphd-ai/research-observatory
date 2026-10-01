@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0",
+  "contractVersion": "1.0.0",
+  "documentType": "research-observatory-corpus-report-drill-page",
+  "snapshotId": "0199c100-0000-7000-8000-000000000001",
+  "projectId": "01945c82-9340-4000-8000-000000000001",
+  "filter": {
+    "kind": "all",
+    "membership": null,
+    "sourceKey": null,
+    "leftSourceKey": null,
+    "rightSourceKey": null,
+    "route": null,
+    "leftRoute": null,
+    "rightRoute": null,
+    "dimension": null,
+    "state": null,
+    "value": null
+  },
+  "members": [
+    {
+      "schemaVersion": "1.0",
+      "contractVersion": "1.0.0",
+      "documentType": "research-observatory-corpus-report-member",
+      "snapshotId": "0199c100-0000-7000-8000-000000000001",
+      "projectId": "01945c82-9340-4000-8000-000000000001",
+      "itemId": "0199c100-0000-7000-8000-00000000000b",
+      "itemRevisionId": "0199c100-0000-7000-8000-000000000065",
+      "workId": "0199c100-0000-7000-8000-0000000000c9",
+      "workRevisionId": "0199c100-0000-7000-8000-00000000012d",
+      "membership": "candidate",
+      "duplicateOfItemId": null,
+      "displayLabel": "Study 1",
+      "paths": [
+        {
+          "pathId": "0199c100-0000-7000-8000-0000000001f5",
+          "sourceRevisionId": "0199c100-0000-7000-8000-0000000005dd",
+          "contextRevisionId": "0199c100-0000-7000-8000-0000000009c5",
+          "sourceKey": "connector:openalex",
+          "route": "connector-record",
+          "metadataAssertionStatus": "retained",
+          "reportInspectStatus": "allowed",
+          "rightsPolicyRevisionId": "0199c100-0000-7000-8000-000000000dad",
+          "rightsExpiresAt": null,
+          "sourceCopyAvailability": "unknown"
+        },
+        {
+          "pathId": "0199c100-0000-7000-8000-0000000001f6",
+          "sourceRevisionId": "0199c100-0000-7000-8000-0000000005de",
+          "contextRevisionId": "0199c100-0000-7000-8000-0000000009c6",
+          "sourceKey": "import:0199c100-0000-7000-8000-000000000033",
+          "route": "import-member",
+          "metadataAssertionStatus": "retained",
+          "reportInspectStatus": "allowed",
+          "rightsPolicyRevisionId": "0199c100-0000-7000-8000-000000000dae",
+          "rightsExpiresAt": null,
+          "sourceCopyAvailability": "unknown"
+        }
+      ],
+      "fields": [
+        {
+          "dimension": "identifier",
+          "state": "unknown",
+          "value": null,
+          "witnessRevisionId": null
+        },
+        {
+          "dimension": "year",
+          "state": "known",
+          "value": "2024",
+          "witnessRevisionId": "0199c100-0000-7000-8000-000000000191"
+        },
+        {
+          "dimension": "venue",
+          "state": "unknown",
+          "value": null,
+          "witnessRevisionId": null
+        },
+        {
+          "dimension": "language",
+          "state": "unknown",
+          "value": null,
+          "witnessRevisionId": null
+        },
+        {
+          "dimension": "discipline",
+          "state": "unknown",
+          "value": null,
+          "witnessRevisionId": null
+        },
+        {
+          "dimension": "oa",
+          "state": "unknown",
+          "value": null,
+          "witnessRevisionId": null
+        },
+        {
+          "dimension": "full-text",
+          "state": "unknown",
+          "value": null,
+          "witnessRevisionId": null
+        }
+      ]
+    }
+  ],
+  "nextCursor": null,
+  "total": 1
+}

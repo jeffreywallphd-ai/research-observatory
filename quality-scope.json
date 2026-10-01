@@ -154,8 +154,12 @@
     "services/core-api/src/research_observatory_core/corpus_contracts.py",
     "services/core-api/src/research_observatory_core/corpus_query.py",
     "services/core-api/src/research_observatory_core/corpus_repository.py",
+    "services/core-api/src/research_observatory_core/corpus_report_model.py",
+    "services/core-api/src/research_observatory_core/corpus_report_repository.py",
+    "tools/generate_corpus_report_schema.py",
     "services/core-api/src/research_observatory_core/corpus_service.py",
     "services/core-api/src/research_observatory_core/ports/corpus.py",
+    "services/core-api/src/research_observatory_core/ports/corpus_reports.py",
     "services/core-api/src/research_observatory_core/logging.py",
     "services/core-api/src/research_observatory_core/main.py",
     "services/core-api/src/research_observatory_core/model_gateway_contracts.py",
@@ -447,6 +451,7 @@
     "tests/reconciliation/test_v16_predecessor.py",
     "packages/contracts/rights/generate_schema.py",
     "services/core-api/src/research_observatory_core/migrations/versions/v0018_rights_policy.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0019_corpus_reports.py",
     "services/core-api/src/research_observatory_core/ports/rights.py",
     "services/core-api/src/research_observatory_core/rights_policy.py",
     "services/core-api/src/research_observatory_core/rights_repository.py",
@@ -456,6 +461,10 @@
     "tests/rights/test_policy.py",
     "tests/rights/test_repository.py",
     "tests/rights/test_runtime_windows.py",
+    "tests/corpus_reports/test_model.py",
+    "tests/reports/test_migration.py",
+    "tests/reports/test_repository.py",
+    "tools/corpus_report_test_check.py",
     "tools/rights_test_check.py"
   ]
 }

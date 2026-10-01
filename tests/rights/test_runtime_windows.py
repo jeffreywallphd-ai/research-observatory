@@ -170,6 +170,10 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                         "shareGroup": None,
                     }
                     permissions.append(permissions[0] | {"use": remote_use})
+                    report_use = inspect_use | {"purpose": "corpus-report"}
+                    permissions.extend(
+                        permissions[0] | {"use": report_use | {"action": action}} for action in ("derive", "inspect")
+                    )
                     publish = {
                         "root": root,
                         "commandId": new_uuid_v7(),
@@ -235,6 +239,18 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                     }
                     item = post(client, "/projects/corpus/create", create)
                     self.assertEqual("candidate", item["membership"])
+                    report_request = {"root": root, "commandId": new_uuid_v7()}
+                    report = post(client, "/projects/corpus/reports/create", report_request)
+                    self.assertEqual(1, report["memberCount"])
+                    self.assertEqual(report, post(client, "/projects/corpus/reports/create", report_request))
+                    self.assertEqual(
+                        item["revisionId"],
+                        post(
+                            client,
+                            "/projects/corpus/reports/drill",
+                            {"root": root, "snapshotId": report["snapshotId"], "filter": {"kind": "all"}, "limit": 10},
+                        )["members"][0]["itemRevisionId"],
+                    )
                     self.assertNotEqual(
                         b"SQLite format 3\x00", (Path(root) / "state/project.sqlite3").read_bytes()[:16]
                     )
@@ -248,6 +264,14 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                         post(client, "/projects/corpus/rights/current", {"root": root, "subject": subject}),
                     )
                     self.assertEqual("allow", post(client, "/projects/corpus/rights/evaluate", evaluation)["code"])
+                    self.assertEqual(
+                        report,
+                        post(
+                            client,
+                            "/projects/corpus/reports/inspect",
+                            {"root": root, "snapshotId": report["snapshotId"]},
+                        ),
+                    )
                     revoked_permissions = [
                         permission | {"value": "denied"} if permission["use"]["action"] == "index" else permission
                         for permission in permissions
@@ -261,6 +285,19 @@ class RightsRuntimeWindowsTests(unittest.TestCase):
                             "expectedPredecessorRevisionId": initial["revisionId"],
                             "permissions": revoked_permissions,
                         },
+                    )
+                    self.assertEqual(
+                        "RO-CORE-CORPUS-DENIED",
+                        post(
+                            client,
+                            "/projects/corpus/reports/inspect",
+                            {"root": root, "snapshotId": report["snapshotId"]},
+                            403,
+                        )["code"],
+                    )
+                    self.assertEqual(
+                        "RO-CORE-CORPUS-DENIED",
+                        post(client, "/projects/corpus/reports/create", report_request, 403)["code"],
                     )
                     revoked_scope = post(
                         client, "/projects/corpus/rights/recheck-scope", {"root": root, "subject": subject}

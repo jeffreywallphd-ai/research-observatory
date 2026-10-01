@@ -10,6 +10,11 @@ from fastapi.testclient import TestClient
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
 from research_observatory_core.corpus.membership import CorpusProblem
+from research_observatory_core.corpus_report_model import (
+    CorpusReportAccumulator,
+    CorpusReportDrillPage,
+    CorpusReportFilter,
+)
 from research_observatory_core.ports.rights import RightsOutputRecheckState
 from research_observatory_core.rights_policy import RightsDecision, RightsPolicyRevision
 from research_observatory_core.rights_repository import RightsProblem
@@ -220,3 +225,90 @@ class CorpusApiTests(unittest.TestCase):
                 self.assertEqual((status, public), (result.status_code, result.json()["code"]))
                 self.assertNotIn(command["root"], result.text)
                 self.assertNotIn(command["subject"]["sourceAssertionRevisionId"], result.text)
+
+    def test_report_routes_bind_idempotency_snapshot_filter_and_authority(self):
+        snapshot_id = "01900000-0000-7000-8000-000000000020"
+        project_id = "01900000-0000-7000-8000-000000000021"
+        command_id = "01900000-0000-7000-8000-000000000022"
+        snapshot = CorpusReportAccumulator(snapshot_id=snapshot_id, project_id=project_id).finalize(
+            intent_revision_id="01900000-0000-7000-8000-000000000023",
+            protocol_revision_id="01900000-0000-7000-8000-000000000023",
+            created_at="2026-10-01T00:00:00.000Z",
+        )
+        selected = CorpusReportFilter(kind="all")
+        page = CorpusReportDrillPage(
+            snapshot_id=snapshot_id,
+            project_id=project_id,
+            filter=selected,
+            members=(),
+            next_cursor=None,
+            total=0,
+        )
+        calls: list[tuple[Any, ...]] = []
+
+        def create_report(root, **values):
+            calls.append(("create", root, values))
+            return snapshot
+
+        def inspect_report(root, selected_snapshot, **values):
+            calls.append(("inspect", root, selected_snapshot, values))
+            return snapshot
+
+        def drill_report(root, selected_snapshot, **values):
+            calls.append(("drill", root, selected_snapshot, values))
+            return page
+
+        runtime = SimpleNamespace(
+            create_report=create_report,
+            inspect_report=inspect_report,
+            drill_report=drill_report,
+        )
+        root = "C:/synthetic-project"
+        with self.client(self.application(runtime)) as client:
+            unauthorized = client.post(
+                "/projects/corpus/reports/create",
+                json={"root": root, "commandId": command_id},
+                headers={"Authorization": ""},
+            )
+            self.assertEqual(401, unauthorized.status_code)
+            created = client.post("/projects/corpus/reports/create", json={"root": root, "commandId": command_id})
+            self.assertEqual((200, snapshot_id), (created.status_code, created.json()["snapshotId"]))
+            self.assertEqual("no-store", created.headers["Cache-Control"])
+            read = client.post("/projects/corpus/reports/inspect", json={"root": root, "snapshotId": snapshot_id})
+            self.assertEqual((200, snapshot_id), (read.status_code, read.json()["snapshotId"]))
+            drilled = client.post(
+                "/projects/corpus/reports/drill",
+                json={"root": root, "snapshotId": snapshot_id, "filter": {"kind": "all"}, "limit": 25},
+            )
+            self.assertEqual((200, 0), (drilled.status_code, drilled.json()["total"]))
+            self.assertEqual(["create", "inspect", "drill"], [call[0] for call in calls])
+            self.assertEqual(command_id, calls[0][2]["command_id"])
+            self.assertEqual(25, calls[2][3]["limit"])
+            self.assertEqual(selected, calls[2][3]["filter"])
+            self.assertIsNone(calls[2][3]["cursor"])
+            for payload in (
+                {"root": root, "snapshotId": snapshot_id, "limit": 101},
+                {"root": root, "snapshotId": snapshot_id, "filter": {"kind": "source"}},
+                {"root": root, "snapshotId": snapshot_id, "cursor": "x" * 513},
+            ):
+                invalid = client.post("/projects/corpus/reports/drill", json=payload)
+                self.assertEqual(422, invalid.status_code)
+            self.assertEqual(3, len(calls))
+
+    def test_report_limit_and_rights_failure_keep_distinct_content_free_diagnostics(self):
+        failure = {"code": "corpus-report-limit"}
+
+        def create_report(*_args, **_kwargs):
+            raise CorpusProblem(failure["code"])
+
+        command = {"root": "C:/synthetic-project", "commandId": "01900000-0000-7000-8000-000000000022"}
+        with self.client(self.application(SimpleNamespace(create_report=create_report))) as client:
+            for internal, status, public in (
+                ("corpus-report-limit", 409, "RO-CORE-CORPUS-REPORT-LIMIT"),
+                ("corpus-rights-denied", 403, "RO-CORE-CORPUS-DENIED"),
+                ("corpus-report-integrity-invalid", 500, "RO-CORE-CORPUS-INTEGRITY-FAILED"),
+            ):
+                failure["code"] = internal
+                result = client.post("/projects/corpus/reports/create", json=command)
+                self.assertEqual((status, public), (result.status_code, result.json()["code"]))
+                self.assertNotIn(command["root"], result.text)

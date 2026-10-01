@@ -15,7 +15,7 @@ import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
 from jsonschema import Draft202012Validator, FormatChecker
 from research_observatory_core import storage
 from research_observatory_core.migrations import runner
-from research_observatory_core.migrations.versions import v0017_corpus_items, v0018_rights_policy
+from research_observatory_core.migrations.versions import v0017_corpus_items, v0018_rights_policy, v0019_corpus_reports
 
 from tests.data import test_sqlite_migrations as migration_fixture
 from tests.reconciliation import test_migration as protected_fixture
@@ -98,10 +98,16 @@ class CorpusMigrationTests(unittest.TestCase):
 
     def test_populated_v16_backup_rows_and_reopen_survive_common_table_rebuild(self) -> None:
         plan = runner.plan_database_migration(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual((v0017_corpus_items.revision, v0018_rights_policy.revision), plan.migration_ids)
+        self.assertEqual(
+            (v0017_corpus_items.revision, v0018_rights_policy.revision, v0019_corpus_reports.revision),
+            plan.migration_ids,
+        )
         self.assertEqual(SCHEMA_SHA256, plan.source_schema_sha256)
         result = runner.migrate_database(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual((v0017_corpus_items.revision, v0018_rights_policy.revision), result.migration_ids)
+        self.assertEqual(
+            (v0017_corpus_items.revision, v0018_rights_policy.revision, v0019_corpus_reports.revision),
+            result.migration_ids,
+        )
         assert result.backup_relative_path is not None
         assert result.recovery_manifest_relative_path is not None
         backup = self.database.parent.parent / result.backup_relative_path
@@ -115,7 +121,10 @@ class CorpusMigrationTests(unittest.TestCase):
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         validator = Draft202012Validator(schema, format_checker=FormatChecker())
         self.assertEqual([], list(validator.iter_errors(manifest)))
-        self.assertEqual([v0017_corpus_items.revision, v0018_rights_policy.revision], manifest["migrationIds"])
+        self.assertEqual(
+            [v0017_corpus_items.revision, v0018_rights_policy.revision, v0019_corpus_reports.revision],
+            manifest["migrationIds"],
+        )
         self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, manifest["targetSchemaSha256"])
         self.assertTrue(list(validator.iter_errors(manifest | {"migrationIds": []})))
         self.assertTrue(
@@ -170,7 +179,7 @@ class CorpusMigrationTests(unittest.TestCase):
             with closing(storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)) as current:
                 report = storage.database_integrity_report(current, expected_project_id=PROJECT_ID)
                 self.assertTrue(report.ok, report.errors)
-                self.assertEqual(18, report.schema_version)
+                self.assertEqual(19, report.schema_version)
                 self.assertEqual(1, current.execute("PRAGMA foreign_keys").fetchone()[0])
                 self.assertEqual(
                     "1.0.0",
@@ -210,14 +219,14 @@ class CorpusMigrationTests(unittest.TestCase):
                 with closing(storage.open_canonical_database(database, expected_project_id=PROJECT_ID)) as reopened:
                     self.assertTrue(storage.database_integrity_report(reopened, expected_project_id=PROJECT_ID).ok)
 
-    def test_fresh_v18_retains_corpus_tables_and_exact_profile(self) -> None:
+    def test_fresh_v19_retains_corpus_tables_and_exact_profile(self) -> None:
         database = self.fixture.project / "fresh" / "state" / "project.sqlite3"
         database.parent.mkdir(parents=True)
         report = storage.initialize_database(
             database, project_id=PROJECT_ID, project_created_at="2026-09-30T00:00:00.000Z"
         )
         self.assertTrue(report.ok, report.errors)
-        self.assertEqual(18, report.schema_version)
+        self.assertEqual(19, report.schema_version)
         self.assertEqual(set(storage.EXPECTED_TABLES), set(report.strict_tables))
         self.assertTrue(
             {"rights_policy_subjects", "rights_policy_revisions", "rights_policy_rechecks"} <= set(report.strict_tables)

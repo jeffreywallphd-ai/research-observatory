@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "1.0",
+  "contractVersion": "1.0.0",
+  "documentType": "research-observatory-corpus-report-snapshot",
+  "snapshotId": "0199c100-0000-7000-8000-000000000001",
+  "projectId": "01945c82-9340-4000-8000-000000000001",
+  "intentRevisionId": "0199c100-0000-7000-8000-000000000002",
+  "protocolRevisionId": "0199c100-0000-7000-8000-000000000003",
+  "ruleVersion": "corpus-report/1.0.0",
+  "createdAt": "2026-10-01T12:00:00.000Z",
+  "memberCount": 1,
+  "discoveryPathCount": 2,
+  "membersSha256": "053c259423d8ad453efddef0f6fb570533fb8af0c5f13147cf309826b05d5f21",
+  "membershipCounts": [
+    {
+      "membership": "candidate",
+      "itemCount": 1
+    },
+    {
+      "membership": "included",
+      "itemCount": 0
+    },
+    {
+      "membership": "excluded",
+      "itemCount": 0
+    },
+    {
+      "membership": "withdrawn",
+      "itemCount": 0
+    }
+  ],
+  "duplicateLinkedItemCount": 0,
+  "unattributedItemCount": 0,
+  "unattributedDiscoveryPathCount": 0,
+  "sourceContributions": [
+    {
+      "sourceKey": "connector:openalex",
+      "itemCount": 1,
+      "discoveryPathCount": 1
+    },
+    {
+      "sourceKey": "import:0199c100-0000-7000-8000-000000000033",
+      "itemCount": 1,
+      "discoveryPathCount": 1
+    }
+  ],
+  "sourceOverlaps": [
+    {
+      "leftSourceKey": "connector:openalex",
+      "rightSourceKey": "import:0199c100-0000-7000-8000-000000000033",
+      "itemCount": 1,
+      "discoveryPathPairCount": 1
+    }
+  ],
+  "routeContributions": [
+    {
+      "route": "import-member",
+      "itemCount": 1,
+      "discoveryPathCount": 1
+    },
+    {
+      "route": "connector-record",
+      "itemCount": 1,
+      "discoveryPathCount": 1
+    },
+    {
+      "route": "citation",
+      "itemCount": 0,
+      "discoveryPathCount": 0
+    },
+    {
+      "route": "recommendation",
+      "itemCount": 0,
+      "discoveryPathCount": 0
+    },
+    {
+      "route": "manual",
+      "itemCount": 0,
+      "discoveryPathCount": 0
+    }
+  ],
+  "routeOverlaps": [
+    {
+      "leftRoute": "connector-record",
+      "rightRoute": "import-member",
+      "itemCount": 1,
+      "discoveryPathPairCount": 1
+    }
+  ],
+  "coverage": [
+    {
+      "dimension": "identifier",
+      "known": 0,
+      "notReported": 0,
+      "unknown": 1,
+      "unavailable": 0
+    },
+    {
+      "dimension": "year",
+      "known": 1,
+      "notReported": 0,
+      "unknown": 0,
+      "unavailable": 0
+    },
+    {
+      "dimension": "venue",
+      "known": 0,
+      "notReported": 0,
+      "unknown": 1,
+      "unavailable": 0
+    },
+    {
+      "dimension": "language",
+      "known": 0,
+      "notReported": 0,
+      "unknown": 1,
+      "unavailable": 0
+    },
+    {
+      "dimension": "discipline",
+      "known": 0,
+      "notReported": 0,
+      "unknown": 1,
+      "unavailable": 0
+    },
+    {
+      "dimension": "oa",
+      "known": 0,
+      "notReported": 0,
+      "unknown": 1,
+      "unavailable": 0
+    },
+    {
+      "dimension": "full-text",
+      "known": 0,
+      "notReported": 0,
+      "unknown": 1,
+      "unavailable": 0
+    }
+  ],
+  "valueDistributions": [
+    {
+      "dimension": "year",
+      "buckets": [
+        {
+          "value": "2024",
+          "itemCount": 1
+        }
+      ],
+      "otherKnownCount": 0,
+      "truncated": false
+    },
+    {
+      "dimension": "venue",
+      "buckets": [],
+      "otherKnownCount": 0,
+      "truncated": false
+    },
+    {
+      "dimension": "language",
+      "buckets": [],
+      "otherKnownCount": 0,
+      "truncated": false
+    },
+    {
+      "dimension": "discipline",
+      "buckets": [],
+      "otherKnownCount": 0,
+      "truncated": false
+    },
+    {
+      "dimension": "oa",
+      "buckets": [],
+      "otherKnownCount": 0,
+      "truncated": false
+    },
+    {
+      "dimension": "full-text",
+      "buckets": [],
+      "otherKnownCount": 0,
+      "truncated": false
+    }
+  ]
+}

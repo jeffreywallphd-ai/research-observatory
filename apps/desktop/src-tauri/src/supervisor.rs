@@ -24,6 +24,8 @@ const STOP_TIMEOUT: Duration = Duration::from_secs(5);
 const HEALTH_RETRY: Duration = Duration::from_millis(50);
 const MAX_DIAGNOSTICS: usize = 64;
 const CAPABILITY_TOKEN_BYTES: usize = 32;
+const MAX_CORPUS_REPORT_REQUEST_BYTES: usize = 32_768;
+const MAX_CORPUS_REPORT_RESPONSE_BYTES: usize = 33_554_432;
 const EXPECTED_CORE_CAPABILITIES: &[&str] = &[
     "intent.acceptance",
     "intent.drafts",
@@ -2497,6 +2499,184 @@ fn validate_import_review_request(path: &str, body: &str) -> bool {
     }
 }
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CorpusReportCreateAdmission {
+    root: String,
+    command_id: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CorpusReportReadAdmission {
+    root: String,
+    snapshot_id: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CorpusReportDrillAdmission {
+    root: String,
+    snapshot_id: String,
+    filter: CorpusReportFilterAdmission,
+    cursor: Option<String>,
+    limit: u64,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+struct CorpusReportFilterAdmission {
+    kind: String,
+    membership: Option<String>,
+    source_key: Option<String>,
+    left_source_key: Option<String>,
+    right_source_key: Option<String>,
+    route: Option<String>,
+    left_route: Option<String>,
+    right_route: Option<String>,
+    dimension: Option<String>,
+    state: Option<String>,
+    value: Option<String>,
+}
+
+fn canonical_report_source_key(value: &str) -> bool {
+    if let Some(revision_id) = value.strip_prefix("import:") {
+        return canonical_uuid_v7(revision_id);
+    }
+    let Some(provider) = value.strip_prefix("connector:") else {
+        return false;
+    };
+    (1..=64).contains(&provider.len())
+        && provider.as_bytes()[0].is_ascii_lowercase()
+        && provider
+            .bytes()
+            .all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'-')
+}
+
+fn valid_corpus_report_filter(filter: &CorpusReportFilterAdmission) -> bool {
+    if [
+        filter.source_key.as_deref(),
+        filter.left_source_key.as_deref(),
+        filter.right_source_key.as_deref(),
+    ]
+    .into_iter()
+    .flatten()
+    .any(|value| !canonical_report_source_key(value))
+        || [
+            filter.route.as_deref(),
+            filter.left_route.as_deref(),
+            filter.right_route.as_deref(),
+        ]
+        .into_iter()
+        .flatten()
+        .any(|value| {
+            !matches!(
+                value,
+                "import-member" | "connector-record" | "citation" | "recommendation" | "manual"
+            )
+        })
+        || filter.dimension.as_deref().is_some_and(|value| {
+            !matches!(
+                value,
+                "identifier" | "year" | "venue" | "language" | "discipline" | "oa" | "full-text"
+            )
+        })
+        || filter.state.as_deref().is_some_and(|value| {
+            !matches!(value, "known" | "not-reported" | "unknown" | "unavailable")
+        })
+        || filter.membership.as_deref().is_some_and(|value| {
+            !matches!(value, "candidate" | "included" | "excluded" | "withdrawn")
+        })
+        || filter
+            .value
+            .as_deref()
+            .is_some_and(|value| !(1..=512).contains(&value.encode_utf16().count()))
+    {
+        return false;
+    }
+    let selectors = [
+        filter.membership.is_some(),
+        filter.source_key.is_some(),
+        filter.left_source_key.is_some(),
+        filter.right_source_key.is_some(),
+        filter.route.is_some(),
+        filter.left_route.is_some(),
+        filter.right_route.is_some(),
+        filter.dimension.is_some(),
+        filter.state.is_some(),
+        filter.value.is_some(),
+    ];
+    let count = selectors.into_iter().filter(|present| *present).count();
+    match filter.kind.as_str() {
+        "all" | "duplicate-linked" | "unattributed" => count == 0,
+        "membership" => count == 1 && filter.membership.is_some(),
+        "source" => count == 1 && filter.source_key.is_some(),
+        "route" => count == 1 && filter.route.is_some(),
+        "source-overlap" => {
+            count == 2
+                && matches!(
+                    (filter.left_source_key.as_deref(), filter.right_source_key.as_deref()),
+                    (Some(left), Some(right)) if left < right
+                )
+        }
+        "route-overlap" => {
+            count == 2
+                && matches!(
+                    (filter.left_route.as_deref(), filter.right_route.as_deref()),
+                    (Some(left), Some(right)) if left < right
+                )
+        }
+        "coverage" => {
+            (count == 2 || count == 3)
+                && filter.dimension.is_some()
+                && filter.state.is_some()
+                && (filter.value.is_none() || filter.state.as_deref() == Some("known"))
+        }
+        _ => false,
+    }
+}
+
+fn validate_corpus_report_api_request(path: &str, body: &str) -> bool {
+    let expected = match path {
+        "/projects/corpus/reports/create" => &["root", "commandId"][..],
+        "/projects/corpus/reports/inspect" => &["root", "snapshotId"][..],
+        "/projects/corpus/reports/drill" => {
+            &["root", "snapshotId", "filter", "cursor", "limit"][..]
+        }
+        _ => return false,
+    };
+    if exact_json_object(body, expected, MAX_CORPUS_REPORT_REQUEST_BYTES).is_none() {
+        return false;
+    }
+    match path {
+        "/projects/corpus/reports/create" => {
+            serde_json::from_str::<CorpusReportCreateAdmission>(body).is_ok_and(|command| {
+                canonical_project_root(&command.root) && canonical_uuid_v7(&command.command_id)
+            })
+        }
+        "/projects/corpus/reports/inspect" => {
+            serde_json::from_str::<CorpusReportReadAdmission>(body).is_ok_and(|command| {
+                canonical_project_root(&command.root) && canonical_uuid_v7(&command.snapshot_id)
+            })
+        }
+        "/projects/corpus/reports/drill" => {
+            serde_json::from_str::<CorpusReportDrillAdmission>(body).is_ok_and(|command| {
+                canonical_project_root(&command.root)
+                    && canonical_uuid_v7(&command.snapshot_id)
+                    && valid_corpus_report_filter(&command.filter)
+                    && command.cursor.as_deref().is_none_or(|cursor| {
+                        (1..=512).contains(&cursor.len())
+                            && cursor.bytes().all(|byte| {
+                                byte.is_ascii_alphanumeric() || matches!(byte, b'-' | b'_')
+                            })
+                    })
+                    && (1..=100).contains(&command.limit)
+            })
+        }
+        _ => false,
+    }
+}
+
 pub(crate) fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'static str> {
     if request.path.len() > 2048 || !request.path.is_ascii() {
         return Err("RO-CORE-API-REQUEST-INVALID");
@@ -2563,6 +2743,16 @@ pub(crate) fn validate_api_request(request: &CoreApiRequest) -> Result<(), &'sta
         {
             return Ok(());
         }
+    }
+    if request.method == "POST"
+        && request.if_match.is_none()
+        && request.idempotency_key.is_none()
+        && request
+            .body
+            .as_deref()
+            .is_some_and(|body| validate_corpus_report_api_request(&request.path, body))
+    {
+        return Ok(());
     }
     if request.method == "POST"
         && request.if_match.is_none()
@@ -2808,6 +2998,9 @@ fn authenticated_api_request_bytes(
         return Err("RO-CORE-API-CANCELLED");
     }
     let response_limit = match api_request.path.as_str() {
+        "/projects/corpus/reports/create"
+        | "/projects/corpus/reports/inspect"
+        | "/projects/corpus/reports/drill" => MAX_CORPUS_REPORT_RESPONSE_BYTES,
         "/projects/reconciliation/inspect"
         | "/projects/reconciliation/versions/context"
         | "/projects/reconciliation/review/context"
@@ -4372,6 +4565,225 @@ mod tests {
     }
 
     #[test]
+    fn corpus_report_native_admission_accepts_only_exact_bounded_requests() {
+        let root = "C:/Research/study-one";
+        let snapshot_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d041";
+        let command_id = "018f47a2-4d6b-7f78-9f2e-7fb76c86d042";
+        let import_source = format!("import:{snapshot_id}");
+        let filters = [
+            serde_json::json!({"kind":"all"}),
+            serde_json::json!({"kind":"all","membership":null,"sourceKey":null,
+                "leftSourceKey":null,"rightSourceKey":null,"route":null,
+                "leftRoute":null,"rightRoute":null,"dimension":null,"state":null,"value":null}),
+            serde_json::json!({"kind":"membership","membership":"included"}),
+            serde_json::json!({"kind":"duplicate-linked"}),
+            serde_json::json!({"kind":"unattributed"}),
+            serde_json::json!({"kind":"source","sourceKey":import_source}),
+            serde_json::json!({"kind":"source-overlap","leftSourceKey":"connector:crossref","rightSourceKey":import_source}),
+            serde_json::json!({"kind":"route","route":"citation"}),
+            serde_json::json!({"kind":"route-overlap","leftRoute":"citation","rightRoute":"manual"}),
+            serde_json::json!({"kind":"coverage","dimension":"year","state":"known","value":"2025"}),
+            serde_json::json!({"kind":"coverage","dimension":"venue","state":"known","value":"é".repeat(300)}),
+            serde_json::json!({"kind":"coverage","dimension":"language","state":"unknown"}),
+        ];
+        for (path, body) in [
+            (
+                "/projects/corpus/reports/create",
+                serde_json::json!({"root":root,"commandId":command_id}),
+            ),
+            (
+                "/projects/corpus/reports/inspect",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id}),
+            ),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: "POST".into(),
+                    path: path.into(),
+                    body: Some(body.to_string()),
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_ok(),
+                "{path}"
+            );
+        }
+        for filter in filters {
+            for cursor in [None, Some("eyJzbmFwc2hvdElkIjoiYWJjIn0")] {
+                let body = serde_json::json!({
+                    "root":root,"snapshotId":snapshot_id,"filter":filter,"cursor":cursor,"limit":100,
+                });
+                assert!(
+                    validate_api_request(&CoreApiRequest {
+                        method: "POST".into(),
+                        path: "/projects/corpus/reports/drill".into(),
+                        body: Some(body.to_string()),
+                        if_match: None,
+                        idempotency_key: None,
+                    })
+                    .is_ok(),
+                    "{body}"
+                );
+            }
+        }
+
+        let mut rejected = vec![
+            (
+                "/projects/corpus/reports/create",
+                serde_json::json!({"root":root,"commandId":snapshot_id,"actorId":"forged"}),
+            ),
+            (
+                "/projects/corpus/reports/create",
+                serde_json::json!({"root":"../escape","commandId":command_id}),
+            ),
+            (
+                "/projects/corpus/reports/create",
+                serde_json::json!({"root":root,"commandId":"018f47a2-4d6b-4f78-9f2e-7fb76c86d042"}),
+            ),
+            (
+                "/projects/corpus/reports/inspect",
+                serde_json::json!({"root":root,"snapshotId":true}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all"},"cursor":null}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all"},"cursor":null,"limit":0}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all"},"cursor":null,"limit":101}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all"},"cursor":null,"limit":true}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all"},"cursor":null,"limit":1.0}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all"},"cursor":"not valid","limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all"},"cursor":"a".repeat(513),"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"future"},"cursor":null,"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all","sourceKey":"connector:crossref"},"cursor":null,"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"source","sourceKey":"connector:Crossref"},"cursor":null,"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"source-overlap","leftSourceKey":"connector:z","rightSourceKey":"connector:a"},"cursor":null,"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"route-overlap","leftRoute":"manual","rightRoute":"citation"},"cursor":null,"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"coverage","dimension":"year","state":"unknown","value":"2025"},"cursor":null,"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"coverage","dimension":"year"},"cursor":null,"limit":50}),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                serde_json::json!({"root":root,"snapshotId":snapshot_id,"filter":{"kind":"all","actorId":"forged"},"cursor":null,"limit":50}),
+            ),
+        ];
+        rejected.push((
+            "/projects/corpus/reports/create",
+            serde_json::json!({"root":format!("C:/{}", "a".repeat(32_768)),"commandId":command_id}),
+        ));
+        for (path, body) in rejected {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: "POST".into(),
+                    path: path.into(),
+                    body: Some(body.to_string()),
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_err(),
+                "unexpectedly admitted {path} {body}"
+            );
+        }
+        for (path, body) in [
+            (
+                "/projects/corpus/reports/create",
+                format!(r#"{{"root":"{root}","root":"{root}","commandId":"{command_id}"}}"#),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                format!(
+                    r#"{{"root":"{root}","snapshotId":"{snapshot_id}","filter":{{"kind":"all","kind":"all"}},"cursor":null,"limit":50}}"#
+                ),
+            ),
+            (
+                "/projects/corpus/reports/drill",
+                format!(
+                    r#"{{"root":"{root}","snapshotId":"{snapshot_id}","filter":{{"kind":"all","sourceKey":null,"sourceKey":null}},"cursor":null,"limit":50}}"#
+                ),
+            ),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: "POST".into(),
+                    path: path.into(),
+                    body: Some(body),
+                    if_match: None,
+                    idempotency_key: None,
+                })
+                .is_err(),
+                "duplicate JSON property was admitted"
+            );
+        }
+        for (method, path, if_match, idempotency_key) in [
+            ("GET", "/projects/corpus/reports/create", None, None),
+            ("POST", "/projects/corpus/reports/create/", None, None),
+            ("POST", "/projects/corpus/reports/export", None, None),
+            (
+                "POST",
+                "/projects/corpus/reports/create",
+                Some("\"unexpected\""),
+                None,
+            ),
+            (
+                "POST",
+                "/projects/corpus/reports/create",
+                None,
+                Some("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+            ),
+        ] {
+            assert!(
+                validate_api_request(&CoreApiRequest {
+                    method: method.into(),
+                    path: path.into(),
+                    body: Some(serde_json::json!({"root":root,"commandId":command_id}).to_string()),
+                    if_match: if_match.map(str::to_owned),
+                    idempotency_key: idempotency_key.map(str::to_owned),
+                })
+                .is_err(),
+                "unexpectedly admitted {method} {path}"
+            );
+        }
+    }
+
+    #[test]
     fn native_api_transport_allows_only_generated_local_routes() {
         for (method, path) in [
             ("GET", "/runtime/version"),
@@ -5062,7 +5474,7 @@ mod tests {
     }
 
     #[test]
-    fn reconciliation_response_limits_cover_admitted_previews_only() {
+    fn large_response_limits_cover_only_admitted_report_and_reconciliation_routes() {
         use std::io::Write;
         for (path, length, chunked, accepted) in [
             (
@@ -5090,6 +5502,11 @@ mod tests {
                 false,
                 false,
             ),
+            ("/projects/corpus/reports/create", 1_560_358, false, true),
+            ("/projects/corpus/reports/drill", 1_560_358, true, true),
+            ("/projects/corpus/reports/inspect", 33_554_432, false, true),
+            ("/projects/corpus/reports/create", 33_554_433, false, false),
+            ("/projects/corpus/reports/create/", 1_560_358, false, false),
             (
                 "/projects/reconciliation/versions/commit",
                 1_560_358,

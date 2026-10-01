@@ -25,6 +25,7 @@ from .connector_service import ConnectorConsentService, ConnectorProjectAdapters
 from .connector_worker import ConnectorWorkerAdapters, ConnectorWorkerService
 from .connectors.settings import ConnectorSettings
 from .corpus_query import ConnectorWorkerQueryResolver
+from .corpus_report_repository import SqliteCorpusReportRepository
 from .corpus_repository import SqliteCorpusRepository
 from .corpus_service import CorpusService
 from .import_preview_repository import sqlite_import_preview_repository
@@ -273,6 +274,9 @@ def create_runtime_app(
             imports=imports,
             connectors=connectors,
             repository_factory=lambda path, identity: SqliteCorpusRepository(path / "state/project.sqlite3", identity),
+            report_repository_factory=lambda path, identity: SqliteCorpusReportRepository(
+                path / "state/project.sqlite3", identity
+            ),
             intent_factory=sqlite_intent_revision_repository,
             actor_id=resolved_actor_id,
             connector_query=ConnectorWorkerQueryResolver(connectors),

@@ -31,6 +31,8 @@ import {
   evaluateCoreApiCompatibility,
   parseOperationEventStream,
   type CoreApiResponse,
+  type CorpusReportDrillPage,
+  type CorpusReportSnapshot,
   type ProvenanceLineagePage,
   type RecalculationComparisonProjection,
   type RecalculationPreview,
@@ -61,6 +63,71 @@ describe("generated Core API client", () => {
   it("binds generated source to the exact OpenAPI bytes", () => {
     const path = fileURLToPath(new URL("./openapi.json", import.meta.url));
     expect(createHash("sha256").update(readFileSync(path)).digest("hex")).toBe(CORE_API_OPENAPI_SHA256);
+  });
+
+  it("binds corpus report commands to exact snapshots and rejects an altered drill witness", async () => {
+    const snapshot = JSON.parse(readFileSync(fileURLToPath(new URL("../corpus-reports/fixtures/valid-snapshot.v1.json", import.meta.url)), "utf8")) as CorpusReportSnapshot;
+    const page = JSON.parse(readFileSync(fileURLToPath(new URL("../corpus-reports/fixtures/valid-drill-page.v1.json", import.meta.url)), "utf8")) as CorpusReportDrillPage;
+    const root = "C:/Research/study-one";
+    const commandId = "0199c100-0000-7000-8000-000000000099";
+    const paths: string[] = [];
+    const client = createCoreApiClient(async (request) => {
+      paths.push(request.path);
+      return response(200, request.path.endsWith("/drill") ? page : snapshot);
+    });
+    await expect(client.createCorpusReport({ root, commandId })).resolves.toEqual(snapshot);
+    await expect(client.inspectCorpusReport({ root, snapshotId: snapshot.snapshotId })).resolves.toEqual(snapshot);
+    await expect(client.drillCorpusReport({
+      root, snapshotId: snapshot.snapshotId, filter: page.filter, cursor: null, limit: 50,
+    })).resolves.toEqual(page);
+    expect(paths).toEqual([
+      "/projects/corpus/reports/create", "/projects/corpus/reports/inspect", "/projects/corpus/reports/drill",
+    ]);
+    await expect(client.drillCorpusReport({
+      root, snapshotId: snapshot.snapshotId, filter: { ...page.filter, kind: "source", sourceKey: null }, cursor: null, limit: 50,
+    })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    await expect(client.drillCorpusReport({
+      root, snapshotId: snapshot.snapshotId,
+      filter: { ...page.filter, kind: "source", sourceKey: "connector:Not-Valid" }, cursor: null, limit: 50,
+    })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    await expect(client.drillCorpusReport({
+      root, snapshotId: snapshot.snapshotId,
+      filter: { ...page.filter, kind: "route", route: "invented-route" as typeof page.filter.route }, cursor: null, limit: 50,
+    })).rejects.toThrow("RO-CORE-REQUEST-INVALID");
+    expect(paths).toHaveLength(3);
+    const altered = createCoreApiClient(async () => response(200, {
+      ...page,
+      members: page.members.map((member, index) => index === 0 ? { ...member, snapshotId: commandId } : member),
+    }));
+    await expect(altered.drillCorpusReport({
+      root, snapshotId: snapshot.snapshotId, filter: page.filter, cursor: null, limit: 50,
+    })).rejects.toThrow("RO-CORE-RESPONSE-INVALID");
+
+    const baseMember = page.members[0];
+    const basePath = baseMember?.paths[0];
+    expect(baseMember).toBeDefined();
+    expect(basePath).toBeDefined();
+    if (!baseMember || !basePath) throw new Error("fixture missing member/path");
+    const pathsForLargePage = Array.from({ length: 1000 }, (_, index) => ({
+      ...basePath,
+      pathId: `0199c100-0000-7000-8000-${(10_000 + index).toString(16).padStart(12, "0")}`,
+    }));
+    const largePage: CorpusReportDrillPage = {
+      ...page,
+      members: Array.from({ length: 8 }, (_, index) => ({
+        ...baseMember,
+        itemId: `0199c100-0000-7000-8000-${(20_000 + index).toString(16).padStart(12, "0")}`,
+        itemRevisionId: `0199c100-0000-7000-8000-${(30_000 + index).toString(16).padStart(12, "0")}`,
+        paths: pathsForLargePage,
+      })),
+      total: 8,
+      nextCursor: null,
+    };
+    expect(new TextEncoder().encode(JSON.stringify(largePage)).length).toBeGreaterThan(1_048_576);
+    const largeResponse = createCoreApiClient(async () => response(200, largePage));
+    await expect(largeResponse.drillCorpusReport({
+      root, snapshotId: snapshot.snapshotId, filter: page.filter, cursor: null, limit: 50,
+    })).resolves.toEqual(largePage);
   });
 
   it("provides a strict end-to-end recalculation client surface", async () => {

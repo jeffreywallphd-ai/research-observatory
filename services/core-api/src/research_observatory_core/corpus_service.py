@@ -29,9 +29,11 @@ from .corpus.membership import (
     apply_decision,
     rebind_work,
 )
+from .corpus_report_model import CorpusReportDrillPage, CorpusReportFilter, CorpusReportProblem, CorpusReportSnapshot
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ingestion.preview_workflow import fingerprint
 from .ports.corpus import CorpusActor, CorpusConnectorQueryResolver, CorpusRepository
+from .ports.corpus_reports import CorpusReportRepository
 from .ports.import_previews import PreviewProblem
 from .ports.reconciliation import ReconciliationConnectorSourceService, ReconciliationSourceService
 from .ports.repositories import IntentRevisionRepository, RepositoryProblem
@@ -118,6 +120,7 @@ class CorpusService:
         actor_id: str,
         connector_query: CorpusConnectorQueryResolver | None = None,
         rights_repository_factory: Callable[[Path, str], RightsRepository] | None = None,
+        report_repository_factory: Callable[[Path, str], CorpusReportRepository] | None = None,
         now: Callable[[], str] = utc_now,
     ) -> None:
         if not is_uuid_v7(actor_id):
@@ -126,12 +129,73 @@ class CorpusService:
         self._imports, self._connectors = imports, connectors
         self._repository, self._intents = repository_factory, intent_factory
         self._rights_repository = rights_repository_factory
+        self._report_repository = report_repository_factory
         self._actor_id, self._connector_query, self._now = actor_id, connector_query, now
 
     def _rights(self, path: Path, project_id: str) -> RightsRepository:
         if self._rights_repository is None:
             raise CorpusProblem("corpus-rights-unavailable")
         return self._rights_repository(path, project_id)
+
+    def _reports(self, path: Path, project_id: str) -> CorpusReportRepository:
+        if self._report_repository is None:
+            raise CorpusProblem("corpus-report-unavailable")
+        return self._report_repository(path, project_id)
+
+    def create_report(self, root: str, *, command_id: str, trace_id: str) -> CorpusReportSnapshot:
+        """Materialize one complete, immutable projection under current authority."""
+
+        _identity(command_id)
+
+        def action(_repo: CorpusRepository, actor: CorpusActor, _intent: str, path: Path, project_id: str):
+            return self._reports(path, project_id).create(
+                command_id=command_id,
+                command_sha256=_digest("create-report", actor, command_id, projectId=project_id),
+                actor=actor,
+            )
+
+        return self._with_authority(root, trace_id, action)
+
+    def inspect_report(self, root: str, snapshot_id: str, *, trace_id: str) -> CorpusReportSnapshot:
+        _identity(snapshot_id)
+        return self._with_authority(
+            root,
+            trace_id,
+            lambda _repo, actor, _intent, path, project_id: self._reports(path, project_id).summary(
+                snapshot_id, actor=actor
+            ),
+            require_write=False,
+        )
+
+    def drill_report(
+        self,
+        root: str,
+        snapshot_id: str,
+        *,
+        filter: CorpusReportFilter,
+        cursor: str | None,
+        limit: int,
+        trace_id: str,
+    ) -> CorpusReportDrillPage:
+        _identity(snapshot_id)
+        try:
+            selected = CorpusReportFilter.model_validate(filter)
+        except ValidationError:
+            raise CorpusProblem("corpus-command-invalid") from None
+        if (
+            isinstance(limit, bool)
+            or not 1 <= limit <= 100
+            or (cursor is not None and (not isinstance(cursor, str) or not 1 <= len(cursor) <= 512))
+        ):
+            raise CorpusProblem("corpus-command-invalid")
+        return self._with_authority(
+            root,
+            trace_id,
+            lambda _repo, actor, _intent, path, project_id: self._reports(path, project_id).page(
+                snapshot_id, filter=selected, after=cursor, limit=limit, actor=actor
+            ),
+            require_write=False,
+        )
 
     def publish_rights(
         self,
@@ -309,6 +373,27 @@ class CorpusService:
                 raise CorpusProblem("corpus-command-conflict") from None
             if error.code in {"rights-command-invalid", "rights-request-invalid", "rights-policy-invalid"}:
                 raise CorpusProblem("corpus-command-invalid") from None
+            raise CorpusProblem("corpus-rights-denied") from None
+        except CorpusReportProblem as error:
+            if error.code in {
+                "corpus-report-integrity-invalid",
+                "corpus-report-storage-invalid",
+                "corpus-report-rights-integrity-invalid",
+                "corpus-report-source-invalid",
+            }:
+                raise CorpusProblem("corpus-report-integrity-invalid") from None
+            if error.code == "corpus-report-not-found":
+                raise CorpusProblem("corpus-report-not-found") from None
+            if error.code == "corpus-report-limit":
+                raise CorpusProblem("corpus-report-limit") from None
+            if error.code in {
+                "corpus-report-command-invalid",
+                "corpus-report-filter-invalid",
+                "corpus-report-cursor-invalid",
+            }:
+                raise CorpusProblem("corpus-command-invalid") from None
+            if error.code == "corpus-report-command-conflict":
+                raise CorpusProblem("corpus-command-conflict") from None
             raise CorpusProblem("corpus-rights-denied") from None
 
     def _source(self, path: Path, project_id: str, address: SourceAddress) -> tuple[SourceAssertion, str | None]:

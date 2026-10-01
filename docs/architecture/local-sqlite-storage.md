@@ -112,14 +112,14 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v17
-profiles to current schema v18. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v18
+profiles to current schema v19. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-18 database is detected
+verified backup remains available. A current version-19 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -203,6 +203,18 @@ SourceAssertion revision when uniquely resolvable. Unresolved historical
 sources remain explicit, and every marker requires human review; the migration
 does not create a rights grant or auto-clear a marker. Bounded per-output
 inspection and Canvas presentation pass to T03.
+
+Version 19 adds append-only corpus report snapshots, member rows, discovery-path
+rows, and exact policy/source witnesses without rewriting v18 history. A report
+streams current canonical corpus-item heads under one writer, calculates
+distinct-item and discovery-path source/route summaries, and seals the complete
+member stream with a SHA-256 digest. The same transaction inserts provenance and
+outbox events; any rights denial, limit, or interrupted write leaves no partial
+snapshot. Report-purpose `derive` and `inspect` use current explicit rights
+policy, never the older corpus-membership import bridge. Protected summary and
+drill reads recheck current policy and the sealed member digest, including after
+restart. The frozen target-v18 recovery schema and populated v18 fixtures remain
+available for exact predecessor recovery.
 
 ### Windows schema-migration backup paths
 

@@ -6,7 +6,7 @@ import unittest
 from dataclasses import dataclass
 from pathlib import Path
 from types import SimpleNamespace
-from typing import cast
+from typing import Any, cast
 from unittest.mock import patch
 
 from research_observatory_core.corpus.membership import (
@@ -17,6 +17,12 @@ from research_observatory_core.corpus.membership import (
     append_discovery_path,
     apply_decision,
     rebind_work,
+)
+from research_observatory_core.corpus_report_model import (
+    CorpusReportAccumulator,
+    CorpusReportDrillPage,
+    CorpusReportFilter,
+    CorpusReportProblem,
 )
 from research_observatory_core.corpus_service import CorpusService
 from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights
@@ -319,6 +325,72 @@ class CorpusServiceTests(unittest.TestCase):
             source=source or address(),
             trace_id=TRACE,
         )
+
+    def test_report_commands_bind_current_actor_and_allow_authorized_read_only_inspection(self) -> None:
+        snapshot = CorpusReportAccumulator(snapshot_id=COMMAND, project_id=PROJECT).finalize(
+            intent_revision_id=INTENT,
+            protocol_revision_id=INTENT,
+            created_at=NOW,
+        )
+        selected = CorpusReportFilter(kind="all")
+        page = CorpusReportDrillPage(
+            snapshot_id=COMMAND,
+            project_id=PROJECT,
+            filter=selected,
+            members=(),
+            next_cursor=None,
+            total=0,
+        )
+        calls: list[tuple[Any, ...]] = []
+
+        def create(*, command_id, command_sha256, actor):
+            calls.append(("create", command_id, command_sha256, actor))
+            return snapshot
+
+        def summary(snapshot_id, *, actor):
+            calls.append(("summary", snapshot_id, actor))
+            return snapshot
+
+        def drill(snapshot_id, *, filter, after, limit, actor):
+            calls.append(("page", snapshot_id, filter, after, limit, actor))
+            return page
+
+        self.f.service._report_repository = lambda _path, _project: SimpleNamespace(
+            create=create, summary=summary, page=drill
+        )
+        self.assertEqual(snapshot, self.f.service.create_report(str(ROOT), command_id=COMMAND, trace_id=TRACE))
+        self.assertEqual(INTENT, calls[0][3].intent_revision_id)
+        self.assertEqual(ACTOR, calls[0][3].actor_id)
+        self.assertEqual(64, len(calls[0][2]))
+        self.f.projects.writable = False
+        self.assertEqual(snapshot, self.f.service.inspect_report(str(ROOT), COMMAND, trace_id=TRACE))
+        self.assertEqual(
+            page,
+            self.f.service.drill_report(str(ROOT), COMMAND, filter=selected, cursor=None, limit=25, trace_id=TRACE),
+        )
+        self.assertEqual(["create", "summary", "page"], [call[0] for call in calls])
+        self.assertEqual(25, calls[2][4])
+        with self.assertRaises(CorpusProblem):
+            self.f.service.create_report(str(ROOT), command_id=SECOND_COMMAND, trace_id=TRACE)
+        self.assertEqual(3, len(calls))
+
+    def test_report_repository_failure_is_content_free(self) -> None:
+        failure = {"code": "corpus-report-integrity-invalid"}
+
+        def fail(*_args, **_kwargs):
+            raise CorpusReportProblem(failure["code"])
+
+        self.f.service._report_repository = lambda _path, _project: SimpleNamespace(summary=fail)
+        for internal, public in (
+            ("corpus-report-integrity-invalid", "corpus-report-integrity-invalid"),
+            ("corpus-report-authority-invalid", "corpus-rights-denied"),
+            ("corpus-report-rights-denied", "corpus-rights-denied"),
+            ("corpus-report-limit", "corpus-report-limit"),
+            ("corpus-report-cursor-invalid", "corpus-command-invalid"),
+        ):
+            failure["code"] = internal
+            with self.assertRaisesRegex(CorpusProblem, public):
+                self.f.service.inspect_report(str(ROOT), COMMAND, trace_id=TRACE)
 
     def test_create_mints_core_ids_and_exact_retry_uses_same_result_without_builder(self) -> None:
         first = self.create()
