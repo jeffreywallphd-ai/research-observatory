@@ -1499,7 +1499,7 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-01T00:13:56+00:00'
+    updated_at: '2026-10-01T00:34:48+00:00'
     pause_reason: null
     pause_category: null
     lease:
@@ -3353,7 +3353,16 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-01T00:13:56+00:00'
-  checkpoints: []
+  checkpoints:
+  - id: W2.CP01
+    kind: risk-cluster
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-01T00:34:48+00:00'
+    evidence:
+    - artifacts/evidence/W2.CP01.qualification-01.json
+    - artifacts/evidence/W2.CP01.review-R01.json
+    notes: CAP-04.S01-S03 import, four-source and reconciliation cluster independently approved at exact candidate 9a319a1b;
+      targeted checks and native smoke pass; full W2 exit qualification remains due.
   completion:
     status: IN_PROGRESS
     reviewer: null
