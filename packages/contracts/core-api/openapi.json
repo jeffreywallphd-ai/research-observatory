@@ -27,6 +27,15 @@
         "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
         "type": "string"
       },
+      "Availability": {
+        "enum": [
+          "unknown",
+          "not-applicable",
+          "available",
+          "unavailable"
+        ],
+        "type": "string"
+      },
       "BoundedText": {
         "maxLength": 65536,
         "minLength": 1,
@@ -1704,6 +1713,149 @@
           "diagnosticCode"
         ],
         "title": "ConnectorRunSummary",
+        "type": "object"
+      },
+      "CorpusCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceAddress"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "root",
+          "commandId",
+          "workId",
+          "workRevisionId",
+          "source"
+        ],
+        "title": "CorpusCreateRequest",
+        "type": "object"
+      },
+      "CorpusItemRevision": {
+        "additionalProperties": false,
+        "description": "One immutable CorpusItem projection with orthogonal named conditions.",
+        "properties": {
+          "availability": {
+            "$ref": "#/components/schemas/Availability"
+          },
+          "decisionRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "discoveryPathIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "title": "Discoverypathids",
+            "type": "array"
+          },
+          "duplicateOfItemId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "itemId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "membership": {
+            "$ref": "#/components/schemas/Membership"
+          },
+          "previousRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "review": {
+            "$ref": "#/components/schemas/Review"
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "workId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "workRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "projectId",
+          "itemId",
+          "revisionId",
+          "previousRevisionId",
+          "workId",
+          "workRevisionId",
+          "membership",
+          "review",
+          "duplicateOfItemId",
+          "availability",
+          "discoveryPathIds",
+          "decisionRevisionId"
+        ],
+        "title": "CorpusItemRevision",
+        "type": "object"
+      },
+      "CorpusReadRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "itemId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "itemId"
+        ],
+        "title": "CorpusReadRequest",
         "type": "object"
       },
       "CsvDelimiter": {
@@ -4673,6 +4825,15 @@
         },
         "maxItems": 256,
         "type": "array"
+      },
+      "Membership": {
+        "enum": [
+          "candidate",
+          "included",
+          "excluded",
+          "withdrawn"
+        ],
+        "type": "string"
       },
       "ModelAccelerator": {
         "enum": [
@@ -7683,6 +7844,13 @@
         "maximum": 300000.0,
         "minimum": 0.0,
         "type": "integer"
+      },
+      "Review": {
+        "enum": [
+          "none",
+          "pending"
+        ],
+        "type": "string"
       },
       "ReviewCommand": {
         "additionalProperties": false,
@@ -11955,6 +12123,208 @@
         "summary": "Recent",
         "tags": [
           "connectors"
+        ]
+      }
+    },
+    "/projects/corpus/create": {
+      "post": {
+        "operationId": "createCorpusItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorpusCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorpusItemRevision"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Create",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/inspect": {
+      "post": {
+        "operationId": "inspectCorpusItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CorpusReadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorpusItemRevision"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Inspect",
+        "tags": [
+          "corpus"
         ]
       }
     },

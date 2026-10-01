@@ -339,7 +339,7 @@ def append_discovery_path(
 
 
 def rebind_work(current: CorpusItemRevision, decision: CorpusDecision) -> CorpusItemRevision:
-    """Retarget after a Core-verified Work merge/split without erasing prior identity."""
+    """Advance to a current revision of the same Work without erasing history."""
 
     current = CorpusItemRevision.model_validate(current)
     decision = CorpusDecision.model_validate(decision)
@@ -354,6 +354,8 @@ def rebind_work(current: CorpusItemRevision, decision: CorpusDecision) -> Corpus
         raise CorpusProblem("corpus-work-evidence-invalid")
     if decision.next_work_id is None or decision.next_work_id == current.item_id:
         raise CorpusProblem("corpus-work-target-invalid")
+    if decision.next_work_id != current.work_id:
+        raise CorpusProblem("corpus-work-target-unrelated")
     return CorpusItemRevision.model_validate(
         current.model_dump()
         | {

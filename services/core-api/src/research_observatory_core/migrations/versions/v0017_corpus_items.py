@@ -9,8 +9,8 @@ revision = "0017_corpus_items"
 down_revision = "0016_work_versions"
 source_schema_version = 16
 target_schema_version = 17
-TARGET_SCHEMA_SHA256 = "719d520126380b3807e657ed080b5ca1b22190dda1b9d7204091d34d4e9049b3"
-TARGET_PROFILE_SHA256 = "ceba26263dec5f1afb5a7a0a2e9587bf7eb99bf9a69ed2da35e42dec4c78c002"
+TARGET_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
+TARGET_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
 MATERIAL_MIGRATION_STEPS = (
     "common-v16-snapshot",
     "common-v16-drop",

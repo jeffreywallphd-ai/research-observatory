@@ -170,6 +170,31 @@ class ArchitectureContractTests(unittest.TestCase):
             path.write_text("import sqlite3\n", encoding="utf-8")
             self.assertTrue(any("outside adapter" in error for error in core_data_boundary_errors(root)))
 
+    def test_corpus_repository_is_a_root_adapter_not_a_business_or_port_dependency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "corpus_repository.py").write_text(
+                "import sqlite3\nfrom .storage import CanonicalConnection\n"
+                "from .repositories import _SqliteAggregateRepository\n"
+                "def save(connection):\n    connection.execute('SELECT 1')\n",
+                encoding="utf-8",
+            )
+            (root / "main.py").write_text(
+                "from .corpus_repository import SqliteCorpusRepository\n", encoding="utf-8"
+            )
+            self.assertEqual([], core_data_boundary_errors(root))
+            for location in ("business.py", "ports/corpus.py", "business/corpus_repository.py"):
+                path = root / location
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(
+                    "import sqlite3\nfrom research_observatory_core.corpus_repository import SqliteCorpusRepository\n",
+                    encoding="utf-8",
+                )
+                errors = core_data_boundary_errors(root)
+                self.assertTrue(any("outside adapter" in error for error in errors), errors)
+                self.assertTrue(any("concrete" in error for error in errors), errors)
+                path.unlink()
+
     def test_connector_repository_is_a_root_adapter_not_a_business_or_port_dependency(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

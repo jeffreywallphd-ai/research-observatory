@@ -296,25 +296,6 @@ class SqliteCorpusRepository:
             raise CorpusProblem("corpus-work-unavailable")
         return work
 
-    def _historical_work(
-        self,
-        connection: CanonicalConnection,
-        aggregates: _SqliteAggregateRepository,
-        work_id: str,
-        revision_id: str,
-    ) -> AggregateRevision:
-        try:
-            work = aggregates.get_revision(revision_id)
-        except RepositoryNotFound:
-            raise CorpusProblem("corpus-work-unavailable") from None
-        row = connection.execute(
-            "SELECT 1 FROM reconciliation_work_states WHERE project_id=? AND work_id=? AND revision_id=?",
-            (self._project, work_id, revision_id),
-        ).fetchone()
-        if work.aggregate_id != work_id or work.aggregate_kind != "record" or row is None:
-            raise CorpusProblem("corpus-work-unavailable")
-        return work
-
     def _connector_job(
         self, connection: CanonicalConnection, job_id: str
     ) -> tuple[dict[str, object], str, str, str, str, str, str, str]:
@@ -745,6 +726,19 @@ class SqliteCorpusRepository:
         _publication_step("state-created")
 
     def _write_decision(self, connection: CanonicalConnection, decision: CorpusDecision) -> None:
+        prior = connection.execute(
+            "SELECT d.decision_id FROM corpus_decisions d JOIN aggregate_revisions r "
+            "ON r.revision_id=d.next_revision_id AND r.project_id=d.project_id "
+            "AND r.aggregate_id=d.item_id WHERE d.project_id=? AND d.item_id=? AND d.dimension=? "
+            "ORDER BY r.revision DESC LIMIT 1",
+            (self._project, decision.item_id, decision.dimension),
+        ).fetchone()
+        superseded_id = str(prior[0]) if prior is not None else None
+        if decision.supersedes_decision_revision_id not in (None, superseded_id):
+            raise CorpusProblem("corpus-decision-supersession-invalid")
+        decision = CorpusDecision.model_validate(
+            decision.model_copy(update={"supersedes_decision_revision_id": superseded_id})
+        )
         if encode_corpus_decision(decision.model_dump(mode="json", by_alias=True)) is None:
             raise CorpusProblem("corpus-contract-invalid")
         connection.execute(
@@ -1010,11 +1004,7 @@ class SqliteCorpusRepository:
                 raise CorpusProblem("corpus-decision-invalid") from None
             evidence = self._evidence(connection, aggregates, current, decision, actor)
             item = apply_decision(current, decision) if kind == "decide" else rebind_work(current, decision)
-            work = (
-                self._historical_work(connection, aggregates, item.work_id, item.work_revision_id)
-                if kind == "decide"
-                else self._work(connection, aggregates, item.work_id, item.work_revision_id)
-            )
+            work = self._work(connection, aggregates, item.work_id, item.work_revision_id)
             _, event = self._append(
                 aggregates, item, actor, command_id, command_sha256, current=previous, inputs=(work, *evidence)
             )

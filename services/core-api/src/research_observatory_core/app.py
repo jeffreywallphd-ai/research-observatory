@@ -19,6 +19,8 @@ from .config import CoreSettings
 from .connector_api import connector_problem, register_connector_routes
 from .connector_worker import ConnectorWorkerService
 from .connectors.providers import ProviderProblem
+from .corpus_api import register_corpus_routes
+from .corpus_service import CorpusService
 from .import_api import register_import_routes
 from .import_intake_api import register_intake_routes
 from .import_preview_service import ImportPreviewService
@@ -121,6 +123,7 @@ class RuntimeContext:
     imports: ImportPreviewService | None = None
     connectors: ConnectorWorkerService | None = None
     reconciliation: ReconciliationService | None = None
+    corpus: CorpusService | None = None
     state: RuntimeState = RuntimeState.STARTING
 
 
@@ -141,6 +144,7 @@ def create_app(
     imports: ImportPreviewService | None = None,
     connectors: ConnectorWorkerService | None = None,
     reconciliation: ReconciliationService | None = None,
+    corpus: CorpusService | None = None,
     capability_digest: bytes | None = None,
     expected_authority: str | None = None,
 ) -> FastAPI:
@@ -184,6 +188,7 @@ def create_app(
             imports=imports,
             connectors=connectors,
             reconciliation=reconciliation,
+            corpus=corpus,
         )
         app.state.runtime = context
         if context.imports is not None:
@@ -328,6 +333,7 @@ def create_app(
     register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
     register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
     register_reconciliation_routes(app, lambda request: runtime(request).reconciliation, project_problem)
+    register_corpus_routes(app, lambda request: runtime(request).corpus)
 
     def signal_workers(context: RuntimeContext, root: str | None = None) -> None:
         # No lifecycle locks or waits until every worker has received its signal.

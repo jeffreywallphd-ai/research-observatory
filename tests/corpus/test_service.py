@@ -6,19 +6,28 @@ import unittest
 from dataclasses import dataclass
 from pathlib import Path
 from types import SimpleNamespace
+from typing import cast
 from unittest.mock import patch
 
 from research_observatory_core.corpus.membership import (
+    CorpusDecision,
     CorpusItemRevision,
     CorpusProblem,
+    DiscoveryPath,
     append_discovery_path,
     apply_decision,
     rebind_work,
 )
 from research_observatory_core.corpus_service import CorpusService
 from research_observatory_core.ingestion.import_drafts import ImportPermission, ImportRights
+from research_observatory_core.ports.corpus import CorpusActor
+from research_observatory_core.ports.reconciliation import (
+    ReconciliationConnectorSourceService,
+    ReconciliationSourceService,
+)
 from research_observatory_core.ports.repositories import IntentProjectIdentity
-from research_observatory_core.projects import ProjectLifecycleProblem
+from research_observatory_core.privacy import ProjectPrivacyService
+from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService
 from research_observatory_core.reconciliation.contracts import SourceAddress, SourceAssertion
 
 ROOT = Path("C:/synthetic-corpus-project")
@@ -39,6 +48,14 @@ THIRD_COMMAND = "01a0f503-66b9-75b2-9e29-e435120b0fb6"
 FOURTH_COMMAND = "01a0f503-66ba-7d58-867e-033918829f64"
 TRACE = "1" * 32
 NOW = "2026-09-30T20:00:00.000Z"
+
+type CorpusHistory = tuple[tuple[CorpusItemRevision, tuple[DiscoveryPath, ...], CorpusDecision | None], ...]
+
+
+def required[T](value: T | None) -> T:
+    if value is None:
+        raise AssertionError("expected repository output")
+    return value
 
 
 def address(*, connector: bool = False, second: bool = False) -> SourceAddress:
@@ -95,15 +112,15 @@ class FakeRepository:
         self.commands: dict[str, tuple[str, CorpusItemRevision]] = {}
         self.publications = 0
         self.builders = 0
-        self.last_actor = None
-        self.last_source = None
-        self.last_path = None
-        self.last_decision = None
-        self.history_result = ()
+        self.last_actor: CorpusActor | None = None
+        self.last_source: SourceAssertion | None = None
+        self.last_path: DiscoveryPath | None = None
+        self.last_decision: CorpusDecision | None = None
+        self.history_result: CorpusHistory = ()
         self.history_calls = 0
         self.citation_members = {(NEXT_WORK, NEXT_WORK_REVISION, SECOND_SOURCE)}
-        self.last_citation_path = None
-        self.last_citation_decision = None
+        self.last_citation_path: DiscoveryPath | None = None
+        self.last_citation_decision: CorpusDecision | None = None
 
     def _replay(self, command_id, command_sha256):
         if command_id not in self.commands:
@@ -268,10 +285,10 @@ def fixture() -> ServiceFixture:
         project_identity=lambda: IntentProjectIdentity(PROJECT, DOMAIN_PROJECT),
     )
     service = CorpusService(
-        projects,
-        SimpleNamespace(get=lambda _root: policy),
-        imports=sources,
-        connectors=sources,
+        cast(ProjectLifecycleService, projects),
+        cast(ProjectPrivacyService, SimpleNamespace(get=lambda _root: policy)),
+        imports=cast(ReconciliationSourceService, sources),
+        connectors=cast(ReconciliationConnectorSourceService, sources),
         repository_factory=lambda _path, _project: repository,
         intent_factory=lambda _path, _project: intents,
         actor_id=ACTOR,
@@ -319,9 +336,11 @@ class CorpusServiceTests(unittest.TestCase):
         )
         self.assertEqual(1, self.f.repository.builders)
         self.assertEqual(1, self.f.repository.publications)
-        self.assertEqual(INTENT, self.f.repository.last_actor.intent_revision_id)
-        self.assertEqual(ACTOR, self.f.repository.last_actor.actor_id)
-        self.assertEqual(SOURCE, self.f.repository.last_source.source_revision_id)
+        actor = required(self.f.repository.last_actor)
+        source = required(self.f.repository.last_source)
+        self.assertEqual(INTENT, actor.intent_revision_id)
+        self.assertEqual(ACTOR, actor.actor_id)
+        self.assertEqual(SOURCE, source.source_revision_id)
 
     def test_connector_discovery_uses_only_the_trusted_resolved_query_revision(self) -> None:
         connector_address = address(connector=True)
@@ -334,10 +353,11 @@ class CorpusServiceTests(unittest.TestCase):
 
         self.f.service._connector_query = resolve
         created = self.create(source=connector_address)
+        path = required(self.f.repository.last_path)
         self.assertEqual("candidate", created.membership)
         self.assertEqual(
             (connector_address.context_id, connector_address.revision_id),
-            (self.f.repository.last_path.query_revision_id, self.f.repository.last_path.context_revision_id),
+            (path.query_revision_id, path.context_revision_id),
         )
         self.assertEqual([(str(ROOT), connector_address, self.f.sources.assertion)], seen)
 
@@ -355,7 +375,7 @@ class CorpusServiceTests(unittest.TestCase):
             source_assertion_revision_id=SECOND_SOURCE,
         )
         created = self.f.service.create_citation(str(ROOT), trace_id=TRACE, **params)
-        path = self.f.repository.last_path
+        path = required(self.f.repository.last_path)
         self.assertEqual(("candidate", "pending"), created.conditions)
         self.assertEqual(
             ("citation", "source-to-corpus-item", NOW, None, NEXT_WORK, SECOND_SOURCE),
@@ -380,7 +400,7 @@ class CorpusServiceTests(unittest.TestCase):
 
     def test_history_routes_oldest_first_through_current_authority(self) -> None:
         created = self.create()
-        first_path = self.f.repository.last_path
+        first_path = required(self.f.repository.last_path)
         included = self.f.service.decide(
             str(ROOT),
             created.item_id,
@@ -399,7 +419,8 @@ class CorpusServiceTests(unittest.TestCase):
         self.f.repository.history_result = expected
         self.assertEqual(expected, self.f.service.history(str(ROOT), created.item_id, trace_id=TRACE))
         self.assertEqual(1, self.f.repository.history_calls)
-        self.assertEqual(ACTOR, self.f.repository.last_actor.actor_id)
+        actor = required(self.f.repository.last_actor)
+        self.assertEqual(ACTOR, actor.actor_id)
         with self.assertRaisesRegex(CorpusProblem, "corpus-command-invalid"):
             self.f.service.history(str(ROOT), "not-an-id", trace_id=TRACE)
         self.f.current_intent["status"] = "draft"
@@ -409,7 +430,7 @@ class CorpusServiceTests(unittest.TestCase):
 
     def test_decide_add_path_and_rebind_stamp_trusted_actor_protocol_and_predecessor(self) -> None:
         created = self.create()
-        entry_path = self.f.repository.last_path
+        entry_path = required(self.f.repository.last_path)
         self.assertEqual(
             ("source-to-corpus-item", NOW, None),
             (entry_path.direction, entry_path.occurred_at, entry_path.predecessor_item_revision_id),
@@ -442,7 +463,7 @@ class CorpusServiceTests(unittest.TestCase):
             evidence_revision_ids=(SECOND_SOURCE,),
             trace_id=TRACE,
         )
-        added_path = self.f.repository.last_path
+        added_path = required(self.f.repository.last_path)
         self.assertEqual(
             ("source-to-corpus-item", NOW, included.revision_id),
             (added_path.direction, added_path.occurred_at, added_path.predecessor_item_revision_id),
@@ -493,8 +514,8 @@ class CorpusServiceTests(unittest.TestCase):
             evidence_revision_ids=(SECOND_SOURCE,),
             trace_id=TRACE,
         )
-        path = self.f.repository.last_citation_path
-        decision = self.f.repository.last_citation_decision
+        path = required(self.f.repository.last_citation_path)
+        decision = required(self.f.repository.last_citation_decision)
         self.assertEqual("citation", path.kind)
         self.assertEqual(
             ("source-to-corpus-item", NOW, created.revision_id),
@@ -595,7 +616,7 @@ class CorpusServiceTests(unittest.TestCase):
 
     def test_read_only_project_can_inspect_typed_history_without_write(self) -> None:
         created = self.create()
-        path = self.f.repository.last_path
+        path = required(self.f.repository.last_path)
         self.f.repository.history_result = ((created, (path,), None),)
         self.f.projects.writable = False
         self.assertEqual(created, self.f.service.inspect(str(ROOT), created.item_id, trace_id=TRACE))

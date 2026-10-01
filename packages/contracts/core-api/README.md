@@ -48,6 +48,12 @@ second revision.
 The current in-memory operation registry is an integration seam only—CAP-03 owns
 durable workflow state and creation behavior.
 
+CAP-04.S04.T01 exposes bounded authenticated corpus create and inspect calls.
+Core resolves the current project, accepted Intent, privacy policy, retained
+source rights, and local actor before a protected corpus write. Typed historical
+discovery and decision reads remain inside Core; a paged HTTP history contract
+is required before the S04 presentation workflow exposes long histories.
+
 Model catalog calls are authenticated POST `/projects/models` (read) and
 `/projects/models/refresh` (write, mandatory 32-hex `Idempotency-Key`). They use
 the native route allowlist and existing lifecycle/compatibility boundary. Reads

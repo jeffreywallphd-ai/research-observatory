@@ -13,7 +13,7 @@ from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 from alembic.migration import MigrationContext
 from alembic.operations import Operations
@@ -46,6 +46,11 @@ _BACKUP_ROOT_NAME = "migration-backups"
 _BACKUP_FILE_NAME = "project.sqlite3"
 _MANIFEST_FILE_NAME = "recovery-manifest.json"
 _FAILURE_FILE_NAME = "failure.json"
+
+
+class _MigrationIdentity(Protocol):
+    revision: str
+    source_schema_version: int
 
 
 class _ActorIdentityMigration:
@@ -747,12 +752,22 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
-    chain = (
-        v0002_schema_history, v0003_object_envelopes, v0004_object_envelope_upgrades,
-        v0005_object_creation_source, v0006_actor_identity, v0007_provenance_ledger,
-        v0008_workflow_executor, v0009_material_dependencies, v0010_dependency_impacts,
-        v0011_import_previews, v0012_import_summaries, v0013_import_commits,
-        v0014_scholarly_reconciliation, v0015_reconciliation_review, v0016_work_versions,
+    chain: tuple[_MigrationIdentity, ...] = (
+        v0002_schema_history,
+        v0003_object_envelopes,
+        v0004_object_envelope_upgrades,
+        v0005_object_creation_source,
+        v0006_actor_identity,
+        v0007_provenance_ledger,
+        v0008_workflow_executor,
+        v0009_material_dependencies,
+        v0010_dependency_impacts,
+        v0011_import_previews,
+        v0012_import_summaries,
+        v0013_import_commits,
+        v0014_scholarly_reconciliation,
+        v0015_reconciliation_review,
+        v0016_work_versions,
         v0017_corpus_items,
     )
     for index, migration in enumerate(chain):

@@ -24,6 +24,9 @@ from .connector_repository import ConnectorRepository
 from .connector_service import ConnectorConsentService, ConnectorProjectAdapters
 from .connector_worker import ConnectorWorkerAdapters, ConnectorWorkerService
 from .connectors.settings import ConnectorSettings
+from .corpus_query import ConnectorWorkerQueryResolver
+from .corpus_repository import SqliteCorpusRepository
+from .corpus_service import CorpusService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
@@ -175,6 +178,7 @@ def create_runtime_app(
     imports = None
     reconciliation = None
     connectors = None
+    corpus = None
     if workflow_context is not None and resolved_actor_id is not None and resolved_provider is not None:
         imports = ImportPreviewService(
             projects,
@@ -262,6 +266,16 @@ def create_runtime_app(
             batch_adapter_factory=reconciliation_adapters,
             resume_epoch=workflow_context.resume_epoch,
         )
+        corpus = CorpusService(
+            projects,
+            privacy,
+            imports=imports,
+            connectors=connectors,
+            repository_factory=lambda path, identity: SqliteCorpusRepository(path / "state/project.sqlite3", identity),
+            intent_factory=sqlite_intent_revision_repository,
+            actor_id=resolved_actor_id,
+            connector_query=ConnectorWorkerQueryResolver(connectors),
+        )
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
@@ -271,6 +285,7 @@ def create_runtime_app(
         imports=imports,
         connectors=connectors,
         reconciliation=reconciliation,
+        corpus=corpus,
         model_gateway=ProjectModelGatewayService(
             projects,
             privacy,

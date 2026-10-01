@@ -5,12 +5,13 @@ import json
 import unittest
 from unittest.mock import patch
 
-import sqlcipher3.dbapi2 as sqlcipher
+import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
 from research_observatory_core import storage
 from research_observatory_core.corpus.membership import (
     CorpusDecision,
     CorpusItemRevision,
     CorpusProblem,
+    Dimension,
     DiscoveryPath,
 )
 from research_observatory_core.corpus_repository import SqliteCorpusRepository, _connector_output_matches
@@ -112,13 +113,16 @@ class CorpusRepositoryTests(unittest.TestCase):
         assert bridge is not None
         _, revisions, _, _ = validated_workflow_authority(intent_repo, expected_project_id=bridge.domain_project_id)
         current = revisions[0]
+        intent_revision_id = current["revisionId"]
+        intent_content_hash = current["revisionContentHash"]
+        assert isinstance(intent_revision_id, str) and isinstance(intent_content_hash, str)
         policy = _read_policy(_SqlitePrivacyPolicyRepository(self.database, self.project), self.project)
         self.actor = CorpusActor(
             actor_id=new_uuid_v7(),
             trace_id="d" * 32,
             occurred_at=f.actor.occurred_at,
-            intent_revision_id=current["revisionId"],
-            intent_sha256=current["revisionContentHash"].removeprefix("sha256:"),
+            intent_revision_id=intent_revision_id,
+            intent_sha256=intent_content_hash.removeprefix("sha256:"),
             policy_sha256=fingerprint(policy.model_dump(mode="json", by_alias=True)).removeprefix("sha256:"),
         )
         self.repository = SqliteCorpusRepository(self.database, self.project)
@@ -314,9 +318,99 @@ class CorpusRepositoryTests(unittest.TestCase):
         self.assertEqual("source-to-corpus-item", history[0][1][0].direction)
         self.assertEqual(self.actor.occurred_at, history[0][1][0].occurred_at)
         self.assertIsNone(history[0][1][0].predecessor_item_revision_id)
-        self.assertEqual(
-            ("screened-in",), tuple(decision.reason_code for _, _, decision in history if decision is not None)
+        reasons = []
+        for _, _, decision in history:
+            if decision is not None:
+                reasons.append(decision.reason_code)
+        self.assertEqual(("screened-in",), tuple(reasons))
+
+    def test_interleaved_decisions_supersede_latest_same_dimension(self) -> None:
+        item = self._create()
+
+        def change(
+            current: CorpusItemRevision,
+            dimension: Dimension,
+            command: str,
+            prior: str,
+            next_value: str,
+            supersedes: str | None = None,
+        ) -> CorpusDecision:
+            return CorpusDecision(
+                decision_id=new_uuid_v7(),
+                project_id=self.project,
+                item_id=current.item_id,
+                previous_revision_id=current.revision_id,
+                next_revision_id=new_uuid_v7(),
+                dimension=dimension,
+                command=command,
+                previous_value=prior,
+                next_value=next_value,
+                previous_decision_revision_id=current.decision_revision_id,
+                supersedes_decision_revision_id=supersedes,
+                actor_id=self.actor.actor_id,
+                reason_code="synthetic-review",
+                protocol_revision_id=self.actor.intent_revision_id,
+                evidence_revision_ids=(self.source.source_revision_id,),
+                occurred_at=self.actor.occurred_at,
+            )
+
+        first = self.repository.decide(
+            item.item_id,
+            expected_revision_id=item.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="a" * 64,
+            actor=self.actor,
+            build=lambda current: change(current, "membership", "include", "candidate", "included"),
         )
+        second = self.repository.decide(
+            item.item_id,
+            expected_revision_id=first.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="b" * 64,
+            actor=self.actor,
+            build=lambda current: change(current, "availability", "mark-unavailable", "unknown", "unavailable"),
+        )
+        before = self._counts()
+        with self.assertRaisesRegex(CorpusProblem, "corpus-decision-supersession-invalid"):
+            self.repository.decide(
+                item.item_id,
+                expected_revision_id=second.revision_id,
+                command_id=new_uuid_v7(),
+                command_sha256="c" * 64,
+                actor=self.actor,
+                build=lambda current: change(
+                    current, "membership", "reconsider", "included", "candidate", second.decision_revision_id
+                ),
+            )
+        self.assertEqual(before, self._counts())
+        third = self.repository.decide(
+            item.item_id,
+            expected_revision_id=second.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="d" * 64,
+            actor=self.actor,
+            build=lambda current: change(current, "membership", "reconsider", "included", "candidate"),
+        )
+        fourth = self.repository.decide(
+            item.item_id,
+            expected_revision_id=third.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="e" * 64,
+            actor=self.actor,
+            build=lambda current: change(current, "availability", "mark-available", "unavailable", "available"),
+        )
+        history = SqliteCorpusRepository(self.database, self.project).history(item.item_id, actor=self.actor)
+        decisions = [entry[2] for entry in history[1:]]
+        assert all(decision is not None for decision in decisions)
+        self.assertEqual(
+            (None, None, first.decision_revision_id, second.decision_revision_id),
+            tuple(decision.supersedes_decision_revision_id for decision in decisions if decision is not None),
+        )
+        self.assertEqual(
+            (None, first.decision_revision_id, second.decision_revision_id, third.decision_revision_id),
+            tuple(decision.previous_decision_revision_id for decision in decisions if decision is not None),
+        )
+        self.assertEqual(fourth, history[-1][0])
 
     def test_failure_after_state_write_rolls_back_all_common_and_corpus_facts(self) -> None:
         before = self._counts()
@@ -507,7 +601,9 @@ class CorpusRepositoryTests(unittest.TestCase):
         self.assertEqual("source-to-corpus-item", citation_path.direction)
         self.assertEqual(self.actor.occurred_at, citation_path.occurred_at)
         self.assertEqual(item.revision_id, citation_path.predecessor_item_revision_id)
-        self.assertEqual("researcher-attested-citation", history[-1][2].reason_code)
+        citation_decision = history[-1][2]
+        assert citation_decision is not None
+        self.assertEqual("researcher-attested-citation", citation_decision.reason_code)
         self.assertEqual(
             appended,
             self.repository.add_citation_path(
@@ -761,6 +857,38 @@ class CorpusRepositoryTests(unittest.TestCase):
         self.assertEqual(self.work_id, result.work_id)
         assert result.work_revision_id is not None
         self.assertNotEqual(item.work_revision_id, result.work_revision_id)
+        next_work_revision_id = result.work_revision_id
+
+        def decide_on_stale_work(current: CorpusItemRevision) -> CorpusDecision:
+            return CorpusDecision(
+                decision_id=new_uuid_v7(),
+                project_id=self.project,
+                item_id=current.item_id,
+                previous_revision_id=current.revision_id,
+                next_revision_id=new_uuid_v7(),
+                dimension="membership",
+                command="include",
+                previous_value="candidate",
+                next_value="included",
+                previous_decision_revision_id=current.decision_revision_id,
+                actor_id=self.actor.actor_id,
+                reason_code="screened-in",
+                protocol_revision_id=self.actor.intent_revision_id,
+                evidence_revision_ids=(self.source.source_revision_id,),
+                occurred_at=self.actor.occurred_at,
+            )
+
+        before = self._counts()
+        with self.assertRaisesRegex(CorpusProblem, "corpus-work-unavailable"):
+            self.repository.decide(
+                item.item_id,
+                expected_revision_id=item.revision_id,
+                command_id=new_uuid_v7(),
+                command_sha256="8" * 64,
+                actor=self.actor,
+                build=decide_on_stale_work,
+            )
+        self.assertEqual(before, self._counts())
 
         def rebind(current: CorpusItemRevision) -> CorpusDecision:
             return CorpusDecision(
@@ -772,13 +900,13 @@ class CorpusRepositoryTests(unittest.TestCase):
                 dimension="work-reference",
                 command="rebind-work",
                 previous_value=current.work_revision_id,
-                next_value=result.work_revision_id,
+                next_value=next_work_revision_id,
                 previous_decision_revision_id=current.decision_revision_id,
                 next_work_id=self.work_id,
                 actor_id=self.actor.actor_id,
                 reason_code="work-updated",
                 protocol_revision_id=self.actor.intent_revision_id,
-                evidence_revision_ids=(result.work_revision_id,),
+                evidence_revision_ids=(next_work_revision_id,),
                 occurred_at=self.actor.occurred_at,
             )
 
@@ -853,6 +981,45 @@ class CorpusRepositoryTests(unittest.TestCase):
                 build=lambda _current: self.fail("replay must not build another path"),
             ),
         )
+
+    def test_rebind_to_unrelated_work_denies_without_relabeling_discovery(self) -> None:
+        item = self._create()
+        unrelated = self._citing_work()
+        assert unrelated.work_id is not None and unrelated.work_revision_id is not None
+        self.assertNotEqual(item.work_id, unrelated.work_id)
+        before = self._counts()
+
+        def rebind(current: CorpusItemRevision) -> CorpusDecision:
+            return CorpusDecision(
+                decision_id=new_uuid_v7(),
+                project_id=self.project,
+                item_id=current.item_id,
+                previous_revision_id=current.revision_id,
+                next_revision_id=new_uuid_v7(),
+                dimension="work-reference",
+                command="rebind-work",
+                previous_value=current.work_revision_id,
+                next_value=unrelated.work_revision_id,
+                previous_decision_revision_id=current.decision_revision_id,
+                next_work_id=unrelated.work_id,
+                actor_id=self.actor.actor_id,
+                reason_code="unrelated-work",
+                protocol_revision_id=self.actor.intent_revision_id,
+                evidence_revision_ids=(unrelated.work_revision_id,),
+                occurred_at=self.actor.occurred_at,
+            )
+
+        with self.assertRaisesRegex(CorpusProblem, "corpus-work-target-unrelated"):
+            self.repository.rebind(
+                item.item_id,
+                expected_revision_id=item.revision_id,
+                command_id=new_uuid_v7(),
+                command_sha256="b" * 64,
+                actor=self.actor,
+                build=rebind,
+            )
+        self.assertEqual(before, self._counts())
+        self.assertEqual(item, self.repository.inspect(item.item_id, actor=self.actor))
 
     def test_connector_without_exact_accepted_query_binding_denies(self) -> None:
         original = self.source
@@ -964,16 +1131,20 @@ class CorpusConnectorWriterTests(ConnectorWorkflowFixture):
         assert bridge is not None
         _, revisions, _, _ = validated_workflow_authority(intent_repo, expected_project_id=bridge.domain_project_id)
         current_intent = revisions[0]
+        intent_revision_id = current_intent["revisionId"]
+        intent_content_hash = current_intent["revisionContentHash"]
+        assert isinstance(intent_revision_id, str) and isinstance(intent_content_hash, str)
         policy = _read_policy(_SqlitePrivacyPolicyRepository(database, project), project)
         actor = CorpusActor(
             actor_id=new_uuid_v7(),
             trace_id="d" * 32,
             occurred_at=self.clock.now(),
-            intent_revision_id=current_intent["revisionId"],
-            intent_sha256=current_intent["revisionContentHash"].removeprefix("sha256:"),
+            intent_revision_id=intent_revision_id,
+            intent_sha256=intent_content_hash.removeprefix("sha256:"),
             policy_sha256=fingerprint(policy.model_dump(mode="json", by_alias=True)).removeprefix("sha256:"),
         )
         item_id, path_id = new_uuid_v7(), new_uuid_v7()
+        work_id, work_revision_id = reconciled.work_id, reconciled.work_revision_id
 
         def build() -> tuple[CorpusItemRevision, DiscoveryPath]:
             path = DiscoveryPath(
@@ -995,8 +1166,8 @@ class CorpusConnectorWriterTests(ConnectorWorkflowFixture):
                 item_id=item_id,
                 revision_id=new_uuid_v7(),
                 previous_revision_id=None,
-                work_id=reconciled.work_id,
-                work_revision_id=reconciled.work_revision_id,
+                work_id=work_id,
+                work_revision_id=work_revision_id,
                 membership="candidate",
                 review="pending",
                 duplicate_of_item_id=None,

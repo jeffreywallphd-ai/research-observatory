@@ -4,7 +4,7 @@
   "profileId": "sqlite-wal-v1",
   "databaseSchemaVersion": 17,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "719d520126380b3807e657ed080b5ca1b22190dda1b9d7204091d34d4e9049b3",
+  "schemaFingerprintSha256": "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",

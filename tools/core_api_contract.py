@@ -2553,6 +2553,74 @@ export function createCoreApiClient(transport: CoreApiTransport) {
 """
 
 
+CORPUS_RUNTIME = r"""
+function corpusOwned(value: unknown): unknown {
+  try { return registryOwnedValue(value, 1000, 5000); } catch { return null; }
+}
+
+function corpusCreateRequest(value: unknown): value is CorpusCreateRequest {
+  const command = record(value);
+  return command !== null && exactKeys(command, ["root", "commandId", "workId", "workRevisionId", "source"])
+    && projectRoot(command.root) && canonicalUuid7(command.commandId) && canonicalUuid7(command.workId)
+    && canonicalUuid7(command.workRevisionId) && decodeSourceAddress(command.source) !== null;
+}
+
+function corpusReadRequest(value: unknown): value is CorpusReadRequest {
+  const command = record(value);
+  return command !== null && exactKeys(command, ["root", "itemId"])
+    && projectRoot(command.root) && canonicalUuid7(command.itemId);
+}
+
+export function decodeCorpusItemRevision(value: unknown): CorpusItemRevision | null {
+  const item = record(corpusOwned(value));
+  if (item === null || !exactKeys(item, ["schemaVersion", "projectId", "itemId", "revisionId",
+    "previousRevisionId", "workId", "workRevisionId", "membership", "review", "duplicateOfItemId",
+    "availability", "discoveryPathIds", "decisionRevisionId"])
+    || item.schemaVersion !== "1.0" || !(canonicalProjectId(item.projectId) || canonicalUuid7(item.projectId))
+    || !canonicalUuid7(item.itemId) || !canonicalUuid7(item.revisionId)
+    || (item.previousRevisionId !== null && !canonicalUuid7(item.previousRevisionId))
+    || !canonicalUuid7(item.workId) || !canonicalUuid7(item.workRevisionId)
+    || !["candidate", "included", "excluded", "withdrawn"].includes(item.membership as string)
+    || !["none", "pending"].includes(item.review as string)
+    || (item.duplicateOfItemId !== null && !canonicalUuid7(item.duplicateOfItemId))
+    || !["unknown", "not-applicable", "available", "unavailable"].includes(item.availability as string)
+    || !Array.isArray(item.discoveryPathIds) || item.discoveryPathIds.length < 1 || item.discoveryPathIds.length > 1000
+    || !item.discoveryPathIds.every(canonicalUuid7) || !reconciliationSorted(item.discoveryPathIds as string[])
+    || (item.decisionRevisionId !== null && !canonicalUuid7(item.decisionRevisionId))
+    || item.itemId === item.revisionId || item.itemId === item.workId
+    || item.previousRevisionId === item.revisionId || item.duplicateOfItemId === item.itemId
+    || (item.previousRevisionId === null
+      ? item.membership !== "candidate" || item.review !== "pending" || item.duplicateOfItemId !== null
+        || item.availability !== "unknown" || item.decisionRevisionId !== null
+      : item.decisionRevisionId === null)) return null;
+  return item as unknown as CorpusItemRevision;
+}
+"""
+
+CORPUS_METHODS = r"""    async createCorpusItem(value: CorpusCreateRequest): Promise<CorpusItemRevision> {
+      const command = corpusOwned(value);
+      if (!corpusCreateRequest(command)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/corpus/create", body,
+        ifMatch: null, idempotencyKey: null }, decodeCorpusItemRevision);
+      if (result.workId !== command.workId || result.workRevisionId !== command.workRevisionId
+        || result.membership !== "candidate" || result.review !== "pending" || result.previousRevisionId !== null)
+        throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },
+    async inspectCorpusItem(value: CorpusReadRequest): Promise<CorpusItemRevision> {
+      const command = corpusOwned(value);
+      if (!corpusReadRequest(command)) throw new Error("RO-CORE-REQUEST-INVALID");
+      const body = JSON.stringify(command);
+      if (new TextEncoder().encode(body).length > 32768) throw new Error("RO-CORE-REQUEST-INVALID");
+      const result = await requestJson(transport, { method: "POST", path: "/projects/corpus/inspect", body,
+        ifMatch: null, idempotencyKey: null }, decodeCorpusItemRevision);
+      if (result.itemId !== command.itemId) throw new Error("RO-CORE-RESPONSE-INVALID");
+      return result;
+    },"""
+
+
 def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: str) -> bytes:
     openapi = json.loads(openapi_bytes)
     if not isinstance(openapi, dict) or openapi.get("openapi") != "3.1.0":
@@ -2585,6 +2653,8 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
         "cancel_workflow_job_projects_workflows_jobs__job_id__cancel_post",
         "retry_workflow_job_projects_workflows_jobs__job_id__retry_post",
         "decide_workflow_human_task_projects_workflows_human_tasks__human_task_id__decide_post",
+        "createCorpusItem",
+        "inspectCorpusItem",
     }
     if not required.issubset(operation_ids):
         raise ValueError(
@@ -2604,9 +2674,22 @@ def render_typescript(openapi_bytes: bytes, workflow_profile_projection_sha256: 
     reconciliation, methods = render_reconciliation(openapi)
     runtime = CLIENT_RUNTIME.replace(
         "export function createCoreApiClient(transport: CoreApiTransport) {\n  return Object.freeze({",
-        "export function createCoreApiClient(transport: CoreApiTransport) {\n  return Object.freeze({\n" + methods,
+        "export function createCoreApiClient(transport: CoreApiTransport) {\n  return Object.freeze({\n"
+        + CORPUS_METHODS
+        + "\n"
+        + methods,
     )
-    return (header + _interfaces(openapi) + "\n" + runtime.strip() + "\n" + reconciliation + "\n").encode()
+    return (
+        header
+        + _interfaces(openapi)
+        + "\n"
+        + runtime.strip()
+        + "\n"
+        + reconciliation
+        + "\n"
+        + CORPUS_RUNTIME.strip()
+        + "\n"
+    ).encode()
 
 
 def generated_artifacts(repo: Path) -> dict[Path, bytes]:

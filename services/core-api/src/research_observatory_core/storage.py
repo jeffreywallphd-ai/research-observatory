@@ -354,7 +354,7 @@ IMPORT_COMMIT_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987
 RECONCILIATION_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
 RECONCILIATION_REVIEW_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
 WORK_VERSION_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
-EXPECTED_SCHEMA_SHA256 = "719d520126380b3807e657ed080b5ca1b22190dda1b9d7204091d34d4e9049b3"
+EXPECTED_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -419,7 +419,7 @@ IMPORT_COMMIT_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5
 RECONCILIATION_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
 RECONCILIATION_REVIEW_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391ab69246f62696623d067cd37"
 WORK_VERSION_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172dd790050bdafda72"
-EXPECTED_PROFILE_SHA256 = "ceba26263dec5f1afb5a7a0a2e9587bf7eb99bf9a69ed2da35e42dec4c78c002"
+EXPECTED_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3780,6 +3780,7 @@ CORPUS_DDL = (
               AND next.decision_revision_id = NEW.decision_id
               AND prior.membership <> 'withdrawn'
               AND (NEW.dimension <> 'work-reference' OR next.work_id = NEW.next_work_id)
+              AND (NEW.dimension <> 'work-reference' OR prior.work_id = next.work_id)
               AND (NEW.dimension = 'membership' OR prior.membership = next.membership)
               AND (NEW.dimension = 'review' OR prior.review = next.review)
               AND (NEW.dimension = 'duplicate' OR prior.duplicate_of_item_id IS next.duplicate_of_item_id)
@@ -3836,13 +3837,18 @@ CORPUS_DDL = (
               AND (SELECT COUNT(*) FROM corpus_item_discovery_paths WHERE revision_id = next.revision_id)
                 = (SELECT COUNT(*) FROM corpus_item_discovery_paths WHERE revision_id = prior.revision_id)
                   + CASE WHEN NEW.dimension = 'discovery' THEN 1 ELSE 0 END
-        ) OR (NEW.supersedes_decision_revision_id IS NOT NULL AND NOT EXISTS (
-            SELECT 1 FROM corpus_decisions prior_decision
-            WHERE prior_decision.decision_id = NEW.supersedes_decision_revision_id
-              AND prior_decision.project_id = NEW.project_id
+        ) OR NEW.supersedes_decision_revision_id IS NOT (
+            SELECT prior_decision.decision_id FROM corpus_decisions prior_decision
+            JOIN aggregate_revisions prior_revision
+              ON prior_revision.revision_id = prior_decision.next_revision_id
+            JOIN aggregate_revisions next_revision ON next_revision.revision_id = NEW.next_revision_id
+            WHERE prior_decision.project_id = NEW.project_id
               AND prior_decision.item_id = NEW.item_id
               AND prior_decision.dimension = NEW.dimension
-        )) OR (NEW.dimension = 'work-reference' AND NOT EXISTS (
+              AND prior_revision.aggregate_id = NEW.item_id
+              AND prior_revision.revision < next_revision.revision
+            ORDER BY prior_revision.revision DESC LIMIT 1
+        ) OR (NEW.dimension = 'work-reference' AND NOT EXISTS (
             SELECT 1 FROM aggregate_identities
             WHERE aggregate_id = NEW.next_work_id AND project_id = NEW.project_id
               AND aggregate_kind = 'record'

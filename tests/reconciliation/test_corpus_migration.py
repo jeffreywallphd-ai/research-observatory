@@ -451,6 +451,186 @@ class CorpusMigrationTests(unittest.TestCase):
             db.execute(sql, (*values, "candidate", *tail))
             db.execute("COMMIT")
 
+    def test_decision_trigger_requires_latest_same_dimension_supersession(self) -> None:
+        database = self.fixture.project / "supersession-binding" / "state" / "project.sqlite3"
+        database.parent.mkdir(parents=True)
+        storage.initialize_database(database, project_id=PROJECT_ID, project_created_at=_TIME)
+        with closing(sqlite3.connect(database, isolation_level=None)) as db:
+            db.execute("PRAGMA foreign_keys=ON")
+            db.execute("BEGIN IMMEDIATE")
+            work_id, work_revision_id, item_id, initial_revision, path_id = _initial_corpus_state(db)
+            fingerprint = hashlib.sha256(json.dumps((path_id,), separators=(",", ":")).encode()).hexdigest()
+
+            def state(prior: str, number: int, membership: str, availability: str) -> tuple[str, str]:
+                revision_id, decision_id = _id(), _id()
+                _common_revision(db, "corpus-item", item_id, revision_id, number)
+                db.execute(
+                    "INSERT INTO corpus_item_states (revision_id,project_id,item_id,previous_revision_id,work_id,"
+                    "work_revision_id,membership,review,availability,primary_discovery_path_id,"
+                    "discovery_fingerprint,decision_revision_id) VALUES (?,?,?,?,?, ?,?,'pending',?,?,?,?)",
+                    (
+                        revision_id,
+                        PROJECT_ID,
+                        item_id,
+                        prior,
+                        work_id,
+                        work_revision_id,
+                        membership,
+                        availability,
+                        path_id,
+                        fingerprint,
+                        decision_id,
+                    ),
+                )
+                db.execute(
+                    "INSERT INTO corpus_item_discovery_paths (revision_id,project_id,item_id,path_id) VALUES (?,?,?,?)",
+                    (revision_id, PROJECT_ID, item_id, path_id),
+                )
+                return revision_id, decision_id
+
+            def decision(
+                prior: str,
+                next_revision: str,
+                decision_id: str,
+                previous_decision_id: str | None,
+                dimension: str,
+                command: str,
+                previous_value: str,
+                next_value: str,
+                supersedes: str | None,
+            ) -> None:
+                db.execute(
+                    "INSERT INTO corpus_decisions (decision_id,project_id,item_id,previous_revision_id,"
+                    "next_revision_id,dimension,command,previous_value,next_value,previous_decision_revision_id,"
+                    "supersedes_decision_revision_id,actor_id,reason_code,protocol_revision_id,occurred_at) "
+                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (
+                        decision_id,
+                        PROJECT_ID,
+                        item_id,
+                        prior,
+                        next_revision,
+                        dimension,
+                        command,
+                        previous_value,
+                        next_value,
+                        previous_decision_id,
+                        supersedes,
+                        _id(),
+                        "synthetic-review",
+                        _id(),
+                        _TIME,
+                    ),
+                )
+
+            first_revision, first_decision = state(initial_revision, 1, "included", "unknown")
+            decision(
+                initial_revision,
+                first_revision,
+                first_decision,
+                None,
+                "membership",
+                "include",
+                "candidate",
+                "included",
+                None,
+            )
+            second_revision, second_decision = state(first_revision, 2, "included", "unavailable")
+            decision(
+                first_revision,
+                second_revision,
+                second_decision,
+                first_decision,
+                "availability",
+                "mark-unavailable",
+                "unknown",
+                "unavailable",
+                None,
+            )
+            third_revision, third_decision = state(second_revision, 3, "candidate", "unavailable")
+            args = (
+                second_revision,
+                third_revision,
+                third_decision,
+                second_decision,
+                "membership",
+                "reconsider",
+                "included",
+                "candidate",
+            )
+            for wrong in (None, second_decision):
+                with (
+                    self.subTest(supersedes=wrong),
+                    self.assertRaisesRegex(sqlite3.IntegrityError, "corpus decision chain binding denied"),
+                ):
+                    decision(*args, wrong)
+            decision(*args, first_decision)
+            self.assertEqual(
+                first_decision,
+                db.execute(
+                    "SELECT supersedes_decision_revision_id FROM corpus_decisions WHERE decision_id=?",
+                    (third_decision,),
+                ).fetchone()[0],
+            )
+            db.execute("COMMIT")
+
+    def test_work_reference_trigger_denies_unrelated_work_relabeling(self) -> None:
+        database = self.fixture.project / "unrelated-work-binding" / "state" / "project.sqlite3"
+        database.parent.mkdir(parents=True)
+        storage.initialize_database(database, project_id=PROJECT_ID, project_created_at=_TIME)
+        with closing(sqlite3.connect(database, isolation_level=None)) as db:
+            db.execute("PRAGMA foreign_keys=ON")
+            db.execute("BEGIN IMMEDIATE")
+            _work_id, work_revision_id, item_id, prior_revision, path_id = _initial_corpus_state(db)
+            unrelated_work_id, unrelated_work_revision_id = _id(), _id()
+            _common_revision(db, "record", unrelated_work_id, unrelated_work_revision_id, 0)
+            next_revision, decision_id = _id(), _id()
+            _common_revision(db, "corpus-item", item_id, next_revision, 1)
+            fingerprint = hashlib.sha256(json.dumps((path_id,), separators=(",", ":")).encode()).hexdigest()
+            db.execute(
+                "INSERT INTO corpus_item_states (revision_id,project_id,item_id,previous_revision_id,work_id,"
+                "work_revision_id,membership,review,availability,primary_discovery_path_id,"
+                "discovery_fingerprint,decision_revision_id) "
+                "VALUES (?,?,?,?,?,?,'candidate','pending','unknown',?,?,?)",
+                (
+                    next_revision,
+                    PROJECT_ID,
+                    item_id,
+                    prior_revision,
+                    unrelated_work_id,
+                    unrelated_work_revision_id,
+                    path_id,
+                    fingerprint,
+                    decision_id,
+                ),
+            )
+            db.execute(
+                "INSERT INTO corpus_item_discovery_paths (revision_id,project_id,item_id,path_id) VALUES (?,?,?,?)",
+                (next_revision, PROJECT_ID, item_id, path_id),
+            )
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "corpus decision chain binding denied"):
+                db.execute(
+                    "INSERT INTO corpus_decisions (decision_id,project_id,item_id,previous_revision_id,"
+                    "next_revision_id,dimension,command,previous_value,next_value,next_work_id,"
+                    "actor_id,reason_code,protocol_revision_id,occurred_at) "
+                    "VALUES (?,?,?,? ,?,'work-reference','rebind-work',?,?,?,?,?,?,?)",
+                    (
+                        decision_id,
+                        PROJECT_ID,
+                        item_id,
+                        prior_revision,
+                        next_revision,
+                        work_revision_id,
+                        unrelated_work_revision_id,
+                        unrelated_work_id,
+                        _id(),
+                        "unrelated-work",
+                        _id(),
+                        _TIME,
+                    ),
+                )
+            db.execute("ROLLBACK")
+
     def test_decision_cannot_hide_another_state_change_or_misname_transition(self) -> None:
         database = self.fixture.project / "one-dimension" / "state" / "project.sqlite3"
         database.parent.mkdir(parents=True)
