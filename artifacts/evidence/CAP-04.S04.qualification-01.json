@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "slice-qualification-evidence",
+  "sliceId": "CAP-04.S04",
+  "approvalCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "candidateCommit": "c4d18111ad875e60cf00a6a445b88ba072c9c90f",
+  "qualificationStatus": "PASS",
+  "independentSliceDisposition": "pending",
+  "executionEnvironment": {
+    "python": ".venv/Scripts/python.exe",
+    "coreImportPath": "services/core-api/src;.",
+    "temporaryDirectory": "artifacts/tmp for protected Windows and desktop application checks"
+  },
+  "taskCandidates": {
+    "CAP-04.S04.T01": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+    "CAP-04.S04.T02": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+    "CAP-04.S04.T03": "6da2ed0e88fe41ba1c22e7b984aef4870545ead0",
+    "W2.C09.T01": "799f2323a4d7e1012f02838d8b6b376228b95693"
+  },
+  "taskEvidenceDigestSemantics": "SHA-256 of committed Git blob bytes (LF); historical Windows working copies may contain CRLF",
+  "taskEvidence": [
+    {
+      "taskId": "CAP-04.S04.T01",
+      "path": "artifacts/evidence/CAP-04.S04.T01.json",
+      "sha256": "611ec1fc709f10b09e826df5f561fc981175780ef315e6d4469adac7a426fad3"
+    },
+    {
+      "taskId": "CAP-04.S04.T02",
+      "path": "artifacts/evidence/CAP-04.S04.T02.json",
+      "sha256": "537072ddc5854c141c030082d03d351da181ada28b724476845f9bb43363e2ad"
+    },
+    {
+      "taskId": "CAP-04.S04.T03",
+      "path": "artifacts/evidence/CAP-04.S04.T03.R03.json",
+      "sha256": "783fb41dee879a519a1632b964f18b6b72fe03176511c585a4ac6559a1c2479b"
+    },
+    {
+      "taskId": "W2.C09.T01",
+      "path": "artifacts/evidence/W2.C09.T01.json",
+      "sha256": "bbac9919ba37b8832d5694bfd8d370f4b2ea58c1bd27a5a4676c7aab21126657"
+    }
+  ],
+  "checks": [
+    {
+      "id": "protected-windows-end-to-end",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.rights.test_runtime_windows.RightsRuntimeWindowsTests.test_authenticated_policy_replay_restart_and_revocation_block_corpus_use",
+      "exitCode": 0,
+      "result": "1 passed in 18.492 s; actual DPAPI/SQLCipher import, membership, rights, report, denied source deletion, restart, revocation",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-windows-c4d.log",
+      "rawOutputSha256": "606585f39e5cbc21cd29d9c1dd861a34c928760096828f818d830cb5a593e2d5"
+    },
+    {
+      "id": "public-corpus-contract-and-handoffs",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.contracts.test_corpus_contracts tests.contracts.test_corpus_public_handoff",
+      "exitCode": 0,
+      "result": "6 passed; public CAP-05/06/08/18 and owner-neutral appended connector path fixture with identity substitution denial",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-handoff-c4d.log",
+      "rawOutputSha256": "7fbd4557750b7f1cde8315a874db426af98aeffad71761220fd6efbfacb7cad3"
+    },
+    {
+      "id": "connector-cancellation-and-restart",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.connectors.test_source_slice_runtime.SourceSliceRuntimeTests.test_four_sources_cache_failure_denial_cancellation_and_restart",
+      "exitCode": 0,
+      "result": "1 passed in 231.749 s; four-source cache/failure/denial/cancellation/restart boundary",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-cancellation-c4d.log",
+      "rawOutputSha256": "b7d5bfef00dcaaa877413c5a68d3141779f8535d6be717c33059f41cdeaaa755"
+    },
+    {
+      "id": "mounted-corpus-report-accessibility",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.desktop.test_corpus_report_interactions.CorpusReportInteractionTests.test_aggregate_keyboard_drill_denial_and_visible_recovery",
+      "exitCode": 0,
+      "result": "1 passed in 4.291 s; mounted keyboard drill, denial and visible recovery",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-interaction-c4d.log",
+      "rawOutputSha256": "e1c566089e1ddfdf6384bff6ccf6a2c0327f3f3077f4297fc5d245f67f63edc8"
+    },
+    {
+      "id": "desktop-application",
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --repo . --report artifacts/tmp/CAP-04.S04.slice-desktop-c4d.json",
+      "exitCode": 0,
+      "result": "9 desktop command stages; report ok=true, zero errors, browser style/workflow qualification",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-desktop-c4d.log",
+      "rawOutputSha256": "eb67b6cb3803998ca8ff8cd8d2dafca7c40e1c808f88d1dbcc22be8f32e199b6",
+      "reportPath": "artifacts/tmp/CAP-04.S04.slice-desktop-c4d.json",
+      "reportSha256": "6358058c23a8b452938a59cadb6a91b7d67ca2a09e32ec23e2cd8420e4c09eeb"
+    },
+    {
+      "id": "v20-schema-and-architecture-parity",
+      "command": ".venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_schema.SqliteSchemaTests.test_v20_query_plans_use_bounded_corpus_rights_source_search_and_snapshot_indexes tests.data.test_sqlite_schema.SqliteSchemaTests.test_architecture_guide_tracks_current_profile_recovery_and_mutable_projection",
+      "exitCode": 0,
+      "result": "2 passed; v20 bounded indexes and executable/guide parity",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-schema-c4d.log",
+      "rawOutputSha256": "870913f0ed421855a1cfda4fd095bebd8ebbbbee4a7e1291e5dea9f7dff1ef19"
+    },
+    {
+      "id": "core-api-contract",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "PASS",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-core-api-c4d.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "result": "PASS: 13 areas, 12 modules, 5 stable interfaces, 3 deployment profiles",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-architecture-c4d.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88"
+    },
+    {
+      "id": "python-quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.slice-quality-c4d.json",
+      "exitCode": 0,
+      "result": "PASS: 463 governed files",
+      "reportPath": "artifacts/tmp/CAP-04.S04.slice-quality-c4d.json",
+      "reportSha256": "017216bc1ce2881a9a842217213ab0f78561722935d1bb9a45fb98bd839919f1"
+    },
+    {
+      "id": "repository-structure",
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "result": "PASS: 12 required modules",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-structure-c4d.log",
+      "rawOutputSha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d"
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.slice-build-c4d.json",
+      "exitCode": 0,
+      "result": "PASS: 0.1.0+gc4d1811 clean",
+      "reportPath": "artifacts/tmp/CAP-04.S04.slice-build-c4d.json",
+      "reportSha256": "79f343abf7bba7dc537c85f7792dd0147a148ca5fd2dbcbc4fa47cd87027e478"
+    },
+    {
+      "id": "backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "PASS: generated views unchanged",
+      "rawOutput": "artifacts/tmp/CAP-04.S04.slice-views-c4d.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa"
+    }
+  ],
+  "performance": {
+    "fresh": true,
+    "performanceQualifying": true,
+    "candidateCommit": "c4d18111ad875e60cf00a6a445b88ba072c9c90f",
+    "report": "artifacts/tmp/CAP-04.S04.performance-qualification-02.json",
+    "reportSha256": "8aab6d741e863584a32fc575b43a5e40be9401711d4bf6fedee31611d768e1a6",
+    "baselineSha256": "6658a04b314e91c8f164c45f512aeeb1eedba96d22b881f3c97004674b7fdcaf",
+    "selectedInputCount": 527,
+    "repetitions": 3,
+    "producerElapsedSeconds": 293.035996499937,
+    "fixtureVersion": "synthetic-protected-corpus-overlap-64-v1",
+    "maxFirstDrillPageSeconds": 0.3932614,
+    "effectiveFirstDrillPageLimitSeconds": 0.4043202,
+    "independentArtifactAudit": "agent:/root/s04_integration_test_review; all 527 physical/Git inputs, three child result/log hashes, raw samples, distributions and eight thresholds verified; no blocking finding"
+  },
+  "authorityMismatch": {
+    "frozenPlan": "planning/slice-plans/CAP-04/CAP-04.S04-corpus-membership-discovery-path-and-rights-governance.md section 13 names CAP-11 monitoring as a future consumer",
+    "backlog": "planning/backlog.yaml assigns CAP-11 to Windows product hardening/release and proposed CAP-10.S07 to living monitoring",
+    "affectedScope": "future owner label for a downstream discovery-path consumer, not the S04 public path contract or current W2 implementation",
+    "safeInterimState": "owner-neutral public appended-path fixture; no implemented CAP-11 monitoring consumer, monitor write permission, or change to the frozen Wave packet",
+    "resumeConditionForDependentFutureWork": "reconcile the capability owner through the applicable planning/approval route before implementing the future monitoring consumer"
+  },
+  "evidenceUse": "Task criterion manifests and approved reviews remain historical for unchanged product paths. Fresh slice checks and benchmark bind candidateCommit. Corrective W2.C09.T01 closes the never-committed CRLF test pin; the prior failed report suite remains adverse. The source-record deletion scenario is a protected denial with unchanged durable history, not a supported deletion/recovery command.",
+  "deferredWaveObligations": [
+    "Five profile domains are covered by risk-selected slice checks; full affected-profile union and clean build/smoke remain checkpoint work under project automation section 8.1.",
+    "W2 exit requires fresh complete affected/repository/profile qualification, cross-capability, packaging, security, privacy, rights, accessibility, performance, and independent Wave review before the separate human release gate.",
+    "The synthetic benchmark does not prove large-corpus scaling, minimum hardware, installed-package execution, live-provider behavior, OS-cache-cold latency, worker throughput, or researcher outcome metrics."
+  ]
+}
