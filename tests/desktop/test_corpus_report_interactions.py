@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import json
 import unittest
+
 from playwright.sync_api import expect, sync_playwright
 
 from tests.desktop import test_model_center_interactions as fixtures
-
 
 REPO = fixtures.REPO
 inline_product_index = fixtures.inline_product_index
@@ -94,7 +94,9 @@ class CorpusReportInteractionTests(unittest.TestCase):
                 page.keyboard.press("Enter")
                 selected_heading = workspace.get_by_role("heading", name=f"Record drill: Source {source_key}")
                 expect(selected_heading).to_be_focused()
-                expect(workspace.get_by_role("row", name=f"{PROTECTED_LABEL} candidate 2 Inspect record")).to_be_visible()
+                expect(
+                    workspace.get_by_role("row", name=f"{PROTECTED_LABEL} candidate 2 Inspect record")
+                ).to_be_visible()
                 expect(page.locator("[data-live-region]")).to_contain_text(
                     f"Source {source_key}: 1 canonical item in this saved report. Page 1 loaded."
                 )
@@ -102,10 +104,16 @@ class CorpusReportInteractionTests(unittest.TestCase):
                 expected_filter = {**drill["filter"], "kind": "source", "sourceKey": source_key}
                 self.assertEqual("POST", calls[2]["method"])
                 self.assertEqual("/projects/corpus/reports/drill", calls[2]["path"])
-                self.assertEqual({
-                    "root": PROJECT_ROOT, "snapshotId": snapshot["snapshotId"],
-                    "filter": expected_filter, "cursor": None, "limit": 50,
-                }, calls[2]["body"])
+                self.assertEqual(
+                    {
+                        "root": PROJECT_ROOT,
+                        "snapshotId": snapshot["snapshotId"],
+                        "filter": expected_filter,
+                        "cursor": None,
+                        "limit": 50,
+                    },
+                    calls[2]["body"],
+                )
 
                 workspace.get_by_role("button", name=f"Inspect record {PROTECTED_LABEL}").click()
                 expect(workspace.get_by_role("heading", name=PROTECTED_LABEL)).to_be_focused()

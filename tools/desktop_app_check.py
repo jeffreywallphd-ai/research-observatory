@@ -3296,7 +3296,10 @@ def runtime_frame_errors(
             corpus.get_by_role("button", name="Open saved report", exact=True).click()
             corpus.locator(".corpus-drill tbody tr").first.wait_for(state="visible", timeout=5_000)
             qualification.record(projects, "corpus", "[data-corpus-canvas]")
-            projects.evaluate("() => { window.__TAURI_INTERNALS__.invoke = window.__CORPUS_QUALIFICATION_ORIGINAL__; delete window.__CORPUS_QUALIFICATION_ORIGINAL__; }")
+            projects.evaluate(
+                "() => { window.__TAURI_INTERNALS__.invoke = window.__CORPUS_QUALIFICATION_ORIGINAL__; "
+                "delete window.__CORPUS_QUALIFICATION_ORIGINAL__; }"
+            )
             open_desktop_tool(projects, "Source Manager")
             qualification.record(projects, "sources", "[data-source-manager]")
             projects.evaluate("() => { window.__TAURI_INTERNALS__.invoke = window.__INTAKE_QUALIFICATION_ORIGINAL__; }")
