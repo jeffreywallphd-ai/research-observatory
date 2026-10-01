@@ -70,6 +70,7 @@
     "packages/contracts/domain/domain-core.schema.json",
     "packages/contracts/domain/domain-core.v2.schema.json",
     "packages/contracts/corpus/corpus-membership.schema.json",
+    "packages/contracts/rights/rights-policy.schema.json",
     "packages/contracts/domain/domain-lifecycle.schema.json",
     "packages/contracts/intent/research-intent.schema.json",
     "packages/contracts/model-gateway/model-task.schema.json",

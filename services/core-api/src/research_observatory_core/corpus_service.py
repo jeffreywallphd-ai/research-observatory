@@ -35,10 +35,18 @@ from .ports.corpus import CorpusActor, CorpusConnectorQueryResolver, CorpusRepos
 from .ports.import_previews import PreviewProblem
 from .ports.reconciliation import ReconciliationConnectorSourceService, ReconciliationSourceService
 from .ports.repositories import IntentRevisionRepository, RepositoryProblem
+from .ports.rights import (
+    RightsOutputRecheckState,
+    RightsPermissionDraft,
+    RightsProblem,
+    RightsRecheckScope,
+    RightsRepository,
+)
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
 from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .reconciliation.contracts import ReconciliationProblem, SourceAddress, SourceAssertion
 from .research_intents import IntentProblem, validated_workflow_authority
+from .rights_policy import RightsDecision, RightsPolicyRevision, RightsRequest, RightsSubject, RightsUse
 
 _TRACE = re.compile(r"[0-9a-f]{32}\Z")
 _REASON = re.compile(r"[a-z][a-z0-9-]{0,63}\Z")
@@ -109,6 +117,7 @@ class CorpusService:
         intent_factory: Callable[[Path, str], IntentRevisionRepository],
         actor_id: str,
         connector_query: CorpusConnectorQueryResolver | None = None,
+        rights_repository_factory: Callable[[Path, str], RightsRepository] | None = None,
         now: Callable[[], str] = utc_now,
     ) -> None:
         if not is_uuid_v7(actor_id):
@@ -116,7 +125,129 @@ class CorpusService:
         self._projects, self._privacy = projects, privacy
         self._imports, self._connectors = imports, connectors
         self._repository, self._intents = repository_factory, intent_factory
+        self._rights_repository = rights_repository_factory
         self._actor_id, self._connector_query, self._now = actor_id, connector_query, now
+
+    def _rights(self, path: Path, project_id: str) -> RightsRepository:
+        if self._rights_repository is None:
+            raise CorpusProblem("corpus-rights-unavailable")
+        return self._rights_repository(path, project_id)
+
+    def publish_rights(
+        self,
+        root: str,
+        *,
+        command_id: str,
+        subject: RightsSubject,
+        permissions: tuple[RightsPermissionDraft, ...],
+        expected_predecessor_revision_id: str | None,
+        confirmed: bool,
+        trace_id: str,
+    ) -> RightsPolicyRevision:
+        """Publish an explicit researcher decision; Core mints durable IDs after replay."""
+
+        if confirmed is not True or not is_uuid_v7(command_id):
+            raise CorpusProblem("corpus-command-invalid")
+        try:
+            subject = RightsSubject.model_validate(subject)
+            permissions = tuple(RightsPermissionDraft.model_validate(value) for value in permissions)
+        except ValidationError:
+            raise CorpusProblem("corpus-command-invalid") from None
+
+        def action(_repo: CorpusRepository, actor: CorpusActor, _intent: str, path: Path, project_id: str):
+            if subject.project_id != project_id:
+                raise CorpusProblem("corpus-rights-denied")
+            command_hash = _digest(
+                "publish-rights",
+                actor,
+                command_id,
+                projectId=project_id,
+                subject=subject.model_dump(mode="json", by_alias=True),
+                permissions=[value.model_dump(mode="json", by_alias=True) for value in permissions],
+                expectedPredecessorRevisionId=expected_predecessor_revision_id,
+            )
+            return self._rights(path, project_id).publish_draft(
+                subject,
+                permissions,
+                expected_predecessor_revision_id,
+                command_id=command_id,
+                command_sha256=command_hash,
+                actor=actor,
+            )
+
+        return self._with_authority(root, trace_id, action)
+
+    def current_rights(self, root: str, subject: RightsSubject, *, trace_id: str) -> RightsPolicyRevision | None:
+        try:
+            subject = RightsSubject.model_validate(subject)
+        except ValidationError:
+            raise CorpusProblem("corpus-command-invalid") from None
+        return self._with_authority(
+            root,
+            trace_id,
+            lambda _repo, actor, _intent, path, project: self._rights(path, project).current(subject, actor=actor),
+            require_write=False,
+        )
+
+    def rights_recheck_scope(self, root: str, subject: RightsSubject, *, trace_id: str) -> RightsRecheckScope | None:
+        try:
+            subject = RightsSubject.model_validate(subject)
+        except ValidationError:
+            raise CorpusProblem("corpus-command-invalid") from None
+        return self._with_authority(
+            root,
+            trace_id,
+            lambda _repo, actor, _intent, path, project: self._rights(path, project).recheck_scope(
+                subject, actor=actor
+            ),
+            require_write=False,
+        )
+
+    def output_rights_rechecks(self, root: str, output_revision_id: str, *, trace_id: str) -> RightsOutputRecheckState:
+        """Read protected output-specific rights markers and pending scope."""
+
+        if not is_uuid_v7(output_revision_id):
+            raise CorpusProblem("corpus-command-invalid")
+        return self._with_authority(
+            root,
+            trace_id,
+            lambda _repo, actor, _intent, path, project: self._rights(path, project).output_rechecks(
+                output_revision_id, actor=actor
+            ),
+            require_write=False,
+        )
+
+    def advance_rights_rechecks(
+        self, root: str, subject: RightsSubject, *, batch_size: int, trace_id: str
+    ) -> RightsRecheckScope | None:
+        try:
+            subject = RightsSubject.model_validate(subject)
+        except ValidationError:
+            raise CorpusProblem("corpus-command-invalid") from None
+        if isinstance(batch_size, bool) or not 1 <= batch_size <= 1_000:
+            raise CorpusProblem("corpus-command-invalid")
+        return self._with_authority(
+            root,
+            trace_id,
+            lambda _repo, actor, _intent, path, project: self._rights(path, project).advance_rechecks(
+                subject, actor=actor, batch_size=batch_size
+            ),
+        )
+
+    def evaluate_rights(self, root: str, subject: RightsSubject, use: RightsUse, *, trace_id: str) -> RightsDecision:
+        try:
+            subject, use = RightsSubject.model_validate(subject), RightsUse.model_validate(use)
+        except ValidationError:
+            raise CorpusProblem("corpus-command-invalid") from None
+
+        def action(_repo: CorpusRepository, actor: CorpusActor, _intent: str, path: Path, project_id: str):
+            if subject.project_id != project_id:
+                raise CorpusProblem("corpus-rights-denied")
+            return self._rights(path, project_id).evaluate(
+                RightsRequest(actor_id=actor.actor_id, subject=subject, use=use), actor=actor
+            )
+
+        return self._with_authority(root, trace_id, action)
 
     def _with_authority[Result](
         self,
@@ -169,6 +300,16 @@ class CorpusService:
             return self._projects.perform_open_project_action(root=root, require_write=require_write, action=guarded)
         except ProjectLifecycleProblem, RepositoryProblem, PrivacyPolicyProblem, IntentProblem:
             raise CorpusProblem("corpus-authority-unavailable") from None
+        except RightsProblem as error:
+            if "integrity" in error.code or error.code in {"rights-storage-invalid", "rights-transaction-required"}:
+                raise CorpusProblem("corpus-rights-integrity-invalid") from None
+            if error.code == "rights-clock-unavailable":
+                raise CorpusProblem("corpus-actor-unavailable") from None
+            if error.code in {"rights-predecessor-stale", "rights-command-conflict", "rights-impact-limit"}:
+                raise CorpusProblem("corpus-command-conflict") from None
+            if error.code in {"rights-command-invalid", "rights-request-invalid", "rights-policy-invalid"}:
+                raise CorpusProblem("corpus-command-invalid") from None
+            raise CorpusProblem("corpus-rights-denied") from None
 
     def _source(self, path: Path, project_id: str, address: SourceAddress) -> tuple[SourceAssertion, str | None]:
         if address.kind == "connector-record" and self._connector_query is None:
@@ -178,8 +319,9 @@ class CorpusService:
             source = SourceAssertion.model_validate(service.reconciliation_source(str(path), address))
             if source.project_id != project_id or source.address != address:
                 raise CorpusProblem("corpus-source-mismatch")
-            if not all(source.rights.permits(action) for action in ("store", "inspect", "derive", "index")):
-                raise CorpusProblem("corpus-rights-denied")
+            # The repository decides the current, exact-copy rights under its
+            # protected writer. Legacy import rights are only a metadata bridge
+            # when no newer policy exists for this retained assertion/copy.
             query_revision_id = None
             if address.kind == "connector-record" and self._connector_query is not None:
                 query_revision_id = self._connector_query(str(path), address, source)

@@ -121,6 +121,7 @@ class FakeRepository:
         self.citation_members = {(NEXT_WORK, NEXT_WORK_REVISION, SECOND_SOURCE)}
         self.last_citation_path: DiscoveryPath | None = None
         self.last_citation_decision: CorpusDecision | None = None
+        self.rights_rejected = False
 
     def _replay(self, command_id, command_sha256):
         if command_id not in self.commands:
@@ -141,6 +142,8 @@ class FakeRepository:
         replay = self._replay(command_id, command_sha256)
         if replay is not None:
             return replay
+        if self.rights_rejected:
+            raise CorpusProblem("corpus-rights-denied")
         self.builders += 1
         item, path = build()
         assert source.source_revision_id == path.source_revision_id
@@ -654,9 +657,14 @@ class CorpusServiceTests(unittest.TestCase):
 
     def test_revoked_source_and_unsupported_connector_deny_before_write(self) -> None:
         self.f.sources.assertion = source_assertion(address(), permitted=False)
+        # The protected repository evaluates current rights under its writer.
+        # This service fake models that disposition without treating source
+        # metadata as a grant or a trusted denial before the writer.
+        self.f.repository.rights_rejected = True
         with self.assertRaisesRegex(CorpusProblem, "corpus-rights-denied"):
             self.create()
         self.assertEqual(0, self.f.repository.publications)
+        self.f.repository.rights_rejected = False
         self.f.sources.assertion = source_assertion(address(connector=True))
         before = self.f.sources.calls
         with self.assertRaisesRegex(CorpusProblem, "corpus-connector-query-unavailable"):

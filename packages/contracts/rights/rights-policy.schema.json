@@ -1,0 +1,623 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-observatory.local/contracts/rights/rights-policy.schema.json",
+  "title": "Research Observatory rights policy and decision documents",
+  "description": "Versioned source/copy-specific values; Core rechecks current policy and independent actor, Intent, privacy and project authority at use time.",
+  "x-research-observatory-semanticRules": [
+    "one-exact-project-source-address-copy-resource-per-policy",
+    "unique-assertion-and-evidence-identities",
+    "action-purpose-destination-context-is-exact",
+    "source-observation-is-not-permission",
+    "reported-license-access-and-terms-are-non-granting-source-observations",
+    "source-observation-binds-the-exact-record-assertion-and-hash",
+    "entitlement-and-confirmation-provenance",
+    "canonical-real-utc-millisecond-time-and-expiry",
+    "decision-is-a-historical-fact-not-use-authority",
+    "legacy-import-bridge-requires-exact-retained-assertion-hash-and-local-metadata-scope"
+  ],
+  "oneOf": [
+    {
+      "$ref": "#/$defs/RightsPolicyRevision"
+    },
+    {
+      "$ref": "#/$defs/RightsDecision"
+    }
+  ],
+  "$defs": {
+    "BoundedText": {
+      "maxLength": 65536,
+      "minLength": 1,
+      "type": "string"
+    },
+    "Confidence": {
+      "enum": [
+        "reported",
+        "confirmed",
+        "verified",
+        "disputed"
+      ],
+      "type": "string"
+    },
+    "CopyLocation": {
+      "enum": [
+        "local-project-object",
+        "local-source",
+        "provider-hosted",
+        "collaboration-copy"
+      ],
+      "type": "string"
+    },
+    "DestinationKind": {
+      "enum": [
+        "local-project",
+        "local-export",
+        "remote-model",
+        "external-export",
+        "collaboration"
+      ],
+      "type": "string"
+    },
+    "Digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Identity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "PermissionValue": {
+      "enum": [
+        "permitted",
+        "denied",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "ProjectIdentity": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "ProvenanceBasis": {
+      "enum": [
+        "source-observation",
+        "researcher-confirmed",
+        "verified-entitlement"
+      ],
+      "type": "string"
+    },
+    "ResourceClass": {
+      "enum": [
+        "metadata",
+        "full-text",
+        "derived-text",
+        "embedding"
+      ],
+      "type": "string"
+    },
+    "RightsAction": {
+      "enum": [
+        "store",
+        "inspect",
+        "index",
+        "derive",
+        "model-use",
+        "quote",
+        "export",
+        "share"
+      ],
+      "type": "string"
+    },
+    "RightsPermission": {
+      "additionalProperties": false,
+      "properties": {
+        "assertionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "subject": {
+          "$ref": "#/$defs/RightsSubject"
+        },
+        "use": {
+          "$ref": "#/$defs/RightsUse"
+        },
+        "value": {
+          "$ref": "#/$defs/PermissionValue"
+        },
+        "basis": {
+          "$ref": "#/$defs/ProvenanceBasis"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "assertedByActorId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "granteeActorId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidenceRevisionIds": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 16,
+          "type": "array"
+        },
+        "licenseObservationRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entitlementRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recordedAt": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+          "type": "string"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "confirmationRequired": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "assertionId",
+        "subject",
+        "use",
+        "value",
+        "basis",
+        "confidence",
+        "assertedByActorId",
+        "granteeActorId",
+        "evidenceRevisionIds",
+        "licenseObservationRevisionId",
+        "entitlementRevisionId",
+        "recordedAt",
+        "expiresAt",
+        "confirmationRequired"
+      ],
+      "type": "object"
+    },
+    "RightsSourceObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "address": {
+          "$ref": "#/$defs/SourceAddress"
+        },
+        "sourceRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "sourceSha256": {
+          "$ref": "#/$defs/Digest"
+        },
+        "provider": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "type": "string"
+        },
+        "terms": {
+          "$ref": "#/$defs/SourceTerms"
+        },
+        "retrievedAt": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "projectId",
+        "sourceAssertionRevisionId",
+        "address",
+        "sourceRevisionId",
+        "sourceSha256",
+        "provider",
+        "terms",
+        "retrievedAt"
+      ],
+      "type": "object"
+    },
+    "RightsSubject": {
+      "additionalProperties": false,
+      "properties": {
+        "projectId": {
+          "$ref": "#/$defs/ProjectIdentity"
+        },
+        "sourceAssertionRevisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "address": {
+          "$ref": "#/$defs/SourceAddress"
+        },
+        "copyId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "copyLocation": {
+          "$ref": "#/$defs/CopyLocation"
+        },
+        "resourceClass": {
+          "$ref": "#/$defs/ResourceClass"
+        }
+      },
+      "required": [
+        "projectId",
+        "sourceAssertionRevisionId",
+        "address",
+        "copyId",
+        "copyLocation",
+        "resourceClass"
+      ],
+      "type": "object"
+    },
+    "RightsUse": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/RightsAction"
+        },
+        "purpose": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "type": "string"
+        },
+        "destinationKind": {
+          "$ref": "#/$defs/DestinationKind"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "region": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "shareGroup": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "action",
+        "purpose",
+        "destinationKind",
+        "provider",
+        "region",
+        "shareGroup"
+      ],
+      "type": "object"
+    },
+    "SourceAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "import-member",
+            "connector-record"
+          ],
+          "type": "string"
+        },
+        "contextId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "ordinal": {
+          "maximum": 200000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "recordKey": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "contextId",
+        "revisionId",
+        "ordinal",
+        "recordKey"
+      ],
+      "type": "object"
+    },
+    "SourceObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "state": {
+          "enum": [
+            "reported",
+            "not-reported",
+            "unknown",
+            "not-applicable"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundedText"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "type": "object"
+    },
+    "SourceTerms": {
+      "additionalProperties": false,
+      "properties": {
+        "license": {
+          "$ref": "#/$defs/SourceObservation"
+        },
+        "terms": {
+          "$ref": "#/$defs/SourceObservation"
+        },
+        "access": {
+          "enum": [
+            "open",
+            "closed",
+            "unknown",
+            "not-reported"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "license",
+        "terms",
+        "access"
+      ],
+      "type": "object"
+    },
+    "RightsPolicyRevision": {
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0",
+          "type": "string"
+        },
+        "contractVersion": {
+          "const": "1.0.0",
+          "type": "string"
+        },
+        "documentType": {
+          "const": "research-observatory-rights-policy-revision",
+          "type": "string"
+        },
+        "revisionId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "predecessorRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/RightsSubject"
+        },
+        "sourceObservation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RightsSourceObservation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "permissions": {
+          "items": {
+            "$ref": "#/$defs/RightsPermission"
+          },
+          "maxItems": 256,
+          "type": "array"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "contractVersion",
+        "documentType",
+        "revisionId",
+        "predecessorRevisionId",
+        "subject",
+        "sourceObservation",
+        "permissions"
+      ],
+      "type": "object"
+    },
+    "AuthorityKind": {
+      "enum": [
+        "policy",
+        "legacy-import-bridge",
+        "none"
+      ],
+      "type": "string"
+    },
+    "DecisionCode": {
+      "enum": [
+        "allow",
+        "deny",
+        "unknown",
+        "require-confirmation"
+      ],
+      "type": "string"
+    },
+    "RightsDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "schemaVersion": {
+          "const": "1.0",
+          "type": "string"
+        },
+        "contractVersion": {
+          "const": "1.0.0",
+          "type": "string"
+        },
+        "documentType": {
+          "const": "research-observatory-rights-decision",
+          "type": "string"
+        },
+        "code": {
+          "$ref": "#/$defs/DecisionCode"
+        },
+        "reasonCode": {
+          "pattern": "^[a-z][a-z0-9-]{0,63}$",
+          "type": "string"
+        },
+        "authorityKind": {
+          "$ref": "#/$defs/AuthorityKind"
+        },
+        "actorId": {
+          "$ref": "#/$defs/Identity"
+        },
+        "subject": {
+          "$ref": "#/$defs/RightsSubject"
+        },
+        "use": {
+          "$ref": "#/$defs/RightsUse"
+        },
+        "policyRevisionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Identity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "governingAssertionIds": {
+          "items": {
+            "$ref": "#/$defs/Identity"
+          },
+          "maxItems": 256,
+          "type": "array"
+        },
+        "sourceAssertionSha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evaluatedAt": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+          "type": "string"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "contractVersion",
+        "documentType",
+        "code",
+        "reasonCode",
+        "authorityKind",
+        "actorId",
+        "subject",
+        "use",
+        "policyRevisionId",
+        "governingAssertionIds",
+        "sourceAssertionSha256",
+        "evaluatedAt",
+        "expiresAt"
+      ],
+      "type": "object"
+    }
+  }
+}

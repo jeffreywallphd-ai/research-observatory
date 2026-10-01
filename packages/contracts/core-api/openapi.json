@@ -27,6 +27,14 @@
         "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]*$",
         "type": "string"
       },
+      "AuthorityKind": {
+        "enum": [
+          "policy",
+          "legacy-import-bridge",
+          "none"
+        ],
+        "type": "string"
+      },
       "Availability": {
         "enum": [
           "unknown",
@@ -628,6 +636,15 @@
         ],
         "title": "ColumnSelection",
         "type": "object"
+      },
+      "Confidence": {
+        "enum": [
+          "reported",
+          "confirmed",
+          "verified",
+          "disputed"
+        ],
+        "type": "string"
       },
       "ConfigurationResponse": {
         "additionalProperties": false,
@@ -1715,6 +1732,15 @@
         "title": "ConnectorRunSummary",
         "type": "object"
       },
+      "CopyLocation": {
+        "enum": [
+          "local-project-object",
+          "local-source",
+          "provider-hosted",
+          "collaboration-copy"
+        ],
+        "type": "string"
+      },
       "CorpusCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1871,6 +1897,15 @@
         "minimum": 0.0,
         "type": "integer"
       },
+      "DecisionCode": {
+        "enum": [
+          "allow",
+          "deny",
+          "unknown",
+          "require-confirmation"
+        ],
+        "type": "string"
+      },
       "DeletionDisclosure": {
         "additionalProperties": false,
         "properties": {
@@ -1919,6 +1954,16 @@
         ],
         "title": "DeletionDisclosure",
         "type": "object"
+      },
+      "DestinationKind": {
+        "enum": [
+          "local-project",
+          "local-export",
+          "remote-model",
+          "external-export",
+          "collaboration"
+        ],
+        "type": "string"
       },
       "DiagnosticPage": {
         "additionalProperties": false,
@@ -5693,6 +5738,14 @@
         "minimum": 1.0,
         "type": "integer"
       },
+      "PermissionValue": {
+        "enum": [
+          "permitted",
+          "denied",
+          "unknown"
+        ],
+        "type": "string"
+      },
       "PreferenceState": {
         "additionalProperties": false,
         "properties": {
@@ -6187,6 +6240,14 @@
         ],
         "title": "ProjectRootRequest",
         "type": "object"
+      },
+      "ProvenanceBasis": {
+        "enum": [
+          "source-observation",
+          "researcher-confirmed",
+          "verified-entitlement"
+        ],
+        "type": "string"
       },
       "ProvenanceLineageNode": {
         "additionalProperties": false,
@@ -7840,6 +7901,15 @@
         "pattern": "^sha256:[0-9a-f]{64}$",
         "type": "string"
       },
+      "ResourceClass": {
+        "enum": [
+          "metadata",
+          "full-text",
+          "derived-text",
+          "embedding"
+        ],
+        "type": "string"
+      },
       "RetryAfter": {
         "maximum": 300000.0,
         "minimum": 0.0,
@@ -8350,6 +8420,858 @@
         "maximum": 2147483647.0,
         "minimum": 1.0,
         "type": "integer"
+      },
+      "RightsAction": {
+        "enum": [
+          "store",
+          "inspect",
+          "index",
+          "derive",
+          "model-use",
+          "quote",
+          "export",
+          "share"
+        ],
+        "type": "string"
+      },
+      "RightsAdvanceRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "batchSize": {
+            "default": 1000,
+            "maximum": 1000.0,
+            "minimum": 1.0,
+            "title": "Batchsize",
+            "type": "integer"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          }
+        },
+        "required": [
+          "root",
+          "subject"
+        ],
+        "title": "RightsAdvanceRequest",
+        "type": "object"
+      },
+      "RightsCurrentRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          }
+        },
+        "required": [
+          "root",
+          "subject"
+        ],
+        "title": "RightsCurrentRequest",
+        "type": "object"
+      },
+      "RightsDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "actorId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "authorityKind": {
+            "$ref": "#/components/schemas/AuthorityKind"
+          },
+          "code": {
+            "$ref": "#/components/schemas/DecisionCode"
+          },
+          "contractVersion": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "documentType": {
+            "const": "research-observatory-rights-decision",
+            "default": "research-observatory-rights-decision",
+            "title": "Documenttype",
+            "type": "string"
+          },
+          "evaluatedAt": {
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+            "title": "Evaluatedat",
+            "type": "string"
+          },
+          "expiresAt": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiresat"
+          },
+          "governingAssertionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 256,
+            "title": "Governingassertionids",
+            "type": "array"
+          },
+          "policyRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reasonCode": {
+            "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            "title": "Reasoncode",
+            "type": "string"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sourceAssertionSha256": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Digest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          },
+          "use": {
+            "$ref": "#/components/schemas/RightsUse"
+          }
+        },
+        "required": [
+          "code",
+          "reasonCode",
+          "authorityKind",
+          "actorId",
+          "subject",
+          "use",
+          "policyRevisionId",
+          "governingAssertionIds",
+          "sourceAssertionSha256",
+          "evaluatedAt",
+          "expiresAt"
+        ],
+        "title": "RightsDecision",
+        "type": "object"
+      },
+      "RightsEvaluateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          },
+          "use": {
+            "$ref": "#/components/schemas/RightsUse"
+          }
+        },
+        "required": [
+          "root",
+          "subject",
+          "use"
+        ],
+        "title": "RightsEvaluateRequest",
+        "type": "object"
+      },
+      "RightsOutputRecheckMarker": {
+        "additionalProperties": false,
+        "description": "A source-rights review marker, without invented dependency-run authority.",
+        "properties": {
+          "disposition": {
+            "const": "requires-review",
+            "title": "Disposition",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "exact",
+              "generic",
+              "legacy"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "markerId": {
+            "maxLength": 71,
+            "minLength": 36,
+            "pattern": "^(?:[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|legacy:[0-9a-f]{64})$",
+            "title": "Markerid",
+            "type": "string"
+          },
+          "occurredAt": {
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+            "title": "Occurredat",
+            "type": "string"
+          },
+          "pathId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "const": "RIGHTS_POLICY",
+            "title": "Reason",
+            "type": "string"
+          },
+          "rightsRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceAssertionRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "markerId",
+          "kind",
+          "rightsRevisionId",
+          "sourceAssertionRevisionId",
+          "pathId",
+          "reason",
+          "disposition",
+          "occurredAt"
+        ],
+        "title": "RightsOutputRecheckMarker",
+        "type": "object"
+      },
+      "RightsOutputRecheckState": {
+        "additionalProperties": false,
+        "description": "Bounded protected inspection; unknown propagation must be treated as pending.",
+        "properties": {
+          "markers": {
+            "items": {
+              "$ref": "#/components/schemas/RightsOutputRecheckMarker"
+            },
+            "maxItems": 100,
+            "title": "Markers",
+            "type": "array"
+          },
+          "outputRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "propagationPending": {
+            "title": "Propagationpending",
+            "type": "boolean"
+          },
+          "propagationUnknown": {
+            "title": "Propagationunknown",
+            "type": "boolean"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "outputRevisionId",
+          "markers",
+          "propagationPending",
+          "propagationUnknown",
+          "truncated"
+        ],
+        "title": "RightsOutputRecheckState",
+        "type": "object"
+      },
+      "RightsOutputRechecksRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "outputRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "root",
+          "outputRevisionId"
+        ],
+        "title": "RightsOutputRechecksRequest",
+        "type": "object"
+      },
+      "RightsPermission": {
+        "additionalProperties": false,
+        "description": "One provenance-bearing observation or explicit permission assertion.",
+        "properties": {
+          "assertedByActorId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assertionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "basis": {
+            "$ref": "#/components/schemas/ProvenanceBasis"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "confirmationRequired": {
+            "default": false,
+            "title": "Confirmationrequired",
+            "type": "boolean"
+          },
+          "entitlementRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidenceRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 16,
+            "title": "Evidencerevisionids",
+            "type": "array"
+          },
+          "expiresAt": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiresat"
+          },
+          "granteeActorId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "licenseObservationRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recordedAt": {
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+            "title": "Recordedat",
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          },
+          "use": {
+            "$ref": "#/components/schemas/RightsUse"
+          },
+          "value": {
+            "$ref": "#/components/schemas/PermissionValue"
+          }
+        },
+        "required": [
+          "assertionId",
+          "subject",
+          "use",
+          "value",
+          "basis",
+          "confidence",
+          "assertedByActorId",
+          "evidenceRevisionIds",
+          "licenseObservationRevisionId",
+          "entitlementRevisionId",
+          "recordedAt",
+          "expiresAt"
+        ],
+        "title": "RightsPermission",
+        "type": "object"
+      },
+      "RightsPermissionDraft": {
+        "additionalProperties": false,
+        "description": "Semantic request without repository-minted identity or recorded time.",
+        "properties": {
+          "basis": {
+            "$ref": "#/components/schemas/ProvenanceBasis"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "confirmationRequired": {
+            "default": false,
+            "title": "Confirmationrequired",
+            "type": "boolean"
+          },
+          "entitlementRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidenceRevisionIds": {
+            "items": {
+              "$ref": "#/components/schemas/Identity"
+            },
+            "maxItems": 16,
+            "title": "Evidencerevisionids",
+            "type": "array"
+          },
+          "expiresAt": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expiresat"
+          },
+          "granteeActorId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "licenseObservationRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "use": {
+            "$ref": "#/components/schemas/RightsUse"
+          },
+          "value": {
+            "$ref": "#/components/schemas/PermissionValue"
+          }
+        },
+        "required": [
+          "use",
+          "value",
+          "basis",
+          "confidence",
+          "evidenceRevisionIds"
+        ],
+        "title": "RightsPermissionDraft",
+        "type": "object"
+      },
+      "RightsPolicyRevision": {
+        "additionalProperties": false,
+        "description": "Current immutable policy revision for exactly one source/copy/resource.",
+        "properties": {
+          "contractVersion": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "documentType": {
+            "const": "research-observatory-rights-policy-revision",
+            "default": "research-observatory-rights-policy-revision",
+            "title": "Documenttype",
+            "type": "string"
+          },
+          "permissions": {
+            "items": {
+              "$ref": "#/components/schemas/RightsPermission"
+            },
+            "maxItems": 256,
+            "title": "Permissions",
+            "type": "array"
+          },
+          "predecessorRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "schemaVersion": {
+            "const": "1.0",
+            "default": "1.0",
+            "title": "Schemaversion",
+            "type": "string"
+          },
+          "sourceObservation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RightsSourceObservation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          }
+        },
+        "required": [
+          "revisionId",
+          "predecessorRevisionId",
+          "subject",
+          "permissions"
+        ],
+        "title": "RightsPolicyRevision",
+        "type": "object"
+      },
+      "RightsPublishRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "commandId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "confirmed": {
+            "title": "Confirmed",
+            "type": "boolean"
+          },
+          "expectedPredecessorRevisionId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Identity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "permissions": {
+            "items": {
+              "$ref": "#/components/schemas/RightsPermissionDraft"
+            },
+            "maxItems": 256,
+            "title": "Permissions",
+            "type": "array"
+          },
+          "root": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "title": "Root",
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          }
+        },
+        "required": [
+          "root",
+          "commandId",
+          "subject",
+          "permissions",
+          "expectedPredecessorRevisionId",
+          "confirmed"
+        ],
+        "title": "RightsPublishRequest",
+        "type": "object"
+      },
+      "RightsRecheckScope": {
+        "additionalProperties": false,
+        "description": "Durable propagation disposition for one exact source/copy policy revision.",
+        "properties": {
+          "disposition": {
+            "enum": [
+              "complete",
+              "pending"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "exactState": {
+            "enum": [
+              "complete",
+              "pending"
+            ],
+            "title": "Exactstate",
+            "type": "string"
+          },
+          "genericState": {
+            "enum": [
+              "complete",
+              "pending"
+            ],
+            "title": "Genericstate",
+            "type": "string"
+          },
+          "occurredAt": {
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+            "title": "Occurredat",
+            "type": "string"
+          },
+          "pendingReason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "exact-limit",
+                  "generic-limit",
+                  "exact-and-generic-limit"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pendingreason"
+          },
+          "reason": {
+            "const": "RIGHTS_POLICY",
+            "title": "Reason",
+            "type": "string"
+          },
+          "rightsRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/RightsSubject"
+          }
+        },
+        "required": [
+          "rightsRevisionId",
+          "subject",
+          "exactState",
+          "genericState",
+          "disposition",
+          "pendingReason",
+          "reason",
+          "occurredAt"
+        ],
+        "title": "RightsRecheckScope",
+        "type": "object"
+      },
+      "RightsSourceObservation": {
+        "additionalProperties": false,
+        "description": "Exact source-reported terms; never an action permission or entitlement.",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/SourceAddress"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "provider": {
+            "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            "title": "Provider",
+            "type": "string"
+          },
+          "retrievedAt": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrievedat"
+          },
+          "sourceAssertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "sourceRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "sourceSha256": {
+            "$ref": "#/components/schemas/Digest"
+          },
+          "terms": {
+            "$ref": "#/components/schemas/SourceTerms"
+          }
+        },
+        "required": [
+          "projectId",
+          "sourceAssertionRevisionId",
+          "address",
+          "sourceRevisionId",
+          "sourceSha256",
+          "provider",
+          "terms",
+          "retrievedAt"
+        ],
+        "title": "RightsSourceObservation",
+        "type": "object"
+      },
+      "RightsSubject": {
+        "additionalProperties": false,
+        "description": "An exact retained record assertion and opaque copy, never a Work grant.",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/SourceAddress"
+          },
+          "copyId": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "copyLocation": {
+            "$ref": "#/components/schemas/CopyLocation"
+          },
+          "projectId": {
+            "$ref": "#/components/schemas/ProjectIdentity"
+          },
+          "resourceClass": {
+            "$ref": "#/components/schemas/ResourceClass"
+          },
+          "sourceAssertionRevisionId": {
+            "$ref": "#/components/schemas/Identity"
+          }
+        },
+        "required": [
+          "projectId",
+          "sourceAssertionRevisionId",
+          "address",
+          "copyId",
+          "copyLocation",
+          "resourceClass"
+        ],
+        "title": "RightsSubject",
+        "type": "object"
+      },
+      "RightsUse": {
+        "additionalProperties": false,
+        "description": "One action and an exact purpose/destination; there are no wildcards.",
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/RightsAction"
+          },
+          "destinationKind": {
+            "$ref": "#/components/schemas/DestinationKind"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "purpose": {
+            "pattern": "^[a-z][a-z0-9-]{0,63}$",
+            "title": "Purpose",
+            "type": "string"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "shareGroup": {
+            "anyOf": [
+              {
+                "pattern": "^[a-z][a-z0-9-]{0,63}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sharegroup"
+          }
+        },
+        "required": [
+          "action",
+          "purpose",
+          "destinationKind"
+        ],
+        "title": "RightsUse",
+        "type": "object"
       },
       "RuntimeState": {
         "enum": [
@@ -12323,6 +13245,636 @@
           }
         },
         "summary": "Inspect",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/rights/advance-rechecks": {
+      "post": {
+        "operationId": "advanceCorpusRightsRechecks",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RightsAdvanceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/RightsRecheckScope"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Advancecorpusrightsrechecks"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Advance Rights Rechecks",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/rights/current": {
+      "post": {
+        "operationId": "getCorpusRightsPolicy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RightsCurrentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/RightsPolicyRevision"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Getcorpusrightspolicy"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Current Rights",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/rights/evaluate": {
+      "post": {
+        "operationId": "evaluateCorpusRights",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RightsEvaluateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RightsDecision"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Evaluate Rights",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/rights/output-rechecks": {
+      "post": {
+        "operationId": "getCorpusRightsOutputRechecks",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RightsOutputRechecksRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RightsOutputRecheckState"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Output Rights Rechecks",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/rights/publish": {
+      "post": {
+        "operationId": "publishCorpusRightsPolicy",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RightsPublishRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RightsPolicyRevision"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Publish Rights",
+        "tags": [
+          "corpus"
+        ]
+      }
+    },
+    "/projects/corpus/rights/recheck-scope": {
+      "post": {
+        "operationId": "getCorpusRightsRecheckScope",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RightsCurrentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/RightsRecheckScope"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Getcorpusrightsrecheckscope"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Content Too Large"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetail"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Rights Recheck Scope",
         "tags": [
           "corpus"
         ]

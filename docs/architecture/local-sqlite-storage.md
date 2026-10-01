@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-17 authority
+## Current version-18 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=17`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=18`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -112,14 +112,14 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v16
-profiles to current schema v17. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v17
+profiles to current schema v18. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-17 database is detected
+verified backup remains available. A current version-18 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -186,6 +186,23 @@ dependency-impact output kind to include corpus items while retaining populated
 v16 impact rows and append-only controls. The target-v16 recovery manifest
 schema is
 retained separately so earlier verified backups remain interpretable.
+
+Version 18 adds append-only, exact source/copy rights-policy revisions and
+source-bound recheck records without changing v17 corpus, import, connector, or
+reconciliation history. A policy revision records the researcher-confirmed use
+assertions separately from source-reported license and access observations;
+neither migration nor an observation creates a permission. Rights publication
+binds provenance, outbox, and affected-output recheck scope in one protected
+transaction. A pending scope remains visible and blocks new source-bound use
+until bounded recheck continuation produces independently verified completion.
+The frozen target-v17 recovery schema and populated v17 import/connector
+fixtures remain the authority for restoring pre-migration backups.
+For each existing v17 corpus output/path membership, migration appends one
+immutable `rights_legacy_output_rechecks` marker, bound to the exact retained
+SourceAssertion revision when uniquely resolvable. Unresolved historical
+sources remain explicit, and every marker requires human review; the migration
+does not create a rights grant or auto-clear a marker. Bounded per-output
+inspection and Canvas presentation pass to T03.
 
 ### Windows schema-migration backup paths
 

@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-17 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-18 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -19,7 +19,9 @@ and both schema fingerprints. The exact predecessor
 `sqlite-migration-recovery.v16.snapshot.json` remains available to validate
 already written target-v16 backup manifests; choose the reader by the
 manifest's target schema version rather than reinterpreting old recovery
-history under the v17 target contract.
+history under the v17 target contract. The frozen
+`sqlite-migration-recovery-v17.snapshot.json` likewise validates target-v17
+manifests after the current contract advances to v18.
 
 The committed v3 envelope migration remains immutable. Version 4 adds the
 `object_envelope_upgrades` mutable-state journal and records v2-origin plaintext
@@ -100,6 +102,21 @@ admit `corpus-item` at contract `2.0.0`; the six prior kinds remain `1.0.0`.
 Append-only corpus states, discovery paths, decisions and command receipts
 attach to those revisions. Migration creates no historical corpus item or
 researcher decision, and interruption retains the verified v16 backup.
+
+Version 18 adds protected, append-only source/copy rights-policy revisions and
+exact corpus recheck scopes. Its immutable policy snapshot keeps reported
+license/access observations separate from researcher-confirmed action grants;
+neither old rows nor the migration acquire new permission. Rights changes
+publish provenance, outbox and recheck authority atomically. A pending scope
+blocks use, survives restart, and closes only after bounded recheck work has a
+verified completion receipt. Populated v17 import and connector fixtures prove
+backup, row preservation, reopen, and interruption recovery.
+The v17-to-v18 migration also appends an exact `rights_legacy_output_rechecks`
+marker for every existing corpus output/path membership. Where a retained
+SourceAssertion matches uniquely, the marker binds its revision; otherwise it
+records that the historical source is unresolved. Every marker remains
+`requires-review`: migration neither grants rights nor clears the marker.
+Bounded per-output inspection and Canvas presentation are T03 follow-on work.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and

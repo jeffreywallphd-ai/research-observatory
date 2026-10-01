@@ -38,6 +38,7 @@ from research_observatory_core.migrations.versions import (
     v0015_reconciliation_review,
     v0016_work_versions,
     v0017_corpus_items,
+    v0018_rights_policy,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -214,6 +215,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.RECONCILIATION_DATABASE_SCHEMA_VERSION,
             storage.RECONCILIATION_REVIEW_DATABASE_SCHEMA_VERSION,
             storage.WORK_VERSION_DATABASE_SCHEMA_VERSION,
+            storage.CORPUS_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -232,6 +234,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0015_reconciliation_review.revision,
             v0016_work_versions.revision,
             v0017_corpus_items.revision,
+            v0018_rights_policy.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -391,6 +394,10 @@ _SUPPORTED_PROFILES = {
     storage.WORK_VERSION_DATABASE_SCHEMA_VERSION: (
         storage.WORK_VERSION_PROFILE_SHA256,
         storage.WORK_VERSION_SCHEMA_SHA256,
+    ),
+    storage.CORPUS_DATABASE_SCHEMA_VERSION: (
+        storage.CORPUS_PROFILE_SHA256,
+        storage.CORPUS_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -633,6 +640,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             16,
             17,
             storage.WORK_VERSION_SCHEMA_SHA256,
+            storage.CORPUS_SCHEMA_SHA256,
+        ),
+        (
+            v0018_rights_policy.revision,
+            17,
+            18,
+            storage.CORPUS_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -746,9 +760,14 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0016_work_versions.TARGET_PROFILE_SHA256 == storage.WORK_VERSION_PROFILE_SHA256
         and v0017_corpus_items.down_revision == v0016_work_versions.revision
         and v0017_corpus_items.source_schema_version == storage.WORK_VERSION_DATABASE_SCHEMA_VERSION
-        and v0017_corpus_items.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0017_corpus_items.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0017_corpus_items.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0017_corpus_items.target_schema_version == storage.CORPUS_DATABASE_SCHEMA_VERSION
+        and v0017_corpus_items.TARGET_SCHEMA_SHA256 == storage.CORPUS_SCHEMA_SHA256
+        and v0017_corpus_items.TARGET_PROFILE_SHA256 == storage.CORPUS_PROFILE_SHA256
+        and v0018_rights_policy.down_revision == v0017_corpus_items.revision
+        and v0018_rights_policy.source_schema_version == storage.CORPUS_DATABASE_SCHEMA_VERSION
+        and v0018_rights_policy.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0018_rights_policy.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0018_rights_policy.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -769,6 +788,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         v0015_reconciliation_review,
         v0016_work_versions,
         v0017_corpus_items,
+        v0018_rights_policy,
     )
     for index, migration in enumerate(chain):
         if source_version == migration.source_schema_version:
@@ -1678,9 +1698,9 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.WORK_VERSION_SCHEMA_SHA256,
-                "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
-                "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
-                "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+                "target_schema_sha256": storage.CORPUS_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.CORPUS_SCHEMA_SHA256,
+                "targetProfileSha256": storage.CORPUS_PROFILE_SHA256,
                 "aggregateIdentitiesDdl": storage.AGGREGATE_IDENTITIES_V17_DDL,
                 "aggregateRevisionsDdl": storage.AGGREGATE_REVISIONS_V17_DDL,
                 "impactItemsDdl": storage.DEPENDENCY_IMPACT_ITEMS_V17_DDL,
@@ -1700,10 +1720,26 @@ def _run_migrations(
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )
+    if source_schema_version <= storage.CORPUS_DATABASE_SCHEMA_VERSION:
+        v0018_rights_policy.apply(
+            operations,
+            {
+                "migration_id": v0018_rights_policy.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.CORPUS_SCHEMA_SHA256,
+                "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
+                "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
+                "rightsAuthority": storage.RIGHTS_POLICY_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V18_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
 
 
 def _precommit_target_verified(connection: sqlite3.Connection, project_id: str) -> bool:
-    """Check the exact v17 schema and every FK while FK enforcement is suspended."""
+    """Check the exact target schema and every FK while FK enforcement is suspended."""
 
     if storage._schema_profile_errors(connection, project_id):
         return False

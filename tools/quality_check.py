@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import time
@@ -36,7 +37,20 @@ def load_scope(repo: Path) -> list[str]:
         absolute_root = repo.joinpath(*root_path.parts)
         if not absolute_root.is_dir():
             raise ValueError(f"governed root does not exist: {relative_root}")
-        discovered.update(path.relative_to(repo).as_posix() for path in absolute_root.rglob("*.py") if path.is_file())
+        for directory, subdirectories, filenames in os.walk(absolute_root, followlinks=False):
+            current = Path(directory)
+            subdirectories[:] = [
+                name
+                for name in subdirectories
+                if name != "node_modules"
+                and not (current / name).is_symlink()
+                and not getattr(current / name, "is_junction", lambda: False)()
+            ]
+            discovered.update(
+                (current / name).relative_to(repo).as_posix()
+                for name in filenames
+                if name.endswith(".py") and (current / name).is_file()
+            )
     for relative in files:
         path = PurePosixPath(relative)
         if path.is_absolute() or ".." in path.parts or path.suffix != ".py":

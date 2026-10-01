@@ -43,6 +43,8 @@ from .ports.repositories import (
 from .privacy import _DEFAULTS, _SETTING_KEYS, _projection
 from .reconciliation.contracts import SourceAssertion
 from .repositories import _UNIT_OF_WORKS, _projection_content_sha256, _SqliteAggregateRepository
+from .rights_policy import RightsAction, RightsDecision, RightsRequest, RightsUse
+from .rights_repository import RightsProblem, SqliteRightsRepository
 from .storage import (
     _DATABASE_ERRORS,
     CanonicalConnection,
@@ -54,6 +56,7 @@ from .workflow_contracts import workflow_record_sha256, workflow_snapshot_errors
 
 _HASH = re.compile(r"[0-9a-f]{64}\Z")
 _TRACE = re.compile(r"[0-9a-f]{32}\Z")
+_CORPUS_RIGHTS_ACTIONS: tuple[RightsAction, ...] = ("store", "inspect", "derive", "index")
 
 
 def _publication_step(_step: str) -> None:
@@ -84,6 +87,14 @@ def _connector_output_matches(manifest_json: str, manifest_sha256: str, page: Ag
     )
 
 
+class _RightsUseDenied(Exception):
+    """Carry the evaluated denial across a rolled-back corpus transaction."""
+
+    def __init__(self, decision: RightsDecision, actor: CorpusActor) -> None:
+        self.decision = decision
+        self.actor = actor
+
+
 class SqliteCorpusRepository:
     def __init__(self, database: Path, project_id: str) -> None:
         if not database.is_absolute() or not project_id:
@@ -101,6 +112,25 @@ class SqliteCorpusRepository:
             token = _UNIT_OF_WORKS.register(connection, self._project)
             yield connection, _SqliteAggregateRepository(token)
             connection.execute("COMMIT")
+        except _RightsUseDenied as denied:
+            # A failed corpus publication rolls back its in-writer use records.
+            # Persist the exact evaluated denial after releasing that writer;
+            # never re-evaluate against a policy that may have changed meanwhile.
+            if connection is not None and connection.in_transaction:
+                connection.rollback()
+            if token is not None:
+                _UNIT_OF_WORKS.unregister(token)
+                token = None
+            if connection is not None:
+                connection.close()
+                connection = None
+            try:
+                SqliteRightsRepository(self._database, self._project).append_denied_attempt(
+                    denied.decision, actor=denied.actor
+                )
+            except RightsProblem:
+                raise CorpusProblem("corpus-rights-integrity-invalid") from None
+            raise CorpusProblem("corpus-rights-denied") from None
         except (*_DATABASE_ERRORS, StorageProblem, sqlite3.Error, OSError):
             raise CorpusProblem("corpus-storage-invalid") from None
         finally:
@@ -395,7 +425,8 @@ class SqliteCorpusRepository:
         source: SourceAssertion,
         path: DiscoveryPath,
         work_revision_id: str,
-    ) -> tuple[AggregateRevision, ...]:
+        actor: CorpusActor,
+    ) -> tuple[tuple[AggregateRevision, ...], str | None]:
         try:
             source = SourceAssertion.model_validate(source)
             path = DiscoveryPath.model_validate(path)
@@ -408,7 +439,6 @@ class SqliteCorpusRepository:
             or path.source_revision_id != source.source_revision_id
             or (path.kind, path.context_id, path.context_revision_id, path.ordinal, path.record_key_sha256)
             != (address.kind, address.context_id, address.revision_id, address.ordinal, address.record_key)
-            or not all(source.rights.permits(action) for action in ("store", "inspect", "derive", "index"))
         ):
             raise CorpusProblem("corpus-source-mismatch")
         if address.kind == "import-member":
@@ -502,26 +532,73 @@ class SqliteCorpusRepository:
                     raise CorpusProblem("corpus-connector-source-unavailable")
                 self._connector_lineage(connection, path.query_revision_id, str(job_id))
             revisions = (address.revision_id, path.query_revision_id)
-        assertions = connection.execute(
-            "SELECT a.assertion_json FROM reconciliation_work_members wm "
-            "JOIN reconciliation_assertions a ON a.revision_id=wm.assertion_revision_id "
-            "AND a.project_id=wm.project_id "
-            "WHERE wm.project_id=? AND wm.work_revision_id=? "
-            "AND a.source_revision_id=? AND a.address_revision_id=? LIMIT 2",
-            (self._project, work_revision_id, source.source_revision_id, address.revision_id),
-        ).fetchall()
-        if len(assertions) != 1:
-            raise CorpusProblem("corpus-source-work-mismatch")
+        _, rights_revision_id = self._current_source_rights(
+            connection, source, actor, work_revision_id=work_revision_id
+        )
         try:
-            retained = SourceAssertion.model_validate_json(assertions[0][0])
-        except ValidationError:
-            raise CorpusProblem("corpus-source-work-mismatch") from None
-        if retained != source:
-            raise CorpusProblem("corpus-source-work-mismatch")
-        try:
-            return tuple(aggregates.get_revision(revision) for revision in dict.fromkeys(revisions))
+            return tuple(aggregates.get_revision(revision) for revision in dict.fromkeys(revisions)), rights_revision_id
         except RepositoryNotFound:
             raise CorpusProblem("corpus-source-unavailable") from None
+
+    def _current_source_rights(
+        self,
+        connection: CanonicalConnection,
+        source: SourceAssertion,
+        actor: CorpusActor,
+        *,
+        work_revision_id: str | None = None,
+    ) -> tuple[str, str | None]:
+        """Check the exact metadata copy under the caller's protected action."""
+
+        rights = SqliteRightsRepository(self._database, self._project)
+        try:
+            subject = rights.source_metadata_subject_with_connection(connection, source)
+            if work_revision_id is not None:
+                matched = connection.execute(
+                    "SELECT 1 FROM reconciliation_work_members WHERE project_id=? "
+                    "AND work_revision_id=? AND assertion_revision_id=? LIMIT 2",
+                    (self._project, work_revision_id, subject.source_assertion_revision_id),
+                ).fetchall()
+                if len(matched) != 1:
+                    raise CorpusProblem("corpus-source-work-mismatch")
+            policy = rights.current_with_connection(connection, subject)
+            if policy is None:
+                # The protected evaluator applies T01's exact import bridge to
+                # both public inspection and corpus use, with the same audit.
+                for action in _CORPUS_RIGHTS_ACTIONS:
+                    decision = rights.evaluate_with_connection(
+                        connection,
+                        RightsRequest(
+                            actor_id=actor.actor_id,
+                            subject=subject,
+                            use=RightsUse(
+                                action=action,
+                                purpose="corpus-membership",
+                                destination_kind="local-project",
+                            ),
+                        ),
+                        actor=actor,
+                    )
+                    if decision.code != "allow" or decision.authority_kind != "legacy-import-bridge":
+                        raise _RightsUseDenied(decision, actor)
+                return subject.source_assertion_revision_id, None
+            for action in _CORPUS_RIGHTS_ACTIONS:
+                decision = rights.evaluate_with_connection(
+                    connection,
+                    RightsRequest(
+                        actor_id=actor.actor_id,
+                        subject=subject,
+                        use=RightsUse(action=action, purpose="corpus-membership", destination_kind="local-project"),
+                    ),
+                    actor=actor,
+                )
+                if decision.code != "allow" or decision.policy_revision_id != policy.revision_id:
+                    raise _RightsUseDenied(decision, actor)
+            return subject.source_assertion_revision_id, policy.revision_id
+        except RightsProblem as error:
+            if "integrity" in error.code or error.code == "rights-storage-invalid":
+                raise CorpusProblem("corpus-rights-integrity-invalid") from None
+            raise CorpusProblem("corpus-rights-denied") from None
 
     def _evidence(
         self,
@@ -591,6 +668,7 @@ class SqliteCorpusRepository:
         *,
         current: AggregateRevision | None,
         inputs: tuple[AggregateRevision, ...],
+        rights_revision_id: str | None = None,
     ) -> tuple[AggregateRevision, AtomicRepositoryEvent]:
         # The common repository records a complete provenance/ledger/outbox
         # fact and typed dependency registration before returning.
@@ -601,10 +679,14 @@ class SqliteCorpusRepository:
         )
         if len(sources) > 64:
             raise CorpusProblem("corpus-evidence-limit")
+        if rights_revision_id is not None and not any(
+            value.revision_id == rights_revision_id and value.aggregate_kind == "decision" for value in sources
+        ):
+            raise CorpusProblem("corpus-rights-integrity-invalid")
         dependencies = tuple(
             MaterialDependency(
                 new_uuid_v7(),
-                "source-revision",
+                "human-decision" if value.revision_id == rights_revision_id else "source-revision",
                 "direct",
                 value.revision_id,
                 None,
@@ -835,9 +917,19 @@ class SqliteCorpusRepository:
             ):
                 raise CorpusProblem("corpus-item-invalid")
             work = self._work(connection, aggregates, item.work_id, item.work_revision_id)
-            sources = self._source(connection, aggregates, source, path, item.work_revision_id)
+            sources, rights_revision_id = self._source(
+                connection, aggregates, source, path, item.work_revision_id, actor
+            )
+            rights_input = (aggregates.get_revision(rights_revision_id),) if rights_revision_id is not None else ()
             _, event = self._append(
-                aggregates, item, actor, command_id, command_sha256, current=None, inputs=(work, *sources)
+                aggregates,
+                item,
+                actor,
+                command_id,
+                command_sha256,
+                current=None,
+                inputs=(work, *sources, *rights_input),
+                rights_revision_id=rights_revision_id,
             )
             self._write_path(connection, path)
             self._write_state(connection, item)
@@ -851,7 +943,8 @@ class SqliteCorpusRepository:
         citing_work_id: str,
         citing_work_revision_id: str,
         source_assertion_revision_id: str,
-    ) -> tuple[AggregateRevision, AggregateRevision]:
+        actor: CorpusActor,
+    ) -> tuple[AggregateRevision, AggregateRevision, str | None]:
         citing_work = self._work(connection, aggregates, citing_work_id, citing_work_revision_id)
         retained_rows = connection.execute(
             "SELECT a.assertion_json,a.source_revision_id,a.address_revision_id "
@@ -870,16 +963,18 @@ class SqliteCorpusRepository:
             retained.project_id != self._project
             or retained.source_revision_id != retained_rows[0][1]
             or retained.address.revision_id != retained_rows[0][2]
-            or not all(retained.rights.permits(action) for action in ("store", "inspect", "derive", "index"))
         ):
             raise CorpusProblem("corpus-citation-source-unavailable")
+        exact_assertion_id, rights_revision_id = self._current_source_rights(connection, retained, actor)
+        if exact_assertion_id != source_assertion_revision_id:
+            raise CorpusProblem("corpus-citation-source-mismatch")
         try:
             assertion = aggregates.get_revision(source_assertion_revision_id)
         except RepositoryNotFound:
             raise CorpusProblem("corpus-citation-source-unavailable") from None
         if assertion.project_id != self._project or assertion.aggregate_kind != "record":
             raise CorpusProblem("corpus-citation-source-unavailable")
-        return citing_work, assertion
+        return citing_work, assertion, rights_revision_id
 
     def create_citation(
         self,
@@ -931,9 +1026,10 @@ class SqliteCorpusRepository:
             if work_id == citing_work_id:
                 raise CorpusProblem("corpus-citation-self-invalid")
             target_work = self._work(connection, aggregates, work_id, work_revision_id)
-            citing_work, assertion = self._citation_assertion(
-                connection, aggregates, citing_work_id, citing_work_revision_id, source_assertion_revision_id
+            citing_work, assertion, rights_revision_id = self._citation_assertion(
+                connection, aggregates, citing_work_id, citing_work_revision_id, source_assertion_revision_id, actor
             )
+            rights_input = (aggregates.get_revision(rights_revision_id),) if rights_revision_id is not None else ()
             item, path = build()
             try:
                 item, path = CorpusItemRevision.model_validate(item), DiscoveryPath.model_validate(path)
@@ -968,7 +1064,8 @@ class SqliteCorpusRepository:
                 command_id,
                 command_sha256,
                 current=None,
-                inputs=(target_work, citing_work, assertion),
+                inputs=(target_work, citing_work, assertion, *rights_input),
+                rights_revision_id=rights_revision_id,
             )
             self._write_path(connection, path)
             self._write_state(connection, item)
@@ -1069,7 +1166,10 @@ class SqliteCorpusRepository:
             evidence = self._evidence(connection, aggregates, current, decision, actor, added_path=path)
             item = append_discovery_path(current, path, decision)
             work = self._work(connection, aggregates, item.work_id, item.work_revision_id)
-            sources = self._source(connection, aggregates, source, path, item.work_revision_id)
+            sources, rights_revision_id = self._source(
+                connection, aggregates, source, path, item.work_revision_id, actor
+            )
+            rights_input = (aggregates.get_revision(rights_revision_id),) if rights_revision_id is not None else ()
             _, event = self._append(
                 aggregates,
                 item,
@@ -1077,7 +1177,8 @@ class SqliteCorpusRepository:
                 command_id,
                 command_sha256,
                 current=previous,
-                inputs=(work, *sources, *evidence),
+                inputs=(work, *sources, *rights_input, *evidence),
+                rights_revision_id=rights_revision_id,
             )
             self._write_path(connection, path)
             self._write_state(connection, item)
@@ -1125,9 +1226,10 @@ class SqliteCorpusRepository:
             target_work = self._work(connection, aggregates, current.work_id, current.work_revision_id)
             if citing_work_id == current.work_id:
                 raise CorpusProblem("corpus-citation-self-invalid")
-            citing_work, assertion = self._citation_assertion(
-                connection, aggregates, citing_work_id, citing_work_revision_id, source_assertion_revision_id
+            citing_work, assertion, rights_revision_id = self._citation_assertion(
+                connection, aggregates, citing_work_id, citing_work_revision_id, source_assertion_revision_id, actor
             )
+            rights_input = (aggregates.get_revision(rights_revision_id),) if rights_revision_id is not None else ()
             path, decision = build(current)
             try:
                 path, decision = DiscoveryPath.model_validate(path), CorpusDecision.model_validate(decision)
@@ -1153,7 +1255,8 @@ class SqliteCorpusRepository:
                 command_id,
                 command_sha256,
                 current=previous,
-                inputs=(target_work, citing_work, assertion, *evidence),
+                inputs=(target_work, citing_work, assertion, *rights_input, *evidence),
+                rights_revision_id=rights_revision_id,
             )
             self._write_path(connection, path)
             self._write_state(connection, item)

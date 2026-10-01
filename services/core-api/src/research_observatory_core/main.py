@@ -55,6 +55,7 @@ from .repositories import (
     sqlite_workflow_queue_repository,
 )
 from .research_intents import ResearchIntentService
+from .rights_repository import SqliteRightsRepository
 from .selective_recalculation import RecalculationControlService
 from .storage import (
     DEVELOPMENT_PLAINTEXT_PROFILE,
@@ -275,6 +276,13 @@ def create_runtime_app(
             intent_factory=sqlite_intent_revision_repository,
             actor_id=resolved_actor_id,
             connector_query=ConnectorWorkerQueryResolver(connectors),
+            rights_repository_factory=lambda path, identity: SqliteRightsRepository(
+                path / "state/project.sqlite3",
+                identity,
+                connector_record_resolver=lambda revision, ordinal: connector_pages(path, identity).source_record(
+                    revision, ordinal
+                ),
+            ),
         )
     return create_app(
         settings=settings,

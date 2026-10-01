@@ -54,6 +54,20 @@ source rights, and local actor before a protected corpus write. Typed historical
 discovery and decision reads remain inside Core; a paged HTTP history contract
 is required before the S04 presentation workflow exposes long histories.
 
+CAP-04.S04.T02 adds authenticated, bounded rights publish, current-policy,
+evaluation, recheck-scope and recheck-continuation calls under
+`/projects/corpus/rights/`. Publication requires an explicit researcher
+confirmation and mints durable assertion IDs inside Core. The current policy
+returns a source-bound observation snapshot separately from action grants.
+Evaluation reports only a current decision; even a source-rights allowance for
+remote use, export, or sharing does not authorize an executor or egress. The
+bounded `output-rechecks` read reports exact, generic, and migrated-output
+rights review markers plus whether propagation remains pending or unknown.
+Consumers must check it before treating a rights-governed output as current;
+the fallback markers do not impersonate a completed dependency-impact run.
+Pending recheck scopes remain inspectable after restart and fail closed until
+their affected outputs have a verified completion receipt.
+
 Model catalog calls are authenticated POST `/projects/models` (read) and
 `/projects/models/refresh` (write, mandatory 32-hex `Idempotency-Key`). They use
 the native route allowlist and existing lifecycle/compatibility boundary. Reads

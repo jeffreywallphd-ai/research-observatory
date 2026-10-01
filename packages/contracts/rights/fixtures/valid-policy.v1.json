@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "1.0",
+  "contractVersion": "1.0.0",
+  "documentType": "research-observatory-rights-policy-revision",
+  "revisionId": "01a0f503-66b8-7c94-b890-31202a63db20",
+  "predecessorRevisionId": null,
+  "subject": {
+    "projectId": "02e2e404-5b49-438e-9b59-ed562626b658",
+    "sourceAssertionRevisionId": "01a0f503-66b4-7d41-aa2c-37d912c84004",
+    "address": {
+      "kind": "connector-record",
+      "contextId": "01a0f503-66bd-7d58-867e-033918829f64",
+      "revisionId": "01a0f503-66be-7d58-867e-033918829f64",
+      "ordinal": 0,
+      "recordKey": null
+    },
+    "copyId": "01a0f503-66b6-711c-8e38-3266c225a178",
+    "copyLocation": "local-project-object",
+    "resourceClass": "metadata"
+  },
+  "sourceObservation": null,
+  "permissions": [
+    {
+      "assertionId": "01a0f503-66bb-7d58-867e-033918829f64",
+      "subject": {
+        "projectId": "02e2e404-5b49-438e-9b59-ed562626b658",
+        "sourceAssertionRevisionId": "01a0f503-66b4-7d41-aa2c-37d912c84004",
+        "address": {
+          "kind": "connector-record",
+          "contextId": "01a0f503-66bd-7d58-867e-033918829f64",
+          "revisionId": "01a0f503-66be-7d58-867e-033918829f64",
+          "ordinal": 0,
+          "recordKey": null
+        },
+        "copyId": "01a0f503-66b6-711c-8e38-3266c225a178",
+        "copyLocation": "local-project-object",
+        "resourceClass": "metadata"
+      },
+      "use": {
+        "action": "inspect",
+        "purpose": "scholarly-screening",
+        "destinationKind": "local-project",
+        "provider": null,
+        "region": null,
+        "shareGroup": null
+      },
+      "value": "permitted",
+      "basis": "researcher-confirmed",
+      "confidence": "confirmed",
+      "assertedByActorId": "01a0f503-66b9-75b2-9e29-e435120b0fb6",
+      "granteeActorId": null,
+      "evidenceRevisionIds": [
+        "01a0f503-66ba-7d58-867e-033918829f64"
+      ],
+      "licenseObservationRevisionId": null,
+      "entitlementRevisionId": null,
+      "recordedAt": "2026-09-30T19:00:00.000Z",
+      "expiresAt": "2026-10-01T20:00:00.000Z",
+      "confirmationRequired": false
+    }
+  ]
+}

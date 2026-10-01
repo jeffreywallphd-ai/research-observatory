@@ -62,12 +62,11 @@
         13,
         14,
         15,
-        16,
-        17
+        16
       ]
     },
     "targetSchemaVersion": {
-      "const": 18
+      "const": 17
     },
     "migrationIds": {
       "oneOf": [
@@ -88,8 +87,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -108,8 +106,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -127,8 +124,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -145,8 +141,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -162,8 +157,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -178,8 +172,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -193,8 +186,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -207,8 +199,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -220,8 +211,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -232,8 +222,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -243,8 +232,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -253,8 +241,7 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
@@ -262,34 +249,25 @@
             "0014_scholarly_reconciliation",
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
           "const": [
             "0015_reconciliation_review",
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
           "const": [
             "0016_work_versions",
-            "0017_corpus_items",
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         },
         {
           "const": [
-            "0017_corpus_items",
-            "0018_rights_policy"
-          ]
-        },
-        {
-          "const": [
-            "0018_rights_policy"
+            "0017_corpus_items"
           ]
         }
       ]
@@ -311,12 +289,11 @@
         "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064",
         "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2",
         "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949",
-        "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5",
-        "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
+        "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
       ]
     },
     "targetSchemaSha256": {
-      "const": "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
+      "const": "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
     },
     "checkpoint": {
       "type": "object",
@@ -354,7 +331,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v(?:[1-9]|10|11|12|13|14|15|16|17)-to-v18-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v(?:[1-9]|10|11|12|13|14|15|16)-to-v17-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {
           "type": "string",
@@ -399,8 +376,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -435,8 +411,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -470,8 +445,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -504,8 +478,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -537,8 +510,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -569,8 +541,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -600,8 +571,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -630,8 +600,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -659,8 +628,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -687,8 +655,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -714,8 +681,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -740,8 +706,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -765,8 +730,7 @@
               "0014_scholarly_reconciliation",
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -789,8 +753,7 @@
             "const": [
               "0015_reconciliation_review",
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -812,8 +775,7 @@
           "migrationIds": {
             "const": [
               "0016_work_versions",
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
@@ -834,33 +796,11 @@
         "properties": {
           "migrationIds": {
             "const": [
-              "0017_corpus_items",
-              "0018_rights_policy"
+              "0017_corpus_items"
             ]
           },
           "sourceSchemaSha256": {
             "const": "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "sourceSchemaVersion": {
-            "const": 17
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "migrationIds": {
-            "const": [
-              "0018_rights_policy"
-            ]
-          },
-          "sourceSchemaSha256": {
-            "const": "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
           }
         }
       }

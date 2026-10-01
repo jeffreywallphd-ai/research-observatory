@@ -3,6 +3,7 @@
 import hashlib
 import json
 import unittest
+from contextlib import closing
 from unittest.mock import patch
 
 import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
@@ -28,6 +29,8 @@ from research_observatory_core.reconciliation.exact import IdentifierAssertion
 from research_observatory_core.reconciliation_repository import SqliteReconciliationRepository
 from research_observatory_core.repositories import _SqliteIntentRevisionRepository, _SqlitePrivacyPolicyRepository
 from research_observatory_core.research_intents import validated_workflow_authority
+from research_observatory_core.rights_policy import RightsPermission, RightsPolicyRevision, RightsUse
+from research_observatory_core.rights_repository import SqliteRightsRepository
 from research_observatory_core.storage import open_canonical_database
 
 from tests.connectors.test_connector_workflow import ConnectorWorkflowFixture
@@ -740,7 +743,9 @@ class CorpusRepositoryTests(unittest.TestCase):
                 build=self._build_item,
             )
         changed_assertion = self.source.model_copy(update={"identifiers": ()})
-        with self.assertRaisesRegex(CorpusProblem, "corpus-source-work-mismatch"):
+        # The protected rights subject now binds the complete retained source
+        # assertion before checking its Work membership.
+        with self.assertRaisesRegex(CorpusProblem, "corpus-rights-denied"):
             self.repository.create(
                 command_id=new_uuid_v7(),
                 command_sha256="5" * 64,
@@ -1142,6 +1147,37 @@ class CorpusConnectorWriterTests(ConnectorWorkflowFixture):
             intent_revision_id=intent_revision_id,
             intent_sha256=intent_content_hash.removeprefix("sha256:"),
             policy_sha256=fingerprint(policy.model_dump(mode="json", by_alias=True)).removeprefix("sha256:"),
+        )
+        rights = SqliteRightsRepository(database, project, connector_record_resolver=self.repository.source_record)
+        with closing(open_canonical_database(database, expected_project_id=project)) as connection:
+            connection.execute("BEGIN")
+            subject = rights.source_metadata_subject_with_connection(connection, source)
+        rights.publish(
+            RightsPolicyRevision(
+                revision_id=new_uuid_v7(),
+                predecessor_revision_id=None,
+                subject=subject,
+                permissions=tuple(
+                    RightsPermission(
+                        assertion_id=new_uuid_v7(),
+                        subject=subject,
+                        use=RightsUse(action=action, purpose="corpus-membership", destination_kind="local-project"),
+                        value="permitted",
+                        basis="researcher-confirmed",
+                        confidence="confirmed",
+                        asserted_by_actor_id=actor.actor_id,
+                        evidence_revision_ids=(subject.source_assertion_revision_id,),
+                        license_observation_revision_id=None,
+                        entitlement_revision_id=None,
+                        recorded_at="2026-09-01T00:00:00.000Z",
+                        expires_at="2030-10-01T00:00:00.000Z",
+                    )
+                    for action in ("store", "inspect", "derive", "index")
+                ),
+            ),
+            command_id=new_uuid_v7(),
+            command_sha256="f" * 64,
+            actor=actor,
         )
         item_id, path_id = new_uuid_v7(), new_uuid_v7()
         work_id, work_revision_id = reconciled.work_id, reconciled.work_revision_id

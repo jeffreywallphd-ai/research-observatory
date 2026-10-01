@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 17
+DATABASE_SCHEMA_VERSION = 18
+CORPUS_DATABASE_SCHEMA_VERSION = 17
 WORK_VERSION_DATABASE_SCHEMA_VERSION = 16
 RECONCILIATION_REVIEW_DATABASE_SCHEMA_VERSION = 15
 RECONCILIATION_DATABASE_SCHEMA_VERSION = 14
@@ -177,6 +178,14 @@ EXPECTED_TABLES = (
     "corpus_decisions",
     "corpus_decision_evidence",
     "corpus_commands",
+    "rights_policy_subjects",
+    "rights_policy_revisions",
+    "rights_policy_rechecks",
+    "rights_policy_recheck_scopes",
+    "rights_policy_recheck_completions",
+    "rights_policy_generic_rechecks",
+    "rights_legacy_output_rechecks",
+    "rights_use_decisions",
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -223,6 +232,14 @@ IMMUTABLE_ROW_TABLES = (
     "corpus_decisions",
     "corpus_decision_evidence",
     "corpus_commands",
+    "rights_policy_subjects",
+    "rights_policy_revisions",
+    "rights_policy_rechecks",
+    "rights_policy_recheck_scopes",
+    "rights_policy_recheck_completions",
+    "rights_policy_generic_rechecks",
+    "rights_legacy_output_rechecks",
+    "rights_use_decisions",
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -281,6 +298,13 @@ EXPECTED_TRIGGERS = tuple(
             "corpus_discovery_path_predecessor_binding",
             "corpus_decision_chain_binding",
             "corpus_command_result_binding",
+            "rights_policy_revision_binding",
+            "rights_policy_recheck_binding",
+            "rights_policy_recheck_scope_binding",
+            "rights_policy_recheck_completion_binding",
+            "rights_policy_generic_recheck_binding",
+            "rights_legacy_output_recheck_binding",
+            "rights_use_decision_binding",
         ]
     )
 )
@@ -331,6 +355,10 @@ EXPECTED_INDEXES = (
     "corpus_item_states_current",
     "corpus_discovery_paths_item",
     "corpus_decisions_item",
+    "rights_policy_revisions_current",
+    "rights_policy_rechecks_output",
+    "rights_policy_generic_rechecks_output",
+    "rights_legacy_output_rechecks_project",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -354,7 +382,8 @@ IMPORT_COMMIT_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987
 RECONCILIATION_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
 RECONCILIATION_REVIEW_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
 WORK_VERSION_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
-EXPECTED_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
+CORPUS_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
+EXPECTED_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -419,7 +448,8 @@ IMPORT_COMMIT_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5
 RECONCILIATION_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
 RECONCILIATION_REVIEW_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391ab69246f62696623d067cd37"
 WORK_VERSION_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172dd790050bdafda72"
-EXPECTED_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
+CORPUS_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
+EXPECTED_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149cbdfb4ed30"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3483,6 +3513,7 @@ SCHEMA_METADATA_V15_DDL = SCHEMA_METADATA_V14_DDL.replace("schema_version = 14",
 
 SCHEMA_METADATA_V16_DDL = SCHEMA_METADATA_V15_DDL.replace("schema_version = 15", "schema_version = 16")
 SCHEMA_METADATA_V17_DDL = SCHEMA_METADATA_V16_DDL.replace("schema_version = 16", "schema_version = 17")
+SCHEMA_METADATA_V18_DDL = SCHEMA_METADATA_V17_DDL.replace("schema_version = 17", "schema_version = 18")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -3885,8 +3916,639 @@ _V17_BASE_DDL_STATEMENTS = tuple(
     for statement in _V6_BASE_DDL_STATEMENTS
 )
 
+RIGHTS_POLICY_DDL = (
+    f"""
+        CREATE TABLE rights_policy_subjects (
+            project_id TEXT NOT NULL,
+            subject_sha256 TEXT NOT NULL CHECK ({_sha256_check("subject_sha256")}),
+            policy_id TEXT NOT NULL CHECK ({_uuid_check("policy_id", "7")}),
+            policy_kind TEXT NOT NULL DEFAULT 'decision' CHECK (policy_kind = 'decision'),
+            subject_json TEXT NOT NULL CHECK (
+                json_valid(subject_json) AND length(CAST(subject_json AS BLOB)) BETWEEN 2 AND 16384
+                AND json_type(subject_json) = 'object'
+                AND json_extract(subject_json, '$.projectId') IS project_id
+                AND json_extract(subject_json, '$.sourceAssertionRevisionId') IS source_assertion_revision_id
+                AND json_extract(subject_json, '$.copyId') IS copy_id
+                AND json_extract(subject_json, '$.copyLocation') IS copy_location
+                AND json_extract(subject_json, '$.resourceClass') IS resource_class
+            ),
+            source_assertion_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_assertion_revision_id", "7")}),
+            copy_id TEXT NOT NULL CHECK ({_uuid_check("copy_id", "7")}),
+            copy_location TEXT NOT NULL CHECK ({_identifier_check("copy_location", 64)}),
+            resource_class TEXT NOT NULL CHECK ({_identifier_check("resource_class", 64)}),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (policy_id, project_id, policy_kind)
+                REFERENCES aggregate_identities (aggregate_id, project_id, aggregate_kind)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            PRIMARY KEY (project_id, subject_sha256),
+            UNIQUE (project_id, subject_sha256, policy_id),
+            UNIQUE (project_id, policy_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE rights_policy_revisions (
+            revision_id TEXT PRIMARY KEY CHECK ({_uuid_check("revision_id", "7")}),
+            policy_id TEXT NOT NULL CHECK ({_uuid_check("policy_id", "7")}),
+            project_id TEXT NOT NULL,
+            aggregate_kind TEXT NOT NULL DEFAULT 'decision' CHECK (aggregate_kind = 'decision'),
+            subject_sha256 TEXT NOT NULL CHECK ({_sha256_check("subject_sha256")}),
+            predecessor_revision_id TEXT CHECK (
+                predecessor_revision_id IS NULL OR ({_uuid_check("predecessor_revision_id", "7")})
+            ),
+            revision_number INTEGER NOT NULL CHECK (revision_number BETWEEN 0 AND {MAX_SAFE_INTEGER}),
+            policy_json TEXT NOT NULL CHECK (
+                json_valid(policy_json) AND length(CAST(policy_json AS BLOB)) BETWEEN 2 AND 262144
+                AND json_type(policy_json) = 'object'
+                AND json_extract(policy_json, '$.revisionId') IS revision_id
+                AND json_extract(policy_json, '$.predecessorRevisionId') IS predecessor_revision_id
+                AND json_extract(policy_json, '$.subject.projectId') IS project_id
+            ),
+            policy_sha256 TEXT NOT NULL CHECK ({_sha256_check("policy_sha256")}),
+            command_id TEXT NOT NULL CHECK ({_uuid_check("command_id", "7")}),
+            command_sha256 TEXT NOT NULL CHECK ({_sha256_check("command_sha256")}),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            FOREIGN KEY (revision_id, aggregate_kind, project_id)
+                REFERENCES aggregate_revisions (revision_id, aggregate_kind, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (policy_id, project_id, aggregate_kind)
+                REFERENCES aggregate_identities (aggregate_id, project_id, aggregate_kind)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (project_id, subject_sha256, policy_id)
+                REFERENCES rights_policy_subjects (project_id, subject_sha256, policy_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (predecessor_revision_id, project_id, subject_sha256, policy_id)
+                REFERENCES rights_policy_revisions (revision_id, project_id, subject_sha256, policy_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK ((revision_number = 0 AND predecessor_revision_id IS NULL)
+                OR (revision_number > 0 AND predecessor_revision_id IS NOT NULL)),
+            CHECK (revision_id <> policy_id AND revision_id IS NOT predecessor_revision_id),
+            UNIQUE (project_id, subject_sha256, revision_number),
+            UNIQUE (project_id, command_id),
+            UNIQUE (revision_id, project_id),
+            UNIQUE (project_id, revision_id, subject_sha256),
+            UNIQUE (revision_id, project_id, subject_sha256, policy_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE rights_policy_rechecks (
+            recheck_id TEXT PRIMARY KEY CHECK ({_uuid_check("recheck_id", "7")}),
+            project_id TEXT NOT NULL,
+            rights_revision_id TEXT NOT NULL CHECK ({_uuid_check("rights_revision_id", "7")}),
+            source_assertion_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_assertion_revision_id", "7")}),
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            path_id TEXT NOT NULL CHECK ({_uuid_check("path_id", "7")}),
+            output_revision_id TEXT NOT NULL CHECK ({_uuid_check("output_revision_id", "7")}),
+            reason TEXT NOT NULL CHECK (reason = 'RIGHTS_POLICY'),
+            disposition TEXT NOT NULL CHECK (disposition = 'requires-review'),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            FOREIGN KEY (rights_revision_id, project_id)
+                REFERENCES rights_policy_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (path_id, project_id, item_id)
+                REFERENCES corpus_discovery_paths (path_id, project_id, item_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (output_revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (rights_revision_id, output_revision_id, path_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE rights_policy_recheck_scopes (
+            rights_revision_id TEXT PRIMARY KEY CHECK ({_uuid_check("rights_revision_id", "7")}),
+            project_id TEXT NOT NULL,
+            subject_sha256 TEXT NOT NULL CHECK ({_sha256_check("subject_sha256")}),
+            source_assertion_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_assertion_revision_id", "7")}),
+            exact_state TEXT NOT NULL CHECK (exact_state IN ('complete', 'pending')),
+            generic_state TEXT NOT NULL CHECK (generic_state IN ('complete', 'pending')),
+            disposition TEXT NOT NULL CHECK (disposition IN ('complete', 'pending')),
+            pending_reason TEXT CHECK (pending_reason IN (
+                'exact-limit', 'generic-limit', 'exact-and-generic-limit'
+            )),
+            reason TEXT NOT NULL CHECK (reason = 'RIGHTS_POLICY'),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            CHECK (
+                (exact_state = 'complete' AND generic_state = 'complete'
+                    AND disposition = 'complete' AND pending_reason IS NULL)
+                OR (exact_state = 'pending' AND generic_state = 'complete'
+                    AND disposition = 'pending' AND pending_reason = 'exact-limit')
+                OR (exact_state = 'complete' AND generic_state = 'pending'
+                    AND disposition = 'pending' AND pending_reason = 'generic-limit')
+                OR (exact_state = 'pending' AND generic_state = 'pending'
+                    AND disposition = 'pending' AND pending_reason = 'exact-and-generic-limit')
+            ),
+            FOREIGN KEY (project_id, rights_revision_id, subject_sha256)
+                REFERENCES rights_policy_revisions (project_id, revision_id, subject_sha256)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (project_id, subject_sha256)
+                REFERENCES rights_policy_subjects (project_id, subject_sha256)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (rights_revision_id, project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE rights_policy_recheck_completions (
+            completion_id TEXT PRIMARY KEY CHECK ({_uuid_check("completion_id", "7")}),
+            rights_revision_id TEXT NOT NULL CHECK ({_uuid_check("rights_revision_id", "7")}),
+            project_id TEXT NOT NULL,
+            dimension TEXT NOT NULL CHECK (dimension IN ('exact', 'generic')),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            FOREIGN KEY (rights_revision_id, project_id)
+                REFERENCES rights_policy_recheck_scopes (rights_revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (rights_revision_id, dimension)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE rights_policy_generic_rechecks (
+            recheck_id TEXT PRIMARY KEY CHECK ({_uuid_check("recheck_id", "7")}),
+            rights_revision_id TEXT NOT NULL CHECK ({_uuid_check("rights_revision_id", "7")}),
+            project_id TEXT NOT NULL,
+            previous_revision_id TEXT NOT NULL CHECK ({_uuid_check("previous_revision_id", "7")}),
+            parent_revision_id TEXT NOT NULL CHECK ({_uuid_check("parent_revision_id", "7")}),
+            output_revision_id TEXT NOT NULL CHECK ({_uuid_check("output_revision_id", "7")}),
+            reason TEXT NOT NULL CHECK (reason = 'RIGHTS_POLICY'),
+            disposition TEXT NOT NULL CHECK (disposition = 'requires-review'),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            FOREIGN KEY (rights_revision_id, project_id)
+                REFERENCES rights_policy_recheck_scopes (rights_revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (previous_revision_id, project_id)
+                REFERENCES rights_policy_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (parent_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (output_revision_id, project_id)
+                REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (rights_revision_id, output_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE rights_legacy_output_rechecks (
+            project_id TEXT NOT NULL,
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            path_id TEXT NOT NULL CHECK ({_uuid_check("path_id", "7")}),
+            output_revision_id TEXT NOT NULL CHECK ({_uuid_check("output_revision_id", "7")}),
+            source_assertion_revision_id TEXT CHECK (
+                source_assertion_revision_id IS NULL OR ({_uuid_check("source_assertion_revision_id", "7")})
+            ),
+            reason TEXT NOT NULL CHECK (reason = 'RIGHTS_POLICY'),
+            disposition TEXT NOT NULL CHECK (disposition = 'requires-review'),
+            detected_at TEXT NOT NULL CHECK ({_timestamp_check("detected_at")}),
+            FOREIGN KEY (output_revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (path_id, project_id, item_id)
+                REFERENCES corpus_discovery_paths (path_id, project_id, item_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (output_revision_id, path_id)
+                REFERENCES corpus_item_discovery_paths (revision_id, path_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            PRIMARY KEY (output_revision_id, path_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE rights_use_decisions (
+            decision_id TEXT PRIMARY KEY CHECK ({_uuid_check("decision_id", "7")}),
+            event_kind TEXT NOT NULL CHECK (event_kind IN (
+                'evaluate', 'denied-attempt', 'legacy-import-bridge'
+            )),
+            project_id TEXT NOT NULL,
+            subject_sha256 TEXT NOT NULL CHECK ({_sha256_check("subject_sha256")}),
+            source_assertion_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_assertion_revision_id", "7")}),
+            source_assertion_sha256 TEXT NOT NULL CHECK ({_sha256_check("source_assertion_sha256")}),
+            authority_kind TEXT NOT NULL CHECK (authority_kind IN (
+                'policy', 'legacy-import-bridge', 'none'
+            )),
+            policy_revision_id TEXT CHECK (
+                policy_revision_id IS NULL OR ({_uuid_check("policy_revision_id", "7")})
+            ),
+            policy_sha256 TEXT CHECK (policy_sha256 IS NULL OR ({_sha256_check("policy_sha256")})),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (
+                length(trace_id) = 32 AND trace_id = lower(trace_id)
+                AND trace_id NOT GLOB '*[^0-9a-f]*'
+            ),
+            use_action TEXT NOT NULL CHECK (use_action IN (
+                'store', 'inspect', 'index', 'derive', 'model-use', 'quote', 'export', 'share'
+            )),
+            use_sha256 TEXT NOT NULL CHECK ({_sha256_check("use_sha256")}),
+            decision_code TEXT NOT NULL CHECK (decision_code IN (
+                'allow', 'deny', 'unknown', 'require-confirmation'
+            )),
+            reason_code TEXT NOT NULL CHECK (
+                length(reason_code) BETWEEN 1 AND 64
+                AND substr(reason_code, 1, 1) GLOB '[a-z]'
+                AND reason_code NOT GLOB '*[^a-z0-9-]*'
+            ),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            CHECK ((authority_kind = 'policy' AND policy_revision_id IS NOT NULL
+                AND policy_sha256 IS NOT NULL)
+                OR (authority_kind IN ('legacy-import-bridge', 'none')
+                    AND policy_revision_id IS NULL AND policy_sha256 IS NULL)),
+            CHECK (decision_code <> 'allow' OR authority_kind IN ('policy', 'legacy-import-bridge')),
+            CHECK (event_kind <> 'denied-attempt' OR decision_code <> 'allow'),
+            CHECK ((event_kind = 'legacy-import-bridge') = (authority_kind = 'legacy-import-bridge')),
+            CHECK (authority_kind <> 'legacy-import-bridge' OR (
+                decision_code = 'allow'
+                AND reason_code = 'rights-legacy-import-confirmed'
+                AND use_action IN ('store', 'inspect', 'derive', 'index')
+            )),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_assertion_revision_id, project_id)
+                REFERENCES reconciliation_assertions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (policy_revision_id, project_id)
+                REFERENCES rights_policy_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    "CREATE INDEX rights_policy_revisions_current ON rights_policy_revisions "
+    "(project_id, subject_sha256, revision_number DESC)",
+    "CREATE INDEX rights_policy_rechecks_output ON rights_policy_rechecks (project_id, output_revision_id)",
+    "CREATE INDEX rights_policy_generic_rechecks_output ON rights_policy_generic_rechecks "
+    "(project_id, output_revision_id)",
+    "CREATE INDEX rights_legacy_output_rechecks_project ON rights_legacy_output_rechecks "
+    "(project_id, output_revision_id)",
+    *(
+        statement
+        for table in (
+            "rights_policy_subjects",
+            "rights_policy_revisions",
+            "rights_policy_rechecks",
+            "rights_policy_recheck_scopes",
+            "rights_policy_recheck_completions",
+            "rights_policy_generic_rechecks",
+            "rights_legacy_output_rechecks",
+            "rights_use_decisions",
+        )
+        for statement in _immutable_triggers(table, f"{table} history is append-only")
+    ),
+    """
+        CREATE TRIGGER rights_policy_revision_binding BEFORE INSERT ON rights_policy_revisions
+        WHEN NOT EXISTS (
+            SELECT 1 FROM aggregate_revisions AS r
+            WHERE r.revision_id = NEW.revision_id AND r.aggregate_id = NEW.policy_id
+              AND r.aggregate_kind = 'decision' AND r.project_id = NEW.project_id
+              AND r.revision = NEW.revision_number AND r.rights_status = 'unknown'
+        ) OR NOT EXISTS (
+            SELECT 1 FROM rights_policy_subjects AS s
+            JOIN reconciliation_assertions AS a ON a.revision_id = s.source_assertion_revision_id
+              AND a.project_id = s.project_id
+            WHERE s.project_id = NEW.project_id AND s.subject_sha256 = NEW.subject_sha256
+              AND s.policy_id = NEW.policy_id
+              AND json_extract(NEW.policy_json, '$.subject.sourceAssertionRevisionId') IS s.source_assertion_revision_id
+              AND json_extract(NEW.policy_json, '$.subject.copyId') IS s.copy_id
+              AND json_extract(NEW.policy_json, '$.subject.copyLocation') IS s.copy_location
+              AND json_extract(NEW.policy_json, '$.subject.resourceClass') IS s.resource_class
+              AND json_type(NEW.policy_json, '$.sourceObservation') = 'object'
+              AND json_extract(NEW.policy_json, '$.sourceObservation.projectId') IS s.project_id
+              AND json_extract(NEW.policy_json, '$.sourceObservation.sourceAssertionRevisionId') IS a.revision_id
+              AND json_extract(NEW.policy_json, '$.sourceObservation.sourceRevisionId') IS a.source_revision_id
+              AND json_extract(NEW.policy_json, '$.sourceObservation.sourceSha256')
+                  IS json_extract(a.assertion_json, '$.sourceSha256')
+              AND json_extract(NEW.policy_json, '$.sourceObservation.provider')
+                  IS json_extract(a.assertion_json, '$.provider')
+              AND json_extract(NEW.policy_json, '$.subject.address.kind')
+                  IS json_extract(a.assertion_json, '$.address.kind')
+              AND json_extract(NEW.policy_json, '$.subject.address.contextId')
+                  IS json_extract(a.assertion_json, '$.address.contextId')
+              AND json_extract(NEW.policy_json, '$.subject.address.revisionId')
+                  IS json_extract(a.assertion_json, '$.address.revisionId')
+              AND json_extract(NEW.policy_json, '$.subject.address.ordinal')
+                  IS json_extract(a.assertion_json, '$.address.ordinal')
+              AND json_extract(NEW.policy_json, '$.subject.address.recordKey')
+                  IS json_extract(a.assertion_json, '$.address.recordKey')
+              AND json_extract(NEW.policy_json, '$.sourceObservation.address.kind')
+                  IS json_extract(a.assertion_json, '$.address.kind')
+              AND json_extract(NEW.policy_json, '$.sourceObservation.address.contextId')
+                  IS json_extract(a.assertion_json, '$.address.contextId')
+              AND json_extract(NEW.policy_json, '$.sourceObservation.address.revisionId')
+                  IS json_extract(a.assertion_json, '$.address.revisionId')
+              AND json_extract(NEW.policy_json, '$.sourceObservation.address.ordinal')
+                  IS json_extract(a.assertion_json, '$.address.ordinal')
+              AND json_extract(NEW.policy_json, '$.sourceObservation.address.recordKey')
+                  IS json_extract(a.assertion_json, '$.address.recordKey')
+              AND json_extract(s.subject_json, '$.address.kind')
+                  IS json_extract(a.assertion_json, '$.address.kind')
+              AND json_extract(s.subject_json, '$.address.contextId')
+                  IS json_extract(a.assertion_json, '$.address.contextId')
+              AND json_extract(s.subject_json, '$.address.revisionId')
+                  IS json_extract(a.assertion_json, '$.address.revisionId')
+              AND json_extract(s.subject_json, '$.address.ordinal')
+                  IS json_extract(a.assertion_json, '$.address.ordinal')
+              AND json_extract(s.subject_json, '$.address.recordKey')
+                  IS json_extract(a.assertion_json, '$.address.recordKey')
+        ) OR (NEW.revision_number = 0 AND EXISTS (
+            SELECT 1 FROM rights_policy_revisions AS prior
+            WHERE prior.project_id = NEW.project_id AND prior.subject_sha256 = NEW.subject_sha256
+        )) OR (NEW.revision_number > 0 AND NOT EXISTS (
+            SELECT 1 FROM rights_policy_revisions AS prior
+            WHERE prior.revision_id = NEW.predecessor_revision_id
+              AND prior.project_id = NEW.project_id AND prior.subject_sha256 = NEW.subject_sha256
+              AND prior.policy_id = NEW.policy_id AND prior.revision_number = NEW.revision_number - 1
+              AND prior.revision_number = (
+                  SELECT MAX(head.revision_number) FROM rights_policy_revisions AS head
+                  WHERE head.project_id = NEW.project_id AND head.subject_sha256 = NEW.subject_sha256
+              )
+        ))
+        BEGIN SELECT RAISE(ABORT, 'rights policy revision binding denied'); END
+    """,
+    """
+        CREATE TRIGGER rights_policy_recheck_binding BEFORE INSERT ON rights_policy_rechecks
+        WHEN NOT EXISTS (
+            SELECT 1 FROM rights_policy_revisions AS r
+            JOIN rights_policy_subjects AS s ON s.project_id = r.project_id
+              AND s.subject_sha256 = r.subject_sha256 AND s.policy_id = r.policy_id
+            JOIN reconciliation_assertions AS a ON a.revision_id = s.source_assertion_revision_id
+              AND a.project_id = s.project_id
+            JOIN corpus_discovery_paths AS path ON path.path_id = NEW.path_id
+              AND path.project_id = NEW.project_id AND path.item_id = NEW.item_id
+            JOIN corpus_item_discovery_paths AS membership
+              ON membership.path_id = path.path_id
+              AND membership.revision_id = NEW.output_revision_id
+              AND membership.project_id = NEW.project_id AND membership.item_id = NEW.item_id
+            WHERE r.revision_id = NEW.rights_revision_id AND r.project_id = NEW.project_id
+              AND s.source_assertion_revision_id = NEW.source_assertion_revision_id
+              AND (
+                  (path.kind IN ('import-member', 'connector-record')
+                      AND path.source_revision_id = a.source_revision_id
+                      AND path.kind = json_extract(a.assertion_json, '$.address.kind')
+                      AND path.context_id = json_extract(a.assertion_json, '$.address.contextId')
+                      AND path.context_revision_id = json_extract(a.assertion_json, '$.address.revisionId')
+                      AND path.ordinal IS json_extract(a.assertion_json, '$.address.ordinal')
+                      AND path.record_key_sha256 IS json_extract(a.assertion_json, '$.address.recordKey'))
+                  OR (path.kind = 'citation'
+                      AND path.source_revision_id = a.revision_id
+                      AND path.context_revision_id = path.citing_work_revision_id
+                      AND EXISTS (
+                          SELECT 1 FROM reconciliation_work_members AS cited_member
+                          JOIN reconciliation_work_states AS cited_work
+                            ON cited_work.revision_id = cited_member.work_revision_id
+                            AND cited_work.project_id = cited_member.project_id
+                          WHERE cited_member.assertion_revision_id = a.revision_id
+                            AND cited_member.project_id = NEW.project_id
+                            AND cited_member.work_revision_id = path.citing_work_revision_id
+                            AND cited_work.work_id = path.context_id
+                      ))
+              )
+        )
+        BEGIN SELECT RAISE(ABORT, 'rights policy recheck binding denied'); END
+    """,
+    """
+        CREATE TRIGGER rights_policy_recheck_scope_binding
+        BEFORE INSERT ON rights_policy_recheck_scopes
+        WHEN NOT EXISTS (
+            SELECT 1 FROM rights_policy_revisions AS r
+            JOIN rights_policy_subjects AS s ON s.project_id = r.project_id
+              AND s.subject_sha256 = r.subject_sha256 AND s.policy_id = r.policy_id
+            WHERE r.revision_id = NEW.rights_revision_id AND r.project_id = NEW.project_id
+              AND r.subject_sha256 = NEW.subject_sha256
+              AND s.source_assertion_revision_id = NEW.source_assertion_revision_id
+              AND r.revision_number = (
+                  SELECT MAX(head.revision_number) FROM rights_policy_revisions AS head
+                  WHERE head.project_id = r.project_id AND head.subject_sha256 = r.subject_sha256
+              )
+        ) OR (NEW.exact_state = 'complete' AND EXISTS (
+            SELECT 1 FROM reconciliation_assertions AS a
+            JOIN corpus_discovery_paths AS path ON path.project_id = a.project_id
+            JOIN corpus_item_discovery_paths AS membership ON membership.path_id = path.path_id
+              AND membership.project_id = path.project_id AND membership.item_id = path.item_id
+            WHERE a.revision_id = NEW.source_assertion_revision_id AND a.project_id = NEW.project_id
+              AND (
+                  (path.kind IN ('import-member', 'connector-record')
+                      AND path.source_revision_id = a.source_revision_id
+                      AND path.kind = json_extract(a.assertion_json, '$.address.kind')
+                      AND path.context_id = json_extract(a.assertion_json, '$.address.contextId')
+                      AND path.context_revision_id = json_extract(a.assertion_json, '$.address.revisionId')
+                      AND path.ordinal IS json_extract(a.assertion_json, '$.address.ordinal')
+                      AND path.record_key_sha256 IS json_extract(a.assertion_json, '$.address.recordKey'))
+                  OR (path.kind = 'citation'
+                      AND path.source_revision_id = a.revision_id
+                      AND path.context_revision_id = path.citing_work_revision_id
+                      AND EXISTS (
+                          SELECT 1 FROM reconciliation_work_members AS cited_member
+                          JOIN reconciliation_work_states AS cited_work
+                            ON cited_work.revision_id = cited_member.work_revision_id
+                            AND cited_work.project_id = cited_member.project_id
+                          WHERE cited_member.assertion_revision_id = a.revision_id
+                            AND cited_member.project_id = NEW.project_id
+                            AND cited_member.work_revision_id = path.citing_work_revision_id
+                            AND cited_work.work_id = path.context_id
+                      ))
+              )
+              AND NOT EXISTS (
+                  SELECT 1 FROM rights_policy_rechecks AS linked
+                  WHERE linked.rights_revision_id = NEW.rights_revision_id
+                    AND linked.project_id = NEW.project_id
+                    AND linked.output_revision_id = membership.revision_id
+                    AND linked.path_id = path.path_id
+              )
+        )) OR (NEW.generic_state = 'complete' AND EXISTS (
+            SELECT 1 FROM rights_policy_revisions AS r
+            WHERE r.revision_id = NEW.rights_revision_id AND r.project_id = NEW.project_id
+              AND r.predecessor_revision_id IS NOT NULL
+              AND NOT EXISTS (
+                  SELECT 1 FROM dependency_impact_runs AS run
+                  JOIN dependency_impact_audit_events AS audit ON audit.run_id = run.run_id
+                    AND audit.project_id = run.project_id
+                  WHERE run.project_id = r.project_id
+                    AND run.previous_revision_id = r.predecessor_revision_id
+                    AND run.replacement_revision_id = r.revision_id
+                    AND run.idempotency_key = 'rights-' || r.command_id
+                    AND run.reason = 'RIGHTS_POLICY'
+                    AND run.dependency_kind = 'human-decision'
+                    AND audit.event_type = 'completed'
+                    AND audit.processed_items = run.total_items
+                    AND audit.sequence = (
+                        SELECT MAX(last.sequence) FROM dependency_impact_audit_events AS last
+                        WHERE last.run_id = run.run_id AND last.project_id = run.project_id
+                    )
+              )
+        ))
+        BEGIN SELECT RAISE(ABORT, 'rights policy recheck scope binding denied'); END
+    """,
+    """
+        CREATE TRIGGER rights_legacy_output_recheck_binding
+        BEFORE INSERT ON rights_legacy_output_rechecks
+        WHEN NOT EXISTS (
+            SELECT 1 FROM corpus_item_discovery_paths AS membership
+            JOIN corpus_discovery_paths AS path ON path.path_id = membership.path_id
+              AND path.project_id = membership.project_id AND path.item_id = membership.item_id
+            WHERE membership.revision_id = NEW.output_revision_id
+              AND membership.path_id = NEW.path_id
+              AND membership.project_id = NEW.project_id
+              AND membership.item_id = NEW.item_id
+              AND path.direction = 'source-to-corpus-item'
+        ) OR NEW.source_assertion_revision_id IS NOT (
+            SELECT CASE WHEN COUNT(*) = 1 THEN MIN(a.revision_id) ELSE NULL END
+            FROM corpus_discovery_paths AS path
+            JOIN reconciliation_assertions AS a ON a.project_id = path.project_id
+              AND (
+                  (path.kind IN ('import-member', 'connector-record')
+                    AND path.source_revision_id = a.source_revision_id
+                    AND path.kind = json_extract(a.assertion_json, '$.address.kind')
+                    AND path.context_id = json_extract(a.assertion_json, '$.address.contextId')
+                    AND path.context_revision_id = json_extract(a.assertion_json, '$.address.revisionId')
+                    AND path.ordinal IS json_extract(a.assertion_json, '$.address.ordinal')
+                    AND path.record_key_sha256 IS json_extract(a.assertion_json, '$.address.recordKey'))
+                  OR (path.kind = 'citation' AND path.source_revision_id = a.revision_id)
+              )
+            WHERE path.path_id = NEW.path_id AND path.project_id = NEW.project_id
+              AND path.item_id = NEW.item_id
+        )
+        BEGIN SELECT RAISE(ABORT, 'legacy output recheck binding denied'); END
+    """,
+    """
+        CREATE TRIGGER rights_policy_generic_recheck_binding
+        BEFORE INSERT ON rights_policy_generic_rechecks
+        WHEN NOT EXISTS (
+            SELECT 1 FROM rights_policy_recheck_scopes AS scope
+            JOIN rights_policy_revisions AS r ON r.revision_id = scope.rights_revision_id
+              AND r.project_id = scope.project_id
+            WHERE scope.rights_revision_id = NEW.rights_revision_id
+              AND scope.project_id = NEW.project_id
+              AND scope.generic_state = 'pending'
+              AND r.predecessor_revision_id = NEW.previous_revision_id
+              AND (NEW.parent_revision_id = r.predecessor_revision_id OR EXISTS (
+                  SELECT 1 FROM rights_policy_generic_rechecks AS parent
+                  WHERE parent.rights_revision_id = NEW.rights_revision_id
+                    AND parent.project_id = NEW.project_id
+                    AND parent.output_revision_id = NEW.parent_revision_id
+              ))
+              AND EXISTS (
+                  SELECT 1 FROM material_dependencies AS d
+                  WHERE d.project_id = NEW.project_id
+                    AND d.dependency_revision_id = NEW.parent_revision_id
+                    AND d.output_revision_id = NEW.output_revision_id
+                    AND d.relation_type IN ('direct', 'conditional')
+              )
+        )
+        BEGIN SELECT RAISE(ABORT, 'rights policy generic recheck binding denied'); END
+    """,
+    """
+        CREATE TRIGGER rights_policy_recheck_completion_binding
+        BEFORE INSERT ON rights_policy_recheck_completions
+        WHEN NOT EXISTS (
+            SELECT 1 FROM rights_policy_recheck_scopes AS scope
+            WHERE scope.rights_revision_id = NEW.rights_revision_id
+              AND scope.project_id = NEW.project_id
+              AND ((NEW.dimension = 'exact' AND scope.exact_state = 'pending')
+                OR (NEW.dimension = 'generic' AND scope.generic_state = 'pending'))
+        ) OR (NEW.dimension = 'exact' AND EXISTS (
+            SELECT 1 FROM rights_policy_recheck_scopes AS scope
+            JOIN reconciliation_assertions AS a ON a.revision_id = scope.source_assertion_revision_id
+              AND a.project_id = scope.project_id
+            JOIN corpus_discovery_paths AS path ON path.project_id = a.project_id
+            JOIN corpus_item_discovery_paths AS membership ON membership.path_id = path.path_id
+              AND membership.project_id = path.project_id AND membership.item_id = path.item_id
+            WHERE scope.rights_revision_id = NEW.rights_revision_id
+              AND scope.project_id = NEW.project_id
+              AND (
+                  (path.kind IN ('import-member', 'connector-record')
+                      AND path.source_revision_id = a.source_revision_id
+                      AND path.kind = json_extract(a.assertion_json, '$.address.kind')
+                      AND path.context_id = json_extract(a.assertion_json, '$.address.contextId')
+                      AND path.context_revision_id = json_extract(a.assertion_json, '$.address.revisionId')
+                      AND path.ordinal IS json_extract(a.assertion_json, '$.address.ordinal')
+                      AND path.record_key_sha256 IS json_extract(a.assertion_json, '$.address.recordKey'))
+                  OR (path.kind = 'citation'
+                      AND path.source_revision_id = a.revision_id
+                      AND path.context_revision_id = path.citing_work_revision_id
+                      AND EXISTS (
+                          SELECT 1 FROM reconciliation_work_members AS cited_member
+                          JOIN reconciliation_work_states AS cited_work
+                            ON cited_work.revision_id = cited_member.work_revision_id
+                            AND cited_work.project_id = cited_member.project_id
+                          WHERE cited_member.assertion_revision_id = a.revision_id
+                            AND cited_member.project_id = NEW.project_id
+                            AND cited_member.work_revision_id = path.citing_work_revision_id
+                            AND cited_work.work_id = path.context_id
+                      ))
+              )
+              AND NOT EXISTS (
+                  SELECT 1 FROM rights_policy_rechecks AS linked
+                  WHERE linked.rights_revision_id = NEW.rights_revision_id
+                    AND linked.project_id = NEW.project_id
+                    AND linked.output_revision_id = membership.revision_id
+                    AND linked.path_id = path.path_id
+              )
+        )) OR (NEW.dimension = 'generic' AND NOT EXISTS (
+            SELECT 1 FROM rights_policy_revisions AS r
+            WHERE r.revision_id = NEW.rights_revision_id AND r.project_id = NEW.project_id
+              AND r.predecessor_revision_id IS NOT NULL
+              AND NOT EXISTS (
+                  SELECT 1 FROM (
+                      SELECT predecessor_revision_id AS revision_id
+                      FROM rights_policy_revisions
+                      WHERE revision_id = NEW.rights_revision_id AND project_id = NEW.project_id
+                      UNION
+                      SELECT parent.output_revision_id FROM rights_policy_generic_rechecks AS parent
+                      WHERE parent.rights_revision_id = NEW.rights_revision_id
+                        AND parent.project_id = NEW.project_id
+                  ) AS parents
+                  CROSS JOIN material_dependencies AS d
+                  WHERE d.project_id = r.project_id
+                    AND d.dependency_revision_id = parents.revision_id
+                    AND d.relation_type IN ('direct', 'conditional')
+                    AND NOT EXISTS (
+                        SELECT 1 FROM rights_policy_generic_rechecks AS linked
+                        WHERE linked.rights_revision_id = NEW.rights_revision_id
+                          AND linked.project_id = NEW.project_id
+                          AND linked.previous_revision_id = r.predecessor_revision_id
+                          AND linked.output_revision_id = d.output_revision_id
+                    )
+              )
+        ))
+        BEGIN SELECT RAISE(ABORT, 'rights policy recheck completion binding denied'); END
+    """,
+    """
+        CREATE TRIGGER rights_use_decision_binding BEFORE INSERT ON rights_use_decisions
+        WHEN NOT EXISTS (
+            SELECT 1 FROM reconciliation_assertions AS a
+            WHERE a.revision_id = NEW.source_assertion_revision_id AND a.project_id = NEW.project_id
+              AND a.payload_sha256 = NEW.source_assertion_sha256
+        ) OR (NEW.authority_kind = 'policy' AND NOT EXISTS (
+            SELECT 1 FROM rights_policy_revisions AS r
+            JOIN rights_policy_subjects AS s ON s.project_id = r.project_id
+              AND s.subject_sha256 = r.subject_sha256 AND s.policy_id = r.policy_id
+            WHERE r.revision_id = NEW.policy_revision_id AND r.project_id = NEW.project_id
+              AND r.subject_sha256 = NEW.subject_sha256
+              AND r.policy_sha256 = NEW.policy_sha256
+              AND s.source_assertion_revision_id = NEW.source_assertion_revision_id
+        )) OR (NEW.authority_kind = 'legacy-import-bridge' AND NOT EXISTS (
+            SELECT 1 FROM reconciliation_assertions AS a
+            WHERE a.revision_id = NEW.source_assertion_revision_id AND a.project_id = NEW.project_id
+              AND json_extract(a.assertion_json, '$.address.kind') = 'import-member'
+              AND json_extract(a.assertion_json, '$.provider') = 'local-import'
+              AND json_extract(a.assertion_json, '$.rights."' || NEW.use_action || '".value') = 'permitted'
+              AND json_extract(a.assertion_json, '$.rights."' || NEW.use_action || '".basis')
+                  = 'researcher-confirmed'
+        ))
+        BEGIN SELECT RAISE(ABORT, 'rights use decision binding denied'); END
+    """,
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V17_DDL,
+    SCHEMA_METADATA_V18_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -3906,6 +4568,7 @@ _DDL_STATEMENTS = (
     *RECONCILIATION_REVIEW_DDL,
     *WORK_VERSION_DDL,
     *CORPUS_DDL,
+    *RIGHTS_POLICY_DDL,
 )
 
 

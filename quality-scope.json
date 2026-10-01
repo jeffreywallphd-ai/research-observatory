@@ -304,6 +304,7 @@
     "tests/contracts/test_domain_contracts_v2.py",
     "tests/contracts/test_corpus_contracts.py",
     "tests/corpus/test_membership_model.py",
+    "tests/corpus/__init__.py",
     "tests/corpus/test_api.py",
     "tests/corpus/test_connector_query.py",
     "tests/corpus/test_repository.py",
@@ -443,6 +444,18 @@
     "services/core-api/src/research_observatory_core/migrations/versions/v0017_corpus_items.py",
     "tests/reconciliation/test_corpus_migration.py",
     "tests/reconciliation/v16_predecessor.py",
-    "tests/reconciliation/test_v16_predecessor.py"
+    "tests/reconciliation/test_v16_predecessor.py",
+    "packages/contracts/rights/generate_schema.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0018_rights_policy.py",
+    "services/core-api/src/research_observatory_core/ports/rights.py",
+    "services/core-api/src/research_observatory_core/rights_policy.py",
+    "services/core-api/src/research_observatory_core/rights_repository.py",
+    "tests/rights/__init__.py",
+    "tests/rights/test_corpus_recheck.py",
+    "tests/rights/test_migration.py",
+    "tests/rights/test_policy.py",
+    "tests/rights/test_repository.py",
+    "tests/rights/test_runtime_windows.py",
+    "tools/rights_test_check.py"
   ]
 }

@@ -193,6 +193,37 @@ class ArchitectureContractTests(unittest.TestCase):
                 self.assertTrue(any("concrete" in error for error in errors), errors)
                 path.unlink()
 
+    def test_rights_repository_is_a_root_adapter_not_a_business_or_port_dependency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "rights_repository.py").write_text(
+                "import sqlite3\nfrom .storage import CanonicalConnection\n"
+                "from .repositories import _SqliteAggregateRepository\n"
+                "def save(connection):\n    connection.execute('SELECT 1')\n",
+                encoding="utf-8",
+            )
+            (root / "main.py").write_text("from .rights_repository import SqliteRightsRepository\n", encoding="utf-8")
+            self.assertEqual([], core_data_boundary_errors(root))
+            for location in ("business.py", "ports/rights.py", "business/rights_repository.py"):
+                path = root / location
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(
+                    "import sqlite3\nfrom research_observatory_core.rights_repository import SqliteRightsRepository\n"
+                    "def save(connection):\n    connection.execute('SELECT 1')\n",
+                    encoding="utf-8",
+                )
+                errors = core_data_boundary_errors(root)
+                self.assertTrue(any("outside adapter" in error for error in errors), errors)
+                self.assertTrue(any("concrete" in error for error in errors), errors)
+                path.unlink()
+
+            (root / "business.py").write_text(
+                "from research_observatory_core import rights_repository as adapter\n",
+                encoding="utf-8",
+            )
+            errors = core_data_boundary_errors(root)
+            self.assertTrue(any("concrete repository adapter" in error for error in errors), errors)
+
     def test_connector_repository_is_a_root_adapter_not_a_business_or_port_dependency(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

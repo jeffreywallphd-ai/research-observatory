@@ -128,6 +128,26 @@
       "safetySensitive": false
     },
     {
+      "id": "source-specific-rights",
+      "patterns": [
+        "packages/contracts/rights/**",
+        "services/core-api/src/research_observatory_core/rights*.py",
+        "services/core-api/src/research_observatory_core/ports/rights.py",
+        "services/core-api/src/research_observatory_core/corpus_repository.py",
+        "services/core-api/src/research_observatory_core/corpus_service.py",
+        "services/core-api/src/research_observatory_core/migrations/versions/v0018_rights_policy.py",
+        "services/core-api/src/research_observatory_core/storage.py",
+        "tests/rights/**",
+        "tools/rights_test_check.py"
+      ],
+      "commands": [
+        "foundation:quality",
+        "service:rights"
+      ],
+      "rationaleCode": "source-rights-boundary",
+      "safetySensitive": false
+    },
+    {
       "id": "core-api-and-portable-contracts",
       "patterns": [
         "packages/contracts/**",

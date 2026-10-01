@@ -410,6 +410,25 @@ class VerificationRunnerTests(unittest.TestCase):
         self.assertNotIn("service:corpus", inactive["selectedCommandIds"])
         self.assertNotIn("service:corpus", inactive["deferredCommandIds"])
 
+    def test_rights_affected_selection_activates_focused_boundary_checks(self) -> None:
+        for path in (
+            "services/core-api/src/research_observatory_core/rights_repository.py",
+            "packages/contracts/rights/rights-policy.schema.json",
+            "tests/rights/test_repository.py",
+        ):
+            with self.subTest(path=path):
+                selection, _ = select_affected_commands(
+                    REPO, self.contract, self.policy, ["service"], [path], "W2-exit"
+                )
+                self.assertEqual("none", selection["fallback"])
+                self.assertIn("source-specific-rights", selection["matchedRuleIds"])
+                self.assertIn("service:rights", selection["selectedCommandIds"])
+
+        unrelated, _ = select_affected_commands(
+            REPO, self.contract, self.policy, ["service"], ["docs/README.md"], "W2-exit"
+        )
+        self.assertNotIn("service:rights", unrelated["selectedCommandIds"])
+
     def test_unsafe_or_empty_changed_paths_and_gate_are_rejected(self) -> None:
         for paths in (
             [],
