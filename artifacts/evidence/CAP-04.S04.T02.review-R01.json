@@ -1,0 +1,54 @@
+{
+  "task_id": "CAP-04.S04.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+  "reviewer": "agent:cap04-s04-t02-independent-review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent expanded rights, security-boundary, migration, and public-contract review of the frozen R01 candidate found no blocking defect against the three approved CAP-04.S04.T02 criteria. The exact retained source assertion, address, metadata copy, action, purpose, and destination bind evaluation; missing or reported terms cannot grant use. The only no-policy allow preserves T01's confirmed local-import metadata bridge for its four corpus actions. Policy publication and protected corpus use retain source-specific provenance, current-authority checks, immutable use audit, and denial without canonical corpus publication. Rights changes commit exact corpus-path and generic dependency review markers or an observable pending scope that fails closed; v18 preserves populated v17 histories and marks their old outputs without inventing grants. The authenticated Windows test exercises actual Core, DPAPI/SQLCipher, restart, revocation, audit, and output inspection. All 61 changed paths, 14 raw-log hashes, eight selected command IDs, build identity, and criterion mappings match the frozen submission. Full service/security-local, desktop, packaging, performance, and cross-capability qualifications remain at the documented S04/checkpoint/W2 gates. Acquired full-text, derived-text, and embedding publication requires later retained copy provenance; this candidate exposes vocabulary and conservative non-allow behavior for those unavailable copies.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-04.S04.T02.json",
+      "canonical_sha256": "537072ddc5854c141c030082d03d351da181ada28b724476845f9bb43363e2ad",
+      "result": "PASS: frozen R01 ledger path/digest, base, candidate, branch, three criterion mappings, 61 exact changed paths, selected/deferred checks, and empty unverified items agree with the manifest and Git."
+    },
+    "build_report": {
+      "path": "artifacts/tmp/CAP-04.S04.T02.build-report-7c0f8a53.json",
+      "canonical_sha256": "b3777edb6c37d2f6282401e91bccf8e2707cb0fd48632a12119a1e5b996ad96a",
+      "result": "PASS: source commit 7c0f8a53, dirty=false, and the current rights schema is inventoried."
+    },
+    "task_projection": {
+      "path": "planning/backlog.yaml",
+      "result": "PASS: CAP-04.S04.T02 is REVIEW at frozen R01 with exact base/candidate/manifest digest, all three original criteria, and no prior open finding."
+    }
+  },
+  "checks": [
+    {
+      "command": "Independently hash the frozen manifest, 14 cited raw logs, and build report; compare manifest paths with git diff --name-only 5e33b15f..7c0f8a53 and selected IDs with verification-profiles.json",
+      "result": "PASS: canonical manifest SHA-256 matches the R01 ledger; every raw-log and build-report digest matches; all 61 paths and eight selected command IDs are exact. All cited checks record exitCode=0."
+    },
+    {
+      "command": "Inspect rights_policy.py, rights_repository.py, portable Python/JSON/TypeScript contracts, source-observation binding, and 48-case exact-candidate rights log",
+      "result": "PASS: eight actions are independent; subject, copy/resource, use context, actor, expiry, conflict, and missing/unknown boundaries are restrictive. A connector page sibling cannot inherit another record's grant; source-reported license/access observations and unverified entitlements cannot grant use. The import bridge is exact, confirmed, local, and superseded by any explicit policy."
+    },
+    {
+      "command": "Inspect corpus_repository.py and Core API/service, 42-case corpus log, and authenticated Windows rights runtime in the 48-case rights log",
+      "result": "PASS: the writer checks retained source/Work membership before action evaluation, reads current rights in its protected transaction, and atomically records successful use. Denied publication rolls back canonical corpus/dependency state and appends the exact evaluated denial in a separate audit writer. Authenticated Core with real DPAPI/SQLCipher denies after revocation and restart and exposes content-free API errors."
+    },
+    {
+      "command": "Inspect exact and generic recheck logic, SQL binding/completion triggers, output inspection, and pending-cap/timeout regression cases",
+      "result": "PASS: changed source rights mark exact source/path corpus outputs and material dependency descendants, or commit a pending scope when bounded planners cannot finish. Continuation is batch/time limited, completion requires database closure proof, and output inspection returns markers or a pending/unknown guard instead of a fabricated completed run."
+    },
+    {
+      "command": "Inspect v0018 forward migration, literal populated v17 import/connector fixtures, frozen recovery snapshot, and migration/recovery/direct-SQL cases in the rights log",
+      "result": "PASS: v18 preserves populated predecessor history, verified backup/restore/reopen, interruption/retry, and immutable legacy output review markers. The frozen v17 recovery snapshot retains SHA-256 4388b3b35df43204ead46972d4fff67670084a5f82d40b046a09bc6a6fdb4d2a. Binding triggers reject material forged policy, marker, completion, and audit witnesses."
+    },
+    {
+      "command": "Inspect generated Core/rights contracts, adapter classifier and quality/verification-control changes; authenticate exact candidate logs",
+      "result": "PASS: Core and rights generator drift checks, TypeScript typecheck, nine focused TS cases, repository structure, build inventory, 64 focused foundation tests, architecture classifier negatives, 447-file format/Ruff/mypy quality, taskctl validation, and planning-view checks pass. The named root adapter exception does not admit business or port storage access."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}

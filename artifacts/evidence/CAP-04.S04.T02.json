@@ -1,0 +1,262 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S04.T02",
+  "baseCommit": "5e33b15f7e4267d27cadb46b288524872467b032",
+  "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S04.T02.task-start.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/package.json",
+    "packages/contracts/rights/README.md",
+    "packages/contracts/rights/fixtures/valid-decision.v1.json",
+    "packages/contracts/rights/fixtures/valid-policy.v1.json",
+    "packages/contracts/rights/generate.mjs",
+    "packages/contracts/rights/generate_schema.py",
+    "packages/contracts/rights/generated.ts",
+    "packages/contracts/rights/rights-policy.schema.json",
+    "packages/contracts/rights/rights.template.ts.txt",
+    "packages/contracts/rights/rights.test.ts",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery-v17.snapshot.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S04.T02.html",
+    "planning/review-site/CAP-04/CAP-04.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/corpus_api.py",
+    "services/core-api/src/research_observatory_core/corpus_repository.py",
+    "services/core-api/src/research_observatory_core/corpus_service.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0018_rights_policy.py",
+    "services/core-api/src/research_observatory_core/ports/rights.py",
+    "services/core-api/src/research_observatory_core/rights_policy.py",
+    "services/core-api/src/research_observatory_core/rights_repository.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/corpus/__init__.py",
+    "tests/corpus/test_api.py",
+    "tests/corpus/test_repository.py",
+    "tests/corpus/test_service.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/foundation/test_architecture_check.py",
+    "tests/foundation/test_verify_runner.py",
+    "tests/reconciliation/test_corpus_migration.py",
+    "tests/rights/__init__.py",
+    "tests/rights/fixtures/README.md",
+    "tests/rights/fixtures/schema-v17-authority.json",
+    "tests/rights/fixtures/schema-v17-connector-corpus-populated.json",
+    "tests/rights/fixtures/schema-v17-import-corpus-populated.json",
+    "tests/rights/test_corpus_recheck.py",
+    "tests/rights/test_migration.py",
+    "tests/rights/test_policy.py",
+    "tests/rights/test_repository.py",
+    "tests/rights/test_runtime_windows.py",
+    "tools/architecture_check.py",
+    "tools/quality_check.py",
+    "tools/rights_test_check.py",
+    "verification-profiles.json",
+    "verification/affected-selection.json"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The portable rights model names eight independent actions and binds every decision to one retained source assertion, exact copy/location/resource, purpose and destination. Unknown or source-reported license/access terms never grant use; 48 fresh rights tests exercise missing, conflicting, expired, actor-specific, wrong-copy and connector-sibling boundaries. The only no-policy allow is a protected, exact confirmed import-member local-metadata bridge for four corpus actions.",
+        "Current policy publication records an immutable source observation, policy provenance/outbox and each protected use decision. Corpus use rechecks the current policy inside its writer, denies without canonical publication, and durably audits the evaluated denial. Policy changes mark exact corpus paths and generic transitive outputs for review; bounded continuation and per-output inspection fail closed when propagation is pending or unknown. Populated v17 outputs receive immutable legacy review markers without invented rights grants."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh exact-commit rights (48), corpus (42), affected foundation-control (64) and focused TypeScript (9) tests pass. Rights migration tests include literal populated v17 import/connector histories, verified backup/reopen/restore, interruption/retry and direct-SQL forgery denials. The Windows runtime case exercises an authenticated principal, accepted Intent, actual DPAPI/SQLCipher, restart, policy revocation, denied corpus write, immutable audit and exact output recheck.",
+        "Corpus integration tests cover explicit connector policy, replay, forged assertion, wrong Work, rollback and service denial propagation. The generated schema/client and Core API parity checks pass; no reported source term, static-only check or mock is used as sole proof of the protected boundary."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Versioned Python/JSON/TypeScript rights contracts and bounded authenticated Core routes expose inspectable decisions and review scope. Additive v18 canonical storage/profile and migration retain the literal frozen v17 recovery snapshot at SHA256 4388b3b35df43204ead46972d4fff67670084a5f82d40b046a09bc6a6fdb4d2a. Architecture/storage and contract documentation describe metadata-only protected publication, future copy provenance requirements and T03 output-guard consumption.",
+        "Append-only policy, use-decision, legacy-output and recheck records carry exact source/actor/trace/revision hashes without research content. Architecture, build-schema inventory, repository structure and 447-file Python quality checks pass; the verification contract includes service:rights in later full service/security qualification while this task uses selected affected checks."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:rights",
+      "service:corpus",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "foundation:quality",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "T02 changes source-specific authority, public Core contracts, the protected corpus writer, append-only audit, transitive dependency rechecks and additive SQL v18 migration. Exact-candidate rights and corpus suites cover real Windows principal/DPAPI/SQLCipher, populated predecessor recovery, denial/rollback and pending propagation; affected architecture, quality, generated-contract, build and planning checks cover changed shared controls. Full service/security-local profiles are reserved for slice/checkpoint/Wave qualification under verification section 8.1 rather than repeated as routine task checks.",
+    "deferred": [
+      "Full service, security-local, desktop, performance, packaging and cross-capability profiles; integrated S04 evidence/review, W2 checkpoint and fresh Wave qualification remain due at their documented gates.",
+      "Protected publication of acquired full-text, derived-text and embedding copies awaits their own retained copy provenance in approved later tasks. T02's vocabulary describes these uses but does not grant them or claim enforcement for unavailable copies."
+    ]
+  },
+  "checks": [
+    {
+      "id": "rights",
+      "command": ".venv\\Scripts\\python.exe tools/rights_test_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.rights-exact-7c0f8a53.log",
+      "rawOutputSha256": "c0299739f7915bffc082562f13cc9eccebb2a431bacc34ece235ab45a30210fa",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "48 rights tests pass, including v18 populated predecessor migration, protected use audit, pending rechecks and real Windows Core/DPAPI/SQLCipher restart",
+      "elapsedSeconds": 91.499
+    },
+    {
+      "id": "corpus",
+      "command": ".venv\\Scripts\\python.exe tools/corpus_test_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.corpus-exact-7c0f8a53.log",
+      "rawOutputSha256": "f21f59698361bd09b5474138902fd03fe0133a1178e22888eba6688f8d26cc51",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "42 corpus tests pass, including connector explicit policy, forged-source denial, rollback and reopen",
+      "elapsedSeconds": 50.913
+    },
+    {
+      "id": "foundation",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_architecture_check tests.foundation.test_verify_runner tests.foundation.test_build_manifest",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.foundation-exact-7c0f8a53.log",
+      "rawOutputSha256": "d5734337c2e62f806662fd4b3f4edc6b3200ffbe6dbdf9a974cfba7867476ee4",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "64 affected architecture, verification-selection and build-inventory control tests pass",
+      "elapsedSeconds": 8.452
+    },
+    {
+      "id": "quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T02.quality-report-7c0f8a53.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.quality-exact-7c0f8a53.log",
+      "rawOutputSha256": "34b95fdd50a670b0a7936611959c266523bc0faf538a4c95362dc9af1f70a9f7",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "447 governed Python files pass format, Ruff and mypy"
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.architecture-exact-7c0f8a53.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Architecture classifier accepts only the named root rights adapter; negative cases remain protected"
+    },
+    {
+      "id": "build",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T02.build-report-7c0f8a53.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.build-exact-7c0f8a53.log",
+      "rawOutputSha256": "a8829abb62eb2a1ee2dce13d5407924f3130106390f7a5b2997f0d4465942171",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Build manifest inventories new current rights schema with unique stable schema IDs"
+    },
+    {
+      "id": "core-api",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.core-api-exact-7c0f8a53.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Generated Core OpenAPI and client agree with authenticated bounded rights routes"
+    },
+    {
+      "id": "rights-python",
+      "command": ".venv\\Scripts\\python.exe packages/contracts/rights/generate_schema.py --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.rights-python-exact-7c0f8a53.log",
+      "rawOutputSha256": "c0020210be6ac8fad740f228da43d4ac5944488b2fa481c97c174f54e12d4b74",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Portable rights JSON schema agrees with strict Python value model"
+    },
+    {
+      "id": "rights-ts",
+      "command": "node packages/contracts/rights/generate.mjs --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.rights-ts-exact-7c0f8a53.log",
+      "rawOutputSha256": "7834d56074756d5cc29fbebc5461a8bc443c31d904f0975089190638a7e438df",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Generated TypeScript rights reader agrees with portable schema"
+    },
+    {
+      "id": "structure",
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.structure-exact-7c0f8a53.log",
+      "rawOutputSha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Repository structure remains valid"
+    },
+    {
+      "id": "ts-typecheck",
+      "command": "node packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.ts-typecheck-exact-7c0f8a53.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Contracts TypeScript typecheck passes"
+    },
+    {
+      "id": "ts-tests",
+      "command": "node packages/contracts/node_modules/vitest/vitest.mjs run packages/contracts/core-api/corpus.test.ts packages/contracts/rights/rights.test.ts",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.ts-tests-exact-7c0f8a53.log",
+      "rawOutputSha256": "f69a98525ca8e51ae7df8dd1ba00a52faea65b53476358d0ae952bf08a02a899",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Nine focused Core API and rights TypeScript tests pass"
+    },
+    {
+      "id": "taskctl",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.taskctl-exact-7c0f8a53.log",
+      "rawOutputSha256": "4b68bbd378b4939bdbc174cd23a91398760e8cc41e01fd5dea9e1ff428421f33",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Backlog and task-control ledger validate at exact candidate"
+    },
+    {
+      "id": "views",
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T02.views-exact-7c0f8a53.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Planning projections are current at exact candidate"
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S04.T02.build-report-7c0f8a53.json",
+    "sha256": "b3777edb6c37d2f6282401e91bccf8e2707cb0fd48632a12119a1e5b996ad96a"
+  },
+  "scopeDeviation": "No approved T02 product scope change or supplemental refactoring. Exact adapter classification, schema inventory, linked dependency-directory quality discovery and rights test-profile mapping are bounded verification maintenance required to check the approved implementation."
+}

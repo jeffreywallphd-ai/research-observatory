@@ -16548,20 +16548,186 @@
             {
               "task_id": "CAP-04.S04.T02",
               "title": "Implement rights, license, entitlement, and permitted-use metadata",
-              "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "status": "DONE",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:cap04-s04-t02-independent-review",
+                "result": "approved",
+                "reviewed_at": "2026-10-01T05:09:43+00:00",
+                "notes": "Independent expanded rights, security-boundary, migration, and public-contract review of the frozen R01 candidate found no blocking defect against the three approved CAP-04.S04.T02 criteria. The exact retained source assertion, address, metadata copy, action, purpose, and destination bind evaluation; missing or reported terms cannot grant use. The only no-policy allow preserves T01's confirmed local-import metadata bridge for its four corpus actions. Policy publication and protected corpus use retain source-specific provenance, current-authority checks, immutable use audit, and denial without canonical corpus publication. Rights changes commit exact corpus-path and generic dependency review markers or an observable pending scope that fails closed; v18 preserves populated v17 histories and marks their old outputs without inventing grants. The authenticated Windows test exercises actual Core, DPAPI/SQLCipher, restart, revocation, audit, and output inspection. All 61 changed paths, 14 raw-log hashes, eight selected command IDs, build identity, and criterion mappings match the frozen submission. Full service/security-local, desktop, packaging, performance, and cross-capability qualifications remain at the documented S04/checkpoint/W2 gates. Acquired full-text, derived-text, and embedding publication requires later retained copy provenance; this candidate exposes vocabulary and conservative non-allow behavior for those unavailable copies."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-01T05:03:06+00:00",
+                      "candidate_commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+                      "base_commit": "5e33b15f7e4267d27cadb46b288524872467b032",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S04.T02.json",
+                        "sha256": "537072ddc5854c141c030082d03d351da181ada28b724476845f9bb43363e2ad",
+                        "commit": "7c0f8a539032ee868e26039e271c8d235df79fb9",
+                        "recorded_at": "2026-10-01T05:03:06+00:00"
+                      },
+                      "acceptance_criteria_sha256": "5dae578c71f0fb55b9ffe175f68585cfa4da67a8a2f8128f36d9e5445f092ce6",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-04.S04.T02.task-start.md",
+                        "docs/architecture/local-sqlite-storage.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/README.md",
+                        "packages/contracts/core-api/generated.ts",
+                        "packages/contracts/core-api/openapi.json",
+                        "packages/contracts/package.json",
+                        "packages/contracts/rights/README.md",
+                        "packages/contracts/rights/fixtures/valid-decision.v1.json",
+                        "packages/contracts/rights/fixtures/valid-policy.v1.json",
+                        "packages/contracts/rights/generate.mjs",
+                        "packages/contracts/rights/generate_schema.py",
+                        "packages/contracts/rights/generated.ts",
+                        "packages/contracts/rights/rights-policy.schema.json",
+                        "packages/contracts/rights/rights.template.ts.txt",
+                        "packages/contracts/rights/rights.test.ts",
+                        "packages/contracts/storage/README.md",
+                        "packages/contracts/storage/sqlite-migration-recovery-v17.snapshot.json",
+                        "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+                        "packages/contracts/tsconfig.json",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S04.T02.html",
+                        "planning/review-site/CAP-04/CAP-04.S04.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W2.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/src/research_observatory_core/corpus_api.py",
+                        "services/core-api/src/research_observatory_core/corpus_repository.py",
+                        "services/core-api/src/research_observatory_core/corpus_service.py",
+                        "services/core-api/src/research_observatory_core/main.py",
+                        "services/core-api/src/research_observatory_core/migrations/runner.py",
+                        "services/core-api/src/research_observatory_core/migrations/versions/v0018_rights_policy.py",
+                        "services/core-api/src/research_observatory_core/ports/rights.py",
+                        "services/core-api/src/research_observatory_core/rights_policy.py",
+                        "services/core-api/src/research_observatory_core/rights_repository.py",
+                        "services/core-api/src/research_observatory_core/storage.py",
+                        "tests/corpus/__init__.py",
+                        "tests/corpus/test_api.py",
+                        "tests/corpus/test_repository.py",
+                        "tests/corpus/test_service.py",
+                        "tests/data/test_sqlite_migrations.py",
+                        "tests/foundation/test_architecture_check.py",
+                        "tests/foundation/test_verify_runner.py",
+                        "tests/reconciliation/test_corpus_migration.py",
+                        "tests/rights/__init__.py",
+                        "tests/rights/fixtures/README.md",
+                        "tests/rights/fixtures/schema-v17-authority.json",
+                        "tests/rights/fixtures/schema-v17-connector-corpus-populated.json",
+                        "tests/rights/fixtures/schema-v17-import-corpus-populated.json",
+                        "tests/rights/test_corpus_recheck.py",
+                        "tests/rights/test_migration.py",
+                        "tests/rights/test_policy.py",
+                        "tests/rights/test_repository.py",
+                        "tests/rights/test_runtime_windows.py",
+                        "tools/architecture_check.py",
+                        "tools/quality_check.py",
+                        "tools/rights_test_check.py",
+                        "verification-profiles.json",
+                        "verification/affected-selection.json"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe tools/rights_test_check.py",
+                        ".venv\\Scripts\\python.exe tools/corpus_test_check.py",
+                        ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_architecture_check tests.foundation.test_verify_runner tests.foundation.test_build_manifest",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T02.quality-report-7c0f8a53.json",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T02.build-report-7c0f8a53.json",
+                        ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+                        ".venv\\Scripts\\python.exe packages/contracts/rights/generate_schema.py --check",
+                        "node packages/contracts/rights/generate.mjs --check",
+                        ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+                        "node packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json",
+                        "node packages/contracts/node_modules/vitest/vitest.mjs run packages/contracts/core-api/corpus.test.ts packages/contracts/rights/rights.test.ts",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py validate",
+                        ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check"
+                      ],
+                      "deferred_checks": [
+                        "Full service, security-local, desktop, performance, packaging and cross-capability profiles; integrated S04 evidence/review, W2 checkpoint and fresh Wave qualification remain due at their documented gates.",
+                        "Protected publication of acquired full-text, derived-text and embedding copies awaits their own retained copy provenance in approved later tasks. T02's vocabulary describes these uses but does not grant them or claim enforcement for unavailable copies."
+                      ],
+                      "selection_rationale": "T02 changes source-specific authority, public Core contracts, the protected corpus writer, append-only audit, transitive dependency rechecks and additive SQL v18 migration. Exact-candidate rights and corpus suites cover real Windows principal/DPAPI/SQLCipher, populated predecessor recovery, denial/rollback and pending propagation; affected architecture, quality, generated-contract, build and planning checks cover changed shared controls. Full service/security-local profiles are reserved for slice/checkpoint/Wave qualification under verification section 8.1 rather than repeated as routine task checks.",
+                      "selection_sha256": "898f16c2220215c60aaecdc34591b80bd44bcd3543b99ac378a8fbfc86844d96",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "service:rights",
+                        "service:corpus",
+                        "foundation:architecture",
+                        "foundation:build-manifest",
+                        "foundation:quality",
+                        "foundation:repository-structure",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "packet_sha256": "251766b9fc48a85530eea0f7b7caf7abcfd3a801b5d17bd772a450e09e7de4bd"
+                    },
+                    "review": {
+                      "reviewer": "agent:cap04-s04-t02-independent-review",
+                      "result": "approved",
+                      "reviewed_at": "2026-10-01T05:09:43+00:00",
+                      "notes": "Independent expanded rights, security-boundary, migration, and public-contract review of the frozen R01 candidate found no blocking defect against the three approved CAP-04.S04.T02 criteria. The exact retained source assertion, address, metadata copy, action, purpose, and destination bind evaluation; missing or reported terms cannot grant use. The only no-policy allow preserves T01's confirmed local-import metadata bridge for its four corpus actions. Policy publication and protected corpus use retain source-specific provenance, current-authority checks, immutable use audit, and denial without canonical corpus publication. Rights changes commit exact corpus-path and generic dependency review markers or an observable pending scope that fails closed; v18 preserves populated v17 histories and marks their old outputs without inventing grants. The authenticated Windows test exercises actual Core, DPAPI/SQLCipher, restart, revocation, audit, and output inspection. All 61 changed paths, 14 raw-log hashes, eight selected command IDs, build identity, and criterion mappings match the frozen submission. Full service/security-local, desktop, packaging, performance, and cross-capability qualifications remain at the documented S04/checkpoint/W2 gates. Acquired full-text, derived-text, and embedding publication requires later retained copy provenance; this candidate exposes vocabulary and conservative non-allow behavior for those unavailable copies."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S04.T02.review-R01.json",
+                      "sha256": "490b157b13741c12b4013ebd89869b85226c8eafef9bb999fbfd964d8dea44fa"
+                    },
+                    "findings": [],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-04.S04.T02",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-10-01T05:03:06+00:00",
+                      "reviewed_at": "2026-10-01T05:09:43+00:00",
+                      "duration_seconds": 397,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "service:rights",
+                        "service:corpus",
+                        "foundation:architecture",
+                        "foundation:build-manifest",
+                        "foundation:quality",
+                        "foundation:repository-structure",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             },
             {
               "task_id": "CAP-04.S04.T03",
               "title": "Build corpus provenance and source-overlap reports",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -16596,7 +16762,7 @@
             {
               "task_id": "CAP-04.S04.T02",
               "title": "Implement rights, license, entitlement, and permitted-use metadata",
-              "status": "IN_PROGRESS",
+              "status": "DONE",
               "page": "CAP-04/CAP-04.S04.T02.html",
               "dependencies": [
                 "CAP-04.S04.T01"
@@ -16615,7 +16781,7 @@
             {
               "task_id": "CAP-04.S04.T03",
               "title": "Build corpus provenance and source-overlap reports",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-04/CAP-04.S04.T03.html",
               "dependencies": [
                 "CAP-04.S04.T02"
