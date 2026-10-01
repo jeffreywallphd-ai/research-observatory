@@ -157,6 +157,7 @@
         "foundation:quality",
         "packaging:unit",
         "service:corpus",
+        "service:corpus-reports",
         "service:unit",
         "contracts:unit"
       ],
@@ -190,6 +191,20 @@
         "service:corpus"
       ],
       "rationaleCode": "corpus-tests",
+      "safetySensitive": false
+    },
+    {
+      "id": "corpus-report-tests",
+      "patterns": [
+        "tests/corpus_reports/**",
+        "tests/reports/**",
+        "tools/corpus_report_test_check.py"
+      ],
+      "commands": [
+        "foundation:quality",
+        "service:corpus-reports"
+      ],
+      "rationaleCode": "corpus-report-tests",
       "safetySensitive": false
     },
     {

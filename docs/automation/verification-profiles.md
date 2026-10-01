@@ -56,6 +56,16 @@ this checkout's Core source and repository root and returns its actual exit
 status. It needs no ambient `PYTHONPATH`; its Windows DPAPI/SQLCipher case must
 execute on the required Windows x64 qualification platform.
 
+The service profile requires `service:corpus-reports`. Its existing launcher,
+`tools/corpus_report_test_check.py`, runs both `tests/corpus_reports` and
+`tests/reports` against this checkout's Core source and returns the failing
+suite's exit status. Core API or portable-contract changes select the report
+suite in affected service verification. Changes confined to either report test
+directory select Python quality and the report suite; a launcher change also
+selects it. The command remains in complete service and W2 verification even
+if a test directory disappears. The launcher then fails instead of silently
+passing an incomplete suite.
+
 The policy authorizes `W1-exit` and `W2-exit` as affected-selection deferred owners;
 generic names, unconfigured Waves and human release gates such as `G2` are rejected
 by both the API and CLI. Use the owner for the task's Wave. These labels record
@@ -109,8 +119,8 @@ and cannot be narrowed with `--profile` or combined with affected mode. Disabled
 commands remain selected exactly once when active in either union. Optional
 commands activate through their existing paths/globs; inactive commands remain
 reported as such, not as executed proof.
-The W2 union includes the active `service:corpus` suite exactly once through its
-service profile.
+The W2 union includes the active `service:corpus` and
+`service:corpus-reports` suites exactly once each through its service profile.
 
 ```powershell
 python tools/verify.py --wave-exit W1 --selection-only --report artifacts/tmp/W1-wave-exit-selection.json
