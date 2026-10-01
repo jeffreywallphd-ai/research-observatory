@@ -415,7 +415,7 @@ WORK_VERSION_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f
 CORPUS_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
 RIGHTS_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
 CORPUS_REPORT_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
-EXPECTED_SCHEMA_SHA256 = "1d270388f1dd4f2ad531f9f9d601253f320e327a062256a101b729516f615b26"
+EXPECTED_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -483,7 +483,7 @@ WORK_VERSION_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172d
 CORPUS_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
 RIGHTS_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149cbdfb4ed30"
 CORPUS_REPORT_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416911a2f805db4a50f"
-EXPECTED_PROFILE_SHA256 = "ffb285caded09ff801bbb9f6dfca97aa52e58f6473db11704a3540e7b4d7a4d1"
+EXPECTED_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4c3639678c26860fc317e1e11515"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -4819,8 +4819,8 @@ CORPUS_SOURCE_PROJECTION_DDL = (
         CREATE TABLE corpus_source_totals (
             project_id TEXT NOT NULL,
             source_key TEXT NOT NULL CHECK (length(source_key) BETWEEN 1 AND 512),
-            item_count INTEGER NOT NULL CHECK (item_count BETWEEN 1 AND 1000000000),
-            discovery_path_count INTEGER NOT NULL CHECK (discovery_path_count BETWEEN item_count AND 1000000000),
+            item_count INTEGER NOT NULL CHECK (item_count > 0),
+            discovery_path_count INTEGER NOT NULL CHECK (discovery_path_count >= item_count),
             PRIMARY KEY (project_id,source_key),
             FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
         ) STRICT
@@ -4830,9 +4830,8 @@ CORPUS_SOURCE_PROJECTION_DDL = (
             project_id TEXT NOT NULL,
             left_source_key TEXT NOT NULL CHECK (length(left_source_key) BETWEEN 1 AND 512),
             right_source_key TEXT NOT NULL CHECK (length(right_source_key) BETWEEN 1 AND 512),
-            item_count INTEGER NOT NULL CHECK (item_count BETWEEN 1 AND 1000000000),
-            discovery_path_pair_count INTEGER NOT NULL CHECK (
-                discovery_path_pair_count BETWEEN item_count AND 1000000000),
+            item_count INTEGER NOT NULL CHECK (item_count > 0),
+            discovery_path_pair_count INTEGER NOT NULL CHECK (discovery_path_pair_count >= item_count),
             PRIMARY KEY (project_id,left_source_key,right_source_key),
             CHECK (left_source_key < right_source_key),
             FOREIGN KEY (project_id,left_source_key) REFERENCES corpus_source_totals (project_id,source_key)

@@ -262,6 +262,141 @@ class CorpusReportRepositoryTests(unittest.TestCase):
             self.repository.create(command_id=new_uuid_v7(), command_sha256="b" * 64, actor=self.corpus.actor)
         self.assertEqual(report, self.repository.summary(report.snapshot_id, actor=self.corpus.actor))
 
+    def test_two_source_path_multiplicity_seals_exact_pair_and_rejects_pair_tamper(self) -> None:
+        fixture = self.corpus._fixture
+        fixture.prepare_another(raw=b"title,doi\nSecond synthetic,10.99999/synthetic-a\n")
+        output = fixture.publish()
+        member = next(
+            value
+            for value in fixture.fixture.repository.manifest_members(output.revision_id, after=0, limit=100)
+            if value.decision.included
+        )
+        assert member.source_record_revision_id is not None
+        address = SourceAddress(
+            kind="import-member",
+            context_id=fixture.fixture.inputs.preview.preview_id,
+            revision_id=output.revision_id,
+            ordinal=member.ordinal,
+            record_key=member.record_key,
+        )
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as connection:
+            raw_sha = connection.execute(
+                "SELECT raw_sha256 FROM import_manifest_members WHERE project_id=? "
+                "AND manifest_revision_id=? AND ordinal=?",
+                (self.corpus.project, output.revision_id, member.ordinal),
+            ).fetchone()[0]
+        second = self.corpus.source.model_copy(
+            update={
+                "address": address,
+                "source_revision_id": member.source_record_revision_id,
+                "source_sha256": raw_sha,
+            }
+        )
+        reconciled = SqliteReconciliationRepository(self.corpus.database, self.corpus.project).reconcile(
+            address,
+            command_id=new_uuid_v7(),
+            actor=ReconciliationActor(new_uuid_v7(), "a" * 32, self.corpus.actor.occurred_at, "b" * 64, "c" * 64),
+            resolve=lambda requested: second if requested == address else self.corpus.source,
+        )
+        work_revision_id = reconciled.work_revision_id
+        assert work_revision_id is not None
+
+        def rebind(current: CorpusItemRevision) -> CorpusDecision:
+            return CorpusDecision(
+                decision_id=new_uuid_v7(),
+                project_id=self.corpus.project,
+                item_id=current.item_id,
+                previous_revision_id=current.revision_id,
+                next_revision_id=new_uuid_v7(),
+                dimension="work-reference",
+                command="rebind-work",
+                previous_value=current.work_revision_id,
+                next_value=work_revision_id,
+                previous_decision_revision_id=current.decision_revision_id,
+                next_work_id=self.corpus.work_id,
+                actor_id=self.corpus.actor.actor_id,
+                reason_code="work-updated",
+                protocol_revision_id=self.corpus.actor.intent_revision_id,
+                evidence_revision_ids=(work_revision_id,),
+                occurred_at=self.corpus.actor.occurred_at,
+            )
+
+        current = self.corpus.repository.rebind(
+            self.item.item_id,
+            expected_revision_id=self.item.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="c" * 64,
+            actor=self.corpus.actor,
+            build=rebind,
+        )
+
+        def append(current: CorpusItemRevision) -> tuple[DiscoveryPath, CorpusDecision]:
+            path = DiscoveryPath(
+                path_id=new_uuid_v7(),
+                project_id=self.corpus.project,
+                item_id=current.item_id,
+                kind="import-member",
+                source_revision_id=second.source_revision_id,
+                direction="source-to-corpus-item",
+                occurred_at=self.corpus.actor.occurred_at,
+                predecessor_item_revision_id=current.revision_id,
+                context_id=address.context_id,
+                context_revision_id=address.revision_id,
+                ordinal=address.ordinal,
+                record_key_sha256=address.record_key,
+            )
+            return path, CorpusDecision(
+                decision_id=new_uuid_v7(),
+                project_id=self.corpus.project,
+                item_id=current.item_id,
+                previous_revision_id=current.revision_id,
+                next_revision_id=new_uuid_v7(),
+                dimension="discovery",
+                command="add-discovery",
+                previous_value=current.discovery_fingerprint,
+                next_value=path.path_id,
+                previous_decision_revision_id=current.decision_revision_id,
+                actor_id=self.corpus.actor.actor_id,
+                reason_code="new-import-path",
+                protocol_revision_id=self.corpus.actor.intent_revision_id,
+                evidence_revision_ids=(second.source_revision_id,),
+                occurred_at=self.corpus.actor.occurred_at,
+            )
+
+        for digest in ("d", "e"):
+            current = self.corpus.repository.add_path(
+                self.item.item_id,
+                expected_revision_id=current.revision_id,
+                command_id=new_uuid_v7(),
+                command_sha256=digest * 64,
+                actor=self.corpus.actor,
+                source=second,
+                build=append,
+            )
+        self.rights._publish(self._policy())
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as connection:
+            connection.execute("BEGIN")
+            second_subject = self.rights.repository.source_metadata_subject_with_connection(connection, second)
+        self.rights._publish(self._policy(subject=second_subject))
+        report = self.repository.create(command_id=new_uuid_v7(), command_sha256="f" * 64, actor=self.corpus.actor)
+        self.assertEqual(1, report.member_count)
+        self.assertEqual((1, 2), tuple(part.discovery_path_count for part in report.source_contributions))
+        self.assertEqual(
+            (1, 2),
+            (
+                report.source_overlaps[0].item_count,
+                report.source_overlaps[0].discovery_path_pair_count,
+            ),
+        )
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as connection:
+            connection.execute(
+                "UPDATE corpus_source_overlap_totals SET discovery_path_pair_count=3 WHERE project_id=?",
+                (self.corpus.project,),
+            )
+        with self.assertRaisesRegex(CorpusReportProblem, "corpus-report-projection-integrity-invalid"):
+            self.repository.create(command_id=new_uuid_v7(), command_sha256="a" * 64, actor=self.corpus.actor)
+        self.assertEqual(report, self.repository.summary(report.snapshot_id, actor=self.corpus.actor))
+
     def test_revoked_report_purpose_blocks_historical_inspection(self) -> None:
         current = self.rights._publish(self._policy())
         summary = self.repository.create(

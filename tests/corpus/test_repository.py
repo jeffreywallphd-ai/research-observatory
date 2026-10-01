@@ -1019,6 +1019,85 @@ class CorpusRepositoryTests(unittest.TestCase):
                 build=lambda _current: self.fail("replay must not build another path"),
             ),
         )
+        second_command = new_uuid_v7()
+        multiplied = self.repository.add_path(
+            item.item_id,
+            expected_revision_id=appended.revision_id,
+            command_id=second_command,
+            command_sha256="b" * 64,
+            actor=self.actor,
+            source=second,
+            build=append,
+        )
+        self.assertEqual(3, len(multiplied.discovery_path_ids))
+        self.assertEqual(
+            multiplied,
+            self.repository.add_path(
+                item.item_id,
+                expected_revision_id=appended.revision_id,
+                command_id=second_command,
+                command_sha256="b" * 64,
+                actor=self.actor,
+                source=second,
+                build=lambda _current: self.fail("pair replay must not add a path"),
+            ),
+        )
+
+        def membership(current: CorpusItemRevision, target: str) -> CorpusDecision:
+            return CorpusDecision(
+                decision_id=new_uuid_v7(),
+                project_id=self.project,
+                item_id=current.item_id,
+                previous_revision_id=current.revision_id,
+                next_revision_id=new_uuid_v7(),
+                dimension="membership",
+                command="include" if target == "included" else "reconsider",
+                previous_value=current.membership,
+                next_value=target,
+                previous_decision_revision_id=current.decision_revision_id,
+                actor_id=self.actor.actor_id,
+                reason_code="screened-in" if target == "included" else "screen-reversed",
+                protocol_revision_id=self.actor.intent_revision_id,
+                evidence_revision_ids=(second.source_revision_id,),
+                occurred_at=self.actor.occurred_at,
+            )
+
+        included = self.repository.decide(
+            item.item_id,
+            expected_revision_id=multiplied.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="c" * 64,
+            actor=self.actor,
+            build=lambda current: membership(current, "included"),
+        )
+        reversed_item = self.repository.decide(
+            item.item_id,
+            expected_revision_id=included.revision_id,
+            command_id=new_uuid_v7(),
+            command_sha256="d" * 64,
+            actor=self.actor,
+            build=lambda current: membership(current, "candidate"),
+        )
+        with open_canonical_database(self.database, expected_project_id=self.project) as connection:
+            head = connection.execute(
+                "SELECT revision_id,source_counts_json FROM corpus_source_item_heads WHERE project_id=? AND item_id=?",
+                (self.project, item.item_id),
+            ).fetchone()
+            totals = connection.execute(
+                "SELECT source_key,item_count,discovery_path_count FROM corpus_source_totals "
+                "WHERE project_id=? ORDER BY source_key",
+                (self.project,),
+            ).fetchall()
+            pairs = connection.execute(
+                "SELECT item_count,discovery_path_pair_count FROM corpus_source_overlap_totals WHERE project_id=?",
+                (self.project,),
+            ).fetchall()
+        self.assertEqual(reversed_item.revision_id, head[0])
+        self.assertEqual(
+            {f"import:{self.address.revision_id}": 1, f"import:{address.revision_id}": 2}, json.loads(head[1])
+        )
+        self.assertEqual(((1, 1), (1, 2)), tuple((row[1], row[2]) for row in totals))
+        self.assertEqual(((1, 2),), tuple(tuple(row) for row in pairs))
 
     def test_rebind_to_unrelated_work_denies_without_relabeling_discovery(self) -> None:
         item = self._create()

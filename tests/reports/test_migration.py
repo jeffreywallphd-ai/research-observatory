@@ -139,6 +139,45 @@ def promote_to_frozen_v19(database: Path, project: str) -> None:
             raise AssertionError("frozen-v19-project-changed")
 
 
+def assert_populated_projection_exact(
+    test: unittest.TestCase,
+    connection: sqlite3.Connection | storage.CanonicalConnection,
+    project: str,
+    old: dict[str, list[list[Any]]],
+) -> None:
+    """Compare v20 backfill with independent frozen predecessor rows."""
+
+    path = old["corpus_discovery_paths"][0]
+    if path[7] == "import-member":
+        source_key = "import:" + path[10]
+    else:
+        test.assertEqual("connector-record", path[7])
+        source_key = "connector:" + json.loads(old["reconciliation_assertions"][0][7])["provider"]
+    item = old["corpus_item_states"][0]
+    heads = connection.execute(
+        "SELECT item_id,revision_id,work_revision_id,included_in_report,source_counts_json "
+        "FROM corpus_source_item_heads WHERE project_id=?",
+        (project,),
+    ).fetchall()
+    test.assertEqual(1, len(heads))
+    test.assertEqual((item[2], item[0], item[6], 1), tuple(heads[0][:4]))
+    test.assertEqual({source_key: 1}, json.loads(heads[0][4]))
+    test.assertEqual(
+        [(source_key, 1, 1)],
+        [
+            tuple(row)
+            for row in connection.execute(
+                "SELECT source_key,item_count,discovery_path_count FROM corpus_source_totals WHERE project_id=?",
+                (project,),
+            )
+        ],
+    )
+    test.assertEqual(
+        [],
+        connection.execute("SELECT * FROM corpus_source_overlap_totals WHERE project_id=?", (project,)).fetchall(),
+    )
+
+
 class CorpusReportMigrationTests(unittest.TestCase):
     def test_populated_v19_projection_backfill_interruption_and_backup_recovery(self) -> None:
         fixture = migration_fixture.SqliteMigrationTests(methodName="runTest")
@@ -147,7 +186,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
         for failpoint in ("projection-authority-create", "projection-backfill", "user-version-advance"):
             with self.subTest(failpoint=failpoint):
                 database = fixture.project / failpoint / "state/project.sqlite3"
-                project, _ = restore_v18(database, "import-corpus")
+                project, old = restore_v18(database, "import-corpus")
                 promote_to_frozen_v19(database, project)
                 planned = runner.plan_database_migration(database, expected_project_id=project)
                 self.assertEqual(19, planned.source_schema_version)
@@ -162,9 +201,9 @@ class CorpusReportMigrationTests(unittest.TestCase):
                     self.assertRaises(runner.MigrationProblem),
                 ):
                     runner.migrate_database(database, expected_project_id=project)
-                with closing(sqlite3.connect(database)) as old:
-                    self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, _schema_sha256(old))
-                    self.assertEqual((19,), old.execute("PRAGMA user_version").fetchone())
+                with closing(sqlite3.connect(database)) as predecessor:
+                    self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, _schema_sha256(predecessor))
+                    self.assertEqual((19,), predecessor.execute("PRAGMA user_version").fetchone())
                 completed = runner.migrate_database(database, expected_project_id=project)
                 self.assertEqual((v0020_corpus_source_projection.revision,), completed.migration_ids)
                 assert completed.backup_relative_path is not None
@@ -172,9 +211,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                     self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, _schema_sha256(backup))
                     self.assertEqual((19,), backup.execute("PRAGMA user_version").fetchone())
                 with closing(storage.open_canonical_database(database, expected_project_id=project)) as current:
-                    self.assertGreater(
-                        current.execute("SELECT COUNT(*) FROM corpus_source_item_heads").fetchone()[0], 0
-                    )
+                    assert_populated_projection_exact(self, current, project, old)
 
     def test_frozen_v18_recovery_contract_survives_successor(self) -> None:
         frozen_path = REPO / "packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json"
@@ -236,16 +273,7 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         )
                     for name in ("corpus_report_snapshots", "corpus_report_members"):
                         self.assertEqual(0, current.execute(f'SELECT COUNT(*) FROM "{name}"').fetchone()[0])
-                    current_count = current.execute(
-                        "SELECT COUNT(*) FROM corpus_source_item_heads WHERE project_id=?", (project,)
-                    ).fetchone()[0]
-                    self.assertGreater(current_count, 0)
-                    self.assertGreater(
-                        current.execute(
-                            "SELECT COUNT(*) FROM corpus_source_totals WHERE project_id=?", (project,)
-                        ).fetchone()[0],
-                        0,
-                    )
+                    assert_populated_projection_exact(self, current, project, old)
                 with closing(
                     storage.open_canonical_database(fixture.database, expected_project_id=project)
                 ) as reopened:

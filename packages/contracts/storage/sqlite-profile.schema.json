@@ -41,7 +41,7 @@
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "1d270388f1dd4f2ad531f9f9d601253f320e327a062256a101b729516f615b26"
+      "const": "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"

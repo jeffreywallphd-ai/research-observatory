@@ -137,6 +137,36 @@ class SqliteSchemaTests(unittest.TestCase):
                     )
                     self.assertIn(expected_index, details)
 
+    def test_v20_source_totals_accept_valid_counts_above_one_billion(self) -> None:
+        self.initialize()
+        with open_canonical_database(self.database, expected_project_id=PROJECT_ID) as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            try:
+                for source_key in ("import:large-a", "import:large-b"):
+                    connection.execute(
+                        "INSERT INTO corpus_source_totals "
+                        "(project_id,source_key,item_count,discovery_path_count) VALUES (?,?,?,?)",
+                        (PROJECT_ID, source_key, 1_000_000_001, 1_000_250_000),
+                    )
+                connection.execute(
+                    "INSERT INTO corpus_source_overlap_totals "
+                    "(project_id,left_source_key,right_source_key,item_count,discovery_path_pair_count) "
+                    "VALUES (?,?,?,?,?)",
+                    (PROJECT_ID, "import:large-a", "import:large-b", 1_000_000_001, 1_000_250_000),
+                )
+                self.assertEqual(
+                    (1_000_000_001, 1_000_250_000),
+                    tuple(
+                        connection.execute(
+                            "SELECT item_count,discovery_path_pair_count FROM corpus_source_overlap_totals "
+                            "WHERE project_id=?",
+                            (PROJECT_ID,),
+                        ).fetchone()
+                    ),
+                )
+            finally:
+                connection.execute("ROLLBACK")
+
     def test_portable_profile_is_exact_and_schema_valid(self) -> None:
         contract_root = REPO / "packages" / "contracts" / "storage"
         profile = json.loads((contract_root / "sqlite-profile.v1.json").read_text(encoding="utf-8"))

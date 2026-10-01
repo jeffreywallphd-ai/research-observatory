@@ -15,6 +15,7 @@ from typing import Any, Protocol
 
 from pydantic import ValidationError
 
+from .corpus_report_model import MAX_ROOTS_PER_MEMBER
 from .reconciliation.contracts import SourceAssertion
 
 
@@ -116,6 +117,10 @@ def _decoded(raw: object) -> Counter[str]:
 
 
 def _pair_counts(counts: Counter[str]) -> dict[tuple[str, str], int]:
+    # An oversized item cannot enter a report. Keep valid corpus publication
+    # bounded instead of materializing its potentially quadratic pair set.
+    if len(counts) > MAX_ROOTS_PER_MEMBER:
+        return {}
     return {(left, right): counts[left] * counts[right] for left, right in combinations(sorted(counts), 2)}
 
 

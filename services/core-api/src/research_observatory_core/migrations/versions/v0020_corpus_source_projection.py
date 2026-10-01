@@ -11,8 +11,8 @@ revision = "0020_corpus_source_projection"
 down_revision = "0019_corpus_reports"
 source_schema_version = 19
 target_schema_version = 20
-TARGET_SCHEMA_SHA256 = "1d270388f1dd4f2ad531f9f9d601253f320e327a062256a101b729516f615b26"
-TARGET_PROFILE_SHA256 = "ffb285caded09ff801bbb9f6dfca97aa52e58f6473db11704a3540e7b4d7a4d1"
+TARGET_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
+TARGET_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4c3639678c26860fc317e1e11515"
 MATERIAL_MIGRATION_STEPS = (
     "projection-authority-create",
     "projection-backfill",

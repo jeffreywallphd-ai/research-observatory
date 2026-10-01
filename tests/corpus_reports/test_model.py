@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import unittest
+from collections import Counter
 
 from pydantic import ValidationError
 from research_observatory_core.corpus_report_model import (
+    MAX_ROOTS_PER_MEMBER,
     CorpusReportAccumulator,
     CorpusReportDrillPage,
     CorpusReportFilter,
@@ -20,6 +22,7 @@ from research_observatory_core.corpus_report_model import (
     SourceOverlap,
     report_member_matches_filter,
 )
+from research_observatory_core.corpus_source_projection import _pair_counts
 
 PROJECT = "01945c82-9340-4000-8000-000000000001"
 
@@ -78,6 +81,24 @@ def member(
 
 
 class CorpusReportModelTests(unittest.TestCase):
+    def test_oversized_source_root_write_omits_quadratic_pairs_and_report_denies_limit(self) -> None:
+        keys = tuple("import:" + identity(5000 + index) for index in range(1000))
+        bounded = Counter({key: 1 for key in keys[:MAX_ROOTS_PER_MEMBER]})
+        self.assertEqual(496, len(_pair_counts(bounded)))
+        self.assertEqual({}, _pair_counts(Counter({key: 1 for key in keys[: MAX_ROOTS_PER_MEMBER + 1]})))
+        self.assertEqual(496, len(_pair_counts(bounded)))
+        self.assertEqual({}, _pair_counts(Counter({key: 1 for key in keys})))
+        report = CorpusReportAccumulator(snapshot_id=identity(1), project_id=PROJECT)
+        oversized = member(
+            1,
+            sources=tuple(
+                (key, "import-member", 500 + index) for index, key in enumerate(keys[: MAX_ROOTS_PER_MEMBER + 1])
+            ),
+        )
+        with self.assertRaisesRegex(CorpusReportProblem, "corpus-report-limit"):
+            report.add(oversized)
+        self.assertEqual(0, report.member_count)
+
     def test_plausible_tampered_pair_cannot_bind_to_exact_member_stream(self) -> None:
         report = CorpusReportAccumulator(snapshot_id=identity(1), project_id=PROJECT, projected_source_overlaps=True)
         report.add(
