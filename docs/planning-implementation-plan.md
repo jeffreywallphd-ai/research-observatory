@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 09f220673a6030402bc4f1f883d150bbc9ea47d915ac6a8606cccb3a6e64f63c
+source_sha256: d37ce48b4ec6be2c38bb4aa34c08f08020025d7072ee0adeb411117a4160a1cc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8940,13 +8940,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S04.T01 - Model corpus item states, reasons, and discovery paths
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S03.T03`, `CAP-03.S02.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Candidate, included, excluded, pending, duplicate, unavailable, and withdrawn states with query/citation/import lineage and decision history.
 

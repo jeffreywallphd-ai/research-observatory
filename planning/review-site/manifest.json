@@ -16333,7 +16333,7 @@
             {
               "task_id": "CAP-04.S04.T01",
               "title": "Model corpus item states, reasons, and discovery paths",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -16374,19 +16374,22 @@
             {
               "task_id": "CAP-04.S04.T01",
               "title": "Model corpus item states, reasons, and discovery paths",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S04.T01.html",
               "dependencies": [
                 "CAP-04.S03.T03",
                 "CAP-03.S02.T03"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "0cd9e588541ec952a9c6ad6437297828493b5a0d"
               },
               "plan_section_sha256": "ebfda9a5ab6ece975ef6d159d8ec5cea1a0902680f9672cfbf552a01ea182a01",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-04.S04.T01.task-start.md",
+                "sha256": "0c356e948cd18612015eb021a6e63543845b0e1ca85f6cd5df4c9c6a40bbb022"
+              }
             },
             {
               "task_id": "CAP-04.S04.T02",

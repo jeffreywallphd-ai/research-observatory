@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S04.html">SLICE-corpus-membership-discovery-path-and-rights-governance</a><span>/</span><span aria-current="page">CAP-04.S04.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S04.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S04.T01 · task 1 of 3</span><h1>Model corpus item states, reasons, and discovery paths</h1><p>Candidate, included, excluded, pending, duplicate, unavailable, and withdrawn states with query/citation/import lineage and decision history.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S04.T01 · task 1 of 3</span><h1>Model corpus item states, reasons, and discovery paths</h1><p>Candidate, included, excluded, pending, duplicate, unavailable, and withdrawn states with query/citation/import lineage and decision history.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S04.html">SLICE-corpus-membership-discovery-path-and-rights-governance</a></dd></div><div><dt>Risk / review</dt><dd>high / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>data</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile data</li></ul>
-  <p data-task-claim="CAP-04.S04.T01" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S04.T01" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="0cd9e588541ec952a9c6ad6437297828493b5a0d"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>0cd9e588541ec952a9c6ad6437297828493b5a0d</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S04.T01" data-task-plan-sha256="ebfda9a5ab6ece975ef6d159d8ec5cea1a0902680f9672cfbf552a01ea182a01"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.1 `CAP-04.S04.T01` - Model corpus item states, reasons, and discovery paths
 **Objective:** Candidate, included, excluded, pending, duplicate, unavailable, and withdrawn states with query/citation/import lineage and decision history.
@@ -88,13 +88,46 @@ python tools/verify.py --profile service
 python tools/verify.py --profile data
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S04.T01">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S04.T01" data-worksheet-sha256="0c356e948cd18612015eb021a6e63543845b0e1ca85f6cd5df4c9c6a40bbb022">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S04.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>0c356e948cd18612015eb021a6e63543845b0e1ca85f6cd5df4c9c6a40bbb022</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S04.T01 task-start acceptance closure
+
+Claim base: `0cd9e588541ec952a9c6ad6437297828493b5a0d` on the approved W2 campaign. The frozen Wave packet is `c85a59f3a293f8e3f2eaf6454682c9a14b1efa55`. This task models project-scoped CorpusItem status, decision reasons, and immutable discovery paths. It does not implement the T02 rights evaluator or T03 Corpus Canvas/reports.
+
+## Authority and recorded mismatch
+
+The authoritative backlog requires `candidate`, `included`, `excluded`, `pending`, `duplicate`, `unavailable`, and `withdrawn`. The same approved slice plan §4 instead names `discovered` and `awaiting-decision` in place of `duplicate` and `pending`. Preserve all seven backlog conditions: `discovered` is an immutable discovery-path event, `awaiting-decision` describes a pending human review, and duplicate is a recorded relationship to an exact canonical target. This interpretation is subject to independent task review; no named backlog condition may be dropped or silently aliased.
+
+Inherited `domain-lifecycle.v1.json` defines only candidate/included/excluded/withdrawn for `corpus-item`. Its bytes, existing transitions, and historical readers stay intact. `domain-core.schema.json` and the v16 aggregate identity/revision CHECK constraints do not admit `corpus-item`; mapping it to `record` or `decision` to gain persistence would violate the domain lifecycle boundary. A first-class canonical CorpusItem therefore needs a versioned successor authority, a task-linked Accepted ADR and generated compatibility catalog entry, a source-retaining v1 bridge, and additive v17 storage migration. The planned successor must preserve all existing identity, provenance, outbox, dependency, encryption, backup, and recovery guarantees. If that cannot be done within the approved W2 scope, use the mismatch/amendment route before dependent implementation.
+
+The design must not force logically independent conditions into one lossy exclusive value. Membership uses the existing four-state lifecycle; pending review, duplicate relationships, and source/copy availability are separately versioned facts. The public CorpusItem projection must expose all seven named conditions and their concurrent meanings (for example, an included Work may have unavailable full text) without overwriting accepted membership. If the approved task is instead interpreted to demand a single seven-destination lifecycle, that is a further breaking successor decision and must be justified explicitly before use.
+
+## Material acceptance closure
+
+| Risk / criterion | Exact authority and invariant | First proof |
+|---|---|---|
+| Entry and lineage | Every CorpusItem is project-scoped, Core-minted, bound to an exact canonical Work revision, and begins with at least one immutable import/query/citation discovery edge. Import binds manifest/member/source-record identity; connector binds protected scientific request, page revision and record ordinal, without credentials. | Contract/fixture tests and one real Core/SQLCipher path for import plus a retained connector/citation path. Deny forged project/source, duplicate edge substitution, and unavailable source replay. |
+| Status and decisions | Membership, pending review, duplicate relation, and availability are explicit, versioned dimensions; every consequential change records trusted actor, reason, governing protocol/criterion revision, prior value, time, evidence and supersession. Withdrawn remains terminal under v1. | Transition table with positive and illegal/stale/cross-project cases; include, exclude, reconsider, duplicate, unavailable and withdrawn history reconstructed after restart. |
+| Identity and atomicity | Stable CorpusItem and immutable revision IDs are canonical UUIDv7. Expected prior revision and command digest guard exact retry; reused idempotency key with changed authority conflicts. Current state, revision, decision, discovery, provenance/outbox, and dependency impacts commit or roll back together. | Fault injection before and after material write stages, stale Work/head denial, exact replay versus changed-command conflict, and no partial publication. |
+| Compatibility | Existing v1 contract/readers and every v16 row retain identity and meaning. Capture a literal populated committed-v16 predecessor fixture before editing v17 schema; do not generate it from the new DDL. Backup precedes migration and can restore/reopen after interruption. | Hash-locked v16 fixture, v1-to-successor bridge and cross-language checks, protected v16→v17 migration/retry/rollback/reopen. |
+| Principal boundary and privacy | Only Core authorizes project/Intent/current rights, mints durable IDs and writes protected storage. Untrusted query/source fields remain data; diagnostics and portable contracts carry no secret, path or raw restricted query. | One authenticated Core plus real SQLCipher/DPAPI vertical proof, malformed and denied request cases, redacted log assertions. |
+
+No T01 renderer interaction is planned; approved `RO-UI-ACADEMIC-MINIMAL-1.7` remains unchanged. The T03 user journey and accessibility checks remain slice obligations. The task uses synthetic provider transport and local protected fixtures; no live-provider or scholarly-result claim is made.
+
+## First tests and selected coverage
+
+Add failing portable contract/transition tests and the exact v16 predecessor fixture before production edits. Then add repository/API cases for discovery entry, all seven named conditions, actor/protocol/prior-state history, idempotency/conflict, denial, migration and restart. Use focused contract generation, schema/migration, Core/provenance and one real protected vertical path. Select affected architecture/ADR, quality and packaging-input checks from changed paths. Full service/data profiles, installed-package and cross-capability checks remain due at S04 integration or W2 exit unless a specific impact justifies them earlier.
+
+Two independent read-only preflights examined the closed v1 lifecycle, generic aggregate constraints, and compositional status semantics. Their findings are incorporated above; they do not constitute ADR acceptance or task review.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S04.T01" data-review-mode="latest-review-only">
   <h3>CAP-04.S04.T01 — Model corpus item states, reasons, and discovery paths</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S04.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S04.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S04.html">Previous</a><a class="button button-primary" href="CAP-04.S04.T02.html">Next</a></nav>
