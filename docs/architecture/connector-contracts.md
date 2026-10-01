@@ -207,8 +207,10 @@ hashes, permitted operations and exact HTTPS destination templates. It also
 declares broker-only authentication scopes, data classes, source-terms status,
 rate/resource ceilings and requested permissions. These declarations are
 untrusted inputs and do not grant project, network, credential or rights access.
-The signed source ID must be `plugin.` followed by the plugin ID, so a plugin
-cannot claim a built-in provider ID. Core registration in T02 must still reject
+The signed source ID must be `plugin.` followed by the plugin ID; plugin IDs
+are at most 121 characters so that qualified source IDs fit the 128-character
+portable field. A plugin cannot claim a built-in provider ID. Core registration
+in T02 must still reject
 plugin-ID/publisher collisions before enablement.
 Missing terms remain `not-reported`; a terms reference does not permit retention,
 full-text acquisition, model use, export or sharing. Current Core policy and

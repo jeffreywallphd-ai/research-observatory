@@ -106,7 +106,7 @@
       "type": "object"
     },
     "PluginId": {
-      "maxLength": 128,
+      "maxLength": 121,
       "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
       "type": "string"
     },
@@ -173,7 +173,7 @@
           "type": "string"
         },
         "sourceId": {
-          "$ref": "#/$defs/PluginId"
+          "$ref": "#/$defs/SourceId"
         }
       },
       "required": [
@@ -230,6 +230,11 @@
     },
     "Sha256": {
       "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "SourceId": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
       "type": "string"
     },
     "Version": {

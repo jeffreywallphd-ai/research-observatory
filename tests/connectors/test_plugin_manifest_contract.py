@@ -218,6 +218,22 @@ class PluginManifestContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.verify(no_rate_limit)
 
+    def test_namespaced_source_identity_plugin_id_length_boundary(self):
+        largest = "a" * 121
+        valid = _manifest_document()
+        valid["pluginId"] = largest
+        valid["sourceIdentity"]["sourceId"] = "plugin." + largest
+        self.assertEqual(128, len(valid["sourceIdentity"]["sourceId"]))
+        verified = self.verify(valid)
+        plan = authorize_plugin_invocation(verified, _grant(verified), _request())
+        self.assertEqual(largest, plan.plugin_id)
+        self.assertEqual("plugin." + largest, plan.source_id)
+        overlong = _manifest_document()
+        overlong["pluginId"] = "a" * 122
+        overlong["sourceIdentity"]["sourceId"] = "plugin." + overlong["pluginId"]
+        with self.assertRaises(ValueError):
+            self.verify(overlong)
+
     def test_authorized_plan_attributes_exact_plugin_grant_and_request_without_secrets(self):
         verified = self.verify()
         grant = _grant(verified)

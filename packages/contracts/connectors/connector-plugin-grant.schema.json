@@ -48,7 +48,7 @@
       "type": "object"
     },
     "PluginId": {
-      "maxLength": 128,
+      "maxLength": 121,
       "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
       "type": "string"
     },

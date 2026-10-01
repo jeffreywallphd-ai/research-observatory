@@ -35,7 +35,8 @@ _HOST = re.compile(r"^(?=.{1,253}$)[a-z0-9]+(?:-[a-z0-9]+)*(?:\.[a-z0-9]+(?:-[a-
 _PATH_PART = re.compile(r"^(?:[A-Za-z0-9._~-]|\{[a-z][a-z0-9_]*\})+$")
 _WINDOWS_DEVICES = {"con", "prn", "aux", "nul", *(f"com{i}" for i in range(1, 10)), *(f"lpt{i}" for i in range(1, 10))}
 
-type PluginId = Annotated[str, Field(strict=True, pattern=_IDENTIFIER, max_length=128)]
+type PluginId = Annotated[str, Field(strict=True, pattern=_IDENTIFIER, max_length=121)]
+type SourceId = Annotated[str, Field(strict=True, pattern=_IDENTIFIER, max_length=128)]
 type Version = Annotated[str, Field(strict=True, pattern=_SEMVER, max_length=64)]
 type KeyId = Annotated[str, Field(strict=True, pattern=_KEY_ID)]
 type Sha256 = Annotated[str, Field(strict=True, pattern=_DIGEST)]
@@ -107,7 +108,7 @@ class PluginDestination(_PluginModel):
 
 
 class PluginSourceIdentity(_PluginModel):
-    source_id: PluginId
+    source_id: SourceId
     display_name: Annotated[str, Field(strict=True, min_length=1, max_length=128)]
 
     @field_validator("display_name")
@@ -249,7 +250,7 @@ class PluginInvocationPlan(_PluginModel):
     plugin_version: Version
     sdk_version: Version
     required_features: tuple[RequiredFeature, ...]
-    source_id: PluginId
+    source_id: SourceId
     package_sha256: Sha256
     manifest_sha256: Sha256
     publisher_key_id: KeyId
