@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b7a6d71b8460c50d86d0ee8070ec9da3ff3f1a7dad5b9af774b6e96b74fbf6fb
+source_sha256: d9637287cbf7dce8feb0220a7331b558edcafda1beaf50e124516c4d131a6f11
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8932,21 +8932,21 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Corpus state is a deliberate scholarly decision with complete acquisition and inclusion provenance.
 
-**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S03.T03`, `CAP-03.S02.T03`
 
-#### - [ ] CAP-04.S04.T01 - Model corpus item states, reasons, and discovery paths
+#### - [x] CAP-04.S04.T01 - Model corpus item states, reasons, and discovery paths
 
-**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S03.T03`, `CAP-03.S02.T03`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:cap04-s04-t01-independent-review (`approved`)
 
 **Objective:** Candidate, included, excluded, pending, duplicate, unavailable, and withdrawn states with query/citation/import lineage and decision history.
 
@@ -8971,9 +8971,11 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-04.S04.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `d9d2c2be7853a634447cfd49671a2dc94d875c2efcebdcccf86e6a128744ac55`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `d9d2c2be7853a634447cfd49671a2dc94d875c2efcebdcccf86e6a128744ac55`
 
 - Candidate / base / branch: `c0d617840cb1aee0e6a9e5477bb3690748bb4596` / `0cd9e588541ec952a9c6ad6437297828493b5a0d` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-01T03:00:29+00:00`
@@ -8987,15 +8989,31 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:cap04-s04-t01-independent-review / `2026-10-01T03:10:45+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S04.T01.review-R01.json` / `80d0aab12b49eab8c504a32750377ee9551a4983fd23ccf1c6d3bde62b18756a`
+
+**Review notes:** Independent commit-bound review of the frozen R01 submission found no blocking acceptance, authority, migration, or evidence defect. The criterion manifest's canonical SHA-256 is 611ec1fc709f10b09e826df5f561fc981175780ef315e6d4469adac7a426fad3, matching the REVIEW backlog projection. Its 93 changed paths exactly equal the base 0cd9e588541ec952a9c6ad6437297828493b5a0d to candidate diff; all seven cited raw-log hashes and the clean c0d61784 build-report hash reproduce. The 40-case corpus log includes an unskipped authenticated Windows Core to current-user DPAPI/SQLCipher import, denial, exact retry, inspect, and post-restart typed history proof. The 43-case migration/storage log includes literal populated-v16 retention, protected backup/recovery, restart, and direct-SQL chain denials. Focused API, generated Python/TypeScript contracts, architecture, quality, backlog, and generated review-site checks pass. The four provisional concerns were replayed and closed: stale Work revisions deny, rebind cannot relabel to an unrelated Work, supersession names the latest decision in the same dimension despite interleaving, and the real Core/protected-store history path executes on Windows. Public create/inspect routes are authenticated, bounded, and redacted; typed history remains a production-service interface for T01, with user-facing history and action-specific rights policy still assigned to later slice work. The root corpus adapter classifier admits only the named root adapter and retains denials for business, port, and nested concrete storage imports. An ignored first-run summary records failed setup commands without the Core source path and with a blocked pnpm wrapper; the frozen manifest cites distinct corrected passing logs at the same clean candidate, so the old summary is not a pass claim. Full profiles and slice-wide integration remain explicitly deferred under the approved verification selection.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:cap04-s04-t01-independent-review at `2026-10-01T03:10:45+00:00`
+
+**Latest notes:** Independent commit-bound review of the frozen R01 submission found no blocking acceptance, authority, migration, or evidence defect. The criterion manifest's canonical SHA-256 is 611ec1fc709f10b09e826df5f561fc981175780ef315e6d4469adac7a426fad3, matching the REVIEW backlog projection. Its 93 changed paths exactly equal the base 0cd9e588541ec952a9c6ad6437297828493b5a0d to candidate diff; all seven cited raw-log hashes and the clean c0d61784 build-report hash reproduce. The 40-case corpus log includes an unskipped authenticated Windows Core to current-user DPAPI/SQLCipher import, denial, exact retry, inspect, and post-restart typed history proof. The 43-case migration/storage log includes literal populated-v16 retention, protected backup/recovery, restart, and direct-SQL chain denials. Focused API, generated Python/TypeScript contracts, architecture, quality, backlog, and generated review-site checks pass. The four provisional concerns were replayed and closed: stale Work revisions deny, rebind cannot relabel to an unrelated Work, supersession names the latest decision in the same dimension despite interleaving, and the real Core/protected-store history path executes on Windows. Public create/inspect routes are authenticated, bounded, and redacted; typed history remains a production-service interface for T01, with user-facing history and action-specific rights policy still assigned to later slice work. The root corpus adapter classifier admits only the named root adapter and retains denials for business, port, and nested concrete storage imports. An ignored first-run summary records failed setup commands without the Core source path and with a blocked pnpm wrapper; the frozen manifest cites distinct corrected passing logs at the same clean candidate, so the old summary is not a pass claim. Full profiles and slice-wide integration remain explicitly deferred under the approved verification selection.
 
 **Currently open findings:** -
 
 #### - [ ] CAP-04.S04.T02 - Implement rights, license, entitlement, and permitted-use metadata
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P0` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

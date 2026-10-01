@@ -1,0 +1,54 @@
+{
+  "task_id": "CAP-04.S04.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+  "reviewer": "agent:cap04-s04-t01-independent-review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent commit-bound review of the frozen R01 submission found no blocking acceptance, authority, migration, or evidence defect. The criterion manifest's canonical SHA-256 is 611ec1fc709f10b09e826df5f561fc981175780ef315e6d4469adac7a426fad3, matching the REVIEW backlog projection. Its 93 changed paths exactly equal the base 0cd9e588541ec952a9c6ad6437297828493b5a0d to candidate diff; all seven cited raw-log hashes and the clean c0d61784 build-report hash reproduce. The 40-case corpus log includes an unskipped authenticated Windows Core to current-user DPAPI/SQLCipher import, denial, exact retry, inspect, and post-restart typed history proof. The 43-case migration/storage log includes literal populated-v16 retention, protected backup/recovery, restart, and direct-SQL chain denials. Focused API, generated Python/TypeScript contracts, architecture, quality, backlog, and generated review-site checks pass. The four provisional concerns were replayed and closed: stale Work revisions deny, rebind cannot relabel to an unrelated Work, supersession names the latest decision in the same dimension despite interleaving, and the real Core/protected-store history path executes on Windows. Public create/inspect routes are authenticated, bounded, and redacted; typed history remains a production-service interface for T01, with user-facing history and action-specific rights policy still assigned to later slice work. The root corpus adapter classifier admits only the named root adapter and retains denials for business, port, and nested concrete storage imports. An ignored first-run summary records failed setup commands without the Core source path and with a blocked pnpm wrapper; the frozen manifest cites distinct corrected passing logs at the same clean candidate, so the old summary is not a pass claim. Full profiles and slice-wide integration remain explicitly deferred under the approved verification selection.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-04.S04.T01.json",
+      "canonical_sha256": "611ec1fc709f10b09e826df5f561fc981175780ef315e6d4469adac7a426fad3",
+      "result": "PASS: frozen R01 task, candidate, base, branch, three criterion mappings, 93 changed paths, selected/deferred checks, and no unverified item agree with backlog and Git."
+    },
+    "build_report": {
+      "path": "artifacts/tmp/CAP-04.S04.T01.build-manifest-c0d61784.json",
+      "canonical_sha256": "188eabc9cda727ea908722cfa337ae5341af3aa6a553b338e812f1bddfcbe5e6",
+      "result": "PASS: source commit c0d61784 and dirty=false."
+    },
+    "task_projection": {
+      "path": "planning/backlog.yaml",
+      "result": "PASS: CAP-04.S04.T01 is REVIEW at frozen R01 and binds the exact candidate, base, manifest path, and canonical digest. Post-submission working-tree projections do not alter the committed candidate."
+    }
+  },
+  "checks": [
+    {
+      "command": "Independently hash the frozen manifest, seven cited raw logs, retained adverse logs, and build report using taskctl's canonical line-ending rule; compare the 93-path manifest inventory with git diff --name-only 0cd9e588..c0d61784 and selected command IDs with verification-profiles.json",
+      "result": "PASS: every cited digest and path inventory matches; all 13 selected command IDs exist. The current corpus, migration, API-contract, foundation, quality, planning, and site logs each end with exitCode=0."
+    },
+    {
+      "command": "Inspect corpus repository/model/SQL chain controls and focused tests for stale Work, unrelated Work rebind, and dimension-specific supersession",
+      "result": "PASS: the writer requires the current active Work revision for decisions; model and v17 SQL deny cross-Work rebind; writer and SQL bind each supersedes_decision_revision_id to the latest prior decision of that dimension. Stale Work, direct-SQL cross-Work, and interleaved-dimension regressions pass in the cited logs."
+    },
+    {
+      "command": "Inspect the authenticated Windows runtime test and its 40-case corpus log against task-start's real Core plus SQLCipher/DPAPI history criterion",
+      "result": "PASS: the test runs on Windows without skip, uses the production Core composition and authenticated create/inspect routes, current Intent/privacy/import rights, real protected storage, denial and replay, then reconstructs Core and reads typed path and decision history after reopen. It confirms the database header is encrypted rather than plain SQLite."
+    },
+    {
+      "command": "Inspect v17 migration/schema/recovery contracts, literal v16 fixture, direct-SQL controls, and the 43-case migration/storage log",
+      "result": "PASS: the forward-only migration retains populated v16 identities, revisions and dependency-impact rows, binds v17 profile/schema hashes, and verifies backup/interruption/retry/reopen. Corpus decision/discovery/command constraints reject material direct-SQL substitution."
+    },
+    {
+      "command": "Inspect Core API, generated OpenAPI/client, v1/v2 bridge and compatibility catalog, corpus schema/fixtures, root adapter classifier, and focused contract/foundation logs",
+      "result": "PASS: Core create/inspect remain locally authenticated, request-bounded and redacted; generated readers and schema digests agree; v1 source meaning remains intact and mixed v1/v2 process advertisement denies. The classifier's named adapter allowance does not permit business or port storage imports."
+    },
+    {
+      "command": "Inspect exact planning/review-site and quality logs and distinguish the unreferenced first-run exact-checks summary from the later final raw logs",
+      "result": "PASS: quality covers 433 governed Python files; backlog/views and the 492-page generated review-site checks pass at c0d61784. The first-run summary records command-environment failures; the manifest hashes only corrected passing reruns at the same candidate, and earlier candidate adverse logs remain retained."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}
