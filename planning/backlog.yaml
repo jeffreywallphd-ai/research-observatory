@@ -23406,7 +23406,7 @@ capabilities:
     depends_on:
     - CAP-04.S03.T03
     - CAP-03.S02.T03
-    status: REVIEW
+    status: DONE
     tasks:
     - id: CAP-04.S04.T01
       capability_id: CAP-04
@@ -24499,13 +24499,13 @@ capabilities:
     platform_targets:
     - windows-x64
     completion:
-      status: REVIEW
-      reviewer: null
-      reviewed_at: null
+      status: APPROVED
+      reviewer: agent:/root/s04_integration_test_review
+      reviewed_at: '2026-10-01T11:13:22+00:00'
       evidence:
       - artifacts/evidence/CAP-04.S04.qualification-01.md
-      notes: Integrated S04 evidence binds reviewed T01-T03 and C09, affected functional/contract/security/restart/UX checks,
-        and protected benchmark at c4d18111; future monitoring owner mismatch is recorded without dependent implementation.
+      notes: Independent R01 approves tested c4d18111 and submitted evidence at 8c6f186 with no blocking findings; see artifacts/evidence/CAP-04.S04.qualification-review-01.md.
+        Risk-selected slice proof is bounded; checkpoint/W2 qualification and human release gate remain.
   - id: CAP-04.S05
     title: Connector SDK and controlled extensibility
     outcome: New data sources can be added without bypassing provenance, rights, security, or canonicalization.
@@ -24519,7 +24519,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T03
     - CAP-00.S03.T03
-    status: NOT_STARTED
+    status: READY
     tasks:
     - id: CAP-04.S05.T01
       capability_id: CAP-04
@@ -24551,11 +24551,11 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: NOT_STARTED
+      status: READY
       owner: null
       branch: null
       started_at: null
-      updated_at: '2026-08-07T00:00:00+00:00'
+      updated_at: '2026-10-01T11:13:22+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 839dcb67414c6b1c900361d81905491d63f604b38ba907c41be8d3c9b05d902e
+source_sha256: 951f337fbc6f9faa884e5f908af27f46f597b67d3abdd865af64e7a34ad165b3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8989,7 +8989,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Corpus state is a deliberate scholarly decision with complete acquisition and inclusion provenance.
 
-**Wave / priority / status / review:** `W2` / `P0` / `REVIEW` / `REVIEW`
+**Wave / priority / status / review:** `W2` / `P0` / `DONE` / `APPROVED`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -9281,7 +9281,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** New data sources can be added without bypassing provenance, rights, security, or canonicalization.
 
-**Wave / priority / status / review:** `W2` / `P1` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P1` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
@@ -9289,7 +9289,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T01 - Publish connector plugin manifest and capability API
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `M` / `high`
+**Status / priority / estimate / risk:** `READY` / `P1` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 

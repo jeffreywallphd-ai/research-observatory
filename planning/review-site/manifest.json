@@ -17417,7 +17417,7 @@
             {
               "task_id": "CAP-04.S05.T01",
               "title": "Publish connector plugin manifest and capability API",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -17458,7 +17458,7 @@
             {
               "task_id": "CAP-04.S05.T01",
               "title": "Publish connector plugin manifest and capability API",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-04/CAP-04.S05.T01.html",
               "dependencies": [
                 "CAP-04.S04.T03",
