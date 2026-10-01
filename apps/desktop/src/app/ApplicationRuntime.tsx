@@ -32,6 +32,7 @@ import {
 } from "./IntentWorkspace";
 import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
 import { ImportWorkspace } from "./ImportWorkspace";
+import { CorpusCanvasWorkspace } from "./CorpusCanvasWorkspace";
 import { SourceManagerWorkspace } from "./SourceManagerWorkspace";
 import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
 import {
@@ -1262,6 +1263,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
             <TaskCenterWorkspace project={currentProject} announce={announce} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "imports" ? (
             <ImportWorkspace project={currentProject} announce={announce} />
+          ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "corpus" ? (
+            <CorpusCanvasWorkspace project={currentProject} announce={announce} active={workspace === "corpus"} onNavigate={navigateWorkspaceState} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "sources" ? (
             <SourceManagerWorkspace project={currentProject} announce={announce} active={workspace === "sources"} onNavigate={navigateWorkspaceState} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "audit" ? (
