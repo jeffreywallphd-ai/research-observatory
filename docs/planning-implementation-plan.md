@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 6a24c5e2ae2936dc6cf58337b4fe4de74aa11e99c055b6cfce0b07926573e762
+source_sha256: db40d8963b64ca13cce0668e853b353def4e9bb4716363ccbef80e67b7c1ea0c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3159,6 +3159,33 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/w2_c08_preflight at `2026-09-30T23:58:28+00:00`
 
 **Latest notes:** Independent expanded review authenticates the frozen R01 packet, committed correction spec and approved CAP-04.S03.T03 origin, exact one-file candidate patch plus taskctl/generated tracking views, seven passing canonical check receipts, and two reused original evidence references. The Rust leap-year predicate and empty/missing workIds predicate are logically equivalent to their predecessors. Fresh public-route assertions cover valid year 2000 and invalid year 1900 leap dates and deny empty, null and missing workIds, while the existing test denies forged authority. Strict all-target Clippy, cargo format and workspace tests pass; workspace tests report 153 passed, zero failed and one intentional ignored. The pinned desktop application report passes nine frontend/native stages and browser style/workflow qualification with zero errors and critical violations. Initial default-TEMP Rust-test ancestor denial and separate global-Python Playwright-version failure remain adverse and distinct from the final pinned/confined PASS; source protections and assertions were not weakened. This approves W2.C08.T01 affected integration only; S01-S03 checkpoint, complete W2 qualification and human release decision remain separate.
+
+**Currently open findings:** -
+
+### W2.C09.T01 — Build corpus provenance and source-overlap reports
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+
+**Reproduction:** At the clean committed S04 candidate 063a3b07712bbdd134e67b6cd34440ccfdd23226, tests/reports/test_migration.py::CorpusReportMigrationTests::test_frozen_v18_recovery_contract_survives_successor fails. The test expects SHA-256 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e for packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json, but its exact Git LF blob at creation commit 6dec0c7 and at current HEAD is SHA-256 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661. The expected digest is the LF-to-CRLF working-copy conversion and was never a committed snapshot. The failing direct report-suite log is artifacts/tmp/CAP-04.S04.reports-suite.log; the original CAP-04.S04.T03 approval and frozen W2 packet remain unchanged.
+
+**Inherited criteria:**
+
+- Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable or unknown data rather than imputing it.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- tests/reports/test_migration.py
+#### Review history — W2.C09.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

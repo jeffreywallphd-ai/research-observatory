@@ -2456,6 +2456,53 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C09.T01",
+          "title": "Build corpus provenance and source-overlap reports",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable or unknown data rather than imputing it.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S04.T03",
+            "origin_commit": "52a71525d7655a94043582b8805e585b3372c92d",
+            "paused_state_sha256": "be1e71736e753db429cbc2d39531e56a006f92ac0b0ac49f5397bf5e572c48e2",
+            "origin_sha256": "8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975",
+            "origin_contract_sha256": "73ca190063e629e5f6b9799a0c6155094936bf3f302ef9ef2541562d5931ac9d",
+            "origin_history_sha256": "10203b0522a99b3751852d5a6204e5ed3b1f817d0ff314c2df4acc73894ff23e",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C09.T01.spec.json",
+              "sha256": "8420fa09b4bdf6b87c22ea3a459de32f80f7726337d8743a5c35b3ff159799b7",
+              "commit": "7f69461b2e25bcf3644a24509133a84d6ed7f2c4"
+            },
+            "reproduction": "At the clean committed S04 candidate 063a3b07712bbdd134e67b6cd34440ccfdd23226, tests/reports/test_migration.py::CorpusReportMigrationTests::test_frozen_v18_recovery_contract_survives_successor fails. The test expects SHA-256 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e for packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json, but its exact Git LF blob at creation commit 6dec0c7 and at current HEAD is SHA-256 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661. The expected digest is the LF-to-CRLF working-copy conversion and was never a committed snapshot. The failing direct report-suite log is artifacts/tmp/CAP-04.S04.reports-suite.log; the original CAP-04.S04.T03 approval and frozen W2 packet remain unchanged.",
+            "changed_paths": [
+              "tests/reports/test_migration.py"
+            ],
+            "impact_analysis": "Restore exact committed-byte verification of the frozen v18 recovery contract while preserving the historical CRLF digest as an explicit serialization witness. Change only the test assertion; do not change the frozen snapshot, migration implementation, line-ending policy, schema, rights, report behavior, approved experience, or release criteria. Run the focused migration/recovery regression and affected report suite, then refresh exact-commit S04 benchmark and slice checks because this test is in their input closure. Preserve the earlier calibration, failed check, and qualifying predecessor report as historical evidence. Obtain independent correction review before ordinary W2 resume."
+          },
+          "task_review": {
+            "task_id": "W2.C09.T01",
+            "title": "Build corpus provenance and source-overlap reports",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },

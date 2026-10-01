@@ -217,8 +217,13 @@ class CorpusReportMigrationTests(unittest.TestCase):
         frozen_path = REPO / "packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json"
         raw = frozen_path.read_bytes()
         self.assertEqual(
-            "95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e",
+            "3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661",
             hashlib.sha256(raw).hexdigest(),
+        )
+        # The former pin captured Windows CRLF checkout bytes, not the committed LF blob.
+        self.assertEqual(
+            "95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e",
+            hashlib.sha256(raw.replace(b"\n", b"\r\n")).hexdigest(),
         )
         frozen = json.loads(raw)
         v19_raw = (REPO / "packages/contracts/storage/sqlite-migration-recovery-v19.snapshot.json").read_bytes()
