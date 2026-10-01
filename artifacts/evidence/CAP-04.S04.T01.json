@@ -1,0 +1,251 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S04.T01",
+  "baseCommit": "0cd9e588541ec952a9c6ad6437297828493b5a0d",
+  "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S04.T01.architecture-review.md",
+    "artifacts/evidence/CAP-04.S04.T01.task-start.md",
+    "docs/adr/ADR-0034-introduce-a-versioned-corpus-item-core-aggregate.md",
+    "docs/adr/index.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/corpus.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/corpus/README.md",
+    "packages/contracts/corpus/corpus-membership.schema.json",
+    "packages/contracts/corpus/corpus.template.py.txt",
+    "packages/contracts/corpus/corpus.template.ts.txt",
+    "packages/contracts/corpus/corpus.test.ts",
+    "packages/contracts/corpus/fixtures/invalid-corpus-decision-time.v1.json",
+    "packages/contracts/corpus/fixtures/invalid-corpus-item-unreasoned-availability.v1.json",
+    "packages/contracts/corpus/fixtures/invalid-discovery-path-mixed-source.v1.json",
+    "packages/contracts/corpus/fixtures/valid-corpus-decision.v1.json",
+    "packages/contracts/corpus/fixtures/valid-corpus-item-revision.v1.json",
+    "packages/contracts/corpus/fixtures/valid-discovery-path.v1.json",
+    "packages/contracts/corpus/generate.mjs",
+    "packages/contracts/corpus/generated.ts",
+    "packages/contracts/domain/domain-compatibility-authorities.v2.json",
+    "packages/contracts/domain/domain-core.v2.schema.json",
+    "packages/contracts/domain/domain-v2.test.ts",
+    "packages/contracts/domain/fixtures/valid-core-aggregate.corpus-item.v2.json",
+    "packages/contracts/domain/generate-v2-authority.mjs",
+    "packages/contracts/domain/generate.mjs",
+    "packages/contracts/domain/generated-v2.ts",
+    "packages/contracts/domain/v2-authority.generated.ts",
+    "packages/contracts/domain/v2-bridge.ts",
+    "packages/contracts/package.json",
+    "packages/contracts/storage/README.md",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-migration-recovery.v16.snapshot.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S04.T01.html",
+    "planning/review-site/CAP-04/CAP-04.S04.html",
+    "planning/review-site/CAP-04/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/corpus/__init__.py",
+    "services/core-api/src/research_observatory_core/corpus/membership.py",
+    "services/core-api/src/research_observatory_core/corpus_api.py",
+    "services/core-api/src/research_observatory_core/corpus_contracts.py",
+    "services/core-api/src/research_observatory_core/corpus_query.py",
+    "services/core-api/src/research_observatory_core/corpus_repository.py",
+    "services/core-api/src/research_observatory_core/corpus_service.py",
+    "services/core-api/src/research_observatory_core/domain_contracts_v2.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0017_corpus_items.py",
+    "services/core-api/src/research_observatory_core/ports/corpus.py",
+    "services/core-api/src/research_observatory_core/ports/repositories.py",
+    "services/core-api/src/research_observatory_core/provenance.py",
+    "services/core-api/src/research_observatory_core/repositories.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/contracts/test_corpus_contracts.py",
+    "tests/contracts/test_domain_contracts_v2.py",
+    "tests/corpus/test_api.py",
+    "tests/corpus/test_connector_query.py",
+    "tests/corpus/test_membership_model.py",
+    "tests/corpus/test_repository.py",
+    "tests/corpus/test_runtime_windows.py",
+    "tests/corpus/test_service.py",
+    "tests/data/test_import_commit_migration.py",
+    "tests/data/test_import_preview_migration.py",
+    "tests/data/test_import_summary_migration.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_recovery_contract.py",
+    "tests/fixtures/scholarly-metadata/README.md",
+    "tests/fixtures/scholarly-metadata/schema-v16-authority.json",
+    "tests/fixtures/scholarly-metadata/schema-v16-populated.json",
+    "tests/foundation/test_architecture_check.py",
+    "tests/foundation/test_plan_review_task_drilldown.py",
+    "tests/reconciliation/test_corpus_migration.py",
+    "tests/reconciliation/test_migration.py",
+    "tests/reconciliation/test_review_migration.py",
+    "tests/reconciliation/test_v16_predecessor.py",
+    "tests/reconciliation/test_version_migration.py",
+    "tests/reconciliation/v16_predecessor.py",
+    "tests/service/test_corpus_provenance_type.py",
+    "tools/architecture_check.py",
+    "tools/core_api_contract.py",
+    "tools/plan_review_site.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Fresh Windows test_authenticated_import_entry_denial_and_reopen traverses an authenticated Core principal, accepted Intent, current privacy and source rights, committed import and reconciliation Work, real DPAPI/SQLCipher corpus creation and a second Core reconstruction. Typed history after reopen retains the root import path and include decision's prior/next revision and value, actor, reason, governing Intent revision and evidence. Provider bytes are synthetic.",
+        "Fresh test_interleaved_decisions_supersede_latest_same_dimension proves a reconsidered membership decision names the prior membership decision even when availability intervenes; its global predecessor still names the availability decision. Corpus model/service/repository tests exercise all seven named conditions as orthogonal facts, import/query/citation entry and path history, exact retries and denial. Citation is human-attested, not a machine-verified citation claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The fresh 40-case corpus suite covers expected create/inspect/decision/history behavior and material failure paths: forged or revoked sources, wrong principal/project, stale Work and item heads, unrelated Work rebind, wrong supersession, current rights denial, altered command replay, rollback and reopening. The Windows case executes rather than skipping.",
+        "The fresh 43-case migration/storage suite includes literal populated-v16 retention, verified backup, interruption/retry/reopen, direct SQL chain and cross-Work denials, and inherited storage/recovery boundaries. Focused Core API, portable contract, TypeScript decoder and generated-client checks cover malformed, oversized and redacted denial responses."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "ADR-0034 and the versioned portable corpus schema bind generated Python/TypeScript readers and the v2 catalog while retaining v1 source bytes. The v17 schema/profile and recovery contracts carry exact hashes, with the frozen literal v16 fixture and old recovery snapshot preserved. Current canonical repository, provenance/outbox and dependency authority remain the writer; no parallel store or automatic scholarly decision was added.",
+        "Generated Core OpenAPI/client parity, architecture/ADR/repository/fixture/build checks, 433-file governed Python quality, and backlog/review-site checks pass at the committed candidate. The architecture classifier admits only the named root corpus SQLite adapter and still rejects business/port/nested concrete storage imports. Public Core create/inspect are bounded and authenticated; typed history remains available through the production service after reopen."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:reconciliation",
+      "service:unit",
+      "data:unit",
+      "contracts:unit",
+      "foundation:unit",
+      "foundation:architecture",
+      "foundation:adr",
+      "foundation:repository-structure",
+      "foundation:fixture-corpus",
+      "foundation:build-manifest",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "T01 changes a public portable contract, Core API, protected corpus writer, SQL v17 migration and shared storage profile. Focused corpus (including actual Windows principal/DPAPI/SQLCipher), populated predecessor/recovery, direct-SQL denial, generated Python/TypeScript/Core clients, architecture, quality and planning checks cover those credible failure paths. Full service/data or platform profiles are not routine task checks under verification §8.1. The exact base-to-candidate diff includes the separately user-requested collapsed planning corrective cards and their formatting commit, plus the literal v16 predecessor fixture and task-start worksheet; those paths are declared, not misrepresented as T01 product scope.",
+    "deferred": [
+      "Full service/data/security/desktop/packaging/performance and cross-capability profiles, integrated S04 review, checkpoint and fresh W2 qualification remain due at their documented gates; no later-platform or live-provider claim is made.",
+      "The portable typed history is implemented and proven after reopen. A bounded paged public history API for the Corpus Canvas is deferred to later S04 presentation work; no unpaged endpoint is published.",
+      "The new tests/corpus suite is run explicitly here. A canonical service:corpus profile/affected-selection mapping is a bounded verification-control repair to complete before S04 qualification so the Wave union cannot omit this suite."
+    ]
+  },
+  "checks": [
+    {
+      "id": "corpus",
+      "command": "PYTHONPATH=services/core-api/src .venv\\Scripts\\python.exe -B -s -m unittest discover -v -s tests/corpus -p test_*.py",
+      "exitCode": 0,
+      "elapsedSeconds": 51.1,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T01.corpus-exact-c0d61784.log",
+      "rawOutputSha256": "e2c0fe02a81d5b8a21d1336fc5b8fdce9f3d8dbfc8af9ca0a2c45e4109f3e1cc",
+      "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Ran 40 tests in 48.774s; OK, including actual Windows Core/DPAPI/SQLCipher and reopen history"
+    },
+    {
+      "id": "migration",
+      "command": "PYTHONPATH=services/core-api/src .venv\\Scripts\\python.exe -B -s -m unittest -v tests.reconciliation.test_corpus_migration tests.data.test_sqlite_recovery_contract tests.data.test_sqlite_schema tests.data.test_sqlite_migrations",
+      "exitCode": 0,
+      "elapsedSeconds": 89.439,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T01.migration-exact-c0d61784.log",
+      "rawOutputSha256": "b4d78154d8d9e00a86223cf281ed48609c4a1a4f8d4f1f343c2dffe964ee9e3d",
+      "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Ran 43 tests in 88.162s; OK, including populated v16 backup/recovery and direct SQL denials"
+    },
+    {
+      "id": "api-contracts",
+      "command": "PYTHONPATH=services/core-api/src focused Core API, architecture and corpus/domain Python unit cases; core_api_contract --check; domain/corpus generator checks; Vitest core-api/corpus + domain-v2 + corpus; TypeScript --noEmit (exact argv in raw log)",
+      "exitCode": 0,
+      "elapsedSeconds": 18.507,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T01.api-contracts-exact-c0d61784.log",
+      "rawOutputSha256": "5b92a9f9e836adada745a94d5e21742a3f12af5f8d989f7f6d1a7c3744326c47",
+      "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "32 Python tests and 11 TypeScript tests pass; generated Core/domain/corpus contracts and typecheck pass"
+    },
+    {
+      "id": "foundation",
+      "command": "tools/architecture_check.py --repo .; tools/adr_check.py --repo .; tools/repository_structure_check.py --repo .; tools/fixture_corpus_check.py --repo .; tools/build_manifest.py --repo .",
+      "exitCode": 0,
+      "elapsedSeconds": 30.491,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T01.foundation-exact-c0d61784.log",
+      "rawOutputSha256": "2a0d9ec616c3cd5574b9ef686a0f376f4f8816018e031d60076784177710cb97",
+      "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Architecture, ADR, repository structure, fixture corpus and clean build manifest pass"
+    },
+    {
+      "id": "quality",
+      "command": "tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T01.quality-report-c0d61784.json",
+      "exitCode": 0,
+      "elapsedSeconds": 0.886,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T01.quality-exact-c0d61784.log",
+      "rawOutputSha256": "f94d16525806b13d077193b94b708b6ce41531fdea66b093bf1d70dabf525043",
+      "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "All 433 governed Python files pass format, Ruff lint and mypy"
+    },
+    {
+      "id": "planning",
+      "command": "tools/taskctl.py validate; tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "elapsedSeconds": 171.976,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T01.planning-exact-c0d61784.log",
+      "rawOutputSha256": "132db74f458586e1e1156270493eedd4c43f1dd777cd43156b1862b0ce795870",
+      "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Backlog validates 20 capabilities, 117 slices, 384 tasks and 12 release gates; generated views current"
+    },
+    {
+      "id": "site",
+      "command": "tools/plan_review_check.py --repo . --report artifacts/tmp/CAP-04.S04.T01.site-exact-c0d61784.json",
+      "exitCode": 0,
+      "elapsedSeconds": 206.403,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T01.site-exact-c0d61784.log",
+      "rawOutputSha256": "5becbeeccda4242df146052649181b86fd12763b20ced9a4b7e3260b9e3ff2e3",
+      "commit": "c0d617840cb1aee0e6a9e5477bb3690748bb4596",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Review site passes deterministic full generation comparison across 492 HTML pages"
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S04.T01.build-manifest-c0d61784.json",
+    "sha256": "188eabc9cda727ea908722cfa337ae5341af3aa6a553b338e812f1bddfcbe5e6"
+  },
+  "retainedAdverseEvidence": [
+    {
+      "path": "artifacts/tmp/CAP-04.S04.T01.corpus-exact-47bab076.log",
+      "sha256": "f8036f1a035726038509e43bf57b336d08737e6f00704963c996d87a6d419132",
+      "assessment": "Earlier committed candidate failed two outdated cross-Work rebind expectations; strengthened denial and valid same-Work tests passed at final candidate."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S04.T01.quality-exact-47bab076.log",
+      "sha256": "a21b85f6a2eb6c92ca92dbd0bd0ed921cac42db46978a37bb240e1e10834244b",
+      "assessment": "Earlier committed candidate reported governed formatting drift; final 433-file quality command passes."
+    },
+    {
+      "path": "artifacts/tmp/CAP-04.S04.T01.planning-exact-11d5f930.log",
+      "sha256": "933343d2c97857fd144f512a1121ec3b2101d3b61a6f61e8d09e2e2ef1ea705c",
+      "assessment": "The previous candidate passed backlog and views but failed review-site projection because its task-start worksheet page and manifest were stale. The generated projection was refreshed, checked before commit, and passed again at the final exact commit."
+    }
+  ],
+  "scopeDeviation": "No approved T01 product scope change or supplemental refactoring. The exact base diff also contains the user's separately requested review-site corrective-card presentation commits; those are not claimed as T01 implementation. The root-adapter classifier addition is bounded authority-preserving control maintenance with a negative regression and independent review pending."
+}

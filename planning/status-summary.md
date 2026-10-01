@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: d37ce48b4ec6be2c38bb4aa34c08f08020025d7072ee0adeb411117a4160a1cc
+source_sha256: b7a6d71b8460c50d86d0ee8070ec9da3ff3f1a7dad5b9af774b6e96b74fbf6fb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 243 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 76 |
 | `DEFERRED` | 36 |
 
@@ -628,6 +628,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-04.S03.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c02_review | - |
 | `CAP-04.S03.T02` | `append-only v1` | 2 | `-` | approved / agent:/root/w2_t02_disposition | - |
 | `CAP-04.S03.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_t03_review | - |
+| `CAP-04.S04.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -722,7 +723,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-04.S04.T01` Model corpus item states, reasons, and discovery paths | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-04.S04.T01` Model corpus item states, reasons, and discovery paths | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

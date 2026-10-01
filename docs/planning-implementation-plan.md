@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: d37ce48b4ec6be2c38bb4aa34c08f08020025d7072ee0adeb411117a4160a1cc
+source_sha256: b7a6d71b8460c50d86d0ee8070ec9da3ff3f1a7dad5b9af774b6e96b74fbf6fb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -8940,7 +8940,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S04.T01 - Model corpus item states, reasons, and discovery paths
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P0` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -8965,13 +8965,33 @@ Original tasks and approvals remain unchanged.
 - python tools/verify.py --profile service
 - python tools/verify.py --profile data
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-04.S04.T01.json` at `c0d617840cb1aee0e6a9e5477bb3690748bb4596`
+
 ##### Review history — CAP-04.S04.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `d9d2c2be7853a634447cfd49671a2dc94d875c2efcebdcccf86e6a128744ac55`
+
+- Candidate / base / branch: `c0d617840cb1aee0e6a9e5477bb3690748bb4596` / `0cd9e588541ec952a9c6ad6437297828493b5a0d` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-01T03:00:29+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S04.T01.json` / `611ec1fc709f10b09e826df5f561fc981175780ef315e6d4469adac7a426fad3` / `c0d617840cb1aee0e6a9e5477bb3690748bb4596`
+- Acceptance-criteria SHA-256: `b658d7d83077c11b6c8e1977b732d7941ee4bf2f0886f1814955fa4fda0c3dc0`
+- Verification-selection SHA-256: `0377d0ce7ea6e48f5f4c7d13ad017ee482e10d7e1f1f60ad6c07cd939b33b107`
+- Changed paths: `artifacts/evidence/CAP-04.S04.T01.architecture-review.md`, `artifacts/evidence/CAP-04.S04.T01.task-start.md`, `docs/adr/ADR-0034-introduce-a-versioned-corpus-item-core-aggregate.md`, `docs/adr/index.json`, `docs/architecture/local-sqlite-storage.md`, `docs/planning-implementation-plan.md`, `packages/contracts/core-api/README.md`, `packages/contracts/core-api/corpus.test.ts`, `packages/contracts/core-api/generated.ts`, `packages/contracts/core-api/openapi.json`, `packages/contracts/corpus/README.md`, `packages/contracts/corpus/corpus-membership.schema.json`, `packages/contracts/corpus/corpus.template.py.txt`, `packages/contracts/corpus/corpus.template.ts.txt`, `packages/contracts/corpus/corpus.test.ts`, `packages/contracts/corpus/fixtures/invalid-corpus-decision-time.v1.json`, `packages/contracts/corpus/fixtures/invalid-corpus-item-unreasoned-availability.v1.json`, `packages/contracts/corpus/fixtures/invalid-discovery-path-mixed-source.v1.json`, `packages/contracts/corpus/fixtures/valid-corpus-decision.v1.json`, `packages/contracts/corpus/fixtures/valid-corpus-item-revision.v1.json`, `packages/contracts/corpus/fixtures/valid-discovery-path.v1.json`, `packages/contracts/corpus/generate.mjs`, `packages/contracts/corpus/generated.ts`, `packages/contracts/domain/domain-compatibility-authorities.v2.json`, `packages/contracts/domain/domain-core.v2.schema.json`, `packages/contracts/domain/domain-v2.test.ts`, `packages/contracts/domain/fixtures/valid-core-aggregate.corpus-item.v2.json`, `packages/contracts/domain/generate-v2-authority.mjs`, `packages/contracts/domain/generate.mjs`, `packages/contracts/domain/generated-v2.ts`, `packages/contracts/domain/v2-authority.generated.ts`, `packages/contracts/domain/v2-bridge.ts`, `packages/contracts/package.json`, `packages/contracts/storage/README.md`, `packages/contracts/storage/sqlite-migration-recovery.schema.json`, `packages/contracts/storage/sqlite-migration-recovery.v16.snapshot.json`, `packages/contracts/storage/sqlite-profile.schema.json`, `packages/contracts/storage/sqlite-profile.v1.json`, `packages/contracts/tsconfig.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S04.T01.html`, `planning/review-site/CAP-04/CAP-04.S04.html`, `planning/review-site/CAP-04/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/app.py`, `services/core-api/src/research_observatory_core/corpus/__init__.py`, `services/core-api/src/research_observatory_core/corpus/membership.py`, `services/core-api/src/research_observatory_core/corpus_api.py`, `services/core-api/src/research_observatory_core/corpus_contracts.py`, `services/core-api/src/research_observatory_core/corpus_query.py`, `services/core-api/src/research_observatory_core/corpus_repository.py`, `services/core-api/src/research_observatory_core/corpus_service.py`, `services/core-api/src/research_observatory_core/domain_contracts_v2.py`, `services/core-api/src/research_observatory_core/main.py`, `services/core-api/src/research_observatory_core/migrations/runner.py`, `services/core-api/src/research_observatory_core/migrations/versions/v0017_corpus_items.py`, `services/core-api/src/research_observatory_core/ports/corpus.py`, `services/core-api/src/research_observatory_core/ports/repositories.py`, `services/core-api/src/research_observatory_core/provenance.py`, `services/core-api/src/research_observatory_core/repositories.py`, `services/core-api/src/research_observatory_core/storage.py`, `tests/contracts/test_corpus_contracts.py`, `tests/contracts/test_domain_contracts_v2.py`, `tests/corpus/test_api.py`, `tests/corpus/test_connector_query.py`, `tests/corpus/test_membership_model.py`, `tests/corpus/test_repository.py`, `tests/corpus/test_runtime_windows.py`, `tests/corpus/test_service.py`, `tests/data/test_import_commit_migration.py`, `tests/data/test_import_preview_migration.py`, `tests/data/test_import_summary_migration.py`, `tests/data/test_sqlite_migrations.py`, `tests/data/test_sqlite_recovery_contract.py`, `tests/fixtures/scholarly-metadata/README.md`, `tests/fixtures/scholarly-metadata/schema-v16-authority.json`, `tests/fixtures/scholarly-metadata/schema-v16-populated.json`, `tests/foundation/test_architecture_check.py`, `tests/foundation/test_plan_review_task_drilldown.py`, `tests/reconciliation/test_corpus_migration.py`, `tests/reconciliation/test_migration.py`, `tests/reconciliation/test_review_migration.py`, `tests/reconciliation/test_v16_predecessor.py`, `tests/reconciliation/test_version_migration.py`, `tests/reconciliation/v16_predecessor.py`, `tests/service/test_corpus_provenance_type.py`, `tools/architecture_check.py`, `tools/core_api_contract.py`, `tools/plan_review_site.py`
+- Selected checks: `PYTHONPATH=services/core-api/src .venv\Scripts\python.exe -B -s -m unittest discover -v -s tests/corpus -p test_*.py`, `PYTHONPATH=services/core-api/src .venv\Scripts\python.exe -B -s -m unittest -v tests.reconciliation.test_corpus_migration tests.data.test_sqlite_recovery_contract tests.data.test_sqlite_schema tests.data.test_sqlite_migrations`, `PYTHONPATH=services/core-api/src focused Core API, architecture and corpus/domain Python unit cases; core_api_contract --check; domain/corpus generator checks; Vitest core-api/corpus + domain-v2 + corpus; TypeScript --noEmit (exact argv in raw log)`, `tools/architecture_check.py --repo .; tools/adr_check.py --repo .; tools/repository_structure_check.py --repo .; tools/fixture_corpus_check.py --repo .; tools/build_manifest.py --repo .`, `tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T01.quality-report-c0d61784.json`, `tools/taskctl.py validate; tools/backlog_views.py --repo . --check`, `tools/plan_review_check.py --repo . --report artifacts/tmp/CAP-04.S04.T01.site-exact-c0d61784.json`
+- Deferred checks: `Full service/data/security/desktop/packaging/performance and cross-capability profiles, integrated S04 review, checkpoint and fresh W2 qualification remain due at their documented gates; no later-platform or live-provider claim is made.`, `The portable typed history is implemented and proven after reopen. A bounded paged public history API for the Corpus Canvas is deferred to later S04 presentation work; no unpaged endpoint is published.`, `The new tests/corpus suite is run explicitly here. A canonical service:corpus profile/affected-selection mapping is a bounded verification-control repair to complete before S04 qualification so the Wave union cannot omit this suite.`
+- Selection rationale: T01 changes a public portable contract, Core API, protected corpus writer, SQL v17 migration and shared storage profile. Focused corpus (including actual Windows principal/DPAPI/SQLCipher), populated predecessor/recovery, direct-SQL denial, generated Python/TypeScript/Core clients, architecture, quality and planning checks cover those credible failure paths. Full service/data or platform profiles are not routine task checks under verification §8.1. The exact base-to-candidate diff includes the separately user-requested collapsed planning corrective cards and their formatting commit, plus the literal v16 predecessor fixture and task-start worksheet; those paths are declared, not misrepresented as T01 product scope.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-04.S04.T02 - Implement rights, license, entitlement, and permitted-use metadata
 
