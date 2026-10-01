@@ -674,10 +674,38 @@ def _launch(image: Path, sid: int, sid_text: str, request: dict[str, Any]) -> di
             kernel.DeleteProcThreadAttributeList(attribute_list)
 
 
+def _validated_loopback_observation(value: Any) -> dict[str, Any]:
+    """Reject a connection or an ambiguous network-stage report."""
+
+    if not isinstance(value, dict) or set(value) != {
+        "startupCode",
+        "connectAttempted",
+        "connectOutcome",
+        "connectErrorCode",
+    }:
+        raise LPACError("lpac-network-observation-invalid")
+    startup = value["startupCode"]
+    attempted = value["connectAttempted"]
+    outcome = value["connectOutcome"]
+    error = value["connectErrorCode"]
+    if not isinstance(startup, int) or isinstance(startup, bool) or not 0 <= startup < 2**32:
+        raise LPACError("lpac-network-observation-invalid")
+    if not isinstance(attempted, bool):
+        raise LPACError("lpac-network-observation-invalid")
+    if attempted:
+        if startup != 0 or outcome != "denied" or not isinstance(error, int) or isinstance(error, bool) or error <= 0:
+            raise LPACError("lpac-network-connection-not-denied")
+    elif outcome != "not-tested" or (
+        startup == 0 and (not isinstance(error, int) or isinstance(error, bool) or error <= 0)
+    ) or (startup != 0 and error is not None):
+        raise LPACError("lpac-network-observation-invalid")
+    return value
+
+
 def run_probe(
     package: Path, inventory: dict[str, Any], *, read_path: Path, write_path: Path, loopback_port: int
 ) -> dict[str, Any]:
-    """Run one fixed adversarial probe; return only after all boundaries deny.
+    """Run one fixed adversarial probe; preserve each network attempt stage.
 
     This is a test-only feasibility vertical. It is not a plugin dispatcher or
     evidence of a production broker, grant, durable job or audit integration.
@@ -708,15 +736,23 @@ def run_probe(
             "loopbackPort": loopback_port,
         }
         result = _launch(image, sid, sid_text, request)
-        if result["probes"] != {
+        probes = result["probes"]
+        _validated_loopback_observation(probes.get("directLoopback") if isinstance(probes, dict) else None)
+        expected_denials = {
             "unrelatedRead": "denied",
             "outsideWrite": "denied",
-            "directLoopback": "denied",
             "profileWrite": "denied",
             "tempWrite": "denied",
             "parentEnvironmentSecret": "denied",
-        }:
-            raise LPACError("lpac-ambient-authority-not-denied")
+        }
+        observed_denials = {key: value for key, value in probes.items() if key != "directLoopback"}
+        if observed_denials != expected_denials:
+            mismatched = sorted(
+                key
+                for key in expected_denials.keys() | observed_denials.keys()
+                if observed_denials.get(key) != expected_denials.get(key)
+            )
+            raise LPACError("lpac-ambient-authority-not-denied:" + ",".join(mismatched))
         return result
     finally:
         if sid:

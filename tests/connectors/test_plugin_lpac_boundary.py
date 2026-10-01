@@ -17,6 +17,23 @@ sys.path.insert(0, str(REPO))
 
 
 class PluginLPACBoundaryTests(unittest.TestCase):
+    def test_loopback_report_does_not_promote_startup_failure_to_connect_denial(self) -> None:
+        from workers.windows.lpac_launcher import LPACError, _validated_loopback_observation
+
+        startup_failure = {
+            "startupCode": 10107,
+            "connectAttempted": False,
+            "connectOutcome": "not-tested",
+            "connectErrorCode": None,
+        }
+        self.assertEqual(_validated_loopback_observation(startup_failure), startup_failure)
+        with self.assertRaisesRegex(LPACError, "observation-invalid"):
+            _validated_loopback_observation("denied")
+        with self.assertRaisesRegex(LPACError, "connection-not-denied"):
+            _validated_loopback_observation(
+                {"startupCode": 0, "connectAttempted": True, "connectOutcome": "allowed", "connectErrorCode": None}
+            )
+
     @unittest.skipUnless(os.name == "nt", "Windows x64 LPAC qualification")
     def test_packaged_worker_is_lpac_and_denies_ambient_authority(self) -> None:
         from workers.windows.lpac_launcher import run_probe
@@ -49,6 +66,9 @@ class PluginLPACBoundaryTests(unittest.TestCase):
                 server.bind(("127.0.0.1", 0))
                 server.listen(1)
                 server.settimeout(1)
+                with socket.create_connection(server.getsockname(), timeout=1):
+                    control, _ = server.accept()
+                    control.close()
                 with patch.dict(os.environ, {"RO_LPAC_TEST_SECRET": "synthetic-secret"}):
                     result = run_probe(
                         package,
@@ -57,16 +77,27 @@ class PluginLPACBoundaryTests(unittest.TestCase):
                         write_path=writable,
                         loopback_port=server.getsockname()[1],
                     )
+                server.settimeout(0.3)
+                with self.assertRaises(socket.timeout):
+                    server.accept()
 
             self.assertIs(result["token"]["appContainer"], True)
             self.assertIs(result["token"]["lessPrivileged"], True)
             self.assertEqual(result["token"]["capabilityCount"], 0)
+            probes = result["probes"]
+            loopback = probes["directLoopback"]
+            self.assertIsInstance(loopback["startupCode"], int)
+            self.assertIsInstance(loopback["connectAttempted"], bool)
+            self.assertIn(loopback["connectOutcome"], {"denied", "not-tested"})
+            if loopback["connectAttempted"]:
+                self.assertEqual(loopback["connectOutcome"], "denied")
+            else:
+                self.assertEqual(loopback["connectOutcome"], "not-tested")
             self.assertEqual(
-                result["probes"],
+                {key: value for key, value in probes.items() if key != "directLoopback"},
                 {
                     "unrelatedRead": "denied",
                     "outsideWrite": "denied",
-                    "directLoopback": "denied",
                     "profileWrite": "denied",
                     "tempWrite": "denied",
                     "parentEnvironmentSecret": "denied",

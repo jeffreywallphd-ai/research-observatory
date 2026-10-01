@@ -2,7 +2,7 @@
 //! It never accepts or executes a connector package.
 
 use serde::Deserialize;
-use serde_json::json;
+use serde_json::{Value, json};
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
@@ -10,6 +10,7 @@ use std::path::Path;
 #[link(name = "Ws2_32")]
 unsafe extern "system" {
     fn WSAStartup(version: u16, data: *mut u64) -> i32;
+    fn WSAGetLastError() -> i32;
     fn WSACleanup() -> i32;
     fn socket(family: i32, kind: i32, protocol: i32) -> usize;
     fn setsockopt(handle: usize, level: i32, option: i32, value: *const u8, length: i32) -> i32;
@@ -90,18 +91,29 @@ fn attempt_write(path: &Path) -> &'static str {
     "allowed"
 }
 
-fn attempt_loopback(port: u16) -> &'static str {
+fn attempt_loopback(port: u16) -> Value {
     // Rust's standard-library socket initialization asserts WSAStartup succeeds.
-    // LPAC without a network capability can reject WSAStartup itself, so use
-    // Winsock directly and report that as a denied connection attempt.
+    // Record startup separately: a failure here means connect was not tested.
     let mut winsock_data = [0_u64; 64];
-    if unsafe { WSAStartup(0x0202, winsock_data.as_mut_ptr()) } != 0 {
-        return "denied";
+    let startup_code = unsafe { WSAStartup(0x0202, winsock_data.as_mut_ptr()) };
+    if startup_code != 0 {
+        return json!({
+            "startupCode": startup_code,
+            "connectAttempted": false,
+            "connectOutcome": "not-tested",
+            "connectErrorCode": null,
+        });
     }
     let handle = unsafe { socket(2, 1, 6) };
     if handle == usize::MAX {
+        let error = unsafe { WSAGetLastError() };
         unsafe { WSACleanup() };
-        return "denied";
+        return json!({
+            "startupCode": startup_code,
+            "connectAttempted": false,
+            "connectOutcome": "not-tested",
+            "connectErrorCode": error,
+        });
     }
     let timeout_ms = 500_i32;
     unsafe {
@@ -112,11 +124,21 @@ fn attempt_loopback(port: u16) -> &'static str {
     address[2..4].copy_from_slice(&port.to_be_bytes());
     address[4..8].copy_from_slice(&[127, 0, 0, 1]);
     let connected = unsafe { connect(handle, address.as_ptr(), address.len() as i32) == 0 };
+    let error = if connected {
+        None
+    } else {
+        Some(unsafe { WSAGetLastError() })
+    };
     unsafe {
         closesocket(handle);
         WSACleanup();
     }
-    if connected { "allowed" } else { "denied" }
+    json!({
+        "startupCode": startup_code,
+        "connectAttempted": true,
+        "connectOutcome": if connected { "allowed" } else { "denied" },
+        "connectErrorCode": error,
+    })
 }
 
 fn run() -> Result<(), ()> {
