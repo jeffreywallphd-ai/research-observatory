@@ -34,11 +34,11 @@ retains an encrypted rollback copy, verifies the staged key after restart, and
 only then activates it with compare-and-swap. Schema migrations use the same
 protected connection and create encrypted migration backups.
 
-## Current version-16 authority
+## Current version-17 authority
 
 | Concern | Current rule |
 |---|---|
-| Database identity | application ID `0x524f4253`, `user_version=16`, profile `sqlite-wal-v1` |
+| Database identity | application ID `0x524f4253`, `user_version=17`, profile `sqlite-wal-v1` |
 | Durable identities | lowercase UUIDv7 text; project UUIDv4 bridge and prior canonical actor identifiers are explicitly retained |
 | Time | UTC RFC 3339 text at fixed millisecond precision |
 | Types | STRICT `INTEGER`, `REAL`, and `TEXT`; no `ANY` or `BLOB` columns |
@@ -89,6 +89,7 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `reconciliation_versions`, `reconciliation_version_sources` | canonical manifestation identity/revision, explicit date precision, retained assertion membership and status fingerprint |
 | `reconciliation_version_relations`, `reconciliation_relation_evidence` | exact directed version endpoints, human knowledge status and retained source selector/value anchors |
 | `reconciliation_version_preferences`, `reconciliation_version_decisions`, `reconciliation_version_impacts` | immutable citable preference and command lineage, current-authority replay and exact publication-owned dependency invalidation |
+| `corpus_items`, `corpus_item_states`, `corpus_discovery_paths`, `corpus_item_discovery_paths`, `corpus_decisions`, `corpus_decision_evidence`, `corpus_commands` | first-class v2 CorpusItem revision binding, append-only membership and discovery history, actor/reason/protocol/evidence decisions, and exact command replay |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
 
 Object bytes, document content, indexes, models, caches, and other derived
@@ -97,7 +98,7 @@ database may retain a SHA-256 reference; it does not admit arbitrary payload or
 derived blob columns.
 
 Every row in `schema_metadata`, `projects`, `aggregate_identities`,
-`aggregate_revisions`, the six kind-extension tables, `provenance_events`, and
+`aggregate_revisions`, the kind-extension and corpus-history tables, `provenance_events`, and
 `settings`, and `schema_migrations` deny UPDATE and DELETE in fingerprinted DDL. New revisions and
 setting values are inserts. `object_records` may advance availability and
 verification state, `object_envelope_upgrades` may advance the durable verified
@@ -111,14 +112,14 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v12
-profiles to current schema v13. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v16
+profiles to current schema v17. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
 revision in one transaction. The immutable recovery manifest binds the backup
 bytes and both schema fingerprints; a failed transaction rolls back while the
-verified backup remains available. A current version-13 database is detected
+verified backup remains available. A current version-17 database is detected
 idempotently and is never backed up or rewritten. Committed v3 history is never
 rewritten; v4 adds only the post-schema object-envelope upgrade journal and v5
 adds the truthful `legacy-unreported` backfill for missing technical object
@@ -172,6 +173,20 @@ The commit repository must additionally validate current rights, draft and worke
 lease, and publish records, manifest, provenance and accepted worker output in one
 transaction. Schema presence alone does not establish that runtime behavior.
 
+Version 14 adds exact scholarly Work/source reconciliation, version 15 sealed
+current Work membership and human review, and version 16 immutable Work
+manifestation/relationship decisions. Version 17 widens the common aggregate
+kind and contract-version constraints in one backed-up, rollbackable table
+rebuild: `corpus-item` uses `2.0.0` while existing kinds and all v16 rows keep
+`1.0.0` and their exact identities. Corpus subtype tables carry immutable
+state, discovery paths (root/source, direction, time and prior item revision),
+decisions and command results. They create no
+historical researcher judgment. The same forward migration widens the immutable
+dependency-impact output kind to include corpus items while retaining populated
+v16 impact rows and append-only controls. The target-v16 recovery manifest
+schema is
+retained separately so earlier verified backups remain interpretable.
+
 ### Windows schema-migration backup paths
 
 An admitted canonical source can have recovery paths beyond the ordinary Windows
@@ -199,7 +214,7 @@ leaving the context without commit, any constraint failure, or a stale expected
 revision rolls the whole transaction back.
 
 The generic aggregate port covers record, document, workflow, evidence,
-ontology, and decision revisions. It returns detached frozen domain
+ontology, decision, and versioned corpus-item revisions. It returns detached frozen domain
 projections, reports not-found, optimistic-conflict, busy-writer, and
 incompatible-authority outcomes through bounded repository exceptions,
 preserves aggregate kind and creation identity across revisions, and never

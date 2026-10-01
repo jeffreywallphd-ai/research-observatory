@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Protocol, runtime_checkable
 
-AggregateKind = Literal["record", "document", "workflow", "evidence", "ontology", "decision"]
+AggregateKind = Literal["record", "document", "workflow", "evidence", "ontology", "decision", "corpus-item"]
 KnowledgeStatus = Literal[
     "observed",
     "extracted",

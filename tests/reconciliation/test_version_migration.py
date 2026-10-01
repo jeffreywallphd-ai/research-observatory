@@ -60,7 +60,7 @@ class VersionMigrationTests(unittest.TestCase):
             for table, rows in before["tables"].items():
                 self.assertEqual(rows, [list(row) for row in saved.execute('SELECT * FROM "' + table + '"')], table)
         with storage.open_canonical_database(database, expected_project_id=self.project) as current:
-            self.assertEqual(16, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
 
     @unittest.skipUnless(os.name == "nt", "Windows native filename and locking boundary")
     def test_native_uri_preserves_literal_names_modes_and_shared_wal_locks(self):
@@ -111,7 +111,7 @@ class VersionMigrationTests(unittest.TestCase):
 
     def test_migration_preserves_every_prior_row_and_backup_then_resumes_pending_impacts(self):
         plan = runner.plan_database_migration(self.database, expected_project_id=self.project)
-        self.assertEqual(("0016_work_versions",), plan.migration_ids)
+        self.assertEqual(("0016_work_versions", "0017_corpus_items"), plan.migration_ids)
         result = runner.migrate_database(self.database, expected_project_id=self.project)
         self.assertEqual("migrated", result.status)
         assert result.backup_relative_path is not None
@@ -121,7 +121,7 @@ class VersionMigrationTests(unittest.TestCase):
                 self.assertEqual(rows, [list(row) for row in backup.execute('SELECT * FROM "' + table + '"')], table)
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=self.project) as db:
-                self.assertEqual(16, db.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(17, db.execute("PRAGMA user_version").fetchone()[0])
                 for table, rows in self.before["tables"].items():
                     if table not in {"schema_metadata", "schema_migrations"}:
                         self.assertEqual(
@@ -223,7 +223,7 @@ class ProtectedVersionMigrationTests(unittest.TestCase):
         self.assertGreater(len(str(backup)), 260)
         self.assertNotIn("\\", str(result.backup_relative_path))
         self.assertFalse(tuple(Path("\\\\?\\" + str(root / "state/migration-backups")).glob("*/.working-*")))
-        for path, version in ((backup, 15), (database, 16), (database, 16)):
+        for path, version in ((backup, 15), (database, 17), (database, 17)):
             self.assertNotEqual(b"SQLite format 3\x00", Path("\\\\?\\" + str(path)).read_bytes()[:16])
             # Independent read-only SQLCipher reader; no production URI helper.
             uri = "file:" + quote("\\\\?\\" + str(path), safe="/:") + "?mode=ro&vfs=win32-longpath"
@@ -242,7 +242,7 @@ class ProtectedVersionMigrationTests(unittest.TestCase):
 
         for _ in range(2):
             with storage.open_canonical_database(database, expected_project_id=identity) as reopened:
-                self.assertEqual(16, reopened.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(17, reopened.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual("ok", reopened.execute("PRAGMA quick_check").fetchone()[0])
 
     def test_encrypted_v15_failure_backup_retry_and_reopen_preserves_every_row(self):
@@ -289,7 +289,7 @@ class ProtectedVersionMigrationTests(unittest.TestCase):
                 self.assertEqual(rows, [list(row) for row in saved.execute('SELECT * FROM "' + table + '"')], table)
         for _ in range(2):
             with storage.open_canonical_database(fixture.database, expected_project_id=identity) as db:
-                self.assertEqual(16, db.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(17, db.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
                 self.assertEqual("ok", db.execute("PRAGMA quick_check").fetchone()[0])
                 for table, rows in before["tables"].items():

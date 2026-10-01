@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0",
+  "contractVersion": "1.0.0",
+  "documentType": "research-observatory-corpus-item-revision",
+  "projectId": "02e2e404-5b49-438e-9b59-ed562626b658",
+  "itemId": "01a0f503-65f9-763e-af00-aacc9aca6494",
+  "revisionId": "01a0f503-66b0-731c-8e38-3266c225a178",
+  "previousRevisionId": null,
+  "workId": "01a0f503-663c-77d1-b0a7-445355a0d8ab",
+  "workRevisionId": "01a0f503-6680-7ab3-a4ab-b29f2fe10c31",
+  "membership": "candidate",
+  "review": "pending",
+  "duplicateOfItemId": null,
+  "availability": "available",
+  "discoveryPathIds": ["01a0f503-66b3-7040-a811-bc2673c290b0"],
+  "decisionRevisionId": null
+}

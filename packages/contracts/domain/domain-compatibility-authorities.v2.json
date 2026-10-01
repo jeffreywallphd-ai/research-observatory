@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "research-observatory-domain-compatibility-authority-catalog",
+  "catalogVersion": "2.0.0",
+  "authorities": [
+    {
+      "id": "authority.domain-core-v1-to-v2-corpus-item",
+      "changeKind": "add-closed-enum-member",
+      "fromVersion": "1.0.0",
+      "toVersion": "2.0.0",
+      "applicableTask": "CAP-04.S04.T01",
+      "adr": {
+        "id": "ADR-0034",
+        "status": "Accepted",
+        "decisionScope": "Versioned v2 portable CoreAggregate for corpus-item, source-retaining v1 read bridge, and forward-only v17 protected Core persistence under approved CAP-04.S04.T01; mixed v1/v2 process advertisements fail closed until separately authorized v2 process negotiation.",
+        "path": "docs/adr/ADR-0034-introduce-a-versioned-corpus-item-core-aggregate.md",
+        "sha256": "4530395408e9940a4e4c793192403b91dd0589a3bd9f7878078cd7d68b52c70f"
+      },
+      "migration": {
+        "id": "domain-core-v1-preserved-read-in-v2",
+        "strategy": "reader-bridge",
+        "sourceRetention": "preserved",
+        "fromSchemaPath": "packages/contracts/domain/domain-core.schema.json",
+        "fromSchemaSha256": "43c4a40b07d96a7fd54a6b63c053d33c999763d0273f63b90a9aaea045524abd",
+        "fromSchemaSetId": "sha256:60cd81eb55668ffc279d7e904d7163a5b87110f81b120e9ff1a6b23e4f13b59e",
+        "toSchemaPath": "packages/contracts/domain/domain-core.v2.schema.json",
+        "toSchemaSha256": "0c1b6b1475e71760496c93f2d1e58fc6a4cad7b592b4ba8521e2ccaa7c6a6fe7",
+        "toSchemaSetId": "sha256:4295581c8906a9e9e8a01d44e8e0790eba1a3262028ec13c83db5cee946b5293",
+        "sharedLifecycleSchemaPath": "packages/contracts/domain/domain-lifecycle.schema.json",
+        "sharedLifecycleSchemaSha256": "77d82e9fe47c51c7b4bc70c38c203497a0323081a00eb0a0ac899c5849bcb3a3",
+        "corpusSchemaPath": "packages/contracts/corpus/corpus-membership.schema.json",
+        "corpusSchemaSha256": "921db7c4511dd5a1f9c361acb89e2841b6eb7e3fc9558e69ab0e1a2f5840ec45",
+        "fixturePath": "packages/contracts/domain/fixtures/valid-core-aggregate.v1.json",
+        "fixtureSha256": "c218321113abd9ea548028b32db6cd4c47545a776ca53adc9abba1b5cb817205",
+        "compatibilityTestPath": "packages/contracts/domain/domain-v2.test.ts",
+        "compatibilityTestSha256": "8abc5508387afb5d306ab2ad7067625ee3fa0665771df9916a39787c2ff0edc6"
+      }
+    }
+  ]
+}

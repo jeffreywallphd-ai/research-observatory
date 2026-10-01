@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "contractVersion": "1.0.0",
+  "documentType": "research-observatory-corpus-decision",
+  "decisionId": "01a0f503-66b7-77ef-a2e1-179131d50cd8",
+  "projectId": "02e2e404-5b49-438e-9b59-ed562626b658",
+  "itemId": "01a0f503-65f9-763e-af00-aacc9aca6494",
+  "previousRevisionId": "01a0f503-66b0-731c-8e38-3266c225a178",
+  "nextRevisionId": "01a0f503-66b1-70aa-98cb-578709242ce8",
+  "dimension": "membership",
+  "command": "include",
+  "previousValue": "candidate",
+  "nextValue": "included",
+  "previousDecisionRevisionId": null,
+  "supersedesDecisionRevisionId": null,
+  "nextWorkId": null,
+  "actorId": "01a0f503-66b6-781e-b85b-e74baa2dcf8e",
+  "reasonCode": "criterion-met",
+  "protocolRevisionId": "01a0f503-66b5-72f6-8d29-e2d56fecad94",
+  "evidenceRevisionIds": ["01a0f503-66b4-7d41-aa2c-37d912c84004"],
+  "occurredAt": "2026-09-30T20:00:00.000Z"
+}

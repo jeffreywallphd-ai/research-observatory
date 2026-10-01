@@ -332,6 +332,15 @@
       "linkedTasks": [
         "CAP-04.S03.T03"
       ]
+    },
+    {
+      "id": "ADR-0034",
+      "path": "docs/adr/ADR-0034-introduce-a-versioned-corpus-item-core-aggregate.md",
+      "title": "Introduce a versioned corpus-item core aggregate",
+      "status": "Accepted",
+      "linkedTasks": [
+        "CAP-04.S04.T01"
+      ]
     }
   ]
 }

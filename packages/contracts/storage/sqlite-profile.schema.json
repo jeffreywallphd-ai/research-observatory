@@ -35,13 +35,13 @@
       "const": "sqlite-wal-v1"
     },
     "databaseSchemaVersion": {
-      "const": 16
+      "const": 17
     },
     "applicationId": {
       "const": 1380926035
     },
     "schemaFingerprintSha256": {
-      "const": "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
+      "const": "719d520126380b3807e657ed080b5ca1b22190dda1b9d7204091d34d4e9049b3"
     },
     "minimumSqliteVersion": {
       "const": "3.37.0"
@@ -150,7 +150,14 @@
         "reconciliation_relation_evidence",
         "reconciliation_version_preferences",
         "reconciliation_version_decisions",
-        "reconciliation_version_impacts"
+        "reconciliation_version_impacts",
+        "corpus_items",
+        "corpus_item_states",
+        "corpus_discovery_paths",
+        "corpus_item_discovery_paths",
+        "corpus_decisions",
+        "corpus_decision_evidence",
+        "corpus_commands"
       ]
     },
     "mutableStateTables": {
@@ -271,7 +278,14 @@
         "reconciliation_relation_evidence",
         "reconciliation_version_preferences",
         "reconciliation_version_decisions",
-        "reconciliation_version_impacts"
+        "reconciliation_version_impacts",
+        "corpus_items",
+        "corpus_item_states",
+        "corpus_discovery_paths",
+        "corpus_item_discovery_paths",
+        "corpus_decisions",
+        "corpus_decision_evidence",
+        "corpus_commands"
       ]
     }
   }

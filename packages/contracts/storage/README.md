@@ -1,7 +1,7 @@
 # Local storage contracts
 
 `sqlite-profile.v1.json` is the exact portable profile contract for the current
-version-15 canonical local database. It fixes the database identity, version, scalar storage domain,
+version-17 canonical local database. It fixes the database identity, version, scalar storage domain,
 connection controls, checkpoint authority, integrity checks, and normalized
 table inventory. It also fixes the immutable-row and intentionally mutable-state
 table sets plus the dedicated backed-up migration-only schema-change boundary.
@@ -11,11 +11,15 @@ The profile is not an API for issuing SQL. Core owns the SQLite adapter, the
 desktop never opens the database, and downstream modules consume repository
 ports introduced by the storage slice. Ordinary connections deny schema DDL.
 The separately constructed T02 Alembic authority is never returned to ordinary
-callers: it checkpoints and validates exact supported version-1 through version-14 fixtures, reserves the
+callers: it checkpoints and validates exact supported version-1 through version-16 fixtures, reserves the
 writer, creates and verifies an online backup, and only then replaces the
 affected controls in one transaction. `sqlite-migration-recovery.schema.json`
 binds the immutable backup manifest to exact backup bytes, the reviewed revision,
-and both schema fingerprints.
+and both schema fingerprints. The exact predecessor
+`sqlite-migration-recovery.v16.snapshot.json` remains available to validate
+already written target-v16 backup manifests; choose the reader by the
+manifest's target schema version rather than reinterpreting old recovery
+history under the v17 target contract.
 
 The committed v3 envelope migration remains immutable. Version 4 adds the
 `object_envelope_upgrades` mutable-state journal and records v2-origin plaintext
@@ -88,6 +92,14 @@ permit recovery after material graph growth without changing previous impact
 items or stale causes. The existing graph validator remains authoritative.
 Populated plaintext and encrypted v14 predecessors exercise backup, additive
 migration, interruption rollback and unchanged historical receipts.
+
+Version 16 adds immutable Work manifestation, relation, preference and decision
+history. Version 17 preserves every v16 row while a backed-up, forward-only
+transaction rebuilds the common aggregate identity/revision constraints to
+admit `corpus-item` at contract `2.0.0`; the six prior kinds remain `1.0.0`.
+Append-only corpus states, discovery paths, decisions and command receipts
+attach to those revisions. Migration creates no historical corpus item or
+researcher decision, and interruption retains the verified v16 backup.
 
 The Core repository layer is the executable consumer boundary for this profile.
 Business modules type against dependency-neutral aggregate-repository and

@@ -63,6 +63,12 @@ def _entity(revision: AggregateRevision) -> dict[str, object]:
     }
 
 
+def _event_type_segment(aggregate_kind: str) -> str:
+    """Keep the exact kind in entities while respecting the v1 type grammar."""
+
+    return "corpus" if aggregate_kind == "corpus-item" else aggregate_kind
+
+
 def _relation(
     relation_type: str,
     occurred_at: str,
@@ -142,7 +148,7 @@ def canonical_aggregate_provenance_event(
         "specversion": "1.0",
         "id": event.event_id,
         "source": "urn:research-observatory:core",
-        "type": f"org.research-observatory.{revision.aggregate_kind}.revision-recorded.v1",
+        "type": f"org.research-observatory.{_event_type_segment(revision.aggregate_kind)}.revision-recorded.v1",
         "subject": (
             f"project/{revision.project_id}/entity/{revision.aggregate_kind}/"
             f"{revision.aggregate_id}/revision/{revision.revision_id}"
@@ -205,7 +211,7 @@ def canonical_invalidation_provenance_event(
         "specversion": "1.0",
         "id": event.event_id,
         "source": "urn:research-observatory:core",
-        "type": f"org.research-observatory.{revision.aggregate_kind}.invalidated.v1",
+        "type": f"org.research-observatory.{_event_type_segment(revision.aggregate_kind)}.invalidated.v1",
         "subject": (
             f"project/{revision.project_id}/entity/{revision.aggregate_kind}/"
             f"{revision.aggregate_id}/revision/{revision.revision_id}"

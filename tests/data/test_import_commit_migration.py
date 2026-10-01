@@ -88,6 +88,7 @@ class ImportCommitMigrationTests(unittest.TestCase):
                 "0014_scholarly_reconciliation",
                 "0015_reconciliation_review",
                 "0016_work_versions",
+                "0017_corpus_items",
             ),
             plan.migration_ids,
         )
@@ -99,7 +100,7 @@ class ImportCommitMigrationTests(unittest.TestCase):
             self.assertEqual(12, backup.execute("PRAGMA user_version").fetchone()[0])
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=project_id) as connection:
-                self.assertEqual(16, connection.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(17, connection.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(1, connection.execute("SELECT COUNT(*) FROM import_previews").fetchone()[0])
                 for table in COMMIT_TABLES:
                     self.assertEqual(0, connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
@@ -188,7 +189,7 @@ class ProtectedImportCommitMigrationTests(unittest.TestCase):
             saved.close()
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=identity) as current:
-                self.assertEqual(16, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual(
                     predecessor.PREVIEW, current.execute("SELECT preview_id FROM import_previews").fetchone()[0]
                 )

@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 16
+DATABASE_SCHEMA_VERSION = 17
+WORK_VERSION_DATABASE_SCHEMA_VERSION = 16
 RECONCILIATION_REVIEW_DATABASE_SCHEMA_VERSION = 15
 RECONCILIATION_DATABASE_SCHEMA_VERSION = 14
 IMPORT_COMMIT_DATABASE_SCHEMA_VERSION = 13
@@ -169,6 +170,13 @@ EXPECTED_TABLES = (
     *RECONCILIATION_TABLES,
     *RECONCILIATION_REVIEW_TABLES,
     *WORK_VERSION_TABLES,
+    "corpus_items",
+    "corpus_item_states",
+    "corpus_discovery_paths",
+    "corpus_item_discovery_paths",
+    "corpus_decisions",
+    "corpus_decision_evidence",
+    "corpus_commands",
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -208,6 +216,13 @@ IMMUTABLE_ROW_TABLES = (
     *RECONCILIATION_TABLES,
     *RECONCILIATION_REVIEW_TABLES,
     *WORK_VERSION_TABLES,
+    "corpus_items",
+    "corpus_item_states",
+    "corpus_discovery_paths",
+    "corpus_item_discovery_paths",
+    "corpus_decisions",
+    "corpus_decision_evidence",
+    "corpus_commands",
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -262,6 +277,10 @@ EXPECTED_TRIGGERS = tuple(
             "reconciliation_version_import_exclusion",
             "reconciliation_version_assertion_exclusion",
             "reconciliation_version_decision_binding",
+            "corpus_item_state_work_binding",
+            "corpus_discovery_path_predecessor_binding",
+            "corpus_decision_chain_binding",
+            "corpus_command_result_binding",
         ]
     )
 )
@@ -309,6 +328,9 @@ EXPECTED_INDEXES = (
     "reconciliation_version_relation_target",
     "reconciliation_version_relation_source",
     "reconciliation_version_preference_work",
+    "corpus_item_states_current",
+    "corpus_discovery_paths_item",
+    "corpus_decisions_item",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -331,7 +353,8 @@ IMPORT_SUMMARY_SCHEMA_SHA256 = "42a9886d0b9d132071cebe3170d12b46a048148f9c69dcf6
 IMPORT_COMMIT_SCHEMA_SHA256 = "13e54503130f8e40036beed26659c5bda2787928c56444987619366e4310b064"
 RECONCILIATION_SCHEMA_SHA256 = "4b8b87b1024b855fa1eee932b41b9d4a8d8492823b17968eb3d17eda24b5ccb2"
 RECONCILIATION_REVIEW_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949"
-EXPECTED_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
+WORK_VERSION_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
+EXPECTED_SCHEMA_SHA256 = "719d520126380b3807e657ed080b5ca1b22190dda1b9d7204091d34d4e9049b3"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -395,7 +418,8 @@ IMPORT_SUMMARY_PROFILE_SHA256 = "9d6ac8532068f3271c42140525a6c106208f92ca6f8362c
 IMPORT_COMMIT_PROFILE_SHA256 = "9ef28bc5d42188c63b50f31eb714c69d040a685311c1dcc5aaf1e89faec42e0b"
 RECONCILIATION_PROFILE_SHA256 = "49ee17767e8a0652a381925181f3a6e38722b9635f15f704c22b648f0e981a89"
 RECONCILIATION_REVIEW_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391ab69246f62696623d067cd37"
-EXPECTED_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172dd790050bdafda72"
+WORK_VERSION_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172dd790050bdafda72"
+EXPECTED_PROFILE_SHA256 = "ceba26263dec5f1afb5a7a0a2e9587bf7eb99bf9a69ed2da35e42dec4c78c002"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3458,10 +3482,406 @@ SCHEMA_METADATA_V14_DDL = SCHEMA_METADATA_V13_DDL.replace("schema_version = 13",
 SCHEMA_METADATA_V15_DDL = SCHEMA_METADATA_V14_DDL.replace("schema_version = 14", "schema_version = 15")
 
 SCHEMA_METADATA_V16_DDL = SCHEMA_METADATA_V15_DDL.replace("schema_version = 15", "schema_version = 16")
+SCHEMA_METADATA_V17_DDL = SCHEMA_METADATA_V16_DDL.replace("schema_version = 16", "schema_version = 17")
+
+_V16_AGGREGATE_IDENTITY_DDL = next(
+    statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
+)
+_V16_AGGREGATE_REVISION_DDL = next(
+    statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_revisions" in statement
+)
+_V17_KIND_LIST = "'record', 'document', 'workflow', 'evidence', 'ontology', 'decision', 'corpus-item'"
+_V16_KIND_LIST = "'record', 'document', 'workflow', 'evidence', 'ontology', 'decision'"
+AGGREGATE_IDENTITIES_V17_DDL = _V16_AGGREGATE_IDENTITY_DDL.replace(_V16_KIND_LIST, _V17_KIND_LIST)
+AGGREGATE_REVISIONS_V17_DDL = _V16_AGGREGATE_REVISION_DDL.replace(_V16_KIND_LIST, _V17_KIND_LIST).replace(
+    "contract_version TEXT NOT NULL CHECK (contract_version = '1.0.0')",
+    "contract_version TEXT NOT NULL CHECK ((aggregate_kind = 'corpus-item' AND contract_version = '2.0.0') "
+    "OR (aggregate_kind <> 'corpus-item' AND contract_version = '1.0.0'))",
+)
+if (
+    AGGREGATE_IDENTITIES_V17_DDL == _V16_AGGREGATE_IDENTITY_DDL
+    or AGGREGATE_REVISIONS_V17_DDL == _V16_AGGREGATE_REVISION_DDL
+    or "contract_version = '2.0.0'" not in AGGREGATE_REVISIONS_V17_DDL
+):
+    raise RuntimeError("compiled v17 aggregate widening differs from the v16 authority")
+
+_V16_DEPENDENCY_IMPACT_ITEMS_DDL = next(
+    statement for statement in DEPENDENCY_IMPACT_DDL if "CREATE TABLE dependency_impact_items" in statement
+)
+DEPENDENCY_IMPACT_ITEMS_V17_DDL = _V16_DEPENDENCY_IMPACT_ITEMS_DDL.replace(_V16_KIND_LIST, _V17_KIND_LIST)
+if DEPENDENCY_IMPACT_ITEMS_V17_DDL == _V16_DEPENDENCY_IMPACT_ITEMS_DDL:
+    raise RuntimeError("compiled v17 impact-kind widening differs from the v16 authority")
+_V17_DEPENDENCY_IMPACT_DDL = tuple(
+    DEPENDENCY_IMPACT_ITEMS_V17_DDL if "CREATE TABLE dependency_impact_items" in statement else statement
+    for statement in DEPENDENCY_IMPACT_DDL
+)
+
+CORPUS_DDL = (
+    """
+        CREATE TABLE corpus_items (
+            revision_id TEXT PRIMARY KEY,
+            aggregate_kind TEXT NOT NULL DEFAULT 'corpus-item' CHECK (aggregate_kind = 'corpus-item'),
+            FOREIGN KEY (revision_id, aggregate_kind)
+                REFERENCES aggregate_revisions (revision_id, aggregate_kind)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id) REFERENCES corpus_item_states (revision_id)
+                DEFERRABLE INITIALLY DEFERRED
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_item_states (
+            revision_id TEXT PRIMARY KEY CHECK ({_uuid_check("revision_id", "7")}),
+            project_id TEXT NOT NULL,
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            item_kind TEXT NOT NULL DEFAULT 'corpus-item' CHECK (item_kind = 'corpus-item'),
+            previous_revision_id TEXT CHECK (
+                previous_revision_id IS NULL OR ({_uuid_check("previous_revision_id", "7")})
+            ),
+            work_id TEXT NOT NULL CHECK ({_uuid_check("work_id", "7")}),
+            work_revision_id TEXT NOT NULL CHECK ({_uuid_check("work_revision_id", "7")}),
+            work_kind TEXT NOT NULL DEFAULT 'record' CHECK (work_kind = 'record'),
+            membership TEXT NOT NULL CHECK (membership IN ('candidate', 'included', 'excluded', 'withdrawn')),
+            review TEXT NOT NULL CHECK (review IN ('none', 'pending')),
+            duplicate_of_item_id TEXT CHECK (
+                duplicate_of_item_id IS NULL OR ({_uuid_check("duplicate_of_item_id", "7")})
+            ),
+            availability TEXT NOT NULL CHECK (
+                availability IN ('unknown', 'not-applicable', 'available', 'unavailable')
+            ),
+            primary_discovery_path_id TEXT NOT NULL CHECK ({_uuid_check("primary_discovery_path_id", "7")}),
+            discovery_fingerprint TEXT NOT NULL CHECK ({_sha256_check("discovery_fingerprint")}),
+            decision_revision_id TEXT CHECK (
+                decision_revision_id IS NULL OR ({_uuid_check("decision_revision_id", "7")})
+            ),
+            FOREIGN KEY (revision_id) REFERENCES corpus_items (revision_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id, project_id) REFERENCES aggregate_revisions (revision_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (item_id, project_id, item_kind)
+                REFERENCES aggregate_identities (aggregate_id, project_id, aggregate_kind)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (work_id, project_id, work_kind)
+                REFERENCES aggregate_identities (aggregate_id, project_id, aggregate_kind)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (previous_revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (revision_id, primary_discovery_path_id)
+                REFERENCES corpus_item_discovery_paths (revision_id, path_id)
+                DEFERRABLE INITIALLY DEFERRED,
+            FOREIGN KEY (decision_revision_id) REFERENCES corpus_decisions (decision_id)
+                DEFERRABLE INITIALLY DEFERRED,
+            CHECK (item_id <> work_id AND revision_id <> item_id AND duplicate_of_item_id IS NOT item_id),
+            CHECK ((previous_revision_id IS NULL AND membership = 'candidate' AND review = 'pending'
+                AND duplicate_of_item_id IS NULL AND availability = 'unknown' AND decision_revision_id IS NULL)
+                OR (previous_revision_id IS NOT NULL AND decision_revision_id IS NOT NULL)),
+            UNIQUE (revision_id, item_id, project_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_discovery_paths (
+            path_id TEXT PRIMARY KEY CHECK ({_uuid_check("path_id", "7")}),
+            project_id TEXT NOT NULL,
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            item_kind TEXT NOT NULL DEFAULT 'corpus-item' CHECK (item_kind = 'corpus-item'),
+            direction TEXT NOT NULL CHECK (direction = 'source-to-corpus-item'),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            predecessor_item_revision_id TEXT CHECK (
+                predecessor_item_revision_id IS NULL OR ({_uuid_check("predecessor_item_revision_id", "7")})
+            ),
+            kind TEXT NOT NULL CHECK (
+                kind IN ('import-member', 'connector-record', 'citation', 'recommendation', 'manual')
+            ),
+            source_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_revision_id", "7")}),
+            context_id TEXT NOT NULL CHECK ({_uuid_check("context_id", "7")}),
+            context_revision_id TEXT NOT NULL CHECK ({_uuid_check("context_revision_id", "7")}),
+            ordinal INTEGER CHECK (ordinal BETWEEN 0 AND 200000),
+            record_key_sha256 TEXT CHECK (record_key_sha256 IS NULL OR ({_sha256_check("record_key_sha256")})),
+            query_revision_id TEXT CHECK (query_revision_id IS NULL OR ({_uuid_check("query_revision_id", "7")})),
+            citing_work_revision_id TEXT CHECK (
+                citing_work_revision_id IS NULL OR ({_uuid_check("citing_work_revision_id", "7")})
+            ),
+            recommendation_revision_id TEXT CHECK (
+                recommendation_revision_id IS NULL OR ({_uuid_check("recommendation_revision_id", "7")})
+            ),
+            manual_decision_revision_id TEXT CHECK (
+                manual_decision_revision_id IS NULL OR ({_uuid_check("manual_decision_revision_id", "7")})
+            ),
+            FOREIGN KEY (item_id, project_id, item_kind)
+                REFERENCES aggregate_identities (aggregate_id, project_id, aggregate_kind)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (predecessor_item_revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK (path_id <> item_id AND path_id <> source_revision_id),
+            CHECK (
+                (kind = 'import-member' AND ordinal BETWEEN 1 AND 200000 AND record_key_sha256 IS NOT NULL
+                    AND query_revision_id IS NULL AND citing_work_revision_id IS NULL
+                    AND recommendation_revision_id IS NULL AND manual_decision_revision_id IS NULL)
+                OR (kind = 'connector-record' AND ordinal BETWEEN 0 AND 999 AND record_key_sha256 IS NULL
+                    AND query_revision_id IS NOT NULL AND citing_work_revision_id IS NULL
+                    AND recommendation_revision_id IS NULL AND manual_decision_revision_id IS NULL)
+                OR (kind = 'citation' AND ordinal IS NULL AND record_key_sha256 IS NULL
+                    AND query_revision_id IS NULL AND citing_work_revision_id IS NOT NULL
+                    AND recommendation_revision_id IS NULL AND manual_decision_revision_id IS NULL)
+                OR (kind = 'recommendation' AND ordinal IS NULL AND record_key_sha256 IS NULL
+                    AND query_revision_id IS NULL AND citing_work_revision_id IS NULL
+                    AND recommendation_revision_id IS NOT NULL AND manual_decision_revision_id IS NULL)
+                OR (kind = 'manual' AND ordinal IS NULL AND record_key_sha256 IS NULL
+                    AND query_revision_id IS NULL AND citing_work_revision_id IS NULL
+                    AND recommendation_revision_id IS NULL AND manual_decision_revision_id IS NOT NULL)
+            ),
+            UNIQUE (path_id, project_id, item_id)
+        ) STRICT
+    """,
+    """
+        CREATE TABLE corpus_item_discovery_paths (
+            revision_id TEXT NOT NULL,
+            project_id TEXT NOT NULL,
+            item_id TEXT NOT NULL,
+            path_id TEXT NOT NULL,
+            FOREIGN KEY (revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (path_id, project_id, item_id)
+                REFERENCES corpus_discovery_paths (path_id, project_id, item_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            PRIMARY KEY (revision_id, path_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_decisions (
+            decision_id TEXT PRIMARY KEY CHECK ({_uuid_check("decision_id", "7")}),
+            project_id TEXT NOT NULL,
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            previous_revision_id TEXT NOT NULL CHECK ({_uuid_check("previous_revision_id", "7")}),
+            next_revision_id TEXT NOT NULL CHECK ({_uuid_check("next_revision_id", "7")}),
+            dimension TEXT NOT NULL CHECK (dimension IN
+                ('membership', 'review', 'duplicate', 'availability', 'discovery', 'work-reference')),
+            command TEXT NOT NULL CHECK (length(command) BETWEEN 1 AND 64),
+            previous_value TEXT NOT NULL CHECK (length(previous_value) BETWEEN 1 AND 64),
+            next_value TEXT NOT NULL CHECK (length(next_value) BETWEEN 1 AND 64),
+            previous_decision_revision_id TEXT CHECK (previous_decision_revision_id IS NULL OR
+                ({_uuid_check("previous_decision_revision_id", "7")})),
+            supersedes_decision_revision_id TEXT CHECK (supersedes_decision_revision_id IS NULL OR
+                ({_uuid_check("supersedes_decision_revision_id", "7")})),
+            next_work_id TEXT CHECK (next_work_id IS NULL OR ({_uuid_check("next_work_id", "7")})),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            reason_code TEXT NOT NULL CHECK (length(reason_code) BETWEEN 1 AND 64),
+            protocol_revision_id TEXT NOT NULL CHECK ({_uuid_check("protocol_revision_id", "7")}),
+            occurred_at TEXT NOT NULL CHECK ({_timestamp_check("occurred_at")}),
+            FOREIGN KEY (previous_revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (next_revision_id, item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK (previous_revision_id <> next_revision_id AND previous_value <> next_value
+                AND decision_id <> item_id AND decision_id <> previous_revision_id
+                AND decision_id <> next_revision_id AND supersedes_decision_revision_id IS NOT decision_id
+                AND previous_decision_revision_id IS NOT decision_id),
+            CHECK ((dimension = 'work-reference' AND next_work_id IS NOT NULL)
+                OR (dimension <> 'work-reference' AND next_work_id IS NULL)),
+            UNIQUE (project_id, item_id, next_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_decision_evidence (
+            decision_id TEXT NOT NULL,
+            evidence_revision_id TEXT NOT NULL CHECK ({_uuid_check("evidence_revision_id", "7")}),
+            FOREIGN KEY (decision_id) REFERENCES corpus_decisions (decision_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            PRIMARY KEY (decision_id, evidence_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE corpus_commands (
+            project_id TEXT NOT NULL,
+            command_id TEXT NOT NULL CHECK ({_uuid_check("command_id", "7")}),
+            semantic_sha256 TEXT NOT NULL CHECK ({_sha256_check("semantic_sha256")}),
+            result_item_id TEXT NOT NULL CHECK ({_uuid_check("result_item_id", "7")}),
+            result_revision_id TEXT NOT NULL CHECK ({_uuid_check("result_revision_id", "7")}),
+            result_path_id TEXT CHECK (result_path_id IS NULL OR ({_uuid_check("result_path_id", "7")})),
+            result_decision_id TEXT CHECK (result_decision_id IS NULL OR ({_uuid_check("result_decision_id", "7")})),
+            provenance_event_id TEXT CHECK (provenance_event_id IS NULL OR ({_uuid_check("provenance_event_id", "7")})),
+            outbox_id TEXT CHECK (outbox_id IS NULL OR ({_uuid_check("outbox_id", "7")})),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (result_revision_id, result_item_id, project_id)
+                REFERENCES corpus_item_states (revision_id, item_id, project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (result_path_id, project_id, result_item_id)
+                REFERENCES corpus_discovery_paths (path_id, project_id, item_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (result_decision_id) REFERENCES corpus_decisions (decision_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (provenance_event_id) REFERENCES provenance_events (event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (outbox_id) REFERENCES outbox_events (outbox_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            CHECK (result_path_id IS NOT NULL OR result_decision_id IS NOT NULL),
+            PRIMARY KEY (project_id, command_id)
+        ) STRICT
+    """,
+    "CREATE INDEX corpus_item_states_current ON corpus_item_states (project_id, item_id, revision_id)",
+    "CREATE INDEX corpus_discovery_paths_item ON corpus_discovery_paths (project_id, item_id, path_id)",
+    "CREATE INDEX corpus_decisions_item ON corpus_decisions (project_id, item_id, next_revision_id)",
+    *(
+        statement
+        for table in (
+            "corpus_items",
+            "corpus_item_states",
+            "corpus_discovery_paths",
+            "corpus_item_discovery_paths",
+            "corpus_decisions",
+            "corpus_decision_evidence",
+            "corpus_commands",
+        )
+        for statement in _immutable_triggers(table, f"{table} history is append-only")
+    ),
+    """
+        CREATE TRIGGER corpus_item_state_work_binding BEFORE INSERT ON corpus_item_states
+        WHEN NOT EXISTS (
+            SELECT 1 FROM aggregate_revisions
+            WHERE revision_id = NEW.work_revision_id AND aggregate_id = NEW.work_id
+              AND aggregate_kind = 'record' AND project_id = NEW.project_id
+        ) OR NOT EXISTS (
+            SELECT 1 FROM aggregate_revisions
+            WHERE revision_id = NEW.revision_id AND aggregate_id = NEW.item_id
+              AND aggregate_kind = 'corpus-item' AND project_id = NEW.project_id
+        ) OR (NEW.duplicate_of_item_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM aggregate_identities
+            WHERE aggregate_id = NEW.duplicate_of_item_id AND aggregate_kind = 'corpus-item'
+              AND project_id = NEW.project_id
+        ))
+        BEGIN SELECT RAISE(ABORT, 'corpus item state binding denied'); END
+    """,
+    """
+        CREATE TRIGGER corpus_discovery_path_predecessor_binding BEFORE INSERT ON corpus_discovery_paths
+        WHEN (NEW.predecessor_item_revision_id IS NULL AND EXISTS (
+            SELECT 1 FROM corpus_item_states
+            WHERE item_id = NEW.item_id AND project_id = NEW.project_id
+        )) OR (NEW.predecessor_item_revision_id IS NOT NULL AND NEW.predecessor_item_revision_id IS NOT (
+            SELECT state.revision_id FROM corpus_item_states state
+            JOIN aggregate_revisions revision ON revision.revision_id = state.revision_id
+            WHERE state.item_id = NEW.item_id AND state.project_id = NEW.project_id
+            ORDER BY revision.revision DESC LIMIT 1
+        ))
+        BEGIN SELECT RAISE(ABORT, 'corpus discovery predecessor binding denied'); END
+    """,
+    """
+        CREATE TRIGGER corpus_decision_chain_binding BEFORE INSERT ON corpus_decisions
+        WHEN NOT EXISTS (
+            SELECT 1 FROM corpus_item_states prior JOIN corpus_item_states next
+              ON next.item_id = prior.item_id AND next.project_id = prior.project_id
+            WHERE prior.revision_id = NEW.previous_revision_id
+              AND next.revision_id = NEW.next_revision_id
+              AND prior.item_id = NEW.item_id AND prior.project_id = NEW.project_id
+              AND next.previous_revision_id = prior.revision_id
+              AND prior.decision_revision_id IS NEW.previous_decision_revision_id
+              AND next.decision_revision_id = NEW.decision_id
+              AND prior.membership <> 'withdrawn'
+              AND (NEW.dimension <> 'work-reference' OR next.work_id = NEW.next_work_id)
+              AND (NEW.dimension = 'membership' OR prior.membership = next.membership)
+              AND (NEW.dimension = 'review' OR prior.review = next.review)
+              AND (NEW.dimension = 'duplicate' OR prior.duplicate_of_item_id IS next.duplicate_of_item_id)
+              AND (NEW.dimension = 'availability' OR prior.availability = next.availability)
+              AND (NEW.dimension = 'work-reference'
+                  OR (prior.work_id = next.work_id AND prior.work_revision_id = next.work_revision_id))
+              AND (NEW.dimension = 'discovery'
+                  OR (prior.discovery_fingerprint = next.discovery_fingerprint
+                      AND prior.primary_discovery_path_id = next.primary_discovery_path_id))
+              AND (
+                (NEW.dimension = 'membership'
+                    AND NEW.previous_value = prior.membership AND NEW.next_value = next.membership
+                    AND NEW.command = CASE
+                        WHEN prior.membership = 'candidate' AND next.membership = 'included' THEN 'include'
+                        WHEN prior.membership = 'candidate' AND next.membership = 'excluded' THEN 'exclude'
+                        WHEN prior.membership = 'candidate' AND next.membership = 'withdrawn' THEN 'withdraw'
+                        WHEN prior.membership = 'included' AND next.membership = 'candidate' THEN 'reconsider'
+                        WHEN prior.membership = 'included' AND next.membership = 'withdrawn' THEN 'withdraw'
+                        WHEN prior.membership = 'excluded' AND next.membership = 'candidate' THEN 'reconsider'
+                        WHEN prior.membership = 'excluded' AND next.membership = 'withdrawn' THEN 'withdraw'
+                    END)
+                OR (NEW.dimension = 'review'
+                    AND NEW.previous_value = prior.review AND NEW.next_value = next.review
+                    AND NEW.command = CASE WHEN next.review = 'pending' THEN 'queue-review'
+                        ELSE 'resolve-review' END)
+                OR (NEW.dimension = 'availability'
+                    AND NEW.previous_value = prior.availability AND NEW.next_value = next.availability
+                    AND NEW.command = 'mark-' || next.availability)
+                OR (NEW.dimension = 'duplicate'
+                    AND NEW.previous_value = COALESCE(prior.duplicate_of_item_id, 'none')
+                    AND NEW.next_value = COALESCE(next.duplicate_of_item_id, 'none')
+                    AND NEW.command = CASE WHEN next.duplicate_of_item_id IS NULL THEN 'clear-duplicate'
+                        ELSE 'mark-duplicate' END)
+                OR (NEW.dimension = 'work-reference'
+                    AND NEW.previous_value = prior.work_revision_id
+                    AND NEW.next_value = next.work_revision_id AND NEW.command = 'rebind-work')
+                OR (NEW.dimension = 'discovery'
+                    AND NEW.previous_value = prior.discovery_fingerprint
+                    AND next.discovery_fingerprint <> prior.discovery_fingerprint
+                    AND NEW.command = 'add-discovery'
+                    AND EXISTS (SELECT 1 FROM corpus_item_discovery_paths added
+                        WHERE added.revision_id = next.revision_id AND added.path_id = NEW.next_value)
+                    AND NOT EXISTS (SELECT 1 FROM corpus_item_discovery_paths old_added
+                        WHERE old_added.revision_id = prior.revision_id AND old_added.path_id = NEW.next_value))
+              )
+              AND NOT EXISTS (
+                  SELECT 1 FROM corpus_item_discovery_paths old_path
+                  WHERE old_path.revision_id = prior.revision_id
+                    AND NOT EXISTS (
+                        SELECT 1 FROM corpus_item_discovery_paths new_path
+                        WHERE new_path.revision_id = next.revision_id AND new_path.path_id = old_path.path_id
+                    )
+              )
+              AND (SELECT COUNT(*) FROM corpus_item_discovery_paths WHERE revision_id = next.revision_id)
+                = (SELECT COUNT(*) FROM corpus_item_discovery_paths WHERE revision_id = prior.revision_id)
+                  + CASE WHEN NEW.dimension = 'discovery' THEN 1 ELSE 0 END
+        ) OR (NEW.supersedes_decision_revision_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM corpus_decisions prior_decision
+            WHERE prior_decision.decision_id = NEW.supersedes_decision_revision_id
+              AND prior_decision.project_id = NEW.project_id
+              AND prior_decision.item_id = NEW.item_id
+              AND prior_decision.dimension = NEW.dimension
+        )) OR (NEW.dimension = 'work-reference' AND NOT EXISTS (
+            SELECT 1 FROM aggregate_identities
+            WHERE aggregate_id = NEW.next_work_id AND project_id = NEW.project_id
+              AND aggregate_kind = 'record'
+        ))
+        BEGIN SELECT RAISE(ABORT, 'corpus decision chain binding denied'); END
+    """,
+    """
+        CREATE TRIGGER corpus_command_result_binding BEFORE INSERT ON corpus_commands
+        WHEN (NEW.result_decision_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM corpus_decisions
+            WHERE decision_id = NEW.result_decision_id AND project_id = NEW.project_id
+              AND item_id = NEW.result_item_id AND next_revision_id = NEW.result_revision_id
+        )) OR (NEW.result_path_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM corpus_item_discovery_paths
+            WHERE path_id = NEW.result_path_id AND project_id = NEW.project_id
+              AND item_id = NEW.result_item_id AND revision_id = NEW.result_revision_id
+        )) OR (NEW.provenance_event_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM provenance_events
+            WHERE event_id = NEW.provenance_event_id AND project_id = NEW.project_id
+        )) OR (NEW.outbox_id IS NOT NULL AND NOT EXISTS (
+            SELECT 1 FROM outbox_events
+            WHERE outbox_id = NEW.outbox_id AND project_id = NEW.project_id
+        ))
+        BEGIN SELECT RAISE(ABORT, 'corpus command result binding denied'); END
+    """,
+)
+
+_V17_BASE_DDL_STATEMENTS = tuple(
+    AGGREGATE_IDENTITIES_V17_DDL
+    if "CREATE TABLE aggregate_identities" in statement
+    else AGGREGATE_REVISIONS_V17_DDL
+    if "CREATE TABLE aggregate_revisions" in statement
+    else statement
+    for statement in _V6_BASE_DDL_STATEMENTS
+)
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V16_DDL,
-    *_V6_BASE_DDL_STATEMENTS,
+    SCHEMA_METADATA_V17_DDL,
+    *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
     *OBJECT_ENVELOPE_COLUMNS,
@@ -3472,13 +3892,14 @@ _DDL_STATEMENTS = (
     *PROVENANCE_LEDGER_DDL,
     *WORKFLOW_EXECUTOR_DDL,
     *MATERIAL_DEPENDENCY_DDL,
-    *DEPENDENCY_IMPACT_DDL,
+    *_V17_DEPENDENCY_IMPACT_DDL,
     *IMPORT_PREVIEW_DDL,
     *IMPORT_SUMMARY_DDL,
     *IMPORT_COMMIT_DDL,
     *RECONCILIATION_DDL,
     *RECONCILIATION_REVIEW_DDL,
     *WORK_VERSION_DDL,
+    *CORPUS_DDL,
 )
 
 

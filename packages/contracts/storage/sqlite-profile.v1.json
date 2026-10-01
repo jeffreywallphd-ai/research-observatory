@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 16,
+  "databaseSchemaVersion": 17,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5",
+  "schemaFingerprintSha256": "719d520126380b3807e657ed080b5ca1b22190dda1b9d7204091d34d4e9049b3",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -99,7 +99,14 @@
     "reconciliation_relation_evidence",
     "reconciliation_version_preferences",
     "reconciliation_version_decisions",
-    "reconciliation_version_impacts"
+    "reconciliation_version_impacts",
+    "corpus_items",
+    "corpus_item_states",
+    "corpus_discovery_paths",
+    "corpus_item_discovery_paths",
+    "corpus_decisions",
+    "corpus_decision_evidence",
+    "corpus_commands"
   ],
   "mutableStateTables": [
     "object_records",
@@ -210,6 +217,13 @@
     "reconciliation_relation_evidence",
     "reconciliation_version_preferences",
     "reconciliation_version_decisions",
-    "reconciliation_version_impacts"
+    "reconciliation_version_impacts",
+    "corpus_items",
+    "corpus_item_states",
+    "corpus_discovery_paths",
+    "corpus_item_discovery_paths",
+    "corpus_decisions",
+    "corpus_decision_evidence",
+    "corpus_commands"
   ]
 }

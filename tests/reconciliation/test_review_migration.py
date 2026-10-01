@@ -34,6 +34,7 @@ class ReviewMigrationTests(unittest.TestCase):
             (
                 "0015_reconciliation_review",
                 "0016_work_versions",
+                "0017_corpus_items",
             ),
             plan.migration_ids,
         )
@@ -45,7 +46,7 @@ class ReviewMigrationTests(unittest.TestCase):
             self.assertEqual(14, backup.execute("PRAGMA user_version").fetchone()[0])
         for _ in range(2):
             with storage.open_canonical_database(self.database, expected_project_id=self.identity) as db:
-                self.assertEqual(16, db.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(17, db.execute("PRAGMA user_version").fetchone()[0])
                 for table, rows in self.before["tables"].items():
                     if table not in {"schema_metadata", "schema_migrations"}:
                         self.assertEqual(
@@ -242,7 +243,7 @@ class ProtectedReviewMigrationTests(unittest.TestCase):
                 self.assertEqual(rows, [list(row) for row in saved.execute('SELECT * FROM "' + table + '"')], table)
         for _ in range(2):
             with storage.open_canonical_database(fixture.database, expected_project_id=identity) as current:
-                self.assertEqual(16, current.execute("PRAGMA user_version").fetchone()[0])
+                self.assertEqual(17, current.execute("PRAGMA user_version").fetchone()[0])
                 self.assertEqual([], current.execute("PRAGMA foreign_key_check").fetchall())
                 self.assertEqual("ok", current.execute("PRAGMA quick_check").fetchone()[0])
                 self.assertEqual(3, current.execute("SELECT COUNT(*) FROM reconciliation_work_states").fetchone()[0])

@@ -234,6 +234,7 @@ _EXTENSIONS = {
         ("evidence", "evidence"),
         ("ontology", "ontologies"),
         ("decision", "decisions"),
+        ("corpus-item", "corpus_items"),
     )
 }
 _SQLITE_DIALECT = sqlite_dialect(paramstyle="named")
@@ -2781,7 +2782,7 @@ class _SqliteAggregateRepository:
             aggregate_kind=draft.aggregate_kind,
             project_id=state.project_id,
             revision=revision_number,
-            contract_version="1.0.0",
+            contract_version="2.0.0" if draft.aggregate_kind == "corpus-item" else "1.0.0",
             created_at=draft.created_at,
             modified_at=draft.modified_at,
             display_label_observed=draft.display_label_observed,
