@@ -1,0 +1,43 @@
+{
+  "task_id": "CAP-04.S05.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+  "reviewer": "agent:/root/s05_t01_code_preflight",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent expanded review approves the frozen R01 T01 signed-plugin contract candidate with no blocking findings. The REVIEW submission binds the exact candidate, claim base, 19 changed paths, seven selected command IDs and the criterion manifest digest bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd. All nine cited raw logs and the clean build report reproduce their stated SHA-256 values; the build report identifies the exact candidate and inventories all five published plugin schemas with matching file hashes. Fourteen focused signed-package tests and 138 portable contract tests pass, along with generated-schema, quality, architecture, structure, backlog, views and build checks. Exact-byte Ed25519 verification, separately trusted publisher key, complete declared file set and hashes, qualified plugin source namespace, supported-but-undeclared capability denial, SDK required-feature negotiation, exact project/package/grant/destination comparison and same-version package renewal are enforced and covered. The authorized-phase provenance contract includes plugin version, permissions, signed/package identities, grant revision and scientific-request digest; it is a pre-dispatch contract, not persisted executed-result provenance. T02 retains active consent persistence, LPAC and broker enforcement, actual result/audit lineage and restart qualification. The selected task checks and explicit slice/Wave deferrals follow verification breadth; no executed plugin, live provider, production publisher, native UI or sandbox result is claimed.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-04.S05.T01.json",
+      "sha256": "bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd",
+      "result": "PASS: three criterion mappings, no unverified items, branch, base, candidate, and exact 19-path Git diff agree with the frozen R01 submission."
+    },
+    "task_projection": {
+      "path": "planning/backlog.yaml",
+      "submission_packet_sha256": "a000f5f87cfa7b1859b30ca315f4c08c7d6b70389aa08f3811e0c710ab79e291",
+      "result": "PASS: CAP-04.S05.T01 is REVIEW at R01, with evidence path/digest, candidate/base, selected checks and no prior open findings matching the submitted packet."
+    },
+    "build_report": {
+      "path": "artifacts/tmp/CAP-04.S05.T01.build-0f94.json",
+      "sha256": "36b88afc7557167c37f6429737f058411c7d6c33cf8df0f3c52cdc9f7e118f07",
+      "result": "PASS: source commit 0f94ec69, dirty=false; all five plugin schemas are inventoried with matching content digests."
+    }
+  },
+  "checks": [
+    {
+      "command": "Independently compare manifest and frozen REVIEW projection with git diff --name-only 2003a9da..0f94ec69; hash the manifest, nine selected raw logs and build report; inspect build schema inventory and selected command IDs",
+      "result": "PASS: 19 exact changed paths; all 11 evidence/report digests and five schema hashes match; seven selected command IDs exist in verification-profiles.json."
+    },
+    {
+      "command": "Inspect the signed plugin admission, grant, authorization-provenance and namespace implementation against ADR-0028, S05 T01 scope and 14 focused tests",
+      "result": "PASS: signed bytes and complete package identity are verified before planning; built-in source impersonation, undeclared supported operation, incompatible major/unknown required feature, grant substitution and changed-package replay deny. The pre-dispatch envelope is constructed only by rechecking the verified package, grant and request."
+    },
+    {
+      "command": "Inspect five generated schema files, generator, quality scope, build inventory, first-party compatibility fixture, architecture documentation and the 138-test portable contract log",
+      "result": "PASS: five schemas have valid Draft 2020-12 shape and no generated drift; first-party page fixture remains readable; build inventory is complete, quality passes 465 governed Python files and the portable contract suite passes. No migration or plugin execution is introduced by T01."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "prior_findings_replayed": []
+}

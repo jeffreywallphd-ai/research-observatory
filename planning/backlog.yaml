@@ -24551,15 +24551,22 @@ capabilities:
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
       - python tools/verify.py --profile service
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-01T11:23:28+00:00'
-      updated_at: '2026-10-01T11:23:28+00:00'
+      updated_at: '2026-10-01T12:00:26+00:00'
       completed_at: null
       blocker: null
-      implementation_notes: ''
-      evidence: []
+      implementation_notes: Signed plugin manifest and pre-dispatch authorization/provenance contract at 0f94ec69; 14 focused
+        and 138 portable contract tests plus selected quality/schema/build/architecture/backlog checks pass. T02 retains durable
+        consent, LPAC execution and result audit.
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/CAP-04.S05.T01.json
+        sha256: bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd
+        commit: 0f94ec694d5e87dfa370bad4110b1d37d364d680
+        recorded_at: '2026-10-01T12:00:26+00:00'
       review:
         reviewer: null
         result: null
@@ -24570,10 +24577,81 @@ capabilities:
         claimed_by: codex-w2-implementation
         claimed_at: '2026-10-01T11:23:28+00:00'
         expires_at: '2026-10-01T19:23:28+00:00'
-      verification_state: null
+      verification_state: passed
       worktree: .
       platform_targets:
       - windows-x64
+      review_control:
+        version: 1
+        attempts: []
+        current_submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-01T12:00:26+00:00'
+          candidate_commit: 0f94ec694d5e87dfa370bad4110b1d37d364d680
+          base_commit: 2003a9da25877a0f2659e13cac1ccb83567ba8f8
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/CAP-04.S05.T01.json
+            sha256: bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd
+            commit: 0f94ec694d5e87dfa370bad4110b1d37d364d680
+            recorded_at: '2026-10-01T12:00:26+00:00'
+          acceptance_criteria_sha256: 7f6020cac37b324c045d57be4923dc3ed220f7ebae1fb4845429502edb3f554b
+          changed_paths:
+          - docs/architecture/connector-contracts.md
+          - docs/planning-implementation-plan.md
+          - packages/contracts/connectors/connector-plugin-authorization-provenance.schema.json
+          - packages/contracts/connectors/connector-plugin-grant.schema.json
+          - packages/contracts/connectors/connector-plugin-invocation-plan.schema.json
+          - packages/contracts/connectors/connector-plugin-invocation-request.schema.json
+          - packages/contracts/connectors/connector-plugin-manifest.schema.json
+          - packaging/build-inputs.json
+          - planning/backlog.yaml
+          - planning/review-site/CAP-04/CAP-04.S05.T01.html
+          - planning/review-site/CAP-04/CAP-04.S05.html
+          - planning/review-site/CAP-04/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - quality-scope.json
+          - services/core-api/src/research_observatory_core/connectors/plugin_manifest.py
+          - tests/connectors/test_plugin_manifest_contract.py
+          - tools/core_api_contract.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest tests.connectors.test_plugin_manifest_contract -v
+          - .venv\Scripts\python.exe -m unittest discover -v -s tests/contracts -p test_*.py
+          - .venv\Scripts\python.exe tools/quality_check.py --repo .
+          - .venv\Scripts\python.exe tools/core_api_contract.py --repo . --check
+          - .venv\Scripts\python.exe tools/architecture_check.py --repo .
+          - .venv\Scripts\python.exe tools/repository_structure_check.py --repo .
+          - .venv\Scripts\python.exe tools/backlog_views.py --repo . --check
+          - .venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T01.build-0f94.json
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate
+          deferred_checks:
+          - CAP-04.S05.T02 owns real LPAC worker isolation, active consent persistence, secret/network broker enforcement,
+            denied-action audit, actual executed-result provenance, crash/cancel/restart and malicious package qualification;
+            T01 publishes only a fail-closed pre-dispatch contract.
+          - Complete foundation/service/search/security-local profiles, live provider paths, packaged worker, native UI/accessibility
+            and representative performance are deferred to the approved S05 slice/checkpoint and fresh W2 exit matrix.
+          selection_rationale: T01 changes a public signed-package/security and versioned schema contract. Fresh exact-candidate
+            signed fixture tests, all portable contract tests, generated-schema drift, quality, architecture, clean build
+            inventory and backlog controls cover the changed trust/compatibility surface. The full foundation/service/search/security
+            profiles would repeat unrelated W2 coverage at task scope and remain for the S05 integrated slice/checkpoint/W2
+            qualification under verification breadth section 8.1.
+          selection_sha256: 1f1da0d265fc8a307e76670a82d191fc2276f2b930ff8a001bae8dbd08a8ed21
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:repository-structure
+          - foundation:architecture
+          - foundation:quality
+          - foundation:backlog
+          - foundation:backlog-views
+          - foundation:build-manifest
+          - contracts:unit
+          packet_sha256: a000f5f87cfa7b1859b30ca315f4c08c7d6b70389aa08f3811e0c710ab79e291
     - id: CAP-04.S05.T02
       capability_id: CAP-04
       slice_id: CAP-04.S05

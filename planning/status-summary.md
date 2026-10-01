@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: cae20ffaf3aec5e0606dd82d8ceea588c1c41b01a9e936aac77e9522fb2ae374
+source_sha256: a7a1903303151e2472ab9326cc71bb3abc19393e42a402aac5887e188470e1da
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 240 |
-| `IN_PROGRESS` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 79 |
 | `DEFERRED` | 36 |
 
@@ -631,6 +631,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-04.S04.T01` | `append-only v1` | 1 | `-` | approved / agent:cap04-s04-t01-independent-review | - |
 | `CAP-04.S04.T02` | `append-only v1` | 1 | `-` | approved / agent:cap04-s04-t02-independent-review | - |
 | `CAP-04.S04.T03` | `append-only v1` | 3 | `-` | approved / agent:/root/t03_r02_independent_review | - |
+| `CAP-04.S05.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -726,7 +727,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-04.S05.T01` Publish connector plugin manifest and capability API | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-04.S05.T01` Publish connector plugin manifest and capability API | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

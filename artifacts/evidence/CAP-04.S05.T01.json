@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S05.T01",
+  "baseCommit": "2003a9da25877a0f2659e13cac1ccb83567ba8f8",
+  "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/architecture/connector-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/connectors/connector-plugin-authorization-provenance.schema.json",
+    "packages/contracts/connectors/connector-plugin-grant.schema.json",
+    "packages/contracts/connectors/connector-plugin-invocation-plan.schema.json",
+    "packages/contracts/connectors/connector-plugin-invocation-request.schema.json",
+    "packages/contracts/connectors/connector-plugin-manifest.schema.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S05.T01.html",
+    "planning/review-site/CAP-04/CAP-04.S05.html",
+    "planning/review-site/CAP-04/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/connectors/plugin_manifest.py",
+    "tests/connectors/test_plugin_manifest_contract.py",
+    "tools/core_api_contract.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The signed v1 plugin manifest declares source identity, operations, broker-only authentication scopes, source terms, rate/resource ceilings, data classes, destinations and permissions. Exact Ed25519 verification against a separately trusted local publisher key precedes complete file-hash validation. Unsupported or signed-but-undeclared operations, incompatible SDK major/unknown required features, unsafe paths/destinations and substituted grant/package/project identities fail before any plugin execution API exists.",
+        "A Core-owned active per-project grant is an explicit precondition. The immutable authorized-phase provenance contract binds plugin version, permission set, publisher, exact manifest/package/signature digests, grant revision, qualified source ID, operation, invocation ID and Core scientific-request digest. The routing request digest is not wire/replay content. No executed-result, durable consent or LPAC claim is made by T01."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fourteen fresh signed synthetic package tests pass on the exact candidate. They include valid signed admission, exact-byte/file tamper and untrusted key denial, SDK feature negotiation, namespace and length boundaries, supported-but-undeclared search denial, grant/destination/project substitution, same-version changed-package consent renewal, forged-plan provenance rejection and five public-schema round trips.",
+        "The 138-test portable contract suite passes, including the unchanged first-party connector page fixture and historical Git publication witnesses. The first sandboxed run failed only because Git rejected checkout ownership; the successful unchanged rerun used an ignored process-local safe-directory config, not a weakened test or tracked runtime setting."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Five generated Draft 2020-12 plugin schemas (manifest, grant, request, plan and authorized-phase provenance), Core validation, synthetic contract tests, architecture documentation and build-schema inventory were added. The generator check, clean build manifest, architecture, quality, structure, backlog views and backlog validation all pass on the exact commit.",
+        "This contract-only task introduces no durable plugin project state, so it requires no storage migration. Actual trusted-key/consent persistence, LPAC dispatch, broker denial/audit, result/response provenance and restart recovery belong to approved CAP-04.S05.T02 and are neither implemented nor claimed here."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:repository-structure",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:backlog",
+      "foundation:backlog-views",
+      "foundation:build-manifest",
+      "contracts:unit"
+    ],
+    "riskAnalysis": "T01 changes a public signed-package/security and versioned schema contract. Fresh exact-candidate signed fixture tests, all portable contract tests, generated-schema drift, quality, architecture, clean build inventory and backlog controls cover the changed trust/compatibility surface. The full foundation/service/search/security profiles would repeat unrelated W2 coverage at task scope and remain for the S05 integrated slice/checkpoint/W2 qualification under verification breadth section 8.1.",
+    "deferred": [
+      "CAP-04.S05.T02 owns real LPAC worker isolation, active consent persistence, secret/network broker enforcement, denied-action audit, actual executed-result provenance, crash/cancel/restart and malicious package qualification; T01 publishes only a fail-closed pre-dispatch contract.",
+      "Complete foundation/service/search/security-local profiles, live provider paths, packaged worker, native UI/accessibility and representative performance are deferred to the approved S05 slice/checkpoint and fresh W2 exit matrix."
+    ]
+  },
+  "checks": [
+    {
+      "id": "plugin",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.connectors.test_plugin_manifest_contract -v",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.plugin-0f94.log",
+      "rawOutputSha256": "e1749ca801ab3002013a8ca897376f092cd5ae709537305727bf14a1776f46c7",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "14 signed-plugin behavioral and schema tests passed in 2.200 seconds."
+    },
+    {
+      "id": "contracts",
+      "command": ".venv\\Scripts\\python.exe -m unittest discover -v -s tests/contracts -p test_*.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.contracts-0f94.log",
+      "rawOutputSha256": "dd16e38763a41aef3dc033ecbc448bf2bad89fc515948d9076b54c747434215d",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate; contract witness clones used an ignored process-local Git safe-directory config, with tests unchanged.",
+      "result": "138 portable and predecessor contract tests passed in 117.068 seconds."
+    },
+    {
+      "id": "quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.quality-0f94.log",
+      "rawOutputSha256": "2a6abb0791e11a6af5c22a3c06ebfecc2cb9d099a8f7b1cfcf38b9bac153b83c",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Ruff and mypy passed for 465 governed Python files."
+    },
+    {
+      "id": "schema",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.schema-0f94.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Five new generated plugin schemas and existing Core contract artifacts have no drift."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.architecture-0f94.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Architecture contract passed."
+    },
+    {
+      "id": "structure",
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.structure-0f94.log",
+      "rawOutputSha256": "1b5743d8019ad30f424c97e446b08c25fcecb5d6de12d1e951c8b8535d709c7d",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Repository structure passed."
+    },
+    {
+      "id": "views",
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.views-0f94.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Generated backlog views passed."
+    },
+    {
+      "id": "build",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T01.build-0f94.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.build-0f94.log",
+      "rawOutputSha256": "e51043689e339075372ad7899a446224c777f23da6f47f0bf8d82c46945b2a35",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Clean 0.1.0+g0f94ec6 build manifest passed with all five plugin schemas inventoried."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T01.backlog-0f94.log",
+      "rawOutputSha256": "d1b0e2530885b1b2f35db76ad7e074cab402de69160cba0936f0069acb9f97a7",
+      "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Backlog validation passed: 20 capabilities, 117 slices, 385 tasks, 12 gates."
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T01.build-0f94.json",
+    "sha256": "36b88afc7557167c37f6429737f058411c7d6c33cf8df0f3c52cdc9f7e118f07"
+  },
+  "scopeDeviation": "No approved T01 product scope change or supplemental refactoring. Adding five portable schema inventory entries is required build provenance for the new approved SDK contract; no UI, migration or plugin execution behavior is introduced."
+}

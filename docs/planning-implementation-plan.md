@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: cae20ffaf3aec5e0606dd82d8ceea588c1c41b01a9e936aac77e9522fb2ae374
+source_sha256: a7a1903303151e2472ab9326cc71bb3abc19393e42a402aac5887e188470e1da
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9289,7 +9289,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T01 - Publish connector plugin manifest and capability API
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `M` / `high`
+**Status / priority / estimate / risk:** `REVIEW` / `P1` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
@@ -9315,13 +9315,33 @@ Original tasks and approvals remain unchanged.
 - python tools/taskctl.py validate
 - python tools/verify.py --profile service
 
+**Evidence:**
+
+- `artifacts/evidence/CAP-04.S05.T01.json` at `0f94ec694d5e87dfa370bad4110b1d37d364d680`
+
 ##### Review history — CAP-04.S05.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `a000f5f87cfa7b1859b30ca315f4c08c7d6b70389aa08f3811e0c710ab79e291`
+
+- Candidate / base / branch: `0f94ec694d5e87dfa370bad4110b1d37d364d680` / `2003a9da25877a0f2659e13cac1ccb83567ba8f8` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-01T12:00:26+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S05.T01.json` / `bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd` / `0f94ec694d5e87dfa370bad4110b1d37d364d680`
+- Acceptance-criteria SHA-256: `7f6020cac37b324c045d57be4923dc3ed220f7ebae1fb4845429502edb3f554b`
+- Verification-selection SHA-256: `1f1da0d265fc8a307e76670a82d191fc2276f2b930ff8a001bae8dbd08a8ed21`
+- Changed paths: `docs/architecture/connector-contracts.md`, `docs/planning-implementation-plan.md`, `packages/contracts/connectors/connector-plugin-authorization-provenance.schema.json`, `packages/contracts/connectors/connector-plugin-grant.schema.json`, `packages/contracts/connectors/connector-plugin-invocation-plan.schema.json`, `packages/contracts/connectors/connector-plugin-invocation-request.schema.json`, `packages/contracts/connectors/connector-plugin-manifest.schema.json`, `packaging/build-inputs.json`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S05.T01.html`, `planning/review-site/CAP-04/CAP-04.S05.html`, `planning/review-site/CAP-04/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `quality-scope.json`, `services/core-api/src/research_observatory_core/connectors/plugin_manifest.py`, `tests/connectors/test_plugin_manifest_contract.py`, `tools/core_api_contract.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest tests.connectors.test_plugin_manifest_contract -v`, `.venv\Scripts\python.exe -m unittest discover -v -s tests/contracts -p test_*.py`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/core_api_contract.py --repo . --check`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .`, `.venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `.venv\Scripts\python.exe tools/backlog_views.py --repo . --check`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T01.build-0f94.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate`
+- Deferred checks: `CAP-04.S05.T02 owns real LPAC worker isolation, active consent persistence, secret/network broker enforcement, denied-action audit, actual executed-result provenance, crash/cancel/restart and malicious package qualification; T01 publishes only a fail-closed pre-dispatch contract.`, `Complete foundation/service/search/security-local profiles, live provider paths, packaged worker, native UI/accessibility and representative performance are deferred to the approved S05 slice/checkpoint and fresh W2 exit matrix.`
+- Selection rationale: T01 changes a public signed-package/security and versioned schema contract. Fresh exact-candidate signed fixture tests, all portable contract tests, generated-schema drift, quality, architecture, clean build inventory and backlog controls cover the changed trust/compatibility surface. The full foundation/service/search/security profiles would repeat unrelated W2 coverage at task scope and remain for the S05 integrated slice/checkpoint/W2 qualification under verification breadth section 8.1.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 #### - [ ] CAP-04.S05.T02 - Implement plugin isolation, configuration, and secret access controls
 
