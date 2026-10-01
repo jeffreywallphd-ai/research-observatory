@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 951f337fbc6f9faa884e5f908af27f46f597b67d3abdd865af64e7a34ad165b3
+source_sha256: cae20ffaf3aec5e0606dd82d8ceea588c1c41b01a9e936aac77e9522fb2ae374
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9289,13 +9289,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T01 - Publish connector plugin manifest and capability API
 
-**Status / priority / estimate / risk:** `READY` / `P1` / `M` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T03`, `CAP-00.S03.T03`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Versioned manifest for source identity, operations, authentication, terms, rate limits, data classes, and required permissions.
 
