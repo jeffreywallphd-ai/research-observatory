@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 0ddf00389b80af35b5683a1768121b46892ece48ec6be53b786f883c951a1cc6
+source_sha256: e60724142292a01266c6fd451dec080ebd0bc231ba1d05d762d8f8c15c6c10dc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -661,14 +661,14 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C06.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c06_reviewer | - |
 | `W2.C07.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c07_preflight | - |
 | `W2.C08.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c08_preflight | - |
-| `W2.C09.T01` | `append-only v1` | 0 | `R01` | - / - | - |
+| `W2.C09.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/s04_integration_test_review | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
 |---|---|---|---|---:|---:|---|
 | `W0` - Engineering foundation | `APPROVED` | `NONE` | `APPROVED` — Historical W0 qualification predates the Wave-campaign controller. | 6/6 | 19/19 | `G0` / `APPROVED` |
 | `W1` - Windows local runtime and durable core | `APPROVED` | `COMPLETE` | `APPROVED` — OWNER-ACCEPTED CORE COMPLETE: explicit 2026-09-13 owner approval closes W1 prototype core with retained qualification gaps, not a full-suite PASS. Reasonable test and UX-control repairs continue between Waves. G1 and W2 activation remain separate; see artifacts/evidence/W1.owner-core-acceptance-01.md. | 15/15 | 53/53 | `G1` / `APPROVED` |
-| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 3/11 | 20/42 | `G2` / `PENDING` |
+| `W2` - Windows local evidence foundation | `APPROVED` | `PAUSED` | `PAUSED` | 3/11 | 21/42 | `G2` / `PENDING` |
 | `W3` - Windows local research workbench | `PENDING` | `NONE` | `PENDING` | 0/16 | 0/48 | `G3` / `PENDING` |
 | `W4` - Windows scholarly reasoning and novelty MVP | `PENDING` | `NONE` | `PENDING` | 0/9 | 0/27 | `G4` / `PENDING` |
 | `W5` - Windows PC/lab production release | `PENDING` | `NONE` | `PENDING` | 0/8 | 0/25 | `G5` / `PENDING` |
@@ -723,9 +723,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 ## Active work
 
-| Task | Status | Owner | Branch |
-|---|---|---|---|
-| `W2.C09.T01` Build corpus provenance and source-overlap reports | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
+No task is currently active.
 
 ## Linked corrective tasks
 
@@ -785,5 +783,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C09.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `approved`.
 

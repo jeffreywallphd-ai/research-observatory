@@ -1,0 +1,38 @@
+{
+  "task_id": "W2.C09.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+  "base_commit": "7f69461b2e25bcf3644a24509133a84d6ed7f2c4",
+  "reviewer": "agent:/root/s04_integration_test_review",
+  "result": "approved",
+  "evidence_sha256": "bbac9919ba37b8832d5694bfd8d370f4b2ea58c1bd27a5a4676c7aab21126657",
+  "packet_sha256": "07a47b4da4c72c7a2f1fc243716bd89255a688baf109f129d25f67a709d1b461",
+  "acceptance_criteria_sha256": "386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1",
+  "selection_sha256": "d8209e0c4e426d1c22278b0c4b0e23a8e5f5f2dbe0c92c4557f7450f78ef5b13",
+  "notes": "Independent R01 review authenticates the frozen packet, committed correction spec and approved CAP-04.S04.T03 origin. The exact base-to-candidate diff has one spec-admitted test change and five taskctl/generated planning paths; no frozen snapshot, migration, product, rights, governed experience or W2 authority changes. The retained predecessor report-suite log shows the v18 raw-hash failure. Fresh candidate report tests pass 14 model/control and 17 migration/repository cases, including v18/v19 recovery and revoked historical-report denial. The v18 Git and physical LF blob hashes to 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661; explicit LF-to-CRLF conversion yields the former 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e. The 463-file quality report passes. The fresh protected benchmark is PASS on the exact candidate: three authenticated children, all 526 physical/Git inputs and all eight measured metrics match the reviewed baseline and limits. Its claim is confined to the synthetic 64-item Windows workload. Structure, backlog, view and site checks are submitted zero-exit execution claims without independently retained raw logs. Original task evidence supports only unchanged behavior; S04 slice, checkpoint, W2 exit and human release remain open.",
+  "corrective_integration": {
+    "evidence_sha256": "bbac9919ba37b8832d5694bfd8d370f4b2ea58c1bd27a5a4676c7aab21126657",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The origin snapshot SHA-256 8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975 remains DONE and independently approved. The test now pins the exact committed v18 recovery bytes and separately retains the historical CRLF digest. No schema, migration, report, rights, UX or release authority changed. Fresh report/recovery and exact-input synthetic performance evidence closes the affected integration; previously passing S04 evidence at 063a3b07 is historical after the test input change."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Original T03 R03 independent approval supports unchanged corpus counts, drill and unknown-data behavior. This test-only correction changes none of those paths. Fresh report repository tests and the bounded protected synthetic benchmark exercise the affected current report boundary without expanding the product claim."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The exact prior failure is retained. The corrected v18 witness and 30 companion report/recovery tests pass on the committed candidate; the test pins Git LF bytes and preserves the former CRLF digest as a separate transformation check. Revoked historical-report inspection remains denied."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Only the admitted migration test and generated claim/tracking paths changed. The frozen fixture, line-ending policy, migrations, contracts, rights, UX and approved W2 packet remain unchanged. Quality and submitted structure/planning checks pass; broader slice and Wave qualification remain pending."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}

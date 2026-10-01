@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 0ddf00389b80af35b5683a1768121b46892ece48ec6be53b786f883c951a1cc6
+source_sha256: e60724142292a01266c6fd451dec080ebd0bc231ba1d05d762d8f8c15c6c10dc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3164,7 +3164,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C09.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `approved`.
 
 **Reproduction:** At the clean committed S04 candidate 063a3b07712bbdd134e67b6cd34440ccfdd23226, tests/reports/test_migration.py::CorpusReportMigrationTests::test_frozen_v18_recovery_contract_survives_successor fails. The test expects SHA-256 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e for packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json, but its exact Git LF blob at creation commit 6dec0c7 and at current HEAD is SHA-256 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661. The expected digest is the LF-to-CRLF working-copy conversion and was never a committed snapshot. The failing direct report-suite log is artifacts/tmp/CAP-04.S04.reports-suite.log; the original CAP-04.S04.T03 approval and frozen W2 packet remain unchanged.
 
@@ -3179,9 +3179,11 @@ Original tasks and approvals remain unchanged.
 - tests/reports/test_migration.py
 #### Review history — W2.C09.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `07a47b4da4c72c7a2f1fc243716bd89255a688baf109f129d25f67a709d1b461`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `07a47b4da4c72c7a2f1fc243716bd89255a688baf109f129d25f67a709d1b461`
 
 - Candidate / base / branch: `799f2323a4d7e1012f02838d8b6b376228b95693` / `7f69461b2e25bcf3644a24509133a84d6ed7f2c4` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-01T09:57:13+00:00`
@@ -3195,9 +3197,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/s04_integration_test_review / `2026-10-01T10:08:07+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C09.T01.review-R01.json` / `356d7386622b0cafb9cf7c858660f698a31f9f47dad5533d0a435abdf85b3f85`
+
+**Review notes:** Independent R01 review authenticates the frozen packet, committed correction spec and approved CAP-04.S04.T03 origin. The exact base-to-candidate diff has one spec-admitted test change and five taskctl/generated planning paths; no frozen snapshot, migration, product, rights, governed experience or W2 authority changes. The retained predecessor report-suite log shows the v18 raw-hash failure. Fresh candidate report tests pass 14 model/control and 17 migration/repository cases, including v18/v19 recovery and revoked historical-report denial. The v18 Git and physical LF blob hashes to 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661; explicit LF-to-CRLF conversion yields the former 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e. The 463-file quality report passes. The fresh protected benchmark is PASS on the exact candidate: three authenticated children, all 526 physical/Git inputs and all eight measured metrics match the reviewed baseline and limits. Its claim is confined to the synthetic 64-item Windows workload. Structure, backlog, view and site checks are submitted zero-exit execution claims without independently retained raw logs. Original task evidence supports only unchanged behavior; S04 slice, checkpoint, W2 exit and human release remain open.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/s04_integration_test_review at `2026-10-01T10:08:07+00:00`
+
+**Latest notes:** Independent R01 review authenticates the frozen packet, committed correction spec and approved CAP-04.S04.T03 origin. The exact base-to-candidate diff has one spec-admitted test change and five taskctl/generated planning paths; no frozen snapshot, migration, product, rights, governed experience or W2 authority changes. The retained predecessor report-suite log shows the v18 raw-hash failure. Fresh candidate report tests pass 14 model/control and 17 migration/repository cases, including v18/v19 recovery and revoked historical-report denial. The v18 Git and physical LF blob hashes to 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661; explicit LF-to-CRLF conversion yields the former 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e. The 463-file quality report passes. The fresh protected benchmark is PASS on the exact candidate: three authenticated children, all 526 physical/Git inputs and all eight measured metrics match the reviewed baseline and limits. Its claim is confined to the synthetic 64-item Windows workload. Structure, backlog, view and site checks are submitted zero-exit execution claims without independently retained raw logs. Original task evidence supports only unchanged behavior; S04 slice, checkpoint, W2 exit and human release remain open.
 
 **Currently open findings:** -
 
