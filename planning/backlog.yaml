@@ -24724,33 +24724,32 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-01T12:21:21+00:00'
-      updated_at: '2026-10-01T13:12:35+00:00'
+      updated_at: '2026-10-01T23:35:28+00:00'
       completed_at: null
-      blocker:
-        reason: 'ADR-0028 packaged LPAC Python worker and no-plaintext-write boundary do not qualify: Python DLL load denies;
-          directory-only ACL permits existing-file writes, recursive ACL blocks launch. Evidence: artifacts/evidence/CAP-04.S05.T02.lpac-feasibility-gate.md'
-        next_action: Diagnose and prove a packaged Python connector worker under verified Windows LPAC with no profile/temp/plaintext
-          writes and no direct egress, then finish broker/grant/UI/recovery integration and independent security review; if
-          approved isolation cannot be met, use append-only ADR/W2 amendment with explicit owner approval before scope change.
-        recorded_at: '2026-10-01T13:12:35+00:00'
-        owner: codex-w2-implementation
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: null
+        notes: 'Reopened: R42c2 and R49 establish source-built zero-capability LPAC no-write and capability-positive pre-transport
+          network denial for implementation feasibility at a955acad; final signed product worker, broker and security review
+          remain open'
       base_sha: 6e9df6409c0cdcae12464dc47d2a809f6c39d2e3
-      lease: null
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-01T23:35:28+00:00'
+        expires_at: '2026-10-02T07:35:28+00:00'
       verification_state: null
       worktree: .
       platform_targets:
       - windows-x64
+      cancellation: null
     - id: CAP-04.S05.T03
       capability_id: CAP-04
       slice_id: CAP-04.S05
