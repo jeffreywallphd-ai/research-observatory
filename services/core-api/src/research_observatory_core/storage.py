@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 19
+DATABASE_SCHEMA_VERSION = 20
+CORPUS_REPORT_DATABASE_SCHEMA_VERSION = 19
 RIGHTS_DATABASE_SCHEMA_VERSION = 18
 CORPUS_DATABASE_SCHEMA_VERSION = 17
 WORK_VERSION_DATABASE_SCHEMA_VERSION = 16
@@ -133,6 +134,11 @@ CORPUS_REPORT_TABLES = (
     "corpus_report_paths",
     "corpus_report_sources",
 )
+CORPUS_SOURCE_PROJECTION_TABLES = (
+    "corpus_source_item_heads",
+    "corpus_source_totals",
+    "corpus_source_overlap_totals",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -194,6 +200,7 @@ EXPECTED_TABLES = (
     "rights_legacy_output_rechecks",
     "rights_use_decisions",
     *CORPUS_REPORT_TABLES,
+    *CORPUS_SOURCE_PROJECTION_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -257,6 +264,7 @@ MUTABLE_STATE_TABLES = (
     "workflow_queue_jobs",
     "workflow_job_attempts",
     "workflow_attempt_artifacts",
+    *CORPUS_SOURCE_PROJECTION_TABLES,
 )
 EXPECTED_TRIGGERS = tuple(
     sorted(
@@ -375,6 +383,12 @@ EXPECTED_INDEXES = (
     "corpus_report_member_item",
     "corpus_report_path_source",
     "corpus_report_source_policy",
+    "corpus_item_states_membership",
+    "corpus_decisions_reason",
+    "rights_use_decisions_action",
+    "corpus_discovery_paths_source",
+    "corpus_discovery_paths_search_run",
+    "corpus_report_snapshots_project_time",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -400,7 +414,8 @@ RECONCILIATION_REVIEW_SCHEMA_SHA256 = "6361c684264358e94c19c90bd67f6f2d47eda21c1
 WORK_VERSION_SCHEMA_SHA256 = "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5"
 CORPUS_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945"
 RIGHTS_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
-EXPECTED_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
+CORPUS_REPORT_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
+EXPECTED_SCHEMA_SHA256 = "1d270388f1dd4f2ad531f9f9d601253f320e327a062256a101b729516f615b26"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -467,7 +482,8 @@ RECONCILIATION_REVIEW_PROFILE_SHA256 = "1db7b16d30ea6c1b629ba935c68a542129855391
 WORK_VERSION_PROFILE_SHA256 = "2cf19511744a6536b5da695027768893bd54946460f57172dd790050bdafda72"
 CORPUS_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131fc31a9fc3"
 RIGHTS_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149cbdfb4ed30"
-EXPECTED_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416911a2f805db4a50f"
+CORPUS_REPORT_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416911a2f805db4a50f"
+EXPECTED_PROFILE_SHA256 = "ffb285caded09ff801bbb9f6dfca97aa52e58f6473db11704a3540e7b4d7a4d1"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3533,6 +3549,7 @@ SCHEMA_METADATA_V16_DDL = SCHEMA_METADATA_V15_DDL.replace("schema_version = 15",
 SCHEMA_METADATA_V17_DDL = SCHEMA_METADATA_V16_DDL.replace("schema_version = 16", "schema_version = 17")
 SCHEMA_METADATA_V18_DDL = SCHEMA_METADATA_V17_DDL.replace("schema_version = 17", "schema_version = 18")
 SCHEMA_METADATA_V19_DDL = SCHEMA_METADATA_V18_DDL.replace("schema_version = 18", "schema_version = 19")
+SCHEMA_METADATA_V20_DDL = SCHEMA_METADATA_V19_DDL.replace("schema_version = 19", "schema_version = 20")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -4778,8 +4795,65 @@ CORPUS_REPORT_DDL = (
 )
 
 
+CORPUS_SOURCE_PROJECTION_DDL = (
+    f"""
+        CREATE TABLE corpus_source_item_heads (
+            project_id TEXT NOT NULL,
+            item_id TEXT NOT NULL CHECK ({_uuid_check("item_id", "7")}),
+            revision_id TEXT NOT NULL CHECK ({_uuid_check("revision_id", "7")}),
+            work_revision_id TEXT NOT NULL CHECK ({_uuid_check("work_revision_id", "7")}),
+            included_in_report INTEGER NOT NULL CHECK (included_in_report IN (0,1)),
+            source_counts_json TEXT NOT NULL CHECK (json_valid(source_counts_json)
+                AND json_type(source_counts_json)='object'
+                AND length(CAST(source_counts_json AS BLOB)) BETWEEN 2 AND 8388608),
+            PRIMARY KEY (project_id,item_id),
+            FOREIGN KEY (revision_id,item_id,project_id)
+                REFERENCES corpus_item_states (revision_id,item_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (work_revision_id,project_id)
+                REFERENCES reconciliation_work_states (revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE corpus_source_totals (
+            project_id TEXT NOT NULL,
+            source_key TEXT NOT NULL CHECK (length(source_key) BETWEEN 1 AND 512),
+            item_count INTEGER NOT NULL CHECK (item_count BETWEEN 1 AND 1000000000),
+            discovery_path_count INTEGER NOT NULL CHECK (discovery_path_count BETWEEN item_count AND 1000000000),
+            PRIMARY KEY (project_id,source_key),
+            FOREIGN KEY (project_id) REFERENCES projects (project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    """
+        CREATE TABLE corpus_source_overlap_totals (
+            project_id TEXT NOT NULL,
+            left_source_key TEXT NOT NULL CHECK (length(left_source_key) BETWEEN 1 AND 512),
+            right_source_key TEXT NOT NULL CHECK (length(right_source_key) BETWEEN 1 AND 512),
+            item_count INTEGER NOT NULL CHECK (item_count BETWEEN 1 AND 1000000000),
+            discovery_path_pair_count INTEGER NOT NULL CHECK (
+                discovery_path_pair_count BETWEEN item_count AND 1000000000),
+            PRIMARY KEY (project_id,left_source_key,right_source_key),
+            CHECK (left_source_key < right_source_key),
+            FOREIGN KEY (project_id,left_source_key) REFERENCES corpus_source_totals (project_id,source_key)
+                ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED,
+            FOREIGN KEY (project_id,right_source_key) REFERENCES corpus_source_totals (project_id,source_key)
+                ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED
+        ) STRICT
+    """,
+    "CREATE INDEX corpus_item_states_membership ON corpus_item_states (project_id,membership,item_id,revision_id)",
+    "CREATE INDEX corpus_decisions_reason ON corpus_decisions (project_id,reason_code,item_id,next_revision_id)",
+    "CREATE INDEX rights_use_decisions_action ON rights_use_decisions (project_id,use_action,occurred_at,decision_id)",
+    "CREATE INDEX corpus_discovery_paths_source ON corpus_discovery_paths "
+    "(project_id,source_revision_id,item_id,path_id)",
+    "CREATE INDEX corpus_discovery_paths_search_run ON corpus_discovery_paths "
+    "(project_id,query_revision_id,item_id,path_id) WHERE query_revision_id IS NOT NULL",
+    "CREATE INDEX corpus_report_snapshots_project_time ON corpus_report_snapshots (project_id,created_at,snapshot_id)",
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V19_DDL,
+    SCHEMA_METADATA_V20_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -4801,6 +4875,7 @@ _DDL_STATEMENTS = (
     *CORPUS_DDL,
     *RIGHTS_POLICY_DDL,
     *CORPUS_REPORT_DDL,
+    *CORPUS_SOURCE_PROJECTION_DDL,
 )
 
 

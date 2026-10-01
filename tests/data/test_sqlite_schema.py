@@ -92,6 +92,51 @@ class SqliteSchemaTests(unittest.TestCase):
         )
         self.assertTrue(report.ok, report.errors)
 
+    def test_v20_query_plans_use_bounded_corpus_rights_source_search_and_snapshot_indexes(self) -> None:
+        self.initialize()
+        lookups = (
+            (
+                "corpus_item_states_membership",
+                "SELECT item_id FROM corpus_item_states WHERE project_id=? AND membership=? ORDER BY item_id",
+                (PROJECT_ID, "included"),
+            ),
+            (
+                "corpus_decisions_reason",
+                "SELECT item_id FROM corpus_decisions WHERE project_id=? AND reason_code=? ORDER BY item_id",
+                (PROJECT_ID, "screened-in"),
+            ),
+            (
+                "rights_use_decisions_action",
+                "SELECT decision_id FROM rights_use_decisions WHERE project_id=? AND use_action=? "
+                "ORDER BY occurred_at,decision_id",
+                (PROJECT_ID, "derive"),
+            ),
+            (
+                "corpus_discovery_paths_source",
+                "SELECT item_id,path_id FROM corpus_discovery_paths WHERE project_id=? AND source_revision_id=? "
+                "ORDER BY item_id,path_id",
+                (PROJECT_ID, REVISION_ID),
+            ),
+            (
+                "corpus_discovery_paths_search_run",
+                "SELECT item_id,path_id FROM corpus_discovery_paths WHERE project_id=? AND query_revision_id=? "
+                "ORDER BY item_id,path_id",
+                (PROJECT_ID, REVISION_ID),
+            ),
+            (
+                "corpus_report_snapshots_project_time",
+                "SELECT snapshot_id FROM corpus_report_snapshots WHERE project_id=? ORDER BY created_at,snapshot_id",
+                (PROJECT_ID,),
+            ),
+        )
+        with open_canonical_database(self.database, expected_project_id=PROJECT_ID) as connection:
+            for expected_index, sql, parameters in lookups:
+                with self.subTest(index=expected_index):
+                    details = " ".join(
+                        str(row[3]) for row in connection.execute("EXPLAIN QUERY PLAN " + sql, parameters)
+                    )
+                    self.assertIn(expected_index, details)
+
     def test_portable_profile_is_exact_and_schema_valid(self) -> None:
         contract_root = REPO / "packages" / "contracts" / "storage"
         profile = json.loads((contract_root / "sqlite-profile.v1.json").read_text(encoding="utf-8"))

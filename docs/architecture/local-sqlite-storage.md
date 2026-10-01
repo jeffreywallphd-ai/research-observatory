@@ -90,6 +90,8 @@ database; T02/T03 must schedule them at startup/maintenance and surface recovery
 | `reconciliation_version_relations`, `reconciliation_relation_evidence` | exact directed version endpoints, human knowledge status and retained source selector/value anchors |
 | `reconciliation_version_preferences`, `reconciliation_version_decisions`, `reconciliation_version_impacts` | immutable citable preference and command lineage, current-authority replay and exact publication-owned dependency invalidation |
 | `corpus_items`, `corpus_item_states`, `corpus_discovery_paths`, `corpus_item_discovery_paths`, `corpus_decisions`, `corpus_decision_evidence`, `corpus_commands` | first-class v2 CorpusItem revision binding, append-only membership and discovery history, actor/reason/protocol/evidence decisions, and exact command replay |
+| `corpus_report_snapshots`, `corpus_report_members`, `corpus_report_paths`, `corpus_report_sources` | immutable report summary, exact member/path stream, and retained source/policy witnesses |
+| `corpus_source_item_heads`, `corpus_source_totals`, `corpus_source_overlap_totals` | mutable, rebuildable current-head source/path and pair counts; no rights authority or sealed-report replacement |
 | `outbox_events` | transaction-outbox metadata/digest seam for the later unit of work |
 
 Object bytes, document content, indexes, models, caches, and other derived
@@ -112,8 +114,8 @@ only intentionally mutable current-profile tables.
 ## Evolution and recovery boundary
 
 T01 established schema version 1 and its sealed ordinary connection factory.
-The backup-first migration authority now advances exact supported v1 through v18
-profiles to current schema v19. It owns forward migrations, backup-before-migrate,
+The backup-first migration authority now advances exact supported v1 through v19
+profiles to current schema v20. It owns forward migrations, backup-before-migrate,
 checkpointed snapshots, frozen source fixtures, and failure recovery. The migration
 runner validates and checkpoints the source, reserves SQLite's writer lock, creates and verifies an online backup
 through a second held connection, and only then runs the reviewed Alembic
@@ -218,6 +220,20 @@ read, rolls back its transient use decision, and records a content-free denial
 provenance event in a separate protected transaction. The frozen target-v18
 recovery schema and populated v18 fixtures remain available for exact
 predecessor recovery.
+
+Version 20 adds derived per-item source counts and project source/overlap totals.
+Every CorpusItem head publication replaces its previous contribution in the
+same transaction as canonical history, provenance, outbox, and retry binding;
+v19-to-v20 migration backfills populated current heads under the backed-up
+migration writer. Report creation still streams exact canonical members,
+authorizes every source for report purpose, and reconciles source and pair
+totals against that stream before sealing. Current rights are rechecked on
+historical reads; these mutable counts never grant permission or alter a sealed
+snapshot. Indexes cover corpus membership/reason, rights action, discovery
+source/search run, and report snapshot chronology. The frozen target-v19
+recovery schema and literal v19 migration fingerprints remain available for
+backup restoration after interruption; retry advances from the intact v19
+source to v20.
 
 ### Windows schema-migration backup paths
 

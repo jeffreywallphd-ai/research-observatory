@@ -11,6 +11,7 @@ from research_observatory_core.corpus_report_model import (
     CorpusReportDrillPage,
     CorpusReportFilter,
     CorpusReportMember,
+    CorpusReportProblem,
     ReportField,
     ReportMembership,
     ReportPath,
@@ -77,6 +78,22 @@ def member(
 
 
 class CorpusReportModelTests(unittest.TestCase):
+    def test_plausible_tampered_pair_cannot_bind_to_exact_member_stream(self) -> None:
+        report = CorpusReportAccumulator(snapshot_id=identity(1), project_id=PROJECT, projected_source_overlaps=True)
+        report.add(
+            member(
+                1,
+                sources=(
+                    ("connector:openalex", "connector-record", 501),
+                    ("import:" + identity(51), "import-member", 502),
+                ),
+            )
+        )
+        sources = (("connector:openalex", 1, 1), ("import:" + identity(51), 1, 1))
+        with self.assertRaisesRegex(CorpusReportProblem, "corpus-report-projection-integrity-invalid"):
+            report.bind_source_projection(sources, (("connector:openalex", "import:" + identity(51), 1, 2),))
+        report.bind_source_projection(sources, (("connector:openalex", "import:" + identity(51), 1, 1),))
+
     def test_distinct_item_denominator_source_route_overlap_and_missingness(self) -> None:
         report = CorpusReportAccumulator(snapshot_id=identity(1), project_id=PROJECT)
         report.add(

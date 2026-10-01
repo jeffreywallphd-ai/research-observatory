@@ -64,12 +64,11 @@
         15,
         16,
         17,
-        18,
-        19
+        18
       ]
     },
     "targetSchemaVersion": {
-      "const": 20
+      "const": 19
     },
     "migrationIds": {
       "oneOf": [
@@ -92,8 +91,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -114,8 +112,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -135,8 +132,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -155,8 +151,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -174,8 +169,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -192,8 +186,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -209,8 +202,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -225,8 +217,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -240,8 +231,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -254,8 +244,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -267,8 +256,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -279,8 +267,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -290,8 +277,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -300,8 +286,7 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
@@ -309,34 +294,25 @@
             "0016_work_versions",
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
           "const": [
             "0017_corpus_items",
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
           "const": [
             "0018_rights_policy",
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         },
         {
           "const": [
-            "0019_corpus_reports",
-            "0020_corpus_source_projection"
-          ]
-        },
-        {
-          "const": [
-            "0020_corpus_source_projection"
+            "0019_corpus_reports"
           ]
         }
       ]
@@ -360,12 +336,11 @@
         "6361c684264358e94c19c90bd67f6f2d47eda21c107d1012a3f86b5cf2faf949",
         "faa1dcd5823f086986ea3a86a8cc85369edd826f2a0c1d724f923bdff9f293f5",
         "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945",
-        "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503",
-        "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
+        "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
       ]
     },
     "targetSchemaSha256": {
-      "const": "1d270388f1dd4f2ad531f9f9d601253f320e327a062256a101b729516f615b26"
+      "const": "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
     },
     "checkpoint": {
       "type": "object",
@@ -403,7 +378,7 @@
       "properties": {
         "relativePath": {
           "type": "string",
-          "pattern": "^state/migration-backups/v(?:[1-9]|1[0-9])-to-v20-[0-9a-f]{32}/project\\.sqlite3$"
+          "pattern": "^state/migration-backups/v(?:[1-9]|10|11|12|13|14|15|16|17|18)-to-v19-[0-9a-f]{32}/project\\.sqlite3$"
         },
         "sha256": {
           "type": "string",
@@ -450,8 +425,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -488,8 +462,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -525,8 +498,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -561,8 +533,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -596,8 +567,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -630,8 +600,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -663,8 +632,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -695,8 +663,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -726,8 +693,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -756,8 +722,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -785,8 +750,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -813,8 +777,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -840,8 +803,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -866,8 +828,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -891,8 +852,7 @@
               "0016_work_versions",
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -915,8 +875,7 @@
             "const": [
               "0017_corpus_items",
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -938,8 +897,7 @@
           "migrationIds": {
             "const": [
               "0018_rights_policy",
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
@@ -960,33 +918,11 @@
         "properties": {
           "migrationIds": {
             "const": [
-              "0019_corpus_reports",
-              "0020_corpus_source_projection"
+              "0019_corpus_reports"
             ]
           },
           "sourceSchemaSha256": {
             "const": "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "sourceSchemaVersion": {
-            "const": 19
-          }
-        }
-      },
-      "then": {
-        "properties": {
-          "migrationIds": {
-            "const": [
-              "0020_corpus_source_projection"
-            ]
-          },
-          "sourceSchemaSha256": {
-            "const": "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
           }
         }
       }

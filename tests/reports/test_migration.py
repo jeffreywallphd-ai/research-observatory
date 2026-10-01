@@ -11,9 +11,17 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
+from alembic.migration import MigrationContext
+from alembic.operations import Operations
 from research_observatory_core import storage
 from research_observatory_core.migrations import runner
-from research_observatory_core.migrations.versions import v0019_corpus_reports
+from research_observatory_core.migrations.versions import (
+    v0002_schema_history,
+    v0019_corpus_reports,
+    v0020_corpus_source_projection,
+)
+from sqlalchemy import create_engine
+from sqlalchemy.pool import StaticPool
 
 from tests.data import test_sqlite_migrations as migration_fixture
 
@@ -94,7 +102,80 @@ def restore_v18(database: Path, kind: str) -> tuple[str, dict[str, list[list[Any
     return str(populated["projectId"]), populated["tables"]
 
 
+def promote_to_frozen_v19(database: Path, project: str) -> None:
+    """Apply the unmodified v19 migration alone to a frozen populated v18 database."""
+
+    raw = sqlite3.connect(database, autocommit=True)
+    engine = create_engine("sqlite://", creator=lambda: raw, poolclass=StaticPool)
+    try:
+        with engine.connect() as connection:
+            connection.exec_driver_sql("PRAGMA foreign_keys=OFF")
+            connection.exec_driver_sql("BEGIN IMMEDIATE")
+            v0019_corpus_reports.apply(
+                Operations(MigrationContext.configure(connection, opts={"transactional_ddl": False})),
+                {
+                    "migration_id": v0019_corpus_reports.revision,
+                    "applied_at": "2026-10-01T00:00:00.000Z",
+                    "backup_manifest_sha256": "a" * 64,
+                    "source_schema_sha256": storage.RIGHTS_SCHEMA_SHA256,
+                    "target_schema_sha256": storage.CORPUS_REPORT_SCHEMA_SHA256,
+                    "targetSchemaSha256": storage.CORPUS_REPORT_SCHEMA_SHA256,
+                    "targetProfileSha256": storage.CORPUS_REPORT_PROFILE_SHA256,
+                    "reportAuthority": storage.CORPUS_REPORT_DDL,
+                    "schemaMetadataDdl": storage.SCHEMA_METADATA_V19_DDL,
+                    "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+                },
+            )
+            connection.exec_driver_sql("COMMIT")
+    finally:
+        engine.dispose()
+    with closing(sqlite3.connect(database)) as predecessor:
+        self_schema = _schema_sha256(predecessor)
+        if self_schema != storage.CORPUS_REPORT_SCHEMA_SHA256:
+            raise AssertionError("frozen-v19-schema-changed")
+        if predecessor.execute("PRAGMA user_version").fetchone() != (19,):
+            raise AssertionError("frozen-v19-version-changed")
+        if predecessor.execute("SELECT project_id FROM projects").fetchone() != (project,):
+            raise AssertionError("frozen-v19-project-changed")
+
+
 class CorpusReportMigrationTests(unittest.TestCase):
+    def test_populated_v19_projection_backfill_interruption_and_backup_recovery(self) -> None:
+        fixture = migration_fixture.SqliteMigrationTests(methodName="runTest")
+        fixture.setUp()
+        self.addCleanup(fixture.tearDown)
+        for failpoint in ("projection-authority-create", "projection-backfill", "user-version-advance"):
+            with self.subTest(failpoint=failpoint):
+                database = fixture.project / failpoint / "state/project.sqlite3"
+                project, _ = restore_v18(database, "import-corpus")
+                promote_to_frozen_v19(database, project)
+                planned = runner.plan_database_migration(database, expected_project_id=project)
+                self.assertEqual(19, planned.source_schema_version)
+                self.assertEqual((v0020_corpus_source_projection.revision,), planned.migration_ids)
+
+                def interrupt(step: str, expected: str = failpoint) -> None:
+                    if step == expected:
+                        raise ValueError("synthetic-projection-migration-interruption")
+
+                with (
+                    patch.object(v0020_corpus_source_projection, "_migration_step_completed", side_effect=interrupt),
+                    self.assertRaises(runner.MigrationProblem),
+                ):
+                    runner.migrate_database(database, expected_project_id=project)
+                with closing(sqlite3.connect(database)) as old:
+                    self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, _schema_sha256(old))
+                    self.assertEqual((19,), old.execute("PRAGMA user_version").fetchone())
+                completed = runner.migrate_database(database, expected_project_id=project)
+                self.assertEqual((v0020_corpus_source_projection.revision,), completed.migration_ids)
+                assert completed.backup_relative_path is not None
+                with closing(sqlite3.connect(database.parent.parent / completed.backup_relative_path)) as backup:
+                    self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, _schema_sha256(backup))
+                    self.assertEqual((19,), backup.execute("PRAGMA user_version").fetchone())
+                with closing(storage.open_canonical_database(database, expected_project_id=project)) as current:
+                    self.assertGreater(
+                        current.execute("SELECT COUNT(*) FROM corpus_source_item_heads").fetchone()[0], 0
+                    )
+
     def test_frozen_v18_recovery_contract_survives_successor(self) -> None:
         frozen_path = REPO / "packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json"
         raw = frozen_path.read_bytes()
@@ -103,12 +184,20 @@ class CorpusReportMigrationTests(unittest.TestCase):
             hashlib.sha256(raw).hexdigest(),
         )
         frozen = json.loads(raw)
+        v19_raw = (REPO / "packages/contracts/storage/sqlite-migration-recovery-v19.snapshot.json").read_bytes()
+        self.assertEqual(
+            "f58f50d884456e24ba7ac55af5bf5bb1216e1aa9924a3dc704f1a718f0766511",
+            hashlib.sha256(v19_raw).hexdigest(),
+        )
+        frozen_v19 = json.loads(v19_raw)
         current = json.loads(
             (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual(18, frozen["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual(19, current["properties"]["targetSchemaVersion"]["const"])
+        self.assertEqual(19, frozen_v19["properties"]["targetSchemaVersion"]["const"])
+        self.assertEqual(20, current["properties"]["targetSchemaVersion"]["const"])
         self.assertEqual(SCHEMA_SHA256, frozen["properties"]["targetSchemaSha256"]["const"])
+        self.assertEqual(storage.CORPUS_REPORT_SCHEMA_SHA256, frozen_v19["properties"]["targetSchemaSha256"]["const"])
         self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current["properties"]["targetSchemaSha256"]["const"])
 
     def test_populated_v18_import_and_connector_histories_survive_v19_with_verified_backup(self) -> None:
@@ -120,7 +209,10 @@ class CorpusReportMigrationTests(unittest.TestCase):
                 project, old = restore_v18(fixture.database, kind)
                 planned = runner.plan_database_migration(fixture.database, expected_project_id=project)
                 self.assertEqual(18, planned.source_schema_version)
-                self.assertEqual((v0019_corpus_reports.revision,), planned.migration_ids)
+                self.assertEqual(
+                    (v0019_corpus_reports.revision, v0020_corpus_source_projection.revision),
+                    planned.migration_ids,
+                )
                 completed = runner.migrate_database(fixture.database, expected_project_id=project)
                 self.assertEqual("migrated", completed.status)
                 assert completed.backup_relative_path is not None
@@ -144,6 +236,16 @@ class CorpusReportMigrationTests(unittest.TestCase):
                         )
                     for name in ("corpus_report_snapshots", "corpus_report_members"):
                         self.assertEqual(0, current.execute(f'SELECT COUNT(*) FROM "{name}"').fetchone()[0])
+                    current_count = current.execute(
+                        "SELECT COUNT(*) FROM corpus_source_item_heads WHERE project_id=?", (project,)
+                    ).fetchone()[0]
+                    self.assertGreater(current_count, 0)
+                    self.assertGreater(
+                        current.execute(
+                            "SELECT COUNT(*) FROM corpus_source_totals WHERE project_id=?", (project,)
+                        ).fetchone()[0],
+                        0,
+                    )
                 with closing(
                     storage.open_canonical_database(fixture.database, expected_project_id=project)
                 ) as reopened:

@@ -21,7 +21,11 @@ import sqlcipher3.dbapi2 as sqlcipher  # type: ignore[import-untyped]
 from jsonschema import Draft202012Validator, FormatChecker
 from research_observatory_core import storage
 from research_observatory_core.migrations import runner
-from research_observatory_core.migrations.versions import v0018_rights_policy, v0019_corpus_reports
+from research_observatory_core.migrations.versions import (
+    v0018_rights_policy,
+    v0019_corpus_reports,
+    v0020_corpus_source_projection,
+)
 
 from tests.data import test_sqlite_migrations as migration_fixture
 from tests.reconciliation import test_migration as protected_fixture
@@ -207,12 +211,26 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 project = restore_v17(database, kind)["projectId"]
                 plan = runner.plan_database_migration(database, expected_project_id=project)
                 self.assertEqual(17, plan.source_schema_version)
-                self.assertEqual(19, plan.target_schema_version)
-                self.assertEqual((v0018_rights_policy.revision, v0019_corpus_reports.revision), plan.migration_ids)
+                self.assertEqual(20, plan.target_schema_version)
+                self.assertEqual(
+                    (
+                        v0018_rights_policy.revision,
+                        v0019_corpus_reports.revision,
+                        v0020_corpus_source_projection.revision,
+                    ),
+                    plan.migration_ids,
+                )
                 self.assertEqual(SCHEMA_SHA256, plan.source_schema_sha256)
                 result = runner.migrate_database(database, expected_project_id=project)
                 self.assertEqual("migrated", result.status)
-                self.assertEqual((v0018_rights_policy.revision, v0019_corpus_reports.revision), result.migration_ids)
+                self.assertEqual(
+                    (
+                        v0018_rights_policy.revision,
+                        v0019_corpus_reports.revision,
+                        v0020_corpus_source_projection.revision,
+                    ),
+                    result.migration_ids,
+                )
                 assert result.backup_relative_path is not None
                 assert result.recovery_manifest_relative_path is not None
                 backup = fixture.project / result.backup_relative_path
@@ -227,9 +245,14 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 validator = Draft202012Validator(schema, format_checker=FormatChecker())
                 self.assertEqual([], list(validator.iter_errors(manifest)))
                 self.assertEqual(17, manifest["sourceSchemaVersion"])
-                self.assertEqual(19, manifest["targetSchemaVersion"])
+                self.assertEqual(20, manifest["targetSchemaVersion"])
                 self.assertEqual(
-                    [v0018_rights_policy.revision, v0019_corpus_reports.revision], manifest["migrationIds"]
+                    [
+                        v0018_rights_policy.revision,
+                        v0019_corpus_reports.revision,
+                        v0020_corpus_source_projection.revision,
+                    ],
+                    manifest["migrationIds"],
                 )
                 self.assertEqual(SCHEMA_SHA256, manifest["sourceSchemaSha256"])
                 self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, manifest["targetSchemaSha256"])
@@ -286,7 +309,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                     with closing(storage.open_canonical_database(database, expected_project_id=project)) as reopened:
                         report = storage.database_integrity_report(reopened, expected_project_id=project)
                         self.assertTrue(report.ok, report.errors)
-                        self.assertEqual(19, report.schema_version)
+                        self.assertEqual(20, report.schema_version)
                 repeated = runner.migrate_database(database, expected_project_id=project)
                 self.assertEqual("current", repeated.status)
                 self.assertIsNone(repeated.backup_relative_path)
@@ -303,7 +326,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual(17, old["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual(19, current["properties"]["targetSchemaVersion"]["const"])
+        self.assertEqual(20, current["properties"]["targetSchemaVersion"]["const"])
         self.assertEqual(SCHEMA_SHA256, old["properties"]["targetSchemaSha256"]["const"])
         self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current["properties"]["targetSchemaSha256"]["const"])
         # A structural historical witness remains interpretable by the frozen
@@ -406,7 +429,10 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 self.assertEqual(ROWS_SHA256["connector-corpus"], _row_fingerprint(saved))
                 self.assertEqual([], saved.execute("PRAGMA cipher_integrity_check").fetchall())
         result = runner.migrate_database(fixture.database, expected_project_id=project)
-        self.assertEqual((v0018_rights_policy.revision, v0019_corpus_reports.revision), result.migration_ids)
+        self.assertEqual(
+            (v0018_rights_policy.revision, v0019_corpus_reports.revision, v0020_corpus_source_projection.revision),
+            result.migration_ids,
+        )
         assert result.backup_relative_path is not None
         second_backup = fixture.root / result.backup_relative_path
         self.assertNotEqual(b"SQLite format 3\x00", second_backup.read_bytes()[:16])
@@ -418,7 +444,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             with closing(storage.open_canonical_database(fixture.database, expected_project_id=project)) as current:
                 report = storage.database_integrity_report(current, expected_project_id=project)
                 self.assertTrue(report.ok, report.errors)
-                self.assertEqual(19, report.schema_version)
+                self.assertEqual(20, report.schema_version)
 
     def test_import_history_can_be_exported_to_encrypted_sqlcipher_and_reopened(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

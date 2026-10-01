@@ -2,9 +2,9 @@
   "schemaVersion": "1.0",
   "documentType": "research-observatory-sqlite-profile",
   "profileId": "sqlite-wal-v1",
-  "databaseSchemaVersion": 17,
+  "databaseSchemaVersion": 20,
   "applicationId": 1380926035,
-  "schemaFingerprintSha256": "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33ac6a7945",
+  "schemaFingerprintSha256": "1d270388f1dd4f2ad531f9f9d601253f320e327a062256a101b729516f615b26",
   "minimumSqliteVersion": "3.37.0",
   "identifierStorage": {
     "project": "uuid4-bridge-or-uuid7-lowercase-text",
@@ -106,7 +106,19 @@
     "corpus_item_discovery_paths",
     "corpus_decisions",
     "corpus_decision_evidence",
-    "corpus_commands"
+    "corpus_commands",
+    "rights_policy_subjects",
+    "rights_policy_revisions",
+    "rights_policy_rechecks",
+    "rights_policy_recheck_scopes",
+    "rights_policy_recheck_completions",
+    "rights_policy_generic_rechecks",
+    "rights_legacy_output_rechecks",
+    "rights_use_decisions",
+    "corpus_report_snapshots",
+    "corpus_report_members",
+    "corpus_report_paths",
+    "corpus_report_sources"
   ],
   "mutableStateTables": [
     "object_records",
@@ -114,7 +126,10 @@
     "outbox_events",
     "workflow_queue_jobs",
     "workflow_job_attempts",
-    "workflow_attempt_artifacts"
+    "workflow_attempt_artifacts",
+    "corpus_source_item_heads",
+    "corpus_source_totals",
+    "corpus_source_overlap_totals"
   ],
   "connectionProfile": {
     "foreignKeys": true,
@@ -224,6 +239,21 @@
     "corpus_item_discovery_paths",
     "corpus_decisions",
     "corpus_decision_evidence",
-    "corpus_commands"
+    "corpus_commands",
+    "rights_policy_subjects",
+    "rights_policy_revisions",
+    "rights_policy_rechecks",
+    "rights_policy_recheck_scopes",
+    "rights_policy_recheck_completions",
+    "rights_policy_generic_rechecks",
+    "rights_legacy_output_rechecks",
+    "rights_use_decisions",
+    "corpus_report_snapshots",
+    "corpus_report_members",
+    "corpus_report_paths",
+    "corpus_report_sources",
+    "corpus_source_item_heads",
+    "corpus_source_totals",
+    "corpus_source_overlap_totals"
   ]
 }

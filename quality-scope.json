@@ -465,6 +465,8 @@
     "tests/reports/test_migration.py",
     "tests/reports/test_repository.py",
     "tools/corpus_report_test_check.py",
-    "tools/rights_test_check.py"
+    "tools/rights_test_check.py",
+    "services/core-api/src/research_observatory_core/corpus_source_projection.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0020_corpus_source_projection.py"
   ]
 }

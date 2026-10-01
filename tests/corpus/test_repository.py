@@ -418,16 +418,29 @@ class CorpusRepositoryTests(unittest.TestCase):
     def test_failure_after_state_write_rolls_back_all_common_and_corpus_facts(self) -> None:
         before = self._counts()
 
+        def projection_counts() -> tuple[int, int, int]:
+            with open_canonical_database(self.database, expected_project_id=self.project) as connection:
+                counts = tuple(
+                    int(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
+                    for table in ("corpus_source_item_heads", "corpus_source_totals", "corpus_source_overlap_totals")
+                )
+                return counts[0], counts[1], counts[2]
+
+        before_projection = projection_counts()
+
         def fail(step: str) -> None:
-            if step == "state-created":
+            if step == selected:
                 raise RuntimeError("deterministic-stop")
 
-        with (
-            patch("research_observatory_core.corpus_repository._publication_step", fail),
-            self.assertRaisesRegex(RuntimeError, "deterministic-stop"),
-        ):
-            self._create()
-        self.assertEqual(before, self._counts())
+        for selected in ("source-projection-updated", "state-created"):
+            with (
+                self.subTest(step=selected),
+                patch("research_observatory_core.corpus_repository._publication_step", fail),
+                self.assertRaisesRegex(RuntimeError, "deterministic-stop"),
+            ):
+                self._create()
+            self.assertEqual(before, self._counts())
+            self.assertEqual(before_projection, projection_counts())
 
     def test_portable_contract_rejection_rolls_back_item_path_and_decision(self) -> None:
         before = self._counts()
@@ -970,6 +983,26 @@ class CorpusRepositoryTests(unittest.TestCase):
             build=append,
         )
         self.assertEqual(2, len(appended.discovery_path_ids))
+        with open_canonical_database(self.database, expected_project_id=self.project) as connection:
+            head = connection.execute(
+                "SELECT revision_id,source_counts_json FROM corpus_source_item_heads WHERE project_id=? AND item_id=?",
+                (self.project, item.item_id),
+            ).fetchone()
+            totals = connection.execute(
+                "SELECT source_key,item_count,discovery_path_count FROM corpus_source_totals "
+                "WHERE project_id=? ORDER BY source_key",
+                (self.project,),
+            ).fetchall()
+            pairs = connection.execute(
+                "SELECT item_count,discovery_path_pair_count FROM corpus_source_overlap_totals WHERE project_id=?",
+                (self.project,),
+            ).fetchall()
+        self.assertEqual(appended.revision_id, head[0])
+        self.assertEqual(
+            {f"import:{self.address.revision_id}": 1, f"import:{address.revision_id}": 1}, json.loads(head[1])
+        )
+        self.assertEqual(((1, 1), (1, 1)), tuple((row[1], row[2]) for row in totals))
+        self.assertEqual(((1, 1),), tuple(tuple(row) for row in pairs))
         self.assertIn(item.discovery_path_ids[0], appended.discovery_path_ids)
         latest_history = SqliteCorpusRepository(self.database, self.project).history(item.item_id, actor=self.actor)
         appended_path = next(path for path in latest_history[-1][1] if path.path_id not in item.discovery_path_ids)

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import unittest
 from contextlib import closing
 from datetime import UTC, datetime
@@ -231,6 +232,35 @@ class CorpusReportRepositoryTests(unittest.TestCase):
         self.assertIsNone(page.members[0].display_label)
         with self.assertRaisesRegex(CorpusReportProblem, "corpus-report-command-conflict"):
             reopened.create(command_id=command_id, command_sha256="b" * 64, actor=self.corpus.actor)
+
+    def test_incremental_source_projection_matches_exact_report_and_fails_closed_on_drift(self) -> None:
+        self.corpus._create()
+        source_key = f"import:{self.corpus.address.revision_id}"
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as connection:
+            heads = connection.execute(
+                "SELECT item_id,source_counts_json FROM corpus_source_item_heads WHERE project_id=? ORDER BY item_id",
+                (self.corpus.project,),
+            ).fetchall()
+            total = connection.execute(
+                "SELECT item_count,discovery_path_count FROM corpus_source_totals WHERE project_id=? AND source_key=?",
+                (self.corpus.project, source_key),
+            ).fetchone()
+        self.assertEqual(2, len(heads))
+        self.assertEqual((2, 2), tuple(total))
+        self.assertEqual(({source_key: 1}, {source_key: 1}), tuple(json.loads(row[1]) for row in heads))
+        self.rights._publish(self._policy())
+        report = self.repository.create(command_id=new_uuid_v7(), command_sha256="a" * 64, actor=self.corpus.actor)
+        self.assertEqual(
+            (2, 2), (report.source_contributions[0].item_count, report.source_contributions[0].discovery_path_count)
+        )
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as connection:
+            connection.execute(
+                "UPDATE corpus_source_item_heads SET source_counts_json='{}' WHERE project_id=? AND item_id=?",
+                (self.corpus.project, self.item.item_id),
+            )
+        with self.assertRaisesRegex(CorpusReportProblem, "corpus-report-projection-integrity-invalid"):
+            self.repository.create(command_id=new_uuid_v7(), command_sha256="b" * 64, actor=self.corpus.actor)
+        self.assertEqual(report, self.repository.summary(report.snapshot_id, actor=self.corpus.actor))
 
     def test_revoked_report_purpose_blocks_historical_inspection(self) -> None:
         current = self.rights._publish(self._policy())

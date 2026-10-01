@@ -38,6 +38,12 @@ from .corpus_report_model import (
     report_member_sha256,
 )
 from .corpus_repository import SqliteCorpusRepository
+from .corpus_source_projection import (
+    SourceProjectionProblem,
+    projected_source_summary,
+    source_for_path,
+    verify_report_member_projection,
+)
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ports.corpus import CorpusActor
 from .reconciliation.contracts import SourceAssertion
@@ -195,43 +201,15 @@ class SqliteCorpusReportRepository:
     def _source_for_path(
         self, connection: CanonicalConnection, path: sqlite3.Row
     ) -> tuple[str | None, SourceAssertion | None, str | None]:
-        route = str(path[1])
-        if route in {"recommendation", "manual"}:
-            return None, None, None
-        if route == "citation":
-            rows = connection.execute(
-                "SELECT revision_id,assertion_json FROM reconciliation_assertions "
-                "WHERE project_id=? AND revision_id=? LIMIT 2",
-                (self._project, path[2]),
-            ).fetchall()
-        else:
-            rows = connection.execute(
-                "SELECT revision_id,assertion_json FROM reconciliation_assertions "
-                "WHERE project_id=? AND source_revision_id=? "
-                "AND json_extract(assertion_json,'$.address.kind')=? "
-                "AND json_extract(assertion_json,'$.address.contextId')=? "
-                "AND json_extract(assertion_json,'$.address.revisionId')=? "
-                "AND json_extract(assertion_json,'$.address.ordinal') IS ? "
-                "AND json_extract(assertion_json,'$.address.recordKey') IS ? LIMIT 2",
-                (self._project, path[2], route, path[4], path[3], path[5], path[6]),
-            ).fetchall()
-        if len(rows) != 1:
-            raise CorpusReportProblem("corpus-report-source-unavailable")
         try:
-            source = SourceAssertion.model_validate_json(str(rows[0][1]))
-        except ValidationError:
-            raise CorpusReportProblem("corpus-report-source-invalid") from None
-        if source.project_id != self._project or (
-            route in {"import-member", "connector-record"} and source.address.kind != route
-        ):
-            raise CorpusReportProblem("corpus-report-source-invalid")
-        if route == "citation":
-            key = None
-        elif route == "import-member":
-            key = "import:" + str(path[3])
-        else:
-            key = "connector:" + source.provider
-        return str(rows[0][0]), source, key
+            return source_for_path(connection, self._project, path)
+        except SourceProjectionProblem as error:
+            code = (
+                "corpus-report-source-unavailable"
+                if str(error) == "corpus-source-unavailable"
+                else "corpus-report-source-invalid"
+            )
+            raise CorpusReportProblem(code) from None
 
     def _authorize_source(
         self,
@@ -457,7 +435,9 @@ class SqliteCorpusReportRepository:
                 self._current_rights(connection, result.snapshot_id, actor)
                 return result
             snapshot_id = new_uuid_v7()
-            accumulator = CorpusReportAccumulator(snapshot_id=snapshot_id, project_id=self._project)
+            accumulator = CorpusReportAccumulator(
+                snapshot_id=snapshot_id, project_id=self._project, projected_source_overlaps=True
+            )
             rights = SqliteRightsRepository(self._database, self._project)
             source_witnesses: dict[str, tuple[str, str, str, str, str | None]] = {}
             last_item_id = ""
@@ -551,6 +531,16 @@ class SqliteCorpusReportRepository:
                         paths=tuple(report_paths),
                         fields=self._fields(tuple(sorted(metadata_sources.items()))),
                     )
+                    try:
+                        verify_report_member_projection(
+                            connection,
+                            self._project,
+                            item_id,
+                            item_revision_id,
+                            (path.source_key for path in report_paths),
+                        )
+                    except SourceProjectionProblem:
+                        raise CorpusReportProblem("corpus-report-projection-integrity-invalid") from None
                     accumulator.add(member)
                     member_json = _canonical(member.model_dump(mode="json", by_alias=True))
                     connection.execute(
@@ -589,6 +579,13 @@ class SqliteCorpusReportRepository:
                         path_count += 1
                     last_item_id = item_id
                 _step("member-batch")
+            try:
+                projected_sources, projected_pairs = projected_source_summary(
+                    connection, self._project, accumulator.member_count
+                )
+            except SourceProjectionProblem:
+                raise CorpusReportProblem("corpus-report-projection-integrity-invalid") from None
+            accumulator.bind_source_projection(projected_sources, projected_pairs)
             summary = accumulator.finalize(
                 intent_revision_id=actor.intent_revision_id,
                 protocol_revision_id=actor.intent_revision_id,

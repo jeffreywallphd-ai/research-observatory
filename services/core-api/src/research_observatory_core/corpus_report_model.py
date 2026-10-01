@@ -464,12 +464,15 @@ class CorpusReportAccumulator:
         snapshot_id: str,
         project_id: str,
         max_distribution_buckets: int = MAX_DISTRIBUTION_BUCKETS,
+        projected_source_overlaps: bool = False,
     ) -> None:
         if not 1 <= max_distribution_buckets <= MAX_DISTRIBUTION_BUCKETS:
             raise CorpusReportProblem("corpus-report-limit")
         self.snapshot_id = snapshot_id
         self.project_id = project_id
         self._max_distribution_buckets = max_distribution_buckets
+        self._projected_source_overlaps = projected_source_overlaps
+        self._projected_pairs: tuple[tuple[str, str, int, int], ...] | None = None
         self._last_item_id: str | None = None
         self._member_count = 0
         self._discovery_path_count = 0
@@ -542,6 +545,24 @@ class CorpusReportAccumulator:
                 assert field.value is not None
                 self._values[field.dimension][field.value] += 1
 
+    def bind_source_projection(
+        self,
+        sources: tuple[tuple[str, int, int], ...],
+        pairs: tuple[tuple[str, str, int, int], ...],
+    ) -> None:
+        if not self._projected_source_overlaps or self._projected_pairs is not None:
+            raise CorpusReportProblem("corpus-report-projection-integrity-invalid")
+        expected_sources = tuple((key, count, self._source_paths[key]) for key, count in sorted(self._sources.items()))
+        if sources != expected_sources or len(pairs) > MAX_SOURCE_OVERLAP_PAIRS:
+            raise CorpusReportProblem("corpus-report-projection-integrity-invalid")
+        expected_pairs = tuple(
+            (left, right, count, self._source_pair_paths[(left, right)])
+            for (left, right), count in sorted(self._source_pairs.items())
+        )
+        if pairs != expected_pairs:
+            raise CorpusReportProblem("corpus-report-projection-integrity-invalid")
+        self._projected_pairs = pairs
+
     def finalize(
         self,
         *,
@@ -549,6 +570,8 @@ class CorpusReportAccumulator:
         protocol_revision_id: str,
         created_at: str,
     ) -> CorpusReportSnapshot:
+        if self._projected_source_overlaps and self._projected_pairs is None:
+            raise CorpusReportProblem("corpus-report-projection-integrity-invalid")
         distributions: list[ValueDistribution] = []
         for dimension in VALUE_DIMENSIONS:
             all_values = sorted(self._values[dimension].items(), key=lambda item: (-item[1], item[0]))
@@ -587,9 +610,16 @@ class CorpusReportAccumulator:
                     left_source_key=left,
                     right_source_key=right,
                     item_count=count,
-                    discovery_path_pair_count=self._source_pair_paths[(left, right)],
+                    discovery_path_pair_count=path_pairs,
                 )
-                for (left, right), count in sorted(self._source_pairs.items())
+                for left, right, count, path_pairs in (
+                    self._projected_pairs
+                    if self._projected_source_overlaps and self._projected_pairs is not None
+                    else tuple(
+                        (left, right, count, self._source_pair_paths[(left, right)])
+                        for (left, right), count in sorted(self._source_pairs.items())
+                    )
+                )
             ),
             route_contributions=tuple(
                 RouteContribution(

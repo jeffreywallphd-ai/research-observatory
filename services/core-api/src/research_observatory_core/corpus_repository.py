@@ -30,6 +30,7 @@ from .corpus.membership import (
     rebind_work,
 )
 from .corpus_contracts import encode_corpus_decision, encode_corpus_item_revision, encode_discovery_path
+from .corpus_source_projection import SourceProjectionProblem, apply_source_projection
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ingestion.preview_workflow import fingerprint
 from .ports.corpus import CorpusActor
@@ -805,6 +806,18 @@ class SqliteCorpusRepository:
                 "INSERT INTO corpus_item_discovery_paths (revision_id,project_id,item_id,path_id) VALUES (?,?,?,?)",
                 (item.revision_id, item.project_id, item.item_id, path_id),
             )
+        try:
+            apply_source_projection(
+                connection,
+                self._project,
+                item.item_id,
+                item.revision_id,
+                item.previous_revision_id,
+                item.work_revision_id,
+            )
+        except SourceProjectionProblem:
+            raise CorpusProblem("corpus-source-projection-integrity-invalid") from None
+        _publication_step("source-projection-updated")
         _publication_step("state-created")
 
     def _write_decision(self, connection: CanonicalConnection, decision: CorpusDecision) -> None:
