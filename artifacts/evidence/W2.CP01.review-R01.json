@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-risk-cluster-checkpoint-review",
+  "checkpointId": "W2.CP01",
+  "attemptId": "R01",
+  "reviewer": "agent:/root/w2_cp01_independent_final",
+  "result": "approved",
+  "candidateCommit": "9a319a1b986ae219f0055a037d05c6005718b099",
+  "evidenceCommit": "887e5cd1293c86e609ce3a0d28709de29b6cfb8d",
+  "evidencePath": "artifacts/evidence/W2.CP01.qualification-01.json",
+  "evidenceGitByteSha256": "722a87abe83e68626f2ef644eba47f70ea016064d85370d5f436e738e034c5af",
+  "notes": "Independent review authenticates exact candidate 9a319a1b, all 33 shared-input Git-byte hashes, selected and adverse logs and reports, and 94+43+2 passing case executions including fresh five-source and native Windows/Core/browser smoke. The initial loader setup failure is retained and narrowly corrected at the same candidate without changing assertions. Idempotency, rights and redaction, conflict and version history, cancellation and restart, and protected migration are covered at checkpoint depth. The full Wave matrix, installed package and live-provider behavior remain deferred; CP01 is a non-human execution checkpoint only.",
+  "findings": [],
+  "closures": [],
+  "limitations": "No human W2 release decision, full Wave-exit qualification, live-provider result, installed-package result, or new product scope is approved by this review."
+}
