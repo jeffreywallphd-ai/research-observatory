@@ -234,10 +234,53 @@ denied dependency/resource or prove a Python worker can start: the minimal
 two-file package is not the full PyInstaller runtime, and no Python code ran.
 No ordinary-AppContainer fallback is authorized.
 
+## R30 process-local loader-notification follow-up
+
+A fresh, ignored native diagnostic compared the same two-file Python 3.14.6
+package, read-only runtime ACL sequence and recursive disposable-profile
+no-write ACL sequence in zero-capability LPAC and ordinary AppContainer. The
+ordinary AppContainer case was a diagnostic comparison, not an approved worker
+fallback. The worker registered `LdrRegisterDllNotification`, queried its own
+process signature and image-load mitigation policies, attempted absolute-path
+`LoadLibraryW` on the packaged DLL, then loaded `VERSION.dll` as a callback
+positive control. Its notification callback copied only bounded module names
+into a fixed buffer and reported them after loading returned.
+
+In LPAC, the Python DLL again failed with Win32 error 5 and **zero notifications
+before the control load**. The subsequent `VERSION.dll` load succeeded and
+reported `msvcrt.dll` and `VERSION.dll`, establishing that notifications worked
+in that same LPAC process. In ordinary AppContainer, the same Python DLL loaded
+and eight notifications appeared before the control, ending with
+`python314.dll`. Both processes reported successful mitigation-policy queries
+with signature and image-load flags zero. Thus those queried policy flags do
+not explain the tested difference; no notification identifies the denied
+resource. The callback cannot observe a failed file or policy check, so the
+result does not prove where the denial occurred or that all relevant
+mitigations match. No Python code or plugin ran in the LPAC case.
+
+Both runs verified their token mode and zero capability count. Both disposable
+profiles and runtime copies passed post-restore content/inventory checks, all
+saved DACLs were restored, `DeleteAppContainerProfile` returned success, and
+the disposable roots were absent. The ignored raw log contains no recorded
+account/profile path or traceback. This is diagnostic evidence only, not a
+commit-bound acceptance receipt or production worker qualification. R30 did
+not repeat the hostile no-write/egress matrix; post-run integrity cannot rule
+out a transient write during worker execution.
+
+| R30 ignored input/output | SHA-256 |
+|---|---|
+| Native worker source `artifacts/tmp/CAP-04.S05.T02.loaderdiag-control-worker/src/main.rs` | `54c240236c4e7675d5f88f461ac6bdc67131e913bacb2c327af1e041559273d1` |
+| Worker `Cargo.toml` / `Cargo.lock` | `8efee4b9962868608744caca26512d33283f6f12d9e904c9e900644baaf09d17` / `03419592143215c267fb3b2a7d12878ba8a1c9c31cc47f93ccfab71b69506840` |
+| Package builder `artifacts/tmp/CAP-04.S05.T02.make_loaderdiag_control_package.py` | `11c63c0daa680de3e8a97f693bb60e3b8bf5c1119e3dcd3d274800e2ecdc4e1a` |
+| Runner `artifacts/tmp/CAP-04.S05.T02.loaderdiag_control_probe.py` | `dd886a7fa77073cc08e79ff2373213137639984f97bb927a08ab80969fc2b83c` |
+| Package inventory / native EXE | `7e51f544369ce74e4023eb8b6373d76f62819c96dd02ea8acf1f0dade97ed1a2` / `fe264b53e7210720d4ceb65502c23191dcb3c5cabe2f6d4855ea5f9b2874671a` |
+| Packaged `python314.dll` | `dd764da43011c90fb33cdc9ff88b0180537669f60f3d7d56b5095b33ce4b3cd7` |
+| Raw log `artifacts/tmp/CAP-04.S05.T02.loaderdiag-control-matched.log` | `6cd5576736325a7990754ff2dfa3d9a8b0b3f828a86ffefe2992fe41266ecf60` |
+
 ### Next diagnostic requiring host authorization
 
 The exact resource behind the Python DLL's LPAC `LoadLibraryW` error 5 is
-still unknown. A bounded next diagnostic is one fresh, synthetic-only worker
+still unknown after R30. A bounded next diagnostic is one fresh, synthetic-only worker
 launch under [Microsoft Process Monitor](https://learn.microsoft.com/en-us/troubleshoot/windows-client/shell-experience/troubleshoot-apps-start-failure-use-process-monitor),
 filtered to the unique test worker process and stopped immediately after the
 load failure. Process Monitor requires elevation and may load a system driver;
@@ -287,7 +330,9 @@ and the task has a complete candidate.
 
 CAP-04.S05.T02 cannot be submitted as complete. R29e proves the specified
 test-owned native LPAC no-write and direct-denial matrix, but the approved
-Python connector image still fails before user code. The native fixture
+Python connector image still fails before user code. R30 narrows the observed
+loader stage without identifying the denied resource or changing that gate.
+The native fixture
 executes no connector package and does not reach brokered plugin calls. The
 project grant, trust, broker, migration, and recovery code on
 the branch remains partial work; none substitutes for the real worker proof.
