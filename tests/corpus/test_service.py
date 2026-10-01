@@ -469,19 +469,33 @@ class CorpusServiceTests(unittest.TestCase):
             (added_path.direction, added_path.occurred_at, added_path.predecessor_item_revision_id),
         )
         self.assertEqual(2, len(added.discovery_path_ids))
+        with self.assertRaisesRegex(CorpusProblem, "corpus-work-target-unrelated"):
+            self.f.service.rebind(
+                str(ROOT),
+                added.item_id,
+                expected_revision_id=added.revision_id,
+                command_id=FOURTH_COMMAND,
+                next_work_id=NEXT_WORK,
+                next_work_revision_id=NEXT_WORK_REVISION,
+                reason_code="work-split",
+                protocol_revision_id=INTENT,
+                evidence_revision_ids=(NEXT_WORK_REVISION,),
+                trace_id=TRACE,
+            )
+        self.assertEqual(3, self.f.repository.publications)
         rebound = self.f.service.rebind(
             str(ROOT),
             added.item_id,
             expected_revision_id=added.revision_id,
             command_id=FOURTH_COMMAND,
-            next_work_id=NEXT_WORK,
+            next_work_id=WORK,
             next_work_revision_id=NEXT_WORK_REVISION,
-            reason_code="work-split",
+            reason_code="work-advance",
             protocol_revision_id=INTENT,
             evidence_revision_ids=(NEXT_WORK_REVISION,),
             trace_id=TRACE,
         )
-        self.assertEqual((NEXT_WORK, NEXT_WORK_REVISION), (rebound.work_id, rebound.work_revision_id))
+        self.assertEqual((WORK, NEXT_WORK_REVISION), (rebound.work_id, rebound.work_revision_id))
         self.assertEqual(4, self.f.repository.publications)
 
     def test_changed_command_with_same_retry_id_conflicts_without_new_ids(self) -> None:

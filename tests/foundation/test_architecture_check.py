@@ -179,9 +179,7 @@ class ArchitectureContractTests(unittest.TestCase):
                 "def save(connection):\n    connection.execute('SELECT 1')\n",
                 encoding="utf-8",
             )
-            (root / "main.py").write_text(
-                "from .corpus_repository import SqliteCorpusRepository\n", encoding="utf-8"
-            )
+            (root / "main.py").write_text("from .corpus_repository import SqliteCorpusRepository\n", encoding="utf-8")
             self.assertEqual([], core_data_boundary_errors(root))
             for location in ("business.py", "ports/corpus.py", "business/corpus_repository.py"):
                 path = root / location

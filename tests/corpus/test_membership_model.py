@@ -282,11 +282,13 @@ class CorpusMembershipModelTests(unittest.TestCase):
             dimension="work-reference",
             previous_value=WORK_REVISION,
             next_value=NEXT_WORK_REVISION,
-            next_work_id=OTHER,
+            next_work_id=WORK,
             evidence_revision_ids=(NEXT_WORK_REVISION,),
         )
+        with self.assertRaisesRegex(CorpusProblem, "corpus-work-target-unrelated"):
+            rebind_work(current, change.model_copy(update={"next_work_id": OTHER}))
         rebound = rebind_work(current, change)
-        self.assertEqual((OTHER, NEXT_WORK_REVISION), (rebound.work_id, rebound.work_revision_id))
+        self.assertEqual((WORK, NEXT_WORK_REVISION), (rebound.work_id, rebound.work_revision_id))
         with self.assertRaisesRegex(CorpusProblem, "corpus-predecessor-stale"):
             rebind_work(rebound, change)
         with self.assertRaises(ValidationError):
