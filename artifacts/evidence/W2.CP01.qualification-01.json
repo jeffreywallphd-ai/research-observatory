@@ -1,0 +1,304 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-risk-cluster-checkpoint-evidence",
+  "checkpointId": "W2.CP01",
+  "waveId": "W2",
+  "kind": "risk-cluster",
+  "deploymentProfile": "LOC",
+  "platform": "windows-x64",
+  "scope": [
+    "CAP-04.S01",
+    "CAP-04.S02",
+    "CAP-04.S03"
+  ],
+  "candidateCommit": "9a319a1b986ae219f0055a037d05c6005718b099",
+  "approvedWaveCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+  "status": "PASS_PENDING_INDEPENDENT_REVIEW",
+  "authority": "Evidence for the approved S01-S03 import, four source contracts, and reconciliation checkpoint only; no new scope, human gate, Wave exit, or release decision.",
+  "selectionRationale": "Freshly exercise the newly added five-source runtime handoff, accumulated source authority, idempotent and atomic import, conflict/version review, cancellation/restart, protected migration, portable contract and graph edges, and a real native/renderer/Core build and smoke. The unchanged 644-case foundation suite and full profile matrix have no new foundation input impact; they remain due at W2 exit rather than being repeated at this checkpoint.",
+  "exactInputClosure": {
+    "method": "SHA-256 of committed Git bytes at candidateCommit; not checkout CRLF bytes",
+    "inputs": [
+      {
+        "path": "packages/contracts/core-api/openapi.json",
+        "gitByteSha256": "5c06bf006534c238876d9a09e76ae2b876ab9d6157d5b0ca5399db00772919f9"
+      },
+      {
+        "path": "packages/contracts/core-api/generated.ts",
+        "gitByteSha256": "23b12e935da8f478b726ee5744febd3c86d4fdbd1484df9c1e5b25bbb5775d8c"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-request.schema.json",
+        "gitByteSha256": "5a6c21c0d138c23db1bfa80dccff2c145fe642f087b28eaf063e7d4374417ce2"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-page.schema.json",
+        "gitByteSha256": "886f2e4259b8bb8187f43a79379b306c27b77920ff1a5130a7be52dfb2c58d5f"
+      },
+      {
+        "path": "packages/contracts/connectors/connector-capabilities.schema.json",
+        "gitByteSha256": "f783440f17d8987a7c90c3ae742e5946b86458e615c02c67805f1ce6fa17c597"
+      },
+      {
+        "path": "packages/contracts/scholarly-records/source-assertion.schema.json",
+        "gitByteSha256": "aa6d61846eac97ceb35195119a748743ad6d200c6ce235320b9da54d67be3656"
+      },
+      {
+        "path": "packages/contracts/scholarly-records/normalized-identifier.schema.json",
+        "gitByteSha256": "cc89b220f9e8bb856cf06d46b859132b08732f0a155f21f813ce29b0695290a8"
+      },
+      {
+        "path": "packages/contracts/scholarly-records/reconciliation-result.schema.json",
+        "gitByteSha256": "f94a742187f5d2b766705142505169a440e605513dc057aea87c928a3c769483"
+      },
+      {
+        "path": "packages/contracts/scholarly-records/candidate-page.schema.json",
+        "gitByteSha256": "7556fc4bc4882dd3ae1df286d45ac1479aa09e71842b58575864fd25618f060d"
+      },
+      {
+        "path": "packages/contracts/scholarly-records/work-state.schema.json",
+        "gitByteSha256": "05689257f54187e36c42fb9f35022aef70f02092b97d74dff686724a0ea4c2f9"
+      },
+      {
+        "path": "packages/contracts/scholarly-records/work-version.schema.json",
+        "gitByteSha256": "f26003231cc8fac722a01ec2bbbaa4c4a74e0b90a848b0ebfe2af9d4fd5d6465"
+      },
+      {
+        "path": "packages/contracts/scholarly-records/version-work-page.schema.json",
+        "gitByteSha256": "d53e3f74a2608203fe460453a380e381a92a90bb2adce42435f5787f2b6e2f27"
+      },
+      {
+        "path": "packages/contracts/domain/domain-core.schema.json",
+        "gitByteSha256": "43c4a40b07d96a7fd54a6b63c053d33c999763d0273f63b90a9aaea045524abd"
+      },
+      {
+        "path": "packages/contracts/domain/domain-lifecycle.v1.json",
+        "gitByteSha256": "99386404ed393d385f223680a2dbafba10c995eadfc1e0c4d912e180322c5125"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/import_previews.py",
+        "gitByteSha256": "5809f502e3789d6e235a47ef42f3d758bb6867dd3f26934eca776c9cbde08036"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/import_commits.py",
+        "gitByteSha256": "4c6742bf6480ae393487b910ace2bf448b62054bf9d464853f6d5c208312a488"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/connectors.py",
+        "gitByteSha256": "0e4cb28eade372289dd95f581a9f87637ae9efd8468b581e46913e98c2aef486"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/ports/reconciliation.py",
+        "gitByteSha256": "974dd6c48b823e5ab71e70124a786fcbc89321c45e7e27101e552f8ed0cce018"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0011_import_previews.py",
+        "gitByteSha256": "d80b2334bab3d65b016fd8282eaff5784815cc5a3c56a7ec62dd8ebadc972982"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0012_import_summaries.py",
+        "gitByteSha256": "e538b0ee317f4a28312e8e8f80e739540441a4876f8434fab61b21d5ff057f02"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0013_import_commits.py",
+        "gitByteSha256": "e52a0ccb23bae8265d492e997c338e16fdaea3e16c37d2b22cf30cf7684f186c"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0014_scholarly_reconciliation.py",
+        "gitByteSha256": "7a5229ec89021e671a191d33b5995d4b0dcd38384032d9f979ba305eb6dd4668"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0015_reconciliation_review.py",
+        "gitByteSha256": "983ecc03af4458eba2e11051998970322bb45c9bb5445bb88b9c9a5c70bb3ea7"
+      },
+      {
+        "path": "services/core-api/src/research_observatory_core/migrations/versions/v0016_work_versions.py",
+        "gitByteSha256": "2d4e186b3771acc311a41e92dd83a247eccc4d578809f865b5c66f5688b27b77"
+      },
+      {
+        "path": "tests/reconciliation/test_runtime_windows.py",
+        "gitByteSha256": "bef72c58d28b4636a153bf15de0cef69f049490447b227b0bf0c44e496ebd2d6"
+      },
+      {
+        "path": "tests/connectors/source_public_handoff.py",
+        "gitByteSha256": "7a5f5e722cb28ac869fde0b9f5c64d4c20814d18c2212da0941d33d971f95ba7"
+      },
+      {
+        "path": "tests/fixtures/imports/public-handoff-v1.json",
+        "gitByteSha256": "86ddf97918c900b35a0ab852caa8d9db8d4ad985cddfbdd2e8b75ca2fd330ec6"
+      },
+      {
+        "path": "tests/fixtures/scholarly-metadata/connector-page.v1.json",
+        "gitByteSha256": "6f69570dbae3249ec6af545e17b86778a743fe2ae5054f914fe7a791c95b9de9"
+      },
+      {
+        "path": "tests/fixtures/scholarly-metadata/source-test-request.v1.json",
+        "gitByteSha256": "aaa71d02200e6e075fd316218af4c68373dd3a7b50fc090e1a42d34a83116c05"
+      },
+      {
+        "path": "tests/fixtures/scholarly-metadata/work-versions.v1.json",
+        "gitByteSha256": "0c207bbc9b3cb495bb5ba5938143ebfa2ed7f3feda2dbd44d979384806c57678"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/supervisor.rs",
+        "gitByteSha256": "ad33668bec2cae91eb80a45eb2c1510a0d0242906bf050dd3db23a853f263ce2"
+      },
+      {
+        "path": "apps/desktop/src-tauri/src/reconciliation_admission.rs",
+        "gitByteSha256": "31d424f24951d06303bb845e937d34783df700c5de169f13a5d9f422d823b4a1"
+      },
+      {
+        "path": "design/ui-reference/APPROVAL.yaml",
+        "gitByteSha256": "45f517db7700251d036fa178173606ce36884f901d5ece6b1b5be5ae51c82b7b"
+      }
+    ],
+    "worktreeCleanDuringSelectedChecks": true
+  },
+  "checks": [
+    {
+      "id": "focused-boundaries-initial",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.reconciliation.test_runtime_windows tests.connectors.test_source_slice_runtime tests.data.test_import_commit_publication tests.reconciliation.test_batch_worker tests.reconciliation.test_exact tests.reconciliation.test_version_repository tests.reconciliation.test_native_renderer tests.contracts.test_import_public_handoff tests.contracts.test_connector_contracts tests.graph.test_dependency_impacts tests.security.test_import_preview_protection",
+      "environment": "TEMP/TMP=artifacts/tmp; PYTHONPATH omitted in this initial attempt",
+      "exitCode": 1,
+      "durationSeconds": 442.644,
+      "result": "94 executed cases passed; one loader import error before its tests ran",
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP01.focused-01.log",
+        "sha256": "019c5cf33437289930fd5c25bc1e0a14763b623f8a30621edb0d229f44eef407"
+      },
+      "adverse": true
+    },
+    {
+      "id": "runtime-windows-corrected",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.reconciliation.test_runtime_windows",
+      "environment": "TEMP/TMP=artifacts/tmp; PYTHONPATH=services/core-api/src",
+      "exitCode": 0,
+      "durationSeconds": 64.736,
+      "result": "2 tests passed, including the new import plus all four retained providers batch replay after Core reconstruction",
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP01.runtime-windows-corrected-01.log",
+        "sha256": "f929033cf33e98bf024fc2e0ccd9f2f91d76e296ed507d1d934cba235877059b"
+      }
+    },
+    {
+      "id": "failure-migration",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_connector_network_failures tests.connectors.test_connector_authority tests.service.test_import_commit_interruptions tests.service.test_import_commit_process_windows tests.data.test_import_preview_migration tests.data.test_import_summary_migration tests.data.test_import_commit_migration tests.reconciliation.test_migration tests.reconciliation.test_review_migration tests.reconciliation.test_version_migration",
+      "environment": "TEMP/TMP=artifacts/tmp",
+      "exitCode": 0,
+      "durationSeconds": 237.29,
+      "result": "43 tests passed",
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP01.failure-migration-01.log",
+        "sha256": "e653b1ab5b7c85a54dadd878aa461a3d7823f500a68eda67b36a1039a970fa2a"
+      }
+    },
+    {
+      "id": "core-api-contract",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated Core API contract matches source",
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP01.core-contract-01.log",
+        "sha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f"
+      }
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/W2.CP01.build-01.json",
+      "exitCode": 0,
+      "result": "PASS: clean exact candidate and compatible component versions",
+      "report": {
+        "path": "artifacts/tmp/W2.CP01.build-01.json",
+        "sha256": "732f62bb460422d9a36b085aac3b1847d534a7c6c963b897f3b87681a7288c1c"
+      },
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP01.build-01.log",
+        "sha256": "77fa5b901ccdc5878f4727acce3a0e3e8460621515de966c1f312256bdeb3925"
+      }
+    },
+    {
+      "id": "packaging-input-smoke",
+      "command": ".venv\\Scripts\\python.exe tools/packaging_smoke_check.py --repo . --report artifacts/tmp/W2.CP01.package-01.json",
+      "exitCode": 0,
+      "result": "PASS: locked packaging inputs; no installer or signing claim",
+      "report": {
+        "path": "artifacts/tmp/W2.CP01.package-01.json",
+        "sha256": "217e7a74875e426a5c33e0ff3c52fa6a42c7ed60524a3f85ca8117d5250dc642"
+      },
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP01.package-01.log",
+        "sha256": "94939e1e44e5de37c047c4da58b8c400f457088ad6402587403f2d7bbaf7e37f"
+      }
+    }
+  ],
+  "criterionProof": [
+    {
+      "risk": "Import and five-source exact handoff, idempotency, current rights, no duplicate canonical publication",
+      "proof": [
+        "runtime-windows-corrected",
+        "focused-boundaries-initial",
+        "failure-migration",
+        "core-api-contract"
+      ],
+      "boundary": "Production Core, DPAPI/SQLCipher, import and four provider adapters, portable contracts; provider HTTP is synthetic."
+    },
+    {
+      "risk": "Protected replay/redaction, error and denial, cancellation/restart and rollback",
+      "proof": [
+        "focused-boundaries-initial",
+        "failure-migration",
+        "runtime-windows-corrected"
+      ],
+      "boundary": "Source and import runtime tests, protected migration/backup/reopen, real native supervisor and browser client; no live provider service."
+    },
+    {
+      "risk": "Conflicting source identities, batch and version decisions, preserved history and downstream impacts",
+      "proof": [
+        "focused-boundaries-initial",
+        "runtime-windows-corrected"
+      ],
+      "boundary": "Exact/worker/version repositories, graph continuation and native review retry/reversal/restart; human authority remains required for decisions."
+    },
+    {
+      "risk": "Exact shared-contract input and clean build/smoke",
+      "proof": [
+        "core-api-contract",
+        "build-manifest",
+        "packaging-input-smoke",
+        "focused-boundaries-initial"
+      ],
+      "boundary": "Git-byte input identities; native renderer test compiles the locked offline Rust integration harness and exercises the Core/browser path. Packaging smoke validates locked inputs only."
+    }
+  ],
+  "retainedAdverseHistory": [
+    {
+      "event": "Earlier 35-command checkpoint fallback failed at desktop application after 16 passing commands; not qualifying CP01 evidence",
+      "candidateCommit": "c7108dc4eb8107c2d0ee1a01441a7ff1fcac6a59",
+      "report": {
+        "path": "artifacts/tmp/W2.S01-S03.checkpoint-union-03.json",
+        "sha256": "70b6baf3342e88a215df0f05741e26023cb31ceedda2bbfe6ed783b0f0f1a590"
+      },
+      "rawLog": {
+        "path": "artifacts/tmp/W2.S01-S03.checkpoint-union-03.log",
+        "sha256": "7c4dadb9d914e31c064e82c0656aa262ba07db8aea3a50b696b7848d1d39e5cb"
+      },
+      "resolution": "Three approved linked corrections W2.C06.T01, W2.C07.T01, W2.C08.T01; strict Clippy and pinned desktop application then passed at W2.C08.T01 candidate, with unchanged approved behavior."
+    },
+    {
+      "event": "Initial direct unittest selection lacked PYTHONPATH and failed to import test_runtime_windows before assertions",
+      "rawLog": {
+        "path": "artifacts/tmp/W2.CP01.focused-01.log",
+        "sha256": "019c5cf33437289930fd5c25bc1e0a14763b623f8a30621edb0d229f44eef407"
+      },
+      "resolution": "Same committed candidate and unchanged tests passed both runtime_windows cases with PYTHONPATH=services/core-api/src; all other 94 first-run cases passed. No assertion was altered or waived."
+    }
+  ],
+  "effectiveFreshSelection": "94 first-run cases passed, 43 failure/migration cases passed, and 2 corrected Windows runtime cases passed at the exact candidate; one initial loader setup error is retained and superseded only for its missing module.",
+  "priorReviewedEvidence": [
+    "CAP-04.S01, CAP-04.S02 and CAP-04.S03 approved slice evidence/reviews remain their historical candidate-bound records; no fresh-current claim is made from them.",
+    "W2.C08.T01 pinned desktop application PASS at product candidate f14c14b8e4833358892696475786af62f73b2212, report SHA-256 d6af2e3286c197d9a69f6c30506eb3d49fdb3ad312b0b62bf0e50d98867c3eb7; product input closure to this candidate is unchanged outside independently reviewed tracking transitions, but the fresh native smoke above supplies CP01 build evidence."
+  ],
+  "deferredToWaveExit": "Fresh full affected/repository/profile matrix, 644-case foundation run, complete desktop/platform/installer/security/privacy/accessibility/performance and three-process benchmarks, and human release decision. Reopen a specific check earlier if new input impact, a suspect receipt or observed failure requires it.",
+  "limitations": "Synthetic provider HTTP and qualification fixtures do not prove live-provider behavior. Core reconstruction in the five-source test is same-process; separate native restart/retry is covered by the selected renderer and migration tests. Packaging-input smoke does not build or sign an installer. No research findings or source claims are inferred.",
+  "independentReview": "pending"
+}
