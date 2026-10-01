@@ -1,0 +1,378 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S04.T03",
+  "baseCommit": "77fe987e16c9bb4b5878538ddf25cce5f24d68c9",
+  "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app.css",
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/CorpusCanvasWorkspace.test.tsx",
+    "apps/desktop/src/app/CorpusCanvasWorkspace.tsx",
+    "apps/desktop/src/app/workflowNavigationModel.ts",
+    "artifacts/evidence/CAP-04.S04.T03.architecture-maintenance.md",
+    "artifacts/evidence/CAP-04.S04.T03.task-start.md",
+    "artifacts/evidence/ui-change/CAP-04.S04.T03.json",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/core-api/README.md",
+    "packages/contracts/core-api/generated.test.ts",
+    "packages/contracts/core-api/generated.ts",
+    "packages/contracts/core-api/openapi.json",
+    "packages/contracts/corpus-reports/README.md",
+    "packages/contracts/corpus-reports/corpus-report.schema.json",
+    "packages/contracts/corpus-reports/corpus-report.template.ts.txt",
+    "packages/contracts/corpus-reports/corpus-report.test.ts",
+    "packages/contracts/corpus-reports/fixtures/invalid-denominator.v1.json",
+    "packages/contracts/corpus-reports/fixtures/invalid-known-without-witness.v1.json",
+    "packages/contracts/corpus-reports/fixtures/valid-drill-page.v1.json",
+    "packages/contracts/corpus-reports/fixtures/valid-member.v1.json",
+    "packages/contracts/corpus-reports/fixtures/valid-overlap-member.v1.json",
+    "packages/contracts/corpus-reports/fixtures/valid-overlap-snapshot.v1.json",
+    "packages/contracts/corpus-reports/fixtures/valid-snapshot.v1.json",
+    "packages/contracts/corpus-reports/generate.mjs",
+    "packages/contracts/corpus-reports/generated.ts",
+    "packages/contracts/package.json",
+    "packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/tsconfig.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S04.T03.html",
+    "planning/review-site/CAP-04/CAP-04.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/corpus_api.py",
+    "services/core-api/src/research_observatory_core/corpus_report_model.py",
+    "services/core-api/src/research_observatory_core/corpus_report_repository.py",
+    "services/core-api/src/research_observatory_core/corpus_service.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0019_corpus_reports.py",
+    "services/core-api/src/research_observatory_core/ports/corpus_reports.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/corpus/test_api.py",
+    "tests/corpus/test_service.py",
+    "tests/corpus_reports/test_model.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/foundation/test_architecture_check.py",
+    "tests/reconciliation/test_corpus_migration.py",
+    "tests/reports/fixtures/schema-v18-authority.json",
+    "tests/reports/fixtures/schema-v18-connector-corpus-populated.json",
+    "tests/reports/fixtures/schema-v18-import-corpus-populated.json",
+    "tests/reports/test_migration.py",
+    "tests/reports/test_repository.py",
+    "tests/rights/test_migration.py",
+    "tests/rights/test_runtime_windows.py",
+    "tools/architecture_check.py",
+    "tools/core_api_contract.py",
+    "tools/corpus_report_test_check.py",
+    "tools/generate_corpus_report_schema.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "A sealed v19 report counts distinct canonical item revisions while separately retaining discovery-path contributions and within-item source/route pair counts. Exact snapshot/filter-bound drill returns the counted item revisions and retained source paths; source-boundary comparison uses the same snapshot and makes no counterfactual claim. Capped known-value lists direct users to the exact all-known drill instead of implying a residual-only filter.",
+        "Identifier, year, venue, language, discipline, OA and full-text fields carry known/not-reported/unknown/unavailable states with exact retained, rights-authorized witnesses; missing values are not imputed and metadata permission does not grant source full-text access. Protected reads recheck rights and sealed integrity after restart. Expired or changed-but-allowing historical witnesses deny and durably audit the read without persisting a false policy allow."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh exact-candidate report tests (19), desktop tests (34), portable/Core contract tests (197), Core API/service tests (21), native route/size tests (2), and affected corpus, architecture, quality and UI-gate checks pass. Report tests include two-source/one-item path multiplicity, one-source/two-item denominators, exact drill, unknown fields, rights denial, rollback, replay, restart and populated v18 migration.",
+        "A real Windows principal with DPAPI/SQLCipher exercises policy replay, restart and revocation at the protected Core boundary. Stale historical report reads prove both denial and content-free durable audit with no tentative allow decision retained."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Portable v1 report schema/TypeScript fixtures, Core OpenAPI/client, v19 additive storage and frozen v18 recovery fixtures are updated and drift checks pass. Report snapshots seal source and rights witnesses, exact member hashes, provenance and outbox atomically; failed creation leaves no partial report. Stale read denials append a separate content-free provenance event after rollback.",
+        "Architecture and storage guidance document the new protected adapter and audit boundary. Additive quality inventory precedes governed renderer implementation; the unchanged approved UI reference 1.7 is bound by the task contract. Independent task review and later slice-wide performance/profile qualification remain distinct gates."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:corpus",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:ui-change",
+      "foundation:build-manifest",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "T03 changes public report contracts, a v19 additive migration, protected report reads/writes, source-rights and native/renderer boundaries. Direct focused report, Core, portable contract, Windows DPAPI/SQLCipher, native and desktop checks cover task criteria; affected foundation controls, exact UI lineage and planning projections are checked. Full desktop/service/search/security-local/data profiles are reserved for S04/checkpoint/W2 gates per verification section 8.1.",
+    "deferred": [
+      "S04 section 11 rolling incremental project/source summaries and representative warm/cold end-to-end performance evidence are not claimed by this task and must be resolved before S04 completion.",
+      "Canonical service/security profile registration for the new focused report suite requires a separate independently reviewed verification-control increment before slice qualification; direct task checks ran here. Full profiles, cross-capability integration, accessibility/performance/packaging, independent slice/Wave reviews and release remain due at their documented gates."
+    ]
+  },
+  "checks": [
+    {
+      "id": "report",
+      "command": ".venv\\Scripts\\python.exe tools/corpus_report_test_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.report-exact-22e184e5.log",
+      "rawOutputSha256": "d1241b1d584ccb988bdad565f2a9084da5a7870fb72da1ae2caa59a360e7148d",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "19 model, repository and migration tests pass, including exact stale-rights audit and rollback",
+      "elapsedSeconds": 43.845
+    },
+    {
+      "id": "corpus",
+      "command": ".venv\\Scripts\\python.exe tools/corpus_test_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.corpus-exact-22e184e5.log",
+      "rawOutputSha256": "532bf4260cf180551c5728dfbd534d107ac3b843d847d5a639f1a2b6b43802fe",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Affected canonical corpus suite passes",
+      "elapsedSeconds": 52.095
+    },
+    {
+      "id": "api",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m unittest tests.corpus.test_api tests.corpus.test_service",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.api-exact-22e184e5.log",
+      "rawOutputSha256": "798d68d4f63aad0df8081bbb8faf766ae0a82d69e77586fe45d2e514fcfee8f0",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "21 Core corpus API/service tests pass",
+      "elapsedSeconds": 2.955
+    },
+    {
+      "id": "windows",
+      "command": "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m unittest tests.rights.test_runtime_windows.RightsRuntimeWindowsTests.test_authenticated_policy_replay_restart_and_revocation_block_corpus_use",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.windows-exact-22e184e5.log",
+      "rawOutputSha256": "83ec975844ab30eed296388e7652f719b909a122084cca899ea4c9478f622e28",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Real Windows principal, DPAPI/SQLCipher, restart and revoked-use boundary passes",
+      "elapsedSeconds": 22.152
+    },
+    {
+      "id": "desktop",
+      "command": "node node_modules/vitest/vitest.mjs run src/app/CorpusCanvasWorkspace.test.tsx src/app/WorkflowNavigation.test.tsx src/app/ApplicationRuntime.test.tsx (cwd apps/desktop)",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.desktop-exact-22e184e5.log",
+      "rawOutputSha256": "83c81f29b8b29ce7a06b61a2a1e6afb38132bb6ee1c461a5dc26d7e5f965a8cc",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "34 focused production renderer/workflow tests pass",
+      "elapsedSeconds": 1.514
+    },
+    {
+      "id": "contracts",
+      "command": "node packages/contracts/node_modules/vitest/vitest.mjs run packages/contracts/core-api/generated.test.ts packages/contracts/corpus-reports/corpus-report.test.ts",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.contracts-exact-22e184e5.log",
+      "rawOutputSha256": "baa28fe4216f5c6681075c387fdff941d60023ab9fc6af6e26a6824d439af242",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "197 portable/Core contract tests pass",
+      "elapsedSeconds": 8.983
+    },
+    {
+      "id": "native",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml corpus_report_native_admission_accepts_only_exact_bounded_requests",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.native-exact-22e184e5.log",
+      "rawOutputSha256": "734596598b3131f81713635fbbf7a0ec119f636e5c4a51a2e56b4eff7a78303e",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Native supervisor admits only bounded exact report routes",
+      "elapsedSeconds": 0.457
+    },
+    {
+      "id": "native-limit",
+      "command": "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml large_response_limits_cover_only_admitted_report_and_reconciliation_routes",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.native-limit-exact-22e184e5.log",
+      "rawOutputSha256": "1cd56186b92a41d7b32f5911ccc719f7daa00e742ec219655977df02fb7877bb",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Native report response size boundary passes",
+      "elapsedSeconds": 1.02
+    },
+    {
+      "id": "ui-gate",
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 77fe987e16c9bb4b5878538ddf25cce5f24d68c9 --head HEAD",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.ui-gate-exact-22e184e5.log",
+      "rawOutputSha256": "4a038273c1f9fa567a9ed4983c4e69a63928579de335bcad1d6897f6b5e7a257",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Approved reference 1.7 and complete task-base renderer lineage pass",
+      "elapsedSeconds": 15.369
+    },
+    {
+      "id": "schema",
+      "command": ".venv\\Scripts\\python.exe tools/generate_corpus_report_schema.py --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.schema-exact-22e184e5.log",
+      "rawOutputSha256": "f34bee0f161aafa1065c0f225a420d79d655ff0fcd280a5b861f4afbb9f9712c",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Portable report JSON schema matches Core model",
+      "elapsedSeconds": 0.383
+    },
+    {
+      "id": "contracts-schema",
+      "command": "node packages/contracts/corpus-reports/generate.mjs --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.contracts-schema-exact-22e184e5.log",
+      "rawOutputSha256": "22fd9316acc69468d29cf1e85fe188e957fbfaa684b0d2cf9ec731a1afee2bb8",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Portable report TypeScript reader matches schema",
+      "elapsedSeconds": 0.097
+    },
+    {
+      "id": "core-api-contract",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.core-api-contract-exact-22e184e5.log",
+      "rawOutputSha256": "97cc8d3bdff34b50538c1a9afb636625534a597e5548b9d4dc9638c87bba0461",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Core OpenAPI and generated client parity pass",
+      "elapsedSeconds": 3.378
+    },
+    {
+      "id": "desktop-type",
+      "command": "node node_modules/typescript/bin/tsc --noEmit (cwd apps/desktop)",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.desktop-type-exact-22e184e5.log",
+      "rawOutputSha256": "dc637655ea4601f21c934010c4cc0fdd7b442039da1b02640863a23d4887a871",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Desktop TypeScript type check passes",
+      "elapsedSeconds": 1.146
+    },
+    {
+      "id": "desktop-lint",
+      "command": "node scripts/lint.mjs (cwd apps/desktop)",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.desktop-lint-exact-22e184e5.log",
+      "rawOutputSha256": "95721e245b7735f4040f10afe506057ebc77c795a4a29dc010fb40075d0b493a",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Desktop lint passes",
+      "elapsedSeconds": 0.181
+    },
+    {
+      "id": "contracts-type",
+      "command": "node packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.contracts-type-exact-22e184e5.log",
+      "rawOutputSha256": "3e0a4383ea5acbed81663ab4c192143e66fdd6e05390c0db8adf7795b6a68c79",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Contracts TypeScript type check passes",
+      "elapsedSeconds": 0.658
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_architecture_check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.architecture-exact-22e184e5.log",
+      "rawOutputSha256": "e5c7c3fcc3f99efcd94c82bd96fba556122fedbce3514a0aac3f76f32f628742",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "12 affected architecture classifier tests pass",
+      "elapsedSeconds": 0.742
+    },
+    {
+      "id": "architecture-check",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.architecture-check-exact-22e184e5.log",
+      "rawOutputSha256": "c0912cb76f8b4081a64b02d4f577b406a92a9a6f87daa14516b94c35ca716f40",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Protected architecture boundary passes",
+      "elapsedSeconds": 4.886
+    },
+    {
+      "id": "quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T03.quality-report-22e184e5.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.quality-exact-22e184e5.log",
+      "rawOutputSha256": "559a74098ebecfef229f42c8798cbbadf1dd99882b0a083a817a0a4485f37962",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "456 governed Python files pass format, lint and types",
+      "elapsedSeconds": 1.131
+    },
+    {
+      "id": "build",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T03.build-report-22e184e5.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.build-exact-22e184e5.log",
+      "rawOutputSha256": "53ec4e25ed6e3c59c60ac4fe61d0736c57650488e084c4336cc01e8c63af940d",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Clean exact-candidate build inventory passes",
+      "elapsedSeconds": 36.08
+    },
+    {
+      "id": "structure",
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.structure-exact-22e184e5.log",
+      "rawOutputSha256": "2b08a88385acef5de0254e2fca50cd7c8dccdd98d17bbc7658d58dcdd83172f1",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Repository structure passes",
+      "elapsedSeconds": 0.372
+    },
+    {
+      "id": "taskctl",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.taskctl-exact-22e184e5.log",
+      "rawOutputSha256": "13e7e9bf97ba88566ffcb08fe46dcb10fd49acaff48aa017243235f70ca8ee1a",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Backlog and task-control ledger validate",
+      "elapsedSeconds": 186.807
+    },
+    {
+      "id": "views",
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.views-exact-22e184e5.log",
+      "rawOutputSha256": "37f468fed5e19a27cdc7852f7d49363b170c20460ae7d1cfa59dcda0e2988ec5",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Generated backlog views are current",
+      "elapsedSeconds": 4.175
+    },
+    {
+      "id": "planning",
+      "command": ".venv\\Scripts\\python.exe tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.planning-exact-22e184e5.log",
+      "rawOutputSha256": "efbeda69f6461565e9414adf1cd29b9dc2b46f596e84bbac073f90df99a5e161",
+      "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Planning review site validates",
+      "elapsedSeconds": 235.553
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S04.T03.build-report-22e184e5.json",
+    "sha256": "cc29af9f65403d87d5a8d9a46dbf3b20cee8d1b7dbc15534312c658316a0161e"
+  },
+  "scopeDeviation": "No approved T03 product scope or reference change. The exact candidate adds the approved report/Corpus Canvas work, an additive pre-UI Python quality inventory, and a bounded architecture-classifier correction for the new protected adapter; verification profile registration is separately deferred to the S04 control boundary."
+}

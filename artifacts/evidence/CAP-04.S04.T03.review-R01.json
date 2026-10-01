@@ -1,0 +1,56 @@
+{
+  "task_id": "CAP-04.S04.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+  "base_commit": "77fe987e16c9bb4b5878538ddf25cce5f24d68c9",
+  "reviewer": "agent:/root/t03_formal_review",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "evidence_sha256": "00cacc63609bcaa772593278acd7c9e1383575458f3a3545a470047401ca1098",
+  "packet_sha256": "33273a5e027ec7155bf8cca2908b47680061ee42900038afff678a3ed8d8fce8",
+  "acceptance_criteria_sha256": "386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1",
+  "selection_sha256": "e59a9900f864f0a7af4c08e6853c91037c941c59bcafa3bf778d1d83ea478021",
+  "notes": "Independent expanded review of the frozen CAP-04.S04.T03 R01 candidate under approved S04 section 9.3, accepted ADR-0027, and experience reference RO-UI-ACADEMIC-MINIMAL-1.7. The exact manifest hash matches the REVIEW backlog projection; all 67 changed paths equal the base-to-candidate Git diff, all 23 cited raw-log hashes reproduce, all cited checks exit zero, and the build report identifies a clean 22e184e5 source. Source review and executed evidence support distinct canonical-item denominators, source/path overlap arithmetic, exact protected drill, explicit missingness, source-specific rights checks, idempotent rollback/restart, and populated-v18-to-v19 migration recovery. The authenticated Windows case proves Core, DPAPI/SQLCipher, restart, and revoked historical-report access. One task-level evidence gap blocks approval: the cited Corpus Canvas desktop tests render static markup and call pure helpers, but do not activate the mounted production controls that must take a user from an aggregate count to an exact record drill and support keyboard/focus and denial/recovery behavior. The real Core test proves the service boundary, not that renderer interaction. S04 section 11 incremental project/source summaries, indexes, and warm/cold representative performance qualification remain distinct open slice obligations; their deferral alone is not this T03 finding. Full affected profiles and independent S04/W2 qualification are likewise later gates. The reviewer made no product, test, backlog, or Git mutation and ran no unchanged full profile.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "evidence-required",
+      "assessment": "Protected repository/model and real Core checks support exact counted revisions and drill predicates, source overlaps, and honest known/not-reported/unknown/unavailable fields. The user-facing aggregate-to-record transition is only visible as static buttons and unexecuted React handlers in the cited desktop evidence. The approved task requires that transition to be usable and focusable."
+    },
+    {
+      "criterion_index": 2,
+      "result": "evidence-required",
+      "assessment": "The 19 focused report tests, 21 API/service tests, 34 desktop unit tests, 197 portable/Core contract tests, two native admission tests, and authenticated Windows protected-store case pass. The desktop tests contain no mounted click, keyboard, focus, denied/error, or recovery interaction for CorpusCanvasWorkspace; pure helper and server-rendered markup checks cannot prove the production event path."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The portable schema and generated TypeScript/Core clients, v19 additive migration, frozen v18 recovery contract, populated predecessor fixtures, protected report source/rights witnesses, provenance/outbox, architecture classifier, storage documentation, and approved UI-reference identity are updated. No unrelated scope expansion or migration-authority change was found in the reviewed candidate."
+    }
+  ],
+  "verification_review": {
+    "changed_path_count": 67,
+    "selected_check_count": 23,
+    "raw_log_digests_matched": 23,
+    "build_report": "artifacts/tmp/CAP-04.S04.T03.build-report-22e184e5.json",
+    "build_report_sha256": "cc29af9f65403d87d5a8d9a46dbf3b20cee8d1b7dbc15534312c658316a0161e",
+    "assessment": "Canonical line-ending SHA-256 of the manifest and every cited raw log reproduces. The 67-file manifest inventory exactly matches git diff --name-only 77fe987e..22e184e5. The build report has source.commit=22e184e5 and source.dirty=false. Selected command IDs exist in verification-profiles.json. The raw report log has five model tests plus fourteen migration/repository tests, the Core log covers API/service tests, and the Windows log shows one authenticated DPAPI/SQLCipher test. The desktop log reports 34 passing Vitest cases; the changed CorpusCanvasWorkspace test source uses renderToStaticMarkup throughout and never mounts or dispatches an event."
+  },
+  "findings": [
+    {
+      "id": "CAP-04.S04.T03-R01-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Aggregate-to-record Corpus Canvas interaction lacks qualifying renderer proof",
+      "reproduction": "At candidate 22e184e5, inspect apps/desktop/src/app/CorpusCanvasWorkspace.test.tsx: it imports renderToStaticMarkup and all CorpusCanvasWorkspace render assertions use server markup; the remaining checks call pure comparison/recovery helpers. Search that file and the candidate's tests for a mounted CorpusCanvasWorkspace, click or keyboard event, focus assertion, and denied/error/retry transition; none is present. Inspect the bound artifacts/tmp/CAP-04.S04.T03.desktop-exact-22e184e5.log: its 34 passing Vitest cases are those static/helper tests and surrounding workflow tests. The authenticated Core test at tests/rights/test_runtime_windows.py exercises /reports/drill directly, not the renderer. Thus the cited checks cannot establish approved S04 section 9.3 and task-start requirements that a user can activate an aggregate count, reach exact records, and recover focus/interaction after a denial or interruption.",
+      "required_remediation": "Preserve frozen R01 and this finding. Add a focused mounted-renderer or browser interaction regression using the production CorpusCanvasWorkspace: activate at least one source or coverage aggregate by keyboard/click, assert the transport receives the exact snapshot/filter, the matching record page is shown, and focus/announcement reaches the drill; exercise denied or interrupted inspection and the visible recovery control without retaining protected data. Bind its fresh exact-candidate result in an append-only R02 evidence submission, retaining the existing real Core/protected-store and reference checks. A later S04 performance benchmark or static markup test does not close this user interaction finding."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": [],
+  "slice_obligations_not_disposed": [
+    "Approved CAP-04.S04 section 11 incrementally precomputed project/source overlap summaries and required indexing remain unproven and must be resolved before S04 completion.",
+    "Representative warm/cold hardware/fixture/repetition/distribution performance evidence, full affected profiles, integrated accessibility/security/recovery, independent slice review, and W2 qualification remain later gates."
+  ]
+}

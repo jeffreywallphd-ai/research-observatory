@@ -16728,14 +16728,205 @@
               "task_id": "CAP-04.S04.T03",
               "title": "Build corpus provenance and source-overlap reports",
               "status": "IN_PROGRESS",
-              "mode": "latest-review-only",
+              "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:/root/t03_formal_review",
+                "result": "changes-requested",
+                "reviewed_at": "2026-10-01T06:54:42+00:00",
+                "notes": "Independent expanded review of the frozen CAP-04.S04.T03 R01 candidate under approved S04 section 9.3, accepted ADR-0027, and experience reference RO-UI-ACADEMIC-MINIMAL-1.7. The exact manifest hash matches the REVIEW backlog projection; all 67 changed paths equal the base-to-candidate Git diff, all 23 cited raw-log hashes reproduce, all cited checks exit zero, and the build report identifies a clean 22e184e5 source. Source review and executed evidence support distinct canonical-item denominators, source/path overlap arithmetic, exact protected drill, explicit missingness, source-specific rights checks, idempotent rollback/restart, and populated-v18-to-v19 migration recovery. The authenticated Windows case proves Core, DPAPI/SQLCipher, restart, and revoked historical-report access. One task-level evidence gap blocks approval: the cited Corpus Canvas desktop tests render static markup and call pure helpers, but do not activate the mounted production controls that must take a user from an aggregate count to an exact record drill and support keyboard/focus and denial/recovery behavior. The real Core test proves the service boundary, not that renderer interaction. S04 section 11 incremental project/source summaries, indexes, and warm/cold representative performance qualification remain distinct open slice obligations; their deferral alone is not this T03 finding. Full affected profiles and independent S04/W2 qualification are likewise later gates. The reviewer made no product, test, backlog, or Git mutation and ran no unchanged full profile."
               },
-              "review_control": null
+              "review_control": {
+                "version": 1,
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-01T06:44:32+00:00",
+                      "candidate_commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+                      "base_commit": "77fe987e16c9bb4b5878538ddf25cce5f24d68c9",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S04.T03.json",
+                        "sha256": "00cacc63609bcaa772593278acd7c9e1383575458f3a3545a470047401ca1098",
+                        "commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+                        "recorded_at": "2026-10-01T06:44:32+00:00"
+                      },
+                      "acceptance_criteria_sha256": "386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1",
+                      "changed_paths": [
+                        "apps/desktop/src-tauri/src/supervisor.rs",
+                        "apps/desktop/src/app.css",
+                        "apps/desktop/src/app/ApplicationRuntime.tsx",
+                        "apps/desktop/src/app/CorpusCanvasWorkspace.test.tsx",
+                        "apps/desktop/src/app/CorpusCanvasWorkspace.tsx",
+                        "apps/desktop/src/app/workflowNavigationModel.ts",
+                        "artifacts/evidence/CAP-04.S04.T03.architecture-maintenance.md",
+                        "artifacts/evidence/CAP-04.S04.T03.task-start.md",
+                        "artifacts/evidence/ui-change/CAP-04.S04.T03.json",
+                        "docs/architecture/local-sqlite-storage.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/core-api/README.md",
+                        "packages/contracts/core-api/generated.test.ts",
+                        "packages/contracts/core-api/generated.ts",
+                        "packages/contracts/core-api/openapi.json",
+                        "packages/contracts/corpus-reports/README.md",
+                        "packages/contracts/corpus-reports/corpus-report.schema.json",
+                        "packages/contracts/corpus-reports/corpus-report.template.ts.txt",
+                        "packages/contracts/corpus-reports/corpus-report.test.ts",
+                        "packages/contracts/corpus-reports/fixtures/invalid-denominator.v1.json",
+                        "packages/contracts/corpus-reports/fixtures/invalid-known-without-witness.v1.json",
+                        "packages/contracts/corpus-reports/fixtures/valid-drill-page.v1.json",
+                        "packages/contracts/corpus-reports/fixtures/valid-member.v1.json",
+                        "packages/contracts/corpus-reports/fixtures/valid-overlap-member.v1.json",
+                        "packages/contracts/corpus-reports/fixtures/valid-overlap-snapshot.v1.json",
+                        "packages/contracts/corpus-reports/fixtures/valid-snapshot.v1.json",
+                        "packages/contracts/corpus-reports/generate.mjs",
+                        "packages/contracts/corpus-reports/generated.ts",
+                        "packages/contracts/package.json",
+                        "packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json",
+                        "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+                        "packages/contracts/tsconfig.json",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S04.T03.html",
+                        "planning/review-site/CAP-04/CAP-04.S04.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W2.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/packaging/sidecar-build.json",
+                        "services/core-api/src/research_observatory_core/corpus_api.py",
+                        "services/core-api/src/research_observatory_core/corpus_report_model.py",
+                        "services/core-api/src/research_observatory_core/corpus_report_repository.py",
+                        "services/core-api/src/research_observatory_core/corpus_service.py",
+                        "services/core-api/src/research_observatory_core/main.py",
+                        "services/core-api/src/research_observatory_core/migrations/runner.py",
+                        "services/core-api/src/research_observatory_core/migrations/versions/v0019_corpus_reports.py",
+                        "services/core-api/src/research_observatory_core/ports/corpus_reports.py",
+                        "services/core-api/src/research_observatory_core/storage.py",
+                        "tests/corpus/test_api.py",
+                        "tests/corpus/test_service.py",
+                        "tests/corpus_reports/test_model.py",
+                        "tests/data/test_sqlite_migrations.py",
+                        "tests/foundation/test_architecture_check.py",
+                        "tests/reconciliation/test_corpus_migration.py",
+                        "tests/reports/fixtures/schema-v18-authority.json",
+                        "tests/reports/fixtures/schema-v18-connector-corpus-populated.json",
+                        "tests/reports/fixtures/schema-v18-import-corpus-populated.json",
+                        "tests/reports/test_migration.py",
+                        "tests/reports/test_repository.py",
+                        "tests/rights/test_migration.py",
+                        "tests/rights/test_runtime_windows.py",
+                        "tools/architecture_check.py",
+                        "tools/core_api_contract.py",
+                        "tools/corpus_report_test_check.py",
+                        "tools/generate_corpus_report_schema.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe tools/corpus_report_test_check.py",
+                        ".venv\\Scripts\\python.exe tools/corpus_test_check.py",
+                        "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m unittest tests.corpus.test_api tests.corpus.test_service",
+                        "$env:PYTHONPATH='services/core-api/src'; .venv\\Scripts\\python.exe -m unittest tests.rights.test_runtime_windows.RightsRuntimeWindowsTests.test_authenticated_policy_replay_restart_and_revocation_block_corpus_use",
+                        "node node_modules/vitest/vitest.mjs run src/app/CorpusCanvasWorkspace.test.tsx src/app/WorkflowNavigation.test.tsx src/app/ApplicationRuntime.test.tsx (cwd apps/desktop)",
+                        "node packages/contracts/node_modules/vitest/vitest.mjs run packages/contracts/core-api/generated.test.ts packages/contracts/corpus-reports/corpus-report.test.ts",
+                        "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml corpus_report_native_admission_accepts_only_exact_bounded_requests",
+                        "cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml large_response_limits_cover_only_admitted_report_and_reconciliation_routes",
+                        ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 77fe987e16c9bb4b5878538ddf25cce5f24d68c9 --head HEAD",
+                        ".venv\\Scripts\\python.exe tools/generate_corpus_report_schema.py --check",
+                        "node packages/contracts/corpus-reports/generate.mjs --check",
+                        ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+                        "node node_modules/typescript/bin/tsc --noEmit (cwd apps/desktop)",
+                        "node scripts/lint.mjs (cwd apps/desktop)",
+                        "node packages/contracts/node_modules/typescript/bin/tsc --noEmit -p packages/contracts/tsconfig.json",
+                        ".venv\\Scripts\\python.exe -m unittest tests.foundation.test_architecture_check",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T03.quality-report-22e184e5.json",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T03.build-report-22e184e5.json",
+                        ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py validate",
+                        ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+                        ".venv\\Scripts\\python.exe tools/plan_review_check.py --repo ."
+                      ],
+                      "deferred_checks": [
+                        "S04 section 11 rolling incremental project/source summaries and representative warm/cold end-to-end performance evidence are not claimed by this task and must be resolved before S04 completion.",
+                        "Canonical service/security profile registration for the new focused report suite requires a separate independently reviewed verification-control increment before slice qualification; direct task checks ran here. Full profiles, cross-capability integration, accessibility/performance/packaging, independent slice/Wave reviews and release remain due at their documented gates."
+                      ],
+                      "selection_rationale": "T03 changes public report contracts, a v19 additive migration, protected report reads/writes, source-rights and native/renderer boundaries. Direct focused report, Core, portable contract, Windows DPAPI/SQLCipher, native and desktop checks cover task criteria; affected foundation controls, exact UI lineage and planning projections are checked. Full desktop/service/search/security-local/data profiles are reserved for S04/checkpoint/W2 gates per verification section 8.1.",
+                      "selection_sha256": "e59a9900f864f0a7af4c08e6853c91037c941c59bcafa3bf778d1d83ea478021",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "service:corpus",
+                        "foundation:architecture",
+                        "foundation:quality",
+                        "foundation:ui-change",
+                        "foundation:build-manifest",
+                        "foundation:repository-structure",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "packet_sha256": "33273a5e027ec7155bf8cca2908b47680061ee42900038afff678a3ed8d8fce8"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/t03_formal_review",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-10-01T06:54:42+00:00",
+                      "notes": "Independent expanded review of the frozen CAP-04.S04.T03 R01 candidate under approved S04 section 9.3, accepted ADR-0027, and experience reference RO-UI-ACADEMIC-MINIMAL-1.7. The exact manifest hash matches the REVIEW backlog projection; all 67 changed paths equal the base-to-candidate Git diff, all 23 cited raw-log hashes reproduce, all cited checks exit zero, and the build report identifies a clean 22e184e5 source. Source review and executed evidence support distinct canonical-item denominators, source/path overlap arithmetic, exact protected drill, explicit missingness, source-specific rights checks, idempotent rollback/restart, and populated-v18-to-v19 migration recovery. The authenticated Windows case proves Core, DPAPI/SQLCipher, restart, and revoked historical-report access. One task-level evidence gap blocks approval: the cited Corpus Canvas desktop tests render static markup and call pure helpers, but do not activate the mounted production controls that must take a user from an aggregate count to an exact record drill and support keyboard/focus and denial/recovery behavior. The real Core test proves the service boundary, not that renderer interaction. S04 section 11 incremental project/source summaries, indexes, and warm/cold representative performance qualification remain distinct open slice obligations; their deferral alone is not this T03 finding. Full affected profiles and independent S04/W2 qualification are likewise later gates. The reviewer made no product, test, backlog, or Git mutation and ran no unchanged full profile."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S04.T03.review-R01.json",
+                      "sha256": "548bd6bce24f654350222228fa62659f0ab54db55537e79469fa45eaaa810679"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-04.S04.T03-R01-F01",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 1,
+                        "title": "Aggregate-to-record Corpus Canvas interaction lacks qualifying renderer proof",
+                        "reproduction": "At candidate 22e184e5, inspect apps/desktop/src/app/CorpusCanvasWorkspace.test.tsx: it imports renderToStaticMarkup and all CorpusCanvasWorkspace render assertions use server markup; the remaining checks call pure comparison/recovery helpers. Search that file and the candidate's tests for a mounted CorpusCanvasWorkspace, click or keyboard event, focus assertion, and denied/error/retry transition; none is present. Inspect the bound artifacts/tmp/CAP-04.S04.T03.desktop-exact-22e184e5.log: its 34 passing Vitest cases are those static/helper tests and surrounding workflow tests. The authenticated Core test at tests/rights/test_runtime_windows.py exercises /reports/drill directly, not the renderer. Thus the cited checks cannot establish approved S04 section 9.3 and task-start requirements that a user can activate an aggregate count, reach exact records, and recover focus/interaction after a denial or interruption.",
+                        "required_remediation": "Preserve frozen R01 and this finding. Add a focused mounted-renderer or browser interaction regression using the production CorpusCanvasWorkspace: activate at least one source or coverage aggregate by keyboard/click, assert the transport receives the exact snapshot/filter, the matching record page is shown, and focus/announcement reaches the drill; exercise denied or interrupted inspection and the visible recovery control without retaining protected data. Bind its fresh exact-candidate result in an append-only R02 evidence submission, retaining the existing real Core/protected-store and reference checks. A later S04 performance benchmark or static markup test does not close this user interaction finding."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-04.S04.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-10-01T06:44:32+00:00",
+                      "reviewed_at": "2026-10-01T06:54:42+00:00",
+                      "duration_seconds": 610,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 1,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "service:corpus",
+                        "foundation:architecture",
+                        "foundation:quality",
+                        "foundation:ui-change",
+                        "foundation:build-manifest",
+                        "foundation:repository-structure",
+                        "foundation:backlog",
+                        "foundation:backlog-views"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
+              }
             }
           ],
           "tasks": [
@@ -16794,7 +16985,7 @@
               "plan_section_sha256": "fcdf9845e59d4917f98bfc7472e67d80b09f67d62670b92e1272c54c117dd284",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-04.S04.T03.task-start.md",
-                "sha256": "7364f3bb6de7d67af725f3eab3e3ad012e794d4cfe6c413b8d45fe5e6fe767fd"
+                "sha256": "048dccd350a0f26741e7579a60b877d3289f252cfd3ff9d652236858af684c30"
               }
             }
           ]
