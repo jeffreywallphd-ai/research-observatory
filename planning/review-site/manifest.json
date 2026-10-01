@@ -17417,90 +17417,137 @@
             {
               "task_id": "CAP-04.S05.T01",
               "title": "Publish connector plugin manifest and capability API",
-              "status": "REVIEW",
+              "status": "DONE",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:/root/s05_t01_code_preflight",
+                "result": "approved",
+                "reviewed_at": "2026-10-01T12:10:06+00:00",
+                "notes": "Independent expanded review approves the frozen R01 T01 signed-plugin contract candidate with no blocking findings. The REVIEW submission binds the exact candidate, claim base, 19 changed paths, seven selected command IDs and the criterion manifest digest bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd. All nine cited raw logs and the clean build report reproduce their stated SHA-256 values; the build report identifies the exact candidate and inventories all five published plugin schemas with matching file hashes. Fourteen focused signed-package tests and 138 portable contract tests pass, along with generated-schema, quality, architecture, structure, backlog, views and build checks. Exact-byte Ed25519 verification, separately trusted publisher key, complete declared file set and hashes, qualified plugin source namespace, supported-but-undeclared capability denial, SDK required-feature negotiation, exact project/package/grant/destination comparison and same-version package renewal are enforced and covered. The authorized-phase provenance contract includes plugin version, permissions, signed/package identities, grant revision and scientific-request digest; it is a pre-dispatch contract, not persisted executed-result provenance. T02 retains active consent persistence, LPAC and broker enforcement, actual result/audit lineage and restart qualification. The selected task checks and explicit slice/Wave deferrals follow verification breadth; no executed plugin, live provider, production publisher, native UI or sandbox result is claimed."
               },
               "review_control": {
                 "version": 1,
-                "attempts": [],
-                "current_submission": {
-                  "id": "R01",
-                  "submitted_by": "codex-w2-implementation",
-                  "submitted_at": "2026-10-01T12:00:26+00:00",
-                  "candidate_commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
-                  "base_commit": "2003a9da25877a0f2659e13cac1ccb83567ba8f8",
-                  "branch": "codex/w2-implementation",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-04.S05.T01.json",
-                    "sha256": "bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd",
-                    "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
-                    "recorded_at": "2026-10-01T12:00:26+00:00"
-                  },
-                  "acceptance_criteria_sha256": "7f6020cac37b324c045d57be4923dc3ed220f7ebae1fb4845429502edb3f554b",
-                  "changed_paths": [
-                    "docs/architecture/connector-contracts.md",
-                    "docs/planning-implementation-plan.md",
-                    "packages/contracts/connectors/connector-plugin-authorization-provenance.schema.json",
-                    "packages/contracts/connectors/connector-plugin-grant.schema.json",
-                    "packages/contracts/connectors/connector-plugin-invocation-plan.schema.json",
-                    "packages/contracts/connectors/connector-plugin-invocation-request.schema.json",
-                    "packages/contracts/connectors/connector-plugin-manifest.schema.json",
-                    "packaging/build-inputs.json",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-04/CAP-04.S05.T01.html",
-                    "planning/review-site/CAP-04/CAP-04.S05.html",
-                    "planning/review-site/CAP-04/index.html",
-                    "planning/review-site/manifest.json",
-                    "planning/review-site/waves/W2.html",
-                    "planning/status-summary.md",
-                    "quality-scope.json",
-                    "services/core-api/src/research_observatory_core/connectors/plugin_manifest.py",
-                    "tests/connectors/test_plugin_manifest_contract.py",
-                    "tools/core_api_contract.py"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe -m unittest tests.connectors.test_plugin_manifest_contract -v",
-                    ".venv\\Scripts\\python.exe -m unittest discover -v -s tests/contracts -p test_*.py",
-                    ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
-                    ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
-                    ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
-                    ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
-                    ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
-                    ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T01.build-0f94.json",
-                    ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
-                  ],
-                  "deferred_checks": [
-                    "CAP-04.S05.T02 owns real LPAC worker isolation, active consent persistence, secret/network broker enforcement, denied-action audit, actual executed-result provenance, crash/cancel/restart and malicious package qualification; T01 publishes only a fail-closed pre-dispatch contract.",
-                    "Complete foundation/service/search/security-local profiles, live provider paths, packaged worker, native UI/accessibility and representative performance are deferred to the approved S05 slice/checkpoint and fresh W2 exit matrix."
-                  ],
-                  "selection_rationale": "T01 changes a public signed-package/security and versioned schema contract. Fresh exact-candidate signed fixture tests, all portable contract tests, generated-schema drift, quality, architecture, clean build inventory and backlog controls cover the changed trust/compatibility surface. The full foundation/service/search/security profiles would repeat unrelated W2 coverage at task scope and remain for the S05 integrated slice/checkpoint/W2 qualification under verification breadth section 8.1.",
-                  "selection_sha256": "1f1da0d265fc8a307e76670a82d191fc2276f2b930ff8a001bae8dbd08a8ed21",
-                  "prior_attempt_id": null,
-                  "open_finding_ids": [],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "foundation:repository-structure",
-                    "foundation:architecture",
-                    "foundation:quality",
-                    "foundation:backlog",
-                    "foundation:backlog-views",
-                    "foundation:build-manifest",
-                    "contracts:unit"
-                  ],
-                  "packet_sha256": "a000f5f87cfa7b1859b30ca315f4c08c7d6b70389aa08f3811e0c710ab79e291"
-                }
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-01T12:00:26+00:00",
+                      "candidate_commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+                      "base_commit": "2003a9da25877a0f2659e13cac1ccb83567ba8f8",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S05.T01.json",
+                        "sha256": "bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd",
+                        "commit": "0f94ec694d5e87dfa370bad4110b1d37d364d680",
+                        "recorded_at": "2026-10-01T12:00:26+00:00"
+                      },
+                      "acceptance_criteria_sha256": "7f6020cac37b324c045d57be4923dc3ed220f7ebae1fb4845429502edb3f554b",
+                      "changed_paths": [
+                        "docs/architecture/connector-contracts.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/connectors/connector-plugin-authorization-provenance.schema.json",
+                        "packages/contracts/connectors/connector-plugin-grant.schema.json",
+                        "packages/contracts/connectors/connector-plugin-invocation-plan.schema.json",
+                        "packages/contracts/connectors/connector-plugin-invocation-request.schema.json",
+                        "packages/contracts/connectors/connector-plugin-manifest.schema.json",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S05.T01.html",
+                        "planning/review-site/CAP-04/CAP-04.S05.html",
+                        "planning/review-site/CAP-04/index.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W2.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/src/research_observatory_core/connectors/plugin_manifest.py",
+                        "tests/connectors/test_plugin_manifest_contract.py",
+                        "tools/core_api_contract.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe -m unittest tests.connectors.test_plugin_manifest_contract -v",
+                        ".venv\\Scripts\\python.exe -m unittest discover -v -s tests/contracts -p test_*.py",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T01.build-0f94.json",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
+                      ],
+                      "deferred_checks": [
+                        "CAP-04.S05.T02 owns real LPAC worker isolation, active consent persistence, secret/network broker enforcement, denied-action audit, actual executed-result provenance, crash/cancel/restart and malicious package qualification; T01 publishes only a fail-closed pre-dispatch contract.",
+                        "Complete foundation/service/search/security-local profiles, live provider paths, packaged worker, native UI/accessibility and representative performance are deferred to the approved S05 slice/checkpoint and fresh W2 exit matrix."
+                      ],
+                      "selection_rationale": "T01 changes a public signed-package/security and versioned schema contract. Fresh exact-candidate signed fixture tests, all portable contract tests, generated-schema drift, quality, architecture, clean build inventory and backlog controls cover the changed trust/compatibility surface. The full foundation/service/search/security profiles would repeat unrelated W2 coverage at task scope and remain for the S05 integrated slice/checkpoint/W2 qualification under verification breadth section 8.1.",
+                      "selection_sha256": "1f1da0d265fc8a307e76670a82d191fc2276f2b930ff8a001bae8dbd08a8ed21",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "contracts:unit"
+                      ],
+                      "packet_sha256": "a000f5f87cfa7b1859b30ca315f4c08c7d6b70389aa08f3811e0c710ab79e291"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/s05_t01_code_preflight",
+                      "result": "approved",
+                      "reviewed_at": "2026-10-01T12:10:06+00:00",
+                      "notes": "Independent expanded review approves the frozen R01 T01 signed-plugin contract candidate with no blocking findings. The REVIEW submission binds the exact candidate, claim base, 19 changed paths, seven selected command IDs and the criterion manifest digest bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd. All nine cited raw logs and the clean build report reproduce their stated SHA-256 values; the build report identifies the exact candidate and inventories all five published plugin schemas with matching file hashes. Fourteen focused signed-package tests and 138 portable contract tests pass, along with generated-schema, quality, architecture, structure, backlog, views and build checks. Exact-byte Ed25519 verification, separately trusted publisher key, complete declared file set and hashes, qualified plugin source namespace, supported-but-undeclared capability denial, SDK required-feature negotiation, exact project/package/grant/destination comparison and same-version package renewal are enforced and covered. The authorized-phase provenance contract includes plugin version, permissions, signed/package identities, grant revision and scientific-request digest; it is a pre-dispatch contract, not persisted executed-result provenance. T02 retains active consent persistence, LPAC and broker enforcement, actual result/audit lineage and restart qualification. The selected task checks and explicit slice/Wave deferrals follow verification breadth; no executed plugin, live provider, production publisher, native UI or sandbox result is claimed."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S05.T01.review-R01.json",
+                      "sha256": "cb6232f8b2d1af979e2b2ea1d047db674591687438e42dc53c7c9a8a8eb4bd5c"
+                    },
+                    "findings": [],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-04.S05.T01",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-10-01T12:00:26+00:00",
+                      "reviewed_at": "2026-10-01T12:10:06+00:00",
+                      "duration_seconds": 580,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "foundation:repository-structure",
+                        "foundation:architecture",
+                        "foundation:quality",
+                        "foundation:backlog",
+                        "foundation:backlog-views",
+                        "foundation:build-manifest",
+                        "contracts:unit"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
               }
             },
             {
               "task_id": "CAP-04.S05.T02",
               "title": "Implement plugin isolation, configuration, and secret access controls",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -17528,7 +17575,7 @@
             {
               "task_id": "CAP-04.S05.T01",
               "title": "Publish connector plugin manifest and capability API",
-              "status": "REVIEW",
+              "status": "DONE",
               "page": "CAP-04/CAP-04.S05.T01.html",
               "dependencies": [
                 "CAP-04.S04.T03",
@@ -17545,7 +17592,7 @@
             {
               "task_id": "CAP-04.S05.T02",
               "title": "Implement plugin isolation, configuration, and secret access controls",
-              "status": "NOT_STARTED",
+              "status": "READY",
               "page": "CAP-04/CAP-04.S05.T02.html",
               "dependencies": [
                 "CAP-04.S05.T01"

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a7a1903303151e2472ab9326cc71bb3abc19393e42a402aac5887e188470e1da
+source_sha256: f1f32147942c952be642c66ebad97fd7c222ce8db734142a87ee0a5d0000bfd2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9281,21 +9281,21 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** New data sources can be added without bypassing provenance, rights, security, or canonicalization.
 
-**Wave / priority / status / review:** `W2` / `P1` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P1` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T03`, `CAP-00.S03.T03`
 
-#### - [ ] CAP-04.S05.T01 - Publish connector plugin manifest and capability API
+#### - [x] CAP-04.S05.T01 - Publish connector plugin manifest and capability API
 
-**Status / priority / estimate / risk:** `REVIEW` / `P1` / `M` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P1` / `M` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T03`, `CAP-00.S03.T03`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/s05_t01_code_preflight (`approved`)
 
 **Objective:** Versioned manifest for source identity, operations, authentication, terms, rate limits, data classes, and required permissions.
 
@@ -9321,9 +9321,11 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-04.S05.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `a000f5f87cfa7b1859b30ca315f4c08c7d6b70389aa08f3811e0c710ab79e291`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `a000f5f87cfa7b1859b30ca315f4c08c7d6b70389aa08f3811e0c710ab79e291`
 
 - Candidate / base / branch: `0f94ec694d5e87dfa370bad4110b1d37d364d680` / `2003a9da25877a0f2659e13cac1ccb83567ba8f8` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-01T12:00:26+00:00`
@@ -9337,15 +9339,31 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/s05_t01_code_preflight / `2026-10-01T12:10:06+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S05.T01.review-R01.json` / `cb6232f8b2d1af979e2b2ea1d047db674591687438e42dc53c7c9a8a8eb4bd5c`
+
+**Review notes:** Independent expanded review approves the frozen R01 T01 signed-plugin contract candidate with no blocking findings. The REVIEW submission binds the exact candidate, claim base, 19 changed paths, seven selected command IDs and the criterion manifest digest bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd. All nine cited raw logs and the clean build report reproduce their stated SHA-256 values; the build report identifies the exact candidate and inventories all five published plugin schemas with matching file hashes. Fourteen focused signed-package tests and 138 portable contract tests pass, along with generated-schema, quality, architecture, structure, backlog, views and build checks. Exact-byte Ed25519 verification, separately trusted publisher key, complete declared file set and hashes, qualified plugin source namespace, supported-but-undeclared capability denial, SDK required-feature negotiation, exact project/package/grant/destination comparison and same-version package renewal are enforced and covered. The authorized-phase provenance contract includes plugin version, permissions, signed/package identities, grant revision and scientific-request digest; it is a pre-dispatch contract, not persisted executed-result provenance. T02 retains active consent persistence, LPAC and broker enforcement, actual result/audit lineage and restart qualification. The selected task checks and explicit slice/Wave deferrals follow verification breadth; no executed plugin, live provider, production publisher, native UI or sandbox result is claimed.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/s05_t01_code_preflight at `2026-10-01T12:10:06+00:00`
+
+**Latest notes:** Independent expanded review approves the frozen R01 T01 signed-plugin contract candidate with no blocking findings. The REVIEW submission binds the exact candidate, claim base, 19 changed paths, seven selected command IDs and the criterion manifest digest bb235594be3baa215923f6a2665aace0d593022f1c6cfab46f62cee6f059d4cd. All nine cited raw logs and the clean build report reproduce their stated SHA-256 values; the build report identifies the exact candidate and inventories all five published plugin schemas with matching file hashes. Fourteen focused signed-package tests and 138 portable contract tests pass, along with generated-schema, quality, architecture, structure, backlog, views and build checks. Exact-byte Ed25519 verification, separately trusted publisher key, complete declared file set and hashes, qualified plugin source namespace, supported-but-undeclared capability denial, SDK required-feature negotiation, exact project/package/grant/destination comparison and same-version package renewal are enforced and covered. The authorized-phase provenance contract includes plugin version, permissions, signed/package identities, grant revision and scientific-request digest; it is a pre-dispatch contract, not persisted executed-result provenance. T02 retains active consent persistence, LPAC and broker enforcement, actual result/audit lineage and restart qualification. The selected task checks and explicit slice/Wave deferrals follow verification breadth; no executed plugin, live provider, production publisher, native UI or sandbox result is claimed.
 
 **Currently open findings:** -
 
 #### - [ ] CAP-04.S05.T02 - Implement plugin isolation, configuration, and secret access controls
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `READY` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
