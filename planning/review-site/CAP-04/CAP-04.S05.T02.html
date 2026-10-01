@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S05.html">SLICE-connector-sdk-and-controlled-extensibility</a><span>/</span><span aria-current="page">CAP-04.S05.T02</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S05.T02">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S05.T02 · task 2 of 3</span><h1>Implement plugin isolation, configuration, and secret access controls</h1><p>Restricted execution boundary, allowlisted network destinations, scoped credentials, timeouts, quotas, and redacted logging.</p></div><span class="status status-in-progress">In_Progress</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S05.T02 · task 2 of 3</span><h1>Implement plugin isolation, configuration, and secret access controls</h1><p>Restricted execution boundary, allowlisted network destinations, scoped credentials, timeouts, quotas, and redacted logging.</p></div><span class="status status-blocked">Blocked</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S05.html">SLICE-connector-sdk-and-controlled-extensibility</a></dd></div><div><dt>Risk / review</dt><dd>high / security-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -88,13 +88,33 @@ python tools/verify.py --profile service
 python tools/verify.py --profile security-local
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S05.T02">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S05.T02" data-worksheet-sha256="af9778c52d988b00b375341760651317b6c6aa70ffb9b2f51ef7d8cb62746b38">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S05.T02.task-start.md</code> · <strong>SHA-256:</strong> <code>af9778c52d988b00b375341760651317b6c6aa70ffb9b2f51ef7d8cb62746b38</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S05.T02 task-start acceptance closure
+
+Claim base: `6e9df6409c0cdcae12464dc47d2a809f6c39d2e3`; claim state committed at `e19f6f28f7fbc2c3fd6421935591a590884240bb`.
+
+Authority: approved CAP-04.S05 §9.2, ADR-0028 and ADR-0027, the T01 signed manifest and authorization contract, and approved UI reference `RO-UI-ACADEMIC-MINIMAL-1.7`. This task owns the restricted Windows worker, brokered access, durable exact project permission, local publisher trust, quotas, timeouts, redacted audit, and failure/recovery proof. It does not authorize arbitrary plugin URLs, plaintext scratch, or a same-user child fallback.
+
+| Material outcome or invariant | Planned proof |
+|---|---|
+| Exact signed package, active trusted publisher and explicit project grant authorize one supported invocation; package/hash/version/publisher/permission or project substitution denies. | Grant/trust state tests plus one committed, real-worker happy path. |
+| Untrusted connector cannot read another project, vault, environment secrets, or write ordinary/AppContainer temporary locations; direct loopback and public egress deny. | Packaged adversarial worker under queried Windows AppContainer identity, explicit LPAC launch attributes, zero capabilities, and synthetic sentinels. |
+| Worker sees no project path, database/key handle, reusable secret, arbitrary URL, or unrestricted RPC. Control frames bind protocol, nonce, sequence, operation and job; oversized/duplicate/wrong-job frames deny. | Private inherited-handle and framed-IPC tests, including malformed input and output. |
+| Network and credential use stay in Core; signed route, concrete scientific parameters, current grant, project intent/privacy/rights, resolved address and redirect are rechecked. | Broker tests for permitted metadata, private/mixed/rebound DNS, route and policy changes, secret redaction, response bounds and denial audit. |
+| A timeout, cancellation, crash, quota, child attempt or parent death cannot commit partial success or retain authority after restart. | Real Job Object/worker failure probes and durable audit/staging recovery tests. |
+| Source Manager separates local publisher trust and exact project permission, with safe cancellation, renewal, disable/quarantine and focus/context return. | Approved 1.7 reference mapping and focused UI/API/native checks when that path is implemented. |
+
+The first decisive proof is the packaged LPAC/no-plaintext-write vertical. Mocked process tests and manifest inspection do not close it. Focused tests are selected first; full `service` and `security-local` profiles remain slice/Wave qualification unless the implementation changes shared infrastructure or a failure cannot be localized. If LPAC or mandatory no-write behavior is demonstrated infeasible, fail closed and use the ADR decision route rather than relaxing the approved boundary.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S05.T02" data-review-mode="latest-review-only">
   <h3>CAP-04.S05.T02 — Implement plugin isolation, configuration, and secret access controls</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S05.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S05.T02" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>BLOCKED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S05.T01.html">Previous</a><a class="button button-primary" href="CAP-04.S05.T03.html">Next</a></nav>

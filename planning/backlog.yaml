@@ -24724,13 +24724,20 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile security-local
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-01T12:21:21+00:00'
-      updated_at: '2026-10-01T12:21:21+00:00'
+      updated_at: '2026-10-01T13:12:35+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: 'ADR-0028 packaged LPAC Python worker and no-plaintext-write boundary do not qualify: Python DLL load denies;
+          directory-only ACL permits existing-file writes, recursive ACL blocks launch. Evidence: artifacts/evidence/CAP-04.S05.T02.lpac-feasibility-gate.md'
+        next_action: Diagnose and prove a packaged Python connector worker under verified Windows LPAC with no profile/temp/plaintext
+          writes and no direct egress, then finish broker/grant/UI/recovery integration and independent security review; if
+          approved isolation cannot be met, use append-only ADR/W2 amendment with explicit owner approval before scope change.
+        recorded_at: '2026-10-01T13:12:35+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -24739,10 +24746,7 @@ capabilities:
         reviewed_at: null
         notes: null
       base_sha: 6e9df6409c0cdcae12464dc47d2a809f6c39d2e3
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-01T12:21:21+00:00'
-        expires_at: '2026-10-01T20:21:21+00:00'
+      lease: null
       verification_state: null
       worktree: .
       platform_targets:

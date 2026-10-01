@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: a1ce3e9524b5198e3f5649aa6457ad6f7841369f6ebb3e3f95adf434a5d9d932
+source_sha256: 8395af78915ec4214f7210c4d4007d993806269117004ed31af5ac29f7e16baa
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,7 +53,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 239 |
-| `IN_PROGRESS` | 1 |
+| `BLOCKED` | 1 |
 | `DONE` | 80 |
 | `DEFERRED` | 36 |
 
@@ -727,7 +727,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-04.S05.T02` Implement plugin isolation, configuration, and secret access controls | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-04.S05.T02` Implement plugin isolation, configuration, and secret access controls | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
