@@ -1490,21 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 1ac0737474f1e94faeb4da3e184af0322507e4e3
+    base_sha: f87623038ad4bb24c7c539f48f90cd91e18625a9
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-09-30T22:16:30+00:00'
-    pause_reason: S01-S03 checkpoint cannot pass desktop:application because eight pinned-Clippy warnings remain in completed
-      CAP-04.S01.T02, CAP-04.S02.T03, and CAP-04.S03.T03. Pause at this clean boundary for sequential authority-preserving
-      corrections; no new human gate or approved-scope change is requested.
-    pause_category: infeasible
-    lease: null
+    updated_at: '2026-10-01T00:13:56+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-01T00:13:56+00:00'
+      expires_at: '2026-10-02T00:13:56+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -3340,9 +3341,21 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-09-30T16:03:19+00:00'
+    - id: W2.R05
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: f87623038ad4bb24c7c539f48f90cd91e18625a9
+      prior_campaign_sha256: 7dbc6dd649247da32f5315cc60f2e11158de9a778c22e0281fcba4f7b429813f
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-01T00:13:56+00:00'
   checkpoints: []
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
