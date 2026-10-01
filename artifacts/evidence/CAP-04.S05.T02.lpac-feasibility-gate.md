@@ -718,6 +718,125 @@ transport verdict or task-resume proof.
 | Positive-control runner / final log | `fc5148641a3f1879590c6f9d92004b32bf83758712712c3c34308f33bf20b3ee` / `582544abd8200100583625b9e4f5f1a243390ba893132be8d91200407d740f60` |
 | Reused R40 native source / EXE / inventory | `fe0e9130a6f7782c0b85df3f8e84474e62695bffc46317de4bb500eb0cb6e56b` / `9a18eef2bc5a6b7ac8392d0924605e0b4c1465716f44aa28d84f6313dfe5d69c` / `4c4c64f2b0ed2c80e3bf2983f022055c738122ba5389164db6c3df7727829a07` |
 
+## R45 matched Winsock initialization control
+
+A new fixed native fixture called only `WSAStartup(2.2)` and `WSACleanup` on
+success; it made no socket, DNS, connection or public transport call. The
+ordinary-user control initialized and cleaned up successfully. Verified
+zero-capability LPAC returned 10107, as did a separate verified LPAC with
+exactly one enabled `internetClient` SID (`S-1-15-3-1`). Both LPACs opted out
+of All Application Packages. Thus an `internetClient` token addition alone
+does **not** resolve this fixture's Winsock initialization failure; the zero-
+capability failure cannot be attributed uniquely to absent network capability.
+This is a test-only capable-token control, not a product permission change or
+public-egress witness. Both final arms restored eight profile and four runtime
+DACLs with exact owner/DACL SDDL match, kept content snapshots intact, deleted
+the disposable profiles, and removed runtime roots.
+
+Preliminary attempts are retained: an extra Rust PDB failed exact inventory
+preflight before profile creation; two later runs reached zero-capability
+`WSAStartup` 10107 but a strict descriptor comparison found that DACL-only
+restore left the disposable inheritance-protection state changed. Those runs
+deleted their disposable profiles and runtimes, did not reach the capable-token
+arm, and are not counted as qualified controls. The final runner restored and
+verified that descriptor state for both arms. Diagnostic basenames use `r43`
+internally; this packet calls the comparison R45 to distinguish it from the
+tracked R43 probe correction. No tracked task/product authority was changed.
+
+| R45 ignored input/output | SHA-256 |
+|---|---|
+| Native source / EXE / inventory / final runner | `73757d58c5ffe89acab40661a2107a09750621b1fe9613c3ba45e8ae60ccd8b5` / `797757d0e2e9dc34cacbaa9c93ba421ed629be227a199ca8e429afa0ae6f26e8` / `153653b28f049a0db357863d073c50eb911a962e425f379a0f52813baa78d006` / `befdad50445818c7dcbba1be9cddabafda73d90cd34c18f53bba7f90a615b77e` |
+| Preflight / two adverse preliminary logs | `7c9f34b671343d42f748551c73e3d6bf79f757d58cf4e4fbe43992d578d4358f` / `15a050b73b05468325e219863c026da29a931ba56f79aea99011ff49f05acf48` / `b6c1215da0fb6e344abbbd61ec2ce1fb943fb086afb1d478d3fe8960c27e4f7a` |
+| Final matched run log | `85e7eea3254f2001234cfaa5d827d2756375f44c9290ee5915874b8b96c4ba72` |
+
+## R42c/R42c2 alternate-stream integrity follow-up
+
+R42c attempted to close the R42b alternate-data-stream observation gap, but
+its host-side `FindFirstStreamW` scan ran after restrictive ACL installation
+and returned error 5 **before** the LPAC worker launched. The harness restored
+12 profile and 68 runtime DACLs, checked content, deleted the disposable
+profile/runtime and then found zero named streams in its post-restore scan.
+That failed prelaunch attempt is retained, not counted as connector evidence.
+
+R42c2 moved the baseline stream scan before the restrictive ACLs and enumerated
+streams on every seeded file/directory after worker exit and DACL restoration,
+before cleanup. An ordinary connector positive control created and enumerated
+named streams in all five target domains. The LPAC baseline was ADS-free, the
+exact admitted synthetic Python connector again reported denial for its 25
+seeded-file attempts, and the post-run enumeration found **zero named streams**
+in profile, Temp, runtime, synthetic project and vault. This closes the
+specific R42b empty-stream loophole for those test-owned targets. The
+zero-capability LPAC token, 12/68 DACL restorations, profile/runtime content,
+project/vault content and owner/DACL snapshots, disposable deletion and
+synthetic trust/sentinel cleanup passed. Connector-originated owner/DACL
+mutation, direct public/loopback transport, product dispatcher/broker audit
+and release signing remain unqualified. `_socket` still failed at
+`WSAStartup` 10107 before `connect`.
+
+| R42c/R42c2 ignored input/output | SHA-256 |
+|---|---|
+| R42c adverse prelaunch log / raw launch-error line | `8607fa8a8dd4ccfcf45d3ffbda4024cbd068f7126d9b5018ff58468bf3c8830b` / `21d2d1a7378d57284642f00d3e9f0f95aafd0c0dba13c4de0beaf4bb2fc946c5` |
+| R42c2 connector template / runner | `2b48dfd07ad8b665e37ecde80f4828a32e402d4a46dfcd64729c8366ac051d1c` / `d3fb3e0ddfb22127ed7c1b286d66928a11357241da19b0fc9217e3f5232c3c7f` |
+| Exact manifest / signature / 61-file inventory | `186c46e0b83afc8f8f940efcc2e6bf99e8e3c29e6af1a270e97e1985d61e4f1e` / `08655f65588b07560fe62eaed85bdcedd39eee30937dcc19285092723625adec` / `ba9da67526dc366593871faacb4e4d70e98d567206e71a29e7423a445945347f` |
+| Final real-user LPAC run log | `3b32e0ec456ec8aaee35a8bd7018bb8f2e57edebdaf6a3a110d8864caf1e502c` |
+
+An independent read-only audit matched the R42c2 inputs and all 61 package
+files, verified the positive-control stream enumerator sees even an empty
+named stream, and traced the post-restore/pre-deletion five-root scan. It
+agreed the ADS observation gap is closed for this test-owned run while the
+task's broader security and product obligations remain unmet.
+
+## R46 test-only registryRead Winsock discriminator
+
+Microsoft's [LPAC launch guidance](https://learn.microsoft.com/en-us/windows/win32/secauthz/implementing-an-appcontainer)
+states that an LPAC cannot open registry keys without `registryRead`. A new
+matched diagnostic reused the exact R45 one-file native EXE, which calls only
+`WSAStartup(2.2)` and `WSACleanup` after success. Ordinary-user control returned
+0. Verified zero-capability LPAC returned 10107. A separate verified LPAC
+with only `registryRead` returned 0 and cleaned up successfully; a third with
+`registryRead` plus `internetClient` also returned 0. Every LPAC retained the
+All Application Packages opt-out. This strongly localizes the Winsock startup
+failure to access enabled by `registryRead` in this fixture; it does not name
+the exact registry object or prove transport behavior. The diagnostic made no
+socket, DNS, `connect` or public-network call. All three test-owned LPACs
+restored eight profile and four runtime DACLs with exact owner/DACL SDDL and
+content matches, deleted profiles and runtime roots, and left the product
+zero-capability token unchanged. **Adding `registryRead` to the product worker
+would change ADR-0028 security authority and is not approved.** An independent
+read-only audit matched the EXE/inventory and log hashes, checked exact token
+capability sets and cleanup, and agreed that this is a strong association on
+this host, not identification of the exact registry object or public-route
+qualification.
+
+| R46 ignored input/output | SHA-256 |
+|---|---|
+| Runner / exact one-file inventory / reused native EXE | `1f4faa330a290ac3a8a88069c3c4898ba5e22b03bf07e2d3c89a13836a91a993` / `153653b28f049a0db357863d073c50eb911a962e425f379a0f52813baa78d006` / `797757d0e2e9dc34cacbaa9c93ba421ed629be227a199ca8e429afa0ae6f26e8` |
+| Final no-transport run log | `af6387e6ec8a3041aa5af3737c4a053620e0f6cba68dcee03170f7a1063116f4` |
+
+## R47 registryRead network-isolation query control
+
+The exact R40 no-transport native policy-query EXE ran under ordinary user,
+zero-capability LPAC, test-only `registryRead` LPAC, and test-only
+`registryRead` plus `internetClient` LPAC. Tokens and All Application Packages
+opt-out were checked before resume. For numeric TEST-NET-2/public and
+RFC1918/private targets, the basic API returned raw `0` in **every** arm.
+The detailed API returned status 14 for both targets in zero-cap LPAC,
+1753 (`EPT_S_NOT_REGISTERED`) for both in `registryRead`-only LPAC, and
+0 for both in the combined-capability LPAC; error type was 0 throughout.
+No arm attempted DNS, a socket, connection or transport, although the
+detailed API contract concerns a server to which connection was attempted.
+These non-target-specific values do not establish a public-route denial or
+make R40/R44 qualifying evidence. Each LPAC restored eight profile and four
+runtime DACLs with owner/DACL SDDL and content matches, deleted its profile
+and runtime root, and left product authority unchanged. An independent
+read-only audit matched the exact image/inventory and logs, verified token
+sets and cleanup, and agreed no public-egress criterion was met.
+
+| R47 ignored input/output | SHA-256 |
+|---|---|
+| Runner / reused one-file inventory / native EXE | `006e6e850d732e317f8b3b66e730e9ca7d2e57c313f18e3c251de7ec7f6b1eea` / `4c4c64f2b0ed2c80e3bf2983f022055c738122ba5389164db6c3df7727829a07` / `9a18eef2bc5a6b7ac8392d0924605e0b4c1465716f44aa28d84f6313dfe5d69c` |
+| Final no-transport run log | `ab3e77a1d59bb7b826dd89f22bbe979d9ea82e437fc96b391f25e9c3b558c7c6` |
+
 ### Host-authorized resource trace if the source-build route fails
 
 The exact resource behind the Python DLL's LPAC `LoadLibraryW` error 5 is
@@ -781,15 +900,20 @@ extensions, with `_socket`/`_ssl` still failing during initialization. R32 and R
 the adverse dependency-only and strict-search results. R42 and R42b executed
 an exact admitted synthetic Python connector inside verified LPAC: the sampled
 ambient read/new-file checks and 25 connector-originated existing-file
-attempts reported denial. R42b's profile/Temp/runtime ADS-absence observation
-is still incomplete. The separate R29e native fixture exercised owner/DACL
-changes and stream absence.
+attempts reported denial. R42c2 additionally found no named streams across
+the five seeded domains after the LPAC run, closing R42b's post-run ADS
+observation gap for those targets. The separate R29e native fixture exercised
+owner/DACL changes and stream absence.
 No run identifies the exact original manifest resource denial or proves a
 direct `connect`/public egress denial. R39 adds three local API startup denials,
 R40's policy query is inconclusive; R44's matched `internetClient` LPAC
 positive control also returned raw `0` and did not resolve it. R41 confirms
 the same import behavior on test-signed bytes without satisfying release
-signing. R43 corrected the
+signing. R45 shows `internetClient` alone does not repair LPAC
+`WSAStartup`; R46 shows test-only `registryRead` alone does, strongly
+localizing the startup prerequisite without authorizing it for the product or
+proving public transport denial. R47's registry-capability policy-query
+controls still gave no target-specific public-route verdict. R43 corrected the
 checked-in probe's network-stage reporting but retained its real profile/temp
 write failure. The product worker has not reached brokered calls or durable
 dispatch, and the test-harness audits do not qualify product audit integration.
