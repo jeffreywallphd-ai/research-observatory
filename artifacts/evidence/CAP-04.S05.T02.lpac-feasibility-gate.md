@@ -540,11 +540,16 @@ A fresh native LPAC fixture called Microsoft's
 [`NetworkIsolationDiagnoseConnectFailure`](https://learn.microsoft.com/en-us/windows/win32/api/networkisolation/nf-networkisolation-networkisolationdiagnoseconnectfailure)
 and detailed variant for numeric TEST-NET-2/public and RFC1918/private
 addresses. It made no DNS, socket or connection call. The ordinary-user
-control returned raw success with no error type. Under verified zero-capability
-LPAC, the basic query still returned raw success, while the detailed query
-returned raw status 14 and error type 0. The API therefore did not identify a
-missing capability or provide a usable public-egress denial witness. The
-result is **inconclusive**, preserved rather than promoted to a pass. All 12
+control and verified zero-capability LPAC both returned raw `0` from the basic
+query, while the LPAC detailed query returned raw status 14 and error type 0.
+Microsoft documents the basic return as `FALSE` when the calling AppContainer
+lacks the required target capabilities and `TRUE` when it has them; the earlier
+description of raw `0` as "success" was incorrect. The ordinary-user control
+does not validate AppContainer capability-query semantics, and the detailed
+form concerns a connection already attempted. Without a capability-bearing
+LPAC positive control or actual transport attempt, R40 provides no decisive
+public-egress denial witness. The result is **inconclusive**, preserved rather
+than promoted to a pass. All 12
 profile and six runtime DACLs were restored; integrity and disposable cleanup
 passed.
 
@@ -584,6 +589,134 @@ It does not qualify a production signer, connector execution or public egress.
 | Signed package inventory / sanitized signing results | `78c269289cf5117acaf253b5cbc56011e977430db88ed6727fd5ea4a0336a357` / `7d372fda3bbc2c136e8f9d3840b54190d27876970bb1c3dbe8ea515bfee9cb8f` |
 | Tamper-control result / projected LPAC inventory | `5f473220ff8f1781473f909d6ae947f86d5df8eef13e72f0ced260308fffe987` / `7fdafdf69131ee075c7bddf158cd46e02cebe17f7ccc5ac88c54a769a25ad008` |
 | LPAC wrapper / run log | `93b30cfefbe0fd3a81b844b6cc0051f22e3e54657c2bf43a2272505c7beff1a4` / `1a8a231428e6964403630fb7eeba896bbbcf62f8fba7e7280825c618dddae220` |
+
+## R42 synthetic signed connector execution vertical
+
+An ignored, test-owned vertical used the T01 Ed25519 exact-package admission
+code, disposable local publisher trust and an explicitly enabled synthetic
+project grant. Current authorization produced an exact plan before launch.
+Its fresh 61-file source-built package included a fixed, signed-manifest
+`plugin/connector.py` asset. The ordinary-user control could reach the local
+listener and synthetic sentinel targets. In verified zero-capability LPAC,
+the connector's **own code executed** and returned a framed synthetic result.
+It reported unrelated/other-project/vault reads, outside/export/profile/temp/
+runtime writes and inherited synthetic environment secret denied. Socket
+initialization failed at 10107 before `connect`; the local listener received
+no LPAC connection. Direct transport/public egress remain unproven.
+This connector attempted creation of new files, not append, overwrite,
+alternate-stream creation, deletion, rename or DACL changes on seeded files;
+R29e's separate native fixture exercised those operations. The combined
+observations do not make R42 alone a complete packaged-Python no-write matrix.
+
+A forbidden `export` broker-call shape was rejected by the current schema and
+one content-free `operation-denied` event was read from the actual synthetic
+grant repository. That audit was arranged by the diagnostic harness, not by a
+product worker-broker IPC integration. All 12 profile and 68 runtime DACLs
+were restored; snapshots, profile deletion and disposable cleanup passed.
+The Ed25519 test seed was a fixed public fixture value in the ignored runner;
+no private-key file was written, and disposable trust/grant/audit state and
+sentinels were removed. No real project, vault or credential was used. This closes the earlier
+"no connector code ran" limitation for a test-owned vertical, while product
+dispatcher, broker IPC, durable execution, production signing and public
+egress remain open.
+
+| R42 ignored input/output | SHA-256 |
+|---|---|
+| Runner / worker source / hostile connector template | `d8c847055e4d402e738754d9e432577add8d07dd48b2edc3b87f70d3b673177d` / `cd557972c52ccd69b29539653569fba4f52ffab4a9becfe3da6c8d793b084291` / `887b0215eef158a42ccbed9485a8ecde8f92ac516f08ed8a9d9a01dada558a8c` |
+| Exact manifest / Ed25519 signature | `c59645914dfd34dbe7c0a3823309d066fc7fb66eddcbe15d82248396d94a5e81` / `3e5586389e32f7f7b5066e158d8c59eb2bda448d2132b6de8014188e0255d8db` |
+| Plugin asset / worker EXE / 61-file inventory | `3b263989dabeebb738ee6ecfaf2c1b742fc7fb408b2e9be40e3dab339d6b32c8` / `917dc9b54ae2ca3e9683f515326ca68608aff23eb78155e0c8ed82b358239b0c` / `a4357ec7defe8d6a192f3d600be9dd8882dd4c6c64a1dbc0c1da3f3564b31d8f` |
+| LPAC run log | `2641e6236b69fbc241ac592c7510c9be0b490e1c0b510ea496a8fbccce6fa6b3` |
+
+## R43 checked-in probe-stage correction and retained no-write failure
+
+At commit `6b2b47a2`, the checked-in disposable native probe reports Winsock
+startup, whether `connect` was attempted, its result and error separately.
+The trusted launcher rejects malformed or allowed network reports, and the
+focused test now makes an ordinary-user positive connection to its local
+listener and checks the listener after the LPAC run. This repairs the R29e
+false-positive label; it does not claim a public-egress test or connector host.
+Focused `cargo fmt --check`, offline Cargo check, Ruff and two Python unit
+cases passed on the committed change. A fresh real LPAC focused test on that
+commit still failed: `lpac-ambient-authority-not-denied:profileWrite,tempWrite`.
+The checked-in probe launcher's existing directory-only ACLs therefore continue
+to permit disposable profile/temp writes; its listener assertion was not
+reached after that failure. The test was **not** weakened or marked passing.
+The test-owned AppContainer profile count with the probe prefix was zero
+afterward. R29e's separate recursive no-write ACL diagnostic remains the
+candidate to integrate after the task's full feasibility gate.
+An independent read-only reviewer approved the bounded false-positive
+correction at exact commit `6b2b47a26ab1018835519d1b850f157a1a91baff`
+with no blocking finding. The reviewer confirmed malformed/allowed reports
+fail closed and noted that `connectErrorCode` also carries a socket-creation
+error when `connectAttempted` is false. That naming note does not change the
+explicit stage semantics. The review is **not** a T02 disposition.
+
+| R43 ignored output | SHA-256 |
+|---|---|
+| Focused real LPAC test failure log | `43809e575d834a460cf75e659dd2469bc1a815940074b3772fc33bdd934f258` |
+
+## R42b connector-originated existing-file no-write matrix
+
+One fresh ignored diagnostic reused the R42 source-built worker package and
+loaded a new exact Ed25519-admitted synthetic Python connector asset. Ordinary
+user positive controls succeeded for 25 seeded-file operations: append,
+overwrite, alternate-stream creation, delete and rename in each of disposable
+LPAC profile, Temp and runtime, and synthetic project and vault locations. In
+verified zero-capability LPAC, the connector's own code attempted and reported
+denial for all 25. Project/vault contents and owner/DACL snapshots matched after
+the run; R29e-style post-restore profile/runtime integrity passed. All 12
+profile and 68 runtime DACLs restored; the disposable profile, runtime,
+synthetic project/vault/trust and sentinel roots were absent after cleanup.
+This extends R42's new-file checks; it does not test connector-originated
+owner/DACL changes because this source-built Python package lacks `_ctypes`.
+The profile/Temp/runtime post-restore snapshots did not enumerate alternate
+data streams, so these three roots do **not** have independent post-run proof
+that an empty stream was absent after an open-then-failed-write sequence.
+Project/vault stream absence was checked; R29e tested stream absence and
+owner/DACL operations in a separate native fixture. The connector's
+`_socket` import again failed at `WSAStartup` 10107 before `connect`; public
+egress and direct transport denial remain unproven. The `operation-denied` and
+`ambient-write-denied` audit codes were arranged by the test harness, not a
+product dispatcher/broker. Release signing and product IPC remain open. An
+independent read-only audit matched the runner, connector, manifest, signature,
+inventory and log hashes, verified that the packaged connector invokes all 25
+operations and that fresh seeds, ordinary positive controls, LPAC token checks,
+post-restore integrity and cleanup are wired. It flagged the missing
+profile/Temp/runtime stream inventory above and agreed the formal task resume
+condition remains unmet.
+
+| R42b ignored input/output | SHA-256 |
+|---|---|
+| Connector template / runner | `198e9ed03b4d31eb4d95d3c29c7b143b923c49877c117738dce0ccda12d52565` / `c9ad066f68ccc08c38ab62f28fcf7310d3d2858fd54a382b34dba5ec26a4f0bc` |
+| Exact manifest / signature / 61-file inventory | `dfd30f24d8020a086cf07f63e6aee0c0f200f8e8f0ba86414bb556fbb2cb7972` / `bbbd20b566eadc93228af55dd3fe35eb8b2307fe61427eb8ddd487cca8b18601` / `e7c05c4b75df3f8ab92153c023b050a15f51315f94d26a628566b706dd95c958` |
+| Real-user LPAC run log | `da0b2ce74a6731f1960f66e7ad09492ea215f43403bd3a7e01ba6a9b7fc305e3` |
+
+## R44 matched no-transport policy-query control
+
+The R40 network-isolation fixture was repeated under two separately created,
+verified LPAC tokens: the exact zero-capability token and a positive-control
+token carrying only `internetClient` (`S-1-15-3-1`). Both opted out of All
+Application Packages. Neither run used DNS, a socket, `connect` or network
+transport. Both returned `0` for the numeric TEST-NET-2/public and
+RFC1918/private basic queries, and detailed status 14/error type 0. The
+internet-capable positive control therefore did **not** discriminate the API
+on this host and unpackaged fixture. R40's raw `0` cannot be promoted to a
+public-route denial verdict. This is adverse diagnostic evidence, not a reason
+to weaken the direct-egress criterion. Each case restored 12 profile and six
+runtime DACLs, passed snapshot integrity, deleted its disposable profile and
+runtime root, and left the outside-write sentinel absent. An initial default-
+sandbox attempt failed before any policy query with profile-creation
+`0x80070002`; the final normal-user run exited zero. No broader capability was
+used for a product worker. An independent read-only audit matched the runner,
+log, native source, EXE and inventory hashes, verified the enabled
+`internetClient` token SID and LPAC opt-out before worker resume, and confirmed
+both controls' identical raw results and cleanup. It likewise found no
+transport verdict or task-resume proof.
+
+| R44 ignored input/output | SHA-256 |
+|---|---|
+| Positive-control runner / final log | `fc5148641a3f1879590c6f9d92004b32bf83758712712c3c34308f33bf20b3ee` / `582544abd8200100583625b9e4f5f1a243390ba893132be8d91200407d740f60` |
+| Reused R40 native source / EXE / inventory | `fe0e9130a6f7782c0b85df3f8e84474e62695bffc46317de4bb500eb0cb6e56b` / `9a18eef2bc5a6b7ac8392d0924605e0b4c1465716f44aa28d84f6313dfe5d69c` / `4c4c64f2b0ed2c80e3bf2983f022055c738122ba5389164db6c3df7727829a07` |
 
 ### Host-authorized resource trace if the source-build route fails
 
@@ -645,13 +778,21 @@ core DLL loads and reaches Python imports, while R35 proved a matching
 `_socket.pyd` loads before Winsock initialization fails. R36 proved narrow
 packaged-Python read/write/secret denials; R38 imported seven rebuilt
 extensions, with `_socket`/`_ssl` still failing during initialization. R32 and R33 preserve
-the adverse dependency-only and strict-search results. No packaged Python
-connector has completed the hostile matrix, and no run identifies the exact
-original manifest resource denial or proves a direct `connect`/public egress
-denial. R39 adds three local API startup denials, R40's policy query is
-inconclusive, and R41 confirms the same import behavior on test-signed bytes
-without satisfying release signing. The
-native fixture executes no connector package and does not reach brokered calls.
+the adverse dependency-only and strict-search results. R42 and R42b executed
+an exact admitted synthetic Python connector inside verified LPAC: the sampled
+ambient read/new-file checks and 25 connector-originated existing-file
+attempts reported denial. R42b's profile/Temp/runtime ADS-absence observation
+is still incomplete. The separate R29e native fixture exercised owner/DACL
+changes and stream absence.
+No run identifies the exact original manifest resource denial or proves a
+direct `connect`/public egress denial. R39 adds three local API startup denials,
+R40's policy query is inconclusive; R44's matched `internetClient` LPAC
+positive control also returned raw `0` and did not resolve it. R41 confirms
+the same import behavior on test-signed bytes without satisfying release
+signing. R43 corrected the
+checked-in probe's network-stage reporting but retained its real profile/temp
+write failure. The product worker has not reached brokered calls or durable
+dispatch, and the test-harness audits do not qualify product audit integration.
 The project grant, trust, broker, migration, and recovery code on the branch
 remains partial work; none substitutes for the real worker proof.
 
