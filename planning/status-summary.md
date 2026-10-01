@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: db40d8963b64ca13cce0668e853b353def4e9bb4716363ccbef80e67b7c1ea0c
+source_sha256: 0ddf00389b80af35b5683a1768121b46892ece48ec6be53b786f883c951a1cc6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -661,7 +661,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `W2.C06.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c06_reviewer | - |
 | `W2.C07.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c07_preflight | - |
 | `W2.C08.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_c08_preflight | - |
-| `W2.C09.T01` | `append-only v1` | 0 | `-` | - / - | - |
+| `W2.C09.T01` | `append-only v1` | 0 | `R01` | - / - | - |
 ## Wave progress
 
 | Wave | Pre-Wave approval | Campaign | Qualification | Approved slices | Done tasks | Exit gate |
@@ -725,7 +725,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `W2.C09.T01` Build corpus provenance and source-overlap reports | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.C09.T01` Build corpus provenance and source-overlap reports | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
@@ -785,5 +785,5 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C09.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
 

@@ -2460,7 +2460,7 @@
         {
           "task_id": "W2.C09.T01",
           "title": "Build corpus provenance and source-overlap reports",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "acceptance_criteria": [
             "Counts reconcile with canonical corpus state; users can drill from aggregates to records; reports identify unavailable or unknown data rather than imputing it.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2489,7 +2489,7 @@
           "task_review": {
             "task_id": "W2.C09.T01",
             "title": "Build corpus provenance and source-overlap reports",
-            "status": "IN_PROGRESS",
+            "status": "REVIEW",
             "mode": "append-only",
             "latest_review": {
               "reviewer": null,
@@ -2500,7 +2500,56 @@
             "review_control": {
               "version": 1,
               "attempts": [],
-              "current_submission": null
+              "current_submission": {
+                "id": "R01",
+                "submitted_by": "codex-w2-implementation",
+                "submitted_at": "2026-10-01T09:57:13+00:00",
+                "candidate_commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+                "base_commit": "7f69461b2e25bcf3644a24509133a84d6ed7f2c4",
+                "branch": "codex/w2-implementation",
+                "evidence_reference": {
+                  "type": "criterion-manifest",
+                  "path": "artifacts/evidence/W2.C09.T01.json",
+                  "sha256": "bbac9919ba37b8832d5694bfd8d370f4b2ea58c1bd27a5a4676c7aab21126657",
+                  "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+                  "recorded_at": "2026-10-01T09:57:13+00:00"
+                },
+                "acceptance_criteria_sha256": "386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1",
+                "changed_paths": [
+                  "docs/planning-implementation-plan.md",
+                  "planning/backlog.yaml",
+                  "planning/review-site/manifest.json",
+                  "planning/review-site/waves/W2.html",
+                  "planning/status-summary.md",
+                  "tests/reports/test_migration.py"
+                ],
+                "selected_checks": [
+                  "$env:PYTHONPATH='services/core-api/src;.'; $env:TEMP=(Resolve-Path artifacts/tmp).Path; $env:TMP=$env:TEMP; .venv\\Scripts\\python.exe -B -s tools/corpus_report_test_check.py",
+                  ".venv\\Scripts\\python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C09.T01.performance-pycache-01 tools/corpus_report_performance_check.py --report artifacts/tmp/W2.C09.T01.performance-qualification-01.json",
+                  ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/W2.C09.T01.candidate-quality.json",
+                  ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+                  "python tools/taskctl.py --file planning/backlog.yaml validate",
+                  "python tools/backlog_views.py --repo . --check",
+                  "python tools/plan_review_check.py --repo ."
+                ],
+                "deferred_checks": [
+                  "Full desktop, service, search, data and security-local profiles have no changed product inputs from this one-test correction and remain risk-selected S04/checkpoint or fresh W2 exit work under verification section 8.1.",
+                  "The preceding S04 benchmark PASS at 063a3b07712bbdd134e67b6cd34440ccfdd23226 is historical after this input change; only the new 799f2323 report is used for this exact candidate. The 64-item fixture does not claim large-corpus, minimum-hardware, installed-package, live-provider or worker-throughput performance."
+                ],
+                "selection_rationale": "Only a committed-byte v18 recovery test assertion changes. The focused report launcher exercises that exact witness plus current report migration, recovery and denial behavior. Fresh quality/structure/backlog checks protect the test and linked-correction controls. The S04 benchmark must be rerun because this test is among its 526 selected inputs; run its three fresh processes without concurrent check load. The planning site is checked because taskctl claim changes visible state.",
+                "selection_sha256": "d8209e0c4e426d1c22278b0c4b0e23a8e5f5f2dbe0c92c4557f7450f78ef5b13",
+                "prior_attempt_id": null,
+                "open_finding_ids": [],
+                "root_cause_analysis": null,
+                "selected_command_ids": [
+                  "service:corpus-reports",
+                  "foundation:quality",
+                  "foundation:repository-structure",
+                  "foundation:backlog",
+                  "foundation:backlog-views"
+                ],
+                "packet_sha256": "07a47b4da4c72c7a2f1fc243716bd89255a688baf109f129d25f67a709d1b461"
+              }
             }
           }
         }

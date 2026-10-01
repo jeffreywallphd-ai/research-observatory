@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C09.T01",
+  "baseCommit": "7f69461b2e25bcf3644a24509133a84d6ed7f2c4",
+  "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/reports/test_migration.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Original CAP-04.S04.T03 R03 independently approved the corpus report behavior at 52a71525d7655a94043582b8805e585b3372c92d. This correction changes no product, schema, contract, migration, or report implementation path. Original evidence is reused only for unchanged report behavior, not as fresh correction or Wave qualification.",
+        "At the exact clean correction candidate, the report launcher passes 14 report model/control and 17 migration/repository tests, including the frozen v18/v19 successor recovery contract and durable report authorization behavior. The fresh S04 protected Windows synthetic benchmark also reports PASS for the reviewed 64-item, four-source overlap workload; it makes no large-corpus or minimum-hardware claim."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The preceding clean candidate failed tests/reports/test_migration.py::CorpusReportMigrationTests::test_frozen_v18_recovery_contract_survives_successor because it pinned CRLF working-copy bytes that were never committed; the adverse artifacts/tmp/CAP-04.S04.reports-suite.log remains retained with SHA-256 fc8ce4708ef600c84acea2eb634e47acb9ef3a5e541c11d15692a1dc3ca31eaf.",
+        "The corrected test pins the exact committed LF v18 snapshot SHA-256 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661 and separately proves that LF-to-CRLF conversion yields the historical 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e. It passed inside the fresh 31-test report launcher, which also covers recovery and authorization failure paths."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The sole product/test path in the base-to-candidate diff is spec-admitted tests/reports/test_migration.py. The other five paths are the taskctl claim and generated planning views. The frozen v18 snapshot, .gitattributes, v20 migration, rights and report code, approved UX, and W2 packet are unchanged.",
+        "At clean commit 799f2323a4d7e1012f02838d8b6b376228b95693, the report launcher, reviewed baseline-bound three-process performance run, 463-file Python quality check, repository structure check, canonical backlog validation, generated backlog view check, and 492-page planning-site check pass. Full S04 slice review, later checkpoint, and W2 exit remain separate obligations."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:corpus-reports",
+      "foundation:quality",
+      "foundation:repository-structure",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "Only a committed-byte v18 recovery test assertion changes. The focused report launcher exercises that exact witness plus current report migration, recovery and denial behavior. Fresh quality/structure/backlog checks protect the test and linked-correction controls. The S04 benchmark must be rerun because this test is among its 526 selected inputs; run its three fresh processes without concurrent check load. The planning site is checked because taskctl claim changes visible state.",
+    "deferred": [
+      "Full desktop, service, search, data and security-local profiles have no changed product inputs from this one-test correction and remain risk-selected S04/checkpoint or fresh W2 exit work under verification section 8.1.",
+      "The preceding S04 benchmark PASS at 063a3b07712bbdd134e67b6cd34440ccfdd23226 is historical after this input change; only the new 799f2323 report is used for this exact candidate. The 64-item fixture does not claim large-corpus, minimum-hardware, installed-package, live-provider or worker-throughput performance."
+    ]
+  },
+  "checks": [
+    {
+      "id": "corpus-report-suite",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; $env:TEMP=(Resolve-Path artifacts/tmp).Path; $env:TMP=$env:TEMP; .venv\\Scripts\\python.exe -B -s tools/corpus_report_test_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.C09.T01.candidate-corpus-report.log",
+      "rawOutputSha256": "9f71ced3aa96528a9c207fa1faa9641d0c7b11fccb27f07f4dd59c9da1aed50b",
+      "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+      "provenance": "fresh execution at fixed clean committed candidate with workspace-local TEMP/TMP",
+      "result": "14 report model/control and 17 report migration/repository tests pass, including the corrected frozen v18 witness."
+    },
+    {
+      "id": "s04-protected-overlap-performance",
+      "command": ".venv\\Scripts\\python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C09.T01.performance-pycache-01 tools/corpus_report_performance_check.py --report artifacts/tmp/W2.C09.T01.performance-qualification-01.json",
+      "exitCode": 0,
+      "reportPath": "artifacts/tmp/W2.C09.T01.performance-qualification-01.json",
+      "reportSha256": "8931e432b0cae9c50a72349e544d559bc8f45a3865c5e1eda02bd411ceb55c98",
+      "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+      "provenance": "three fresh isolated Windows processes at fixed clean committed candidate; all 526 physical and Git inputs independently audited",
+      "result": "PASS in 270.138 seconds against independently reviewed immutable baseline SHA-256 6658a04b314e91c8f164c45f512aeeb1eedba96d22b881f3c97004674b7fdcaf; all eight measured metrics pass."
+    },
+    {
+      "id": "python-quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/W2.C09.T01.candidate-quality.json",
+      "exitCode": 0,
+      "reportPath": "artifacts/tmp/W2.C09.T01.candidate-quality.json",
+      "reportSha256": "0a02d319647d3bf5fc31d727cf9efdcd0e54e9a90dcaf9fe4a9db3e7a2364150",
+      "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Python quality PASS across 463 governed files."
+    },
+    {
+      "id": "repository-structure",
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "12 required modules present."
+    },
+    {
+      "id": "taskctl-validate",
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Canonical backlog valid: 20 capabilities, 117 slices, 385 tasks and 12 release gates."
+    },
+    {
+      "id": "backlog-views",
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Generated backlog views match the claimed ledger."
+    },
+    {
+      "id": "planning-review-site",
+      "command": "python tools/plan_review_check.py --repo .",
+      "exitCode": 0,
+      "commit": "799f2323a4d7e1012f02838d8b6b376228b95693",
+      "provenance": "fresh execution at fixed clean committed candidate",
+      "result": "Planning review site PASS: 19 capabilities, 111 slices, 337 tasks and 492 HTML pages."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "8c15764812e8e7b7bb594c0c098405d25c19881e5a4018c79657827fa2b05975",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "$env:PYTHONPATH='services/core-api/src;.'; $env:TEMP=(Resolve-Path artifacts/tmp).Path; $env:TMP=$env:TEMP; .venv\\Scripts\\python.exe -B -s tools/corpus_report_test_check.py",
+      ".venv\\Scripts\\python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C09.T01.performance-pycache-01 tools/corpus_report_performance_check.py --report artifacts/tmp/W2.C09.T01.performance-qualification-01.json",
+      ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/W2.C09.T01.candidate-quality.json",
+      "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "python tools/backlog_views.py --repo . --check"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S04.T03.R03.json",
+        "sha256": "783fb41dee879a519a1632b964f18b6b72fe03176511c585a4ac6559a1c2479b",
+        "commit": "52a71525d7655a94043582b8805e585b3372c92d"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S04.T03.review-R03.json",
+        "sha256": "04b04bd07fcaabd38020504c653e515d491b85b8b1ee20172b5e4ef98cc7c35e",
+        "commit": "52a71525d7655a94043582b8805e585b3372c92d"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S04.performance-baseline-review-01.md",
+        "sha256": "ab7039428280e35bbc75b072f7a5fedff75d27f6c52b7af789c3ef01b76f6f90",
+        "commit": "063a3b07712bbdd134e67b6cd34440ccfdd23226"
+      }
+    ],
+    "rationale": "The linked correction restores the frozen v18 snapshot test to exact committed-byte authority without changing the snapshot, migration, report, rights, UX or W2 approval. The earlier failing suite remains adverse. Fresh report/recovery, quality, planning-integrity and exact-input protected performance checks prove the affected integration at the corrected committed candidate; original T03 evidence is historical support only for unchanged product behavior."
+  },
+  "scopeDeviation": null
+}

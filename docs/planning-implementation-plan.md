@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: db40d8963b64ca13cce0668e853b353def4e9bb4716363ccbef80e67b7c1ea0c
+source_sha256: 0ddf00389b80af35b5683a1768121b46892ece48ec6be53b786f883c951a1cc6
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3164,7 +3164,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C09.T01 — Build corpus provenance and source-overlap reports
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S04.T03`. **Latest review:** `-`.
 
 **Reproduction:** At the clean committed S04 candidate 063a3b07712bbdd134e67b6cd34440ccfdd23226, tests/reports/test_migration.py::CorpusReportMigrationTests::test_frozen_v18_recovery_contract_survives_successor fails. The test expects SHA-256 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e for packages/contracts/storage/sqlite-migration-recovery-v18.snapshot.json, but its exact Git LF blob at creation commit 6dec0c7 and at current HEAD is SHA-256 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661. The expected digest is the LF-to-CRLF working-copy conversion and was never a committed snapshot. The failing direct report-suite log is artifacts/tmp/CAP-04.S04.reports-suite.log; the original CAP-04.S04.T03 approval and frozen W2 packet remain unchanged.
 
@@ -3181,7 +3181,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `07a47b4da4c72c7a2f1fc243716bd89255a688baf109f129d25f67a709d1b461`
+
+- Candidate / base / branch: `799f2323a4d7e1012f02838d8b6b376228b95693` / `7f69461b2e25bcf3644a24509133a84d6ed7f2c4` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-01T09:57:13+00:00`
+- Evidence: `artifacts/evidence/W2.C09.T01.json` / `bbac9919ba37b8832d5694bfd8d370f4b2ea58c1bd27a5a4676c7aab21126657` / `799f2323a4d7e1012f02838d8b6b376228b95693`
+- Acceptance-criteria SHA-256: `386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1`
+- Verification-selection SHA-256: `d8209e0c4e426d1c22278b0c4b0e23a8e5f5f2dbe0c92c4557f7450f78ef5b13`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/reports/test_migration.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src;.'; $env:TEMP=(Resolve-Path artifacts/tmp).Path; $env:TMP=$env:TEMP; .venv\Scripts\python.exe -B -s tools/corpus_report_test_check.py`, `.venv\Scripts\python.exe -B -s -X pycache_prefix=artifacts/tmp/W2.C09.T01.performance-pycache-01 tools/corpus_report_performance_check.py --report artifacts/tmp/W2.C09.T01.performance-qualification-01.json`, `.venv\Scripts\python.exe tools/quality_check.py --repo . --report artifacts/tmp/W2.C09.T01.candidate-quality.json`, `.venv\Scripts\python.exe tools/repository_structure_check.py --repo .`, `python tools/taskctl.py --file planning/backlog.yaml validate`, `python tools/backlog_views.py --repo . --check`, `python tools/plan_review_check.py --repo .`
+- Deferred checks: `Full desktop, service, search, data and security-local profiles have no changed product inputs from this one-test correction and remain risk-selected S04/checkpoint or fresh W2 exit work under verification section 8.1.`, `The preceding S04 benchmark PASS at 063a3b07712bbdd134e67b6cd34440ccfdd23226 is historical after this input change; only the new 799f2323 report is used for this exact candidate. The 64-item fixture does not claim large-corpus, minimum-hardware, installed-package, live-provider or worker-throughput performance.`
+- Selection rationale: Only a committed-byte v18 recovery test assertion changes. The focused report launcher exercises that exact witness plus current report migration, recovery and denial behavior. Fresh quality/structure/backlog checks protect the test and linked-correction controls. The S04 benchmark must be rerun because this test is among its 526 selected inputs; run its three fresh processes without concurrent check load. The planning site is checked because taskctl claim changes visible state.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
