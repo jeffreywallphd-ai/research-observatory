@@ -251,6 +251,37 @@ class ArchitectureContractTests(unittest.TestCase):
                 self.assertTrue(any("concrete" in error for error in errors), errors)
                 path.unlink()
 
+    def test_corpus_source_projection_is_a_root_adapter_not_a_nested_or_port_dependency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = (
+                "import sqlite3\nfrom .storage import CanonicalConnection\n"
+                "def update(connection):\n    connection.execute('SELECT 1')\n"
+            )
+            (root / "corpus_source_projection.py").write_text(source, encoding="utf-8")
+            self.assertEqual([], core_data_boundary_errors(root))
+            for location in ("business/corpus_source_projection.py", "ports/corpus_source_projection.py"):
+                with self.subTest(location=location):
+                    path = root / location
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(source, encoding="utf-8")
+                    errors = core_data_boundary_errors(root)
+                    self.assertTrue(any("database dependency outside adapter" in error for error in errors), errors)
+                    self.assertTrue(any("database call execute outside adapter" in error for error in errors), errors)
+                    path.unlink()
+            for location in ("business.py", "ports/sources.py"):
+                with self.subTest(location=location):
+                    path = root / location
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(
+                        "from research_observatory_core.corpus_source_projection import apply_source_projection\n",
+                        encoding="utf-8",
+                    )
+                    self.assertTrue(
+                        any("concrete repository adapter" in error for error in core_data_boundary_errors(root))
+                    )
+                    path.unlink()
+
     def test_connector_repository_is_a_root_adapter_not_a_business_or_port_dependency(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

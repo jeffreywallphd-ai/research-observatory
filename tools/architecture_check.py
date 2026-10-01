@@ -36,6 +36,7 @@ _REPOSITORY_ADAPTER_MODULES = {
     "import_commit_repository",
     "corpus_repository",
     "corpus_report_repository",
+    "corpus_source_projection",
     "rights_repository",
 }
 _DATA_ADAPTER_FILES = {"object_store.py", "storage.py"} | {f"{module}.py" for module in _REPOSITORY_ADAPTER_MODULES}
