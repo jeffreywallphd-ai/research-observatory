@@ -189,3 +189,55 @@ Development checks cover synthetic mappings, isolated real DPAPI, native/Core
 permission and configuration paths, protected-project restart and browser
 interactions. Final native/task/slice qualification remains pending; these checks
 are not live-provider or production-package evidence.
+
+## Signed plugin SDK contract — CAP-04.S05.T01
+
+`packages/contracts/connectors/connector-plugin-*.schema.json` publishes the
+portable manifest, project-grant, invocation-request and invocation-plan shapes.
+The authorization-provenance schema records a successful pre-dispatch decision.
+`connectors/plugin_manifest.py` owns their Core validation. This is a separate
+SDK from the first-party connector request/capability/page contract above:
+ADR-0028 permits only lookup, search, references, citations,
+open-access-locations and repository-metadata for plugins. The first-party
+recommendations and OA-resolution operations do not become plugin authority.
+
+A plugin manifest declares its stable plugin and source identities, semantic
+plugin/SDK versions and required SDK features, fixed entry point, complete file
+hashes, permitted operations and exact HTTPS destination templates. It also
+declares broker-only authentication scopes, data classes, source-terms status,
+rate/resource ceilings and requested permissions. These declarations are
+untrusted inputs and do not grant project, network, credential or rights access.
+The signed source ID must be `plugin.` followed by the plugin ID, so a plugin
+cannot claim a built-in provider ID. Core registration in T02 must still reject
+plugin-ID/publisher collisions before enablement.
+Missing terms remain `not-reported`; a terms reference does not permit retention,
+full-text acquisition, model use, export or sharing. Current Core policy and
+action-specific rights still decide each operation.
+
+Core verifies a detached Ed25519 signature over the **exact manifest bytes**
+against an explicitly configured local publisher key, validates the strict
+manifest and verifies the complete declared file set before producing a verified
+package identity. Its package digest is SHA-256 over the domain prefix
+`research-observatory-connector-package-v1` plus a zero byte, followed by each
+file in sorted path order as a four-byte big-endian UTF-8 path length, path,
+eight-byte big-endian content length and exact content bytes. The manifest
+digest and signature digest remain separate. Unknown publishers, changed signed
+bytes, undeclared files, changed file bytes, unsafe paths, incompatible major
+versions and unknown required features deny. No bundled key can trust itself.
+
+An authenticated active Core-owned project grant must bind the exact plugin
+ID/version, publisher, manifest and package digests, declared permissions and
+destinations, project and revision. A same-version package update therefore
+requires a new enable decision; increased permissions require renewed consent.
+The authorization function only returns an attributable plan containing those
+identities, source, operation, invocation, Core-owned scientific-request digest
+and routing-request digest when the current grant and requested
+operation/destination match. The latter digest binds the routing fields and
+scientific digest; it is not a digest of wire bytes or replay content. A typed
+`authorized` provenance envelope recomputes authorization from the verified
+package, Core-owned grant and request, with no claim
+that an operation ran or yielded a result. It does not execute plugin code,
+obtain a secret, authorize a scientific query or persist consent. CAP-04.S05.T02
+owns durable enablement, dispatch through an LPAC worker and narrow broker,
+current policy/rights rechecks, denial/audit and restart qualification. A caller
+must never accept a plugin-supplied grant or plan as Core authority.

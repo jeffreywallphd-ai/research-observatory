@@ -1,0 +1,92 @@
+{
+  "$defs": {
+    "InvocationId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "lookup",
+        "search",
+        "references",
+        "citations",
+        "open-access-locations",
+        "repository-metadata"
+      ],
+      "type": "string"
+    },
+    "PluginDestination": {
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Host",
+          "type": "string"
+        },
+        "pathTemplate": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Pathtemplate",
+          "type": "string"
+        },
+        "port": {
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "Port",
+          "type": "integer"
+        },
+        "scheme": {
+          "const": "https",
+          "title": "Scheme",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme",
+        "host",
+        "port",
+        "pathTemplate"
+      ],
+      "title": "PluginDestination",
+      "type": "object"
+    },
+    "ProjectId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Sha256": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/connectors/connector-plugin-invocation-request.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "destination": {
+      "$ref": "#/$defs/PluginDestination"
+    },
+    "invocationId": {
+      "$ref": "#/$defs/InvocationId"
+    },
+    "operation": {
+      "$ref": "#/$defs/Operation"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectId"
+    },
+    "scientificRequestSha256": {
+      "$ref": "#/$defs/Sha256"
+    }
+  },
+  "required": [
+    "projectId",
+    "invocationId",
+    "scientificRequestSha256",
+    "operation",
+    "destination"
+  ],
+  "title": "PluginInvocationRequest",
+  "type": "object"
+}

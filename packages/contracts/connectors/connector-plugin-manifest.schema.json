@@ -1,0 +1,371 @@
+{
+  "$defs": {
+    "DataClass": {
+      "enum": [
+        "public-metadata",
+        "licensed-metadata",
+        "private-query",
+        "full-text"
+      ],
+      "type": "string"
+    },
+    "KeyId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "lookup",
+        "search",
+        "references",
+        "citations",
+        "open-access-locations",
+        "repository-metadata"
+      ],
+      "type": "string"
+    },
+    "Permission": {
+      "enum": [
+        "provider-network",
+        "credential-broker"
+      ],
+      "type": "string"
+    },
+    "PluginAuthentication": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "broker-scoped"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mode"
+      ],
+      "title": "PluginAuthentication",
+      "type": "object"
+    },
+    "PluginDestination": {
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Host",
+          "type": "string"
+        },
+        "pathTemplate": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Pathtemplate",
+          "type": "string"
+        },
+        "port": {
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "Port",
+          "type": "integer"
+        },
+        "scheme": {
+          "const": "https",
+          "title": "Scheme",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme",
+        "host",
+        "port",
+        "pathTemplate"
+      ],
+      "title": "PluginDestination",
+      "type": "object"
+    },
+    "PluginFile": {
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "maxLength": 240,
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/Sha256"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "title": "PluginFile",
+      "type": "object"
+    },
+    "PluginId": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "PluginRateLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "maxConcurrent": {
+          "maximum": 1,
+          "minimum": 1,
+          "title": "Maxconcurrent",
+          "type": "integer"
+        },
+        "maxRequestsPerSecond": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Maxrequestspersecond",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "maxRequestsPerSecond",
+        "maxConcurrent"
+      ],
+      "title": "PluginRateLimits",
+      "type": "object"
+    },
+    "PluginResourceProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "committedMemoryMiB": {
+          "maximum": 256,
+          "minimum": 16,
+          "title": "Committedmemorymib",
+          "type": "integer"
+        },
+        "maxJobsPerProject": {
+          "maximum": 1,
+          "minimum": 1,
+          "title": "Maxjobsperproject",
+          "type": "integer"
+        },
+        "wallTimeSeconds": {
+          "maximum": 60,
+          "minimum": 1,
+          "title": "Walltimeseconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "committedMemoryMiB",
+        "maxJobsPerProject",
+        "wallTimeSeconds"
+      ],
+      "title": "PluginResourceProfile",
+      "type": "object"
+    },
+    "PluginSourceIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "displayName": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Displayname",
+          "type": "string"
+        },
+        "sourceId": {
+          "$ref": "#/$defs/PluginId"
+        }
+      },
+      "required": [
+        "sourceId",
+        "displayName"
+      ],
+      "title": "PluginSourceIdentity",
+      "type": "object"
+    },
+    "PluginTerms": {
+      "additionalProperties": false,
+      "description": "A provider declaration; it never authorizes any rights action.",
+      "properties": {
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "status": {
+          "enum": [
+            "not-reported",
+            "declared"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "PluginTerms",
+      "type": "object"
+    },
+    "RequiredFeature": {
+      "enum": [
+        "source-assertions-v1",
+        "brokered-requests-v1"
+      ],
+      "type": "string"
+    },
+    "Scope": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "Sha256": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Version": {
+      "maxLength": 64,
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/connectors/connector-plugin-manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authentication": {
+      "$ref": "#/$defs/PluginAuthentication"
+    },
+    "credentialScopes": {
+      "items": {
+        "$ref": "#/$defs/Scope"
+      },
+      "maxItems": 16,
+      "title": "Credentialscopes",
+      "type": "array"
+    },
+    "dataClasses": {
+      "items": {
+        "$ref": "#/$defs/DataClass"
+      },
+      "maxItems": 4,
+      "minItems": 1,
+      "title": "Dataclasses",
+      "type": "array"
+    },
+    "destinations": {
+      "items": {
+        "$ref": "#/$defs/PluginDestination"
+      },
+      "maxItems": 16,
+      "title": "Destinations",
+      "type": "array"
+    },
+    "entryPoint": {
+      "maxLength": 240,
+      "minLength": 1,
+      "title": "Entrypoint",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/PluginFile"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "title": "Files",
+      "type": "array"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/$defs/Operation"
+      },
+      "maxItems": 6,
+      "minItems": 1,
+      "title": "Operations",
+      "type": "array"
+    },
+    "permissions": {
+      "items": {
+        "$ref": "#/$defs/Permission"
+      },
+      "maxItems": 2,
+      "title": "Permissions",
+      "type": "array"
+    },
+    "pluginId": {
+      "$ref": "#/$defs/PluginId"
+    },
+    "pluginVersion": {
+      "$ref": "#/$defs/Version"
+    },
+    "publisherKeyId": {
+      "$ref": "#/$defs/KeyId"
+    },
+    "rateLimits": {
+      "$ref": "#/$defs/PluginRateLimits"
+    },
+    "requiredFeatures": {
+      "items": {
+        "$ref": "#/$defs/RequiredFeature"
+      },
+      "maxItems": 2,
+      "title": "Requiredfeatures",
+      "type": "array"
+    },
+    "resourceProfile": {
+      "$ref": "#/$defs/PluginResourceProfile"
+    },
+    "rightsBehavior": {
+      "const": "source-assertions-only",
+      "title": "Rightsbehavior",
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "sdkVersion": {
+      "$ref": "#/$defs/Version"
+    },
+    "sourceIdentity": {
+      "$ref": "#/$defs/PluginSourceIdentity"
+    },
+    "terms": {
+      "$ref": "#/$defs/PluginTerms"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "pluginId",
+    "pluginVersion",
+    "sdkVersion",
+    "requiredFeatures",
+    "publisherKeyId",
+    "sourceIdentity",
+    "authentication",
+    "terms",
+    "rateLimits",
+    "entryPoint",
+    "files",
+    "operations",
+    "destinations",
+    "credentialScopes",
+    "dataClasses",
+    "rightsBehavior",
+    "resourceProfile",
+    "permissions"
+  ],
+  "title": "PluginManifest",
+  "type": "object"
+}

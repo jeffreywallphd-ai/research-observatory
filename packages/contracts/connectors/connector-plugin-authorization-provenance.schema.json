@@ -1,0 +1,191 @@
+{
+  "$defs": {
+    "InvocationId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "KeyId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "lookup",
+        "search",
+        "references",
+        "citations",
+        "open-access-locations",
+        "repository-metadata"
+      ],
+      "type": "string"
+    },
+    "Permission": {
+      "enum": [
+        "provider-network",
+        "credential-broker"
+      ],
+      "type": "string"
+    },
+    "PluginDestination": {
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Host",
+          "type": "string"
+        },
+        "pathTemplate": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Pathtemplate",
+          "type": "string"
+        },
+        "port": {
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "Port",
+          "type": "integer"
+        },
+        "scheme": {
+          "const": "https",
+          "title": "Scheme",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme",
+        "host",
+        "port",
+        "pathTemplate"
+      ],
+      "title": "PluginDestination",
+      "type": "object"
+    },
+    "PluginId": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "ProjectId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "RequiredFeature": {
+      "enum": [
+        "source-assertions-v1",
+        "brokered-requests-v1"
+      ],
+      "type": "string"
+    },
+    "Sha256": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Version": {
+      "maxLength": 64,
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/connectors/connector-plugin-authorization-provenance.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An authorized decision only, not authority when deserialized as data.",
+  "properties": {
+    "destination": {
+      "$ref": "#/$defs/PluginDestination"
+    },
+    "grantRevision": {
+      "minimum": 1,
+      "title": "Grantrevision",
+      "type": "integer"
+    },
+    "invocationId": {
+      "$ref": "#/$defs/InvocationId"
+    },
+    "manifestSha256": {
+      "$ref": "#/$defs/Sha256"
+    },
+    "operation": {
+      "$ref": "#/$defs/Operation"
+    },
+    "packageSha256": {
+      "$ref": "#/$defs/Sha256"
+    },
+    "permissions": {
+      "items": {
+        "$ref": "#/$defs/Permission"
+      },
+      "title": "Permissions",
+      "type": "array"
+    },
+    "phase": {
+      "const": "authorized",
+      "title": "Phase",
+      "type": "string"
+    },
+    "pluginId": {
+      "$ref": "#/$defs/PluginId"
+    },
+    "pluginVersion": {
+      "$ref": "#/$defs/Version"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectId"
+    },
+    "publisherKeyId": {
+      "$ref": "#/$defs/KeyId"
+    },
+    "requestSha256": {
+      "$ref": "#/$defs/Sha256"
+    },
+    "requiredFeatures": {
+      "items": {
+        "$ref": "#/$defs/RequiredFeature"
+      },
+      "title": "Requiredfeatures",
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    },
+    "scientificRequestSha256": {
+      "$ref": "#/$defs/Sha256"
+    },
+    "sdkVersion": {
+      "$ref": "#/$defs/Version"
+    },
+    "signatureSha256": {
+      "$ref": "#/$defs/Sha256"
+    },
+    "sourceId": {
+      "$ref": "#/$defs/PluginId"
+    }
+  },
+  "required": [
+    "pluginId",
+    "pluginVersion",
+    "sdkVersion",
+    "requiredFeatures",
+    "sourceId",
+    "packageSha256",
+    "manifestSha256",
+    "publisherKeyId",
+    "signatureSha256",
+    "projectId",
+    "grantRevision",
+    "permissions",
+    "invocationId",
+    "scientificRequestSha256",
+    "requestSha256",
+    "operation",
+    "destination",
+    "schemaVersion",
+    "phase"
+  ],
+  "title": "PluginAuthorizationProvenance",
+  "type": "object"
+}

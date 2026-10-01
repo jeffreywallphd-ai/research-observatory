@@ -2817,6 +2817,13 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
             ConnectorRequest,
             ConnectorResultPage,
         )
+        from research_observatory_core.connectors.plugin_manifest import (
+            PluginAuthorizationProvenance,
+            PluginInvocationPlan,
+            PluginInvocationRequest,
+            PluginManifest,
+            PluginProjectGrant,
+        )
         from research_observatory_core.contract import canonical_openapi_bytes
         from research_observatory_core.model_registry_contracts import ModelManifest
         from research_observatory_core.model_routing_contracts import RoutingPolicy
@@ -2890,6 +2897,11 @@ def generated_artifacts(repo: Path) -> dict[Path, bytes]:
                 ("connector-request.schema.json", ConnectorRequest),
                 ("connector-page.schema.json", ConnectorResultPage),
                 ("connector-capabilities.schema.json", ConnectorCapabilities),
+                ("connector-plugin-manifest.schema.json", PluginManifest),
+                ("connector-plugin-grant.schema.json", PluginProjectGrant),
+                ("connector-plugin-invocation-request.schema.json", PluginInvocationRequest),
+                ("connector-plugin-invocation-plan.schema.json", PluginInvocationPlan),
+                ("connector-plugin-authorization-provenance.schema.json", PluginAuthorizationProvenance),
             )
         }
         workflow_profile_projection = approved_workflow_catalog_projection().model_dump(mode="json", by_alias=True)

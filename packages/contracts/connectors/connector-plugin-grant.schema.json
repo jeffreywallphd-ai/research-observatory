@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "KeyId": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$",
+      "type": "string"
+    },
+    "Permission": {
+      "enum": [
+        "provider-network",
+        "credential-broker"
+      ],
+      "type": "string"
+    },
+    "PluginDestination": {
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Host",
+          "type": "string"
+        },
+        "pathTemplate": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Pathtemplate",
+          "type": "string"
+        },
+        "port": {
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "Port",
+          "type": "integer"
+        },
+        "scheme": {
+          "const": "https",
+          "title": "Scheme",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheme",
+        "host",
+        "port",
+        "pathTemplate"
+      ],
+      "title": "PluginDestination",
+      "type": "object"
+    },
+    "PluginId": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "ProjectId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Sha256": {
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Version": {
+      "maxLength": 64,
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+      "type": "string"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/connectors/connector-plugin-grant.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "destinations": {
+      "items": {
+        "$ref": "#/$defs/PluginDestination"
+      },
+      "maxItems": 16,
+      "title": "Destinations",
+      "type": "array"
+    },
+    "manifestSha256": {
+      "$ref": "#/$defs/Sha256"
+    },
+    "packageSha256": {
+      "$ref": "#/$defs/Sha256"
+    },
+    "permissions": {
+      "items": {
+        "$ref": "#/$defs/Permission"
+      },
+      "maxItems": 2,
+      "title": "Permissions",
+      "type": "array"
+    },
+    "pluginId": {
+      "$ref": "#/$defs/PluginId"
+    },
+    "pluginVersion": {
+      "$ref": "#/$defs/Version"
+    },
+    "projectId": {
+      "$ref": "#/$defs/ProjectId"
+    },
+    "publisherKeyId": {
+      "$ref": "#/$defs/KeyId"
+    },
+    "revision": {
+      "maximum": 9007199254740991,
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "projectId",
+    "pluginId",
+    "pluginVersion",
+    "packageSha256",
+    "manifestSha256",
+    "publisherKeyId",
+    "permissions",
+    "destinations",
+    "revision"
+  ],
+  "title": "PluginProjectGrant",
+  "type": "object"
+}
