@@ -16730,10 +16730,10 @@
               "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": "agent:/root/t03_formal_review",
+                "reviewer": "agent:/root/t03_r02_independent_review",
                 "result": "changes-requested",
-                "reviewed_at": "2026-10-01T06:54:42+00:00",
-                "notes": "Independent expanded review of the frozen CAP-04.S04.T03 R01 candidate under approved S04 section 9.3, accepted ADR-0027, and experience reference RO-UI-ACADEMIC-MINIMAL-1.7. The exact manifest hash matches the REVIEW backlog projection; all 67 changed paths equal the base-to-candidate Git diff, all 23 cited raw-log hashes reproduce, all cited checks exit zero, and the build report identifies a clean 22e184e5 source. Source review and executed evidence support distinct canonical-item denominators, source/path overlap arithmetic, exact protected drill, explicit missingness, source-specific rights checks, idempotent rollback/restart, and populated-v18-to-v19 migration recovery. The authenticated Windows case proves Core, DPAPI/SQLCipher, restart, and revoked historical-report access. One task-level evidence gap blocks approval: the cited Corpus Canvas desktop tests render static markup and call pure helpers, but do not activate the mounted production controls that must take a user from an aggregate count to an exact record drill and support keyboard/focus and denial/recovery behavior. The real Core test proves the service boundary, not that renderer interaction. S04 section 11 incremental project/source summaries, indexes, and warm/cold representative performance qualification remain distinct open slice obligations; their deferral alone is not this T03 finding. Full affected profiles and independent S04/W2 qualification are likewise later gates. The reviewer made no product, test, backlog, or Git mutation and ran no unchanged full profile."
+                "reviewed_at": "2026-10-01T07:59:52+00:00",
+                "notes": "Independent R02 review of the exact 00553b30 candidate and frozen submission closes CAP-04.S04.T03-R01-F01. A mounted Chromium test uses the built production Corpus Canvas to activate a source aggregate by keyboard, asserts the exact saved-snapshot/filter/cursor/limit request and matching record, checks heading focus and live announcement, then proves a 403 clears protected content and the visible saved-report action restores interaction. The authenticated Windows Core/DPAPI/SQLCipher restart and revocation check also passes. The R02 manifest hash matches the REVIEW backlog projection; its 40 paths equal the base-to-candidate Git diff, all 12 cited canonical raw-log digests and zero exits reproduce, the build report binds a clean 00553b30 source, the frozen v19 recovery schema equals its predecessor, and architecture-maintenance predecessor hashes match. Focused v20 migration, projection, rights-aware member reconciliation and report-seal review found no product blocker. Approval remains unavailable because the changed SQLite architecture guide still states that v19 is current and never backed up, contradicting the committed v20 migration and verified v19 backup; it also omits the new mutable projection tables from its mutability prose. This violates the third task criterion's documentation/recovery accuracy. Representative warm/cold performance, report-suite profile registration, full affected profiles and integrated slice/W2 qualification remain later gates; no unchanged full profile was replayed in this review."
               },
               "review_control": {
                 "version": 1,
@@ -16923,6 +16923,165 @@
                         "closed_finding_ids": []
                       }
                     }
+                  },
+                  {
+                    "submission": {
+                      "id": "R02",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-01T07:51:41+00:00",
+                      "candidate_commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+                      "base_commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S04.T03.R02.json",
+                        "sha256": "078c2315cc45631df925456ed87355219cb81a3a1dbe51c9ea2e044f73e10955",
+                        "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+                        "recorded_at": "2026-10-01T07:51:41+00:00"
+                      },
+                      "acceptance_criteria_sha256": "386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1",
+                      "changed_paths": [
+                        "apps/desktop/src/app.css",
+                        "artifacts/evidence/CAP-04.S04.T03.architecture-classifier.maintenance-R02.md",
+                        "artifacts/evidence/CAP-04.S04.T03.json",
+                        "artifacts/evidence/CAP-04.S04.T03.review-R01.json",
+                        "artifacts/evidence/CAP-04.S04.T03.task-start.md",
+                        "docs/architecture/local-sqlite-storage.md",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/storage/sqlite-migration-recovery-v19.snapshot.json",
+                        "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+                        "packages/contracts/storage/sqlite-profile.schema.json",
+                        "packages/contracts/storage/sqlite-profile.v1.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S04.T03.html",
+                        "planning/review-site/CAP-04/CAP-04.S04.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/packaging/sidecar-build.json",
+                        "services/core-api/src/research_observatory_core/corpus_report_model.py",
+                        "services/core-api/src/research_observatory_core/corpus_report_repository.py",
+                        "services/core-api/src/research_observatory_core/corpus_repository.py",
+                        "services/core-api/src/research_observatory_core/corpus_source_projection.py",
+                        "services/core-api/src/research_observatory_core/migrations/runner.py",
+                        "services/core-api/src/research_observatory_core/migrations/versions/v0020_corpus_source_projection.py",
+                        "services/core-api/src/research_observatory_core/storage.py",
+                        "tests/corpus/test_repository.py",
+                        "tests/corpus_reports/test_model.py",
+                        "tests/data/test_sqlite_migrations.py",
+                        "tests/data/test_sqlite_schema.py",
+                        "tests/desktop/test_corpus_report_interactions.py",
+                        "tests/desktop/test_desktop_app_check.py",
+                        "tests/foundation/test_architecture_check.py",
+                        "tests/packaging/test_core_sidecar_package.py",
+                        "tests/reconciliation/test_corpus_migration.py",
+                        "tests/reports/test_migration.py",
+                        "tests/reports/test_repository.py",
+                        "tests/rights/test_migration.py",
+                        "tools/architecture_check.py",
+                        "tools/core_sidecar_build.py",
+                        "tools/desktop_app_check.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe tools/corpus_report_test_check.py",
+                        ".venv\\Scripts\\python.exe tools/corpus_test_check.py",
+                        "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_schema",
+                        "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_migrations tests.reports.test_migration",
+                        "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.desktop.test_corpus_report_interactions",
+                        "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_product_style_qualification_contract_is_exact_and_rejects_matrix_gaps",
+                        "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.rights.test_runtime_windows.RightsRuntimeWindowsTests.test_authenticated_policy_replay_restart_and_revocation_block_corpus_use",
+                        ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 77fe987e16c9bb4b5878538ddf25cce5f24d68c9 --head HEAD",
+                        ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.quality.json",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.build.json",
+                        ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo ."
+                      ],
+                      "deferred_checks": [
+                        "S04 still requires a reviewed representative warm/cold end-to-end performance baseline and qualification for the incremental projection, full affected profile registration/execution, integrated accessibility/security/recovery, independent slice review and subsequent W2 gates. A separate bounded verification-control increment must register the report suite in service and affected profiles before S04 qualification.",
+                        "An initial precursor 722481dd desktop product run failed six unrelated import-source tests because the default user temporary directory was unavailable to the sandbox; the unchanged product check passed after using a workspace-local temporary directory. A broad desktop checker unit run at that precursor failed two unrelated DevelopmentEntry fixture cleanups with WinError 32 while the targeted Corpus Canvas matrix and built product capture passed. These failed attempts are retained in ignored R02 logs and are not cited as final-candidate passes; their full-profile closure remains due at the later slice/Wave gate.",
+                        "The unchanged native supervisor admission cases and portable report/Core contract generation passed in R01. R02 reruns the changed product, migration, UI and protection boundaries; full native/contract and deployment-profile replay remains at slice/checkpoint/W2 qualification rather than ordinary task scope."
+                      ],
+                      "selection_rationale": "R02 repairs the R01 mounted interaction proof and adds approved S04 section 11 incremental source projection with a v20 migration and rights-sensitive report reconciliation. Fresh task-level checks target changed corpus/report/storage paths, migration/recovery, actual Windows protected storage, renderer focus/denial/recovery, approved UI identity, and affected architecture/build/quality controls. The final candidate and all cited check logs are fixed to commit 00553b30. Full profile and representative performance qualification remain S04/checkpoint/W2 work under verification section 8.1.",
+                      "selection_sha256": "b7898cc898a4447393b33d88ce716168e7fdee5bfe8fde48591aab847153ba98",
+                      "prior_attempt_id": "R01",
+                      "open_finding_ids": [
+                        "CAP-04.S04.T03-R01-F01"
+                      ],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "service:corpus",
+                        "desktop:application",
+                        "foundation:architecture",
+                        "foundation:quality",
+                        "foundation:ui-change",
+                        "foundation:build-manifest",
+                        "foundation:repository-structure"
+                      ],
+                      "packet_sha256": "82414f692b37aefc154f7d0f6ea046e42408770b2ae577823c8fd6c3d88a1ffe"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/t03_r02_independent_review",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-10-01T07:59:52+00:00",
+                      "notes": "Independent R02 review of the exact 00553b30 candidate and frozen submission closes CAP-04.S04.T03-R01-F01. A mounted Chromium test uses the built production Corpus Canvas to activate a source aggregate by keyboard, asserts the exact saved-snapshot/filter/cursor/limit request and matching record, checks heading focus and live announcement, then proves a 403 clears protected content and the visible saved-report action restores interaction. The authenticated Windows Core/DPAPI/SQLCipher restart and revocation check also passes. The R02 manifest hash matches the REVIEW backlog projection; its 40 paths equal the base-to-candidate Git diff, all 12 cited canonical raw-log digests and zero exits reproduce, the build report binds a clean 00553b30 source, the frozen v19 recovery schema equals its predecessor, and architecture-maintenance predecessor hashes match. Focused v20 migration, projection, rights-aware member reconciliation and report-seal review found no product blocker. Approval remains unavailable because the changed SQLite architecture guide still states that v19 is current and never backed up, contradicting the committed v20 migration and verified v19 backup; it also omits the new mutable projection tables from its mutability prose. This violates the third task criterion's documentation/recovery accuracy. Representative warm/cold performance, report-suite profile registration, full affected profiles and integrated slice/W2 qualification remain later gates; no unchanged full profile was replayed in this review."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S04.T03.review-R02.json",
+                      "sha256": "3daa613d80bf1669cf62f1d23fa911fbb45c291aea114483339dd7fdf03c851e"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-04.S04.T03-R02-F01",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 3,
+                        "title": "SQLite recovery guide still calls v19 current after the v20 migration",
+                        "reproduction": "At candidate 00553b30, inspect docs/architecture/local-sqlite-storage.md:117-125. It first says supported v1-v19 profiles advance to current v20, then says a current version-19 database is detected idempotently and is never backed up or rewritten. services/core-api/src/research_observatory_core/storage.py:50 declares DATABASE_SCHEMA_VERSION=20; migrations/runner.py:1795-1799 runs v0020 for a v19 source; tests/reports/test_migration.py:182-213 verifies a populated v19 source migrates to v20 with a retained, verified v19 backup. The same guide at line 112 says its previously listed object/outbox tables are the only intentionally mutable current-profile tables, while packages/contracts/storage/sqlite-profile.v1.json:123-132 and the new guide table list corpus_source_item_heads, corpus_source_totals and corpus_source_overlap_totals as mutable. The architecture/recovery prose is therefore false for this submitted migration despite passing code and tests.",
+                        "required_remediation": "On a strict-descendant candidate, correct the guide so only a current v20 database is idempotently left unchanged, and explicitly state that v19 is backed up and migrated to v20. Revise the mutable-table prose to include the three rebuildable corpus source projection tables while distinguishing them from immutable history and sealed report authority. Before editing, update the missed criterion-3 acceptance row and add the smallest focused documentation/contract parity regression; bind its fresh exact-candidate result and the corrected guide in append-only R03 evidence. Because R03 is the third submission with an open finding, include the required root-cause analysis of why the copied current-version/recovery prose escaped R02 closure."
+                      }
+                    ],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-04.S04.T03-R01-F01",
+                        "disposition": "fixed",
+                        "evidence": "tests/desktop/test_corpus_report_interactions.py mounts the built production Corpus Canvas in Chromium. The exact-candidate browser log records its passing keyboard source-aggregate activation, saved snapshot/source filter/cursor/limit POST, visible matching record, drill-heading focus and live announcement. A later 403 clears the protected label and revision ID from the DOM, focuses the saved-report control, and a permitted retry reloads the report. The exact-candidate authenticated Windows check retains Core/DPAPI/SQLCipher restart and revoked historical-report denial. This directly supplies the mounted interaction and failure/recovery proof absent in R01."
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-04.S04.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R02",
+                      "submitted_at": "2026-10-01T07:51:41+00:00",
+                      "reviewed_at": "2026-10-01T07:59:52+00:00",
+                      "duration_seconds": 491,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 1,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "service:corpus",
+                        "desktop:application",
+                        "foundation:architecture",
+                        "foundation:quality",
+                        "foundation:ui-change",
+                        "foundation:build-manifest",
+                        "foundation:repository-structure"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R01",
+                        "replayed_finding_ids": [
+                          "CAP-04.S04.T03-R01-F01"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-04.S04.T03-R01-F01"
+                        ]
+                      }
+                    }
                   }
                 ],
                 "current_submission": null
@@ -16985,7 +17144,7 @@
               "plan_section_sha256": "fcdf9845e59d4917f98bfc7472e67d80b09f67d62670b92e1272c54c117dd284",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-04.S04.T03.task-start.md",
-                "sha256": "048dccd350a0f26741e7579a60b877d3289f252cfd3ff9d652236858af684c30"
+                "sha256": "7acb3d7fdf45f932ba0d923c60d70a23daf0f5531b955bba9b5ba54694cb403f"
               }
             }
           ]

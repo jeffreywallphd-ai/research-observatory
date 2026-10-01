@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 152039582a00fadc499b0ee7d843cac843374d0265a014f964da37821f230e3a
+source_sha256: 6b89bf70baac67376a0d51d968645aa9e7891a8d1867c04182b07f52950ee723
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -630,7 +630,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-04.S03.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/w2_t03_review | - |
 | `CAP-04.S04.T01` | `append-only v1` | 1 | `-` | approved / agent:cap04-s04-t01-independent-review | - |
 | `CAP-04.S04.T02` | `append-only v1` | 1 | `-` | approved / agent:cap04-s04-t02-independent-review | - |
-| `CAP-04.S04.T03` | `append-only v1` | 1 | `-` | changes-requested / agent:/root/t03_formal_review | `CAP-04.S04.T03-R01-F01` |
+| `CAP-04.S04.T03` | `append-only v1` | 2 | `-` | changes-requested / agent:/root/t03_r02_independent_review | `CAP-04.S04.T03-R02-F01` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |

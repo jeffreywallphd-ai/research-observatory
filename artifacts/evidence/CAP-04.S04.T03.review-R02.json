@@ -1,0 +1,64 @@
+{
+  "task_id": "CAP-04.S04.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+  "base_commit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+  "reviewer": "agent:/root/t03_r02_independent_review",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "evidence_sha256": "078c2315cc45631df925456ed87355219cb81a3a1dbe51c9ea2e044f73e10955",
+  "packet_sha256": "82414f692b37aefc154f7d0f6ea046e42408770b2ae577823c8fd6c3d88a1ffe",
+  "acceptance_criteria_sha256": "386ec34b613489cba113f76abd364204fcd30375ab86a3d1ca28c9f2dd6081e1",
+  "selection_sha256": "b7898cc898a4447393b33d88ce716168e7fdee5bfe8fde48591aab847153ba98",
+  "notes": "Independent R02 review of the exact 00553b30 candidate and frozen submission closes CAP-04.S04.T03-R01-F01. A mounted Chromium test uses the built production Corpus Canvas to activate a source aggregate by keyboard, asserts the exact saved-snapshot/filter/cursor/limit request and matching record, checks heading focus and live announcement, then proves a 403 clears protected content and the visible saved-report action restores interaction. The authenticated Windows Core/DPAPI/SQLCipher restart and revocation check also passes. The R02 manifest hash matches the REVIEW backlog projection; its 40 paths equal the base-to-candidate Git diff, all 12 cited canonical raw-log digests and zero exits reproduce, the build report binds a clean 00553b30 source, the frozen v19 recovery schema equals its predecessor, and architecture-maintenance predecessor hashes match. Focused v20 migration, projection, rights-aware member reconciliation and report-seal review found no product blocker. Approval remains unavailable because the changed SQLite architecture guide still states that v19 is current and never backed up, contradicting the committed v20 migration and verified v19 backup; it also omits the new mutable projection tables from its mutability prose. This violates the third task criterion's documentation/recovery accuracy. Representative warm/cold performance, report-suite profile registration, full affected profiles and integrated slice/W2 qualification remain later gates; no unchanged full profile was replayed in this review.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Exact protected report/model checks and the R01 real Core boundary remain intact. The mounted built-product browser test activates a source count, sends the exact snapshot-bound drill request, shows its matching member and focus/live announcement, then clears protected content on denial and recovers through the saved-report control."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Fresh final-candidate report, corpus, schema, migration, browser, desktop matrix, authenticated Windows, UI, quality, architecture, build and structure checks have matching logs and zero exits. They cover projection drift, pair tamper, populated predecessor backfill/interruption, report limits, denial and visible recovery."
+    },
+    {
+      "criterion_index": 3,
+      "result": "changes-requested",
+      "assessment": "The additive v20 schema, frozen v19 recovery contract, storage profile, packaging inventory and bounded architecture classifier are coherent. The changed SQLite architecture guide contains a false current-version and backup guarantee and an incomplete mutable-table statement, so its documented migration/recovery contract does not match the candidate."
+    }
+  ],
+  "verification_review": {
+    "changed_path_count": 40,
+    "selected_check_count": 12,
+    "raw_log_digests_matched": 12,
+    "build_report": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.build.json",
+    "build_report_sha256": "78a6cba28f3eb288c8cb1e4f14b7a6a10e46df1b099c5d471eab705b17db8868",
+    "assessment": "Canonical line-ending SHA-256 reproduces for the submitted manifest and all 12 cited raw logs. The 40-file manifest inventory exactly matches git diff --name-only 22e184e5..00553b30; git diff --check passes. All logs bind 00553b30 and exit zero, and the build report records source.commit=00553b30 with source.dirty=false. The report log contains seven model plus seventeen migration/repository cases, the corpus log 46 cases, and the browser log one mounted built-product interaction. Frozen v19 recovery schema bytes equal the predecessor schema, and all three architecture maintenance predecessor hashes reproduce."
+  },
+  "findings": [
+    {
+      "id": "CAP-04.S04.T03-R02-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "SQLite recovery guide still calls v19 current after the v20 migration",
+      "reproduction": "At candidate 00553b30, inspect docs/architecture/local-sqlite-storage.md:117-125. It first says supported v1-v19 profiles advance to current v20, then says a current version-19 database is detected idempotently and is never backed up or rewritten. services/core-api/src/research_observatory_core/storage.py:50 declares DATABASE_SCHEMA_VERSION=20; migrations/runner.py:1795-1799 runs v0020 for a v19 source; tests/reports/test_migration.py:182-213 verifies a populated v19 source migrates to v20 with a retained, verified v19 backup. The same guide at line 112 says its previously listed object/outbox tables are the only intentionally mutable current-profile tables, while packages/contracts/storage/sqlite-profile.v1.json:123-132 and the new guide table list corpus_source_item_heads, corpus_source_totals and corpus_source_overlap_totals as mutable. The architecture/recovery prose is therefore false for this submitted migration despite passing code and tests.",
+      "required_remediation": "On a strict-descendant candidate, correct the guide so only a current v20 database is idempotently left unchanged, and explicitly state that v19 is backed up and migrated to v20. Revise the mutable-table prose to include the three rebuildable corpus source projection tables while distinguishing them from immutable history and sealed report authority. Before editing, update the missed criterion-3 acceptance row and add the smallest focused documentation/contract parity regression; bind its fresh exact-candidate result and the corrected guide in append-only R03 evidence. Because R03 is the third submission with an open finding, include the required root-cause analysis of why the copied current-version/recovery prose escaped R02 closure."
+    }
+  ],
+  "closures": [
+    {
+      "finding_id": "CAP-04.S04.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "tests/desktop/test_corpus_report_interactions.py mounts the built production Corpus Canvas in Chromium. The exact-candidate browser log records its passing keyboard source-aggregate activation, saved snapshot/source filter/cursor/limit POST, visible matching record, drill-heading focus and live announcement. A later 403 clears the protected label and revision ID from the DOM, focuses the saved-report control, and a permitted retry reloads the report. The exact-candidate authenticated Windows check retains Core/DPAPI/SQLCipher restart and revoked historical-report denial. This directly supplies the mounted interaction and failure/recovery proof absent in R01."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-04.S04.T03-R01-F01"
+  ],
+  "slice_obligations_not_disposed": [
+    "Approved S04 section 11 still requires representative warm/cold hardware, fixture, repetitions, distribution and regression-threshold performance evidence for the incremental source projection.",
+    "The focused report suite still needs separately reviewed service/affected-profile registration before S04 qualification; full affected profiles, integrated accessibility/security/recovery, independent S04 review and W2 qualification remain later gates."
+  ]
+}

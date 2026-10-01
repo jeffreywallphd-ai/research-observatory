@@ -1,0 +1,240 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S04.T03",
+  "baseCommit": "22e184e5095441b2ed8122f62bb715ebb197d470",
+  "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app.css",
+    "artifacts/evidence/CAP-04.S04.T03.architecture-classifier.maintenance-R02.md",
+    "artifacts/evidence/CAP-04.S04.T03.json",
+    "artifacts/evidence/CAP-04.S04.T03.review-R01.json",
+    "artifacts/evidence/CAP-04.S04.T03.task-start.md",
+    "docs/architecture/local-sqlite-storage.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/storage/sqlite-migration-recovery-v19.snapshot.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S04.T03.html",
+    "planning/review-site/CAP-04/CAP-04.S04.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/src/research_observatory_core/corpus_report_model.py",
+    "services/core-api/src/research_observatory_core/corpus_report_repository.py",
+    "services/core-api/src/research_observatory_core/corpus_repository.py",
+    "services/core-api/src/research_observatory_core/corpus_source_projection.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0020_corpus_source_projection.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/corpus/test_repository.py",
+    "tests/corpus_reports/test_model.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/data/test_sqlite_schema.py",
+    "tests/desktop/test_corpus_report_interactions.py",
+    "tests/desktop/test_desktop_app_check.py",
+    "tests/foundation/test_architecture_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tests/reconciliation/test_corpus_migration.py",
+    "tests/reports/test_migration.py",
+    "tests/reports/test_repository.py",
+    "tests/rights/test_migration.py",
+    "tools/architecture_check.py",
+    "tools/core_sidecar_build.py",
+    "tools/desktop_app_check.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The 24-case exact-candidate report suite and 46-case corpus suite prove distinct canonical-item denominators, source/path overlap multiplicity, exact report-member and pair reconciliation, report-seal tamper denial, rights-aware source witnesses, and explicit known/not-reported/unknown/unavailable values. The v20 per-item/project source projection is transactionally updated on corpus writes; valid items above 32 source roots keep bounded corpus publication while report creation denies its documented root limit.",
+        "The mounted production Corpus Canvas browser regression activates a source aggregate by keyboard, proves the POST body carries the exact saved snapshot/filter/cursor/limit, shows the counted record and moves focus/announcement to the drill. A 403 clears protected content and offers the visible saved-report recovery control. This directly closes R01 finding CAP-04.S04.T03-R01-F01; the Windows protected-store case independently proves Core/DPAPI/SQLCipher restart and revocation."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Fresh final-candidate report (24), corpus (46), v20 schema (11), migration (24), mounted browser (1), Corpus Canvas matrix (1), and authenticated Windows protected-store (1) checks pass. Failure/boundary cases cover two-source path multiplicity, duplicate command replay, aggregate tamper, oversized report roots, totals above one billion, populated predecessor backfill and interruption/retry, denied protected inspection, and renderer recovery.",
+        "Fresh UI reference, architecture, Python quality, build and repository-structure checks pass at the same clean commit. The broad desktop product check passed on precursor 722481dd with an authorized workspace-local temporary directory; its unchanged product inputs and capture are supporting diagnostic evidence, while the final-candidate mounted browser and UI gate are the qualifying T03 interaction/reference proof."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Additive v20 schema, migration and frozen v19 recovery snapshot extend the v19 report contract with indexed per-item source heads and project/source overlap totals. Storage/profile/schema fingerprints, sidecar inventory, contracts and documentation agree; report creation compares the projection against exact authorized member accumulation before sealing. Failed or stale rights reads retain denial/audit behavior from R01.",
+        "The approved reference 1.7 remains unchanged. Corpus Canvas styling uses approved tokens and its populated capture matrix is registered. A bounded architecture-classifier correction recognizes only the new root SQL projection adapter; negative tests keep nested business/port SQL and concrete-adapter imports denied. R01 evidence and adverse finding are preserved for independent R02 disposition."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "service:corpus",
+      "desktop:application",
+      "foundation:architecture",
+      "foundation:quality",
+      "foundation:ui-change",
+      "foundation:build-manifest",
+      "foundation:repository-structure"
+    ],
+    "riskAnalysis": "R02 repairs the R01 mounted interaction proof and adds approved S04 section 11 incremental source projection with a v20 migration and rights-sensitive report reconciliation. Fresh task-level checks target changed corpus/report/storage paths, migration/recovery, actual Windows protected storage, renderer focus/denial/recovery, approved UI identity, and affected architecture/build/quality controls. The final candidate and all cited check logs are fixed to commit 00553b30. Full profile and representative performance qualification remain S04/checkpoint/W2 work under verification section 8.1.",
+    "deferred": [
+      "S04 still requires a reviewed representative warm/cold end-to-end performance baseline and qualification for the incremental projection, full affected profile registration/execution, integrated accessibility/security/recovery, independent slice review and subsequent W2 gates. A separate bounded verification-control increment must register the report suite in service and affected profiles before S04 qualification.",
+      "An initial precursor 722481dd desktop product run failed six unrelated import-source tests because the default user temporary directory was unavailable to the sandbox; the unchanged product check passed after using a workspace-local temporary directory. A broad desktop checker unit run at that precursor failed two unrelated DevelopmentEntry fixture cleanups with WinError 32 while the targeted Corpus Canvas matrix and built product capture passed. These failed attempts are retained in ignored R02 logs and are not cited as final-candidate passes; their full-profile closure remains due at the later slice/Wave gate.",
+      "The unchanged native supervisor admission cases and portable report/Core contract generation passed in R01. R02 reruns the changed product, migration, UI and protection boundaries; full native/contract and deployment-profile replay remains at slice/checkpoint/W2 qualification rather than ordinary task scope."
+    ]
+  },
+  "checks": [
+    {
+      "id": "report",
+      "command": ".venv\\Scripts\\python.exe tools/corpus_report_test_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.report.log",
+      "rawOutputSha256": "559892cb32def575685fa87a4b1a4c8d1adb67344b3ce41ca32f89a3f9420ad0",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "24 report model/repository/migration cases pass, including exact source-pair seal and tamper denial",
+      "elapsedSeconds": 42.644
+    },
+    {
+      "id": "corpus",
+      "command": ".venv\\Scripts\\python.exe tools/corpus_test_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.corpus.log",
+      "rawOutputSha256": "7b03cf46ea315c9d3d551f8f79fb4a8b98eeef1fea2355c31fc3c7019449be63",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "46 canonical corpus cases pass, including projection add/replay and membership changes",
+      "elapsedSeconds": 50.578
+    },
+    {
+      "id": "schema",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_schema",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.schema.log",
+      "rawOutputSha256": "b8ccd21504583e961a0c80a325216f990f1297342c304c11a4ab159b9954b219",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "11 v20 storage schema and index cases pass, including totals above one billion",
+      "elapsedSeconds": 2.033
+    },
+    {
+      "id": "migration",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.data.test_sqlite_migrations tests.reports.test_migration",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.migration.log",
+      "rawOutputSha256": "0081ab0366688fce6ee4cacec9615c4d62ddefc8978214ff6b2e492f6a2129eb",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "24 migration cases pass, including populated v19 backfill, interruption, backup retry, and frozen predecessor retention",
+      "elapsedSeconds": 49.255
+    },
+    {
+      "id": "browser",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.desktop.test_corpus_report_interactions",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.browser.log",
+      "rawOutputSha256": "1a5281c1e9af914db5c0b3e8474168d04ce045d42664f9fbadd6f0394e55ef47",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Mounted Corpus Canvas keyboard aggregate-to-record drill, exact transport, focus, denial clearing, and visible recovery pass",
+      "elapsedSeconds": 3.57
+    },
+    {
+      "id": "desktop-checker-matrix",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.desktop.test_desktop_app_check.DesktopAppCheckTests.test_product_style_qualification_contract_is_exact_and_rejects_matrix_gaps",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.desktop-checker-matrix.log",
+      "rawOutputSha256": "8f9706cc255dd2e17d4cd989a39948a1e78e3b11762cae236386e8bee11e328a",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Corpus Canvas product style qualification matrix includes all required captures and rejects gaps",
+      "elapsedSeconds": 1.022
+    },
+    {
+      "id": "windows",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -B -s -m unittest -v tests.rights.test_runtime_windows.RightsRuntimeWindowsTests.test_authenticated_policy_replay_restart_and_revocation_block_corpus_use",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.windows.log",
+      "rawOutputSha256": "882402c55e40fce397596342d9f0d7ddc2ee60ae7967a1e2d4c5f9be34f2ecfb",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Real Windows principal with DPAPI/SQLCipher exercises protected policy replay, restart, and revocation",
+      "elapsedSeconds": 16.155
+    },
+    {
+      "id": "ui-gate",
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 77fe987e16c9bb4b5878538ddf25cce5f24d68c9 --head HEAD",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.ui-gate.log",
+      "rawOutputSha256": "bd5f2434318d52692340a54d6d704fa27d6a60d31f3340cb5546f08f8a50da72",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Approved reference 1.7 and complete task-base UI lineage pass",
+      "elapsedSeconds": 10.689
+    },
+    {
+      "id": "quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo . --report artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.quality.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.quality.log",
+      "rawOutputSha256": "f30e8217efef75eee2d523d0c2b8a2ac65d3401d08eecc3125ba6a642ce0ff22",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "459 governed Python files pass format, lint, and typing",
+      "elapsedSeconds": 0.825
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.architecture.log",
+      "rawOutputSha256": "7b74bd032a2adceab76ab732d9cb3a4465aec02ce1821898f844a1448132fe3f",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Root source projection is classified as a data adapter; protected architecture boundary passes",
+      "elapsedSeconds": 3.173
+    },
+    {
+      "id": "build",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.build.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.build.log",
+      "rawOutputSha256": "e739a2dd64354111876d06b1a641d8ea5ad0040d2de93e2dc69fddfcfcdd6fd6",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Clean final-candidate build inventory passes",
+      "elapsedSeconds": 26.295
+    },
+    {
+      "id": "structure",
+      "command": ".venv\\Scripts\\python.exe tools/repository_structure_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.structure.log",
+      "rawOutputSha256": "01afd62d2b9c0434c2b4dfe7ae73f198f0519afeb87e2fc2540a7912309d11e3",
+      "commit": "00553b30714a1f00e584ee2d6d9b182528a4a82d",
+      "provenance": "fresh local execution at fixed clean committed Windows x64 candidate",
+      "result": "Repository structure passes",
+      "elapsedSeconds": 0.214
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S04.T03.R02.20261001T074625Z-28ea12.build.json",
+    "sha256": "78a6cba28f3eb288c8cb1e4f14b7a6a10e46df1b099c5d471eab705b17db8868"
+  },
+  "scopeDeviation": "No change to approved T03 scope, security authority, migration guarantee, governed experience or release criteria. The v20 projection implements approved S04 section 11 work within the same active slice. The architecture classifier repair is bounded control maintenance with predecessor hash and negative regression; verification profile registration is separately due before slice qualification.",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-04.S04.T03.json",
+    "sha256": "00cacc63609bcaa772593278acd7c9e1383575458f3a3545a470047401ca1098",
+    "commit": "22e184e5095441b2ed8122f62bb715ebb197d470"
+  },
+  "reviewerDisposition": {
+    "openFindingIds": [
+      "CAP-04.S04.T03-R01-F01"
+    ]
+  }
+}
