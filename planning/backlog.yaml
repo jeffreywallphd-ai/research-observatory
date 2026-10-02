@@ -43743,7 +43743,8 @@ wave_approval_bases:
     - CAP-05.S04
     - CAP-05.S05
     - CAP-05.S06
-    notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations remain recorded, not waived.
+    notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
+      remain recorded, not waived.
   canonical_sha256: 3f15c0da1fdaaf41b5ce69cc3cc3cda337ff549178101e0a358e0fb40503c97a
 wave_amendments:
 - id: W1.A01
@@ -51471,3 +51472,52 @@ wave_amendments:
     effectiveStateCommit: 5329e538d853a36b46d123b9fc97caabb7d4735a
     recordSha256: 3856a53b1f7079f4b80469b03f6651c00e8ee84dc9d9f0711e40600bbf03d506
     returnPolicy: paused-predecessor
+- id: W2.A01
+  change_request_id: ECR-0009
+  target_wave: W2
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W2.A01.json
+    sha256: 6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096
+    introduction_commit: f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: human:repository-owner
+      at: '2026-10-02T16:23:51Z'
+      rationale: The repository owner replied 'Approved, please proceed.' to the decision request explicitly identifying ECR-0009's
+        exact candidate 3fb76d6cb6bce6eaf16774931704de68c6168500, packet SHA-256 9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2,
+        and proposed Academic Minimal 1.8 reference RO-UI-ACADEMIC-MINIMAL-1.8. This records the owner decision for only the
+        reviewed W2.A01.B00 bootstrap, W2.A01.S01 contribution, W2.A01.T01 gate/ADR task, and W2.A01.T02 reference/typed opaque
+        renderer-contract task. Production choose/drop/attach remains unavailable in T02; original CAP-05.S01.T01 later owns
+        real native/Core attachment proof after amendment adoption. This approval does not complete any task or slice, adopt
+        the amendment, resume ordinary W2, approve W2 qualification/release, authorize a renderer file-path shortcut, or waive
+        independent checks. The timestamp records binding of the owner's decision to this exact reviewed candidate.
+  bootstrap:
+    id: W2.A01.B00
+    status: REVIEW
+    implementer: codex-w2-implementation
+    implementation_commit: 68d36d6722202cc2e9a497755596cb629bb32174
+    submission_branch: codex/w2-implementation
+    scope_addenda: []
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A01.B00.json
+      sha256: b275d3fa4b69b1a46dd72fee00d5b27d15b2509e66ad09b258b23a0f7bcd69c2
+      commit: 68d36d6722202cc2e9a497755596cb629bb32174
+      recorded_at: '2026-10-02T17:06:11+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

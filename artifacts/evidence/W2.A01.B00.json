@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A01.B00",
+  "commit": "68d36d6722202cc2e9a497755596cb629bb32174",
+  "baseCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0009.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": "python tools/planctl.py --repo . ecr validate ECR-0009 --require-approved",
+      "exitCode": 0,
+      "result": "ECR-0009 is approved and history-bound to the exact reviewed packet and committed owner approval."
+    },
+    {
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "Canonical backlog validates: 20 capabilities, 117 slices, 385 tasks, 12 release gates."
+    },
+    {
+      "command": "python tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A01.B00-site-validation.json",
+      "exitCode": 0,
+      "result": "All 493 generated planning-review HTML pages validate; ignored raw report SHA-256 5a7d6f3a4451f8e7bcf7c0e8ba35e879c7b481295d615862e582764c87374a39."
+    },
+    {
+      "command": "python tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated backlog views pass with no changes."
+    },
+    {
+      "command": "From tests/foundation: ..\\..\\.venv\\Scripts\\python.exe -m unittest -v test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_append_records_reserved_history_and_bounded_maintenance test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_append_denies_an_active_recovery_hold test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment",
+      "exitCode": 0,
+      "result": "Three focused real-controller transition tests passed, including reserved append, active-hold denial, and interleaved successor history preservation."
+    },
+    {
+      "command": "git diff --check f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287 68d36d6722202cc2e9a497755596cb629bb32174 --; git diff --name-only f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287 68d36d6722202cc2e9a497755596cb629bb32174 --",
+      "exitCode": 0,
+      "result": "Patch hygiene passes; exact approval-to-candidate range contains only the three authorized generated review-site paths."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "planctl validates ECR-0009 as approved and history-bound to reviewed packet candidate 3fb76d6cb6bce6eaf16774931704de68c6168500 and committed owner approval f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287; its bound W2 base and GOV-MIG-0001 remain unchanged.",
+        "The independently reviewed ECR-0009 R01 ledger at planning/enabler-change-requests/ECR-0009.review-R01.json has no open findings; the exact 1.8 proposal remains only proposed at this bootstrap stage."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The candidate changes only the three packet-authorized generated approval projections; focused controller tests cover atomic reserved-history append, active-hold denial, and successor history preservation.",
+        "Bootstrap-submit is the supported CAS transition that will append only W2.A01 APPROVED, W2.A01.B00 REVIEW, and packet-bound S01/T01-T02 definitions after this candidate and evidence pass its checks. This criterion requires verification against the actual submitted state during independent B00 review."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Before submission, taskctl reports no active Wave campaign; CAP-05.S01.T01 remains BLOCKED without a lease, and W2.A01 is not yet materialized.",
+        "The approval-to-candidate Git diff contains no active reference, product, renderer, native, Core, controller, or backlog edit; W2 resume and any task claim remain separate gated transitions."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 changes only generated approval projections and invokes the existing append-only amendment controller. Checks cover exact approval history, real controller transition/denial behavior, canonical backlog and generated-site integrity, and exact file scope. The initial repo-root dotted unittest invocation could not import the sibling historical fixture; all three affected controller tests passed from their required test directory. A slower optional site fixture was interrupted after the direct 493-page validator passed and is not claimed as qualifying evidence.",
+    "deferred": "Independent B00 review will inspect the actual atomic append and preserved W2 pause. W2.A01.T01 owns the protected UI gate and ADR; T02 owns approved-reference publication and typed renderer contract. Original CAP-05.S01.T01 and W2 exit retain native/Core proof, product profiles, platform, security, privacy, accessibility, packaging, and release criteria."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-review",
+    "note": "Review exact B00 candidate 68d36d6722202cc2e9a497755596cb629bb32174 and the atomic bootstrap-submit state. Confirm approval ancestry, three authorized paths, W2.A01-only append, immutable original CAP-05.S01.T01 blocker/history, paused W2 without an ordinary lease, and no product or active-reference change before materialization."
+  }
+}

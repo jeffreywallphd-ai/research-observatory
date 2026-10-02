@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b2694c19f28a7f913f84360ee1b3f08dd55a8f42b8fc95a74c804510a20fead2
+source_sha256: 4b92ac51567e6c3532a84004d88bfc888114e2324c8530a2ecb6ffaabd94d2cc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 15 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 9 |
+| Wave amendments | 10 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -50,6 +50,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
+| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `APPROVED` |
 
 ## Waves
 
@@ -2354,6 +2355,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** Independent incremental W1.A09.T04 review approves the frozen R02 candidate and closes both R01 findings as fixed. The 11 focused tests and lint pass in the reviewer's fresh retained synthetic fixture. Canonical exclusion is enforced before lookup, linked/redirecting entries are rejected before content reads, and bounded snapshots are authenticated directly to explicit candidate blobs before report parsing. Independent current-input/report and frozen-packet comparisons match. No additional acceptance-blocking defect was found in the changed helper/test/evidence boundary. The unchanged R01 product/native/Core, qualified packaging, presentation/performance and return dispositions carry forward without a redundant product audit. This approves W1.A09.T04 only: not contribution/exit/adoption, W1.A08 activation, ordinary-profile startup, Wave/release qualification, G1 or remote effects.
 
 **Currently open findings:** -
+
+## W2.A01 - ECR-0009
+
+**Target Wave / class:** `W2` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W2.A01.json` (`6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-10-02T16:23:51Z` by human:repository-owner: The repository owner replied 'Approved, please proceed.' to the decision request explicitly identifying ECR-0009's exact candidate 3fb76d6cb6bce6eaf16774931704de68c6168500, packet SHA-256 9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2, and proposed Academic Minimal 1.8 reference RO-UI-ACADEMIC-MINIMAL-1.8. This records the owner decision for only the reviewed W2.A01.B00 bootstrap, W2.A01.S01 contribution, W2.A01.T01 gate/ADR task, and W2.A01.T02 reference/typed opaque renderer-contract task. Production choose/drop/attach remains unavailable in T02; original CAP-05.S01.T01 later owns real native/Core attachment proof after amendment adoption. This approval does not complete any task or slice, adopt the amendment, resume ordinary W2, approve W2 qualification/release, authorize a renderer file-path shortcut, or waive independent checks. The timestamp records binding of the owner's decision to this exact reviewed candidate.
+
+### Amendment-exit review and adoption — W2.A01
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 ## Linked corrective tasks
