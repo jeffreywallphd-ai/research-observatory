@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W2.A01",
+  "changeRequestId": "ECR-0009",
+  "targetWave": "W2",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-02T16:23:51Z",
+  "decision": "The repository owner replied 'Approved, please proceed.' to the decision request explicitly identifying ECR-0009's exact candidate 3fb76d6cb6bce6eaf16774931704de68c6168500, packet SHA-256 9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2, and proposed Academic Minimal 1.8 reference RO-UI-ACADEMIC-MINIMAL-1.8. This records the owner decision for only the reviewed W2.A01.B00 bootstrap, W2.A01.S01 contribution, W2.A01.T01 gate/ADR task, and W2.A01.T02 reference/typed opaque renderer-contract task. Production choose/drop/attach remains unavailable in T02; original CAP-05.S01.T01 later owns real native/Core attachment proof after amendment adoption. This approval does not complete any task or slice, adopt the amendment, resume ordinary W2, approve W2 qualification/release, authorize a renderer file-path shortcut, or waive independent checks. The timestamp records binding of the owner's decision to this exact reviewed candidate.",
+  "packet": {
+    "commit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+    "path": "planning/enabler-change-requests/ECR-0009.packet.json",
+    "sha256": "9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2",
+    "proposalPath": "planning/enabler-change-requests/ECR-0009.md",
+    "proposalSha256": "19b25c2170a6401ce0ca4567835817c14a53dfdb3f65e7d95a7886aa484210c2"
+  },
+  "effectiveBase": {
+    "waveBase": {
+      "waveId": "W2",
+      "packetCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "approvalRecordCommit": "3bc1c1828efab50efc730bf3907c3036eff58a2f"
+    },
+    "orderedAmendments": [],
+    "reservedAmendments": []
+  },
+  "bootstrapUnit": "W2.A01.B00",
+  "authorizedTaskIds": [
+    "W2.A01.T01",
+    "W2.A01.T02"
+  ],
+  "independentPacketReview": {
+    "reviewer": "agent:/root/backend_commit_preflight",
+    "candidateCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+    "reviewedStateCommit": "184d5e4af398fc9fb5c91c95f779d96b8c3a4547",
+    "result": "APPROVED",
+    "attemptId": "R01",
+    "findingIdsClosed": [
+      "ECR-0009-preflight-F01",
+      "ECR-0009-preflight-F02"
+    ],
+    "ledger": {
+      "path": "planning/enabler-change-requests/ECR-0009.review-R01.json",
+      "sha256": "04e221c2a6ea83f8b5620b309f5fbcac67d67d8cd794cd6f09ef5cab67de1320",
+      "introductionCommit": "184d5e4af398fc9fb5c91c95f779d96b8c3a4547"
+    }
+  }
+}
