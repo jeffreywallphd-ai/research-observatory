@@ -1,0 +1,56 @@
+{
+  "task_id": "CAP-04.S05.T02",
+  "attempt_id": "R02",
+  "candidate_commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+  "reviewer": "agent:/root/lpac_boundary_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "notes": "Independent focused security re-review approves the strict-descendant R02 correction and closes CAP-04.S05.T02-R01-F01. The frozen R02 submission binds candidate 5a76725c, base e1d55299, the exact 11 incremental paths, the line-ending-canonical criterion-manifest digest a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994 and eight matching exact-candidate check outputs. The full Windows x64 LPAC boundary module passes 15/15, including a locally signed packaged worker that reaches the broker before exceeding a one-second wall deadline or a 256 MiB committed-memory profile. Both probes return bounded typed failure without a successful WorkerResult, verify worker termination and guardian removal of the exact profile/runtime, and preserve an unrelated sentinel. A separate protected SQLite dispatch test proves worker failure yields a content-free durable denial bound to the invocation and package with no output-store write; the real launcher and Core dispatch are composed through their unchanged production runtime adapter. Focused Core 68/68, packaging 6 pass/1 expected skip, frozen Core build, quality, architecture, generated API contract and clean build manifest pass. R01's product/security review and desktop qualification remain valid because R02 changes tests and task-start/planning evidence only. Public-address packet/connect denial, production signing, live provider behavior and per-attempt audit of caught OS-denied syscalls are not claimed. No blocking finding remains.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-04.S05.T02.R02.json",
+      "canonical_sha256": "a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994",
+      "result": "PASS: exact frozen R02 submission, strict-descendant candidate/base, 11-path incremental Git diff, three criterion mappings, explicit R01-F01 replay, eight selected command IDs and output hashes agree."
+    },
+    "native_boundary": {
+      "path": "artifacts/tmp/CAP-04.S05.T02.R02.native-full-5a76725c.log",
+      "canonical_sha256": "4221ee414393ea606b039d737d195f8749496128d3836ac76b30a0f2a9b969c9",
+      "result": "PASS: complete native module 15/15 in 41.950 seconds; both new signed-worker resource-exhaustion tests passed without skip."
+    },
+    "focused_core": {
+      "path": "artifacts/tmp/CAP-04.S05.T02.R02.focused-5a76725c.log",
+      "canonical_sha256": "6015e1196011527a03944fe07c54a54e4fd606001af9dcc780adeed756c91c87",
+      "result": "PASS: 68/68 focused connector/Core tests, including the new durable worker-failure denial and zero-staging case."
+    },
+    "build_report": {
+      "path": "artifacts/tmp/CAP-04.S05.T02.R02.build-5a76725c.json",
+      "sha256": "719de056ad61b73dc509d29b3538059b647320feba8ad7a592db552e8da948b0",
+      "result": "PASS: source commit is 5a76725cfb521448a3da7a20b993c370ca854ba6 and source dirty=false."
+    }
+  },
+  "checks": [
+    {
+      "command": "Compare the R02 criterion manifest and frozen REVIEW projection to the exact e1d55299..5a76725c Git diff; recompute line-ending-canonical SHA-256 for all eight named raw logs and byte SHA-256 for the clean build report",
+      "result": "PASS: candidate, base, 11 changed paths, eight check hashes, build report, open-finding replay and explicit deferrals agree."
+    },
+    {
+      "command": "Inspect tests/connectors/test_plugin_lpac_boundary.py:513-687 and exact native output against workers/windows/connector_launcher.py:300-349 and ADR-0028 resource/failure clauses",
+      "result": "PASS: signed worker reaches one broker call, then exceeds the configured wall or committed-memory bound; timeout or pipe-truncation is a bounded failure, retained worker handle signals termination, guardian exits after exact-resource cleanup, and unrelated sentinel survives. Host-positive memory allocation control distinguishes the 256 MiB Job limit from a trivially exhausted test host."
+    },
+    {
+      "command": "Inspect tests/connectors/test_plugin_dispatch.py:263-310 and the unchanged PluginDispatchController audit/failure path; inspect 68-test Core log and R01 adverse-boundary record",
+      "result": "PASS: a worker exception yields exactly one protected content-free denial with invocation/package identity after repository reopen and zero output-store writes. The audit test is seam-composed with, rather than falsely described as, a real LPAC exhaustion dispatch. R01 public-network and direct-OS-denial observation limits remain explicit."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "CAP-04.S05.T02-R01-F01",
+      "disposition": "fixed",
+      "evidence": "At exact strict-descendant candidate 5a76725cfb521448a3da7a20b993c370ca854ba6, the task-start failure-proof row now names real locally signed LPAC wall and committed-memory exhaustion. tests/connectors/test_plugin_lpac_boundary.py:513-687 drives both limits through the product launcher with the frozen Core guardian; the full native log passes 15/15 and verifies bounded failure, worker termination, exact guardian cleanup, unrelated sentinel preservation and absence of successful output. tests/connectors/test_plugin_dispatch.py:263-310 verifies a worker failure is durably audited without staging in protected SQLite; the focused Core log passes 68/68. All eight R02 check hashes and the clean exact-candidate build report reproduce. R01-F01's missing actual resource-exhaustion proof is therefore closed without changing the product authority boundary."
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-04.S05.T02-R01-F01"
+  ]
+}

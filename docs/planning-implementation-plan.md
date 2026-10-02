@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 13a9e903f7d0c4b2a9812f3ebd37709a2e90892b06c3cf7bf8fe425a74930d33
+source_sha256: b828cca71092eea8763bd596f5717574a93ec7b69d93aa8e5de7ad2aaba3e1eb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9361,15 +9361,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-04.S05.T02 - Implement plugin isolation, configuration, and secret access controls
+#### - [x] CAP-04.S05.T02 - Implement plugin isolation, configuration, and secret access controls
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `DONE` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S05.T01`
 
-**Owner / review:** codex-w2-implementation / agent:/root/lpac_boundary_review (`changes-requested`)
+**Owner / review:** codex-w2-implementation / agent:/root/lpac_boundary_review (`approved`)
 
 **Objective:** Restricted execution boundary, allowlisted network destinations, scoped credentials, timeouts, quotas, and redacted logging.
 
@@ -9391,10 +9391,11 @@ Original tasks and approvals remain unchanged.
 **Evidence:**
 
 - `artifacts/evidence/CAP-04.S05.T02.json` at `e1d55299a132597b572bfb26e1ea09a7c45c760e`
+- `artifacts/evidence/CAP-04.S05.T02.R02.json` at `5a76725cfb521448a3da7a20b993c370ca854ba6`
 
 ##### Review history — CAP-04.S05.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -9426,17 +9427,47 @@ Original tasks and approvals remain unchanged.
 
 - None
 
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `dcfbcd459987e38b1e107557f300dfc19785dde679cd4e0bb5cfeb8eda094c2e`
+
+- Candidate / base / branch: `5a76725cfb521448a3da7a20b993c370ca854ba6` / `e1d55299a132597b572bfb26e1ea09a7c45c760e` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-02T02:54:08+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S05.T02.R02.json` / `a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994` / `5a76725cfb521448a3da7a20b993c370ca854ba6`
+- Acceptance-criteria SHA-256: `831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5`
+- Verification-selection SHA-256: `f8f20cf13c616c21762c63f66f92a27785c64c509cd89c3eb9120fcbe19005de`
+- Changed paths: `artifacts/evidence/CAP-04.S05.T02.json`, `artifacts/evidence/CAP-04.S05.T02.review-R01.json`, `artifacts/evidence/CAP-04.S05.T02.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S05.T02.html`, `planning/review-site/CAP-04/CAP-04.S05.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/connectors/test_plugin_dispatch.py`, `tests/connectors/test_plugin_lpac_boundary.py`
+- Selected checks: `.venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_lpac_boundary`, `.venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_grants tests.connectors.test_plugin_trust tests.connectors.test_plugin_broker tests.connectors.test_plugin_credentials tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_package_repository tests.connectors.test_plugin_consent tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_result tests.connectors.test_plugin_runtime tests.connectors.test_plugin_grant_migration`, `.venv\Scripts\python.exe -m unittest -v tests.packaging.test_core_sidecar_package`, `.venv\Scripts\python.exe tools/core_sidecar_build.py --output artifacts/tmp/sw13 --worker-build artifacts/tmp/w2worker8`, `.venv\Scripts\python.exe tools/quality_check.py --repo .`, `.venv\Scripts\python.exe tools/architecture_check.py --repo .`, `.venv\Scripts\python.exe tools/core_api_contract.py --repo . --check`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T02.R02.build-5a76725c.json`
+- Deferred checks: `R01's unchanged desktop Source Manager implementation was qualified by nine commands and 72 style cases; S05 integration and W2 exit rerun affected desktop/accessibility checks.`, `Full repository and deployment profiles, cross-capability performance and public-provider behavior belong to S05 integration/checkpoint and W2 exit. This local test does not claim release signing or packet-level public-address denial.`
+- Selection rationale: R02 changes two connector test modules and one task-start proof row, not product, runtime, UI or build source. Replay R01-F01 with the full signed LPAC module and focused Core durable failure/audit tests. Verify frozen Core input closure, packaging, quality, architecture, API contract and clean build on exact 5a76725c. Earlier R01 full desktop and product checks remain retained and reviewed. Independent security review replays F01 and assesses new test seams; full profile repetition would not add material R02-specific proof.
+- Prior round / replayed open findings: `R01` / `CAP-04.S05.T02-R01-F01`
+- Root-cause escalation: -
+
+**Disposition / reviewer / time:** `approved` / agent:/root/lpac_boundary_review / `2026-10-02T03:00:21+00:00`
+
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S05.T02.review-R02.json` / `d67b08296ed64b7bde214f9e284f57dbe4f8066384fd46dff6a741962c25cff8`
+
+**Review notes:** Independent focused security re-review approves the strict-descendant R02 correction and closes CAP-04.S05.T02-R01-F01. The frozen R02 submission binds candidate 5a76725c, base e1d55299, the exact 11 incremental paths, the line-ending-canonical criterion-manifest digest a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994 and eight matching exact-candidate check outputs. The full Windows x64 LPAC boundary module passes 15/15, including a locally signed packaged worker that reaches the broker before exceeding a one-second wall deadline or a 256 MiB committed-memory profile. Both probes return bounded typed failure without a successful WorkerResult, verify worker termination and guardian removal of the exact profile/runtime, and preserve an unrelated sentinel. A separate protected SQLite dispatch test proves worker failure yields a content-free durable denial bound to the invocation and package with no output-store write; the real launcher and Core dispatch are composed through their unchanged production runtime adapter. Focused Core 68/68, packaging 6 pass/1 expected skip, frozen Core build, quality, architecture, generated API contract and clean build manifest pass. R01's product/security review and desktop qualification remain valid because R02 changes tests and task-start/planning evidence only. Public-address packet/connect denial, production signing, live provider behavior and per-attempt audit of caught OS-denied syscalls are not claimed. No blocking finding remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-04.S05.T02-R01-F01` `fixed` — At exact strict-descendant candidate 5a76725cfb521448a3da7a20b993c370ca854ba6, the task-start failure-proof row now names real locally signed LPAC wall and committed-memory exhaustion. tests/connectors/test_plugin_lpac_boundary.py:513-687 drives both limits through the product launcher with the frozen Core guardian; the full native log passes 15/15 and verifies bounded failure, worker termination, exact guardian cleanup, unrelated sentinel preservation and absence of successful output. tests/connectors/test_plugin_dispatch.py:263-310 verifies a worker failure is durably audited without staging in protected SQLite; the focused Core log passes 68/68. All eight R02 check hashes and the clean exact-candidate build report reproduce. R01-F01's missing actual resource-exhaustion proof is therefore closed without changing the product authority boundary.
+
 **Current immutable submission awaiting review:** None
 
-**Current latest-review projection:** `changes-requested` by agent:/root/lpac_boundary_review at `2026-10-02T02:37:55+00:00`
+**Current latest-review projection:** `approved` by agent:/root/lpac_boundary_review at `2026-10-02T03:00:21+00:00`
 
-**Latest notes:** Independent expanded security review of the frozen R01 candidate finds the signed zero-capability LPAC worker, guardian ownership and cleanup, narrow Core broker, durable project grant/trust/consent and encrypted result path supported by the selected checks. The criterion manifest's line-ending-canonical SHA-256 matches the frozen submission, its 96 changed paths match the base-to-candidate diff, and its nine named checks have matching canonical output hashes. The review-owned supplemental full native boundary module passes 13/13 tests on the same candidate, closing the selected run's omitted frame, tamper, redirected-root, unpinned-runtime and cancellable-wait cases. The evidence truthfully limits network isolation to pre-transport denial and does not claim an observed public-address connect. Core-visible broker denials and worker failures enter a bounded durable audit; direct OS-denied socket or filesystem attempts that the untrusted plugin catches are not individually observed or audited. The one blocking gap is missing actual signed-worker resource-exhaustion proof despite an explicit ADR-0028 verification requirement and T02 task-start failure-probe row. No release-signing, live-provider or production public-route result is inferred.
+**Latest notes:** Independent focused security re-review approves the strict-descendant R02 correction and closes CAP-04.S05.T02-R01-F01. The frozen R02 submission binds candidate 5a76725c, base e1d55299, the exact 11 incremental paths, the line-ending-canonical criterion-manifest digest a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994 and eight matching exact-candidate check outputs. The full Windows x64 LPAC boundary module passes 15/15, including a locally signed packaged worker that reaches the broker before exceeding a one-second wall deadline or a 256 MiB committed-memory profile. Both probes return bounded typed failure without a successful WorkerResult, verify worker termination and guardian removal of the exact profile/runtime, and preserve an unrelated sentinel. A separate protected SQLite dispatch test proves worker failure yields a content-free durable denial bound to the invocation and package with no output-store write; the real launcher and Core dispatch are composed through their unchanged production runtime adapter. Focused Core 68/68, packaging 6 pass/1 expected skip, frozen Core build, quality, architecture, generated API contract and clean build manifest pass. R01's product/security review and desktop qualification remain valid because R02 changes tests and task-start/planning evidence only. Public-address packet/connect denial, production signing, live provider behavior and per-attempt audit of caught OS-denied syscalls are not claimed. No blocking finding remains.
 
-**Currently open findings:** `CAP-04.S05.T02-R01-F01`
+**Currently open findings:** -
 
 #### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P1` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P1` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
@@ -9486,7 +9517,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -9494,7 +9525,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `NOT_STARTED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

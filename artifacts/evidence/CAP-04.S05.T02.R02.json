@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S05.T02",
+  "baseCommit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+  "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+  "branch": "codex/w2-implementation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-04.S05.T02.json",
+    "sha256": "98fcbe87db7dd08586adc375ed55ed0bb9a1633e18e291dbc8b481650721360d",
+    "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e"
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S05.T02.json",
+    "artifacts/evidence/CAP-04.S05.T02.review-R01.json",
+    "artifacts/evidence/CAP-04.S05.T02.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S05.T02.html",
+    "planning/review-site/CAP-04/CAP-04.S05.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/connectors/test_plugin_dispatch.py",
+    "tests/connectors/test_plugin_lpac_boundary.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The complete native Windows x64 module passes 15/15 on exact commit 5a76725c using the locally signed packaged LPAC worker and newly frozen Core guardian. The two R01-F01 regressions enter the broker before exceeding a one-second wall deadline and a 256 MiB committed-memory Job limit. They assert typed timeout or truncated-pipe failure, signaled worker termination, guardian exit, exact profile and runtime removal, an intact unrelated sentinel, and no successful WorkerResult. A bounded 320 MiB host positive control confirms memory is available outside the worker Job.",
+        "The 68 focused Core connector tests include a protected SQLite durable content-free plugin-worker-failed audit after a synthetic worker exception, reopened by invocation and package identity, with zero output-store writes. Native exhaustion and durable dispatch-audit proofs are seam-composed through the production launcher/dispatch call path; direct OS-denied operations caught inside the untrusted worker are not individually observable or audited. R01's signed isolation, broker, guardian and previous adverse gate evidence remain attached and independently reviewed."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact R02 candidate passes 68 focused Core connector tests, including encrypted-state migration/reopen, consent, grant and package restart, denial, cancellation and fenced staging; the new failure audit test verifies denial survives a repository reopen. The full signed native module passes 15/15 including two new resource-exhaustion cases. Frozen Core package and six packaging tests pass, with one expected environment skip.",
+        "No product or desktop UI source changed after R01. Its committed R01 submission and independent review retain the exact earlier full desktop application qualification, nine commands and 72 style cases. Desktop/profile-wide replay is deferred to S05 slice integration and W2 qualification under verification breadth section 8.1."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The strict-descendant R02 diff preserves R01's reviewed product and authority boundaries, updates the missed task-start failure-proof row, adds real signed-worker wall/memory regressions, and adds the protected durable failure-audit regression. The original R01 adverse finding and its evidence remain immutable; this submission asks the independent reviewer to replay and close F01.",
+        "Exact-candidate Python quality (516 files), architecture, generated Core API contract and clean build manifest pass. The frozen Core/guardian builds with 783 files and the locally signed worker inventory; no approved scope, security, migration or governed-experience reduction is claimed. Test signing and synthetic broker transport are not production signing or a live public-route result."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-04.S05.T02-R01-F01"
+    ],
+    "note": "Replay R01-F01 on exact candidate 5a76725cfb521448a3da7a20b993c370ca854ba6: verify signed worker wall and committed-memory exhaustion, typed denial, termination and cleanup, no staged output, durable content-free failure audit, and preserve the R01 public-route and direct-OS-denial observation limits."
+  },
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "security-local:unit",
+      "service:unit",
+      "packaging:unit",
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "contracts:unit"
+    ],
+    "riskAnalysis": "R02 changes two connector test modules and one task-start proof row, not product, runtime, UI or build source. Replay R01-F01 with the full signed LPAC module and focused Core durable failure/audit tests. Verify frozen Core input closure, packaging, quality, architecture, API contract and clean build on exact 5a76725c. Earlier R01 full desktop and product checks remain retained and reviewed. Independent security review replays F01 and assesses new test seams; full profile repetition would not add material R02-specific proof.",
+    "deferred": [
+      "R01's unchanged desktop Source Manager implementation was qualified by nine commands and 72 style cases; S05 integration and W2 exit rerun affected desktop/accessibility checks.",
+      "Full repository and deployment profiles, cross-capability performance and public-provider behavior belong to S05 integration/checkpoint and W2 exit. This local test does not claim release signing or packet-level public-address denial."
+    ]
+  },
+  "checks": [
+    {
+      "id": "native-lpac",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_lpac_boundary",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.native-full-5a76725c.log",
+      "rawOutputSha256": "4221ee414393ea606b039d737d195f8749496128d3836ac76b30a0f2a9b969c9",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh unsandboxed local Windows x64 execution on clean 5a76725c with ignored locally signed worker bundle and frozen exact-candidate Core under artifacts/tmp/sw13.",
+      "result": "15/15 native LPAC/guardian cases passed, including wall and committed-memory exhaustion."
+    },
+    {
+      "id": "connector-core",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_grants tests.connectors.test_plugin_trust tests.connectors.test_plugin_broker tests.connectors.test_plugin_credentials tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_package_repository tests.connectors.test_plugin_consent tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_result tests.connectors.test_plugin_runtime tests.connectors.test_plugin_grant_migration",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.focused-5a76725c.log",
+      "rawOutputSha256": "6015e1196011527a03944fe07c54a54e4fd606001af9dcc780adeed756c91c87",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh local execution on clean 5a76725c with synthetic packages, identities, keys, projects and transport.",
+      "result": "68/68 focused connector, broker, grant, durable audit and migration tests passed."
+    },
+    {
+      "id": "packaging",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.packaging-5a76725c.log",
+      "rawOutputSha256": "ccf37599ca43f318a5bcd2e5f0263a666ef9a87505fc5f5cc97d31ccf8458c2b",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh local Windows x64 execution on clean 5a76725c.",
+      "result": "6 packaging tests passed; one environment-dependent test skipped."
+    },
+    {
+      "id": "frozen-core",
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --output artifacts/tmp/sw13 --worker-build artifacts/tmp/w2worker8",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.sidecar-5a76725c.log",
+      "rawOutputSha256": "84bd4a283f0d11c6e90c39effa8697286fc66ca0da62fd2c070fe72c8aee13d1",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh local build on clean 5a76725c using the unchanged ignored locally signed worker bundle.",
+      "result": "Frozen Core/guardian built successfully with 783 files and 74,183,734 bytes."
+    },
+    {
+      "id": "quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.quality-5a76725c.log",
+      "rawOutputSha256": "5b75ee687619a22c50b83200f2697ac011425b4380f93820cdb4cb1297397f36",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh local execution on clean 5a76725c.",
+      "result": "Ruff and mypy pass for 516 governed Python files."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.architecture-5a76725c.log",
+      "rawOutputSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh local execution on clean 5a76725c.",
+      "result": "Architecture contract passes: 13 areas, 12 modules, five stable interfaces and three deployment profiles."
+    },
+    {
+      "id": "core-api-contract",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.contract-5a76725c.log",
+      "rawOutputSha256": "906caa6683fd9e71ddbb3b34c25bd5234d25d8a396df0d3d5a20095eec2aee31",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh local execution on clean 5a76725c.",
+      "result": "Generated Core API contract passes without drift."
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T02.R02.build-5a76725c.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.R02.build-5a76725c.log",
+      "rawOutputSha256": "8e2b99ea0ad94949051ec27d35fd6885d30ee712951824d33827cead5f11319d",
+      "commit": "5a76725cfb521448a3da7a20b993c370ca854ba6",
+      "provenance": "Fresh local execution on clean 5a76725c.",
+      "result": "Clean 0.1.0+g5a76725 build manifest passes."
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T02.R02.build-5a76725c.json",
+    "sha256": "719de056ad61b73dc509d29b3538059b647320feba8ad7a592db552e8da948b0"
+  },
+  "adverseEvidence": "artifacts/evidence/CAP-04.S05.T02.lpac-feasibility-gate.md",
+  "scopeDeviation": "No approved scope, security authority, migration guarantee or governed-experience change. R02 adds exact-boundary regression evidence only; R01's product implementation and adverse history remain intact."
+}
