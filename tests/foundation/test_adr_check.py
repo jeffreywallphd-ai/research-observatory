@@ -10,11 +10,23 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "tools"))
 
-from adr_check import validate_change_set, validate_registry  # noqa: E402
+from adr_check import task_ids, validate_change_set, validate_registry  # noqa: E402
 from adr_new import create_adr  # noqa: E402
 
 
 class ArchitectureDecisionWorkflowTests(unittest.TestCase):
+    def test_materialized_amendment_tasks_are_valid_adr_links(self) -> None:
+        backlog = {
+            "capabilities": [{"slices": [{"tasks": [{"id": "CAP-00.S01.T01"}]}]}],
+            "wave_amendments": [
+                {
+                    "taskInventory": [{"id": "W2.A01.T99"}],
+                    "tasks": [{"id": "W2.A01.T01"}],
+                }
+            ],
+        }
+        self.assertEqual({"CAP-00.S01.T01", "W2.A01.T01"}, task_ids(backlog))
+
     def test_repository_adr_registry_and_task_links_are_valid(self) -> None:
         errors, records = validate_registry(REPO)
 
@@ -54,6 +66,12 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
                 "ADR-0031",
                 "ADR-0032",
                 "ADR-0033",
+                "ADR-0034",
+                *(
+                    {"ADR-0035"}
+                    if (REPO / "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md").is_file()
+                    else set()
+                ),
             },
             set(records),
         )

@@ -41,12 +41,18 @@ def parse_adr(path: Path) -> tuple[dict[str, Any], str]:
 
 
 def task_ids(backlog: dict[str, Any]) -> set[str]:
-    return {
+    ordinary = {
         task["id"]
         for capability in backlog["capabilities"]
         for slice_ in capability["slices"]
         for task in slice_["tasks"]
     }
+    materialized_amendment = {
+        task["id"]
+        for amendment in backlog.get("wave_amendments", [])
+        for task in amendment.get("tasks", [])
+    }
+    return ordinary | materialized_amendment
 
 
 def validate_registry(repo: Path) -> tuple[list[str], dict[str, dict[str, Any]]]:
