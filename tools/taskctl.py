@@ -8997,7 +8997,7 @@ def command_amendment_activate(args, data, capabilities, slices, tasks, gates) -
         "scope": "wave-amendment",
         "owner": agent,
         "branch": branch,
-        "worktree": worktree,
+        "worktree": prospective_worktree_binding((amendment.get("campaign") or {}).get("worktree"), repo),
         "base_sha": base_sha,
         "profile": args.profile,
         "platform": args.platform,

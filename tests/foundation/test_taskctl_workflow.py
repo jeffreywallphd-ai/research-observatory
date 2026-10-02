@@ -6166,6 +6166,7 @@ class TaskctlWorkflowTests(unittest.TestCase):
 
         self.assertEqual("ACTIVE", amendment["lifecycle"]["status"])
         self.assertEqual("ACTIVE", amendment["campaign"]["status"])
+        self.assertEqual(".", amendment["campaign"]["worktree"])
         self.assertEqual("W1.A02", data["control_plane"]["active_amendment"])
         self.assertEqual("READY", amendment["tasks"][0]["status"])
         self.assertEqual("NOT_STARTED", amendment["tasks"][1]["status"])
