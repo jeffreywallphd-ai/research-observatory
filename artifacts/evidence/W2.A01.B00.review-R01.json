@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-review",
+  "amendmentId": "W2.A01",
+  "taskId": "W2.A01.B00",
+  "attemptId": "R01",
+  "reviewer": "agent:/root/t01_commit_review",
+  "reviewedAt": "2026-10-02T17:21:19Z",
+  "result": "approved",
+  "candidateCommit": "68d36d6722202cc2e9a497755596cb629bb32174",
+  "baseCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287",
+  "submissionCommit": "013e8e407df1474ba847e4eca6466c7f6a4e33af",
+  "independence": {
+    "implementer": "codex-w2-implementation",
+    "statement": "The reviewer independently inspected exact committed authority, candidate, evidence and delivered backlog state. The reviewer did not author or submit B00, run taskctl review, or mutate the backlog. Earlier independent site/privacy assessments are not substituted for this actual append review."
+  },
+  "artifactBindings": [
+    {
+      "path": "planning/wave-amendment-approvals/W2.A01.json",
+      "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+      "gitBlob": "f00da02179949f4caced4c909a881fdc0266aede",
+      "introductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0009.packet.json",
+      "sha256": "9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2",
+      "gitBlob": "5866695919337bd0ef677fedd16b07140c270035",
+      "approvedPacketCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0009.review-R01.json",
+      "sha256": "04e221c2a6ea83f8b5620b309f5fbcac67d67d8cd794cd6f09ef5cab67de1320",
+      "gitBlob": "06d844f0ad687437a6535bf329deff858c413daf",
+      "introductionCommit": "184d5e4af398fc9fb5c91c95f779d96b8c3a4547"
+    },
+    {
+      "path": "artifacts/evidence/W2.A01.B00.json",
+      "sha256": "b275d3fa4b69b1a46dd72fee00d5b27d15b2509e66ad09b258b23a0f7bcd69c2",
+      "gitBlob": "3d8a420f3aee1a00b187770f4d2d96467fe4a04d",
+      "commit": "013e8e407df1474ba847e4eca6466c7f6a4e33af"
+    }
+  ],
+  "scope": {
+    "candidateChangedFiles": [
+      "planning/review-site/enablers/ECR-0009.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json"
+    ],
+    "deliveryChangedFiles": [
+      "artifacts/evidence/W2.A01.B00-precommit-privacy-incident.md",
+      "artifacts/evidence/W2.A01.B00.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0009.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "boundary": "B00 approval is limited to the exact human-approved authority projection and append-only REVIEW submission. Task materialization, active 1.8 publication, renderer/native/Core work, amendment exit/adoption, ordinary W2 resume, Wave qualification and release remain separate."
+  },
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied",
+      "evidence": "The sole-file approval introduction f8a49a2e directly follows independent packet-review introduction 184d5e4a and binds exact packet candidate 3fb76d6c, packet SHA-256, reviewed R01 ledger and the owner's explicit ECR-0009/Academic Minimal 1.8 decision. Approval, candidate and submission form strict direct descendants. All 58 unique packet-bound proposal/reference/schema/review paths retain the expected SHA-256 at packet, approval, B00 and submit commits. The W2 historical base and GOV-MIG-0001 remain unchanged."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied",
+      "evidence": "The approval-to-candidate diff is exactly the three packet-authorized generated paths. Parsing the two committed backlog blobs before/after bootstrap-submit shows every other top-level object unchanged and the nine prior amendment entries byte-equivalent as data and in order. The only new entry is W2.A01 lifecycle APPROVED with B00 REVIEW, exact candidate/approval/evidence pins, campaign null and tasks []. The packet holds exact S01/T01-T02 inventory; taskctl requires independent B00 approval before the separate supported materialize transition, so no executable task is falsely claimed at REVIEW. Original CAP-05.S01.T01 history and blocker are unchanged."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied",
+      "evidence": "The complete W2 campaign object is unchanged: PAUSED with no lease. CAP-05.S01.T01 remains BLOCKED with no lease, and the control plane has no active amendment. The candidate and submission change no product, controller, active design/ui-reference or 1.8 reference-approval file. The corrected evidence manifest raw SHA-256 matches the submitted backlog reference and contains no local-hook private-metadata reasons or pinned full-unmasked Gitleaks finding. The rejected earlier precommit evidence attempt is preserved in a redacted incident note; it created no commit or review disposition."
+    }
+  ],
+  "independentChecks": [
+    {
+      "check": "Exact Git ancestry, artifact hashes, 58 packet-bound paths and complete parsed predecessor comparison",
+      "result": "passed",
+      "method": "Read exact Git blobs at packet, approval, candidate and submission commits; compare approval/review/evidence SHA-256 and Git blobs, approval introductions and candidate/delivery path sets; parse both backlog versions and compare every field outside the sole appended W2.A01 entry."
+    },
+    {
+      "check": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed",
+      "observation": "Fresh read-only validation reported 20 capabilities, 117 slices, 385 tasks and 12 release gates at the submitted state."
+    },
+    {
+      "check": "Exact evidence and privacy inspection",
+      "result": "passed",
+      "observation": "Submitted evidence hash matches the backlog pin; the evidence and redacted incident note have zero local-hook private-metadata reasons, and the pinned full-unmasked scanner found zero credentials in the corrected manifest."
+    },
+    {
+      "check": "git diff --check f8a49a2e 68d36d67 and git diff --check 68d36d67 013e8e40",
+      "result": "passed"
+    }
+  ],
+  "verificationSelection": {
+    "rationale": "This bootstrap projects exact approved authority through three generated files and uses the existing append-only controller. Exact Git/approval/packet hashes, actual submitted backlog comparison, fresh canonical validation and evidence/privacy checks cover its material risks. Previously recorded focused controller tests and the 493-page site report were inspected as submitted evidence, not represented as fresh reviewer runs. Product and full W2 profiles remain downstream obligations.",
+    "deferred": [
+      "Supported task materialization only after the bootstrap-review transition, followed by amendment activation and ordered T01/T02 work.",
+      "Bounded generated-view repair below before claiming the planning review site current or integrating that presentation state.",
+      "Native/Core attachment, rights, denial, cancellation, restart/recovery and full W2 qualification remain with the original task and later Wave gates."
+    ]
+  },
+  "findings": [],
+  "closures": [],
+  "boundedMaintenanceFollowUps": [
+    {
+      "id": "W2-A01-B00-site-P2-01",
+      "severity": "P2",
+      "blocksBootstrapControlReview": false,
+      "path": "planning/review-site/waves/W2.html",
+      "reproduction": "At submission 013e8e40, the generated interruption callout renders Current ordinary authority with empty base and adopted-amendment code fields even though the canonical W2 approval base remains bound and unchanged.",
+      "requiredBefore": "The generated W2 review page is called current or its presentation state is integrated.",
+      "route": "Bounded source/projection maintenance with focused regression, generated-site check and independent control review; preserve all W2 approval and task authority."
+    },
+    {
+      "id": "W2-A01-B00-site-P2-02",
+      "severity": "P2",
+      "blocksBootstrapControlReview": false,
+      "paths": [
+        "planning/review-site/enablers/ECR-0009.html",
+        "planning/review-site/enablers/index.html"
+      ],
+      "reproduction": "At submission 013e8e40, the generated ECR-0009 detail/index labels lifecycle APPROVED as Materialization APPROVED although the canonical amendment has tasks [] and has not passed bootstrap review or materialize. The detail page's explicit caveat does not make that label accurate.",
+      "requiredBefore": "The generated ECR-0009 review page or register is called current or its presentation state is integrated.",
+      "route": "Bounded source/projection maintenance with a pre-materialization regression and independent control review; do not mutate the approved packet or canonical amendment state."
+    }
+  ],
+  "disposition": "Accept the exact B00 candidate and actual append for the supported independent bootstrap-review transition. The two separately tracked P2 generated-view defects do not alter the canonical authority and do not block this control disposition; repair them before claiming the review-site projection current or integrating it. This ledger itself performs no state transition or task materialization.",
+  "authorityLimits": {
+    "newHumanApprovalRequested": false,
+    "productTaskApproval": false,
+    "activeReferencePublicationApproval": false,
+    "amendmentExitApproval": false,
+    "waveResumeApproval": false,
+    "waveExitOrReleaseApproval": false,
+    "localMainIntegrationApproval": false
+  }
+}
