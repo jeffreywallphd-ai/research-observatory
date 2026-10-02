@@ -51574,17 +51574,17 @@ wave_amendments:
       index entry in the independent control/security review
     - Affected foundation, schema, quality and independent control/security/ADR review on committed candidate
     packet_task_sha256: dddbb903737ac476e73b4215b270993d3d93b6de244e9282a84afb8c1ccdcda3
-    status: REVIEW
+    status: IN_PROGRESS
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2
     worktree: .
     lease:
       claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-02T18:44:28+00:00'
-      expires_at: '2026-10-03T02:44:28+00:00'
+      claimed_at: '2026-10-02T20:19:01+00:00'
+      expires_at: '2026-10-03T04:19:01+00:00'
     started_at: '2026-10-02T18:44:28+00:00'
-    updated_at: '2026-10-02T20:06:53+00:00'
+    updated_at: '2026-10-02T20:19:01+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
@@ -51594,102 +51594,164 @@ wave_amendments:
       sha256: cf21fd27e7cc1769cdbcef561d370d3957e8b6b2dc0f02d9aac439db216fed59
       commit: f64b7dfe0b347e9293064e53460f7dfb675a621f
       recorded_at: '2026-10-02T20:06:53+00:00'
-    verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+    verification_state: null
+    review: &id159
+      reviewer: agent:/root/verifier_repair_review
+      result: changes-requested
+      reviewed_at: '2026-10-02T20:19:01+00:00'
+      notes: 'Independent expanded review of the frozen R01 packet inspected the exact 16-path candidate diff, indexed Proposed
+        ADR-0035, ECR-0009/T01 criteria, current review submission, and all 11 cited check logs. The evidence file SHA-256
+        and every raw-log SHA-256 match the submitted references. The final-candidate focused checks pass, but they miss one
+        permitted typed product-source path class, so criterion 3 is not yet met. An earlier pre-submission finding at 0948d634
+        allowed a backlog transition to share a governed renderer or reference commit; f64b7dfe added a failing Git regression
+        and closed that narrower case. The current finding is distinct: a permitted .d.ts attachment contract is excluded
+        from governed uiFiles and bypasses both product chronology and mixed-backlog checks. The repository-wide quality inventory
+        failure for ten prior CAP-05 Python files is disclosed and deferred to bounded W2 control maintenance; targeted quality
+        checks pass for all T01-changed Python files, but this review does not call the global quality profile passed. T02
+        remains unclaimed and must not start on this adverse T01 disposition.'
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex-w2-implementation
-        submitted_at: '2026-10-02T20:06:53+00:00'
-        candidate_commit: f64b7dfe0b347e9293064e53460f7dfb675a621f
-        base_commit: 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2
-        branch: codex/w2-implementation
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W2.A01.T01.json
-          sha256: cf21fd27e7cc1769cdbcef561d370d3957e8b6b2dc0f02d9aac439db216fed59
-          commit: f64b7dfe0b347e9293064e53460f7dfb675a621f
-          recorded_at: '2026-10-02T20:06:53+00:00'
-        acceptance_criteria_sha256: ee05b1366fd5ad93a5d389bdaec94e94a3968eff68625df8011322a8e6aa9a38
-        changed_paths:
-        - artifacts/evidence/W2.A01.T01.task-start.md
-        - design/ui-change.schema.json
-        - docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md
-        - docs/adr/index.json
-        - docs/automation/design-first-ui-changes.md
-        - docs/planning-implementation-plan.md
-        - planning/backlog.yaml
-        - planning/review-site/enablers/ECR-0009.html
-        - planning/review-site/enablers/index.html
-        - planning/review-site/manifest.json
-        - planning/review-site/waves/W2.html
-        - planning/status-summary.md
-        - tests/foundation/test_adr_check.py
-        - tests/foundation/test_ui_change_gate.py
-        - tools/adr_check.py
-        - tools/ui_change_gate.py
-        selected_checks:
-        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_hidden_and_mixed_history
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_separate_backlog_from_product_commits
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_extra_and_redirected_history
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_non_renderer_product_and_security_files
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_redirected_ancillary_delivery
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_automatic_base_uses_live_claim
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_live_claim_rejects_foreign_or_expired_state
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_approved_reference_implementation_and_defect_restoration_pass
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_requires_new_human_approval_before_implementation
-          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_self_approval tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_approval_and_implementation_in_same_commit
-        - .venv\Scripts\python.exe -m unittest discover -v -s tests/foundation -p test_planctl_amendments.py
-        - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate
-        - .venv\Scripts\python.exe tools/adr_check.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head f64b7dfe0b347e9293064e53460f7dfb675a621f
-        - .venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head
-          f64b7dfe0b347e9293064e53460f7dfb675a621f
-        - .venv\Scripts\python.exe tools/ui_change_gate.py --repo .
-        - .venv\Scripts\python.exe tools/adr_check.py --repo .
-        - .venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py
-          tools/adr_check.py tests/foundation/test_adr_check.py
-        - .venv\Scripts\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py
-          tools/adr_check.py tests/foundation/test_adr_check.py
-        - .venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py
-          tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py
-        - git diff --check 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 f64b7dfe0b347e9293064e53460f7dfb675a621f
-        deferred_checks:
-        - 'Repository-wide foundation:quality remains failed at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44):
-          ten prior CAP-05 Python files need bounded quality-inventory maintenance, and affected CAP-05 format/mypy findings
-          need correction before Wave exit. No T01 source is omitted from targeted quality.'
-        - The full foundation/service/security profiles and product/native/UI conformance matrix remain for W2.A01.T02, resumed
-          CAP-05.S01.T01, relevant slice checkpoints, and fresh W2 qualification; T01 changes no product renderer, reference
-          publication, native file access or release gate.
-        selection_rationale: T01 changes a security-sensitive design-first control, schema, and indexed Proposed ADR. Fresh
-          exact-candidate real-Git hostile/positive cases, retained 1.0/1.1 cases, planctl amendment regressions, exact-base
-          and canonical gate/ADR checks, backlog validation, and targeted Ruff/mypy cover the affected authority surface.
-          The broader 93-case UI module, 29 taskctl schema tests, architecture, generated views, and 493-page site check passed
-          on prior candidate 0948d634; these are supplementary nonqualifying context only, and no prior receipt is reused
-          as final-candidate proof. Initial dotted planctl invocation on 0948d634 passed 15 cases and had one ModuleNotFoundError
-          for a sibling test fixture; the correct discovery-mode suite passes 16/16 on f64b7dfe. Repository-wide quality_check
-          failed earlier at da2b026d before lint/mypy because ten already-committed CAP-05 Python files are missing from quality-scope.json;
-          this is preserved adverse evidence, not a T01 quality pass. Targeted format/lint/mypy for all T01-changed Python
-          files pass on f64b7dfe. Independent pre-review found a mixed backlog/product-commit gap at 0948d634; a red Git regression
-          reproduced it and f64b7dfe closes it, with both outcomes retained in the independent disposition.
-        selection_sha256: 9af6cead2d2ac0e8957c184b6d3b445c3813966340119d1f51d7ab0d88894c62
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - foundation:ui-change
-        - foundation:adr
-        - foundation:backlog
-        packet_sha256: 992aba71183768aca78d7547041bbdcba7f1f646760d08b95ea9a937d221808b
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-02T20:06:53+00:00'
+          candidate_commit: f64b7dfe0b347e9293064e53460f7dfb675a621f
+          base_commit: 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.A01.T01.json
+            sha256: cf21fd27e7cc1769cdbcef561d370d3957e8b6b2dc0f02d9aac439db216fed59
+            commit: f64b7dfe0b347e9293064e53460f7dfb675a621f
+            recorded_at: '2026-10-02T20:06:53+00:00'
+          acceptance_criteria_sha256: ee05b1366fd5ad93a5d389bdaec94e94a3968eff68625df8011322a8e6aa9a38
+          changed_paths:
+          - artifacts/evidence/W2.A01.T01.task-start.md
+          - design/ui-change.schema.json
+          - docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md
+          - docs/adr/index.json
+          - docs/automation/design-first-ui-changes.md
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/enablers/ECR-0009.html
+          - planning/review-site/enablers/index.html
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - tests/foundation/test_adr_check.py
+          - tests/foundation/test_ui_change_gate.py
+          - tools/adr_check.py
+          - tools/ui_change_gate.py
+          selected_checks:
+          - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_hidden_and_mixed_history
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_separate_backlog_from_product_commits
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_extra_and_redirected_history
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_non_renderer_product_and_security_files
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_redirected_ancillary_delivery
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_automatic_base_uses_live_claim
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_live_claim_rejects_foreign_or_expired_state
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_approved_reference_implementation_and_defect_restoration_pass
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_requires_new_human_approval_before_implementation
+            tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_self_approval tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_approval_and_implementation_in_same_commit
+          - .venv\Scripts\python.exe -m unittest discover -v -s tests/foundation -p test_planctl_amendments.py
+          - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate
+          - .venv\Scripts\python.exe tools/adr_check.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head f64b7dfe0b347e9293064e53460f7dfb675a621f
+          - .venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head
+            f64b7dfe0b347e9293064e53460f7dfb675a621f
+          - .venv\Scripts\python.exe tools/ui_change_gate.py --repo .
+          - .venv\Scripts\python.exe tools/adr_check.py --repo .
+          - .venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py
+            tools/adr_check.py tests/foundation/test_adr_check.py
+          - .venv\Scripts\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py
+            tools/adr_check.py tests/foundation/test_adr_check.py
+          - .venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py
+            tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py
+          - git diff --check 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 f64b7dfe0b347e9293064e53460f7dfb675a621f
+          deferred_checks:
+          - 'Repository-wide foundation:quality remains failed at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44):
+            ten prior CAP-05 Python files need bounded quality-inventory maintenance, and affected CAP-05 format/mypy findings
+            need correction before Wave exit. No T01 source is omitted from targeted quality.'
+          - The full foundation/service/security profiles and product/native/UI conformance matrix remain for W2.A01.T02,
+            resumed CAP-05.S01.T01, relevant slice checkpoints, and fresh W2 qualification; T01 changes no product renderer,
+            reference publication, native file access or release gate.
+          selection_rationale: T01 changes a security-sensitive design-first control, schema, and indexed Proposed ADR. Fresh
+            exact-candidate real-Git hostile/positive cases, retained 1.0/1.1 cases, planctl amendment regressions, exact-base
+            and canonical gate/ADR checks, backlog validation, and targeted Ruff/mypy cover the affected authority surface.
+            The broader 93-case UI module, 29 taskctl schema tests, architecture, generated views, and 493-page site check
+            passed on prior candidate 0948d634; these are supplementary nonqualifying context only, and no prior receipt is
+            reused as final-candidate proof. Initial dotted planctl invocation on 0948d634 passed 15 cases and had one ModuleNotFoundError
+            for a sibling test fixture; the correct discovery-mode suite passes 16/16 on f64b7dfe. Repository-wide quality_check
+            failed earlier at da2b026d before lint/mypy because ten already-committed CAP-05 Python files are missing from
+            quality-scope.json; this is preserved adverse evidence, not a T01 quality pass. Targeted format/lint/mypy for
+            all T01-changed Python files pass on f64b7dfe. Independent pre-review found a mixed backlog/product-commit gap
+            at 0948d634; a red Git regression reproduced it and f64b7dfe closes it, with both outcomes retained in the independent
+            disposition.
+          selection_sha256: 9af6cead2d2ac0e8957c184b6d3b445c3813966340119d1f51d7ab0d88894c62
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:backlog
+          packet_sha256: 992aba71183768aca78d7547041bbdcba7f1f646760d08b95ea9a937d221808b
+        review: *id159
+        ledger:
+          path: artifacts/evidence/W2.A01.T01.review-R01.json
+          sha256: b32d59580924a76854c75a856e9be60eb61d7cfb6a881ae0c6fca14cf63621b2
+        findings:
+        - id: W2.A01.T01-R01-F01
+          severity: high
+          blocking: true
+          criterion_index: 3
+          title: Typed product-source files bypass reference order and backlog separation
+          reproduction: 'At f64b7dfe, intentional_amendment_delivery_path accepts apps/desktop/src/native-attachment.d.ts,
+            but is_implementation_path returns false because .d.ts is a globally ignored UI suffix. In disposable real-Git
+            fixtures built from UiChangeGateTests.prepare, first commit a reference publication and a later View.tsx renderer,
+            then change planning/backlog.yaml together with native-attachment.d.ts in one commit: intentional_amendment_segments
+            returns successfully, omitting the mixed commit from uiCommits. In a second fixture, commit native-attachment.d.ts
+            before the reference publication, then publish the reference and commit View.tsx: the same function accepts the
+            range and omits the early typed-contract commit. The guard at tools/ui_change_gate.py around line 2083 checks
+            only governed ui_paths or reference_delta. This admitted typed opaque product contract is within W2.A01.T02 scope,
+            so both accepted histories contradict the approved design-first and no mixed control/product criteria. The disposable
+            reproduction commits were 90b7e495e1aba17de5e53e0e2f054483b4208661 and 28fb22849a43459a6a241f64e02c662559a8a393;
+            they are not repository authority commits.'
+          required_remediation: In a strict descendant, add a failing real-Git regression for both .d.ts histories. Classify
+            admitted app/package typed product-source paths for publication-before-product ordering and backlog/product separation,
+            independently of the existing governed UI inventory used for changedFiles and uiFiles. Keep legitimate separate
+            taskctl transitions valid, retain the exact 1.0/1.1 lanes and policy roots, and do not widen T02 delivery scope.
+            Run the focused regression plus affected final-candidate schema/Git, ADR and quality checks, then submit an immutable
+            R02 packet that replays this finding for independent closure.
+        closures: []
+        telemetry:
+          task_id: W2.A01.T01
+          amendment_id: W2.A01
+          attempt_id: R01
+          submitted_at: '2026-10-02T20:06:53+00:00'
+          reviewed_at: '2026-10-02T20:19:01+00:00'
+          duration_seconds: 728
+          outcome: changes-requested
+          finding_counts:
+            critical: 0
+            high: 1
+            medium: 0
+            low: 0
+            blocking: 1
+            total: 1
+          command_ids:
+          - foundation:ui-change
+          - foundation:adr
+          - foundation:backlog
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   - id: W2.A01.T02
     amendment_id: W2.A01
     title: Publish Academic Minimal 1.8 and stage attachment UI

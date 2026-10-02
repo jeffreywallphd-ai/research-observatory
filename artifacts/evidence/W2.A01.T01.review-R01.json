@@ -1,0 +1,58 @@
+{
+  "task_id": "W2.A01.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "f64b7dfe0b347e9293064e53460f7dfb675a621f",
+  "base_commit": "468cb3902f5b3ea9c1ad9769c969c581f68cd1c2",
+  "submission_record_commit": "b15fcd0d094e8e6f63f495f2bbc746c9b3cb7a57",
+  "reviewer": "agent:/root/verifier_repair_review",
+  "result": "changes-requested",
+  "evidence_sha256": "cf21fd27e7cc1769cdbcef561d370d3957e8b6b2dc0f02d9aac439db216fed59",
+  "packet_sha256": "992aba71183768aca78d7547041bbdcba7f1f646760d08b95ea9a937d221808b",
+  "acceptance_criteria_sha256": "ee05b1366fd5ad93a5d389bdaec94e94a3968eff68625df8011322a8e6aa9a38",
+  "selection_sha256": "9af6cead2d2ac0e8957c184b6d3b445c3813966340119d1f51d7ab0d88894c62",
+  "notes": "Independent expanded review of the frozen R01 packet inspected the exact 16-path candidate diff, indexed Proposed ADR-0035, ECR-0009/T01 criteria, current review submission, and all 11 cited check logs. The evidence file SHA-256 and every raw-log SHA-256 match the submitted references. The final-candidate focused checks pass, but they miss one permitted typed product-source path class, so criterion 3 is not yet met. An earlier pre-submission finding at 0948d634 allowed a backlog transition to share a governed renderer or reference commit; f64b7dfe added a failing Git regression and closed that narrower case. The current finding is distinct: a permitted .d.ts attachment contract is excluded from governed uiFiles and bypasses both product chronology and mixed-backlog checks. The repository-wide quality inventory failure for ten prior CAP-05 Python files is disclosed and deferred to bounded W2 control maintenance; targeted quality checks pass for all T01-changed Python files, but this review does not call the global quality profile passed. T02 remains unclaimed and must not start on this adverse T01 disposition.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The 1.2 schema selects only W2.A01.T02, and the gate authenticates the committed packet, approval, task and proposed-reference chain. Contract labels alone cannot grant the lane."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied-with-finding-1-impact",
+      "assessment": "The gate checks the live owner, lease, branch, base, reviewed T01 predecessor, proposal and reference records, and governed UI/reference history. Finding W2.A01.T01-R01-F01 shows that permitted typed product-source history is not included in the chronology check."
+    },
+    {
+      "criterion_index": 3,
+      "result": "not-satisfied",
+      "assessment": "A .d.ts product contract may be committed before reference publication or together with a planning/backlog.yaml transition while the gate reports a valid segment. Other tested hostile paths deny as submitted."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "The selected final-candidate tests retain ordinary 1.0 and resumed 1.1 positive and denial cases; the new selector does not alter their schemas or thresholds."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "assessment": "ADR-0035 and its appended index entry were introduced with the protected gate/schema change, remain Proposed, link T01, and do not supersede ADR-0003. The exact base-to-candidate ADR check passes."
+    },
+    {
+      "criterion_index": 6,
+      "result": "not-satisfied",
+      "assessment": "Focused committed checks and targeted quality checks pass, but this expanded independent review finds a blocking security/control coverage gap requiring a descendant candidate and new review round."
+    }
+  ],
+  "findings": [
+    {
+      "id": "W2.A01.T01-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Typed product-source files bypass reference order and backlog separation",
+      "reproduction": "At f64b7dfe, intentional_amendment_delivery_path accepts apps/desktop/src/native-attachment.d.ts, but is_implementation_path returns false because .d.ts is a globally ignored UI suffix. In disposable real-Git fixtures built from UiChangeGateTests.prepare, first commit a reference publication and a later View.tsx renderer, then change planning/backlog.yaml together with native-attachment.d.ts in one commit: intentional_amendment_segments returns successfully, omitting the mixed commit from uiCommits. In a second fixture, commit native-attachment.d.ts before the reference publication, then publish the reference and commit View.tsx: the same function accepts the range and omits the early typed-contract commit. The guard at tools/ui_change_gate.py around line 2083 checks only governed ui_paths or reference_delta. This admitted typed opaque product contract is within W2.A01.T02 scope, so both accepted histories contradict the approved design-first and no mixed control/product criteria. The disposable reproduction commits were 90b7e495e1aba17de5e53e0e2f054483b4208661 and 28fb22849a43459a6a241f64e02c662559a8a393; they are not repository authority commits.",
+      "required_remediation": "In a strict descendant, add a failing real-Git regression for both .d.ts histories. Classify admitted app/package typed product-source paths for publication-before-product ordering and backlog/product separation, independently of the existing governed UI inventory used for changedFiles and uiFiles. Keep legitimate separate taskctl transitions valid, retain the exact 1.0/1.1 lanes and policy roots, and do not widen T02 delivery scope. Run the focused regression plus affected final-candidate schema/Git, ADR and quality checks, then submit an immutable R02 packet that replays this finding for independent closure."
+    }
+  ],
+  "closures": []
+}
