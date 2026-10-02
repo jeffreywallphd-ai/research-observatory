@@ -67,7 +67,10 @@ and redirected objects. Human reference approval must strictly precede each
 renderer implementation commit. Control edits cannot be mixed into that
 renderer delivery or self-authorize it. Taskctl may record backlog transitions
 in separate commits, but no commit may change `planning/backlog.yaml` together
-with governed reference or renderer files.
+with governed reference or renderer files. Admitted `.d.ts` typed product-source
+files obey the same publication order and backlog separation; their per-commit
+history is recorded separately from governed `uiFiles` and cannot hide an
+add-then-revert edit.
 
 The owner-approved ECR authority plus the independent `W2.A01.T01` and
 `W2.A01.T02` reviews provide the exact amendment-specific substitute for the

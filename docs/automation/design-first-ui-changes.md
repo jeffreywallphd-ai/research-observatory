@@ -48,7 +48,10 @@ redirected Git objects, extra UI contracts, files outside the approved
 renderer/reference/evidence envelope, and mixed control/product edits deny
 qualification. Taskctl may record backlog transitions in separate commits;
 no commit may change `planning/backlog.yaml` together with governed reference
-or renderer files. The separate reference-publication commit
+or renderer files. Admitted `.d.ts` typed product-source files also require
+publication first and separate backlog transitions; the gate records them
+apart from governed `uiFiles` and rejects hidden add/revert history. The
+separate reference-publication commit
 must follow the human decision and strictly precede every renderer commit.
 The complete contract is evaluated with the T02 task base and current `HEAD`;
 producer labels and a successful partial or mock check cannot replace

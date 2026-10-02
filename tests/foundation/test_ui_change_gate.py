@@ -2167,6 +2167,74 @@ class UiChangeGateTests(unittest.TestCase):
                     root, base, head, mixed_publication, contract_path, {reference}, policy
                 )
 
+    def test_intentional_amendment_segments_deny_typed_product_bypasses(self) -> None:
+        reference = "design/ui-reference/assets/tokens.css"
+        ui_path = "apps/desktop/src/View.tsx"
+        typed_path = "apps/desktop/src/native-attachment.d.ts"
+        contract_path = "artifacts/evidence/ui-change/W2.A01.T02.json"
+        for kind in ("before-publication", "mixed-backlog"):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as temporary:
+                root, base, _package = self.prepare(temporary)
+                policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+                self.assertTrue(ui_gate.intentional_amendment_delivery_path(typed_path, contract_path, policy))
+                self.assertFalse(ui_gate.is_implementation_path(typed_path, policy))
+                if kind == "before-publication":
+                    (root / typed_path).write_text(
+                        "export interface AttachmentIntent { id: string }\n", encoding="utf-8"
+                    )
+                    self.commit(root, "typed product contract before reference")
+                (root / reference).write_text(":root { --surface: blue; }\n", encoding="utf-8")
+                publication = self.commit(root, "publish approved reference")
+                self.write_json(root / contract_path, {"synthetic": "regular"})
+                (root / ui_path).write_text("export const View = () => 'approved';\n", encoding="utf-8")
+                self.commit(root, "renderer and evidence")
+                if kind == "mixed-backlog":
+                    self.write_yaml(root / "planning/backlog.yaml", {"capabilities": [], "status": "REVIEW"})
+                    (root / typed_path).write_text(
+                        "export interface AttachmentIntent { id: string }\n", encoding="utf-8"
+                    )
+                    self.commit(root, "mix taskctl review transition and typed product contract")
+                head = self.git(root, "rev-parse", "HEAD")
+                expected = "reference.*product" if kind == "before-publication" else "backlog.*product"
+                with self.assertRaisesRegex(ValueError, expected):
+                    ui_gate.intentional_amendment_segments(
+                        root, base, head, publication, contract_path, {reference}, policy
+                    )
+
+    def test_intentional_amendment_segments_report_separate_typed_product_history(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _package = self.prepare(temporary)
+            policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+            reference = "design/ui-reference/assets/tokens.css"
+            ui_path = "apps/desktop/src/View.tsx"
+            typed_path = "apps/desktop/src/native-attachment.d.ts"
+            contract_path = "artifacts/evidence/ui-change/W2.A01.T02.json"
+            self.assertFalse(
+                ui_gate.intentional_amendment_delivery_path(
+                    "packages/ui-components/src/native-attachment.d.ts", contract_path, policy
+                )
+            )
+            (root / reference).write_text(":root { --surface: blue; }\n", encoding="utf-8")
+            publication = self.commit(root, "publish approved reference")
+            (root / typed_path).write_text("export interface AttachmentIntent { id: string }\n", encoding="utf-8")
+            typed_commit = self.commit(root, "freeze typed product contract after reference")
+            self.write_json(root / contract_path, {"synthetic": "regular"})
+            (root / ui_path).write_text("export const View = () => 'approved';\n", encoding="utf-8")
+            head = self.commit(root, "render approved interaction")
+            segments = ui_gate.intentional_amendment_segments(
+                root, base, head, publication, contract_path, {reference}, policy
+            )
+            self.assertEqual([ui_path], segments["uiFiles"])
+            self.assertEqual([head], segments["uiCommits"])
+            self.assertEqual([typed_path], segments["typedProductFiles"])
+            self.assertEqual([typed_commit], segments["typedProductCommits"])
+            (root / typed_path).unlink()
+            hidden = self.commit(root, "erase typed product contract")
+            with self.assertRaisesRegex(ValueError, "hidden add/revert"):
+                ui_gate.intentional_amendment_segments(
+                    root, base, hidden, publication, contract_path, {reference}, policy
+                )
+
     def test_intentional_amendment_segments_reject_extra_and_redirected_history(self) -> None:
         reference = "design/ui-reference/assets/tokens.css"
         contract_path = "artifacts/evidence/ui-change/W2.A01.T02.json"

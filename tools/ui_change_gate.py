@@ -2030,6 +2030,11 @@ def intentional_amendment_delivery_path(path: str, contract_path: str, policy: d
     return False
 
 
+def intentional_amendment_typed_product_path(path: str) -> bool:
+    """Classify exact-lane typed source without changing governed UI inventory."""
+    return path.endswith(".d.ts") and path.startswith(("apps/desktop/src/", "packages/ui-components/src/"))
+
+
 def intentional_amendment_segments(
     repo: Path,
     base: str,
@@ -2056,10 +2061,13 @@ def intentional_amendment_segments(
     contract_root = f"{policy['contractRoot']}/"
     net = changed_paths(repo, base, head)
     net_ui = {path for path in net if is_implementation_path(path, policy)}
+    net_typed = {path for path in net if intentional_amendment_typed_product_path(path)}
     net_reference = {path for path in net if path.startswith(reference_root)}
     touched_ui: set[str] = set()
+    touched_typed: set[str] = set()
     touched_reference: set[str] = set()
     ui_commits: list[str] = []
+    typed_commits: list[str] = []
     reference_commits: list[str] = []
     seen_publication = False
     for commit in ordered:
@@ -2080,15 +2088,17 @@ def intentional_amendment_segments(
                 if entry is not None and entry != ("100644", "blob"):
                     raise ValueError(f"intentional amendment delivery path is redirected or executable: {path}")
         ui_paths = {path for path in paths if is_implementation_path(path, policy)}
+        typed_paths = {path for path in paths if intentional_amendment_typed_product_path(path)}
+        product_paths = ui_paths | typed_paths
         reference_delta = {path for path in paths if path.startswith(reference_root)}
-        if "planning/backlog.yaml" in paths and (ui_paths or reference_delta):
+        if "planning/backlog.yaml" in paths and (product_paths or reference_delta):
             raise ValueError(
                 "intentional amendment backlog transition cannot share a reference or renderer product commit"
             )
-        if ui_paths and not seen_publication:
-            raise ValueError("human reference publication must strictly precede every renderer commit")
+        if product_paths and not seen_publication:
+            raise ValueError("human reference publication must strictly precede every product-source commit")
         if reference_delta:
-            if commit != publication or seen_publication or ui_paths:
+            if commit != publication or seen_publication or product_paths:
                 raise ValueError("intentional amendment reference may change only in its separate publication commit")
             if not reference_delta.issubset(reference_paths):
                 raise ValueError("intentional amendment publication touched an unreviewed reference file")
@@ -2103,13 +2113,22 @@ def intentional_amendment_segments(
         if ui_paths:
             touched_ui.update(ui_paths)
             ui_commits.append(commit)
+        if typed_paths:
+            touched_typed.update(typed_paths)
+            typed_commits.append(commit)
     if reference_commits != [publication] or not ui_commits:
         raise ValueError("intentional amendment requires one publication and later renderer work")
     if tree_entry(repo, head, contract_path) != ("100644", "blob"):
         raise ValueError("intentional amendment final UI evidence contract is not a regular blob")
-    if touched_ui != net_ui or touched_reference != net_reference:
-        raise ValueError("intentional amendment range contains hidden add/revert UI or reference history")
-    return {"uiFiles": sorted(touched_ui), "uiCommits": ui_commits, "referenceFiles": sorted(touched_reference)}
+    if touched_ui != net_ui or touched_typed != net_typed or touched_reference != net_reference:
+        raise ValueError("intentional amendment range contains hidden add/revert UI, typed source or reference history")
+    return {
+        "uiFiles": sorted(touched_ui),
+        "uiCommits": ui_commits,
+        "typedProductFiles": sorted(touched_typed),
+        "typedProductCommits": typed_commits,
+        "referenceFiles": sorted(touched_reference),
+    }
 
 
 def immutable_record(
