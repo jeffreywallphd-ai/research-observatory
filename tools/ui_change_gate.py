@@ -2619,6 +2619,12 @@ def require_ordinary_submission_lineage(
         raise ValueError("ordinary origin submission must preserve claim branch and strict candidate/delivery lineage")
 
 
+def canonical_correction_evidence_path(identity: str, path: str) -> bool:
+    prefix = re.escape(f"artifacts/evidence/{identity}")
+    suffix = r"(?:-R(?:0[1-9]|[1-9][0-9]+))?(?:\.[A-Za-z0-9_-]+)*\.json"
+    return re.fullmatch(prefix + suffix, path) is not None
+
+
 def correction_submission_ranges(
     repo: Path, head: str, correction: dict[str, Any], *, ordinary_origin: bool = False
 ) -> list[dict[str, Any]]:
@@ -2704,7 +2710,7 @@ def correction_submission_ranges(
                 raise ValueError("correction task review is not its actual frozen-submission transition")
             reference = packet["evidence_reference"]
             path = str(reference.get("path"))
-            if not re.fullmatch(re.escape(f"artifacts/evidence/{identity}") + r"(?:\.[A-Za-z0-9_-]+)*\.json", path):
+            if not canonical_correction_evidence_path(identity, path):
                 raise ValueError("correction task evidence path is outside its exact namespace")
             manifest, delivery = immutable_record(repo, head, path, reference.get("sha256"), evidence=True)
             if ordinary_origin:

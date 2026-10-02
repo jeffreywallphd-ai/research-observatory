@@ -2522,6 +2522,44 @@ class UiChangeGateTests(unittest.TestCase):
                     root, base, self.git(root, "rev-parse", "HEAD"), altered, policy
                 )
 
+    def test_completed_amendment_control_accepts_reviewed_second_round_evidence(self) -> None:
+        head = self.git(REPO, "rev-parse", "HEAD")
+        backlog = yaml.safe_load(ui_gate.blob(REPO, head, "planning/backlog.yaml"))
+        amendment = ui_gate.amendment_record(backlog, "W2.A01")
+        task = next(item for item in amendment["tasks"] if item["id"] == "W2.A01.T01")
+        attempts = task["review_control"]["attempts"]
+        self.assertEqual(
+            "artifacts/evidence/W2.A01.T01-R02.json", attempts[1]["submission"]["evidence_reference"]["path"]
+        )
+        ranges = ui_gate.correction_submission_ranges(REPO, head, {"tasks": [task]})
+        self.assertEqual(
+            [attempt["submission"]["candidate_commit"] for attempt in attempts], [item["candidate"] for item in ranges]
+        )
+
+    def test_correction_evidence_namespace_keeps_round_and_task_boundaries(self) -> None:
+        identity = "W2.A01.T01"
+        for path in (
+            "artifacts/evidence/W2.A01.T01.json",
+            "artifacts/evidence/W2.A01.T01-R02.json",
+            "artifacts/evidence/W2.A01.T01-R02.detail.json",
+        ):
+            with self.subTest(accepted=path):
+                self.assertTrue(ui_gate.canonical_correction_evidence_path(identity, path))
+        for path in (
+            "artifacts/evidence/W2.A01.T02-R02.json",
+            "artifacts/evidence/W2.A01.T01-R00.json",
+            "artifacts/evidence/W2.A01.T01-R2.json",
+            "artifacts/evidence/W2.A01.T01-R002.json",
+            "artifacts/evidence/W2.A01.T01-r02.json",
+            "artifacts/evidence/W2.A01.T01-R02-R03.json",
+            "artifacts/evidence/W2.A01.T01-R02.json/child.json",
+            "artifacts/evidence/../W2.A01.T01-R02.json",
+            "artifacts/evidence/nested/W2.A01.T01-R02.json",
+            "artifacts/evidence/W2.A01.T01-R02.md",
+        ):
+            with self.subTest(rejected=path):
+                self.assertFalse(ui_gate.canonical_correction_evidence_path(identity, path))
+
     def test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, head, candidate, _contract = self.intentional_git_fixture(temporary)
