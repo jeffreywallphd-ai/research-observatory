@@ -66,7 +66,7 @@ function decodeReview(value: unknown): PluginPackageReview | null {
     || typeof review.packageSha256 !== "string" || !sha.test(review.packageSha256)
     || typeof review.signatureSha256 !== "string" || !sha.test(review.signatureSha256)
     || typeof review.trustStatus !== "string" || !["untrusted", "active", "revoked", "invalid"].includes(review.trustStatus)
-    || typeof review.grantStatus !== "string" || !["disabled", "enabled", "different-package"].includes(review.grantStatus)
+    || typeof review.grantStatus !== "string" || !["disabled", "enabled", "different-package", "renewal-required"].includes(review.grantStatus)
     || (review.runtimeStatus !== "ready" && review.runtimeStatus !== "unavailable")) return null;
   const permissions = strings(review.permissions, 2); const operations = strings(review.operations, 6);
   const dataClasses = strings(review.dataClasses, 4); const credentialScopes = strings(review.credentialScopes, 16);

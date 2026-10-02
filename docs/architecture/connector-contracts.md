@@ -295,6 +295,18 @@ another broker. Before a secret lease, a separate Core-owned scope binding must
 match the destination's exact HTTPS scheme, host and port; merely signing two
 destinations does not make a credential valid at both.
 
+The T02 live worker accepts first-page broker egress only when its protected
+scientific input is a UTF-8 JSON object with exactly one operation-specific
+field: `identifier` for lookup/references/citations/OA locations, `query` for
+search, or `repositoryId` for repository metadata. Core compares the complete
+validated worker call with that value on every broker recheck. The broker may
+separately lease a declared credential scope at its exact destination origin.
+Opaque, duplicate-key, extra-field, changed-value, cursor and page-size input
+denies before transport and records a content-free policy reason. T03's sample
+connector must add an explicit, Core-bound continuation policy before enabling
+multi-page broker calls; the published call schema alone does not authorize a
+cursor.
+
 The local credential adapter stores one protected token per project, publisher,
 plugin and declared scope in the profile vault. Its protected payload also
 binds the selected origin, so changing destination does not reuse a token.

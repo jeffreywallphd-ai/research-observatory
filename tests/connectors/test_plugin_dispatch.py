@@ -222,6 +222,7 @@ class PluginDispatchTests(unittest.TestCase):
                 project_id=PROJECT,
                 package_sha256=plan.package_sha256,
                 manifest_sha256=plan.manifest_sha256,
+                signature_sha256=plan.signature_sha256,
                 request=self.request,
                 input_data=self.input_data,
                 actor=self.actor,

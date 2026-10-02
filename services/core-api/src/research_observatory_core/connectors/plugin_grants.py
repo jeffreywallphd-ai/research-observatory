@@ -7,9 +7,14 @@ confirmation. These values are never accepted from a plugin or worker frame.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
+from ..domain_contracts import is_uuid_v7
+from .contracts import _utc
 from .plugin_manifest import PluginDestination, PluginProjectGrant
+
+_TRACE = re.compile(r"[0-9a-f]{32}\Z")
 
 
 class PluginGrantProblem(ValueError):
@@ -28,6 +33,23 @@ class PluginGrantActor:
     trace_id: str
     occurred_at: str
     actor_type: str = "human"
+
+
+def _actor(actor: PluginGrantActor, *, allow_system: bool = False) -> None:
+    """Validate authenticated actor facts without depending on storage code."""
+
+    if (
+        not isinstance(actor, PluginGrantActor)
+        or actor.actor_type not in ({"human", "system"} if allow_system else {"human"})
+        or not is_uuid_v7(actor.actor_id)
+        or not isinstance(actor.trace_id, str)
+        or _TRACE.fullmatch(actor.trace_id) is None
+    ):
+        raise PluginGrantProblem("plugin-grant-actor-invalid")
+    try:
+        _utc(actor.occurred_at)
+    except ValueError:
+        raise PluginGrantProblem("plugin-grant-actor-invalid") from None
 
 
 @dataclass(frozen=True, slots=True)

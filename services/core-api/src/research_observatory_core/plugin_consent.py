@@ -72,6 +72,7 @@ class PluginConsentPreview(ContractModel):
     retention: ConnectorRetention
     package_sha256: str
     manifest_sha256: str
+    signature_sha256: str
     request_sha256: str
     intent_revision_id: str
     policy_sha256: str
@@ -222,6 +223,7 @@ class PluginConsentService:
         project_id: str,
         package_sha256: str,
         manifest_sha256: str,
+        signature_sha256: str,
         request: PluginInvocationRequest,
         retention: ConnectorRetention,
         *,
@@ -238,7 +240,7 @@ class PluginConsentService:
             ):
                 raise PluginConsentProblem()
             admitted = self._admin.prepare_persisted_invocation(
-                root, project_id, package_sha256, manifest_sha256, request, actor=actor
+                root, project_id, package_sha256, manifest_sha256, signature_sha256, request, actor=actor
             )
             intent, policy_sha256 = self._current(binding, admitted.plan, request)
             now = self._clock()
@@ -265,6 +267,7 @@ class PluginConsentService:
                 retention=retention,
                 package_sha256=package_sha256,
                 manifest_sha256=manifest_sha256,
+                signature_sha256=signature_sha256,
                 request_sha256=admitted.plan.request_sha256,
                 intent_revision_id=intent.revision_id,
                 policy_sha256=policy_sha256,

@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import io
 import os
 import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
+from dataclasses import replace
 from pathlib import Path
 from typing import cast
 
@@ -40,6 +43,7 @@ from research_observatory_core.object_store import create_local_object_store  # 
 from research_observatory_core.plugin_admin_service import PluginAdminService  # noqa: E402
 from research_observatory_core.plugin_api import register_plugin_routes  # noqa: E402
 from research_observatory_core.plugin_grant_repository import SqlitePluginGrantRepository  # noqa: E402
+from research_observatory_core.plugin_package_repository import SqlitePluginPackageRepository  # noqa: E402
 from research_observatory_core.projects import ProjectLifecycleProblem, ProjectLifecycleService  # noqa: E402
 from research_observatory_core.storage import configure_protected_database_provider, initialize_database  # noqa: E402
 from research_observatory_core.transport import CoreProblem, TraceCorrelationMiddleware, problem_detail  # noqa: E402
@@ -108,6 +112,9 @@ class PluginAdminSessionTests(unittest.TestCase):
             cast(PluginPublisherTrustStore, FakeTrust()),
             actor_id=ACTOR,
             grant_repository_factory=lambda *_: cast(SqlitePluginGrantRepository, FakeGrants()),
+            package_repository_factory=lambda path, identity: SqlitePluginPackageRepository(
+                path / "state/project.sqlite3", identity
+            ),
         )
         self.session = self.service.context(str(self.root), PROJECT)
 
@@ -376,6 +383,12 @@ class PluginAdminRealAuthorityTests(unittest.TestCase):
             cast(ProjectLifecycleService, FakeProjects(self.root)),
             trust,
             actor_id=ACTOR,
+            grant_repository_factory=lambda path, identity: SqlitePluginGrantRepository(
+                path / "state/project.sqlite3", identity
+            ),
+            package_repository_factory=lambda path, identity: SqlitePluginPackageRepository(
+                path / "state/project.sqlite3", identity
+            ),
             runtime_available=lambda: True,
             package_store_factory=self.package_store_factory,
         )
@@ -495,6 +508,12 @@ class PluginAdminRealAuthorityTests(unittest.TestCase):
             cast(ProjectLifecycleService, FakeProjects(self.root)),
             self.service._trust,
             actor_id=ACTOR,
+            grant_repository_factory=lambda path, identity: SqlitePluginGrantRepository(
+                path / "state/project.sqlite3", identity
+            ),
+            package_repository_factory=lambda path, identity: SqlitePluginPackageRepository(
+                path / "state/project.sqlite3", identity
+            ),
             runtime_available=lambda: True,
             package_store_factory=self.package_store_factory,
         )
@@ -503,20 +522,164 @@ class PluginAdminRealAuthorityTests(unittest.TestCase):
             PROJECT,
             review.package_sha256,
             review.manifest_sha256,
+            dispatch.plan.signature_sha256,
             request,
             actor=self.actor,
         )
         self.assertEqual(dispatch.plan, persisted.plan)
+        removed_trust = self.service.trust_decide(
+            str(self.root),
+            PROJECT,
+            self.session,
+            PluginTrustDecision(
+                new_uuid_v7(), review.publisher_key_id, state.public_key_sha256, state.revision, "revoke"
+            ),
+            None,
+            actor=self.actor,
+        )
+        self.assertEqual("revoked", removed_trust.status)
+        restored_trust = self.service.trust_decide(
+            str(self.root),
+            PROJECT,
+            self.session,
+            PluginTrustDecision(
+                new_uuid_v7(), review.publisher_key_id, state.public_key_sha256, removed_trust.revision, "trust"
+            ),
+            key,
+            actor=self.actor,
+        )
+        self.assertEqual("active", restored_trust.status)
+        stale_review = self.service.review(
+            str(self.root),
+            PROJECT,
+            self.session,
+            sealed.package_token,
+            trace_id=self.actor.trace_id,
+        ).review
+        assert stale_review is not None
+        self.assertEqual("renewal-required", stale_review.grant_status)
+        with self.assertRaisesRegex(PluginGrantProblem, "plugin-grant-trust-changed"):
+            self.service.prepare_invocation(
+                str(self.root), PROJECT, self.session, sealed.package_token, request, actor=self.actor
+            )
+        assert restored_trust.revision is not None
+        renewed = self.service.enable(
+            str(self.root),
+            PROJECT,
+            self.session,
+            sealed.package_token,
+            replace(
+                confirmation,
+                action_id=new_uuid_v7(),
+                trusted_key_revision=restored_trust.revision,
+                expected_revision=enabled.revision,
+            ),
+            actor=self.actor,
+        )
+        self.assertEqual(("enabled", 2), (renewed.status, renewed.revision))
+        current_review = self.service.review(
+            str(self.root),
+            PROJECT,
+            self.session,
+            sealed.package_token,
+            trace_id=self.actor.trace_id,
+        ).review
+        assert current_review is not None
+        self.assertEqual("enabled", current_review.grant_status)
+        new_key = SigningKey(b"\x16" * 32)
+        new_public_key = bytes(new_key.verify_key)
+        new_key_sha256 = "sha256:" + hashlib.sha256(new_public_key).hexdigest()
+        with zipfile.ZipFile(io.BytesIO(raw)) as original:
+            members = {name: original.read(name) for name in original.namelist()}
+        members["manifest.sig"] = new_key.sign(members["manifest.json"]).signature
+        rotated_raw, _ = archive(files=members)
+        removed_again = self.service.trust_decide(
+            str(self.root),
+            PROJECT,
+            self.session,
+            PluginTrustDecision(
+                new_uuid_v7(),
+                review.publisher_key_id,
+                state.public_key_sha256,
+                restored_trust.revision,
+                "revoke",
+            ),
+            None,
+            actor=self.actor,
+        )
+        rotated_trust = self.service.trust_decide(
+            str(self.root),
+            PROJECT,
+            self.session,
+            PluginTrustDecision(
+                new_uuid_v7(),
+                review.publisher_key_id,
+                new_key_sha256,
+                removed_again.revision,
+                "rotate",
+                previous_key_sha256=state.public_key_sha256,
+            ),
+            new_public_key,
+            actor=self.actor,
+        )
+        rotated_intake = self.service.create(str(self.root), PROJECT, self.session)
+        self.service.chunk(str(self.root), PROJECT, self.session, rotated_intake.intake_id, 1, rotated_raw)
+        rotated_sealed = self.service.seal(
+            str(self.root),
+            PROJECT,
+            self.session,
+            rotated_intake.intake_id,
+            archive_sha256="sha256:" + hashlib.sha256(rotated_raw).hexdigest(),
+            byte_length=len(rotated_raw),
+            chunk_count=1,
+            trace_id=self.actor.trace_id,
+        )
+        assert rotated_sealed.review is not None and rotated_sealed.package_token is not None
+        assert rotated_trust.revision is not None
+        self.assertEqual(review.package_sha256, rotated_sealed.review.package_sha256)
+        self.assertEqual(review.manifest_sha256, rotated_sealed.review.manifest_sha256)
+        self.assertNotEqual(review.signature_sha256, rotated_sealed.review.signature_sha256)
+        self.assertEqual("renewal-required", rotated_sealed.review.grant_status)
+        rotated_grant = self.service.enable(
+            str(self.root),
+            PROJECT,
+            self.session,
+            rotated_sealed.package_token,
+            replace(
+                confirmation,
+                action_id=new_uuid_v7(),
+                trusted_key_sha256=new_key_sha256,
+                trusted_key_revision=rotated_trust.revision,
+                expected_revision=renewed.revision,
+            ),
+            actor=self.actor,
+        )
+        self.assertEqual(("enabled", 3), (rotated_grant.status, rotated_grant.revision))
+        reopened_rotated = restarted.prepare_persisted_invocation(
+            str(self.root),
+            PROJECT,
+            review.package_sha256,
+            review.manifest_sha256,
+            rotated_sealed.review.signature_sha256,
+            request,
+            actor=self.actor,
+        )
+        self.assertEqual(rotated_sealed.review.signature_sha256, reopened_rotated.plan.signature_sha256)
+        pointers = SqlitePluginPackageRepository(self.root / "state/project.sqlite3", PROJECT)
+        self.assertIsNotNone(pointers.read(review.package_sha256, review.manifest_sha256, review.signature_sha256))
+        self.assertIsNotNone(
+            pointers.read(review.package_sha256, review.manifest_sha256, rotated_sealed.review.signature_sha256)
+        )
         revoked = self.service.revoke(
             str(self.root),
             PROJECT,
             self.session,
-            enabled.plugin_id,
-            cast(int, enabled.revision),
+            rotated_grant.plugin_id,
+            cast(int, rotated_grant.revision),
             new_uuid_v7(),
             actor=self.actor,
         )
-        self.assertEqual(("disabled", 2), (revoked.status, revoked.revision))
+        self.assertEqual(("disabled", 4), (revoked.status, revoked.revision))
         self.assertEqual(
             "disabled", self.service.grant_status(str(self.root), PROJECT, self.session, enabled.plugin_id).status
         )
@@ -530,6 +693,7 @@ class PluginAdminRealAuthorityTests(unittest.TestCase):
                 PROJECT,
                 review.package_sha256,
                 review.manifest_sha256,
+                dispatch.plan.signature_sha256,
                 request,
                 actor=self.actor,
             )

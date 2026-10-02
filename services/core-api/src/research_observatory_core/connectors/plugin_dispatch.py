@@ -127,6 +127,7 @@ class PluginDispatchController:
                 package_token=package_token,
                 package_sha256=None,
                 manifest_sha256=None,
+                signature_sha256=None,
                 request=request,
                 input_data=input_data,
                 actor=actor,
@@ -142,11 +143,12 @@ class PluginDispatchController:
         project_id: str,
         package_sha256: str,
         manifest_sha256: str,
+        signature_sha256: str,
         request: PluginInvocationRequest,
         input_data: bytes,
         actor: PluginGrantActor,
     ) -> PluginStagedOutput:
-        """Run an already queued job from its canonical package pair, not a token."""
+        """Run an already queued job from its exact signed package, not a token."""
 
         with self._active_mutex:
             if project_id in self._active_projects:
@@ -160,6 +162,7 @@ class PluginDispatchController:
                 package_token=None,
                 package_sha256=package_sha256,
                 manifest_sha256=manifest_sha256,
+                signature_sha256=signature_sha256,
                 request=request,
                 input_data=input_data,
                 actor=actor,
@@ -177,6 +180,7 @@ class PluginDispatchController:
         package_token: str | None,
         package_sha256: str | None,
         manifest_sha256: str | None,
+        signature_sha256: str | None,
         request: PluginInvocationRequest,
         input_data: bytes,
         actor: PluginGrantActor,
@@ -195,12 +199,19 @@ class PluginDispatchController:
             or "sha256:" + hashlib.sha256(input_data).hexdigest() != request.scientific_request_sha256
         ):
             raise PluginDispatchProblem("plugin-input-invalid")
-        persisted = package_sha256 is not None and manifest_sha256 is not None
-        if package_sha256 is not None and manifest_sha256 is not None and session_id is None and package_token is None:
+        persisted = package_sha256 is not None and manifest_sha256 is not None and signature_sha256 is not None
+        if persisted and session_id is None and package_token is None:
+            assert package_sha256 is not None and manifest_sha256 is not None and signature_sha256 is not None
             admitted = self._admin.prepare_persisted_invocation(
-                root, project_id, package_sha256, manifest_sha256, request, actor=actor
+                root, project_id, package_sha256, manifest_sha256, signature_sha256, request, actor=actor
             )
-        elif not persisted and session_id is not None and package_token is not None:
+        elif (
+            package_sha256 is None
+            and manifest_sha256 is None
+            and signature_sha256 is None
+            and session_id is not None
+            and package_token is not None
+        ):
             admitted = self._admin.prepare_invocation(root, project_id, session_id, package_token, request, actor=actor)
         else:
             raise PluginDispatchProblem("plugin-authority-invalid")

@@ -1,0 +1,9 @@
+# CAP-04.S05.T02 architecture-boundary maintenance
+
+Predecessor: `94156564c37fad4ba4f9f0227fded44751700bd6`. The T02 implementation had introduced three root-level SQLite repositories without registering them as adapters in `tools/architecture_check.py`; the architecture check rejected their SQL access. Simply registering them also correctly exposed concrete repository imports in business services.
+
+Intended delta: register only `plugin_grant_repository`, `plugin_job_repository`, and `plugin_package_repository` as root adapters; move their narrow service contracts and package pointer value into `ports/plugin_*.py`; inject concrete factories from `main.py`. Preserve the checker's ban on SQL in business/port modules and on concrete adapter imports outside composition/adapter code. No authority, task state, evidence gate, or released schema is relaxed. The on-disk package pointer key moves from the unshipped T02 pair-key candidate to a signature-bound key so distinct signed archives remain addressable; no released W2 project uses the earlier candidate.
+
+Risk tier: high, because grant persistence, package identity, restart lookup, and the architecture control are security boundaries. Selected checks: architecture checker and negative fixture; focused grant, package, admin, consent, dispatch, worker and migration tests; governed Python quality; packaging and frozen-sidecar checks; signed LPAC worker boundary after the final source commit. Independent task security review must inspect the final exact candidate and this control delta. Full service and security-local profiles remain slice/Wave coverage under the verification-breadth rule.
+
+This port/composition work completes the T02 implementation under the existing approved architecture. It is not supplemental technical-debt refactoring, so it consumes no separate W2 refactoring allocation. Any later cleanup must be charged against the Wave's one cumulative budget.

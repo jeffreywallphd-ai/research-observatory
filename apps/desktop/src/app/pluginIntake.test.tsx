@@ -84,8 +84,13 @@ describe("native connector package review", () => {
     const grant = decodeGrantState({ pluginId: reviewed.review.pluginId, status: "enabled", revision: 1,
       packageSha256: reviewed.review.packageSha256, manifestSha256: reviewed.review.manifestSha256,
       permissions: [], destinations: [] });
-    expect(grantMatchesPackage(grant, reviewed)).toBe(true);
-    expect(grantMatchesPackage(grant, { ...reviewed, review: { ...reviewed.review, manifestSha256: digest("e") } })).toBe(false);
+    const enabledReview = { ...reviewed, review: { ...reviewed.review, grantStatus: "enabled" } };
+    expect(grantMatchesPackage(grant, enabledReview)).toBe(true);
+    expect(grantMatchesPackage(grant, { ...enabledReview, review: { ...enabledReview.review, manifestSha256: digest("e") } })).toBe(false);
+    const staleReview = { ...enabledReview, review: { ...enabledReview.review, grantStatus: "renewal-required" } };
+    expect(grantMatchesPackage(grant, staleReview)).toBe(false);
+    expect(grantMatchesPackage(grant, enabledReview)).toBe(true);
+    expect(renderToStaticMarkup(<PluginReviewPane project={project} announce={() => undefined} active initialPackage={staleReview} />)).toContain("Project permission needs renewal");
   });
 
   it("discards a late package token after selection is cancelled", async () => {

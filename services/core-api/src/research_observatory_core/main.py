@@ -42,7 +42,9 @@ from .modules import default_module_registry
 from .object_store import create_local_object_store, upgrade_local_object_envelopes
 from .plugin_admin_service import PluginAdminService
 from .plugin_consent import PluginConsentService
+from .plugin_grant_repository import SqlitePluginGrantRepository
 from .plugin_job_repository import PluginJobRepository
+from .plugin_package_repository import SqlitePluginPackageRepository
 from .plugin_runtime import InstalledPluginRuntime
 from .plugin_worker import PluginWorkerAdapters, PluginWorkerService
 from .ports.credential_store import CredentialStoreProblem
@@ -262,6 +264,12 @@ def create_runtime_app(
                     "local-default",
                 ),
                 actor_id=resolved_actor_id,
+                grant_repository_factory=lambda path, identity: SqlitePluginGrantRepository(
+                    path / "state/project.sqlite3", identity
+                ),
+                package_repository_factory=lambda path, identity: SqlitePluginPackageRepository(
+                    path / "state/project.sqlite3", identity
+                ),
                 runtime_available=installed_plugin_runtime.available,
                 package_store_factory=lambda path, identity: PluginPackageStore(
                     create_local_object_store(

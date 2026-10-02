@@ -25,6 +25,7 @@ from .connectors.plugin_result import validate_plugin_output
 from .connectors.plugin_workflow import PluginJobInput, bind_plugin_claim
 from .domain_contracts import new_uuid_v7
 from .ports.object_store import ObjectPutCommand, ObjectStore, ObjectStoreProblem
+from .ports.plugin_jobs import PluginJobRepositoryProblem
 from .ports.repositories import (
     AggregateRevision,
     AggregateRevisionDraft,
@@ -42,12 +43,6 @@ from .repositories import (
 from .storage import CanonicalConnection, StorageProblem, open_canonical_database
 
 _MAX_DOCUMENT = 16 * 1024 * 1024
-
-
-class PluginJobRepositoryProblem(ValueError):
-    def __init__(self, code: str) -> None:
-        self.code = code
-        super().__init__(code)
 
 
 class PluginPublishedPage(ConnectorModel):

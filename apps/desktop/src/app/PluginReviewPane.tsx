@@ -29,7 +29,7 @@ export function samePackageIdentity(left: ReviewedPluginPackage, right: Reviewed
     && left.review.publisherKeyId === right.review.publisherKeyId;
 }
 export function grantMatchesPackage(grant: PluginGrantState | null, selected: ReviewedPluginPackage): boolean {
-  return grant?.status === "enabled" && grant.pluginId === selected.review.pluginId
+  return selected.review.grantStatus === "enabled" && grant?.status === "enabled" && grant.pluginId === selected.review.pluginId
     && grant.packageSha256 === selected.review.packageSha256
     && grant.manifestSha256 === selected.review.manifestSha256;
 }
@@ -143,7 +143,7 @@ export function PluginReviewPane({ project, announce, active, initialPackage, na
       if (kind === "refresh" && state) setNotice("Current package, local publisher trust and project permission were rechecked.");
       else if (outcome.status === "ok") {
         const verified = state && (kind === "trust" ? state.trust.status === "active"
-          : kind === "enable" ? grantMatchesPackage(state.grant, current)
+          : kind === "enable" ? grantMatchesPackage(state.grant, state.review)
             : kind === "disable" ? state.grant.status === "disabled"
               : state.trust.status === "revoked");
         if (!verified) {
@@ -180,7 +180,7 @@ export function PluginReviewPane({ project, announce, active, initialPackage, na
     {failure ? <Notification tone="warning" title="Connector review needs attention">{failure}</Notification> : null}
     {notice ? <Notification tone="info" title="Connector review">{notice}</Notification> : null}
     {!selected ? <p>No package selected. Select one to inspect its current publisher trust and project permission.</p> : <>
-      <StatusBadge tone={selected.review.trustStatus === "invalid" || selected.review.trustStatus === "revoked" ? "danger" : selected.review.grantStatus === "enabled" ? "success" : "warning"}>{selected.review.trustStatus === "invalid" ? "Quarantined · signature invalid" : selected.review.trustStatus === "revoked" ? "Publisher trust removed" : selected.review.grantStatus === "enabled" ? "Project permission recorded" : "Not enabled"}</StatusBadge>
+      <StatusBadge tone={selected.review.trustStatus === "invalid" || selected.review.trustStatus === "revoked" ? "danger" : selected.review.grantStatus === "enabled" ? "success" : "warning"}>{selected.review.trustStatus === "invalid" ? "Quarantined · signature invalid" : selected.review.trustStatus === "revoked" ? "Publisher trust removed" : selected.review.grantStatus === "enabled" ? "Project permission recorded" : selected.review.grantStatus === "renewal-required" ? "Project permission needs renewal" : "Not enabled"}</StatusBadge>
       <dl className="ro-key-value"><dt>Package</dt><dd>{selected.review.sourceDisplayName} · version {selected.review.pluginVersion}</dd>
         <dt>Package digest</dt><dd className="ro-wrap-anywhere"><code>{selected.review.packageSha256}</code></dd>
         <dt>Manifest digest</dt><dd className="ro-wrap-anywhere"><code>{selected.review.manifestSha256}</code></dd>
@@ -202,7 +202,7 @@ export function PluginReviewPane({ project, announce, active, initialPackage, na
         <div><h3 className="ro-typography ro-typography--card-title">2. Project permission</h3><p>Enabling applies only to this project and this exact package digest. It remains subject to current rights and privacy policy.</p>
           {grant?.status === "enabled" ? <p>Current project package: <code className="ro-wrap-anywhere">{grant.packageSha256}</code></p> : null}
           {changes.length ? <p>Newly requested access: {changes.join(", ")}. Renewed consent is required.</p> : null}
-          {grant?.status === "enabled" && !sameGrant ? <p>The existing grant does not authorize this replacement package; review and consent are required again.</p> : null}
+          {grant?.status === "enabled" && !sameGrant ? <p>The existing grant does not authorize this package under current publisher trust; review and consent are required again.</p> : null}
           <label className="ro-cluster"><input type="checkbox" checked={consent} disabled={!!busy || !active} onChange={(event) => setConsent(event.currentTarget.checked)} />I consent to this exact package and its displayed project operations, destinations and data classes.</label>
           <div className="ro-action-row"><Button tone="primary" disabled={!enableAvailable || sameGrant} aria-describedby="connector-enable-help" onClick={() => void act("enable")}>Enable for this project</Button>
             {grant?.status === "enabled" ? <Button tone="danger" disabled={!!busy || !active} onClick={() => void act("disable")}>Disable in this project</Button> : null}</div>

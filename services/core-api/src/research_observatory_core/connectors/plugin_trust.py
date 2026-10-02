@@ -15,7 +15,6 @@ from dataclasses import dataclass
 from typing import Literal, cast
 
 from ..domain_contracts import is_uuid_v7
-from ..plugin_grant_repository import SqlitePluginGrantRepository, _actor
 from ..ports.credential_store import (
     CredentialStore,
     SecretAccessContext,
@@ -28,7 +27,8 @@ from ..ports.credential_store import (
     SecretReference,
     SecretUnavailable,
 )
-from .plugin_grants import PluginEnableConfirmation, PluginGrantActor, PluginGrantProblem
+from ..ports.plugin_grants import PluginGrantRepository
+from .plugin_grants import PluginEnableConfirmation, PluginGrantActor, PluginGrantProblem, _actor
 from .plugin_manifest import (
     PluginInvocationPlan,
     PluginInvocationRequest,
@@ -432,7 +432,7 @@ class PluginPublisherTrustStore:
 class PluginGrantService:
     """Composition boundary: local trust plus exact current project authority."""
 
-    def __init__(self, trust: PluginPublisherTrustStore, grants: SqlitePluginGrantRepository) -> None:
+    def __init__(self, trust: PluginPublisherTrustStore, grants: PluginGrantRepository) -> None:
         self._trust = trust
         self._grants = grants
 

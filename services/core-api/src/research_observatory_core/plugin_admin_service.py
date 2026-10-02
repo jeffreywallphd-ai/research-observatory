@@ -34,8 +34,8 @@ from .connectors.plugin_package_store import PluginPackageStore
 from .connectors.plugin_trust import PluginGrantService, PluginPublisherTrustStore, PluginTrustDecision
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .models import ContractModel
-from .plugin_grant_repository import SqlitePluginGrantRepository
-from .plugin_package_repository import PluginPackagePointer, SqlitePluginPackageRepository
+from .ports.plugin_grants import PluginGrantRepository
+from .ports.plugin_packages import PluginPackagePointer, PluginPackageRepository
 from .projects import ProjectLifecycleService
 
 _SESSION = re.compile(r"[0-9a-f]{32}\Z")
@@ -61,7 +61,7 @@ class PluginPackageReview(ContractModel):
     credential_scopes: tuple[str, ...]
     resource_profile: dict[str, int]
     trust_status: Literal["untrusted", "active", "revoked", "invalid"]
-    grant_status: Literal["disabled", "enabled", "different-package"]
+    grant_status: Literal["disabled", "enabled", "different-package", "renewal-required"]
     runtime_status: Literal["ready", "unavailable"]
 
 
@@ -161,9 +161,9 @@ class PluginAdminService:
         trust: PluginPublisherTrustStore,
         *,
         actor_id: str,
-        grant_repository_factory: Callable[[Path, str], SqlitePluginGrantRepository] | None = None,
+        grant_repository_factory: Callable[[Path, str], PluginGrantRepository],
         package_store_factory: Callable[[Path, str], PluginPackageStore] | None = None,
-        package_repository_factory: Callable[[Path, str], SqlitePluginPackageRepository] | None = None,
+        package_repository_factory: Callable[[Path, str], PluginPackageRepository],
         runtime_available: Callable[[], bool] | None = None,
         clock: Callable[[], float] = time.monotonic,
         now: Callable[[], str] = utc_now,
@@ -172,13 +172,9 @@ class PluginAdminService:
             raise PluginGrantProblem("plugin-grant-actor-invalid")
         self._projects, self._trust = projects, trust
         self._actor_id, self._clock, self._now = actor_id, clock, now
-        self._grant_repository_factory = grant_repository_factory or (
-            lambda path, project_id: SqlitePluginGrantRepository(path / "state/project.sqlite3", project_id)
-        )
+        self._grant_repository_factory = grant_repository_factory
         self._package_store_factory = package_store_factory
-        self._package_repository_factory = package_repository_factory or (
-            lambda path, project_id: SqlitePluginPackageRepository(path / "state/project.sqlite3", project_id)
-        )
+        self._package_repository_factory = package_repository_factory
         self._runtime_available = runtime_available or (lambda: False)
         self._mutex = threading.RLock()
         self._sessions: dict[Path, _ProjectSession] = {}
@@ -368,14 +364,22 @@ class PluginAdminService:
                 trust_status = "invalid"
         grants = self._grant_repository_factory(path, session.project_id)
         current = grants.current_grant_authority(manifest.plugin_id)
-        grant_status: Literal["disabled", "enabled", "different-package"] = "disabled"
+        grant_status: Literal["disabled", "enabled", "different-package", "renewal-required"] = "disabled"
         if current is not None:
-            grant_status = (
-                "enabled"
-                if current.grant.package_sha256 == inspected.package_sha256
-                and current.grant.manifest_sha256 == inspected.manifest_sha256
-                else "different-package"
-            )
+            if (
+                current.grant.package_sha256 != inspected.package_sha256
+                or current.grant.manifest_sha256 != inspected.manifest_sha256
+            ):
+                grant_status = "different-package"
+            elif (
+                trust_status == "active"
+                and trust is not None
+                and current.trusted_key_sha256 == trust.public_key_sha256
+                and current.trusted_key_revision == trust.revision
+            ):
+                grant_status = "enabled"
+            else:
+                grant_status = "renewal-required"
         remaining = max(0, int(candidate.expires_at - self._clock()))
         expires_at = (
             (datetime.now(UTC) + timedelta(seconds=remaining)).isoformat(timespec="milliseconds").replace("+00:00", "Z")
@@ -549,7 +553,7 @@ class PluginAdminService:
                 )
             else:
                 current_pointer = self._package_repository_factory(path, session.project_id).read(
-                    inspected.package_sha256, inspected.manifest_sha256
+                    inspected.package_sha256, inspected.manifest_sha256, inspected.signature_sha256
                 )
                 if current_pointer is None:
                     raise PluginGrantProblem("plugin-package-store-unavailable")
@@ -614,18 +618,21 @@ class PluginAdminService:
         project_id: str,
         package_sha256: str,
         manifest_sha256: str,
+        signature_sha256: str,
         request: PluginInvocationRequest,
         actor: PluginGrantActor,
     ) -> PluginAuthorizedDispatch:
         if self._package_store_factory is None or not self._runtime_ready():
             raise PluginGrantProblem("plugin-runtime-unavailable")
-        pointer = self._package_repository_factory(path, project_id).read(package_sha256, manifest_sha256)
+        pointer = self._package_repository_factory(path, project_id).read(
+            package_sha256, manifest_sha256, signature_sha256
+        )
         if pointer is None:
             raise PluginGrantProblem("plugin-package-unavailable")
         inspected = self._package_store_factory(path, project_id).load(
             pointer.archive_object_sha256, package_sha256, manifest_sha256
         )
-        if inspected.signature_sha256 != pointer.signature_sha256:
+        if inspected.signature_sha256 != signature_sha256 or pointer.signature_sha256 != signature_sha256:
             raise PluginGrantProblem("plugin-package-identity-conflict")
         service = PluginGrantService(self._trust, self._grant_repository_factory(path, project_id))
         plan = service.current_authorization(
@@ -647,6 +654,7 @@ class PluginAdminService:
         project_id: str,
         package_sha256: str,
         manifest_sha256: str,
+        signature_sha256: str,
         request: PluginInvocationRequest,
         *,
         actor: PluginGrantActor,
@@ -659,7 +667,7 @@ class PluginAdminService:
             root,
             project_id,
             lambda path, identity: self._persisted_authorization(
-                path, identity, package_sha256, manifest_sha256, request, actor
+                path, identity, package_sha256, manifest_sha256, signature_sha256, request, actor
             ),
         )
 
@@ -669,12 +677,13 @@ class PluginAdminService:
         project_id: str,
         package_sha256: str,
         manifest_sha256: str,
+        signature_sha256: str,
         request: PluginInvocationRequest,
         *,
         actor: PluginGrantActor,
     ) -> PluginInvocationPlan:
         return self.prepare_persisted_invocation(
-            root, project_id, package_sha256, manifest_sha256, request, actor=actor
+            root, project_id, package_sha256, manifest_sha256, signature_sha256, request, actor=actor
         ).plan
 
     def current_grant_persisted(self, root: str, project_id: str, plugin_id: str) -> PluginProjectGrant | None:

@@ -11,29 +11,14 @@ import hashlib
 import json
 import re
 import sqlite3
-from dataclasses import dataclass
 from pathlib import Path
 
 from .domain_contracts import new_uuid_v7
+from .ports.plugin_packages import PluginPackagePointer, PluginPackagePointerProblem
 from .storage import StorageProblem, open_canonical_database
 
 _SHA = re.compile(r"sha256:[0-9a-f]{64}\Z")
 _OBJECT = re.compile(r"[0-9a-f]{64}\Z")
-
-
-class PluginPackagePointerProblem(ValueError):
-    def __init__(self, code: str):
-        self.code = code
-        super().__init__(code)
-
-
-@dataclass(frozen=True, slots=True)
-class PluginPackagePointer:
-    project_id: str
-    package_sha256: str
-    manifest_sha256: str
-    signature_sha256: str
-    archive_object_sha256: str
 
 
 def _validated(pointer: PluginPackagePointer) -> PluginPackagePointer:
@@ -53,19 +38,23 @@ def _validated(pointer: PluginPackagePointer) -> PluginPackagePointer:
     return pointer
 
 
-def _key(package_sha256: str, manifest_sha256: str) -> str:
+def _key(package_sha256: str, manifest_sha256: str, signature_sha256: str) -> str:
     if (
         not isinstance(package_sha256, str)
         or not isinstance(manifest_sha256, str)
+        or not isinstance(signature_sha256, str)
         or _SHA.fullmatch(package_sha256) is None
         or _SHA.fullmatch(manifest_sha256) is None
+        or _SHA.fullmatch(signature_sha256) is None
     ):
         raise PluginPackagePointerProblem("plugin-package-digest-invalid")
     digest = hashlib.sha256(
-        b"research-observatory-plugin-package-pointer-v1\0"
+        b"research-observatory-plugin-package-pointer-v2\0"
         + package_sha256.encode("ascii")
         + b"\0"
         + manifest_sha256.encode("ascii")
+        + b"\0"
+        + signature_sha256.encode("ascii")
     ).hexdigest()
     return "plugin.package." + digest
 
@@ -121,26 +110,32 @@ class SqlitePluginPackageRepository:
             raise PluginPackagePointerProblem("plugin-package-repository-invalid")
         self._database, self._project_id = database, project_id
 
-    def _read(self, connection, package_sha256: str, manifest_sha256: str) -> PluginPackagePointer | None:
+    def _read(
+        self, connection, package_sha256: str, manifest_sha256: str, signature_sha256: str
+    ) -> PluginPackagePointer | None:
         rows = connection.execute(
             "SELECT revision,value_type,text_value FROM settings WHERE project_id=? AND setting_key=? "
             "ORDER BY revision",
-            (self._project_id, _key(package_sha256, manifest_sha256)),
+            (self._project_id, _key(package_sha256, manifest_sha256, signature_sha256)),
         ).fetchall()
         if not rows:
             return None
         if len(rows) != 1 or rows[0][0] != 1 or rows[0][1] != "text" or not isinstance(rows[0][2], str):
             raise PluginPackagePointerProblem("plugin-package-pointer-corrupt")
         pointer = _decoded(rows[0][2], self._project_id)
-        if (pointer.package_sha256, pointer.manifest_sha256) != (package_sha256, manifest_sha256):
+        if (pointer.package_sha256, pointer.manifest_sha256, pointer.signature_sha256) != (
+            package_sha256,
+            manifest_sha256,
+            signature_sha256,
+        ):
             raise PluginPackagePointerProblem("plugin-package-pointer-corrupt")
         return pointer
 
-    def read(self, package_sha256: str, manifest_sha256: str) -> PluginPackagePointer | None:
+    def read(self, package_sha256: str, manifest_sha256: str, signature_sha256: str) -> PluginPackagePointer | None:
         try:
             connection = open_canonical_database(self._database, expected_project_id=self._project_id)
             try:
-                return self._read(connection, package_sha256, manifest_sha256)
+                return self._read(connection, package_sha256, manifest_sha256, signature_sha256)
             finally:
                 connection.close()
         except PluginPackagePointerProblem:
@@ -156,7 +151,9 @@ class SqlitePluginPackageRepository:
             connection = open_canonical_database(self._database, expected_project_id=self._project_id)
             try:
                 connection.execute("BEGIN IMMEDIATE")
-                current = self._read(connection, pointer.package_sha256, pointer.manifest_sha256)
+                current = self._read(
+                    connection, pointer.package_sha256, pointer.manifest_sha256, pointer.signature_sha256
+                )
                 if current is not None:
                     if current != pointer:
                         raise PluginPackagePointerProblem("plugin-package-identity-conflict")
@@ -169,7 +166,7 @@ class SqlitePluginPackageRepository:
                     (
                         new_uuid_v7(),
                         self._project_id,
-                        _key(pointer.package_sha256, pointer.manifest_sha256),
+                        _key(pointer.package_sha256, pointer.manifest_sha256, pointer.signature_sha256),
                         _encoded(pointer),
                         now,
                         now,

@@ -19,9 +19,9 @@ from .models import ContractModel, ProblemDetail
 from .plugin_admin_service import PluginAdminService
 from .plugin_api import _problem
 from .plugin_consent import PluginConsentPreview, PluginConsentProblem, PluginConsentService
-from .plugin_job_repository import PluginJobRepositoryProblem
 from .plugin_worker import PluginWorkerProblem, PluginWorkerService
 from .ports.object_store import ObjectStoreProblem
+from .ports.plugin_jobs import PluginJobRepositoryProblem
 from .ports.workflow_executor import WorkflowJobRecord, WorkflowQueueProblem
 from .projects import ProjectLifecycleProblem
 from .transport import CoreProblem
@@ -60,6 +60,7 @@ class PluginJobAddress(ContractModel):
 class PluginPreviewCommand(PluginJobAddress):
     package_sha256: Annotated[str, Field(strict=True, pattern=r"^sha256:[0-9a-f]{64}$")]
     manifest_sha256: Annotated[str, Field(strict=True, pattern=r"^sha256:[0-9a-f]{64}$")]
+    signature_sha256: Annotated[str, Field(strict=True, pattern=r"^sha256:[0-9a-f]{64}$")]
     request: PluginInvocationRequest = Field(repr=False)
     retention: ConnectorRetention
 
@@ -171,6 +172,7 @@ def register_plugin_invocation_routes(
                 command.project_id,
                 command.package_sha256,
                 command.manifest_sha256,
+                command.signature_sha256,
                 command.request,
                 command.retention,
                 actor=administration.actor(request.state.trace_id),

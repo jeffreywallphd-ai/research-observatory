@@ -9,7 +9,9 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from typing import cast
+from unittest.mock import patch
 
+import httpx2
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -20,6 +22,7 @@ from research_observatory_core.authentication import (  # noqa: E402
     LocalAuthenticationMiddleware,
     capability_token_digest,
 )
+from research_observatory_core.connectors.plugin_broker import PluginBrokerCall, PluginNetworkBroker  # noqa: E402
 from research_observatory_core.connectors.plugin_credentials import PluginCredentialSettings  # noqa: E402
 from research_observatory_core.connectors.plugin_grants import PluginGrantActor  # noqa: E402
 from research_observatory_core.connectors.plugin_manifest import PluginProjectGrant, verify_plugin_package  # noqa: E402
@@ -37,6 +40,7 @@ from research_observatory_core.plugin_worker import (  # noqa: E402
     PluginWorkerAdapters,
     PluginWorkerProblem,
     PluginWorkerService,
+    _assert_scientific_broker_call,
 )
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
 from research_observatory_core.repositories import sqlite_workflow_admission_binding  # noqa: E402
@@ -48,6 +52,7 @@ from research_observatory_core.workflow_executor import (  # noqa: E402
 )
 
 from tests.connectors.test_plugin_admin_service import FakeProjects, _project_error  # noqa: E402
+from tests.connectors.test_plugin_broker import streamed  # noqa: E402
 from tests.connectors.test_plugin_dispatch import _Admin  # noqa: E402
 from tests.connectors.test_plugin_job_repository import PluginJobFixture  # noqa: E402
 from tests.connectors.test_plugin_package_intake import archive  # noqa: E402
@@ -62,7 +67,7 @@ class FakeAdmin:
     def actor(self, trace_id):
         return PluginGrantActor(new_uuid_v7(), trace_id, "2026-10-01T12:00:00.000Z")
 
-    def prepare_persisted_invocation(self, _root, _project, _package, _manifest, _request, *, actor):
+    def prepare_persisted_invocation(self, _root, _project, _package, _manifest, _signature, _request, *, actor):
         return PluginAuthorizedDispatch(
             type("SignedPackage", (), {"manifest": self.inspected.manifest})(), self.plan, {}
         )
@@ -181,6 +186,122 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
         physical = tuple(path for path in (self.root / "objects").rglob("*") if path.is_file())
         self.assertTrue(physical)
         self.assertFalse(any(self.input_data in path.read_bytes() for path in physical))
+
+    def test_live_worker_broker_denies_changed_scientific_identifier_before_egress(self):
+        raw, key = archive()
+        inspected = inspect_plugin_archive(raw)
+        package = verify_plugin_package(
+            inspected.manifest_bytes,
+            inspected.signature,
+            inspected.files,
+            {inspected.manifest.publisher_key_id: key},
+        )
+        manifest = package.manifest
+        grant = PluginProjectGrant(
+            project_id=self.inputs.project_id,
+            plugin_id=manifest.plugin_id,
+            plugin_version=manifest.plugin_version,
+            package_sha256=package.package_sha256,
+            manifest_sha256=package.manifest_sha256,
+            publisher_key_id=manifest.publisher_key_id,
+            permissions=manifest.permissions,
+            destinations=manifest.destinations,
+            revision=1,
+        )
+        admin = _Admin(package, dict(inspected.files), self.plan, grant)
+        self.worker._admin = cast(PluginAdminService, admin)
+
+        def run(_runtime, _package, _files, **kwargs):
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "different"})
+            self.fail("changed scientific identifier reached a successful worker result")
+
+        self.worker._runtime = cast(InstalledPluginRuntime, SimpleNamespace(load=lambda: object(), run=run))
+        queued = self.worker.submit(str(self.root), self.preview_id, self.inputs.request, self.input_data)
+        self.worker.run_pending()
+        self.assertNotEqual("succeeded", self.queue.get(queued.job_id).state)
+        self.assertIn("policy-denied", admin.denials)
+        self.assertIsNone(self.repository.result(self.repository.input(self.inputs.invocation_id)))
+
+    def test_live_worker_broker_allows_exact_scientific_identifier_with_synthetic_transport(self):
+        raw, key = archive()
+        inspected = inspect_plugin_archive(raw)
+        package = verify_plugin_package(
+            inspected.manifest_bytes,
+            inspected.signature,
+            inspected.files,
+            {inspected.manifest.publisher_key_id: key},
+        )
+        manifest = package.manifest
+        grant = PluginProjectGrant(
+            project_id=self.inputs.project_id,
+            plugin_id=manifest.plugin_id,
+            plugin_version=manifest.plugin_version,
+            package_sha256=package.package_sha256,
+            manifest_sha256=package.manifest_sha256,
+            publisher_key_id=manifest.publisher_key_id,
+            permissions=manifest.permissions,
+            destinations=manifest.destinations,
+            revision=1,
+        )
+        admin = _Admin(package, dict(inspected.files), self.plan, grant)
+        self.worker._admin = cast(PluginAdminService, admin)
+        requests: list[str] = []
+
+        def respond(request: httpx2.Request) -> httpx2.Response:
+            requests.append(str(request.url))
+            return streamed(httpx2.Response(200, json={"id": "synthetic-1"}))
+
+        def broker(**kwargs):
+            return PluginNetworkBroker(**kwargs, transport_factory=lambda *_: httpx2.MockTransport(respond))
+
+        def run(_runtime, _package, _files, **kwargs):
+            body = kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
+            self.assertEqual({"id": "synthetic-1"}, json.loads(body))
+            output = json.dumps(
+                {
+                    "schemaVersion": "1.0",
+                    "invocationId": self.inputs.invocation_id,
+                    "operation": self.inputs.request.operation,
+                    "records": [],
+                    "continuation": "exhausted",
+                },
+                separators=(",", ":"),
+            ).encode()
+            return SimpleNamespace(
+                output=output,
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        self.worker._runtime = cast(InstalledPluginRuntime, SimpleNamespace(load=lambda: object(), run=run))
+        with patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker", side_effect=broker):
+            queued = self.worker.submit(str(self.root), self.preview_id, self.inputs.request, self.input_data)
+            self.worker.run_pending()
+        self.assertEqual(("succeeded", []), (self.queue.get(queued.job_id).state, admin.denials))
+        self.assertEqual(["https://repository.example.invalid/v1/records?identifier=synthetic-1"], requests)
+        self.assertEqual([], admin.denials)
+
+    def test_scientific_parameter_binding_rejects_cursor_and_ambiguous_input(self):
+        approved = PluginBrokerCall(operation="lookup", identifier="synthetic-1")
+        _assert_scientific_broker_call(self.input_data, self.plan.operation, approved)
+        for input_data, call in (
+            (self.input_data, PluginBrokerCall(operation="lookup", identifier="different")),
+            (b'{"identifier":"one","identifier":"two"}', approved),
+            (b'{"identifier":"synthetic-1","query":"extra"}', approved),
+        ):
+            with self.assertRaisesRegex(PluginWorkerProblem, "broker-parameters-denied"):
+                _assert_scientific_broker_call(input_data, self.plan.operation, call)
+        with self.assertRaisesRegex(PluginWorkerProblem, "broker-parameters-denied"):
+            _assert_scientific_broker_call(
+                b'{"query":"approved"}',
+                "search",
+                PluginBrokerCall(operation="search", query="approved", cursor="unapproved-page"),
+            )
 
     def test_restart_without_ephemeral_consent_cancels_durable_runnable_job(self):
         queued = self.worker.submit(str(self.root), self.preview_id, self.inputs.request, self.input_data)

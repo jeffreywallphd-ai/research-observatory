@@ -42,14 +42,21 @@ class PluginPackageRepositoryTests(unittest.TestCase):
             "4" * 64,
         )
 
-    def test_exact_pair_reopens_and_conflicting_archive_denies(self):
-        self.assertIsNone(self.repository.read(self.pointer.package_sha256, self.pointer.manifest_sha256))
+    def test_exact_signature_reopens_and_conflicting_archive_denies(self):
+        self.assertIsNone(
+            self.repository.read(
+                self.pointer.package_sha256, self.pointer.manifest_sha256, self.pointer.signature_sha256
+            )
+        )
         self.assertEqual(
             self.pointer,
             self.repository.record(self.pointer, now="2026-10-01T12:00:00.000Z"),
         )
         reopened = SqlitePluginPackageRepository(self.database, PROJECT)
-        self.assertEqual(self.pointer, reopened.read(self.pointer.package_sha256, self.pointer.manifest_sha256))
+        self.assertEqual(
+            self.pointer,
+            reopened.read(self.pointer.package_sha256, self.pointer.manifest_sha256, self.pointer.signature_sha256),
+        )
         self.assertEqual(
             self.pointer,
             reopened.record(self.pointer, now="2026-10-01T12:01:00.000Z"),
@@ -65,6 +72,21 @@ class PluginPackageRepositoryTests(unittest.TestCase):
                 ),
                 now="2026-10-01T12:02:00.000Z",
             )
+        rotated = PluginPackagePointer(
+            PROJECT,
+            self.pointer.package_sha256,
+            self.pointer.manifest_sha256,
+            "sha256:" + "6" * 64,
+            "7" * 64,
+        )
+        self.assertEqual(rotated, reopened.record(rotated, now="2026-10-01T12:03:00.000Z"))
+        self.assertEqual(
+            self.pointer,
+            reopened.read(self.pointer.package_sha256, self.pointer.manifest_sha256, self.pointer.signature_sha256),
+        )
+        self.assertEqual(
+            rotated, reopened.read(rotated.package_sha256, rotated.manifest_sha256, rotated.signature_sha256)
+        )
 
 
 if __name__ == "__main__":

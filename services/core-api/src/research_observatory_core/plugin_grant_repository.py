@@ -21,6 +21,7 @@ from .connectors.plugin_grants import (
     PluginGrantActor,
     PluginGrantAuditEvent,
     PluginGrantProblem,
+    _actor,
 )
 from .connectors.plugin_manifest import (
     _VERIFIED_SEAL,
@@ -32,12 +33,10 @@ from .storage import (
     _DATABASE_ERRORS,
     CanonicalConnection,
     StorageProblem,
-    _normalize_utc_millisecond,
     _project_identity,
     open_canonical_database,
 )
 
-_TRACE = re.compile(r"[0-9a-f]{32}\Z")
 _SHA = re.compile(r"sha256:[0-9a-f]{64}\Z")
 _CODE = re.compile(r"[a-z][a-z0-9-]{0,63}\Z")
 _PLUGIN = re.compile(r"[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*\Z")
@@ -49,21 +48,6 @@ def _canonical(value: object) -> str:
 
 def _digest(value: object) -> str:
     return hashlib.sha256(_canonical(value).encode("ascii")).hexdigest()
-
-
-def _actor(actor: PluginGrantActor, *, allow_system: bool = False) -> None:
-    if (
-        not isinstance(actor, PluginGrantActor)
-        or actor.actor_type not in ({"human", "system"} if allow_system else {"human"})
-        or not is_uuid_v7(actor.actor_id)
-        or _TRACE.fullmatch(actor.trace_id) is None
-    ):
-        raise PluginGrantProblem("plugin-grant-actor-invalid")
-    try:
-        if _normalize_utc_millisecond(actor.occurred_at) != actor.occurred_at:
-            raise ValueError
-    except ValueError, StorageProblem:
-        raise PluginGrantProblem("plugin-grant-actor-invalid") from None
 
 
 def _package(package: VerifiedPluginPackage) -> None:

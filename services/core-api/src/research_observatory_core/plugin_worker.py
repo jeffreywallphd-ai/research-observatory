@@ -14,11 +14,11 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .connectors.broker import utc_now
-from .connectors.plugin_broker import PluginBrokerRates
+from .connectors.plugin_broker import PluginBrokerCall, PluginBrokerRates
 from .connectors.plugin_credentials import PluginCredentialSettings, PluginCredentialStatus
 from .connectors.plugin_dispatch import PluginDispatchController, PluginDispatchProblem
 from .connectors.plugin_grants import PluginGrantActor
-from .connectors.plugin_manifest import PluginInvocationRequest
+from .connectors.plugin_manifest import Operation, PluginInvocationRequest
 from .connectors.plugin_workflow import ACTIVITY, PluginJobInput, bind_plugin_claim, build_plugin_job
 from .domain_contracts import is_uuid_v7
 from .logging import emit_log_record
@@ -30,9 +30,9 @@ from .plugin_consent import (
     PluginConsentStage,
     PluginConsentStamp,
 )
-from .plugin_job_repository import PluginJobRepository, PluginJobRepositoryProblem
 from .plugin_runtime import InstalledPluginRuntime
 from .ports.object_store import ObjectPutCommand, ObjectStore, ObjectStoreProblem
+from .ports.plugin_jobs import PluginJobRepositoryProblem, PluginJobStore
 from .ports.workflow_executor import (
     WorkflowActor,
     WorkflowJobAuthority,
@@ -59,9 +59,44 @@ class PluginWorkerProblem(ValueError):
         super().__init__(code)
 
 
+_SCIENTIFIC_FIELD: dict[Operation, str] = {
+    "lookup": "identifier",
+    "search": "query",
+    "references": "identifier",
+    "citations": "identifier",
+    "open-access-locations": "identifier",
+    "repository-metadata": "repositoryId",
+}
+
+
+def _assert_scientific_broker_call(input_data: bytes, operation: Operation, call: PluginBrokerCall) -> None:
+    """Bind first-page egress to the exact Core-held scientific parameter."""
+
+    try:
+        if not input_data or len(input_data) > 4096:
+            raise ValueError
+        fields = json.loads(input_data.decode("utf-8"), object_pairs_hook=_unique_json_fields)
+        if not isinstance(fields, dict) or set(fields) != {_SCIENTIFIC_FIELD[operation]}:
+            raise ValueError
+        expected = PluginBrokerCall.model_validate({"operation": operation, **fields})
+    except ValueError, UnicodeError, KeyError:
+        raise PluginWorkerProblem("plugin-worker-broker-parameters-denied") from None
+    if call.model_copy(update={"credential_scope": None}) != expected:
+        raise PluginWorkerProblem("plugin-worker-broker-parameters-denied")
+
+
+def _unique_json_fields(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    values: dict[str, object] = {}
+    for key, value in pairs:
+        if key in values:
+            raise ValueError("duplicate scientific parameter")
+        values[key] = value
+    return values
+
+
 @dataclass(frozen=True, slots=True)
 class PluginWorkerAdapters:
-    jobs: PluginJobRepository
+    jobs: PluginJobStore
     queue: WorkflowQueueRepository
     admission: LocalWorkerAdmission
     objects: ObjectStore
@@ -320,6 +355,7 @@ class PluginWorkerService:
                 project_id,
                 authority.plan.package_sha256,
                 authority.plan.manifest_sha256,
+                authority.plan.signature_sha256,
                 request,
                 actor=self._admin.actor(trace_id),
             )
@@ -360,6 +396,7 @@ class PluginWorkerService:
                 project_id,
                 plan.package_sha256,
                 plan.manifest_sha256,
+                plan.signature_sha256,
                 request,
                 actor=self._admin.actor(trace_id),
             )
@@ -422,6 +459,8 @@ class PluginWorkerService:
                 cancellation = _Cancellation(self, binding, context)
 
                 def policy(plan, call):
+                    if call is not None:
+                        _assert_scientific_broker_call(data, plan.operation, call)
                     self._guard(authority, inputs, "broker" if call is not None else "dispatch")
 
                 controller = PluginDispatchController(
@@ -446,6 +485,7 @@ class PluginWorkerService:
                         project_id=binding.project_id,
                         package_sha256=inputs.package_sha256,
                         manifest_sha256=inputs.manifest_sha256,
+                        signature_sha256=inputs.signature_sha256,
                         request=inputs.request,
                         input_data=data,
                         actor=PluginGrantActor(

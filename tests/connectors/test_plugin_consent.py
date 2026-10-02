@@ -36,11 +36,12 @@ class FakeCurrentPluginAdmin:
         self.plan, self.package = plan, package
         self.active = True
 
-    def prepare_persisted_invocation(self, _root, _project, package, manifest, request, *, actor):
+    def prepare_persisted_invocation(self, _root, _project, package, manifest, signature, request, *, actor):
         if (
             not self.active
             or package != self.plan.package_sha256
             or manifest != self.plan.manifest_sha256
+            or signature != self.plan.signature_sha256
             or request.invocation_id != self.plan.invocation_id
         ):
             raise ValueError("inactive")
@@ -111,6 +112,7 @@ class PluginConsentTests(ConnectorAuthorityFixture):
             self.project.project_id,
             self.plan.package_sha256,
             self.plan.manifest_sha256,
+            self.plan.signature_sha256,
             self.plugin_request,
             self.rights,
             actor=self.actor,
@@ -144,6 +146,7 @@ class PluginConsentTests(ConnectorAuthorityFixture):
                 self.project.project_id,
                 self.plan.package_sha256,
                 self.plan.manifest_sha256,
+                self.plan.signature_sha256,
                 self.plugin_request,
                 ConnectorRetention(),
                 actor=self.actor,
@@ -155,6 +158,7 @@ class PluginConsentTests(ConnectorAuthorityFixture):
         self.assertEqual(preview.policy_sha256, stamp.policy_sha256)
         self.assertEqual(preview.intent_revision_id, stamp.intent.revision_id)
         self.assertEqual(preview.destination, self.plan.destination)
+        self.assertEqual(preview.signature_sha256, self.plan.signature_sha256)
         self.assertEqual(preview.permissions, self.plan.permissions)
         self.assertEqual(preview.data_classes, self.admin.package.manifest.data_classes)
         self.assertEqual(preview.declared_terms, self.admin.package.manifest.terms)
