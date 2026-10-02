@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: af675f74fddb624efe257f3bce76f1acbea599102a0bb602848ca5b327b4b5ff
+source_sha256: ba4665c330239d0997bcf6db030e1b455b49e4cab98c9c9b44ca65f3e5246c21
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -285,7 +285,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ## W2 - Windows local evidence foundation
 
-**Pre-Wave approval / campaign / qualification:** `APPROVED` / `ACTIVE` / `IN_PROGRESS`
+**Pre-Wave approval / campaign / qualification:** `APPROVED` / `PAUSED` / `PAUSED`
 
 **Capability contributions:** `CAP-04`, `CAP-05`
 
@@ -9525,7 +9525,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

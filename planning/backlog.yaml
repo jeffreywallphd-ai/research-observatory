@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,13 +1499,12 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-01T10:26:11+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-01T10:26:11+00:00'
-      expires_at: '2026-10-02T10:26:11+00:00'
+    updated_at: '2026-10-02T11:40:57+00:00'
+    pause_reason: CAP-05.S01.T01 requires a governed selected-version attachment interaction absent from approved Academic
+      Minimal 1.7. Backend/native groundwork is committed and independently checked; ECR-0009 and proposed 1.8 require exact
+      review and separate owner approval before intentional renderer work.
+    pause_category: approved-design-gate
+    lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -3553,7 +3552,7 @@ waves:
     notes: CAP-04.S01-S03 import, four-source and reconciliation cluster independently approved at exact candidate 9a319a1b;
       targeted checks and native smoke pass; full W2 exit qualification remains due.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -25228,13 +25227,22 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-02T03:11:13+00:00'
+      updated_at: '2026-10-02T11:38:18+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Approved Academic Minimal 1.7 lacks the selected Work/version attachment interaction required for this task;
+          bounded backend/native groundwork is committed and independently checked, but renderer work requires an approved
+          newer reference and bounded UI-gate authority.
+        next_action: Keep W2 paused; repair the missing historical W2 approval-base projection, validate and independently
+          review exact ECR-0009 and Academic Minimal 1.8 proposal, then obtain explicit owner approval before amendment bootstrap.
+          After reviewed amendment adoption, resume W2 and recover CAP-05.S01.T01 through taskctl for complete attachment
+          evidence and review.
+        recorded_at: '2026-10-02T11:38:18+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -25243,10 +25251,7 @@ capabilities:
         reviewed_at: null
         notes: null
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-02T03:11:13+00:00'
-        expires_at: '2026-10-02T11:11:13+00:00'
+      lease: null
       verification_state: null
       worktree: .
       platform_targets:
