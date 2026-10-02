@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 706dbf67d8ab08a4056a7be715370fc703233f542a75f3a0a3b61dfddc50ccbd
+source_sha256: 3debc1388d168430b240d61f62e2fa815ee8e0bd7ab46616408a8c6ccc7f9c52
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 15 |
+| Enabler tasks | 17 |
 | Waves | 12 |
 | Wave approval bases | 2 |
 | Wave amendments | 10 |
@@ -50,7 +50,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
-| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `APPROVED` |
+| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -2362,11 +2362,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A01.json` (`6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-02T16:23:51Z` by human:repository-owner: The repository owner replied 'Approved, please proceed.' to the decision request explicitly identifying ECR-0009's exact candidate 3fb76d6cb6bce6eaf16774931704de68c6168500, packet SHA-256 9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2, and proposed Academic Minimal 1.8 reference RO-UI-ACADEMIC-MINIMAL-1.8. This records the owner decision for only the reviewed W2.A01.B00 bootstrap, W2.A01.S01 contribution, W2.A01.T01 gate/ADR task, and W2.A01.T02 reference/typed opaque renderer-contract task. Production choose/drop/attach remains unavailable in T02; original CAP-05.S01.T01 later owns real native/Core attachment proof after amendment adoption. This approval does not complete any task or slice, adopt the amendment, resume ordinary W2, approve W2 qualification/release, authorize a renderer file-path shortcut, or waive independent checks. The timestamp records binding of the owner's decision to this exact reviewed candidate.
+- `E02` `MATERIALIZED` at `2026-10-02T18:11:43+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W2.A01
 
@@ -2383,6 +2384,70 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W2.A01.T01 - Admit exact intentional amendment UI lineage
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A01.B00`
+
+**Objective:** Install a narrowly scoped, independently reviewed design-first gate/schema route for the exact human-approved W2.A01 attachment interaction without weakening ordinary or restoration controls.
+
+**Acceptance criteria:**
+
+- Extend design/ui-change.schema.json and tools/ui_change_gate.py only for a versioned intentional-amendment contract whose exact packet, approval, proposed/active reference, task claim and reviewed control predecessor authenticate from committed Git/backlog authority; task-declared labels alone never admit UI work.
+- Authenticate current W2.A01.T02 owner/lease/branch/base, exact task/materialized inventory, ECR packet and approval introductions, independent T01 review, complete governed UI/reference file and per-commit history, and human reference approval strictly before any renderer commit.
+- Deny missing or substituted approval, changed proposal bytes, nonhuman/self approval, stale/foreign lease/base/branch, another amendment or ordinary task, approval in/after implementation commit, extra contract/files, redirected Git object, hidden add-then-revert, and control edits mixed with product work.
+- Preserve positive and adversarial 1.0 ordinary/linked restoration and 1.1 resumed-amendment behavior and all thresholds; no generic exemption, policy root widening, or same-range self-approval.
+- In the same change set as the protected gate edit, introduce docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md and one appended docs/adr/index.json entry. The Proposed companion links W2.A01.T01, covers only actually changed protected paths, records alternatives, compatibility, security, rollback and verification under ADR-0001/0003, and does not silently supersede accepted ADR-0003.
+- Run focused foundation/schema/Git-history adversarial and ADR-path checks and obtain expanded independent security/control/ADR task review before W2.A01.T02 starts.
+
+**Verification:**
+
+- TDD hostile Git/backlog fixtures for authenticated exact authority, approvals, lease/base/branch and complete per-commit paths
+- Existing UI gate 1.0/1.1 and taskctl/planctl regression suite with unchanged assertions
+- Run tools/adr_check.py over the exact T01 base-to-candidate range; inspect the one new Proposed ADR-0035 and appended index entry in the independent control/security review
+- Affected foundation, schema, quality and independent control/security/ADR review on committed candidate
+
+#### Review history — W2.A01.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
+
+### - [ ] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A01.B00`, `W2.A01.T01`
+
+**Objective:** Publish the exact human-approved 1.8 reference, then stage the selected Work/version renderer interaction and frozen typed opaque native contract in strictly later commits, leaving production file access unavailable until original CAP-05.S01.T01 wires the trusted bridge.
+
+**Acceptance criteria:**
+
+- Bind every governed proposal file by the SHA-256 inventory in this packet and authenticate its exact Git blob at the later immutable packet commit before independent packet review and owner approval; publish only those reviewed files to design/ui-reference with enumerated approval metadata substitutions, derived hashes and exact immutable human reference approval record.
+- Use a distinct reference publication/approval commit after the human decision and before every renderer implementation commit; maintain approved 1.7 historical bytes and a new 1.8 ID.
+- Implement the inline Ingestion Review panel from selected Work/version with typed opaque native command/event contract, explicit uncertain-match confirmation, rights/status, cancel/Escape/retry and actionable unsafe/password/oversize/denied/interrupted states from deterministic contract outcomes; exact-revision status/route and return context are modeled, with reader action disabled/pending until CAP-05.S04. Production choose/drop stays disabled or explicitly unavailable before native wiring; no renderer path/bytes, stock Tauri drop path event or broad filesystem grant.
+- Provide task-owned intentional UI evidence listing exact changed governed files, current approval/package/base/owner and focused product checks; the complete task-base UI gate and adversarial lineage checks pass.
+- Prove mounted keyboard/focus/denial/recovery and typed native-contract behavior with synthetic outcomes; do not claim mock UI as real Core/native admission. Freeze exact opaque command/event names and payloads so resumed CAP-05.S01.T01 can add fixed-action native-only picker/drop, stage/candidate/cancel/commit and real disposable-project safety, provenance, rights, interruption and cancellation proof without a renderer follow-up.
+- Complete independent expanded task and slice review before amendment exit/adoption; no premature ordinary W2 resume or Wave release.
+
+**Verification:**
+
+- Reference generator, manifest/hash, route/workflow, accessibility and explicit approval-publication reproduction
+- Whole task-base UI gate with per-commit and approved-reference lineage
+- Mounted desktop choose/drop intent, confirm/cancel/retry, exact-revision handoff, disabled/pending reader, keyboard/focus and unavailable-before-native cases using typed mock outcomes
+- Frozen opaque native command/event contract and no renderer path/bytes or stock Tauri drop event; trusted local Core/native attachment and native-only drop proof are original CAP-05.S01.T01 obligations after adoption
+
+#### Review history — W2.A01.T02
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 ## Linked corrective tasks

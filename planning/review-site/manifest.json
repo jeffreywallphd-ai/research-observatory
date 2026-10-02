@@ -37523,7 +37523,7 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A01.json",
       "approval_sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
       "approval_status": "APPROVED",
-      "lifecycle_status": "APPROVED",
+      "lifecycle_status": "MATERIALIZED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
@@ -37990,7 +37990,34 @@
         "referenceApprovalStatus": "proposed"
       },
       "scope_addenda": [],
-      "task_reviews": [],
+      "task_reviews": [
+        {
+          "task_id": "W2.A01.T01",
+          "title": "Admit exact intentional amendment UI lineage",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        },
+        {
+          "task_id": "W2.A01.T02",
+          "title": "Publish Academic Minimal 1.8 and stage attachment UI",
+          "status": "NOT_STARTED",
+          "mode": "latest-review-only",
+          "latest_review": {
+            "reviewer": null,
+            "result": null,
+            "reviewed_at": null,
+            "notes": null
+          },
+          "review_control": null
+        }
+      ],
       "exit_review": {
         "amendment_id": "W2.A01",
         "mode": "latest-completion-only",
