@@ -29,6 +29,12 @@ const kindLabel = (kind: string): string => kind.replaceAll("-", " ");
 const sourceTitle = (context: VersionContext, id: string): string =>
   context.sources.find((source) => source.assertionRevisionId === id)?.assertion.fields.find((field) => field.name === "title")?.observed
   ?? "Title not reported";
+const sameSavedDecision = (left: AttachmentCommitRequest, right: AttachmentCommitRequest): boolean =>
+  left.schemaVersion === right.schemaVersion && left.operationId === right.operationId
+  && left.sessionId === right.sessionId && left.candidateId === right.candidateId
+  && left.confirmationSha256 === right.confirmationSha256 && left.commandId === right.commandId
+  && sameAttachmentSelection(left.selection, right.selection)
+  && left.matchConfirmed === right.matchConfirmed && left.permittedUse === right.permittedUse;
 
 export function DocumentAttachmentPane({ root, context, versionId, client, announce, onClose, onTaskCenter, initialSourceId,
   onRecoveryContext, initialHandoff, port = nativeDocumentAttachmentPort }: {
@@ -61,6 +67,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   });
   const [problem, setProblem] = useState<AttachmentProblemCode | null>(null);
   const [unconfirmed, setUnconfirmed] = useState<AttachmentCommitRequest | null>(initialHandoff?.attachmentId ? null : initialHandoff?.commitRequest ?? null);
+  const [retryHeld, setRetryHeld] = useState(Boolean(initialHandoff?.commitRequest && !initialHandoff.attachmentId));
   const [attachmentStatus, setAttachmentStatus] = useState<AttachmentStatus | null>(null);
   const [statusNonce, setStatusNonce] = useState(0);
   const [status, setStatus] = useState("Attachment status has not been confirmed. Select the retained source assertion to check this exact version before choosing a copy.");
@@ -81,6 +88,9 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     && committed.operationId === lastCommit.current.operationId
     && committed.sessionId === lastCommit.current.sessionId
     && committed.candidateId === lastCommit.current.candidateId ? lastCommit.current : null;
+  const historicalReply: AttachmentHandoff | null = committed?.status === "attached" && responseCommand
+    ? { selection: responseCommand.selection, operationId: responseCommand.operationId, commitRequest: responseCommand,
+      attachmentId: committed.attachmentId, documentRevisionId: committed.documentRevisionId } : null;
   const recoverableAfterReply = Boolean(committed?.status === "attached" && attachmentStatus && responseCommand
     && sameAttachmentSelection(committed.selection, attachmentStatus.selection)
     && attachmentStatus.operationId === committed.operationId
@@ -104,20 +114,34 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
         if (active && live.current && result && sameAttachmentSelection(request.selection, result.selection)
           && (request.operationId === null || result.operationId === request.operationId)
           && (request.commandId === null || result.commandId === request.commandId)) {
+          if (result.status === "unconfirmed" && (!result.retryRequest || lastCommit.current
+            && !sameSavedDecision(lastCommit.current, result.retryRequest))) {
+            setRetryHeld(true);
+            const message = "The native status did not match the exact saved attachment decision. No retry was sent; check durable status in Task Center.";
+            setStatus(message); announce(message);
+            return;
+          }
           setAttachmentStatus(result);
           const command = unconfirmedRef.current;
           if (!command && (result.status === "processing" || result.status === "available")
             && result.attachmentId && result.documentRevisionId) {
-            onRecoveryContext?.(selected, { selection: selected, operationId: result.operationId,
-              commitRequest: null, attachmentId: result.attachmentId, documentRevisionId: result.documentRevisionId });
+            onRecoveryContext?.(selected, historicalReply && result.operationId === historicalReply.operationId
+              && result.commandId === historicalReply.commitRequest?.commandId ? historicalReply
+              : { selection: selected, operationId: result.operationId,
+                commitRequest: null, attachmentId: result.attachmentId, documentRevisionId: result.documentRevisionId });
           }
           if (result.status === "unconfirmed" && result.retryRequest) {
             const retry = result.retryRequest;
+            setRetryHeld(false);
             pending.current = { operationId: retry.operationId, selection: retry.selection, sessionId: retry.sessionId,
               candidateId: retry.candidateId, phase: "commit" };
             unconfirmedRef.current = retry; lastCommit.current = retry; setUnconfirmed(retry);
-            onRecoveryContext?.(retry.selection, { selection: retry.selection, operationId: retry.operationId,
-              commitRequest: retry, attachmentId: null, documentRevisionId: null });
+            onRecoveryContext?.(retry.selection, historicalReply && retry.operationId === historicalReply.operationId
+              && retry.commandId === historicalReply.commitRequest?.commandId
+              && retry.sessionId === historicalReply.commitRequest?.sessionId
+              && retry.candidateId === historicalReply.commitRequest?.candidateId ? historicalReply
+              : { selection: retry.selection, operationId: retry.operationId,
+                commitRequest: retry, attachmentId: null, documentRevisionId: null });
           }
           if (command && result.commandId === command.commandId && result.operationId === command.operationId) {
             if ((result.status === "processing" || result.status === "available") && result.attachmentId && result.documentRevisionId) {
@@ -128,9 +152,12 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
                 attachmentId: result.attachmentId, documentRevisionId: result.documentRevisionId });
               onRecoveryContext?.(command.selection, { selection: command.selection, operationId: command.operationId,
                 commitRequest: command, attachmentId: result.attachmentId, documentRevisionId: result.documentRevisionId });
-            } else if (["denied", "failed", "cancelled"].includes(result.status)) {
-              pending.current = null; unconfirmedRef.current = null; lastCommit.current = null; setUnconfirmed(null);
-              onRecoveryContext?.(command.selection, null);
+            } else if (["denied", "failed", "cancelled", "unavailable"].includes(result.status)) {
+              pending.current = null; unconfirmedRef.current = null; setUnconfirmed(null);
+              const retained = historicalReply && historicalReply.commitRequest?.commandId === command.commandId
+                ? historicalReply : null;
+              if (!retained) lastCommit.current = null;
+              onRecoveryContext?.(command.selection, retained);
             }
           }
         }
@@ -145,7 +172,8 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     pending.current = null;
     if (operation) void port.cancel(attachmentCancelRequest(operation.operationId, operation.sessionId, operation.candidateId));
     committedRef.current = false;
-    setCandidate(null); setCommitted(null); setUnconfirmed(null); unconfirmedRef.current = null; lastCommit.current = null;
+    setCandidate(null); setCommitted(null); setUnconfirmed(null); setRetryHeld(false);
+    unconfirmedRef.current = null; lastCommit.current = null;
     setMatchConfirmed(false); setPermittedUse("");
     setBusy(false); setProblem(null); setStatus(message);
     announce(message);
@@ -184,7 +212,6 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     };
   }, [port, context.projectId, versionId]);
   useEffect(() => { if (candidate) candidateHeading.current?.focus(); }, [candidate]);
-  useEffect(() => { if (problem || committed || unconfirmed) statusHeading.current?.focus(); }, [problem, committed, unconfirmed]);
 
   function handleEvent(event: AttachmentEvent): void {
     const operation = pending.current;
@@ -270,7 +297,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   async function commit(): Promise<void> {
     const operation = pending.current;
     if (!operation || !selected || !sameAttachmentSelection(operation.selection, selected)
-      || !operation.sessionId || busy || committed && !unconfirmed
+      || !operation.sessionId || busy || unconfirmed && retryHeld || committed && !unconfirmed
       || !unconfirmed && (!candidate || !matchConfirmed || permittedUse !== "project-only")) return;
     const ticket = ++generation.current;
     setBusy(true); setProblem(null); setStatus("Rechecking exact Work/version and rights before attachment…");
@@ -278,7 +305,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     const command = unconfirmed ?? attachmentCommitRequest(operation.operationId, operation.sessionId!, candidate!.candidateId,
       candidate!.confirmationSha256, newAttachmentId(), selected);
     operation.phase = "commit";
-    setUnconfirmed(command); unconfirmedRef.current = command; lastCommit.current = command;
+    setUnconfirmed(command); setRetryHeld(false); unconfirmedRef.current = command; lastCommit.current = command;
     onRecoveryContext?.(selected, { selection: selected, operationId: command.operationId,
       commitRequest: command, attachmentId: null, documentRevisionId: null });
     const result = await port.commit(command);
@@ -306,15 +333,15 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
       onRecoveryContext?.(selected, { selection: selected, operationId: command.operationId,
         commitRequest: command, attachmentId: result.attachmentId, documentRevisionId: result.documentRevisionId });
     } else if (result.status === "rejected") {
-      pending.current = null; lastCommit.current = null;
+      pending.current = null; if (!historicalReply) lastCommit.current = null;
       setProblem(result.code); setCandidate(null); setStatus(attachmentProblemMessage(result.code));
       announce("Document attachment needs attention.");
-      onRecoveryContext?.(selected, null);
+      onRecoveryContext?.(selected, historicalReply);
     } else {
-      pending.current = null; lastCommit.current = null;
+      pending.current = null; if (!historicalReply) lastCommit.current = null;
       setCandidate(null); setStatus("Attachment cancelled. Selected Work/version and metadata remain unchanged.");
       announce("Attachment cancelled.");
-      onRecoveryContext?.(selected, null);
+      onRecoveryContext?.(selected, historicalReply);
     }
     setStatusNonce((value) => value + 1);
   }
@@ -363,14 +390,14 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     </section> : null}
     <p ref={statusHeading} tabIndex={-1} role="status" aria-live="polite">{currentStatus}</p>
     <div className="ro-action-row"><Button disabled={Boolean(unconfirmed) || committedBlocksNew} onClick={cancelAndReturn}>Cancel attachment</Button>
-      {unconfirmed ? <Button disabled={busy || !available} onClick={() => void commit()}>Retry same attachment decision</Button>
+      {unconfirmed ? <Button disabled={busy || !available || retryHeld} onClick={() => void commit()}>Retry same attachment decision</Button>
         : <Button disabled={!canBegin || busy || committedBlocksNew} onClick={() => void begin("choose")}>Choose another file…</Button>}
       <Button disabled={!selected || busy || !onTaskCenter} onClick={() => selected && onTaskCenter?.({ selection: selected,
         operationId: pending.current?.operationId ?? attachmentStatus?.operationId ?? committed?.operationId ?? null,
         commitRequest: lastCommit.current && (unconfirmed || committed) && lastCommit.current.operationId === (pending.current?.operationId ?? committed?.operationId)
           ? lastCommit.current : null,
-        attachmentId: attachmentStatus?.attachmentId ?? (committed?.status === "attached" ? committed.attachmentId : null),
-        documentRevisionId: attachmentStatus?.documentRevisionId ?? (committed?.status === "attached" ? committed.documentRevisionId : null) })}>View Task Center</Button>
+        attachmentId: committed?.status === "attached" ? committed.attachmentId : attachmentStatus?.attachmentId ?? null,
+        documentRevisionId: committed?.status === "attached" ? committed.documentRevisionId : attachmentStatus?.documentRevisionId ?? null })}>View Task Center</Button>
       <Button disabled={busy || Boolean(unconfirmed)} onClick={onClose}>Return to Work versions</Button></div>
     <Button disabled>Open in Document Reader · pending viewer</Button>
     <p>The reader stays unavailable until CAP-05.S04 provides protected source viewing and an exact-revision return route.</p>

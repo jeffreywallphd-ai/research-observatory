@@ -58,6 +58,7 @@ ATTACHMENT_HOST = r""";
     ready: false, begin: [], commit: [], cancel: [], status: [], failure: null,
     commitFailure: null, listener: null, lastEvent: null, durable: null, retryRequest: null,
     ambiguous: false, staleVersion: false, statusOverride: null,
+    holdStatus: false, releaseStatus: null,
   };
   const emit = payload => {
     state.lastEvent = payload;
@@ -129,11 +130,16 @@ ATTACHMENT_HOST = r""";
       const request = args.request;
       state.status.push(request);
       if (!state.ready) throw new Error('native attachment unavailable');
+      if (state.holdStatus) await new Promise(resolve => { state.releaseStatus = resolve; });
+      if (state.statusOverride
+        && ['failed', 'cancelled', 'unavailable', 'denied'].includes(state.statusOverride.status))
+        state.retryRequest = null;
       return state.statusOverride
         ? {schemaVersion:'1.0', status:state.statusOverride.status, selection:request.selection,
           operationId:request.operationId ?? '01900000-0000-7000-8000-000000000084',
           commandId:request.commandId,
-          attachmentId:null, documentRevisionId:null, code:state.statusOverride.code,
+          attachmentId:state.statusOverride.attachmentId ?? null,
+          documentRevisionId:state.statusOverride.documentRevisionId ?? null, code:state.statusOverride.code,
           retryRequest:state.statusOverride.retryRequest ?? null}
         : state.retryRequest && JSON.stringify(state.retryRequest.selection) === JSON.stringify(request.selection)
         ? {schemaVersion:'1.0', status:'unconfirmed', selection:request.selection,
@@ -429,8 +435,14 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             self.assertGreaterEqual(len(requests["cancel"]), 2)
             self.assertNotIn("root", requests["begin"][0])
             self.assertNotIn("sourcePath", str(requests["begin"]))
-            panel.get_by_role("button", name="View Task Center").click()
+            panel.get_by_text(
+                "Authoritative status: attachment recorded; local processing is pending.", exact=False
+            ).wait_for()
+            if menu.get_attribute("open") is None:
+                menu.locator("summary").click()
+            menu.get_by_role("button", name="Task Center", exact=True).click()
             page.get_by_role("heading", name="Task Center", exact=True).wait_for()
+            page.get_by_text("Saved decision", exact=False).wait_for()
             page.get_by_text(
                 "Authoritative status: attachment recorded; local processing is pending.", exact=False
             ).wait_for()
@@ -488,11 +500,22 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
                 saved_decision,
             )
             panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("status").filter(
+                has_text="Authoritative status: the saved attachment decision has no confirmed result"
+            ).wait_for()
+            page.evaluate("window.__ATTACH_TEST__.holdStatus = true")
             page.get_by_role("button", name="Return to selected Work/version").click()
             panel = page.get_by_role("region", name="Selected-version attachment")
+            page.wait_for_function("window.__ATTACH_TEST__.releaseStatus !== null")
+            panel.get_by_role("button", name="Return to Work versions").focus()
+            page.evaluate(
+                "() => { const state = window.__ATTACH_TEST__; state.holdStatus = false; "
+                "state.releaseStatus(); state.releaseStatus = null; }"
+            )
             panel.get_by_role("status").filter(
                 has_text="Authoritative status: the saved attachment decision has no confirmed result"
             ).wait_for()
+            self.assertIn("Return to Work versions", page.evaluate("document.activeElement?.textContent"))
             self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_disabled())
             page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'failed', code:'interrupted'}")
             panel.get_by_role("button", name="Retry same attachment decision").click()
@@ -504,6 +527,125 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
                 saved_decision["commandId"], page.evaluate("window.__ATTACH_TEST__.status.at(-1).commandId")
             )
             self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_enabled())
+            altered_decision = {**saved_decision, "candidateId": "01900000-0000-7000-8000-000000000098"}
+            page.evaluate(
+                "request => { window.__ATTACH_TEST__.statusOverride = "
+                "{status:'unconfirmed', code:null, retryRequest:request}; }",
+                altered_decision,
+            )
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            panel.get_by_text("native status did not match the exact saved attachment decision", exact=False).wait_for()
+            self.assertEqual(0, panel.get_by_role("button", name="Retry same attachment decision").count())
+            self.assertEqual(commit_count + 1, len(page.evaluate("window.__ATTACH_TEST__.commit")))
+            self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_disabled())
+            panel.get_by_role("button", name="View Task Center").click()
+            self.assertIn(
+                "01900000-0000-7000-8000-000000000081",
+                page.get_by_text("Earlier native response reported attachment", exact=False).inner_text(),
+            )
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            page.evaluate(
+                "request => { window.__ATTACH_TEST__.statusOverride = "
+                "{status:'unconfirmed', code:null, retryRequest:request}; }",
+                saved_decision,
+            )
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            panel.get_by_role("status").filter(
+                has_text="Authoritative status: the saved attachment decision has no confirmed result"
+            ).wait_for()
+            self.assertIn("Earlier native response reported attachment", panel.inner_text())
+            page.evaluate("window.__ATTACH_TEST__.commitFailure = 'throw'")
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'failed', code:'interrupted'}")
+            commit_count = len(page.evaluate("window.__ATTACH_TEST__.commit"))
+            panel.get_by_role("button", name="Retry same attachment decision").click()
+            page.wait_for_function("count => window.__ATTACH_TEST__.commit.length === count + 1", arg=commit_count)
+            self.assertEqual(saved_decision, page.evaluate("window.__ATTACH_TEST__.commit.at(-1)"))
+            panel.get_by_role("status").filter(has_text="Authoritative status: attachment failed").wait_for()
+            self.assertEqual(0, panel.get_by_role("button", name="Retry same attachment decision").count())
+            self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_enabled())
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            panel.get_by_role("status").filter(has_text="Authoritative status: attachment failed").wait_for()
+            self.assertIn("Earlier native response reported attachment", panel.inner_text())
+            page.evaluate(
+                "window.__ATTACH_TEST__.statusOverride = "
+                "{status:'failed', code:'interrupted', "
+                "attachmentId:'01900000-0000-7000-8000-000000000098', "
+                "documentRevisionId:'01900000-0000-7000-8000-000000000099'}"
+            )
+            panel.get_by_role("button", name="View Task Center").click()
+            historical = page.get_by_text("Earlier native response reported attachment", exact=False).inner_text()
+            self.assertIn("01900000-0000-7000-8000-000000000081", historical)
+            self.assertNotIn("01900000-0000-7000-8000-000000000098", historical)
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            panel.get_by_role("status").filter(has_text="Authoritative status: attachment failed").wait_for()
+            self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_disabled())
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'failed', code:'interrupted'}")
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            panel.get_by_role("status").filter(has_text="Authoritative status: attachment failed").wait_for()
+            self.assertTrue(panel.get_by_role("button", name="Choose local full-text file…").is_enabled())
+            for terminal, code, recoverable, retry_failure in (
+                ("failed", "interrupted", True, "interrupted"),
+                ("unavailable", "worker-unavailable", True, "throw"),
+                ("denied", "rights-denied", False, "throw"),
+            ):
+                page.evaluate("window.__ATTACH_TEST__.statusOverride = null")
+                panel.get_by_role("button", name="Choose local full-text file…").click()
+                panel.get_by_role("heading", name="Pending document candidate").wait_for()
+                panel.get_by_label("I confirm this file belongs to the selected Work and version shown above.").check()
+                panel.get_by_label("Permitted use").select_option("project-only")
+                panel.get_by_role("button", name="Attach to selected version").click()
+                panel.get_by_text("Native attachment response reported", exact=False).wait_for()
+                decision = page.evaluate("window.__ATTACH_TEST__.commit.at(-1)")
+                page.evaluate(
+                    "request => { window.__ATTACH_TEST__.statusOverride = "
+                    "{status:'unconfirmed', code:null, retryRequest:request}; }",
+                    decision,
+                )
+                panel.get_by_role("button", name="View Task Center").click()
+                page.get_by_role("button", name="Return to selected Work/version").click()
+                panel = page.get_by_role("region", name="Selected-version attachment")
+                panel.get_by_role("status").filter(
+                    has_text="Authoritative status: the saved attachment decision has no confirmed result"
+                ).wait_for()
+                self.assertIn("Earlier native response reported attachment", panel.inner_text())
+                if menu.get_attribute("open") is None:
+                    menu.locator("summary").click()
+                menu.get_by_role("button", name="Task Center", exact=True).click()
+                page.get_by_text("Saved decision", exact=False).wait_for()
+                self.assertIn(
+                    "01900000-0000-7000-8000-000000000081",
+                    page.get_by_text("Earlier native response reported attachment", exact=False).inner_text(),
+                )
+                page.get_by_role("button", name="Return to selected Work/version").click()
+                panel = page.get_by_role("region", name="Selected-version attachment")
+                panel.get_by_role("button", name="Retry same attachment decision").wait_for()
+                page.evaluate("failure => { window.__ATTACH_TEST__.commitFailure = failure; }", retry_failure)
+                page.evaluate(
+                    "value => { window.__ATTACH_TEST__.statusOverride = value; }",
+                    {"status": terminal, "code": code},
+                )
+                commit_count = len(page.evaluate("window.__ATTACH_TEST__.commit"))
+                panel.get_by_role("button", name="Retry same attachment decision").click()
+                page.wait_for_function("count => window.__ATTACH_TEST__.commit.length === count + 1", arg=commit_count)
+                self.assertEqual(decision, page.evaluate("window.__ATTACH_TEST__.commit.at(-1)"))
+                panel.get_by_role("status").filter(has_text=f"Authoritative status: attachment {terminal}").wait_for()
+                self.assertEqual(0, panel.get_by_role("button", name="Retry same attachment decision").count())
+                self.assertEqual(
+                    recoverable,
+                    panel.get_by_role("button", name="Choose local full-text file…").is_enabled(),
+                    f"terminal={terminal} retry_failure={retry_failure}",
+                )
+                self.assertIn("Earlier native response reported attachment", panel.inner_text())
             page.evaluate("window.__ATTACH_TEST__.statusOverride = null")
             panel.get_by_role("button", name="Return to Work versions").focus()
             page.keyboard.press("Escape")
@@ -666,6 +808,43 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             panel.get_by_text("Native attachment response reported", exact=False).wait_for()
             self.assertEqual(commits_before_retry + 1, len(page.evaluate("window.__ATTACH_TEST__.commit")))
             self.assertEqual(pending_after_loss, page.evaluate("window.__ATTACH_TEST__.commit.at(-1)"))
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = {status:'failed', code:'interrupted'}")
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            panel.get_by_role("status").filter(has_text="Authoritative status: attachment failed").wait_for()
+            panel.get_by_role("button", name="Choose local full-text file…").click()
+            panel.get_by_role("heading", name="Pending document candidate").wait_for()
+            panel.get_by_label("I confirm this file belongs to the selected Work and version shown above.").check()
+            panel.get_by_label("Permitted use").select_option("project-only")
+            page.evaluate("window.__ATTACH_TEST__.statusOverride = null")
+            page.evaluate("window.__ATTACH_TEST__.commitFailure = 'throw'")
+            panel.get_by_role("button", name="Attach to selected version").click()
+            panel.get_by_text("reply was not confirmed", exact=False).wait_for()
+            panel.get_by_role("button", name="View Task Center").click()
+            page.get_by_role("status").filter(
+                has_text="Authoritative status: the saved attachment decision has no confirmed result"
+            ).wait_for()
+            page.evaluate(
+                "window.__ATTACH_TEST__.statusOverride = {status:'processing', code:null, "
+                "attachmentId:'01900000-0000-7000-8000-000000000081', "
+                "documentRevisionId:'01900000-0000-7000-8000-000000000082'}"
+            )
+            page.evaluate("window.__ATTACH_TEST__.holdStatus = true")
+            commits_before_status = len(page.evaluate("window.__ATTACH_TEST__.commit"))
+            page.get_by_role("button", name="Return to selected Work/version").click()
+            panel = page.get_by_role("region", name="Selected-version attachment")
+            page.wait_for_function("window.__ATTACH_TEST__.releaseStatus !== null")
+            panel.get_by_role("button", name="View Task Center").focus()
+            page.evaluate(
+                "() => { const state = window.__ATTACH_TEST__; state.holdStatus = false; "
+                "state.releaseStatus(); state.releaseStatus = null; }"
+            )
+            panel.get_by_role("status").filter(
+                has_text="Authoritative status: attachment recorded; local processing is pending."
+            ).wait_for()
+            self.assertIn("View Task Center", page.evaluate("document.activeElement?.textContent"))
+            self.assertEqual(commits_before_status, len(page.evaluate("window.__ATTACH_TEST__.commit")))
             self.assertEqual([], errors)
 
 
