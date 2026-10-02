@@ -67,11 +67,7 @@ class ArchitectureDecisionWorkflowTests(unittest.TestCase):
                 "ADR-0032",
                 "ADR-0033",
                 "ADR-0034",
-                *(
-                    {"ADR-0035"}
-                    if (REPO / "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md").is_file()
-                    else set()
-                ),
+                "ADR-0035",
             },
             set(records),
         )

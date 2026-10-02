@@ -28,6 +28,24 @@ REFERENCE_EXCLUSIONS = frozenset(
 HUMAN_ID = re.compile(r"^human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$")
 AGENT_ID = re.compile(r"agent:(?:/?[a-z0-9_-]+)(?:/[a-z0-9_-]+)*")
 LINKED_CORRECTION_ID = re.compile(r"W(?:[0-9]|1[01])\.C[0-9]{2,}\.T01")
+INTENTIONAL_AMENDMENT_ID = "W2.A01"
+INTENTIONAL_AMENDMENT_TASK_ID = "W2.A01.T02"
+INTENTIONAL_AMENDMENT_CONTROL_TASK_ID = "W2.A01.T01"
+INTENTIONAL_AMENDMENT_CHANGE_REQUEST_ID = "ECR-0009"
+INTENTIONAL_AMENDMENT_REFERENCE_ID = "RO-UI-ACADEMIC-MINIMAL-1.8"
+INTENTIONAL_AMENDMENT_REFERENCE_APPROVAL_PATH = (
+    "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"
+)
+INTENTIONAL_AMENDMENT_CONTROL_PATHS = frozenset(
+    {
+        "tools/ui_change_gate.py",
+        "design/ui-change.schema.json",
+        "tests/foundation/test_ui_change_gate.py",
+        "docs/automation/design-first-ui-changes.md",
+        "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md",
+        "docs/adr/index.json",
+    }
+)
 EXPECTED_POLICY_SCALARS = {
     "schemaVersion": "1.0",
     "documentType": "ui-change-policy",
@@ -1863,6 +1881,10 @@ def automatic_base(repo: Path, head_ref: str) -> str:
         and (
             isinstance(task.get("experience_change"), dict)
             or task.get("amendment_id") in resumed_parents
+            or (
+                task.get("id") == INTENTIONAL_AMENDMENT_TASK_ID
+                and task.get("amendment_id") == INTENTIONAL_AMENDMENT_ID
+            )
             or bool(corrective_ui_paths(task))
         )
     ]
@@ -1972,6 +1994,121 @@ def restoration_segments(
     }
 
 
+def intentional_amendment_delivery_path(path: str, contract_path: str, policy: dict[str, Any]) -> bool:
+    """Keep T02 in renderer/reference/evidence scope; deny native and policy work."""
+    if path in {
+        "planning/backlog.yaml",
+        "planning/status-summary.md",
+        "docs/planning-implementation-plan.md",
+        INTENTIONAL_AMENDMENT_REFERENCE_APPROVAL_PATH,
+        contract_path,
+    }:
+        return True
+    if path in {
+        "planning/review-site/index.html",
+        "planning/review-site/enablers/index.html",
+        "planning/review-site/enablers/ECR-0009.html",
+        "planning/review-site/waves/W2.html",
+        "planning/review-site/manifest.json",
+    }:
+        return True
+    if path.startswith(f"{policy['referenceRoot']}/"):
+        return True
+    if path.startswith("artifacts/evidence/W2.A01.T02") and (
+        path == "artifacts/evidence/W2.A01.T02.json"
+        or path.startswith("artifacts/evidence/W2.A01.T02.")
+        or path.startswith("artifacts/evidence/W2.A01.T02/")
+    ):
+        return True
+    if path.startswith("apps/desktop/src/"):
+        return is_implementation_path(path, policy) or path.endswith(
+            (".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx", ".d.ts")
+        )
+    if path.startswith("packages/ui-components/src/"):
+        return is_implementation_path(path, policy)
+    if path.startswith("packages/ui-components/tests/"):
+        return path.endswith((".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx"))
+    if path.startswith("tests/desktop/"):
+        return path.endswith((".py", ".ts", ".tsx"))
+    return False
+
+
+def intentional_amendment_segments(
+    repo: Path,
+    base: str,
+    head: str,
+    publication: str,
+    contract_path: str,
+    reference_paths: set[str],
+    policy: dict[str, Any],
+) -> dict[str, list[str]]:
+    """Check every T02 commit, including changes erased from the final diff."""
+    rows = git(repo, "rev-list", "--reverse", "--topo-order", "--parents", f"{base}..{head}").decode().splitlines()
+    previous = base
+    ordered: list[str] = []
+    for row in rows:
+        values = row.split()
+        if len(values) != 2 or values[1] != previous:
+            raise ValueError("intentional amendment UI history must be linear")
+        previous = values[0]
+        ordered.append(previous)
+    if not ordered or previous != head or publication not in ordered:
+        raise ValueError("intentional amendment publication is absent from the exact task range")
+
+    reference_root = f"{policy['referenceRoot']}/"
+    contract_root = f"{policy['contractRoot']}/"
+    net = changed_paths(repo, base, head)
+    net_ui = {path for path in net if is_implementation_path(path, policy)}
+    net_reference = {path for path in net if path.startswith(reference_root)}
+    touched_ui: set[str] = set()
+    touched_reference: set[str] = set()
+    ui_commits: list[str] = []
+    reference_commits: list[str] = []
+    seen_publication = False
+    for commit in ordered:
+        parent = resolve_commit(repo, f"{commit}^")
+        paths = commit_paths(repo, commit)
+        if paths & (MAINTENANCE_CONTROL_PATHS | INTENTIONAL_AMENDMENT_CONTROL_PATHS):
+            raise ValueError("intentional amendment product range touched a design-first control or reviewed ADR")
+        if any(path.startswith(contract_root) and path != contract_path for path in paths):
+            raise ValueError("intentional amendment product range touched an extra UI contract")
+        extra_delivery = sorted(path for path in paths if not intentional_amendment_delivery_path(path, contract_path, policy))
+        if extra_delivery:
+            raise ValueError(f"intentional amendment product range touched out-of-scope files: {extra_delivery}")
+        for path in paths:
+            for point in (parent, commit):
+                entry = tree_entry(repo, point, path)
+                if entry is not None and entry != ("100644", "blob"):
+                    raise ValueError(f"intentional amendment delivery path is redirected or executable: {path}")
+        ui_paths = {path for path in paths if is_implementation_path(path, policy)}
+        reference_delta = {path for path in paths if path.startswith(reference_root)}
+        if ui_paths and not seen_publication:
+            raise ValueError("human reference publication must strictly precede every renderer commit")
+        if reference_delta:
+            if commit != publication or seen_publication or ui_paths:
+                raise ValueError("intentional amendment reference may change only in its separate publication commit")
+            if not reference_delta.issubset(reference_paths):
+                raise ValueError("intentional amendment publication touched an unreviewed reference file")
+            seen_publication = True
+            reference_commits.append(commit)
+            touched_reference.update(reference_delta)
+        elif commit == publication:
+            raise ValueError("cited intentional amendment publication did not change the reference")
+        statuses = git(repo, "diff", "--name-status", "--find-renames", "--find-copies", parent, commit, "--")
+        if any(line[:1] in {b"R", b"C", b"T"} for line in statuses.splitlines()):
+            raise ValueError("intentional amendment range does not support rename/copy/type changes")
+        if ui_paths:
+            touched_ui.update(ui_paths)
+            ui_commits.append(commit)
+    if reference_commits != [publication] or not ui_commits:
+        raise ValueError("intentional amendment requires one publication and later renderer work")
+    if tree_entry(repo, head, contract_path) != ("100644", "blob"):
+        raise ValueError("intentional amendment final UI evidence contract is not a regular blob")
+    if touched_ui != net_ui or touched_reference != net_reference:
+        raise ValueError("intentional amendment range contains hidden add/revert UI or reference history")
+    return {"uiFiles": sorted(touched_ui), "uiCommits": ui_commits, "referenceFiles": sorted(touched_reference)}
+
+
 def immutable_record(
     repo: Path, head: str, path: str, digest: str | None = None, *, evidence: bool = False
 ) -> tuple[dict[str, Any], str]:
@@ -2039,6 +2176,361 @@ def approved_amendment_packet(repo: Path, head: str, amendment: dict[str, Any]) 
             if actual.get(field) != expected[field]:
                 raise ValueError(f"immutable approved task field differs: {actual.get('id')}/{field}")
     return packet, packet_commit, introduction
+
+
+def intentional_amendment_control_predecessor(
+    repo: Path, head: str, base: str, amendment: dict[str, Any]
+) -> dict[str, str]:
+    """Require the exact T01 source and ADR to be independently reviewed and retained."""
+    control = next((task for task in amendment["tasks"] if task.get("id") == INTENTIONAL_AMENDMENT_CONTROL_TASK_ID), None)
+    if control is None or control.get("status") != "DONE" or control.get("review", {}).get("result") != "approved":
+        raise ValueError("intentional amendment T01 lacks an approved independent task review")
+    ranges = correction_submission_ranges(repo, head, {"tasks": [control]})
+    if not ranges or not independent_identity(control["review"].get("reviewer"), control.get("owner")):
+        raise ValueError("intentional amendment T01 review is absent or self-reviewed")
+    for reviewed_range in ranges:
+        if reviewed_range["paths"] != sorted(changed_paths(repo, reviewed_range["base"], reviewed_range["candidate"])):
+            raise ValueError("intentional amendment T01 reviewed changed paths differ from actual Git history")
+    candidate = ranges[-1]["candidate"]
+    ledger = control["review_control"]["attempts"][-1]["ledger"]
+    _record, review_introduction = immutable_record(repo, head, ledger["path"], ledger["sha256"], evidence=True)
+    control_base = control.get("base_sha")
+    if (
+        not isinstance(control_base, str)
+        or resolve_commit(repo, control_base) != control_base
+        or any(
+            left == right or not is_ancestor(repo, left, right)
+            for left, right in pairwise((control_base, candidate, review_introduction, base))
+        )
+    ):
+        raise ValueError("intentional amendment T01 review must strictly precede the T02 claim base")
+    control_paths = changed_paths(repo, control_base, candidate)
+    if not INTENTIONAL_AMENDMENT_CONTROL_PATHS.issubset(control_paths):
+        raise ValueError("intentional amendment T01 reviewed candidate lacks its gate/schema/ADR/index change")
+    for path in INTENTIONAL_AMENDMENT_CONTROL_PATHS:
+        if tree_entry(repo, candidate, path) != ("100644", "blob"):
+            raise ValueError(f"intentional amendment T01 reviewed control is not a regular blob: {path}")
+    index_path = "docs/adr/index.json"
+    candidate_index = json_object(blob(repo, candidate, index_path), "reviewed T01 ADR index")
+    candidate_records = candidate_index.get("records")
+    def unique_adr_records(records: object) -> bool:
+        if not isinstance(records, list) or not all(
+            isinstance(record, dict)
+            and isinstance(record.get("id"), str)
+            and isinstance(record.get("path"), str)
+            for record in records
+        ):
+            return False
+        return len({record["id"] for record in records}) == len(records) and len(
+            {record["path"] for record in records}
+        ) == len(records)
+
+    if not unique_adr_records(candidate_records) or sum(
+        isinstance(record, dict)
+        and record.get("id") == "ADR-0035"
+        and record.get("path") == "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md"
+        and record.get("status") == "Proposed"
+        and isinstance(record.get("linkedTasks"), list)
+        and INTENTIONAL_AMENDMENT_CONTROL_TASK_ID in record["linkedTasks"]
+        for record in candidate_records
+    ) != 1:
+        raise ValueError("intentional amendment reviewed T01 ADR index lacks its proposed decision")
+    previous_index = candidate_index
+    for commit in git(repo, "rev-list", "--reverse", f"{candidate}..{head}").decode().splitlines():
+        touched = commit_paths(repo, commit) & INTENTIONAL_AMENDMENT_CONTROL_PATHS
+        if touched - {index_path}:
+            raise ValueError("intentional amendment reviewed T01 gate/schema/ADR/tests/procedure was touched after review")
+        if index_path not in touched:
+            continue
+        if tree_entry(repo, commit, index_path) != ("100644", "blob"):
+            raise ValueError("intentional amendment post-review ADR index is redirected or missing")
+        current_index = json_object(blob(repo, commit, index_path), "post-review ADR index")
+        records = current_index.get("records")
+        prior_records = previous_index["records"]
+        if (
+            not unique_adr_records(records)
+            or len(records) <= len(prior_records)
+            or records[:len(prior_records)] != prior_records
+            or {key: value for key, value in current_index.items() if key != "records"}
+            != {key: value for key, value in candidate_index.items() if key != "records"}
+        ):
+            raise ValueError("intentional amendment post-review ADR index must append records without changing reviewed entries")
+        previous_index = current_index
+    return {"candidate": candidate, "reviewIntroduction": review_introduction}
+
+
+def intentional_amendment_live_claim(
+    repo: Path, base: str, head: str, contract: dict[str, Any], policy: dict[str, Any]
+) -> dict[str, Any]:
+    """Bind T02 to its live taskctl claim before reading reference authority."""
+    from taskctl import require_active_lease
+
+    if head != resolve_commit(repo, "HEAD"):
+        raise ValueError("intentional amendment UI authority requires current HEAD")
+    expected_selector = {
+        "amendmentId": INTENTIONAL_AMENDMENT_ID,
+        "changeRequestId": INTENTIONAL_AMENDMENT_CHANGE_REQUEST_ID,
+        "controlTaskId": INTENTIONAL_AMENDMENT_CONTROL_TASK_ID,
+        "referenceApprovalPath": INTENTIONAL_AMENDMENT_REFERENCE_APPROVAL_PATH,
+    }
+    if (
+        contract.get("schemaVersion") != "1.2"
+        or contract.get("taskId") != INTENTIONAL_AMENDMENT_TASK_ID
+        or contract.get("changeKind") != "intentional-design-change"
+        or contract.get("intentionalAmendmentAuthority") != expected_selector
+    ):
+        raise ValueError("intentional amendment contract selector is not the exact approved W2.A01.T02 lane")
+    backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "intentional amendment backlog")
+    amendment = amendment_record(backlog, INTENTIONAL_AMENDMENT_ID)
+    task = backlog_task(backlog, INTENTIONAL_AMENDMENT_TASK_ID)
+    if task is None or task not in amendment.get("tasks", []):
+        raise ValueError("intentional amendment T02 is absent from its materialized task inventory")
+    campaign = amendment.get("campaign") or {}
+    wave_matches = [wave for wave in backlog.get("waves", []) if wave.get("id") == "W2"]
+    if len(wave_matches) != 1:
+        raise ValueError("intentional amendment requires exactly one paused W2 campaign")
+    ordinary_campaign = wave_matches[0].get("campaign") or {}
+    ordinary_active = [
+        task
+        for task in backlog_tasks(backlog)
+        if task.get("wave") == "W2"
+        and task.get("amendment_id") is None
+        and task.get("status") in {"IN_PROGRESS", "REVIEW"}
+    ]
+    competing = [
+        other
+        for other in backlog.get("wave_amendments", [])
+        if other.get("id") != INTENTIONAL_AMENDMENT_ID
+        and (other.get("campaign") or {}).get("status") == "ACTIVE"
+    ]
+    if (
+        ordinary_campaign.get("status") != "PAUSED"
+        or ordinary_campaign.get("scope") != "amendment-hold"
+        or ordinary_campaign.get("lease") is not None
+        or ordinary_active
+        or competing
+    ):
+        raise ValueError("intentional amendment requires the exclusive paused W2 activation boundary")
+    owner = task.get("owner")
+    current_branch = git(repo, "branch", "--show-current").decode().strip()
+    repository_root = Path(git(repo, "rev-parse", "--show-toplevel").decode().strip()).resolve()
+    if (
+        amendment.get("change_request_id") != INTENTIONAL_AMENDMENT_CHANGE_REQUEST_ID
+        or amendment.get("target_wave") != "W2"
+        or amendment.get("lifecycle", {}).get("status") != "ACTIVE"
+        or campaign.get("status") != "ACTIVE"
+        or campaign.get("scope") != "wave-amendment"
+        or backlog.get("control_plane", {}).get("active_amendment") != INTENTIONAL_AMENDMENT_ID
+        or task.get("amendment_id") != INTENTIONAL_AMENDMENT_ID
+        or task.get("status") not in {"IN_PROGRESS", "REVIEW"}
+        or task.get("base_sha") != base
+        or not isinstance(owner, str)
+        or not owner
+        or campaign.get("owner") != owner
+        or task.get("branch") != current_branch
+        or campaign.get("branch") != current_branch
+        or task.get("worktree") != "."
+        or campaign.get("worktree") != "."
+        or repository_root != repo
+        or contract.get("implementationAgent") != f"agent:{owner}"
+    ):
+        raise ValueError("intentional amendment T02 does not hold the exact current campaign/claim/base/branch/worktree")
+    try:
+        require_active_lease(amendment, owner, "Intentional amendment campaign")
+        require_active_lease(task, owner, "Intentional amendment task")
+    except SystemExit as exc:
+        raise ValueError(f"intentional amendment lease is stale or foreign: {exc}") from exc
+    prior = yaml_object(blob(repo, base, "planning/backlog.yaml"), "intentional amendment claim base")
+    prior_task = backlog_task(prior, INTENTIONAL_AMENDMENT_TASK_ID) or {}
+    if (
+        prior_task.get("status") != "READY"
+        or prior_task.get("base_sha") is not None
+        or prior_task.get("owner") is not None
+        or prior_task.get("lease") is not None
+    ):
+        raise ValueError("intentional amendment T02 base does not precede an eligible claim")
+    ordered = git(repo, "rev-list", "--reverse", f"{base}..{head}").decode().splitlines()
+    if not ordered or resolve_commit(repo, f"{ordered[0]}^") != base:
+        raise ValueError("intentional amendment T02 claim does not descend directly from its base")
+    claimed_state = yaml_object(blob(repo, ordered[0], "planning/backlog.yaml"), "intentional amendment claim")
+    claimed_task = backlog_task(claimed_state, INTENTIONAL_AMENDMENT_TASK_ID) or {}
+    if (
+        claimed_task.get("status") != "IN_PROGRESS"
+        or claimed_task.get("owner") != owner
+        or claimed_task.get("branch") != current_branch
+        or claimed_task.get("worktree") != "."
+        or claimed_task.get("base_sha") != base
+        or (claimed_task.get("lease") or {}).get("claimed_by") != owner
+        or not claimed_task.get("started_at")
+        or any(
+            claimed_task.get(field) != prior_task.get(field)
+            for field in (
+                "id", "amendment_id", "title", "objective", "dependencies", "acceptance_criteria",
+                "verification_commands", "packet_task_sha256",
+            )
+        )
+        or any(
+            is_implementation_path(path, policy) or path.startswith(f"{policy['referenceRoot']}/")
+            for path in commit_paths(repo, ordered[0])
+        )
+    ):
+        raise ValueError("intentional amendment T02 has no exact pre-product task claim transition")
+    return {"backlog": backlog, "amendment": amendment, "task": task, "owner": owner, "claimCommit": ordered[0]}
+
+
+def intentional_amendment_authority(
+    repo: Path, base: str, head: str, contract: dict[str, Any], policy: dict[str, Any]
+) -> dict[str, Any]:
+    """Authenticate the only approved intentional amendment without task-label authority."""
+    from planctl import _reference_publication_content_errors
+    live = intentional_amendment_live_claim(repo, base, head, contract, policy)
+    amendment = live["amendment"]
+    owner = live["owner"]
+    packet, packet_commit, approval_introduction = approved_amendment_packet(repo, head, amendment)
+    approval_path = amendment["approval_reference"]["path"]
+    approval, _ = immutable_record(repo, head, approval_path, amendment["approval_reference"]["sha256"])
+    human = approval.get("approvedBy")
+    if (
+        packet.get("authorizedTaskIds") != [INTENTIONAL_AMENDMENT_CONTROL_TASK_ID, INTENTIONAL_AMENDMENT_TASK_ID]
+        or packet.get("governedExperience", {}).get("referenceId") != INTENTIONAL_AMENDMENT_REFERENCE_ID
+        or not isinstance(human, str)
+        or HUMAN_ID.fullmatch(human) is None
+        or human.removeprefix("human:").casefold() == owner.casefold()
+        or not is_ancestor(repo, approval_introduction, base)
+    ):
+        raise ValueError("intentional amendment packet/human approval is missing, substituted or self-approved")
+    predecessor = intentional_amendment_control_predecessor(repo, head, base, amendment)
+
+    proposal_root = "planning/W2-reference-1.8"
+    proposal_items = packet.get("governedExperience", {}).get("files")
+    if not isinstance(proposal_items, list) or not proposal_items:
+        raise ValueError("intentional amendment approved reference proposal inventory is absent")
+    proposal_paths: set[str] = set()
+    for item in proposal_items:
+        path = item.get("path") if isinstance(item, dict) else None
+        if not isinstance(path, str) or not path.startswith(f"{proposal_root}/") or path in proposal_paths:
+            raise ValueError("intentional amendment proposal contains an extra, duplicate or redirected path")
+        proposal_paths.add(path)
+        if tree_entry(repo, packet_commit, path) != ("100644", "blob") or hashlib.sha256(
+            blob(repo, packet_commit, path)
+        ).hexdigest() != item.get("sha256"):
+            raise ValueError(f"intentional amendment proposal differs from its immutable packet blob: {path}")
+    immutable_sources = {
+        f"planning/enabler-change-requests/{INTENTIONAL_AMENDMENT_CHANGE_REQUEST_ID}.packet.json",
+        approval["packet"]["proposalPath"],
+        *proposal_paths,
+    }
+    for commit in git(repo, "rev-list", f"{packet_commit}..{head}").decode().splitlines():
+        if commit_paths(repo, commit) & immutable_sources:
+            raise ValueError("intentional amendment reviewed packet/proposal source was touched after approval candidate")
+    proposed_manifest = yaml_object(
+        blob(repo, packet_commit, f"{proposal_root}/REFERENCE_MANIFEST.yaml"), "intentional amendment proposal manifest"
+    )
+    governed = proposed_manifest.get("governed_files")
+    if (
+        proposed_manifest.get("status") != "proposed"
+        or not isinstance(governed, list)
+        or any(not isinstance(name, str) or canonical_path(name) != name for name in governed)
+        or proposal_paths != {f"{proposal_root}/{name}" for name in [*governed, "REFERENCE_MANIFEST.yaml"]}
+    ):
+        raise ValueError("intentional amendment proposal manifest does not enumerate the exact reviewed files")
+    proposal_hashes = {
+        name: hashlib.sha256(canonical_payload(name, blob(repo, packet_commit, f"{proposal_root}/{name}"))).hexdigest()
+        for name in governed
+    }
+    if proposed_manifest.get("file_hashes") != proposal_hashes:
+        raise ValueError("intentional amendment proposal manifest hashes differ from packet-bound files")
+    proposal_package_sha = hashlib.sha256(
+        json.dumps(proposal_hashes, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    proposed_approval = yaml_object(
+        blob(repo, packet_commit, f"{proposal_root}/APPROVAL.yaml"), "intentional amendment proposed approval"
+    )
+    if (
+        proposed_approval.get("reference_id") != INTENTIONAL_AMENDMENT_REFERENCE_ID
+        or proposed_approval.get("version") != "1.8"
+        or proposed_approval.get("supersedes") != "RO-UI-ACADEMIC-MINIMAL-1.7"
+        or proposed_approval.get("status") != "proposed"
+    ):
+        raise ValueError("intentional amendment proposed reference identity differs from approved packet")
+
+    record_path = INTENTIONAL_AMENDMENT_REFERENCE_APPROVAL_PATH
+    design_approval, record_introduction = immutable_record(repo, head, record_path)
+    expected_design_approval = {
+        "schemaVersion": "1.0",
+        "kind": "ui-reference-design-approval",
+        "referenceId": INTENTIONAL_AMENDMENT_REFERENCE_ID,
+        "approvedBy": human,
+        "approvedAt": approval.get("approvedAt"),
+        "scope": "reference-publication-and-plan-binding-only",
+        "proposal": {
+            "commit": packet_commit,
+            "path": proposal_root,
+            "packageSha256": proposal_package_sha,
+        },
+        "amendmentApproval": {
+            "path": approval_path,
+            "sha256": amendment["approval_reference"]["sha256"],
+            "introductionCommit": approval_introduction,
+        },
+    }
+    if (
+        any(design_approval.get(key) != value for key, value in expected_design_approval.items())
+        or set(design_approval) != set(expected_design_approval) | {"basis"}
+        or not isinstance(design_approval.get("basis"), str)
+        or "ECR-0009" not in design_approval["basis"]
+    ):
+        raise ValueError("intentional amendment reference approval record does not bind the exact human decision/proposal")
+    publication = contract["reference"]["approvalCommit"]
+    anchors = (approval_introduction, base, live["claimCommit"], record_introduction, publication, head)
+    if resolve_commit(repo, publication) != publication or any(
+        (left == right and not (left == record_introduction and right == publication))
+        or (left != right and not is_ancestor(repo, left, right))
+        for left, right in pairwise(anchors)
+    ):
+        raise ValueError("intentional amendment human decision/reference publication ancestry is invalid")
+    publication_state, publication_errors = reference_state(repo, publication, policy)
+    head_state, head_errors = reference_state(repo, head, policy)
+    base_state, base_errors = reference_state(repo, base, policy)
+    publication_errors.extend(head_errors)
+    publication_errors.extend(base_errors)
+    publication_errors.extend(_reference_publication_content_errors(repo, packet, packet_commit, publication))
+    published_approval = publication_state.get("approval", {})
+    expected_authority = {
+        "amendment_id": INTENTIONAL_AMENDMENT_ID,
+        "change_request_id": INTENTIONAL_AMENDMENT_CHANGE_REQUEST_ID,
+        "approval_record": approval_path,
+        "approval_record_sha256": amendment["approval_reference"]["sha256"],
+        "approval_record_introduction_commit": approval_introduction,
+    }
+    if (
+        publication_errors
+        or base_state.get("referenceId") != "RO-UI-ACADEMIC-MINIMAL-1.7"
+        or publication_state != head_state
+        or publication_state.get("referenceId") != INTENTIONAL_AMENDMENT_REFERENCE_ID
+        or publication_state.get("version") != "1.8"
+        or published_approval.get("supersedes") != base_state.get("referenceId")
+        or published_approval.get("approval_kind") != "human"
+        or published_approval.get("approved_by") != human
+        or published_approval.get("approved_at") != approval.get("approvedAt")
+        or published_approval.get("authority") != expected_authority
+    ):
+        raise ValueError("intentional amendment published reference differs from approved 1.8 authority: " + "; ".join(publication_errors))
+    reference_paths = {path.replace(f"{proposal_root}/", f"{policy['referenceRoot']}/", 1) for path in proposal_paths}
+    segments = intentional_amendment_segments(
+        repo, base, head, publication, str(contract["contractPath"]), reference_paths, policy
+    )
+    if segments["uiFiles"] != contract.get("changedFiles"):
+        raise ValueError("intentional amendment contract omits a governed renderer path")
+    return {
+        **segments,
+        "packetCommit": packet_commit,
+        "approvalIntroduction": approval_introduction,
+        "controlCandidate": predecessor["candidate"],
+        "controlReviewIntroduction": predecessor["reviewIntroduction"],
+        "referenceApprovalIntroduction": record_introduction,
+        "publicationCommit": publication,
+    }
 
 
 def independent_identity(reviewer: object, owner: object) -> bool:
@@ -2697,6 +3189,12 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
                 errors.extend(linked_correction_range_errors(repo, base, head, linked_active[0], policy))
                 if implementation_commits(repo, base, head, policy):
                     errors.append("linked correction has reverted UI history but no net governed implementation change")
+            intentional = backlog_task(no_ui_backlog, INTENTIONAL_AMENDMENT_TASK_ID)
+            if intentional is not None and intentional.get("status") in {"IN_PROGRESS", "REVIEW"}:
+                if intentional.get("amendment_id") != INTENTIONAL_AMENDMENT_ID or intentional.get("base_sha") != base:
+                    raise ValueError("intentional amendment task has a stale or foreign base")
+                if implementation_commits(repo, base, head, policy):
+                    errors.append("intentional amendment has reverted renderer history but no net governed change")
         except (KeyError, TypeError, UnicodeError, ValueError, yaml.YAMLError) as exc:
             errors.append(str(exc))
         if contract_paths:
@@ -2733,7 +3231,15 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         return report
 
     resumed_scope: dict[str, Any] | None = None
+    intentional_scope: dict[str, Any] | None = None
     linked_origin: dict[str, Any] | None = None
+    if "intentionalAmendmentAuthority" in contract:
+        try:
+            intentional_scope = intentional_amendment_authority(repo, base, head, contract, policy)
+            report["rangeAuthority"] = intentional_scope
+        except (KeyError, TypeError, ValueError, UnicodeError, yaml.YAMLError) as exc:
+            errors.append(f"invalid intentional amendment UI authority: {exc}")
+            return report
     if "amendmentAuthority" in contract:
         try:
             resumed_scope = resumed_amendment_authority(repo, base, head, contract, policy)
@@ -2840,6 +3346,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         if (
             linked_origin is None
             and ("amendmentAuthority" not in contract or experience is not None)
+            and intentional_scope is None
             and experience != expected_experience
         ):
             errors.append("task experience_change must exactly match the UI evidence lineage")
@@ -2883,7 +3390,7 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
         approval_identity = str(approved_by).split(":", 1)[-1].casefold()
         if approved_by == contract.get("implementationAgent") or approval_identity == implementation_identity:
             errors.append("the implementation agent cannot approve its own UI reference revision")
-        if task is not None and task.get("review_gate") != "human-and-agent-review":
+        if task is not None and intentional_scope is None and task.get("review_gate") != "human-and-agent-review":
             errors.append("intentional UI implementation tasks require human-and-agent-review")
         if not reference_changed:
             errors.append("intentional UI change requires a governed reference revision in the change range")

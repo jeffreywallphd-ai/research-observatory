@@ -341,6 +341,15 @@
       "linkedTasks": [
         "CAP-04.S04.T01"
       ]
+    },
+    {
+      "id": "ADR-0035",
+      "path": "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md",
+      "title": "Admit exact intentional amendment UI lineage",
+      "status": "Proposed",
+      "linkedTasks": [
+        "W2.A01.T01"
+      ]
     }
   ]
 }

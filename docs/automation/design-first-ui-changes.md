@@ -2,11 +2,11 @@
 
 `tools/ui_change_gate.py` is the pull-request and foundation guard for researcher-facing implementation. It compares an immutable Git base and head, rather than trusting the working tree, and activates when renderer files under the governed UI roots in `ui-change-policy.json` change.
 
-Every activated change must add exactly one contract at `artifacts/evidence/ui-change/<task-id>.json`. The contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml` or the authenticated restoration authority described below. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
+Every activated change must add exactly one contract at `artifacts/evidence/ui-change/<task-id>.json`. The contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml` or one of the exact authenticated amendment/restoration authorities below. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
 
 ## Change kinds
 
-- `intentional-design-change` changes a normative route, navigation, token, workflow, required region, interaction, accessibility behavior, or theme behavior. The base and head reference IDs must differ. The new `APPROVAL.yaml` must declare `approval_kind: human`, use an `approved_by: human:<identity>` distinct from the implementation agent, supersede the base reference, and be committed after the change base but strictly before every implementation commit. The task requires `human-and-agent-review`.
+- `intentional-design-change` changes a normative route, navigation, token, workflow, required region, interaction, accessibility behavior, or theme behavior. The base and head reference IDs must differ. The new `APPROVAL.yaml` must declare `approval_kind: human`, use an `approved_by: human:<identity>` distinct from the implementation agent, supersede the base reference, and be committed after the change base but strictly before every implementation commit. Ordinary tasks require `human-and-agent-review`; only the exact opt-in 1.2 amendment below uses the separately authenticated owner approval and independent review substitute.
 - `approved-reference-implementation` creates implementation that conforms to the unchanged approved reference, including first implementation of an already approved page or workflow. It cites focused conformance evidence and does not alter the reference.
 - `defect-restoration` returns drifted code to the unchanged approved reference. It records the defect, expected approved behavior, and focused passing restoration evidence; no new design approval is needed. Until CAP-00.S06.T04 installs a governed implementation-conformance verifier, the task must retain `human-and-agent-review` so a self-asserted restoration cannot classify arbitrary new behavior as a defect fix.
 
@@ -23,6 +23,45 @@ For a task branch, validate the whole task/PR range:
 The foundation profile uses `UI_CHANGE_BASE_SHA` when CI supplies the pull-request or push base. A manual dispatch requires an explicit immutable base SHA. Locally, the gate uses the sole active task's governed `base_sha` when that task carries `experience_change`, fails on ambiguous or invalid active-task state, and falls back to `HEAD^` only when no UI task is active. CI performs a full-history checkout so commit ordering and ancestry are verifiable. The pull-request template records the same lineage for reviewers, but prose or a checked box cannot replace the committed contract.
 
 The gate fails for a missing, extra, malformed, renamed, or stale contract; incomplete changed-file coverage; unknown or mismatched task metadata; forged reference hashes; a nonhuman or self approval; same-commit approval and implementation; intentional implementation without a newer approved reference; or restoration/conformance work that also modifies the reference.
+
+## Exact intentional amendment (opt-in 1.2)
+
+The owner-approved `ECR-0009` authorizes one additive lane for the materialized
+`W2.A01.T02` attachment interaction. Its `schemaVersion: "1.2"` contract uses
+`changeKind: "intentional-design-change"`, reference ID
+`RO-UI-ACADEMIC-MINIMAL-1.8`, version `1.8`, predecessor
+`RO-UI-ACADEMIC-MINIMAL-1.7`, and a closed `intentionalAmendmentAuthority`
+object naming `W2.A01`, `ECR-0009`, control task `W2.A01.T01`, and
+`planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json`. These exact
+labels select the route; they do not prove approval or claim authority.
+No other amendment or ordinary task may use 1.2, and 1.0/1.1 contracts cannot
+carry this authority object.
+
+The gate checks the immutable ECR packet and its proposal-file hashes, the
+introduced human approval record, materialized task identity and complete
+inventory, committed independent `W2.A01.T01` review, and the current
+`W2.A01.T02` owner, lease, branch and original task base. It checks the new
+reference approval and published package against the reviewed proposal and
+every governed reference and implementation path in the full task-base range.
+Every intermediate commit counts, including a file added and later reverted;
+redirected Git objects, extra UI contracts, files outside the approved
+renderer/reference/evidence envelope, and mixed control/product edits deny
+qualification. The separate reference-publication commit
+must follow the human decision and strictly precede every renderer commit.
+The complete contract is evaluated with the T02 task base and current `HEAD`;
+producer labels and a successful partial or mock check cannot replace
+the committed evidence chain. Independent T02 review checks whether each
+enumerated renderer file actually belongs to the approved interaction.
+
+This lane substitutes the authenticated ECR owner decision plus the independent
+T01 control/security review and T02 task review for amendment task fields that
+the v4.1 task schema forbids. It does not supersede ADR-0003 or weaken the
+ordinary intentional-change rule. Proposed ADR-0035 documents the exact
+protected gate change, and the T01 ADR/control review must be committed before
+T02 begins. The staged T02 renderer keeps production choose/drop unavailable;
+real native/Core attachment and native-only path handling remain in the
+resumed `CAP-05.S01.T01`. Neither amendment adoption nor this gate result is W2
+release approval.
 
 ## Linked completed-task restoration (existing 1.0)
 

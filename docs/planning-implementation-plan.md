@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3debc1388d168430b240d61f62e2fa815ee8e0bd7ab46616408a8c6ccc7f9c52
+source_sha256: 061906c3ef95dbe30c8492e5e19936a1ed87c28f993c84521813bbeba9ff4b48
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
-| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `MATERIALIZED` |
+| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ACTIVE` |
 
 ## Waves
 
@@ -2362,12 +2362,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A01.json` (`6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096`)
 
-**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-02T16:23:51Z` by human:repository-owner: The repository owner replied 'Approved, please proceed.' to the decision request explicitly identifying ECR-0009's exact candidate 3fb76d6cb6bce6eaf16774931704de68c6168500, packet SHA-256 9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2, and proposed Academic Minimal 1.8 reference RO-UI-ACADEMIC-MINIMAL-1.8. This records the owner decision for only the reviewed W2.A01.B00 bootstrap, W2.A01.S01 contribution, W2.A01.T01 gate/ADR task, and W2.A01.T02 reference/typed opaque renderer-contract task. Production choose/drop/attach remains unavailable in T02; original CAP-05.S01.T01 later owns real native/Core attachment proof after amendment adoption. This approval does not complete any task or slice, adopt the amendment, resume ordinary W2, approve W2 qualification/release, authorize a renderer file-path shortcut, or waive independent checks. The timestamp records binding of the owner's decision to this exact reviewed candidate.
 - `E02` `MATERIALIZED` at `2026-10-02T18:11:43+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-10-02T18:39:35+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W2.A01
 
@@ -2387,7 +2388,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A01.T01 - Admit exact intentional amendment UI lineage
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A01.B00`
 
@@ -9612,7 +9613,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `READY` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

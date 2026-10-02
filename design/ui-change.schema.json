@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://research-observatory.local/schemas/ui-change-evidence-1.1.json",
+  "$id": "https://research-observatory.local/schemas/ui-change-evidence-1.2.json",
   "title": "Research Observatory UI change evidence",
   "type": "object",
   "required": [
@@ -15,7 +15,7 @@
     "focusedEvidence"
   ],
   "properties": {
-    "schemaVersion": {"enum": ["1.0", "1.1"]},
+    "schemaVersion": {"enum": ["1.0", "1.1", "1.2"]},
     "documentType": {"const": "ui-change-evidence"},
     "taskId": {
       "type": "string",
@@ -113,6 +113,17 @@
         }
       },
       "additionalProperties": false
+    },
+    "intentionalAmendmentAuthority": {
+      "type": "object",
+      "required": ["amendmentId", "changeRequestId", "controlTaskId", "referenceApprovalPath"],
+      "properties": {
+        "amendmentId": {"const": "W2.A01"},
+        "changeRequestId": {"const": "ECR-0009"},
+        "controlTaskId": {"const": "W2.A01.T01"},
+        "referenceApprovalPath": {"const": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"}
+      },
+      "additionalProperties": false
     }
   },
   "$defs": {"commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
@@ -141,6 +152,25 @@
         }
       },
       "else": {"not": {"required": ["amendmentAuthority"]}}
+    },
+    {
+      "if": {"properties": {"schemaVersion": {"const": "1.2"}}},
+      "then": {
+        "required": ["intentionalAmendmentAuthority"],
+        "properties": {
+          "taskId": {"const": "W2.A01.T02"},
+          "changeKind": {"const": "intentional-design-change"},
+          "reference": {
+            "properties": {
+              "referenceId": {"const": "RO-UI-ACADEMIC-MINIMAL-1.8"},
+              "version": {"const": "1.8"},
+              "previousReferenceId": {"const": "RO-UI-ACADEMIC-MINIMAL-1.7"}
+            }
+          }
+        },
+        "not": {"anyOf": [{"required": ["restoration"]}, {"required": ["restorationClassification"]}]}
+      },
+      "else": {"not": {"required": ["intentionalAmendmentAuthority"]}}
     },
     {
       "if": {"properties": {"changeKind": {"const": "defect-restoration"}}},
