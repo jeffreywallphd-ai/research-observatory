@@ -32,6 +32,8 @@ import {
 } from "./IntentWorkspace";
 import { TaskCenterWorkspace } from "./TaskCenterWorkspace";
 import { ImportWorkspace } from "./ImportWorkspace";
+import type { AttachmentHandoff } from "./DocumentAttachmentPane";
+import { sameAttachmentSelection, type AttachmentSelection } from "./documentAttachment";
 import { CorpusCanvasWorkspace } from "./CorpusCanvasWorkspace";
 import { SourceManagerWorkspace } from "./SourceManagerWorkspace";
 import { ModelCenterWorkspace } from "./ModelCenterWorkspace";
@@ -353,6 +355,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
   const [announcement, setAnnouncement] = useState("Desktop shell ready. No project is open.");
   const [workspace, setWorkspace] = useState<ApplicationWorkspace>("home");
   const [currentProject, setCurrentProject] = useState<ProjectProjection | null>(null);
+  const [attachmentHandoff, setAttachmentHandoff] = useState<AttachmentHandoff | null>(null);
+  const [attachmentReturn, setAttachmentReturn] = useState<AttachmentHandoff | null>(null);
   const workflowClient = useMemo(() => createCoreApiClient(workflowTransport), [workflowTransport]);
   const [workflowCatalog, setWorkflowCatalog] = useState<WorkflowProfileCatalogProjection | null>(null);
   const [workflowIntent, setWorkflowIntent] = useState<IntentWorkspaceProjection | null>(null);
@@ -414,11 +418,14 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     applicationLockRef.current = snapshot;
     setApplicationLock(snapshot);
     if (snapshot.state === "locked") {
+      currentProjectRef.current = null;
       workflowContextLoaderRef.current.invalidate();
       workflowRequestGuardRef.current.invalidate();
       clearPendingSupportingRequest();
       workflowCommandBusyRef.current = false;
       setCurrentProject(null);
+      setAttachmentHandoff(null);
+      setAttachmentReturn(null);
       setWorkflowCatalog(null);
       setWorkflowIntent(null);
       setWorkflowAuthority(null);
@@ -566,6 +573,8 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     workflowCommandBusyRef.current = false;
     setWorkflowCommandBusy(false);
     setCurrentProject(next);
+    setAttachmentHandoff(null);
+    setAttachmentReturn(null);
   }, [clearPendingSupportingRequest]);
 
   useEffect(() => {
@@ -845,6 +854,30 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
     }
     setWorkspace(nextWorkspace);
   }, [announce, applyWorkflowProgress, clearPendingSupportingRequest, workflowAuthority, workflowClient, workflowProgress]);
+
+  const openAttachmentTaskCenter = useCallback((handoff: AttachmentHandoff) => {
+    if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== handoff.selection.projectId) return;
+    setAttachmentHandoff(handoff);
+    navigateWorkspaceState("tasks");
+    announce("Task Center opened. The exact selected Work/version return context is retained.");
+  }, [announce, navigateWorkspaceState]);
+
+  const retainAttachmentRecovery = useCallback((selection: AttachmentSelection, handoff: AttachmentHandoff | null) => {
+    if (applicationLockRef.current.state !== "unlocked" || currentProjectRef.current?.projectId !== selection.projectId) return;
+    setAttachmentHandoff((current) => handoff ?? (current && sameAttachmentSelection(current.selection, selection) ? null : current));
+  }, []);
+
+  const returnToAttachment = useCallback(() => {
+    if (!attachmentHandoff || applicationLockRef.current.state !== "unlocked"
+      || currentProjectRef.current?.projectId !== attachmentHandoff.selection.projectId) return;
+    setAttachmentReturn(attachmentHandoff);
+    navigateWorkspaceState("imports");
+    announce("Returned to the selected Work/version; current revisions will be checked again.");
+  }, [announce, attachmentHandoff, navigateWorkspaceState]);
+
+  const consumeAttachmentReturn = useCallback((handoff: AttachmentHandoff) => {
+    setAttachmentReturn((current) => current === handoff ? null : current);
+  }, []);
 
   const openProjectHome = useCallback(() => {
     navigateWorkspaceState("home");
@@ -1260,9 +1293,12 @@ export function ApplicationRuntime({ workflowTransport = packagedProjectTranspor
               onWorkspaceChange={applyPersistedIntentWorkspace}
             />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "tasks" ? (
-            <TaskCenterWorkspace project={currentProject} announce={announce} />
+            <TaskCenterWorkspace project={currentProject} announce={announce}
+              attachmentReturn={attachmentHandoff} onReturnToAttachment={returnToAttachment} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "imports" ? (
-            <ImportWorkspace project={currentProject} announce={announce} />
+            <ImportWorkspace project={currentProject} announce={announce}
+              attachmentReturn={attachmentReturn} onAttachmentReturnConsumed={consumeAttachmentReturn}
+              onTaskCenter={openAttachmentTaskCenter} onAttachmentRecovery={retainAttachmentRecovery} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "corpus" ? (
             <CorpusCanvasWorkspace project={currentProject} announce={announce} active={workspace === "corpus"} onNavigate={navigateWorkspaceState} />
           ) : (workspace === "application-settings" ? previousWorkspaceRef.current : workspace) === "sources" ? (

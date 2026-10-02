@@ -10,12 +10,17 @@ import {
 import { Button, Field, Notification, Panel, StatusBadge, Typography } from "@research-observatory/ui-components";
 
 import { packagedProjectTransport } from "./ProjectsWorkspace";
+import type { AttachmentHandoff } from "./DocumentAttachmentPane";
+import { attachmentStatusMessage, attachmentStatusRequest, sameAttachmentSelection, type AttachmentStatus } from "./documentAttachment";
+import { nativeDocumentAttachmentPort } from "./documentAttachmentNative";
 
 export interface TaskCenterWorkspaceProps {
   readonly project: ProjectProjection | null;
   readonly announce: (message: string) => void;
   readonly transport?: CoreApiTransport;
   readonly initialRuns?: readonly WorkflowTaskCenterRun[];
+  readonly attachmentReturn?: AttachmentHandoff | null;
+  readonly onReturnToAttachment?: () => void;
 }
 
 type Confirmation =
@@ -56,6 +61,8 @@ export function TaskCenterWorkspace({
   announce,
   transport = packagedProjectTransport,
   initialRuns,
+  attachmentReturn,
+  onReturnToAttachment,
 }: TaskCenterWorkspaceProps): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
   const [runs, setRuns] = useState<readonly WorkflowTaskCenterRun[]>(initialRuns ?? []);
@@ -65,6 +72,9 @@ export function TaskCenterWorkspace({
   const [failure, setFailure] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmation, setConfirmation] = useState<Confirmation>(null);
+  const [documentStatus, setDocumentStatus] = useState<AttachmentStatus | null>(null);
+  const [documentStatusLoading, setDocumentStatusLoading] = useState(false);
+  const documentStatusGeneration = useRef(0);
   const cancelRef = useRef<HTMLButtonElement>(null);
   const restoreFocusRef = useRef<HTMLButtonElement>(null);
   const selectedWorkflowRef = useRef<HTMLButtonElement>(null);
@@ -74,6 +84,25 @@ export function TaskCenterWorkspace({
   const projectKey = project ? `${project.projectId}\u0000${project.root}` : "";
   const activeProjectKeyRef = useRef(projectKey);
   activeProjectKeyRef.current = projectKey;
+
+  const loadDocumentStatus = useCallback(async (): Promise<void> => {
+    const handoff = attachmentReturn;
+    if (!handoff || !project || handoff.selection.projectId !== project.projectId) return;
+    const ticket = ++documentStatusGeneration.current;
+    const request = attachmentStatusRequest(handoff.selection, handoff.operationId, handoff.commitRequest?.commandId ?? null);
+    setDocumentStatusLoading(true); setDocumentStatus(null);
+    try {
+      const result = await nativeDocumentAttachmentPort.status(request);
+      if (documentStatusGeneration.current === ticket && result
+        && sameAttachmentSelection(request.selection, result.selection)
+        && (request.operationId === null || result.operationId === request.operationId)
+        && (request.commandId === null || result.commandId === request.commandId)) setDocumentStatus(result);
+    } finally { if (documentStatusGeneration.current === ticket) setDocumentStatusLoading(false); }
+  }, [attachmentReturn, project]);
+  useEffect(() => {
+    void loadDocumentStatus();
+    return () => { documentStatusGeneration.current += 1; };
+  }, [loadDocumentStatus]);
 
   const load = useCallback(async (announceChange = false): Promise<void> => {
     if (!project || !available) return;
@@ -225,6 +254,22 @@ export function TaskCenterWorkspace({
       </div>
       <Button disabled={busy} onClick={() => void load(true)}>Refresh</Button>
     </div>
+    {attachmentReturn?.selection.projectId === project.projectId ? <Panel title="Selected-version attachment context">
+      <p className="ro-wrap-anywhere">Work {attachmentReturn.selection.workId} · revision {attachmentReturn.selection.workRevisionId}.
+        Version {attachmentReturn.selection.versionId} · revision {attachmentReturn.selection.versionRevisionId}.
+        Source assertion {attachmentReturn.selection.sourceAssertionRevisionId}.</p>
+      {attachmentReturn.operationId ? <p className="ro-wrap-anywhere">Attachment operation {attachmentReturn.operationId}.</p> : null}
+      <p>{attachmentReturn.attachmentId && attachmentReturn.documentRevisionId
+        ? `${attachmentReturn.commitRequest ? "Earlier native response reported" : "Last checked attachment status identified"} attachment ${attachmentReturn.attachmentId} and document revision ${attachmentReturn.documentRevisionId}. Inspect the current durable status before relying on processing.`
+        : "This is a return context, not evidence of a completed or running attachment. Current durable work appears below."}</p>
+      {attachmentReturn.commitRequest ? <p className="ro-wrap-anywhere">Saved decision {attachmentReturn.commitRequest.commandId}.
+        {attachmentReturn.attachmentId === null
+          ? " If its reply remains unconfirmed, retry only this same decision after exact authority is checked."
+          : " An earlier native response reported this attachment; current authoritative status is shown below."}</p> : null}
+      <p role="status">{documentStatusLoading ? "Checking exact attachment status…" : attachmentStatusMessage(documentStatus)}</p>
+      <Button disabled={documentStatusLoading} onClick={() => void loadDocumentStatus()}>Refresh attachment status</Button>
+      <Button disabled={!onReturnToAttachment} onClick={onReturnToAttachment}>Return to selected Work/version</Button>
+    </Panel> : null}
     {!writable ? <Notification tone="warning" title="Read-only workflow view">You can inspect durable work, but commands are disabled until the project is opened read-write.</Notification> : null}
     {failure ? <Notification tone="danger" title="Task Center unavailable">{failure}</Notification> : null}
     {loading ? <p role="status">Loading durable workflows…</p> : null}

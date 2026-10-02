@@ -5,12 +5,17 @@ import { packagedProjectTransport } from "./ProjectsWorkspace";
 import { chooseImportSource, type ImportIntakeOptions } from "./importIntake";
 import { ImportReviewPane, importFailure, importStatusLabel } from "./ImportReviewPane";
 import { ReconciliationPane } from "./ReconciliationPane";
+import type { AttachmentHandoff } from "./DocumentAttachmentPane";
 
 export interface ImportWorkspaceProps {
   readonly project: ProjectProjection | null;
   readonly announce: (message: string) => void;
   readonly transport?: CoreApiTransport;
   readonly initialPreviews?: ImportPreviewPage;
+  readonly attachmentReturn?: AttachmentHandoff | null;
+  readonly onAttachmentReturnConsumed?: (handoff: AttachmentHandoff) => void;
+  readonly onTaskCenter?: (handoff: AttachmentHandoff) => void;
+  readonly onAttachmentRecovery?: (selection: AttachmentHandoff["selection"], handoff: AttachmentHandoff | null) => void;
 }
 
 export function ImportWorkspace(props: ImportWorkspaceProps): ReactNode {
@@ -22,7 +27,7 @@ export function ImportWorkspace(props: ImportWorkspaceProps): ReactNode {
   return <ImportProject key={`${project.projectId}\u0000${project.root}`} {...props} project={project} />;
 }
 
-function ImportProject({ project, announce, transport = packagedProjectTransport, initialPreviews }: ImportWorkspaceProps & { readonly project: ProjectProjection }): ReactNode {
+function ImportProject({ project, announce, transport = packagedProjectTransport, initialPreviews, attachmentReturn, onAttachmentReturnConsumed, onTaskCenter, onAttachmentRecovery }: ImportWorkspaceProps & { readonly project: ProjectProjection }): ReactNode {
   const client = useMemo(() => createCoreApiClient(transport), [transport]);
   const [page, setPage] = useState<ImportPreviewPage | null>(initialPreviews ?? null);
   const [after, setAfter] = useState<string | null>(null);
@@ -124,6 +129,8 @@ function ImportProject({ project, announce, transport = packagedProjectTransport
       </Panel>
       {selected ? <ImportReviewPane key={selected.previewId} root={project.root} projectId={project.projectId} initial={selected} client={client} announce={announce} onStatus={updateStatus} /> : <Panel title="Select a batch to review"><p>Compare raw fields with normalized candidates, correct mappings, and exclude unwanted records. Saved previews are retained in this project.</p></Panel>}
     </div>
-    <ReconciliationPane root={project.root} projectId={project.projectId} client={client} announce={announce} headingRef={reconciliationHeading} />
+    <ReconciliationPane root={project.root} projectId={project.projectId} client={client} announce={announce} headingRef={reconciliationHeading}
+      returnAttachment={attachmentReturn} onAttachmentReturnConsumed={onAttachmentReturnConsumed}
+      onTaskCenter={onTaskCenter} onAttachmentRecovery={onAttachmentRecovery} />
   </div>;
 }

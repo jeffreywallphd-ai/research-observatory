@@ -4,13 +4,18 @@ import { createCoreApiClient, type CandidateExplanation, type CandidatePage, typ
 import { Button, DataTable, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
 import { ReconciliationReviewPane } from "./ReconciliationReviewPane";
 import { ReconciliationVersionsPane } from "./ReconciliationVersionsPane";
+import type { AttachmentHandoff } from "./DocumentAttachmentPane";
 
 type Client = ReturnType<typeof createCoreApiClient>;
 const active = (status: ReconciliationBatchStatus | null): boolean => Boolean(status && !["succeeded", "failed", "cancelled"].includes(status.state));
 
-export function ReconciliationPane({ root, projectId, client, announce, headingRef }: {
+export function ReconciliationPane({ root, projectId, client, announce, headingRef, onTaskCenter, returnAttachment, onAttachmentReturnConsumed, onAttachmentRecovery }: {
   readonly root: string; readonly projectId: string; readonly client: Client; readonly announce: (message: string) => void;
   readonly headingRef: RefObject<HTMLHeadingElement | null>;
+  readonly onTaskCenter?: ((handoff: AttachmentHandoff) => void) | undefined;
+  readonly returnAttachment?: AttachmentHandoff | null | undefined;
+  readonly onAttachmentReturnConsumed?: ((handoff: AttachmentHandoff) => void) | undefined;
+  readonly onAttachmentRecovery?: ((selection: AttachmentHandoff["selection"], handoff: AttachmentHandoff | null) => void) | undefined;
 }): ReactNode {
   const [requestId, setRequestId] = useState<string | null>(null), [status, setStatus] = useState<ReconciliationBatchStatus | null>(null);
   const [page, setPage] = useState<CandidatePage | null>(null), [cursors, setCursors] = useState<readonly number[]>([0]);
@@ -18,7 +23,7 @@ export function ReconciliationPane({ root, projectId, client, announce, headingR
   const [selected, setSelected] = useState<{ candidate: CandidateExplanation; inspections: readonly ReconciliationInspection[]; context: ReviewContext } | null>(null);
   const live = useRef(true), generation = useRef(0), pendingRef = useRef<"status" | "action" | null>(null), lastState = useRef<string | null>(null);
   const compareButton = useRef<HTMLButtonElement | null>(null);
-  const [versionOpen, setVersionOpen] = useState(false);
+  const [versionOpen, setVersionOpen] = useState(Boolean(returnAttachment?.selection.projectId === projectId));
   const versionButton = useRef<HTMLButtonElement | null>(null);
   const lastCandidate = useRef<string | null>(null), restoreFocus = useRef(false);
   const current = (ticket: number): boolean => live.current && generation.current === ticket;
@@ -131,6 +136,8 @@ export function ReconciliationPane({ root, projectId, client, announce, headingR
       </> : null}
     </div></Panel>
     {versionOpen ? <ReconciliationVersionsPane root={root} projectId={projectId} client={client} announce={announce}
+      onTaskCenter={onTaskCenter} returnAttachment={returnAttachment} onAttachmentReturnConsumed={onAttachmentReturnConsumed}
+      onAttachmentRecovery={onAttachmentRecovery}
       onClose={() => { setVersionOpen(false); globalThis.requestAnimationFrame(() => { if (live.current) versionButton.current?.focus(); }); }}
       onDenied={() => { setPage(null); setSelected(null); }} /> : null}
     {selected ? <ReconciliationReviewPane key={`${selected.candidate.left}/${selected.candidate.right}`} root={root} projectId={projectId} client={client} initial={selected.context} inspections={selected.inspections} candidate={selected.candidate} announce={announce} onClose={closeComparison} onCommitted={() => { void refresh(); }}

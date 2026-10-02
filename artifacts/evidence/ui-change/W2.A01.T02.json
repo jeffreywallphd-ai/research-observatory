@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.2",
+  "documentType": "ui-change-evidence",
+  "taskId": "W2.A01.T02",
+  "changeKind": "intentional-design-change",
+  "contractPath": "artifacts/evidence/ui-change/W2.A01.T02.json",
+  "implementationAgent": "agent:codex-w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/ApplicationRuntime.tsx",
+    "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+    "apps/desktop/src/app/ImportWorkspace.tsx",
+    "apps/desktop/src/app/ReconciliationPane.tsx",
+    "apps/desktop/src/app/ReconciliationVersionsPane.tsx",
+    "apps/desktop/src/app/TaskCenterWorkspace.tsx",
+    "apps/desktop/src/app/documentAttachment.ts",
+    "apps/desktop/src/app/documentAttachmentNative.ts"
+  ],
+  "reference": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "version": "1.8",
+    "packageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "approvalCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+    "approvedBy": "human:repository-owner",
+    "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.7"
+  },
+  "focusedEvidence": [
+    {
+      "command": "From apps/desktop: node node_modules/typescript/bin/tsc --noEmit",
+      "result": "passed",
+      "scope": "Strict typing of the selected-version attachment panel, opaque native contract and application navigation/recovery wiring."
+    },
+    {
+      "command": "From apps/desktop: node node_modules/vitest/vitest.mjs run src/app/documentAttachment.test.ts src/app/ImportWorkspace.test.tsx src/app/TaskCenterWorkspace.test.tsx src/app/ApplicationRuntime.test.tsx",
+      "result": "passed",
+      "scope": "Four focused desktop test files and 27 tests covering exact selection and native payload decoding, terminal-status eligibility, denial and retained navigation behavior."
+    },
+    {
+      "command": "From apps/desktop: node node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+      "result": "passed",
+      "scope": "Production renderer compilation with the approved 1.8 attachment interaction; the native attachment bridge remains unavailable."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_document_attachment_interactions -v",
+      "result": "passed",
+      "scope": "Mounted desktop journey against a disposable real Core project and synthetic opaque native outcomes: selected version, choose/drop, denial, focus, cancellation, exact retry, Task Center, lock and reopening. Mock native outcomes do not establish native/Core file admission."
+    }
+  ],
+  "implementationScope": "Implement only the owner-approved Academic Minimal 1.8 inline selected-Work/version attachment interaction, exact opaque native command/event/status contract and return context for W2.A01.T02. Keep production file choose, drop and attach unavailable until CAP-05.S01.T01 implements and qualifies the trusted native/Core bridge; pass no source-file path, bytes, stock Tauri drop path event or broad filesystem grant through the renderer. The protected reader remains pending CAP-05.S04.",
+  "intentionalAmendmentAuthority": {
+    "amendmentId": "W2.A01",
+    "changeRequestId": "ECR-0009",
+    "controlTaskId": "W2.A01.T01",
+    "referenceApprovalPath": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"
+  }
+}

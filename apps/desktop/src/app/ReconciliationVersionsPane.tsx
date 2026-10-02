@@ -3,6 +3,8 @@ import { CoreApiClientError, createCoreApiClient, type VersionCommand, type Vers
   type VersionDefinition, type VersionOutcome, type VersionPlan, type VersionPreview, type VersionReference,
   type VersionWorkPage, type WorkVersion, type UpdateRelationDraft } from "@research-observatory/contracts/core-api";
 import { Button, DataTable, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
+import { DocumentAttachmentPane, type AttachmentHandoff } from "./DocumentAttachmentPane";
+import { attachmentSelection, sameAttachmentSelection } from "./documentAttachment";
 
 type Client = ReturnType<typeof createCoreApiClient>;
 const kinds: readonly VersionDefinition["kind"][] = ["preprint", "accepted-manuscript", "version-of-record", "erratum", "correction", "expression-of-concern", "retraction", "not-reported"];
@@ -17,9 +19,13 @@ const versionLabel = (context: VersionContext, id: string): string => {
   return index < 0 ? "Historical version" : `${label(context.versions[index]!.definition.kind)} · version ${index + 1}`;
 };
 
-export function ReconciliationVersionsPane({ root, projectId, client, announce, onClose, onDenied }: {
+export function ReconciliationVersionsPane({ root, projectId, client, announce, onClose, onDenied, onTaskCenter, returnAttachment, onAttachmentReturnConsumed, onAttachmentRecovery }: {
   readonly root: string; readonly projectId: string; readonly client: Client; readonly announce: (message: string) => void;
   readonly onClose: () => void; readonly onDenied: () => void;
+  readonly onTaskCenter?: ((handoff: AttachmentHandoff) => void) | undefined;
+  readonly returnAttachment?: AttachmentHandoff | null | undefined;
+  readonly onAttachmentReturnConsumed?: ((handoff: AttachmentHandoff) => void) | undefined;
+  readonly onAttachmentRecovery?: ((selection: AttachmentHandoff["selection"], handoff: AttachmentHandoff | null) => void) | undefined;
 }): ReactNode {
   const [page, setPage] = useState<VersionWorkPage | null>(null), [cursors, setCursors] = useState<readonly (string | null)[]>([null]);
   const [selected, setSelected] = useState<readonly string[]>([]), [context, setContext] = useState<VersionContext | null>(null);
@@ -32,15 +38,32 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
   const [preview, setPreview] = useState<{ plan: VersionPlan; value: VersionPreview } | null>(null);
   const [command, setCommand] = useState<VersionCommand | null>(null), [outcome, setOutcome] = useState<VersionOutcome | null>(null);
   const [historical, setHistorical] = useState<WorkVersion | null>(null);
+  const [attachmentVersionId, setAttachmentVersionId] = useState<string | null>(null);
+  const [attachmentInitialSourceId, setAttachmentInitialSourceId] = useState<string | undefined>(undefined);
+  const [attachmentHandoff, setAttachmentHandoff] = useState<AttachmentHandoff | null>(null);
   const [needsRefresh, setNeedsRefresh] = useState(false);
   const live = useRef(true), generation = useRef(0), pending = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null), previewHeading = useRef<HTMLHeadingElement>(null), resultHeading = useRef<HTMLHeadingElement>(null), historyHeading = useRef<HTMLHeadingElement>(null);
   const reviewButton = useRef<HTMLButtonElement>(null), previewButton = useRef<HTMLButtonElement>(null);
   const inventoryHeading = useRef<HTMLHeadingElement>(null);
   const refreshButton = useRef<HTMLButtonElement>(null);
+  const attachmentTriggers = useRef(new Map<string, HTMLButtonElement>());
   const unresolved = command !== null && outcome === null, disabled = busy || preview !== null || command !== null || outcome !== null;
   const current = (ticket: number): boolean => live.current && generation.current === ticket;
-  useEffect(() => { live.current = true; void loadPage([null]); return () => { live.current = false; generation.current += 1; }; }, []);
+  useEffect(() => {
+    live.current = true;
+    if (returnAttachment?.selection.projectId === projectId) {
+      setSelected([returnAttachment.selection.workId]);
+      void loadContext([returnAttachment.selection.workId], false, returnAttachment);
+    } else void loadPage([null]);
+    return () => { live.current = false; generation.current += 1; };
+  }, []);
+  useEffect(() => {
+    if (attachmentHandoff && context && attachmentVersionId === attachmentHandoff.selection.versionId
+      && sameAttachmentSelection(attachmentHandoff.selection,
+        attachmentSelection(context, attachmentHandoff.selection.versionId,
+          attachmentHandoff.selection.sourceAssertionRevisionId))) onAttachmentReturnConsumed?.(attachmentHandoff);
+  }, [attachmentHandoff, attachmentVersionId, context, onAttachmentReturnConsumed]);
   useEffect(() => { if (context) heading.current?.focus(); }, [context]);
   useEffect(() => { if (page && !context) inventoryHeading.current?.focus(); }, [page]);
   useEffect(() => { if (preview) previewHeading.current?.focus(); }, [preview]);
@@ -61,6 +84,7 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
           && error.problem.code === "RO-CORE-RECONCILIATION-VERSION-NOT-APPLIED";
         if (denied) {
           setPage(null); setSelected([]); setContext(null); setPreview(null); setCommand(null); setOutcome(null); setHistorical(null);
+          setAttachmentVersionId(null);
           setRationale(""); setSources([]); setVersionId(""); setTargetId(""); setEvidenceKey(""); setDateValue(""); onDenied();
           setNeedsRefresh(false);
         }
@@ -79,13 +103,24 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
       if (current(ticket)) { setPage(result); setCursors(next); }
     });
   }
-  async function loadContext(ids = selected, preserveDraft = false): Promise<void> {
+  async function loadContext(ids = selected, preserveDraft = false, handoff: AttachmentHandoff | null = null): Promise<void> {
     await perform(async (ticket) => {
       const result = await client.inspectScholarlyVersionContext({ root, workIds: [...ids].sort() });
       if (result.projectId !== projectId) throw new Error("RO-CORE-RESPONSE-INVALID");
       if (current(ticket)) {
         setContext(result); setPreview(null); setCommand(null); setOutcome(null); setHistorical(null);
+        setAttachmentVersionId(null); setAttachmentInitialSourceId(undefined); setAttachmentHandoff(null);
         setNeedsRefresh(false);
+        if (handoff && !preserveDraft) {
+          const binding = attachmentSelection(result, handoff.selection.versionId,
+            handoff.selection.sourceAssertionRevisionId);
+          if (sameAttachmentSelection(handoff.selection, binding)) {
+            setAttachmentInitialSourceId(handoff.selection.sourceAssertionRevisionId);
+            setAttachmentHandoff(handoff);
+            setAttachmentVersionId(binding!.versionId);
+          }
+          else setFailure("The selected Work/version changed while you were away. Review current revisions before another attachment attempt.");
+        }
         if (preserveDraft) {
           const members = new Set(result.works.flatMap((work) => work.assertionRevisionIds));
           const available = new Set(result.versions.map((version) => version.versionId));
@@ -109,8 +144,19 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
   }
   function backToWorks(): void {
     setContext(null); setHistorical(null); setPreview(null); setCommand(null); setOutcome(null); setFailure(null);
+    setAttachmentVersionId(null); setAttachmentInitialSourceId(undefined); setAttachmentHandoff(null);
     setNeedsRefresh(false);
+    if (!page) void loadPage([null]);
     globalThis.requestAnimationFrame(() => { if (live.current) reviewButton.current?.focus(); });
+  }
+  function closeAttachment(): void {
+    const closedVersionId = attachmentVersionId;
+    setAttachmentVersionId(null); setAttachmentInitialSourceId(undefined); setAttachmentHandoff(null);
+    globalThis.requestAnimationFrame(() => {
+      const target = closedVersionId ? attachmentTriggers.current.get(closedVersionId) : null;
+      if (live.current && target?.isConnected && !target.disabled) target.focus();
+      else if (live.current) heading.current?.focus();
+    });
   }
   function backToDraft(): void {
     setPreview(null);
@@ -193,8 +239,8 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
     </> : <>
       <h3 ref={heading} tabIndex={-1} className="ro-typography ro-typography--card-title">Review Work versions</h3>
       <p>Version classifications, relationships and citable preferences are researcher decisions. Original assertions and competing status evidence stay available. A preference does not remove a warning or grant source rights.</p>
-      <div className="ro-action-row"><Button disabled={busy || unresolved} onClick={backToWorks}>Back to Works</Button>
-        <Button ref={refreshButton} disabled={busy || command !== null} onClick={() => void loadContext(context.works.map((work) => work.workId), true)}>Refresh version evidence</Button></div>
+      <div className="ro-action-row"><Button disabled={busy || unresolved || attachmentVersionId !== null} onClick={backToWorks}>Back to Works</Button>
+        <Button ref={refreshButton} disabled={busy || command !== null || attachmentVersionId !== null} onClick={() => void loadContext(context.works.map((work) => work.workId), true)}>Refresh version evidence</Button></div>
       {context.preferenceStates.map((state) => <section key={state.workId} className="ro-stack" aria-label={`Citable preference for Work ${state.workId}`}>
         <p className="ro-wrap-anywhere">Work {state.workId}</p>
         {state.selected ? <><StatusBadge>Preferred citable version · {state.state.replaceAll("-", " ")}</StatusBadge><p>{versionLabel(context, state.selected.versionId)}</p>
@@ -206,10 +252,17 @@ export function ReconciliationVersionsPane({ root, projectId, client, announce, 
         </Notification>)}
         {!context.relations.some((item) => warnings[item.assertion.kind]) ? <p>No sourced warning relationship is recorded in this context. This does not establish that a work has no corrections or retractions.</p> : null}
       </section>
-      <DataTable caption="Current Work versions" columns={[{ id: "version", label: "Version" }, { id: "date", label: "Reported date" }, { id: "placement", label: "Membership" }, { id: "history", label: "History" }]}
+      <DataTable caption="Current Work versions" columns={[{ id: "version", label: "Version" }, { id: "date", label: "Reported date" }, { id: "placement", label: "Membership" }, { id: "history", label: "History" }, { id: "attachment", label: "Full text" }]}
         rows={context.versions.map((version) => ({ id: version.versionId, version: versionLabel(context, version.versionId), date: dateLabel(version.definition.date),
           placement: context.placements.find((item) => item.versionId === version.versionId)?.state.replaceAll("-", " ") ?? "Requires review",
-          history: <Button disabled={busy || unresolved} onClick={() => void inspect(version.revisionId)}>Inspect version history</Button> }))} rowKey={(row) => String(row.id)} />
+          history: <Button disabled={busy || unresolved} onClick={() => void inspect(version.revisionId)}>Inspect version history</Button>,
+          attachment: <Button disabled={busy || unresolved || needsRefresh || attachmentVersionId !== null
+            || !version.definition.assertionRevisionIds.some((id) => attachmentSelection(context, version.versionId, id))}
+            ref={(element) => { if (element) attachmentTriggers.current.set(version.versionId, element); else attachmentTriggers.current.delete(version.versionId); }}
+            onClick={() => { setAttachmentInitialSourceId(undefined); setAttachmentHandoff(null); setAttachmentVersionId(version.versionId); }}>Attach full text to this version</Button> }))} rowKey={(row) => String(row.id)} />
+      {attachmentVersionId ? <DocumentAttachmentPane key={attachmentVersionId} root={root} context={context} versionId={attachmentVersionId}
+        client={client} announce={announce} onClose={closeAttachment} onTaskCenter={onTaskCenter}
+        onRecoveryContext={onAttachmentRecovery} initialSourceId={attachmentInitialSourceId} initialHandoff={attachmentHandoff} /> : null}
       {historical ? <section className="ro-stack" aria-label="Retained version history"><h4 ref={historyHeading} tabIndex={-1}>Retained version revision</h4>
         <p>{label(historical.definition.kind)} · {dateLabel(historical.definition.date)}</p><p className="ro-wrap-anywhere">Revision: {historical.revisionId}. Decision: {historical.decisionRevisionId}.</p>
         <ul>{historical.definition.assertionRevisionIds.map((id) => <li key={id} className="ro-wrap-anywhere">Source assertion: {id}</li>)}</ul>
