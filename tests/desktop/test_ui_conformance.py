@@ -39,6 +39,7 @@ from ui_conformance import (  # noqa: E402
     new_page,
     open_browser,
     provenance_only_reference_ratification,
+    reference_package_at,
     set_page,
     wave_slice_authority_bound_approval_errors,
     wave_slice_proposal_consumption_errors,
@@ -77,6 +78,149 @@ class UiConformanceTests(unittest.TestCase):
 
     def git(self, root: Path, *args: str) -> str:
         return subprocess.run(["git", *args], cwd=root, check=True, capture_output=True, text=True).stdout.strip()
+
+    def amendment_reference_fixture(
+        self,
+        temporary: str,
+        *,
+        actor: str = "human:repository-owner",
+        proposal_deferred: bool = False,
+        published_deferred: bool = False,
+        omit_published_deferred: bool = False,
+        bind_proposal: bool = True,
+        wrong_source_hash: bool = False,
+        changed_scope: bool = False,
+    ) -> tuple[Path, str]:
+        root = Path(temporary) / "repo"
+        root.mkdir()
+        self.git(root, "init", "-b", "main")
+        self.git(root, "config", "user.name", "UI Authority Test")
+        self.git(root, "config", "user.email", "ui-authority@example.invalid")
+        self.git(root, "config", "core.autocrlf", "false")
+        reference = root / "design" / "ui-reference"
+        reference.mkdir(parents=True)
+        approval_path = reference / "APPROVAL.yaml"
+        approval_path.write_text(
+            "reference_id: RO-UI-ACADEMIC-MINIMAL-1.7\nstatus: approved\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "approve predecessor reference")
+
+        proposal_path = REPO / "planning" / "W2-reference-1.8" / "APPROVAL.yaml"
+        proposal = yaml.safe_load(proposal_path.read_text(encoding="utf-8"))
+        if proposal_deferred:
+            proposal["deferred_surfaces"] = []
+        proposal_root = root / "planning" / "W2-reference-1.8"
+        proposal_root.mkdir(parents=True)
+        proposal_approval = proposal_root / "APPROVAL.yaml"
+        proposal_approval.write_text(yaml.safe_dump(proposal, sort_keys=False), encoding="utf-8", newline="\n")
+        proposal_manifest = {
+            "reference_id": proposal["reference_id"],
+            "version": proposal["version"],
+            "status": "proposed",
+            "approval_file": "APPROVAL.yaml",
+            "canonical_token_file": "APPROVAL.yaml",
+            "style_guides": ["APPROVAL.yaml"],
+            "workflow_catalog": "APPROVAL.yaml",
+            "page_contracts": "APPROVAL.yaml",
+            "page_inventory": "APPROVAL.yaml",
+            "site_manifest": "APPROVAL.yaml",
+            "generator": "APPROVAL.yaml",
+            "validator": "APPROVAL.yaml",
+            "governed_files": ["APPROVAL.yaml"],
+            "file_hashes": {"APPROVAL.yaml": hashlib.sha256(proposal_approval.read_bytes()).hexdigest()},
+        }
+        proposal_manifest_path = proposal_root / "REFERENCE_MANIFEST.yaml"
+        proposal_manifest_path.write_text(
+            yaml.safe_dump(proposal_manifest, sort_keys=False), encoding="utf-8", newline="\n"
+        )
+        packet_path = root / "planning" / "enabler-change-requests" / "ECR-0009.packet.json"
+        packet_files = [
+            {
+                "path": "planning/W2-reference-1.8/APPROVAL.yaml",
+                "sha256": (
+                    "0" * 64 if wrong_source_hash else hashlib.sha256(proposal_approval.read_bytes()).hexdigest()
+                ),
+            },
+            {
+                "path": "planning/W2-reference-1.8/REFERENCE_MANIFEST.yaml",
+                "sha256": hashlib.sha256(proposal_manifest_path.read_bytes()).hexdigest(),
+            },
+        ]
+        if not bind_proposal:
+            packet_files.pop(0)
+        packet = {
+            "documentType": "enabler-change-request-packet",
+            "changeRequestId": "ECR-0009",
+            "proposedAmendmentId": "W2.A01",
+            "targetWave": "W2",
+            "status": "pending-approval",
+            "executionState": "non-executable",
+            "governedExperience": {"files": packet_files},
+        }
+        self.write_json(packet_path, packet)
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "bind reviewed proposal and amendment packet")
+        packet_commit = self.git(root, "rev-parse", "HEAD")
+
+        record_path = root / "planning" / "wave-amendment-approvals" / "W2.A01.json"
+        approved_at = "2026-10-02T16:23:51Z"
+        record = {
+            "schemaVersion": "1.0",
+            "documentType": "wave-amendment-approval",
+            "amendmentId": "W2.A01",
+            "changeRequestId": "ECR-0009",
+            "targetWave": "W2",
+            "status": "APPROVED",
+            "approvedBy": actor,
+            "approvedAt": approved_at,
+            "authorizedTaskIds": ["W2.A01.T01", "W2.A01.T02"],
+            "packet": {
+                "commit": packet_commit,
+                "path": "planning/enabler-change-requests/ECR-0009.packet.json",
+                "sha256": hashlib.sha256(packet_path.read_bytes()).hexdigest(),
+            },
+        }
+        self.write_json(record_path, record)
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "record human amendment approval")
+        introduction = self.git(root, "rev-parse", "HEAD")
+
+        approved = {
+            **proposal,
+            "status": "approved",
+            "approval_kind": "human",
+            "approved_by": "human:repository-owner",
+            "approved_at": approved_at,
+            "approval_basis": "Repository owner approved the exact proposal.",
+            "authority": {
+                "amendment_id": "W2.A01",
+                "change_request_id": "ECR-0009",
+                "approval_record": "planning/wave-amendment-approvals/W2.A01.json",
+                "approval_record_sha256": hashlib.sha256(record_path.read_bytes()).hexdigest(),
+                "approval_record_introduction_commit": introduction,
+            },
+        }
+        if published_deferred:
+            approved["deferred_surfaces"] = []
+        if omit_published_deferred:
+            approved.pop("deferred_surfaces", None)
+        if changed_scope:
+            approved["scope"]["normative"].append("Unapproved extra scope")
+        approval_path.write_text(yaml.safe_dump(approved, sort_keys=False), encoding="utf-8", newline="\n")
+        approved_manifest = {
+            **proposal_manifest,
+            "status": "approved",
+            "file_hashes": {"APPROVAL.yaml": hashlib.sha256(approval_path.read_bytes()).hexdigest()},
+        }
+        (reference / "REFERENCE_MANIFEST.yaml").write_text(
+            yaml.safe_dump(approved_manifest, sort_keys=False), encoding="utf-8", newline="\n"
+        )
+        self.git(root, "add", "--all")
+        self.git(root, "commit", "-m", "publish approved reference")
+        return root, self.git(root, "rev-parse", "HEAD")
 
     def wave_slice_authority_fixture(
         self,
@@ -644,10 +788,9 @@ class UiConformanceTests(unittest.TestCase):
 
     def test_actual_amendment_bound_v16_approval_shape_is_exact(self) -> None:
         # Historical approval shape must not read whichever reference is active now.
+        approval_commit = "0460b2af60643172504e1abe0f185e010f171700"
         approval = yaml.safe_load(
-            subprocess.check_output(
-                ["git", "show", "0460b2af60643172504e1abe0f185e010f171700:design/ui-reference/APPROVAL.yaml"], cwd=REPO
-            )
+            subprocess.check_output(["git", "show", f"{approval_commit}:design/ui-reference/APPROVAL.yaml"], cwd=REPO)
         )
         self.assertEqual([], approval_record_errors(approval, "v1.6-approval", "RO-UI-ACADEMIC-MINIMAL-1.6"))
         self.assertEqual(
@@ -660,6 +803,85 @@ class UiConformanceTests(unittest.TestCase):
             },
             set(approval["authority"]),
         )
+        _, _, errors = reference_package_at(REPO, approval_commit, "RO-UI-ACADEMIC-MINIMAL-1.6")
+        self.assertEqual([], errors)
+
+    def test_amendment_publication_accepts_exact_proposal_without_deferred_surfaces(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval_commit = self.amendment_reference_fixture(temporary)
+            approval_bytes, package_digest, errors = reference_package_at(
+                root, approval_commit, "RO-UI-ACADEMIC-MINIMAL-1.8"
+            )
+
+        self.assertEqual([], errors)
+        self.assertIsNotNone(approval_bytes)
+        self.assertIsNotNone(package_digest)
+
+    def test_amendment_publication_retains_legacy_bare_actor_form(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval_commit = self.amendment_reference_fixture(temporary, actor="repository-owner")
+            _, _, errors = reference_package_at(root, approval_commit, "RO-UI-ACADEMIC-MINIMAL-1.8")
+
+        self.assertEqual([], errors)
+
+    def test_amendment_publication_rejects_prefixed_actor_substitution(self) -> None:
+        for actor in ("human:other-owner", "human:human:repository-owner"):
+            with self.subTest(actor=actor), tempfile.TemporaryDirectory() as temporary:
+                root, approval_commit = self.amendment_reference_fixture(temporary, actor=actor)
+                _, _, errors = reference_package_at(root, approval_commit, "RO-UI-ACADEMIC-MINIMAL-1.8")
+                self.assertTrue(any("approver" in error for error in errors), errors)
+
+    def test_amendment_publication_rejects_omission_if_proposal_declares_deferred_surfaces(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval_commit = self.amendment_reference_fixture(
+                temporary, proposal_deferred=True, omit_published_deferred=True
+            )
+            _, _, errors = reference_package_at(root, approval_commit, "RO-UI-ACADEMIC-MINIMAL-1.8")
+
+        self.assertTrue(any("approved amendment proposal" in error for error in errors), errors)
+
+    def test_amendment_publication_rejects_added_deferred_surfaces_and_scope(self) -> None:
+        for published_deferred, changed_scope in ((True, False), (False, True)):
+            with (
+                self.subTest(published_deferred=published_deferred, changed_scope=changed_scope),
+                tempfile.TemporaryDirectory() as temporary,
+            ):
+                root, approval_commit = self.amendment_reference_fixture(
+                    temporary, published_deferred=published_deferred, changed_scope=changed_scope
+                )
+                _, _, errors = reference_package_at(root, approval_commit, "RO-UI-ACADEMIC-MINIMAL-1.8")
+                self.assertTrue(any("approved amendment proposal" in error for error in errors), errors)
+
+    def test_amendment_publication_rejects_unbound_or_misbound_proposal(self) -> None:
+        for bind_proposal, wrong_source_hash in ((False, False), (True, True)):
+            with (
+                self.subTest(bind_proposal=bind_proposal, wrong_source_hash=wrong_source_hash),
+                tempfile.TemporaryDirectory() as temporary,
+            ):
+                root, approval_commit = self.amendment_reference_fixture(
+                    temporary, bind_proposal=bind_proposal, wrong_source_hash=wrong_source_hash
+                )
+                _, _, errors = reference_package_at(root, approval_commit, "RO-UI-ACADEMIC-MINIMAL-1.8")
+                self.assertTrue(any("proposal" in error for error in errors), errors)
+
+    def test_historical_amendment_without_proposal_inventory_keeps_exact_approved_blob(self) -> None:
+        _, _, errors = reference_package_at(
+            REPO,
+            "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b",
+            "RO-UI-ACADEMIC-MINIMAL-1.4",
+        )
+        self.assertEqual([], errors)
+
+    def test_compact_amendment_approval_still_rejects_extra_fields_and_authority_keys(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, approval_commit = self.amendment_reference_fixture(temporary)
+            approval = yaml.safe_load(self.git(root, "show", f"{approval_commit}:design/ui-reference/APPROVAL.yaml"))
+        altered = dict(approval)
+        altered["unreviewed_field"] = "value"
+        self.assertTrue(approval_record_errors(altered, "extra", approval["reference_id"]))
+        altered = dict(approval)
+        altered["authority"] = {**approval["authority"], "unreviewed_field": "value"}
+        self.assertTrue(approval_record_errors(altered, "authority", approval["reference_id"]))
 
     def test_wave_slice_bound_approval_accepts_exact_projection_fixture(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

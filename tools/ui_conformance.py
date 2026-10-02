@@ -1393,8 +1393,12 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
     design_authority = (
         isinstance(value.get("authority"), dict) and set(value["authority"]) == DESIGN_APPROVAL_AUTHORITY_KEYS
     )
-    design_keys = AUTHORITY_APPROVAL_KEYS - {"deferred_surfaces"}
-    if keys not in {LEGACY_APPROVAL_KEYS, AUTHORITY_APPROVAL_KEYS} and not (design_authority and keys == design_keys):
+    amendment_authority = (
+        isinstance(value.get("authority"), dict) and set(value["authority"]) == APPROVAL_AUTHORITY_KEYS
+    )
+    compact_authority_keys = AUTHORITY_APPROVAL_KEYS - {"deferred_surfaces"}
+    compact_authority = (design_authority or amendment_authority) and keys == compact_authority_keys
+    if keys not in {LEGACY_APPROVAL_KEYS, AUTHORITY_APPROVAL_KEYS} and not compact_authority:
         expected = AUTHORITY_APPROVAL_KEYS if keys & {"approval_kind", "authority"} else LEGACY_APPROVAL_KEYS
         errors.append(
             f"{label}: approval fields must be exact; missing={sorted(expected - keys)}, "
@@ -1434,7 +1438,7 @@ def approval_record_errors(value: object, label: str, reference_id: str) -> list
     deferred = value.get("deferred_surfaces", [])
     if not isinstance(deferred, list) or any(not isinstance(item, str) or not item.strip() for item in deferred):
         errors.append(f"{label}: deferred_surfaces must be an array of nonempty strings")
-    if keys == AUTHORITY_APPROVAL_KEYS or design_authority:
+    if keys == AUTHORITY_APPROVAL_KEYS or compact_authority:
         authority = value["authority"]
         if value["approval_kind"] != "human" or not re.fullmatch(
             r"human:[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?", str(value["approved_by"])
@@ -1481,6 +1485,67 @@ def commit_is_ancestor(repo: Path, ancestor: str, descendant: str) -> bool:
     if completed.returncode not in {0, 1}:
         raise ValueError(completed.stderr.decode("utf-8", errors="replace").strip() or "git merge-base failed")
     return completed.returncode == 0
+
+
+def amendment_proposal_approval_errors(
+    repo: Path,
+    approval: dict[str, Any],
+    packet: dict[str, Any],
+    packet_commit: str,
+    approval_commit: str,
+    approval_path: str,
+) -> list[str]:
+    """Bind approved amendment metadata to its exact packet-owned proposal."""
+    label = f"{approval_commit}:{approval_path}"
+    experience = packet.get("governedExperience")
+    files = experience.get("files") if isinstance(experience, dict) else None
+    proposal_files = (
+        [
+            item
+            for item in files
+            if isinstance(item, dict)
+            and isinstance(item.get("path"), str)
+            and item["path"].startswith("planning/")
+            and item["path"].endswith("/APPROVAL.yaml")
+            and "\\" not in item["path"]
+            and ".." not in item["path"].split("/")
+        ]
+        if isinstance(files, list)
+        else []
+    )
+    if len(proposal_files) != 1:
+        # This exact accepted 1.4 approval predates packet-bound reference inventories.
+        legacy_commit = "9f26bd47c653b1c4dd6c3be94c2feefceeb96c4b"
+        legacy_sha256 = "2eb5ea95f3b7359ba99e4030eedb96bea2f6c5f349217de6ac1ecb87b527aa06"
+        legacy_payload, legacy_error = git_blob_at(repo, approval_commit, approval_path)
+        if (
+            approval_commit == legacy_commit
+            and approval_path == "design/ui-reference/APPROVAL.yaml"
+            and approval.get("reference_id") == "RO-UI-ACADEMIC-MINIMAL-1.4"
+            and "deferred_surfaces" in approval
+            and not legacy_error
+            and legacy_payload is not None
+            and hashlib.sha256(legacy_payload).hexdigest() == legacy_sha256
+            and yaml.safe_load(legacy_payload.decode("utf-8")) == approval
+        ):
+            return []
+        return [f"{label}: amendment approval lacks one packet-bound reference proposal"]
+    source = proposal_files[0]
+    source_payload, source_error = git_blob_at(repo, packet_commit, source["path"])
+    if source_error or source_payload is None or hashlib.sha256(source_payload).hexdigest() != source.get("sha256"):
+        return [f"{label}: approved amendment proposal bytes differ from the packet"]
+    try:
+        proposal = yaml.safe_load(source_payload.decode("utf-8"))
+    except UnicodeDecodeError, yaml.YAMLError:
+        return [f"{label}: approved amendment proposal is unreadable"]
+    if not isinstance(proposal, dict) or proposal.get("status") != "proposed":
+        return [f"{label}: approved amendment proposal is not proposed"]
+    mutable = {"status", "approval_kind", "approved_by", "approved_at", "approval_basis", "authority"}
+    proposal_stable = {key: value for key, value in proposal.items() if key not in mutable}
+    approval_stable = {key: value for key, value in approval.items() if key not in mutable}
+    if proposal_stable != approval_stable:
+        return [f"{label}: approved reference differs from the approved amendment proposal"]
+    return []
 
 
 def amendment_authority_bound_approval_errors(
@@ -1536,7 +1601,8 @@ def amendment_authority_bound_approval_errors(
         return [*errors, f"{label}: authority approval record is not valid UTF-8 JSON"]
     if not isinstance(authority_record, dict):
         return [*errors, f"{label}: authority approval record must be an object"]
-    expected_human = f"human:{authority_record.get('approvedBy', '')}"
+    approved_actor = authority_record.get("approvedBy", "")
+    expected_human = approved_actor if str(approved_actor).startswith("human:") else f"human:{approved_actor}"
     authorized_tasks = authority_record.get("authorizedTaskIds")
     if (
         authority_record.get("schemaVersion") != "1.0"
@@ -1589,6 +1655,12 @@ def amendment_authority_bound_approval_errors(
                 or packet_record.get("executionState") != "non-executable"
             ):
                 errors.append(f"{label}: authority packet does not bind the cited amendment and change request")
+            if isinstance(packet_record, dict):
+                errors.extend(
+                    amendment_proposal_approval_errors(
+                        repo, approval, packet_record, packet_commit, approval_commit, approval_path
+                    )
+                )
 
     prior_approval_commits = git(
         repo,

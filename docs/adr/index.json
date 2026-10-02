@@ -350,6 +350,15 @@
       "linkedTasks": [
         "W2.A01.T01"
       ]
+    },
+    {
+      "id": "ADR-0036",
+      "path": "docs/adr/ADR-0036-verify-exact-amendment-reference-approval-metadata.md",
+      "title": "Verify exact amendment reference approval metadata",
+      "status": "Proposed",
+      "linkedTasks": [
+        "W2.A01.T02"
+      ]
     }
   ]
 }
