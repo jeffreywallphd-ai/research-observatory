@@ -1,0 +1,75 @@
+{
+  "task_id": "W2.A01.T01",
+  "attempt_id": "R02",
+  "candidate_commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+  "base_commit": "f64b7dfe0b347e9293064e53460f7dfb675a621f",
+  "submission_record_commit": "4746d299d62e716d73d2e6bd1e0d831496ee22ff",
+  "reviewer": "agent:/root/verifier_repair_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "evidence_sha256": "6dae87844fb671678a01241151595100a6a61a43a986893a03e5f244feeb2f33",
+  "packet_sha256": "ccf45f6499f9d474c7d490465bb55c2ad61e095047fe1b533590199b06192a57",
+  "acceptance_criteria_sha256": "ee05b1366fd5ad93a5d389bdaec94e94a3968eff68625df8011322a8e6aa9a38",
+  "selection_sha256": "8d1e7672d66dc552363b5b3ac4eda4a5b1df57a8d090649ef2afc0f42b7370bf",
+  "notes": "Independent expanded R02 review authenticates the strict f64b7dfe-to-a2e16012 descendant, frozen R02 submission, exact 12-path incremental diff, evidence SHA-256, and all ten final-candidate raw-log hashes. The five remediation source/document paths add a closed typed product-source classifier, two real-Git denial reproductions, legal post-publication and hidden add/revert cases, and matching ADR/procedure/acceptance text. R01 changes-requested ledger and its failed red reproduction remain immutable; R01-F01 is replayed and closed below. The 17-case exact-candidate schema/Git suite, exact task-base and canonical UI/ADR gates, backlog, targeted Ruff format/lint/mypy, and diff checks pass. Earlier 1.0/1.1 tests remain in the selected fresh suite with unchanged policy roots and governed uiFiles accounting. The f64b7dfe planctl suite is supplementary context only because no planctl input changed in this descendant. The repository-wide CAP-05 quality inventory failure remains deferred W2 work; targeted T01 quality passes are not represented as a global quality pass. This approval is only the W2.A01.T01 R02 task review disposition; W2.A01.T02, amendment exit, ordinary W2 resume, Wave qualification, and release retain their separate gates.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The exact opt-in 1.2 selector, immutable ECR packet/proposal/approval chain, and live T02 task authority remain intact. Fresh schema and real-Git positive/denial cases pass at a2e16012."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The gate retains current owner, lease, branch, base, reviewed T01 predecessor, approval introductions and governed history checks. Admitted typed product source now obeys publication-before-product chronology in the per-commit range."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "R01-F01's two previously accepted real-Git histories now deny: .d.ts product source before reference publication and .d.ts source mixed with planning/backlog.yaml. A separate post-publication typed commit passes, while typed add/revert denies. The earlier governed renderer/reference backlog-mix regression remains in the fresh suite."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "The fresh 17-case suite includes retained ordinary 1.0 and resumed 1.1 positive/adverse paths. No global policy root, ignored suffix, legacy contract shape, or governed changedFiles/uiFiles meaning was widened."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "assessment": "Indexed Proposed ADR-0035 remains linked to T01 without superseding ADR-0003. Its bounded typed-source clarification agrees with the task-start note and design-first procedure; the exact task-base ADR check passes 35 indexed records and 18 changed paths."
+    },
+    {
+      "criterion_index": 6,
+      "result": "satisfied",
+      "assessment": "The exact a2e16012 candidate has passing criterion-linked real-Git/schema, UI/ADR, backlog, targeted quality, and patch-hygiene logs with verified hashes. This independent disposition closes the sole open R01 finding; full W2 profiles remain later gates."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Submitted evidence and Git lineage",
+      "result": "passed",
+      "observation": "The R02 manifest hash matches the frozen backlog reference; its 12 changedFiles equal the exact f64b7dfe..a2e16012 Git diff; all ten cited raw-log hashes match; the R01 ledger hash remains b32d59580924a76854c75a856e9be60eb61d7cfb6a881ae0c6fca14cf63621b2."
+    },
+    {
+      "check": "R01-F01 failure and exact-candidate closure",
+      "result": "passed",
+      "observation": "The retained red log SHA-256 74b76770a688dd075d3e1d970b719b4a834722016561897252900937205b66e4 records two missing ValueErrors before the fix. At a2e16012, the same two cases and legal/hidden typed history pass in the 17-case real-Git suite; the reviewer also independently reran the two new tests, Ruff lint and format checks."
+    },
+    {
+      "check": "Scope and decision association",
+      "result": "passed",
+      "observation": "The remediation source diff after the adverse R01 transition contains only task-start note, ADR-0035, design-first procedure, UI gate and UI gate test. ECR packet, owner approval, ui-change schema, policy roots, ordinary/resumed lanes, and product/native/Core files are unchanged."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W2.A01.T01-R01-F01",
+      "disposition": "fixed",
+      "evidence": "At a2e16012, intentional_amendment_typed_product_path classifies allowed .d.ts product source independently of is_implementation_path. intentional_amendment_segments uses that class for reference-before-product ordering, backlog/product separation, per-commit typedProductFiles/typedProductCommits, and hidden add/revert detection. Fresh exact-candidate real-Git regressions deny both R01 reproductions and pass separate legal typed delivery without changing governed uiFiles."
+    }
+  ],
+  "prior_findings_replayed": [
+    "W2.A01.T01-R01-F01"
+  ]
+}

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 72613f3967717fe1ba0de601e16f87e69334b80f85297f4eabe71bfa4667c514
+source_sha256: a12b65fc6f4abf8dfb26ba1c3e96d13a2061fe6cb9c402857088eeb892c518ea
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2386,9 +2386,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W2.A01.T01 - Admit exact intentional amendment UI lineage
+### - [x] W2.A01.T01 - Admit exact intentional amendment UI lineage
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / agent:/root/verifier_repair_review (`changes-requested`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/verifier_repair_review (`approved`)
 
 **Dependencies:** `W2.A01.B00`
 
@@ -2417,7 +2417,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A01.T01
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -2449,7 +2449,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `ccf45f6499f9d474c7d490465bb55c2ad61e095047fe1b533590199b06192a57`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `ccf45f6499f9d474c7d490465bb55c2ad61e095047fe1b533590199b06192a57`
 
 - Candidate / base / branch: `a2e16012cfa9eb9a0f3413438fa0a88583d0be50` / `f64b7dfe0b347e9293064e53460f7dfb675a621f` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-02T20:40:25+00:00`
@@ -2463,15 +2465,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W2.A01.T01-R01-F01`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:/root/verifier_repair_review at `2026-10-02T20:19:01+00:00`
+**Disposition / reviewer / time:** `approved` / agent:/root/verifier_repair_review / `2026-10-02T20:52:44+00:00`
 
-**Latest notes:** Independent expanded review of the frozen R01 packet inspected the exact 16-path candidate diff, indexed Proposed ADR-0035, ECR-0009/T01 criteria, current review submission, and all 11 cited check logs. The evidence file SHA-256 and every raw-log SHA-256 match the submitted references. The final-candidate focused checks pass, but they miss one permitted typed product-source path class, so criterion 3 is not yet met. An earlier pre-submission finding at 0948d634 allowed a backlog transition to share a governed renderer or reference commit; f64b7dfe added a failing Git regression and closed that narrower case. The current finding is distinct: a permitted .d.ts attachment contract is excluded from governed uiFiles and bypasses both product chronology and mixed-backlog checks. The repository-wide quality inventory failure for ten prior CAP-05 Python files is disclosed and deferred to bounded W2 control maintenance; targeted quality checks pass for all T01-changed Python files, but this review does not call the global quality profile passed. T02 remains unclaimed and must not start on this adverse T01 disposition.
+**Immutable review ledger:** `artifacts/evidence/W2.A01.T01.review-R02.json` / `7b6ad12d4b0a7bb482c41a8df2986a30966bf04678c0cd63b18853616f346c1f`
 
-**Currently open findings:** `W2.A01.T01-R01-F01`
+**Review notes:** Independent expanded R02 review authenticates the strict f64b7dfe-to-a2e16012 descendant, frozen R02 submission, exact 12-path incremental diff, evidence SHA-256, and all ten final-candidate raw-log hashes. The five remediation source/document paths add a closed typed product-source classifier, two real-Git denial reproductions, legal post-publication and hidden add/revert cases, and matching ADR/procedure/acceptance text. R01 changes-requested ledger and its failed red reproduction remain immutable; R01-F01 is replayed and closed below. The 17-case exact-candidate schema/Git suite, exact task-base and canonical UI/ADR gates, backlog, targeted Ruff format/lint/mypy, and diff checks pass. Earlier 1.0/1.1 tests remain in the selected fresh suite with unchanged policy roots and governed uiFiles accounting. The f64b7dfe planctl suite is supplementary context only because no planctl input changed in this descendant. The repository-wide CAP-05 quality inventory failure remains deferred W2 work; targeted T01 quality passes are not represented as a global quality pass. This approval is only the W2.A01.T01 R02 task review disposition; W2.A01.T02, amendment exit, ordinary W2 resume, Wave qualification, and release retain their separate gates.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W2.A01.T01-R01-F01` `fixed` — At a2e16012, intentional_amendment_typed_product_path classifies allowed .d.ts product source independently of is_implementation_path. intentional_amendment_segments uses that class for reference-before-product ordering, backlog/product separation, per-commit typedProductFiles/typedProductCommits, and hidden add/revert detection. Fresh exact-candidate real-Git regressions deny both R01 reproductions and pass separate legal typed delivery without changing governed uiFiles.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/verifier_repair_review at `2026-10-02T20:52:44+00:00`
+
+**Latest notes:** Independent expanded R02 review authenticates the strict f64b7dfe-to-a2e16012 descendant, frozen R02 submission, exact 12-path incremental diff, evidence SHA-256, and all ten final-candidate raw-log hashes. The five remediation source/document paths add a closed typed product-source classifier, two real-Git denial reproductions, legal post-publication and hidden add/revert cases, and matching ADR/procedure/acceptance text. R01 changes-requested ledger and its failed red reproduction remain immutable; R01-F01 is replayed and closed below. The 17-case exact-candidate schema/Git suite, exact task-base and canonical UI/ADR gates, backlog, targeted Ruff format/lint/mypy, and diff checks pass. Earlier 1.0/1.1 tests remain in the selected fresh suite with unchanged policy roots and governed uiFiles accounting. The f64b7dfe planctl suite is supplementary context only because no planctl input changed in this descendant. The repository-wide CAP-05 quality inventory failure remains deferred W2 work; targeted T01 quality passes are not represented as a global quality pass. This approval is only the W2.A01.T01 R02 task review disposition; W2.A01.T02, amendment exit, ordinary W2 resume, Wave qualification, and release retain their separate gates.
+
+**Currently open findings:** -
 
 ### - [ ] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W2.A01.B00`, `W2.A01.T01`
 
