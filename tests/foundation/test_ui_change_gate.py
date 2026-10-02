@@ -2381,6 +2381,81 @@ class UiChangeGateTests(unittest.TestCase):
                         root, base, head, publication, contract_path, {reference}, policy
                     )
 
+    def test_intentional_amendment_accepts_only_exact_published_reference_projection(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, _initial, _package = self.prepare(temporary)
+            policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+            page_path = "planning/review-site/enablers/ECR-0005.html"
+            page = root / page_path
+            page.parent.mkdir(parents=True)
+            original = (
+                "<p>Historical approval remains unchanged. The current published reference is "
+                "<code>REF-1</code>; publication does not retroactively change this packet.</p>\n"
+            )
+            page.write_text(original, encoding="utf-8", newline="\n")
+            base = self.commit(root, "existing historic ECR projection")
+
+            approval = root / "design/ui-reference/APPROVAL.yaml"
+            record = yaml.safe_load(approval.read_text(encoding="utf-8"))
+            record["reference_id"] = "REF-2"
+            record["supersedes"] = "REF-1"
+            self.write_yaml(approval, record)
+            publication = self.commit(root, "publish approved successor reference")
+            contract_path = "artifacts/evidence/ui-change/W2.A01.T02.json"
+            self.write_json(root / contract_path, {"synthetic": "regular"})
+            (root / "apps/desktop/src/View.tsx").write_text(
+                "export const View = () => 'approved';\n", encoding="utf-8", newline="\n"
+            )
+            renderer = self.commit(root, "renderer after publication")
+            page.write_text(
+                original.replace("<code>REF-1</code>", "<code>REF-2</code>"), encoding="utf-8", newline="\n"
+            )
+            projection = self.commit(root, "refresh historic ECR current-reference projection")
+            segments = ui_gate.intentional_amendment_segments(
+                root,
+                base,
+                projection,
+                publication,
+                contract_path,
+                {"design/ui-reference/APPROVAL.yaml"},
+                policy,
+            )
+            self.assertEqual(["apps/desktop/src/View.tsx"], segments["uiFiles"])
+            for label, hostile_path, hostile_text in (
+                (
+                    "extra-content",
+                    page_path,
+                    original.replace("Historical", "Rewritten").replace("REF-1</code>;", "REF-2</code>;"),
+                ),
+                ("wrong-reference", page_path, original.replace("REF-1</code>;", "REF-X</code>;")),
+                (
+                    "new-page",
+                    "planning/review-site/enablers/ECR-0006.html",
+                    original.replace("REF-1</code>;", "REF-2</code>;"),
+                ),
+                (
+                    "nested-page",
+                    "planning/review-site/enablers/nested/ECR-0006.html",
+                    original.replace("REF-1</code>;", "REF-2</code>;"),
+                ),
+            ):
+                with self.subTest(label=label):
+                    self.git(root, "reset", "--hard", renderer)
+                    hostile = root / hostile_path
+                    hostile.parent.mkdir(parents=True, exist_ok=True)
+                    hostile.write_text(hostile_text, encoding="utf-8", newline="\n")
+                    head = self.commit(root, f"hostile {label} projection")
+                    with self.assertRaisesRegex(ValueError, "out-of-scope files"):
+                        ui_gate.intentional_amendment_segments(
+                            root,
+                            base,
+                            head,
+                            publication,
+                            contract_path,
+                            {"design/ui-reference/APPROVAL.yaml"},
+                            policy,
+                        )
+
     def test_intentional_amendment_automatic_base_uses_live_claim(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, _package = self.prepare(temporary)

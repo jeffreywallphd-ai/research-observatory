@@ -2035,6 +2035,32 @@ def intentional_amendment_typed_product_path(path: str) -> bool:
     return path.endswith(".d.ts") and path.startswith(("apps/desktop/src/", "packages/ui-components/src/"))
 
 
+def intentional_amendment_reference_projection(
+    repo: Path, base: str, parent: str, commit: str, publication: str, path: str, policy: dict[str, Any]
+) -> bool:
+    """Admit only the mechanical active-reference text refresh of an existing ECR page."""
+    if (
+        re.fullmatch(r"planning/review-site/enablers/ECR-[0-9]{4}\.html", path) is None
+        or tree_entry(repo, base, path) != ("100644", "blob")
+        or not is_ancestor(repo, publication, parent)
+    ):
+        return False
+    approval = yaml_object(blob(repo, publication, str(policy["approvalPath"])), "published reference approval")
+    previous, current = approval.get("supersedes"), approval.get("reference_id")
+    if (
+        not all(
+            isinstance(value, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", value)
+            for value in (previous, current)
+        )
+        or previous == current
+    ):
+        return False
+    before, after = blob(repo, parent, path), blob(repo, commit, path)
+    old = f"The current published reference is <code>{previous}</code>;".encode()
+    new = f"The current published reference is <code>{current}</code>;".encode()
+    return before.count(old) == 1 and after == before.replace(old, new, 1)
+
+
 def intentional_amendment_segments(
     repo: Path,
     base: str,
@@ -2078,7 +2104,10 @@ def intentional_amendment_segments(
         if any(path.startswith(contract_root) and path != contract_path for path in paths):
             raise ValueError("intentional amendment product range touched an extra UI contract")
         extra_delivery = sorted(
-            path for path in paths if not intentional_amendment_delivery_path(path, contract_path, policy)
+            path
+            for path in paths
+            if not intentional_amendment_delivery_path(path, contract_path, policy)
+            and not intentional_amendment_reference_projection(repo, base, parent, commit, publication, path, policy)
         )
         if extra_delivery:
             raise ValueError(f"intentional amendment product range touched out-of-scope files: {extra_delivery}")
