@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 441cd5b9d5527ba985755bffdb6593196bc2b065765ebcd783324dbcbd55f2d8
+source_sha256: be85aae401b47db20c0544f848c660c3406016a078532adeb5f1ab26bac08923
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2489,7 +2489,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A01.B00`, `W2.A01.T01`
 
@@ -2511,13 +2511,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Mounted desktop choose/drop intent, confirm/cancel/retry, exact-revision handoff, disabled/pending reader, keyboard/focus and unavailable-before-native cases using typed mock outcomes
 - Frozen opaque native command/event contract and no renderer path/bytes or stock Tauri drop event; trusted local Core/native attachment and native-only drop proof are original CAP-05.S01.T01 obligations after adoption
 
+**Evidence:**
+
+- `artifacts/evidence/W2.A01.T02.json` at `a6588fc5d2473d028a4f8d6c24ec8aa48e527255`
+
 #### Review history — W2.A01.T02
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `945d366602d1b0457013bea2a1a47640e26612021557ad4d96bf2d4322886565`
+
+- Candidate / base / branch: `a6588fc5d2473d028a4f8d6c24ec8aa48e527255` / `1f628843e415b6affbd811eb37d9fff437fac51f` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-02T22:59:58+00:00`
+- Evidence: `artifacts/evidence/W2.A01.T02.json` / `75097d4aa5d9b3ce2cf60c4e1a08090a5390cd91453448e021ca1638bc78a09a` / `a6588fc5d2473d028a4f8d6c24ec8aa48e527255`
+- Acceptance-criteria SHA-256: `a88ca37f57ae373595f4a7939bdb7e4b68215f0b6d34ef6d87e295c016e7d286`
+- Verification-selection SHA-256: `a9ead1522e3157e59ae89d0284254b7267fa460187dd22f51f1357d7518656f0`
+- Changed paths: `apps/desktop/src/app/ApplicationRuntime.tsx`, `apps/desktop/src/app/DocumentAttachmentPane.tsx`, `apps/desktop/src/app/ImportWorkspace.tsx`, `apps/desktop/src/app/ReconciliationPane.tsx`, `apps/desktop/src/app/ReconciliationVersionsPane.tsx`, `apps/desktop/src/app/TaskCenterWorkspace.tsx`, `apps/desktop/src/app/documentAttachment.test.ts`, `apps/desktop/src/app/documentAttachment.ts`, `apps/desktop/src/app/documentAttachmentNative.ts`, `artifacts/evidence/W2.A01.T02.task-start.md`, `artifacts/evidence/ui-change/W2.A01.T02.json`, `design/ui-reference/APPROVAL.yaml`, `design/ui-reference/CAPABILITY_COVERAGE.json`, `design/ui-reference/CAPABILITY_COVERAGE.md`, `design/ui-reference/PAGE_INVENTORY.md`, `design/ui-reference/PAGE_INVENTORY_SOURCE.md`, `design/ui-reference/README.md`, `design/ui-reference/REFERENCE_MANIFEST.yaml`, `design/ui-reference/SITE_MANIFEST.json`, `design/ui-reference/STYLE_GUIDE.md`, `design/ui-reference/STYLE_GUIDE_SOURCE.md`, `design/ui-reference/WORKFLOW_CATALOG.json`, `design/ui-reference/WORKFLOW_CATALOG.md`, `design/ui-reference/application-settings.html`, `design/ui-reference/assets/app.css`, `design/ui-reference/assets/app.js`, `design/ui-reference/audit-lineage.html`, `design/ui-reference/claim-graph.html`, `design/ui-reference/corpus-canvas.html`, `design/ui-reference/critical-lens.html`, `design/ui-reference/document-reader.html`, `design/ui-reference/evidence-matrix.html`, `design/ui-reference/help-onboarding.html`, `design/ui-reference/index.html`, `design/ui-reference/ingestion-reconciliation.html`, `design/ui-reference/intent-contract.html`, `design/ui-reference/living-monitor.html`, `design/ui-reference/manuscript-blueprint.html`, `design/ui-reference/manuscript-studio.html`, `design/ui-reference/model-center.html`, `design/ui-reference/new-project.html`, `design/ui-reference/novelty-audit.html`, `design/ui-reference/opportunity-radar.html`, `design/ui-reference/parsing-quality.html`, `design/ui-reference/project-settings.html`, `design/ui-reference/projects.html`, `design/ui-reference/prototype-index.html`, `design/ui-reference/research-notebook.html`, `design/ui-reference/reviewer-simulation.html`, `design/ui-reference/revision-response.html`, `design/ui-reference/schema-manager.html`, `design/ui-reference/screening.html`, `design/ui-reference/scripts/build_mockups.py`, `design/ui-reference/scripts/render_previews.py`, `design/ui-reference/scripts/smoke_interactions.py`, `design/ui-reference/search-studio.html`, `design/ui-reference/source-manager.html`, `design/ui-reference/study-design.html`, `design/ui-reference/style-guide.html`, `design/ui-reference/synthesis-studio.html`, `design/ui-reference/task-center.html`, `design/ui-reference/technical-reports.html`, `design/ui-reference/theory-map.html`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json`, `planning/review-site/enablers/ECR-0009.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/desktop/test_document_attachment_interactions.py`
+- Selected checks: `.venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A01.T02.reference-report-a6588fc5.json`, `.venv/Scripts/python.exe .local/w2-reference-control/tools/ui_change_gate.py --repo . --base 1f628843e415b6affbd811eb37d9fff437fac51f --head a6588fc5d2473d028a4f8d6c24ec8aa48e527255`, `From apps/desktop: node node_modules/typescript/bin/tsc --noEmit`, `From apps/desktop: node node_modules/vitest/vitest.mjs run src/app/documentAttachment.test.ts src/app/ImportWorkspace.test.tsx src/app/TaskCenterWorkspace.test.tsx src/app/ApplicationRuntime.test.tsx`, `From apps/desktop: node node_modules/vite/bin/vite.js build --config vite.product.config.ts`, `.venv/Scripts/python.exe -m unittest tests.desktop.test_document_attachment_interactions -v`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv/Scripts/python.exe -m ruff check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py`, `.venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py`, `From apps/desktop: node scripts/lint.mjs`, `.venv/Scripts/python.exe design/ui-reference/scripts/verify_site.py`, `.venv/Scripts/python.exe design/ui-reference/scripts/smoke_interactions.py`, `git diff --check 1f628843e415b6affbd811eb37d9fff437fac51f a6588fc5d2473d028a4f8d6c24ec8aa48e527255`
+- Deferred checks: `Repository-wide foundation:quality remains failed at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44): prior CAP-05 Python files need bounded inventory maintenance and affected format/mypy correction before Wave exit.`, `The planning review site check at artifacts/tmp/W2.A01.T02.plan-review-1d11c818.log failed because only ECR-0005/0006/0007 generated pages and manifest still project the former active 1.7 reference; regenerate those deterministic views after T02 review, outside T02's exact product delivery range.`, `Full desktop/service/security profiles, real native/Core admission, reader opening, integrated slice review and fresh W2 qualification remain for approved downstream tasks and exit; the current desktop profile still targets 1.7 pending reviewed retargeting after 1.8 publication.`
+- Selection rationale: Risk-selected exact-candidate checks cover approved-reference publication and Git chronology, changed renderer/native contract, mounted identity/focus/recovery, task-control validity, static type/build and local site behavior. The whole task-base UI gate is required and recorded separately after independently reviewed bounded parser maintenance. Pre-candidate adverse renderer findings were replayed; mock native outcomes do not qualify trusted file admission.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 
 ## Linked corrective tasks
