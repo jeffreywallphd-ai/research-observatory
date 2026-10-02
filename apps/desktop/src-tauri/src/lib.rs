@@ -6,6 +6,8 @@ mod connector_configuration;
 mod connector_configuration_dialog;
 pub mod directory_picker;
 #[cfg(windows)]
+mod document_runtime;
+#[cfg(windows)]
 mod import_report;
 mod import_runtime;
 #[cfg(windows)]

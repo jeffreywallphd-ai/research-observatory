@@ -16,7 +16,7 @@ import struct
 import threading
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager, nullcontext, suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, BinaryIO, cast
@@ -24,6 +24,7 @@ from typing import Any, BinaryIO, cast
 from nacl import bindings as sodium
 from nacl.exceptions import CryptoError
 
+from .ports.corpus import CorpusActor
 from .ports.object_store import (
     CleanupCategory,
     ObjectAccessClass,
@@ -41,6 +42,8 @@ from .ports.object_store import (
     ObjectNotFound,
     ObjectPutCommand,
     ObjectReferenced,
+    ObjectSourceTooLarge,
+    ObjectStagingCancelled,
     ObjectStoragePressure,
     ObjectStore,
     ObjectStoreProblem,
@@ -1220,7 +1223,12 @@ def _inventory(state: _StoreState) -> _Inventory:
                            AND document.object_sha256 = object.object_sha256)
                        + (SELECT count(*) FROM import_source_chunks AS chunk
                            WHERE chunk.project_id = object.project_id
-                             AND chunk.object_sha256 = object.object_sha256) AS reference_count,
+                             AND chunk.object_sha256 = object.object_sha256)
+                       + (SELECT count(*) FROM document_attachment_candidates AS candidate
+                           WHERE candidate.project_id = object.project_id
+                             AND candidate.object_sha256 = object.object_sha256
+                             AND NOT EXISTS (SELECT 1 FROM document_attachment_cancellations AS cancelled
+                               WHERE cancelled.candidate_id = candidate.candidate_id)) AS reference_count,
                        object.envelope_version, object.key_version, object.ciphertext_byte_length,
                        object.creation_source
                   FROM object_records AS object
@@ -1379,7 +1387,12 @@ _METADATA_SQL = """
                AND document.object_sha256 = object.object_sha256)
            + (SELECT count(*) FROM import_source_chunks AS chunk
                WHERE chunk.project_id = object.project_id
-                 AND chunk.object_sha256 = object.object_sha256) AS reference_count,
+                 AND chunk.object_sha256 = object.object_sha256)
+           + (SELECT count(*) FROM document_attachment_candidates AS candidate
+               WHERE candidate.project_id = object.project_id
+                 AND candidate.object_sha256 = object.object_sha256
+                 AND NOT EXISTS (SELECT 1 FROM document_attachment_cancellations AS cancelled
+                   WHERE cancelled.candidate_id = candidate.candidate_id)) AS reference_count,
            object.envelope_version, object.key_version, object.ciphertext_byte_length,
            object.creation_source
     FROM object_records AS object
@@ -1566,7 +1579,9 @@ def _stream_to_staging(
     allow_plaintext_fixture: bool,
     upgrade_boundary: Callable[[str], None] | None = None,
     admission_check: Callable[[int], None] | None = None,
-) -> tuple[Path, str, int, _EnvelopeMetadata]:
+    max_plaintext_bytes: int | None = None,
+    cancellation_requested: Callable[[], bool] | None = None,
+) -> tuple[Path, str, int, _EnvelopeMetadata, tuple[int, int]]:
     encrypted = protection_profile == _ENCRYPTED_PROFILE
     plaintext_fixture = protection_profile == _PLAINTEXT_FIXTURE and allow_plaintext_fixture
     if not encrypted and not plaintext_fixture:
@@ -1577,6 +1592,8 @@ def _stream_to_staging(
     descriptor = -1
     succeeded = False
     try:
+        if cancellation_requested is not None and cancellation_requested():
+            raise ObjectStagingCancelled("object staging was cancelled")
         descriptor = os.open(
             destination,
             os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, "O_BINARY", 0),
@@ -1607,9 +1624,13 @@ def _stream_to_staging(
             frame_index = 0
             block = _read_source_block(source)
             while True:
+                if cancellation_requested is not None and cancellation_requested():
+                    raise ObjectStagingCancelled("object staging was cancelled")
                 next_block = b"" if block == b"" else _read_source_block(source)
                 final = next_block == b""
                 length += len(block)
+                if max_plaintext_bytes is not None and length > max_plaintext_bytes:
+                    raise ObjectSourceTooLarge("object source exceeds the permitted length")
                 if length > MAX_SAFE_INTEGER:
                     raise ValueError("object exceeds the supported length")
                 digest.update(block)
@@ -1633,7 +1654,11 @@ def _stream_to_staging(
                 frame_index += 1
         else:
             while block := _read_source_block(source):
+                if cancellation_requested is not None and cancellation_requested():
+                    raise ObjectStagingCancelled("object staging was cancelled")
                 length += len(block)
+                if max_plaintext_bytes is not None and length > max_plaintext_bytes:
+                    raise ObjectSourceTooLarge("object source exceeds the permitted length")
                 if length > MAX_SAFE_INTEGER:
                     raise ValueError("object exceeds the supported length")
                 digest.update(block)
@@ -1675,7 +1700,7 @@ def _stream_to_staging(
                 ciphertext_byte_length=length,
             )
         succeeded = True
-        return destination, object_sha256, length, envelope
+        return destination, object_sha256, length, envelope, identity
     finally:
         if descriptor >= 0:
             os.close(descriptor)
@@ -2186,7 +2211,7 @@ def _reconcile_one_upgrade(state: _StoreState, staging: Path, digest: str) -> No
                 source = _open_read_locked(destination)
                 staged: Path | None = None
                 try:
-                    staged, staged_digest, staged_length, envelope = _stream_to_staging(
+                    staged, staged_digest, staged_length, envelope, _staged_identity = _stream_to_staging(
                         source,
                         staging,
                         project_id=state.project_id,
@@ -2653,6 +2678,49 @@ class _LocalObjectStore:
         return result
 
     def put(self, source: BinaryIO, command: ObjectPutCommand) -> StoredObject:
+        return self._put(source, command)
+
+    def put_inspected(
+        self,
+        source: BinaryIO,
+        command: ObjectPutCommand,
+        inspector: Callable[[BinaryIO, str, int], str],
+        *,
+        max_plaintext_bytes: int,
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> StoredObject:
+        """Inspect authenticated encrypted staging before object publication.
+
+        The callback sees only a bounded verified stream, digest and length. It
+        returns the detected media type; failures discard this owned staging
+        file and never create object metadata or a visible object.
+        """
+
+        if (
+            command.protection_profile != _ENCRYPTED_PROFILE
+            or not callable(inspector)
+            or type(max_plaintext_bytes) is not int
+            or not 1 <= max_plaintext_bytes <= MAX_SAFE_INTEGER
+            or (cancellation_requested is not None and not callable(cancellation_requested))
+        ):
+            raise _bounded(ObjectStoreProblem, "inspected object staging configuration is invalid")
+        return self._put(
+            source,
+            command,
+            inspector=inspector,
+            max_plaintext_bytes=max_plaintext_bytes,
+            cancellation_requested=cancellation_requested,
+        )
+
+    def _put(
+        self,
+        source: BinaryIO,
+        command: ObjectPutCommand,
+        *,
+        inspector: Callable[[BinaryIO, str, int], str] | None = None,
+        max_plaintext_bytes: int | None = None,
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> StoredObject:
         command = _validate_command(command)
         if not hasattr(source, "read"):
             raise _bounded(ObjectStoreProblem, "object source is invalid")
@@ -2683,31 +2751,123 @@ class _LocalObjectStore:
 
             staging_directory = _staging_directory(state.temporary)
             with _stable_directories([state.root, state.state, state.objects, state.temporary, staging_directory]):
+                staging_directories = (state.root, state.state, state.objects, state.temporary, staging_directory)
+                staging_directory_identities = tuple(_identity(path) for path in staging_directories)
+
+                def cancelled_without_store_lock() -> bool:
+                    if cancellation_requested is None:
+                        return False
+                    state.lock.release()
+                    try:
+                        return cancellation_requested()
+                    finally:
+                        state.lock.acquire()
+
                 staging_failure: ObjectStoreProblem | None = None
                 staging: Path | None = None
                 digest = ""
                 length = 0
                 envelope: _EnvelopeMetadata | None = None
+                staging_identity: tuple[int, int] | None = None
                 try:
-                    staging, digest, length, envelope = _stream_to_staging(
-                        source,
-                        staging_directory,
-                        project_id=state.project_id,
-                        protection_profile=command.protection_profile,
-                        key_provider=state.key_provider,
-                        allow_plaintext_fixture=state.allow_plaintext_fixture,
-                        admission_check=admit,
-                    )
+                    # The inspected source can be a slow native stream. Its
+                    # cancellation callback can take the project lifecycle
+                    # lock, so neither operation may hold the object-store lock.
+                    if inspector is not None:
+                        state.lock.release()
+                    try:
+                        staging, digest, length, envelope, staging_identity = _stream_to_staging(
+                            source,
+                            staging_directory,
+                            project_id=state.project_id,
+                            protection_profile=command.protection_profile,
+                            key_provider=state.key_provider,
+                            allow_plaintext_fixture=state.allow_plaintext_fixture,
+                            admission_check=admit,
+                            max_plaintext_bytes=max_plaintext_bytes,
+                            cancellation_requested=cancellation_requested,
+                        )
+                    finally:
+                        if inspector is not None:
+                            state.lock.acquire()
                 except ObjectStoreProblem as problem:
                     staging_failure = _bounded(type(problem), str(problem))
                 except Exception:
                     staging_failure = _bounded(ObjectStoreProblem, "object source could not be staged")
-                if staging_failure is not None or staging is None or envelope is None:
+                if staging_failure is not None or staging is None or envelope is None or staging_identity is None:
                     raise staging_failure or _bounded(ObjectStoreProblem, "object source could not be staged")
                 if command.expected_sha256 is not None and digest != command.expected_sha256:
                     with suppress(OSError):
                         staging.unlink()
                     raise _bounded(ObjectIntegrityMismatch, "object content hash did not match")
+                if inspector is not None:
+                    staged_reader: Any | None = None
+                    try:
+                        if cancelled_without_store_lock():
+                            raise ObjectStagingCancelled("document staging was cancelled")
+                        if any(
+                            _redirect(path) or _identity(path) != identity
+                            for path, identity in zip(staging_directories, staging_directory_identities, strict=True)
+                        ):
+                            raise ObjectCorrupt("object staging directory identity changed during upload")
+                        staged_bytes = staging.stat().st_size
+                        if staged_bytes != envelope.ciphertext_byte_length or _identity(staging) != staging_identity:
+                            raise ObjectCorrupt("object staging identity or length changed during upload")
+                        # Admission during an unlocked upload is advisory. A
+                        # concurrent writer may have increased project usage.
+                        baseline_bytes = _inventory(state).usage.project_byte_count - staged_bytes
+                        last_staged_bytes = staged_bytes
+                        admit(staged_bytes)
+                        staged_reader = _verified_encrypted_reader(
+                            staging,
+                            project_id=state.project_id,
+                            object_sha256=digest,
+                            byte_length=length,
+                            ciphertext_byte_length=envelope.ciphertext_byte_length,
+                            key_version=envelope.key_version,
+                            wrapped_key=envelope.wrapped_key,
+                            wrap_nonce=envelope.wrap_nonce,
+                            key_provider=state.key_provider,
+                        )
+                        # The held reader pins the staged inode. Inspection can
+                        # take the worker deadline, so do not serialize unrelated
+                        # verified reads (or cancellation) behind the store lock.
+                        state.lock.release()
+                        try:
+                            detected_media_type = inspector(cast(BinaryIO, staged_reader), digest, length)
+                        finally:
+                            state.lock.acquire()
+                        if cancelled_without_store_lock():
+                            raise ObjectStagingCancelled("document staging was cancelled")
+                        if not staged_reader.matches():
+                            raise ObjectCorrupt("object staging identity changed during inspection")
+                        if any(
+                            _redirect(path) or _identity(path) != identity
+                            for path, identity in zip(staging_directories, staging_directory_identities, strict=True)
+                        ):
+                            raise ObjectCorrupt("object staging directory identity changed during inspection")
+                        # Other writers may have changed usage while the lock was
+                        # released; re-admit against the current project inventory.
+                        staged_bytes = staging.stat().st_size
+                        if staged_bytes != envelope.ciphertext_byte_length:
+                            raise ObjectCorrupt("object staging length changed during inspection")
+                        # Inventory already includes this owned .tmp file. Subtract
+                        # it before projecting the final copy to avoid charging
+                        # the same encrypted bytes twice.
+                        baseline_bytes = _inventory(state).usage.project_byte_count - staged_bytes
+                        last_staged_bytes = staged_bytes
+                        admit(staged_bytes)
+                        command = _validate_command(replace(command, media_type=detected_media_type))
+                    except BaseException:
+                        if staged_reader is not None:
+                            staged_reader.close()
+                            staged_reader = None
+                        with suppress(OSError):
+                            staging.unlink()
+                        raise
+                    finally:
+                        if staged_reader is not None:
+                            staged_reader.close()
                 publication_failure: ObjectStoreProblem | None = None
                 try:
                     destination, buckets = _object_path(state.objects, state.project_id, digest, create=True)
@@ -2755,22 +2915,33 @@ class _LocalObjectStore:
                                 ),
                             )
                         else:
-                            immutable = (
-                                existing.byte_length,
-                                existing.media_type,
-                                existing.rights_status,
-                                existing.protection_profile,
-                                existing.retention_class,
-                                existing.creation_source,
-                            )
-                            requested = (
-                                length,
-                                command.media_type,
-                                command.rights_status,
-                                command.protection_profile,
-                                command.retention_class,
-                                command.creation_source,
-                            )
+                            immutable: tuple[object, ...]
+                            requested: tuple[object, ...]
+                            if inspector is None:
+                                immutable = (
+                                    existing.byte_length,
+                                    existing.media_type,
+                                    existing.rights_status,
+                                    existing.protection_profile,
+                                    existing.retention_class,
+                                    existing.creation_source,
+                                )
+                                requested = (
+                                    length,
+                                    command.media_type,
+                                    command.rights_status,
+                                    command.protection_profile,
+                                    command.retention_class,
+                                    command.creation_source,
+                                )
+                            else:
+                                # An inspected attachment is a separate copy
+                                # assertion. Project hash dedup may reuse prior
+                                # bytes, while rights and source provenance are
+                                # bound to the candidate, never inherited from
+                                # the object's original metadata.
+                                immutable = (existing.byte_length, existing.media_type, existing.protection_profile)
+                                requested = (length, command.media_type, command.protection_profile)
                             if immutable != requested:
                                 raise ObjectConflict("object metadata conflicts with its content identity")
                             if existing.storage_state == "quarantined":
@@ -2937,6 +3108,121 @@ class _LocalObjectStore:
             if failure is not None:
                 raise failure
             raise _bounded(ObjectStoreProblem, "object verification failed")
+
+    def open_document_attachment(
+        self, attachment_id: str, document_revision_id: str, *, actor: CorpusActor
+    ) -> VerifiedObjectStream:
+        """Read an exact attached revision after current per-copy inspect authority."""
+
+        from pydantic import ValidationError
+
+        from .domain_contracts import is_uuid_v7
+        from .reconciliation.contracts import SourceAssertion
+        from .rights_policy import RightsRequest, RightsSubject, RightsUse
+        from .rights_repository import RightsProblem, SqliteRightsRepository
+
+        if not is_uuid_v7(attachment_id) or not is_uuid_v7(document_revision_id):
+            raise _bounded(ObjectAccessDenied, "document attachment identity is invalid")
+        state = self._state()
+        connection: CanonicalConnection | None = None
+        reader: Any | None = None
+        digest: str | None = None
+        failure: ObjectStoreProblem | None = None
+        with state.lock, _stable_directories([state.root, state.state, state.objects, state.temporary]):
+            try:
+                connection = _open_thread_transferable_canonical_database(
+                    state.database, expected_project_id=state.project_id
+                )
+                connection.execute("BEGIN IMMEDIATE")
+                row = connection.execute(
+                    "SELECT a.object_sha256,a.candidate_id,a.source_assertion_revision_id,s.assertion_json "
+                    "FROM document_attachment_assertions a "
+                    "JOIN document_attachment_candidates c ON c.project_id=a.project_id "
+                    "AND c.candidate_id=a.candidate_id "
+                    "JOIN documents d ON d.revision_id=a.document_revision_id AND d.project_id=a.project_id "
+                    "JOIN reconciliation_assertions s ON s.revision_id=a.source_assertion_revision_id "
+                    "AND s.project_id=a.project_id "
+                    "WHERE a.project_id=? AND a.attachment_id=? AND a.document_revision_id=? "
+                    "AND c.object_sha256=a.object_sha256 AND d.object_sha256=a.object_sha256 "
+                    "AND NOT EXISTS (SELECT 1 FROM document_attachment_cancellations x "
+                    "WHERE x.candidate_id=a.candidate_id)",
+                    (state.project_id, attachment_id, document_revision_id),
+                ).fetchone()
+                if row is None:
+                    raise ObjectAccessDenied("document attachment is unavailable")
+                digest = str(row[0])
+                source = SourceAssertion.model_validate_json(str(row[3]))
+                subject = RightsSubject(
+                    project_id=state.project_id,
+                    source_assertion_revision_id=str(row[2]),
+                    address=source.address,
+                    copy_id=str(row[1]),
+                    copy_location="local-project-object",
+                    resource_class="full-text",
+                )
+                rights = SqliteRightsRepository(state.database, state.project_id)
+                decision = rights.evaluate_with_connection(
+                    connection,
+                    RightsRequest(
+                        actor_id=actor.actor_id,
+                        subject=subject,
+                        use=RightsUse(action="inspect", purpose="document-analysis", destination_kind="local-project"),
+                    ),
+                    actor=actor,
+                )
+                if decision.code != "allow":
+                    connection.execute("COMMIT")
+                    raise ObjectAccessDenied("document inspection right is not current")
+                metadata = _metadata(connection, state.project_id, digest)
+                if (
+                    metadata is None
+                    or metadata.storage_state != "available"
+                    or metadata.protection_profile != _ENCRYPTED_PROFILE
+                ):
+                    raise ObjectNotFound("document object is unavailable")
+                _authorize_access(
+                    state,
+                    _access_request(
+                        state.project_id,
+                        metadata,
+                        purpose="document-analysis",
+                        access_class="local-read",
+                        destination_id=None,
+                    ),
+                )
+                destination, buckets = _object_path(state.objects, state.project_id, digest, create=False)
+                with _stable_directories([state.root, state.objects, *buckets]):
+                    reader = _verified_stored_reader(state, connection, destination, metadata)
+                connection.execute(
+                    "UPDATE object_records SET verified_at=COALESCE(verified_at, ?) "
+                    "WHERE project_id=? AND object_sha256=? AND storage_state='available'",
+                    (max(metadata.created_at, _now()), state.project_id, digest),
+                )
+                stream = _VerifiedObjectStream(reader, connection, state.project_id, digest)
+                reader = None
+                connection = None
+                return stream
+            except ObjectStoreProblem as problem:
+                failure = _bounded(type(problem), str(problem))
+            except RightsProblem, ValidationError:
+                failure = _bounded(ObjectAccessDenied, "document authority is unavailable")
+            except OSError, ProjectLifecycleProblem:
+                failure = _bounded(ObjectCorrupt, "document object integrity verification failed")
+            except sqlite3.Error, StorageProblem:
+                failure = _bounded(ObjectStoreProblem, "document stream could not be opened")
+            finally:
+                if reader is not None:
+                    reader.close()
+                if connection is not None:
+                    if connection.in_transaction:
+                        with suppress(sqlite3.Error, StorageProblem):
+                            connection.execute("ROLLBACK")
+                    connection.close()
+            if isinstance(failure, ObjectCorrupt) and digest is not None:
+                _mark_quarantined(state, digest)
+            if failure is not None:
+                raise failure
+            raise _bounded(ObjectStoreProblem, "document stream could not be opened")
 
     def delete(self, object_sha256: str) -> None:
         self._delete(object_sha256, expected_candidate=None)

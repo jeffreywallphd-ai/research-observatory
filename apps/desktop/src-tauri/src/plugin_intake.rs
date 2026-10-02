@@ -424,7 +424,9 @@ pub(crate) fn failure(error: PickerFailure) -> PluginIntakeOutcome {
     match error {
         PickerFailure::Cancelled => PluginIntakeOutcome::Cancelled,
         PickerFailure::Unavailable => PluginIntakeOutcome::Unavailable,
-        PickerFailure::Failed => PluginIntakeOutcome::Failed,
+        PickerFailure::Failed | PickerFailure::DocumentEmpty | PickerFailure::DocumentOversize => {
+            PluginIntakeOutcome::Failed
+        }
     }
 }
 
@@ -1109,7 +1111,9 @@ pub(crate) fn trust_publisher(
         Ok(value) => PluginActionOutcome::Ok { value },
         Err(PickerFailure::Cancelled) => PluginActionOutcome::Cancelled,
         Err(PickerFailure::Unavailable) => PluginActionOutcome::Unavailable,
-        Err(PickerFailure::Failed) => PluginActionOutcome::Failed,
+        Err(
+            PickerFailure::Failed | PickerFailure::DocumentEmpty | PickerFailure::DocumentOversize,
+        ) => PluginActionOutcome::Failed,
     }
 }
 

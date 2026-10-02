@@ -191,17 +191,16 @@ def _dialogue(
         sequence += 2
 
 
-def _launch_connector(
+def _launch_signed_worker(
     image: Path,
     sid: int,
     sid_text: str,
     profile: Path,
     temp: Path,
     request: dict[str, Any],
-    input_data: bytes,
     memory_mib: int,
     wall_seconds: int,
-    broker_callback: Callable[[dict[str, Any]], bytes],
+    dialogue: Callable[[Any, int, int, dict[str, Any]], tuple[bytes, int]],
     cancelled: Callable[[], bool] | None,
 ) -> WorkerResult:
     kernel, advapi, _, _ = win._api()
@@ -325,7 +324,7 @@ def _launch_connector(
 
         def exchange() -> None:
             try:
-                completed.put(_dialogue(kernel, parent_stdin, parent_stdout, request, input_data, broker_callback))
+                completed.put(dialogue(kernel, parent_stdin, parent_stdout, request))
             except BaseException as exc:
                 completed.put(exc)
 
@@ -410,6 +409,50 @@ def run_connector(
     ):
         raise win.LPACError("lpac-invocation-invalid")
     profile_limits = package.manifest.resource_profile
+
+    def prepare_request(image: Path) -> dict[str, Any]:
+        entry_sha = _stage_plugin(package, package_files, image)
+        return {
+            "protocolVersion": "1.0",
+            "jobNonce": job_nonce,
+            "sequence": 0,
+            "operation": "invoke",
+            "invocationId": invocation_id,
+            "connectorOperation": operation,
+            "inputSha256": hashlib.sha256(input_data).hexdigest(),
+            "inputLength": len(input_data),
+            "pluginSha256": entry_sha,
+        }
+
+    def dialogue(kernel: Any, parent_stdin: int, parent_stdout: int, request: dict[str, Any]) -> tuple[bytes, int]:
+        return _dialogue(kernel, parent_stdin, parent_stdout, request, input_data, broker_callback)
+
+    return _run_signed_worker(
+        runtime,
+        prepare_request=prepare_request,
+        dialogue=dialogue,
+        memory_mib=profile_limits.committed_memory_mi_b,
+        wall_seconds=profile_limits.wall_time_seconds,
+        cancelled=cancelled,
+    )
+
+
+def _run_signed_worker(
+    runtime: SignedWorkerRuntime,
+    *,
+    prepare_request: Callable[[Path], dict[str, Any]],
+    dialogue: Callable[[Any, int, int, dict[str, Any]], tuple[bytes, int]],
+    memory_mib: int,
+    wall_seconds: int,
+    cancelled: Callable[[], bool] | None,
+) -> WorkerResult:
+    """Shared exact signed-runtime, LPAC, Job and guardian lifecycle."""
+
+    if runtime.application_public_key != APPLICATION_INVENTORY_PUBLIC_KEY:
+        raise win.LPACError("lpac-worker-application-pin-mismatch")
+    verify_worker_runtime(runtime)
+    if not 1 <= memory_mib <= 4096 or not 1 <= wall_seconds <= 900:
+        raise win.LPACError("lpac-worker-profile-invalid")
     kernel, advapi, userenv, _ole = win._api()
     name: str | None = None
     sid: int | None = None
@@ -443,18 +486,7 @@ def run_connector(
             runtime_root, runtime.inventory_bytes, runtime.signature, runtime.application_public_key
         )
         image = verify_worker_runtime(staged_runtime)
-        entry_sha = _stage_plugin(package, package_files, image)
-        request = {
-            "protocolVersion": "1.0",
-            "jobNonce": job_nonce,
-            "sequence": 0,
-            "operation": "invoke",
-            "invocationId": invocation_id,
-            "connectorOperation": operation,
-            "inputSha256": hashlib.sha256(input_data).hexdigest(),
-            "inputLength": len(input_data),
-            "pluginSha256": entry_sha,
-        }
+        request = prepare_request(image)
         guardian.seal()
         acl_started = True
         with no_write_lpac_acl(profile, temp, runtime_root, sid_text, kernel, advapi, restoration=acl_status):
@@ -463,17 +495,16 @@ def run_connector(
                 return not guardian.alive() or (cancelled is not None and cancelled())
 
             try:
-                result = _launch_connector(
+                result = _launch_signed_worker(
                     image,
                     sid,
                     sid_text,
                     profile,
                     temp,
                     request,
-                    input_data,
-                    profile_limits.committed_memory_mi_b,
-                    profile_limits.wall_time_seconds,
-                    broker_callback,
+                    memory_mib,
+                    wall_seconds,
+                    dialogue,
                     cancelled_or_guardian_lost,
                 )
             except win.LPACError:

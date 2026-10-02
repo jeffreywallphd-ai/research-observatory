@@ -17,6 +17,7 @@ use windows_sys::Win32::Storage::FileSystem::{
 
 const CHUNK_BYTES: usize = 128 * 1024;
 const MAX_SOURCE_BYTES: u64 = 256 * 1024 * 1024;
+const MAX_DOCUMENT_BYTES: u64 = 128 * 1024 * 1024;
 const UNAVAILABLE: &str = "RO-IMPORT-SOURCE-UNAVAILABLE";
 const CANCELLED: &str = "RO-IMPORT-SOURCE-CANCELLED";
 
@@ -135,6 +136,18 @@ pub(crate) fn pin_directory(path: &Path) -> Result<Vec<File>, &'static str> {
 
 impl HeldImportSource {
     pub(crate) fn open_selected(path: &Path) -> Result<Self, &'static str> {
+        Self::open_selected_with_limit(path, MAX_SOURCE_BYTES)
+    }
+
+    pub(crate) fn open_document_selected(path: &Path) -> Result<Self, &'static str> {
+        let source = Self::open_selected_with_limit(path, MAX_DOCUMENT_BYTES)?;
+        if source.length == 0 {
+            return Err("RO-IMPORT-DOCUMENT-EMPTY");
+        }
+        Ok(source)
+    }
+
+    fn open_selected_with_limit(path: &Path, limit: u64) -> Result<Self, &'static str> {
         let value = path.to_str().ok_or(UNAVAILABLE)?;
         if !local_path_syntax(value)
             || path
@@ -166,9 +179,12 @@ impl HeldImportSource {
             .open(path)
             .map_err(|_| "RO-IMPORT-SOURCE-FILE-UNAVAILABLE")?;
         let metadata = file.metadata().map_err(|_| UNAVAILABLE)?;
+        if limit == MAX_DOCUMENT_BYTES && metadata.len() > limit {
+            return Err("RO-IMPORT-DOCUMENT-OVERSIZE");
+        }
         if !metadata.is_file()
             || is_reparse(&metadata)
-            || metadata.len() > MAX_SOURCE_BYTES
+            || metadata.len() > limit
             || metadata.file_attributes() & FILE_ATTRIBUTE_OFFLINE != 0
             || unsafe { GetFileType(file.as_raw_handle()) } != FILE_TYPE_DISK
             || !same_path(&opened_path(&file)?, path)
@@ -186,6 +202,10 @@ impl HeldImportSource {
 
     pub(crate) fn basename(&self) -> &str {
         &self.basename
+    }
+
+    pub(crate) fn byte_length(&self) -> u64 {
+        self.length
     }
 
     pub(crate) fn transfer(
@@ -344,6 +364,35 @@ mod tests {
         ] {
             assert!(HeldImportSource::open_selected(Path::new(value)).is_err());
         }
+    }
+
+    #[test]
+    fn document_source_denies_over_128_mib_before_transfer() {
+        let fixture = Fixture::new();
+        let path = fixture.source(b"");
+        let file = OpenOptions::new().write(true).open(&path).unwrap();
+        file.set_len(128 * 1024 * 1024 + 1).unwrap();
+        drop(file);
+        assert_eq!(
+            HeldImportSource::open_document_selected(&path).err(),
+            Some("RO-IMPORT-DOCUMENT-OVERSIZE")
+        );
+        let file = OpenOptions::new().write(true).open(&path).unwrap();
+        file.set_len(128 * 1024 * 1024).unwrap();
+        drop(file);
+        let selected = HeldImportSource::open_document_selected(&path);
+        assert!(selected.is_ok(), "{:?}", selected.err());
+    }
+
+    #[test]
+    fn document_source_rejects_empty_file_without_changing_bibliography_import() {
+        let fixture = Fixture::new();
+        let path = fixture.source(b"");
+        assert_eq!(
+            HeldImportSource::open_document_selected(&path).err(),
+            Some("RO-IMPORT-DOCUMENT-EMPTY")
+        );
+        assert!(HeldImportSource::open_selected(&path).is_ok());
     }
 
     #[test]

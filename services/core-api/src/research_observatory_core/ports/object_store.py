@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import BinaryIO, Literal, Protocol, runtime_checkable
+
+from .corpus import CorpusActor
 
 RightsStatus = Literal["allowed", "denied", "unknown", "not-applicable"]
 ObjectCreationSource = Literal[
@@ -97,6 +100,14 @@ class ObjectStoragePressure(ObjectStoreProblem):
     """A hard quota, low-disk reserve, or stale cleanup lease denied mutation."""
 
     code = "RO-CORE-OBJECT-STORAGE-PRESSURE"
+
+
+class ObjectSourceTooLarge(ObjectStoreProblem):
+    code = "RO-CORE-OBJECT-SOURCE-TOO-LARGE"
+
+
+class ObjectStagingCancelled(ObjectStoreProblem):
+    code = "RO-CORE-OBJECT-STAGING-CANCELLED"
 
 
 @dataclass(frozen=True, slots=True)
@@ -234,6 +245,16 @@ class VerifiedObjectStream(Protocol):
 class ObjectStore(Protocol):
     def put(self, source: BinaryIO, command: ObjectPutCommand) -> StoredObject: ...
 
+    def put_inspected(
+        self,
+        source: BinaryIO,
+        command: ObjectPutCommand,
+        inspector: Callable[[BinaryIO, str, int], str],
+        *,
+        max_plaintext_bytes: int,
+        cancellation_requested: Callable[[], bool] | None = None,
+    ) -> StoredObject: ...
+
     def open(
         self,
         object_sha256: str,
@@ -242,6 +263,12 @@ class ObjectStore(Protocol):
         access_class: ObjectAccessClass = "local-read",
         destination_id: str | None = None,
     ) -> VerifiedObjectStream: ...
+
+    def open_document_attachment(
+        self, attachment_id: str, document_revision_id: str, *, actor: CorpusActor
+    ) -> VerifiedObjectStream:
+        """Read an exact attached revision after current per-copy inspect authority."""
+        ...
 
     def metadata(self, object_sha256: str) -> StoredObject: ...
 
@@ -272,6 +299,8 @@ __all__ = [
     "ObjectNotFound",
     "ObjectPutCommand",
     "ObjectReferenced",
+    "ObjectSourceTooLarge",
+    "ObjectStagingCancelled",
     "ObjectStoragePressure",
     "ObjectStore",
     "ObjectStoreProblem",

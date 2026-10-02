@@ -9,8 +9,10 @@ import secrets
 import socket
 import sys
 import threading
+from collections.abc import Callable
 from functools import partial
 from pathlib import Path
+from typing import BinaryIO
 
 import uvicorn
 from fastapi import FastAPI
@@ -31,6 +33,8 @@ from .corpus_query import ConnectorWorkerQueryResolver
 from .corpus_report_repository import SqliteCorpusReportRepository
 from .corpus_repository import SqliteCorpusRepository
 from .corpus_service import CorpusService
+from .document_attachment_api import DocumentCommit, DocumentStageCommand
+from .document_attachment_repository import LocalDocumentAttachmentService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
 from .logging import emit_log_record
@@ -47,11 +51,15 @@ from .plugin_job_repository import PluginJobRepository
 from .plugin_package_repository import SqlitePluginPackageRepository
 from .plugin_runtime import InstalledPluginRuntime
 from .plugin_worker import PluginWorkerAdapters, PluginWorkerService
+from .ports.corpus import CorpusActor
 from .ports.credential_store import CredentialStoreProblem
 from .ports.database_keys import DatabaseKeyProvider
+from .ports.document_attachments import AttachmentCandidate, AttachmentProblem, DocumentAttachment
+from .ports.import_previews import PreviewProblem
+from .ports.object_store import ObjectStore
 from .ports.object_store_keys import ObjectMasterKeyProvider
 from .privacy import ProjectPrivacyService
-from .projects import ProjectLifecycleService
+from .projects import ProjectLifecycleProblem, ProjectLifecycleService
 from .provenance import ProvenanceService
 from .repositories import (
     create_sqlite_unit_of_work_factory,
@@ -91,6 +99,132 @@ _DEFAULT_OBJECT_KEY_PROVIDER = object()
 _DEFAULT_DATABASE_KEY_PROVIDER = object()
 _DEFAULT_LOCAL_ACTOR_ID = object()
 _DEFAULT_CONNECTOR_SETTINGS = object()
+
+
+class DocumentAttachmentRuntime:
+    """Compose a current Core actor/session with the encrypted attachment port."""
+
+    def __init__(
+        self,
+        imports: ImportPreviewService,
+        corpus: CorpusService,
+        object_store_factory: Callable[[Path, str], ObjectStore],
+    ) -> None:
+        self._imports = imports
+        self._corpus = corpus
+        self._object_store_factory = object_store_factory
+
+    def context(self, root: str, project_id: str) -> str:
+        return self._imports.native_context(root, project_id)
+
+    def _action[Result](
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        trace_id: str,
+        action: Callable[[LocalDocumentAttachmentService, CorpusActor], Result],
+    ) -> Result:
+        def current() -> Result:
+            def authorized(_repository, actor, _intent, path: Path, actual_id: str) -> Result:
+                if actual_id != project_id:
+                    raise AttachmentProblem("attachment-authority-changed")
+                service = LocalDocumentAttachmentService(
+                    path / "state/project.sqlite3", actual_id, self._object_store_factory(path, actual_id)
+                )
+                return action(service, actor)
+
+            # Corpus owns current researcher, accepted Intent, privacy and
+            # write authority. The native session fences close/reopen and
+            # project switches throughout this one bounded action.
+            return self._corpus._with_authority(root, trace_id, authorized)
+
+        return self._imports.in_native_session(root, project_id, session_id, current)
+
+    def stage(
+        self,
+        command: DocumentStageCommand,
+        source: BinaryIO,
+        *,
+        trace_id: str,
+        cancellation_requested: Callable[[], bool],
+    ) -> AttachmentCandidate:
+        service, actor = self._action(
+            command.root,
+            command.project_id,
+            command.session_id,
+            trace_id,
+            lambda selected, current_actor: (selected, current_actor),
+        )
+
+        def cancelled() -> bool:
+            if cancellation_requested():
+                return True
+            try:
+                return self._imports.native_context(command.root, command.project_id) != command.session_id
+            except (PreviewProblem, ProjectLifecycleProblem):
+                return True
+
+        def publication_guard(publish: Callable[[], AttachmentCandidate]) -> AttachmentCandidate:
+            def current(_service: LocalDocumentAttachmentService, current_actor: CorpusActor) -> AttachmentCandidate:
+                if (
+                    current_actor.actor_id,
+                    current_actor.intent_revision_id,
+                    current_actor.intent_sha256,
+                    current_actor.policy_sha256,
+                ) != (actor.actor_id, actor.intent_revision_id, actor.intent_sha256, actor.policy_sha256):
+                    raise AttachmentProblem("attachment-authority-changed")
+                return publish()
+
+            return self._action(command.root, command.project_id, command.session_id, trace_id, current)
+
+        # The lifecycle mutex is released throughout encrypted upload and LPAC
+        # inspection. Only the final candidate transaction is fenced by the
+        # current project session again.
+        return service.stage(
+            source,
+            source_name=command.source_name,
+            declared_media_type=command.declared_media_type,
+            source_assertion_revision_id=command.source_assertion_revision_id,
+            work_id=command.work_id,
+            work_revision_id=command.work_revision_id,
+            version_id=command.version_id,
+            version_revision_id=command.version_revision_id,
+            actor=actor,
+            cancellation_requested=cancelled,
+            publication_guard=publication_guard,
+        )
+
+    def load_candidate(
+        self, root: str, project_id: str, session_id: str, candidate_id: str, *, trace_id: str
+    ) -> AttachmentCandidate:
+        return self._action(
+            root,
+            project_id,
+            session_id,
+            trace_id,
+            lambda service, actor: service.load_candidate(candidate_id, actor=actor),
+        )
+
+    def cancel(self, root: str, project_id: str, session_id: str, candidate_id: str, *, trace_id: str) -> None:
+        self._action(
+            root, project_id, session_id, trace_id, lambda service, actor: service.cancel(candidate_id, actor=actor)
+        )
+
+    def commit(self, command: DocumentCommit, *, trace_id: str) -> DocumentAttachment:
+        return self._action(
+            command.root,
+            command.project_id,
+            command.session_id,
+            trace_id,
+            lambda service, actor: service.commit(
+                command.candidate_id,
+                confirmation_sha256=command.confirmation_sha256,
+                command_id=command.command_id,
+                actor=actor,
+            ),
+        )
+
 
 
 def create_runtime_app(
@@ -194,6 +328,7 @@ def create_runtime_app(
     plugin_consent = None
     plugin_worker = None
     corpus = None
+    attachments = None
     if workflow_context is not None and resolved_actor_id is not None and resolved_provider is not None:
         imports = ImportPreviewService(
             projects,
@@ -360,6 +495,16 @@ def create_runtime_app(
                 ),
             ),
         )
+        attachments = DocumentAttachmentRuntime(
+            imports,
+            corpus,
+            lambda path, identity: create_local_object_store(
+                path,
+                identity,
+                key_provider=resolved_provider,
+                access_policy=privacy.object_access_policy(str(path)),
+            ),
+        )
     return create_app(
         settings=settings,
         capability_digest=capability_digest,
@@ -367,6 +512,7 @@ def create_runtime_app(
         projects=projects,
         privacy=privacy,
         imports=imports,
+        attachments=attachments,
         connectors=connectors,
         plugin_admin=plugin_admin,
         plugin_consent=plugin_consent,

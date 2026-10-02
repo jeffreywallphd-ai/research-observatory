@@ -492,7 +492,9 @@ pub(crate) fn failure(error: PickerFailure) -> ImportOutcome {
     match error {
         PickerFailure::Cancelled => ImportOutcome::Cancelled,
         PickerFailure::Unavailable => ImportOutcome::Unavailable,
-        PickerFailure::Failed => ImportOutcome::Failed,
+        PickerFailure::Failed | PickerFailure::DocumentEmpty | PickerFailure::DocumentOversize => {
+            ImportOutcome::Failed
+        }
     }
 }
 

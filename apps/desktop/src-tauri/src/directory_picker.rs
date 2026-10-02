@@ -173,6 +173,17 @@ pub(crate) enum PickerFailure {
     Cancelled,
     Unavailable,
     Failed,
+    DocumentEmpty,
+    DocumentOversize,
+}
+
+#[cfg(windows)]
+fn document_source_failure(code: &'static str) -> PickerFailure {
+    match code {
+        "RO-IMPORT-DOCUMENT-EMPTY" => PickerFailure::DocumentEmpty,
+        "RO-IMPORT-DOCUMENT-OVERSIZE" => PickerFailure::DocumentOversize,
+        _ => PickerFailure::Failed,
+    }
 }
 
 pub(crate) trait PickerResult {
@@ -488,6 +499,42 @@ impl DirectoryPickerManager {
         let fixture_root = self.fixture_root.clone();
         self.run_managed_worker(Arc::new(authority), move |reservation, authority| {
             let source = native::show_import_source(
+                owner,
+                &reservation.pending,
+                authority,
+                #[cfg(feature = "integration-harness")]
+                fixture_root.as_deref(),
+            )?;
+            let pending = Arc::clone(&reservation.pending);
+            let authority = Arc::clone(authority);
+            let live: AuthorityCheck = Arc::new(move || {
+                !pending.cancelled.load(Ordering::Acquire) && authority_valid(&authority)
+            });
+            if !authority_valid(&live) {
+                return Err(PickerFailure::Cancelled);
+            }
+            consume(source, live)
+        })
+    }
+
+    /// Hold a document selection within the same native reservation, with the
+    /// document-specific 128 MiB cap applied before any Core transfer.
+    #[cfg(windows)]
+    pub(crate) fn document_source<T: Send + 'static>(
+        &self,
+        owner: isize,
+        authority: impl Fn() -> bool + Send + Sync + 'static,
+        consume: impl FnOnce(
+            crate::import_source::HeldImportSource,
+            AuthorityCheck,
+        ) -> Result<T, PickerFailure>
+        + Send
+        + 'static,
+    ) -> Result<T, PickerFailure> {
+        #[cfg(feature = "integration-harness")]
+        let fixture_root = self.fixture_root.clone();
+        self.run_managed_worker(Arc::new(authority), move |reservation, authority| {
+            let source = native::show_document_source(
                 owner,
                 &reservation.pending,
                 authority,
@@ -979,6 +1026,7 @@ mod native {
         select_path(
             owner,
             Some(request),
+            false,
             pending,
             authority,
             #[cfg(feature = "integration-harness")]
@@ -995,6 +1043,7 @@ mod native {
         match select_path(
             owner,
             None,
+            false,
             pending,
             authority,
             #[cfg(feature = "integration-harness")]
@@ -1010,9 +1059,35 @@ mod native {
         }
     }
 
+    pub(super) fn show_document_source(
+        owner: isize,
+        pending: &Arc<PendingDialog>,
+        authority: &AuthorityCheck,
+        #[cfg(feature = "integration-harness")] fixture_root: Option<&Path>,
+    ) -> Result<crate::import_source::HeldImportSource, PickerFailure> {
+        match select_path(
+            owner,
+            None,
+            true,
+            pending,
+            authority,
+            #[cfg(feature = "integration-harness")]
+            fixture_root,
+        ) {
+            DirectoryOutcome::Selected { path } => {
+                crate::import_source::HeldImportSource::open_document_selected(Path::new(&path))
+                    .map_err(document_source_failure)
+            }
+            DirectoryOutcome::Cancelled => Err(PickerFailure::Cancelled),
+            DirectoryOutcome::Unavailable => Err(PickerFailure::Unavailable),
+            DirectoryOutcome::Failed => Err(PickerFailure::Failed),
+        }
+    }
+
     fn select_path(
         owner: isize,
         request: Option<&DirectoryRequest>,
+        document: bool,
         pending: &Arc<PendingDialog>,
         authority: &AuthorityCheck,
         #[cfg(feature = "integration-harness")] fixture_root: Option<&Path>,
@@ -1100,6 +1175,7 @@ mod native {
                             .SetTitle(w!("Choose an existing Research Observatory project"))?,
                         Some(DirectoryPurpose::ImportReport) => dialog
                             .SetTitle(w!("Choose where to save the import diagnostic report"))?,
+                        None if document => dialog.SetTitle(w!("Choose a document to attach"))?,
                         None => dialog
                             .SetTitle(w!("Choose a bibliography or reference file to import"))?,
                     }
@@ -2116,6 +2192,23 @@ mod tests {
         );
         assert_eq!(result, Err(PickerFailure::Unavailable));
         assert!(manager.admission().active.is_none());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn document_selection_preserves_empty_and_oversize_denials_without_paths() {
+        assert_eq!(
+            document_source_failure("RO-IMPORT-DOCUMENT-EMPTY"),
+            PickerFailure::DocumentEmpty
+        );
+        assert_eq!(
+            document_source_failure("RO-IMPORT-DOCUMENT-OVERSIZE"),
+            PickerFailure::DocumentOversize
+        );
+        assert_eq!(
+            document_source_failure("RO-IMPORT-SOURCE-FILE-INVALID"),
+            PickerFailure::Failed
+        );
     }
 
     #[cfg(windows)]

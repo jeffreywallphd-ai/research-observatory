@@ -8,14 +8,17 @@ its inherited pipes. It has no listener and no network or filesystem broker.
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import sys
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, BinaryIO
 
+from workers.document.inspection import MAX_DOCUMENT_BYTES, DocumentInspectionError, classify_document
 from workers.windows.protocol import (
     MAX_BINARY_FRAME,
+    MAX_DOCUMENT_CHUNK,
     read_binary_frame,
     read_frame,
     write_binary_frame,
@@ -25,6 +28,7 @@ from workers.windows.protocol import (
 _DIGEST = re.compile(r"[0-9a-f]{64}\Z")
 _OPERATIONS = frozenset({"lookup", "search", "references", "citations", "open-access-locations", "repository-metadata"})
 _CALL_KEYS = frozenset({"operation", "identifier", "query", "repositoryId", "cursor", "pageSize", "credentialScope"})
+_DOCUMENT_EXTENSION = re.compile(r"\.[a-z0-9]{1,15}\Z")
 
 
 class WorkerProtocolError(ValueError):
@@ -78,8 +82,74 @@ def _load_connector(asset_root: Path, expected_sha256: str) -> Callable[..., byt
     return invoke
 
 
+def _run_document_inspection(request: dict[str, Any], stdin: BinaryIO, stdout: BinaryIO) -> None:
+    if set(request) != {"protocolVersion", "jobNonce", "sequence", "operation", "extension", "declaredMediaType"}:
+        raise WorkerProtocolError("worker-document-request-invalid")
+    extension = request["extension"]
+    media_type = request["declaredMediaType"]
+    if not isinstance(extension, str) or (_DOCUMENT_EXTENSION.fullmatch(extension) is None and extension):
+        raise WorkerProtocolError("worker-document-extension-invalid")
+    if media_type is not None and (
+        not isinstance(media_type, str)
+        or not 0 < len(media_type) <= 128
+        or any(ord(char) < 32 or ord(char) > 126 for char in media_type)
+    ):
+        raise WorkerProtocolError("worker-document-media-type-invalid")
+    content = bytearray()
+    digest = hashlib.sha256()
+    while True:
+        chunk = read_binary_frame(stdin)
+        if len(chunk) > MAX_DOCUMENT_CHUNK:
+            raise WorkerProtocolError("worker-document-chunk-oversize")
+        if not chunk:
+            break
+        if len(content) + len(chunk) > MAX_DOCUMENT_BYTES:
+            raise WorkerProtocolError("worker-document-oversize")
+        content.extend(chunk)
+        digest.update(chunk)
+    footer = read_frame(stdin, expected_nonce=request["jobNonce"], expected_sequence=1)
+    if (
+        set(footer) != {"protocolVersion", "jobNonce", "sequence", "operation", "inputLength", "inputSha256"}
+        or footer["operation"] != "inspect-end"
+        or type(footer["inputLength"]) is not int
+        or footer["inputLength"] != len(content)
+        or not isinstance(footer["inputSha256"], str)
+        or footer["inputSha256"] != digest.hexdigest()
+    ):
+        raise WorkerProtocolError("worker-input-hash-mismatch")
+    verdict: dict[str, str | int]
+    try:
+        inspection = classify_document(bytes(content), extension=extension, declared_media_type=media_type)
+    except DocumentInspectionError as exc:
+        verdict = {"status": "rejected", "code": exc.code}
+    else:
+        verdict = {
+            "status": "accepted",
+            "format": inspection.format,
+            "mediaType": inspection.media_type,
+            "sizeBytes": inspection.size_bytes,
+            "sha256": inspection.sha256,
+        }
+    output = json.dumps(verdict, sort_keys=True, separators=(",", ":")).encode("ascii")
+    write_frame(
+        stdout,
+        {
+            "protocolVersion": "1.0",
+            "jobNonce": request["jobNonce"],
+            "sequence": 2,
+            "operation": "invoke-result",
+            "outputLength": len(output),
+            "outputSha256": hashlib.sha256(output).hexdigest(),
+        },
+    )
+    write_binary_frame(stdout, output)
+
+
 def run_worker(stdin: BinaryIO, stdout: BinaryIO, *, asset_root: Path) -> None:
     request = read_frame(stdin, expected_nonce=None, expected_sequence=0)
+    if request["operation"] == "inspect-document":
+        _run_document_inspection(request, stdin, stdout)
+        return
     _validate_request(request)
     input_data = read_binary_frame(stdin)
     if len(input_data) != request["inputLength"] or hashlib.sha256(input_data).hexdigest() != request["inputSha256"]:

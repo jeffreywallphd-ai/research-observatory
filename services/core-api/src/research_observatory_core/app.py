@@ -21,6 +21,7 @@ from .connector_worker import ConnectorWorkerService
 from .connectors.providers import ProviderProblem
 from .corpus_api import register_corpus_routes
 from .corpus_service import CorpusService
+from .document_attachment_api import DocumentRuntimePort, register_document_attachment_routes
 from .import_api import register_import_routes
 from .import_intake_api import register_intake_routes
 from .import_preview_service import ImportPreviewService
@@ -126,6 +127,7 @@ class RuntimeContext:
     task_center: TaskCenterService
     recalculation: RecalculationControlService
     imports: ImportPreviewService | None = None
+    attachments: DocumentRuntimePort | None = None
     connectors: ConnectorWorkerService | None = None
     plugin_admin: PluginAdminService | None = None
     plugin_consent: PluginConsentService | None = None
@@ -150,6 +152,7 @@ def create_app(
     task_center: TaskCenterService | None = None,
     recalculation: RecalculationControlService | None = None,
     imports: ImportPreviewService | None = None,
+    attachments: DocumentRuntimePort | None = None,
     connectors: ConnectorWorkerService | None = None,
     plugin_admin: PluginAdminService | None = None,
     plugin_consent: PluginConsentService | None = None,
@@ -197,6 +200,7 @@ def create_app(
             task_center=resolved_task_center,
             recalculation=resolved_recalculation,
             imports=imports,
+            attachments=attachments,
             connectors=connectors,
             plugin_admin=plugin_admin,
             plugin_consent=plugin_consent,
@@ -349,6 +353,7 @@ def create_app(
 
     register_import_routes(app, lambda request: runtime(request).imports, project_problem)
     register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
+    register_document_attachment_routes(app, lambda request: runtime(request).attachments)
     register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
     register_plugin_routes(app, lambda request: runtime(request).plugin_admin, project_problem)
     register_plugin_invocation_routes(

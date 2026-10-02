@@ -42,6 +42,7 @@ from research_observatory_core.migrations.versions import (
     v0019_corpus_reports,
     v0020_corpus_source_projection,
     v0021_plugin_grants,
+    v0022_document_attachments,
 )
 
 _MANIFEST_DOCUMENT_TYPE = "research-observatory-sqlite-migration-recovery"
@@ -222,6 +223,7 @@ def migration_framework_projection() -> dict[str, Any]:
             storage.RIGHTS_DATABASE_SCHEMA_VERSION,
             storage.CORPUS_REPORT_DATABASE_SCHEMA_VERSION,
             storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION,
+            storage.DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION,
         ],
         "revisions": [
             v0002_schema_history.revision,
@@ -244,6 +246,7 @@ def migration_framework_projection() -> dict[str, Any]:
             v0019_corpus_reports.revision,
             v0020_corpus_source_projection.revision,
             v0021_plugin_grants.revision,
+            v0022_document_attachments.revision,
         ],
         "backupRequired": True,
         "downgradeMode": "restore-verified-backup",
@@ -419,6 +422,10 @@ _SUPPORTED_PROFILES = {
     storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
         storage.PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256,
         storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+    ),
+    storage.DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION: (
+        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256,
+        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
     ),
     storage.DATABASE_SCHEMA_VERSION: (
         storage.EXPECTED_PROFILE_SHA256,
@@ -689,6 +696,13 @@ def _valid_migration_history(schema_version: int, rows: tuple[tuple[Any, ...], .
             20,
             21,
             storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+            storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+        ),
+        (
+            v0022_document_attachments.revision,
+            21,
+            22,
+            storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
             storage.EXPECTED_SCHEMA_SHA256,
         ),
     )
@@ -823,9 +837,15 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0020_corpus_source_projection.TARGET_PROFILE_SHA256 == storage.PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256
         and v0021_plugin_grants.down_revision == v0020_corpus_source_projection.revision
         and v0021_plugin_grants.source_schema_version == storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION
-        and v0021_plugin_grants.target_schema_version == storage.DATABASE_SCHEMA_VERSION
-        and v0021_plugin_grants.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
-        and v0021_plugin_grants.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
+        and v0021_plugin_grants.target_schema_version == storage.DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0021_plugin_grants.TARGET_SCHEMA_SHA256 == storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256
+        and v0021_plugin_grants.TARGET_PROFILE_SHA256 == storage.DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256
+        and v0022_document_attachments.down_revision == v0021_plugin_grants.revision
+        and v0022_document_attachments.source_schema_version
+        == storage.DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0022_document_attachments.target_schema_version == storage.DATABASE_SCHEMA_VERSION
+        and v0022_document_attachments.TARGET_SCHEMA_SHA256 == storage.EXPECTED_SCHEMA_SHA256
+        and v0022_document_attachments.TARGET_PROFILE_SHA256 == storage.EXPECTED_PROFILE_SHA256
     )
     if not registry_valid:
         raise MigrationProblem("migration-registry-invalid")
@@ -850,6 +870,7 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         v0019_corpus_reports,
         v0020_corpus_source_projection,
         v0021_plugin_grants,
+        v0022_document_attachments,
     )
     for index, migration in enumerate(chain):
         if source_version == migration.source_schema_version:
@@ -1837,11 +1858,27 @@ def _run_migrations(
                 "applied_at": applied_at,
                 "backup_manifest_sha256": backup_manifest_sha256,
                 "source_schema_sha256": storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                "target_schema_sha256": storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                "targetSchemaSha256": storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                "targetProfileSha256": storage.DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256,
+                "pluginGrantAuthority": storage.PLUGIN_GRANT_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V21_DDL,
+                "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
+            },
+        )
+    if source_schema_version <= storage.DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION:
+        v0022_document_attachments.apply(
+            operations,
+            {
+                "migration_id": v0022_document_attachments.revision,
+                "applied_at": applied_at,
+                "backup_manifest_sha256": backup_manifest_sha256,
+                "source_schema_sha256": storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
                 "target_schema_sha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetSchemaSha256": storage.EXPECTED_SCHEMA_SHA256,
                 "targetProfileSha256": storage.EXPECTED_PROFILE_SHA256,
-                "pluginGrantAuthority": storage.PLUGIN_GRANT_DDL,
-                "schemaMetadataDdl": storage.SCHEMA_METADATA_V21_DDL,
+                "documentAttachmentAuthority": storage.DOCUMENT_ATTACHMENT_DDL,
+                "schemaMetadataDdl": storage.SCHEMA_METADATA_V22_DDL,
                 "schemaMetadataTriggers": v0002_schema_history.SCHEMA_METADATA_TRIGGERS,
             },
         )

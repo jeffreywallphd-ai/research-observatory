@@ -11,6 +11,8 @@ use std::sync::{Arc, Condvar, Mutex, Weak, mpsc};
 use std::thread;
 use std::time::{Duration, Instant};
 
+#[cfg(windows)]
+use crate::import_source::{HeldImportSource, SourceSeal};
 use crate::workflow_session::WorkflowSessionAuthority;
 use serde::{Deserialize, Serialize};
 
@@ -474,7 +476,97 @@ pub(crate) struct NativeImportConnection {
     project_id: String,
 }
 
+/// Native-only association identity. The selected filename and byte count come
+/// from the held source, never this request or a renderer path.
+#[cfg(windows)]
+pub(crate) struct DocumentStageSelection {
+    pub session_id: String,
+    pub declared_media_type: Option<String>,
+    pub source_assertion_revision_id: String,
+    pub work_id: String,
+    pub work_revision_id: String,
+    pub version_id: String,
+    pub version_revision_id: String,
+}
+
 impl NativeImportConnection {
+    #[cfg(windows)]
+    pub(crate) fn document_context(&self) -> Result<CoreApiResponse, &'static str> {
+        if !self.is_current() {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        let response = authenticated_api_request_with_cancellation(
+            self.port,
+            &self.token,
+            &CoreApiRequest {
+                method: "POST".into(),
+                path: "/native/document-attachments/context".into(),
+                body: Some(
+                    serde_json::json!({"root":self.root,"projectId":self.project_id}).to_string(),
+                ),
+                if_match: None,
+                idempotency_key: None,
+            },
+            Some(self.cancellation.as_ref()),
+        );
+        if !self.is_current() {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        response
+    }
+
+    #[cfg(windows)]
+    pub(crate) fn document_stage(
+        &self,
+        source: HeldImportSource,
+        selection: &DocumentStageSelection,
+        authorized: impl Fn() -> bool,
+    ) -> Result<(CoreApiResponse, Option<SourceSeal>), &'static str> {
+        if !self.is_current()
+            || !authorized()
+            || !canonical_lower_hex(&selection.session_id, 32)
+            || selection
+                .declared_media_type
+                .as_ref()
+                .is_some_and(|value| value.is_empty() || value.len() > 200)
+            || [
+                &selection.source_assertion_revision_id,
+                &selection.work_id,
+                &selection.work_revision_id,
+                &selection.version_id,
+                &selection.version_revision_id,
+            ]
+            .iter()
+            .any(|value| !canonical_uuid_v7(value))
+            || source.byte_length() > 128 * 1024 * 1024
+        {
+            return Err("RO-DOCUMENT-STAGE-INVALID");
+        }
+        let header = serde_json::to_vec(&serde_json::json!({
+            "root": self.root,
+            "projectId": self.project_id,
+            "sessionId": selection.session_id,
+            "sourceName": source.basename(),
+            "declaredMediaType": selection.declared_media_type,
+            "sourceAssertionRevisionId": selection.source_assertion_revision_id,
+            "workId": selection.work_id,
+            "workRevisionId": selection.work_revision_id,
+            "versionId": selection.version_id,
+            "versionRevisionId": selection.version_revision_id,
+            "byteLength": source.byte_length(),
+        }))
+        .map_err(|_| "RO-DOCUMENT-STAGE-INVALID")?;
+        if header.is_empty() || header.len() > 8192 {
+            return Err("RO-DOCUMENT-STAGE-INVALID");
+        }
+        let current = || authorized() && self.is_current();
+        let outcome =
+            authenticated_document_stage(self.port, &self.token, &header, source, current);
+        if !self.is_current() || !authorized() {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        outcome
+    }
     pub(crate) fn plugin_request(
         &self,
         action: NativePluginAction,
@@ -3111,6 +3203,194 @@ fn authenticated_api_request_bytes(
     parse_api_response_with_limit(&response, &trace_id, response_limit)
 }
 
+#[cfg(windows)]
+fn write_document_bytes(
+    stream: &mut TcpStream,
+    mut bytes: &[u8],
+    deadline: Instant,
+    authorized: &impl Fn() -> bool,
+) -> Result<(), &'static str> {
+    while !bytes.is_empty() {
+        if !authorized() {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        if Instant::now() >= deadline {
+            return Err("RO-DOCUMENT-STAGE-TIMEOUT");
+        }
+        match stream.write(bytes) {
+            Ok(0) => return Err("RO-DOCUMENT-STAGE-UNAVAILABLE"),
+            Ok(count) => bytes = &bytes[count..],
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    std::io::ErrorKind::WouldBlock
+                        | std::io::ErrorKind::TimedOut
+                        | std::io::ErrorKind::Interrupted
+                ) => {}
+            Err(_) => return Err("RO-DOCUMENT-STAGE-UNAVAILABLE"),
+        }
+    }
+    Ok(())
+}
+
+#[cfg(windows)]
+fn document_response_available(stream: &mut TcpStream) -> Result<bool, &'static str> {
+    stream
+        .set_read_timeout(Some(Duration::from_millis(1)))
+        .map_err(|_| "RO-DOCUMENT-STAGE-UNAVAILABLE")?;
+    let mut first = [0_u8; 1];
+    let available = stream.peek(&mut first);
+    stream
+        .set_read_timeout(Some(Duration::from_millis(50)))
+        .map_err(|_| "RO-DOCUMENT-STAGE-UNAVAILABLE")?;
+    match available {
+        Ok(1) => Ok(true),
+        Ok(0) => Err("RO-DOCUMENT-STAGE-UNAVAILABLE"),
+        Err(error)
+            if matches!(
+                error.kind(),
+                std::io::ErrorKind::WouldBlock
+                    | std::io::ErrorKind::TimedOut
+                    | std::io::ErrorKind::Interrupted
+            ) =>
+        {
+            Ok(false)
+        }
+        _ => Err("RO-DOCUMENT-STAGE-UNAVAILABLE"),
+    }
+}
+
+/// Stream a held native source to one fixed Core route. The source never joins
+/// the HTTP header buffer, a renderer body, or a plaintext disk stage.
+#[cfg(windows)]
+fn authenticated_document_stage(
+    port: u16,
+    capability_token: &CapabilityToken,
+    header: &[u8],
+    source: HeldImportSource,
+    authorized: impl Fn() -> bool,
+) -> Result<(CoreApiResponse, Option<SourceSeal>), &'static str> {
+    if header.is_empty() || header.len() > 8192 || source.byte_length() > 128 * 1024 * 1024 {
+        return Err("RO-DOCUMENT-STAGE-INVALID");
+    }
+    let body_length = 4_u64 + header.len() as u64 + source.byte_length();
+    let deadline = Instant::now() + Duration::from_secs(180);
+    if !authorized() {
+        return Err("RO-CORE-API-CANCELLED");
+    }
+    let mut trace_bytes = [0_u8; 16];
+    fill_secure_random(&mut trace_bytes).map_err(|_| "RO-CORE-TRACE-RANDOM-FAILED")?;
+    let mut trace = Vec::with_capacity(32);
+    append_hex(&trace_bytes, &mut trace);
+    zeroize_bytes(&mut trace_bytes);
+    let trace_id = String::from_utf8(trace.clone()).map_err(|_| "RO-CORE-TRACE-RANDOM-FAILED")?;
+
+    let address = SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), port);
+    let mut stream = TcpStream::connect_timeout(&address, Duration::from_secs(1))
+        .map_err(|_| "RO-DOCUMENT-STAGE-UNAVAILABLE")?;
+    stream
+        .set_read_timeout(Some(Duration::from_millis(50)))
+        .and_then(|_| stream.set_write_timeout(Some(Duration::from_millis(50))))
+        .map_err(|_| "RO-DOCUMENT-STAGE-UNAVAILABLE")?;
+    let mut wire = Vec::with_capacity(512);
+    wire.extend_from_slice(b"POST /native/document-attachments/stage HTTP/1.1\r\nHost: 127.0.0.1:");
+    wire.extend_from_slice(port.to_string().as_bytes());
+    wire.extend_from_slice(b"\r\nAuthorization: Bearer ");
+    capability_token.append_hex(&mut wire);
+    wire.extend_from_slice(b"\r\nX-Trace-Id: ");
+    wire.extend_from_slice(&trace);
+    wire.extend_from_slice(b"\r\nAccept: application/json\r\nContent-Type: application/octet-stream\r\nContent-Length: ");
+    wire.extend_from_slice(body_length.to_string().as_bytes());
+    wire.extend_from_slice(b"\r\nConnection: close\r\n\r\n");
+    let written = write_document_bytes(&mut stream, &wire, deadline, &authorized);
+    zeroize_bytes(&mut wire);
+    zeroize_bytes(&mut trace);
+    written?;
+    write_document_bytes(
+        &mut stream,
+        &(header.len() as u32).to_be_bytes(),
+        deadline,
+        &authorized,
+    )?;
+    write_document_bytes(&mut stream, header, deadline, &authorized)?;
+    let source_length = source.byte_length();
+    let mut written_source_bytes = 0_u64;
+    let seal = source.transfer(
+        || authorized(),
+        |_, bytes| {
+            write_document_bytes(&mut stream, bytes, deadline, &authorized)?;
+            written_source_bytes += bytes.len() as u64;
+            if written_source_bytes < source_length && document_response_available(&mut stream)? {
+                return Err("RO-DOCUMENT-STAGE-EARLY-RESPONSE");
+            }
+            Ok(())
+        },
+    );
+    let seal = match seal {
+        Ok(seal) => Some(seal),
+        Err("RO-IMPORT-SOURCE-CANCELLED") => return Err("RO-CORE-API-CANCELLED"),
+        Err("RO-DOCUMENT-STAGE-UNAVAILABLE" | "RO-DOCUMENT-STAGE-EARLY-RESPONSE")
+            if authorized() =>
+        {
+            // Core can reject an invalid session or WorkVersion as soon as it
+            // receives the frame header, before consuming the selected bytes.
+            // Recover only a complete, trace-correlated non-success response;
+            // a partial or reset reply stays a transport failure.
+            let recovery_deadline = deadline.min(Instant::now() + Duration::from_millis(750));
+            let response =
+                read_document_response(&mut stream, &trace_id, recovery_deadline, &authorized)?;
+            if response.status == 200 {
+                return Err("RO-DOCUMENT-STAGE-RESPONSE-INVALID");
+            }
+            return Ok((response, None));
+        }
+        Err(error) => return Err(error),
+    };
+    if !authorized() {
+        return Err("RO-CORE-API-CANCELLED");
+    }
+    let parsed = read_document_response(&mut stream, &trace_id, deadline, &authorized)?;
+    Ok((parsed, seal))
+}
+
+#[cfg(windows)]
+fn read_document_response(
+    stream: &mut TcpStream,
+    trace_id: &str,
+    deadline: Instant,
+    authorized: &impl Fn() -> bool,
+) -> Result<CoreApiResponse, &'static str> {
+    let mut response = Vec::new();
+    let mut chunk = [0_u8; 8192];
+    loop {
+        if !authorized() {
+            return Err("RO-CORE-API-CANCELLED");
+        }
+        if Instant::now() >= deadline {
+            return Err("RO-DOCUMENT-STAGE-TIMEOUT");
+        }
+        match stream.read(&mut chunk) {
+            Ok(0) => break,
+            Ok(count) => {
+                if response.len().saturating_add(count) > 131_072 {
+                    return Err("RO-DOCUMENT-STAGE-RESPONSE-INVALID");
+                }
+                response.extend_from_slice(&chunk[..count]);
+            }
+            Err(error)
+                if matches!(
+                    error.kind(),
+                    std::io::ErrorKind::WouldBlock
+                        | std::io::ErrorKind::TimedOut
+                        | std::io::ErrorKind::Interrupted
+                ) => {}
+            Err(_) if !response.is_empty() => break,
+            Err(_) => return Err("RO-DOCUMENT-STAGE-RESPONSE-INVALID"),
+        }
+    }
+    parse_api_response_with_limit(&response, trace_id, 65_536)
+}
+
 #[cfg(test)]
 fn parse_api_response(
     response: &[u8],
@@ -3773,6 +4053,11 @@ mod tests {
         for path in [
             "/native/connectors/configuration/status",
             "/native/connectors/configuration/replace",
+            "/native/document-attachments/context",
+            "/native/document-attachments/stage",
+            "/native/document-attachments/candidate",
+            "/native/document-attachments/cancel",
+            "/native/document-attachments/commit",
         ] {
             assert!(
                 super::validate_api_request(&super::CoreApiRequest {
@@ -3968,6 +4253,34 @@ mod tests {
         );
         server.join().unwrap();
         assert!(!connection.is_current());
+        let document_root = dunce::canonicalize(
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../artifacts/tmp"),
+        )
+        .unwrap()
+        .join(format!(
+            "ro-document-stale-{}",
+            crate::application_sign_in_policy::secure_random_hex::<16>().unwrap()
+        ));
+        std::fs::create_dir(&document_root).unwrap();
+        let document_path = document_root.join("synthetic.txt");
+        std::fs::write(&document_path, b"synthetic document").unwrap();
+        let source =
+            crate::import_source::HeldImportSource::open_document_selected(&document_path).unwrap();
+        let selection = super::DocumentStageSelection {
+            session_id: "a".repeat(32),
+            declared_media_type: Some("text/plain".into()),
+            source_assertion_revision_id: "01900000-0000-7000-8000-000000000002".into(),
+            work_id: "01900000-0000-7000-8000-000000000003".into(),
+            work_revision_id: "01900000-0000-7000-8000-000000000004".into(),
+            version_id: "01900000-0000-7000-8000-000000000005".into(),
+            version_revision_id: "01900000-0000-7000-8000-000000000006".into(),
+        };
+        assert_eq!(
+            connection.document_stage(source, &selection, || true).err(),
+            Some("RO-DOCUMENT-STAGE-INVALID"),
+            "a prior project generation cannot upload to a new one"
+        );
+        std::fs::remove_dir_all(&document_root).unwrap();
         assert!(
             connection
                 .publish_current::<()>(|| panic!("changed project cannot publish a report"))
@@ -5736,6 +6049,306 @@ mod tests {
             assert_eq!(result.is_err(), drop_reply);
             server.join().unwrap();
         }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn document_transport_streams_exact_framed_held_bytes_without_a_renderer_body() {
+        use sha2::Digest;
+        use std::io::{Read, Write};
+        let root = dunce::canonicalize(
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../artifacts/tmp"),
+        )
+        .unwrap()
+        .join(format!(
+            "ro-document-wire-{}",
+            crate::application_sign_in_policy::secure_random_hex::<16>().unwrap()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let path = root.join("synthetic.txt");
+        let content = vec![b'x'; 128 * 1024 + 7];
+        std::fs::write(&path, &content).unwrap();
+        let source = crate::import_source::HeldImportSource::open_document_selected(&path).unwrap();
+        let header = serde_json::json!({"byteLength":content.len(),"sourceName":"synthetic.txt"})
+            .to_string()
+            .into_bytes();
+        let listener = std::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let token = super::CapabilityToken::generate().unwrap();
+        let expected = content.clone();
+        let expected_header = header.clone();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(std::time::Duration::from_secs(5)))
+                .unwrap();
+            let mut headers = Vec::new();
+            while !headers.ends_with(b"\r\n\r\n") {
+                let mut byte = [0];
+                stream.read_exact(&mut byte).unwrap();
+                headers.push(byte[0]);
+                assert!(headers.len() <= 8192);
+            }
+            let headers = String::from_utf8(headers).unwrap();
+            assert!(headers.starts_with("POST /native/document-attachments/stage HTTP/1.1\r\n"));
+            assert!(headers.contains("Content-Type: application/octet-stream\r\n"));
+            let length: usize = headers
+                .lines()
+                .find_map(|line| line.strip_prefix("Content-Length: "))
+                .unwrap()
+                .parse()
+                .unwrap();
+            assert_eq!(length, 4 + expected_header.len() + expected.len());
+            let mut framing = [0_u8; 4];
+            stream.read_exact(&mut framing).unwrap();
+            assert_eq!(u32::from_be_bytes(framing) as usize, expected_header.len());
+            let mut observed_header = vec![0; expected_header.len()];
+            stream.read_exact(&mut observed_header).unwrap();
+            assert_eq!(observed_header, expected_header);
+            let mut received = vec![0; expected.len()];
+            stream.read_exact(&mut received).unwrap();
+            assert_eq!(received, expected);
+            let trace = headers
+                .lines()
+                .find_map(|line| line.strip_prefix("X-Trace-Id: "))
+                .unwrap();
+            write!(stream, "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nX-Trace-Id: {trace}\r\nContent-Length: 2\r\n\r\n{{}}").unwrap();
+        });
+        let (response, seal) =
+            super::authenticated_document_stage(port, &token, &header, source, || true).unwrap();
+        let seal = seal.expect("complete upload must have a held-source seal");
+        assert_eq!(response.status, 200);
+        assert_eq!(seal.byte_length, content.len() as u64);
+        assert_eq!(seal.chunk_count, 2);
+        assert_eq!(
+            seal.source_sha256,
+            format!("{:x}", sha2::Sha256::digest(&content))
+        );
+        server.join().unwrap();
+        std::fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn document_transport_closes_owned_socket_when_cancelled_after_upload() {
+        use std::io::Read;
+        let root = dunce::canonicalize(
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../artifacts/tmp"),
+        )
+        .unwrap()
+        .join(format!(
+            "ro-document-cancel-{}",
+            crate::application_sign_in_policy::secure_random_hex::<16>().unwrap()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let path = root.join("synthetic.txt");
+        std::fs::write(&path, b"synthetic document").unwrap();
+        let source = crate::import_source::HeldImportSource::open_document_selected(&path).unwrap();
+        let listener = std::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let token = super::CapabilityToken::generate().unwrap();
+        let (uploaded, observed) = std::sync::mpsc::sync_channel(1);
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(std::time::Duration::from_secs(5)))
+                .unwrap();
+            let mut headers = Vec::new();
+            while !headers.ends_with(b"\r\n\r\n") {
+                let mut byte = [0];
+                stream.read_exact(&mut byte).unwrap();
+                headers.push(byte[0]);
+                assert!(headers.len() <= 8192);
+            }
+            let headers = String::from_utf8(headers).unwrap();
+            let length: usize = headers
+                .lines()
+                .find_map(|line| line.strip_prefix("Content-Length: "))
+                .unwrap()
+                .parse()
+                .unwrap();
+            let mut body = vec![0; length];
+            stream.read_exact(&mut body).unwrap();
+            uploaded.send(()).unwrap();
+            let mut byte = [0];
+            assert_eq!(
+                stream.read(&mut byte).unwrap(),
+                0,
+                "cancel must close request socket"
+            );
+        });
+        let cancelled = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let checking = std::sync::Arc::clone(&cancelled);
+        let client = std::thread::spawn(move || {
+            super::authenticated_document_stage(port, &token, b"{}", source, || {
+                !checking.load(std::sync::atomic::Ordering::Acquire)
+            })
+        });
+        observed
+            .recv_timeout(std::time::Duration::from_secs(5))
+            .unwrap();
+        cancelled.store(true, std::sync::atomic::Ordering::Release);
+        assert_eq!(client.join().unwrap().err(), Some("RO-CORE-API-CANCELLED"));
+        server.join().unwrap();
+        std::fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn document_transport_recovers_a_correlated_early_problem_after_write_failure() {
+        use std::io::{Read, Write};
+        let root = dunce::canonicalize(
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../artifacts/tmp"),
+        )
+        .unwrap()
+        .join(format!(
+            "ro-document-early-{}",
+            crate::application_sign_in_policy::secure_random_hex::<16>().unwrap()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let path = root.join("synthetic.bin");
+        let file = std::fs::File::create(&path).unwrap();
+        file.set_len(128 * 1024 * 1024).unwrap();
+        drop(file);
+        let source = crate::import_source::HeldImportSource::open_document_selected(&path).unwrap();
+        let listener = std::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let token = super::CapabilityToken::generate().unwrap();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(std::time::Duration::from_secs(5)))
+                .unwrap();
+            let mut headers = Vec::new();
+            while !headers.ends_with(b"\r\n\r\n") {
+                let mut byte = [0];
+                stream.read_exact(&mut byte).unwrap();
+                headers.push(byte[0]);
+                assert!(headers.len() <= 8192);
+            }
+            let headers = String::from_utf8(headers).unwrap();
+            let trace = headers
+                .lines()
+                .find_map(|line| line.strip_prefix("X-Trace-Id: "))
+                .unwrap();
+            let body = serde_json::json!({
+                "type":"urn:research-observatory:problem:document-association-stale",
+                "title":"Document association changed",
+                "status":409,
+                "detail":"The selected Work or version has changed.",
+                "code":"RO-CORE-DOCUMENT-ASSOCIATION-STALE",
+                "traceId":trace,
+                "retryable":false,
+                "remediation":"Refresh the Work and version before retrying."
+            })
+            .to_string();
+            write!(stream, "HTTP/1.1 409 Conflict\r\nContent-Type: application/problem+json\r\nX-Trace-Id: {trace}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n", body.len()).unwrap();
+            stream.write_all(body.as_bytes()).unwrap();
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        });
+        let result = super::authenticated_document_stage(port, &token, b"{}", source, || true);
+        assert_eq!(
+            result.as_ref().map(|(response, _)| response.status),
+            Ok(409)
+        );
+        let (response, seal) = result.unwrap();
+        assert!(seal.is_none(), "early denial has no completed source seal");
+        let selection = crate::document_runtime::DocumentSelection {
+            root: "C:/Synthetic/project".into(),
+            project_id: "01900000-0000-7000-8000-000000000001".into(),
+            declared_media_type: None,
+            source_assertion_revision_id: "01900000-0000-7000-8000-000000000002".into(),
+            work_id: "01900000-0000-7000-8000-000000000003".into(),
+            work_revision_id: "01900000-0000-7000-8000-000000000004".into(),
+            version_id: "01900000-0000-7000-8000-000000000005".into(),
+            version_revision_id: "01900000-0000-7000-8000-000000000006".into(),
+        };
+        let decoded = crate::document_runtime::decode_stage_response(
+            response,
+            seal.as_ref(),
+            &selection,
+            "synthetic.bin",
+        )
+        .unwrap();
+        assert!(
+            matches!(decoded, crate::document_runtime::DocumentStageOutcome::Rejected(problem)
+            if problem.code == "RO-CORE-DOCUMENT-ASSOCIATION-STALE"
+                && problem.remediation == "Refresh the Work and version before retrying.")
+        );
+        server.join().unwrap();
+        std::fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[cfg(windows)]
+    #[test]
+    #[ignore = "requires the ignored signed-LPAC/Uvicorn bridge fixture"]
+    fn document_held_source_reaches_real_core_route_and_signed_lpac() {
+        let config_path = std::env::var("RO_W2_NATIVE_DOCUMENT_BRIDGE_CONFIG")
+            .expect("set the ignored synthetic bridge config path");
+        let config: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(config_path).unwrap()).unwrap();
+        let port = u16::try_from(config["port"].as_u64().unwrap()).unwrap();
+        let source_path = std::path::PathBuf::from(config["sourcePath"].as_str().unwrap());
+        let original = config["header"].clone();
+        let token = super::CapabilityToken([0xaa; 32]);
+        let run = |header: &serde_json::Value| {
+            let source =
+                crate::import_source::HeldImportSource::open_document_selected(&source_path)
+                    .unwrap();
+            super::authenticated_document_stage(
+                port,
+                &token,
+                header.to_string().as_bytes(),
+                source,
+                || true,
+            )
+            .unwrap()
+        };
+        let selected = |header: &serde_json::Value| crate::document_runtime::DocumentSelection {
+            root: header["root"].as_str().unwrap().to_owned(),
+            project_id: header["projectId"].as_str().unwrap().to_owned(),
+            declared_media_type: Some("text/plain".into()),
+            source_assertion_revision_id: header["sourceAssertionRevisionId"]
+                .as_str()
+                .unwrap()
+                .to_owned(),
+            work_id: header["workId"].as_str().unwrap().to_owned(),
+            work_revision_id: header["workRevisionId"].as_str().unwrap().to_owned(),
+            version_id: header["versionId"].as_str().unwrap().to_owned(),
+            version_revision_id: header["versionRevisionId"].as_str().unwrap().to_owned(),
+        };
+        let mut stale = original.clone();
+        stale["versionRevisionId"] = "01900000-0000-7000-8000-000000000077".into();
+        let (denied, seal) = run(&stale);
+        assert_eq!(denied.status, 409);
+        let outcome = crate::document_runtime::decode_stage_response(
+            denied,
+            seal.as_ref(),
+            &selected(&stale),
+            "paper.txt",
+        )
+        .unwrap();
+        assert!(
+            matches!(outcome, crate::document_runtime::DocumentStageOutcome::Rejected(problem)
+            if problem.code == "RO-CORE-DOCUMENT-ASSOCIATION-STALE")
+        );
+
+        let (response, seal) = run(&original);
+        let seal = seal.expect("successful upload requires a held-source seal");
+        let outcome = crate::document_runtime::decode_stage_response(
+            response,
+            Some(&seal),
+            &selected(&original),
+            "paper.txt",
+        )
+        .unwrap();
+        assert!(
+            matches!(outcome, crate::document_runtime::DocumentStageOutcome::Candidate(candidate)
+            if candidate.object_sha256 == seal.source_sha256
+                && candidate.byte_length == seal.byte_length
+                && candidate.version_revision_id == original["versionRevisionId"].as_str().unwrap()
+                && candidate.format == "plain-text")
+        );
     }
 
     #[test]

@@ -1,0 +1,39 @@
+{
+  "ciphertext": [
+    {
+      "relativePath": "objects/10/6f/106f700fea75dfdd838df2f4ac48c7cbc1908d579a9ad5a3c2e218256ced7d37.blob",
+      "sha256": "0ca7b0a844ba557dd6ff8efeed36cfdb8cf3e502426c10a9353c3409af1208a4"
+    },
+    {
+      "relativePath": "objects/66/f1/66f1e99c6d668bdffe199a0c24ae34b8a2ed76ce6baf5725666c0fd2c0fc207f.blob",
+      "sha256": "5aa43c8b6eea090c328f03da2eb0dc518f8a5990336fa63b4dcb9ae87b90d932"
+    }
+  ],
+  "counts": {
+    "object_records": 2,
+    "reconciliation_version_sources": 1,
+    "reconciliation_versions": 1,
+    "reconciliation_work_states": 3
+  },
+  "databaseSha256": "135510071c9fe79f0215c8d9d919bd0fb45601c546e26d20e413ee07e62e9c6d",
+  "objects": [
+    {
+      "ciphertextByteLength": 105,
+      "envelopeVersion": "secretstream-xchacha20poly1305-v1",
+      "objectSha256": "68ecfd832c92c8586fe8bd35db11d4ae61146493839977b440ab65e724ceb7dd"
+    },
+    {
+      "ciphertextByteLength": 86,
+      "envelopeVersion": "secretstream-xchacha20poly1305-v1",
+      "objectSha256": "7ceea3876d6cbd3d56ba9bf568f89ab832eca2fefc3e0c7ff44c807b6308be62"
+    }
+  ],
+  "projectId": "24c563fc-66f6-4167-9a91-9c4f21d979e1",
+  "schemaSha256": "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034",
+  "schemaVersion": 21,
+  "sourceAssertionRevisionId": "01a0faa2-c69a-7eff-bdbb-d64d643c539a",
+  "versionId": "01a0faa2-cbbf-75b0-8869-daf2b55d1c82",
+  "versionRevisionId": "01a0faa2-cbbe-73cf-bbd2-09a5e73418e4",
+  "workId": "01a0faa2-c69e-764f-9209-6c12be4227e4",
+  "workRevisionId": "01a0faa2-c69e-7f6f-8596-0c6f22cec8e1"
+}

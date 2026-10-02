@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 21
+DATABASE_SCHEMA_VERSION = 22
+DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 21
 PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 20
 CORPUS_REPORT_DATABASE_SCHEMA_VERSION = 19
 RIGHTS_DATABASE_SCHEMA_VERSION = 18
@@ -141,6 +142,11 @@ CORPUS_SOURCE_PROJECTION_TABLES = (
     "corpus_source_overlap_totals",
 )
 PLUGIN_GRANT_TABLES = ("plugin_grant_events",)
+DOCUMENT_ATTACHMENT_TABLES = (
+    "document_attachment_candidates",
+    "document_attachment_cancellations",
+    "document_attachment_assertions",
+)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -204,6 +210,7 @@ EXPECTED_TABLES = (
     *CORPUS_REPORT_TABLES,
     *CORPUS_SOURCE_PROJECTION_TABLES,
     *PLUGIN_GRANT_TABLES,
+    *DOCUMENT_ATTACHMENT_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -260,6 +267,7 @@ IMMUTABLE_ROW_TABLES = (
     "rights_use_decisions",
     *CORPUS_REPORT_TABLES,
     *PLUGIN_GRANT_TABLES,
+    *DOCUMENT_ATTACHMENT_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -332,6 +340,7 @@ EXPECTED_TRIGGERS = tuple(
             "corpus_report_source_binding",
             "plugin_grant_revision_binding",
             "plugin_grant_event_binding",
+            "document_attachment_assertion_binding",
         ]
     )
 )
@@ -396,6 +405,9 @@ EXPECTED_INDEXES = (
     "corpus_discovery_paths_search_run",
     "corpus_report_snapshots_project_time",
     "plugin_grant_events_current",
+    "document_attachment_candidates_work",
+    "document_attachment_candidates_object",
+    "document_attachment_assertions_version",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -423,7 +435,8 @@ CORPUS_SCHEMA_SHA256 = "bb068798493011b7b2300c076e9f129443fe15939aabdf16dc62af33
 RIGHTS_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d57008b89b503"
 CORPUS_REPORT_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
 PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
-EXPECTED_SCHEMA_SHA256 = "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
+DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256 = "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
+EXPECTED_SCHEMA_SHA256 = "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -492,7 +505,8 @@ CORPUS_PROFILE_SHA256 = "3b79e6e6c2fa5055041b6977a318d0fe335b88f8106b72c2d099131
 RIGHTS_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149cbdfb4ed30"
 CORPUS_REPORT_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416911a2f805db4a50f"
 PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4c3639678c26860fc317e1e11515"
-EXPECTED_PROFILE_SHA256 = "74ed7818d261958b0039aef90c00b42ed5f97b3558cc61818fcca93a862a9822"
+DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256 = "74ed7818d261958b0039aef90c00b42ed5f97b3558cc61818fcca93a862a9822"
+EXPECTED_PROFILE_SHA256 = "67361cdaa6b082a552f89a40c5a83036526da3a1230c8f6d3bef4cb57cc43997"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3560,6 +3574,7 @@ SCHEMA_METADATA_V18_DDL = SCHEMA_METADATA_V17_DDL.replace("schema_version = 17",
 SCHEMA_METADATA_V19_DDL = SCHEMA_METADATA_V18_DDL.replace("schema_version = 18", "schema_version = 19")
 SCHEMA_METADATA_V20_DDL = SCHEMA_METADATA_V19_DDL.replace("schema_version = 19", "schema_version = 20")
 SCHEMA_METADATA_V21_DDL = SCHEMA_METADATA_V20_DDL.replace("schema_version = 20", "schema_version = 21")
+SCHEMA_METADATA_V22_DDL = SCHEMA_METADATA_V21_DDL.replace("schema_version = 21", "schema_version = 22")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -5001,8 +5016,141 @@ PLUGIN_GRANT_DDL = (
 )
 
 
+DOCUMENT_ATTACHMENT_DDL = (
+    f"""
+        CREATE TABLE document_attachment_candidates (
+            candidate_id TEXT PRIMARY KEY CHECK ({_uuid_check("candidate_id", "7")}),
+            project_id TEXT NOT NULL,
+            source_assertion_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_assertion_revision_id", "7")}),
+            work_id TEXT NOT NULL CHECK ({_uuid_check("work_id", "7")}),
+            work_revision_id TEXT NOT NULL CHECK ({_uuid_check("work_revision_id", "7")}),
+            version_id TEXT NOT NULL CHECK ({_uuid_check("version_id", "7")}),
+            version_revision_id TEXT NOT NULL CHECK ({_uuid_check("version_revision_id", "7")}),
+            object_sha256 TEXT NOT NULL CHECK ({_sha256_check("object_sha256")}),
+            byte_length INTEGER NOT NULL CHECK (byte_length BETWEEN 1 AND 134217728),
+            format_name TEXT NOT NULL CHECK (format_name IN ('pdf','jats','tei','xml','html','docx','plain-text')),
+            media_type TEXT NOT NULL CHECK (length(media_type) BETWEEN 3 AND 200),
+            source_name TEXT NOT NULL CHECK (length(source_name) BETWEEN 1 AND 255),
+            confirmation_required INTEGER NOT NULL CHECK (confirmation_required IN (0,1)),
+            candidate_sha256 TEXT NOT NULL CHECK ({_sha256_check("candidate_sha256")}),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (length(trace_id)=32 AND trace_id=lower(trace_id)
+                AND trace_id NOT GLOB '*[^0-9a-f]*'),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (project_id) REFERENCES projects(project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (source_assertion_revision_id,project_id) REFERENCES reconciliation_assertions
+                (revision_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (work_revision_id,project_id,work_id) REFERENCES reconciliation_work_states
+                (revision_id,project_id,work_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (version_revision_id,project_id,version_id) REFERENCES reconciliation_versions
+                (revision_id,project_id,version_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (object_sha256,project_id) REFERENCES object_records
+                (object_sha256,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (candidate_id,project_id),
+            UNIQUE (candidate_id,project_id,source_assertion_revision_id)
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_attachment_cancellations (
+            candidate_id TEXT PRIMARY KEY CHECK ({_uuid_check("candidate_id", "7")}),
+            project_id TEXT NOT NULL,
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            trace_id TEXT NOT NULL CHECK (length(trace_id)=32 AND trace_id=lower(trace_id)
+                AND trace_id NOT GLOB '*[^0-9a-f]*'),
+            cancelled_at TEXT NOT NULL CHECK ({_timestamp_check("cancelled_at")}),
+            FOREIGN KEY (candidate_id,project_id) REFERENCES document_attachment_candidates
+                (candidate_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    f"""
+        CREATE TABLE document_attachment_assertions (
+            attachment_id TEXT PRIMARY KEY CHECK ({_uuid_check("attachment_id", "7")}),
+            project_id TEXT NOT NULL,
+            candidate_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("candidate_id", "7")}),
+            source_assertion_revision_id TEXT NOT NULL CHECK ({_uuid_check("source_assertion_revision_id", "7")}),
+            document_id TEXT NOT NULL CHECK ({_uuid_check("document_id", "7")}),
+            document_revision_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("document_revision_id", "7")}),
+            work_id TEXT NOT NULL CHECK ({_uuid_check("work_id", "7")}),
+            work_revision_id TEXT NOT NULL CHECK ({_uuid_check("work_revision_id", "7")}),
+            version_id TEXT NOT NULL CHECK ({_uuid_check("version_id", "7")}),
+            version_revision_id TEXT NOT NULL CHECK ({_uuid_check("version_revision_id", "7")}),
+            object_sha256 TEXT NOT NULL CHECK ({_sha256_check("object_sha256")}),
+            subject_sha256 TEXT NOT NULL CHECK ({_sha256_check("subject_sha256")}),
+            rights_policy_revision_id TEXT NOT NULL CHECK ({_uuid_check("rights_policy_revision_id", "7")}),
+            confirmation_sha256 TEXT CHECK (confirmation_sha256 IS NULL OR ({_sha256_check("confirmation_sha256")})),
+            command_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("command_id", "7")}),
+            command_sha256 TEXT NOT NULL CHECK ({_sha256_check("command_sha256")}),
+            provenance_event_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("provenance_event_id", "7")}),
+            outbox_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("outbox_id", "7")}),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            committed_at TEXT NOT NULL CHECK ({_timestamp_check("committed_at")}),
+            FOREIGN KEY (candidate_id,project_id,source_assertion_revision_id)
+                REFERENCES document_attachment_candidates(candidate_id,project_id,source_assertion_revision_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (document_revision_id,project_id) REFERENCES aggregate_revisions(revision_id,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (work_revision_id,project_id,work_id) REFERENCES reconciliation_work_states
+                (revision_id,project_id,work_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (version_revision_id,project_id,version_id) REFERENCES reconciliation_versions
+                (revision_id,project_id,version_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (object_sha256,project_id) REFERENCES object_records(object_sha256,project_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (rights_policy_revision_id,project_id,subject_sha256) REFERENCES rights_policy_revisions
+                (revision_id,project_id,subject_sha256) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (provenance_event_id) REFERENCES provenance_events(event_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT,
+            FOREIGN KEY (outbox_id) REFERENCES outbox_events(outbox_id)
+                ON UPDATE RESTRICT ON DELETE RESTRICT
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in DOCUMENT_ATTACHMENT_TABLES
+        for statement in _immutable_triggers(table, "document attachment history is append-only")
+    ),
+    "CREATE INDEX document_attachment_candidates_work ON document_attachment_candidates(project_id,work_id,version_id)",
+    "CREATE INDEX document_attachment_candidates_object ON document_attachment_candidates(project_id,object_sha256)",
+    "CREATE INDEX document_attachment_assertions_version "
+    "ON document_attachment_assertions(project_id,version_revision_id)",
+    """
+        CREATE TRIGGER document_attachment_assertion_binding BEFORE INSERT ON document_attachment_assertions
+        WHEN EXISTS (SELECT 1 FROM document_attachment_cancellations x WHERE x.candidate_id=NEW.candidate_id)
+          OR NOT EXISTS (
+              SELECT 1 FROM document_attachment_candidates c JOIN documents d
+                ON d.revision_id=NEW.document_revision_id AND d.project_id=c.project_id
+                JOIN aggregate_revisions r ON r.revision_id=d.revision_id AND r.project_id=d.project_id
+              WHERE c.candidate_id=NEW.candidate_id AND c.project_id=NEW.project_id
+                AND c.source_assertion_revision_id=NEW.source_assertion_revision_id
+                AND c.work_id=NEW.work_id AND c.work_revision_id=NEW.work_revision_id
+                AND c.version_id=NEW.version_id AND c.version_revision_id=NEW.version_revision_id
+                AND c.object_sha256=NEW.object_sha256 AND d.object_sha256=c.object_sha256
+                AND r.aggregate_id=NEW.document_id AND r.aggregate_kind='document'
+                AND ((c.confirmation_required=0 AND NEW.confirmation_sha256 IS NULL)
+                  OR (c.confirmation_required=1 AND NEW.confirmation_sha256=c.candidate_sha256))
+          )
+          OR NOT EXISTS (
+              SELECT 1 FROM rights_policy_revisions p JOIN rights_policy_subjects s
+                ON s.project_id=p.project_id AND s.subject_sha256=p.subject_sha256
+              WHERE p.revision_id=NEW.rights_policy_revision_id AND p.project_id=NEW.project_id
+                AND p.subject_sha256=NEW.subject_sha256 AND s.copy_id=NEW.candidate_id
+                AND s.source_assertion_revision_id=NEW.source_assertion_revision_id
+                AND s.copy_location='local-project-object' AND s.resource_class='full-text'
+          )
+          OR NOT EXISTS (
+              SELECT 1 FROM provenance_events p JOIN outbox_events o
+                ON o.project_id=p.project_id AND o.revision_id=p.revision_id
+              WHERE p.event_id=NEW.provenance_event_id AND o.outbox_id=NEW.outbox_id
+                AND p.project_id=NEW.project_id AND p.revision_id=NEW.document_revision_id
+                AND p.actor_id=NEW.actor_id AND p.occurred_at=NEW.committed_at
+                AND p.record_sha256=o.record_sha256
+          )
+        BEGIN SELECT RAISE(ABORT,'document attachment assertion binding denied'); END
+    """,
+)
+
+
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V21_DDL,
+    SCHEMA_METADATA_V22_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -5026,6 +5174,7 @@ _DDL_STATEMENTS = (
     *CORPUS_REPORT_DDL,
     *CORPUS_SOURCE_PROJECTION_DDL,
     *PLUGIN_GRANT_DDL,
+    *DOCUMENT_ATTACHMENT_DDL,
 )
 
 

@@ -218,14 +218,24 @@ class SqliteRightsRepository:
             resource_class="metadata",
         )
 
-    def _validate_subject_copy(self, subject: RightsSubject) -> None:
-        # T02 has an authenticated source-held metadata copy, but no protected
-        # acquired/derived-copy provenance or licensed entitlement verifier yet.
+    def _validate_subject_copy(self, connection: CanonicalConnection, subject: RightsSubject) -> None:
+        # A staged attachment candidate is an exact project-held copy witness.
+        # It is not a permission: full-text use still needs a current policy.
         if (
             subject.copy_id != subject.source_assertion_revision_id
             or subject.copy_location != "local-source"
             or subject.resource_class != "metadata"
         ):
+            if subject.copy_location == "local-project-object" and subject.resource_class == "full-text":
+                row = connection.execute(
+                    "SELECT 1 FROM document_attachment_candidates c WHERE c.project_id=? "
+                    "AND c.candidate_id=? AND c.source_assertion_revision_id=? "
+                    "AND NOT EXISTS (SELECT 1 FROM document_attachment_cancellations x "
+                    "WHERE x.candidate_id=c.candidate_id) LIMIT 1",
+                    (self._project, subject.copy_id, subject.source_assertion_revision_id),
+                ).fetchone()
+                if row is not None:
+                    return
             raise RightsProblem("rights-copy-unavailable")
 
     def _source_observation(
@@ -343,7 +353,7 @@ class SqliteRightsRepository:
         except ValidationError:
             raise RightsProblem("rights-source-mismatch") from None
         self._retained_source(connection, subject)
-        self._validate_subject_copy(subject)
+        self._validate_subject_copy(connection, subject)
         subject_hash = _digest(subject.model_dump(mode="json", by_alias=True))
         mapping = connection.execute(
             "SELECT policy_id,subject_json FROM rights_policy_subjects WHERE project_id=? AND subject_sha256=?",
@@ -798,13 +808,13 @@ class SqliteRightsRepository:
         self._authority(connection, actor)
         source = self._retained_source(connection, request.subject)
         assertion_hash = _digest(source.model_dump(mode="json", by_alias=True))
-        supported_copy = (
-            request.subject.copy_id == request.subject.source_assertion_revision_id
-            and request.subject.copy_location == "local-source"
-            and request.subject.resource_class == "metadata"
-        )
-        # This adapter has no protected provenance for any other copy. Evaluation
-        # must remain inspectable and fail closed rather than imply a grant.
+        try:
+            self._validate_subject_copy(connection, request.subject)
+            supported_copy = True
+        except RightsProblem as problem:
+            if str(problem) != "rights-copy-unavailable":
+                raise
+            supported_copy = False
         policy = self.current_with_connection(connection, request.subject) if supported_copy else None
         decision = evaluate_rights(policy, request, now=_utcnow())
         if (
@@ -959,7 +969,7 @@ class SqliteRightsRepository:
             raise RightsProblem("rights-decision-invalid")
         with self._transaction(write=True) as (connection, _):
             self._retained_source(connection, decision.subject)
-            self._validate_subject_copy(decision.subject)
+            self._validate_subject_copy(connection, decision.subject)
             self._insert_use_decision(connection, decision, actor=actor, event_kind="denied-attempt")
 
     def require_allow_with_connection(
@@ -1377,7 +1387,7 @@ class SqliteRightsRepository:
         subject_json = policy.subject.model_dump_json(by_alias=True)
         subject_hash = _digest(policy.subject.model_dump(mode="json", by_alias=True))
         source = self._retained_source(connection, policy.subject)
-        self._validate_subject_copy(policy.subject)
+        self._validate_subject_copy(connection, policy.subject)
         observation = self._source_observation(source, policy.subject.source_assertion_revision_id, connector_record)
         if policy.source_observation is not None and policy.source_observation != observation:
             raise RightsProblem("rights-observation-mismatch")
@@ -1551,7 +1561,7 @@ class SqliteRightsRepository:
         with self._transaction(write=True) as (connection, aggregates):
             self._authority(connection, actor)
             source = self._retained_source(connection, subject)
-            self._validate_subject_copy(subject)
+            self._validate_subject_copy(connection, subject)
             if any(item.basis == "source-observation" for item in permissions):
                 raise RightsProblem("rights-observation-unverified")
             if any(item.basis == "verified-entitlement" for item in permissions):

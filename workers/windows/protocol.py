@@ -8,6 +8,7 @@ from typing import Any, BinaryIO
 
 MAX_CONTROL_FRAME = 1_048_576
 MAX_BINARY_FRAME = 10 * 1_048_576
+MAX_DOCUMENT_CHUNK = 1_048_576
 
 
 class FrameError(ValueError):

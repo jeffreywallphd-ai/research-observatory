@@ -38,6 +38,7 @@ _REPOSITORY_ADAPTER_MODULES = {
     "corpus_report_repository",
     "corpus_source_projection",
     "rights_repository",
+    "document_attachment_repository",
     "plugin_grant_repository",
     "plugin_job_repository",
     "plugin_package_repository",
