@@ -48,9 +48,7 @@ def task_ids(backlog: dict[str, Any]) -> set[str]:
         for task in slice_["tasks"]
     }
     materialized_amendment = {
-        task["id"]
-        for amendment in backlog.get("wave_amendments", [])
-        for task in amendment.get("tasks", [])
+        task["id"] for amendment in backlog.get("wave_amendments", []) for task in amendment.get("tasks", [])
     }
     return ordinary | materialized_amendment
 

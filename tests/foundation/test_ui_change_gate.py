@@ -44,12 +44,16 @@ class UiChangeGateTests(unittest.TestCase):
         """Extend the real approved ECR history in an isolated Git clone."""
         root = Path(temporary) / "intentional-fixture"
         protected_config = Path(temporary) / "fixture-gitconfig"
-        protected_config.write_text(
-            f"[safe]\n\tdirectory = {(REPO / '.git').as_posix()}\n", encoding="utf-8"
-        )
+        protected_config.write_text(f"[safe]\n\tdirectory = {(REPO / '.git').as_posix()}\n", encoding="utf-8")
         clone = subprocess.run(
             [
-                "git", "clone", "--quiet", "--shared", "--no-checkout", str(REPO), str(root),
+                "git",
+                "clone",
+                "--quiet",
+                "--shared",
+                "--no-checkout",
+                str(REPO),
+                str(root),
             ],
             check=False,
             capture_output=True,
@@ -85,64 +89,93 @@ class UiChangeGateTests(unittest.TestCase):
             "selectedCommandIds": ["foundation:unit"],
         }
         manifest = {
-            "taskId": "W2.A01.T01", "commit": candidate, "baseCommit": control_base,
-            "branch": "fixture", "changedFiles": reviewed_paths,
+            "taskId": "W2.A01.T01",
+            "commit": candidate,
+            "baseCommit": control_base,
+            "branch": "fixture",
+            "changedFiles": reviewed_paths,
             "checks": [{"command": "synthetic focused Git fixture", "exitCode": 0}],
             "acceptanceCriteria": [
                 {"criterion_index": index, "evidence": ["synthetic control review fixture"]}
                 for index, _criterion in enumerate(t01["acceptance_criteria"], start=1)
             ],
-            "unverifiedItems": [], "verificationSelection": selection,
+            "unverifiedItems": [],
+            "verificationSelection": selection,
         }
         self.write_json(root / evidence_path, manifest)
         evidence_sha = hashlib.sha256((root / evidence_path).read_bytes()).hexdigest()
         evidence_ref = {
-            "type": "criterion-manifest", "path": evidence_path, "sha256": evidence_sha,
-            "commit": candidate, "recorded_at": "2026-10-02T20:00:00Z",
+            "type": "criterion-manifest",
+            "path": evidence_path,
+            "sha256": evidence_sha,
+            "commit": candidate,
+            "recorded_at": "2026-10-02T20:00:00Z",
         }
         self.commit(root, "synthetic T01 evidence delivery")
         submission = {
-            "id": "R01", "submitted_by": t01["owner"], "submitted_at": "2026-10-02T20:00:00Z",
-            "candidate_commit": candidate, "base_commit": control_base, "branch": "fixture",
+            "id": "R01",
+            "submitted_by": t01["owner"],
+            "submitted_at": "2026-10-02T20:00:00Z",
+            "candidate_commit": candidate,
+            "base_commit": control_base,
+            "branch": "fixture",
             "evidence_reference": evidence_ref,
             "acceptance_criteria_sha256": taskctl.canonical_json_sha256(t01["acceptance_criteria"]),
-            "changed_paths": reviewed_paths, "selected_checks": ["synthetic focused Git fixture"],
+            "changed_paths": reviewed_paths,
+            "selected_checks": ["synthetic focused Git fixture"],
             "selected_command_ids": ["foundation:unit"],
-            "deferred_checks": ["full Wave exit"], "selection_rationale": selection["riskAnalysis"],
+            "deferred_checks": ["full Wave exit"],
+            "selection_rationale": selection["riskAnalysis"],
             "selection_sha256": taskctl.canonical_json_sha256(selection),
-            "prior_attempt_id": None, "open_finding_ids": [], "root_cause_analysis": None,
+            "prior_attempt_id": None,
+            "open_finding_ids": [],
+            "root_cause_analysis": None,
         }
         submission["packet_sha256"] = taskctl.task_submission_packet_sha256(submission)
         t01.update(
-            status="REVIEW", evidence=[evidence_ref],
+            status="REVIEW",
+            evidence=[evidence_ref],
             review_control={"version": 1, "attempts": [], "current_submission": submission},
         )
         self.write_yaml(backlog_path, backlog)
         self.commit(root, "freeze synthetic T01 submission")
         reviewer = "agent:/root/fixture-independent-review"
         review = {
-            "reviewer": reviewer, "result": "approved", "reviewed_at": "2026-10-02T20:01:00Z",
+            "reviewer": reviewer,
+            "result": "approved",
+            "reviewed_at": "2026-10-02T20:01:00Z",
             "notes": "Synthetic committed-git fixture: no product approval claim.",
         }
         ledger_path = "artifacts/evidence/W2.A01.T01.review-R01.json"
         self.write_json(
             root / ledger_path,
             {
-                "task_id": "W2.A01.T01", "attempt_id": "R01", "candidate_commit": candidate,
-                "reviewer": reviewer, "result": "approved", "notes": review["notes"],
-                "findings": [], "closures": [],
+                "task_id": "W2.A01.T01",
+                "attempt_id": "R01",
+                "candidate_commit": candidate,
+                "reviewer": reviewer,
+                "result": "approved",
+                "notes": review["notes"],
+                "findings": [],
+                "closures": [],
             },
         )
         ledger_sha = hashlib.sha256((root / ledger_path).read_bytes()).hexdigest()
         attempt = {
-            "submission": submission, "review": review,
+            "submission": submission,
+            "review": review,
             "ledger": {"path": ledger_path, "sha256": ledger_sha},
-            "findings": [], "closures": [],
+            "findings": [],
+            "closures": [],
         }
         attempt["telemetry"] = taskctl.build_task_review_telemetry_event(t01, attempt)
         t01.update(
-            status="DONE", lease=None, verification_state="passed", evidence=[evidence_ref],
-            review=review, completed_at="2026-10-02T20:01:00Z",
+            status="DONE",
+            lease=None,
+            verification_state="passed",
+            evidence=[evidence_ref],
+            review=review,
+            completed_at="2026-10-02T20:01:00Z",
             review_control={
                 "version": 1,
                 "attempts": [attempt],
@@ -155,13 +188,15 @@ class UiChangeGateTests(unittest.TestCase):
         self.commit(root, "synthetic independent T01 disposition")
         later_index_path = root / "docs/adr/index.json"
         later_index = json.loads(later_index_path.read_text(encoding="utf-8"))
-        later_index["records"].append({
-            "id": "ADR-0036",
-            "path": "docs/adr/ADR-0036-synthetic-verifier-maintenance.md",
-            "title": "Synthetic append-only index probe after T01 review",
-            "status": "Proposed",
-            "linkedTasks": ["W2.A01.T01"],
-        })
+        later_index["records"].append(
+            {
+                "id": "ADR-0036",
+                "path": "docs/adr/ADR-0036-synthetic-verifier-maintenance.md",
+                "title": "Synthetic append-only index probe after T01 review",
+                "status": "Proposed",
+                "linkedTasks": ["W2.A01.T01"],
+            }
+        )
         self.write_json(later_index_path, later_index)
         (root / "docs/adr/ADR-0036-synthetic-verifier-maintenance.md").write_text(
             "# Synthetic independent verifier maintenance\n", encoding="utf-8"
@@ -172,8 +207,12 @@ class UiChangeGateTests(unittest.TestCase):
         )
         base = self.commit(root, "exact T02 claim base")
         t02.update(
-            status="IN_PROGRESS", owner="codex-w2-implementation", branch="fixture", worktree=".",
-            base_sha=base, started_at="2026-10-02T20:02:00Z",
+            status="IN_PROGRESS",
+            owner="codex-w2-implementation",
+            branch="fixture",
+            worktree=".",
+            base_sha=base,
+            started_at="2026-10-02T20:02:00Z",
             lease={
                 "claimed_by": "codex-w2-implementation",
                 "claimed_at": "2026-10-02T20:02:00Z",
@@ -183,22 +222,27 @@ class UiChangeGateTests(unittest.TestCase):
         self.write_yaml(backlog_path, backlog)
         self.commit(root, "exact T02 claim")
 
-        packet = json.loads((root / "planning/enabler-change-requests/ECR-0009.packet.json").read_text(encoding="utf-8"))
         approval = json.loads((root / "planning/wave-amendment-approvals/W2.A01.json").read_text(encoding="utf-8"))
         proposal_root = root / "planning/W2-reference-1.8"
         proposed_manifest = yaml.safe_load((proposal_root / "REFERENCE_MANIFEST.yaml").read_text(encoding="utf-8"))
         proposal_package_sha = hashlib.sha256(
-            json.dumps(proposed_manifest["file_hashes"], ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            json.dumps(
+                proposed_manifest["file_hashes"], ensure_ascii=False, sort_keys=True, separators=(",", ":")
+            ).encode("utf-8")
         ).hexdigest()
         design_approval_path = "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"
         self.write_json(
             root / design_approval_path,
             {
-                "schemaVersion": "1.0", "kind": "ui-reference-design-approval",
-                "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8", "approvedBy": approval["approvedBy"],
-                "approvedAt": approval["approvedAt"], "scope": "reference-publication-and-plan-binding-only",
+                "schemaVersion": "1.0",
+                "kind": "ui-reference-design-approval",
+                "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+                "approvedBy": approval["approvedBy"],
+                "approvedAt": approval["approvedAt"],
+                "scope": "reference-publication-and-plan-binding-only",
                 "proposal": {
-                    "commit": approval["packet"]["commit"], "path": "planning/W2-reference-1.8",
+                    "commit": approval["packet"]["commit"],
+                    "path": "planning/W2-reference-1.8",
                     "packageSha256": proposal_package_sha,
                 },
                 "amendmentApproval": {
@@ -211,10 +255,16 @@ class UiChangeGateTests(unittest.TestCase):
         )
         target_root = root / "design/ui-reference"
         for path in target_root.rglob("*"):
-            if path.is_file() and path.relative_to(target_root).as_posix() not in [
-                *proposed_manifest["governed_files"], "REFERENCE_MANIFEST.yaml",
-                *ui_gate.REFERENCE_EXCLUSIONS,
-            ] and not path.relative_to(target_root).as_posix().startswith("previews/"):
+            if (
+                path.is_file()
+                and path.relative_to(target_root).as_posix()
+                not in [
+                    *proposed_manifest["governed_files"],
+                    "REFERENCE_MANIFEST.yaml",
+                    *ui_gate.REFERENCE_EXCLUSIONS,
+                ]
+                and not path.relative_to(target_root).as_posix().startswith("previews/")
+            ):
                 path.unlink()
         for relative in proposed_manifest["governed_files"]:
             target = target_root / relative
@@ -224,10 +274,13 @@ class UiChangeGateTests(unittest.TestCase):
             shutil.copyfile(proposal_root / relative, target)
         published_approval = yaml.safe_load((target_root / "APPROVAL.yaml").read_text(encoding="utf-8"))
         published_approval.update(
-            status="approved", approved_by=approval["approvedBy"], approved_at=approval["approvedAt"],
+            status="approved",
+            approved_by=approval["approvedBy"],
+            approved_at=approval["approvedAt"],
             approval_basis="ECR-0009 exact owner decision and new 1.8 reference approval record.",
             authority={
-                "amendment_id": "W2.A01", "change_request_id": "ECR-0009",
+                "amendment_id": "W2.A01",
+                "change_request_id": "ECR-0009",
                 "approval_record": "planning/wave-amendment-approvals/W2.A01.json",
                 "approval_record_sha256": amendment["approval_reference"]["sha256"],
                 "approval_record_introduction_commit": amendment["approval_reference"]["introduction_commit"],
@@ -241,22 +294,31 @@ class UiChangeGateTests(unittest.TestCase):
         ).hexdigest()
         self.write_yaml(target_root / "REFERENCE_MANIFEST.yaml", published_manifest)
         publication = self.commit(root, "publish exact approved 1.8 reference")
-        state, reference_errors = ui_gate.reference_state(root, publication, json.loads((root / "ui-change-policy.json").read_text()))
+        state, reference_errors = ui_gate.reference_state(
+            root, publication, json.loads((root / "ui-change-policy.json").read_text())
+        )
         self.assertEqual([], reference_errors)
         ui_path = "apps/desktop/src/app/ImportReviewPane.tsx"
         with (root / ui_path).open("a", encoding="utf-8") as stream:
             stream.write("\n// Synthetic W2.A01.T02 renderer lineage fixture.\n")
-        contract = self.contract(
-            "intentional-design-change", state["packageSha256"], publication,
-            approved_by=approval["approvedBy"], previous="RO-UI-ACADEMIC-MINIMAL-1.7",
-            reference_id="RO-UI-ACADEMIC-MINIMAL-1.8", version="1.8",
-            implementation_agent="agent:codex-w2-implementation", task_id="W2.A01.T02",
+        contract: dict[str, Any] = self.contract(
+            "intentional-design-change",
+            state["packageSha256"],
+            publication,
+            approved_by=approval["approvedBy"],
+            previous="RO-UI-ACADEMIC-MINIMAL-1.7",
+            reference_id="RO-UI-ACADEMIC-MINIMAL-1.8",
+            version="1.8",
+            implementation_agent="agent:codex-w2-implementation",
+            task_id="W2.A01.T02",
         )
         contract["schemaVersion"] = "1.2"
         contract["changedFiles"] = [ui_path]
         contract["intentionalAmendmentAuthority"] = {
-            "amendmentId": "W2.A01", "changeRequestId": "ECR-0009",
-            "controlTaskId": "W2.A01.T01", "referenceApprovalPath": design_approval_path,
+            "amendmentId": "W2.A01",
+            "changeRequestId": "ECR-0009",
+            "controlTaskId": "W2.A01.T01",
+            "referenceApprovalPath": design_approval_path,
         }
         self.write_json(root / "artifacts/evidence/ui-change/W2.A01.T02.json", contract)
         head = self.commit(root, "render exact approved 1.8 interaction")
@@ -1888,7 +1950,7 @@ class UiChangeGateTests(unittest.TestCase):
         schema = json.loads((REPO / "design/ui-change.schema.json").read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
         validator = Draft202012Validator(schema)
-        contract = self.contract(
+        contract: dict[str, Any] = self.contract(
             "intentional-design-change",
             "a" * 64,
             "b" * 40,
@@ -1926,7 +1988,10 @@ class UiChangeGateTests(unittest.TestCase):
         authority = contract["intentionalAmendmentAuthority"]
         for key in authority:
             with self.subTest(missing=key):
-                invalid = {**contract, "intentionalAmendmentAuthority": {k: v for k, v in authority.items() if k != key}}
+                invalid = {
+                    **contract,
+                    "intentionalAmendmentAuthority": {k: v for k, v in authority.items() if k != key},
+                }
                 self.assertTrue(list(validator.iter_errors(invalid)))
             with self.subTest(substituted=key):
                 invalid = {**contract, "intentionalAmendmentAuthority": {**authority, key: "other"}}
@@ -2038,7 +2103,9 @@ class UiChangeGateTests(unittest.TestCase):
             hidden.unlink()
             reverted = self.commit(root, "erase hidden renderer")
             with self.assertRaisesRegex(ValueError, "hidden add/revert"):
-                ui_gate.intentional_amendment_segments(root, base, reverted, publication, contract_path, {reference}, policy)
+                ui_gate.intentional_amendment_segments(
+                    root, base, reverted, publication, contract_path, {reference}, policy
+                )
 
         with tempfile.TemporaryDirectory() as temporary:
             root, base, _package = self.prepare(temporary)
@@ -2091,7 +2158,9 @@ class UiChangeGateTests(unittest.TestCase):
             (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'approved';\n", encoding="utf-8")
             restored = self.commit(root, "restore regular contract and implement renderer")
             with self.assertRaisesRegex(ValueError, "delivery path is redirected"):
-                ui_gate.intentional_amendment_segments(root, base, restored, publication, contract_path, {reference}, policy)
+                ui_gate.intentional_amendment_segments(
+                    root, base, restored, publication, contract_path, {reference}, policy
+                )
 
         with tempfile.TemporaryDirectory() as temporary:
             root, base, _package = self.prepare(temporary)
@@ -2108,14 +2177,18 @@ class UiChangeGateTests(unittest.TestCase):
             (root / ui_path).write_text("export const View = () => 'approved';\n", encoding="utf-8")
             restored = self.commit(root, "restore regular renderer")
             with self.assertRaisesRegex(ValueError, "redirected"):
-                ui_gate.intentional_amendment_segments(root, base, restored, publication, contract_path, {reference}, policy)
+                ui_gate.intentional_amendment_segments(
+                    root, base, restored, publication, contract_path, {reference}, policy
+                )
 
         with tempfile.TemporaryDirectory() as temporary:
             root, base, _package = self.prepare(temporary)
             policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
             self.write_json(root / contract_path, {"synthetic": "same commit"})
             (root / reference).write_text(":root { --surface: blue; }\n", encoding="utf-8")
-            (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'premature';\n", encoding="utf-8")
+            (root / "apps/desktop/src/View.tsx").write_text(
+                "export const View = () => 'premature';\n", encoding="utf-8"
+            )
             simultaneous = self.commit(root, "reference and renderer in one commit")
             with self.assertRaisesRegex(ValueError, "strictly precede"):
                 ui_gate.intentional_amendment_segments(
@@ -2133,7 +2206,9 @@ class UiChangeGateTests(unittest.TestCase):
             (root / reference).write_text(":root { --surface: green; }\n", encoding="utf-8")
             rewritten = self.commit(root, "rewrite approved reference after renderer")
             with self.assertRaisesRegex(ValueError, "only in its separate publication"):
-                ui_gate.intentional_amendment_segments(root, base, rewritten, publication, contract_path, {reference}, policy)
+                ui_gate.intentional_amendment_segments(
+                    root, base, rewritten, publication, contract_path, {reference}, policy
+                )
 
     def test_intentional_amendment_segments_deny_non_renderer_product_and_security_files(self) -> None:
         for path in (
@@ -2151,7 +2226,9 @@ class UiChangeGateTests(unittest.TestCase):
                 (root / reference).write_text(":root { --surface: blue; }\n", encoding="utf-8")
                 publication = self.commit(root, "publish approved reference")
                 self.write_json(root / contract_path, {"synthetic": "regular"})
-                (root / "apps/desktop/src/View.tsx").write_text("export const View = () => 'approved';\n", encoding="utf-8")
+                (root / "apps/desktop/src/View.tsx").write_text(
+                    "export const View = () => 'approved';\n", encoding="utf-8"
+                )
                 self.commit(root, "renderer and evidence")
                 extra = root / path
                 extra.parent.mkdir(parents=True, exist_ok=True)
@@ -2160,7 +2237,9 @@ class UiChangeGateTests(unittest.TestCase):
                 extra.unlink()
                 reverted = self.commit(root, "revert unrelated edit")
                 with self.assertRaisesRegex(ValueError, "out-of-scope"):
-                    ui_gate.intentional_amendment_segments(root, base, reverted, publication, contract_path, {reference}, policy)
+                    ui_gate.intentional_amendment_segments(
+                        root, base, reverted, publication, contract_path, {reference}, policy
+                    )
 
     def test_intentional_amendment_segments_deny_redirected_ancillary_delivery(self) -> None:
         for path in ("artifacts/evidence/W2.A01.T02.extra.json", "planning/review-site/waves/W2.html"):
@@ -2218,7 +2297,7 @@ class UiChangeGateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root, _initial, _package = self.prepare(temporary)
             policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
-            task = {
+            task: dict[str, Any] = {
                 "id": "W2.A01.T02",
                 "amendment_id": "W2.A01",
                 "title": "Exact reference and renderer",
@@ -2232,7 +2311,7 @@ class UiChangeGateTests(unittest.TestCase):
                 "base_sha": None,
                 "lease": None,
             }
-            amendment = {
+            amendment: dict[str, Any] = {
                 "id": "W2.A01",
                 "change_request_id": "ECR-0009",
                 "target_wave": "W2",
@@ -2247,7 +2326,7 @@ class UiChangeGateTests(unittest.TestCase):
                 },
                 "tasks": [task],
             }
-            backlog = {
+            backlog: dict[str, Any] = {
                 "capabilities": [],
                 "waves": [{"id": "W2", "campaign": {"status": "PAUSED", "scope": "amendment-hold", "lease": None}}],
                 "wave_amendments": [amendment],
@@ -2266,7 +2345,7 @@ class UiChangeGateTests(unittest.TestCase):
             )
             self.write_yaml(root / "planning/backlog.yaml", backlog)
             self.commit(root, "exact taskctl claim shape")
-            contract = {
+            contract: dict[str, Any] = {
                 "schemaVersion": "1.2",
                 "taskId": "W2.A01.T02",
                 "changeKind": "intentional-design-change",
@@ -2278,7 +2357,9 @@ class UiChangeGateTests(unittest.TestCase):
                     "referenceApprovalPath": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json",
                 },
             }
-            valid = ui_gate.intentional_amendment_live_claim(root, base, self.git(root, "rev-parse", "HEAD"), contract, policy)
+            valid = ui_gate.intentional_amendment_live_claim(
+                root, base, self.git(root, "rev-parse", "HEAD"), contract, policy
+            )
             self.assertEqual("codex", valid["owner"])
             for field, invalid in (
                 ("branch", "foreign"),
@@ -2386,9 +2467,7 @@ class UiChangeGateTests(unittest.TestCase):
                         payload = json.loads(target.read_text(encoding="utf-8"))
                         if kind == "packet":
                             payload["targetWave"] = "W3"
-                        elif kind == "human-approval":
-                            payload["approvedBy"] = "human:forged-owner"
-                        elif kind == "design-approval":
+                        elif kind in {"human-approval", "design-approval"}:
                             payload["approvedBy"] = "human:forged-owner"
                         else:
                             payload["reference"]["approvalCommit"] = head
