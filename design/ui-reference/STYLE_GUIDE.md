@@ -1,8 +1,8 @@
 # Research Observatory — Academic Minimal Style and Experience Guide
 
-**Version:** 1.7
-**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.7`
-**Purpose:** Proposed implementation specification; not active authority until exact human approval. The existing crisp light / deep-navy visual system and workflow semantics are retained.
+**Version:** 1.8
+**Reference ID:** `RO-UI-ACADEMIC-MINIMAL-1.8`
+**Purpose:** Inert proposed implementation specification; not active authority until exact human approval. The approved 1.7 visual system and fourteen workflow sequences are inherited.
 
 ## 1. Authority and design-first change order
 
@@ -59,6 +59,49 @@ Reuse cards, fields, key-value lists, notices, buttons, focus tokens and respons
 grids. Use text state labels, accessible names and keyboard traversal in both
 themes; no per-page styling system. This reference's package and inactive actions
 are illustrative, not proof of an installed connector or authorization.
+
+### 1.4 Local full-text attachment from a selected work/version
+
+Ingestion Review owns one inline **Attach full text** panel reached from a
+selected canonical work and explicit version. Preserve the project, work/version
+selection, current primary workflow and return target. Show the metadata-only or
+existing full-text status before selection. A visible native file-picker input and
+drop target accept PDF, JATS, TEI, XML, HTML, DOCX and plain text; keyboard users
+use the picker. Dropping a file changes only the pending local candidate. Selection
+alone never imports, parses, opens or alters the canonical record. Show safe name,
+type and size metadata without opening untrusted content in the renderer.
+
+Keep the association and rights decisions beside the candidate. An uncertain
+work/version match requires the researcher to confirm the exact displayed target
+or cancel and choose another work/version; never infer a match from filename or
+metadata similarity alone. An explicit permitted-use selection names project-only
+storage/inspection and does not imply redistribution, model egress or export.
+Unknown or denied rights retain metadata-only status and block commitment.
+Only after inspection, rights policy and any required association confirmation
+pass may the application offer **Attach to selected version**. Duplicate bytes
+may reuse protected storage but retain a separate provenance/source assertion.
+
+Show candidate, validating, committed/processing, available, unavailable,
+denied, failed and cancelled as distinct text states. Unsupported format and
+password protection explain which supported file to choose or how to obtain an
+unlocked lawful copy; oversize explains the configured limit and permits choosing
+another file; unsafe/quarantined files offer no bypass and keep the metadata
+record; denied rights explain that the file cannot be attached under current
+policy. Retry after a recoverable local copy/inspection failure uses an explicit
+action and rechecks the same candidate; a changed file begins a new review.
+Cancel or Escape clears the pending candidate without changing canonical work,
+rights or provenance, returns focus to the invoking work control and keeps the
+selection. Reject late validation after project switch, close or lock. Announce
+safe status and errors close to the panel without exposing local paths or content.
+
+On success, retain the exact committed revision ID, durable status route and
+selected work/version return context. While processing, link to the durable
+task status. The reader action remains disabled/pending until CAP-05.S04 provides
+the ADR-0029 protected viewer; then its exact-revision open and back-navigation
+return to the same work/version and current primary step. Keep a missing-full-text
+record useful for metadata inspection and later attach/retry. Reuse cards, fields,
+key-value lists, notices, buttons, focus tokens and responsive grids in both
+themes. The reference picker/drop demo reads no file bytes and commits nothing.
 
 ## 2. Design character
 

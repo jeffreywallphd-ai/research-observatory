@@ -103,6 +103,73 @@
     button.addEventListener('click', () => button.classList.toggle('active'));
   });
 
+  // Inert proposal demo: expose file metadata only; never read bytes or commit.
+  const attachmentPanel = document.querySelector('[data-attachment-panel]');
+  if (attachmentPanel) {
+    const trigger = document.querySelector('[data-attachment-trigger]');
+    const fileInput = attachmentPanel.querySelector('[data-attachment-file]');
+    const dropTarget = attachmentPanel.querySelector('[data-attachment-drop]');
+    const candidateText = attachmentPanel.querySelector('[data-attachment-candidate]');
+    const match = attachmentPanel.querySelector('[data-attachment-match]');
+    const rights = attachmentPanel.querySelector('[data-attachment-rights]');
+    const status = attachmentPanel.querySelector('[data-attachment-status]');
+    const commit = attachmentPanel.querySelector('[data-attachment-commit]');
+    let candidate = null;
+
+    const update = () => {
+      commit.disabled = !candidate || !match.checked || rights.value !== 'project-only';
+      if (rights.value === 'denied') status.textContent = 'Rights denied. Keep metadata only and review the source permission.';
+      else if (rights.value === 'unknown') status.textContent = 'Rights unknown. Keep metadata only until permitted use is established.';
+      else if (candidate && !match.checked) status.textContent = 'Candidate selected. Confirm the displayed work/version before proceeding.';
+      else if (candidate && rights.value !== 'project-only') status.textContent = 'Candidate selected. State permitted use before proceeding.';
+      else if (candidate) status.textContent = 'Candidate ready for application inspection; no file has been imported by this reference.';
+    };
+    const choose = (file) => {
+      candidate = file || null;
+      candidateText.textContent = candidate
+        ? `Selected: ${candidate.name} · ${candidate.size.toLocaleString()} bytes. Type and safety not yet verified.`
+        : 'No file selected. Paths and contents are never shown in this mock.';
+      update();
+    };
+    const cancel = () => {
+      candidate = null;
+      fileInput.value = '';
+      match.checked = false;
+      rights.value = '';
+      candidateText.textContent = 'No file selected. Paths and contents are never shown in this mock.';
+      status.textContent = 'Attachment cancelled. Selected work/version and metadata remain unchanged.';
+      commit.disabled = true;
+      if (trigger) trigger.focus();
+    };
+
+    if (trigger) trigger.addEventListener('click', (event) => {
+      event.preventDefault();
+      attachmentPanel.scrollIntoView({ block: 'start' });
+      attachmentPanel.focus();
+    });
+    fileInput.addEventListener('change', () => choose(fileInput.files && fileInput.files[0]));
+    dropTarget.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropTarget.classList.add('drag-over');
+    });
+    dropTarget.addEventListener('dragleave', () => dropTarget.classList.remove('drag-over'));
+    dropTarget.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropTarget.classList.remove('drag-over');
+      choose(event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]);
+    });
+    match.addEventListener('change', update);
+    rights.addEventListener('change', update);
+    attachmentPanel.querySelector('[data-attachment-cancel]').addEventListener('click', cancel);
+    attachmentPanel.querySelector('[data-attachment-retry]').addEventListener('click', () => fileInput.click());
+    attachmentPanel.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') { event.preventDefault(); cancel(); }
+    });
+    commit.addEventListener('click', () => {
+      status.textContent = 'Reference only. The application must inspect the file and rights before any attachment.';
+    });
+  }
+
 
   const WORKFLOW_PROFILES = {
   "rapid-orientation": {

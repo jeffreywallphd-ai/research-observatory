@@ -69,11 +69,7 @@ def combine_themes(stem: str) -> None:
 def main() -> None:
     errors: list[str] = []
     with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            executable_path="/usr/bin/chromium",
-            args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
-        )
+        browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": 1720, "height": 1080}, device_scale_factor=1)
         page.on(
             "console",

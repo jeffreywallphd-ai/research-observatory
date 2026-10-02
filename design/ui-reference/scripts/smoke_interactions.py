@@ -44,6 +44,32 @@ def main() -> None:
         page.locator("[data-toast]").first.click()
         page.wait_for_timeout(100)
         toast_text = page.locator(".mock-toast").inner_text()
+
+        page.set_content(inline_page("ingestion-reconciliation.html"), wait_until="load")
+        attachment_trigger = page.locator("[data-attachment-trigger]")
+        attachment_trigger.click()
+        attachment_panel = page.locator("[data-attachment-panel]")
+        if not attachment_panel.evaluate("el => document.activeElement === el"):
+            errors.append("attachment panel did not receive focus from selected-work action")
+        attach_action = page.locator("[data-attachment-commit]")
+        if attach_action.is_enabled():
+            errors.append("attachment action enabled before candidate, match and rights review")
+        if page.locator("[data-attachment-reader]").is_enabled():
+            errors.append("protected reader action enabled before CAP-05.S04 viewer delivery")
+        page.locator("[data-attachment-file]").set_input_files({
+            "name": "illustrative.pdf", "mimeType": "application/pdf", "buffer": b"%PDF-1.4"
+        })
+        page.locator("[data-attachment-match]").check()
+        page.locator("[data-attachment-rights]").select_option("project-only")
+        if not attach_action.is_enabled():
+            errors.append("attachment mock did not expose reviewed candidate action")
+        page.locator("[data-attachment-cancel]").click()
+        if attach_action.is_enabled() or not attachment_trigger.evaluate("el => document.activeElement === el"):
+            errors.append("attachment cancellation did not reset pending state and return focus")
+        attachment_trigger.click()
+        page.keyboard.press("Escape")
+        if not attachment_trigger.evaluate("el => document.activeElement === el"):
+            errors.append("attachment Escape did not return focus")
         browser.close()
 
     if errors:
@@ -56,7 +82,7 @@ def main() -> None:
         raise SystemExit("Mock action did not create user feedback.")
     if workflow_steps != 14 or "Study Design Studio" not in workflow_text or "Technical Reports & Results" not in workflow_text or "Reviewer Simulation" not in workflow_text or "Publication Audit" not in workflow_text:
         raise SystemExit("Use-case switching did not produce the ordered empirical-study-to-article workflow.")
-    print("Interaction smoke test passed: theme, sidebar, mock feedback, and adaptive workflow navigation.")
+    print("Interaction smoke test passed: theme, sidebar, mock feedback, adaptive workflow navigation, and inert attachment review.")
 
 
 if __name__ == "__main__":

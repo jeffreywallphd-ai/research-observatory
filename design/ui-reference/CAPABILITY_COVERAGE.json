@@ -1,7 +1,7 @@
 {
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.7",
-  "version": "1.7",
-  "date": "2026-09-02",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.8",
+  "version": "1.8",
+  "date": "2026-10-01",
   "product_page_count": 33,
   "capabilities": [
     {
@@ -71,6 +71,7 @@
       "status": "covered",
       "pages": [
         "document-reader.html",
+        "ingestion-reconciliation.html",
         "parsing-quality.html",
         "technical-reports.html"
       ],
@@ -486,9 +487,10 @@
     },
     "ingestion-reconciliation.html": {
       "page": "Ingestion & Reconciliation",
-      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, rights review, and selected work/version local full-text attachment.",
       "capabilities": [
-        "CAP-04"
+        "CAP-04",
+        "CAP-05"
       ],
       "required_regions": [
         "application top bar",
@@ -505,6 +507,10 @@
         "duplicate/version decisions",
         "correction/retraction alerts",
         "rights review",
+        "selected work/version and metadata/full-text status",
+        "inline local full-text picker/drop and pending candidate",
+        "uncertain-association confirmation and permitted-use decision",
+        "attachment cancellation, retry, error remedies, exact-revision status/route handoff, and pending reader state",
         "reversible merge decisions"
       ],
       "illustrative_values": true
@@ -561,7 +567,7 @@
     },
     "document-reader.html": {
       "page": "Document Reader",
-      "purpose": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+      "purpose": "Secure source inspection, parsed structure, page anchors, evidence selection, and return to the selected work/version.",
       "capabilities": [
         "CAP-05",
         "CAP-08",
@@ -581,7 +587,8 @@
         "document outline",
         "stable page/source anchors",
         "evidence selection",
-        "rights and parser provenance"
+        "rights and parser provenance",
+        "selected work/version return route"
       ],
       "illustrative_values": true
     },

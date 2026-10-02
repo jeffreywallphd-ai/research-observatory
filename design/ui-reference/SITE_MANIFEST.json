@@ -1,8 +1,8 @@
 {
   "name": "Research Observatory Academic Minimal UI Reference",
-  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.7",
-  "version": "1.7",
-  "generated_at": "2026-09-02",
+  "reference_id": "RO-UI-ACADEMIC-MINIMAL-1.8",
+  "version": "1.8",
+  "generated_at": "2026-10-01",
   "approval": "APPROVAL.yaml",
   "capability_coverage": "CAPABILITY_COVERAGE.json",
   "workflow_catalog": "WORKFLOW_CATALOG.json",
@@ -111,9 +111,10 @@
     {
       "file": "ingestion-reconciliation.html",
       "page": "Ingestion & Reconciliation",
-      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+      "purpose": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, rights review, and selected work/version local full-text attachment.",
       "capabilities": [
-        "CAP-04"
+        "CAP-04",
+        "CAP-05"
       ]
     },
     {
@@ -136,7 +137,7 @@
     {
       "file": "document-reader.html",
       "page": "Document Reader",
-      "purpose": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+      "purpose": "Secure source inspection, parsed structure, page anchors, evidence selection, and return to the selected work/version.",
       "capabilities": [
         "CAP-05",
         "CAP-08",
@@ -387,7 +388,7 @@
     "landmarks_labels_and_unique_ids": "required",
     "workflow_contracts": "required",
     "capability_coverage": "required",
-    "reference_approval": "approved",
+    "reference_approval": "proposed",
     "cross_platform_theme_parity": "required",
     "research_production_safeguards": "required",
     "implementation_conformance": "enforced by repository automation"

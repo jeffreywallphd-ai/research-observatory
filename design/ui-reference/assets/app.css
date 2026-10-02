@@ -283,6 +283,15 @@ tbody tr:hover td { background: var(--brand-50); }
 .notice-title { color: var(--text-strong); font-weight: 760; font-size: var(--text-xs); }
 .notice-text { color: var(--text-muted); font-size: var(--text-xs); margin-top: 0.15rem; }
 
+/* Proposed inline local attachment uses inherited surface, field and focus tokens. */
+.attachment-drop { display: grid; gap: var(--space-2); padding: var(--space-4); border: 1px dashed var(--border-strong); border-radius: var(--radius-md); background: var(--surface-2); }
+.attachment-drop.drag-over { border-color: var(--brand-600); background: var(--brand-50); }
+.attachment-drop input { max-width: 100%; }
+.attachment-drop p, .attachment-check { margin: 0; }
+.attachment-check { display: flex; align-items: flex-start; gap: var(--space-2); margin-top: var(--space-3); font-size: var(--text-xs); }
+.attachment-check input { margin-top: .2rem; }
+.attachment-actions { flex-wrap: wrap; }
+
 .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr)); gap: var(--grid-gap); margin-bottom: var(--grid-gap); }
 .status-row { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-3); }
 .section { margin-top: var(--space-5); }

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "1.0",
+  "kind": "ui-reference-design-approval",
+  "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-02T16:23:51Z",
+  "scope": "reference-publication-and-plan-binding-only",
+  "proposal": {
+    "commit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+    "path": "planning/W2-reference-1.8",
+    "packageSha256": "19fbd0f9250e4994b561913beacb0aecbea07478e53981272b7866682a778b7e"
+  },
+  "amendmentApproval": {
+    "path": "planning/wave-amendment-approvals/W2.A01.json",
+    "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+    "introductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+  },
+  "basis": "The repository owner approved the exact reviewed ECR-0009 packet and Academic Minimal 1.8 proposal; this design approval authorizes reference publication and plan binding only, not W2 release. See planning/wave-amendment-approvals/W2.A01.json."
+}

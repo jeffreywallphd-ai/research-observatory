@@ -1,7 +1,7 @@
 # Research Observatory Capability-to-Page Coverage
 
-**Version:** 1.7
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.7`
+**Version:** 1.8
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.8`
 **Product pages:** 33
 **Capabilities:** 20
 
@@ -14,7 +14,7 @@
 | CAP-02 — Local projects, durable storage, security, and recovery | covered | `new-project.html`, `project-settings.html`, `projects.html`, `technical-reports.html` |
 | CAP-03 — Canonical domain, research intent, provenance, and durable workflows | covered | `audit-lineage.html`, `help-onboarding.html`, `index.html`, `intent-contract.html`, `manuscript-blueprint.html`, `new-project.html`, `projects.html`, `research-notebook.html`, `schema-manager.html`, `study-design.html`, `task-center.html` |
 | CAP-04 — Scholarly ingestion, connectors, canonicalization, and corpus governance | covered | `corpus-canvas.html`, `ingestion-reconciliation.html`, `source-manager.html` |
-| CAP-05 — Document acquisition, parsing, source inspection, and page anchors | covered | `document-reader.html`, `parsing-quality.html`, `technical-reports.html` |
+| CAP-05 — Document acquisition, parsing, source inspection, and page anchors | covered | `document-reader.html`, `ingestion-reconciliation.html`, `parsing-quality.html`, `technical-reports.html` |
 | CAP-06 — Local search, discovery, corpus diagnostics, and screening | covered | `corpus-canvas.html`, `screening.html`, `search-studio.html` |
 | CAP-07 — Provider-neutral model gateway and governed AI execution | covered | `audit-lineage.html`, `manuscript-studio.html`, `model-center.html`, `reviewer-simulation.html`, `task-center.html`, `technical-reports.html` |
 | CAP-08 — Evidence schemas, extraction, verification, and adjudication | covered | `document-reader.html`, `evidence-matrix.html`, `schema-manager.html`, `study-design.html`, `technical-reports.html` |
@@ -200,9 +200,9 @@ Open, local, licensed, and reference-manager adapters with rights, permissions, 
 - rights and model-egress policy per source class
 
 ### `ingestion-reconciliation.html` — Ingestion & Reconciliation
-Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.
+Import provenance, canonicalization, duplicates, versions, corrections, retractions, rights review, and selected work/version local full-text attachment.
 
-**Capabilities:** CAP-04
+**Capabilities:** CAP-04, CAP-05
 
 **Required regions:**
 - application top bar
@@ -219,6 +219,10 @@ Import provenance, canonicalization, duplicates, versions, corrections, retracti
 - duplicate/version decisions
 - correction/retraction alerts
 - rights review
+- selected work/version and metadata/full-text status
+- inline local full-text picker/drop and pending candidate
+- uncertain-association confirmation and permitted-use decision
+- attachment cancellation, retry, error remedies, exact-revision status/route handoff, and pending reader state
 - reversible merge decisions
 
 ### `corpus-canvas.html` — Corpus Canvas
@@ -265,7 +269,7 @@ Active-learning queue, human inclusion authority, audit samples, conflicts, and 
 - stopping diagnostics
 
 ### `document-reader.html` — Document Reader
-Secure source inspection, parsed structure, page anchors, and evidence selection.
+Secure source inspection, parsed structure, page anchors, evidence selection, and return to the selected work/version.
 
 **Capabilities:** CAP-05, CAP-08, CAP-17
 
@@ -284,6 +288,7 @@ Secure source inspection, parsed structure, page anchors, and evidence selection
 - stable page/source anchors
 - evidence selection
 - rights and parser provenance
+- selected work/version return route
 
 ### `research-notebook.html` — Research Notebook
 Researcher-owned memos, evolving questions, interpretive history, alternative readings, and linked evidence.

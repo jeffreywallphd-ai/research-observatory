@@ -1,6 +1,6 @@
 # Research Observatory Page Inventory
 
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.7`
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.8`
 **Product pages:** 33
 **Additional reference pages:** `style-guide.html`, `prototype-index.html`
 
@@ -13,10 +13,10 @@
 | `help-onboarding.html` | Help, Onboarding & Diagnostics | Workflow catalog, sample project, contextual help, shortcuts, diagnostics, and support bundles. |
 | `search-studio.html` | Search Studio | Structured, semantic, citation, and branch-based discovery with coverage diagnostics. |
 | `source-manager.html` | Source Manager | Open, local, licensed, reference-manager, report, and manuscript sources with rights and health; bounded publisher-trust and project-permission review. |
-| `ingestion-reconciliation.html` | Ingestion & Reconciliation | Canonicalization, duplicates, versions, corrections, retractions, and rights review. |
+| `ingestion-reconciliation.html` | Ingestion & Reconciliation | Canonicalization, duplicates, versions, corrections, retractions, rights review, and selected work/version local full-text attachment. |
 | `corpus-canvas.html` | Corpus Canvas | Clusters, networks, discovery paths, coverage, missingness, and boundary sensitivity. |
 | `screening.html` | Screening | Active-learning queue, human inclusion authority, audit samples, conflicts, and stopping diagnostics. |
-| `document-reader.html` | Document Reader | Secure source inspection, parsed structure, page anchors, and evidence selection. |
+| `document-reader.html` | Document Reader | Secure source inspection, parsed structure, page anchors, evidence selection, and return to the selected work/version. |
 | `research-notebook.html` | Research Notebook | Researcher-owned memos, evolving questions, alternatives, and linked evidence. |
 | `parsing-quality.html` | Parsing Quality & Corrections | Document structure, anchors, tables, figures, references, corrections, and reprocessing impact. |
 | `evidence-matrix.html` | Evidence Matrix | Extraction, verification, alternatives, comparability, and adjudication. |

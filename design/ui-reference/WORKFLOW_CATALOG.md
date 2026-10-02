@@ -1,7 +1,7 @@
 # Research Observatory Use-Case and Workflow Catalog
 
-**Version:** 1.7
-**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.7`
+**Version:** 1.8
+**Reference:** `RO-UI-ACADEMIC-MINIMAL-1.8`
 
 The selected use case is stored in the versioned Research Intent Contract. It orders the primary navigation, defaults, checkpoints, and expected outputs. All tools remain accessible as supporting tools.
 
@@ -14,6 +14,14 @@ When a material dependency revision makes an object stale, Audit & Lineage expla
 Source Manager's connector review is a supporting interaction, not a new workflow
 stage. Preserve the initiating source and current primary return context. Review,
 trust, enable and test are distinct; none automatically completes a research stage.
+
+Ingestion Review's selected work/version attachment is also a supporting
+interaction. Picking or dropping a local file, confirming a possible match,
+reviewing rights, and recording an exact-revision status/reader handoff do not
+add a workflow step or complete the current research stage. Cancellation returns
+to the same work/version and current primary step; processing is visible in Task
+Center. Opening the protected reader remains pending until CAP-05.S04; its later
+back-navigation uses the retained selected-version return context.
 All fourteen sequences and their keys remain unchanged. Existing project selections
 continue to bind their inherited exact catalog revision under ADR-0026; this visual
 reference proposal does not migrate those durable selections.

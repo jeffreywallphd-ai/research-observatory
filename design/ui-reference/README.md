@@ -1,17 +1,16 @@
-# Research Observatory UI Reference
+# Research Observatory UI Reference Proposal
 
-This directory is the governed, linked, offline experience reference for the PC/lab-first Research Observatory researcher application using **Academic Minimal 1.7**. This copy is an inert W2 connector-review proposal, not the active approved reference. See `APPROVAL.yaml` for its pending status.
+This directory is an inert **Academic Minimal 1.8 proposal**, copied from the approved 1.7 package. It is not the active experience authority. See `APPROVAL.yaml` for the pending status.
 
 ## Start with the workflow
 
-Open `new-project.html` to see use-case selection, `index.html` for the current project workflow, `application-settings.html` for app-wide Security & sign-in, `audit-lineage.html` for controlled recalculation, or `prototype-index.html` for every reference page. The sidebar's primary use-case selector changes the ordered guided navigation. The full tool inventory remains available under **All tools**.
+Open `ingestion-reconciliation.html#attach-full-text` for the proposed selected work/version attachment interaction, `document-reader.html#reader-source-context` for the future reader and selected-version return contract, or `prototype-index.html` for every reference page. The fourteen guided workflow sequences are inherited unchanged.
 
 ## Authority
 
-- `assets/tokens.css`, semantic rules in `STYLE_GUIDE.md`, the fourteen profiles in `WORKFLOW_CATALOG.*`, route inventory, required page regions, accessibility behavior, and approved visual baselines are normative once this revision is approved.
-- Mock names, values, studies, providers, dates, prose, charts, and inactive actions are illustrative and do not create backend scope.
-- `APPROVAL.yaml` records approval status; `REFERENCE_MANIFEST.yaml` identifies governed files; `CAPABILITY_COVERAGE.*` maps capabilities to pages.
-- Intentional user-facing changes require an updated proposed reference, validation, human approval, and only then application implementation.
+- The approved 1.7 package under `design/ui-reference/` remains the implementation authority until this exact proposal receives human approval and a new approval record.
+- The 1.8 change is bounded to the inline Ingestion Review attachment contract, an exact-revision status/route handoff, future Document Reader return, and proposal metadata; illustrative names, files, states and inactive actions create no backend scope.
+- `APPROVAL.yaml` records the proposal status; `REFERENCE_MANIFEST.yaml` identifies governed files.
 
 ## Open locally
 
@@ -19,17 +18,17 @@ Open `new-project.html` to see use-case selection, `index.html` for the current 
 python -m http.server 8080
 ```
 
-Then open `http://localhost:8080/prototype-index.html`.
+Then open `http://localhost:8080/ingestion-reconciliation.html#attach-full-text`.
 
 ## Shared implementation
 
-- `assets/tokens.css` — canonical light/dark tokens.
-- `assets/app.css` — shared shell, workflow navigation, components, layouts, data displays, and responsive behavior.
-- `assets/app.js` — theme, sidebar, tabs, mock actions, use-case selection, adaptive workflow ordering, and context guidance.
+- `assets/tokens.css` — inherited light/dark tokens.
+- `assets/app.css` — shared components and proposed attachment panel styling.
+- `assets/app.js` — local, inert picker/drop interaction; no file bytes are read and no acquisition occurs.
 - `STYLE_GUIDE.md` / `style-guide.html` — technical and visual specification.
-- `WORKFLOW_CATALOG.md` / `.json` — authoritative use-case sequences and outputs.
+- `WORKFLOW_CATALOG.md` / `.json` — fourteen inherited use-case sequences.
 - `CAPABILITY_COVERAGE.md` / `.json` — page contracts and capability mapping.
 - `scripts/build_mockups.py` — deterministic page generator.
 - `scripts/verify_site.py` — reference integrity checks.
 
-University/cloud administrator consoles remain intentionally deferred and require active W10/W11 requirements and separately approved page contracts.
+University/cloud administrator consoles remain deferred.
