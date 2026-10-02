@@ -76,12 +76,30 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   const work = placement?.workIds.length === 1 ? context.works.find((item) => item.workId === placement.workIds[0]) : null;
   const validVersion = Boolean(version && placement?.state === "assigned" && work?.disposition === "active");
   const canBegin = available && selected !== null && canStartAttachmentReview(attachmentStatus);
+  const responseCommand = committed?.status === "attached" && lastCommit.current
+    && sameAttachmentSelection(committed.selection, lastCommit.current.selection)
+    && committed.operationId === lastCommit.current.operationId
+    && committed.sessionId === lastCommit.current.sessionId
+    && committed.candidateId === lastCommit.current.candidateId ? lastCommit.current : null;
+  const recoverableAfterReply = Boolean(committed?.status === "attached" && attachmentStatus && responseCommand
+    && sameAttachmentSelection(committed.selection, attachmentStatus.selection)
+    && attachmentStatus.operationId === committed.operationId
+    && attachmentStatus.commandId === responseCommand.commandId
+    && ["failed", "cancelled", "unavailable"].includes(attachmentStatus.status)
+    && canStartAttachmentReview(attachmentStatus)
+    && (attachmentStatus.attachmentId === null || attachmentStatus.attachmentId === committed.attachmentId)
+    && (attachmentStatus.documentRevisionId === null || attachmentStatus.documentRevisionId === committed.documentRevisionId));
+  const committedBlocksNew = Boolean(committed) && !recoverableAfterReply;
 
   useEffect(() => {
     let active = true;
     setAttachmentStatus(null);
     if (selected) {
-      const request = attachmentStatusRequest(selected, initialHandoff?.operationId ?? null, initialHandoff?.commitRequest?.commandId ?? null);
+      const savedCommand = lastCommit.current && sameAttachmentSelection(selected, lastCommit.current.selection)
+        ? lastCommit.current : null;
+      const handoff = initialHandoff && sameAttachmentSelection(selected, initialHandoff.selection) ? initialHandoff : null;
+      const request = attachmentStatusRequest(selected, savedCommand?.operationId ?? handoff?.operationId ?? null,
+        savedCommand?.commandId ?? handoff?.commitRequest?.commandId ?? null);
       void port.status(request).then((result) => {
         if (active && live.current && result && sameAttachmentSelection(request.selection, result.selection)
           && (request.operationId === null || result.operationId === request.operationId)
@@ -104,6 +122,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
           if (command && result.commandId === command.commandId && result.operationId === command.operationId) {
             if ((result.status === "processing" || result.status === "available") && result.attachmentId && result.documentRevisionId) {
               committedRef.current = true; pending.current = null; unconfirmedRef.current = null; setUnconfirmed(null);
+              setCandidate(null); setMatchConfirmed(false); setPermittedUse("");
               setCommitted({ schemaVersion: "1.0", status: "attached", operationId: command.operationId,
                 sessionId: command.sessionId, selection: command.selection, candidateId: command.candidateId,
                 attachmentId: result.attachmentId, documentRevisionId: result.documentRevisionId });
@@ -213,16 +232,17 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   }
 
   async function begin(mode: AttachmentMode): Promise<void> {
-    if (!canBegin || busy || !selected || unconfirmed || committed) return;
-    lastCommit.current = null;
-    const previous = pending.current;
-    pending.current = null;
-    if (previous) void port.cancel(attachmentCancelRequest(previous.operationId, previous.sessionId, previous.candidateId));
+    if (!canBegin || busy || !selected || unconfirmed || committedBlocksNew) return;
     const ticket = ++generation.current;
     setBusy(true); setProblem(null); setCandidate(null);
     setMatchConfirmed(false); setPermittedUse("");
     setStatus("Checking current Work/version and source authority…");
     if (!await exactCurrent(selected, ticket)) return;
+    lastCommit.current = null;
+    committedRef.current = false; setCommitted(null);
+    const previous = pending.current;
+    pending.current = null;
+    if (previous) void port.cancel(attachmentCancelRequest(previous.operationId, previous.sessionId, previous.candidateId));
     const operationId = newAttachmentId();
     pending.current = { operationId, selection: selected, sessionId: null, candidateId: null, phase: "stage" };
     setStatus(mode === "choose" ? "Waiting for the native document picker…" : "Native file drop armed for this selected version…");
@@ -250,7 +270,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
   async function commit(): Promise<void> {
     const operation = pending.current;
     if (!operation || !selected || !sameAttachmentSelection(operation.selection, selected)
-      || !operation.sessionId || busy || committed
+      || !operation.sessionId || busy || committed && !unconfirmed
       || !unconfirmed && (!candidate || !matchConfirmed || permittedUse !== "project-only")) return;
     const ticket = ++generation.current;
     setBusy(true); setProblem(null); setStatus("Rechecking exact Work/version and rights before attachment…");
@@ -279,7 +299,8 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     setUnconfirmed(null); unconfirmedRef.current = null;
     operation.phase = "stage";
     if (result.status === "attached") {
-      committedRef.current = true;
+      committedRef.current = true; pending.current = null;
+      setCandidate(null); setMatchConfirmed(false); setPermittedUse("");
       setCommitted(result); setStatus("Native attachment response reported a recorded copy for this exact Work/version revision. Check durable processing status in Task Center; the protected reader is pending.");
       announce("Document attachment recorded for the selected version.");
       onRecoveryContext?.(selected, { selection: selected, operationId: command.operationId,
@@ -303,8 +324,8 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     aria-busy={busy} onKeyDown={(event) => {
       if (event.key === "Escape") {
         event.preventDefault(); event.stopPropagation();
-        if (committed) onClose();
-        else if (unconfirmed) { setStatus("The attachment decision is unresolved. Use Task Center to check exact status or retry the same saved decision."); statusHeading.current?.focus(); }
+        if (unconfirmed) { setStatus("The attachment decision is unresolved. Use Task Center to check exact status or retry the same saved decision."); statusHeading.current?.focus(); }
+        else if (committedBlocksNew) onClose();
         else cancelAndReturn();
       }
     }}>
@@ -313,21 +334,21 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
     {validVersion ? <dl className="import-rights ro-wrap-anywhere">
       <div><dt>Work</dt><dd>{work!.workId} · revision {work!.revisionId}</dd></div>
       <div><dt>Version</dt><dd>{kindLabel(version!.definition.kind)} · {versionId} · revision {version!.revisionId}</dd></div>
-      <div><dt>Full text</dt><dd>{attachmentStatusMessage(attachmentStatus)}
+      <div><dt>Full text</dt><dd><span role="status" aria-live="polite" aria-atomic="true">{attachmentStatusMessage(attachmentStatus)}</span>
         {attachmentStatus?.attachmentId && attachmentStatus.documentRevisionId
           ? ` Attachment ${attachmentStatus.attachmentId} · document revision ${attachmentStatus.documentRevisionId}.` : null}</dd></div>
     </dl> : <Notification tone="warning" title="Select an unambiguous current version">This version must belong to exactly one active Work. Refresh version evidence before attachment.</Notification>}
     {committed?.status === "attached" ? <p className="ro-wrap-anywhere">Earlier native response reported attachment {committed.attachmentId} and document revision {committed.documentRevisionId}; current authoritative status is shown above.</p> : null}
     <div className="ro-field"><label htmlFor="attachment-source">Source assertion for this version</label>
-      <select id="attachment-source" value={sourceId} disabled={busy || Boolean(unconfirmed) || Boolean(committed)} onChange={(event) => {
+      <select id="attachment-source" value={sourceId} disabled={busy || Boolean(unconfirmed) || committedBlocksNew} onChange={(event) => {
         clearPending("Source selection changed. The pending candidate was discarded."); setSourceId(event.currentTarget.value);
       }}><option value="">Select the retained source assertion</option>{sourceIds.map((id) => <option key={id} value={id}>{sourceTitle(context, id).slice(0, 120)} · {id}</option>)}</select>
     </div>
     <p>Source rights and acquisition status remain separate. Choose a lawful local copy; this selection does not grant export, redistribution or model use.</p>
-    <div className="ro-action-row"><Button disabled={!canBegin || busy || Boolean(unconfirmed) || Boolean(committed)} onClick={() => void begin("choose")}>Choose local full-text file…</Button></div>
+    <div className="ro-action-row"><Button disabled={!canBegin || busy || Boolean(unconfirmed) || committedBlocksNew} onClick={() => void begin("choose")}>Choose local full-text file…</Button></div>
     <section className="ro-stack" aria-label="Native document drop target" data-document-native-drop-target="true">
       <p>Native document drop target for this selected version. File paths and bytes stay outside the renderer. Arm this target before dropping a lawful local copy.</p>
-      <Button disabled={!canBegin || busy || Boolean(unconfirmed) || Boolean(committed)} onClick={() => void begin("drop")}>Arm native file drop</Button>
+      <Button disabled={!canBegin || busy || Boolean(unconfirmed) || committedBlocksNew} onClick={() => void begin("drop")}>Arm native file drop</Button>
     </section>
     {!available ? <Notification tone="info" title="Native attachment unavailable">Production choose, drop and attach remain unavailable until the trusted native/Core bridge is installed. No renderer file chooser or drop-path event is used.</Notification> : null}
     {candidate ? <section className="ro-stack" aria-label="Pending document candidate"><h4 ref={candidateHeading} tabIndex={-1}>Pending document candidate</h4>
@@ -341,15 +362,15 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
       <Button tone="primary" disabled={busy || !matchConfirmed || permittedUse !== "project-only" || Boolean(unconfirmed)} onClick={() => void commit()}>Attach to selected version</Button>
     </section> : null}
     <p ref={statusHeading} tabIndex={-1} role="status" aria-live="polite">{currentStatus}</p>
-    <div className="ro-action-row"><Button disabled={Boolean(unconfirmed) || Boolean(committed)} onClick={cancelAndReturn}>Cancel attachment</Button>
+    <div className="ro-action-row"><Button disabled={Boolean(unconfirmed) || committedBlocksNew} onClick={cancelAndReturn}>Cancel attachment</Button>
       {unconfirmed ? <Button disabled={busy || !available} onClick={() => void commit()}>Retry same attachment decision</Button>
-        : <Button disabled={!canBegin || busy || Boolean(committed)} onClick={() => void begin("choose")}>Choose another file…</Button>}
+        : <Button disabled={!canBegin || busy || committedBlocksNew} onClick={() => void begin("choose")}>Choose another file…</Button>}
       <Button disabled={!selected || busy || !onTaskCenter} onClick={() => selected && onTaskCenter?.({ selection: selected,
         operationId: pending.current?.operationId ?? attachmentStatus?.operationId ?? committed?.operationId ?? null,
         commitRequest: lastCommit.current && (unconfirmed || committed) && lastCommit.current.operationId === (pending.current?.operationId ?? committed?.operationId)
           ? lastCommit.current : null,
-        attachmentId: attachmentStatus ? attachmentStatus.attachmentId : committed?.status === "attached" ? committed.attachmentId : null,
-        documentRevisionId: attachmentStatus ? attachmentStatus.documentRevisionId : committed?.status === "attached" ? committed.documentRevisionId : null })}>View Task Center</Button>
+        attachmentId: attachmentStatus?.attachmentId ?? (committed?.status === "attached" ? committed.attachmentId : null),
+        documentRevisionId: attachmentStatus?.documentRevisionId ?? (committed?.status === "attached" ? committed.documentRevisionId : null) })}>View Task Center</Button>
       <Button disabled={busy || Boolean(unconfirmed)} onClick={onClose}>Return to Work versions</Button></div>
     <Button disabled>Open in Document Reader · pending viewer</Button>
     <p>The reader stays unavailable until CAP-05.S04 provides protected source viewing and an exact-revision return route.</p>
