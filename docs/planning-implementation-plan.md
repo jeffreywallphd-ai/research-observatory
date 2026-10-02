@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: be85aae401b47db20c0544f848c660c3406016a078532adeb5f1ab26bac08923
+source_sha256: ba5e0798a8ab959c7bdc5af33162e9721774b9c998d1c340a29a293b5f35f2f2
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2489,7 +2489,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / agent:/root/w2_a01_t02_independent_review (`changes-requested`)
 
 **Dependencies:** `W2.A01.B00`, `W2.A01.T01`
 
@@ -2517,9 +2517,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A01.T02
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `945d366602d1b0457013bea2a1a47640e26612021557ad4d96bf2d4322886565`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `945d366602d1b0457013bea2a1a47640e26612021557ad4d96bf2d4322886565`
 
 - Candidate / base / branch: `a6588fc5d2473d028a4f8d6c24ec8aa48e527255` / `1f628843e415b6affbd811eb37d9fff437fac51f` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-02T22:59:58+00:00`
@@ -2533,11 +2535,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / agent:/root/w2_a01_t02_independent_review / `2026-10-02T23:13:49+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.A01.T02.review-R01.json` / `4fcbe0bedf91c04aee440e06cd512366ecb676bc49ae8041afbe5153b964fa6b`
 
-**Currently open findings:** -
+**Review notes:** Independent expanded review inspected the frozen R01 submission, exact 70-path task-base diff, committed reference-before-renderer chronology, approved ECR-0009 and Academic Minimal 1.8 contracts, the opaque native adapter and mounted interaction source. The line-ending-canonical evidence SHA-256 matches the submission and all 13 cited raw-log SHA-256 values match their files. Reference, whole-base external UI gate, typecheck, 27 focused Vitest cases, Vite product build, one mounted real-Core/synthetic-native interaction, affected lint/format, site/smoke, backlog and diff checks report passing at a6588fc5. The external UI checker is the disclosed separate reviewed 5078ef4c2ca6f2b8a0ffd08a8945b9c9b6b831d0 commit; the earlier in-tree parser failure remains adverse evidence, not a pass. The first pre-submission replacement, terminal-event, focus and return-context findings remain preserved in task-start.md and their exercised paths were replayed. The submitted tests do not cover a successful native reply followed by an authoritative failure, or a live announcement when a later authoritative denial arrives. The two findings below therefore block T02 task approval. The stale historical planning review pages were disclosed and refreshed after submission outside the a6588fc5 product range. Global quality inventory, full desktop profiles, real native/Core admission, protected reader, slice review and W2 qualification remain separate later work; this review grants none of them.
+
+**Findings opened:**
+
+- `W2.A01.T02-R01-F01` `high` blocking=`True` criterion=`3` — A later authoritative failure leaves the attachment pane in a committed dead end; reproduce: At a6588fc5, mount DocumentAttachmentPane with a selected Work/version, ready native port and metadata-only status. Return a candidate and then an attached commit outcome. The commit path at apps/desktop/src/app/DocumentAttachmentPane.tsx:281-286 sets committed and committedRef true. Next return a valid exact-selection, same-operation/same-command authoritative status with status failed and code interrupted or password-protected; decodeAttachmentStatus permits this terminal result. The status effect at lines 80-116 updates attachmentStatus but has no branch that clears or reclassifies committed when unconfirmedRef is null. The panel now displays the failure, and canStartAttachmentReview returns true for it, but the source selector, choose/drop, Cancel and Choose another file controls at lines 322-346 remain disabled by committed. The same failure recurs when Task Center returns a successful handoff after local processing later fails: initialHandoff initializes committed true at lines 55-60. The mounted test covers failed status before any commit and processing after success, so its pass does not exercise this sequence.; remediate: Update the missed task-start acceptance row, then add a failing mounted regression for attached reply followed by exact authoritative failed/cancelled/unavailable status, including a Task Center return. Reconcile the historical attached reply with current durable status and expose a safe, explicit recovery or lawful new-copy action after a terminal recoverable failure, rechecking the exact Work/version and preserving command identity; keep denied/rights-changed states blocked and never replay an unconfirmed commit as a new command. Run affected exact-candidate mounted, contract, type/build and UI checks and submit a strict descendant R02 replaying this finding.
+- `W2.A01.T02-R01-F02` `medium` blocking=`True` criterion=`5` — Authoritative attachment status and denial are not announced in the inline panel; reproduce: At a6588fc5, mount the pane with a selected version and a native status reply of metadata-only, then cause a later accepted status reply of denied/rights-denied or failed/interrupted for that same selection. The status effect at apps/desktop/src/app/DocumentAttachmentPane.tsx:85-116 only calls setAttachmentStatus; it neither calls announce nor updates the pane's live status string. The new authoritative text appears in an ordinary definition-list dd at lines 313-319, outside a live region. The only role=status/aria-live node at line 343 retains the preceding text, such as Source selection changed or Attachment status has not been confirmed. A keyboard or screen-reader user receives no reliable announcement of the new denial or failure, although that result changes action availability. Academic Minimal 1.8 STYLE_GUIDE.md section 1.4 requires safe status and errors to be announced close to this panel; the mounted test checks visible text but not the live announcement.; remediate: Add a focused mounted accessibility regression that observes the live-region or announcement output after an accepted authoritative denied/failed status. Surface the safe authoritative status message through that live mechanism and keep it synchronized with the displayed status, without exposing file paths, content, or untrusted native text. Recheck keyboard focus and denial transitions in the R02 candidate.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:/root/w2_a01_t02_independent_review at `2026-10-02T23:13:49+00:00`
+
+**Latest notes:** Independent expanded review inspected the frozen R01 submission, exact 70-path task-base diff, committed reference-before-renderer chronology, approved ECR-0009 and Academic Minimal 1.8 contracts, the opaque native adapter and mounted interaction source. The line-ending-canonical evidence SHA-256 matches the submission and all 13 cited raw-log SHA-256 values match their files. Reference, whole-base external UI gate, typecheck, 27 focused Vitest cases, Vite product build, one mounted real-Core/synthetic-native interaction, affected lint/format, site/smoke, backlog and diff checks report passing at a6588fc5. The external UI checker is the disclosed separate reviewed 5078ef4c2ca6f2b8a0ffd08a8945b9c9b6b831d0 commit; the earlier in-tree parser failure remains adverse evidence, not a pass. The first pre-submission replacement, terminal-event, focus and return-context findings remain preserved in task-start.md and their exercised paths were replayed. The submitted tests do not cover a successful native reply followed by an authoritative failure, or a live announcement when a later authoritative denial arrives. The two findings below therefore block T02 task approval. The stale historical planning review pages were disclosed and refreshed after submission outside the a6588fc5 product range. Global quality inventory, full desktop profiles, real native/Core admission, protected reader, slice review and W2 qualification remain separate later work; this review grants none of them.
+
+**Currently open findings:** `W2.A01.T02-R01-F01`, `W2.A01.T02-R01-F02`
 
 
 ## Linked corrective tasks

@@ -51924,17 +51924,17 @@ wave_amendments:
     - Frozen opaque native command/event contract and no renderer path/bytes or stock Tauri drop event; trusted local Core/native
       attachment and native-only drop proof are original CAP-05.S01.T01 obligations after adoption
     packet_task_sha256: 5f567cdccf7d2b1e61d256a90bd93fb20b2118ed77b53acc4d36a8b8f5a3dfad
-    status: REVIEW
+    status: IN_PROGRESS
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: 1f628843e415b6affbd811eb37d9fff437fac51f
     worktree: .
     lease:
       claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-02T21:12:02+00:00'
-      expires_at: '2026-10-03T05:12:02+00:00'
+      claimed_at: '2026-10-02T23:13:49+00:00'
+      expires_at: '2026-10-03T07:13:49+00:00'
     started_at: '2026-10-02T21:12:02+00:00'
-    updated_at: '2026-10-02T22:59:58+00:00'
+    updated_at: '2026-10-02T23:13:49+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
@@ -51944,140 +51944,223 @@ wave_amendments:
       sha256: 75097d4aa5d9b3ce2cf60c4e1a08090a5390cd91453448e021ca1638bc78a09a
       commit: a6588fc5d2473d028a4f8d6c24ec8aa48e527255
       recorded_at: '2026-10-02T22:59:58+00:00'
-    verification_state: passed
-    review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+    verification_state: null
+    review: &id160
+      reviewer: agent:/root/w2_a01_t02_independent_review
+      result: changes-requested
+      reviewed_at: '2026-10-02T23:13:49+00:00'
+      notes: Independent expanded review inspected the frozen R01 submission, exact 70-path task-base diff, committed reference-before-renderer
+        chronology, approved ECR-0009 and Academic Minimal 1.8 contracts, the opaque native adapter and mounted interaction
+        source. The line-ending-canonical evidence SHA-256 matches the submission and all 13 cited raw-log SHA-256 values
+        match their files. Reference, whole-base external UI gate, typecheck, 27 focused Vitest cases, Vite product build,
+        one mounted real-Core/synthetic-native interaction, affected lint/format, site/smoke, backlog and diff checks report
+        passing at a6588fc5. The external UI checker is the disclosed separate reviewed 5078ef4c2ca6f2b8a0ffd08a8945b9c9b6b831d0
+        commit; the earlier in-tree parser failure remains adverse evidence, not a pass. The first pre-submission replacement,
+        terminal-event, focus and return-context findings remain preserved in task-start.md and their exercised paths were
+        replayed. The submitted tests do not cover a successful native reply followed by an authoritative failure, or a live
+        announcement when a later authoritative denial arrives. The two findings below therefore block T02 task approval.
+        The stale historical planning review pages were disclosed and refreshed after submission outside the a6588fc5 product
+        range. Global quality inventory, full desktop profiles, real native/Core admission, protected reader, slice review
+        and W2 qualification remain separate later work; this review grants none of them.
     review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex-w2-implementation
-        submitted_at: '2026-10-02T22:59:58+00:00'
-        candidate_commit: a6588fc5d2473d028a4f8d6c24ec8aa48e527255
-        base_commit: 1f628843e415b6affbd811eb37d9fff437fac51f
-        branch: codex/w2-implementation
-        evidence_reference:
-          type: criterion-manifest
-          path: artifacts/evidence/W2.A01.T02.json
-          sha256: 75097d4aa5d9b3ce2cf60c4e1a08090a5390cd91453448e021ca1638bc78a09a
-          commit: a6588fc5d2473d028a4f8d6c24ec8aa48e527255
-          recorded_at: '2026-10-02T22:59:58+00:00'
-        acceptance_criteria_sha256: a88ca37f57ae373595f4a7939bdb7e4b68215f0b6d34ef6d87e295c016e7d286
-        changed_paths:
-        - apps/desktop/src/app/ApplicationRuntime.tsx
-        - apps/desktop/src/app/DocumentAttachmentPane.tsx
-        - apps/desktop/src/app/ImportWorkspace.tsx
-        - apps/desktop/src/app/ReconciliationPane.tsx
-        - apps/desktop/src/app/ReconciliationVersionsPane.tsx
-        - apps/desktop/src/app/TaskCenterWorkspace.tsx
-        - apps/desktop/src/app/documentAttachment.test.ts
-        - apps/desktop/src/app/documentAttachment.ts
-        - apps/desktop/src/app/documentAttachmentNative.ts
-        - artifacts/evidence/W2.A01.T02.task-start.md
-        - artifacts/evidence/ui-change/W2.A01.T02.json
-        - design/ui-reference/APPROVAL.yaml
-        - design/ui-reference/CAPABILITY_COVERAGE.json
-        - design/ui-reference/CAPABILITY_COVERAGE.md
-        - design/ui-reference/PAGE_INVENTORY.md
-        - design/ui-reference/PAGE_INVENTORY_SOURCE.md
-        - design/ui-reference/README.md
-        - design/ui-reference/REFERENCE_MANIFEST.yaml
-        - design/ui-reference/SITE_MANIFEST.json
-        - design/ui-reference/STYLE_GUIDE.md
-        - design/ui-reference/STYLE_GUIDE_SOURCE.md
-        - design/ui-reference/WORKFLOW_CATALOG.json
-        - design/ui-reference/WORKFLOW_CATALOG.md
-        - design/ui-reference/application-settings.html
-        - design/ui-reference/assets/app.css
-        - design/ui-reference/assets/app.js
-        - design/ui-reference/audit-lineage.html
-        - design/ui-reference/claim-graph.html
-        - design/ui-reference/corpus-canvas.html
-        - design/ui-reference/critical-lens.html
-        - design/ui-reference/document-reader.html
-        - design/ui-reference/evidence-matrix.html
-        - design/ui-reference/help-onboarding.html
-        - design/ui-reference/index.html
-        - design/ui-reference/ingestion-reconciliation.html
-        - design/ui-reference/intent-contract.html
-        - design/ui-reference/living-monitor.html
-        - design/ui-reference/manuscript-blueprint.html
-        - design/ui-reference/manuscript-studio.html
-        - design/ui-reference/model-center.html
-        - design/ui-reference/new-project.html
-        - design/ui-reference/novelty-audit.html
-        - design/ui-reference/opportunity-radar.html
-        - design/ui-reference/parsing-quality.html
-        - design/ui-reference/project-settings.html
-        - design/ui-reference/projects.html
-        - design/ui-reference/prototype-index.html
-        - design/ui-reference/research-notebook.html
-        - design/ui-reference/reviewer-simulation.html
-        - design/ui-reference/revision-response.html
-        - design/ui-reference/schema-manager.html
-        - design/ui-reference/screening.html
-        - design/ui-reference/scripts/build_mockups.py
-        - design/ui-reference/scripts/render_previews.py
-        - design/ui-reference/scripts/smoke_interactions.py
-        - design/ui-reference/search-studio.html
-        - design/ui-reference/source-manager.html
-        - design/ui-reference/study-design.html
-        - design/ui-reference/style-guide.html
-        - design/ui-reference/synthesis-studio.html
-        - design/ui-reference/task-center.html
-        - design/ui-reference/technical-reports.html
-        - design/ui-reference/theory-map.html
-        - docs/planning-implementation-plan.md
-        - planning/backlog.yaml
-        - planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json
-        - planning/review-site/enablers/ECR-0009.html
-        - planning/review-site/manifest.json
-        - planning/status-summary.md
-        - tests/desktop/test_document_attachment_interactions.py
-        selected_checks:
-        - .venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A01.T02.reference-report-a6588fc5.json
-        - .venv/Scripts/python.exe .local/w2-reference-control/tools/ui_change_gate.py --repo . --base 1f628843e415b6affbd811eb37d9fff437fac51f
-          --head a6588fc5d2473d028a4f8d6c24ec8aa48e527255
-        - 'From apps/desktop: node node_modules/typescript/bin/tsc --noEmit'
-        - 'From apps/desktop: node node_modules/vitest/vitest.mjs run src/app/documentAttachment.test.ts src/app/ImportWorkspace.test.tsx
-          src/app/TaskCenterWorkspace.test.tsx src/app/ApplicationRuntime.test.tsx'
-        - 'From apps/desktop: node node_modules/vite/bin/vite.js build --config vite.product.config.ts'
-        - .venv/Scripts/python.exe -m unittest tests.desktop.test_document_attachment_interactions -v
-        - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate
-        - .venv/Scripts/python.exe -m ruff check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py
-        - .venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py
-        - 'From apps/desktop: node scripts/lint.mjs'
-        - .venv/Scripts/python.exe design/ui-reference/scripts/verify_site.py
-        - .venv/Scripts/python.exe design/ui-reference/scripts/smoke_interactions.py
-        - git diff --check 1f628843e415b6affbd811eb37d9fff437fac51f a6588fc5d2473d028a4f8d6c24ec8aa48e527255
-        deferred_checks:
-        - 'Repository-wide foundation:quality remains failed at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44):
-          prior CAP-05 Python files need bounded inventory maintenance and affected format/mypy correction before Wave exit.'
-        - The planning review site check at artifacts/tmp/W2.A01.T02.plan-review-1d11c818.log failed because only ECR-0005/0006/0007
-          generated pages and manifest still project the former active 1.7 reference; regenerate those deterministic views
-          after T02 review, outside T02's exact product delivery range.
-        - Full desktop/service/security profiles, real native/Core admission, reader opening, integrated slice review and
-          fresh W2 qualification remain for approved downstream tasks and exit; the current desktop profile still targets
-          1.7 pending reviewed retargeting after 1.8 publication.
-        selection_rationale: Risk-selected exact-candidate checks cover approved-reference publication and Git chronology,
-          changed renderer/native contract, mounted identity/focus/recovery, task-control validity, static type/build and
-          local site behavior. The whole task-base UI gate is required and recorded separately after independently reviewed
-          bounded parser maintenance. Pre-candidate adverse renderer findings were replayed; mock native outcomes do not qualify
-          trusted file admission.
-        selection_sha256: a9ead1522e3157e59ae89d0284254b7267fa460187dd22f51f1357d7518656f0
-        prior_attempt_id: null
-        open_finding_ids: []
-        root_cause_analysis: null
-        selected_command_ids:
-        - foundation:ui-reference
-        - foundation:ui-change
-        - foundation:backlog
-        - desktop:unit
-        packet_sha256: 945d366602d1b0457013bea2a1a47640e26612021557ad4d96bf2d4322886565
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-02T22:59:58+00:00'
+          candidate_commit: a6588fc5d2473d028a4f8d6c24ec8aa48e527255
+          base_commit: 1f628843e415b6affbd811eb37d9fff437fac51f
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.A01.T02.json
+            sha256: 75097d4aa5d9b3ce2cf60c4e1a08090a5390cd91453448e021ca1638bc78a09a
+            commit: a6588fc5d2473d028a4f8d6c24ec8aa48e527255
+            recorded_at: '2026-10-02T22:59:58+00:00'
+          acceptance_criteria_sha256: a88ca37f57ae373595f4a7939bdb7e4b68215f0b6d34ef6d87e295c016e7d286
+          changed_paths:
+          - apps/desktop/src/app/ApplicationRuntime.tsx
+          - apps/desktop/src/app/DocumentAttachmentPane.tsx
+          - apps/desktop/src/app/ImportWorkspace.tsx
+          - apps/desktop/src/app/ReconciliationPane.tsx
+          - apps/desktop/src/app/ReconciliationVersionsPane.tsx
+          - apps/desktop/src/app/TaskCenterWorkspace.tsx
+          - apps/desktop/src/app/documentAttachment.test.ts
+          - apps/desktop/src/app/documentAttachment.ts
+          - apps/desktop/src/app/documentAttachmentNative.ts
+          - artifacts/evidence/W2.A01.T02.task-start.md
+          - artifacts/evidence/ui-change/W2.A01.T02.json
+          - design/ui-reference/APPROVAL.yaml
+          - design/ui-reference/CAPABILITY_COVERAGE.json
+          - design/ui-reference/CAPABILITY_COVERAGE.md
+          - design/ui-reference/PAGE_INVENTORY.md
+          - design/ui-reference/PAGE_INVENTORY_SOURCE.md
+          - design/ui-reference/README.md
+          - design/ui-reference/REFERENCE_MANIFEST.yaml
+          - design/ui-reference/SITE_MANIFEST.json
+          - design/ui-reference/STYLE_GUIDE.md
+          - design/ui-reference/STYLE_GUIDE_SOURCE.md
+          - design/ui-reference/WORKFLOW_CATALOG.json
+          - design/ui-reference/WORKFLOW_CATALOG.md
+          - design/ui-reference/application-settings.html
+          - design/ui-reference/assets/app.css
+          - design/ui-reference/assets/app.js
+          - design/ui-reference/audit-lineage.html
+          - design/ui-reference/claim-graph.html
+          - design/ui-reference/corpus-canvas.html
+          - design/ui-reference/critical-lens.html
+          - design/ui-reference/document-reader.html
+          - design/ui-reference/evidence-matrix.html
+          - design/ui-reference/help-onboarding.html
+          - design/ui-reference/index.html
+          - design/ui-reference/ingestion-reconciliation.html
+          - design/ui-reference/intent-contract.html
+          - design/ui-reference/living-monitor.html
+          - design/ui-reference/manuscript-blueprint.html
+          - design/ui-reference/manuscript-studio.html
+          - design/ui-reference/model-center.html
+          - design/ui-reference/new-project.html
+          - design/ui-reference/novelty-audit.html
+          - design/ui-reference/opportunity-radar.html
+          - design/ui-reference/parsing-quality.html
+          - design/ui-reference/project-settings.html
+          - design/ui-reference/projects.html
+          - design/ui-reference/prototype-index.html
+          - design/ui-reference/research-notebook.html
+          - design/ui-reference/reviewer-simulation.html
+          - design/ui-reference/revision-response.html
+          - design/ui-reference/schema-manager.html
+          - design/ui-reference/screening.html
+          - design/ui-reference/scripts/build_mockups.py
+          - design/ui-reference/scripts/render_previews.py
+          - design/ui-reference/scripts/smoke_interactions.py
+          - design/ui-reference/search-studio.html
+          - design/ui-reference/source-manager.html
+          - design/ui-reference/study-design.html
+          - design/ui-reference/style-guide.html
+          - design/ui-reference/synthesis-studio.html
+          - design/ui-reference/task-center.html
+          - design/ui-reference/technical-reports.html
+          - design/ui-reference/theory-map.html
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json
+          - planning/review-site/enablers/ECR-0009.html
+          - planning/review-site/manifest.json
+          - planning/status-summary.md
+          - tests/desktop/test_document_attachment_interactions.py
+          selected_checks:
+          - .venv/Scripts/python.exe tools/ui_reference_check.py --repo . --reference design/ui-reference --report artifacts/tmp/W2.A01.T02.reference-report-a6588fc5.json
+          - .venv/Scripts/python.exe .local/w2-reference-control/tools/ui_change_gate.py --repo . --base 1f628843e415b6affbd811eb37d9fff437fac51f
+            --head a6588fc5d2473d028a4f8d6c24ec8aa48e527255
+          - 'From apps/desktop: node node_modules/typescript/bin/tsc --noEmit'
+          - 'From apps/desktop: node node_modules/vitest/vitest.mjs run src/app/documentAttachment.test.ts src/app/ImportWorkspace.test.tsx
+            src/app/TaskCenterWorkspace.test.tsx src/app/ApplicationRuntime.test.tsx'
+          - 'From apps/desktop: node node_modules/vite/bin/vite.js build --config vite.product.config.ts'
+          - .venv/Scripts/python.exe -m unittest tests.desktop.test_document_attachment_interactions -v
+          - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate
+          - .venv/Scripts/python.exe -m ruff check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py
+          - .venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py
+          - 'From apps/desktop: node scripts/lint.mjs'
+          - .venv/Scripts/python.exe design/ui-reference/scripts/verify_site.py
+          - .venv/Scripts/python.exe design/ui-reference/scripts/smoke_interactions.py
+          - git diff --check 1f628843e415b6affbd811eb37d9fff437fac51f a6588fc5d2473d028a4f8d6c24ec8aa48e527255
+          deferred_checks:
+          - 'Repository-wide foundation:quality remains failed at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44):
+            prior CAP-05 Python files need bounded inventory maintenance and affected format/mypy correction before Wave exit.'
+          - The planning review site check at artifacts/tmp/W2.A01.T02.plan-review-1d11c818.log failed because only ECR-0005/0006/0007
+            generated pages and manifest still project the former active 1.7 reference; regenerate those deterministic views
+            after T02 review, outside T02's exact product delivery range.
+          - Full desktop/service/security profiles, real native/Core admission, reader opening, integrated slice review and
+            fresh W2 qualification remain for approved downstream tasks and exit; the current desktop profile still targets
+            1.7 pending reviewed retargeting after 1.8 publication.
+          selection_rationale: Risk-selected exact-candidate checks cover approved-reference publication and Git chronology,
+            changed renderer/native contract, mounted identity/focus/recovery, task-control validity, static type/build and
+            local site behavior. The whole task-base UI gate is required and recorded separately after independently reviewed
+            bounded parser maintenance. Pre-candidate adverse renderer findings were replayed; mock native outcomes do not
+            qualify trusted file admission.
+          selection_sha256: a9ead1522e3157e59ae89d0284254b7267fa460187dd22f51f1357d7518656f0
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:backlog
+          - desktop:unit
+          packet_sha256: 945d366602d1b0457013bea2a1a47640e26612021557ad4d96bf2d4322886565
+        review: *id160
+        ledger:
+          path: artifacts/evidence/W2.A01.T02.review-R01.json
+          sha256: 4fcbe0bedf91c04aee440e06cd512366ecb676bc49ae8041afbe5153b964fa6b
+        findings:
+        - id: W2.A01.T02-R01-F01
+          severity: high
+          blocking: true
+          criterion_index: 3
+          title: A later authoritative failure leaves the attachment pane in a committed dead end
+          reproduction: 'At a6588fc5, mount DocumentAttachmentPane with a selected Work/version, ready native port and metadata-only
+            status. Return a candidate and then an attached commit outcome. The commit path at apps/desktop/src/app/DocumentAttachmentPane.tsx:281-286
+            sets committed and committedRef true. Next return a valid exact-selection, same-operation/same-command authoritative
+            status with status failed and code interrupted or password-protected; decodeAttachmentStatus permits this terminal
+            result. The status effect at lines 80-116 updates attachmentStatus but has no branch that clears or reclassifies
+            committed when unconfirmedRef is null. The panel now displays the failure, and canStartAttachmentReview returns
+            true for it, but the source selector, choose/drop, Cancel and Choose another file controls at lines 322-346 remain
+            disabled by committed. The same failure recurs when Task Center returns a successful handoff after local processing
+            later fails: initialHandoff initializes committed true at lines 55-60. The mounted test covers failed status before
+            any commit and processing after success, so its pass does not exercise this sequence.'
+          required_remediation: Update the missed task-start acceptance row, then add a failing mounted regression for attached
+            reply followed by exact authoritative failed/cancelled/unavailable status, including a Task Center return. Reconcile
+            the historical attached reply with current durable status and expose a safe, explicit recovery or lawful new-copy
+            action after a terminal recoverable failure, rechecking the exact Work/version and preserving command identity;
+            keep denied/rights-changed states blocked and never replay an unconfirmed commit as a new command. Run affected
+            exact-candidate mounted, contract, type/build and UI checks and submit a strict descendant R02 replaying this
+            finding.
+        - id: W2.A01.T02-R01-F02
+          severity: medium
+          blocking: true
+          criterion_index: 5
+          title: Authoritative attachment status and denial are not announced in the inline panel
+          reproduction: At a6588fc5, mount the pane with a selected version and a native status reply of metadata-only, then
+            cause a later accepted status reply of denied/rights-denied or failed/interrupted for that same selection. The
+            status effect at apps/desktop/src/app/DocumentAttachmentPane.tsx:85-116 only calls setAttachmentStatus; it neither
+            calls announce nor updates the pane's live status string. The new authoritative text appears in an ordinary definition-list
+            dd at lines 313-319, outside a live region. The only role=status/aria-live node at line 343 retains the preceding
+            text, such as Source selection changed or Attachment status has not been confirmed. A keyboard or screen-reader
+            user receives no reliable announcement of the new denial or failure, although that result changes action availability.
+            Academic Minimal 1.8 STYLE_GUIDE.md section 1.4 requires safe status and errors to be announced close to this
+            panel; the mounted test checks visible text but not the live announcement.
+          required_remediation: Add a focused mounted accessibility regression that observes the live-region or announcement
+            output after an accepted authoritative denied/failed status. Surface the safe authoritative status message through
+            that live mechanism and keep it synchronized with the displayed status, without exposing file paths, content,
+            or untrusted native text. Recheck keyboard focus and denial transitions in the R02 candidate.
+        closures: []
+        telemetry:
+          task_id: W2.A01.T02
+          amendment_id: W2.A01
+          attempt_id: R01
+          submitted_at: '2026-10-02T22:59:58+00:00'
+          reviewed_at: '2026-10-02T23:13:49+00:00'
+          duration_seconds: 831
+          outcome: changes-requested
+          finding_counts:
+            critical: 0
+            high: 1
+            medium: 1
+            low: 0
+            blocking: 2
+            total: 2
+          command_ids:
+          - foundation:ui-reference
+          - foundation:ui-change
+          - foundation:backlog
+          - desktop:unit
+          remediation:
+            prior_attempt_id: null
+            replayed_finding_ids: []
+            closed_finding_ids: []
+      current_submission: null
   completion:
     status: PENDING
     reviewer: null
