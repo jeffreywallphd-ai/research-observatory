@@ -51574,14 +51574,17 @@ wave_amendments:
       index entry in the independent control/security review
     - Affected foundation, schema, quality and independent control/security/ADR review on committed candidate
     packet_task_sha256: dddbb903737ac476e73b4215b270993d3d93b6de244e9282a84afb8c1ccdcda3
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-02T18:39:35+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-02T18:44:28+00:00'
+      expires_at: '2026-10-03T02:44:28+00:00'
+    started_at: '2026-10-02T18:44:28+00:00'
+    updated_at: '2026-10-02T18:44:28+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
