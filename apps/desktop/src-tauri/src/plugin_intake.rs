@@ -92,9 +92,11 @@ pub(crate) enum PluginIntakeOutcome {
     Failed,
 }
 
+type ActiveIntake = Arc<Mutex<Option<(String, Arc<AtomicBool>)>>>;
+
 #[derive(Default, Clone)]
 pub(crate) struct PluginIntakeManager {
-    active: Arc<Mutex<Option<(String, Arc<AtomicBool>)>>>,
+    active: ActiveIntake,
     cancelled_before_start: Arc<Mutex<Option<String>>>,
 }
 
@@ -795,7 +797,7 @@ pub(crate) fn perform_action(
                 return PluginActionOutcome::Failed;
             }
             let message = format!(
-                "Disable connector {} in project {}?\n\nCurrent package: {}\n\nNew requests will stop and in-flight work will be cancelled. Imported evidence and provenance remain.",
+                "Disable connector {} in project {}?\n\nCurrent package: {}\n\nNew requests will stop. In-flight work may continue until its next authority check or timeout, but cannot publish after disabling. Imported evidence and provenance remain.",
                 visible(plugin_id),
                 request.project_id,
                 package_sha

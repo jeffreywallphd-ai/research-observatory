@@ -119,8 +119,8 @@ export function PluginReviewPane({ project, announce, active, initialPackage, na
     generation.current++; pending.current?.abort(); pending.current = null;
     if (selected) void discardPluginReview({ root: project.root, projectId: project.projectId }, selected.packageToken, nativeTransport);
     setSelected(null); setTrust(null); setGrant(null); setConsent(false); setTrustRemovalAcknowledged(false); setFailure(null);
-    setNotice("Review closed. The previous project configuration is unchanged.");
-    announce("Connector review closed. Prior configuration is unchanged.");
+    setNotice("Review closed. Select a package to view its current publisher trust and project permission.");
+    announce("Connector review closed. Select a package to view its current publisher trust and project permission.");
     requestAnimationFrame(() => { if (live.current) chooseButton.current?.focus(); });
   }
 
@@ -152,7 +152,7 @@ export function PluginReviewPane({ project, announce, active, initialPackage, na
         }
         const message = kind === "trust" ? "Publisher key trusted locally. This package is not yet enabled for the project."
           : kind === "enable" ? "Connector enabled for this project. Each request still needs current policy checks."
-            : kind === "disable" ? "Connector disabled for this project. In-flight work is cancelled; imported evidence remains."
+            : kind === "disable" ? "Connector disabled for this project. New requests stop, and in-flight results cannot publish after disabling. Imported evidence remains."
               : "Local publisher trust removed. Dependent packages can no longer run; imported evidence remains.";
         setNotice(message); announce(message);
         if (kind === "enable") setConsent(false);
@@ -179,7 +179,7 @@ export function PluginReviewPane({ project, announce, active, initialPackage, na
     {busy ? <p role="status">{busy === "choose" ? "Inspecting the selected local package…" : "Checking current connector authority…"}</p> : null}
     {failure ? <Notification tone="warning" title="Connector review needs attention">{failure}</Notification> : null}
     {notice ? <Notification tone="info" title="Connector review">{notice}</Notification> : null}
-    {!selected ? <p>No package selected. Existing project sources and permissions are unchanged.</p> : <>
+    {!selected ? <p>No package selected. Select one to inspect its current publisher trust and project permission.</p> : <>
       <StatusBadge tone={selected.review.trustStatus === "invalid" || selected.review.trustStatus === "revoked" ? "danger" : selected.review.grantStatus === "enabled" ? "success" : "warning"}>{selected.review.trustStatus === "invalid" ? "Quarantined · signature invalid" : selected.review.trustStatus === "revoked" ? "Publisher trust removed" : selected.review.grantStatus === "enabled" ? "Project permission recorded" : "Not enabled"}</StatusBadge>
       <dl className="ro-key-value"><dt>Package</dt><dd>{selected.review.sourceDisplayName} · version {selected.review.pluginVersion}</dd>
         <dt>Package digest</dt><dd className="ro-wrap-anywhere"><code>{selected.review.packageSha256}</code></dd>
