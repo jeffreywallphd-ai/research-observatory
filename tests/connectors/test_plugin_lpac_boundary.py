@@ -510,6 +510,182 @@ def invoke(input_data, broker, operation):
             self.assertFalse(outside.exists())
             self.assertFalse(runtime_parent_write.exists())
 
+    def _prove_signed_worker_resource_exhaustion(self, *, memory: bool) -> None:
+        """Exhaust a manifest limit in the actual signed LPAC worker."""
+
+        import secrets
+        import time
+        from ctypes import wintypes
+
+        from nacl.signing import SigningKey
+        from research_observatory_core.connectors.plugin_manifest import verify_plugin_package
+
+        from tests.connectors.test_plugin_manifest_contract import (
+            PATH,
+            PUBLISHER_ID,
+            _manifest_bytes,
+            _manifest_document,
+        )
+        from workers.windows import connector_launcher, recovery_guardian
+        from workers.windows.lpac_launcher import LPACError, _api
+        from workers.windows.recovery_guardian import GuardianProcess
+        from workers.windows.runtime_inventory import APPLICATION_INVENTORY_PUBLIC_KEY, SignedWorkerRuntime
+
+        build_path = os.environ.get("RO_W2_SIGNED_WORKER_BUILD")
+        sidecar_path = os.environ.get("RO_W2_CORE_SIDECAR_GUARDIAN")
+        if not build_path or not sidecar_path:
+            self.skipTest("locally signed worker and frozen Core guardian are required")
+        build = Path(build_path).resolve(strict=True)
+        sidecar = Path(sidecar_path).resolve(strict=True)
+        runtime = SignedWorkerRuntime(
+            build / "package",
+            (build / "inventory.json").read_bytes(),
+            (build / "inventory.sig").read_bytes(),
+            APPLICATION_INVENTORY_PUBLIC_KEY,
+        )
+        source = (
+            """
+def invoke(input_data, broker, operation):
+    broker({"operation": "lookup", "identifier": input_data.decode("ascii")})
+    chunks = []
+    for _ in range(320):
+        chunk = bytearray(1_048_576)
+        for offset in range(0, len(chunk), 4096):
+            chunk[offset] = 1
+        chunks.append(chunk)
+    return b"memory-limit-not-enforced"
+"""
+            if memory
+            else """
+def invoke(input_data, broker, operation):
+    broker({"operation": "lookup", "identifier": input_data.decode("ascii")})
+    while True:
+        pass
+"""
+        ).encode("utf-8")
+        document = _manifest_document(package_file=source)
+        document["resourceProfile"] = {
+            "committedMemoryMiB": 256,
+            "maxJobsPerProject": 1,
+            "wallTimeSeconds": 20 if memory else 1,
+        }
+        manifest = _manifest_bytes(document)
+        signing_key = SigningKey(b"\x42" * 32)
+        package = verify_plugin_package(
+            manifest,
+            signing_key.sign(manifest).signature,
+            {PATH: source},
+            {PUBLISHER_ID: bytes(signing_key.verify_key)},
+        )
+        self.assertEqual(package.manifest.resource_profile.wall_time_seconds, 20 if memory else 1)
+        self.assertEqual(package.manifest.resource_profile.committed_memory_mi_b, 256)
+
+        if memory:
+            # Distinguish the worker Job limit from an exhausted test host.
+            def prove_host_can_commit() -> None:
+                chunks: list[bytearray] = []
+                try:
+                    for _ in range(320):
+                        chunk = bytearray(1_048_576)
+                        for offset in range(0, len(chunk), 4096):
+                            chunk[offset] = 1
+                        chunks.append(chunk)
+                except MemoryError:
+                    self.fail("test host cannot commit the bounded 320 MiB positive control")
+                finally:
+                    chunks.clear()
+
+            prove_host_can_commit()
+
+        kernel, _, _, _ = _api()
+        kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+        kernel.OpenProcess.restype = wintypes.HANDLE
+        guardians: list[GuardianProcess] = []
+        worker_handles: list[Any] = []
+        calls: list[dict[str, Any]] = []
+        original_start = connector_launcher.start_guardian
+        original_token = connector_launcher.win._token
+        local = Path(os.environ["LOCALAPPDATA"]).resolve(strict=True)
+        runtime_parent = local / "RoWorker"
+        runtime_parent.mkdir(exist_ok=True)
+        self.assertFalse(runtime_parent.is_symlink() or runtime_parent.is_junction())
+        sentinel = runtime_parent / f"synthetic-unrelated-{secrets.token_hex(8)}.txt"
+        sentinel.write_bytes(b"synthetic-only")
+
+        def observe_guardian() -> GuardianProcess:
+            guardian = original_start()
+            guardians.append(guardian)
+            return guardian
+
+        def observe_token(advapi: Any, launched_kernel: Any, process: int, sid_text: str) -> dict[str, Any]:
+            token = original_token(advapi, launched_kernel, process, sid_text)
+            launched_kernel.GetProcessId.argtypes = [wintypes.HANDLE]
+            launched_kernel.GetProcessId.restype = wintypes.DWORD
+            worker_pid = launched_kernel.GetProcessId(process)
+            self.assertNotEqual(worker_pid, 0)
+            handle = kernel.OpenProcess(0x101000, False, worker_pid)
+            self.assertTrue(handle, "could not retain the signed worker process handle")
+            worker_handles.append(handle)
+            return token
+
+        def record_marker(call: dict[str, Any]) -> bytes:
+            calls.append(call)
+            return b"synthetic-metadata"
+
+        started = time.monotonic()
+        try:
+            with (
+                patch.object(
+                    recovery_guardian,
+                    "_guardian_command",
+                    return_value=[str(sidecar), "--plugin-acl-guardian"],
+                ),
+                patch.object(connector_launcher, "start_guardian", side_effect=observe_guardian),
+                patch.object(connector_launcher.win, "_token", side_effect=observe_token),
+            ):
+                try:
+                    outcome = connector_launcher.run_connector(
+                        runtime,
+                        package,
+                        {PATH: source},
+                        job_nonce=secrets.token_hex(16),
+                        invocation_id="synthetic-resource-exhaustion",
+                        operation="lookup",
+                        input_data=b"synthetic-1",
+                        broker_callback=record_marker,
+                    )
+                except LPACError as error:
+                    failure = str(error)
+                else:
+                    self.fail(f"resource exhaustion returned {len(outcome.output)} successful output bytes")
+            self.assertEqual(calls, [{"operation": "lookup", "identifier": "synthetic-1"}])
+            if memory:
+                self.assertEqual(failure, "lpac-worker-pipe-truncated")
+            else:
+                self.assertEqual(failure, "lpac-worker-timeout")
+            self.assertLess(time.monotonic() - started, 45 if memory else 30)
+            self.assertEqual(len(worker_handles), 1)
+            self.assertEqual(kernel.WaitForSingleObject(worker_handles[0], 5000), 0)
+            self.assertEqual(len(guardians), 1)
+            guardian = guardians[0]
+            self.assertEqual(guardian.process.returncode, 0)
+            self.assertFalse(guardian.profile.parent.exists(), "guardian left the exact LPAC profile")
+            self.assertFalse(guardian.runtime.exists(), "guardian left the exact copied runtime")
+            self.assertEqual(sentinel.read_bytes(), b"synthetic-only")
+        finally:
+            for handle in worker_handles:
+                kernel.CloseHandle(handle)
+            if sentinel.exists():
+                sentinel.unlink()
+
+    @unittest.skipUnless(os.name == "nt", "Windows x64 LPAC qualification")
+    def test_signed_product_worker_enforces_one_second_wall_limit(self) -> None:
+        self._prove_signed_worker_resource_exhaustion(memory=False)
+
+    @unittest.skipUnless(os.name == "nt", "Windows x64 LPAC qualification")
+    def test_signed_product_worker_enforces_committed_memory_limit(self) -> None:
+        self._prove_signed_worker_resource_exhaustion(memory=True)
+
     def _prove_guardian_recovery(self, phase: str, *, delayed_lock: bool = False) -> None:
         """Kill Core before or after sealing; guardian must own exact cleanup."""
 

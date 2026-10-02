@@ -6,6 +6,7 @@ import asyncio
 import hashlib
 import json
 import sys
+import tempfile
 import threading
 import unittest
 from pathlib import Path
@@ -30,9 +31,12 @@ from research_observatory_core.connectors.plugin_manifest import (  # noqa: E402
 from research_observatory_core.connectors.plugin_package_intake import inspect_plugin_archive  # noqa: E402
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.plugin_admin_service import PluginAdminService, PluginAuthorizedDispatch  # noqa: E402
+from research_observatory_core.plugin_grant_repository import SqlitePluginGrantRepository  # noqa: E402
 from research_observatory_core.ports.object_store import ObjectStore, StoredObject  # noqa: E402
+from research_observatory_core.storage import configure_protected_database_provider, initialize_database  # noqa: E402
 
 from tests.connectors.test_plugin_package_intake import archive  # noqa: E402
+from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
 
 PROJECT = "0190a000-0000-7000-8000-000000000040"
 
@@ -255,6 +259,56 @@ class PluginDispatchTests(unittest.TestCase):
         with self.assertRaisesRegex(PluginDispatchProblem, "plugin-policy-denied"):
             self._run(revoked)
         self.assertEqual(0, self.store.puts)
+
+    def test_failed_persisted_worker_records_content_free_durable_denial_without_staging(self):
+        with tempfile.TemporaryDirectory(prefix="ro-plugin-worker-denial-", dir=REPO / "artifacts/tmp") as temporary:
+            state = Path(temporary) / "state"
+            state.mkdir()
+            database = state / "project.sqlite3"
+            configure_protected_database_provider(InMemoryDatabaseKeyProvider())
+            initialized = initialize_database(
+                database, project_id=PROJECT, project_created_at="2026-10-01T12:00:00.000Z"
+            )
+            self.assertTrue(initialized.ok, initialized.errors)
+            repository = SqlitePluginGrantRepository(database, PROJECT)
+            plan = self.admin.dispatch.plan
+
+            def persist_denial(_root, _project, *, plugin_id, invocation_id, reason_code, actor):
+                repository.record_denial(
+                    plugin_id=plugin_id,
+                    invocation_id=invocation_id,
+                    package_sha256=plan.package_sha256,
+                    reason_code=reason_code,
+                    actor=actor,
+                )
+
+            def failed_worker(_runtime, _package, _files, **_kwargs):
+                raise RuntimeError("synthetic worker did not return an output")
+
+            with (
+                patch.object(self.admin, "record_denial_persisted", side_effect=persist_denial),
+                self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-failed"),
+            ):
+                asyncio.run(
+                    self._controller(failed_worker).dispatch_persisted(
+                        root="C:/synthetic",
+                        project_id=PROJECT,
+                        package_sha256=plan.package_sha256,
+                        manifest_sha256=plan.manifest_sha256,
+                        signature_sha256=plan.signature_sha256,
+                        request=self.request,
+                        input_data=self.input_data,
+                        actor=self.actor,
+                    )
+                )
+            self.assertEqual(0, self.store.puts)
+            events = SqlitePluginGrantRepository(database, PROJECT).audit_history(plan.plugin_id)
+            self.assertEqual(1, len(events))
+            self.assertEqual("denied", events[0].event_kind)
+            self.assertEqual("plugin-worker-failed", events[0].reason_code)
+            self.assertEqual(self.request.invocation_id, events[0].invocation_id)
+            self.assertEqual(plan.package_sha256, events[0].package_sha256)
+            self.assertNotIn("synthetic worker did not return an output", repr(events))
 
     def test_same_project_second_job_denied_while_first_worker_runs(self):
         entered, release = threading.Event(), threading.Event()
