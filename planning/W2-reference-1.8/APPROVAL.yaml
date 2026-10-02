@@ -1,0 +1,18 @@
+reference_id: RO-UI-ACADEMIC-MINIMAL-1.8
+version: '1.8'
+status: proposed
+approval_kind: human
+approved_by: null
+approved_at: null
+approval_basis: null
+supersedes: RO-UI-ACADEMIC-MINIMAL-1.7
+scope:
+  normative:
+  - Inherit approved 1.7 contracts except the inline CAP-05.S01.T01 local full-text
+    attachment interaction in Ingestion Review and its selected-version return context
+  - Native picker or drop, explicit uncertain-association confirmation and rights
+    state, cancellation, recovery and actionable denial/error states
+  illustrative:
+  - Mock work/version, filename, rights example and inactive import actions
+implementation_rule: Inert proposal; exact human reference approval and a new
+  reference approval record precede CAP-05.S01.T01 product implementation.
