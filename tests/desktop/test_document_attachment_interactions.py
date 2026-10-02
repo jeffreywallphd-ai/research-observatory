@@ -25,8 +25,8 @@ from desktop_app_check import (  # noqa: E402
     core_workflow_catalog_json,
     inline_product_index,
 )
-from tests.reconciliation import test_version_api as version_fixture  # noqa: E402
 
+from tests.reconciliation import test_version_api as version_fixture  # noqa: E402
 
 ATTACHMENT_HOST = r""";
 (() => {
@@ -42,8 +42,11 @@ ATTACHMENT_HOST = r""";
   const selection = request => request.selection;
   const fingerprint = async value => {
     const canonical = item => Array.isArray(item) ? '[' + item.map(canonical).join(',') + ']'
-      : item && typeof item === 'object' ? '{' + Object.keys(item).sort().map(key => canonical(key) + ':' + canonical(item[key])).join(',') + '}'
-      : JSON.stringify(item).replace(/[\u007f-\uffff]/g, char => '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0'));
+      : item && typeof item === 'object'
+      ? '{' + Object.keys(item).sort()
+        .map(key => canonical(key) + ':' + canonical(item[key])).join(',') + '}'
+      : JSON.stringify(item).replace(/[\u007f-\uffff]/g,
+        char => '\\u' + char.charCodeAt(0).toString(16).padStart(4, '0'));
     const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(canonical(value)));
     return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2,'0')).join('');
   };
@@ -196,15 +199,25 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
         work = fixture.ok("works", after=None, limit=32)["items"][0]
         original = fixture.ok("context", workIds=[work["workId"]])
         plan = dict(
-            schemaVersion="1.0", action="register", workIds=[work["workId"]],
-            contextSha256=original["contextSha256"], rationale="Synthetic manifestation for UI test",
-            definition=dict(kind="accepted-manuscript", assertionRevisionIds=work["assertionRevisionIds"],
-                            date=dict(precision="not-reported", value=None)),
-            version=None, relation=None, previousPreferenceRevisionId=None,
+            schemaVersion="1.0",
+            action="register",
+            workIds=[work["workId"]],
+            contextSha256=original["contextSha256"],
+            rationale="Synthetic manifestation for UI test",
+            definition=dict(
+                kind="accepted-manuscript",
+                assertionRevisionIds=work["assertionRevisionIds"],
+                date=dict(precision="not-reported", value=None),
+            ),
+            version=None,
+            relation=None,
+            previousPreferenceRevisionId=None,
         )
         preview = fixture.ok("preview", plan=plan)
-        fixture.ok("commit", command=dict(commandId=preview["commandId"], plan=plan,
-                                          expectedPreviewSha256=preview["previewSha256"]))
+        fixture.ok(
+            "commit",
+            command=dict(commandId=preview["commandId"], plan=plan, expectedPreviewSha256=preview["previewSha256"]),
+        )
         version = fixture.ok("context", workIds=[work["workId"]])["versions"][0]
         fixture.f.service.detach(fixture.f.root)
         closed = fixture.client.post("/projects/close", json={"root": fixture.f.root})
@@ -218,7 +231,9 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
                 headers["If-Match"] = request["ifMatch"]
             if request["idempotencyKey"] is not None:
                 headers["Idempotency-Key"] = request["idempotencyKey"]
-            response = fixture.client.request(request["method"], request["path"], content=request["body"], headers=headers)
+            response = fixture.client.request(
+                request["method"], request["path"], content=request["body"], headers=headers
+            )
             return {
                 "status": response.status_code,
                 "contentType": response.headers["content-type"].split(";")[0],
@@ -242,8 +257,14 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             context = browser.new_context(viewport={"width": 1440, "height": 1000}, reduced_motion="reduce")
             cleanup.callback(context.close)
             document = inline_product_index(REPO)
-            context.route("**/*", lambda route: route.fulfill(status=200, content_type="text/html", body=document)
-                          if route.request.url == "http://tauri.localhost/index.html" else route.abort())
+            context.route(
+                "**/*",
+                lambda route: (
+                    route.fulfill(status=200, content_type="text/html", body=document)
+                    if route.request.url == "http://tauri.localhost/index.html"
+                    else route.abort()
+                ),
+            )
             page = context.new_page()
             errors = []
             page.on("pageerror", lambda error: errors.append(str(error)))
@@ -285,14 +306,19 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             page.evaluate("window.__ATTACH_TEST__.failure = 'password-protected'")
             panel.get_by_role("button", name="Choose local full-text file…").click()
             page.wait_for_timeout(500)
-            self.assertIn("password protected", panel.inner_text(),
-                          f"native state={page.evaluate('window.__ATTACH_TEST__')} page errors={errors}")
+            self.assertIn(
+                "password protected",
+                panel.inner_text(),
+                f"native state={page.evaluate('window.__ATTACH_TEST__')} page errors={errors}",
+            )
             page.evaluate("window.__EMIT_REPLACEMENT__()")
             self.assertEqual(0, panel.get_by_role("heading", name="Pending document candidate").count())
-            for code, phrase in (("unsafe-content", "failed safety inspection"),
-                                 ("oversize", "128 MiB limit"),
-                                 ("rights-denied", "Rights deny local attachment"),
-                                 ("interrupted", "was interrupted")):
+            for code, phrase in (
+                ("unsafe-content", "failed safety inspection"),
+                ("oversize", "128 MiB limit"),
+                ("rights-denied", "Rights deny local attachment"),
+                ("interrupted", "was interrupted"),
+            ):
                 page.evaluate("code => { window.__ATTACH_TEST__.failure = code; }", code)
                 panel.get_by_role("button", name="Choose local full-text file…").click()
                 panel.get_by_role("status").filter(has_text=phrase).wait_for()
@@ -345,7 +371,11 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             panel.get_by_label("Permitted use").select_option("project-only")
             page.evaluate("window.__EMIT_REPLACEMENT__()")
             panel.get_by_text("replacement.pdf", exact=False).wait_for()
-            self.assertFalse(panel.get_by_label("I confirm this file belongs to the selected Work and version shown above.").is_checked())
+            self.assertFalse(
+                panel.get_by_label(
+                    "I confirm this file belongs to the selected Work and version shown above."
+                ).is_checked()
+            )
             self.assertEqual("", panel.get_by_label("Permitted use").input_value())
             panel.get_by_label("I confirm this file belongs to the selected Work and version shown above.").check()
             panel.get_by_label("Permitted use").select_option("project-only")
@@ -399,21 +429,36 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             self.assertNotIn("sourcePath", str(requests["begin"]))
             panel.get_by_role("button", name="View Task Center").click()
             page.get_by_role("heading", name="Task Center", exact=True).wait_for()
-            page.get_by_text("Authoritative status: attachment recorded; local processing is pending.", exact=False).wait_for()
-            self.assertIn("01900000-0000-7000-8000-000000000081", page.get_by_text("Earlier native response reported attachment", exact=False).inner_text())
+            page.get_by_text(
+                "Authoritative status: attachment recorded; local processing is pending.", exact=False
+            ).wait_for()
+            self.assertIn(
+                "01900000-0000-7000-8000-000000000081",
+                page.get_by_text("Earlier native response reported attachment", exact=False).inner_text(),
+            )
             page.get_by_role("button", name="Return to selected Work/version").click()
             panel = page.get_by_role("region", name="Selected-version attachment")
             panel.get_by_text(version["revisionId"], exact=False).wait_for()
             panel.get_by_role("button", name="Return to Work versions").focus()
             page.keyboard.press("Escape")
             page.wait_for_timeout(300)
-            self.assertIn("Attach full text to this version", page.evaluate("document.activeElement?.textContent"),
-                          f"active={page.evaluate('document.activeElement?.outerHTML')} row={page.get_by_role('button', name='Attach full text to this version', exact=True).evaluate_all('(nodes) => nodes.map(n => [n.outerHTML, n.isConnected, n.disabled])')} errors={errors}")
+            active_markup = page.evaluate("document.activeElement?.outerHTML")
+            attach_row_markup = page.get_by_role(
+                "button", name="Attach full text to this version", exact=True
+            ).evaluate_all("(nodes) => nodes.map(n => [n.outerHTML, n.isConnected, n.disabled])")
+            self.assertIn(
+                "Attach full text to this version",
+                page.evaluate("document.activeElement?.textContent"),
+                f"active={active_markup} row={attach_row_markup} errors={errors}",
+            )
             self.assertEqual(0, page.get_by_role("region", name="Selected-version attachment").count())
             if menu.get_attribute("open") is None:
                 menu.locator("summary").click()
-            self.assertEqual(1, menu.get_by_role("button", name="Task Center", exact=True).count(),
-                             f"menu={menu.inner_text()} open={menu.get_attribute('open')}")
+            self.assertEqual(
+                1,
+                menu.get_by_role("button", name="Task Center", exact=True).count(),
+                f"menu={menu.inner_text()} open={menu.get_attribute('open')}",
+            )
             menu.get_by_role("button", name="Task Center", exact=True).click()
             self.assertEqual(1, page.get_by_role("button", name="Return to selected Work/version").count())
             if menu.get_attribute("open") is None:
@@ -426,9 +471,14 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             page.get_by_role("button", name="Attach full text to this version", exact=True).click()
             panel = page.get_by_role("region", name="Selected-version attachment")
             panel.get_by_label("Source assertion for this version").select_option(work["assertionRevisionIds"][0])
-            panel.get_by_text("Authoritative status: attachment recorded; local processing is pending.", exact=False).wait_for()
+            panel.get_by_text(
+                "Authoritative status: attachment recorded; local processing is pending.", exact=False
+            ).wait_for()
             panel.get_by_role("button", name="View Task Center").click()
-            self.assertIn("01900000-0000-7000-8000-000000000082", page.get_by_text("Last checked attachment status identified attachment", exact=False).inner_text())
+            self.assertIn(
+                "01900000-0000-7000-8000-000000000082",
+                page.get_by_text("Last checked attachment status identified attachment", exact=False).inner_text(),
+            )
             if menu.get_attribute("open") is None:
                 menu.locator("summary").click()
             menu.get_by_role("button", name="Ingestion & Reconciliation", exact=True).click()
@@ -436,15 +486,30 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             page.evaluate("window.__ATTACH_TEST__.ambiguous = true")
             page.get_by_role("button", name="Open Work versions", exact=True).click()
             page.wait_for_timeout(500)
-            self.assertEqual(1, page.get_by_label(f"Select Work {work['workId']}", exact=False).count(),
-                             f"page={page.locator('[data-reconciliation-versions]').inner_text() if page.locator('[data-reconciliation-versions]').count() else page.locator('main').inner_text()[-5000:]} errors={errors}")
+            versions_region = page.locator("[data-reconciliation-versions]")
+            versions_text = (
+                versions_region.inner_text() if versions_region.count() else page.locator("main").inner_text()[-5000:]
+            )
+            self.assertEqual(
+                1,
+                page.get_by_label(f"Select Work {work['workId']}", exact=False).count(),
+                f"page={versions_text} errors={errors}",
+            )
             page.get_by_label(f"Select Work {work['workId']}", exact=False).check()
             page.get_by_label("Select Work f1900000-0000-7000-8000-000000000090", exact=False).check()
             page.get_by_role("button", name="Review selected Work versions", exact=True).click()
             page.wait_for_timeout(400)
-            self.assertEqual(1, page.get_by_role("button", name="Attach full text to this version", exact=True).count(),
-                             f"page={page.locator('main').inner_text()[-3000:]} core={page.evaluate('({status:window.__ATTACH_TEST__.lastContextStatus, body:window.__ATTACH_TEST__.lastContextBody})')} errors={errors}")
-            self.assertTrue(page.get_by_role("button", name="Attach full text to this version", exact=True).is_disabled())
+            core_context = page.evaluate(
+                "({status:window.__ATTACH_TEST__.lastContextStatus, body:window.__ATTACH_TEST__.lastContextBody})"
+            )
+            self.assertEqual(
+                1,
+                page.get_by_role("button", name="Attach full text to this version", exact=True).count(),
+                f"page={page.locator('main').inner_text()[-3000:]} core={core_context} errors={errors}",
+            )
+            self.assertTrue(
+                page.get_by_role("button", name="Attach full text to this version", exact=True).is_disabled()
+            )
             page.get_by_role("button", name="Back to Works", exact=True).click()
             page.get_by_role("button", name="Close Work versions", exact=True).click()
             page.evaluate("window.__ATTACH_TEST__.ambiguous = false; window.__ATTACH_TEST__.durable = null")
@@ -458,8 +523,11 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             page.evaluate("window.__ATTACH_TEST__.staleVersion = true")
             panel.get_by_role("button", name="Choose local full-text file…").click()
             page.wait_for_timeout(400)
-            self.assertIn("The Work, version or source changed. Refresh current evidence before retrying.", panel.inner_text(),
-                          f"core={page.evaluate('window.__ATTACH_TEST__.lastContextBody')} errors={errors}")
+            self.assertIn(
+                "The Work, version or source changed. Refresh current evidence before retrying.",
+                panel.inner_text(),
+                f"core={page.evaluate('window.__ATTACH_TEST__.lastContextBody')} errors={errors}",
+            )
             self.assertEqual(before_stale, len(page.evaluate("window.__ATTACH_TEST__.begin")))
             self.assertEqual(0, panel.get_by_role("heading", name="Pending document candidate").count())
             page.evaluate("window.__ATTACH_TEST__.staleVersion = false")
@@ -522,7 +590,9 @@ class DocumentAttachmentInteractionTests(unittest.TestCase):
             page.get_by_role("button", name="Attach full text to this version", exact=True).click()
             panel = page.get_by_role("region", name="Selected-version attachment")
             panel.get_by_label("Source assertion for this version").select_option(work["assertionRevisionIds"][0])
-            panel.get_by_text("Authoritative status: the saved attachment decision has no confirmed result", exact=False).wait_for()
+            panel.get_by_text(
+                "Authoritative status: the saved attachment decision has no confirmed result", exact=False
+            ).wait_for()
             panel.get_by_role("button", name="Retry same attachment decision").wait_for()
             self.assertEqual(pending_after_loss, page.evaluate("window.__ATTACH_TEST__.retryRequest"))
             commits_before_retry = len(page.evaluate("window.__ATTACH_TEST__.commit"))
