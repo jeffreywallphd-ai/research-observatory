@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0009",
+  "proposedAmendmentId": "W2.A01",
+  "targetWave": "W2",
+  "attemptId": "R01",
+  "candidateCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+  "packetSha256": "9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2",
+  "reviewer": "agent:/root/backend_commit_preflight",
+  "reviewedAt": "2026-10-02T12:46:31Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "summary": "The exact final proposal candidate is structurally valid, hash-bound, quiescent, and limited to two ordered W2 amendment tasks. The earlier circular live-attachment requirement and unsafe stock Tauri drop assumption are closed at the proposal boundary. This independent packet disposition makes the proposal eligible for a separate exact human decision; it is not that decision or execution authority.",
+  "independence": {
+    "proposalPacketOrSiteAuthoredByReviewer": false,
+    "priorParticipation": "Read-only backend preflight and independent ECR design assessment identified the two adverse preflight findings. The reviewer authored the retained preapproval note but did not author the proposal, packet, governed reference, revision, generator, or generated site.",
+    "persistentWrites": [
+      "artifacts/evidence/ECR-0009-preapproval-review.md",
+      "planning/enabler-change-requests/ECR-0009.review-R01.json"
+    ],
+    "workflowMutations": "None: no taskctl transition, approval, reference publication, amendment activation, integration, or release action was performed by this reviewer."
+  },
+  "bindings": {
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0009.packet.json",
+      "sha256": "9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2"
+    },
+    "canonicalProposal": {
+      "path": "planning/enabler-change-requests/ECR-0009.md",
+      "sha256": "19b25c2170a6401ce0ca4567835817c14a53dfdb3f65e7d95a7886aa484210c2"
+    },
+    "humanReview": {
+      "path": "planning/enabler-change-requests/ECR-0009-review.html",
+      "sha256": "d64b54ee67d93094dd35ec0d0da82886a7bebc1681f68daf53ff375ee65f9941"
+    },
+    "proposalSchema": {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c"
+    },
+    "adversePreflight": {
+      "path": "artifacts/evidence/ECR-0009-preapproval-review.md",
+      "introductionCommit": "9d928757b2001c6e49d6170f5b1627a42cb56ff7",
+      "sha256": "e57ffd4df6114ab78071d99284947a70d4f47298a7dc6e5d5ca785be18c25fd8"
+    },
+    "siteProjectionReview": {
+      "path": "artifacts/evidence/W2-enabler-review-site-projection-repair.review.md",
+      "introductionCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+      "sha256": "f24f9645a9a24d4023e84909e28660e57e39252fa6312bf59d22daf73fad721a"
+    },
+    "authentication": "The candidate was clean HEAD during independent review. All 58 unique SHA-256 rows matched exact candidate Git blobs: all 55 governed 1.8 proposal files and the canonical proposal, v4.1 schema, and human review page. The 55-row inventory exactly covered the candidate proposal tree. The packet SHA-256 matched its candidate Git blob."
+  },
+  "checks": [
+    {
+      "id": "IR-R01-packet-structure-and-history",
+      "command": "python tools/planctl.py --repo . ecr validate ECR-0009",
+      "result": "PASS",
+      "observation": "The exact clean candidate was structurally and historically valid. This read-only check did not require or infer an approval record."
+    },
+    {
+      "id": "IR-R01-hash-inventory",
+      "result": "PASS",
+      "observation": "Independently SHA-256 hashed all 58 exact candidate Git blobs, found 58 unique paths and zero mismatches, and compared the 55 proposed-reference rows with all 55 proposal-tree files. The packet hash is the value bound above."
+    },
+    {
+      "id": "IR-R01-authority-and-quiescence",
+      "result": "PASS",
+      "observation": "The effective W2 approval equals both its historical 3bc1c182 approval and the separately repaired W2 base. Canonical approval SHA-256 is 3f15c0da1fdaaf41b5ce69cc3cc3cda337ff549178101e0a358e0fb40503c97a. Base repair f7ca8920 has independent exact-commit review a6dd627e. GOV-MIG-0001's retained blob matches its packet SHA. W2 is PAUSED with no lease; CAP-05.S01.T01 is BLOCKED with no lease; active amendment is null, no W2 amendment exists, and both historical recovery holds are RELEASED."
+    },
+    {
+      "id": "IR-R01-scope-and-estimate",
+      "result": "PASS",
+      "observation": "The original W2 inventory at c85a59f3 has 33 atomic tasks: 22 L and 11 M, totaling 143 points. The ECR adds exactly W2.A01.T01 and W2.A01.T02 at M/3 each, ordered after bootstrap and T01 respectively. It declares no supplemental refactor task or allocation (0/143), does not replace CAP-05.S01.T01, and preserves cumulative reclassification review for any actual later refactoring."
+    },
+    {
+      "id": "IR-R01-sequencing-and-security",
+      "result": "PASS_WITH_LATER_ORIGINAL_TASK_PROOF",
+      "observation": "The revised canonical proposal, packet, and static review page consistently limit T02 to reference publication, a frozen typed opaque renderer contract, mounted synthetic outcomes, and fail-closed unavailable production choose/drop/attach. They prohibit renderer paths/bytes, stock Tauri drop-path events, and broad filesystem grants. Real fixed-action native commands, native-only drop/held-source handling, Core lifecycle and disposable-project trusted proof remain with resumed CAP-05.S01.T01 after amendment adoption; infeasible native drop handling requires a separate approved redesign."
+    },
+    {
+      "id": "IR-R01-generated-review-projection",
+      "result": "PASS",
+      "observation": "The exact generated ECR-0009 page and register identify W2/W2.A01, pending human approval, non-executable and NOT_MATERIALIZED states, an inactive amendment campaign, and T02 publication/renderer work before later original-task native proof. The separate exact-commit site review introduced at the candidate reports no blocking finding. Its 493-page checker report is retained site evidence, not repeated or represented as full W2 qualification."
+    },
+    {
+      "id": "IR-R01-history-delta-and-whitespace",
+      "result": "PASS",
+      "observation": "The final candidate differs from c7489ac1 only by the independent site review note. Neither the packet nor any bound proposal blob changed. git diff --check passed for the revised packet, site projection, and final site-review-note commits."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "findingId": "ECR-0009-preflight-F01",
+      "disposition": "closed",
+      "closedAtCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+      "basis": "The original ba45848f T02 acceptance demanded real Core/native proof before adoption while native/Core implementation remained in blocked CAP-05.S01.T01. Revised ECR-0009.md ordered inventory, execution boundary, acceptance item 4, and rollback, plus packet sliceContributions[0], taskInventory[1], acceptanceCriteria[3], verificationObligations[4], and rollback[3], now accept only reference and typed renderer-contract proof for T02; original T01 supplies the native bridge and real end-to-end proof after adoption. No mock outcome is treated as trusted attachment or W2 completion.",
+      "adverseEvidence": "artifacts/evidence/ECR-0009-preapproval-review.md",
+      "evidence": ["IR-R01-sequencing-and-security", "IR-R01-packet-structure-and-history"]
+    },
+    {
+      "findingId": "ECR-0009-preflight-F02",
+      "disposition": "closed",
+      "closedAtCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+      "basis": "The revised ECR-0009.md execution boundary and acceptance item 4, packet taskInventory[1] and nonGoals, and static review page explicitly deny renderer paths/bytes, stock Tauri drop events, and broad filesystem grants. Production drop stays unavailable in T02. Native-only interception and held-source pinning remain a mandatory original-task proof, with an explicit separate-redesign stop if they cannot be achieved under the approved boundary.",
+      "adverseEvidence": "artifacts/evidence/ECR-0009-preapproval-review.md",
+      "evidence": ["IR-R01-sequencing-and-security"]
+    }
+  ],
+  "priorFindingsReplayed": ["ECR-0009-preflight-F01", "ECR-0009-preflight-F02"],
+  "readiness": {
+    "exactPacketReviewAccepted": true,
+    "humanApprovalRecorded": false,
+    "referenceApprovalRecorded": false,
+    "recordingCondition": "Commit this exact ledger as the sole change in a direct child of the reviewed candidate, then seek a separate explicit owner decision for the exact ECR-0009 packet and proposed Academic Minimal 1.8 reference. The later immutable approval record must bind this candidate, packet hash, ledger hash/introduction, reviewer, R01 attempt, and both closed finding IDs in the same order.",
+    "executionCondition": "Only after the matching human decision and immutable approval/reference records validate may supported bootstrap, claims, publication, renderer work, amendment exit/adoption and original-task recovery proceed. Native feasibility, full trusted acquisition, W2 qualification and the separate release decision remain unproven."
+  },
+  "authorityLimits": {
+    "humanProductOrReferenceApproval": false,
+    "activeReferencePublished": false,
+    "amendmentMaterializedOrAdopted": false,
+    "ordinaryTaskOrWaveComplete": false,
+    "releaseAuthorized": false
+  }
+}
