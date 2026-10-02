@@ -61,6 +61,18 @@ def strip_first_h1(markdown: str) -> str:
     return re.sub(r"\A\s*#\s+[^\n]+\n+", "", markdown, count=1)
 
 
+def enabler_display_title(metadata: dict[str, Any], body: str, change_id: str) -> str:
+    declared = metadata.get("title")
+    if isinstance(declared, str) and declared.strip():
+        return declared.strip()
+    heading = re.search(r"(?m)^#\s+(.+?)\s*$", body)
+    if heading:
+        title = re.sub(rf"^{re.escape(change_id)}\s*[\u2014\u2013:-]\s*", "", heading.group(1).strip()).strip()
+        if title:
+            return title
+    raise ValueError(f"{change_id} proposal requires a nonempty title or first heading")
+
+
 def extract_section(markdown: str, number: int) -> str:
     pattern = re.compile(rf"(?ms)^##\s+{number}\.\s+.*?(?=^##\s+\d+\.|\Z)")
     match = pattern.search(markdown)
@@ -1032,9 +1044,8 @@ def governed_experience_html(repo: Path, experience: dict[str, Any]) -> tuple[st
         "Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve "
         "a new reference or authorize bootstrap materialization of reference approval."
         if experience.get("referenceApprovalStatus") == "approved"
-        else f"Reference <code>{esc(experience.get('referenceId'))}</code> requires human approval: "
-        f"{esc(experience.get('approvalRequired'))}. Approval reserves the reference; bootstrap must "
-        "materialize its canonical approval before renderer implementation."
+        else f"Reference <code>{esc(experience.get('referenceId'))}</code> requires human approval. "
+        "Its canonical approval and publication must precede renderer implementation under the approved amendment."
     )
     if experience.get("sourceBinding"):
         binding = experience["sourceBinding"]
@@ -1364,6 +1375,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 
     for record in enabler_records:
         proposal_meta, proposal_body = read_frontmatter(repo / record["proposal_path"])
+        proposal_title = enabler_display_title(proposal_meta, proposal_body, record["change_request_id"])
         authority = record["authority"]
         authority_chain = record["authority_chain"]
         effective_base = record["effective_base"]
@@ -1435,7 +1447,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         else:
             enabler_authority_rows = [
                 (
-                    "W1 base approval",
+                    f"{record['target_wave']} base approval",
                     effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit"),
                     effective_base.get("originalApprovalRecordCommit") or authority.get("originalApprovalRecordCommit"),
                     "Original complete Wave packet",
@@ -1514,11 +1526,11 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             "amendment, Wave-resume, or release-gate authority."
         )
         authority_summary = (
-            f"Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. "
+            f"Effective ordinary {esc(record['target_wave'])} authority remains the approved base plus adopted ordered amendments. "
             f"{esc(record['amendment_id'])} authorizes only bootstrap unit "
             f"<code>{esc(record['bootstrap_unit'])}</code> and the exact bounded task inventory below until adoption."
             if current_is_approved
-            else f"Effective ordinary W1 authority remains the approved base plus adopted ordered amendments. "
+            else f"Effective ordinary {esc(record['target_wave'])} authority remains the approved base plus adopted ordered amendments. "
             f"{esc(record['amendment_id'])} is pending and non-executable. If separately approved, it would authorize "
             f"only bootstrap unit <code>{esc(record['bootstrap_unit'])}</code> and the exact bounded task inventory below."
         )
@@ -1526,11 +1538,11 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         inventory_projection = "authorized packet inventory" if current_is_approved else "proposed packet inventory"
         safe_resume = (
             f"Continue the approved amendment through independently approved bootstrap, materialization, "
-            f"{task_completion}, amendment-exit control/security review, and the W1 adoption checkpoint."
+            f"{task_completion}, amendment-exit control/security review, and the {esc(record['target_wave'])} adoption checkpoint."
             if current_is_approved
             else f"First obtain independent approval of this exact packet and explicit human approval. Only then may "
             f"the amendment continue through independently approved bootstrap, materialization, {task_completion}, "
-            "amendment-exit control/security review, and the W1 adoption checkpoint."
+            f"amendment-exit control/security review, and the {esc(record['target_wave'])} adoption checkpoint."
         )
         task_review_rows = "".join(
             task_review_history_html(task) for task in (record.get("amendment") or {}).get("tasks", [])
@@ -1562,7 +1574,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <section class="hero compact">
   <div class="hero-top"><div><span class="eyebrow">{esc(record["amendment_id"])} · {
             esc(record["target_wave"])
-        }</span><h1>{esc(record["change_request_id"])} — {esc(proposal_meta.get("title"))}</h1></div>{
+        }</span><h1>{esc(record["change_request_id"])} — {esc(proposal_title)}</h1></div>{
             status_badge(record["approval_status"])
         }</div>
   <p>{
@@ -1655,7 +1667,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <section class="callout callout-warning">
   <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>{
             safe_resume
-        } The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W1 in place is prohibited.</p></div>
+        } The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving {esc(record['target_wave'])} in place is prohibited.</p></div>
 </section>
 <details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria">{
             rollback
@@ -1665,7 +1677,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         }</article></details>
 """
         detail_page = shell(
-            title=f"{record['change_request_id']} {proposal_meta.get('title')}",
+            title=f"{record['change_request_id']} {proposal_title}",
             page_type="enabler-detail",
             depth=1,
             body=layout(

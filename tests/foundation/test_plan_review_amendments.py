@@ -41,6 +41,7 @@ from plan_review_site import (  # noqa: E402
     amendment_exit_projection,
     amendment_exit_review_html,
     build_site,
+    enabler_display_title,
     governed_experience_html,
     load_enabler_change_requests,
     task_review_history_html,
@@ -584,10 +585,82 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         self.assertNotIn("Approval reserves the reference", experience_section)
         self.assertNotIn("materialize its canonical approval", experience_section)
         self.assertEqual("not-bound", pending_entry["governed_experience"]["referenceApprovalStatus"])
-        self.assertIn("Approval reserves the reference", pending_experience_section)
-        self.assertIn("materialize its canonical approval", pending_experience_section)
+        self.assertIn(
+            "canonical approval and publication must precede renderer implementation", pending_experience_section
+        )
+        self.assertNotIn("bootstrap must", pending_experience_section)
 
         self.assertFalse([line for line in detail.splitlines() if line.rstrip() != line])
+
+    def test_w2_enabler_heading_and_authority_do_not_inherit_w1_copy(self) -> None:
+        backlog = yaml.safe_load((REPO / "planning/backlog.yaml").read_text(encoding="utf-8"))
+        original = next(
+            record
+            for record in load_enabler_change_requests(REPO, backlog)
+            if record["change_request_id"] == "ECR-0004"
+        )
+        with tempfile.TemporaryDirectory(prefix="w2-enabler-render-", dir=REPO / ".local") as temporary:
+            root = Path(temporary)
+            proposal = root / "ECR-9000.md"
+            proposal.write_text(
+                "---\ndocument_type: enabler-change-request\nchange_request_id: ECR-9000\n---\n\n"
+                "# ECR-9000 — Synthetic W2 authority\n\nSynthetic proposal.\n",
+                encoding="utf-8",
+            )
+            record = copy.deepcopy(original)
+            record.update(
+                change_request_id="ECR-9000",
+                amendment_id="W2.A99",
+                target_wave="W2",
+                proposal_path=proposal.relative_to(REPO).as_posix(),
+                approval_status="PENDING",
+                approval_path=None,
+                approval_sha256=None,
+                approved_by=None,
+                approved_at=None,
+                authority={},
+                authority_chain={
+                    "waveBase": {
+                        "waveId": "W2",
+                        "packetCommit": "a" * 40,
+                        "approvalRecordCommit": "b" * 40,
+                    },
+                    "orderedAmendments": [],
+                    "reservedAmendments": [],
+                },
+                migration_authority={},
+                bootstrap_unit="W2.A99.B00",
+                bootstrap_attempts=[],
+                scope_addenda=[],
+                task_inventory=[{"id": "W2.A99.T01", "title": "Synthetic task", "dependencies": []}],
+                slice_contributions=[],
+                refactor_budget={},
+                governed_experience={
+                    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+                    "approvalRequired": True,
+                    "referenceApprovalStatus": "not-bound",
+                    "files": [],
+                },
+                adoption_checkpoints=[],
+                amendment=None,
+                task_reviews=[],
+            )
+            with patch("plan_review_site.load_enabler_change_requests", return_value=[record]):
+                build_site(REPO, root / "site")
+            detail = (root / "site/enablers/ECR-9000.html").read_text(encoding="utf-8")
+
+        self.assertIn("<h1>ECR-9000 — Synthetic W2 authority</h1>", detail)
+        self.assertIn("<title>ECR-9000 Synthetic W2 authority", detail)
+        self.assertIn("W2 base approval", detail)
+        self.assertIn("Effective ordinary W2 authority", detail)
+        self.assertIn("W2 adoption checkpoint", detail)
+        self.assertIn("reapproving W2 in place", detail)
+        self.assertNotIn("Effective ordinary W1 authority", detail)
+        self.assertNotIn("W1 adoption checkpoint", detail)
+        self.assertIn("canonical approval and publication must precede renderer implementation", detail)
+        self.assertNotIn("requires human approval: True", detail)
+        with self.assertRaisesRegex(ValueError, "ECR-9000 proposal requires a nonempty title"):
+            enabler_display_title({}, "No heading", "ECR-9000")
 
     def test_interrupted_approved_wave_suppresses_repeat_commands_but_future_wave_keeps_approval(self) -> None:
         # Exercise both authority branches regardless of the live campaign state.
