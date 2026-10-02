@@ -38235,7 +38235,7 @@
         {
           "task_id": "W2.A01.T02",
           "title": "Publish Academic Minimal 1.8 and stage attachment UI",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

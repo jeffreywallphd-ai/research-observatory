@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a12b65fc6f4abf8dfb26ba1c3e96d13a2061fe6cb9c402857088eeb892c518ea
+source_sha256: 441cd5b9d5527ba985755bffdb6593196bc2b065765ebcd783324dbcbd55f2d8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2489,7 +2489,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A01.B00`, `W2.A01.T01`
 

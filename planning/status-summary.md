@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: a12b65fc6f4abf8dfb26ba1c3e96d13a2061fe6cb9c402857088eeb892c518ea
+source_sha256: 441cd5b9d5527ba985755bffdb6593196bc2b065765ebcd783324dbcbd55f2d8
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,7 +70,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 16 |
 
 ## Wave authority and append-only amendments
@@ -749,6 +749,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A01.T02` Publish Academic Minimal 1.8 and stage attachment UI | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

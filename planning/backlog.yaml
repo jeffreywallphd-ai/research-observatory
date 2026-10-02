@@ -51924,14 +51924,17 @@ wave_amendments:
     - Frozen opaque native command/event contract and no renderer path/bytes or stock Tauri drop event; trusted local Core/native
       attachment and native-only drop proof are original CAP-05.S01.T01 obligations after adoption
     packet_task_sha256: 5f567cdccf7d2b1e61d256a90bd93fb20b2118ed77b53acc4d36a8b8f5a3dfad
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-02T20:52:44+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: 1f628843e415b6affbd811eb37d9fff437fac51f
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-02T21:12:02+00:00'
+      expires_at: '2026-10-03T05:12:02+00:00'
+    started_at: '2026-10-02T21:12:02+00:00'
+    updated_at: '2026-10-02T21:12:02+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
