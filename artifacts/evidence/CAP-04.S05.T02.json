@@ -1,0 +1,249 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S05.T02",
+  "baseCommit": "6e9df6409c0cdcae12464dc47d2a809f6c39d2e3",
+  "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "Cargo.lock",
+    "Cargo.toml",
+    "apps/desktop/src-tauri/src/lib.rs",
+    "apps/desktop/src-tauri/src/plugin_intake.rs",
+    "apps/desktop/src-tauri/src/supervisor.rs",
+    "apps/desktop/src/app/PluginReviewPane.tsx",
+    "apps/desktop/src/app/SourceManagerWorkspace.tsx",
+    "apps/desktop/src/app/pluginActions.ts",
+    "apps/desktop/src/app/pluginIntake.test.tsx",
+    "apps/desktop/src/app/pluginIntake.ts",
+    "artifacts/evidence/CAP-04.S05.T02.architecture-boundary-maintenance.md",
+    "artifacts/evidence/CAP-04.S05.T02.lpac-feasibility-gate.md",
+    "artifacts/evidence/CAP-04.S05.T02.task-start.md",
+    "docs/architecture/connector-contracts.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/connectors/connector-plugin-broker-call.schema.json",
+    "packages/contracts/connectors/connector-plugin-repository-metadata.schema.json",
+    "packages/contracts/storage/sqlite-migration-recovery-v20.snapshot.json",
+    "packages/contracts/storage/sqlite-migration-recovery.schema.json",
+    "packages/contracts/storage/sqlite-profile.schema.json",
+    "packages/contracts/storage/sqlite-profile.v1.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S05.T02.html",
+    "planning/review-site/CAP-04/CAP-04.S05.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/packaging/sidecar-build.json",
+    "services/core-api/sidecar_entry.py",
+    "services/core-api/src/research_observatory_core/app.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_broker.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_credentials.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_grants.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_package_intake.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_package_store.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_result.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_trust.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_workflow.py",
+    "services/core-api/src/research_observatory_core/main.py",
+    "services/core-api/src/research_observatory_core/migrations/runner.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0021_plugin_grants.py",
+    "services/core-api/src/research_observatory_core/object_store.py",
+    "services/core-api/src/research_observatory_core/plugin_admin_service.py",
+    "services/core-api/src/research_observatory_core/plugin_api.py",
+    "services/core-api/src/research_observatory_core/plugin_consent.py",
+    "services/core-api/src/research_observatory_core/plugin_grant_repository.py",
+    "services/core-api/src/research_observatory_core/plugin_invocation_api.py",
+    "services/core-api/src/research_observatory_core/plugin_job_repository.py",
+    "services/core-api/src/research_observatory_core/plugin_package_repository.py",
+    "services/core-api/src/research_observatory_core/plugin_runtime.py",
+    "services/core-api/src/research_observatory_core/plugin_worker.py",
+    "services/core-api/src/research_observatory_core/ports/object_store.py",
+    "services/core-api/src/research_observatory_core/ports/plugin_grants.py",
+    "services/core-api/src/research_observatory_core/ports/plugin_jobs.py",
+    "services/core-api/src/research_observatory_core/ports/plugin_packages.py",
+    "services/core-api/src/research_observatory_core/storage.py",
+    "tests/connectors/fixtures/lpac_core_crash.py",
+    "tests/connectors/test_plugin_admin_service.py",
+    "tests/connectors/test_plugin_broker.py",
+    "tests/connectors/test_plugin_consent.py",
+    "tests/connectors/test_plugin_credentials.py",
+    "tests/connectors/test_plugin_dispatch.py",
+    "tests/connectors/test_plugin_grant_migration.py",
+    "tests/connectors/test_plugin_grants.py",
+    "tests/connectors/test_plugin_job_repository.py",
+    "tests/connectors/test_plugin_lpac_boundary.py",
+    "tests/connectors/test_plugin_package_intake.py",
+    "tests/connectors/test_plugin_package_repository.py",
+    "tests/connectors/test_plugin_package_store.py",
+    "tests/connectors/test_plugin_result.py",
+    "tests/connectors/test_plugin_runtime.py",
+    "tests/connectors/test_plugin_trust.py",
+    "tests/connectors/test_plugin_worker_submission.py",
+    "tests/connectors/test_plugin_workflow.py",
+    "tests/data/test_sqlite_migrations.py",
+    "tests/foundation/test_architecture_check.py",
+    "tests/packaging/test_core_sidecar_package.py",
+    "tools/architecture_check.py",
+    "tools/core_api_contract.py",
+    "tools/core_sidecar_build.py",
+    "tools/plugin_worker_probe_build.py",
+    "tools/plugin_worker_runtime_build.py",
+    "workers/__init__.py",
+    "workers/windows/__init__.py",
+    "workers/windows/connector_launcher.py",
+    "workers/windows/lpac_launcher.py",
+    "workers/windows/no_write_acl.py",
+    "workers/windows/plugin_worker.py",
+    "workers/windows/probe/Cargo.toml",
+    "workers/windows/probe/src/main.rs",
+    "workers/windows/protocol.py",
+    "workers/windows/recovery_guardian.py",
+    "workers/windows/runtime_inventory.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Five real Windows x64 tests on the committed candidate launch a locally signed, inventory-verified packaged Python worker inside a zero-capability LPAC, with a separately frozen Core/guardian. The hostile connector is denied synthetic unrelated-project and vault reads, parent environment secret, project/profile/temp/runtime/outside writes, child-process breakaway, and direct loopback before transport. No listener receives a connection. The guardian's exact-resource recovery is exercised before seal, after Core crash, and under delayed OS locks. These are local test-signing and pre-transport denial results, not release signing or an observed public-address connect; the earlier adverse probes and the R49 feasibility disposition remain in the retained LPAC gate note.",
+        "The live Core broker tests reject changed scientific input, forged or stale grants, undeclared operations, changed URL/host/method, private DNS targets, redirects, oversized or malformed responses, unsupported credentials, and failed audit before synthetic transport. Signed destination and credential scope, current project consent, per-origin secrets, rate/retry limits, content-free denial audit, and fenced result staging are checked in the 67-test service run. No real external source or secret is used."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Sixty-seven exact-candidate Core connector tests pass, including successful signed package review/trust/enable/dispatch through a synthetic broker, persisted grant and encrypted package restart, same-key re-trust and key-rotation renewal, changed scientific identifier denial before egress, exact identifier success, cancellation/revocation and late-result fences, credential scope denial, malformed frames, and v20 encrypted migration with verified backup/reopen.",
+        "Five native signed LPAC/guardian boundary tests pass. The full desktop application qualification passes nine commands and 72 real style cases, including Source Manager in light/dark themes at three viewport sizes; focused TypeScript and Rust checks are included there. Six packaging tests pass with one expected environment skip. The frozen Core sidecar package builds with 783 files and the signed-worker bundle is verified at runtime."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The T02 diff updates signed-runtime inventory and build inputs, Core-owned grants/jobs/encrypted package repositories behind ports, native review/status/cancel contracts, broker/audit/provenance documentation, Windows LPAC worker and guardian, Source Manager's approved connector-review panel, security fixtures, and exact encrypted v20 migration/restart tests. The temporary architecture port additions and their boundary rationale are recorded in artifacts/evidence/CAP-04.S05.T02.architecture-boundary-maintenance.md; no scope or security boundary reduction is claimed.",
+        "Generated Core API contract, architecture policy, 516-file Python quality and clean build manifest pass on the exact commit. The desktop qualification passes after restoring the approved flex-wrapping panel action row. The retained feasibility-gate note discloses earlier failed diagnostics and the precise public-route observation limit; the task neither claims a public packet-level denial nor authorizes a weaker AppContainer or writable scratch."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:quality",
+      "foundation:architecture",
+      "foundation:build-manifest",
+      "contracts:unit",
+      "service:unit",
+      "security-local:unit",
+      "packaging:unit",
+      "desktop:application"
+    ],
+    "riskAnalysis": "T02 changes a signed cross-process execution boundary, Core broker and credential authority, durable encrypted consent/package state, native project UI and crash recovery. Select exact-candidate signed LPAC/guardian probes, malicious and happy-path Core service tests, migration/restart cases, full desktop qualification, frozen sidecar/packaging, generated contract, architecture, quality and clean build. Independent task review must expand for security, secrets, migration and public IPC. The earlier sandbox-only LPAC profile-registration error and pre-fix desktop panel-flow failure were not treated as passing results; their corrected exact-candidate reruns passed. Full repository/service/security profiles and broader cross-capability performance belong to S05 integration/checkpoint and fresh W2 exit under verification breadth section 8.1.",
+    "deferred": [
+      "T03 owns a signed sample institutional repository connector, Core-bound pagination continuation and developer conformance suite; T02 intentionally permits only the exact first-page scientific value selected by Core.",
+      "S05 slice integration and W2 exit will run fresh full affected/repository profiles, cross-capability and packaging/performance matrices. Local test signing and synthetic broker transport do not establish production signing or live provider behavior."
+    ]
+  },
+  "checks": [
+    {
+      "id": "native-lpac",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_packaged_worker_is_lpac_and_denies_ambient_authority tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_signed_product_worker_denies_ambient_authority tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_guardian_recovers_before_seal_after_core_crash tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_guardian_recovers_exact_job_after_core_crash tests.connectors.test_plugin_lpac_boundary.PluginLPACBoundaryTests.test_guardian_retries_after_delayed_os_lock",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.native-e1d55299.log",
+      "rawOutputSha256": "d93e01944385b6aae5867e03f82ddb00c2108d80eaea4a1ecea213c0dde5d97a",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh unsandboxed local Windows x64 execution on the clean committed candidate. RO_W2_SIGNED_WORKER_BUILD pointed to the ignored locally signed test bundle and RO_W2_CORE_SIDECAR_GUARDIAN to the exact-candidate frozen Core under artifacts/tmp/sw11.",
+      "result": "Five real signed Windows LPAC/guardian isolation and recovery tests passed in 34.725 seconds."
+    },
+    {
+      "id": "connector-core",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_grants tests.connectors.test_plugin_trust tests.connectors.test_plugin_broker tests.connectors.test_plugin_credentials tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_package_repository tests.connectors.test_plugin_consent tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_result tests.connectors.test_plugin_runtime tests.connectors.test_plugin_grant_migration",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.focused-e1d55299.log",
+      "rawOutputSha256": "d22305562a32f336492b29648c9649e03110a8e3c36a7afb7d7d9d9f1838862c",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate with synthetic packages, keys, projects and transport.",
+      "result": "67 focused plugin, broker, credentials, encrypted-state, dispatch, consent and migration tests passed."
+    },
+    {
+      "id": "desktop",
+      "command": ".venv\\Scripts\\python.exe tools/desktop_app_check.py --report artifacts/tmp/CAP-04.S05.T02.desktop-e1d55299.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.desktop-e1d55299.log",
+      "rawOutputSha256": "5a17f77fc52b850c7a4c46d5bd09c524c55201a2badd6a6f3bb7a063847b9b36",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh unsandboxed local Windows x64 execution on the clean committed candidate with the bundled Node 24 runtime on PATH and pinned offline renderer.",
+      "result": "Full desktop application qualification passed nine commands and 72 style cases with no errors."
+    },
+    {
+      "id": "packaging",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.packaging-e1d55299.log",
+      "rawOutputSha256": "858d4464a7cb1d60bdcf05146a6acb5b023f915f618b5882c630169741bfebfc",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Six frozen Core sidecar packaging tests passed; one environment-dependent test skipped."
+    },
+    {
+      "id": "frozen-core",
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --output artifacts/tmp/sw11 --worker-build artifacts/tmp/w2worker8",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.sidecar-e1d55299.log",
+      "rawOutputSha256": "882ef650908a1d58696de23901b45005bc4e6f78efd7da64e8f99ac539cd9e78",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh local build on the clean committed Windows x64 candidate using the unchanged ignored locally signed worker bundle.",
+      "result": "Exact-candidate frozen Core/guardian package built successfully with 783 files and 74,183,734 bytes."
+    },
+    {
+      "id": "quality",
+      "command": ".venv\\Scripts\\python.exe tools/quality_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.quality-e1d55299.log",
+      "rawOutputSha256": "5b75ee687619a22c50b83200f2697ac011425b4380f93820cdb4cb1297397f36",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh local execution on the clean committed candidate.",
+      "result": "Ruff and mypy passed for 516 governed Python files."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.architecture-e1d55299.log",
+      "rawOutputSha256": "1ba622fdbf569bf9ab13ee46e639b636ea005c560abcd4b168f782d8fbdc3f74",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh local execution on the clean committed candidate.",
+      "result": "Architecture contract passed with 13 areas, 12 modules, five stable interfaces and three deployment profiles."
+    },
+    {
+      "id": "core-api-contract",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.contract-e1d55299.log",
+      "rawOutputSha256": "906caa6683fd9e71ddbb3b34c25bd5234d25d8a396df0d3d5a20095eec2aee31",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh local execution on the clean committed candidate.",
+      "result": "Generated Core API contract passed without drift."
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T02.build-e1d55299.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T02.build-e1d55299.log",
+      "rawOutputSha256": "596d0d6a5cbfab3242c7ce4bfed0e4ccebb058a137ee25e022d35a58bb638aa6",
+      "commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+      "provenance": "Fresh local execution on the clean committed candidate.",
+      "result": "Clean 0.1.0+ge1d5529 build manifest passed."
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T02.build-e1d55299.json",
+    "sha256": "208b9cbee93d141c306ceb5627c0a8cbb8524399c01828a07a95a67b19702f95"
+  },
+  "desktopReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T02.desktop-e1d55299.json",
+    "sha256": "5a17f77fc52b850c7a4c46d5bd09c524c55201a2badd6a6f3bb7a063847b9b36"
+  },
+  "adverseEvidence": "artifacts/evidence/CAP-04.S05.T02.lpac-feasibility-gate.md",
+  "scopeDeviation": "No approved scope, security authority, migration guarantee or governed-experience change. The connector review uses approved reference RO-UI-ACADEMIC-MINIMAL-1.7; the final panel markup restores its wrapping action flow. Narrow protocol ports enforce existing architecture boundaries and are documented as bounded maintenance, not new product scope or supplemental refactoring."
+}

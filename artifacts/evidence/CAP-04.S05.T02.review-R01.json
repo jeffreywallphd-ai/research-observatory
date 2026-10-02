@@ -1,0 +1,48 @@
+{
+  "task_id": "CAP-04.S05.T02",
+  "attempt_id": "R01",
+  "candidate_commit": "e1d55299a132597b572bfb26e1ea09a7c45c760e",
+  "reviewer": "agent:/root/lpac_boundary_review",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent expanded security review of the frozen R01 candidate finds the signed zero-capability LPAC worker, guardian ownership and cleanup, narrow Core broker, durable project grant/trust/consent and encrypted result path supported by the selected checks. The criterion manifest's line-ending-canonical SHA-256 matches the frozen submission, its 96 changed paths match the base-to-candidate diff, and its nine named checks have matching canonical output hashes. The review-owned supplemental full native boundary module passes 13/13 tests on the same candidate, closing the selected run's omitted frame, tamper, redirected-root, unpinned-runtime and cancellable-wait cases. The evidence truthfully limits network isolation to pre-transport denial and does not claim an observed public-address connect. Core-visible broker denials and worker failures enter a bounded durable audit; direct OS-denied socket or filesystem attempts that the untrusted plugin catches are not individually observed or audited. The one blocking gap is missing actual signed-worker resource-exhaustion proof despite an explicit ADR-0028 verification requirement and T02 task-start failure-probe row. No release-signing, live-provider or production public-route result is inferred.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-04.S05.T02.json",
+      "canonical_sha256": "98fcbe87db7dd08586adc375ed55ed0bb9a1633e18e291dbc8b481650721360d",
+      "result": "PASS: exact candidate, claim base, branch, 96 changed paths, three criterion mappings and nine selected check records match the frozen R01 submission and local evidence."
+    },
+    "supplemental_native_boundary": {
+      "path": "artifacts/tmp/CAP-04.S05.T02.native-full-e1d55299.log",
+      "canonical_sha256": "d50cf6000a5adc122a48f047848be79592a0c6f62a89b808b7daa555927fb800",
+      "result": "PASS: complete PluginLPACBoundaryTests module, 13 tests in 33.016 seconds on the exact candidate with the locally signed bundle and frozen Core. Supplemental review evidence; the immutable R01 submission cites its five selected native cases."
+    }
+  },
+  "checks": [
+    {
+      "command": "Independently inspect the frozen R01 manifest, base-to-candidate Git path inventory, canonical output hashes, clean build report and selected Windows/desktop/Core logs",
+      "result": "PASS: binding and stated limited outcomes reproduce; native 5/5, focused Core 67/67, desktop nine commands and 72 style cases, packaging 6/6 with one expected skip, quality/architecture/API contract/build pass."
+    },
+    {
+      "command": "Review the exact worker launch, Job Object limits, guardian recovery, signed-runtime validation, private IPC, broker/audit, durable grant/consent/result and native human-confirmation paths against ADR-0028 and the T02 task-start map",
+      "result": "PASS except for F01: configured Job memory/affinity/active-process and wall deadline are visible, but no exact-candidate signed-worker run forces memory or wall exhaustion and proves typed failure, termination, cleanup and no publication."
+    },
+    {
+      "command": "Inspect review-owned supplemental complete PluginLPACBoundaryTests output and recompute its line-ending-canonical SHA-256",
+      "result": "PASS: 13/13, including oversize/duplicate/wrong-job frames, binary limits, signed-runtime tamper and redirected roots, unpinned runtime, cancellable wait, real LPAC denials and guardian crash recovery."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-04.S05.T02-R01-F01",
+      "severity": "high",
+      "blocking": true,
+      "criterion_index": 1,
+      "title": "Packaged worker resource exhaustion is configured but not exercised",
+      "reproduction": "At exact candidate e1d55299a132597b572bfb26e1ea09a7c45c760e, inspect workers/windows/connector_launcher.py:300-349: the launcher sets a Job Object committed-memory limit, one active process, one-CPU affinity and a wall deadline. The selected five-case native log and supplemental complete 13-case native log contain no connector that exceeds committed memory or wall time. The focused Core run checks single-in-flight admission and synthetic cancellation, not OS-enforced exhaustion of the signed LPAC process. The manifest nevertheless maps criterion 1 to restricted execution and task-start artifacts/evidence/CAP-04.S05.T02.task-start.md:13 promises real Job Object/worker failure probes for quota and timeout. ADR-0028:83-87 requires bounded memory and wall time with typed failure and no partial success, and ADR-0028:137-145 explicitly requires resource-exhaustion verification. Inspection of configured limits cannot prove Windows applied them or that the guardian and durable workflow recover after exhaustion.",
+      "required_remediation": "In a strict-descendant candidate, retain the R01 packet and update the missed task-start acceptance row with a bounded real signed-worker exhaustion regression. Drive a manifest-permitted LPAC connector beyond a controlled wall-time budget and, where practical, beyond its committed-memory limit; assert bounded typed failure, owned worker termination, exact guardian profile/runtime cleanup, no staged or published success, and content-free durable failure audit. Keep sentinel data synthetic and the profile limits within approved maxima. Run the native regression against the rebuilt frozen Core and signed bundle on the exact new commit, refresh criterion evidence, and replay R01-F01 in independent R02 review."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}
