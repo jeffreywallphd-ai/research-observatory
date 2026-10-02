@@ -12,6 +12,7 @@ import json
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import Literal, cast
 
 from ..domain_contracts import is_uuid_v7
 from ..plugin_grant_repository import SqlitePluginGrantRepository, _actor
@@ -80,7 +81,7 @@ class PluginPublisherTrustEvent:
 class PluginPublisherTrustState:
     publisher_key_id: str
     revision: int
-    status: str
+    status: Literal["active", "revoked"]
     public_key_sha256: str
 
 
@@ -148,7 +149,7 @@ class PluginPublisherTrustStore:
                 or _SHA.fullmatch(head["eventSha256"]) is None
             ):
                 raise PluginGrantProblem("plugin-publisher-corrupt")
-        committed = int(head["revision"]) if head is not None else 0
+        committed = cast(int, head["revision"]) if head is not None else 0
         events: list[dict[str, object]] = []
         predecessor: str | None = None
         for revision in range(1, committed + 2):
@@ -229,7 +230,7 @@ class PluginPublisherTrustStore:
     def _project(event: dict[str, object]) -> PluginPublisherTrustState:
         return PluginPublisherTrustState(
             publisher_key_id=str(event["publisherKeyId"]),
-            revision=int(event["revision"]),
+            revision=cast(int, event["revision"]),
             status="revoked" if event["operation"] == "revoke" else "active",
             public_key_sha256=str(event["publicKeySha256"]),
         )
@@ -242,7 +243,7 @@ class PluginPublisherTrustStore:
         _version, events = self._state(key_id, audit_context)
         return tuple(
             PluginPublisherTrustEvent(
-                int(event["revision"]),
+                cast(int, event["revision"]),
                 str(event["operation"]),
                 str(event["actionId"]),
                 str(event["publisherKeyId"]),
@@ -302,7 +303,7 @@ class PluginPublisherTrustStore:
             raise PluginGrantProblem("plugin-publisher-decision-invalid")
         head_version, events, pending = self._load(decision.publisher_key_id, actor.trace_id)
         prior = events[-1] if events else None
-        prior_revision = int(prior["revision"]) if prior is not None else None
+        prior_revision = cast(int, prior["revision"]) if prior is not None else None
         if (prior_revision or 0) >= _MAX_EVENTS:
             raise PluginGrantProblem("plugin-publisher-history-limit")
         for event in events:
@@ -339,10 +340,11 @@ class PluginPublisherTrustStore:
                 raise PluginGrantProblem("plugin-publisher-revoke-denied")
             public_key = bytes.fromhex(str(prior["publicKey"]))
         assert isinstance(public_key, bytes)
+        next_revision = (prior_revision or 0) + 1
         next_event = {
             "schemaVersion": "1.0",
             "publisherKeyId": decision.publisher_key_id,
-            "revision": (prior_revision or 0) + 1,
+            "revision": next_revision,
             "operation": decision.operation,
             "actionId": decision.action_id,
             "publicKey": public_key.hex(),
@@ -360,7 +362,7 @@ class PluginPublisherTrustStore:
         if pending is None:
             try:
                 self._credentials.put(
-                    self._reference(decision.publisher_key_id, int(next_event["revision"])),
+                    self._reference(decision.publisher_key_id, next_revision),
                     _canonical(next_event),
                     context,
                 )
@@ -454,7 +456,9 @@ class PluginGrantService:
             self._grants.record_denial(plugin_id=confirmation.plugin_id, reason_code=error.code, actor=actor)
             raise
         return self._grants.enable(
-            package, confirmation, actor=actor,
+            package,
+            confirmation,
+            actor=actor,
             trusted_key_sha256=trust.public_key_sha256,
             trusted_key_revision=trust.revision,
         )

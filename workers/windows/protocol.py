@@ -7,6 +7,7 @@ import re
 from typing import Any, BinaryIO
 
 MAX_CONTROL_FRAME = 1_048_576
+MAX_BINARY_FRAME = 10 * 1_048_576
 
 
 class FrameError(ValueError):
@@ -68,4 +69,32 @@ def read_frame(stream: BinaryIO, *, expected_nonce: str | None, expected_sequenc
 
 def write_frame(stream: BinaryIO, value: dict[str, Any]) -> None:
     stream.write(encode_frame(value))
+    stream.flush()
+
+
+def _read_exact(stream: BinaryIO, length: int) -> bytes:
+    chunks: list[bytes] = []
+    remaining = length
+    while remaining:
+        chunk = stream.read(remaining)
+        if not chunk:
+            raise FrameError("binary-frame-truncated")
+        chunks.append(chunk)
+        remaining -= len(chunk)
+    return b"".join(chunks)
+
+
+def read_binary_frame(stream: BinaryIO) -> bytes:
+    prefix = _read_exact(stream, 4)
+    length = int.from_bytes(prefix, "big")
+    if length > MAX_BINARY_FRAME:
+        raise FrameError("binary-frame-length-invalid")
+    return _read_exact(stream, length)
+
+
+def write_binary_frame(stream: BinaryIO, value: bytes) -> None:
+    if not isinstance(value, bytes) or len(value) > MAX_BINARY_FRAME:
+        raise FrameError("binary-frame-length-invalid")
+    stream.write(len(value).to_bytes(4, "big"))
+    stream.write(value)
     stream.flush()

@@ -166,13 +166,21 @@ class PluginTrustTests(unittest.TestCase):
                 self.signature,
                 self.files,
                 PluginEnableConfirmation(
-                    action_id=new_uuid_v7(), project_id=PROJECT_ID,
-                    plugin_id="fixture.repository", plugin_version="1.0.0",
+                    action_id=new_uuid_v7(),
+                    project_id=PROJECT_ID,
+                    plugin_id="fixture.repository",
+                    plugin_version="1.0.0",
                     publisher_key_id=PUBLISHER_ID,
-                    trusted_key_sha256=_sha(self.public_key), trusted_key_revision=1,
-                    package_sha256=_sha(b"absent"), manifest_sha256=_sha(self.raw),
-                    permissions=(), destinations=(), operations=(), data_classes=(),
-                    credential_scopes=(), expected_revision=None,
+                    trusted_key_sha256=_sha(self.public_key),
+                    trusted_key_revision=1,
+                    package_sha256=_sha(b"absent"),
+                    manifest_sha256=_sha(self.raw),
+                    permissions=(),
+                    destinations=(),
+                    operations=(),
+                    data_classes=(),
+                    credential_scopes=(),
+                    expected_revision=None,
                 ),
                 actor=self.actor,
             )
@@ -299,9 +307,7 @@ class PluginTrustTests(unittest.TestCase):
         new_public = bytes(new_key.verify_key)
         self.trust.decide(
             new_public,
-            self._decision(
-                "rotate", new_public, expected_revision=2, previous_key_sha256=_sha(self.public_key)
-            ),
+            self._decision("rotate", new_public, expected_revision=2, previous_key_sha256=_sha(self.public_key)),
             actor=self.actor,
         )
         restarted = PluginPublisherTrustStore(
@@ -313,23 +319,31 @@ class PluginTrustTests(unittest.TestCase):
         request = self._request(PROJECT_ID)
         with self.assertRaisesRegex(PluginGrantProblem, "plugin-grant-trust-changed"):
             restarted_service.current_authorization(
-                self.raw, resigned, self.files, request,
-                expected_plugin_id=original.plugin_id, actor=self.system,
+                self.raw,
+                resigned,
+                self.files,
+                request,
+                expected_plugin_id=original.plugin_id,
+                actor=self.system,
             )
         authority = self.repos[PROJECT_ID].current_grant_authority(original.plugin_id)
         assert authority is not None
-        self.assertEqual((1, _sha(self.public_key)),
-                         (authority.trusted_key_revision, authority.trusted_key_sha256))
+        self.assertEqual((1, _sha(self.public_key)), (authority.trusted_key_revision, authority.trusted_key_sha256))
         renewed = replace(
             self._confirmation(PROJECT_ID, package),
-            action_id=new_uuid_v7(), expected_revision=1,
+            action_id=new_uuid_v7(),
+            expected_revision=1,
         )
-        self.assertEqual(2, restarted_service.enable(
-            self.raw, resigned, self.files, renewed, actor=self.actor
-        ).revision)
+        self.assertEqual(
+            2, restarted_service.enable(self.raw, resigned, self.files, renewed, actor=self.actor).revision
+        )
         plan = restarted_service.current_authorization(
-            self.raw, resigned, self.files, request,
-            expected_plugin_id=original.plugin_id, actor=self.system,
+            self.raw,
+            resigned,
+            self.files,
+            request,
+            expected_plugin_id=original.plugin_id,
+            actor=self.system,
         )
         self.assertEqual(2, plan.grant_revision)
 
@@ -342,8 +356,12 @@ class PluginTrustTests(unittest.TestCase):
         self.trust.decide(self.public_key, self._decision("trust", expected_revision=2), actor=self.actor)
         with self.assertRaisesRegex(PluginGrantProblem, "plugin-grant-trust-changed"):
             service.current_authorization(
-                self.raw, self.signature, self.files, self._request(PROJECT_ID),
-                expected_plugin_id="fixture.repository", actor=self.system,
+                self.raw,
+                self.signature,
+                self.files,
+                self._request(PROJECT_ID),
+                expected_plugin_id="fixture.repository",
+                actor=self.system,
             )
 
     def test_corrupt_unavailable_and_partial_trust_fail_closed_then_exact_retry_recovers(self) -> None:
@@ -384,4 +402,6 @@ class PluginTrustTests(unittest.TestCase):
         self._trust()
         with self.assertRaisesRegex(PluginGrantProblem, "plugin-grant-actor-invalid"):
             self.trust.decide(None, self._decision("revoke", expected_revision=1), actor=self.system)
-        self.assertEqual("active", self.trust.state(PUBLISHER_ID, audit_context=self.actor.trace_id).status)
+        state = self.trust.state(PUBLISHER_ID, audit_context=self.actor.trace_id)
+        assert state is not None
+        self.assertEqual("active", state.status)

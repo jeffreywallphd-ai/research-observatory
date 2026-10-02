@@ -440,11 +440,15 @@ class SqlitePluginGrantRepository:
                     or any(not all(isinstance(value, str) for value in review[field]) for field in review)
                 ):
                     raise ValueError
-            except (ValueError, TypeError):
+            except ValueError, TypeError:
                 raise PluginGrantProblem("plugin-grant-integrity-invalid") from None
             return PluginCurrentGrant(
-                grant, latest[6], latest[7],
-                tuple(review["operations"]), tuple(review["dataClasses"]), tuple(review["credentialScopes"]),
+                grant,
+                latest[6],
+                latest[7],
+                tuple(review["operations"]),
+                tuple(review["dataClasses"]),
+                tuple(review["credentialScopes"]),
             )
         finally:
             connection.close()

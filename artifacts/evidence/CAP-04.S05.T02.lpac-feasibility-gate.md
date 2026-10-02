@@ -1015,3 +1015,32 @@ criterion needs a destination-specific observation rather than a proven
 pre-transport denial, stop submission and use the decision/amendment route
 before changing any verification obligation. Product broker/audit, resource
 limits, cancellation and restart/recovery remain entirely open.
+
+### Product implementation diagnostics retained before exact-candidate review
+
+The first post-reopen cleanup design wrote ownership to a parent journal after
+creating the profile/runtime. A Core death between creation and journal sync
+could orphan those resources, so this design was removed. The replacement
+trusted guardian creates and owns the exact resources before Core receives
+them, keeps ACL restoration handles, and survives Core Job closure. Its first
+recovery probe failed because it verified one DACL before restoring all DACLs;
+the harness also retained separate safety handles during deletion. Both causes
+were corrected without weakening the denial assertions.
+
+An initial nested frozen-sidecar output path failed copying the signed worker
+with `WinError 3`; the shorter ignored `artifacts/tmp/sw7` build succeeded. An
+earlier test-only LPAC probe still used ambient user profile/temp and a weaker
+ACL, yielding adverse `profileWrite,tempWrite` results; it was aligned to the
+guardian-owned strict no-write path and rerun. These failures are diagnostic
+history, not passing evidence. The post-fix local signed-worker/frozen-Core
+five-test log and its digests are recorded in ignored
+`artifacts/tmp/CAP-04.S05.T02.worker-build-local-01/frozen-core-sw7-proof.json`.
+That precommit run does not replace fresh exact-candidate qualification.
+
+A same-user terminal path redirection is rejected without following or
+deleting an unknown target. Automatic cleanup of that anomalous target is not
+claimed; the approved worker remains fail closed. The packaged product worker
+reports direct-network denial before transport under its zero-capability LPAC
+token, not an observed public `connect` or packet-level denial. Final task
+review must assess that precise limit against ADR-0028 and the retained R39/R49
+OS controls; this section is not a review approval.

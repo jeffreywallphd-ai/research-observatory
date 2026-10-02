@@ -1,5 +1,9 @@
 """Build and verify the versioned Windows Core API sidecar artifact."""
 
+# The script can run directly from tools/ while packaging a second repo-root
+# Python package. The import bootstrap must precede the worker import.
+# ruff: noqa: E402, I001
+
 from __future__ import annotations
 
 import argparse
@@ -15,8 +19,20 @@ import sys
 from pathlib import Path
 from typing import Any
 
+REPO = Path(__file__).resolve().parents[1]
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
 from build_manifest import guarded_atomic_write_json
 from jsonschema import Draft202012Validator
+from workers.windows.runtime_inventory import (
+    APPLICATION_INVENTORY_PUBLIC_KEY,
+    INSTALLED_INVENTORY_NAME,
+    INSTALLED_SIGNATURE_NAME,
+    INSTALLED_WORKER_DIRECTORY,
+    SignedWorkerRuntime,
+    verify_worker_runtime,
+)
 
 TARGET_TRIPLE = "x86_64-pc-windows-msvc"
 CONTRACT_PATH = Path("services/core-api/packaging/sidecar-build.json")
@@ -135,9 +151,13 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.connectors.settings",
             "research_observatory_core.connectors.inspection",
             "research_observatory_core.connectors.plugin_broker",
+            "research_observatory_core.connectors.plugin_dispatch",
             "research_observatory_core.connectors.plugin_grants",
             "research_observatory_core.connectors.plugin_manifest",
+            "research_observatory_core.connectors.plugin_package_intake",
+            "research_observatory_core.connectors.plugin_package_store",
             "research_observatory_core.connectors.plugin_trust",
+            "research_observatory_core.connectors.plugin_workflow",
             "research_observatory_core.connectors.transport",
             "research_observatory_core.connectors.workflow",
             "research_observatory_core.ports.connector_runtime",
@@ -165,6 +185,8 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.migrations.versions.v0020_corpus_source_projection",
             "research_observatory_core.migrations.versions.v0021_plugin_grants",
             "research_observatory_core.plugin_grant_repository",
+            "research_observatory_core.plugin_admin_service",
+            "research_observatory_core.plugin_api",
             "research_observatory_core.import_preview_repository",
             "research_observatory_core.import_commit_repository",
             "research_observatory_core.import_draft_repository",
@@ -189,6 +211,12 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.windows_credentials",
             "sqlcipher3",
             "sqlcipher3._sqlite3",
+            "workers.windows.connector_launcher",
+            "workers.windows.lpac_launcher",
+            "workers.windows.no_write_acl",
+            "workers.windows.protocol",
+            "workers.windows.recovery_guardian",
+            "workers.windows.runtime_inventory",
         ],
     }:
         raise SidecarBuildError("sidecar builder must be the approved PyInstaller 6.21.0 onedir/no-UPX profile")
@@ -311,7 +339,7 @@ def verify_artifact(
     return errors
 
 
-def _check_build_host(contract: dict[str, Any], source_root: Path) -> None:
+def _check_build_host(contract: dict[str, Any], source_root: Path, repo: Path) -> None:
     if os.name != "nt" or platform.machine().casefold() not in {"amd64", "x86_64"}:
         raise SidecarBuildError("the release-authoritative sidecar build requires Windows x64")
     actual_python = platform.python_version()
@@ -323,6 +351,7 @@ def _check_build_host(contract: dict[str, Any], source_root: Path) -> None:
         raise SidecarBuildError("PyInstaller is unavailable; run the frozen development dependency install") from exc
     if getattr(pyinstaller, "__version__", None) != contract["builder"]["version"]:
         raise SidecarBuildError("installed PyInstaller does not match the build contract")
+    sys.path.insert(0, str(repo))
     sys.path.insert(0, str(source_root))
     try:
         for module_name in contract["requiredModules"]:
@@ -332,6 +361,7 @@ def _check_build_host(contract: dict[str, Any], source_root: Path) -> None:
                 raise SidecarBuildError(f"required build module is unavailable: {module_name}") from exc
     finally:
         sys.path.remove(str(source_root))
+        sys.path.remove(str(repo))
 
 
 def _canonical_empty_output(repo: Path, output_root: Path) -> Path:
@@ -356,13 +386,15 @@ def _canonical_empty_output(repo: Path, output_root: Path) -> Path:
     return output_root
 
 
-def build_sidecar(repo: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
+def build_sidecar(
+    repo: Path, output_root: Path, *, worker_bundle: SignedWorkerRuntime | None = None
+) -> tuple[Path, dict[str, Any]]:
     repo = repo.resolve(strict=True)
     contract = load_build_contract(repo)
     source_root = (repo / SOURCE_ROOT).resolve(strict=True)
     if source_root != repo / SOURCE_ROOT or _is_redirect(source_root):
         raise SidecarBuildError("Core API source root must be canonical and nonredirected")
-    _check_build_host(contract, source_root)
+    _check_build_host(contract, source_root, repo)
     output_root = _canonical_empty_output(repo, output_root)
     entry_source = _fixed_file(repo, ENTRY_SOURCE)
     build_root = output_root / "build"
@@ -382,6 +414,8 @@ def build_sidecar(repo: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
             contract["entrypoint"].removesuffix(".exe"),
             "--paths",
             str(source_root),
+            "--paths",
+            str(repo),
             "--onedir",
             "--console",
             "--noupx",
@@ -415,6 +449,24 @@ def build_sidecar(repo: Path, output_root: Path) -> tuple[Path, dict[str, Any]]:
         if destination.exists() or _is_redirect(destination):
             raise SidecarBuildError("third-party notice destination already exists or is redirected")
         shutil.copyfile(source, destination)
+    if worker_bundle is not None:
+        if worker_bundle.application_public_key != APPLICATION_INVENTORY_PUBLIC_KEY:
+            raise SidecarBuildError("worker bundle uses a different application signing identity")
+        verify_worker_runtime(worker_bundle)
+        destination = artifact_root / INSTALLED_WORKER_DIRECTORY
+        if destination.exists() or _is_redirect(destination):
+            raise SidecarBuildError("worker bundle destination already exists or is redirected")
+        shutil.copytree(worker_bundle.package, destination)
+        (artifact_root / INSTALLED_INVENTORY_NAME).write_bytes(worker_bundle.inventory_bytes)
+        (artifact_root / INSTALLED_SIGNATURE_NAME).write_bytes(worker_bundle.signature)
+        verify_worker_runtime(
+            SignedWorkerRuntime(
+                destination,
+                worker_bundle.inventory_bytes,
+                worker_bundle.signature,
+                APPLICATION_INVENTORY_PUBLIC_KEY,
+            )
+        )
     inventory, errors = _inventory(artifact_root)
     if errors:
         raise SidecarBuildError("; ".join(errors))
@@ -449,6 +501,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--repo", type=Path, default=Path.cwd())
     parser.add_argument("--output", type=Path, default=Path("artifacts/tmp/core-sidecar"))
     parser.add_argument("--report", type=Path, default=Path("artifacts/tmp/core-sidecar-package.json"))
+    parser.add_argument(
+        "--worker-build", type=Path, help="completed signed worker build root; optional fail-closed W2 package"
+    )
     return parser
 
 
@@ -499,7 +554,16 @@ def main() -> int:
         if _is_redirect(output) or output.parent.resolve(strict=True) != scratch.resolve(strict=True):
             raise SidecarBuildError("existing output is outside or redirects the canonical scratch root")
         shutil.rmtree(output)
-    artifact_root, manifest = build_sidecar(repo, output)
+    worker_bundle = None
+    if arguments.worker_build is not None:
+        worker_build = arguments.worker_build.absolute()
+        worker_bundle = SignedWorkerRuntime(
+            worker_build / "package",
+            (worker_build / "inventory.json").read_bytes(),
+            (worker_build / "inventory.sig").read_bytes(),
+            APPLICATION_INVENTORY_PUBLIC_KEY,
+        )
+    artifact_root, manifest = build_sidecar(repo, output, worker_bundle=worker_bundle)
     executable = artifact_root / manifest["entrypoint"]
     completed = subprocess.run([executable, "--check"], capture_output=True, text=True, timeout=30, check=False)
     report_value = {

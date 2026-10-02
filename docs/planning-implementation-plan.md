@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 8395af78915ec4214f7210c4d4007d993806269117004ed31af5ac29f7e16baa
+source_sha256: 7dd67a7260c665c088d10470b87c07808cdd2755ac916f348248b339ead163eb
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9363,7 +9363,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T02 - Implement plugin isolation, configuration, and secret access controls
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P1` / `L` / `high`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `L` / `high`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
@@ -9394,7 +9394,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** -
+**Latest notes:** Reopened: R42c2 and R49 establish source-built zero-capability LPAC no-write and capability-positive pre-transport network denial for implementation feasibility at a955acad; final signed product worker, broker and security review remain open
 
 #### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 

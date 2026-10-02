@@ -412,6 +412,43 @@ pub(crate) enum NativeImportAction {
     Report,
 }
 
+/// Fixed native-only plugin authority. Renderer requests cannot select these
+/// paths through `core_api_request`.
+#[derive(Clone, Copy)]
+pub(crate) enum NativePluginAction {
+    Context,
+    Create,
+    Chunk,
+    Seal,
+    Cancel,
+    Discard,
+    Review,
+    TrustStatus,
+    TrustDecide,
+    GrantStatus,
+    GrantEnable,
+    GrantRevoke,
+}
+
+impl NativePluginAction {
+    fn path(self) -> &'static str {
+        match self {
+            Self::Context => "/native/connectors/plugins/packages/context",
+            Self::Create => "/native/connectors/plugins/packages/create",
+            Self::Chunk => "/native/connectors/plugins/packages/chunk",
+            Self::Seal => "/native/connectors/plugins/packages/seal",
+            Self::Cancel => "/native/connectors/plugins/packages/cancel",
+            Self::Discard => "/native/connectors/plugins/packages/discard",
+            Self::Review => "/native/connectors/plugins/packages/review",
+            Self::TrustStatus => "/native/connectors/plugins/trust/status",
+            Self::TrustDecide => "/native/connectors/plugins/trust/decide",
+            Self::GrantStatus => "/native/connectors/plugins/grants/status",
+            Self::GrantEnable => "/native/connectors/plugins/grants/enable",
+            Self::GrantRevoke => "/native/connectors/plugins/grants/revoke",
+        }
+    }
+}
+
 impl NativeImportAction {
     fn path(&self) -> &'static str {
         match self {
@@ -438,6 +475,39 @@ pub(crate) struct NativeImportConnection {
 }
 
 impl NativeImportConnection {
+    pub(crate) fn plugin_request(
+        &self,
+        action: NativePluginAction,
+        body: serde_json::Value,
+    ) -> Result<CoreApiResponse, &'static str> {
+        if body["root"].as_str() != Some(self.root.as_str())
+            || body["projectId"].as_str() != Some(self.project_id.as_str())
+            || !self.is_current()
+        {
+            return Err("RO-PLUGIN-PROJECT-UNAVAILABLE");
+        }
+        let body = body.to_string();
+        if body.len() > 200_000 {
+            return Err("RO-PLUGIN-REQUEST-INVALID");
+        }
+        let response = authenticated_api_request_with_cancellation(
+            self.port,
+            &self.token,
+            &CoreApiRequest {
+                method: "POST".into(),
+                path: action.path().into(),
+                body: Some(body),
+                if_match: None,
+                idempotency_key: None,
+            },
+            Some(self.cancellation.as_ref()),
+        );
+        if !self.is_current() {
+            return Err("RO-PLUGIN-PROJECT-UNAVAILABLE");
+        }
+        response
+    }
+
     /// Fixed private connector protocol. The caller owns and clears the body;
     /// it is never copied through CoreApiRequest's public String body or logs.
     pub(crate) fn configuration_request(
@@ -3337,7 +3407,7 @@ fn verify_core_api_contract(
 }
 
 #[cfg(windows)]
-fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
+pub(crate) fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
     use windows_sys::Win32::Security::Cryptography::{
         BCRYPT_USE_SYSTEM_PREFERRED_RNG, BCryptGenRandom,
     };
@@ -3356,7 +3426,7 @@ fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
 }
 
 #[cfg(not(windows))]
-fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
+pub(crate) fn fill_secure_random(target: &mut [u8]) -> Result<(), &'static str> {
     std::fs::File::open("/dev/urandom")
         .and_then(|mut source| source.read_exact(target))
         .map_err(|_| "RO-CORE-AUTH-RANDOM-FAILED")
@@ -3497,9 +3567,9 @@ impl ProcessTreeContainment {
             CreateToolhelp32Snapshot, TH32CS_SNAPTHREAD, THREADENTRY32, Thread32First, Thread32Next,
         };
         use windows_sys::Win32::System::JobObjects::{
-            AssignProcessToJobObject, CreateJobObjectW, JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
-            JOBOBJECT_EXTENDED_LIMIT_INFORMATION, JobObjectExtendedLimitInformation,
-            SetInformationJobObject,
+            AssignProcessToJobObject, CreateJobObjectW, JOB_OBJECT_LIMIT_BREAKAWAY_OK,
+            JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE, JOBOBJECT_EXTENDED_LIMIT_INFORMATION,
+            JobObjectExtendedLimitInformation, SetInformationJobObject,
         };
         use windows_sys::Win32::System::Threading::{
             OpenThread, ResumeThread, THREAD_SUSPEND_RESUME,
@@ -3510,7 +3580,12 @@ impl ProcessTreeContainment {
                 return Err("RO-CORE-CONTAINMENT-FAILED");
             }
             let mut limits: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = zeroed();
-            limits.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
+            // Core descendants remain in the kill-on-close Job by default. A
+            // trusted cleanup guardian must request breakaway explicitly so it
+            // can restore job-owned ACLs if Core dies mid-plugin invocation.
+            // The LPAC plugin is also held in its own non-breakaway Job.
+            limits.BasicLimitInformation.LimitFlags =
+                JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK;
             let configured = SetInformationJobObject(
                 job,
                 JobObjectExtendedLimitInformation,
@@ -5853,6 +5928,59 @@ mod tests {
             // must terminate this child; never a user process or ordinary Core.
             thread::sleep(Duration::from_secs(15));
         }
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn core_job_keeps_normal_child_contained_with_explicit_guardian_breakaway_available() {
+        use std::mem::{size_of, zeroed};
+        use std::os::windows::io::AsRawHandle;
+        use windows_sys::Win32::System::JobObjects::{
+            IsProcessInJob, JOB_OBJECT_LIMIT_BREAKAWAY_OK, JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
+            JOBOBJECT_EXTENDED_LIMIT_INFORMATION, JobObjectExtendedLimitInformation,
+            QueryInformationJobObject,
+        };
+
+        let mut command = Command::new(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "supervisor::tests::process_stop_fixture_child",
+                "--nocapture",
+            ])
+            .env("RO_STOP_FIXTURE_CHILD", "1")
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        configure_hidden_process(&mut command);
+        let mut child = command.spawn().unwrap();
+        let containment = ProcessTreeContainment::attach_and_resume(&child).unwrap();
+        unsafe {
+            let mut limits: JOBOBJECT_EXTENDED_LIMIT_INFORMATION = zeroed();
+            assert_ne!(
+                QueryInformationJobObject(
+                    containment.0,
+                    JobObjectExtendedLimitInformation,
+                    (&raw mut limits).cast(),
+                    size_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>() as u32,
+                    std::ptr::null_mut(),
+                ),
+                0,
+            );
+            assert_eq!(
+                limits.BasicLimitInformation.LimitFlags
+                    & (JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK),
+                JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE | JOB_OBJECT_LIMIT_BREAKAWAY_OK,
+            );
+            let mut in_job = 0;
+            assert_ne!(
+                IsProcessInJob(child.as_raw_handle().cast(), containment.0, &raw mut in_job),
+                0,
+            );
+            assert_ne!(in_job, 0, "ordinary Core child must remain in its Job");
+        }
+        containment.terminate();
+        assert!(child.wait().is_ok());
     }
 
     #[cfg(windows)]

@@ -817,7 +817,8 @@ def _migration_ids(source_version: int) -> tuple[str, ...]:
         and v0019_corpus_reports.TARGET_PROFILE_SHA256 == storage.CORPUS_REPORT_PROFILE_SHA256
         and v0020_corpus_source_projection.down_revision == v0019_corpus_reports.revision
         and v0020_corpus_source_projection.source_schema_version == storage.CORPUS_REPORT_DATABASE_SCHEMA_VERSION
-        and v0020_corpus_source_projection.target_schema_version == storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION
+        and v0020_corpus_source_projection.target_schema_version
+        == storage.PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION
         and v0020_corpus_source_projection.TARGET_SCHEMA_SHA256 == storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256
         and v0020_corpus_source_projection.TARGET_PROFILE_SHA256 == storage.PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256
         and v0021_plugin_grants.down_revision == v0020_corpus_source_projection.revision

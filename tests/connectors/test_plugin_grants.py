@@ -111,7 +111,9 @@ class PluginGrantRepositoryTests(unittest.TestCase):
 
     def _enable(self, package, confirmation, *, actor):
         return self.repo.enable(
-            package, confirmation, actor=actor,
+            package,
+            confirmation,
+            actor=actor,
             trusted_key_sha256=confirmation.trusted_key_sha256,
             trusted_key_revision=confirmation.trusted_key_revision,
         )
@@ -158,8 +160,9 @@ class PluginGrantRepositoryTests(unittest.TestCase):
             {"data_classes": ()},
             {"credential_scopes": ("unreviewed-scope",)},
         ):
-            with self.subTest(changes=changes), self.assertRaisesRegex(
-                PluginGrantProblem, "plugin-grant-confirmation-mismatch"
+            with (
+                self.subTest(changes=changes),
+                self.assertRaisesRegex(PluginGrantProblem, "plugin-grant-confirmation-mismatch"),
             ):
                 self._enable(self.package, self._confirmation(expected_revision=1, **changes), actor=self.actor)
         self.assertEqual(original, self.repo.current_grant(original.plugin_id))

@@ -65,9 +65,13 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.connectors.settings",
                     "research_observatory_core.connectors.inspection",
                     "research_observatory_core.connectors.plugin_broker",
+                    "research_observatory_core.connectors.plugin_dispatch",
                     "research_observatory_core.connectors.plugin_grants",
                     "research_observatory_core.connectors.plugin_manifest",
+                    "research_observatory_core.connectors.plugin_package_intake",
+                    "research_observatory_core.connectors.plugin_package_store",
                     "research_observatory_core.connectors.plugin_trust",
+                    "research_observatory_core.connectors.plugin_workflow",
                     "research_observatory_core.connectors.transport",
                     "research_observatory_core.connectors.workflow",
                     "research_observatory_core.ports.connector_runtime",
@@ -95,6 +99,8 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.migrations.versions.v0020_corpus_source_projection",
                     "research_observatory_core.migrations.versions.v0021_plugin_grants",
                     "research_observatory_core.plugin_grant_repository",
+                    "research_observatory_core.plugin_admin_service",
+                    "research_observatory_core.plugin_api",
                     "research_observatory_core.import_preview_repository",
                     "research_observatory_core.import_commit_repository",
                     "research_observatory_core.import_draft_repository",
@@ -119,6 +125,12 @@ class CoreSidecarPackageTests(unittest.TestCase):
                     "research_observatory_core.windows_credentials",
                     "sqlcipher3",
                     "sqlcipher3._sqlite3",
+                    "workers.windows.connector_launcher",
+                    "workers.windows.lpac_launcher",
+                    "workers.windows.no_write_acl",
+                    "workers.windows.protocol",
+                    "workers.windows.recovery_guardian",
+                    "workers.windows.runtime_inventory",
                 ],
             },
         )
@@ -134,12 +146,16 @@ class CoreSidecarPackageTests(unittest.TestCase):
             "research_observatory_core.migrations.versions.v0021_plugin_grants",
             "research_observatory_core.plugin_grant_repository",
             "research_observatory_core.connectors.plugin_broker",
+            "research_observatory_core.connectors.plugin_dispatch",
+            "research_observatory_core.connectors.plugin_package_store",
+            "research_observatory_core.connectors.plugin_workflow",
             "research_observatory_core.connectors.plugin_trust",
         ):
             self.assertIn(module, contract["requiredModules"])
         self.assertIn("research_observatory_core.dependency_impacts", contract["requiredModules"])
         self.assertIn("research_observatory_core.domain_compatibility", contract["requiredModules"])
         self.assertIn("research_observatory_core.domain_lifecycles", contract["requiredModules"])
+        self.assertIn("workers.windows.recovery_guardian", contract["requiredModules"])
         self.assertIn("research_observatory_core.provenance", contract["requiredModules"])
         self.assertIn("research_observatory_core.provenance_contracts", contract["requiredModules"])
         self.assertIn("research_observatory_core.workflow_contracts", contract["requiredModules"])
@@ -187,6 +203,7 @@ class CoreSidecarPackageTests(unittest.TestCase):
         self.assertIn("research_observatory_core.recalculation_contracts", contract["requiredModules"])
         self.assertIn("sqlalchemy", contract["requiredModules"])
         self.assertIn("sqlcipher3", contract["requiredModules"])
+        self.assertIn("workers.windows.connector_launcher", contract["requiredModules"])
         self.assertEqual(
             contract["noticeFiles"],
             [
@@ -309,6 +326,9 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "alembic.operations",
                 "research_observatory_core.connectors.settings",
                 "research_observatory_core.connectors.inspection",
+                "research_observatory_core.connectors.plugin_dispatch",
+                "research_observatory_core.connectors.plugin_package_store",
+                "research_observatory_core.connectors.plugin_workflow",
                 "research_observatory_core.migrations.runner",
                 "research_observatory_core.migrations.versions.v0002_schema_history",
                 "research_observatory_core.migrations.versions.v0003_object_envelopes",
@@ -326,6 +346,11 @@ class CoreSidecarPackageTests(unittest.TestCase):
                 "research_observatory_core.windows_credentials",
                 "sqlcipher3",
                 "sqlalchemy.engine",
+                "workers.windows.connector_launcher",
+                "workers.windows.lpac_launcher",
+                "workers.windows.no_write_acl",
+                "workers.windows.protocol",
+                "workers.windows.runtime_inventory",
             ):
                 self.assertIn(f"'{required_module}'", archive.stdout)
 
@@ -352,6 +377,17 @@ class CoreSidecarPackageTests(unittest.TestCase):
             self.assertEqual(checked["status"], "configuration-valid")
             self.assertNotIn("storageMigration", checked)
             self.assertNotIn("python", environment["PATH"].casefold())
+            absent_worker = subprocess.run(
+                [executable, "--check-worker-runtime"],
+                cwd=Path(environment["TEMP"]),
+                env=environment,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                check=False,
+            )
+            self.assertEqual(absent_worker.returncode, 2)
+            self.assertEqual(json.loads(absent_worker.stdout), {"status": "worker-runtime-invalid"})
 
             runtime_candidates = sorted(
                 path

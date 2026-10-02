@@ -7,6 +7,7 @@ import { configureSource, configurationMessage, openSourceTerms, type Configurat
 import type { ApplicationWorkspace } from "./workflowNavigationModel";
 import { SourceTestPane } from "./SourceTestPane";
 import { SourceRequestHistory } from "./SourceRequestHistory";
+import { PluginReviewPane } from "./PluginReviewPane";
 
 const SOURCES: readonly { id: ScholarlyProvider; name: string; purpose: string }[] = [
   { id: "openalex", name: "OpenAlex", purpose: "Scholarly metadata search and identifier lookup" },
@@ -119,6 +120,7 @@ function SourceProject({ project, announce, transport = packagedProjectTransport
         </Panel>;
       })}</div>
     </section>
+    <PluginReviewPane project={project} announce={announce} active={active} />
     {testing && page?.items.find((item) => item.providerId === testing) ? <SourceTestPane key={testing} project={project} provider={page.items.find((item) => item.providerId === testing)!} client={client} announce={announce} active={active} onInspect={(previewId) => setInspectionSelection({ previewId })} onTasks={onNavigate ? () => onNavigate("tasks") : undefined} onClose={() => { const provider = testing; setTesting(null); requestAnimationFrame(() => { if (live.current) testControls.current.get(provider)?.focus(); }); }} /> : null}
     <SourceRequestHistory root={project.root} client={client} diagnosticsClient={diagnostics} active={active} selection={inspectionSelection} />
     <div className="status-grid ro-grid">

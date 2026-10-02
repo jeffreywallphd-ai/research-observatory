@@ -5,7 +5,9 @@ use serde::Deserialize;
 use serde_json::{Value, json};
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
+use std::os::windows::process::CommandExt;
 use std::path::Path;
+use std::process::{Command, Stdio};
 
 #[link(name = "Ws2_32")]
 unsafe extern "system" {
@@ -91,6 +93,30 @@ fn attempt_write(path: &Path) -> &'static str {
     "allowed"
 }
 
+fn attempt_child_breakaway() -> Value {
+    const CREATE_BREAKAWAY_FROM_JOB: u32 = 0x0100_0000;
+    let Ok(image) = std::env::current_exe() else {
+        return json!({"attempted": false, "outcome": "image-unavailable", "errorCode": null});
+    };
+    match Command::new(image)
+        .arg("--synthetic-breakaway-child")
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .creation_flags(CREATE_BREAKAWAY_FROM_JOB)
+        .spawn()
+    {
+        Ok(mut child) => {
+            let _ = child.kill();
+            let _ = child.wait();
+            json!({"attempted": true, "outcome": "allowed", "errorCode": null})
+        }
+        Err(error) => {
+            json!({"attempted": true, "outcome": "denied", "errorCode": error.raw_os_error()})
+        }
+    }
+}
+
 fn attempt_loopback(port: u16) -> Value {
     // Rust's standard-library socket initialization asserts WSAStartup succeeds.
     // Record startup separately: a failure here means connect was not tested.
@@ -153,10 +179,9 @@ fn run() -> Result<(), ()> {
     })?;
     let profile = Path::new(&profile);
     let temp = Path::new(&temp);
-    if !profile.is_dir() || !temp.is_dir() {
-        eprintln!("probe-error:profile-or-temp-unavailable");
-        return Err(());
-    }
+    // Core verified these exact job-owned directories before sealing their
+    // no-write ACLs. The LPAC may not be able to query directory metadata;
+    // still attempt actual writes so denial is observed rather than inferred.
     let response = json!({
         "protocolVersion": "1.0",
         "jobNonce": request.job_nonce,
@@ -166,6 +191,7 @@ fn run() -> Result<(), ()> {
             "parentEnvironmentSecret": if std::env::var_os("RO_LPAC_TEST_SECRET").is_none() { "denied" } else { "leaked" },
             "unrelatedRead": attempt_read(&request.read_path),
             "outsideWrite": attempt_write(Path::new(&request.write_path)),
+            "childBreakaway": attempt_child_breakaway(),
             "directLoopback": attempt_loopback(request.loopback_port),
             "profileWrite": attempt_write(&profile.join("lpac-write-probe")),
             "tempWrite": attempt_write(&temp.join("lpac-write-probe")),

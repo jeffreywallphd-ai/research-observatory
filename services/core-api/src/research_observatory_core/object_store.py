@@ -85,7 +85,7 @@ _CREATION_SOURCES: frozenset[str] = frozenset(
     ("local-import", "connector-acquisition", "local-derivation", "test-fixture")
 )
 _LOCAL_ACCESS_PURPOSES: frozenset[str] = frozenset(
-    ("reference-import", "document-analysis", "test-verification", "storage-performance")
+    ("reference-import", "document-analysis", "connector-plugin-execution", "test-verification", "storage-performance")
 )
 _EGRESS_ACCESS_PURPOSES: frozenset[str] = frozenset(("project-backup", "project-export", "provider-egress"))
 _PLAINTEXT_FIXTURE = "plaintext-fixture-v1"

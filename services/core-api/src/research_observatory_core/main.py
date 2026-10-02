@@ -23,6 +23,9 @@ from .config import CoreSettings
 from .connector_repository import ConnectorRepository
 from .connector_service import ConnectorConsentService, ConnectorProjectAdapters
 from .connector_worker import ConnectorWorkerAdapters, ConnectorWorkerService
+from .connectors.plugin_credentials import PluginCredentialSettings
+from .connectors.plugin_package_store import PluginPackageStore
+from .connectors.plugin_trust import PluginPublisherTrustStore
 from .connectors.settings import ConnectorSettings
 from .corpus_query import ConnectorWorkerQueryResolver
 from .corpus_report_repository import SqliteCorpusReportRepository
@@ -37,6 +40,11 @@ from .model_gateway_service import ProjectModelGatewayService
 from .model_registry_repository import SqliteModelRoutingRepository, sqlite_model_catalog_repository
 from .modules import default_module_registry
 from .object_store import create_local_object_store, upgrade_local_object_envelopes
+from .plugin_admin_service import PluginAdminService
+from .plugin_consent import PluginConsentService
+from .plugin_job_repository import PluginJobRepository
+from .plugin_runtime import InstalledPluginRuntime
+from .plugin_worker import PluginWorkerAdapters, PluginWorkerService
 from .ports.credential_store import CredentialStoreProblem
 from .ports.database_keys import DatabaseKeyProvider
 from .ports.object_store_keys import ObjectMasterKeyProvider
@@ -180,6 +188,9 @@ def create_runtime_app(
     imports = None
     reconciliation = None
     connectors = None
+    plugin_admin = None
+    plugin_consent = None
+    plugin_worker = None
     corpus = None
     if workflow_context is not None and resolved_actor_id is not None and resolved_provider is not None:
         imports = ImportPreviewService(
@@ -242,6 +253,59 @@ def create_runtime_app(
             settings=resolved_connector_settings,
         )
 
+        if os.name == "nt":
+            installed_plugin_runtime = InstalledPluginRuntime()
+            plugin_admin = PluginAdminService(
+                projects,
+                PluginPublisherTrustStore(
+                    WindowsCredentialStore(profile_vault_root or default_windows_profile_vault_path()),
+                    "local-default",
+                ),
+                actor_id=resolved_actor_id,
+                runtime_available=installed_plugin_runtime.available,
+                package_store_factory=lambda path, identity: PluginPackageStore(
+                    create_local_object_store(
+                        path,
+                        identity,
+                        key_provider=resolved_provider,
+                        access_policy=privacy.object_access_policy(str(path)),
+                    )
+                ),
+            )
+            plugin_consent = PluginConsentService(projects, privacy, plugin_admin, sqlite_intent_revision_repository)
+
+            def plugin_adapters(path: Path, identity: str) -> PluginWorkerAdapters:
+                queue = sqlite_workflow_queue_repository(path, identity)
+                objects = create_local_object_store(
+                    path,
+                    identity,
+                    key_provider=resolved_provider,
+                    access_policy=privacy.object_access_policy(str(path)),
+                )
+                demand = document_demand
+                return PluginWorkerAdapters(
+                    PluginJobRepository(path / "state/project.sqlite3", identity, objects),
+                    queue,
+                    sqlite_workflow_admission_binding(
+                        queue,
+                        controller=controller,
+                        policy=ProjectWorkerPolicy(identity, demand, {"document": demand}, {"document": 1}),
+                    ),
+                    objects,
+                )
+
+            plugin_worker = PluginWorkerService(
+                projects,
+                plugin_admin,
+                plugin_consent,
+                plugin_adapters,
+                local_actor_id=resolved_actor_id,
+                runtime=installed_plugin_runtime,
+                credentials=PluginCredentialSettings(
+                    WindowsCredentialStore(profile_vault_root or default_windows_profile_vault_path())
+                ),
+            )
+
         def reconciliation_adapters(path: Path, identity: str) -> ReconciliationBatchAdapters:
             queue = sqlite_workflow_queue_repository(path, identity)
             demand = document_demand
@@ -296,6 +360,9 @@ def create_runtime_app(
         privacy=privacy,
         imports=imports,
         connectors=connectors,
+        plugin_admin=plugin_admin,
+        plugin_consent=plugin_consent,
+        plugin_worker=plugin_worker,
         reconciliation=reconciliation,
         corpus=corpus,
         model_gateway=ProjectModelGatewayService(

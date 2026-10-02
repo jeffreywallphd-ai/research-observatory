@@ -10,6 +10,7 @@ mod import_report;
 mod import_runtime;
 #[cfg(windows)]
 mod import_source;
+mod plugin_intake;
 mod reconciliation_admission;
 pub mod supervisor;
 pub mod support_bundle;
@@ -229,6 +230,170 @@ async fn import_selected_file(
     {
         let _ = (manager, picker, supervisor, request, owner, ticket);
         Ok(ImportOutcome::Unavailable)
+    }
+}
+
+#[tauri::command]
+async fn select_connector_package(
+    window: tauri::WebviewWindow,
+    manager: State<'_, plugin_intake::PluginIntakeManager>,
+    picker: State<'_, DirectoryPickerManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    message: tauri::ipc::Request<'_>,
+) -> Result<plugin_intake::PluginIntakeOutcome, ()> {
+    use plugin_intake::PluginIntakeOutcome;
+    let tauri::ipc::InvokeBody::Json(payload) = message.body() else {
+        return Ok(PluginIntakeOutcome::Failed);
+    };
+    let Some(request) = plugin_intake::decode_request(payload) else {
+        return Ok(PluginIntakeOutcome::Failed);
+    };
+    let Some(owner) = directory_window_handle(&window) else {
+        return Ok(PluginIntakeOutcome::Unavailable);
+    };
+    let Ok(ticket) = lock.begin_protected_action() else {
+        return Ok(PluginIntakeOutcome::Cancelled);
+    };
+    #[cfg(windows)]
+    {
+        let (manager, picker, supervisor, security) = (
+            manager.inner().clone(),
+            picker.inner().clone(),
+            supervisor.inner().clone(),
+            lock.inner().clone(),
+        );
+        let prepared = tauri::async_runtime::spawn_blocking(move || {
+            plugin_intake::prepare(
+                manager, picker, supervisor, security, ticket, owner, request,
+            )
+        })
+        .await;
+        match prepared {
+            Ok(Ok(mut prepared)) => {
+                let same_window = directory_window_handle(&window) == Some(owner);
+                let security = lock.inner().clone();
+                Ok(tauri::async_runtime::spawn_blocking(move || {
+                    if same_window
+                        && security
+                            .commit_protected_action(ticket, || Ok(prepared.accept()))
+                            .unwrap_or(false)
+                    {
+                        prepared.into_outcome()
+                    } else {
+                        PluginIntakeOutcome::Cancelled
+                    }
+                })
+                .await
+                .unwrap_or(PluginIntakeOutcome::Failed))
+            }
+            Ok(Err(error)) => Ok(plugin_intake::failure(error)),
+            Err(_) => Ok(PluginIntakeOutcome::Failed),
+        }
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = (request, manager, picker, supervisor, ticket);
+        Ok(PluginIntakeOutcome::Unavailable)
+    }
+}
+
+#[tauri::command]
+fn cancel_connector_package_selection(
+    window: tauri::WebviewWindow,
+    manager: State<'_, plugin_intake::PluginIntakeManager>,
+    picker: State<'_, DirectoryPickerManager>,
+    operation_id: String,
+) -> Result<(), ()> {
+    if directory_window_handle(&window).is_none() {
+        return Err(());
+    }
+    manager.cancel(&operation_id, &picker);
+    Ok(())
+}
+
+#[tauri::command]
+async fn connector_plugin_action(
+    window: tauri::WebviewWindow,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    message: tauri::ipc::Request<'_>,
+) -> Result<plugin_intake::PluginActionOutcome, ()> {
+    use plugin_intake::PluginActionOutcome;
+    let tauri::ipc::InvokeBody::Json(payload) = message.body() else {
+        return Ok(PluginActionOutcome::Failed);
+    };
+    let Some(request) = plugin_intake::decode_action(payload) else {
+        return Ok(PluginActionOutcome::Failed);
+    };
+    let Some(owner) = directory_window_handle(&window) else {
+        return Ok(PluginActionOutcome::Unavailable);
+    };
+    let Ok(ticket) = lock.begin_protected_action() else {
+        return Ok(PluginActionOutcome::Cancelled);
+    };
+    let (supervisor, security) = (supervisor.inner().clone(), lock.inner().clone());
+    let outcome = tauri::async_runtime::spawn_blocking(move || {
+        plugin_intake::perform_action(supervisor, security, ticket, owner, request)
+    })
+    .await
+    .unwrap_or(PluginActionOutcome::Failed);
+    if directory_window_handle(&window) != Some(owner) {
+        // The Core mutation may have committed before this window ended.
+        Ok(PluginActionOutcome::Failed)
+    } else {
+        Ok(outcome)
+    }
+}
+
+#[tauri::command]
+async fn trust_connector_publisher(
+    window: tauri::WebviewWindow,
+    manager: State<'_, plugin_intake::PluginIntakeManager>,
+    picker: State<'_, DirectoryPickerManager>,
+    supervisor: State<'_, RuntimeSupervisor>,
+    lock: State<'_, ApplicationLockManager>,
+    message: tauri::ipc::Request<'_>,
+) -> Result<plugin_intake::PluginActionOutcome, ()> {
+    use plugin_intake::PluginActionOutcome;
+    let tauri::ipc::InvokeBody::Json(payload) = message.body() else {
+        return Ok(PluginActionOutcome::Failed);
+    };
+    let Some(request) = plugin_intake::decode_trust_request(payload) else {
+        return Ok(PluginActionOutcome::Failed);
+    };
+    let Some(owner) = directory_window_handle(&window) else {
+        return Ok(PluginActionOutcome::Unavailable);
+    };
+    let Ok(ticket) = lock.begin_protected_action() else {
+        return Ok(PluginActionOutcome::Cancelled);
+    };
+    #[cfg(windows)]
+    {
+        let (manager, picker, supervisor, security) = (
+            manager.inner().clone(),
+            picker.inner().clone(),
+            supervisor.inner().clone(),
+            lock.inner().clone(),
+        );
+        let result = tauri::async_runtime::spawn_blocking(move || {
+            plugin_intake::trust_publisher(
+                manager, picker, supervisor, security, ticket, owner, request,
+            )
+        })
+        .await
+        .unwrap_or(PluginActionOutcome::Failed);
+        if directory_window_handle(&window) == Some(owner) {
+            Ok(result)
+        } else {
+            // The mutation may have committed before the window changed.
+            Ok(PluginActionOutcome::Failed)
+        }
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = (request, manager, picker, supervisor, ticket);
+        Ok(PluginActionOutcome::Unavailable)
     }
 }
 
@@ -755,6 +920,10 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
         open_scholarly_source_terms,
         cancel_scholarly_source_configuration,
         import_selected_file,
+        select_connector_package,
+        cancel_connector_package_selection,
+        connector_plugin_action,
+        trust_connector_publisher,
         cancel_import_file,
         save_import_report,
         choose_project_directory,
@@ -870,6 +1039,7 @@ fn setup_runtime(
     app.manage(support.clone());
     app.manage(picker.clone());
     app.manage(import_runtime::ImportManager::default());
+    app.manage(plugin_intake::PluginIntakeManager::default());
     app.manage(connector_configuration::ConfigurationManager::default());
     if lock.is_unlocked() {
         let startup = supervisor.clone();

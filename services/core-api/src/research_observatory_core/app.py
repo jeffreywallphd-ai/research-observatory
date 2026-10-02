@@ -89,6 +89,11 @@ from .operations import (
     OperationRegistry,
     OperationReplayGap,
 )
+from .plugin_admin_service import PluginAdminService
+from .plugin_api import register_plugin_routes
+from .plugin_consent import PluginConsentService
+from .plugin_invocation_api import register_plugin_invocation_routes
+from .plugin_worker import PluginWorkerService
 from .ports.import_previews import PreviewProblem
 from .ports.workflow_executor import WorkflowQueueConflict
 from .privacy import PrivacyPolicyProblem, ProjectPrivacyService
@@ -122,6 +127,9 @@ class RuntimeContext:
     recalculation: RecalculationControlService
     imports: ImportPreviewService | None = None
     connectors: ConnectorWorkerService | None = None
+    plugin_admin: PluginAdminService | None = None
+    plugin_consent: PluginConsentService | None = None
+    plugin_worker: PluginWorkerService | None = None
     reconciliation: ReconciliationService | None = None
     corpus: CorpusService | None = None
     state: RuntimeState = RuntimeState.STARTING
@@ -143,6 +151,9 @@ def create_app(
     recalculation: RecalculationControlService | None = None,
     imports: ImportPreviewService | None = None,
     connectors: ConnectorWorkerService | None = None,
+    plugin_admin: PluginAdminService | None = None,
+    plugin_consent: PluginConsentService | None = None,
+    plugin_worker: PluginWorkerService | None = None,
     reconciliation: ReconciliationService | None = None,
     corpus: CorpusService | None = None,
     capability_digest: bytes | None = None,
@@ -187,6 +198,9 @@ def create_app(
             recalculation=resolved_recalculation,
             imports=imports,
             connectors=connectors,
+            plugin_admin=plugin_admin,
+            plugin_consent=plugin_consent,
+            plugin_worker=plugin_worker,
             reconciliation=reconciliation,
             corpus=corpus,
         )
@@ -195,6 +209,8 @@ def create_app(
             context.imports.start()
         if context.connectors is not None:
             context.connectors.start()
+        if context.plugin_worker is not None:
+            context.plugin_worker.start()
         if context.reconciliation is not None:
             context.reconciliation.start()
         context.state = RuntimeState.READY
@@ -208,6 +224,8 @@ def create_app(
                 context.reconciliation.shutdown()
             if context.connectors is not None:
                 context.connectors.shutdown()
+            if context.plugin_worker is not None:
+                context.plugin_worker.shutdown()
             if context.imports is not None:
                 context.imports.shutdown()
             context.projects.shutdown()
@@ -332,6 +350,14 @@ def create_app(
     register_import_routes(app, lambda request: runtime(request).imports, project_problem)
     register_intake_routes(app, lambda request: runtime(request).imports, project_problem)
     register_connector_routes(app, lambda request: runtime(request).connectors, project_problem)
+    register_plugin_routes(app, lambda request: runtime(request).plugin_admin, project_problem)
+    register_plugin_invocation_routes(
+        app,
+        lambda request: runtime(request).plugin_admin,
+        lambda request: runtime(request).plugin_consent,
+        lambda request: runtime(request).plugin_worker,
+        project_problem,
+    )
     register_reconciliation_routes(app, lambda request: runtime(request).reconciliation, project_problem)
     register_corpus_routes(app, lambda request: runtime(request).corpus)
 
@@ -341,6 +367,12 @@ def create_app(
             context.imports.signal_stop(root)
         if context.connectors is not None:
             context.connectors.signal_stop(root)
+        if context.plugin_worker is not None:
+            context.plugin_worker.signal_stop(root)
+        if context.plugin_consent is not None and root is not None:
+            context.plugin_consent.detach(root)
+        if context.plugin_admin is not None:
+            context.plugin_admin.clear(root)
         if context.reconciliation is not None:
             context.reconciliation.signal_stop(root)
 
@@ -702,6 +734,8 @@ def create_app(
                     context.imports.attach(projection.root)
                 if context.connectors is not None and projection.access_mode.value == "read-write":
                     context.connectors.attach(projection.root)
+                if context.plugin_worker is not None and projection.access_mode.value == "read-write":
+                    context.plugin_worker.attach(projection.root)
                 if context.reconciliation is not None and projection.access_mode.value == "read-write":
                     context.reconciliation.attach(projection.root)
             except Exception:
@@ -712,6 +746,8 @@ def create_app(
                     context.reconciliation.detach(projection.root)
                 if context.connectors is not None:
                     context.connectors.detach(projection.root)
+                if context.plugin_worker is not None:
+                    context.plugin_worker.detach(projection.root)
                 if context.imports is not None:
                     context.imports.detach(projection.root)
                 context.projects.close(root=projection.root, trace_id=request.state.trace_id)
@@ -734,6 +770,8 @@ def create_app(
                 context.reconciliation.detach(command.root)
             if context.connectors is not None:
                 context.connectors.detach(command.root)
+            if context.plugin_worker is not None:
+                context.plugin_worker.detach(command.root)
             if context.imports is not None:
                 try:
                     context.imports.detach(command.root)

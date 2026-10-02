@@ -17547,13 +17547,13 @@
             {
               "task_id": "CAP-04.S05.T02",
               "title": "Implement plugin isolation, configuration, and secret access controls",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": null
+                "notes": "Reopened: R42c2 and R49 establish source-built zero-capability LPAC no-write and capability-positive pre-transport network denial for implementation feasibility at a955acad; final signed product worker, broker and security review remain open"
               },
               "review_control": null
             },
@@ -17592,7 +17592,7 @@
             {
               "task_id": "CAP-04.S05.T02",
               "title": "Implement plugin isolation, configuration, and secret access controls",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S05.T02.html",
               "dependencies": [
                 "CAP-04.S05.T01"
@@ -17605,7 +17605,7 @@
               "plan_section_sha256": "0b72c1fdc2dfaab468e09e8a7a144d23a273ebf1f9d8de67f6e4f8bcabe1d31a",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-04.S05.T02.task-start.md",
-                "sha256": "af9778c52d988b00b375341760651317b6c6aa70ffb9b2f51ef7d8cb62746b38"
+                "sha256": "439c55548b8221d20464822ed143536b90d4a4038ed6aa312395d1b620c27d2f"
               }
             },
             {

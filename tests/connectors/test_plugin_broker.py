@@ -6,8 +6,10 @@ import hashlib
 import json
 import sys
 import unittest
+from collections.abc import Callable
 from contextlib import contextmanager
 from pathlib import Path
+from typing import cast
 from unittest.mock import AsyncMock, patch
 
 import httpx2
@@ -135,7 +137,7 @@ class PluginBrokerTests(unittest.IsolatedAsyncioTestCase):
         package, grant = fixture()
         plan = plan_for(package, grant)
         seen = []
-        audits = []
+        audits: list[str] = []
 
         def recheck(current, call):
             seen.append((current.request_sha256, call.identifier))
@@ -408,7 +410,7 @@ class PluginBrokerTests(unittest.IsolatedAsyncioTestCase):
         package, grant = fixture(authentication=True, destinations=[DESTINATION, second])
         plan = plan_for(package, grant, destination_index=1)
         leases = []
-        audits = []
+        audits: list[str] = []
 
         @contextmanager
         def lease(*_):
@@ -419,7 +421,7 @@ class PluginBrokerTests(unittest.IsolatedAsyncioTestCase):
             package=package,
             current_grant=lambda *_: grant,
             current_request=lambda *_: request_for(plan),
-            current_credential_origin=lambda *_: ("https", DESTINATION["host"], 443),
+            current_credential_origin=lambda *_: ("https", str(DESTINATION["host"]), 443),
             rates=PluginBrokerRates(),
             recheck=lambda *_: None,
             audit_denial=audits.append,
@@ -470,7 +472,7 @@ class PluginBrokerTests(unittest.IsolatedAsyncioTestCase):
         destination = DESTINATION | {"pathTemplate": "/v1/search"}
         package, grant = fixture(destination=destination)
         plan = plan_for(package, grant, "search")
-        audits = []
+        audits: list[str] = []
         broker = PluginNetworkBroker(
             package=package,
             current_grant=lambda *_: grant,
@@ -502,7 +504,7 @@ class PluginBrokerTests(unittest.IsolatedAsyncioTestCase):
             recheck=None,
         )
         with self.assertRaises(ValueError):
-            PluginNetworkBroker(**common, audit_denial=async_audit)
+            PluginNetworkBroker(**common, audit_denial=cast(Callable[[str], None], async_audit))
 
         def returning_awaitable(_):
             return async_audit("policy-denied")
@@ -512,7 +514,7 @@ class PluginBrokerTests(unittest.IsolatedAsyncioTestCase):
             await broker.fetch(plan, PluginBrokerCall(operation="lookup", identifier="paper"))
         self.assertEqual("audit-unavailable", denied.exception.code)
 
-        audits = []
+        audits: list[str] = []
 
         def broken_transport(*_):
             raise RuntimeError("synthetic-private-sentinel")

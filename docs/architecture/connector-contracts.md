@@ -244,16 +244,35 @@ owns durable enablement, dispatch through an LPAC worker and narrow broker,
 current policy/rights rechecks, denial/audit and restart qualification. A caller
 must never accept a plugin-supplied grant or plan as Core authority.
 
+## Windows plugin worker boundary — CAP-04.S05.T02
+
+The release-installed worker is admitted only by the application-pinned signed
+inventory and exact file hashes. Core copies that verified bundle and the one
+verified plugin into a disposable runtime owned from inception by a trusted
+breakaway guardian. The guardian creates the exact AppContainer profile and
+runtime directory, keeps original ACL handles before Core seals read/execute
+access, and restores those ACLs and removes only those resources when Core
+closes or dies. A redirected or colliding resource fails closed; cleanup never
+follows an unknown target. The guardian receives no project data, credential or
+plugin IPC.
+
+The plugin process starts under a zero-capability Less Privileged AppContainer
+token with no writable profile, temp or runtime path. It receives only the
+allowlisted private handles and bounded frames. Its own non-breakaway Job Object
+limits one process, memory and lifetime; the containing Core Job kills the
+worker on Core death while permitting only the trusted guardian's explicit
+breakaway. Core validates worker output before encrypted staging and fenced
+publication. A local signed test build establishes this Windows x64 boundary;
+release signing and Wave packaging remain separate gates.
+
 ## Plugin network broker — CAP-04.S05.T02
 
-Implementation status: this is a tested, unconnected Core component while
-`CAP-04.S05.T02` is blocked on the packaged LPAC/no-plaintext-write boundary.
-No production caller currently binds it to a workflow job, worker IPC, current
-grant, or durable audit. The required runtime composition described below is
-not yet implemented or qualified.
-Live composition must also recheck current publisher trust before each broker
-call, or cancel every affected worker immediately on trust revocation; a grant
-check alone would leave an already-running worker with stale publisher authority.
+The broker remains subordinate to the active `CAP-04.S05.T02` worker and durable
+job implementation. Its standalone tests are not evidence that a packaged
+plugin is enabled or that an invocation has published a result. Live composition
+must recheck current publisher trust before each broker call, or cancel every
+affected worker immediately on trust revocation; a grant check alone would leave
+an already-running worker with stale publisher authority.
 
 `connectors/plugin_broker.py` accepts only a Core-owned plan and the strict
 `PluginBrokerCall` operation parameters. Its generated JSON Schema is the
@@ -275,6 +294,17 @@ one-request-per-second and single-in-flight budget cannot be reset by creating
 another broker. Before a secret lease, a separate Core-owned scope binding must
 match the destination's exact HTTPS scheme, host and port; merely signing two
 destinations does not make a credential valid at both.
+
+The local credential adapter stores one protected token per project, publisher,
+plugin and declared scope in the profile vault. Its protected payload also
+binds the selected origin, so changing destination does not reuse a token.
+Native-only configuration returns only presence and a compare-and-swap version;
+the broker obtains a short lease after current consent and grant checks. Neither
+the value nor its vault reference enters worker frames or source observations.
+The Core credential endpoints have no released desktop caller in T02. A plugin
+requiring a credential therefore remains unavailable to a researcher until a
+later native configuration flow is integrated; direct Core tests establish the
+scoped-vault control, not an end-user setup journey.
 
 Construction also requires a synchronous Core-bound denial-audit callback that durably
 records a content-free reason code against the authoritative job. If that audit
@@ -303,10 +333,10 @@ publication path still need their separate output/provenance validation.
 
 ## Local plugin trust and project grants — CAP-04.S05.T02
 
-Implementation status: the persistence and authorization components below are
-partial task groundwork. No production native/UI caller authenticates the
-researcher's trust and project-permission actions or dispatches a plugin through
-the LPAC worker. These components do not authorize plugin execution on their own.
+`CAP-04.S05.T02` is integrating the native selected-file review, encrypted
+package persistence, restricted worker and durable job. The components below
+do not authorize plugin execution on their own; final packaged-worker and
+commit-bound qualification remain separate.
 
 `connectors/plugin_trust.py` stores local publisher-key decisions in the existing
 profile-scoped `SIGNING_TRUST` credential port. An authenticated human action
@@ -332,3 +362,55 @@ plan. Its request must come from the existing authoritative workflow job; the
 broker separately rechecks current project/intent/rights policy. The native/UI
 caller owns actor authentication and the two distinct visible decisions: local
 publisher trust and exact per-project permission.
+
+The native Source Manager package picker sends only bounded archive chunks to
+authenticated Core. Core inspects the exact ZIP structure without executing it,
+then keeps a short-lived candidate token in the current project session. The
+researcher separately trusts an independently supplied publisher key and
+confirms the exact package, manifest and requested project permissions. On
+enable, Core verifies both decisions again and stores the selected archive in
+the project's encrypted ObjectStore with project-lifetime retention. An
+immutable-by-policy canonical settings pointer binds package and manifest
+digests to the archive object and signature digests. The project grant is
+recorded only after that object reopens and verifies. After a Core restart,
+the pointer and current trust/grant can reopen the exact package without a
+candidate token. A missing or changed object, revoked key or revoked grant
+denies launch; the pointer cannot itself grant execution. The proposed
+CAP-02.S05 project-backup scope will need to inventory this durable object
+alongside the project metadata.
+
+The renderer supplies only a package, plugin or publisher identity hint for
+grant and revocation actions. The native bridge fetches the current exact
+package, trust and grant facts from authenticated Core, shows a default-No
+Windows confirmation with the affected project or cross-project scope, and
+constructs the action ID, expected revision and enable confirmation itself.
+Core rechecks the current facts before recording the human-attributed event.
+Renderer-supplied confirmation, revision or action facts are rejected.
+
+The worker's portable `source-assertions-v1` JSON page contains a `1.0` schema
+version, exact invocation ID and operation, at most 1000 source-reported records,
+an exhausted/next-page marker and a bounded next cursor only when needed. Each
+record carries a raw identifier, reported identifiers, bounded name/encoding/
+value fields and reported terms. It cannot supply a Core project ID, source
+namespace, retrieval time, rights decision, grant, accepted Intent or canonical
+Work. Core rejects extra fields and identity mismatches, then binds its own
+source namespace and retrieval time before encrypted staging. The owning
+workflow attempt must validate its lease and cancellation fence before
+publishing a page with exact package, manifest, request, policy and raw-response
+provenance; a staged object alone is not a successful source observation.
+
+Plugin egress has a separate, ephemeral exact-request consent authority. An
+accepted Intent must permit the plugin source ID in `approved-content` mode;
+if a valid source ID exceeds Intent's 100-character destination limit, Core
+uses a stable `plugin.sha256.<source-id-hash>` alias shown with the preview.
+Current project privacy must permit approved-provider egress with a task
+preview. The preview exposes the exact destination, declared permissions,
+data classes, terms, retention choice, and scientific-request digest for
+researcher review. A local researcher must explicitly confirm that request.
+Core binds the confirmation fingerprint, current Intent revision,
+privacy hash, source rights/retention choice and exact signed plan into each
+guarded admission, dispatch, broker and publication step. Revocation, changed
+Intent/privacy/grant, project close, expiry or Core restart denies the pending
+request. Local publisher trust and an enabled package remain separate from
+this research-content egress decision. The plugin invocation UI is a later
+slice integration; no current package review action silently sends data.

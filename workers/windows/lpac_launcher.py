@@ -10,10 +10,10 @@ from __future__ import annotations
 import ctypes
 import hashlib
 import os
+import re
 import secrets
 import shutil
 import subprocess
-import sys
 from ctypes import wintypes
 from pathlib import Path
 from typing import Any
@@ -32,6 +32,7 @@ _PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES = 131081
 _PROC_THREAD_ATTRIBUTE_ALL_APPLICATION_PACKAGES_POLICY = 131087
 _PROCESS_CREATION_ALL_APPLICATION_PACKAGES_OPT_OUT = 1
 _JOB_OBJECT_LIMIT_ACTIVE_PROCESS = 0x8
+_JOB_OBJECT_LIMIT_AFFINITY = 0x10
 _JOB_OBJECT_LIMIT_JOB_MEMORY = 0x200
 _JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x2000
 _HANDLE_FLAG_INHERIT = 1
@@ -236,6 +237,12 @@ def _api() -> tuple[Any, Any, Any, Any]:
     kernel.ReadFile.restype = wintypes.BOOL
     kernel.LocalFree.argtypes = [ctypes.c_void_p]
     kernel.GetCurrentProcess.restype = wintypes.HANDLE
+    kernel.GetProcessAffinityMask.argtypes = [
+        wintypes.HANDLE,
+        ctypes.POINTER(ctypes.c_size_t),
+        ctypes.POINTER(ctypes.c_size_t),
+    ]
+    kernel.GetProcessAffinityMask.restype = wintypes.BOOL
     userenv.CreateAppContainerProfile.argtypes = [
         wintypes.LPCWSTR,
         wintypes.LPCWSTR,
@@ -245,6 +252,8 @@ def _api() -> tuple[Any, Any, Any, Any]:
         ctypes.POINTER(ctypes.c_void_p),
     ]
     userenv.CreateAppContainerProfile.restype = ctypes.c_long
+    userenv.DeriveAppContainerSidFromAppContainerName.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_void_p)]
+    userenv.DeriveAppContainerSidFromAppContainerName.restype = ctypes.c_long
     userenv.GetAppContainerFolderPath.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_wchar_p)]
     userenv.GetAppContainerFolderPath.restype = ctypes.c_long
     userenv.DeleteAppContainerProfile.argtypes = [wintypes.LPCWSTR]
@@ -350,13 +359,23 @@ def _run_icacls(path: Path, *arguments: str) -> None:
         raise LPACError("lpac-acl-setup-failed")
 
 
-def _profile(userenv: Any, advapi: Any, ole: Any) -> tuple[str, int, str, Path, Path]:
-    name = "ResearchObservatory.PluginProbe." + secrets.token_hex(12)
+def _profile(
+    userenv: Any,
+    advapi: Any,
+    ole: Any,
+    *,
+    name: str | None = None,
+) -> tuple[str, int, str, Path, Path]:
+    name = name or "ResearchObservatory.PluginProbe." + secrets.token_hex(12)
+    if not re.fullmatch(r"ResearchObservatory\.PluginProbe\.[0-9a-f]{24}", name):
+        raise LPACError("lpac-profile-name-invalid")
     sid = ctypes.c_void_p()
+    created = False
     try:
         hr = userenv.CreateAppContainerProfile(name, name, "Disposable LPAC probe", None, 0, ctypes.byref(sid))
         if hr != 0 or not sid.value:
             raise LPACError(f"lpac-profile-creation-failed:0x{hr & 0xFFFFFFFF:08x}")
+        created = True
         sid_text_pointer = ctypes.c_wchar_p()
         _must(advapi.ConvertSidToStringSidW(sid, ctypes.byref(sid_text_pointer)), "lpac-profile-sid-invalid")
         try:
@@ -382,7 +401,28 @@ def _profile(userenv: Any, advapi: Any, ole: Any) -> tuple[str, int, str, Path, 
     except BaseException:
         if sid.value:
             advapi.FreeSid(sid)
-        userenv.DeleteAppContainerProfile(name)
+        if created:
+            userenv.DeleteAppContainerProfile(name)
+        raise
+
+
+def _derive_profile_sid(userenv: Any, advapi: Any, kernel: Any, name: str, expected_sid: str) -> int:
+    """Give Core its own SID allocation for a guardian-created exact profile."""
+
+    sid = ctypes.c_void_p()
+    if userenv.DeriveAppContainerSidFromAppContainerName(name, ctypes.byref(sid)) != 0 or not sid.value:
+        raise LPACError("lpac-profile-sid-derive-failed")
+    try:
+        pointer = ctypes.c_wchar_p()
+        _must(advapi.ConvertSidToStringSidW(sid, ctypes.byref(pointer)), "lpac-profile-sid-invalid")
+        try:
+            if pointer.value != expected_sid:
+                raise LPACError("lpac-profile-sid-mismatch")
+        finally:
+            kernel.LocalFree(ctypes.cast(pointer, ctypes.c_void_p))
+        return sid.value
+    except BaseException:
+        advapi.FreeSid(sid)
         raise
 
 
@@ -465,11 +505,16 @@ def _token(advapi: Any, kernel: Any, process: int, expected_sid: str) -> dict[st
             kernel.LocalFree(ctypes.cast(sid_pointer, ctypes.c_void_p))
         if not app_container or capability_count != 0 or sid_text != expected_sid:
             raise LPACError("lpac-token-not-isolated")
+        if token.value is None:
+            raise LPACError("lpac-token-unavailable")
+        integrity_rid = _integrity_rid(advapi, kernel, token.value)
         impersonation = wintypes.HANDLE()
         _must(advapi.DuplicateToken(token, 2, ctypes.byref(impersonation)), "lpac-token-duplicate-failed")
         try:
-            own_package_allowed = _access_check(advapi, kernel, impersonation, expected_sid)
-            all_packages_allowed = _access_check(advapi, kernel, impersonation, "S-1-15-2-1")
+            if impersonation.value is None:
+                raise LPACError("lpac-token-duplicate-failed")
+            own_package_allowed = _access_check(advapi, kernel, impersonation.value, expected_sid)
+            all_packages_allowed = _access_check(advapi, kernel, impersonation.value, "S-1-15-2-1")
         finally:
             _close(kernel, impersonation.value)
         if not own_package_allowed or all_packages_allowed:
@@ -479,6 +524,7 @@ def _token(advapi: Any, kernel: Any, process: int, expected_sid: str) -> dict[st
             "lessPrivileged": True,
             "capabilityCount": capability_count,
             "allApplicationPackagesDenied": True,
+            "integrityLevelRid": integrity_rid,
         }
     finally:
         _close(kernel, token.value)
@@ -507,6 +553,25 @@ def _current_user_sid(advapi: Any, kernel: Any) -> str:
         _close(kernel, token.value)
 
 
+def _integrity_rid(advapi: Any, kernel: Any, token: int) -> int:
+    size = wintypes.DWORD()
+    advapi.GetTokenInformation(token, 25, None, 0, ctypes.byref(size))
+    if not 0 < size.value <= 65_536:
+        raise LPACError("lpac-integrity-token-invalid")
+    buffer = ctypes.create_string_buffer(size.value)
+    _must(advapi.GetTokenInformation(token, 25, buffer, size, ctypes.byref(size)), "lpac-integrity-unavailable")
+    sid = ctypes.c_void_p.from_buffer(buffer).value
+    pointer = ctypes.c_wchar_p()
+    _must(sid and advapi.ConvertSidToStringSidW(sid, ctypes.byref(pointer)), "lpac-integrity-sid-invalid")
+    try:
+        value = pointer.value
+    finally:
+        kernel.LocalFree(ctypes.cast(pointer, ctypes.c_void_p))
+    if not value or not value.startswith("S-1-16-") or not value[7:].isdigit():
+        raise LPACError("lpac-integrity-sid-invalid")
+    return int(value[7:])
+
+
 def _pipe(kernel: Any, attributes: _SecurityAttributes) -> tuple[int, int]:
     read = wintypes.HANDLE()
     write = wintypes.HANDLE()
@@ -514,6 +579,8 @@ def _pipe(kernel: Any, attributes: _SecurityAttributes) -> tuple[int, int]:
         kernel.CreatePipe(ctypes.byref(read), ctypes.byref(write), ctypes.byref(attributes), 0),
         "lpac-pipe-creation-failed",
     )
+    if read.value is None or write.value is None:
+        raise LPACError("lpac-pipe-creation-failed")
     return read.value, write.value
 
 
@@ -529,7 +596,7 @@ def _write(kernel: Any, handle: int, data: bytes) -> None:
 
 
 def _read(kernel: Any, handle: int) -> bytes:
-    chunks = []
+    chunks: list[bytes] = []
     total = 0
     while True:
         buffer = ctypes.create_string_buffer(32_768)
@@ -546,7 +613,7 @@ def _read(kernel: Any, handle: int) -> bytes:
         chunks.append(buffer.raw[: count.value])
 
 
-def _launch(image: Path, sid: int, sid_text: str, request: dict[str, Any]) -> dict[str, Any]:
+def _launch(image: Path, sid: int, sid_text: str, profile: Path, temp: Path, request: dict[str, Any]) -> dict[str, Any]:
     kernel, advapi, _, _ = _api()
     attributes = _SecurityAttributes(ctypes.sizeof(_SecurityAttributes), None, True)
     child_stdin = parent_stdin = parent_stdout = child_stdout = parent_stderr = child_stderr = job = None
@@ -590,12 +657,12 @@ def _launch(image: Path, sid: int, sid_text: str, request: dict[str, Any]) -> di
         startup.StartupInfo.hStdError = child_stderr
         startup.lpAttributeList = attribute_list
         env_fields = {
-            "LOCALAPPDATA": os.environ["LOCALAPPDATA"],
+            "LOCALAPPDATA": str(profile),
             "PYTHONDONTWRITEBYTECODE": "1",
             "PYTHONNOUSERSITE": "1",
             "SYSTEMROOT": os.environ.get("SYSTEMROOT", r"C:\Windows"),
-            "TEMP": os.environ["TEMP"],
-            "TMP": os.environ["TEMP"],
+            "TEMP": str(temp),
+            "TMP": str(temp),
             "WINDIR": os.environ.get("WINDIR", r"C:\Windows"),
         }
         env_block = ctypes.create_unicode_buffer(
@@ -695,9 +762,11 @@ def _validated_loopback_observation(value: Any) -> dict[str, Any]:
     if attempted:
         if startup != 0 or outcome != "denied" or not isinstance(error, int) or isinstance(error, bool) or error <= 0:
             raise LPACError("lpac-network-connection-not-denied")
-    elif outcome != "not-tested" or (
-        startup == 0 and (not isinstance(error, int) or isinstance(error, bool) or error <= 0)
-    ) or (startup != 0 and error is not None):
+    elif (
+        outcome != "not-tested"
+        or (startup == 0 and (not isinstance(error, int) or isinstance(error, bool) or error <= 0))
+        or (startup != 0 and error is not None)
+    ):
         raise LPACError("lpac-network-observation-invalid")
     return value
 
@@ -711,21 +780,26 @@ def run_probe(
     evidence of a production broker, grant, durable job or audit integration.
     """
 
+    from .no_write_acl import AclRestoration, no_write_lpac_acl
+    from .recovery_guardian import start_guardian
+
     _verified_image(package, inventory)
-    kernel, advapi, userenv, ole = _api()
-    name: str | None = None
+    kernel, advapi, userenv, _ole = _api()
+    guardian = None
     sid: int | None = None
-    sid_text: str | None = None
+    acl_status = AclRestoration()
     try:
-        name, sid, sid_text, profile, temp = _profile(userenv, advapi, ole)
-        runtime_root = profile / "runtime"
-        shutil.copytree(package, runtime_root)
+        guardian = start_guardian()
+        name, sid_text, profile, temp, runtime_root = (
+            guardian.name,
+            guardian.sid_text,
+            guardian.profile,
+            guardian.temp,
+            guardian.runtime,
+        )
+        sid = _derive_profile_sid(userenv, advapi, kernel, name, sid_text)
+        shutil.copytree(package, runtime_root, dirs_exist_ok=True)
         image = _verified_image(runtime_root, inventory)
-        user_sid = _current_user_sid(advapi, kernel)
-        _run_icacls(profile.parent, "/grant", f"*{sid_text}:(OI)(CI)(RX)", f"*{user_sid}:(OI)(CI)(RX)", "/T")
-        _run_icacls(profile.parent, "/deny", f"*{sid_text}:(OI)(CI)(W)", "/T")
-        _run_icacls(profile, "/deny", f"*{sid_text}:(WD,AD,DC)")
-        _run_icacls(temp, "/deny", f"*{sid_text}:(WD,AD,DC)")
         request = {
             "protocolVersion": "1.0",
             "jobNonce": secrets.token_hex(16),
@@ -735,9 +809,20 @@ def run_probe(
             "writePath": str(write_path.resolve(strict=False)),
             "loopbackPort": loopback_port,
         }
-        result = _launch(image, sid, sid_text, request)
+        guardian.seal()
+        with no_write_lpac_acl(profile, temp, runtime_root, sid_text, kernel, advapi, restoration=acl_status):
+            result = _launch(image, sid, sid_text, profile, temp, request)
         probes = result["probes"]
         _validated_loopback_observation(probes.get("directLoopback") if isinstance(probes, dict) else None)
+        child = probes.get("childBreakaway") if isinstance(probes, dict) else None
+        if (
+            not isinstance(child, dict)
+            or set(child) != {"attempted", "outcome", "errorCode"}
+            or child["attempted"] is not True
+            or child["outcome"] != "denied"
+            or type(child["errorCode"]) is not int
+        ):
+            raise LPACError("lpac-child-breakaway-not-denied")
         expected_denials = {
             "unrelatedRead": "denied",
             "outsideWrite": "denied",
@@ -745,7 +830,9 @@ def run_probe(
             "tempWrite": "denied",
             "parentEnvironmentSecret": "denied",
         }
-        observed_denials = {key: value for key, value in probes.items() if key != "directLoopback"}
+        observed_denials = {
+            key: value for key, value in probes.items() if key not in {"directLoopback", "childBreakaway"}
+        }
         if observed_denials != expected_denials:
             mismatched = sorted(
                 key
@@ -755,7 +842,9 @@ def run_probe(
             raise LPACError("lpac-ambient-authority-not-denied:" + ",".join(mismatched))
         return result
     finally:
-        if sid:
-            advapi.FreeSid(sid)
-        if name and userenv.DeleteAppContainerProfile(name) != 0 and sys.exc_info()[0] is None:
-            raise LPACError("lpac-profile-cleanup-failed")
+        try:
+            if guardian:
+                guardian.finish(restored=acl_status.restored)
+        finally:
+            if sid:
+                advapi.FreeSid(sid)

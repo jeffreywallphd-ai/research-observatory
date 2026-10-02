@@ -16,6 +16,7 @@ ObjectCreationSource = Literal[
 ObjectAccessPurpose = Literal[
     "reference-import",
     "document-analysis",
+    "connector-plugin-execution",
     "test-verification",
     "storage-performance",
     "project-backup",
