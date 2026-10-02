@@ -1039,14 +1039,26 @@ def governed_experience_html(repo: Path, experience: dict[str, Any]) -> tuple[st
         )
         for item in experience.get("files", [])
     )
-    summary = (
-        f"Reference <code>{esc(experience.get('referenceId'))}</code> is already human-approved. "
-        "Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve "
-        "a new reference or authorize bootstrap materialization of reference approval."
-        if experience.get("referenceApprovalStatus") == "approved"
-        else f"Reference <code>{esc(experience.get('referenceId'))}</code> requires human approval. "
-        "Its canonical approval and publication must precede renderer implementation under the approved amendment."
-    )
+    reference_id = experience.get("referenceId")
+    if not reference_id:
+        if (
+            experience.get("files")
+            or experience.get("approvalRequired") is True
+            or experience.get("referenceApprovalStatus") == "approved"
+        ):
+            raise ValueError("Governed referenceId is missing from an experience proposal")
+        summary = "No governed reference is bound or proposed by this enabler."
+    elif experience.get("referenceApprovalStatus") == "approved":
+        summary = (
+            f"Reference <code>{esc(reference_id)}</code> is already human-approved. "
+            "Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve "
+            "a new reference or authorize bootstrap materialization of reference approval."
+        )
+    else:
+        summary = (
+            f"Reference <code>{esc(reference_id)}</code> requires human approval. "
+            "Its canonical approval and publication must precede renderer implementation under the approved amendment."
+        )
     if experience.get("sourceBinding"):
         binding = experience["sourceBinding"]
         summary += (
@@ -1667,7 +1679,9 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
 <section class="callout callout-warning">
   <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>{
             safe_resume
-        } The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving {esc(record['target_wave'])} in place is prohibited.</p></div>
+        } The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving {
+            esc(record["target_wave"])
+        } in place is prohibited.</p></div>
 </section>
 <details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria">{
             rollback

@@ -1144,5 +1144,18 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         self.assertIn("Amendment-exit review and adoption projections", summary)
 
 
+class EnablerExperienceProjectionTests(unittest.TestCase):
+    def test_w1_enabler_without_reference_does_not_invent_approval_duty(self) -> None:
+        summary, rows = governed_experience_html(
+            REPO,
+            {"files": [], "referenceApprovalStatus": "not-bound"},
+        )
+        self.assertEqual("No governed reference is bound or proposed by this enabler.", summary)
+        self.assertEqual("", rows)
+        self.assertNotIn("requires human approval", summary)
+        with self.assertRaisesRegex(ValueError, "referenceId"):
+            governed_experience_html(REPO, {"files": [], "approvalRequired": True})
+
+
 if __name__ == "__main__":
     unittest.main()
