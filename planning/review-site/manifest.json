@@ -37994,7 +37994,7 @@
         {
           "task_id": "W2.A01.T01",
           "title": "Admit exact intentional amendment UI lineage",
-          "status": "IN_PROGRESS",
+          "status": "REVIEW",
           "mode": "append-only",
           "latest_review": {
             "reviewer": "agent:/root/verifier_repair_review",
@@ -38119,7 +38119,65 @@
                 }
               }
             ],
-            "current_submission": null
+            "current_submission": {
+              "id": "R02",
+              "submitted_by": "codex-w2-implementation",
+              "submitted_at": "2026-10-02T20:40:25+00:00",
+              "candidate_commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+              "base_commit": "f64b7dfe0b347e9293064e53460f7dfb675a621f",
+              "branch": "codex/w2-implementation",
+              "evidence_reference": {
+                "type": "criterion-manifest",
+                "path": "artifacts/evidence/W2.A01.T01-R02.json",
+                "sha256": "6dae87844fb671678a01241151595100a6a61a43a986893a03e5f244feeb2f33",
+                "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+                "recorded_at": "2026-10-02T20:40:25+00:00"
+              },
+              "acceptance_criteria_sha256": "ee05b1366fd5ad93a5d389bdaec94e94a3968eff68625df8011322a8e6aa9a38",
+              "changed_paths": [
+                "artifacts/evidence/W2.A01.T01.json",
+                "artifacts/evidence/W2.A01.T01.review-R01.json",
+                "artifacts/evidence/W2.A01.T01.task-start.md",
+                "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md",
+                "docs/automation/design-first-ui-changes.md",
+                "docs/planning-implementation-plan.md",
+                "planning/backlog.yaml",
+                "planning/review-site/enablers/ECR-0009.html",
+                "planning/review-site/manifest.json",
+                "planning/status-summary.md",
+                "tests/foundation/test_ui_change_gate.py",
+                "tools/ui_change_gate.py"
+              ],
+              "selected_checks": [
+                ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_hidden_and_mixed_history tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_separate_backlog_from_product_commits tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_extra_and_redirected_history tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_non_renderer_product_and_security_files tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_redirected_ancillary_delivery tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_automatic_base_uses_live_claim tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_live_claim_rejects_foreign_or_expired_state tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks tests.foundation.test_ui_change_gate.UiChangeGateTests.test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance tests.foundation.test_ui_change_gate.UiChangeGateTests.test_approved_reference_implementation_and_defect_restoration_pass tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_requires_new_human_approval_before_implementation tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_self_approval tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_approval_and_implementation_in_same_commit tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_typed_product_bypasses tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_report_separate_typed_product_history",
+                ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+                ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+                ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+                ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo .",
+                ".venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+                ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py",
+                ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py",
+                ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py",
+                "git diff --check 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 a2e16012cfa9eb9a0f3413438fa0a88583d0be50"
+              ],
+              "deferred_checks": [
+                "Repository-wide foundation:quality remains failed at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44): ten prior CAP-05 Python files need bounded quality-inventory maintenance, and affected CAP-05 format/mypy findings need correction before Wave exit. All T01-changed Python files pass targeted quality on a2e16012; no global quality pass is claimed.",
+                "The full foundation/service/security profiles and product/native/UI conformance matrix remain for W2.A01.T02, resumed CAP-05.S01.T01, relevant slice checkpoints, and fresh W2 qualification; T01 changes no product renderer, reference publication, native file access or release gate."
+              ],
+              "selection_rationale": "R02 replays W2.A01.T01-R01-F01: admitted .d.ts typed product source previously bypassed publication chronology and backlog/product separation. Fresh exact-a2e16012 real-Git tests cover both denied histories, legal separate typed source, hidden add/revert, the complete ECR chain, and retained 1.0/1.1 routes. Exact task-base UI/ADR gates, backlog validation, and targeted quality cover the affected security/control surface. The R01 changes-requested ledger and red reproduction remain adverse evidence. No planctl source, packet, approval or validator input changed in this descendant, so the prior 16/16 planctl suite is supplementary rather than a reused qualifying receipt.",
+              "selection_sha256": "8d1e7672d66dc552363b5b3ac4eda4a5b1df57a8d090649ef2afc0f42b7370bf",
+              "prior_attempt_id": "R01",
+              "open_finding_ids": [
+                "W2.A01.T01-R01-F01"
+              ],
+              "root_cause_analysis": null,
+              "selected_command_ids": [
+                "foundation:ui-change",
+                "foundation:adr",
+                "foundation:backlog"
+              ],
+              "packet_sha256": "ccf45f6499f9d474c7d490465bb55c2ad61e095047fe1b533590199b06192a57"
+            }
           }
         },
         {

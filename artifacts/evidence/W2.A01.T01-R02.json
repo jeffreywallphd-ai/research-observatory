@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A01.T01",
+  "baseCommit": "f64b7dfe0b347e9293064e53460f7dfb675a621f",
+  "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.A01.T01.json",
+    "artifacts/evidence/W2.A01.T01.review-R01.json",
+    "artifacts/evidence/W2.A01.T01.task-start.md",
+    "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0009.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The existing opt-in 1.2 schema still selects only W2.A01.T02; the Git-bound packet, approval, proposal, T01 review and live T02 claim chain remains authenticated.",
+        "The fresh a2e16012 17-case focused schema/Git suite passes its complete approved packet-to-renderer lineage and label/authority denials."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The exact T02 owner, lease, branch, base, first claim, immutable approval introductions and T01 independent predecessor checks remain intact.",
+        "R01 finding W2.A01.T01-R01-F01 is addressed by classifying admitted typed .d.ts product source for publication-before-product chronology while retaining governed uiFiles separately; both real-Git bypass reproductions now deny."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The R01 review at artifacts/evidence/W2.A01.T01.review-R01.json remains changes-requested with blocking finding W2.A01.T01-R01-F01. Its two pre-fix real-Git cases failed to raise as captured in ignored artifacts/tmp/W2.A01.T01.R02-F01.red.log (SHA-256 74b76770a688dd075d3e1d970b719b4a834722016561897252900937205b66e4); a2e16012 closes both in the fresh 17-case run.",
+        "An admitted .d.ts typed source commit before reference publication or mixed with planning/backlog.yaml now denies; separate taskctl transitions and post-publication typed product work remain legal. Typed add/revert history also denies, and native/Core/security paths remain out of scope."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The 1.0 ordinary/linked-restoration and 1.1 resumed-amendment positive and adverse fixtures remain in the fresh a2e16012 focused 17-case suite with unchanged assertions and policy roots.",
+        "The exact 1.2 fix adds a typed-product classifier only after the bounded delivery allowlist; it does not change ordinary changedFiles or governed uiFiles accounting."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "The indexed Proposed ADR-0035 companion remains linked to W2.A01.T01 under ADR-0001/0003; the remediation clarifies typed product-source chronology and task-start scope without superseding ADR-0003.",
+        "The fresh exact 468cb390..a2e16012 ADR check passes 35 indexed records and 18 changed paths; R02 independent ADR/security/control review remains required."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "Fresh exact-candidate UI/Git-history 17/17, backlog, ADR, UI gate, canonical profile, targeted Ruff format/lint/mypy, and whitespace checks all pass on a2e16012, with each raw output hash recorded below.",
+        "The prior planctl amendment suite passed 16/16 at f64b7dfe but is supplementary to R02 because this remediation changes only the exact UI gate classifier/tests/docs and no planctl input. R02 independent expanded task review is still pending; W2.A01.T02 must remain unclaimed until approved disposition."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:backlog"
+    ],
+    "riskAnalysis": "R02 replays W2.A01.T01-R01-F01: admitted .d.ts typed product source previously bypassed publication chronology and backlog/product separation. Fresh exact-a2e16012 real-Git tests cover both denied histories, legal separate typed source, hidden add/revert, the complete ECR chain, and retained 1.0/1.1 routes. Exact task-base UI/ADR gates, backlog validation, and targeted quality cover the affected security/control surface. The R01 changes-requested ledger and red reproduction remain adverse evidence. No planctl source, packet, approval or validator input changed in this descendant, so the prior 16/16 planctl suite is supplementary rather than a reused qualifying receipt.",
+    "deferred": [
+      "Repository-wide foundation:quality remains failed at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44): ten prior CAP-05 Python files need bounded quality-inventory maintenance, and affected CAP-05 format/mypy findings need correction before Wave exit. All T01-changed Python files pass targeted quality on a2e16012; no global quality pass is claimed.",
+      "The full foundation/service/security profiles and product/native/UI conformance matrix remain for W2.A01.T02, resumed CAP-05.S01.T01, relevant slice checkpoints, and fresh W2 qualification; T01 changes no product renderer, reference publication, native file access or release gate."
+    ]
+  },
+  "checks": [
+    {
+      "id": "ui",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_hidden_and_mixed_history tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_separate_backlog_from_product_commits tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_reject_extra_and_redirected_history tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_non_renderer_product_and_security_files tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_redirected_ancillary_delivery tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_automatic_base_uses_live_claim tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_live_claim_rejects_foreign_or_expired_state tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks tests.foundation.test_ui_change_gate.UiChangeGateTests.test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance tests.foundation.test_ui_change_gate.UiChangeGateTests.test_approved_reference_implementation_and_defect_restoration_pass tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_requires_new_human_approval_before_implementation tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_self_approval tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_change_rejects_approval_and_implementation_in_same_commit tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_deny_typed_product_bypasses tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_segments_report_separate_typed_product_history",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.ui-a2e16012.log",
+      "rawOutputSha256": "1cb3fbb625ab21ab19cd2f185acacaee6658b06e260af07572ee423e405535dd",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "17 focused 1.2 intentional-amendment and retained 1.0/1.1 real-Git/schema tests passed in 228.111 seconds; both R01-F01 typed-source bypasses now deny."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.backlog-a2e16012.log",
+      "rawOutputSha256": "1e29322fc7e664317b715b7f9c36705908bf0a14e1f15e117f09408ff07cb169",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "Canonical backlog validates: 20 capabilities, 117 slices, 387 tasks, 12 release gates."
+    },
+    {
+      "id": "adr",
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.adr-a2e16012.log",
+      "rawOutputSha256": "554d16b90253c690295df12675191e5f8adc8ad7cd32b00def5e169b0e7f29ca",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "Exact task-base ADR checker passed: 35 indexed records and 18 changed paths inspected."
+    },
+    {
+      "id": "ui-gate",
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 --head a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.ui-gate-a2e16012.log",
+      "rawOutputSha256": "833fb40eef0dc58d91fe98327a451d9750f3bc422235e6b9bac770aa016910b7",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "Exact task-base UI change gate passed for control-only T01 candidate; no renderer change is claimed."
+    },
+    {
+      "id": "ui-gate-profile",
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.ui-gate-profile-a2e16012.log",
+      "rawOutputSha256": "3444030ab439ad68c5e05251ee70ee1232ff3cdbdde73e47c489363a03367554",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "Canonical UI change gate profile command passed on the clean candidate."
+    },
+    {
+      "id": "adr-profile",
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.adr-profile-a2e16012.log",
+      "rawOutputSha256": "aa5559b813c9658d279353127cbdfc24bb630d91ab041e1562077d49b0538baf",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "Canonical ADR registry command passed: 35 indexed records."
+    },
+    {
+      "id": "ruff-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.ruff-format-a2e16012.log",
+      "rawOutputSha256": "55b5a2cb0bdd55641f1b6dad60805a4c29520e41d507781e75aa8ec8d6ed9a10",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "All four T01-changed Python files pass Ruff format check."
+    },
+    {
+      "id": "ruff-lint",
+      "command": ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.ruff-lint-a2e16012.log",
+      "rawOutputSha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "All four T01-changed Python files pass Ruff lint."
+    },
+    {
+      "id": "mypy",
+      "command": ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py tools/adr_check.py tests/foundation/test_adr_check.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.mypy-a2e16012.log",
+      "rawOutputSha256": "d9a5631f7d87a741fbecc3236286d1792d22d349ff13846d71cdc9217307bb76",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "All four T01-changed Python files pass mypy with no issues."
+    },
+    {
+      "id": "diff",
+      "command": "git diff --check 468cb3902f5b3ea9c1ad9769c969c581f68cd1c2 a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T01.diff-a2e16012.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "provenance": "Fresh local execution on the clean committed Windows x64 a2e16012 candidate; no shared HEAD or selected input changed during this check.",
+      "result": "Exact task-base patch has no whitespace errors."
+    }
+  ],
+  "scopeDeviation": "No approved T01 scope change or supplemental refactoring. The immutable R01 submission and changes-requested review remain adverse evidence; a2e16012 addresses only W2.A01.T01-R01-F01 through typed product-source classification, real-Git tests and bounded explanatory text. Prior global quality inventory failure remains disclosed; repository-wide quality is not claimed passed.",
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "expanded-independent-security-control-ADR-review",
+    "openFindingIds": [
+      "W2.A01.T01-R01-F01"
+    ],
+    "note": "Review the exact a2e16012 remediation, 12 changed paths, R01 ledger and red reproduction, all 10 fresh raw-log hashes, typed source versus governed uiFiles separation, retained 1.0/1.1 lanes, and disclosed global CAP-05 quality failure. Do not claim R01-F01 closed or W2.A01.T02 ready until independent R02 approval."
+  },
+  "supersedes": {
+    "path": "artifacts/evidence/W2.A01.T01.json",
+    "sha256": "cf21fd27e7cc1769cdbcef561d370d3957e8b6b2dc0f02d9aac439db216fed59",
+    "commit": "f64b7dfe0b347e9293064e53460f7dfb675a621f",
+    "reason": "R02 remediation of independently recorded W2.A01.T01-R01-F01; R01 evidence and adverse review remain immutable."
+  }
+}
