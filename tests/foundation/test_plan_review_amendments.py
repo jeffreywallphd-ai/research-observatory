@@ -42,6 +42,8 @@ from plan_review_site import (  # noqa: E402
     amendment_exit_review_html,
     build_site,
     enabler_display_title,
+    enabler_interrupts_wave,
+    enabler_ordinary_authority_html,
     governed_experience_html,
     load_enabler_change_requests,
     task_review_history_html,
@@ -414,6 +416,44 @@ class PlanReviewSourceLinkPortabilityTests(unittest.TestCase):
 
 
 class PlanReviewAmendmentTests(unittest.TestCase):
+    def test_superseded_amendment_does_not_interrupt_wave(self) -> None:
+        wave = {"id": "W1", "campaign": {"status": "PAUSED"}}
+        record = {
+            "target_wave": "W1",
+            "approval_status": "APPROVED",
+            "lifecycle_status": "SUPERSEDED",
+            "classification": "gate-integrity-safety-defect",
+        }
+        self.assertFalse(enabler_interrupts_wave(record, wave))
+        record["lifecycle_status"] = "APPROVED"
+        self.assertTrue(enabler_interrupts_wave(record, wave))
+
+    def test_enabler_ordinary_authority_preserves_v3_and_v2_bases(self) -> None:
+        record = {
+            "authority_chain": {},
+            "effective_base": {
+                "waveBase": {"packetCommit": "a" * 40, "approvalRecordCommit": "b" * 40},
+                "orderedAmendments": [
+                    {"id": "W1.A01", "status": "ADOPTED", "packetCommit": "c" * 40},
+                    {"id": "W1.A02", "status": "APPROVED", "packetCommit": "d" * 40},
+                ],
+            },
+            "authority": {},
+        }
+        rendered = enabler_ordinary_authority_html(record)
+        self.assertIn(f"base <code>{'a' * 40}</code> (approval <code>{'b' * 40}</code>)", rendered)
+        self.assertIn(f"+ W1.A01 <code>{'c' * 40}</code>", rendered)
+        self.assertNotIn("W1.A02", rendered)
+        record["effective_base"] = {
+            "originalPacketCommit": "e" * 40,
+            "legacyAmendmentId": "W1.A01",
+            "legacyAmendmentPacketCommit": "f" * 40,
+        }
+        self.assertEqual(
+            enabler_ordinary_authority_html(record),
+            f"base <code>{'e' * 40}</code> + W1.A01 <code>{'f' * 40}</code>",
+        )
+
     temporary: ClassVar[tempfile.TemporaryDirectory[str]]
     site: ClassVar[Path]
     manifest: ClassVar[dict[str, Any]]
@@ -645,9 +685,42 @@ class PlanReviewAmendmentTests(unittest.TestCase):
                 amendment=None,
                 task_reviews=[],
             )
-            with patch("plan_review_site.load_enabler_change_requests", return_value=[record]):
+            interrupt_proposal = root / "ECR-9001.md"
+            interrupt_proposal.write_text(
+                "---\ndocument_type: enabler-change-request\nchange_request_id: ECR-9001\n---\n\n"
+                "# ECR-9001 — Synthetic W2 interruption\n\nSynthetic proposal.\n",
+                encoding="utf-8",
+            )
+            interrupt_record = copy.deepcopy(record)
+            interrupt_record.update(
+                change_request_id="ECR-9001",
+                amendment_id="W2.A98",
+                proposal_path=interrupt_proposal.relative_to(REPO).as_posix(),
+                approval_status="APPROVED",
+                approval_sha256="f" * 64,
+                approved_by="synthetic-reviewer",
+                approved_at="2026-10-02T00:00:00Z",
+                lifecycle_status="APPROVED",
+                bootstrap_status="REVIEW",
+                bootstrap_unit="W2.A98.B00",
+                task_inventory=[{"id": "W2.A98.T01", "title": "Synthetic task", "dependencies": []}],
+                authority_chain={
+                    "waveBase": {
+                        "waveId": "W2",
+                        "packetCommit": "a" * 40,
+                        "approvalRecordCommit": "b" * 40,
+                    },
+                    "orderedAmendments": [
+                        {"id": "W2.A96", "status": "ADOPTED", "packetCommit": "c" * 40},
+                        {"id": "W2.A97", "status": "APPROVED", "packetCommit": "d" * 40},
+                    ],
+                    "reservedAmendments": [{"id": "W2.A95", "packetCommit": "e" * 40}],
+                },
+            )
+            with patch("plan_review_site.load_enabler_change_requests", return_value=[record, interrupt_record]):
                 build_site(REPO, root / "site")
             detail = (root / "site/enablers/ECR-9000.html").read_text(encoding="utf-8")
+            wave = (root / "site/waves/W2.html").read_text(encoding="utf-8")
 
         self.assertIn("<h1>ECR-9000 — Synthetic W2 authority</h1>", detail)
         self.assertIn("<title>ECR-9000 Synthetic W2 authority", detail)
@@ -659,6 +732,15 @@ class PlanReviewAmendmentTests(unittest.TestCase):
         self.assertNotIn("W1 adoption checkpoint", detail)
         self.assertIn("canonical approval and publication must precede renderer implementation", detail)
         self.assertNotIn("requires human approval: True", detail)
+        interruption = wave.split('id="wave-amendment-interruption"', 1)[1].split("</section>", 1)[0]
+        self.assertIn(
+            f"Current ordinary authority: base <code>{'a' * 40}</code> "
+            f"(approval <code>{'b' * 40}</code>) + W2.A96 <code>{'c' * 40}</code>.",
+            interruption,
+        )
+        self.assertNotIn("W2.A95", interruption)
+        self.assertNotIn("W2.A97", interruption)
+        self.assertNotIn("<code></code>", interruption)
         with self.assertRaisesRegex(ValueError, "ECR-9000 proposal requires a nonempty title"):
             enabler_display_title({}, "No heading", "ECR-9000")
 

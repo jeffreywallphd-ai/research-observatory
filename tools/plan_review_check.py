@@ -928,7 +928,7 @@ def main() -> int:
             for change_id, ecr in manifest_ecrs.items()
             if ecr.get("target_wave") == wave_id
             and ecr.get("approval_status") == "APPROVED"
-            and ecr.get("lifecycle_status") not in {"ADOPTED", "DEFERRED", "WITHDRAWN"}
+            and ecr.get("lifecycle_status") not in {"ADOPTED", "SUPERSEDED", "DEFERRED", "WITHDRAWN"}
             and (
                 ecr.get("lifecycle_status") != "NOT_MATERIALIZED"
                 or (

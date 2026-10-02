@@ -911,12 +911,40 @@ def load_enabler_change_requests(repo: Path, backlog: dict[str, Any]) -> list[di
 def enabler_interrupts_wave(record: dict[str, Any], wave: dict[str, Any]) -> bool:
     if record.get("target_wave") != wave.get("id") or record.get("approval_status") != "APPROVED":
         return False
-    if record.get("lifecycle_status") in {"ADOPTED", "DEFERRED", "WITHDRAWN"}:
+    if record.get("lifecycle_status") in {"ADOPTED", "SUPERSEDED", "DEFERRED", "WITHDRAWN"}:
         return False
     if record.get("lifecycle_status") != "NOT_MATERIALIZED":
         return True
     campaign = wave.get("campaign") or {}
     return campaign.get("status") == "PAUSED" and record.get("classification") == "gate-integrity-safety-defect"
+
+
+def enabler_ordinary_authority_html(record: dict[str, Any]) -> str:
+    """Show the effective ordinary authority without counting a proposed amendment."""
+    authority_chain = record.get("authority_chain") or {}
+    effective_base = record.get("effective_base") or {}
+    authority = record.get("authority") or {}
+    structured = authority_chain if authority_chain.get("waveBase") else effective_base
+    if structured.get("waveBase"):
+        wave_base = structured["waveBase"]
+        rendered = (
+            f"base <code>{esc(wave_base.get('packetCommit') or 'missing')}</code> "
+            f"(approval <code>{esc(wave_base.get('approvalRecordCommit') or 'missing')}</code>)"
+        )
+        for predecessor in structured.get("orderedAmendments") or []:
+            if predecessor.get("status") == "ADOPTED":
+                rendered += (
+                    f" + {esc(predecessor.get('id') or 'missing')} "
+                    f"<code>{esc(predecessor.get('packetCommit') or 'missing')}</code>"
+                )
+        return rendered
+    base_packet = effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit")
+    legacy_id = effective_base.get("legacyAmendmentId") or authority.get("legacyAmendmentId")
+    legacy_packet = effective_base.get("legacyAmendmentPacketCommit") or authority.get("legacyAmendmentPacketCommit")
+    rendered = f"base <code>{esc(base_packet or 'missing')}</code>"
+    if legacy_id and legacy_packet:
+        rendered += f" + {esc(legacy_id)} <code>{esc(legacy_packet)}</code>"
+    return rendered
 
 
 def load_recovery_holds(repo: Path, backlog: dict[str, Any]) -> list[dict[str, Any]]:
@@ -1246,7 +1274,7 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
   <div class="capability-card-top"><span class="eyebrow">{esc(record["amendment_id"])} · {esc(record["target_wave"])}</span>{status_badge(record["approval_status"])}</div>
   <h2>{esc(record["change_request_id"])}</h2>
   <p>{esc(record["classification"])}</p>
-  <dl><div><dt>Proposal</dt><dd>{esc(record["proposal_status"])}</dd></div><div><dt>Materialization</dt><dd>{esc(record["lifecycle_status"])}</dd></div><div><dt>Campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
+  <dl><div><dt>Proposal</dt><dd>{esc(record["proposal_status"])}</dd></div><div><dt>Amendment lifecycle</dt><dd>{esc(record["lifecycle_status"])}</dd></div><div><dt>Bootstrap</dt><dd>{esc(record["bootstrap_status"])}</dd></div><div><dt>Campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
   <span class="text-link">Inspect exact authority and execution boundary</span>
 </a>"""
         )
@@ -1599,9 +1627,9 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
             esc(record["proposal_execution_state"])
         }</dd></div><div><dt>Human approval</dt><dd>{
             esc(record["approval_status"])
-        }</dd></div><div><dt>Materialization lifecycle</dt><dd>{
+        }</dd></div><div><dt>Amendment lifecycle</dt><dd>{
             esc(record["lifecycle_status"])
-        }</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
+        }</dd></div><div><dt>Bootstrap</dt><dd>{esc(record["bootstrap_status"])}</dd></div><div><dt>Amendment campaign</dt><dd>{esc(record["campaign_status"])}</dd></div></dl>
   <p>{approval_summary}</p>
 </section>
 <section class="review-toolbar">
@@ -1932,19 +1960,13 @@ def _build_site_unlocked(repo: Path, output: Path, selected_capability: str | No
         if interrupting_enablers:
             interruption_items_parts: list[str] = []
             for record in interrupting_enablers:
-                authority = record["authority"]
-                effective_base = record["effective_base"]
-                base_packet = effective_base.get("originalPacketCommit") or authority.get("originalWavePacketCommit")
-                legacy_id = effective_base.get("legacyAmendmentId") or authority.get("legacyAmendmentId")
-                legacy_packet = effective_base.get("legacyAmendmentPacketCommit") or authority.get(
-                    "legacyAmendmentPacketCommit"
-                )
+                ordinary_authority = enabler_ordinary_authority_html(record)
                 interruption_items_parts.append(
                     f'<li><a href="../{esc(record["page"])}"><strong>{esc(record["change_request_id"])} / {esc(record["amendment_id"])}</strong></a> — '
-                    f"approval {esc(record['approval_status'])}; materialization {esc(record['lifecycle_status'])}; "
+                    f"approval {esc(record['approval_status'])}; lifecycle {esc(record['lifecycle_status'])}; "
                     f"bootstrap {esc(record['bootstrap_status'])}; campaign {esc(record['campaign_status'])}"
-                    f"<small>Current ordinary authority: base <code>{esc(base_packet)}</code> + {esc(legacy_id)} "
-                    f"<code>{esc(legacy_packet)}</code>. Approved interrupting scope: {esc(record['amendment_id'])} packet "
+                    f"<small>Current ordinary authority: {ordinary_authority}. "
+                    f"Approved interrupting scope: {esc(record['amendment_id'])} packet "
                     f"<code>{esc(record['packet_sha256'])}</code> and approval <code>{esc(record['approval_sha256'])}</code>; not ordinary authority until adopted.</small></li>"
                 )
             interruption_items = "".join(interruption_items_parts)
