@@ -17974,7 +17974,7 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -18015,7 +18015,7 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S01.T01.html",
               "dependencies": [
                 "CAP-04.S04.T02",
@@ -18023,12 +18023,15 @@
                 "CAP-04.S05.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "6506c68461144747b0ee9be10853211717aa381d"
               },
               "plan_section_sha256": "89a49d436097cfafeb28f30971ba08e6634b396b0cf419f53e9d681bc85b69d4",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-05.S01.T01.task-start.md",
+                "sha256": "2abb2b2733534187d661d6582a288131e4370e297c8e2a8afc946395e6bd34b9"
+              }
             },
             {
               "task_id": "CAP-05.S01.T02",

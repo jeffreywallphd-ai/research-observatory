@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b828cca71092eea8763bd596f5717574a93ec7b69d93aa8e5de7ad2aaba3e1eb
+source_sha256: af675f74fddb624efe257f3bce76f1acbea599102a0bb602848ca5b327b4b5ff
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9525,13 +9525,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `READY` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
 **Dependencies:** `CAP-04.S04.T02`, `CAP-02.S03.T03`, `CAP-04.S05.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Drag/drop and file-picker flows for PDF, JATS, TEI, XML, HTML, DOCX, and plain text with work/version selection.
 

@@ -1,0 +1,20 @@
+# CAP-05.S01.T01 task-start acceptance closure
+
+Claim base: `6506c68461144747b0ee9be10853211717aa381d`; W2 campaign owner `codex-w2-implementation`.
+
+Authority: approved W2 packet and CAP-05.S01 §9.1; backlog criteria and dependencies; ADR-0015, ADR-0028, ADR-0029, current canonical WorkVersion/reconciliation and rights contracts, and approved Academic Minimal 1.7. T01 owns local attachment and exact Work/version association. Remote OA retrieval and the broader acquisition queue remain T02/T03.
+
+Current boundary: Core schema v21 has a `documents` subtype with an object digest but no local attachment/WorkVersion association service. Native import selection covers bibliography sources, not document attachment. The existing object store provides encrypted project-scoped content-addressed storage. Capture the literal v21 predecessor, including populated synthetic associations and ciphertext identity, before an additive migration.
+
+| Material rule | Planned proof |
+|---|---|
+| A current local project can attach each supported PDF, JATS, TEI/XML, HTML, DOCX and plain-text file to an exact canonical Work/version. | Focused end-to-end native held selection → bounded Core intake → encrypted object → canonical association/provenance, with exact identity assertions and a restart reopen. |
+| Filename, extension, MIME, renderer path and a stale Work/version cannot confer authority. Uncertain association requires an explicit researcher confirmation bound to the current candidate. | Signature/structure mismatch, stale version, cross-project and missing-confirmation denials before canonical publication. Renderer receives opaque selection identity, never an unrestricted path. |
+| Accepted bytes are bounded at 128 MiB, encrypted in staging, and inspected only inside the qualified zero-capability worker. Unsupported, password-protected, active/unsafe, oversize and malformed content receive actionable typed errors. | Real worker format/password/size probes with synthetic files; no plaintext ordinary temp, no canonical association or success object after rejection. |
+| Identical bytes reuse project-scoped encrypted object storage but retain separate source assertions and exact Work/version history. | Two attachments with identical bytes yield one canonical object and distinct immutable acquisition assertions; other-project dedup/rights substitution denies. |
+| Current rights and researcher/project authority are rechecked at commit. Cancellation, interrupted copy, disk pressure or restart does not publish a partial association. | Deterministic copy/transaction fault and cancellation/restart cases; metadata Work stays usable; only owned staging is cleaned. |
+| Renderer interaction follows a human-approved experience reference with keyboard, focus, light/dark, error, cancel, uncertain-match and return context. | **Governed design gate:** reference 1.7 lacks the required attachment flow. Prepare and validate a new reference and append-only W2 amendment, obtain explicit owner approval and new reference identity before renderer implementation; then run focused conformance and native/browser proof. |
+
+Initial tests: start with backend success and stale/cross-project/password/duplicate/failure characterizations before product edits. Inspect and reuse the exact v21 migration fixture and protected object-store boundary. Select affected document, object-store, rights, reconciliation, migration, worker, contract, native and UI checks only as changed paths warrant. Full documents/desktop profiles and cross-capability matrix remain for slice/checkpoint/W2 qualification unless a shared runtime change expands risk.
+
+The approved 1.7 Source Manager “Add local library” action is an adapter chooser, not this Work/version attachment. No renderer implementation or implied 1.7 conformance will be claimed from that control. Backend work independent of page layout may proceed while the design-first packet is prepared; no task-completion claim precedes the governed reference decision and complete vertical proof.
