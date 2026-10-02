@@ -51497,7 +51497,7 @@ wave_amendments:
         independent checks. The timestamp records binding of the owner's decision to this exact reviewed candidate.
   bootstrap:
     id: W2.A01.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex-w2-implementation
     implementation_commit: 68d36d6722202cc2e9a497755596cb629bb32174
     submission_branch: codex/w2-implementation
@@ -51509,10 +51509,11 @@ wave_amendments:
       commit: 68d36d6722202cc2e9a497755596cb629bb32174
       recorded_at: '2026-10-02T17:06:11+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: agent:/root/t01_commit_review
+      result: approved
+      reviewed_at: '2026-10-02T18:04:45+00:00'
+      notes: Independent R01 ledger artifacts/evidence/W2.A01.B00.review-R01.json at 5d60cb40 approves frozen candidate 68d36d67
+        and submission 013e8e40; bounded generated-site presentation follow-ups resolved at 907ed1ad.
   campaign: null
   tasks: []
   completion:
