@@ -57,7 +57,7 @@
       "id": "W2.A01.S01",
       "capabilityId": "CAP-05",
       "title": "Selected-version attachment experience authority",
-      "objective": "Publish a human-approved 1.8 attachment reference and deliver the bounded researcher UI under an independently reviewed intentional-amendment gate while preserving CAP-05.S01.T01 trusted acquisition authority.",
+      "objective": "Publish the human-approved 1.8 attachment reference and deliver a reviewed selected-version renderer interaction contract; original CAP-05.S01.T01 later wires native-only choose/drop and qualifies trusted acquisition before W2 release.",
       "workType": "new-product-work",
       "refactorTaskIds": [],
       "taskIds": [
@@ -67,7 +67,7 @@
       "acceptanceCriteria": [
         "The gate extension and a new indexed Proposed ADR-0035 companion are independently reviewed and committed together before the UI delivery task; only exact approved W2.A01.T02 may use the intentional amendment lane, with existing 1.0/1.1 denials preserved.",
         "The approved 1.8 reference is published from the exact reviewed proposal with only permitted approval metadata substitutions and derived hashes; publication strictly precedes every renderer implementation commit.",
-        "Mounted interface and trusted Core/native checks cover selected Work/version, local choose/drop, uncertain association, rights/status, cancel/retry/errors, exact-revision status/route handoff, pending reader state and keyboard/focus return; protected viewer opening remains CAP-05.S04.",
+        "Mounted renderer tests cover selected Work/version, opaque choose/drop intents, uncertain association, rights/status, cancel/retry/errors, exact-revision status/route handoff, pending reader state and keyboard/focus return with typed mock outcomes and fail-closed unavailable production actions. Real native/Core attachment and drop-path safety proof remain with resumed CAP-05.S01.T01; protected viewer opening remains CAP-05.S04.",
         "Expanded task/slice/exit review binds exact committed evidence and leaves ordinary CAP-05.S01.T01 and W2 release criteria separate."
       ]
     }
@@ -102,8 +102,8 @@
     },
     {
       "id": "W2.A01.T02",
-      "title": "Publish Academic Minimal 1.8 and deliver attachment UI",
-      "objective": "Publish the exact human-approved 1.8 reference, then implement the selected Work/version local full-text interaction in strictly later commits under the reviewed gate.",
+      "title": "Publish Academic Minimal 1.8 and stage attachment UI",
+      "objective": "Publish the exact human-approved 1.8 reference, then stage the selected Work/version renderer interaction and frozen typed opaque native contract in strictly later commits, leaving production file access unavailable until original CAP-05.S01.T01 wires the trusted bridge.",
       "estimate": "M",
       "dependencies": [
         "W2.A01.B00",
@@ -112,16 +112,16 @@
       "acceptanceCriteria": [
         "Bind every governed proposal file by the SHA-256 inventory in this packet and authenticate its exact Git blob at the later immutable packet commit before independent packet review and owner approval; publish only those reviewed files to design/ui-reference with enumerated approval metadata substitutions, derived hashes and exact immutable human reference approval record.",
         "Use a distinct reference publication/approval commit after the human decision and before every renderer implementation commit; maintain approved 1.7 historical bytes and a new 1.8 ID.",
-        "Implement the inline Ingestion Review panel from selected Work/version with native picker/drop, explicit uncertain-match confirmation, rights/status, cancel/Escape/retry and actionable unsafe/password/oversize/denied/interrupted outcomes; a committed attachment records exact-revision status/route and return context while the reader action stays disabled/pending until CAP-05.S04.",
+        "Implement the inline Ingestion Review panel from selected Work/version with typed opaque native command/event contract, explicit uncertain-match confirmation, rights/status, cancel/Escape/retry and actionable unsafe/password/oversize/denied/interrupted states from deterministic contract outcomes; exact-revision status/route and return context are modeled, with reader action disabled/pending until CAP-05.S04. Production choose/drop stays disabled or explicitly unavailable before native wiring; no renderer path/bytes, stock Tauri drop path event or broad filesystem grant.",
         "Provide task-owned intentional UI evidence listing exact changed governed files, current approval/package/base/owner and focused product checks; the complete task-base UI gate and adversarial lineage checks pass.",
-        "Prove mounted keyboard/focus/denial/recovery and real Core/native/disposable-project association, safety, provenance, rights and cancellation boundaries without claiming mock HTML as product behavior; preserve the ordinary CAP-05.S01.T01 completion obligation.",
+        "Prove mounted keyboard/focus/denial/recovery and typed native-contract behavior with synthetic outcomes; do not claim mock UI as real Core/native admission. Freeze exact opaque command/event names and payloads so resumed CAP-05.S01.T01 can add fixed-action native-only picker/drop, stage/candidate/cancel/commit and real disposable-project safety, provenance, rights, interruption and cancellation proof without a renderer follow-up.",
         "Complete independent expanded task and slice review before amendment exit/adoption; no premature ordinary W2 resume or Wave release."
       ],
       "verification": [
         "Reference generator, manifest/hash, route/workflow, accessibility and explicit approval-publication reproduction",
         "Whole task-base UI gate with per-commit and approved-reference lineage",
-        "Mounted desktop choose/drop/confirm/cancel/retry, exact-revision handoff, disabled/pending reader and keyboard/focus cases",
-        "Trusted local Core/native attachment, rights/unsafe/password/oversize/denial/restart/idempotence checks and independent review"
+        "Mounted desktop choose/drop intent, confirm/cancel/retry, exact-revision handoff, disabled/pending reader, keyboard/focus and unavailable-before-native cases using typed mock outcomes",
+        "Frozen opaque native command/event contract and no renderer path/bytes or stock Tauri drop event; trusted local Core/native attachment and native-only drop proof are original CAP-05.S01.T01 obligations after adoption"
       ]
     }
   ],
@@ -544,7 +544,7 @@
     "W2's historical packet/approval projection, quiescent pause and exact ECR/reference proposal file hashes authenticate before any approval or bootstrap; the later immutable packet commit must contain those exact governed Git blobs after the source-only proposal commit.",
     "Human approval of the exact ECR and 1.8 reference and independent packet review precede amendment activation; T01 independently reviewed gate precedes T02 reference publication and renderer delivery.",
     "The gate admits only exact intentional W2.A01.T02 authority while rejecting all enumerated hostile substitutions; ordinary and restoration lanes remain unchanged.",
-    "The 1.8 inline selected-version journey and trusted acquisition interface pass success/failure/denial/cancel/recovery/focus and exact-revision status/route handoff criteria; protected reader opening remains CAP-05.S04.",
+    "The 1.8 inline selected-version renderer journey and typed opaque native contract pass mounted success/failure/denial/cancel/recovery/focus and exact-revision status/route handoff cases, with production choose/drop unavailable until the native bridge is qualified; real trusted acquisition remains original CAP-05.S01.T01 and protected reader opening remains CAP-05.S04.",
     "Independent task/slice/exit dispositions and supported adoption precede explicit W2 resume; original CAP-05.S01.T01 and full W2 qualification remain separate."
   ],
   "verificationObligations": [
@@ -552,17 +552,17 @@
     "ADR-0001/0003 association: one indexed Proposed ADR-0035 companion linked to W2.A01.T01 in the same protected-gate change set, exact affected paths, adr_check base-to-candidate result and independent control/ADR review.",
     "Exact governed proposal generation/hash/inventory and reference publication comparison including metadata-only approval fields.",
     "Focused adversarial UI gate/schema tests for approvals, task identity/lease/base/branch, per-commit files, hidden reverts and existing 1.0/1.1 behavior, followed by independent control review.",
-    "Real mounted desktop/keyboard/focus/rights status and native/Core/disposable local project proof for attach, deny, unsafe, password, oversize, cancel, interruption, retry, restart, exact-revision handoff and disabled/pending reader state.",
+    "Mounted desktop/keyboard/focus/rights status and typed opaque native-contract proof with synthetic outcomes, unavailable production actions, exact-revision handoff and disabled/pending reader state; after adoption, original CAP-05.S01.T01 must prove real native-only picker/drop, Core/disposable-project attach, deny, unsafe, password, oversize, cancel, interruption, retry and restart before W2 release.",
     "Full task-base UI lineage, affected profiles, independent task/slice/exit review and later full W2 qualification; do not substitute mock screenshots for product checks."
   ],
   "rollback": [
     "Before approval, revise or defer only inert proposal bytes; keep 1.7, backlog and product unchanged.",
     "On base-repair, bootstrap or publication failure, retain original approved authority, adverse findings and one recoverable paused owner; no partial manual transition or approval inference.",
     "On T01/T02 failure, preserve attempts and review findings for bounded descendant remediation; no weakening old tests, hidden revert, auto-attach retry or reference ID reuse.",
-    "Withhold amendment adoption and ordinary W2 resume for open security, rights, reference, UI or trusted-boundary findings; full W2 exit and release remain separate."
+    "Withhold amendment adoption and ordinary W2 resume for open gate, reference, UI, opaque-contract or renderer path/bytes findings. Resumed CAP-05.S01.T01 and W2 release remain blocked for real native/Core security, rights, drop-path, file-safety and trusted-boundary findings; full W2 exit and release are separate."
   ],
   "nonGoals": [
-    "No reduction of original CAP-05.S01.T01 backend, rights, native file safety, provenance, persistence or review obligations.",
+    "No native/Core implementation or real attachment claim in W2.A01.T02; no reduction of original CAP-05.S01.T01 fixed native lifecycle commands, native-only drop interception, backend, rights, file safety, provenance, persistence or independent review obligations.",
     "No early CAP-05.S04 protected Document Reader transport, source opening, parsing, evidence selection or viewer qualification; T02 carries only exact-revision status/route and return context with a pending reader action.",
     "No new acquisition route, hosted/cloud provider, external network effect, arbitrary filesystem grant, remote upload, broad gate exemption or nonlocal data disclosure.",
     "No rewrite of approved Academic Minimal 1.7, original W2 packet, past task/evidence/approval history or GOV-MIG-0001 authority.",
@@ -571,7 +571,7 @@
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0009.md",
-      "sha256": "b94e34182527252cab5d8d9bdb44cebc1a23642691077c6f6b8347922ffe615c",
+      "sha256": "19b25c2170a6401ce0ca4567835817c14a53dfdb3f65e7d95a7886aa484210c2",
       "role": "canonical-proposal"
     },
     {
@@ -581,7 +581,7 @@
     },
     {
       "path": "planning/enabler-change-requests/ECR-0009-review.html",
-      "sha256": "9602904d6c67cdd178f99cd911e09fd9fb01a689a80cb5460781ad7a80ad2a93",
+      "sha256": "d64b54ee67d93094dd35ec0d0da82886a7bebc1681f68daf53ff375ee65f9941",
       "role": "human-review"
     }
   ]
