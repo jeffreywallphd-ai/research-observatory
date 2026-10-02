@@ -174,8 +174,8 @@ export function PluginReviewPane({ project, announce, active, initialPackage, na
   return <section className="ro-panel ro-stack" id="connector-review" aria-labelledby="connector-review-title" onKeyDown={(event) => { if (event.key === "Escape" && selected && !busy) { event.stopPropagation(); cancelReview(); } }} data-plugin-review>
     <h2 className="ro-typography ro-typography--section-title" id="connector-review-title" ref={reviewHeading} tabIndex={-1}>Review connector access</h2>
     <p>Selecting a local package inspects its declared identity and permissions. It does not run code, test a connection or retrieve research data.</p>
-    <div className="ro-action-row"><Button ref={chooseButton} disabled={!!busy || !active} onClick={() => void choose()}>Choose connector package…</Button>
-      {selected ? <><Button disabled={!!busy || !active} onClick={() => void act("refresh")}>Refresh review</Button><Button disabled={!!busy} onClick={cancelReview}>Cancel review</Button></> : null}</div>
+    <div><div className="ro-action-row"><Button ref={chooseButton} disabled={!!busy || !active} onClick={() => void choose()}>Choose connector package…</Button>
+      {selected ? <><Button disabled={!!busy || !active} onClick={() => void act("refresh")}>Refresh review</Button><Button disabled={!!busy} onClick={cancelReview}>Cancel review</Button></> : null}</div></div>
     {busy ? <p role="status">{busy === "choose" ? "Inspecting the selected local package…" : "Checking current connector authority…"}</p> : null}
     {failure ? <Notification tone="warning" title="Connector review needs attention">{failure}</Notification> : null}
     {notice ? <Notification tone="info" title="Connector review">{notice}</Notification> : null}
