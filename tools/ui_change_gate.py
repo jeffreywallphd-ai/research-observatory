@@ -2081,6 +2081,10 @@ def intentional_amendment_segments(
                     raise ValueError(f"intentional amendment delivery path is redirected or executable: {path}")
         ui_paths = {path for path in paths if is_implementation_path(path, policy)}
         reference_delta = {path for path in paths if path.startswith(reference_root)}
+        if "planning/backlog.yaml" in paths and (ui_paths or reference_delta):
+            raise ValueError(
+                "intentional amendment backlog transition cannot share a reference or renderer product commit"
+            )
         if ui_paths and not seen_publication:
             raise ValueError("human reference publication must strictly precede every renderer commit")
         if reference_delta:

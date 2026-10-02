@@ -2122,6 +2122,51 @@ class UiChangeGateTests(unittest.TestCase):
                     root, base, mixed, publication, "artifacts/evidence/ui-change/W2.A01.T02.json", {reference}, policy
                 )
 
+    def test_intentional_amendment_segments_separate_backlog_from_product_commits(self) -> None:
+        reference = "design/ui-reference/assets/tokens.css"
+        ui_path = "apps/desktop/src/View.tsx"
+        contract_path = "artifacts/evidence/ui-change/W2.A01.T02.json"
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _package = self.prepare(temporary)
+            policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+            backlog_path = root / "planning/backlog.yaml"
+            self.write_yaml(backlog_path, {"capabilities": [], "control_plane": {"active_amendment": "W2.A01"}})
+            self.commit(root, "stand-alone taskctl claim transition")
+            (root / reference).write_text(":root { --surface: blue; }\n", encoding="utf-8")
+            publication = self.commit(root, "separate reference publication")
+            self.write_json(root / contract_path, {"synthetic": "regular"})
+            (root / ui_path).write_text("export const View = () => 'approved';\n", encoding="utf-8")
+            head = self.commit(root, "separate renderer implementation")
+            self.assertEqual(
+                [ui_path],
+                ui_gate.intentional_amendment_segments(
+                    root, base, head, publication, contract_path, {reference}, policy
+                )["uiFiles"],
+            )
+            self.write_yaml(
+                backlog_path, {"capabilities": [], "control_plane": {"active_amendment": "W2.A01"}, "status": "REVIEW"}
+            )
+            (root / ui_path).write_text("export const View = () => 'mixed';\n", encoding="utf-8")
+            mixed_renderer = self.commit(root, "mix taskctl review transition and renderer")
+            with self.assertRaisesRegex(ValueError, "backlog.*product"):
+                ui_gate.intentional_amendment_segments(
+                    root, base, mixed_renderer, publication, contract_path, {reference}, policy
+                )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _package = self.prepare(temporary)
+            policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+            self.write_yaml(root / "planning/backlog.yaml", {"capabilities": [], "status": "IN_PROGRESS"})
+            (root / reference).write_text(":root { --surface: blue; }\n", encoding="utf-8")
+            mixed_publication = self.commit(root, "mix taskctl claim and reference publication")
+            self.write_json(root / contract_path, {"synthetic": "regular"})
+            (root / ui_path).write_text("export const View = () => 'approved';\n", encoding="utf-8")
+            head = self.commit(root, "later renderer implementation")
+            with self.assertRaisesRegex(ValueError, "backlog.*product"):
+                ui_gate.intentional_amendment_segments(
+                    root, base, head, mixed_publication, contract_path, {reference}, policy
+                )
+
     def test_intentional_amendment_segments_reject_extra_and_redirected_history(self) -> None:
         reference = "design/ui-reference/assets/tokens.css"
         contract_path = "artifacts/evidence/ui-change/W2.A01.T02.json"
