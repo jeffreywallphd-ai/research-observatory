@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 4fe59116a51575e2d397ff1b52903002bd7baebba8b3a233662d318521454220
+source_sha256: ee1e06d2d286e35b25a9ca3fe7b1cb214bee997b6681db28a3d51ad6ce2e22fa
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -51,7 +51,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
-| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ACTIVE` |
+| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `REVIEW` |
 
 ## Waves
 
@@ -2630,21 +2630,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A02.json` (`d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-03T10:28:36Z` by human:repository-owner: The repository owner replied 'Approved, please continue' to the decision request explicitly identifying ECR-0010/W2.A02, reviewed candidate 60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db, packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43, and the independent R01 packet disposition. This approves only the bounded adopted-attachment-UI continuation authority proposed in the exact packet, beginning with W2.A02.B00 and the ordered W2.A02.S01/W2.A02.T01 control work and reviews. Academic Minimal 1.8 remains the unchanged approved reference; this is not approval of a 1.9 reference or a new researcher interaction. W2 remains PAUSED and CAP-05.S01.T01 BLOCKED until supported amendment bootstrap, independent control/slice/exit/security reviews, adoption, and explicit Wave resume. The separate intermittent D3D startup finding, original task evidence/review, remaining W2 slices, qualification and human release decision are not waived or completed. The timestamp records binding of the owner's decision to this exact reviewed candidate.
 - `E02` `MATERIALIZED` at `2026-10-03T11:20:25+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-03T11:31:01+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+- `E04` `REVIEW` at `2026-10-03T14:10:25+00:00` by codex-w2-implementation: Submitted amendment exit for review.
 
 ### Amendment-exit review and adoption — W2.A02
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `9c1d9bc16a9fe0d6cfc1d884c43e7ac47c1e5e569bb603f6ac4c8eef253dd2ba`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `bfafa6b89c8dd64b5133ae9ab659ba58d235f30e` / `b9719a975864b866805862082a6454904967a661` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-03T14:10:25+00:00`
+- Bound exit evidence: amendment `W2.A02` / `artifacts/evidence/W2.A02.exit.json` / `bda866f0e80b490909ac0e9f79880ec1340fa35b56cc81572ca590085a17d5a7` / `bfafa6b89c8dd64b5133ae9ab659ba58d235f30e`
+- Acceptance-criteria SHA-256: `b39c11f248c0c5b72a94b5dfd65014a0c86d2eeaccf03fcdc0098e4e48c18499`
+- Selected-check SHA-256: `a624ad7466ac0120b473a70b105939110b806a96114e74bdc78493f688fd92e4`
+- Selected checks: `.venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0010 --require-approved`, `.venv\Scripts\python.exe tools/backlog_views.py --repo . --check`
+- Prior round / replayed open findings: `-` / -
+
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W2.A02.exit.json`
 
 **Latest completion notes:** -
 
