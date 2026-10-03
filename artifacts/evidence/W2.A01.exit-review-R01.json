@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-independent-review",
+  "amendment_id": "W2.A01",
+  "attempt_id": "R01",
+  "reviewer": "agent:/root/w2_quality_inventory_prepare",
+  "result": "approved",
+  "reviewed_state_commit": "5c99e233029323084a4d182295514d5227ed938f",
+  "candidate_commit": "b33122d1e6e77f3ac67890c13492a02f3aca271c",
+  "declared_candidate_commit": "7f7770a5ec2c536c5b426662ad3e12a786c4efe9",
+  "evidence": {
+    "path": "artifacts/evidence/W2.A01.exit.json",
+    "sha256": "6723bfd2988716a699caba27db722afe683ace3cb42ead080ba5ece4d7dcf342"
+  },
+  "notes": "Independent R01 approval of the exact W2.A01 amendment exit at committed REVIEW-state delivery 5c99e233, not an approval of adoption, ordinary W2 resumption, native/Core attachment, full W2 qualification or release. The frozen b33122d1 exit evidence, declared contribution candidate 7f7770a5, approved ECR-0009 authority and all five immutable exit criteria bind correctly. W2.A01.B00, T01 R02, T02 R02 and the distinct S01 contribution have committed independent approvals and no open findings. The valid whole T02 task-base UI gate pass belongs to frozen product candidate 988ee478 and externally reviewed checker 38dd61f3; the later active checker Git blob is byte-identical and its bounded repair has a separate independent disposition. Later current-HEAD and detached-branch gate denials remain adverse. The 98/99 full guard-module run at 089c00c6 remains adverse: a stale historical-reference fixture was corrected at fff7a04b, its focused replay and eight selected real-Git/lineage cases passed, but no later 99/99 full run is asserted. The earlier planning-site receipt named HEAD 7dd50bba while the generated T02 DONE projection was still uncommitted; it is not a clean committed post-DONE site check. The fresh REVIEW-state site check passed after generation under HEAD b33122d1, and the exact seven-path state/projection delivery was then committed cleanly as 5c99e233. Task and slice evidence preserve all R01 findings and their explicit R02 closures, as well as the known foundation:quality inventory/format/type failure. No production native file acquisition, native-only drop, protected reader, cross-capability full profile or human release decision is inferred. The separate committed adoption manifest and taskctl adoption checkpoint must precede explicit W2 resume; original CAP-05.S01.T01 and full W2 exit remain outstanding.",
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "sliceReviewer": "agent:/root/t02_site_mismatch_diagnose",
+    "statement": "This reviewer did not implement W2.A01.B00, T01, T02, the active UI gate repair or the amendment exit manifest; did not review the two tasks or S01; and did not own the amendment campaign. Prior isolated work on a separate quality-inventory maintenance candidate and read-only exit preflight did not change this amendment's product or approval authority. Only this exit-review ledger is authored here."
+  },
+  "criterion_dispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied",
+      "basis": "The exact ECR-0009 Git packet blob at 3fb76d6c, the introduced human approval at f8a49a2e, independently approved packet review, W2 historical approval-base projection, proposed 1.8 inventory and B00 quiescent-pause evidence are bound by the approved ECR validator and exit record. The raw packet and approval SHA-256 values independently match their introduction Git blobs; original W2 approval and 1.7 reference remain historical authority."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied",
+      "basis": "The owner-approved W2.A01 and 1.8 records follow the independent packet review. T01 R02 independent control/ADR disposition at 6e4becbb precedes distinct reference approval/publication acdc67b6, which precedes renderer candidate 988ee478. T01 and T02 each retain adverse R01 and approved R02 history; B00 and S01 have separate independent approvals."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied-with-declared-evidence-boundary",
+      "basis": "T01's approved exact-authority 1.2 control and indexed Proposed ADR-0035 precede T02. The frozen whole task-base gate returned ok true with no errors at 988ee478 using reviewed external checker 38dd61f3; the active checker source is byte-identical and its separate maintenance review at ab2c868e approved canonical evidence paths, exact historical ECR projection and corrected fixture. Focused hostile real-Git/1.0/1.1 lineage tests pass at the committed control candidate. The advanced-HEAD and detached-worktree denials and earlier 98/99 suite result remain adverse; neither is relabeled as a current-head full pass."
+    },
+    {
+      "criterionIndex": 4,
+      "result": "satisfied-with-approved-native-boundary",
+      "basis": "The exact T02 R02 product evidence and independently approved S01 review include fresh mounted disposable-Core/synthetic-native success, denial, cancellation, retry, focus, status announcement and exact-revision return cases. The opaque native command/event names are fixed, renderer path/bytes and stock drop-path shortcuts are absent, and production choose/drop is unavailable before native wiring. Real native/Core admission and persistence remain with CAP-05.S01.T01; protected reader opening remains with CAP-05.S04."
+    },
+    {
+      "criterionIndex": 5,
+      "result": "satisfied-at-independent-exit-review-boundary",
+      "basis": "B00, both tasks and S01 have distinct committed independent dispositions with no open findings. This ledger supplies the independent exit R01 disposition only. The supported, separately committed adoption/security checkpoint and explicit ordinary W2 resume have not occurred and are not pre-approved by this ledger; original CAP-05.S01.T01 and full W2 qualification remain separate."
+    }
+  ],
+  "independent_checks_performed_for_exit": [
+    {
+      "check": "Exact REVIEW-state and frozen exit binding",
+      "result": "passed",
+      "observation": "5c99e233 is a clean sole-parent child of b33122d1 and changes only the authoritative backlog plus six derived plan/site projections. The frozen current submission is R01, records b33122d1 as the evidence introduction and 7f7770a5 as declared candidate, binds exit SHA-256 6723bfd2 and the five-criterion and selected-check hashes, and retains W2 PAUSED/amendment-hold with both tasks DONE/approved."
+    },
+    {
+      "check": "Immutable authority, evidence and source closure",
+      "result": "passed",
+      "observation": "Read-only Git/raw SHA-256 comparison matched approved ECR packet, W2.A01 approval, both final R02 task manifests at their submission deliveries, both R02 review ledgers, S01 review, active control review and all seven cited selected-check logs. ECR proposal, approval, T01 control review, 1.8 publication and renderer ancestry are ordered. No app, approved reference, Core or contract source changed from frozen T02 product candidate 988ee478 through exit evidence b33122d1."
+    },
+    {
+      "check": "REVIEW-state planning-site projection",
+      "result": "passed",
+      "observation": "The fresh generated REVIEW-state planning-site checker output reports pass for 19 capabilities, 111 slices, 337 tasks and 493 pages; its raw SHA-256 is 8f776989798c84adb10eba10ec811f6acc3ff1d1b90c2099bc91025190bc85f7. It ran before the exact generated bytes were committed in 5c99e233, and the checkout is clean afterward. The prior 7dd receipt is retained with its precommit DONE-site qualification."
+    }
+  ],
+  "retained_history_and_limits": [
+    "The T01 and T02 R01 findings, red characterization checks, active gate replay denials, 98/99 guard-module result and foundation:quality failure remain adverse evidence. Focused repairs and approved R02 closures do not erase them.",
+    "The W2.A01 contribution proves typed synthetic native intent and mounted UI behavior, not native file admission, trusted held-source bytes, Core persistence, protected reader opening or ordinary-profile startup.",
+    "CAP-05.S01.T01 must be reopened only after supported amendment adoption and explicit W2 resume. Later W2 slices/checkpoints, full affected/repository/profile and platform qualification, independent Wave review and human release gate remain required."
+  ],
+  "pending_adoption_contract": {
+    "approvedExitAttempt": "R01",
+    "requiresSeparateCommittedCheckpointEvidence": true,
+    "requiresTaskctlAdopt": true,
+    "expectedWaveAfterAdoption": "PAUSED with ordinary wave scope",
+    "ordinaryResumeRequiresExplicitCommand": true,
+    "releaseApprovalGranted": false
+  },
+  "findings": [],
+  "closures": []
+}

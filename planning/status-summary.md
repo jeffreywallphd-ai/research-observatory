@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: cfe399f9f92eb69b5d1d479612fa1e15d8a4d334ce525e3a69a12dad66c8b640
+source_sha256: eef35a96fa5c49423f8a3c62befbdd34616eea615370f4811ad74c3452fa3837
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -89,7 +89,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
-| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `REVIEW` | `APPROVED` | `REVIEW` | 2 |
+| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 2 |
 
 ## Amendment-exit review and adoption projections
 
@@ -554,9 +554,11 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 ### Amendment-exit review and adoption — W2.A01
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `180f327f658fba6416642063e0ddd227cf91cee4e30a93abcaa4fa35ad05bab1`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `180f327f658fba6416642063e0ddd227cf91cee4e30a93abcaa4fa35ad05bab1`
 
 - Candidate / declared candidate / branch: `b33122d1e6e77f3ac67890c13492a02f3aca271c` / `7f7770a5ec2c536c5b426662ad3e12a786c4efe9` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T00:59:19+00:00`
@@ -566,11 +568,29 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 - Selected checks: `.venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0009 --require-approved`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `.venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_attachment_interactions`, `Eight selected real-Git UI gate, canonical namespace, and historical authority tests`, `Complete T02 task-base UI gate with externally reviewed byte-identical checker`, `.venv/Scripts/python.exe tools/plan_review_check.py --repo .`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/w2_quality_inventory_prepare / `2026-10-03T01:14:48+00:00`
+
+**Reviewed state commit:** `5c99e233029323084a4d182295514d5227ed938f`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W2.A01.exit-review-R01.json` / `4d65f33bea45a4362bb7333d6a1a868b8a9905da3910da36225bc2e32ea263f1`
+
+**Review notes:** Independent R01 approval of the exact W2.A01 amendment exit at committed REVIEW-state delivery 5c99e233, not an approval of adoption, ordinary W2 resumption, native/Core attachment, full W2 qualification or release. The frozen b33122d1 exit evidence, declared contribution candidate 7f7770a5, approved ECR-0009 authority and all five immutable exit criteria bind correctly. W2.A01.B00, T01 R02, T02 R02 and the distinct S01 contribution have committed independent approvals and no open findings. The valid whole T02 task-base UI gate pass belongs to frozen product candidate 988ee478 and externally reviewed checker 38dd61f3; the later active checker Git blob is byte-identical and its bounded repair has a separate independent disposition. Later current-HEAD and detached-branch gate denials remain adverse. The 98/99 full guard-module run at 089c00c6 remains adverse: a stale historical-reference fixture was corrected at fff7a04b, its focused replay and eight selected real-Git/lineage cases passed, but no later 99/99 full run is asserted. The earlier planning-site receipt named HEAD 7dd50bba while the generated T02 DONE projection was still uncommitted; it is not a clean committed post-DONE site check. The fresh REVIEW-state site check passed after generation under HEAD b33122d1, and the exact seven-path state/projection delivery was then committed cleanly as 5c99e233. Task and slice evidence preserve all R01 findings and their explicit R02 closures, as well as the known foundation:quality inventory/format/type failure. No production native file acquisition, native-only drop, protected reader, cross-capability full profile or human release decision is inferred. The separate committed adoption manifest and taskctl adoption checkpoint must precede explicit W2 resume; original CAP-05.S01.T01 and full W2 exit remain outstanding.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:/root/w2_quality_inventory_prepare at `2026-10-03T01:14:48+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W2.A01.exit.json`
 
-**Latest completion notes:** -
+**Latest completion notes:** Independent R01 approval of the exact W2.A01 amendment exit at committed REVIEW-state delivery 5c99e233, not an approval of adoption, ordinary W2 resumption, native/Core attachment, full W2 qualification or release. The frozen b33122d1 exit evidence, declared contribution candidate 7f7770a5, approved ECR-0009 authority and all five immutable exit criteria bind correctly. W2.A01.B00, T01 R02, T02 R02 and the distinct S01 contribution have committed independent approvals and no open findings. The valid whole T02 task-base UI gate pass belongs to frozen product candidate 988ee478 and externally reviewed checker 38dd61f3; the later active checker Git blob is byte-identical and its bounded repair has a separate independent disposition. Later current-HEAD and detached-branch gate denials remain adverse. The 98/99 full guard-module run at 089c00c6 remains adverse: a stale historical-reference fixture was corrected at fff7a04b, its focused replay and eight selected real-Git/lineage cases passed, but no later 99/99 full run is asserted. The earlier planning-site receipt named HEAD 7dd50bba while the generated T02 DONE projection was still uncommitted; it is not a clean committed post-DONE site check. The fresh REVIEW-state site check passed after generation under HEAD b33122d1, and the exact seven-path state/projection delivery was then committed cleanly as 5c99e233. Task and slice evidence preserve all R01 findings and their explicit R02 closures, as well as the known foundation:quality inventory/format/type failure. No production native file acquisition, native-only drop, protected reader, cross-capability full profile or human release decision is inferred. The separate committed adoption manifest and taskctl adoption checkpoint must precede explicit W2 resume; original CAP-05.S01.T01 and full W2 exit remain outstanding.
 
 **Bound amendment-adoption checkpoints:**
 

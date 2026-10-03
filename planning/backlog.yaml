@@ -51530,7 +51530,7 @@ wave_amendments:
       notes: Independent R01 ledger artifacts/evidence/W2.A01.B00.review-R01.json at 5d60cb40 approves frozen candidate 68d36d67
         and submission 013e8e40; bounded generated-site presentation follow-ups resolved at 907ed1ad.
   campaign:
-    status: REVIEW
+    status: COMPLETE
     scope: wave-amendment
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -51539,7 +51539,7 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-02T18:39:35+00:00'
-    updated_at: '2026-10-03T00:59:19+00:00'
+    updated_at: '2026-10-03T01:14:48+00:00'
     pause_reason: null
     lease: null
   tasks:
@@ -52293,38 +52293,81 @@ wave_amendments:
             - W2.A01.T02-R01-F02
       current_submission: null
   completion:
-    status: REVIEW
-    reviewer: null
-    reviewed_at: null
+    status: APPROVED
+    reviewer: agent:/root/w2_quality_inventory_prepare
+    reviewed_at: '2026-10-03T01:14:48+00:00'
     evidence:
     - artifacts/evidence/W2.A01.exit.json
-    notes: ''
+    notes: 'Independent R01 approval of the exact W2.A01 amendment exit at committed REVIEW-state delivery 5c99e233, not an
+      approval of adoption, ordinary W2 resumption, native/Core attachment, full W2 qualification or release. The frozen b33122d1
+      exit evidence, declared contribution candidate 7f7770a5, approved ECR-0009 authority and all five immutable exit criteria
+      bind correctly. W2.A01.B00, T01 R02, T02 R02 and the distinct S01 contribution have committed independent approvals
+      and no open findings. The valid whole T02 task-base UI gate pass belongs to frozen product candidate 988ee478 and externally
+      reviewed checker 38dd61f3; the later active checker Git blob is byte-identical and its bounded repair has a separate
+      independent disposition. Later current-HEAD and detached-branch gate denials remain adverse. The 98/99 full guard-module
+      run at 089c00c6 remains adverse: a stale historical-reference fixture was corrected at fff7a04b, its focused replay
+      and eight selected real-Git/lineage cases passed, but no later 99/99 full run is asserted. The earlier planning-site
+      receipt named HEAD 7dd50bba while the generated T02 DONE projection was still uncommitted; it is not a clean committed
+      post-DONE site check. The fresh REVIEW-state site check passed after generation under HEAD b33122d1, and the exact seven-path
+      state/projection delivery was then committed cleanly as 5c99e233. Task and slice evidence preserve all R01 findings
+      and their explicit R02 closures, as well as the known foundation:quality inventory/format/type failure. No production
+      native file acquisition, native-only drop, protected reader, cross-capability full profile or human release decision
+      is inferred. The separate committed adoption manifest and taskctl adoption checkpoint must precede explicit W2 resume;
+      original CAP-05.S01.T01 and full W2 exit remain outstanding.'
     exit_review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex-w2-implementation
-        submitted_at: '2026-10-03T00:59:19+00:00'
-        candidate_commit: b33122d1e6e77f3ac67890c13492a02f3aca271c
-        declared_candidate_commit: 7f7770a5ec2c536c5b426662ad3e12a786c4efe9
-        branch: codex/w2-implementation
-        evidence_reference:
-          type: amendment-exit-evidence
-          amendment_id: W2.A01
-          path: artifacts/evidence/W2.A01.exit.json
-          sha256: 6723bfd2988716a699caba27db722afe683ace3cb42ead080ba5ece4d7dcf342
-          commit: b33122d1e6e77f3ac67890c13492a02f3aca271c
-        acceptance_criteria_sha256: 60dc12087c336952a46effaabe13636602c72362a799054eb18e3084add25909
-        selected_checks:
-        - .venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0009 --require-approved
-        - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate
-        - .venv/Scripts/python.exe tools/backlog_views.py --repo . --check
-        - .venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_attachment_interactions
-        - Eight selected real-Git UI gate, canonical namespace, and historical authority tests
-        - Complete T02 task-base UI gate with externally reviewed byte-identical checker
-        - .venv/Scripts/python.exe tools/plan_review_check.py --repo .
-        selected_checks_sha256: f5bbf7233a8be80abc101f3e703ea1c14e61dadad0d633184a5035d628d620ea
-        prior_attempt_id: null
-        open_finding_ids: []
-        packet_sha256: 180f327f658fba6416642063e0ddd227cf91cee4e30a93abcaa4fa35ad05bab1
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-03T00:59:19+00:00'
+          candidate_commit: b33122d1e6e77f3ac67890c13492a02f3aca271c
+          declared_candidate_commit: 7f7770a5ec2c536c5b426662ad3e12a786c4efe9
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: amendment-exit-evidence
+            amendment_id: W2.A01
+            path: artifacts/evidence/W2.A01.exit.json
+            sha256: 6723bfd2988716a699caba27db722afe683ace3cb42ead080ba5ece4d7dcf342
+            commit: b33122d1e6e77f3ac67890c13492a02f3aca271c
+          acceptance_criteria_sha256: 60dc12087c336952a46effaabe13636602c72362a799054eb18e3084add25909
+          selected_checks:
+          - .venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0009 --require-approved
+          - .venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate
+          - .venv/Scripts/python.exe tools/backlog_views.py --repo . --check
+          - .venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_attachment_interactions
+          - Eight selected real-Git UI gate, canonical namespace, and historical authority tests
+          - Complete T02 task-base UI gate with externally reviewed byte-identical checker
+          - .venv/Scripts/python.exe tools/plan_review_check.py --repo .
+          selected_checks_sha256: f5bbf7233a8be80abc101f3e703ea1c14e61dadad0d633184a5035d628d620ea
+          prior_attempt_id: null
+          open_finding_ids: []
+          packet_sha256: 180f327f658fba6416642063e0ddd227cf91cee4e30a93abcaa4fa35ad05bab1
+        review:
+          reviewer: agent:/root/w2_quality_inventory_prepare
+          result: approved
+          reviewed_at: '2026-10-03T01:14:48+00:00'
+          reviewed_state_commit: 5c99e233029323084a4d182295514d5227ed938f
+          notes: 'Independent R01 approval of the exact W2.A01 amendment exit at committed REVIEW-state delivery 5c99e233,
+            not an approval of adoption, ordinary W2 resumption, native/Core attachment, full W2 qualification or release.
+            The frozen b33122d1 exit evidence, declared contribution candidate 7f7770a5, approved ECR-0009 authority and all
+            five immutable exit criteria bind correctly. W2.A01.B00, T01 R02, T02 R02 and the distinct S01 contribution have
+            committed independent approvals and no open findings. The valid whole T02 task-base UI gate pass belongs to frozen
+            product candidate 988ee478 and externally reviewed checker 38dd61f3; the later active checker Git blob is byte-identical
+            and its bounded repair has a separate independent disposition. Later current-HEAD and detached-branch gate denials
+            remain adverse. The 98/99 full guard-module run at 089c00c6 remains adverse: a stale historical-reference fixture
+            was corrected at fff7a04b, its focused replay and eight selected real-Git/lineage cases passed, but no later 99/99
+            full run is asserted. The earlier planning-site receipt named HEAD 7dd50bba while the generated T02 DONE projection
+            was still uncommitted; it is not a clean committed post-DONE site check. The fresh REVIEW-state site check passed
+            after generation under HEAD b33122d1, and the exact seven-path state/projection delivery was then committed cleanly
+            as 5c99e233. Task and slice evidence preserve all R01 findings and their explicit R02 closures, as well as the
+            known foundation:quality inventory/format/type failure. No production native file acquisition, native-only drop,
+            protected reader, cross-capability full profile or human release decision is inferred. The separate committed
+            adoption manifest and taskctl adoption checkpoint must precede explicit W2 resume; original CAP-05.S01.T01 and
+            full W2 exit remain outstanding.'
+        ledger:
+          path: artifacts/evidence/W2.A01.exit-review-R01.json
+          sha256: 4d65f33bea45a4362bb7333d6a1a868b8a9905da3910da36225bc2e32ea263f1
+        findings: []
+        closures: []
+      current_submission: null
