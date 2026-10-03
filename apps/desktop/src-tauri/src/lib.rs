@@ -1826,7 +1826,7 @@ pub mod directory_integration_harness {
             r#"
 (() => {{
   const projectId = {project}, workId = {work}, sourceId = {source};
-  const data = {{ phase: 0, ready: false, error: null, html5: {{ dragEnter: 0, dragOver: 0, drop: 0,
+  const data = {{ phase: 0, ready: false, error: null, sourceId, html5: {{ dragEnter: 0, dragOver: 0, drop: 0,
     exposedFiles: 0, exposedFileItems: 0 }} }};
   Object.defineProperty(window, '__RO_DROP_PROBE', {{ value: data, configurable: false }});
   for (const [name, field] of [['dragenter', 'dragEnter'], ['dragover', 'dragOver'], ['drop', 'drop']]) {{
@@ -1911,11 +1911,13 @@ pub mod directory_integration_harness {
   const pane = () => document.querySelector('section[aria-label="Selected-version attachment"]');
   const exactButton = (root, text) => {{
     const matches = Array.from(root?.querySelectorAll('button') ?? []).filter((item) =>
-      item.textContent?.trim() === text && !item.disabled);
-    return matches.length === 1 ? matches[0] : null;
+      item.textContent?.trim() === text);
+    return matches.length === 1 && !matches[0].disabled ? matches[0] : null;
   }};
   const clickPicker = () => {{
-    const control = exactButton(pane(), 'Choose local full-text file…');
+    const mounted = pane();
+    if (mounted?.querySelector('#attachment-source')?.value !== sourceId) return false;
+    const control = exactButton(mounted, 'Choose local full-text file…');
     if (!control) return false;
     control.click(); probe.pickerAction = 'clicked'; return true;
   }};
@@ -1981,13 +1983,19 @@ pub mod directory_integration_harness {
 (() => {
   const probe = window.__RO_DROP_PROBE;
   const allowed = (value, values) => values.includes(value) ? value : null;
+  const pane = document.querySelector('section[aria-label="Selected-version attachment"]');
+  const pickerControls = Array.from(pane?.querySelectorAll('button') ?? []).filter((item) =>
+    item.textContent?.trim() === 'Choose local full-text file…');
   return { pickerAction: allowed(probe?.pickerAction,
     ['clicked','reopening','reopen-timeout','source-unavailable']),
     commitAction: allowed(probe?.commitAction,
     ['reviewing','clicked','control-timeout','candidate-lost']),
     candidateVisible: !!document.querySelector('section[aria-label="Selected-version attachment"] section[aria-label="Pending document candidate"]'),
-    paneVisible: !!document.querySelector('section[aria-label="Selected-version attachment"]'),
-    sourceSelected: !!document.querySelector('section[aria-label="Selected-version attachment"] #attachment-source')?.value };
+    paneVisible: !!pane,
+    sourceSelected: typeof probe?.sourceId === 'string' && !!probe.sourceId &&
+      pane?.querySelector('#attachment-source')?.value === probe.sourceId,
+    pickerControlCount: pickerControls.length,
+    pickerControlEnabled: pickerControls.length === 1 && !pickerControls[0].disabled };
 })()
 "#;
 
@@ -2539,7 +2547,9 @@ pub mod directory_integration_harness {
                                     "commitAction":value["commitAction"],
                                     "candidateVisible":value["candidateVisible"],
                                     "paneVisible":value["paneVisible"],
-                                    "sourceSelected":value["sourceSelected"]}));
+                                    "sourceSelected":value["sourceSelected"],
+                                    "pickerControlCount":value["pickerControlCount"],
+                                    "pickerControlEnabled":value["pickerControlEnabled"]}));
                             }
                         });
                     }

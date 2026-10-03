@@ -198,6 +198,8 @@ def safe_picker_event(event: dict[str, Any]) -> dict[str, Any]:
             "candidateVisible",
             "paneVisible",
             "sourceSelected",
+            "pickerControlCount",
+            "pickerControlEnabled",
         }:
             raise drop.ProbeFailure("picker-action-state-shape-invalid")
         if event["pickerAction"] not in {
@@ -216,6 +218,13 @@ def safe_picker_event(event: dict[str, Any]) -> dict[str, Any]:
             raise drop.ProbeFailure("picker-action-state-value-invalid")
         if any(type(event[name]) is not bool for name in ("candidateVisible", "paneVisible", "sourceSelected")):
             raise drop.ProbeFailure("picker-action-state-boolean-invalid")
+        if (
+            type(event["pickerControlCount"]) is not int
+            or not 0 <= event["pickerControlCount"] <= 32
+            or type(event["pickerControlEnabled"]) is not bool
+            or (event["pickerControlCount"] != 1 and event["pickerControlEnabled"])
+        ):
+            raise drop.ProbeFailure("picker-action-state-control-invalid")
     else:
         raise drop.ProbeFailure("picker-event-kind-invalid")
     return event
@@ -273,6 +282,46 @@ def safe_commit_event(event: dict[str, Any]) -> dict[str, Any]:
 class StagePairEvents(Protocol):
     picker_results: list[dict[str, Any]]
     stage: list[dict[str, Any]]
+
+
+class PickerReadout(Protocol):
+    def readout(self) -> tuple[dict[str, Any], dict[str, Any]]: ...
+
+
+def wait_for_picker_control(
+    fixture: PickerReadout,
+    *,
+    timeout: float,
+    observations: list[dict[str, Any]] | None = None,
+) -> None:
+    deadline = time.monotonic() + timeout
+    while True:
+        observed, state = fixture.readout()
+        safe_picker_event(state)
+        if observed.get("uiError") is not None or observed.get("uiPhase") != 8:
+            raise drop.ProbeFailure("picker-control-ui-sequence-invalid")
+        if observations is not None:
+            observations.append(
+                {
+                    "paneVisible": state["paneVisible"],
+                    "sourceSelected": state["sourceSelected"],
+                    "pickerControlCount": state["pickerControlCount"],
+                    "pickerControlEnabled": state["pickerControlEnabled"],
+                }
+            )
+        if state["pickerControlCount"] > 1 or (state["pickerControlCount"] != 1 and state["pickerControlEnabled"]):
+            raise drop.ProbeFailure("picker-control-ambiguous")
+        if (
+            state["paneVisible"] is True
+            and state["sourceSelected"] is True
+            and state["pickerControlCount"] == 1
+            and state["pickerControlEnabled"] is True
+        ):
+            return
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise drop.ProbeFailure("picker-control-readiness-timeout")
+        time.sleep(min(0.25, remaining))
 
 
 class FixtureEvents:
@@ -796,6 +845,7 @@ def main() -> int:
         "stageEvents": [],
         "pickerActions": [],
         "pickerResults": [],
+        "pickerReadinessObservations": [],
         "selectedCandidateObservations": [],
         "cancelObservations": [],
         "commitActions": [],
@@ -852,6 +902,12 @@ def main() -> int:
                 stage_start = len(fixture.stage)
                 picker_start = len(fixture.picker_results)
                 result["windowPreflights"].append({"action": action, **require_exact_window(process, ready)})
+                if action == "cancel":
+                    wait_for_picker_control(
+                        fixture,
+                        timeout=20,
+                        observations=result["pickerReadinessObservations"],
+                    )
                 choose_status = fixture.choose()
                 if choose_status != ("clicked" if action == "cancel" else "reopening"):
                     raise drop.ProbeFailure(f"picker-unexpected-choose-state-{action}")
