@@ -1490,22 +1490,22 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: PAUSED
+    status: ACTIVE
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
-    base_sha: 639a6b2e181a4b375599d1b8bfee64ca1e264363
+    base_sha: 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-03T08:31:06+00:00'
-    pause_reason: CAP-05.S01.T01 is BLOCKED at the independently recorded full-original-base UI authority mismatch. A narrowly
-      scoped ECR-0010/W2.A02 amendment needs exact packet review and explicit owner approval before ordinary T01 can resume.
-      Its intermittent fifth-D3D pre-show startup denial remains separately unresolved; passing four-node picker and OS-drop
-      runs do not close that risk.
-    pause_category: human-decision
-    lease: null
+    updated_at: '2026-10-03T15:00:24+00:00'
+    pause_reason: null
+    pause_category: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-03T15:00:24+00:00'
+      expires_at: '2026-10-04T15:00:24+00:00'
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -3554,6 +3554,18 @@ waves:
       platform: windows-x64
       actor: codex-w2-implementation
       resumed_at: '2026-10-03T02:20:13+00:00'
+    - id: W2.R08
+      wave_id: W2
+      control_revision: 12
+      prior_status: PAUSED
+      pre_resume_commit: 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf
+      prior_campaign_sha256: cdf4d75b293d0251b74b295cfc05620c536fb18952d7d1cc27ff768b6b4099f0
+      branch: codex/w2-implementation
+      worktree: .
+      profile: LOC
+      platform: windows-x64
+      actor: codex-w2-implementation
+      resumed_at: '2026-10-03T15:00:24+00:00'
   checkpoints:
   - id: W2.CP01
     kind: risk-cluster
@@ -3587,7 +3599,7 @@ waves:
       commit: db7edd6c6021ed78afd9084b37d2ef48e1fc12cb
     notes: Adopt independently reviewed ECR-0010 control route; retain original CAP-05.S01.T01 and W2 gates
   completion:
-    status: PAUSED
+    status: IN_PROGRESS
     reviewer: null
     reviewed_at: null
     evidence: []
