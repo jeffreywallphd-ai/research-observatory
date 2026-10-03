@@ -105,6 +105,10 @@ The reviewed W2.A01.T01, reference-verifier/ADR-0036, active UI-gate/fixture,
 GOV-MAINT-0025 quality-inventory and W2.A02.T01 chains must each account for
 their attributed control commits. Neither a filename nor a historical task
 label substitutes for its exact independent review and Git ancestry. The
+W2.A01.T01 predecessor is its exact approved R02 candidate; reviewed
+W2.A02.T01 commits may change only the six ECR-0010 control-source files and
+their task-owned evidence or generated workflow projections. Independent review
+does not turn an extra product file into approved control scope. The
 original T01 definition is checked against the immutable W2 packet Git blob,
 not only the current backlog projection. Every governed reference, renderer,
 typed-source, backlog and gate-control commit is attributed to the proper

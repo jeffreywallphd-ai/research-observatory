@@ -324,7 +324,9 @@ class UiChangeGateTests(unittest.TestCase):
         head = self.commit(root, "render exact approved 1.8 interaction")
         return root, base, head, candidate, contract
 
-    def adopted_continuation_git_fixture(self, temporary: str) -> tuple[Path, str, str, dict[str, Any], dict[str, Any]]:
+    def adopted_continuation_git_fixture(
+        self, temporary: str, *, inject_unapproved_control_source: bool = False
+    ) -> tuple[Path, str, str, dict[str, Any], dict[str, Any]]:
         """Extend real W2 history with test-only reviewed/adopted control records."""
         root = Path(temporary) / "adopted-continuation-fixture"
         protected_config = Path(temporary) / "fixture-gitconfig"
@@ -375,6 +377,10 @@ class UiChangeGateTests(unittest.TestCase):
             target = root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(REPO / relative, target)
+        if inject_unapproved_control_source:
+            injected = root / "workers/document/injected_control.py"
+            self.assertFalse(injected.exists())
+            injected.write_text("INJECTED_CONTROL = True\n", encoding="utf-8")
         control_candidate = self.commit(root, "synthetic W2.A02.T01 control candidate")
         changed = sorted(ui_gate.changed_paths(root, control_base, control_candidate))
         evidence_path = "artifacts/evidence/W2.A02.T01.json"
@@ -698,10 +704,12 @@ class UiChangeGateTests(unittest.TestCase):
         return self.commit(root, "synthetic original-base T01 reactivation after Wave resume")
 
     def classified_adopted_continuation_fixture(
-        self, temporary: str
+        self, temporary: str, *, inject_unapproved_control_source: bool = False
     ) -> tuple[Path, str, str, dict[str, Any], dict[str, Any], dict[str, Any]]:
         """Build a test-only current classification atop authenticated historical Git."""
-        root, adoption, _branch, backlog, _amendment = self.adopted_continuation_git_fixture(temporary)
+        root, adoption, _branch, backlog, _amendment = self.adopted_continuation_git_fixture(
+            temporary, inject_unapproved_control_source=inject_unapproved_control_source
+        )
         reactivation = self.reactivate_adopted_continuation(root, adoption, backlog)
         base = "6506c68461144747b0ee9be10853211717aa381d"
         policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
@@ -3726,6 +3734,19 @@ class UiChangeGateTests(unittest.TestCase):
             policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
             with self.assertRaisesRegex(ValueError, "imported authority code changed without exact approval"):
                 ui_gate.adopted_continuation_authority(root, base, attack, contract, policy)
+
+    def test_adopted_continuation_rejects_reviewed_a02_source_outside_six_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, head, contract, _manifest, _scope = self.classified_adopted_continuation_fixture(
+                temporary, inject_unapproved_control_source=True
+            )
+            injected = "workers/document/injected_control.py"
+            backlog = yaml.safe_load((root / "planning/backlog.yaml").read_text(encoding="utf-8"))
+            control = next(item for item in backlog["wave_amendments"] if item["id"] == "W2.A02")["tasks"][0]
+            self.assertIn(injected, control["review_control"]["attempts"][0]["submission"]["changed_paths"])
+            policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+            with self.assertRaisesRegex(ValueError, "W2.A02.T01 source paths differ from approved six-file scope"):
+                ui_gate.adopted_continuation_authority(root, base, head, contract, policy)
 
     def test_late_inventory_rejects_control_or_nonadditive_or_noncanonical_changes(self) -> None:
         cases = (

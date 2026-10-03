@@ -80,7 +80,12 @@ The W2.A01.T01 source rounds, separately reviewed reference-verifier/ADR-0036
 repair, active UI-gate/fixture maintenance chain, GOV-MAINT-0025
 quality-inventory review and W2.A02.T01 control chain are authenticated by
 their exact candidate/evidence/review ancestry; filenames or hashes alone do
-not grant a general exception. The original T01 task definition comes from
+not grant a general exception. The W2.A01.T01 predecessor is pinned to its
+approved R02 candidate. The W2.A02.T01 reviewed source inventory is limited
+to the six ECR-0010 control files, with only its task-owned evidence/review
+records and generated workflow projections admitted alongside them. A reviewed
+extra product source remains out of scope and cannot be dropped from the later
+classification input inventory. The original T01 task definition comes from
 the immutable W2 packet Git blob, not a mutable current projection.
 
 The independent classification must judge the **current committed product**

@@ -82,6 +82,28 @@ ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW_SHA256 = "f24f9645a9a24d4023e84909e28660
 ADOPTED_CONTINUATION_BOOTSTRAP_FOLLOWUP = "907ed1adefa1607aa372873eb804c8a1375b9ba0"
 ADOPTED_CONTINUATION_BOOTSTRAP_FOLLOWUP_TREE = "233e7ffde2781a424c699783a2573d22227544b6"
 ADOPTED_CONTINUATION_PLANNING_TOOLS = frozenset({"tools/plan_review_site.py", "tools/plan_review_check.py"})
+ADOPTED_CONTINUATION_A01_CONTROL_CANDIDATE = "a2e16012cfa9eb9a0f3413438fa0a88583d0be50"
+ADOPTED_CONTINUATION_A02_CONTROL_SOURCE = frozenset(
+    {
+        "design/ui-change.schema.json",
+        "tools/ui_change_gate.py",
+        "tests/foundation/test_ui_change_gate.py",
+        "docs/automation/design-first-ui-changes.md",
+        "docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md",
+        "docs/adr/index.json",
+    }
+)
+ADOPTED_CONTINUATION_A02_TRACKING_OUTPUTS = frozenset(
+    {
+        "docs/planning-implementation-plan.md",
+        "planning/backlog.yaml",
+        "planning/review-site/enablers/ECR-0010.html",
+        "planning/review-site/enablers/index.html",
+        "planning/review-site/manifest.json",
+        "planning/review-site/waves/W2.html",
+        "planning/status-summary.md",
+    }
+)
 ADOPTED_CONTINUATION_AUTHORITY_INPUTS = frozenset(
     {
         "tools/taskctl.py",
@@ -3486,17 +3508,40 @@ def adopted_continuation_reviewed_task_commits(
     """Attribute every source commit to an immutable independent task submission."""
 
     ranges = correction_submission_ranges(repo, head, {"tasks": [task]})
+    a02_control = task.get("id") == "W2.A02.T01"
+    allowed_a02_paths = set(ADOPTED_CONTINUATION_A02_CONTROL_SOURCE | ADOPTED_CONTINUATION_A02_TRACKING_OUTPUTS)
+    if a02_control:
+        allowed_a02_paths.add("artifacts/evidence/W2.A02.T01.task-start.md")
+        for index, attempt in enumerate((task.get("review_control") or {}).get("attempts") or [], start=1):
+            reference = attempt["submission"]["evidence_reference"]
+            evidence_path = reference.get("path")
+            ledger_path = attempt["ledger"].get("path")
+            if (
+                not isinstance(evidence_path, str)
+                or not canonical_correction_evidence_path("W2.A02.T01", evidence_path)
+                or ledger_path != f"artifacts/evidence/W2.A02.T01.review-R{index:02d}.json"
+            ):
+                raise ValueError("W2.A02.T01 source paths differ from approved six-file scope")
+            allowed_a02_paths.update((evidence_path, ledger_path))
     admitted: dict[str, set[str]] = {}
+    a02_source_seen: set[str] = set()
     for reviewed in ranges:
         net = sorted(changed_paths(repo, reviewed["base"], reviewed["candidate"]))
         if reviewed["paths"] != net:
             raise ValueError("adopted continuation reviewed task path inventory differs from Git")
+        if a02_control:
+            reviewed_paths = set(reviewed["paths"])
+            if not reviewed_paths.issubset(allowed_a02_paths):
+                raise ValueError("W2.A02.T01 source paths differ from approved six-file scope")
+            a02_source_seen.update(reviewed_paths & ADOPTED_CONTINUATION_A02_CONTROL_SOURCE)
         rows = git(repo, "rev-list", "--reverse", f"{reviewed['base']}..{reviewed['candidate']}").decode().splitlines()
         for commit in rows:
             paths = commit_paths(repo, commit)
             if not paths.issubset(set(reviewed["paths"])) or commit in admitted:
                 raise ValueError("adopted continuation task review has hidden or overlapping source paths")
             admitted[commit] = paths
+    if a02_control and a02_source_seen != ADOPTED_CONTINUATION_A02_CONTROL_SOURCE:
+        raise ValueError("W2.A02.T01 source paths differ from approved six-file scope")
     return ranges, admitted
 
 
@@ -3890,9 +3935,14 @@ def adopted_continuation_authority(
     ):
         raise ValueError("adopted continuation inherited T02 renderer/reference segment differs")
 
-    _, inherited_controls = adopted_continuation_reviewed_task_commits(
+    inherited_control_ranges, inherited_controls = adopted_continuation_reviewed_task_commits(
         repo, head, backlog_task(backlog, "W2.A01.T01") or {}
     )
+    if (
+        not inherited_control_ranges
+        or inherited_control_ranges[-1]["candidate"] != ADOPTED_CONTINUATION_A01_CONTROL_CANDIDATE
+    ):
+        raise ValueError("adopted continuation inherited A01 control candidate differs from approved history")
     _, continuation_controls = adopted_continuation_reviewed_task_commits(repo, head, control_task)
     reviewed_controls = {**inherited_controls, **continuation_controls}
     if set(inherited_controls) & set(continuation_controls):
