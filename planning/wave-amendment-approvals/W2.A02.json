@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W2.A02",
+  "changeRequestId": "ECR-0010",
+  "targetWave": "W2",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-03T10:28:36Z",
+  "decision": "The repository owner replied 'Approved, please continue' to the decision request explicitly identifying ECR-0010/W2.A02, reviewed candidate 60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db, packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43, and the independent R01 packet disposition. This approves only the bounded adopted-attachment-UI continuation authority proposed in the exact packet, beginning with W2.A02.B00 and the ordered W2.A02.S01/W2.A02.T01 control work and reviews. Academic Minimal 1.8 remains the unchanged approved reference; this is not approval of a 1.9 reference or a new researcher interaction. W2 remains PAUSED and CAP-05.S01.T01 BLOCKED until supported amendment bootstrap, independent control/slice/exit/security reviews, adoption, and explicit Wave resume. The separate intermittent D3D startup finding, original task evidence/review, remaining W2 slices, qualification and human release decision are not waived or completed. The timestamp records binding of the owner's decision to this exact reviewed candidate.",
+  "packet": {
+    "commit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+    "path": "planning/enabler-change-requests/ECR-0010.packet.json",
+    "sha256": "f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43",
+    "proposalPath": "planning/enabler-change-requests/ECR-0010.md",
+    "proposalSha256": "f688916e42852828da7d313106ffcffd1acd697872f6bf568dfa73aefee2fb2c"
+  },
+  "effectiveBase": {
+    "waveBase": {
+      "waveId": "W2",
+      "packetCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "approvalRecordCommit": "3bc1c1828efab50efc730bf3907c3036eff58a2f"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W2.A01",
+        "changeRequestId": "ECR-0009",
+        "status": "ADOPTED",
+        "packetCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A01.json",
+          "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+          "introductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+        },
+        "effectiveStateCommit": "56187d40ca5d38f72f7c9dfb132070b034032a57"
+      }
+    ],
+    "reservedAmendments": []
+  },
+  "bootstrapUnit": "W2.A02.B00",
+  "authorizedTaskIds": [
+    "W2.A02.T01"
+  ],
+  "independentPacketReview": {
+    "reviewer": "agent:/root/ecr0010_independent_proposal_review",
+    "candidateCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+    "reviewedStateCommit": "a64febae61139e9e5cfb1738c0e7cdef55ba91de",
+    "result": "APPROVED",
+    "attemptId": "R01",
+    "findingIdsClosed": [],
+    "ledger": {
+      "path": "planning/enabler-change-requests/ECR-0010.review-R01.json",
+      "sha256": "e87d5ce06fece2a1989482133b81996959c30dd4ec5d50728f3c96fb00961d9e",
+      "introductionCommit": "a64febae61139e9e5cfb1738c0e7cdef55ba91de"
+    }
+  }
+}
