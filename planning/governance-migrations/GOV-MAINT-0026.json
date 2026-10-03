@@ -3,7 +3,7 @@
   "documentType": "governance-control-maintenance",
   "maintenanceId": "GOV-MAINT-0026",
   "title": "Close the paused W2 Python quality inventory for the seed document-drop fixture test",
-  "status": "candidate",
+  "status": "adopted",
   "riskTier": 2,
   "humanApprovalRequired": false,
   "implementationAgent": "agent:w2-quality-inventory-prepare",
@@ -62,6 +62,26 @@
     ]
   },
   "rollback": "Preserve all prior adverse logs and the exact rejected candidate if review requests changes. Remediate only by a descendant control-only candidate and append-only independent finding closure; do not rewrite this predecessor, alter 1.8 authority, suppress quality failure, or label inventory closure as W2 completion.",
-  "reviewAttempts": [],
-  "review": null
+  "reviewAttempts": [
+    {
+      "reviewId": "GOV-MAINT-0026.R01",
+      "reviewedCommit": "6e396c5e18fefb255334e1ddeeea02eb4b6bdb2c",
+      "reviewer": "agent:maint26-independent-review",
+      "reviewedAt": "2026-10-03T19:18:48.717609+00:00",
+      "disposition": "APPROVED",
+      "findings": [],
+      "path": "planning/governance-migrations/GOV-MAINT-0026.review-R01.json",
+      "sha256": "a5603eb1f4ee4dcb279f2f4f298fbb10aa802507ab970fa68bef15d9f6435c94"
+    }
+  ],
+  "review": {
+    "reviewId": "GOV-MAINT-0026.R01",
+    "reviewedCommit": "6e396c5e18fefb255334e1ddeeea02eb4b6bdb2c",
+    "reviewer": "agent:maint26-independent-review",
+    "reviewedAt": "2026-10-03T19:18:48.717609+00:00",
+    "disposition": "APPROVED",
+    "findings": [],
+    "path": "planning/governance-migrations/GOV-MAINT-0026.review-R01.json",
+    "sha256": "a5603eb1f4ee4dcb279f2f4f298fbb10aa802507ab970fa68bef15d9f6435c94"
+  }
 }

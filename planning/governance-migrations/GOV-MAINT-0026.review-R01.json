@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance-review",
+  "maintenanceId": "GOV-MAINT-0026",
+  "reviewId": "GOV-MAINT-0026.R01",
+  "reviewedCommit": "6e396c5e18fefb255334e1ddeeea02eb4b6bdb2c",
+  "reviewer": "agent:maint26-independent-review",
+  "reviewedAt": "2026-10-03T19:18:48.717609+00:00",
+  "disposition": "APPROVED",
+  "authorityPreserved": true,
+  "candidateChangedPaths": [
+    "planning/governance-migrations/GOV-MAINT-0026.json",
+    "quality-scope.json"
+  ],
+  "findings": []
+}
