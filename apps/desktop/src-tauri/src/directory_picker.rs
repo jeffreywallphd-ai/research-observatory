@@ -1075,8 +1075,20 @@ mod native {
             fixture_root,
         ) {
             DirectoryOutcome::Selected { path } => {
-                crate::import_source::HeldImportSource::open_document_selected(Path::new(&path))
-                    .map_err(document_source_failure)
+                let opened = crate::import_source::HeldImportSource::open_document_selected(
+                    Path::new(&path),
+                );
+                #[cfg(feature = "integration-harness")]
+                fixture_trace(
+                    fixture_root.is_some(),
+                    if opened.is_ok() {
+                        "document-held-source-opened"
+                    } else {
+                        "document-held-source-denied"
+                    },
+                    None,
+                );
+                opened.map_err(document_source_failure)
             }
             DirectoryOutcome::Cancelled => Err(PickerFailure::Cancelled),
             DirectoryOutcome::Unavailable => Err(PickerFailure::Unavailable),
@@ -1253,11 +1265,28 @@ mod native {
                 DirectoryOutcome::Failed
             };
         }
-        let result = unsafe {
-            dialog
-                .GetResult()
-                .and_then(|item| item.GetDisplayName(SIGDN_FILESYSPATH))
-        };
+        let shell_item = unsafe { dialog.GetResult() };
+        #[cfg(feature = "integration-harness")]
+        fixture_trace(
+            fixture_root.is_some() && document,
+            if shell_item.is_ok() {
+                "document-shell-result-acquired"
+            } else {
+                "document-shell-result-denied"
+            },
+            None,
+        );
+        let result = shell_item.and_then(|item| unsafe { item.GetDisplayName(SIGDN_FILESYSPATH) });
+        #[cfg(feature = "integration-harness")]
+        fixture_trace(
+            fixture_root.is_some() && document,
+            if result.is_ok() {
+                "document-filesystem-display-acquired"
+            } else {
+                "document-filesystem-display-denied"
+            },
+            None,
+        );
         let Ok(result) = result else {
             return DirectoryOutcome::Failed;
         };
@@ -1278,6 +1307,16 @@ mod native {
                 Err(PathFailure::Invalid)
             }
         });
+        #[cfg(feature = "integration-harness")]
+        fixture_trace(
+            fixture_root.is_some() && document,
+            if path.is_ok() {
+                "document-selected-path-admitted"
+            } else {
+                "document-selected-path-denied"
+            },
+            None,
+        );
         match path {
             Ok(path) => DirectoryOutcome::Selected {
                 path: path.to_string_lossy().into_owned(),

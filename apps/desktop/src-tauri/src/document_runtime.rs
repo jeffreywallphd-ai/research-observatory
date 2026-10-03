@@ -7,6 +7,46 @@ use crate::supervisor::{CoreApiResponse, DocumentStageSelection, NativeImportCon
 use serde::Deserialize;
 use std::sync::Arc;
 
+#[cfg(feature = "integration-harness")]
+#[derive(Clone, Copy)]
+enum StagePhase {
+    CoreInvoked,
+    CoreCallDenied,
+    CoreResponseReceived,
+    AuthorityLost,
+    CandidateDecoded,
+    RejectionDecoded,
+    DecodeDenied,
+}
+
+#[cfg(feature = "integration-harness")]
+impl StagePhase {
+    fn code(self) -> &'static str {
+        match self {
+            Self::CoreInvoked => "core-invoked",
+            Self::CoreCallDenied => "core-call-denied",
+            Self::CoreResponseReceived => "core-response-received",
+            Self::AuthorityLost => "authority-lost",
+            Self::CandidateDecoded => "candidate-decoded",
+            Self::RejectionDecoded => "rejection-decoded",
+            Self::DecodeDenied => "decode-denied",
+        }
+    }
+}
+
+#[cfg(feature = "integration-harness")]
+fn stage_phase_record(phase: StagePhase) -> serde_json::Value {
+    // Only a closed phase category may leave the harness. Never log the held
+    // source, selected path, Core response, identity, or runtime error text.
+    serde_json::json!({"kind":"document-stage-phase","phase":phase.code()})
+}
+
+#[cfg(feature = "integration-harness")]
+fn trace_stage_phase(phase: StagePhase) {
+    use std::io::Write;
+    let _ = writeln!(std::io::stdout().lock(), "{}", stage_phase_record(phase));
+}
+
 #[derive(Clone)]
 pub(crate) struct DocumentSelection {
     pub root: String,
@@ -219,19 +259,35 @@ pub(crate) fn stage_held_document(
         version_id: request.version_id.clone(),
         version_revision_id: request.version_revision_id.clone(),
     };
-    let (response, seal) = connection
-        .document_stage(source, &selection, || authorized())
-        .map_err(|_| {
-            if authorized() && connection.is_current() {
-                PickerFailure::Failed
-            } else {
-                PickerFailure::Cancelled
-            }
-        })?;
+    #[cfg(feature = "integration-harness")]
+    trace_stage_phase(StagePhase::CoreInvoked);
+    let staged = connection.document_stage(source, &selection, || authorized());
+    #[cfg(feature = "integration-harness")]
+    trace_stage_phase(if staged.is_ok() {
+        StagePhase::CoreResponseReceived
+    } else {
+        StagePhase::CoreCallDenied
+    });
+    let (response, seal) = staged.map_err(|_| {
+        if authorized() && connection.is_current() {
+            PickerFailure::Failed
+        } else {
+            PickerFailure::Cancelled
+        }
+    })?;
     if !authorized() || !connection.is_current() {
+        #[cfg(feature = "integration-harness")]
+        trace_stage_phase(StagePhase::AuthorityLost);
         return Err(PickerFailure::Cancelled);
     }
-    decode_stage_response(response, seal.as_ref(), request, &source_name)
+    let decoded = decode_stage_response(response, seal.as_ref(), request, &source_name);
+    #[cfg(feature = "integration-harness")]
+    trace_stage_phase(match &decoded {
+        Ok(DocumentStageOutcome::Candidate(_)) => StagePhase::CandidateDecoded,
+        Ok(DocumentStageOutcome::Rejected(_)) => StagePhase::RejectionDecoded,
+        Err(_) => StagePhase::DecodeDenied,
+    });
+    decoded
 }
 
 pub(crate) fn stage_selected_document(
@@ -271,6 +327,31 @@ pub(crate) fn stage_selected_document(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(feature = "integration-harness")]
+    #[test]
+    fn stage_diagnostics_expose_only_closed_path_free_phase_categories() {
+        for phase in [
+            StagePhase::CoreInvoked,
+            StagePhase::CoreCallDenied,
+            StagePhase::CoreResponseReceived,
+            StagePhase::AuthorityLost,
+            StagePhase::CandidateDecoded,
+            StagePhase::RejectionDecoded,
+            StagePhase::DecodeDenied,
+        ] {
+            let record = stage_phase_record(phase);
+            let fields = record.as_object().expect("stage diagnostic object");
+            assert_eq!(fields.len(), 2);
+            assert_eq!(record["kind"], "document-stage-phase");
+            let code = record["phase"].as_str().expect("closed phase code");
+            assert!((1..=32).contains(&code.len()));
+            assert!(
+                code.bytes()
+                    .all(|byte| byte.is_ascii_lowercase() || byte == b'-')
+            );
+        }
+    }
 
     fn selection() -> DocumentSelection {
         DocumentSelection {
