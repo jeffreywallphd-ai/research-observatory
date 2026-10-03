@@ -93,6 +93,22 @@ def _count(connection, table: str, project_id: str) -> int:
     return int(connection.execute(f"SELECT COUNT(*) FROM {table} WHERE project_id=?", (project_id,)).fetchone()[0])
 
 
+def _require_provenance_binding(provenance, attachment, expected: Expected) -> None:
+    _require(
+        provenance["project_id"] == provenance["outbox_project_id"] == expected.project_id
+        and provenance["revision_id"] == provenance["outbox_revision_id"] == expected.document_revision_id
+        and provenance["event_type"]
+        == provenance["outbox_event_type"]
+        == "org.research-observatory.document.revision-recorded.v1"
+        and provenance["actor_type"] == "human"
+        and provenance["actor_id"] == attachment["actor_id"]
+        and provenance["occurred_at"] == attachment["committed_at"]
+        and provenance["record_sha256"] == provenance["outbox_record_sha256"]
+        and provenance["idempotency_key"] == "document-attachment-" + expected.command_id,
+        "attachment-provenance-binding-mismatch",
+    )
+
+
 def _inspect_database(database: Path, expected: Expected, source_length: int) -> dict[str, str]:
     with open_canonical_database(database, expected_project_id=expected.project_id) as connection:
         for table in (
@@ -207,17 +223,7 @@ def _inspect_database(database: Path, expected: Expected, source_length: int) ->
             (attachment["outbox_id"], attachment["provenance_event_id"]),
             "attachment-provenance-unavailable",
         )
-        _require(
-            provenance["project_id"] == provenance["outbox_project_id"] == expected.project_id
-            and provenance["revision_id"] == provenance["outbox_revision_id"] == expected.document_revision_id
-            and provenance["event_type"] == provenance["outbox_event_type"] == "document.attached"
-            and provenance["actor_type"] == "human"
-            and provenance["actor_id"] == attachment["actor_id"]
-            and provenance["occurred_at"] == attachment["committed_at"]
-            and provenance["record_sha256"] == provenance["outbox_record_sha256"]
-            and provenance["idempotency_key"] == "document-attachment-" + expected.command_id,
-            "attachment-provenance-binding-mismatch",
-        )
+        _require_provenance_binding(provenance, attachment, expected)
         dependencies = connection.execute(
             "SELECT dependency_kind,dependency_revision_id FROM material_dependencies "
             "WHERE project_id=? AND output_revision_id=?",
