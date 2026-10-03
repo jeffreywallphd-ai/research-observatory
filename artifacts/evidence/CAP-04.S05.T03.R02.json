@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S05.T03",
+  "baseCommit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+  "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+  "branch": "codex/w2-implementation",
+  "supersedes": {
+    "path": "artifacts/evidence/CAP-04.S05.T03.json",
+    "sha256": "54f2aa1da249a366cabf93787bc19fafe627dc01cf8f7f4714f2533a52d54417",
+    "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12"
+  },
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S05.T03.json",
+    "artifacts/evidence/CAP-04.S05.T03.review-R01.json",
+    "artifacts/evidence/CAP-04.S05.T03.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S05.T03.html",
+    "planning/review-site/CAP-04/CAP-04.S05.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The independently reviewed R01 packet and unchanged T03 product source provide the documented synthetic connector, closed static conformance report and public worker-page contract. A fresh 68-test focused connector/contract run on this strict-descendant commit again passes malformed package/output/cursor/content-safe diagnostic and three-argument/optional-context compatibility paths. R01's four adverse pre-review product findings remain closed; the R02 source diff changes only task evidence and generated planning/review records."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "R01-F01 is replayed with a fixed selected-input identity report. The report names and hashes the ignored locally signed worker inventory, signature and image, source-equivalence Git comparison to the worker build commit, synthetic sample source/manifest, and a freshly built frozen Core guardian and build report from this clean R02 commit. The source comparison finds no changed worker/build-tool paths; the signed package remains locally test-signed only.",
+        "An input-verifying runner records its exact script digest, selected RO_W2_SIGNED_WORKER_BUILD and RO_W2_CORE_SIDECAR_GUARDIAN paths, input-report digest, approved unsandboxed local Windows context, and a no-skip native log digest in a separate execution witness. It rechecks the worker inventory, signature, image and guardian hashes immediately before launching the two real Windows x64 LPAC sample tests; both pass on this commit. They execute two broker-observed search pages and reject a malformed broker page without echoing private content. The fresh 68-test focused run covers same-authority pagination, Core-owned source/rights/provenance, redaction persistence, denial, cancellation and restart. No live institutional provider or production-signing result is inferred."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The nine-path incremental diff preserves the R01 product, public schema, accepted ADR authority and all adverse review history; it adds the missed selected-input acceptance note and records the formal R01 finding and taskctl projections. The clean Core sidecar build from this R02 commit passes with 784 inventoried files and includes the signed worker bundle. Fresh clean build-manifest and backlog validation pass; the older full quality inventory omission and stale T02 migration fixture remain explicit separate repair obligations before slice/W2 qualification."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "reviewerDisposition": {
+    "status": "pending-re-review",
+    "requiredGate": "agent-review",
+    "openFindingIds": [
+      "CAP-04.S05.T03-R01-F01"
+    ],
+    "note": "Replay the R01 selected-input identity finding against the exact report, fresh Core build, signed worker source-equivalence proof and two no-skip native cases. Preserve R01's other closures and disclosed quality/migration limits."
+  },
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "contracts:unit",
+      "security-local:unit",
+      "packaging:unit",
+      "foundation:build-manifest",
+      "foundation:backlog"
+    ],
+    "riskAnalysis": "R02 changes only task-start evidence and generated review/planning state, not worker, Core, package, UI or public-schema source. The blocking finding concerns exact native selected-input identity. Select a byte-hashed input report, worker source-equivalence Git check, fresh frozen Core/guardian build and two no-skip real LPAC sample cases on this committed candidate. The input-verifying runner emits a content-free preamble in the passing raw log; the execution witness hashes that log, runner bytes and input report, records both env assignments and unsandboxed local context. Repeat the 68 focused connector/contract tests to confirm the same behavior after the evidence correction, plus clean build and backlog controls. R01's broader architecture/ADR/packaging/static checks remain independently reviewed against unchanged product inputs; full profile reruns are left for S05 integration and W2 exit. The first R02 Core copy failed in a long ignored output path (WinError 3) and is retained; the unchanged build succeeded in fresh short artifacts/tmp/c11. An independent native replay from the default sandbox failed at guardian handshake before a broker call; it is retained as a non-equivalent-principal adverse result, not represented as a native pass or product denial proof. The qualifying 2/2 run used the approved unsandboxed local Windows execution context and exact reported inputs.",
+    "deferred": [
+      "Full foundation quality remains red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is required before S05/W2 quality proof.",
+      "The older T02 v20 grant-migration test fixture must be restored through linked correction W2.C05.T01 before S05/W2 migration proof; no production migration defect was demonstrated.",
+      "S05 integrated slice and W2 exit retain the complete affected/full profile matrix, cross-capability security/rights/accessibility/performance and live-signing/provider limits."
+    ]
+  },
+  "checks": [
+    {
+      "id": "selected-inputs",
+      "command": ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_inputs.py --guardian artifacts/tmp/c11/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --core-report artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.json --output artifacts/tmp/CAP-04.S05.T03.R02.inputs-42379f73.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.R02.inputs-42379f73.log",
+      "rawOutputSha256": "77ed9dfda9c2b81ac145e1227df440f7d3bf429f3d92e4e80c125c1a53b1a41b",
+      "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "provenance": "Fresh local report on clean committed Windows x64 candidate; ignored producer script and output are available for independent byte rehash and Git comparison.",
+      "result": "Candidate/source equivalence and exact signed worker/sample/guardian/report digests recorded with no changed worker build paths."
+    },
+    {
+      "id": "native-sample",
+      "command": "& artifacts/tmp/t03_r02_bound_native.ps1",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.R02.native-bound-42379f73.log",
+      "rawOutputSha256": "847f25d46deafd572a77aaeca59111596d3b9feecb5e99bdc8a8a86caaf275ab",
+      "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "provenance": "Fresh approved unsandboxed local Windows x64 execution; the runner verifies the exact input-report paths and digests before launching the locally test-signed bundle and fresh candidate Core guardian.",
+      "result": "Two real signed Windows x64 LPAC sample tests passed without skip in 10.114 seconds after content-free selected-input preamble."
+    },
+    {
+      "id": "native-execution-witness",
+      "command": ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_native_witness.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.R02.native-witness-42379f73.log",
+      "rawOutputSha256": "cf322caae0c26bd975d779947137c50a37d3272933855ed83d808b6df5063b2f",
+      "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "provenance": "Fresh local witness generation after the approved unsandboxed native run; independent review can rehash every ignored input and raw output.",
+      "result": "Execution witness binds runner SHA-256, both env-selected paths, input-report SHA-256, raw native log SHA-256 and no-skip 2/2 result."
+    },
+    {
+      "id": "frozen-core",
+      "command": ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/c11 --worker-build artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.log",
+      "rawOutputSha256": "01e0228925d556e968e90bf0b4c638b93a1161906e9531982c274bc4e537ee83",
+      "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "provenance": "Fresh local build on clean committed Windows x64 candidate in a short ignored output path; prior long-path copy failure is retained separately.",
+      "result": "Fresh frozen Core/guardian build passed with 784 inventoried files and signed-worker bundle."
+    },
+    {
+      "id": "focused-connector",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.R02.focused-42379f73.log",
+      "rawOutputSha256": "b0b287f8718f91981a620d8856349d50deb44b0670e798059067add6655b1e25",
+      "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate with synthetic inputs.",
+      "result": "68 focused connector, worker, repository and public-contract tests passed in 41.640 seconds."
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.R02.build-42379f73.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.R02.build-42379f73.log",
+      "rawOutputSha256": "7ee3e57037f513e39d2e68cefff8bc73c3b91d45a4f6a4d555c25aa3e6787ab0",
+      "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Clean 0.1.0+g42379f7 build manifest passed."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.R02.taskctl-42379f73.log",
+      "rawOutputSha256": "a2f9b2323fc2cbf2161f47e0637bdf7748398cf3e45a581670e4104f96163300",
+      "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Backlog schema and semantic validation passed."
+    }
+  ],
+  "inputReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T03.R02.inputs-42379f73.json",
+    "sha256": "ac6c1be6e2298c97ed2d84d98002397feb6d7ffad17e2f22e536b08adc3803bc"
+  },
+  "nativeExecutionWitness": {
+    "path": "artifacts/tmp/CAP-04.S05.T03.R02.native-witness-42379f73.json",
+    "sha256": "43bfe68ae73e1d1bedc421d00ac4628aefe7780f18f5f8738936fb144cfd9e63"
+  },
+  "coreBuildReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.json",
+    "sha256": "8417e10d771b699d4f39dd416355b9db7d30305a1f336ecfa7cb1170feaf28b0"
+  },
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T03.R02.build-42379f73.json",
+    "sha256": "751299d684fe5225b9dbf9c8b29cb7c8a9bb77e25185df2a31b107621aab8d98"
+  },
+  "adverseEvidence": "artifacts/evidence/CAP-04.S05.T03.review-R01.json",
+  "adverseRerun": {
+    "path": "artifacts/tmp/CAP-04.S05.T03.R02.independent-native-42379f73.log",
+    "sha256": "eac272d8436df3ff66727d052895c034a5918819ca46ba173decba1f19b8060a",
+    "provenance": "Independent default-sandbox local replay, unlike the qualifying unsandboxed Windows run; both cases stopped at lpac-guardian-handshake-invalid before broker execution. Retained as an adverse setup/principal result, not a product or criterion pass."
+  },
+  "scopeDeviation": "No approved product scope, security, migration, governed UX or release change. R02 adds evidence for selected native inputs and preserves test signing and synthetic transport limits. The long-path Core copy failure is retained in artifacts/tmp/CAP-04.S05.T03.R02.core-build-42379f73.log; the same build succeeded in fresh short artifacts/tmp/c11 without assertion changes. The independent default-sandbox guardian handshake failure is separately retained with its non-equivalent principal."
+}

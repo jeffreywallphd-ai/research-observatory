@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 322dd8144c4e0809482cebf4ac45b48299db9ec89556288ebba3754a2e61e380
+source_sha256: 7d701ea9aac6b3fa144dcd30647ed8cc767ba3d2b8df3b9c63b3e46b919aff05
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9869,7 +9869,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `M` / `medium`
+**Status / priority / estimate / risk:** `REVIEW` / `P1` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
@@ -9898,6 +9898,7 @@ Original tasks and approvals remain unchanged.
 **Evidence:**
 
 - `artifacts/evidence/CAP-04.S05.T03.json` at `9a22c5fe122358b854ceae6c7cb47cdfd68c8f12`
+- `artifacts/evidence/CAP-04.S05.T03.R02.json` at `42379f73cf6853be3618a8bb554ffa50a3fdf5c0`
 
 ##### Review history — CAP-04.S05.T03
 
@@ -9933,7 +9934,19 @@ Original tasks and approvals remain unchanged.
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `1c336168bb60def992357ab6cd003cbe801abe55888ac8133b95d0b273b571d6`
+
+- Candidate / base / branch: `42379f73cf6853be3618a8bb554ffa50a3fdf5c0` / `9a22c5fe122358b854ceae6c7cb47cdfd68c8f12` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-03T17:37:18+00:00`
+- Evidence: `artifacts/evidence/CAP-04.S05.T03.R02.json` / `0497627f354903da8e9d3ee83f2ca413dca1d59f3fabc0b2bfdd8110ef6a801b` / `42379f73cf6853be3618a8bb554ffa50a3fdf5c0`
+- Acceptance-criteria SHA-256: `05609bef191428a127b093c2f2706ee09cfc130bfa4ebdc841a7db64b09035fd`
+- Verification-selection SHA-256: `4e2744e2459f9205ad6fd9bed6e248e5993980ea200e408c78be8fa08eb89d64`
+- Changed paths: `artifacts/evidence/CAP-04.S05.T03.json`, `artifacts/evidence/CAP-04.S05.T03.review-R01.json`, `artifacts/evidence/CAP-04.S05.T03.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/CAP-04/CAP-04.S05.T03.html`, `planning/review-site/CAP-04/CAP-04.S05.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`
+- Selected checks: `.venv\Scripts\python.exe artifacts/tmp/t03_r02_inputs.py --guardian artifacts/tmp/c11/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --core-report artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.json --output artifacts/tmp/CAP-04.S05.T03.R02.inputs-42379f73.json`, `& artifacts/tmp/t03_r02_bound_native.ps1`, `.venv\Scripts\python.exe artifacts/tmp/t03_r02_native_witness.py`, `.venv\Scripts\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/c11 --worker-build artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated`, `.venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract`, `.venv\Scripts\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.R02.build-42379f73.json`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate`
+- Deferred checks: `Full foundation quality remains red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is required before S05/W2 quality proof.`, `The older T02 v20 grant-migration test fixture must be restored through linked correction W2.C05.T01 before S05/W2 migration proof; no production migration defect was demonstrated.`, `S05 integrated slice and W2 exit retain the complete affected/full profile matrix, cross-capability security/rights/accessibility/performance and live-signing/provider limits.`
+- Selection rationale: R02 changes only task-start evidence and generated review/planning state, not worker, Core, package, UI or public-schema source. The blocking finding concerns exact native selected-input identity. Select a byte-hashed input report, worker source-equivalence Git check, fresh frozen Core/guardian build and two no-skip real LPAC sample cases on this committed candidate. The input-verifying runner emits a content-free preamble in the passing raw log; the execution witness hashes that log, runner bytes and input report, records both env assignments and unsandboxed local context. Repeat the 68 focused connector/contract tests to confirm the same behavior after the evidence correction, plus clean build and backlog controls. R01's broader architecture/ADR/packaging/static checks remain independently reviewed against unchanged product inputs; full profile reruns are left for S05 integration and W2 exit. The first R02 Core copy failed in a long ignored output path (WinError 3) and is retained; the unchanged build succeeded in fresh short artifacts/tmp/c11. An independent native replay from the default sandbox failed at guardian handshake before a broker call; it is retained as a non-equivalent-principal adverse result, not represented as a native pass or product denial proof. The qualifying 2/2 run used the approved unsandboxed local Windows execution context and exact reported inputs.
+- Prior round / replayed open findings: `R01` / `CAP-04.S05.T03-R01-F01`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by agent:/root/t03_independent_review at `2026-10-03T17:14:06+00:00`
 

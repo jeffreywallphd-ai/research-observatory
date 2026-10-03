@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 322dd8144c4e0809482cebf4ac45b48299db9ec89556288ebba3754a2e61e380
+source_sha256: 7d701ea9aac6b3fa144dcd30647ed8cc767ba3d2b8df3b9c63b3e46b919aff05
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -53,8 +53,8 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `NOT_STARTED` | 237 |
-| `IN_PROGRESS` | 1 |
 | `BLOCKED` | 1 |
+| `REVIEW` | 1 |
 | `DONE` | 81 |
 | `DEFERRED` | 36 |
 
@@ -727,7 +727,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | `CAP-04.S04.T03` | `append-only v1` | 3 | `-` | approved / agent:/root/t03_r02_independent_review | - |
 | `CAP-04.S05.T01` | `append-only v1` | 1 | `-` | approved / agent:/root/s05_t01_code_preflight | - |
 | `CAP-04.S05.T02` | `append-only v1` | 2 | `-` | approved / agent:/root/lpac_boundary_review | - |
-| `CAP-04.S05.T03` | `append-only v1` | 1 | `-` | changes-requested / agent:/root/t03_independent_review | `CAP-04.S05.T03-R01-F01` |
+| `CAP-04.S05.T03` | `append-only v1` | 1 | `R02` | changes-requested / agent:/root/t03_independent_review | `CAP-04.S05.T03-R01-F01` |
 | `CAP-07.S01.T01` | `append-only v1` | 2 | `-` | approved / codex-independent | - |
 | `CAP-07.S01.T02` | `append-only v1` | 1 | `-` | approved / agent:/root/model_registry_review | - |
 | `CAP-07.S01.T03` | `append-only v1` | 1 | `-` | approved / agent:/root/decoder_memo_review | - |
@@ -826,7 +826,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-04.S05.T03` Deliver a sample repository connector and conformance suite | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-04.S05.T03` Deliver a sample repository connector and conformance suite | `REVIEW` | codex-w2-implementation | `codex/w2-implementation` |
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
