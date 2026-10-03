@@ -368,6 +368,15 @@
       "linkedTasks": [
         "W2.A02.T01"
       ]
+    },
+    {
+      "id": "ADR-0038",
+      "path": "docs/adr/ADR-0038-bind-sample-connector-page-and-port-to-existing-plugin-authority.md",
+      "title": "Bind sample connector page and port to existing plugin authority",
+      "status": "Proposed",
+      "linkedTasks": [
+        "CAP-04.S05.T03"
+      ]
     }
   ]
 }
