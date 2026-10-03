@@ -1491,7 +1491,7 @@ waves:
       remain recorded, not waived.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
@@ -52411,7 +52411,7 @@ wave_amendments:
     sha256: d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79
     introduction_commit: 5fbeea66e84bac5ab24cf1bb8d2522838529a0ba
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -52426,6 +52426,11 @@ wave_amendments:
         reviews, adoption, and explicit Wave resume. The separate intermittent D3D startup finding, original task evidence/review,
         remaining W2 slices, qualification and human release decision are not waived or completed. The timestamp records binding
         of the owner's decision to this exact reviewed candidate.
+    - id: E02
+      status: MATERIALIZED
+      actor: codex-w2-implementation
+      at: '2026-10-03T11:20:25+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W2.A02.B00
     status: APPROVED
@@ -52446,7 +52451,74 @@ wave_amendments:
       notes: Independent R01 ledger artifacts/evidence/W2.A02.B00.review-R01.json at d22a451bf2dc3917b3c27c1b5a62b70e7bfb023c
         approves candidate f97c32f1 and submitted state d61a9e1c with no findings.
   campaign: null
-  tasks: []
+  tasks:
+  - id: W2.A02.T01
+    amendment_id: W2.A02
+    title: Authenticate adopted attachment UI continuation
+    objective: Add one tightly bound, independently reviewed design-first gate/schema route for T01's inherited W2.A01 and
+      later approved-reference restoration history without changing product, reference or ordinary task authority.
+    dependencies:
+    - W2.A02.B00
+    acceptance_criteria:
+    - 'Add exact-identity-only v1.3 adoptedContinuationAuthority for CAP-05.S01.T01 defect-restoration: authenticate frozen
+      original 6506 base/owner/lease/branch, W2 and W2.A01 approvals/adoption, T02 reviewed candidate and unchanged v1.2 contract,
+      historical approved 1.7-to-1.8 publication, independently reviewed W2.A01.T01, f54da79f, 0d9ab50b/089c00c6/fff7a04b,
+      GOV-MAINT-0025 52ff3d04 and W2.A02.T01 control chains, and complete per-commit inherited/T01 inventories.'
+    - Require exactly historical T02 and current T01 contracts; admit T01 agent-review/absent experience_change only with
+      independent exact-candidate current product/approved-1.8 conformance classification and no T01 reference change. The
+      closed 1.3 object binds exact W2.A01/W2.A02/T02 selectors, authenticated adoption/reactivation anchors, separately derived
+      inherited/resumed UI files and commits, and task-namespaced classification path/SHA/introduction commit; no other schema
+      version may carry it. Reuse the capture reader for its authenticated Core/native Rust/renderer/contract/build/checker
+      snapshot and separately derive/bind T01-owned test, fixture, worker and other product inputs omitted from that snapshot
+      as exact dependentInputFiles/Git blobs. Deny missing/stale classification/captures, later dependent-input edits including
+      add/revert, extra contracts, redirected objects, foreign claim or unattributed control changes.
+    - 'Allow one historical mixed control/product commit only at exact immutable 9727f1b195e7dee300e7f3df3c289e7739fb0fdc:
+      quality-scope.json strictly appends nine canonical regular Python files introduced in the same sole-parent commit, with
+      all prior entries/metadata/roots unchanged and exactly two governed renderer edits. The v1.3 gate verifies its full
+      tree and task history; a later separate independent T01 full-candidate review examines the verified exception and current
+      product after submission, not as a gate prerequisite. This is not prior independent control approval or a reusable mixed-commit
+      allowance; deny all other mixed commits.'
+    - Make automatic_base select the sole authenticated active T01 original 6506 base rather than HEAD^, with hostile ordinary-task/foreign-state
+      denials; preserve all existing 1.0, 1.1 and 1.2 positive/hostile assertions, roots, thresholds and approval-before-code
+      rules.
+    - Introduce indexed Proposed docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md with exact protected
+      paths and no silent supersession of ADR-0003; pass ADR check and expanded independent control/security review before
+      amendment exit.
+    - Limit W2.A02.T01 control source to design/ui-change.schema.json, tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py,
+      docs/automation/design-first-ui-changes.md, new Proposed ADR-0037 and one appended docs/adr/index.json entry; no renderer,
+      native, Core, reference, original T01 task-base, migration or release edit occurs in this control task. Task-owned evidence/reviews
+      and generated review-site projections are separate workflow outputs.
+    verification_commands:
+    - Focused schema and real-Git authority chronology tests for two authenticated contracts, historical 1.7-to-1.8 segment,
+      exact f54da79f/1f628843 verifier, 0d9ab50b/089c00c6/fff7a04b/ab2c868e UI-gate, 52ff3d04/639a6b2e GOV-MAINT-0025, W2.A01/W2.A02
+      control reviews, exact 9727 strict-additive nine-file/two-renderer mixed commit, independent current classification,
+      and automatic_base full 6506 selection.
+    - Deny forged or absent approvals/reviews, stale or foreign task/lease/base/branch, extra or mutated UI contracts, changed
+      9727 tree or Python introductions, any other mixed control/product commit, reference rewrite, symlink/redirect, hidden
+      add/revert, and stale captures or captured Core/native Rust/renderer/contract/build/checker inputs and separately bound
+      T01-dependent test/fixture/worker/product inputs; retain unchanged positive/adversarial 1.0/1.1/1.2 UI gate fixtures,
+      taskctl/planctl validity, ADR association and independent expanded security/control/ADR review.
+    - Exact committed-candidate full original-base UI gate qualification with independent product/reference conformance classification
+      is deferred to resumed CAP-05.S01.T01, not claimed by this control task.
+    packet_task_sha256: 7296e7634979c1b35103f2a60d98806f3cf40c71be2c5dfa6b69a76935f431f7
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null

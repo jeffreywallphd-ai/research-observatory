@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 89859147c51db9436768f947306db222f70e3fe55912b8a2a4b8baaa714c14f3
+source_sha256: e9634c213f8d6772cd27367a5058ad89e18fbae1b54859011c5277c77e55593f
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -27,7 +27,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Capabilities | 20 |
 | Slices | 117 |
 | Tasks | 356 |
-| Enabler tasks | 17 |
+| Enabler tasks | 18 |
 | Waves | 12 |
 | Wave approval bases | 2 |
 | Wave amendments | 11 |
@@ -51,7 +51,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
-| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `APPROVED` |
+| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `MATERIALIZED` |
 
 ## Waves
 
@@ -2630,11 +2630,12 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A02.json` (`d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79`)
 
-**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-03T10:28:36Z` by human:repository-owner: The repository owner replied 'Approved, please continue' to the decision request explicitly identifying ECR-0010/W2.A02, reviewed candidate 60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db, packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43, and the independent R01 packet disposition. This approves only the bounded adopted-attachment-UI continuation authority proposed in the exact packet, beginning with W2.A02.B00 and the ordered W2.A02.S01/W2.A02.T01 control work and reviews. Academic Minimal 1.8 remains the unchanged approved reference; this is not approval of a 1.9 reference or a new researcher interaction. W2 remains PAUSED and CAP-05.S01.T01 BLOCKED until supported amendment bootstrap, independent control/slice/exit/security reviews, adoption, and explicit Wave resume. The separate intermittent D3D startup finding, original task evidence/review, remaining W2 slices, qualification and human release decision are not waived or completed. The timestamp records binding of the owner's decision to this exact reviewed candidate.
+- `E02` `MATERIALIZED` at `2026-10-03T11:20:25+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 
 ### Amendment-exit review and adoption — W2.A02
 
@@ -2651,6 +2652,37 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - None
 
 **Bounded tasks:**
+
+### - [ ] W2.A02.T01 - Authenticate adopted attachment UI continuation
+
+**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+
+**Dependencies:** `W2.A02.B00`
+
+**Objective:** Add one tightly bound, independently reviewed design-first gate/schema route for T01's inherited W2.A01 and later approved-reference restoration history without changing product, reference or ordinary task authority.
+
+**Acceptance criteria:**
+
+- Add exact-identity-only v1.3 adoptedContinuationAuthority for CAP-05.S01.T01 defect-restoration: authenticate frozen original 6506 base/owner/lease/branch, W2 and W2.A01 approvals/adoption, T02 reviewed candidate and unchanged v1.2 contract, historical approved 1.7-to-1.8 publication, independently reviewed W2.A01.T01, f54da79f, 0d9ab50b/089c00c6/fff7a04b, GOV-MAINT-0025 52ff3d04 and W2.A02.T01 control chains, and complete per-commit inherited/T01 inventories.
+- Require exactly historical T02 and current T01 contracts; admit T01 agent-review/absent experience_change only with independent exact-candidate current product/approved-1.8 conformance classification and no T01 reference change. The closed 1.3 object binds exact W2.A01/W2.A02/T02 selectors, authenticated adoption/reactivation anchors, separately derived inherited/resumed UI files and commits, and task-namespaced classification path/SHA/introduction commit; no other schema version may carry it. Reuse the capture reader for its authenticated Core/native Rust/renderer/contract/build/checker snapshot and separately derive/bind T01-owned test, fixture, worker and other product inputs omitted from that snapshot as exact dependentInputFiles/Git blobs. Deny missing/stale classification/captures, later dependent-input edits including add/revert, extra contracts, redirected objects, foreign claim or unattributed control changes.
+- Allow one historical mixed control/product commit only at exact immutable 9727f1b195e7dee300e7f3df3c289e7739fb0fdc: quality-scope.json strictly appends nine canonical regular Python files introduced in the same sole-parent commit, with all prior entries/metadata/roots unchanged and exactly two governed renderer edits. The v1.3 gate verifies its full tree and task history; a later separate independent T01 full-candidate review examines the verified exception and current product after submission, not as a gate prerequisite. This is not prior independent control approval or a reusable mixed-commit allowance; deny all other mixed commits.
+- Make automatic_base select the sole authenticated active T01 original 6506 base rather than HEAD^, with hostile ordinary-task/foreign-state denials; preserve all existing 1.0, 1.1 and 1.2 positive/hostile assertions, roots, thresholds and approval-before-code rules.
+- Introduce indexed Proposed docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md with exact protected paths and no silent supersession of ADR-0003; pass ADR check and expanded independent control/security review before amendment exit.
+- Limit W2.A02.T01 control source to design/ui-change.schema.json, tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, docs/automation/design-first-ui-changes.md, new Proposed ADR-0037 and one appended docs/adr/index.json entry; no renderer, native, Core, reference, original T01 task-base, migration or release edit occurs in this control task. Task-owned evidence/reviews and generated review-site projections are separate workflow outputs.
+
+**Verification:**
+
+- Focused schema and real-Git authority chronology tests for two authenticated contracts, historical 1.7-to-1.8 segment, exact f54da79f/1f628843 verifier, 0d9ab50b/089c00c6/fff7a04b/ab2c868e UI-gate, 52ff3d04/639a6b2e GOV-MAINT-0025, W2.A01/W2.A02 control reviews, exact 9727 strict-additive nine-file/two-renderer mixed commit, independent current classification, and automatic_base full 6506 selection.
+- Deny forged or absent approvals/reviews, stale or foreign task/lease/base/branch, extra or mutated UI contracts, changed 9727 tree or Python introductions, any other mixed control/product commit, reference rewrite, symlink/redirect, hidden add/revert, and stale captures or captured Core/native Rust/renderer/contract/build/checker inputs and separately bound T01-dependent test/fixture/worker/product inputs; retain unchanged positive/adversarial 1.0/1.1/1.2 UI gate fixtures, taskctl/planctl validity, ADR association and independent expanded security/control/ADR review.
+- Exact committed-candidate full original-base UI gate qualification with independent product/reference conformance classification is deferred to resumed CAP-05.S01.T01, not claimed by this control task.
+
+#### Review history — W2.A02.T01
+
+**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 
 ## Linked corrective tasks
