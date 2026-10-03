@@ -38651,7 +38651,7 @@
       "approval_sha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
       "approval_status": "APPROVED",
       "lifecycle_status": "APPROVED",
-      "bootstrap_status": "REVIEW",
+      "bootstrap_status": "APPROVED",
       "campaign_status": "NONE",
       "bootstrap_attempts": [
         {
@@ -38668,12 +38668,12 @@
             }
           ],
           "review": {
-            "reviewer": null,
-            "result": null,
-            "reviewed_at": null,
-            "notes": null
+            "reviewer": "agent:/root/w2a02_bootstrap_independent_review",
+            "result": "approved",
+            "reviewed_at": "2026-10-03T11:05:05+00:00",
+            "notes": "Independent R01 ledger artifacts/evidence/W2.A02.B00.review-R01.json at d22a451bf2dc3917b3c27c1b5a62b70e7bfb023c approves candidate f97c32f1 and submitted state d61a9e1c with no findings."
           },
-          "current_status": "REVIEW"
+          "current_status": "APPROVED"
         }
       ],
       "slice_contributions": [

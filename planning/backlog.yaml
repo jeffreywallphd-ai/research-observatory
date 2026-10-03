@@ -52428,7 +52428,7 @@ wave_amendments:
         of the owner's decision to this exact reviewed candidate.
   bootstrap:
     id: W2.A02.B00
-    status: REVIEW
+    status: APPROVED
     implementer: codex-w2-implementation
     implementation_commit: f97c32f1330a92cb64c5a95f6d66b2f3f56da147
     submission_branch: codex/w2-implementation
@@ -52440,10 +52440,11 @@ wave_amendments:
       commit: f97c32f1330a92cb64c5a95f6d66b2f3f56da147
       recorded_at: '2026-10-03T10:44:39+00:00'
     review:
-      reviewer: null
-      result: null
-      reviewed_at: null
-      notes: null
+      reviewer: agent:/root/w2a02_bootstrap_independent_review
+      result: approved
+      reviewed_at: '2026-10-03T11:05:05+00:00'
+      notes: Independent R01 ledger artifacts/evidence/W2.A02.B00.review-R01.json at d22a451bf2dc3917b3c27c1b5a62b70e7bfb023c
+        approves candidate f97c32f1 and submitted state d61a9e1c with no findings.
   campaign: null
   tasks: []
   completion:
