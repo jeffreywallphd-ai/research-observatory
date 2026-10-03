@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e9634c213f8d6772cd27367a5058ad89e18fbae1b54859011c5277c77e55593f
+source_sha256: 2707eef617da6706b9c07ffc7b071c9e99c108994fffd34ad54f898508eefdee
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -51,7 +51,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
-| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `MATERIALIZED` |
+| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ACTIVE` |
 
 ## Waves
 
@@ -2630,12 +2630,13 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A02.json` (`d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79`)
 
-**Lifecycle / bootstrap / campaign / completion:** `MATERIALIZED` / `APPROVED` / `NONE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-03T10:28:36Z` by human:repository-owner: The repository owner replied 'Approved, please continue' to the decision request explicitly identifying ECR-0010/W2.A02, reviewed candidate 60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db, packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43, and the independent R01 packet disposition. This approves only the bounded adopted-attachment-UI continuation authority proposed in the exact packet, beginning with W2.A02.B00 and the ordered W2.A02.S01/W2.A02.T01 control work and reviews. Academic Minimal 1.8 remains the unchanged approved reference; this is not approval of a 1.9 reference or a new researcher interaction. W2 remains PAUSED and CAP-05.S01.T01 BLOCKED until supported amendment bootstrap, independent control/slice/exit/security reviews, adoption, and explicit Wave resume. The separate intermittent D3D startup finding, original task evidence/review, remaining W2 slices, qualification and human release decision are not waived or completed. The timestamp records binding of the owner's decision to this exact reviewed candidate.
 - `E02` `MATERIALIZED` at `2026-10-03T11:20:25+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
+- `E03` `ACTIVE` at `2026-10-03T11:31:01+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 
 ### Amendment-exit review and adoption — W2.A02
 
@@ -2655,7 +2656,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A02.T01 - Authenticate adopted attachment UI continuation
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W2.A02.B00`
 
@@ -9847,7 +9848,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

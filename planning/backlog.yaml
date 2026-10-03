@@ -25221,7 +25221,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T02
     - CAP-02.S03.T03
-    status: IN_PROGRESS
+    status: NOT_STARTED
     tasks:
     - id: CAP-05.S01.T01
       capability_id: CAP-05
@@ -43066,7 +43066,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: null
+  active_amendment: W2.A02
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -52411,7 +52411,7 @@ wave_amendments:
     sha256: d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79
     introduction_commit: 5fbeea66e84bac5ab24cf1bb8d2522838529a0ba
   lifecycle:
-    status: MATERIALIZED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -52431,6 +52431,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-03T11:20:25+00:00'
       rationale: Materialized the exact human-approved task inventory.
+    - id: E03
+      status: ACTIVE
+      actor: codex-w2-implementation
+      at: '2026-10-03T11:31:01+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W2.A02.B00
     status: APPROVED
@@ -52450,7 +52455,22 @@ wave_amendments:
       reviewed_at: '2026-10-03T11:05:05+00:00'
       notes: Independent R01 ledger artifacts/evidence/W2.A02.B00.review-R01.json at d22a451bf2dc3917b3c27c1b5a62b70e7bfb023c
         approves candidate f97c32f1 and submitted state d61a9e1c with no findings.
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave-amendment
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    worktree: .
+    base_sha: d1aec9e89fe28ea61e8ceb8ad9da93813e4b70f6
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-10-03T11:31:01+00:00'
+    updated_at: '2026-10-03T11:31:01+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-03T11:31:01+00:00'
+      expires_at: '2026-10-04T11:31:01+00:00'
   tasks:
   - id: W2.A02.T01
     amendment_id: W2.A02
@@ -52501,14 +52521,14 @@ wave_amendments:
     - Exact committed-candidate full original-base UI gate qualification with independent product/reference conformance classification
       is deferred to resumed CAP-05.S01.T01, not claimed by this control task.
     packet_task_sha256: 7296e7634979c1b35103f2a60d98806f3cf40c71be2c5dfa6b69a76935f431f7
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-10-03T11:31:01+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
