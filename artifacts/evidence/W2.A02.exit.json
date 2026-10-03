@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-exit-evidence",
+  "amendmentId": "W2.A02",
+  "changeRequestId": "ECR-0010",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "b9719a975864b866805862082a6454904967a661",
+  "outcome": "ready-for-independent-amendment-exit-review",
+  "authority": {
+    "approvedPacket": {
+      "path": "planning/enabler-change-requests/ECR-0010.packet.json",
+      "commit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+      "rawSha256": "f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43"
+    },
+    "amendmentApproval": {
+      "path": "planning/wave-amendment-approvals/W2.A02.json",
+      "introductionCommit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba",
+      "rawSha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
+      "approvedBy": "human:repository-owner"
+    },
+    "reference": {
+      "id": "RO-UI-ACADEMIC-MINIMAL-1.8",
+      "publicationCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+      "publishedPackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+      "unchangedSincePublication": true
+    }
+  },
+  "scope": {
+    "bootstrap": {
+      "id": "W2.A02.B00",
+      "status": "APPROVED",
+      "implementationCommit": "f97c32f1330a92cb64c5a95f6d66b2f3f56da147",
+      "evidencePath": "artifacts/evidence/W2.A02.B00.json",
+      "evidenceSha256": "c522b8677acbc9a4a2b75830a28887d98fb74484145ac6ecf0bac69f82d6838e",
+      "reviewPath": "artifacts/evidence/W2.A02.B00.review-R01.json",
+      "reviewSha256": "ebde07a8e4231343eec930d6d6020a3a399995bc3aa9a84335aaaee4ce375913"
+    },
+    "contribution": {
+      "id": "W2.A02.S01",
+      "capabilityId": "CAP-05",
+      "taskIds": [
+        "W2.A02.T01"
+      ],
+      "reviewStatus": "approved"
+    },
+    "task": {
+      "id": "W2.A02.T01",
+      "status": "DONE",
+      "finalCandidateCommit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "finalEvidencePath": "artifacts/evidence/W2.A02.T01.json",
+      "finalEvidenceSha256": "ed80bda41ecb2e2688afb570a3e2ca7aeabc0d76e4a0cf056e0372467329f04f",
+      "reviewPath": "artifacts/evidence/W2.A02.T01.review-R01.json",
+      "reviewSha256": "d50593a6bd6f5e180b373bd925647179f40a192fb9d7d59c2ebaffb27f910c45",
+      "reviewResult": "approved",
+      "openFindings": []
+    }
+  },
+  "contributionReview": {
+    "path": "artifacts/evidence/W2.A02.S01.review-01.json",
+    "rawSha256": "4ce20278ff5eebf84b44716a4c407c7b3b770eb57a77ee51abad6b3bf9d22c85",
+    "introductionCommit": "b9719a975864b866805862082a6454904967a661",
+    "reviewedCompletionDeliveryCommit": "24bc565da9db1c06b06a22738eba7080339f11b3",
+    "result": "approved",
+    "openFindings": []
+  },
+  "acceptanceClosure": [
+    {
+      "criterionIndex": 1,
+      "criterion": "W2 is cleanly PAUSED, original T01 is BLOCKED with its 6506 base retained, and the packet binds the exact W2 base, adopted W2.A01, GOV-MIG-0001 and unchanged approved 1.8 package before independent packet review and explicit owner approval.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "The frozen ECR-0010 packet and owner approval bind the paused W2 original campaign, adopted W2.A01/W2.CP02, GOV-MIG-0001 and unchanged Academic Minimal 1.8. W2 remains PAUSED/amendment-hold and CAP-05.S01.T01 remains BLOCKED with its original 6506 base. B00's independent R01 review preceded materialization and activation."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "The independently reviewed v1.3 control and ADR authenticate exactly historical T02 v1.2 plus current T01 v1.3 contracts, the approved 1.7-to-1.8 change, all named independently reviewed intervening control chains, exact one-off 9727 additive Python inventory/renderer history, and independently classified current 1.8 product; automatic-base 6506 selection denies self-approval and shortened lineage.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "W2.A02.T01 R01 independently approved the exact f989ba75 v1.3 gate/schema and indexed Proposed ADR-0037. The 13-case real-Git suite and separate repaired six-source-path denial authenticate historical T02 v1.2 and future current T01 v1.3 selectors, 1.7-to-1.8 publication, reviewed maintenance chains, sole 9727 exception and original-base selection. Independent current-product/1.8 classification is a guard required during resumed T01, not completed product evidence at this exit."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "B00 appends shell tasks:[], receives independent review, then separate materialization and activation; only exact W2.A02.T01/S01 execute, with task, slice, exit and security checkpoint reviews before adoption. W2 remains PAUSED until explicit resume.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "B00 was independently approved before the exact one-task materialization and amendment activation. T01 has committed R01 approved disposition with no findings; W2.A02.S01 has a separate committed independent three-criterion contribution review. This exit packet requests its own independent review; a separate security checkpoint and adoption remain required while W2 stays PAUSED."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Resumed ordinary T01 separately proves real native/Core attachment and current 1.8 conformance through a full original-base UI gate, exact-candidate task checks and independent review; W2 release stays separate.",
+      "status": "ready-for-independent-exit-disposition",
+      "evidence": "The original CAP-05.S01.T01 current-product classification, complete original-6506-base UI gate, real Windows native/Core picker and drop, fifth-D3D startup closure, task evidence and independent review remain later ordinary W2 obligations. Amendment exit, checkpoint and adoption do not assert them or approve W2 release."
+    }
+  ],
+  "checks": [
+    {
+      "command": ".venv\\Scripts\\python.exe tools/planctl.py --repo . ecr validate ECR-0010 --require-approved",
+      "result": "passed",
+      "testedCommit": "b9719a975864b866805862082a6454904967a661",
+      "rawOutput": "artifacts/tmp/W2.A02.exit.ecr-b9719a97.log",
+      "rawOutputSha256": "adb8d662cff7cd493a692d53d6a7b9201238a6b780a18c3cfb2ffcc85df2dcbd",
+      "observation": "The exact approved ECR-0010 packet, W2.A02 owner approval, adopted W2.A01 predecessor and approved 1.8 reference validate as history-bound at the clean contribution candidate."
+    },
+    {
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "result": "passed",
+      "testedCommit": "b9719a975864b866805862082a6454904967a661",
+      "rawOutput": "artifacts/tmp/W2.A02.exit.views-b9719a97.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "observation": "Generated backlog views are current for the committed T01 DONE and S01 contribution checkpoint."
+    }
+  ],
+  "inheritedChecks": [
+    {
+      "source": "artifacts/evidence/W2.A02.T01.json",
+      "candidateCommit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "boundary": "Thirteen exact-candidate authority/legacy real-Git cases, focused six-file denial, ADR, backlog, control-only UI gate and targeted quality passed; no inherited log is relabeled as a fresh b971 check."
+    },
+    {
+      "source": "artifacts/evidence/W2.A02.T01.review-R01.json",
+      "reviewStateCommit": "4872e6cafd3d811febff85b92a9800921df6b4c1",
+      "boundary": "Independent task review checked ten raw log hashes plus preserved adverse red result, and fresh taskctl and plan-review-site integrity at the committed REVIEW state."
+    }
+  ],
+  "waveCampaign": {
+    "status": "PAUSED",
+    "scope": "amendment-hold",
+    "pauseReason": "CAP-05.S01.T01 is BLOCKED at the independently recorded full-original-base UI authority mismatch. A narrowly scoped ECR-0010/W2.A02 amendment needs exact packet review and explicit owner approval before ordinary T01 can resume. Its intermittent fifth-D3D pre-show startup denial remains separately unresolved; passing four-node picker and OS-drop runs do not close that risk."
+  },
+  "amendmentCampaign": {
+    "status": "ACTIVE",
+    "scope": "wave-amendment",
+    "pauseReason": null
+  },
+  "requiredNextTransition": "independent amendment exit review",
+  "reviewerDisposition": {
+    "status": "pending-independent-exit-review",
+    "openFindings": [],
+    "note": "Review the exact committed exit evidence, four packet criteria, distinct B00/T01/S01 dispositions, authorized six-file source boundary, retained adverse red result, unchanged 1.8 reference and deferred ordinary T01 proof. Security checkpoint/adoption remain separate."
+  }
+}
