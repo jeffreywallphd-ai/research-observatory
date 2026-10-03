@@ -1,0 +1,56 @@
+{
+  "task_id": "W2.A03.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+  "base_commit": "cd61bae9681690f92b754e443cd61f2c62026288",
+  "submission_record_commit": "206960d50ce5be77bd120de09d04d144afa8f7d1",
+  "reviewer": "agent:/root/maint26_independent_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "evidence_sha256": "3c16cfc101bfd9aea58197b44eab35c628180ae718b366da43eef8e1a89f883a",
+  "packet_sha256": "db9f32de6ea1c746755792dc625811ec70a2ee2555a4f581bc864d6172cd6d29",
+  "acceptance_criteria_sha256": "2f6cf72465a551d93229db9483004b02f1abea46d2a39ebc2a2db1fc184026de",
+  "selection_sha256": "7f84fa8d2ad5cc189004712dcaa116cd0afd6825409ba293b58b6ff60f044fd6",
+  "notes": "Independent expanded control, security and ADR review of source candidate aa096646 and clean frozen REVIEW state 206960d5. The 18-path task-base diff contains ten of the eleven permitted ECR-0011 T01 source paths and eight task-owned evidence or generated planning outputs; the optional desktop test path was untouched. No T02 assembler, activation, baseline, approved reference, renderer, Core/native, original task-base, migration or release source changed. The committed 1.8 witness binds approved publication acdc67b6 and package cd8995fd, applies only the closed ordered 1.5-to-1.8 semantic transform, and retains historic 1.6/1.7 witness cases. The v1.4 gate requires exact ECR-0011/B00/T01/T02, A01/A02, CAP-04.S05.T03 R01-R03, GOV-MAINT-0025/0026 and W2.C10 ancestry, original 6506 base, separate adoption and reactivation, two-contract limit, current classification and capture/dependent-input lineage. The earlier review-site prefix and post-adoption source-attribution gaps were corrected with focused real-Git denials. All twelve exact-candidate retained raw check-output hashes match the manifest; the full-base future-state fixture passed but mocks capture readers and is not actual T02 desktop or CAP-05 product/native qualification. Earlier red full-base, witness fixture and sandbox-owner outcomes remain described with retained log hashes in the task-start worksheet. Proposed ADR-0039 is indexed, remains Proposed, and supersedes no accepted decision. I previously independently reviewed the ECR-0011 packet and B00 bootstrap, and did not author this T01 candidate or evidence. This approves only W2.A03.T01; T02 activation and capture, A03 integration/adoption, original CAP-05.S01.T01 D3D/native/Core proof, W2 qualification and human release remain separate.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The regular committed witness selects the exact approved 1.8 publication and package and unchanged approved 1.5 semantic source. The verifier enforces one closed ordered coverage date, CAP-05 page/capability, Source Manager, ingestion and reader transform. The retained nine-case exact-candidate suite includes real-Git 1.6/1.7/1.8 histories and stale, dirty, redirected, changed and reordered denials; the direct committed witness check returned no errors."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Schema 1.4 requires the unchanged v1.3 continuation object and one closed A03 activation object only for the original CAP-05.S01.T01 restoration. The gate rederives exact reviewed task, prior CAP-04.S05.T03/GOV26/C10, A01/A02/A03 adoption and third reactivation history, original 6506 base, two-contract inventory, current classification and producer/dependent inputs. Focused real-Git denials close unrelated review-site output and post-adoption A03-source edits. The synthetic full-base future-state positive passed with explicitly mocked capture readers; actual desktop and original-task qualification remain due."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The Git base-to-candidate path list exactly equals the frozen manifest's 18 paths: ten approved T01 sources and eight task-owned evidence or generated projections. All new files are regular 100644 blobs. No T02 consumer, approved reference, renderer, Core/native, migration, original base or release source changed. Task-base ADR, control-only UI gate, backlog/views, targeted Python static checks and diff check have retained zero-exit outputs."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "One indexed Proposed ADR-0039 associates the witness, verifier, schema and gate with W2.A03.T01 and does not supersede ADR-0003/0004 or Proposed ADR-0037. The exact task-base ADR checker inspected all 18 changed paths. This independent ledger supplies the required expanded control, security and ADR disposition without granting T02, original-task or Wave completion."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Frozen packet, evidence and exact Git scope",
+      "result": "passed",
+      "observation": "At clean submitted HEAD 206960d5, taskctl stores REVIEW R01 for candidate aa096646 at base cd61bae9. The committed manifest canonical SHA-256 is 3c16cfc1 and matches its frozen evidence reference; packet SHA-256 is db9f32de. All four criteria and selected command IDs match the frozen submission, and its 18 changedFiles exactly equal the Git diff. Owner-approved ECR-0011 packet SHA-256 is 31a31459 and precedes this candidate. W2 remains PAUSED, A03 ACTIVE, original CAP-05.S01.T01 BLOCKED and T02 NOT_STARTED."
+    },
+    {
+      "check": "Retained execution and adverse-evidence truth",
+      "result": "passed",
+      "observation": "All twelve ignored rawOutput files exist and their SHA-256 values match the committed manifest. Their outputs report nine witness and six targeted real-Git tests passing, the 526.583-second synthetic full original-base case passing, and zero-exit ADR, task-base UI gate, backlog/views, Ruff, mypy and diff checks. The UI gate's task-base output has uiFiles:[], so it does not prove the later live original-base lane. Preserved development red logs show the historical control attribution and witness fixture failures, followed by the documented narrow corrections."
+    },
+    {
+      "check": "Authority and review independence",
+      "result": "passed",
+      "observation": "The changed witness, schema, gate and Proposed ADR implement the closed ECR-0011 T01 control route. The prior ECR-0011 packet and B00 reviews were independently performed by this reviewer and are disclosed; this reviewer authored neither T01 source nor criterion evidence. No review or taskctl state was mutated during this examination."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}

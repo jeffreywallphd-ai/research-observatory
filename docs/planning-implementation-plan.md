@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f3babda7d808af489fcd11633e4e4d9c2e7711a830fd7a234446eb35a0268957
+source_sha256: fb2726df6e75c7933ab5da36d2ba136a39cf3eb91862c62d62143d7c57e62106
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2787,9 +2787,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W2.A03.T01 - Bind exact 1.8 presentation and UI control authority
+### - [x] W2.A03.T01 - Bind exact 1.8 presentation and UI control authority
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/maint26_independent_review (`approved`)
 
 **Dependencies:** `W2.A03.B00`
 
@@ -2814,9 +2814,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A03.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `db9f32de6ea1c746755792dc625811ec70a2ee2555a4f581bc864d6172cd6d29`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `db9f32de6ea1c746755792dc625811ec70a2ee2555a4f581bc864d6172cd6d29`
 
 - Candidate / base / branch: `aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd` / `cd61bae9681690f92b754e443cd61f2c62026288` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T23:31:58+00:00`
@@ -2830,15 +2832,31 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/maint26_independent_review / `2026-10-03T23:51:46+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.A03.T01.review-R01.json` / `c0c9c10e3e6d271edd13db1c767ed8d4d07b5564b8a28f5b4c383173cf14d159`
+
+**Review notes:** Independent expanded control, security and ADR review of source candidate aa096646 and clean frozen REVIEW state 206960d5. The 18-path task-base diff contains ten of the eleven permitted ECR-0011 T01 source paths and eight task-owned evidence or generated planning outputs; the optional desktop test path was untouched. No T02 assembler, activation, baseline, approved reference, renderer, Core/native, original task-base, migration or release source changed. The committed 1.8 witness binds approved publication acdc67b6 and package cd8995fd, applies only the closed ordered 1.5-to-1.8 semantic transform, and retains historic 1.6/1.7 witness cases. The v1.4 gate requires exact ECR-0011/B00/T01/T02, A01/A02, CAP-04.S05.T03 R01-R03, GOV-MAINT-0025/0026 and W2.C10 ancestry, original 6506 base, separate adoption and reactivation, two-contract limit, current classification and capture/dependent-input lineage. The earlier review-site prefix and post-adoption source-attribution gaps were corrected with focused real-Git denials. All twelve exact-candidate retained raw check-output hashes match the manifest; the full-base future-state fixture passed but mocks capture readers and is not actual T02 desktop or CAP-05 product/native qualification. Earlier red full-base, witness fixture and sandbox-owner outcomes remain described with retained log hashes in the task-start worksheet. Proposed ADR-0039 is indexed, remains Proposed, and supersedes no accepted decision. I previously independently reviewed the ECR-0011 packet and B00 bootstrap, and did not author this T01 candidate or evidence. This approves only W2.A03.T01; T02 activation and capture, A03 integration/adoption, original CAP-05.S01.T01 D3D/native/Core proof, W2 qualification and human release remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/maint26_independent_review at `2026-10-03T23:51:46+00:00`
+
+**Latest notes:** Independent expanded control, security and ADR review of source candidate aa096646 and clean frozen REVIEW state 206960d5. The 18-path task-base diff contains ten of the eleven permitted ECR-0011 T01 source paths and eight task-owned evidence or generated planning outputs; the optional desktop test path was untouched. No T02 assembler, activation, baseline, approved reference, renderer, Core/native, original task-base, migration or release source changed. The committed 1.8 witness binds approved publication acdc67b6 and package cd8995fd, applies only the closed ordered 1.5-to-1.8 semantic transform, and retains historic 1.6/1.7 witness cases. The v1.4 gate requires exact ECR-0011/B00/T01/T02, A01/A02, CAP-04.S05.T03 R01-R03, GOV-MAINT-0025/0026 and W2.C10 ancestry, original 6506 base, separate adoption and reactivation, two-contract limit, current classification and capture/dependent-input lineage. The earlier review-site prefix and post-adoption source-attribution gaps were corrected with focused real-Git denials. All twelve exact-candidate retained raw check-output hashes match the manifest; the full-base future-state fixture passed but mocks capture readers and is not actual T02 desktop or CAP-05 product/native qualification. Earlier red full-base, witness fixture and sandbox-owner outcomes remain described with retained log hashes in the task-start worksheet. Proposed ADR-0039 is indexed, remains Proposed, and supersedes no accepted decision. I previously independently reviewed the ECR-0011 packet and B00 bootstrap, and did not author this T01 candidate or evidence. This approves only W2.A03.T01; T02 activation and capture, A03 integration/adoption, original CAP-05.S01.T01 D3D/native/Core proof, W2 qualification and human release remain separate.
 
 **Currently open findings:** -
 
 ### - [ ] W2.A03.T02 - Activate approved 1.8 desktop consumers and pinned baseline
 
-**Status / owner / review:** `NOT_STARTED` / - / - (`-`)
+**Status / owner / review:** `READY` / - / - (`-`)
 
 **Dependencies:** `W2.A03.B00`, `W2.A03.T01`
 
