@@ -1043,9 +1043,7 @@
       "unlocks_waves": [
         "W3"
       ],
-      "interrupting_change_request_ids": [
-        "ECR-0010"
-      ],
+      "interrupting_change_request_ids": [],
       "interrupting_recovery_request_ids": [],
       "corrective_tasks": [
         {
@@ -38650,7 +38648,7 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A02.json",
       "approval_sha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "ADOPTED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
@@ -39291,7 +39289,24 @@
           "current_submission": null
         }
       },
-      "adoption_checkpoints": [],
+      "adoption_checkpoints": [
+        {
+          "id": "W2.CP03",
+          "kind": "security",
+          "recorded_by": "codex-w2-implementation",
+          "recorded_at": "2026-10-03T14:40:21+00:00",
+          "notes": "Adopt independently reviewed ECR-0010 control route; retain original CAP-05.S01.T01 and W2 gates",
+          "evidence_references": [
+            {
+              "type": "amendment-adoption-evidence",
+              "amendment_id": "W2.A02",
+              "path": "artifacts/evidence/W2.A02.adoption.json",
+              "sha256": "ff767dcbc6aab20106500d827865b0892852416c6dedf55e05e43d0fec44aaa5",
+              "commit": "db7edd6c6021ed78afd9084b37d2ef48e1fc12cb"
+            }
+          ]
+        }
+      ],
       "page": "enablers/ECR-0010.html"
     }
   ],

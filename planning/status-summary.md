@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: dcb4eb5441590c527168546565a43b0c9e999a9ebed966918c0811da6d23bfbc
+source_sha256: f44fdda7f332d6420b40bad0bd50352513f743ddfb4027b74fe3a98afb6914ac
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -62,8 +62,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `ADOPTED` | 9 |
-| `REVIEW` | 1 |
+| `ADOPTED` | 10 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -90,7 +89,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
-| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `REVIEW` | `APPROVED` | `COMPLETE` | 1 |
+| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
 
 ## Amendment-exit review and adoption projections
 
@@ -640,7 +639,8 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W2.CP03` `security` by codex-w2-implementation at `2026-10-03T14:40:21+00:00` — Adopt independently reviewed ECR-0010 control route; retain original CAP-05.S01.T01 and W2 gates
+  - amendment `W2.A02` / `artifacts/evidence/W2.A02.adoption.json` / `ff767dcbc6aab20106500d827865b0892852416c6dedf55e05e43d0fec44aaa5` / `db7edd6c6021ed78afd9084b37d2ef48e1fc12cb`
 
 
 ## Task review history projections

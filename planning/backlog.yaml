@@ -1491,7 +1491,7 @@ waves:
       remain recorded, not waived.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
@@ -3575,6 +3575,17 @@ waves:
       sha256: c9a0c04eea44bcb97fbb0b2cfd262320ad27daa03a532f229ef6df9e5ebd0d30
       commit: 1e51bf12d5105928a4740b9a2950c6851f8a5dcd
     notes: Adopted W2.A01 control-plane amendment.
+  - id: W2.CP03
+    kind: security
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-03T14:40:21+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W2.A02
+      path: artifacts/evidence/W2.A02.adoption.json
+      sha256: ff767dcbc6aab20106500d827865b0892852416c6dedf55e05e43d0fec44aaa5
+      commit: db7edd6c6021ed78afd9084b37d2ef48e1fc12cb
+    notes: Adopt independently reviewed ECR-0010 control route; retain original CAP-05.S01.T01 and W2 gates
   completion:
     status: PAUSED
     reviewer: null
@@ -52411,7 +52422,7 @@ wave_amendments:
     sha256: d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79
     introduction_commit: 5fbeea66e84bac5ab24cf1bb8d2522838529a0ba
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -52441,6 +52452,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-03T14:10:25+00:00'
       rationale: Submitted amendment exit for review.
+    - id: E05
+      status: ADOPTED
+      actor: codex-w2-implementation
+      at: '2026-10-03T14:40:21+00:00'
+      rationale: Adopt independently reviewed ECR-0010 control route; retain original CAP-05.S01.T01 and W2 gates
   bootstrap:
     id: W2.A02.B00
     status: APPROVED
