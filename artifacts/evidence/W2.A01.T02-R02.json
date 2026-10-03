@@ -1,0 +1,198 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A01.T02",
+  "baseCommit": "a6588fc5d2473d028a4f8d6c24ec8aa48e527255",
+  "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+    "artifacts/evidence/W2.A01.T02.json",
+    "artifacts/evidence/W2.A01.T02.review-R01.json",
+    "artifacts/evidence/W2.A01.T02.task-start.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0005.html",
+    "planning/review-site/enablers/ECR-0006.html",
+    "planning/review-site/enablers/ECR-0007.html",
+    "planning/review-site/enablers/ECR-0009.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/desktop/test_document_attachment_interactions.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The immutable ECR-0009 packet, 55 Git-bound proposal paths, exact owner approval and distinct 1.8 publication at acdc67b6 remain unchanged from R01; the fresh whole-base gate authenticates them again at this R02 candidate.",
+        "The approved 1.8 package SHA-256 remains cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94; the R02 diff does not alter design/ui-reference or the approval record."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The task claim, separate approved-reference publication, and every renderer commit retain strict Git order. The R02 product correction is a later descendant of the independently adverse R01 ledger, and approved 1.7 history remains unchanged.",
+        "The independently reviewed 38dd61f3 checker passes the complete task-base per-commit chronology at the R02 candidate, including only byte-exact active-reference label refreshes on pre-existing historical ECR pages."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "R02 keeps the opaque choose/drop/commit/status contract and selected Work/version/source binding. A native attached reply remains labeled historical while exact same-selection/operation/command authoritative failed, cancelled or recoverable unavailable status releases lawful new-copy controls; denied/unsafe authority remains gated by canStartAttachmentReview.",
+        "The mounted synthetic-native replay checks global and inline Task Center return, exact historical command/revision IDs, same-command unconfirmed retry, rejection of an altered retry payload, stale authority denial and focus. Production native acquisition and reader stay unavailable/pending for original CAP-05.S01.T01 and CAP-05.S04."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The task-owned UI evidence retains the exact eight governed renderer paths, immutable owner-approved 1.8 package and focused checks. The fresh whole-base gate uses independently approved external control producer 38dd61f3; its first 5078ef4c increment admits canonical T01 R02 evidence names, and its second increment admits only byte-exact generated current-reference labels on existing ECR pages.",
+        "The prior in-tree evidence-path denial and post-R01 generated-page denial remain adverse raw logs, not replaced or hidden. The R02 gate reports no authority errors at the exact committed candidate."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "R01 findings W2.A01.T02-R01-F01 and -F02 were reproduced before source edits; the task-start worksheet preserves the red failures and missed acceptance rows. The fresh mounted real-Core/synthetic-native test proves recoverable post-commit status, safe live announcement for failed/denied/unconfirmed status without asynchronous focus movement, exact retry without a new command, altered-payload denial, and stale authority refusal.",
+        "Further adverse focus and global-handoff red outputs remain at artifacts/tmp/W2.A01.T02.R02.red-preflight-focus-ec66ab78.log (SHA-256 c89063c57a819584ea1a4a0eca8ce7abdf23431c8a04f760e7c4a0ea9ea90ea3) and artifacts/tmp/W2.A01.T02.R02.red-global-handoff-ec66ab78.log (SHA-256 4dfb2b233f2b26b33c1ec1f903dd5d3d07b6d1d0423913679d47d404b79d7c61). Focused Vitest, strict typing and product build pass. Synthetic native outcomes do not prove real file picker/drop admission, Core attachment persistence, rights/provenance or protected reader; these remain downstream tasks."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "The immutable R01 submission and changes-requested ledger at artifacts/evidence/W2.A01.T02.review-R01.json remain adverse with two open blocking finding IDs. This R02 packet replays both for independent closure against the exact new commit.",
+        "Independent expanded R02 task and later W2.A01.S01 slice review remain prerequisites to amendment exit/adoption; ordinary W2 remains PAUSED and release is not claimed."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:ui-change",
+      "foundation:backlog",
+      "desktop:unit"
+    ],
+    "riskAnalysis": "R02 specifically replays W2.A01.T02-R01-F01 and W2.A01.T02-R01-F02 with red-before-fix mounted evidence: an attached reply followed by authoritative terminal status must restore safe actions, and later denial/failure must enter a live region. Fresh exact-candidate mounted, contract, typing/build, lint/format, backlog and whole task-base UI lineage checks cover changed behavior and approval-control history. The separately reviewed 38dd61f3 checker remains external to T02 delivery history until independent task disposition.",
+    "deferred": [
+      "Repository-wide foundation:quality remains failed on the prior CAP-05 Python inventory; bounded inventory and affected format/mypy maintenance remain before W2 exit (R01 adverse log artifacts/tmp/W2.A01.T01.quality-da2b026d.log, SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44).",
+      "Full desktop/service/security profiles, real native/Core file admission, protected reader, integrated amendment slice review and W2 qualification remain downstream. The deterministic planning review site was checked before its projection commit and will be freshly qualified at amendment exit; the current task does not claim a full repository profile pass."
+    ]
+  },
+  "checks": [
+    {
+      "id": "ui-gate",
+      "command": ".venv/Scripts/python.exe .local/w2-reference-control/tools/ui_change_gate.py --repo . --base 1f628843e415b6affbd811eb37d9fff437fac51f --head 988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.ui-gate-988ee478.log",
+      "rawOutputSha256": "d60715bf172c4aea25ca3b006c03f1b7e93531a80e7a03996f49ad63a9b3217a",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh external control execution against committed target 988ee4789f2004cce83187f971760d5b5f3e02ca; separately committed and independently approved checker source 38dd61f302000317f9fd84151afeba3365cb528f; original adverse parser/projection logs preserved.",
+      "result": "The whole task-base history passes, including reviewed T01 control, approved 1.8 publication, exact renderer product files and byte-exact historic ECR reference-label projections."
+    },
+    {
+      "id": "mounted",
+      "command": ".venv/Scripts/python.exe -m unittest tests.desktop.test_document_attachment_interactions -v",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.mounted-988ee478.log",
+      "rawOutputSha256": "4fbe5079cff5067a104fd03d59158ee53579e6bc2afd730e9a3f13e771534cf6",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Mounted real-Core/synthetic-native journey passes attached-reply then authoritative failed/cancelled/unavailable/denied status, global and inline Task Center return, exact historical IDs, safe live announcement without asynchronous focus theft, exact same-command uncertainty and altered-payload denial, stale authority and lock recovery."
+    },
+    {
+      "id": "vitest",
+      "command": "From apps/desktop: node node_modules/vitest/vitest.mjs run src/app/documentAttachment.test.ts src/app/ImportWorkspace.test.tsx src/app/TaskCenterWorkspace.test.tsx src/app/ApplicationRuntime.test.tsx",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.vitest-988ee478.log",
+      "rawOutputSha256": "1c87d750f2cb8eaff9ae02db5f81f18cdeab551acc1706388d784acd7451434c",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Four focused desktop files and 27 opaque-contract/renderer-adjacent tests pass."
+    },
+    {
+      "id": "typecheck",
+      "command": "From apps/desktop: node node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.typecheck-988ee478.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Strict typing passes for the renderer recovery and opaque native contract."
+    },
+    {
+      "id": "vite",
+      "command": "From apps/desktop: node node_modules/vite/bin/vite.js build --config vite.product.config.ts",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.vite-988ee478.log",
+      "rawOutputSha256": "7d7a8d9693d0592b6f316a4abb06576161ee05b9e76065d1d9750b39ae34ed76",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Product renderer build passes with the R02 status recovery behavior."
+    },
+    {
+      "id": "desktop-lint",
+      "command": "From apps/desktop: node scripts/lint.mjs",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.desktop-lint-988ee478.log",
+      "rawOutputSha256": "d514ec2b5b510fe3786f853f14cfc079e8cc173b690cee606f34cb03ac65e528",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Desktop source lint passes."
+    },
+    {
+      "id": "ruff",
+      "command": ".venv/Scripts/python.exe -m ruff check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.ruff-988ee478.log",
+      "rawOutputSha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Changed mounted Python test passes Ruff lint."
+    },
+    {
+      "id": "format",
+      "command": ".venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.format-988ee478.log",
+      "rawOutputSha256": "fd2299c9f1c6dc869070883e281051bfe93aacf66c1a3b0069f45b4aa410ca50",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Changed mounted Python test passes Ruff format."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.backlog-988ee478.log",
+      "rawOutputSha256": "1e29322fc7e664317b715b7f9c36705908bf0a14e1f15e117f09408ff07cb169",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Canonical backlog, frozen adverse R01 review and current T02 lease validate."
+    },
+    {
+      "id": "diff",
+      "command": "git diff --check a6588fc5d2473d028a4f8d6c24ec8aa48e527255 988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.diff-988ee478.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "provenance": "Fresh local execution against the clean committed Windows x64 R02 candidate, with stable HEAD and selected inputs.",
+      "result": "Exact R02 incremental diff has no whitespace errors."
+    }
+  ],
+  "scopeDeviation": "None. R02 addresses only the independently recorded attachment recovery and status-announcement findings, plus separately reviewed generic gate control repair used as an external evidence producer. Historic planning projections were refreshed through the required workflow without product or approval-scope change.",
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "expanded-independent-R02-task-and-slice-review",
+    "openFindingIds": [
+      "W2.A01.T02-R01-F01",
+      "W2.A01.T02-R01-F02"
+    ],
+    "note": "Independently replay both W2.A01.T02 R01 findings against the exact R02 candidate, including attached-to-failed Task Center return, live announcement, same-command uncertainty and unchanged denial/privacy boundaries. Do not close either finding or adopt W2.A01 until independent approval; the external checker has separate control approval."
+  },
+  "supersedes": {
+    "path": "artifacts/evidence/W2.A01.T02.json",
+    "sha256": "75097d4aa5d9b3ce2cf60c4e1a08090a5390cd91453448e021ca1638bc78a09a",
+    "commit": "a6588fc5d2473d028a4f8d6c24ec8aa48e527255",
+    "reason": "R02 remediation of independently recorded W2.A01.T02-R01-F01 and W2.A01.T02-R01-F02; R01 evidence and review remain immutable."
+  }
+}

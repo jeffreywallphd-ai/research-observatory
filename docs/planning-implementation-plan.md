@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ba5e0798a8ab959c7bdc5af33162e9721774b9c998d1c340a29a293b5f35f2f2
+source_sha256: 81166b0ceba709ea6629da1b3752bcbdb4ab0ec68a53e4b57b823a21b2096249
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2489,7 +2489,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / agent:/root/w2_a01_t02_independent_review (`changes-requested`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / agent:/root/w2_a01_t02_independent_review (`changes-requested`)
 
 **Dependencies:** `W2.A01.B00`, `W2.A01.T01`
 
@@ -2514,6 +2514,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Evidence:**
 
 - `artifacts/evidence/W2.A01.T02.json` at `a6588fc5d2473d028a4f8d6c24ec8aa48e527255`
+- `artifacts/evidence/W2.A01.T02-R02.json` at `988ee4789f2004cce83187f971760d5b5f3e02ca`
 
 #### Review history — W2.A01.T02
 
@@ -2550,7 +2551,19 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R02` / packet SHA-256 `2c32f27323835dc3b780f58ecbc0b7ca93a9fd8788a7d340f07a2708589f0f1a`
+
+- Candidate / base / branch: `988ee4789f2004cce83187f971760d5b5f3e02ca` / `a6588fc5d2473d028a4f8d6c24ec8aa48e527255` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-02T23:57:26+00:00`
+- Evidence: `artifacts/evidence/W2.A01.T02-R02.json` / `177f4b42f495f1e26661eab83164b9eeb1a57df5fb02354fd7aeb0265f818d98` / `988ee4789f2004cce83187f971760d5b5f3e02ca`
+- Acceptance-criteria SHA-256: `a88ca37f57ae373595f4a7939bdb7e4b68215f0b6d34ef6d87e295c016e7d286`
+- Verification-selection SHA-256: `c0b94239fbb73374caa8737a2e9526dcddead754b0287907591e2910591ed12b`
+- Changed paths: `apps/desktop/src/app/DocumentAttachmentPane.tsx`, `artifacts/evidence/W2.A01.T02.json`, `artifacts/evidence/W2.A01.T02.review-R01.json`, `artifacts/evidence/W2.A01.T02.task-start.md`, `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0005.html`, `planning/review-site/enablers/ECR-0006.html`, `planning/review-site/enablers/ECR-0007.html`, `planning/review-site/enablers/ECR-0009.html`, `planning/review-site/manifest.json`, `planning/status-summary.md`, `tests/desktop/test_document_attachment_interactions.py`
+- Selected checks: `.venv/Scripts/python.exe .local/w2-reference-control/tools/ui_change_gate.py --repo . --base 1f628843e415b6affbd811eb37d9fff437fac51f --head 988ee4789f2004cce83187f971760d5b5f3e02ca`, `.venv/Scripts/python.exe -m unittest tests.desktop.test_document_attachment_interactions -v`, `From apps/desktop: node node_modules/vitest/vitest.mjs run src/app/documentAttachment.test.ts src/app/ImportWorkspace.test.tsx src/app/TaskCenterWorkspace.test.tsx src/app/ApplicationRuntime.test.tsx`, `From apps/desktop: node node_modules/typescript/bin/tsc --noEmit`, `From apps/desktop: node node_modules/vite/bin/vite.js build --config vite.product.config.ts`, `From apps/desktop: node scripts/lint.mjs`, `.venv/Scripts/python.exe -m ruff check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py`, `.venv/Scripts/python.exe -m ruff format --check --config pyproject.toml -- tests/desktop/test_document_attachment_interactions.py`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `git diff --check a6588fc5d2473d028a4f8d6c24ec8aa48e527255 988ee4789f2004cce83187f971760d5b5f3e02ca`
+- Deferred checks: `Repository-wide foundation:quality remains failed on the prior CAP-05 Python inventory; bounded inventory and affected format/mypy maintenance remain before W2 exit (R01 adverse log artifacts/tmp/W2.A01.T01.quality-da2b026d.log, SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44).`, `Full desktop/service/security profiles, real native/Core file admission, protected reader, integrated amendment slice review and W2 qualification remain downstream. The deterministic planning review site was checked before its projection commit and will be freshly qualified at amendment exit; the current task does not claim a full repository profile pass.`
+- Selection rationale: R02 specifically replays W2.A01.T02-R01-F01 and W2.A01.T02-R01-F02 with red-before-fix mounted evidence: an attached reply followed by authoritative terminal status must restore safe actions, and later denial/failure must enter a live region. Fresh exact-candidate mounted, contract, typing/build, lint/format, backlog and whole task-base UI lineage checks cover changed behavior and approval-control history. The separately reviewed 38dd61f3 checker remains external to T02 delivery history until independent task disposition.
+- Prior round / replayed open findings: `R01` / `W2.A01.T02-R01-F01`, `W2.A01.T02-R01-F02`
+- Root-cause escalation: -
 
 **Current latest-review projection:** `changes-requested` by agent:/root/w2_a01_t02_independent_review at `2026-10-02T23:13:49+00:00`
 
