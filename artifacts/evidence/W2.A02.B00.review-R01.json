@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-bootstrap-review",
+  "amendmentId": "W2.A02",
+  "taskId": "W2.A02.B00",
+  "attemptId": "R01",
+  "reviewer": "agent:/root/w2a02_bootstrap_independent_review",
+  "reviewedAt": "2026-10-03T11:03:05Z",
+  "result": "approved",
+  "candidateCommit": "f97c32f1330a92cb64c5a95f6d66b2f3f56da147",
+  "baseCommit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba",
+  "submissionCommit": "d61a9e1c384e3301805c707951bffbfe0e321d5d",
+  "independence": {
+    "implementer": "codex-w2-implementation",
+    "statement": "The reviewer independently inspected the exact committed approval, packet, candidate, evidence and submitted backlog state. The reviewer did not author the ECR-0010 proposal, packet, approval, B00 candidate or evidence, did not submit B00, and performed no taskctl mutation. This ledger is an independent read-only disposition for the actual append."
+  },
+  "artifactBindings": [
+    {
+      "path": "planning/wave-amendment-approvals/W2.A02.json",
+      "sha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
+      "gitBlob": "0fb2ce3d1a54e0bcdc994ca5255364a9e2d686aa",
+      "introductionCommit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0010.packet.json",
+      "sha256": "f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43",
+      "gitBlob": "01da78287ec14da2d0f783e4cc0179c95b1e4bdc",
+      "approvedPacketCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0010.review-R01.json",
+      "sha256": "e87d5ce06fece2a1989482133b81996959c30dd4ec5d50728f3c96fb00961d9e",
+      "gitBlob": "94829b90bb167b095b29f10fca5a7310b1e2c8c0",
+      "introductionCommit": "a64febae61139e9e5cfb1738c0e7cdef55ba91de"
+    },
+    {
+      "path": "artifacts/evidence/W2.A02.B00.json",
+      "sha256": "c522b8677acbc9a4a2b75830a28887d98fb74484145ac6ecf0bac69f82d6838e",
+      "gitBlob": "c45f1e8dcee0ef3e69cbd3f92d51558f9555cab7",
+      "commit": "d61a9e1c384e3301805c707951bffbfe0e321d5d"
+    }
+  ],
+  "scope": {
+    "candidateChangedFiles": [
+      "planning/review-site/enablers/ECR-0010.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json"
+    ],
+    "deliveryChangedFiles": [
+      "artifacts/evidence/W2.A02.B00.json",
+      "docs/planning-implementation-plan.md",
+      "planning/backlog.yaml",
+      "planning/review-site/enablers/ECR-0010.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json",
+      "planning/review-site/waves/W2.html",
+      "planning/status-summary.md"
+    ],
+    "boundary": "B00 approves only the exact owner-approved scope projection and append-only REVIEW shell. Task materialization, amendment activation and adoption, original CAP-05.S01.T01 recovery, ordinary W2 resume, Wave qualification and release remain separate."
+  },
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "result": "satisfied",
+      "evidence": "The owner approval at 5fbeea66 directly follows the independent ECR-0010 R01 ledger at a64febae, which itself directly follows the reviewed candidate at 60e8a2d3; the packet and R01 ledger SHA-256 values match their immutable Git blobs. Independent planctl --require-approved passed at the clean B00 candidate. The candidate and submission change no approved 1.8 reference file or W2/W2.A01/GOV-MIG-0001 authority record."
+    },
+    {
+      "criterionIndex": 2,
+      "result": "satisfied",
+      "evidence": "The approval-to-candidate Git diff is exactly the packet's three authorized generated ECR-0010 paths and equals the frozen evidence changedFiles. The actual supported bootstrap-submit appends one W2.A02 shell with lifecycle APPROVED, B00 REVIEW, tasks:[], campaign null and completion PENDING. Its B00 evidence reference binds the exact candidate, submission branch and committed manifest hash; review fields remain empty pending this disposition."
+    },
+    {
+      "criterionIndex": 3,
+      "result": "satisfied",
+      "evidence": "Parsed Git blobs show all ten prior amendment entries and every other predecessor top-level backlog field unchanged. W2's campaign remains PAUSED without a lease; CAP-05.S01.T01 remains BLOCKED with original base 6506c68461144747b0ee9be10853211717aa381d and no lease. No amendment is active. Materialization and activation have not occurred."
+    },
+    {
+      "criterionIndex": 4,
+      "result": "satisfied",
+      "evidence": "The complete approval-to-submission path set contains only the three B00 projection paths plus committed evidence, canonical backlog and generated planning/site projections. There is no renderer, native, Core, reference, controller, migration, task-base or release-source change; the approved 1.8 reference has no path delta since its publication. The submitted page labels human approval, lifecycle APPROVED and B00 REVIEW separately, and W2's page states the amendment is not ordinary authority until adopted."
+    }
+  ],
+  "independentChecks": [
+    {
+      "check": "Exact Git ancestry, immutable authority/evidence hashes and predecessor comparison",
+      "result": "passed",
+      "method": "Read committed Git blobs at ECR packet, ECR R01 review, owner approval, B00 candidate and submitted state; independently recomputed SHA-256 and Git blob bindings, candidate/delivery path sets, all four evidence rows, ten predecessor amendment entries, all non-amendment backlog fields, W2/T01 holds and active-amendment marker."
+    },
+    {
+      "check": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0010 --require-approved",
+      "result": "passed",
+      "observation": "Independently executed at the clean f97c32f1 B00 candidate; the exact reviewed ECR-0010 packet and owner approval are history-bound."
+    },
+    {
+      "check": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed",
+      "observation": "Independently executed at clean submitted commit d61a9e1c: 20 capabilities, 117 slices, 387 tasks, 12 release gates."
+    },
+    {
+      "check": "Generated planning-site projection and retained site report",
+      "result": "passed",
+      "observation": "Inspected committed ECR-0010 and W2 status projections. The submitted artifact/tmp/W2.A02.B00-site-validation.json report has SHA-256 29cb1998ffc93528424bcb5e03e02e30a3e4e45220fa969b4b5b01a6667dd03f and reports 494 pages, errors=[], warnings=[], status pass; this report is submitted check evidence, not a fresh reviewer site execution."
+    },
+    {
+      "check": "git diff --check approval..candidate and candidate..submission",
+      "result": "passed"
+    }
+  ],
+  "verificationSelection": {
+    "rationale": "This bootstrap uses an existing append-only controller to project exact human approval. Its material risks are authority binding, unauthorized path changes, predecessor mutation, false activation and misleading current state. Exact Git and backlog comparison, fresh submitted-state validation, and inspected status/site evidence address those risks. The producer's focused controller tests and full generated-site check are retained as submitted evidence rather than misrepresented as fresh reviewer runs.",
+    "deferred": [
+      "Separate packet-exact task materialization, amendment activation and W2.A02.T01 control/security/ADR review.",
+      "Original CAP-05.S01.T01 native/Core, rights, denial, cancellation and restart proof; later slice/W2 qualification and human release decision."
+    ]
+  },
+  "findings": [],
+  "closures": [],
+  "priorFindingsReplayed": [],
+  "disposition": "Approve exact W2.A02.B00 candidate f97c32f1 and actual submitted REVIEW append d61a9e1c for the supported independent bootstrap-review transition. This ledger does not perform that transition, materialize W2.A02.T01, activate the amendment, resume W2 or approve release.",
+  "authorityLimits": {
+    "newHumanApprovalRequested": false,
+    "productTaskApproval": false,
+    "governedReferenceChangeApproval": false,
+    "amendmentExitApproval": false,
+    "waveResumeApproval": false,
+    "waveExitOrReleaseApproval": false,
+    "localMainIntegrationApproval": false
+  }
+}
