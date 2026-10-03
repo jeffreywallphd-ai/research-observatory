@@ -11,8 +11,10 @@ import hashlib
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
+from jsonschema import Draft202012Validator
+from jsonschema.exceptions import SchemaError
 from pydantic import ValidationError
 
 REPO = Path(__file__).resolve().parents[1]
@@ -20,6 +22,7 @@ sys.path.insert(0, str(REPO / "services" / "core-api" / "src"))
 
 from research_observatory_core.connectors.plugin_broker import PluginBrokerCall  # noqa: E402
 from research_observatory_core.connectors.plugin_manifest import (  # noqa: E402
+    Operation,
     PluginManifest,
     verify_plugin_package,
 )
@@ -28,10 +31,84 @@ from research_observatory_core.connectors.plugin_package_intake import (  # noqa
     inspect_plugin_archive,
 )
 from research_observatory_core.connectors.plugin_result import PluginWorkerPage  # noqa: E402
+from research_observatory_core.connectors.plugin_scientific_request import (  # noqa: E402
+    PluginScientificRequestProblem,
+    parse_plugin_scientific_request,
+)
 
 _MAX_JSON = 10 * 1024 * 1024
 _MAX_DRAFT_FILE = 16 * 1024 * 1024
 _MAX_DRAFT_PACKAGE = 64 * 1024 * 1024
+_WORKER_PAGE_SCHEMA = REPO / "packages" / "contracts" / "connectors" / "connector-plugin-worker-page.schema.json"
+# Pydantic locations can contain third-party object keys. Only public contract
+# names and explicitly denied Core-owned fields may appear in a diagnostic.
+_SAFE_POINTER_FIELDS = frozenset(
+    {
+        "schemaVersion",
+        "pluginId",
+        "pluginVersion",
+        "sdkVersion",
+        "requiredFeatures",
+        "publisherKeyId",
+        "sourceIdentity",
+        "authentication",
+        "terms",
+        "rateLimits",
+        "entryPoint",
+        "files",
+        "operations",
+        "destinations",
+        "credentialScopes",
+        "dataClasses",
+        "rightsBehavior",
+        "resourceProfile",
+        "permissions",
+        "path",
+        "sha256",
+        "scheme",
+        "host",
+        "port",
+        "pathTemplate",
+        "sourceId",
+        "displayName",
+        "mode",
+        "status",
+        "reference",
+        "maxRequestsPerSecond",
+        "maxConcurrent",
+        "committedMemoryMiB",
+        "maxJobsPerProject",
+        "wallTimeSeconds",
+        "invocationId",
+        "operation",
+        "input",
+        "brokerCall",
+        "brokerResponse",
+        "output",
+        "query",
+        "pageSize",
+        "cursor",
+        "previousInvocationId",
+        "identifier",
+        "repositoryId",
+        "credentialScope",
+        "records",
+        "rawIdentifier",
+        "identifiers",
+        "fields",
+        "name",
+        "encoding",
+        "value",
+        "license",
+        "access",
+        "state",
+        "continuation",
+        "nextCursor",
+        "projectId",
+        "rightsStatus",
+        "retrievedAt",
+    }
+)
 
 
 class _InvalidJson(ValueError):
@@ -69,6 +146,16 @@ def _pointer(*parts: str | int) -> str:
     return "".join("/" + _escape(part) for part in parts)
 
 
+def _safe_pointer(prefix: str, parts: tuple[str | int, ...]) -> str:
+    pointer = prefix
+    for part in parts:
+        if (isinstance(part, int) and part >= 0) or (isinstance(part, str) and part in _SAFE_POINTER_FIELDS):
+            pointer += _pointer(part)
+        else:
+            break
+    return pointer
+
+
 def _add(violations: list[dict[str, Any]], code: str, pointer: str, case: int | None = None) -> None:
     item: dict[str, Any] = {"code": code, "pointer": pointer}
     if case is not None:
@@ -92,7 +179,7 @@ def _model_errors(
     }
     for issue in error.errors(include_url=False, include_input=False):
         code = namespace + "_" + codes.get(str(issue["type"]), "INVARIANT_INVALID")
-        _add(violations, code, prefix + _pointer(*issue["loc"]), case)
+        _add(violations, code, _safe_pointer(prefix, issue["loc"]), case)
 
 
 def _draft_manifest(path: Path, violations: list[dict[str, Any]]) -> PluginManifest | None:
@@ -178,15 +265,19 @@ def _case_shape(document: Any, index: int, violations: list[dict[str, Any]]) -> 
         return False
     for key in sorted(required - set(document)):
         _add(violations, "CASE_REQUIRED", _pointer(key), index)
-    for key in sorted(set(document) - required):
-        _add(violations, "CASE_UNKNOWN_FIELD", _pointer(key), index)
+    if set(document) - required:
+        _add(violations, "CASE_UNKNOWN_FIELD", "/case", index)
     if document.get("schemaVersion") != "1.0":
         _add(violations, "CASE_VERSION_INVALID", "/schemaVersion", index)
     return required <= set(document) and not (set(document) - required) and document.get("schemaVersion") == "1.0"
 
 
 def _case_local(
-    document: dict[str, Any], index: int, manifest: PluginManifest | None, violations: list[dict[str, Any]]
+    document: dict[str, Any],
+    index: int,
+    manifest: PluginManifest | None,
+    page_schema: Draft202012Validator | None,
+    violations: list[dict[str, Any]],
 ) -> None:
     operation = document["operation"]
     if not isinstance(operation, str):
@@ -201,6 +292,13 @@ def _case_local(
     if not isinstance(call_data, dict):
         _add(violations, "CASE_BROKER_CALL_INVALID", "/brokerCall", index)
         return
+    try:
+        encoded_input = json.dumps(input_data, ensure_ascii=True, allow_nan=False, separators=(",", ":")).encode(
+            "ascii"
+        )
+        parse_plugin_scientific_request(encoded_input, cast(Operation, operation))
+    except PluginScientificRequestProblem, ValueError, TypeError, RecursionError:
+        _add(violations, "SCIENTIFIC_REQUEST_INVALID", "/input", index)
     predecessor = input_data.get("previousInvocationId")
     cursor = input_data.get("cursor")
     if (predecessor is None) != (cursor is None):
@@ -219,6 +317,9 @@ def _case_local(
     except Exception:
         _add(violations, "CASE_BROKER_CALL_INVALID", "/brokerCall", index)
     output_data = document["output"]
+    if page_schema is not None:
+        for issue in page_schema.iter_errors(output_data):
+            _add(violations, "PAGE_SCHEMA_INVALID", _safe_pointer("/output", tuple(issue.absolute_path)), index)
     try:
         page = PluginWorkerPage.model_validate(output_data)
     except ValidationError as error:
@@ -337,6 +438,13 @@ def validate(
         else _signed_package(package_path, key_id or "", key_file, violations)  # type: ignore[arg-type]
     )
     inspection_valid = manifest is not None and not violations
+    try:
+        schema = _read_json(_WORKER_PAGE_SCHEMA, maximum=256 * 1024)
+        Draft202012Validator.check_schema(schema)
+        page_schema: Draft202012Validator | None = Draft202012Validator(schema)
+    except _InvalidJson, SchemaError:
+        _add(violations, "PAGE_SCHEMA_UNAVAILABLE", "/output")
+        page_schema = None
     cases: list[Any] = []
     valid_shapes: list[bool] = []
     for index, path in enumerate(case_paths, 1):
@@ -351,7 +459,7 @@ def validate(
         valid = _case_shape(document, index, violations)
         valid_shapes.append(valid)
         if valid:
-            _case_local(document, index, manifest, violations)
+            _case_local(document, index, manifest, page_schema, violations)
     _case_predecessors(cases, violations)
     _case_coverage(manifest, cases, valid_shapes, violations)
     violations.sort(key=lambda item: (item.get("case", 0), item["pointer"], item["code"]))

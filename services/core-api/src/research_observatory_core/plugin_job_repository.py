@@ -392,6 +392,8 @@ class PluginJobRepository:
                 raise ValueError
             observed_search_cursor = None
             for ref in broker_responses:
+                if ref.redacted is None:
+                    raise ValueError
                 body = self._read(ref.object_sha256)
                 if len(body) != ref.byte_length:
                     raise ValueError
@@ -487,6 +489,23 @@ class PluginJobRepository:
                         f"plugin.broker-response.{index}",
                         "1.0.0",
                         "sha256:" + ref.object_sha256,
+                        "dependency.material.v1",
+                        "1.0.0",
+                    )
+                    for index, ref in enumerate(broker_responses, 1)
+                )
+                dependencies += tuple(
+                    MaterialDependency(
+                        new_uuid_v7(),
+                        "parameter-set",
+                        "direct",
+                        None,
+                        f"plugin.broker-response-redacted.{index}",
+                        "1.0.0",
+                        "sha256:"
+                        + hashlib.sha256(
+                            ("plugin.broker-response-redacted.v1:" + str(ref.redacted).lower()).encode()
+                        ).hexdigest(),
                         "dependency.material.v1",
                         "1.0.0",
                     )

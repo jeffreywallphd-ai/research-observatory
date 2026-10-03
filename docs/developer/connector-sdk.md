@@ -1,9 +1,9 @@
 # Connector SDK: synthetic repository example and conformance
 
-The [sample repository connector](../../plugins/connectors/sample_repository/plugin/connector.py)
+The [sample repository connector](sample_repository/plugin/connector.py)
 shows how to turn public repository metadata into source-reported assertions.
 Its domain is `repository.example.invalid`, and every record in its
-[fixtures](../../plugins/connectors/sample_repository/fixtures) is synthetic.
+[fixtures](sample_repository/fixtures) is synthetic.
 It is a developer example, not a live source, trusted publisher, or permission
 to retrieve, retain, use, export, or share content.
 
@@ -59,7 +59,7 @@ rewrites the earlier one.
 
 ## Write and validate a package
 
-Copy the [unsigned draft manifest](../../plugins/connectors/sample_repository/manifest.json)
+Copy the [unsigned draft manifest](sample_repository/manifest.json)
 and the sample file into your own workspace. Change the stable plugin ID,
 qualified source ID (`plugin.<pluginId>`), publisher key ID, declared operations,
 exact public HTTPS scheme/host/port/path templates, data classes, terms, and
@@ -72,10 +72,10 @@ root:
 
 ```powershell
 .venv\Scripts\python.exe tools\connector_conformance.py `
-  --manifest plugins\connectors\sample_repository\manifest.json `
-  --case plugins\connectors\sample_repository\fixtures\repository-metadata.case.json `
-  --case plugins\connectors\sample_repository\fixtures\search-page-1.case.json `
-  --case plugins\connectors\sample_repository\fixtures\search-page-2.case.json
+  --manifest docs\developer\sample_repository\manifest.json `
+  --case docs\developer\sample_repository\fixtures\repository-metadata.case.json `
+  --case docs\developer\sample_repository\fixtures\search-page-1.case.json `
+  --case docs\developer\sample_repository\fixtures\search-page-2.case.json
 ```
 
 The command reports `result`, `caseCount`, and stable `code`/JSON `pointer`

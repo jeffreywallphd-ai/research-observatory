@@ -186,7 +186,7 @@ class PluginJobFixture(unittest.TestCase):
         )
         return self.inputs, self.plan
 
-    def _staged(self, next_cursor=None):
+    def _staged(self, next_cursor=None, *, redacted=False):
         response = json.dumps(
             {"records": [], "nextCursor": next_cursor} if self.plan.operation == "search" else {"id": "synthetic-1"},
             separators=(",", ":"),
@@ -233,7 +233,7 @@ class PluginJobFixture(unittest.TestCase):
             1,
             NOW,
             validate_plugin_output(self.plan, body, retrieved_at=NOW),
-            (PluginBrokerResponseRef(object_sha256=response_digest, byte_length=len(response)),),
+            (PluginBrokerResponseRef(object_sha256=response_digest, byte_length=len(response), redacted=redacted),),
         )
 
     def _claim(self):
@@ -469,20 +469,66 @@ class PluginJobRepositoryTests(PluginJobFixture):
         self.assertEqual(self.plan.source_id, page.plan.source_id)
         self.assertEqual(1, len(page.broker_responses))
         self.assertEqual(1, page.broker_calls)
+        self.assertIs(page.broker_responses[0].redacted, False)
         with self.objects.open(page.broker_responses[0].object_sha256, purpose="document-analysis") as stream:
             sanitized_response = stream.read()
         self.assertEqual(b'{"id":"synthetic-1"}', sanitized_response)
         object_files = tuple(path for path in (self.root / "objects").rglob("*") if path.is_file())
         self.assertFalse(any(sanitized_response in path.read_bytes() for path in object_files))
         with open_canonical_database(self.database, expected_project_id=PROJECT) as connection:
-            dependency = connection.execute(
-                "SELECT fingerprint FROM material_dependencies WHERE project_id=? AND output_revision_id=? "
-                "AND configuration_id='plugin.broker-response.1'",
+            dependencies = connection.execute(
+                "SELECT configuration_id,fingerprint FROM material_dependencies "
+                "WHERE project_id=? AND output_revision_id=? "
+                "AND configuration_id IN ('plugin.broker-response.1','plugin.broker-response-redacted.1')",
                 (PROJECT, page.revision_id),
-            ).fetchone()
-        self.assertEqual("sha256:" + page.broker_responses[0].object_sha256, dependency[0])
+            ).fetchall()
+        self.assertEqual(
+            {
+                "plugin.broker-response.1": "sha256:" + page.broker_responses[0].object_sha256,
+                "plugin.broker-response-redacted.1": "sha256:"
+                + hashlib.sha256(b"plugin.broker-response-redacted.v1:false").hexdigest(),
+            },
+            dict(dependencies),
+        )
         legacy_page = PluginPublishedPage.model_validate(page.model_dump(exclude={"broker_responses"}))
         self.assertEqual((), legacy_page.broker_responses)
+        historical = page.model_dump()
+        del historical["broker_responses"][0]["redacted"]
+        historical_page = PluginPublishedPage.model_validate(historical)
+        self.assertIsNone(historical_page.broker_responses[0].redacted)
+
+    def test_redacted_broker_response_reopens_with_explicit_provenance(self):
+        claim = self._claim()
+        staged = self._staged(redacted=True)
+        self.assertIs(staged.broker_responses[0].redacted, True)
+        output = self.repository.publish(
+            self.inputs,
+            self.plan,
+            staged,
+            claim,
+            actor_id=self.actor.actor_id,
+            now=lambda: LATER,
+            recheck_current=lambda: None,
+            interrupted=lambda: False,
+        )
+        reopened = PluginJobRepository(
+            self.database, PROJECT, create_local_object_store(self.root, PROJECT, key_provider=self.keys)
+        )
+        page = reopened.result(self.inputs)
+        assert page is not None
+        self.assertEqual(output.revision_id, page.revision_id)
+        self.assertIs(page.broker_responses[0].redacted, True)
+        with open_canonical_database(self.database, expected_project_id=PROJECT) as connection:
+            dependency = connection.execute(
+                "SELECT fingerprint FROM material_dependencies WHERE project_id=? AND output_revision_id=? "
+                "AND configuration_id='plugin.broker-response-redacted.1'",
+                (PROJECT, page.revision_id),
+            ).fetchone()
+        self.assertIsNotNone(dependency)
+        self.assertEqual(
+            "sha256:" + hashlib.sha256(b"plugin.broker-response-redacted.v1:true").hexdigest(),
+            dependency[0],
+        )
 
     def test_no_broker_response_reference_cannot_publish_result(self):
         claim = self._claim()
@@ -492,6 +538,24 @@ class PluginJobRepositoryTests(PluginJobFixture):
                 self.inputs,
                 self.plan,
                 staged,
+                claim,
+                actor_id=self.actor.actor_id,
+                now=lambda: LATER,
+                recheck_current=lambda: None,
+                interrupted=lambda: False,
+            )
+        self.assertIsNone(self.repository.result(self.inputs))
+
+    def test_unknown_historical_redaction_marker_cannot_publish_new_result(self):
+        claim = self._claim()
+        staged = self._staged()
+        historical = PluginBrokerResponseRef.model_validate(staged.broker_responses[0].model_dump(exclude={"redacted"}))
+        self.assertIsNone(historical.redacted)
+        with self.assertRaisesRegex(PluginJobRepositoryProblem, "broker-response"):
+            self.repository.publish(
+                self.inputs,
+                self.plan,
+                replace(staged, broker_responses=(historical,)),
                 claim,
                 actor_id=self.actor.actor_id,
                 now=lambda: LATER,

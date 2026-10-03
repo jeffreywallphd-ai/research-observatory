@@ -416,10 +416,12 @@ publishing a page with exact package, manifest, request, policy and raw-response
 provenance; a staged object alone is not a successful source observation.
 For plugin results, Core retains the exact **sanitized broker response bytes**
 that it gave the worker as separate encrypted objects. The published page and
-material dependencies bind their ordered object digests; these references do
-not assert that untrusted worker fields are true or grant rights. Original wire
-headers, credential values, and unsanitized response bytes are not retained as
-plugin provenance.
+material dependencies bind their ordered object digests and each Core broker
+redaction observation (`true` or `false`). Older page references without that
+marker reopen as unknown; new publication requires an explicit marker. These
+references do not assert that untrusted worker fields are true or grant rights.
+Original wire headers, credential values, and unsanitized response bytes are
+not retained as plugin provenance.
 
 Plugin egress has a separate, ephemeral exact-request consent authority. An
 accepted Intent must permit the plugin source ID in `approved-content` mode;

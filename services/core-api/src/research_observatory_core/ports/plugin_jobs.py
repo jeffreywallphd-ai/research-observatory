@@ -3,15 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Protocol
+from typing import Protocol
 
 from ..connectors.plugin_dispatch import PluginStagedOutput
 from ..connectors.plugin_manifest import PluginInvocationPlan
 from ..connectors.plugin_workflow import PluginJobInput
 from .workflow_executor import WorkflowJobClaim, WorkflowOutputReference
-
-if TYPE_CHECKING:
-    from ..plugin_job_repository import PluginPublishedPage
 
 
 class PluginJobRepositoryProblem(ValueError):
@@ -20,12 +17,25 @@ class PluginJobRepositoryProblem(ValueError):
         super().__init__(code)
 
 
+class PluginPublishedPageView(Protocol):
+    """The predecessor fields used by Core without coupling the port to storage."""
+
+    @property
+    def plan(self) -> PluginInvocationPlan: ...
+
+    @property
+    def continuation(self) -> str: ...
+
+    @property
+    def next_cursor(self) -> str | None: ...
+
+
 class PluginJobStore(Protocol):
     def save_input(self, inputs: PluginJobInput, *, actor_id: str, now: str) -> None: ...
 
     def input(self, invocation_id: str) -> PluginJobInput: ...
 
-    def result(self, inputs: PluginJobInput) -> PluginPublishedPage | None: ...
+    def result(self, inputs: PluginJobInput) -> PluginPublishedPageView | None: ...
 
     def publish(
         self,

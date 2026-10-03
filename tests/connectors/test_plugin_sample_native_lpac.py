@@ -23,7 +23,7 @@ from workers.windows.connector_launcher import WorkerResult, run_connector  # no
 from workers.windows.lpac_launcher import LPACError  # noqa: E402
 from workers.windows.runtime_inventory import APPLICATION_INVENTORY_PUBLIC_KEY, SignedWorkerRuntime  # noqa: E402
 
-SAMPLE = REPO / "plugins/connectors/sample_repository"
+SAMPLE = REPO / "docs/developer/sample_repository"
 ENTRY = "plugin/connector.py"
 SEARCH_CASES = (
     SAMPLE / "fixtures/search-page-1.case.json",

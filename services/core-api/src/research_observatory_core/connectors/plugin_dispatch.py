@@ -77,6 +77,9 @@ class PluginBrokerResponseRef(ConnectorModel):
 
     object_sha256: ObjectDigest
     byte_length: Annotated[int, Field(strict=True, ge=1, le=_MAX_BINARY)]
+    # None only describes pages written before this marker existed. New
+    # publication requires the Core broker's explicit true/false observation.
+    redacted: bool | None = Field(default=None, strict=True)
 
 
 class PluginDispatchController:
@@ -419,6 +422,7 @@ class PluginDispatchController:
                         PluginBrokerResponseRef(
                             object_sha256=stored_response.object_sha256,
                             byte_length=stored_response.byte_length,
+                            redacted=response.redacted,
                         ),
                     )
                 )

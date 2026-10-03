@@ -15,7 +15,7 @@ from pathlib import Path
 from nacl.signing import SigningKey
 
 REPO = Path(__file__).resolve().parents[2]
-SAMPLE = REPO / "plugins" / "connectors" / "sample_repository"
+SAMPLE = REPO / "docs" / "developer" / "sample_repository"
 CHECKER = REPO / "tools" / "connector_conformance.py"
 CASES = (
     SAMPLE / "fixtures" / "repository-metadata.case.json",
@@ -155,7 +155,7 @@ class SampleConnectorConformanceTests(unittest.TestCase):
     def test_sample_search_without_optional_page_size_does_not_invent_a_broker_parameter(self) -> None:
         sys.path.insert(0, str(SAMPLE))
         try:
-            from plugin.connector import invoke  # type: ignore[import-not-found]
+            from plugin.connector import invoke
 
             case = json.loads(CASES[1].read_text(encoding="utf-8"))
             case["input"].pop("pageSize")
@@ -182,7 +182,7 @@ class SampleConnectorConformanceTests(unittest.TestCase):
     def test_sample_rejects_provider_extra_fields_without_echoing_them(self) -> None:
         sys.path.insert(0, str(SAMPLE))
         try:
-            from plugin.connector import invoke  # type: ignore[import-not-found]
+            from plugin.connector import invoke
 
             case = json.loads(CASES[1].read_text(encoding="utf-8"))
             case["brokerResponse"]["records"][0]["privateToken"] = "PRIVATE-DO-NOT-ECHO"
@@ -213,6 +213,75 @@ class SampleConnectorConformanceTests(unittest.TestCase):
         self.assertEqual(1, status)
         self.assertIn({"code": "PAGE_UNKNOWN_FIELD", "pointer": "/output/projectId", "case": 1}, report["violations"])
         self.assertNotIn("PRIVATE-DO-NOT-ECHO", json.dumps(report))
+
+    def test_scientific_input_rejects_unknown_field_even_when_broker_call_matches(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            changed = Path(temporary) / "case.json"
+            case = json.loads(CASES[1].read_text(encoding="utf-8"))
+            case["input"]["unexpectedParameter"] = "synthetic"
+            case["brokerCall"]["unexpectedParameter"] = "synthetic"
+            changed.write_text(json.dumps(case), encoding="utf-8")
+            status, report = check(SAMPLE / "manifest.json", changed)
+        self.assertEqual(1, status)
+        self.assertIn({"code": "SCIENTIFIC_REQUEST_INVALID", "pointer": "/input", "case": 1}, report["violations"])
+
+    def test_scientific_input_rejects_explicit_null_optional_parameter(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            changed = Path(temporary) / "case.json"
+            case = json.loads(CASES[1].read_text(encoding="utf-8"))
+            case["input"]["pageSize"] = None
+            case["brokerCall"]["pageSize"] = None
+            changed.write_text(json.dumps(case), encoding="utf-8")
+            status, report = check(SAMPLE / "manifest.json", changed)
+        self.assertEqual(1, status)
+        self.assertIn({"code": "SCIENTIFIC_REQUEST_INVALID", "pointer": "/input", "case": 1}, report["violations"])
+
+    def test_worker_output_must_match_published_camel_case_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            changed = Path(temporary) / "case.json"
+            case = json.loads(CASES[1].read_text(encoding="utf-8"))
+            record = case["output"]["records"][0]
+            record["raw_identifier"] = record.pop("rawIdentifier")
+            changed.write_text(json.dumps(case), encoding="utf-8")
+            status, report = check(SAMPLE / "manifest.json", changed)
+        self.assertEqual(1, status)
+        self.assertIn({"code": "PAGE_SCHEMA_INVALID", "pointer": "/output/records/0", "case": 1}, report["violations"])
+
+    def test_unknown_field_names_are_not_diagnostic_content(self) -> None:
+        secret = "SYNTHETIC_PRIVATE_FIELD_NAME_DO_NOT_ECHO"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            case = json.loads(CASES[1].read_text(encoding="utf-8"))
+            case[secret] = "synthetic"
+            root_case = root / "root-case.json"
+            root_case.write_text(json.dumps(case), encoding="utf-8")
+            _, root_report = check(SAMPLE / "manifest.json", root_case)
+
+            case.pop(secret)
+            case["brokerCall"][secret] = "synthetic"
+            case["output"]["records"][0][secret] = "synthetic"
+            nested_case = root / "nested-case.json"
+            nested_case.write_text(json.dumps(case), encoding="utf-8")
+            _, nested_report = check(SAMPLE / "manifest.json", nested_case)
+
+            draft = root / "sample"
+            shutil.copytree(SAMPLE, draft)
+            manifest_path = draft / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest[secret] = "synthetic"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            _, manifest_report = check(manifest_path)
+        self.assertNotIn(secret, json.dumps(root_report))
+        self.assertNotIn(secret, json.dumps(nested_report))
+        self.assertNotIn(secret, json.dumps(manifest_report))
+        self.assertIn({"code": "CASE_UNKNOWN_FIELD", "pointer": "/case", "case": 1}, root_report["violations"])
+        self.assertIn(
+            {"code": "BROKER_CALL_UNKNOWN_FIELD", "pointer": "/brokerCall", "case": 1}, nested_report["violations"]
+        )
+        self.assertIn(
+            {"code": "PAGE_UNKNOWN_FIELD", "pointer": "/output/records/0", "case": 1}, nested_report["violations"]
+        )
+        self.assertIn({"code": "MANIFEST_UNKNOWN_FIELD", "pointer": "/manifest"}, manifest_report["violations"])
 
     def test_reported_license_requires_a_value_without_claiming_usage_rights(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

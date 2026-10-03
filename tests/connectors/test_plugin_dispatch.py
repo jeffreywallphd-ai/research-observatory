@@ -261,8 +261,36 @@ class PluginDispatchTests(unittest.TestCase):
         self.assertEqual(
             (hashlib.sha256(response).hexdigest(), len(response)), (reference.object_sha256, reference.byte_length)
         )
+        self.assertIs(reference.redacted, False)
         self.assertEqual(response, self.store.bodies[reference.object_sha256])
         self.assertNotEqual(staged.object_sha256, reference.object_sha256)
+
+    def test_broker_redaction_flag_stays_with_core_staged_response(self):
+        private_value = b"private-contact-sentinel"
+        response = b'{"contact":"[REDACTED]"}'
+
+        async def fetch(_broker, _plan, _call):
+            return SimpleNamespace(body=response, redacted=True)
+
+        def runner(_runtime, _package, _files, **kwargs):
+            self.assertEqual(response, kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"}))
+            return SimpleNamespace(
+                output=self._valid_output(),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        with patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch):
+            staged = self._run(runner)
+        reference = staged.broker_responses[0]
+        self.assertIs(reference.redacted, True)
+        self.assertEqual(response, self.store.bodies[reference.object_sha256])
+        self.assertFalse(any(private_value in body for body in self.store.bodies.values()))
 
     def test_non_search_changed_identifier_denied_before_broker_fetch(self):
         fetches: list[str] = []
