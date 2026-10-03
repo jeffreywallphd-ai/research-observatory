@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a3c663c7b78fe66fc20b6a794a3a2583ff0fccd57e9a4460b4848f66df2c7272
+source_sha256: 4fe59116a51575e2d397ff1b52903002bd7baebba8b3a233662d318521454220
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2654,9 +2654,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bounded tasks:**
 
-### - [ ] W2.A02.T01 - Authenticate adopted attachment UI continuation
+### - [x] W2.A02.T01 - Authenticate adopted attachment UI continuation
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/activation_privacy_review (`approved`)
 
 **Dependencies:** `W2.A02.B00`
 
@@ -2683,9 +2683,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A02.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `9e6e90f73a4fd0a710f28f407e239f5d519b46a81a36072a97ece35294f8fba1`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `9e6e90f73a4fd0a710f28f407e239f5d519b46a81a36072a97ece35294f8fba1`
 
 - Candidate / base / branch: `f989ba75b605c2d53db058441ecea211ae41c776` / `23b019825f944e75edb6420b742e82f1216be7c6` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T13:33:53+00:00`
@@ -2699,9 +2701,25 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/activation_privacy_review / `2026-10-03T13:52:21+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.A02.T01.review-R01.json` / `d50593a6bd6f5e180b373bd925647179f40a192fb9d7d59c2ebaffb27f910c45`
+
+**Review notes:** Independent expanded control, security and ADR review of the exact W2.A02.T01 source candidate f989ba75 and frozen REVIEW state 4872e6ca. The 11-path task-base diff contains the six ECR-0010 control-source files and five generated planning outputs; no renderer, native, Core, approved reference, original T01 base, migration or release source changed. The initial dcb37d84 draft had a real six-file scope bypass: the retained pre-fix red log SHA-256 21bc427e84b308b81e35db5cc48a23fe48485d036522295b543b1b6f5d8c2f95 records ValueError not raised for an extra reviewed worker file. The repaired f989ba75 real-Git regression denies that file and passed (SHA-256 a93a0c79463963fc9782467a4760e8386bc2eea21d8388aa3443ad329f337b17). The 13-case authority/compatibility suite passed (SHA-256 e71f56d16ab024a5102d9d5bf51394730d3d07861c0b943e3da866af2e6768b9); all ten manifest log hashes match their retained outputs. I inspected the exact packet-bound 907ed1ad planning-site follow-up and 9b72d021 relative-worktree taskctl repair as historical context, and the independently reviewed 3658/0948 ADR-check, 694a T01 groundwork, 9727 mixed commit, verifier, active-gate and maintenance chains. No prior standalone approval is attributed to 907ed1ad or 9b72d021; this review covers their bounded effect on the new lane. The v1.3 gate binds the inherited T02 review/publication, original T01 claim, current lease, separate adoption/reactivation, per-commit UI/reference/control history, exact 9727 exception, and independent capture/dependent-input classification. Proposed ADR-0037 remains documentary and does not supersede Accepted ADR-0003. At clean REVIEW commit 4872e6ca, independent read-only taskctl validation and planning review-site check both passed. This approves only the W2.A02.T01 control task; W2.A02 slice/exit/security checkpoint/adoption, actual CAP-05.S01.T01 current-product classification/native and startup proof, later W2 qualification and human release remain separate.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/activation_privacy_review at `2026-10-03T13:52:21+00:00`
+
+**Latest notes:** Independent expanded control, security and ADR review of the exact W2.A02.T01 source candidate f989ba75 and frozen REVIEW state 4872e6ca. The 11-path task-base diff contains the six ECR-0010 control-source files and five generated planning outputs; no renderer, native, Core, approved reference, original T01 base, migration or release source changed. The initial dcb37d84 draft had a real six-file scope bypass: the retained pre-fix red log SHA-256 21bc427e84b308b81e35db5cc48a23fe48485d036522295b543b1b6f5d8c2f95 records ValueError not raised for an extra reviewed worker file. The repaired f989ba75 real-Git regression denies that file and passed (SHA-256 a93a0c79463963fc9782467a4760e8386bc2eea21d8388aa3443ad329f337b17). The 13-case authority/compatibility suite passed (SHA-256 e71f56d16ab024a5102d9d5bf51394730d3d07861c0b943e3da866af2e6768b9); all ten manifest log hashes match their retained outputs. I inspected the exact packet-bound 907ed1ad planning-site follow-up and 9b72d021 relative-worktree taskctl repair as historical context, and the independently reviewed 3658/0948 ADR-check, 694a T01 groundwork, 9727 mixed commit, verifier, active-gate and maintenance chains. No prior standalone approval is attributed to 907ed1ad or 9b72d021; this review covers their bounded effect on the new lane. The v1.3 gate binds the inherited T02 review/publication, original T01 claim, current lease, separate adoption/reactivation, per-commit UI/reference/control history, exact 9727 exception, and independent capture/dependent-input classification. Proposed ADR-0037 remains documentary and does not supersede Accepted ADR-0003. At clean REVIEW commit 4872e6ca, independent read-only taskctl validation and planning review-site check both passed. This approves only the W2.A02.T01 control task; W2.A02 slice/exit/security checkpoint/adoption, actual CAP-05.S01.T01 current-product classification/native and startup proof, later W2 qualification and human release remain separate.
 
 **Currently open findings:** -
 

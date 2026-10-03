@@ -1,0 +1,66 @@
+{
+  "task_id": "W2.A02.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+  "base_commit": "23b019825f944e75edb6420b742e82f1216be7c6",
+  "submission_record_commit": "4872e6cafd3d811febff85b92a9800921df6b4c1",
+  "reviewer": "agent:/root/activation_privacy_review",
+  "result": "approved",
+  "approvalAvailable": true,
+  "evidence_sha256": "ed80bda41ecb2e2688afb570a3e2ca7aeabc0d76e4a0cf056e0372467329f04f",
+  "packet_sha256": "9e6e90f73a4fd0a710f28f407e239f5d519b46a81a36072a97ece35294f8fba1",
+  "acceptance_criteria_sha256": "61c068878d1eef469dbb4c45a6069f41a01c98b31dd08df22c1465c4ba588809",
+  "selection_sha256": "0e87213a4c45996ce26ed8325c759837622a49387f5f374a1279f854fdbcd748",
+  "notes": "Independent expanded control, security and ADR review of the exact W2.A02.T01 source candidate f989ba75 and frozen REVIEW state 4872e6ca. The 11-path task-base diff contains the six ECR-0010 control-source files and five generated planning outputs; no renderer, native, Core, approved reference, original T01 base, migration or release source changed. The initial dcb37d84 draft had a real six-file scope bypass: the retained pre-fix red log SHA-256 21bc427e84b308b81e35db5cc48a23fe48485d036522295b543b1b6f5d8c2f95 records ValueError not raised for an extra reviewed worker file. The repaired f989ba75 real-Git regression denies that file and passed (SHA-256 a93a0c79463963fc9782467a4760e8386bc2eea21d8388aa3443ad329f337b17). The 13-case authority/compatibility suite passed (SHA-256 e71f56d16ab024a5102d9d5bf51394730d3d07861c0b943e3da866af2e6768b9); all ten manifest log hashes match their retained outputs. I inspected the exact packet-bound 907ed1ad planning-site follow-up and 9b72d021 relative-worktree taskctl repair as historical context, and the independently reviewed 3658/0948 ADR-check, 694a T01 groundwork, 9727 mixed commit, verifier, active-gate and maintenance chains. No prior standalone approval is attributed to 907ed1ad or 9b72d021; this review covers their bounded effect on the new lane. The v1.3 gate binds the inherited T02 review/publication, original T01 claim, current lease, separate adoption/reactivation, per-commit UI/reference/control history, exact 9727 exception, and independent capture/dependent-input classification. Proposed ADR-0037 remains documentary and does not supersede Accepted ADR-0003. At clean REVIEW commit 4872e6ca, independent read-only taskctl validation and planning review-site check both passed. This approves only the W2.A02.T01 control task; W2.A02 slice/exit/security checkpoint/adoption, actual CAP-05.S01.T01 current-product classification/native and startup proof, later W2 qualification and human release remain separate.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The exact v1.3 selector authenticates the frozen 6506 T01 claim, W2 and W2.A01/W2.A02 approvals and adoption, T02 reviewed v1.2 publication, pinned A01 R02 candidate, reviewed maintenance ancestry and complete per-commit attribution. Packet-bound 907ed1ad/9b72d021 and reviewed 3658/0948 histories were inspected without granting general exceptions."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Only the historical T02 and current T01 contracts are admitted. Exact current independent 1.8 classification, capture producer Git snapshot and separately derived T01-dependent test, fixture, worker and product blobs are required. Extra contracts, shortened base, stale inputs and hidden add/revert histories deny in the selected real-Git cases; actual resumed product qualification remains outside this task."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The sole 9727f1b1 exception pins the immutable commit/tree, one parent, two renderer edits and nine canonical newly introduced regular Python paths appended to otherwise unchanged quality inventory. It is not described as prior product approval; the separate T01 full-candidate review remains required."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "Automatic base selection uses original 6506 only for the sole authenticated active T01 continuation and rejects foreign or shortened state. The fresh suite retained selected v1.0, v1.1 and v1.2 passing and denial paths; policy roots and legacy approval ordering were not widened."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "assessment": "Indexed Proposed ADR-0037 links W2.A02.T01, names the two protected paths, and does not supersede ADR-0003. The exact task-base ADR check passed 37 indexed decisions and 11 changed paths."
+    },
+    {
+      "criterion_index": 6,
+      "result": "satisfied",
+      "assessment": "The six protected source files and five taskctl-generated projections are the entire 23b01982..f989ba75 diff. The preserved red failure and focused passing six-path regression close the pre-submission bypass; the candidate also passed the 13-case authority suite, UI gate, ADR/backlog/views, targeted Ruff/mypy and diff checks."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Frozen submission and retained outputs",
+      "result": "passed",
+      "observation": "The committed manifest was introduced once at REVIEW state 4872e6ca; its Git blob SHA-256 equals the frozen evidence reference ed80bda41ecb2e2688afb570a3e2ca7aeabc0d76e4a0cf056e0372467329f04f. Candidate/base/branch, 11 changed paths, criteria, selection and submission packet hashes recompute. Ten retained raw check outputs and the adverse pre-fix red output match their recorded SHA-256 values. Working-tree CRLF line endings normalize to the committed manifest bytes as taskctl requires."
+    },
+    {
+      "check": "Source-scope failure and repair",
+      "result": "passed",
+      "observation": "The pre-fix real-Git case failed because an extra reviewed workers/document/injected_control.py produced no ValueError. At f989ba75 the same focused case passes. Reviewed A02 source paths now enforce the six approved files plus exact task evidence/review references and fixed generated projections; inherited A01 control source is pinned to its independently approved R02 candidate."
+    },
+    {
+      "check": "Committed REVIEW projection",
+      "result": "passed",
+      "observation": "At clean HEAD 4872e6ca, independent read-only taskctl validate exited 0 (20 capabilities, 117 slices, 388 tasks, 12 release gates) and plan_review_check exited 0 (19 capabilities, 111 slices, 337 tasks, 494 HTML pages). These checks ran in parallel and changed no repository files."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}
