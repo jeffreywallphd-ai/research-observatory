@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: b79d5eaa138a1108904e62ed8c7837bd5e44712b5c93365016ecd9f1eeb29bb5
+source_sha256: 1e33b6d2691b9779021f557489982698fcc2d8468c25f4280f0260e0b1a674b1
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9867,15 +9867,15 @@ Original tasks and approvals remain unchanged.
 
 **Currently open findings:** -
 
-#### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
+#### - [x] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 
-**Status / priority / estimate / risk:** `REVIEW` / `P1` / `M` / `medium`
+**Status / priority / estimate / risk:** `DONE` / `P1` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S05.T02`
 
-**Owner / review:** codex-w2-implementation / agent:/root/t03_independent_review (`changes-requested`)
+**Owner / review:** codex-w2-implementation / agent:/root/t03_independent_review (`approved`)
 
 **Objective:** Reference connector for a local/institutional repository plus tests for pagination, errors, provenance, rights, and replay.
 
@@ -9903,7 +9903,7 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-04.S05.T03
 
-**Review mode:** `append-only v1` / 2 completed round(s)
+**Review mode:** `append-only v1` / 3 completed round(s)
 
 ###### Round R01
 
@@ -9965,7 +9965,9 @@ Original tasks and approvals remain unchanged.
 
 - `CAP-04.S05.T03-R01-F01` `fixed` — artifacts/evidence/CAP-04.S05.T03.R02.json
 
-**Current immutable submission awaiting review:** `R03` / packet SHA-256 `cd93be95b0dfb27ca2355b04606080152e4d8c7122aa9e0d8e40f9c384cb2112`
+###### Round R03
+
+**Immutable submission packet:** `R03` / packet SHA-256 `cd93be95b0dfb27ca2355b04606080152e4d8c7122aa9e0d8e40f9c384cb2112`
 
 - Candidate / base / branch: `c879f5d68aea48622b719e105b7915821ddbb6a5` / `42379f73cf6853be3618a8bb554ffa50a3fdf5c0` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T18:14:49+00:00`
@@ -9979,11 +9981,27 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `R02` / `CAP-04.S05.T03-R02-F01`
 - Root-cause escalation: The R02 evidence author used a partial corrective-task inventory to populate a future-work label and did not verify the cited C05 task's canonical origin, scope or DONE status before freezing the manifest. That allowed an already-used unrelated ID to appear as a migration prerequisite. R03 adds a bounded referential inventory check and uses an ID-free pending dependency until taskctl allocates the linked correction.
 
-**Current latest-review projection:** `changes-requested` by agent:/root/t03_independent_review at `2026-10-03T17:54:31+00:00`
+**Disposition / reviewer / time:** `approved` / agent:/root/t03_independent_review / `2026-10-03T18:36:35+00:00`
 
-**Latest notes:** Independent expanded R02 review closes CAP-04.S05.T03-R01-F01 on the exact clean strict-descendant candidate: the selected locally test-signed worker and fresh frozen Core guardian are path/hash bound to a no-skip 2/2 real Windows x64 LPAC run, the worker/build source is unchanged from its signed build, and fresh 68/68 focused tests pass. The sandbox guardian-handshake failure remains retained as a non-equivalent-principal adverse result. However the frozen R02 criterion manifest and submitted backlog packet incorrectly direct the outstanding T02 migration-fixture repair to W2.C05.T01. Canonical W2.C05.T01 was already completed for unrelated CAP-04.S01.T03 test typing, and W2.C01.T01 through W2.C09.T01 are all DONE. The erroneous pointer could make a required S05/W2 migration prerequisite appear assigned or discharged by unrelated work. This is a new medium blocking evidence-accuracy finding under criterion 3; R02 approval is unavailable. Keep R02 and R01 immutable and correct the deferral in an append-only R03 packet, using a newly allocated linked-correction ID only after validating the canonical ledger. The earlier quality-inventory omission remains a separate S05/W2 obligation. Test signing and synthetic broker data do not establish production signing or a live provider.
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S05.T03.review-R03.json` / `891d12759db54c6f51b1860951cbf90be7f56237d0ede468620ab8a6b6e13394`
 
-**Currently open findings:** `CAP-04.S05.T03-R02-F01`
+**Review notes:** Independent expanded R03 review of exact candidate c879f5d6 and frozen submission packet cd93be95 closes the sole open R02 finding CAP-04.S05.T03-R02-F01. The R03 task-start proof note and criterion manifest preserve R01/R02 history, verify the full canonical W2 corrective inventory, and describe the stale CAP-04.S05.T02 v20 grant-migration fixture as an unresolved linked-correction prerequisite without assigning an unallocated immutable ID. W2.C01.T01 through W2.C09.T01 are DONE; W2.C05.T01 remains an unrelated completed CAP-04.S01.T03 six-test typing correction and is not counted toward S05/W2 migration proof. The already closed R01-F01 is replayed: locally test-signed worker inventory, signature, packaged image, reused Core guardian and sample bytes match their reports; worker/Core/build-tool source is unchanged from R02 to R03 and worker build source remains identical to 33333d0f. The hashed R03 runner fixes both environment paths, rehashes selected inputs, then two real Windows x64 LPAC sample tests pass without skip. Fresh focused tests pass 68/68, clean build-manifest and backlog validation pass, and all 16 submitted raw-log/report/witness hash references match. R03's eight-path diff changes task evidence and generated planning/review state only. The earlier sandbox guardian-handshake failure is retained as an adverse non-equivalent-principal result. T03 native tests use a synthetic broker callback; the joined signed-sample-to-Core durable-publication/reopen path, stale migration fixture repair, quality inventory repair, and complete S05/W2 checks remain slice/Wave obligations. No production-signing or live-provider qualification is inferred.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `CAP-04.S05.T03-R02-F01` `fixed` — artifacts/evidence/CAP-04.S05.T03.R03.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/t03_independent_review at `2026-10-03T18:36:35+00:00`
+
+**Latest notes:** Independent expanded R03 review of exact candidate c879f5d6 and frozen submission packet cd93be95 closes the sole open R02 finding CAP-04.S05.T03-R02-F01. The R03 task-start proof note and criterion manifest preserve R01/R02 history, verify the full canonical W2 corrective inventory, and describe the stale CAP-04.S05.T02 v20 grant-migration fixture as an unresolved linked-correction prerequisite without assigning an unallocated immutable ID. W2.C01.T01 through W2.C09.T01 are DONE; W2.C05.T01 remains an unrelated completed CAP-04.S01.T03 six-test typing correction and is not counted toward S05/W2 migration proof. The already closed R01-F01 is replayed: locally test-signed worker inventory, signature, packaged image, reused Core guardian and sample bytes match their reports; worker/Core/build-tool source is unchanged from R02 to R03 and worker build source remains identical to 33333d0f. The hashed R03 runner fixes both environment paths, rehashes selected inputs, then two real Windows x64 LPAC sample tests pass without skip. Fresh focused tests pass 68/68, clean build-manifest and backlog validation pass, and all 16 submitted raw-log/report/witness hash references match. R03's eight-path diff changes task evidence and generated planning/review state only. The earlier sandbox guardian-handshake failure is retained as an adverse non-equivalent-principal result. T03 native tests use a synthetic broker callback; the joined signed-sample-to-Core durable-publication/reopen path, stale migration fixture repair, quality inventory repair, and complete S05/W2 checks remain slice/Wave obligations. No production-signing or live-provider qualification is inferred.
+
+**Currently open findings:** -
 
 ## CAP-document-inspection (`CAP-05`) - Document acquisition, parsing, source inspection, and page anchors
 

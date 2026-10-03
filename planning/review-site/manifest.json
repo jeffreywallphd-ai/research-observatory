@@ -17881,13 +17881,13 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "REVIEW",
+              "status": "DONE",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "agent:/root/t03_independent_review",
-                "result": "changes-requested",
-                "reviewed_at": "2026-10-03T17:54:31+00:00",
-                "notes": "Independent expanded R02 review closes CAP-04.S05.T03-R01-F01 on the exact clean strict-descendant candidate: the selected locally test-signed worker and fresh frozen Core guardian are path/hash bound to a no-skip 2/2 real Windows x64 LPAC run, the worker/build source is unchanged from its signed build, and fresh 68/68 focused tests pass. The sandbox guardian-handshake failure remains retained as a non-equivalent-principal adverse result. However the frozen R02 criterion manifest and submitted backlog packet incorrectly direct the outstanding T02 migration-fixture repair to W2.C05.T01. Canonical W2.C05.T01 was already completed for unrelated CAP-04.S01.T03 test typing, and W2.C01.T01 through W2.C09.T01 are all DONE. The erroneous pointer could make a required S05/W2 migration prerequisite appear assigned or discharged by unrelated work. This is a new medium blocking evidence-accuracy finding under criterion 3; R02 approval is unavailable. Keep R02 and R01 immutable and correct the deferral in an append-only R03 packet, using a newly allocated linked-correction ID only after validating the canonical ledger. The earlier quality-inventory omission remains a separate S05/W2 obligation. Test signing and synthetic broker data do not establish production signing or a live provider."
+                "result": "approved",
+                "reviewed_at": "2026-10-03T18:36:35+00:00",
+                "notes": "Independent expanded R03 review of exact candidate c879f5d6 and frozen submission packet cd93be95 closes the sole open R02 finding CAP-04.S05.T03-R02-F01. The R03 task-start proof note and criterion manifest preserve R01/R02 history, verify the full canonical W2 corrective inventory, and describe the stale CAP-04.S05.T02 v20 grant-migration fixture as an unresolved linked-correction prerequisite without assigning an unallocated immutable ID. W2.C01.T01 through W2.C09.T01 are DONE; W2.C05.T01 remains an unrelated completed CAP-04.S01.T03 six-test typing correction and is not counted toward S05/W2 migration proof. The already closed R01-F01 is replayed: locally test-signed worker inventory, signature, packaged image, reused Core guardian and sample bytes match their reports; worker/Core/build-tool source is unchanged from R02 to R03 and worker build source remains identical to 33333d0f. The hashed R03 runner fixes both environment paths, rehashes selected inputs, then two real Windows x64 LPAC sample tests pass without skip. Fresh focused tests pass 68/68, clean build-manifest and backlog validation pass, and all 16 submitted raw-log/report/witness hash references match. R03's eight-path diff changes task evidence and generated planning/review state only. The earlier sandbox guardian-handshake failure is retained as an adverse non-equivalent-principal result. T03 native tests use a synthetic broker callback; the joined signed-sample-to-Core durable-publication/reopen path, stale migration fixture repair, quality inventory repair, and complete S05/W2 checks remain slice/Wave obligations. No production-signing or live-provider qualification is inferred."
               },
               "review_control": {
                 "version": 1,
@@ -18158,65 +18158,119 @@
                         ]
                       }
                     }
+                  },
+                  {
+                    "submission": {
+                      "id": "R03",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-03T18:14:49+00:00",
+                      "candidate_commit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
+                      "base_commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S05.T03.R03.json",
+                        "sha256": "2d5c073b78a78c1eab43a63a30faaecd58b591acb5aea8e3278e3d3c30050066",
+                        "commit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
+                        "recorded_at": "2026-10-03T18:14:49+00:00"
+                      },
+                      "acceptance_criteria_sha256": "05609bef191428a127b093c2f2706ee09cfc130bfa4ebdc841a7db64b09035fd",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-04.S05.T03.R02.json",
+                        "artifacts/evidence/CAP-04.S05.T03.review-R02.json",
+                        "artifacts/evidence/CAP-04.S05.T03.task-start.md",
+                        "docs/planning-implementation-plan.md",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S05.T03.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe artifacts/tmp/t03_r03_correction_inventory.py",
+                        ".venv\\Scripts\\python.exe artifacts/tmp/t03_r03_source_closure.py",
+                        ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_inputs.py --guardian artifacts/tmp/c11/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --core-report artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.json --output artifacts/tmp/CAP-04.S05.T03.R03.inputs-c879f5d6.json",
+                        "& artifacts/tmp/t03_r03_bound_native.ps1",
+                        ".venv\\Scripts\\python.exe artifacts/tmp/t03_r03_native_witness.py",
+                        ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.R03.build-c879f5d6.json",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
+                      ],
+                      "deferred_checks": [
+                        "Full foundation quality remains red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is required before S05/W2 quality proof.",
+                        "The older CAP-04.S05.T02 v20 grant-migration test fixture remains an unresolved linked-correction prerequisite. Its immutable corrective ID is not allocated; taskctl correct at a clean paused W2 boundary and independent approval must precede S05/W2 migration proof. No production migration defect was demonstrated.",
+                        "S05 integrated slice must prove signed LPAC sample through Core broker to durable publication/reopen under its authority boundary. T03's native launcher and focused Core tests do not alone establish that joined path.",
+                        "S05 integrated slice and W2 exit retain full affected/repository/profile breadth, cross-capability security/rights/accessibility/performance and live-signing/provider limits."
+                      ],
+                      "selection_rationale": "Third submission with one open finding CAP-04.S05.T03-R02-F01. Root cause is a partial corrective inventory and no origin/scope/status check before R02 freeze. The R03 source change is an evidence/proof note only; replay the exact referential inventory against canonical backlog, leave the pending T02 fixture repair ID-free until taskctl allocation, and preserve R02. R01-F01 was closed by independent R02 review; recheck selected signed worker/Core input identities and execute two fresh no-skip real LPAC sample cases on this committed candidate. Exact R02-to-R03 source closure allows reusing the frozen Core guardian instead of a redundant rebuild. Repeat 68 focused connector/contract tests, clean build manifest and backlog validation because this is an evidence correction. Full quality, migration and joined sample-to-Core durable-publication qualification remain S05/W2 work, not T03 claims.",
+                      "selection_sha256": "8cb3807ffec2f5d4a61850bd5e7ed67872aa6f16308554dbd577b693010801ff",
+                      "prior_attempt_id": "R02",
+                      "open_finding_ids": [
+                        "CAP-04.S05.T03-R02-F01"
+                      ],
+                      "root_cause_analysis": "The R02 evidence author used a partial corrective-task inventory to populate a future-work label and did not verify the cited C05 task's canonical origin, scope or DONE status before freezing the manifest. That allowed an already-used unrelated ID to appear as a migration prerequisite. R03 adds a bounded referential inventory check and uses an ID-free pending dependency until taskctl allocates the linked correction.",
+                      "selected_command_ids": [
+                        "search:connectors",
+                        "contracts:unit",
+                        "security-local:unit",
+                        "foundation:build-manifest",
+                        "foundation:backlog"
+                      ],
+                      "packet_sha256": "cd93be95b0dfb27ca2355b04606080152e4d8c7122aa9e0d8e40f9c384cb2112"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/t03_independent_review",
+                      "result": "approved",
+                      "reviewed_at": "2026-10-03T18:36:35+00:00",
+                      "notes": "Independent expanded R03 review of exact candidate c879f5d6 and frozen submission packet cd93be95 closes the sole open R02 finding CAP-04.S05.T03-R02-F01. The R03 task-start proof note and criterion manifest preserve R01/R02 history, verify the full canonical W2 corrective inventory, and describe the stale CAP-04.S05.T02 v20 grant-migration fixture as an unresolved linked-correction prerequisite without assigning an unallocated immutable ID. W2.C01.T01 through W2.C09.T01 are DONE; W2.C05.T01 remains an unrelated completed CAP-04.S01.T03 six-test typing correction and is not counted toward S05/W2 migration proof. The already closed R01-F01 is replayed: locally test-signed worker inventory, signature, packaged image, reused Core guardian and sample bytes match their reports; worker/Core/build-tool source is unchanged from R02 to R03 and worker build source remains identical to 33333d0f. The hashed R03 runner fixes both environment paths, rehashes selected inputs, then two real Windows x64 LPAC sample tests pass without skip. Fresh focused tests pass 68/68, clean build-manifest and backlog validation pass, and all 16 submitted raw-log/report/witness hash references match. R03's eight-path diff changes task evidence and generated planning/review state only. The earlier sandbox guardian-handshake failure is retained as an adverse non-equivalent-principal result. T03 native tests use a synthetic broker callback; the joined signed-sample-to-Core durable-publication/reopen path, stale migration fixture repair, quality inventory repair, and complete S05/W2 checks remain slice/Wave obligations. No production-signing or live-provider qualification is inferred."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S05.T03.review-R03.json",
+                      "sha256": "891d12759db54c6f51b1860951cbf90be7f56237d0ede468620ab8a6b6e13394"
+                    },
+                    "findings": [],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-04.S05.T03-R02-F01",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-04.S05.T03.R03.json"
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-04.S05.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R03",
+                      "submitted_at": "2026-10-03T18:14:49+00:00",
+                      "reviewed_at": "2026-10-03T18:36:35+00:00",
+                      "duration_seconds": 1306,
+                      "outcome": "approved",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 0,
+                        "low": 0,
+                        "blocking": 0,
+                        "total": 0
+                      },
+                      "command_ids": [
+                        "search:connectors",
+                        "contracts:unit",
+                        "security-local:unit",
+                        "foundation:build-manifest",
+                        "foundation:backlog"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R02",
+                        "replayed_finding_ids": [
+                          "CAP-04.S05.T03-R02-F01"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-04.S05.T03-R02-F01"
+                        ]
+                      }
+                    }
                   }
                 ],
-                "current_submission": {
-                  "id": "R03",
-                  "submitted_by": "codex-w2-implementation",
-                  "submitted_at": "2026-10-03T18:14:49+00:00",
-                  "candidate_commit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
-                  "base_commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
-                  "branch": "codex/w2-implementation",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-04.S05.T03.R03.json",
-                    "sha256": "2d5c073b78a78c1eab43a63a30faaecd58b591acb5aea8e3278e3d3c30050066",
-                    "commit": "c879f5d68aea48622b719e105b7915821ddbb6a5",
-                    "recorded_at": "2026-10-03T18:14:49+00:00"
-                  },
-                  "acceptance_criteria_sha256": "05609bef191428a127b093c2f2706ee09cfc130bfa4ebdc841a7db64b09035fd",
-                  "changed_paths": [
-                    "artifacts/evidence/CAP-04.S05.T03.R02.json",
-                    "artifacts/evidence/CAP-04.S05.T03.review-R02.json",
-                    "artifacts/evidence/CAP-04.S05.T03.task-start.md",
-                    "docs/planning-implementation-plan.md",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-04/CAP-04.S05.T03.html",
-                    "planning/review-site/manifest.json",
-                    "planning/status-summary.md"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe artifacts/tmp/t03_r03_correction_inventory.py",
-                    ".venv\\Scripts\\python.exe artifacts/tmp/t03_r03_source_closure.py",
-                    ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_inputs.py --guardian artifacts/tmp/c11/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --core-report artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.json --output artifacts/tmp/CAP-04.S05.T03.R03.inputs-c879f5d6.json",
-                    "& artifacts/tmp/t03_r03_bound_native.ps1",
-                    ".venv\\Scripts\\python.exe artifacts/tmp/t03_r03_native_witness.py",
-                    ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
-                    ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.R03.build-c879f5d6.json",
-                    ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
-                  ],
-                  "deferred_checks": [
-                    "Full foundation quality remains red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is required before S05/W2 quality proof.",
-                    "The older CAP-04.S05.T02 v20 grant-migration test fixture remains an unresolved linked-correction prerequisite. Its immutable corrective ID is not allocated; taskctl correct at a clean paused W2 boundary and independent approval must precede S05/W2 migration proof. No production migration defect was demonstrated.",
-                    "S05 integrated slice must prove signed LPAC sample through Core broker to durable publication/reopen under its authority boundary. T03's native launcher and focused Core tests do not alone establish that joined path.",
-                    "S05 integrated slice and W2 exit retain full affected/repository/profile breadth, cross-capability security/rights/accessibility/performance and live-signing/provider limits."
-                  ],
-                  "selection_rationale": "Third submission with one open finding CAP-04.S05.T03-R02-F01. Root cause is a partial corrective inventory and no origin/scope/status check before R02 freeze. The R03 source change is an evidence/proof note only; replay the exact referential inventory against canonical backlog, leave the pending T02 fixture repair ID-free until taskctl allocation, and preserve R02. R01-F01 was closed by independent R02 review; recheck selected signed worker/Core input identities and execute two fresh no-skip real LPAC sample cases on this committed candidate. Exact R02-to-R03 source closure allows reusing the frozen Core guardian instead of a redundant rebuild. Repeat 68 focused connector/contract tests, clean build manifest and backlog validation because this is an evidence correction. Full quality, migration and joined sample-to-Core durable-publication qualification remain S05/W2 work, not T03 claims.",
-                  "selection_sha256": "8cb3807ffec2f5d4a61850bd5e7ed67872aa6f16308554dbd577b693010801ff",
-                  "prior_attempt_id": "R02",
-                  "open_finding_ids": [
-                    "CAP-04.S05.T03-R02-F01"
-                  ],
-                  "root_cause_analysis": "The R02 evidence author used a partial corrective-task inventory to populate a future-work label and did not verify the cited C05 task's canonical origin, scope or DONE status before freezing the manifest. That allowed an already-used unrelated ID to appear as a migration prerequisite. R03 adds a bounded referential inventory check and uses an ID-free pending dependency until taskctl allocates the linked correction.",
-                  "selected_command_ids": [
-                    "search:connectors",
-                    "contracts:unit",
-                    "security-local:unit",
-                    "foundation:build-manifest",
-                    "foundation:backlog"
-                  ],
-                  "packet_sha256": "cd93be95b0dfb27ca2355b04606080152e4d8c7122aa9e0d8e40f9c384cb2112"
-                }
+                "current_submission": null
               }
             }
           ],
@@ -18260,7 +18314,7 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "REVIEW",
+              "status": "DONE",
               "page": "CAP-04/CAP-04.S05.T03.html",
               "dependencies": [
                 "CAP-04.S05.T02"
