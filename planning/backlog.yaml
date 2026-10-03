@@ -3494,7 +3494,7 @@ waves:
       id: W2.C10.T01
       wave: W2
       priority: P1
-      status: IN_PROGRESS
+      status: REVIEW
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       base_sha: eee6f5df4ba2b940e69fc8d7b49c033139e01856
@@ -3504,12 +3504,17 @@ waves:
         claimed_at: '2026-10-03T19:23:23+00:00'
         expires_at: '2026-10-04T03:23:23+00:00'
       started_at: '2026-10-03T19:23:23+00:00'
-      updated_at: '2026-10-03T19:23:23+00:00'
+      updated_at: '2026-10-03T20:04:04+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
-      evidence: []
-      verification_state: null
+      evidence:
+      - type: criterion-manifest
+        path: artifacts/evidence/W2.C10.T01.json
+        sha256: 93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a
+        commit: 3dde91238b0be11847f68845a52b9785048dc8cd
+        recorded_at: '2026-10-03T20:04:04+00:00'
+      verification_state: passed
       review:
         reviewer: null
         result: null
@@ -3518,7 +3523,67 @@ waves:
       review_control:
         version: 1
         attempts: []
-        current_submission: null
+        current_submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-03T20:04:04+00:00'
+          candidate_commit: 3dde91238b0be11847f68845a52b9785048dc8cd
+          base_commit: eee6f5df4ba2b940e69fc8d7b49c033139e01856
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: criterion-manifest
+            path: artifacts/evidence/W2.C10.T01.json
+            sha256: 93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a
+            commit: 3dde91238b0be11847f68845a52b9785048dc8cd
+            recorded_at: '2026-10-03T20:04:04+00:00'
+          acceptance_criteria_sha256: 831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5
+          changed_paths:
+          - docs/planning-implementation-plan.md
+          - planning/backlog.yaml
+          - planning/review-site/manifest.json
+          - planning/review-site/waves/W2.html
+          - planning/status-summary.md
+          - services/core-api/src/research_observatory_core/plugin_worker.py
+          - tests/connectors/test_plugin_grant_migration.py
+          - tests/connectors/test_plugin_worker_submission.py
+          selected_checks:
+          - $env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_worker_submission
+            tests.connectors.test_plugin_grant_migration tests.connectors.test_plugin_grants
+          - $env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_admin_service
+            tests.connectors.test_plugin_package_repository
+          - $env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_dispatch
+            tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_broker tests.connectors.test_plugin_consent
+          - $env:RO_W2_SIGNED_WORKER_BUILD='artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated'; $env:RO_W2_CORE_SIDECAR_GUARDIAN='artifacts/tmp/CAP-04.S05.T03.R02.core-42379f73/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe';
+            .venv\Scripts\python.exe -B -s artifacts/tmp/s05_protected_authority_probe.red-b763fa8c.py
+          - $files=@('services/core-api/src/research_observatory_core/plugin_worker.py','tests/connectors/test_plugin_grant_migration.py','tests/connectors/test_plugin_worker_submission.py');
+            $env:MYPYPATH='tools;services/core-api/src'; .venv\Scripts\python.exe -m ruff check --config pyproject.toml --
+            $files; .venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- $files; .venv\Scripts\python.exe
+            -m mypy --config-file pyproject.toml --no-namespace-packages -- $files
+          - python tools/taskctl.py --file planning/backlog.yaml validate
+          deferred_checks:
+          - S05 slice integration must join signed sample to protected Core for two pages, denial/cancellation and restart/recovery
+            with independent slice review; the one-page preflight does not discharge that obligation.
+          - Unchanged broad service/security-local/desktop/packaging profiles remain checkpoint or fresh W2 exit work under
+            verification §8.1; this correction has no changed worker image, guardian, build or desktop inputs.
+          - Dev-only plaintext package-pointer transaction behavior requires separate triage outside this fixed correction
+            spec.
+          selection_rationale: The one-line product change affects persisted Core grant authorization; the second change repairs
+            a test-only encrypted migration fixture. Focused worker/grant/admin, broker/consent and native signed-LPAC/Core
+            checks target the plausible identity, denial, migration and durable-publication failures. Ruff/mypy cover all
+            three changed paths; taskctl validates the correction claim. The ignored native probe authenticates its selected
+            worker/guardian/sample bytes but overrides source-checkout runtime availability and imports an ignored helper
+            outside a fully frozen input closure; it is only a one-page synthetic preflight. A separate development plaintext
+            Python 3.14 package-pointer transaction failure was preserved and does not reproduce in the protected correction
+            path; it is outside this three-path correction scope.
+          selection_sha256: f43f537e609368cbc226fbd926aa2933f6d484b17c57e8191161664fc47056ce
+          prior_attempt_id: null
+          open_finding_ids: []
+          root_cause_analysis: null
+          selected_command_ids:
+          - search:connectors
+          - foundation:quality
+          - foundation:backlog
+          packet_sha256: dbcff21bb0648e655a5f32a6d0adfab03f9a04c867184ed488a829f335995eb1
       correction:
         origin_task_id: CAP-04.S05.T02
         origin_commit: 6506c68461144747b0ee9be10853211717aa381d

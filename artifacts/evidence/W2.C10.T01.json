@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.C10.T01",
+  "baseCommit": "eee6f5df4ba2b940e69fc8d7b49c033139e01856",
+  "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "services/core-api/src/research_observatory_core/plugin_worker.py",
+    "tests/connectors/test_plugin_grant_migration.py",
+    "tests/connectors/test_plugin_worker_submission.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Original CAP-04.S05.T02 R02 independently approved the signed Windows LPAC restriction, broker denial, cleanup and durable content-free failure audit at 5a76725c. The correction does not change the LPAC worker, guardian, broker, credential, grant validator or human trust/enable authority; original R02 evidence is historical support only for those unchanged boundaries.",
+        "At exact candidate 3dde9123, 49 focused dispatch/job/broker/consent tests pass, including changed-host/path/method/scheme denial before egress; the new real Core-admin persisted-dispatch test denies system trust/enable, proves human grant, then reaches one synthetic broker call. That committed regression uses SQLCipher with an in-memory key and real DPAPI publisher trust, not production DPAPI project-key composition. The protected local native preflight reaches signed LPAC and publishes/reopens one page with production DPAPI/SQLCipher, but uses test signing, synthetic HTTP, an overridden runtime-availability gate, and an injected ignored runtime helper without full frozen input closure. S05 two-page, joined denial/cancellation and process-restart proof remains separate."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Both migration tests were red at the clean paused predecessor due to a stale fixture that mixed v20 with successor DDL. The corrected test constructs exact encrypted v20, pins the frozen fingerprint, verifies ordered v21/v22/v23 fingerprints/history, verified backup/reopen, and injected v21 step rollback/retry. Both pass inside the 20-test focused Core group; production DDL is unchanged.",
+        "The new regression first failed against the byte-unchanged workload actor after real human trust/enable and before broker egress. At exact candidate it passes through persisted Core authorization using the existing system runtime actor, while system trust/enable remains denied. Overall 20 Core, 9 authority, 49 dispatch and one protected signed native preflight tests pass; red logs and the separate dev-plaintext package-pointer trace remain in ignored artifacts."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The only product/test paths in the exact base-to-candidate diff are the three spec-admitted files: plugin_worker.py and the worker-submission and grant-migration test modules. The remaining five paths are taskctl claim and generated planning views. No approved permission, grant validator, production migration, broker, LPAC, build, UX or audit contract changed.",
+        "At clean committed candidate, affected Ruff lint/format and mypy pass, taskctl validates the claim ledger, and fresh focused encrypted migration/denial checks pass. Full joined S05 integration, later checkpoint and W2 exit qualification remain governed separate work."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "foundation:quality",
+      "foundation:backlog"
+    ],
+    "riskAnalysis": "The one-line product change affects persisted Core grant authorization; the second change repairs a test-only encrypted migration fixture. Focused worker/grant/admin, broker/consent and native signed-LPAC/Core checks target the plausible identity, denial, migration and durable-publication failures. Ruff/mypy cover all three changed paths; taskctl validates the correction claim. The ignored native probe authenticates its selected worker/guardian/sample bytes but overrides source-checkout runtime availability and imports an ignored helper outside a fully frozen input closure; it is only a one-page synthetic preflight. A separate development plaintext Python 3.14 package-pointer transaction failure was preserved and does not reproduce in the protected correction path; it is outside this three-path correction scope.",
+    "deferred": [
+      "S05 slice integration must join signed sample to protected Core for two pages, denial/cancellation and restart/recovery with independent slice review; the one-page preflight does not discharge that obligation.",
+      "Unchanged broad service/security-local/desktop/packaging profiles remain checkpoint or fresh W2 exit work under verification \u00a78.1; this correction has no changed worker image, guardian, build or desktop inputs.",
+      "Dev-only plaintext package-pointer transaction behavior requires separate triage outside this fixed correction spec."
+    ]
+  },
+  "checks": [
+    {
+      "id": "connector-core",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_grant_migration tests.connectors.test_plugin_grants",
+      "exitCode": 0,
+      "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "result": "20/20 persisted worker, grant, encrypted v20/v21-v23 migration, restart and denial tests passed.",
+      "rawOutput": "artifacts/tmp/W2.C10.T01.candidate-core-3dde9123.log",
+      "rawOutputSha256": "f2e16ac360cbd3cfa57f2d6d4769fae3041767bd1144ee7e53d7ac3626fc31fe"
+    },
+    {
+      "id": "package-authority",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_package_repository",
+      "exitCode": 0,
+      "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "result": "9/9 admin/package trust, enable and reopening tests passed.",
+      "rawOutput": "artifacts/tmp/W2.C10.T01.candidate-authority-3dde9123.log",
+      "rawOutputSha256": "2ba0d3141364ffbd620f282d673cdcf4e5bfc2b2df70705a56f95ca4806c83f4"
+    },
+    {
+      "id": "dispatch-broker-consent",
+      "command": "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_broker tests.connectors.test_plugin_consent",
+      "exitCode": 0,
+      "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "result": "49/49 dispatch, durable jobs, broker boundary and consent tests passed.",
+      "rawOutput": "artifacts/tmp/W2.C10.T01.candidate-dispatch-3dde9123.log",
+      "rawOutputSha256": "3453117f1dcfdceaffdb4a6f115a4b452ad7c074e6930e75706364e8d83a27e4"
+    },
+    {
+      "id": "protected-signed-lpac-preflight",
+      "command": "$env:RO_W2_SIGNED_WORKER_BUILD='artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated'; $env:RO_W2_CORE_SIDECAR_GUARDIAN='artifacts/tmp/CAP-04.S05.T03.R02.core-42379f73/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe'; .venv\\Scripts\\python.exe -B -s artifacts/tmp/s05_protected_authority_probe.red-b763fa8c.py",
+      "exitCode": 0,
+      "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "result": "1/1 protected DPAPI/SQLCipher Core, real human package trust/enable and consent, signed LPAC sample, synthetic HTTP one-page publication/reopen passed. The ignored probe overrides the source-checkout runtime-availability gate and imports an ignored helper; this is bounded preflight, not S05 qualification.",
+      "rawOutput": "artifacts/tmp/W2.C10.T01.candidate-protected-native-3dde9123.log",
+      "rawOutputSha256": "a1ed27bd82f7693f180255846571230c2705dfc855fa5880f75554bc7974737e",
+      "inputReport": "artifacts/tmp/W2.C10.T01.candidate-native-inputs-3dde9123.json",
+      "inputReportSha256": "e616d8b05d18befddcc999a4ead0c4bfd1e1dbbf406c15a0c15a8c219003e4e8"
+    },
+    {
+      "id": "affected-python-quality",
+      "command": "$files=@('services/core-api/src/research_observatory_core/plugin_worker.py','tests/connectors/test_plugin_grant_migration.py','tests/connectors/test_plugin_worker_submission.py'); $env:MYPYPATH='tools;services/core-api/src'; .venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- $files",
+      "exitCode": 0,
+      "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "result": "Ruff lint/format and mypy pass on all three changed Python paths.",
+      "rawOutput": "artifacts/tmp/W2.C10.T01.candidate-quality-R02-3dde9123.log",
+      "rawOutputSha256": "c5c6c08982e5f414e59975e25c54efb6a40f89b31dc568fac65ec8b686aedfd3"
+    },
+    {
+      "id": "taskctl-validate",
+      "command": "python tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+      "provenance": "fresh execution at fixed clean committed Windows x64 candidate",
+      "result": "Canonical backlog valid: 20 capabilities, 117 slices, 389 tasks and 12 release gates."
+    }
+  ],
+  "correctiveIntegration": {
+    "originSha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994",
+    "authorityPreserved": true,
+    "affectedChecks": [
+      "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_grant_migration tests.connectors.test_plugin_grants",
+      "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_package_repository",
+      "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_broker tests.connectors.test_plugin_consent",
+      "$env:RO_W2_SIGNED_WORKER_BUILD='artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated'; $env:RO_W2_CORE_SIDECAR_GUARDIAN='artifacts/tmp/CAP-04.S05.T03.R02.core-42379f73/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe'; .venv\\Scripts\\python.exe -B -s artifacts/tmp/s05_protected_authority_probe.red-b763fa8c.py",
+      "$files=@('services/core-api/src/research_observatory_core/plugin_worker.py','tests/connectors/test_plugin_grant_migration.py','tests/connectors/test_plugin_worker_submission.py'); $env:MYPYPATH='tools;services/core-api/src'; .venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- $files",
+      "python tools/taskctl.py --file planning/backlog.yaml validate"
+    ],
+    "reusedEvidence": [
+      {
+        "path": "artifacts/evidence/CAP-04.S05.T02.R02.json",
+        "sha256": "a68ef1f82ea3716e94a76c57c75dff0b2ab2860a27fba0becf66bdabeba2a994",
+        "commit": "6506c68461144747b0ee9be10853211717aa381d"
+      },
+      {
+        "path": "artifacts/evidence/CAP-04.S05.T02.review-R02.json",
+        "sha256": "d67b08296ed64b7bde214f9e284f57dbe4f8066384fd46dff6a741962c25cff8",
+        "commit": "6506c68461144747b0ee9be10853211717aa381d"
+      }
+    ],
+    "rationale": "Restores the original approved T02 runtime grant authorization and frozen encrypted migration proof without expanding system authority or changing production migrations, LPAC, broker or human trust/enable. Red reproductions are retained; focused exact-candidate checks and a bounded protected signed-LPAC/Core positive preflight prove the repaired path. Historical R02 support is limited to unchanged boundaries; S05 integration and W2 exit remain fresh obligations."
+  },
+  "scopeDeviation": null
+}

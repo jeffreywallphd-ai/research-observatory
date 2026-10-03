@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 343176c6afe18f2b2441e191a7be659bd5ae3bf4c143f1bb06ef4f12454bb845
+source_sha256: 7edcf567cee0df5a50ee2aabb4db12da1fbd079b36dfb624fe69c994ff8749a4
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3623,7 +3623,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C10.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
 
 **Reproduction:** At clean paused predecessor b763fa8ccff87c2828e94459252f02e35e1f4ef1, both encrypted grant-migration tests fail before migration: the v20 fixture slices the full DDL sequence by only the grant group length and now includes v22/v23 DDL, so its schema fingerprint differs from the frozen v20 fingerprint (ignored raw log artifacts/tmp/W2.C10.T01.grant-migration-red-b763fa8c.log, SHA-256 95588b3d40405e3f227056ae6414e31047c92ddff9b677b59bc49a0d390bb053). Separately, an unmodified protected local DPAPI/SQLCipher Core probe with real package trust, human enable, current Intent/privacy/consent and selected signed-LPAC sample inputs fails at persisted grant authorization: PluginWorkerService constructs actor_type workload, while PluginGrantService.current_authorization admits only human or system actors for runtime checks. The durable job fails before broker egress or LPAC launch (ignored raw log artifacts/tmp/W2.C10.T01.protected-core-red-b763fa8c.log, SHA-256 55dbc4d7642205143ba0df88b32be653c26b7bb189c1a6996dd152625efcb7a8; ignored input report artifacts/tmp/W2.C10.T01.red-inputs-b763fa8c.json, SHA-256 624d0c5635879846a529d4bfafcfd5d3fc23a58a01fe369076a7cb8bc0b5b993). These red probes prove defects, not native launch, task, slice or Wave qualification.
 
@@ -3642,7 +3642,19 @@ Original tasks and approvals remain unchanged.
 
 **Review mode:** `append-only v1` / 0 completed round(s)
 
-**Current immutable submission awaiting review:** None
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `dbcff21bb0648e655a5f32a6d0adfab03f9a04c867184ed488a829f335995eb1`
+
+- Candidate / base / branch: `3dde91238b0be11847f68845a52b9785048dc8cd` / `eee6f5df4ba2b940e69fc8d7b49c033139e01856` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-03T20:04:04+00:00`
+- Evidence: `artifacts/evidence/W2.C10.T01.json` / `93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a` / `3dde91238b0be11847f68845a52b9785048dc8cd`
+- Acceptance-criteria SHA-256: `831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5`
+- Verification-selection SHA-256: `f43f537e609368cbc226fbd926aa2933f6d484b17c57e8191161664fc47056ce`
+- Changed paths: `docs/planning-implementation-plan.md`, `planning/backlog.yaml`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `services/core-api/src/research_observatory_core/plugin_worker.py`, `tests/connectors/test_plugin_grant_migration.py`, `tests/connectors/test_plugin_worker_submission.py`
+- Selected checks: `$env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_grant_migration tests.connectors.test_plugin_grants`, `$env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_package_repository`, `$env:PYTHONPATH='services/core-api/src;.'; .venv\Scripts\python.exe -m unittest -v tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_broker tests.connectors.test_plugin_consent`, `$env:RO_W2_SIGNED_WORKER_BUILD='artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated'; $env:RO_W2_CORE_SIDECAR_GUARDIAN='artifacts/tmp/CAP-04.S05.T03.R02.core-42379f73/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe'; .venv\Scripts\python.exe -B -s artifacts/tmp/s05_protected_authority_probe.red-b763fa8c.py`, `$files=@('services/core-api/src/research_observatory_core/plugin_worker.py','tests/connectors/test_plugin_grant_migration.py','tests/connectors/test_plugin_worker_submission.py'); $env:MYPYPATH='tools;services/core-api/src'; .venv\Scripts\python.exe -m ruff check --config pyproject.toml -- $files; .venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- $files; .venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- $files`, `python tools/taskctl.py --file planning/backlog.yaml validate`
+- Deferred checks: `S05 slice integration must join signed sample to protected Core for two pages, denial/cancellation and restart/recovery with independent slice review; the one-page preflight does not discharge that obligation.`, `Unchanged broad service/security-local/desktop/packaging profiles remain checkpoint or fresh W2 exit work under verification §8.1; this correction has no changed worker image, guardian, build or desktop inputs.`, `Dev-only plaintext package-pointer transaction behavior requires separate triage outside this fixed correction spec.`
+- Selection rationale: The one-line product change affects persisted Core grant authorization; the second change repairs a test-only encrypted migration fixture. Focused worker/grant/admin, broker/consent and native signed-LPAC/Core checks target the plausible identity, denial, migration and durable-publication failures. Ruff/mypy cover all three changed paths; taskctl validates the correction claim. The ignored native probe authenticates its selected worker/guardian/sample bytes but overrides source-checkout runtime availability and imports an ignored helper outside a fully frozen input closure; it is only a one-page synthetic preflight. A separate development plaintext Python 3.14 package-pointer transaction failure was preserved and does not reproduce in the protected correction path; it is outside this three-path correction scope.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
