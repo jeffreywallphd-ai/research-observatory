@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3f55ef051dce37e36751713748a05e76367d70d7d4a623a8102110b178e6c505
+source_sha256: 322dd8144c4e0809482cebf4ac45b48299db9ec89556288ebba3754a2e61e380
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9869,13 +9869,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 
-**Status / priority / estimate / risk:** `REVIEW` / `P1` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S05.T02`
 
-**Owner / review:** codex-w2-implementation / - (`-`)
+**Owner / review:** codex-w2-implementation / agent:/root/t03_independent_review (`changes-requested`)
 
 **Objective:** Reference connector for a local/institutional repository plus tests for pagination, errors, provenance, rights, and replay.
 
@@ -9901,9 +9901,11 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-04.S05.T03
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `35831e0d076cc5734b79ad2ac93322a6e4824ba59e1fd028b0c6e2c77679579e`
+###### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `35831e0d076cc5734b79ad2ac93322a6e4824ba59e1fd028b0c6e2c77679579e`
 
 - Candidate / base / branch: `9a22c5fe122358b854ceae6c7cb47cdfd68c8f12` / `2283e37e43cb56f8330b060b4c7d4b4f0f19489b` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T17:01:15+00:00`
@@ -9917,11 +9919,27 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `changes-requested` / agent:/root/t03_independent_review / `2026-10-03T17:14:06+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S05.T03.review-R01.json` / `994719a14891128c490f6ce56b9ed85249304d4b22c4ce93da2548e66ce00e4f`
 
-**Currently open findings:** -
+**Review notes:** Independent expanded review of the exact CAP-04.S05.T03 candidate reproduces the 37-path base-to-candidate inventory, three criterion mappings, clean build identity and matching hashes for all twelve submitted passing check logs and the build report. Focused connector and public-contract tests pass 68/68; two real locally signed Windows LPAC sample tests pass without skip; six Core packaging tests pass with one environment skip. The static sample, architecture, ADR, generated contract, build-input and backlog checks pass. The four adverse pre-review product findings are closed on this candidate: malformed scientific input and snake_case output no longer receive conformance passes; unknown field names are absent from diagnostics; Core-owned broker redaction state persists through encrypted response staging, publication and reopen. Proposed ADR-0038 associates the new protected paths with accepted ADR-0027/0028 without asserting new authority. The completed-T02 migration fixture and older quality inventory omission remain separately disclosed for later correction and W2 qualification. One blocking evidence gap remains: the native test command uses environment-selected ignored signed worker and Core guardian binaries, but the immutable R01 manifest and raw native log do not bind those selected inputs by path and digest or establish their source equivalence to this candidate. Therefore the real-boundary result cannot yet be independently reproduced as an exact selected-input proof; task approval is unavailable until an append-only R02 packet closes F01.
+
+**Findings opened:**
+
+- `CAP-04.S05.T03-R01-F01` `medium` blocking=`True` criterion=`2` — Signed LPAC sample proof omits the identity of its selected worker and guardian inputs; reproduce: At exact candidate 9a22c5fe122358b854ceae6c7cb47cdfd68c8f12, tests/connectors/test_plugin_sample_native_lpac.py:35-49 obtains its worker build and Core guardian from RO_W2_SIGNED_WORKER_BUILD and RO_W2_CORE_SIDECAR_GUARDIAN. The submitted native-sample command omits those environment assignments. artifacts/tmp/CAP-04.S05.T03.native-sample-9a22c5fe.log contains two passing names and a summary but no selected binary/inventory path or hash. artifacts/evidence/CAP-04.S05.T03.json describes an ignored signed bundle and frozen Core generically, without their inventory, signature, guardian digest or source relation to the 9a22c5fe candidate. The bundle may be locally present and the test verifies its signature at use, but this immutable packet does not establish which selected inputs produced the two passing real-boundary results. The task-start map and AGENTS.md require criterion-linked exact-commit evidence with fixed selected inputs; this gap prevents independent reproduction of the real cross-process proof mapped to criterion 2.; remediate: Keep R01 immutable. In a strict-descendant R02 candidate, add an explicit task-start acceptance row or proof note for selected-input identity. Record the exact ignored worker build and guardian paths, SHA-256 of signed worker inventory and signature and guardian executable, and verify the worker source was byte-identical between its build commit and the R02 candidate (or rebuild from R02). Run the two native sample cases afresh on the clean R02 commit with those fixed environment inputs; capture an input-identity report and native log with hashes. Bind that report and the raw log in the new criterion manifest, preserve the four pre-review closures and all other adverse results, then request independent R02 replay of F01. Do not describe test signing as a production signature or claim live network behavior.
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:/root/t03_independent_review at `2026-10-03T17:14:06+00:00`
+
+**Latest notes:** Independent expanded review of the exact CAP-04.S05.T03 candidate reproduces the 37-path base-to-candidate inventory, three criterion mappings, clean build identity and matching hashes for all twelve submitted passing check logs and the build report. Focused connector and public-contract tests pass 68/68; two real locally signed Windows LPAC sample tests pass without skip; six Core packaging tests pass with one environment skip. The static sample, architecture, ADR, generated contract, build-input and backlog checks pass. The four adverse pre-review product findings are closed on this candidate: malformed scientific input and snake_case output no longer receive conformance passes; unknown field names are absent from diagnostics; Core-owned broker redaction state persists through encrypted response staging, publication and reopen. Proposed ADR-0038 associates the new protected paths with accepted ADR-0027/0028 without asserting new authority. The completed-T02 migration fixture and older quality inventory omission remain separately disclosed for later correction and W2 qualification. One blocking evidence gap remains: the native test command uses environment-selected ignored signed worker and Core guardian binaries, but the immutable R01 manifest and raw native log do not bind those selected inputs by path and digest or establish their source equivalence to this candidate. Therefore the real-boundary result cannot yet be independently reproduced as an exact selected-input proof; task approval is unavailable until an append-only R02 packet closes F01.
+
+**Currently open findings:** `CAP-04.S05.T03-R01-F01`
 
 ## CAP-document-inspection (`CAP-05`) - Document acquisition, parsing, source inspection, and page anchors
 

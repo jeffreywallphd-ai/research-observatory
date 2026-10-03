@@ -1,0 +1,57 @@
+{
+  "task_id": "CAP-04.S05.T03",
+  "attempt_id": "R01",
+  "candidate_commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+  "reviewer": "agent:/root/t03_independent_review",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent expanded review of the exact CAP-04.S05.T03 candidate reproduces the 37-path base-to-candidate inventory, three criterion mappings, clean build identity and matching hashes for all twelve submitted passing check logs and the build report. Focused connector and public-contract tests pass 68/68; two real locally signed Windows LPAC sample tests pass without skip; six Core packaging tests pass with one environment skip. The static sample, architecture, ADR, generated contract, build-input and backlog checks pass. The four adverse pre-review product findings are closed on this candidate: malformed scientific input and snake_case output no longer receive conformance passes; unknown field names are absent from diagnostics; Core-owned broker redaction state persists through encrypted response staging, publication and reopen. Proposed ADR-0038 associates the new protected paths with accepted ADR-0027/0028 without asserting new authority. The completed-T02 migration fixture and older quality inventory omission remain separately disclosed for later correction and W2 qualification. One blocking evidence gap remains: the native test command uses environment-selected ignored signed worker and Core guardian binaries, but the immutable R01 manifest and raw native log do not bind those selected inputs by path and digest or establish their source equivalence to this candidate. Therefore the real-boundary result cannot yet be independently reproduced as an exact selected-input proof; task approval is unavailable until an append-only R02 packet closes F01.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-04.S05.T03.json",
+      "canonical_sha256": "54f2aa1da249a366cabf93787bc19fafe627dc01cf8f7f4714f2533a52d54417",
+      "result": "PASS: candidate, claim base, branch, all 37 changed paths, three criterion maps, twelve raw-log hashes and clean build-report hash agree."
+    },
+    "focused_connector": {
+      "path": "artifacts/tmp/CAP-04.S05.T03.focused-verbose-9a22c5fe.log",
+      "sha256": "fadede0d2e5cb16985129775dbf665b87c76d96abd8caa75dd1f675f59060fbf",
+      "result": "PASS: 68/68 focused connector, worker, repository, sample and contract tests."
+    },
+    "native_sample": {
+      "path": "artifacts/tmp/CAP-04.S05.T03.native-sample-9a22c5fe.log",
+      "sha256": "9426fbca7de3997e98ab78c89a18b35244cf8a1239af93bfd55f70ff0ef1cf82",
+      "result": "PASS: two signed Windows LPAC sample tests executed without skip; exact ignored worker and guardian input identities are not recorded in this log or R01 manifest."
+    }
+  },
+  "checks": [
+    {
+      "command": "Compare the frozen R01 criterion manifest, current Git HEAD and 2283e37e..9a22c5fe changed paths; recompute twelve raw-log SHA-256 values and the clean build-report SHA-256",
+      "result": "PASS: exact commit, 37 changed paths, all hashes, 68 focused tests, two native tests and 6/1 packaging outcome agree."
+    },
+    {
+      "command": "Replay the four adverse pre-review cases against the committed static checker and inspect encrypted broker-redaction publication/reopen and historical unknown behavior",
+      "result": "PASS: extra-null input, untrusted secret field name and snake_case output are denied with content-free locations; valid sample passes; explicit true/false redaction is retained and historical absence remains unknown."
+    },
+    {
+      "command": "Inspect native-sample test and exact R01 raw log/manifest for the environment-selected signed worker bundle and frozen Core guardian identity",
+      "result": "FAIL F01: test reads RO_W2_SIGNED_WORKER_BUILD and RO_W2_CORE_SIDECAR_GUARDIAN, while R01 records neither selected input path/digest nor source-equivalence proof. The raw log prints only test names and outcomes."
+    },
+    {
+      "command": "Run supplemental affected Ruff lint/format on 17 changed Python files and mypy on seven changed product/tool files at HEAD 9a22c5fe",
+      "result": "PASS: reviewer supplemental static checks found no issue; these do not replace the separately red full foundation quality profile."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-04.S05.T03-R01-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 2,
+      "title": "Signed LPAC sample proof omits the identity of its selected worker and guardian inputs",
+      "reproduction": "At exact candidate 9a22c5fe122358b854ceae6c7cb47cdfd68c8f12, tests/connectors/test_plugin_sample_native_lpac.py:35-49 obtains its worker build and Core guardian from RO_W2_SIGNED_WORKER_BUILD and RO_W2_CORE_SIDECAR_GUARDIAN. The submitted native-sample command omits those environment assignments. artifacts/tmp/CAP-04.S05.T03.native-sample-9a22c5fe.log contains two passing names and a summary but no selected binary/inventory path or hash. artifacts/evidence/CAP-04.S05.T03.json describes an ignored signed bundle and frozen Core generically, without their inventory, signature, guardian digest or source relation to the 9a22c5fe candidate. The bundle may be locally present and the test verifies its signature at use, but this immutable packet does not establish which selected inputs produced the two passing real-boundary results. The task-start map and AGENTS.md require criterion-linked exact-commit evidence with fixed selected inputs; this gap prevents independent reproduction of the real cross-process proof mapped to criterion 2.",
+      "required_remediation": "Keep R01 immutable. In a strict-descendant R02 candidate, add an explicit task-start acceptance row or proof note for selected-input identity. Record the exact ignored worker build and guardian paths, SHA-256 of signed worker inventory and signature and guardian executable, and verify the worker source was byte-identical between its build commit and the R02 candidate (or rebuild from R02). Run the two native sample cases afresh on the clean R02 commit with those fixed environment inputs; capture an input-identity report and native log with hashes. Bind that report and the raw log in the new criterion manifest, preserve the four pre-review closures and all other adverse results, then request independent R02 replay of F01. Do not describe test signing as a production signature or claim live network behavior."
+    }
+  ],
+  "closures": [],
+  "prior_findings_replayed": []
+}

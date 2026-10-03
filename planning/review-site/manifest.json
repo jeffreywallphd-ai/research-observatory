@@ -17881,107 +17881,165 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
-                "reviewer": null,
-                "result": null,
-                "reviewed_at": null,
-                "notes": null
+                "reviewer": "agent:/root/t03_independent_review",
+                "result": "changes-requested",
+                "reviewed_at": "2026-10-03T17:14:06+00:00",
+                "notes": "Independent expanded review of the exact CAP-04.S05.T03 candidate reproduces the 37-path base-to-candidate inventory, three criterion mappings, clean build identity and matching hashes for all twelve submitted passing check logs and the build report. Focused connector and public-contract tests pass 68/68; two real locally signed Windows LPAC sample tests pass without skip; six Core packaging tests pass with one environment skip. The static sample, architecture, ADR, generated contract, build-input and backlog checks pass. The four adverse pre-review product findings are closed on this candidate: malformed scientific input and snake_case output no longer receive conformance passes; unknown field names are absent from diagnostics; Core-owned broker redaction state persists through encrypted response staging, publication and reopen. Proposed ADR-0038 associates the new protected paths with accepted ADR-0027/0028 without asserting new authority. The completed-T02 migration fixture and older quality inventory omission remain separately disclosed for later correction and W2 qualification. One blocking evidence gap remains: the native test command uses environment-selected ignored signed worker and Core guardian binaries, but the immutable R01 manifest and raw native log do not bind those selected inputs by path and digest or establish their source equivalence to this candidate. Therefore the real-boundary result cannot yet be independently reproduced as an exact selected-input proof; task approval is unavailable until an append-only R02 packet closes F01."
               },
               "review_control": {
                 "version": 1,
-                "attempts": [],
-                "current_submission": {
-                  "id": "R01",
-                  "submitted_by": "codex-w2-implementation",
-                  "submitted_at": "2026-10-03T17:01:15+00:00",
-                  "candidate_commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
-                  "base_commit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
-                  "branch": "codex/w2-implementation",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-04.S05.T03.json",
-                    "sha256": "54f2aa1da249a366cabf93787bc19fafe627dc01cf8f7f4714f2533a52d54417",
-                    "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
-                    "recorded_at": "2026-10-03T17:01:15+00:00"
-                  },
-                  "acceptance_criteria_sha256": "05609bef191428a127b093c2f2706ee09cfc130bfa4ebdc841a7db64b09035fd",
-                  "changed_paths": [
-                    "artifacts/evidence/CAP-04.S05.T03.task-start.md",
-                    "docs/adr/ADR-0038-bind-sample-connector-page-and-port-to-existing-plugin-authority.md",
-                    "docs/adr/index.json",
-                    "docs/architecture/connector-contracts.md",
-                    "docs/developer/connector-sdk.md",
-                    "docs/developer/sample_repository/fixtures/repository-metadata.case.json",
-                    "docs/developer/sample_repository/fixtures/search-page-1.case.json",
-                    "docs/developer/sample_repository/fixtures/search-page-2.case.json",
-                    "docs/developer/sample_repository/manifest.json",
-                    "docs/developer/sample_repository/plugin/__init__.py",
-                    "docs/developer/sample_repository/plugin/connector.py",
-                    "docs/planning-implementation-plan.md",
-                    "packages/contracts/connectors/connector-plugin-worker-page.schema.json",
-                    "packaging/build-inputs.json",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-04/CAP-04.S05.T03.html",
-                    "planning/review-site/CAP-04/CAP-04.S05.html",
-                    "planning/review-site/manifest.json",
-                    "planning/review-site/waves/W2.html",
-                    "planning/status-summary.md",
-                    "quality-scope.json",
-                    "services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py",
-                    "services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py",
-                    "services/core-api/src/research_observatory_core/plugin_job_repository.py",
-                    "services/core-api/src/research_observatory_core/plugin_worker.py",
-                    "services/core-api/src/research_observatory_core/ports/plugin_jobs.py",
-                    "tests/connectors/test_plugin_dispatch.py",
-                    "tests/connectors/test_plugin_job_repository.py",
-                    "tests/connectors/test_plugin_sample_conformance.py",
-                    "tests/connectors/test_plugin_sample_native_lpac.py",
-                    "tests/connectors/test_plugin_scientific_request.py",
-                    "tests/connectors/test_plugin_worker_api.py",
-                    "tests/connectors/test_plugin_worker_submission.py",
-                    "tests/contracts/test_plugin_worker_contract.py",
-                    "tools/connector_conformance.py",
-                    "tools/core_api_contract.py",
-                    "workers/windows/plugin_worker.py"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
-                    ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_native_lpac",
-                    ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
-                    ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.build-9a22c5fe.json",
-                    ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 2283e37e43cb56f8330b060b4c7d4b4f0f19489b --head HEAD",
-                    ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
-                    ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
-                    ".venv\\Scripts\\python.exe -m ruff check docs/developer/sample_repository/plugin tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py services/core-api/src/research_observatory_core/plugin_job_repository.py services/core-api/src/research_observatory_core/plugin_worker.py services/core-api/src/research_observatory_core/ports/plugin_jobs.py workers/windows/plugin_worker.py tests/connectors/test_plugin_sample_conformance.py tests/connectors/test_plugin_sample_native_lpac.py",
-                    ".venv\\Scripts\\python.exe -m ruff format --check docs/developer/sample_repository/plugin tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py services/core-api/src/research_observatory_core/plugin_job_repository.py services/core-api/src/research_observatory_core/plugin_worker.py services/core-api/src/research_observatory_core/ports/plugin_jobs.py workers/windows/plugin_worker.py tests/connectors/test_plugin_sample_conformance.py tests/connectors/test_plugin_sample_native_lpac.py",
-                    ".venv\\Scripts\\python.exe -m mypy tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py",
-                    ".venv\\Scripts\\python.exe tools/connector_conformance.py --manifest docs/developer/sample_repository/manifest.json --case docs/developer/sample_repository/fixtures/repository-metadata.case.json --case docs/developer/sample_repository/fixtures/search-page-1.case.json --case docs/developer/sample_repository/fixtures/search-page-2.case.json",
-                    ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
-                  ],
-                  "deferred_checks": [
-                    "Full foundation quality is currently red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is the bounded control-repair route. Affected T03 Ruff, format and mypy pass, but the full quality check is not represented as passing.",
-                    "The expanded connector suite's two grant-migration failures are a stale completed-T02 v20 fixture after v22/v23 DDL additions. A linked correction is required before S05/W2 migration qualification; no production migration defect was demonstrated by the isolated audit.",
-                    "S05 integrated slice/checkpoint and W2 exit retain the complete affected/full profiles, cross-capability denial/restart/recovery, desktop accessibility, packaging, performance and security matrix. Live provider, production code signing and external network behavior are not established by synthetic local tests."
-                  ],
-                  "selection_rationale": "T03 changes a public connector/page contract and Core/worker cross-process publication boundary. Select exact-candidate focused happy, denial, cancellation, restart and conformance regressions; real locally signed LPAC sample execution; directly affected packaging, schema, architecture, ADR, build-input, static quality and backlog checks. The first pre-review found four content/provenance/contract defects; red-first regressions and remediation are recorded in the task-start note and replayed by independent review. Full foundation quality was attempted but fails on a preexisting CAP-05.S01.T01 inventory omission; selected affected Ruff/format/mypy pass. The broader grant-migration run finds a stale completed-T02 test fixture; no migration qualification is claimed. Full profile and cross-capability runs belong to S05 integration/checkpoint and W2 exit, after those separate repairs.",
-                  "selection_sha256": "09fc1efdeacbdd05cb23dcf40f6983951f83e0597c7d0e881d360997f815a0ed",
-                  "prior_attempt_id": null,
-                  "open_finding_ids": [],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "search:connectors",
-                    "contracts:unit",
-                    "packaging:unit",
-                    "foundation:build-manifest",
-                    "foundation:architecture",
-                    "foundation:adr",
-                    "foundation:quality",
-                    "foundation:backlog"
-                  ],
-                  "packet_sha256": "35831e0d076cc5734b79ad2ac93322a6e4824ba59e1fd028b0c6e2c77679579e"
-                }
+                "attempts": [
+                  {
+                    "submission": {
+                      "id": "R01",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-03T17:01:15+00:00",
+                      "candidate_commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+                      "base_commit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S05.T03.json",
+                        "sha256": "54f2aa1da249a366cabf93787bc19fafe627dc01cf8f7f4714f2533a52d54417",
+                        "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+                        "recorded_at": "2026-10-03T17:01:15+00:00"
+                      },
+                      "acceptance_criteria_sha256": "05609bef191428a127b093c2f2706ee09cfc130bfa4ebdc841a7db64b09035fd",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-04.S05.T03.task-start.md",
+                        "docs/adr/ADR-0038-bind-sample-connector-page-and-port-to-existing-plugin-authority.md",
+                        "docs/adr/index.json",
+                        "docs/architecture/connector-contracts.md",
+                        "docs/developer/connector-sdk.md",
+                        "docs/developer/sample_repository/fixtures/repository-metadata.case.json",
+                        "docs/developer/sample_repository/fixtures/search-page-1.case.json",
+                        "docs/developer/sample_repository/fixtures/search-page-2.case.json",
+                        "docs/developer/sample_repository/manifest.json",
+                        "docs/developer/sample_repository/plugin/__init__.py",
+                        "docs/developer/sample_repository/plugin/connector.py",
+                        "docs/planning-implementation-plan.md",
+                        "packages/contracts/connectors/connector-plugin-worker-page.schema.json",
+                        "packaging/build-inputs.json",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S05.T03.html",
+                        "planning/review-site/CAP-04/CAP-04.S05.html",
+                        "planning/review-site/manifest.json",
+                        "planning/review-site/waves/W2.html",
+                        "planning/status-summary.md",
+                        "quality-scope.json",
+                        "services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py",
+                        "services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py",
+                        "services/core-api/src/research_observatory_core/plugin_job_repository.py",
+                        "services/core-api/src/research_observatory_core/plugin_worker.py",
+                        "services/core-api/src/research_observatory_core/ports/plugin_jobs.py",
+                        "tests/connectors/test_plugin_dispatch.py",
+                        "tests/connectors/test_plugin_job_repository.py",
+                        "tests/connectors/test_plugin_sample_conformance.py",
+                        "tests/connectors/test_plugin_sample_native_lpac.py",
+                        "tests/connectors/test_plugin_scientific_request.py",
+                        "tests/connectors/test_plugin_worker_api.py",
+                        "tests/connectors/test_plugin_worker_submission.py",
+                        "tests/contracts/test_plugin_worker_contract.py",
+                        "tools/connector_conformance.py",
+                        "tools/core_api_contract.py",
+                        "workers/windows/plugin_worker.py"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
+                        ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_native_lpac",
+                        ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.build-9a22c5fe.json",
+                        ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 2283e37e43cb56f8330b060b4c7d4b4f0f19489b --head HEAD",
+                        ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+                        ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+                        ".venv\\Scripts\\python.exe -m ruff check docs/developer/sample_repository/plugin tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py services/core-api/src/research_observatory_core/plugin_job_repository.py services/core-api/src/research_observatory_core/plugin_worker.py services/core-api/src/research_observatory_core/ports/plugin_jobs.py workers/windows/plugin_worker.py tests/connectors/test_plugin_sample_conformance.py tests/connectors/test_plugin_sample_native_lpac.py",
+                        ".venv\\Scripts\\python.exe -m ruff format --check docs/developer/sample_repository/plugin tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py services/core-api/src/research_observatory_core/plugin_job_repository.py services/core-api/src/research_observatory_core/plugin_worker.py services/core-api/src/research_observatory_core/ports/plugin_jobs.py workers/windows/plugin_worker.py tests/connectors/test_plugin_sample_conformance.py tests/connectors/test_plugin_sample_native_lpac.py",
+                        ".venv\\Scripts\\python.exe -m mypy tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py",
+                        ".venv\\Scripts\\python.exe tools/connector_conformance.py --manifest docs/developer/sample_repository/manifest.json --case docs/developer/sample_repository/fixtures/repository-metadata.case.json --case docs/developer/sample_repository/fixtures/search-page-1.case.json --case docs/developer/sample_repository/fixtures/search-page-2.case.json",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
+                      ],
+                      "deferred_checks": [
+                        "Full foundation quality is currently red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is the bounded control-repair route. Affected T03 Ruff, format and mypy pass, but the full quality check is not represented as passing.",
+                        "The expanded connector suite's two grant-migration failures are a stale completed-T02 v20 fixture after v22/v23 DDL additions. A linked correction is required before S05/W2 migration qualification; no production migration defect was demonstrated by the isolated audit.",
+                        "S05 integrated slice/checkpoint and W2 exit retain the complete affected/full profiles, cross-capability denial/restart/recovery, desktop accessibility, packaging, performance and security matrix. Live provider, production code signing and external network behavior are not established by synthetic local tests."
+                      ],
+                      "selection_rationale": "T03 changes a public connector/page contract and Core/worker cross-process publication boundary. Select exact-candidate focused happy, denial, cancellation, restart and conformance regressions; real locally signed LPAC sample execution; directly affected packaging, schema, architecture, ADR, build-input, static quality and backlog checks. The first pre-review found four content/provenance/contract defects; red-first regressions and remediation are recorded in the task-start note and replayed by independent review. Full foundation quality was attempted but fails on a preexisting CAP-05.S01.T01 inventory omission; selected affected Ruff/format/mypy pass. The broader grant-migration run finds a stale completed-T02 test fixture; no migration qualification is claimed. Full profile and cross-capability runs belong to S05 integration/checkpoint and W2 exit, after those separate repairs.",
+                      "selection_sha256": "09fc1efdeacbdd05cb23dcf40f6983951f83e0597c7d0e881d360997f815a0ed",
+                      "prior_attempt_id": null,
+                      "open_finding_ids": [],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "search:connectors",
+                        "contracts:unit",
+                        "packaging:unit",
+                        "foundation:build-manifest",
+                        "foundation:architecture",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:backlog"
+                      ],
+                      "packet_sha256": "35831e0d076cc5734b79ad2ac93322a6e4824ba59e1fd028b0c6e2c77679579e"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/t03_independent_review",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-10-03T17:14:06+00:00",
+                      "notes": "Independent expanded review of the exact CAP-04.S05.T03 candidate reproduces the 37-path base-to-candidate inventory, three criterion mappings, clean build identity and matching hashes for all twelve submitted passing check logs and the build report. Focused connector and public-contract tests pass 68/68; two real locally signed Windows LPAC sample tests pass without skip; six Core packaging tests pass with one environment skip. The static sample, architecture, ADR, generated contract, build-input and backlog checks pass. The four adverse pre-review product findings are closed on this candidate: malformed scientific input and snake_case output no longer receive conformance passes; unknown field names are absent from diagnostics; Core-owned broker redaction state persists through encrypted response staging, publication and reopen. Proposed ADR-0038 associates the new protected paths with accepted ADR-0027/0028 without asserting new authority. The completed-T02 migration fixture and older quality inventory omission remain separately disclosed for later correction and W2 qualification. One blocking evidence gap remains: the native test command uses environment-selected ignored signed worker and Core guardian binaries, but the immutable R01 manifest and raw native log do not bind those selected inputs by path and digest or establish their source equivalence to this candidate. Therefore the real-boundary result cannot yet be independently reproduced as an exact selected-input proof; task approval is unavailable until an append-only R02 packet closes F01."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S05.T03.review-R01.json",
+                      "sha256": "994719a14891128c490f6ce56b9ed85249304d4b22c4ce93da2548e66ce00e4f"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-04.S05.T03-R01-F01",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 2,
+                        "title": "Signed LPAC sample proof omits the identity of its selected worker and guardian inputs",
+                        "reproduction": "At exact candidate 9a22c5fe122358b854ceae6c7cb47cdfd68c8f12, tests/connectors/test_plugin_sample_native_lpac.py:35-49 obtains its worker build and Core guardian from RO_W2_SIGNED_WORKER_BUILD and RO_W2_CORE_SIDECAR_GUARDIAN. The submitted native-sample command omits those environment assignments. artifacts/tmp/CAP-04.S05.T03.native-sample-9a22c5fe.log contains two passing names and a summary but no selected binary/inventory path or hash. artifacts/evidence/CAP-04.S05.T03.json describes an ignored signed bundle and frozen Core generically, without their inventory, signature, guardian digest or source relation to the 9a22c5fe candidate. The bundle may be locally present and the test verifies its signature at use, but this immutable packet does not establish which selected inputs produced the two passing real-boundary results. The task-start map and AGENTS.md require criterion-linked exact-commit evidence with fixed selected inputs; this gap prevents independent reproduction of the real cross-process proof mapped to criterion 2.",
+                        "required_remediation": "Keep R01 immutable. In a strict-descendant R02 candidate, add an explicit task-start acceptance row or proof note for selected-input identity. Record the exact ignored worker build and guardian paths, SHA-256 of signed worker inventory and signature and guardian executable, and verify the worker source was byte-identical between its build commit and the R02 candidate (or rebuild from R02). Run the two native sample cases afresh on the clean R02 commit with those fixed environment inputs; capture an input-identity report and native log with hashes. Bind that report and the raw log in the new criterion manifest, preserve the four pre-review closures and all other adverse results, then request independent R02 replay of F01. Do not describe test signing as a production signature or claim live network behavior."
+                      }
+                    ],
+                    "closures": [],
+                    "telemetry": {
+                      "task_id": "CAP-04.S05.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R01",
+                      "submitted_at": "2026-10-03T17:01:15+00:00",
+                      "reviewed_at": "2026-10-03T17:14:06+00:00",
+                      "duration_seconds": 771,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 1,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "search:connectors",
+                        "contracts:unit",
+                        "packaging:unit",
+                        "foundation:build-manifest",
+                        "foundation:architecture",
+                        "foundation:adr",
+                        "foundation:quality",
+                        "foundation:backlog"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": null,
+                        "replayed_finding_ids": [],
+                        "closed_finding_ids": []
+                      }
+                    }
+                  }
+                ],
+                "current_submission": null
               }
             }
           ],
@@ -18025,7 +18083,7 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S05.T03.html",
               "dependencies": [
                 "CAP-04.S05.T02"
