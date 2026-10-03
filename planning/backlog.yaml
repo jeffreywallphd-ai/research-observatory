@@ -25244,7 +25244,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T02
     - CAP-02.S03.T03
-    status: NOT_STARTED
+    status: IN_PROGRESS
     tasks:
     - id: CAP-05.S01.T01
       capability_id: CAP-05
@@ -25274,32 +25274,27 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-03T08:27:51+00:00'
+      updated_at: '2026-10-03T15:14:51+00:00'
       completed_at: null
-      blocker:
-        reason: Full immutable 6506-base UI gate rejects inherited W2.A01.T02 v1.2 outside paused activation; post-adoption
-          T01 has no authority contract. Two earlier built-app starts also denied an uncharacterized fifth D3D child and exited
-          before metadata UI. Exact r12 picker encrypted commit/restart and r18 native OS-drop passed on the ordinary four-child
-          path; neither unmet gate is waived.
-        next_action: Pause W2 for a reviewed ECR-0010/W2.A02 adopted-1.8 continuation authority packet and explicit owner
-          decision. After approved control adoption, resume T01, characterize the fifth D3D child on a bounded real recurrence
-          before any native target change, then complete exact gate checks, independent task review and integration.
-        recorded_at: '2026-10-03T08:27:51+00:00'
-        owner: codex-w2-implementation
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: 'Reopened: W2.A01 adopted and W2 resumed; approved Academic Minimal 1.8 now governs the selected Work/version
-          attachment interaction. Complete the original native/Core bridge and real-boundary evidence.'
+        notes: 'Reopened: W2.A02 adopted at 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf with independent control, slice, exit
+          and security review; W2 resumed at 0394ed16. Preserve original 6506 base; finish fifth D3D characterization and
+          exact current-product UI and native/Core proof.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease: null
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-03T15:14:51+00:00'
+        expires_at: '2026-10-03T23:14:51+00:00'
       verification_state: null
       worktree: .
       platform_targets:

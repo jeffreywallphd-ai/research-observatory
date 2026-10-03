@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 3a688dabff620c419909aa4713ff51dd95619f6fff7eed7770dfd67af5a15641
+source_sha256: 54d7bb1885e871a6494bebfe40a62c49ab657c2e7f467b3599355319fc7cb4c3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -54,7 +54,7 @@ manual_edit: prohibited
 |---|---:|
 | `NOT_STARTED` | 237 |
 | `READY` | 1 |
-| `BLOCKED` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 81 |
 | `DEFERRED` | 36 |
 
@@ -825,7 +825,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 
 | Task | Status | Owner | Branch |
 |---|---|---|---|
-| `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `CAP-05.S01.T01` Implement local document attachment and version association | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 3a688dabff620c419909aa4713ff51dd95619f6fff7eed7770dfd67af5a15641
+source_sha256: 54d7bb1885e871a6494bebfe40a62c49ab657c2e7f467b3599355319fc7cb4c3
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9919,7 +9919,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -9927,7 +9927,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 
@@ -9958,7 +9958,7 @@ Original tasks and approvals remain unchanged.
 
 **Current latest-review projection:** `-` by - at `-`
 
-**Latest notes:** Reopened: W2.A01 adopted and W2 resumed; approved Academic Minimal 1.8 now governs the selected Work/version attachment interaction. Complete the original native/Core bridge and real-boundary evidence.
+**Latest notes:** Reopened: W2.A02 adopted at 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf with independent control, slice, exit and security review; W2 resumed at 0394ed16. Preserve original 6506 base; finish fifth D3D characterization and exact current-product UI and native/Core proof.
 
 #### - [ ] CAP-05.S01.T02 - Implement open-access location selection and download
 
