@@ -3,7 +3,8 @@ import { createCoreApiClient, type VersionContext } from "@research-observatory/
 import { Button, Notification, Panel, StatusBadge } from "@research-observatory/ui-components";
 import {
   attachmentBeginRequest, attachmentCancelRequest, attachmentCommitRequest, attachmentProblemMessage,
-  attachmentSelection, attachmentStatusMessage, attachmentStatusRequest, canStartAttachmentReview, newAttachmentId, sameAttachmentSelection,
+  attachmentSelection, attachmentStatusMessage, attachmentStatusRequest, canStartAttachmentReview,
+  isInterruptedPriorSessionStatus, newAttachmentId, sameAttachmentSelection,
   type AttachmentCandidate, type AttachmentCommitRequest, type AttachmentEvent, type AttachmentOutcome,
   type AttachmentProblemCode, type AttachmentSelection, type AttachmentMode, type AttachmentStatus,
 } from "./documentAttachment";
@@ -111,9 +112,12 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
       const request = attachmentStatusRequest(selected, savedCommand?.operationId ?? handoff?.operationId ?? null,
         savedCommand?.commandId ?? handoff?.commitRequest?.commandId ?? null);
       void port.status(request).then((result) => {
+        const interruptedPriorSession = result && isInterruptedPriorSessionStatus(savedCommand, request, result,
+          committed !== null) && unconfirmedRef.current !== null && savedCommand !== null
+          && sameSavedDecision(unconfirmedRef.current, savedCommand);
         if (active && live.current && result && sameAttachmentSelection(request.selection, result.selection)
           && (request.operationId === null || result.operationId === request.operationId)
-          && (request.commandId === null || result.commandId === request.commandId)) {
+          && (request.commandId === null || result.commandId === request.commandId || interruptedPriorSession)) {
           if (result.status === "unconfirmed" && (!result.retryRequest || lastCommit.current
             && !sameSavedDecision(lastCommit.current, result.retryRequest))) {
             setRetryHeld(true);
@@ -123,6 +127,16 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
           }
           setAttachmentStatus(result);
           const command = unconfirmedRef.current;
+          if (interruptedPriorSession && command) {
+            generation.current += 1;
+            pending.current = null; unconfirmedRef.current = null; lastCommit.current = null;
+            setUnconfirmed(null); setRetryHeld(false); setBusy(false); setCandidate(null);
+            setMatchConfirmed(false); setPermittedUse(""); setProblem(null);
+            const message = "The saved attachment decision belongs to an earlier session and cannot be retried. Choose the file again after reviewing the current Work/version and rights.";
+            setStatus(message); announce(message);
+            onRecoveryContext?.(command.selection, null);
+            return;
+          }
           if (!command && (result.status === "processing" || result.status === "available")
             && result.attachmentId && result.documentRevisionId) {
             onRecoveryContext?.(selected, historicalReply && result.operationId === historicalReply.operationId
@@ -153,7 +167,7 @@ export function DocumentAttachmentPane({ root, context, versionId, client, annou
               onRecoveryContext?.(command.selection, { selection: command.selection, operationId: command.operationId,
                 commitRequest: command, attachmentId: result.attachmentId, documentRevisionId: result.documentRevisionId });
             } else if (["denied", "failed", "cancelled", "unavailable"].includes(result.status)) {
-              pending.current = null; unconfirmedRef.current = null; setUnconfirmed(null);
+              pending.current = null; unconfirmedRef.current = null; setUnconfirmed(null); setRetryHeld(false);
               const retained = historicalReply && historicalReply.commitRequest?.commandId === command.commandId
                 ? historicalReply : null;
               if (!retained) lastCommit.current = null;

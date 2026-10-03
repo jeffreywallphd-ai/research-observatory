@@ -11,6 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 import ntpath
+import re
 import sqlite3
 from collections.abc import Callable
 from pathlib import Path
@@ -21,9 +22,17 @@ from pydantic import ValidationError
 from .corpus_repository import SqliteCorpusRepository
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ports.corpus import CorpusActor
-from .ports.document_attachments import AttachmentCandidate, AttachmentProblem, DocumentAttachment, DocumentInspection
+from .ports.document_attachments import (
+    AttachmentCandidate,
+    AttachmentProblem,
+    AttachmentStatusState,
+    DocumentAttachment,
+    DocumentAttachmentStatus,
+    DocumentInspection,
+)
 from .ports.object_store import ObjectPutCommand, ObjectStagingCancelled, ObjectStore
 from .ports.repositories import AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
+from .ports.rights import RightsPermissionDraft
 from .reconciliation.contracts import SourceAssertion
 from .repositories import _projection_content_sha256
 from .rights_policy import RightsDecision, RightsRequest, RightsSubject, RightsUse
@@ -32,6 +41,7 @@ from .storage import CanonicalConnection
 
 MAX_DOCUMENT_BYTES = 128 * 1024 * 1024
 _FORMATS = frozenset({"pdf", "jats", "tei", "xml", "html", "docx", "plain-text"})
+_SESSION = re.compile(r"[0-9a-f]{32}\Z")
 
 
 class _Denied(Exception):
@@ -191,6 +201,8 @@ class LocalDocumentAttachmentService:
         version_id: str,
         version_revision_id: str,
         actor: CorpusActor,
+        operation_id: str | None = None,
+        session_id: str | None = None,
         cancellation_requested: Callable[[], bool] | None = None,
         publication_guard: Callable[[Callable[[], AttachmentCandidate]], AttachmentCandidate] | None = None,
     ) -> AttachmentCandidate:
@@ -201,8 +213,19 @@ class LocalDocumentAttachmentService:
             not isinstance(declared_media_type, str) or len(declared_media_type) > 200
         ):
             raise AttachmentProblem("attachment-media-type-invalid")
+        if (operation_id is None) != (session_id is None) or (
+            operation_id is not None and (not is_uuid_v7(operation_id) or _SESSION.fullmatch(session_id or "") is None)
+        ):
+            raise AttachmentProblem("attachment-operation-invalid")
         with self._corpus._transaction(write=False) as (connection, _):
             self._authority(connection, actor)
+            if (
+                operation_id is not None
+                and connection.execute(
+                    "SELECT 1 FROM document_attachment_operations WHERE operation_id=?", (operation_id,)
+                ).fetchone()
+            ):
+                raise AttachmentProblem("attachment-operation-conflict")
             self._current_binding(
                 connection,
                 source_assertion_revision_id=source_assertion_revision_id,
@@ -265,6 +288,7 @@ class LocalDocumentAttachmentService:
                 "mediaType": stored.media_type,
             }
         )
+
         def publish() -> AttachmentCandidate:
             if cancellation_requested is not None and cancellation_requested():
                 raise ObjectStagingCancelled()
@@ -314,6 +338,14 @@ class LocalDocumentAttachmentService:
                         _now(),
                     ),
                 )
+                if operation_id is not None and session_id is not None:
+                    try:
+                        connection.execute(
+                            "INSERT INTO document_attachment_operations VALUES (?,?,?,?,?,?)",
+                            (operation_id, self._project, candidate_id, session_id, actor.actor_id, _now()),
+                        )
+                    except sqlite3.IntegrityError:
+                        raise AttachmentProblem("attachment-operation-conflict") from None
                 return self._candidate(connection, candidate_id)
 
         return publication_guard(publish) if publication_guard is not None else publish()
@@ -328,9 +360,134 @@ class LocalDocumentAttachmentService:
                 raise AttachmentProblem("attachment-candidate-cancelled")
             return self._candidate(connection, candidate_id)
 
-    def cancel(self, candidate_id: str, *, actor: CorpusActor) -> None:
+    def status(
+        self,
+        *,
+        source_assertion_revision_id: str,
+        work_id: str,
+        work_revision_id: str,
+        version_id: str,
+        version_revision_id: str,
+        operation_id: str | None,
+        command_id: str | None,
+        session_id: str,
+        actor: CorpusActor,
+    ) -> DocumentAttachmentStatus:
+        selection = (source_assertion_revision_id, work_id, work_revision_id, version_id, version_revision_id)
+        if (
+            any(not is_uuid_v7(value) for value in selection)
+            or (operation_id is not None and not is_uuid_v7(operation_id))
+            or (command_id is not None and (operation_id is None or not is_uuid_v7(command_id)))
+            or _SESSION.fullmatch(session_id) is None
+        ):
+            raise AttachmentProblem("attachment-status-invalid")
+
+        def result(
+            state: AttachmentStatusState,
+            candidate_id: str | None = None,
+            attachment_id: str | None = None,
+            document_revision_id: str | None = None,
+            *,
+            found_operation: str | None = operation_id,
+            found_command: str | None = command_id,
+        ) -> DocumentAttachmentStatus:
+            return DocumentAttachmentStatus(
+                state,
+                self._project,
+                *selection,
+                found_operation,
+                found_command,
+                candidate_id,
+                attachment_id,
+                document_revision_id,
+            )
+
+        with self._corpus._transaction(write=False) as (connection, _):
+            self._authority(connection, actor)
+            if operation_id is not None:
+                row = connection.execute(
+                    "SELECT o.candidate_id,o.session_id,o.actor_id,c.source_assertion_revision_id,c.work_id,"
+                    "c.work_revision_id,c.version_id,c.version_revision_id "
+                    "FROM document_attachment_operations o JOIN document_attachment_candidates c "
+                    "ON c.project_id=o.project_id AND c.candidate_id=o.candidate_id "
+                    "WHERE o.project_id=? AND o.operation_id=?",
+                    (self._project, operation_id),
+                ).fetchone()
+                if row is None or str(row[2]) != actor.actor_id or tuple(row[3:8]) != selection:
+                    return result("unavailable", found_command=None)
+                candidate_id = str(row[0])
+                attachment = connection.execute(
+                    "SELECT attachment_id,document_revision_id,command_id FROM document_attachment_assertions "
+                    "WHERE project_id=? AND candidate_id=?",
+                    (self._project, candidate_id),
+                ).fetchone()
+                if attachment is not None:
+                    if command_id is not None and str(attachment[2]) != command_id:
+                        return result("unavailable", found_command=None)
+                    return result(
+                        "committed",
+                        candidate_id,
+                        str(attachment[0]),
+                        str(attachment[1]),
+                        found_command=str(attachment[2]),
+                    )
+                if connection.execute(
+                    "SELECT 1 FROM document_attachment_cancellations WHERE project_id=? AND candidate_id=?",
+                    (self._project, candidate_id),
+                ).fetchone():
+                    return result("cancelled", candidate_id)
+                if str(row[1]) != session_id:
+                    return result("stale-session", candidate_id, found_command=None)
+                return result("unresolved" if command_id is not None else "candidate", candidate_id)
+
+            attachment = connection.execute(
+                "SELECT a.attachment_id,a.document_revision_id,a.candidate_id,a.command_id,o.operation_id "
+                "FROM document_attachment_assertions a LEFT JOIN document_attachment_operations o "
+                "ON o.project_id=a.project_id AND o.candidate_id=a.candidate_id "
+                "WHERE a.project_id=? AND a.source_assertion_revision_id=? AND a.work_id=? "
+                "AND a.work_revision_id=? AND a.version_id=? AND a.version_revision_id=? "
+                "ORDER BY a.committed_at DESC,a.attachment_id DESC LIMIT 1",
+                (self._project, *selection),
+            ).fetchone()
+            if attachment is None:
+                return result("metadata-only", found_operation=None, found_command=None)
+            found_operation = str(attachment[4]) if attachment[4] is not None else None
+            return result(
+                "committed" if found_operation is not None else "legacy",
+                str(attachment[2]),
+                str(attachment[0]),
+                str(attachment[1]),
+                found_operation=found_operation,
+                found_command=str(attachment[3]),
+            )
+
+    def cancel(
+        self,
+        candidate_id: str,
+        *,
+        actor: CorpusActor,
+        operation_id: str | None = None,
+        session_id: str | None = None,
+    ) -> None:
         with self._corpus._transaction(write=True) as (connection, _):
             self._authority(connection, actor)
+            if operation_id is not None or session_id is not None:
+                if (
+                    operation_id is None
+                    or session_id is None
+                    or not is_uuid_v7(operation_id)
+                    or _SESSION.fullmatch(session_id) is None
+                ):
+                    raise AttachmentProblem("attachment-operation-invalid")
+                if (
+                    connection.execute(
+                        "SELECT 1 FROM document_attachment_operations WHERE project_id=? AND operation_id=? "
+                        "AND candidate_id=? AND session_id=? AND actor_id=?",
+                        (self._project, operation_id, candidate_id, session_id, actor.actor_id),
+                    ).fetchone()
+                    is None
+                ):
+                    raise AttachmentProblem("attachment-operation-unavailable")
             self._candidate(connection, candidate_id)
             if connection.execute(
                 "SELECT 1 FROM document_attachment_assertions WHERE project_id=? AND candidate_id=?",
@@ -349,13 +506,53 @@ class LocalDocumentAttachmentService:
         confirmation_sha256: str,
         command_id: str,
         actor: CorpusActor,
+        operation_id: str | None = None,
+        session_id: str | None = None,
+        match_confirmed: bool | None = None,
+        permitted_use: str | None = None,
+        exact_selection: tuple[str, str, str, str, str] | None = None,
     ) -> DocumentAttachment:
         if not is_uuid_v7(candidate_id) or not is_uuid_v7(command_id):
             raise AttachmentProblem("attachment-command-invalid")
-        command_sha256 = _sha({"candidateId": candidate_id, "confirmationSha256": confirmation_sha256})
+        project_only = operation_id is not None
+        if project_only:
+            if (
+                not is_uuid_v7(operation_id)
+                or _SESSION.fullmatch(session_id or "") is None
+                or match_confirmed is not True
+                or permitted_use != "project-only"
+                or exact_selection is None
+                or len(exact_selection) != 5
+                or any(not is_uuid_v7(value) for value in exact_selection)
+            ):
+                raise AttachmentProblem("attachment-command-invalid")
+            command_sha256 = _sha(
+                {
+                    "candidateId": candidate_id,
+                    "confirmationSha256": confirmation_sha256,
+                    "operationId": operation_id,
+                    "sessionId": session_id,
+                    "selection": exact_selection,
+                    "matchConfirmed": True,
+                    "permittedUse": "project-only",
+                }
+            )
+        else:
+            if any(value is not None for value in (session_id, match_confirmed, permitted_use, exact_selection)):
+                raise AttachmentProblem("attachment-command-invalid")
+            command_sha256 = _sha({"candidateId": candidate_id, "confirmationSha256": confirmation_sha256})
         try:
             with self._corpus._transaction(write=True) as (connection, aggregates):
                 self._authority(connection, actor)
+                if project_only:
+                    assert operation_id is not None and session_id is not None
+                    operation = connection.execute(
+                        "SELECT 1 FROM document_attachment_operations WHERE project_id=? AND operation_id=? "
+                        "AND candidate_id=? AND session_id=? AND actor_id=?",
+                        (self._project, operation_id, candidate_id, session_id, actor.actor_id),
+                    ).fetchone()
+                    if operation is None:
+                        raise AttachmentProblem("attachment-operation-unavailable")
                 replay = connection.execute(
                     "SELECT attachment_id,command_sha256,actor_id FROM document_attachment_assertions "
                     "WHERE project_id=? AND command_id=?",
@@ -366,6 +563,14 @@ class LocalDocumentAttachmentService:
                         raise AttachmentProblem("attachment-command-conflict")
                     return self._attachment(connection, str(replay[0]))
                 candidate = self._candidate(connection, candidate_id)
+                if project_only and exact_selection != (
+                    candidate.source_assertion_revision_id,
+                    candidate.work_id,
+                    candidate.work_revision_id,
+                    candidate.version_id,
+                    candidate.version_revision_id,
+                ):
+                    raise AttachmentProblem("attachment-association-stale")
                 if connection.execute(
                     "SELECT 1 FROM document_attachment_cancellations WHERE project_id=? AND candidate_id=?",
                     (self._project, candidate_id),
@@ -392,6 +597,33 @@ class LocalDocumentAttachmentService:
                     "available",
                 ):
                     raise AttachmentProblem("attachment-object-unavailable")
+                if project_only and self._rights.current_with_connection(connection, candidate.rights_subject) is None:
+                    permissions = tuple(
+                        RightsPermissionDraft(
+                            use=use,
+                            value="permitted",
+                            basis="researcher-confirmed",
+                            confidence="confirmed",
+                            grantee_actor_id=actor.actor_id,
+                            evidence_revision_ids=(candidate.source_assertion_revision_id,),
+                            license_observation_revision_id=None,
+                            entitlement_revision_id=None,
+                        )
+                        for use in (
+                            RightsUse(action="store", purpose="document-attachment", destination_kind="local-project"),
+                            RightsUse(action="inspect", purpose="document-analysis", destination_kind="local-project"),
+                        )
+                    )
+                    self._rights.publish_draft_with_connection(
+                        connection,
+                        aggregates,
+                        candidate.rights_subject,
+                        permissions,
+                        None,
+                        command_id=command_id,
+                        command_sha256=command_sha256,
+                        actor=actor,
+                    )
                 decision = self._rights.evaluate_with_connection(
                     connection,
                     RightsRequest(
@@ -403,6 +635,20 @@ class LocalDocumentAttachmentService:
                 )
                 if decision.code != "allow" or decision.policy_revision_id is None:
                     raise _Denied(decision)
+                if project_only:
+                    inspect_decision = self._rights.evaluate_with_connection(
+                        connection,
+                        RightsRequest(
+                            actor_id=actor.actor_id,
+                            subject=candidate.rights_subject,
+                            use=RightsUse(
+                                action="inspect", purpose="document-analysis", destination_kind="local-project"
+                            ),
+                        ),
+                        actor=actor,
+                    )
+                    if inspect_decision.code != "allow":
+                        raise _Denied(inspect_decision)
                 sources = tuple(
                     aggregates.get_revision(value)
                     for value in (

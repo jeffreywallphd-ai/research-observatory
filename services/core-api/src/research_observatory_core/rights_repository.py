@@ -1542,6 +1542,32 @@ class SqliteRightsRepository:
     ) -> RightsPolicyRevision:
         """Check replay before minting revision, assertion IDs, or recorded time."""
 
+        with self._transaction(write=True) as (connection, aggregates):
+            return self.publish_draft_with_connection(
+                connection,
+                aggregates,
+                subject,
+                permissions,
+                expected_predecessor_revision_id,
+                command_id=command_id,
+                command_sha256=command_sha256,
+                actor=actor,
+            )
+
+    def publish_draft_with_connection(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        subject: RightsSubject,
+        permissions: tuple[RightsPermissionDraft, ...],
+        expected_predecessor_revision_id: str | None,
+        *,
+        command_id: str,
+        command_sha256: str,
+        actor: RightsActor,
+    ) -> RightsPolicyRevision:
+        """Publish within an existing canonical writer, including its rollback."""
+
         self._actor(actor, command_id=command_id, command_sha256=command_sha256)
         try:
             subject = RightsSubject.model_validate(subject)
@@ -1558,61 +1584,60 @@ class SqliteRightsRepository:
         if subject.project_id != self._project:
             raise RightsProblem("rights-source-mismatch")
         connector_record = self._resolve_connector_record(subject)
-        with self._transaction(write=True) as (connection, aggregates):
-            self._authority(connection, actor)
-            source = self._retained_source(connection, subject)
-            self._validate_subject_copy(connection, subject)
-            if any(item.basis == "source-observation" for item in permissions):
-                raise RightsProblem("rights-observation-unverified")
-            if any(item.basis == "verified-entitlement" for item in permissions):
-                raise RightsProblem("rights-entitlement-unverified")
-            replay = self._replay_draft(
-                connection,
-                subject,
-                permissions,
-                expected_predecessor_revision_id,
-                command_id,
-                command_sha256,
-                actor,
-            )
-            if replay is not None:
-                return replay
-            now = _utcnow()
-            if now.tzinfo is None or now.utcoffset() is None:
-                raise RightsProblem("rights-clock-unavailable")
-            recorded_at = now.astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
-            try:
-                minted_permissions = tuple(
-                    RightsPermission(
-                        assertion_id=new_uuid_v7(),
-                        subject=subject,
-                        use=item.use,
-                        value=item.value,
-                        basis=item.basis,
-                        confidence=item.confidence,
-                        asserted_by_actor_id=actor.actor_id if item.basis == "researcher-confirmed" else None,
-                        grantee_actor_id=item.grantee_actor_id,
-                        evidence_revision_ids=item.evidence_revision_ids,
-                        license_observation_revision_id=item.license_observation_revision_id,
-                        entitlement_revision_id=item.entitlement_revision_id,
-                        recorded_at=recorded_at,
-                        expires_at=item.expires_at,
-                        confirmation_required=item.confirmation_required,
-                    )
-                    for item in permissions
-                )
-                policy = RightsPolicyRevision(
-                    revision_id=new_uuid_v7(),
-                    predecessor_revision_id=expected_predecessor_revision_id,
+        self._authority(connection, actor)
+        source = self._retained_source(connection, subject)
+        self._validate_subject_copy(connection, subject)
+        if any(item.basis == "source-observation" for item in permissions):
+            raise RightsProblem("rights-observation-unverified")
+        if any(item.basis == "verified-entitlement" for item in permissions):
+            raise RightsProblem("rights-entitlement-unverified")
+        replay = self._replay_draft(
+            connection,
+            subject,
+            permissions,
+            expected_predecessor_revision_id,
+            command_id,
+            command_sha256,
+            actor,
+        )
+        if replay is not None:
+            return replay
+        now = _utcnow()
+        if now.tzinfo is None or now.utcoffset() is None:
+            raise RightsProblem("rights-clock-unavailable")
+        recorded_at = now.astimezone(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+        try:
+            minted_permissions = tuple(
+                RightsPermission(
+                    assertion_id=new_uuid_v7(),
                     subject=subject,
-                    permissions=minted_permissions,
+                    use=item.use,
+                    value=item.value,
+                    basis=item.basis,
+                    confidence=item.confidence,
+                    asserted_by_actor_id=actor.actor_id if item.basis == "researcher-confirmed" else None,
+                    grantee_actor_id=item.grantee_actor_id,
+                    evidence_revision_ids=item.evidence_revision_ids,
+                    license_observation_revision_id=item.license_observation_revision_id,
+                    entitlement_revision_id=item.entitlement_revision_id,
+                    recorded_at=recorded_at,
+                    expires_at=item.expires_at,
+                    confirmation_required=item.confirmation_required,
                 )
-            except ValidationError:
-                raise RightsProblem("rights-policy-invalid") from None
-            self._validate_policy_evidence(policy, actor, source)
-            return self._publish_with_connection(
-                connection, aggregates, policy, command_id, command_sha256, actor, connector_record
+                for item in permissions
             )
+            policy = RightsPolicyRevision(
+                revision_id=new_uuid_v7(),
+                predecessor_revision_id=expected_predecessor_revision_id,
+                subject=subject,
+                permissions=minted_permissions,
+            )
+        except ValidationError:
+            raise RightsProblem("rights-policy-invalid") from None
+        self._validate_policy_evidence(policy, actor, source)
+        return self._publish_with_connection(
+            connection, aggregates, policy, command_id, command_sha256, actor, connector_record
+        )
 
 
 __all__ = ["RightsActor", "RightsProblem", "SqliteRightsRepository"]

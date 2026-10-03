@@ -47,7 +47,8 @@ from research_observatory_core.ports.database_keys import (
 
 APPLICATION_ID = 0x524F4253  # ASCII "ROBS"
 DATABASE_PROFILE = "sqlite-wal-v1"
-DATABASE_SCHEMA_VERSION = 22
+DATABASE_SCHEMA_VERSION = 23
+ATTACHMENT_OPERATION_PREDECESSOR_DATABASE_SCHEMA_VERSION = 22
 DOCUMENT_ATTACHMENT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 21
 PLUGIN_GRANT_PREDECESSOR_DATABASE_SCHEMA_VERSION = 20
 CORPUS_REPORT_DATABASE_SCHEMA_VERSION = 19
@@ -147,6 +148,7 @@ DOCUMENT_ATTACHMENT_TABLES = (
     "document_attachment_cancellations",
     "document_attachment_assertions",
 )
+ATTACHMENT_OPERATION_TABLES = ("document_attachment_operations",)
 
 EXPECTED_TABLES = (
     "schema_metadata",
@@ -211,6 +213,7 @@ EXPECTED_TABLES = (
     *CORPUS_SOURCE_PROJECTION_TABLES,
     *PLUGIN_GRANT_TABLES,
     *DOCUMENT_ATTACHMENT_TABLES,
+    *ATTACHMENT_OPERATION_TABLES,
 )
 IMMUTABLE_ROW_TABLES = (
     "schema_metadata",
@@ -268,6 +271,7 @@ IMMUTABLE_ROW_TABLES = (
     *CORPUS_REPORT_TABLES,
     *PLUGIN_GRANT_TABLES,
     *DOCUMENT_ATTACHMENT_TABLES,
+    *ATTACHMENT_OPERATION_TABLES,
 )
 MUTABLE_STATE_TABLES = (
     "object_records",
@@ -408,6 +412,7 @@ EXPECTED_INDEXES = (
     "document_attachment_candidates_work",
     "document_attachment_candidates_object",
     "document_attachment_assertions_version",
+    "document_attachment_operations_candidate",
 )
 V1_SCHEMA_SHA256 = "61e5693187250e240f9b6cae573e3b89752ae9b135c6c739d14ff3dfbf6dfdc9"
 V1_PROFILE_SHA256 = "fcd3ee269f5d80ce4b554ffc4578d0d16cd941b4afecea19f8860197a77bd1c0"
@@ -436,7 +441,8 @@ RIGHTS_SCHEMA_SHA256 = "a9812a5fad0394652a070b3fd8466961eb3e88a928965d56e89d5700
 CORPUS_REPORT_SCHEMA_SHA256 = "829684b8a5274b6666400c2719ea9302384a8bdd01024b8f952b49a834ae52ba"
 PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256 = "c6bdef5f65d5f688747a1effed96f3cd79556e37891946e1985841bce4ae1cd6"
 DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256 = "c0aa9be9916fbe517f1ae94a86aeac13f19a92ec366b1a4d4d816bff614da034"
-EXPECTED_SCHEMA_SHA256 = "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
+ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256 = "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e"
+EXPECTED_SCHEMA_SHA256 = "0d5eb89a3975aa1d95fa4d190ce8debfee2ae43d390669ce8b3acb5f10a1a41e"
 
 _PROFILE_DOCUMENT: dict[str, Any] = {
     "schemaVersion": "1.0",
@@ -506,7 +512,8 @@ RIGHTS_PROFILE_SHA256 = "4617f88a662f50b6286f399158ca4477e2cad34bad68033be99149c
 CORPUS_REPORT_PROFILE_SHA256 = "e22cb614472013b6ed3fac45c9778e7fb9c987018d20f416911a2f805db4a50f"
 PLUGIN_GRANT_PREDECESSOR_PROFILE_SHA256 = "1e5b92e8e82cc64a191b4e3d5c1935d1931c4c3639678c26860fc317e1e11515"
 DOCUMENT_ATTACHMENT_PREDECESSOR_PROFILE_SHA256 = "74ed7818d261958b0039aef90c00b42ed5f97b3558cc61818fcca93a862a9822"
-EXPECTED_PROFILE_SHA256 = "67361cdaa6b082a552f89a40c5a83036526da3a1230c8f6d3bef4cb57cc43997"
+ATTACHMENT_OPERATION_PREDECESSOR_PROFILE_SHA256 = "67361cdaa6b082a552f89a40c5a83036526da3a1230c8f6d3bef4cb57cc43997"
+EXPECTED_PROFILE_SHA256 = "bc4f7aa4029ed660329b407362c017a42de2966f1d18bbbcbe7c75f1afa837f5"
 if _PROFILE_SHA256 != EXPECTED_PROFILE_SHA256:
     raise RuntimeError("compiled SQLite profile differs from its reviewed fingerprint")
 
@@ -3575,6 +3582,7 @@ SCHEMA_METADATA_V19_DDL = SCHEMA_METADATA_V18_DDL.replace("schema_version = 18",
 SCHEMA_METADATA_V20_DDL = SCHEMA_METADATA_V19_DDL.replace("schema_version = 19", "schema_version = 20")
 SCHEMA_METADATA_V21_DDL = SCHEMA_METADATA_V20_DDL.replace("schema_version = 20", "schema_version = 21")
 SCHEMA_METADATA_V22_DDL = SCHEMA_METADATA_V21_DDL.replace("schema_version = 21", "schema_version = 22")
+SCHEMA_METADATA_V23_DDL = SCHEMA_METADATA_V22_DDL.replace("schema_version = 22", "schema_version = 23")
 
 _V16_AGGREGATE_IDENTITY_DDL = next(
     statement for statement in _V1_DDL_STATEMENTS if "CREATE TABLE aggregate_identities" in statement
@@ -5148,9 +5156,32 @@ DOCUMENT_ATTACHMENT_DDL = (
     """,
 )
 
+ATTACHMENT_OPERATION_DDL = (
+    f"""
+        CREATE TABLE document_attachment_operations (
+            operation_id TEXT PRIMARY KEY CHECK ({_uuid_check("operation_id", "7")}),
+            project_id TEXT NOT NULL,
+            candidate_id TEXT NOT NULL UNIQUE CHECK ({_uuid_check("candidate_id", "7")}),
+            session_id TEXT NOT NULL CHECK (length(session_id)=32 AND session_id=lower(session_id)
+                AND session_id NOT GLOB '*[^0-9a-f]*'),
+            actor_id TEXT NOT NULL CHECK ({_uuid_check("actor_id", "7")}),
+            created_at TEXT NOT NULL CHECK ({_timestamp_check("created_at")}),
+            FOREIGN KEY (candidate_id,project_id) REFERENCES document_attachment_candidates
+                (candidate_id,project_id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+            UNIQUE (operation_id,project_id)
+        ) STRICT
+    """,
+    *(
+        statement
+        for table in ATTACHMENT_OPERATION_TABLES
+        for statement in _immutable_triggers(table, "document attachment operation history is append-only")
+    ),
+    "CREATE INDEX document_attachment_operations_candidate ON document_attachment_operations(project_id,candidate_id)",
+)
+
 
 _DDL_STATEMENTS = (
-    SCHEMA_METADATA_V22_DDL,
+    SCHEMA_METADATA_V23_DDL,
     *_V17_BASE_DDL_STATEMENTS,
     SCHEMA_MIGRATIONS_DDL,
     *SCHEMA_MIGRATIONS_TRIGGERS,
@@ -5175,6 +5206,7 @@ _DDL_STATEMENTS = (
     *CORPUS_SOURCE_PROJECTION_DDL,
     *PLUGIN_GRANT_DDL,
     *DOCUMENT_ATTACHMENT_DDL,
+    *ATTACHMENT_OPERATION_DDL,
 )
 
 

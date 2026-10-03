@@ -3,9 +3,7 @@
 use crate::application_lock::ApplicationLockManager;
 use crate::directory_picker::{DirectoryPickerManager, PickerFailure};
 use crate::import_source::{HeldImportSource, SourceSeal};
-use crate::supervisor::{
-    CoreApiResponse, DocumentStageSelection, NativeImportConnection, RuntimeSupervisor,
-};
+use crate::supervisor::{CoreApiResponse, DocumentStageSelection, NativeImportConnection};
 use serde::Deserialize;
 use std::sync::Arc;
 
@@ -13,6 +11,7 @@ use std::sync::Arc;
 pub(crate) struct DocumentSelection {
     pub root: String,
     pub project_id: String,
+    pub operation_id: String,
     pub declared_media_type: Option<String>,
     pub source_assertion_revision_id: String,
     pub work_id: String,
@@ -25,6 +24,7 @@ impl DocumentSelection {
     fn valid(&self) -> bool {
         crate::directory_picker::local_path_syntax(&self.root)
             && crate::supervisor::canonical_project_id(&self.project_id)
+            && crate::supervisor::canonical_uuid_v7(&self.operation_id)
             && self
                 .declared_media_type
                 .as_ref()
@@ -43,9 +43,30 @@ impl DocumentSelection {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
-struct DocumentContext {
+pub(crate) struct DocumentContext {
     project_id: String,
-    session_id: String,
+    pub session_id: String,
+}
+
+pub(crate) fn current_document_context(
+    connection: &NativeImportConnection,
+    project_id: &str,
+) -> Result<DocumentContext, PickerFailure> {
+    let response = connection
+        .document_context()
+        .map_err(|_| PickerFailure::Unavailable)?;
+    if response.status != 200
+        || response.content_type != "application/json"
+        || response.body.len() > 4096
+    {
+        return Err(PickerFailure::Failed);
+    }
+    let context: DocumentContext =
+        serde_json::from_str(&response.body).map_err(|_| PickerFailure::Failed)?;
+    if context.project_id != project_id || !lower_hex(&context.session_id, 32) {
+        return Err(PickerFailure::Failed);
+    }
+    Ok(context)
 }
 
 #[derive(Debug, Deserialize)]
@@ -190,6 +211,7 @@ pub(crate) fn stage_held_document(
     let source_name = source.basename().to_owned();
     let selection = DocumentStageSelection {
         session_id: session_id.to_owned(),
+        operation_id: request.operation_id.clone(),
         declared_media_type: request.declared_media_type.clone(),
         source_assertion_revision_id: request.source_assertion_revision_id.clone(),
         work_id: request.work_id.clone(),
@@ -214,7 +236,8 @@ pub(crate) fn stage_held_document(
 
 pub(crate) fn stage_selected_document(
     picker: DirectoryPickerManager,
-    supervisor: RuntimeSupervisor,
+    connection: Arc<NativeImportConnection>,
+    session_id: String,
     lock: ApplicationLockManager,
     ticket: u64,
     owner: isize,
@@ -226,24 +249,8 @@ pub(crate) fn stage_selected_document(
     if lock.finish_protected_action(ticket).is_err() || !picker.is_open() {
         return Err(PickerFailure::Cancelled);
     }
-    let connection = Arc::new(
-        supervisor
-            .native_import_connection(&request.root, &request.project_id)
-            .map_err(|_| PickerFailure::Unavailable)?,
-    );
-    let response = connection
-        .document_context()
-        .map_err(|_| PickerFailure::Unavailable)?;
-    if response.status != 200
-        || response.content_type != "application/json"
-        || response.body.len() > 4096
-    {
-        return Err(PickerFailure::Failed);
-    }
-    let context: DocumentContext =
-        serde_json::from_str(&response.body).map_err(|_| PickerFailure::Failed)?;
-    if context.project_id != request.project_id || !lower_hex(&context.session_id, 32) {
-        return Err(PickerFailure::Failed);
+    if !lower_hex(&session_id, 32) || !connection.is_current() {
+        return Err(PickerFailure::Unavailable);
     }
     let checking_picker = picker.clone();
     let checking_lock = lock.clone();
@@ -256,9 +263,7 @@ pub(crate) fn stage_selected_document(
                 && checking_connection.is_current()
         },
         move |source, authorized| {
-            stage_held_document(&connection, &context.session_id, source, &request, || {
-                authorized()
-            })
+            stage_held_document(&connection, &session_id, source, &request, || authorized())
         },
     )
 }
@@ -271,6 +276,7 @@ mod tests {
         DocumentSelection {
             root: "C:/Synthetic/project".into(),
             project_id: "01900000-0000-7000-8000-000000000001".into(),
+            operation_id: "01900000-0000-7000-8000-000000000008".into(),
             declared_media_type: Some("application/pdf".into()),
             source_assertion_revision_id: "01900000-0000-7000-8000-000000000002".into(),
             work_id: "01900000-0000-7000-8000-000000000003".into(),
@@ -287,6 +293,9 @@ mod tests {
         let mut empty_media = request.clone();
         empty_media.declared_media_type = Some(String::new());
         assert!(!empty_media.valid());
+        let mut invalid_operation = request.clone();
+        invalid_operation.operation_id = "not-a-canonical-operation".into();
+        assert!(!invalid_operation.valid());
         let seal = SourceSeal {
             source_sha256: "a".repeat(64),
             byte_length: 42,

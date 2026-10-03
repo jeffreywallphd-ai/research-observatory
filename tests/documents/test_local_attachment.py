@@ -16,8 +16,11 @@ from contextlib import closing
 from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Literal
 from unittest.mock import patch
 from zipfile import ZipFile
+
+from jsonschema import Draft202012Validator, FormatChecker
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "services/core-api/src"))
@@ -52,6 +55,7 @@ from research_observatory_core.reconciliation_repository import SqliteReconcilia
 from research_observatory_core.rights_policy import RightsUse  # noqa: E402
 from research_observatory_core.rights_repository import SqliteRightsRepository  # noqa: E402
 from research_observatory_core.storage import (  # noqa: E402
+    _schema_fingerprint,
     development_plaintext_database_fixture,
     open_canonical_database,
 )
@@ -538,8 +542,208 @@ class LocalAttachmentServiceTests(unittest.TestCase):
             actor=f.actor,
         )
 
+    def stage_operation(self, operation_id: str, session_id: str):
+        f = self.corpus
+        return self.service.stage(
+            io.BytesIO(b"Synthetic plain text full text\n"),
+            source_name="paper.txt",
+            declared_media_type="text/plain",
+            source_assertion_revision_id=self._assertion_id(),
+            work_id=f.work_id,
+            work_revision_id=self.work_revision_id,
+            version_id=self.version.version_id,
+            version_revision_id=self.version.revision_id,
+            actor=f.actor,
+            operation_id=operation_id,
+            session_id=session_id,
+        )
+
+    def test_project_only_decision_binds_operation_and_publishes_exact_copy_rights_atomically(self) -> None:
+        operation_id, session_id, command_id = new_uuid_v7(), "d" * 32, new_uuid_v7()
+        candidate = self.stage_operation(operation_id, session_id)
+        first = self.service.status(
+            source_assertion_revision_id=candidate.source_assertion_revision_id,
+            work_id=candidate.work_id,
+            work_revision_id=candidate.work_revision_id,
+            version_id=candidate.version_id,
+            version_revision_id=candidate.version_revision_id,
+            operation_id=operation_id,
+            command_id=None,
+            session_id=session_id,
+            actor=self.corpus.actor,
+        )
+        self.assertEqual("candidate", first.state)
+        self.assertEqual(candidate.candidate_id, first.candidate_id)
+        attachment = self.service.commit(
+            candidate.candidate_id,
+            confirmation_sha256=candidate.candidate_sha256,
+            command_id=command_id,
+            actor=self.corpus.actor,
+            operation_id=operation_id,
+            session_id=session_id,
+            match_confirmed=True,
+            permitted_use="project-only",
+            exact_selection=(
+                candidate.source_assertion_revision_id,
+                candidate.work_id,
+                candidate.work_revision_id,
+                candidate.version_id,
+                candidate.version_revision_id,
+            ),
+        )
+        self.assertEqual(candidate.version_revision_id, attachment.version_revision_id)
+        restarted = LocalDocumentAttachmentService(self.corpus.database, self.corpus.project, self.store)
+        status = restarted.status(
+            source_assertion_revision_id=candidate.source_assertion_revision_id,
+            work_id=candidate.work_id,
+            work_revision_id=candidate.work_revision_id,
+            version_id=candidate.version_id,
+            version_revision_id=candidate.version_revision_id,
+            operation_id=operation_id,
+            command_id=command_id,
+            session_id="e" * 32,
+            actor=self.corpus.actor,
+        )
+        self.assertEqual("committed", status.state)
+        self.assertEqual(attachment.attachment_id, status.attachment_id)
+        self.assertEqual(attachment.document_revision_id, status.document_revision_id)
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as db:
+            self.assertEqual(1, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
+        policy = self.rights.current(candidate.rights_subject, actor=self.corpus.actor)
+        self.assertIsNotNone(policy)
+        assert policy is not None
+        self.assertEqual(
+            {("store", "document-attachment"), ("inspect", "document-analysis")},
+            {(permission.use.action, permission.use.purpose) for permission in policy.permissions},
+        )
+
+    def test_operation_substitution_and_restart_unresolved_candidate_fail_closed(self) -> None:
+        operation_id, session_id = new_uuid_v7(), "d" * 32
+        candidate = self.stage_operation(operation_id, session_id)
+        selected = dict(
+            source_assertion_revision_id=candidate.source_assertion_revision_id,
+            work_id=candidate.work_id,
+            work_revision_id=candidate.work_revision_id,
+            version_id=candidate.version_id,
+            version_revision_id=candidate.version_revision_id,
+        )
+        self.assertEqual(
+            "unresolved",
+            self.service.status(
+                **selected,
+                operation_id=operation_id,
+                command_id=new_uuid_v7(),
+                session_id=session_id,
+                actor=self.corpus.actor,
+            ).state,
+        )
+        self.assertEqual(
+            "stale-session",
+            self.service.status(
+                **selected,
+                operation_id=operation_id,
+                command_id=new_uuid_v7(),
+                session_id="e" * 32,
+                actor=self.corpus.actor,
+            ).state,
+        )
+        self.assertEqual(
+            "unavailable",
+            self.service.status(
+                **{**selected, "version_revision_id": new_uuid_v7()},
+                operation_id=operation_id,
+                command_id=None,
+                session_id=session_id,
+                actor=self.corpus.actor,
+            ).state,
+        )
+        with self.assertRaisesRegex(AttachmentProblem, "operation|association"):
+            self.service.commit(
+                candidate.candidate_id,
+                confirmation_sha256=candidate.candidate_sha256,
+                command_id=new_uuid_v7(),
+                actor=self.corpus.actor,
+                operation_id=new_uuid_v7(),
+                session_id=session_id,
+                match_confirmed=True,
+                permitted_use="project-only",
+                exact_selection=tuple(selected.values()),
+            )
+
+    def test_explicit_project_only_does_not_override_existing_denial_and_audits_it(self) -> None:
+        operation_id, session_id = new_uuid_v7(), "d" * 32
+        candidate = self.stage_operation(operation_id, session_id)
+        self.publish_right(candidate, value="denied")
+        with self.assertRaisesRegex(AttachmentProblem, "attachment-rights-denied"):
+            self.service.commit(
+                candidate.candidate_id,
+                confirmation_sha256=candidate.candidate_sha256,
+                command_id=new_uuid_v7(),
+                actor=self.corpus.actor,
+                operation_id=operation_id,
+                session_id=session_id,
+                match_confirmed=True,
+                permitted_use="project-only",
+                exact_selection=(
+                    candidate.source_assertion_revision_id,
+                    candidate.work_id,
+                    candidate.work_revision_id,
+                    candidate.version_id,
+                    candidate.version_revision_id,
+                ),
+            )
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as db:
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_assertions").fetchone()[0])
+            self.assertEqual(
+                1,
+                db.execute(
+                    "SELECT COUNT(*) FROM rights_use_decisions WHERE event_kind='denied-attempt' AND use_action='store'"
+                ).fetchone()[0],
+            )
+
+    def test_project_only_rights_publication_rolls_back_if_attachment_commit_interrupts(self) -> None:
+        operation_id, session_id, command_id = new_uuid_v7(), "d" * 32, new_uuid_v7()
+        candidate = self.stage_operation(operation_id, session_id)
+        selection = (
+            candidate.source_assertion_revision_id,
+            candidate.work_id,
+            candidate.work_revision_id,
+            candidate.version_id,
+            candidate.version_revision_id,
+        )
+        with (
+            patch.object(self.service._rights, "evaluate_with_connection", side_effect=RuntimeError("synthetic stop")),
+            self.assertRaisesRegex(RuntimeError, "synthetic stop"),
+        ):
+            self.service.commit(
+                candidate.candidate_id,
+                confirmation_sha256=candidate.candidate_sha256,
+                command_id=command_id,
+                actor=self.corpus.actor,
+                operation_id=operation_id,
+                session_id=session_id,
+                match_confirmed=True,
+                permitted_use="project-only",
+                exact_selection=selection,
+            )
+        self.assertIsNone(self.rights.current(candidate.rights_subject, actor=self.corpus.actor))
+        with open_canonical_database(self.corpus.database, expected_project_id=self.corpus.project) as db:
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_assertions").fetchone()[0])
+        attached = self.service.commit(
+            candidate.candidate_id,
+            confirmation_sha256=candidate.candidate_sha256,
+            command_id=command_id,
+            actor=self.corpus.actor,
+            operation_id=operation_id,
+            session_id=session_id,
+            match_confirmed=True,
+            permitted_use="project-only",
+            exact_selection=selection,
+        )
+        self.assertEqual(candidate.version_revision_id, attached.version_revision_id)
+
     def publish_right(self, candidate, *, value="permitted", predecessor=None, inspect=False):
-        actions = ("store", "inspect") if inspect else ("store",)
+        actions: tuple[Literal["store", "inspect"], ...] = ("store", "inspect") if inspect else ("store",)
         return self.rights.publish_draft(
             candidate.rights_subject,
             tuple(
@@ -852,10 +1056,20 @@ class AttachmentMigrationTests(unittest.TestCase):
                 ),
             )
         plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
-        self.assertEqual(("0022_document_attachments",), plan.migration_ids)
+        self.assertEqual(("0022_document_attachments", "0023_attachment_operations"), plan.migration_ids)
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
         assert result.backup_relative_path is not None
+        assert result.recovery_manifest_relative_path is not None
+        recovery_schema = json.loads(
+            (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
+        )
+        recovery_path = self.project / result.recovery_manifest_relative_path
+        recovery_manifest = json.loads(recovery_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            [],
+            list(Draft202012Validator(recovery_schema, format_checker=FormatChecker()).iter_errors(recovery_manifest)),
+        )
         with closing(sqlite3.connect(self.project / result.backup_relative_path)) as backup:
             self.assertEqual(
                 self.manifest["schemaSha256"],
@@ -864,7 +1078,7 @@ class AttachmentMigrationTests(unittest.TestCase):
                 ),
             )
         with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
-            self.assertEqual(22, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
             self.assertEqual(
                 self.manifest["counts"]["reconciliation_versions"],
                 db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0],
@@ -902,9 +1116,145 @@ class AttachmentMigrationTests(unittest.TestCase):
             )
         result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
         self.assertEqual("migrated", result.status)
-        with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
+        with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as canonical_db:
+            self.assertEqual(23, canonical_db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(1, canonical_db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0])
+
+
+class AttachmentOperationMigrationTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.manifest = json.loads((REPO / "tests/fixtures/documents/v22-predecessor.json").read_text(encoding="utf-8"))
+        self.temporary = tempfile.TemporaryDirectory(prefix="ro-document-v22-")
+        self.addCleanup(self._cleanup)
+        self.project = Path(self.temporary.name) / "project"
+        with ZipFile(REPO / "tests/fixtures/documents/v22-predecessor.zip") as archive:
+            for name in ("state/project.sqlite3", *(item["relativePath"] for item in self.manifest["ciphertext"])):
+                target = self.project / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(archive.read(name))
+        self.database = self.project / "state/project.sqlite3"
+        self.profile = development_plaintext_database_fixture()
+        self.profile.__enter__()
+        self.addCleanup(self.profile.__exit__, None, None, None)
+
+    def _cleanup(self) -> None:
+        if os.name == "nt":
+            subprocess.run(
+                [
+                    str(Path(os.environ["SYSTEMROOT"]) / "System32/icacls.exe"),
+                    self.temporary.name,
+                    "/reset",
+                    "/t",
+                    "/c",
+                    "/q",
+                ],
+                capture_output=True,
+                check=False,
+                timeout=30,
+            )
+        self.temporary.cleanup()
+
+    def _source_rows(self) -> dict[str, list[tuple[object, ...]]]:
+        tables = (
+            "document_attachment_candidates",
+            "document_attachment_assertions",
+            "rights_policy_revisions",
+            "object_records",
+        )
+        with closing(sqlite3.connect(self.database)) as db:
+            return {table: db.execute(f"SELECT * FROM {table} ORDER BY rowid").fetchall() for table in tables}
+
+    def _assert_literal_predecessor(self) -> None:
+        self.assertEqual(self.manifest["databaseSha256"], hashlib.sha256(self.database.read_bytes()).hexdigest())
+        with closing(sqlite3.connect(self.database)) as db:
             self.assertEqual(22, db.execute("PRAGMA user_version").fetchone()[0])
-            self.assertEqual(1, db.execute("SELECT COUNT(*) FROM reconciliation_versions").fetchone()[0])
+            self.assertEqual(
+                (22, self.manifest["profileSha256"], self.manifest["schemaSha256"]),
+                db.execute("SELECT schema_version,profile_sha256,schema_sha256 FROM schema_metadata").fetchone(),
+            )
+            self.assertEqual(
+                self.manifest["schemaSha256"],
+                _schema_fingerprint(db),
+            )
+            self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
+            for table, count in self.manifest["counts"].items():
+                self.assertEqual(count, db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0])
+            self.assertEqual(
+                (self.manifest["candidateId"], self.manifest["attachmentId"], self.manifest["documentRevisionId"]),
+                db.execute(
+                    "SELECT c.candidate_id,a.attachment_id,a.document_revision_id "
+                    "FROM document_attachment_candidates c JOIN document_attachment_assertions a "
+                    "ON a.project_id=c.project_id AND a.candidate_id=c.candidate_id"
+                ).fetchone(),
+            )
+
+    def test_literal_populated_v22_migrates_without_changing_attachment_rights_or_ciphertext(self) -> None:
+        self._assert_literal_predecessor()
+        before_rows = self._source_rows()
+        before_ciphertext = {
+            item["relativePath"]: hashlib.sha256((self.project / item["relativePath"]).read_bytes()).hexdigest()
+            for item in self.manifest["ciphertext"]
+        }
+        self.assertEqual(
+            {item["relativePath"]: item["sha256"] for item in self.manifest["ciphertext"]},
+            before_ciphertext,
+        )
+        plan = runner.plan_database_migration(self.database, expected_project_id=self.manifest["projectId"])
+        self.assertEqual(("0023_attachment_operations",), plan.migration_ids)
+        result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
+        self.assertEqual("migrated", result.status)
+        assert result.backup_relative_path is not None
+        assert result.recovery_manifest_relative_path is not None
+        recovery_schema = json.loads(
+            (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
+        )
+        recovery_path = self.project / result.recovery_manifest_relative_path
+        recovery_manifest = json.loads(recovery_path.read_text(encoding="utf-8"))
+        self.assertEqual(
+            [],
+            list(Draft202012Validator(recovery_schema, format_checker=FormatChecker()).iter_errors(recovery_manifest)),
+        )
+        with closing(sqlite3.connect(self.project / result.backup_relative_path)) as backup:
+            self.assertEqual(22, backup.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(
+                self.manifest["schemaSha256"],
+                _schema_fingerprint(backup),
+            )
+        with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
+            self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
+            self.assertEqual([], db.execute("PRAGMA foreign_key_check").fetchall())
+        self.assertEqual(before_rows, self._source_rows())
+        self.assertEqual(
+            before_ciphertext,
+            {key: hashlib.sha256((self.project / key).read_bytes()).hexdigest() for key in before_ciphertext},
+        )
+
+    def test_interrupted_v23_migration_leaves_populated_v22_source_retryable(self) -> None:
+        from research_observatory_core.migrations.versions import v0023_attachment_operations
+
+        self._assert_literal_predecessor()
+        before_rows = self._source_rows()
+        original = v0023_attachment_operations._migration_step_completed
+
+        def interrupt(step: str) -> None:
+            if step == "metadata-v23-copy":
+                raise RuntimeError("synthetic migration interruption")
+            original(step)
+
+        with (
+            patch.object(v0023_attachment_operations, "_migration_step_completed", side_effect=interrupt),
+            self.assertRaises(RuntimeError),
+        ):
+            runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
+        self._assert_literal_predecessor()
+        self.assertEqual(before_rows, self._source_rows())
+        result = runner.migrate_database(self.database, expected_project_id=self.manifest["projectId"])
+        self.assertEqual("migrated", result.status)
+        with open_canonical_database(self.database, expected_project_id=self.manifest["projectId"]) as db:
+            self.assertEqual(23, db.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_operations").fetchone()[0])
+        self.assertEqual(before_rows, self._source_rows())
 
 
 if __name__ == "__main__":

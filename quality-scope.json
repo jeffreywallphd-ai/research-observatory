@@ -536,6 +536,15 @@
     "tests/service/test_document_attachment_api.py",
     "workers/document/__init__.py",
     "workers/document/inspection.py",
-    "workers/windows/document_launcher.py"
+    "workers/windows/document_launcher.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0023_attachment_operations.py",
+    "tests/desktop/tools/run_windows_document_drop_probe.py",
+    "tests/desktop/tools/seed_document_drop_fixture.py",
+    "tests/documents/test_attachment_lifecycle_regressions.py",
+    "tests/desktop/tools/verify_document_attachment_fixture.py",
+    "tests/desktop/tools/run_windows_document_picker_probe.py",
+    "tests/desktop/test_document_stage_fixture_probe.py",
+    "tests/desktop/test_document_attachment_fixture_verifier.py",
+    "tests/desktop/test_windows_document_picker_probe.py"
   ]
 }

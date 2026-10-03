@@ -188,6 +188,7 @@ def load_build_contract(repo: Path) -> dict[str, Any]:
             "research_observatory_core.migrations.versions.v0020_corpus_source_projection",
             "research_observatory_core.migrations.versions.v0021_plugin_grants",
             "research_observatory_core.migrations.versions.v0022_document_attachments",
+            "research_observatory_core.migrations.versions.v0023_attachment_operations",
             "research_observatory_core.plugin_grant_repository",
             "research_observatory_core.plugin_job_repository",
             "research_observatory_core.plugin_package_repository",

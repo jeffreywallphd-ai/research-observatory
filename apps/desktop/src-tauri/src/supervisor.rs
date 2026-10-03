@@ -281,6 +281,13 @@ struct ImportProjectSelection {
 }
 
 impl ImportProjectSelection {
+    fn selected_root_for(&self, project_id: &str) -> Option<&str> {
+        self.selected
+            .as_ref()
+            .filter(|(_, selected_id)| selected_id == project_id)
+            .map(|(root, _)| root.as_str())
+    }
+
     fn changing(&mut self) -> Result<u64, &'static str> {
         self.selected = None;
         self.generation = self
@@ -481,6 +488,7 @@ pub(crate) struct NativeImportConnection {
 #[cfg(windows)]
 pub(crate) struct DocumentStageSelection {
     pub session_id: String,
+    pub operation_id: String,
     pub declared_media_type: Option<String>,
     pub source_assertion_revision_id: String,
     pub work_id: String,
@@ -489,7 +497,81 @@ pub(crate) struct DocumentStageSelection {
     pub version_revision_id: String,
 }
 
+#[cfg(windows)]
+#[derive(Clone, Copy)]
+pub(crate) enum NativeDocumentAction {
+    Status,
+    Cancel,
+    Commit,
+}
+
+#[cfg(windows)]
+impl NativeDocumentAction {
+    fn path(self) -> &'static str {
+        match self {
+            Self::Status => "/native/document-attachments/status",
+            Self::Cancel => "/native/document-attachments/cancel",
+            Self::Commit => "/native/document-attachments/commit",
+        }
+    }
+}
+
 impl NativeImportConnection {
+    #[cfg(all(test, windows))]
+    pub(crate) fn unavailable_for_attachment_test(project_id: &str) -> Self {
+        Self {
+            supervisor: RuntimeSupervisor::new(Err("test-only-unavailable")),
+            port: 0,
+            token: CapabilityToken([0; CAPABILITY_TOKEN_BYTES]),
+            cancellation: Arc::new(AtomicBool::new(true)),
+            attempt: 0,
+            project_generation: 0,
+            root: "C:/synthetic-attachment-test".into(),
+            project_id: project_id.into(),
+        }
+    }
+
+    #[cfg(windows)]
+    pub(crate) fn document_root(&self) -> &str {
+        &self.root
+    }
+
+    /// Fixed private attachment request. A renderer can neither select the
+    /// endpoint nor supply the project root or capability token.
+    #[cfg(windows)]
+    pub(crate) fn document_request(
+        &self,
+        action: NativeDocumentAction,
+        body: serde_json::Value,
+    ) -> Result<CoreApiResponse, &'static str> {
+        if body["root"].as_str() != Some(self.root.as_str())
+            || body["projectId"].as_str() != Some(self.project_id.as_str())
+            || !self.is_current()
+        {
+            return Err("RO-DOCUMENT-PROJECT-UNAVAILABLE");
+        }
+        let body = body.to_string();
+        if body.len() > 8192 {
+            return Err("RO-DOCUMENT-REQUEST-INVALID");
+        }
+        let response = authenticated_api_request_with_cancellation(
+            self.port,
+            &self.token,
+            &CoreApiRequest {
+                method: "POST".into(),
+                path: action.path().into(),
+                body: Some(body),
+                if_match: None,
+                idempotency_key: None,
+            },
+            Some(self.cancellation.as_ref()),
+        );
+        if !self.is_current() {
+            return Err("RO-DOCUMENT-PROJECT-UNAVAILABLE");
+        }
+        response
+    }
+
     #[cfg(windows)]
     pub(crate) fn document_context(&self) -> Result<CoreApiResponse, &'static str> {
         if !self.is_current() {
@@ -525,6 +607,7 @@ impl NativeImportConnection {
         if !self.is_current()
             || !authorized()
             || !canonical_lower_hex(&selection.session_id, 32)
+            || !canonical_uuid_v7(&selection.operation_id)
             || selection
                 .declared_media_type
                 .as_ref()
@@ -546,6 +629,7 @@ impl NativeImportConnection {
             "root": self.root,
             "projectId": self.project_id,
             "sessionId": selection.session_id,
+            "operationId": selection.operation_id,
             "sourceName": source.basename(),
             "declaredMediaType": selection.declared_media_type,
             "sourceAssertionRevisionId": selection.source_assertion_revision_id,
@@ -562,6 +646,23 @@ impl NativeImportConnection {
         let current = || authorized() && self.is_current();
         let outcome =
             authenticated_document_stage(self.port, &self.token, &header, source, current);
+        #[cfg(feature = "integration-harness")]
+        match &outcome {
+            Ok((response, _)) if response.status == 200 => {
+                crate::directory_integration_harness::observe_document_transport_phase(
+                    "response-accepted",
+                    None,
+                );
+            }
+            Ok(_) => crate::directory_integration_harness::observe_document_transport_phase(
+                "response-rejected",
+                None,
+            ),
+            Err(code) => crate::directory_integration_harness::observe_document_transport_phase(
+                "transport-error",
+                Some(*code),
+            ),
+        }
         if !self.is_current() || !authorized() {
             return Err("RO-CORE-API-CANCELLED");
         }
@@ -730,6 +831,31 @@ impl NativeImportConnection {
 }
 
 impl RuntimeSupervisor {
+    /// Resolve a renderer's opaque project ID through the already authenticated,
+    /// writable native project selection. The root never enters renderer IPC.
+    pub(crate) fn native_document_connection(
+        &self,
+        project_id: &str,
+    ) -> Result<NativeImportConnection, &'static str> {
+        if !canonical_project_id(project_id) {
+            return Err("RO-IMPORT-PROJECT-UNAVAILABLE");
+        }
+        let root = {
+            let mut inner = self
+                .shared
+                .inner
+                .lock()
+                .map_err(|_| "RO-IMPORT-PROJECT-UNAVAILABLE")?;
+            inner.refresh();
+            inner
+                .import_project
+                .selected_root_for(project_id)
+                .ok_or("RO-IMPORT-PROJECT-UNAVAILABLE")?
+                .to_owned()
+        };
+        self.native_import_connection(&root, project_id)
+    }
+
     pub fn new(config: Result<SupervisorConfig, &'static str>) -> Self {
         Self::with_authority(config, None)
     }
@@ -1183,6 +1309,105 @@ impl RuntimeSupervisor {
     }
 }
 
+fn configure_core_child_environment(
+    command: &mut Command,
+    config: &SupervisorConfig,
+) -> Result<(), &'static str> {
+    command.env_clear();
+    for name in ["SystemRoot", "WINDIR", "TEMP", "TMP"] {
+        if let Some(value) = std::env::var_os(name) {
+            command.env(name, value);
+        }
+    }
+    command.env("RO_CORE_PROFILE", "local");
+    command.env("RO_CORE_BIND_HOST", "127.0.0.1");
+    command.env("RO_CORE_BIND_PORT", "0");
+    command.env("RO_CORE_LOG_LEVEL", "INFO");
+    #[cfg(feature = "integration-harness")]
+    for (name, value) in &config.integration_environment {
+        command.env(name, value);
+    }
+    // The signed worker guardian needs this OS-known location. It must not
+    // inherit a caller- or fixture-supplied value through the cleared env.
+    #[cfg(windows)]
+    command.env("LOCALAPPDATA", trusted_local_app_data()?);
+    #[cfg(not(feature = "integration-harness"))]
+    let _ = config;
+    Ok(())
+}
+
+#[cfg(windows)]
+fn trusted_local_app_data() -> Result<PathBuf, &'static str> {
+    use std::os::windows::ffi::OsStringExt;
+    use windows::Win32::System::Com::CoTaskMemFree;
+    use windows_sys::Win32::UI::Shell::{FOLDERID_LocalAppData, SHGetKnownFolderPath};
+
+    struct TaskMemory(*mut u16);
+    impl Drop for TaskMemory {
+        fn drop(&mut self) {
+            unsafe { CoTaskMemFree(Some(self.0.cast())) };
+        }
+    }
+
+    let mut allocation = TaskMemory(std::ptr::null_mut());
+    let status = unsafe {
+        SHGetKnownFolderPath(
+            &FOLDERID_LocalAppData,
+            0,
+            std::ptr::null_mut(),
+            &mut allocation.0,
+        )
+    };
+    if status < 0 || allocation.0.is_null() {
+        return Err("RO-CORE-LOCAL-APP-DATA-UNAVAILABLE");
+    }
+    let mut length = 0;
+    while length <= 4096 && unsafe { *allocation.0.add(length) } != 0 {
+        length += 1;
+    }
+    if length == 0 || length > 4096 {
+        return Err("RO-CORE-LOCAL-APP-DATA-UNAVAILABLE");
+    }
+    let wide = unsafe { std::slice::from_raw_parts(allocation.0, length) };
+    validate_local_app_data_path(&PathBuf::from(std::ffi::OsString::from_wide(wide)))
+}
+
+#[cfg(windows)]
+fn validate_local_app_data_path(path: &Path) -> Result<PathBuf, &'static str> {
+    const FAILURE: &str = "RO-CORE-LOCAL-APP-DATA-UNAVAILABLE";
+    let value = path.to_str().ok_or(FAILURE)?;
+    if !crate::directory_picker::local_path_syntax(value) {
+        return Err(FAILURE);
+    }
+    let drive = value[..3].replace('/', "\\");
+    let drive = drive.encode_utf16().chain(Some(0)).collect::<Vec<_>>();
+    if !matches!(
+        unsafe { windows_sys::Win32::Storage::FileSystem::GetDriveTypeW(drive.as_ptr()) },
+        2 | 3 | 5 | 6
+    ) {
+        return Err(FAILURE);
+    }
+    let mut current = PathBuf::new();
+    for component in path.components() {
+        current.push(component);
+        if !current.is_absolute() {
+            continue;
+        }
+        let metadata = fs::symlink_metadata(&current).map_err(|_| FAILURE)?;
+        if !metadata.is_dir()
+            || metadata.file_type().is_symlink()
+            || crate::directory_picker::is_reparse(&metadata)
+        {
+            return Err(FAILURE);
+        }
+    }
+    let canonical = dunce::canonicalize(path).map_err(|_| FAILURE)?;
+    if !crate::directory_picker::same_path(&canonical, path) {
+        return Err(FAILURE);
+    }
+    Ok(canonical)
+}
+
 fn launch(
     config: &SupervisorConfig,
     shared: Arc<SupervisorShared>,
@@ -1211,23 +1436,11 @@ fn launch(
     command
         .arg("--supervised")
         .current_dir(&config.working_directory)
-        .env_clear()
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
-    for name in ["SystemRoot", "WINDIR", "TEMP", "TMP"] {
-        if let Some(value) = std::env::var_os(name) {
-            command.env(name, value);
-        }
-    }
-    command.env("RO_CORE_PROFILE", "local");
-    command.env("RO_CORE_BIND_HOST", "127.0.0.1");
-    command.env("RO_CORE_BIND_PORT", "0");
-    command.env("RO_CORE_LOG_LEVEL", "INFO");
-    #[cfg(feature = "integration-harness")]
-    for (name, value) in &config.integration_environment {
-        command.env(name, value);
-    }
+    configure_core_child_environment(&mut command, config)
+        .map_err(|code| (RuntimeState::Crashed, code))?;
     configure_hidden_process(&mut command);
 
     let mut child = command
@@ -1305,9 +1518,19 @@ fn launch(
                 }
             }
         };
-        let handshake = validate_handshake(&bytes, pid)?;
-        wait_until_ready(&handshake, &capability_token, &mut child, &shared, attempt)?;
-        verify_core_api_contract(handshake.port, &capability_token)?;
+        let handshake_result = validate_handshake(&bytes, pid);
+        #[cfg(feature = "integration-harness")]
+        fixture_startup_stage("handshake", &handshake_result);
+        let handshake = handshake_result?;
+        let ready_result =
+            wait_until_ready(&handshake, &capability_token, &mut child, &shared, attempt);
+        #[cfg(feature = "integration-harness")]
+        fixture_startup_stage("readyz", &ready_result);
+        ready_result?;
+        let contract_result = verify_core_api_contract(handshake.port, &capability_token);
+        #[cfg(feature = "integration-harness")]
+        fixture_startup_stage("runtime-version", &contract_result);
+        contract_result?;
         ensure_attempt_active(&shared, attempt)?;
         Ok(handshake.port)
     })();
@@ -1327,6 +1550,14 @@ fn launch(
         cancellation: Arc::new(AtomicBool::new(false)),
         port,
     })
+}
+
+#[cfg(feature = "integration-harness")]
+fn fixture_startup_stage<T>(stage: &'static str, result: &Result<T, (RuntimeState, &'static str)>) {
+    match result {
+        Ok(_) => eprintln!("RO-SUPERVISOR-PROBE stage={stage} result=pass"),
+        Err((_, code)) => eprintln!("RO-SUPERVISOR-PROBE stage={stage} result=fail code={code}"),
+    }
 }
 
 fn append_hex(bytes: &[u8], target: &mut Vec<u8>) {
@@ -3313,6 +3544,8 @@ fn authenticated_document_stage(
         &authorized,
     )?;
     write_document_bytes(&mut stream, header, deadline, &authorized)?;
+    #[cfg(feature = "integration-harness")]
+    crate::directory_integration_harness::observe_document_transport_phase("header-sent", None);
     let source_length = source.byte_length();
     let mut written_source_bytes = 0_u64;
     let seal = source.transfer(
@@ -3346,6 +3579,11 @@ fn authenticated_document_stage(
         }
         Err(error) => return Err(error),
     };
+    #[cfg(feature = "integration-harness")]
+    crate::directory_integration_harness::observe_document_transport_phase(
+        "source-transfer-complete",
+        None,
+    );
     if !authorized() {
         return Err("RO-CORE-API-CANCELLED");
     }
@@ -3364,15 +3602,41 @@ fn read_document_response(
     let mut chunk = [0_u8; 8192];
     loop {
         if !authorized() {
+            #[cfg(feature = "integration-harness")]
+            crate::directory_integration_harness::observe_document_transport_phase(
+                "response-read-error",
+                Some("cancelled"),
+            );
             return Err("RO-CORE-API-CANCELLED");
         }
         if Instant::now() >= deadline {
+            #[cfg(feature = "integration-harness")]
+            crate::directory_integration_harness::observe_document_transport_phase(
+                "response-read-error",
+                Some("timeout"),
+            );
             return Err("RO-DOCUMENT-STAGE-TIMEOUT");
         }
         match stream.read(&mut chunk) {
-            Ok(0) => break,
+            Ok(0) => {
+                #[cfg(feature = "integration-harness")]
+                crate::directory_integration_harness::observe_document_transport_phase(
+                    "response-read-end",
+                    Some(if response.is_empty() {
+                        "eof-empty"
+                    } else {
+                        "eof-with-data"
+                    }),
+                );
+                break;
+            }
             Ok(count) => {
                 if response.len().saturating_add(count) > 131_072 {
+                    #[cfg(feature = "integration-harness")]
+                    crate::directory_integration_harness::observe_document_transport_phase(
+                        "response-read-error",
+                        Some("oversize"),
+                    );
                     return Err("RO-DOCUMENT-STAGE-RESPONSE-INVALID");
                 }
                 response.extend_from_slice(&chunk[..count]);
@@ -3384,11 +3648,118 @@ fn read_document_response(
                         | std::io::ErrorKind::TimedOut
                         | std::io::ErrorKind::Interrupted
                 ) => {}
-            Err(_) if !response.is_empty() => break,
-            Err(_) => return Err("RO-DOCUMENT-STAGE-RESPONSE-INVALID"),
+            Err(_) if !response.is_empty() => {
+                #[cfg(feature = "integration-harness")]
+                crate::directory_integration_harness::observe_document_transport_phase(
+                    "response-read-end",
+                    Some("io-after-data"),
+                );
+                break;
+            }
+            Err(_) => {
+                #[cfg(feature = "integration-harness")]
+                crate::directory_integration_harness::observe_document_transport_phase(
+                    "response-read-error",
+                    Some("io-empty"),
+                );
+                return Err("RO-DOCUMENT-STAGE-RESPONSE-INVALID");
+            }
         }
     }
-    parse_api_response_with_limit(&response, trace_id, 65_536)
+    let parsed = parse_api_response_with_limit(&response, trace_id, 65_536);
+    #[cfg(feature = "integration-harness")]
+    if parsed.is_err() {
+        crate::directory_integration_harness::observe_document_transport_phase(
+            "response-http-class",
+            Some(document_response_http_class(&response)),
+        );
+        crate::directory_integration_harness::observe_document_transport_phase(
+            "response-parse-error",
+            Some(classify_document_response_parse_error(&response, trace_id)),
+        );
+    }
+    parsed
+}
+
+#[cfg(all(windows, feature = "integration-harness"))]
+fn document_response_http_class(response: &[u8]) -> &'static str {
+    let Some(line_end) = response.windows(2).position(|window| window == b"\r\n") else {
+        return "invalid";
+    };
+    let Ok(line) = std::str::from_utf8(&response[..line_end]) else {
+        return "invalid";
+    };
+    let Some(status) = line
+        .strip_prefix("HTTP/1.1 ")
+        .and_then(|rest| rest.get(..3))
+    else {
+        return "invalid";
+    };
+    if status.len() != 3 || !status.bytes().all(|byte| byte.is_ascii_digit()) {
+        return "invalid";
+    }
+    match status.as_bytes()[0] {
+        b'2' => "2xx",
+        b'3' => "3xx",
+        b'4' => "4xx",
+        b'5' => "5xx",
+        _ => "invalid",
+    }
+}
+
+/// Test-only structural diagnosis of a failed HTTP response. This returns one
+/// fixed code and never records response headers, body, trace, or source data.
+#[cfg(all(windows, feature = "integration-harness"))]
+fn classify_document_response_parse_error(response: &[u8], expected_trace: &str) -> &'static str {
+    let Some(split) = response.windows(4).position(|window| window == b"\r\n\r\n") else {
+        return "head-incomplete";
+    };
+    let Ok(head) = std::str::from_utf8(&response[..split]) else {
+        return "head-decode";
+    };
+    let mut lines = head.split("\r\n");
+    let Some(status) = lines.next() else {
+        return "status-invalid";
+    };
+    if !status.starts_with("HTTP/1.1 ") {
+        return "status-invalid";
+    }
+    let mut trace = None;
+    let mut length = None;
+    let mut chunked = false;
+    for line in lines {
+        let Some((name, value)) = line.split_once(':') else {
+            return "other-invalid";
+        };
+        let value = value.trim();
+        if name.eq_ignore_ascii_case("x-trace-id") {
+            trace = Some(value);
+        } else if name.eq_ignore_ascii_case("content-length") {
+            length = value.parse::<usize>().ok();
+        } else if name.eq_ignore_ascii_case("transfer-encoding") {
+            chunked = value.eq_ignore_ascii_case("chunked");
+        }
+    }
+    match trace {
+        None => return "trace-missing",
+        Some(value) if value != expected_trace => return "trace-mismatch",
+        Some(_) => {}
+    }
+    let body = &response[split + 4..];
+    let body = if chunked {
+        let Ok(decoded) = decode_chunked(body, 65_536) else {
+            return "framing-invalid";
+        };
+        decoded
+    } else if length == Some(body.len()) {
+        body.to_vec()
+    } else {
+        return "framing-invalid";
+    };
+    if std::str::from_utf8(&body).is_err() {
+        return "body-decode";
+    }
+    "other-invalid"
 }
 
 #[cfg(test)]
@@ -3985,6 +4356,61 @@ impl ProcessTreeContainment {
 #[cfg(test)]
 mod tests {
     use super::{CoreApiResponse, ImportProjectSelection};
+
+    #[cfg(windows)]
+    #[test]
+    fn supervised_core_uses_os_local_app_data_after_clearing_ambient_and_fixture_values() {
+        use std::ffi::OsStr;
+        use std::path::PathBuf;
+        use std::process::Command;
+
+        let expected = super::trusted_local_app_data().unwrap();
+        let mut command = Command::new("unused");
+        command
+            .env("LocalAppData", "C:\\spoofed-local-app-data")
+            .env("RO_UNTRUSTED_AMBIENT", "should-not-cross");
+        let config = super::SupervisorConfig {
+            executable: PathBuf::from("unused"),
+            working_directory: PathBuf::from("unused"),
+            #[cfg(feature = "integration-harness")]
+            integration_arguments: Vec::new(),
+            #[cfg(feature = "integration-harness")]
+            integration_environment: vec![(
+                "LoCaLaPpDaTa".into(),
+                "C:\\spoofed-fixture-local-app-data".into(),
+            )],
+        };
+        super::configure_core_child_environment(&mut command, &config).unwrap();
+        let env = command.get_envs().collect::<Vec<_>>();
+        assert_eq!(
+            env.iter()
+                .find(|(name, _)| name.eq_ignore_ascii_case(OsStr::new("LOCALAPPDATA")))
+                .and_then(|(_, value)| *value),
+            Some(expected.as_os_str()),
+        );
+        assert!(
+            !env.iter()
+                .any(|(name, _)| name == &OsStr::new("RO_UNTRUSTED_AMBIENT"))
+        );
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn supervised_core_denies_missing_or_redirected_local_app_data() {
+        use std::path::Path;
+
+        for invalid in [
+            Path::new("relative-local-app-data"),
+            Path::new("C:\\missing-local-app-data-for-supervisor-test"),
+            Path::new("\\\\server\\share\\local-app-data"),
+        ] {
+            assert_eq!(
+                super::validate_local_app_data_path(invalid),
+                Err("RO-CORE-LOCAL-APP-DATA-UNAVAILABLE"),
+            );
+        }
+    }
+
     fn import_project_response(root: &str, project_id: &str) -> CoreApiResponse {
         CoreApiResponse {
             status: 200,
@@ -4005,8 +4431,14 @@ mod tests {
         let first = selected.changing().unwrap();
         selected.complete(first, &import_project_response(root, project));
         assert!(selected.matches(first, root, project));
+        assert_eq!(selected.selected_root_for(project), Some(root));
+        assert_eq!(
+            selected.selected_root_for("01900000-0000-7000-8000-000000000002"),
+            None
+        );
         let second = selected.changing().unwrap();
         assert!(!selected.matches(first, root, project));
+        assert_eq!(selected.selected_root_for(project), None);
         selected.complete(first, &import_project_response(root, project));
         assert!(!selected.matches(second, root, project));
         selected.complete(second, &import_project_response(root, project));
@@ -4058,6 +4490,7 @@ mod tests {
             "/native/document-attachments/candidate",
             "/native/document-attachments/cancel",
             "/native/document-attachments/commit",
+            "/native/document-attachments/status",
         ] {
             assert!(
                 super::validate_api_request(&super::CoreApiRequest {
@@ -4268,6 +4701,7 @@ mod tests {
             crate::import_source::HeldImportSource::open_document_selected(&document_path).unwrap();
         let selection = super::DocumentStageSelection {
             session_id: "a".repeat(32),
+            operation_id: "01900000-0000-7000-8000-000000000008".into(),
             declared_media_type: Some("text/plain".into()),
             source_assertion_revision_id: "01900000-0000-7000-8000-000000000002".into(),
             work_id: "01900000-0000-7000-8000-000000000003".into(),
@@ -6128,6 +6562,72 @@ mod tests {
         std::fs::remove_dir_all(&root).unwrap();
     }
 
+    #[cfg(all(windows, feature = "integration-harness"))]
+    #[test]
+    fn tiny_document_transport_denies_uncorrelated_core_error_without_exposing_reply() {
+        use std::io::{Read, Write};
+        let root = dunce::canonicalize(
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../../artifacts/tmp"),
+        )
+        .unwrap()
+        .join(format!(
+            "ro-tiny-document-wire-{}",
+            crate::application_sign_in_policy::secure_random_hex::<16>().unwrap()
+        ));
+        std::fs::create_dir(&root).unwrap();
+        let path = root.join("synthetic.txt");
+        std::fs::write(&path, b"x").unwrap();
+        let source = crate::import_source::HeldImportSource::open_document_selected(&path).unwrap();
+        let listener = std::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let token = super::CapabilityToken::generate().unwrap();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(std::time::Duration::from_secs(5)))
+                .unwrap();
+            let mut headers = Vec::new();
+            while !headers.ends_with(b"\r\n\r\n") {
+                let mut byte = [0];
+                stream.read_exact(&mut byte).unwrap();
+                headers.push(byte[0]);
+                assert!(headers.len() < 8192);
+            }
+            let headers = String::from_utf8(headers).unwrap();
+            let length: usize = headers
+                .lines()
+                .find_map(|line| line.strip_prefix("Content-Length: "))
+                .unwrap()
+                .parse()
+                .unwrap();
+            let mut body = vec![0; length];
+            stream.read_exact(&mut body).unwrap();
+            assert_eq!(&body[4..6], b"{}", "tiny stage header stays framed");
+            assert_eq!(&body[6..], b"x", "tiny source bytes stay native-only");
+            let response = b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\nContent-Length: 21\r\n\r\nInternal Server Error";
+            stream.write_all(response).unwrap();
+        });
+        assert_eq!(
+            super::authenticated_document_stage(port, &token, b"{}", source, || true).unwrap_err(),
+            "RO-CORE-API-RESPONSE-INVALID"
+        );
+        assert_eq!(
+            super::classify_document_response_parse_error(
+                b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\nContent-Length: 21\r\n\r\nInternal Server Error",
+                &"a".repeat(32),
+            ),
+            "trace-missing"
+        );
+        assert_eq!(
+            super::document_response_http_class(
+                b"HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\n"
+            ),
+            "5xx"
+        );
+        server.join().unwrap();
+        std::fs::remove_dir_all(&root).unwrap();
+    }
+
     #[cfg(windows)]
     #[test]
     fn document_transport_closes_owned_socket_when_cancelled_after_upload() {
@@ -6256,6 +6756,7 @@ mod tests {
         let selection = crate::document_runtime::DocumentSelection {
             root: "C:/Synthetic/project".into(),
             project_id: "01900000-0000-7000-8000-000000000001".into(),
+            operation_id: "01900000-0000-7000-8000-000000000008".into(),
             declared_media_type: None,
             source_assertion_revision_id: "01900000-0000-7000-8000-000000000002".into(),
             work_id: "01900000-0000-7000-8000-000000000003".into(),
@@ -6307,6 +6808,7 @@ mod tests {
         let selected = |header: &serde_json::Value| crate::document_runtime::DocumentSelection {
             root: header["root"].as_str().unwrap().to_owned(),
             project_id: header["projectId"].as_str().unwrap().to_owned(),
+            operation_id: header["operationId"].as_str().unwrap().to_owned(),
             declared_media_type: Some("text/plain".into()),
             source_assertion_revision_id: header["sourceAssertionRevisionId"]
                 .as_str()

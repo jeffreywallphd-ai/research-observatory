@@ -6,6 +6,10 @@ mod connector_configuration;
 mod connector_configuration_dialog;
 pub mod directory_picker;
 #[cfg(windows)]
+mod document_attachment;
+#[cfg(windows)]
+mod document_drop;
+#[cfg(windows)]
 mod document_runtime;
 #[cfg(windows)]
 mod import_report;
@@ -492,6 +496,23 @@ async fn choose_project_directory(
     let Ok(ticket) = lock.begin_protected_action() else {
         return Ok(DirectoryOutcome::Cancelled);
     };
+    #[cfg(all(feature = "integration-harness", windows))]
+    if let Some(fixture) = window.try_state::<directory_integration_harness::Fixture>()
+        && fixture.document_drop_mode()
+        && request.purpose == directory_picker::DirectoryPurpose::OpenProject
+    {
+        let result = fixture
+            .document_drop_project()
+            .and_then(|path| {
+                (lock.finish_protected_action(ticket).is_ok()
+                    && directory_window_handle(&window) == Some(owner))
+                .then_some(DirectoryOutcome::Selected { path })
+                .ok_or("probe-attachment-project-selection-denied")
+            })
+            .unwrap_or(DirectoryOutcome::Unavailable);
+        directory_integration_harness::observe_result(&result);
+        return Ok(result);
+    }
     let manager = picker.inner().clone();
     let checking_manager = manager.clone();
     let checking_lock = lock.inner().clone();
@@ -895,12 +916,26 @@ pub async fn dispatch_core_api_request(
 pub fn run() {
     application_builder()
         .setup(|app| {
+            let window_config = app
+                .config()
+                .app
+                .windows
+                .iter()
+                .find(|window| window.label == "main")
+                .cloned()
+                .ok_or_else(|| std::io::Error::other("RO-MAIN-WINDOW-CONFIG-UNAVAILABLE"))?;
             #[cfg(windows)]
-            main_menu::install(
-                &app.get_webview_window("main")
-                    .ok_or_else(|| std::io::Error::other("RO-MENU-MAIN-UNAVAILABLE"))?,
-            )
-            .map_err(std::io::Error::other)?;
+            let main = tauri::WebviewWindowBuilder::from_config(app, &window_config)?
+                .visible(false)
+                .drag_and_drop(false)
+                .disable_drag_drop_handler()
+                .build()?;
+            #[cfg(not(windows))]
+            let main = tauri::WebviewWindowBuilder::from_config(app, &window_config)?
+                .visible(false)
+                .build()?;
+            #[cfg(windows)]
+            main_menu::install(&main).map_err(std::io::Error::other)?;
             let application_data = app
                 .path()
                 .app_local_data_dir()
@@ -910,13 +945,65 @@ pub fn run() {
                 runtime_config(app),
                 &application_data,
                 DirectoryPickerManager::default(),
-            )
+            )?;
+            #[cfg(windows)]
+            {
+                let manager = app
+                    .state::<document_attachment::DocumentAttachmentManager>()
+                    .inner()
+                    .clone();
+                document_drop::install(&main, &manager).map_err(std::io::Error::other)?;
+                manager.set_installed(true);
+                main.show()?;
+            }
+            #[cfg(not(windows))]
+            main.show()?;
+            Ok(())
         })
         .run(tauri::generate_context!())
         .expect("Research Observatory desktop runtime failed");
 }
 
 fn application_builder() -> tauri::Builder<tauri::Wry> {
+    #[cfg(windows)]
+    let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
+        configure_scholarly_source,
+        open_scholarly_source_terms,
+        cancel_scholarly_source_configuration,
+        import_selected_file,
+        select_connector_package,
+        cancel_connector_package_selection,
+        connector_plugin_action,
+        trust_connector_publisher,
+        cancel_import_file,
+        save_import_report,
+        choose_project_directory,
+        default_project_parent,
+        core_runtime_start,
+        core_runtime_status,
+        core_runtime_retry,
+        core_runtime_stop,
+        core_runtime_diagnostics,
+        core_api_request,
+        support_bundle_preview,
+        support_bundle_export,
+        application_lock_status,
+        application_lock_activity,
+        application_lock_audit,
+        application_lock_hello_availability,
+        application_lock_configure,
+        application_lock_now,
+        application_lock_unlock,
+        application_sign_in_transition_prepare,
+        application_sign_in_password_recovery_prepare,
+        application_sign_in_transition_commit,
+        document_attachment::document_attachment_capabilities,
+        document_attachment::document_attachment_begin,
+        document_attachment::document_attachment_cancel,
+        document_attachment::document_attachment_commit,
+        document_attachment::document_attachment_status
+    ];
+    #[cfg(not(windows))]
     let handler: fn(tauri::ipc::Invoke<tauri::Wry>) -> bool = tauri::generate_handler![
         configure_scholarly_source,
         open_scholarly_source_terms,
@@ -995,6 +1082,13 @@ fn application_builder() -> tauri::Builder<tauri::Wry> {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event
                 && window.label() == "main"
             {
+                #[cfg(windows)]
+                {
+                    window
+                        .state::<document_attachment::DocumentAttachmentManager>()
+                        .set_installed(false);
+                    document_drop::uninstall();
+                }
                 let picker = window.state::<DirectoryPickerManager>().inner().clone();
                 api.prevent_close();
                 if matches!(picker.begin_close(), CloseDisposition::AlreadyClosing) {
@@ -1043,6 +1137,8 @@ fn setup_runtime(
     app.manage(import_runtime::ImportManager::default());
     app.manage(plugin_intake::PluginIntakeManager::default());
     app.manage(connector_configuration::ConfigurationManager::default());
+    #[cfg(windows)]
+    app.manage(document_attachment::DocumentAttachmentManager::default());
     if lock.is_unlocked() {
         let startup = supervisor.clone();
         tauri::async_runtime::spawn_blocking(move || startup.start());
@@ -1440,6 +1536,175 @@ pub mod directory_integration_harness {
         MainClose,
         Lifecycle,
         LifecycleResume,
+        DocumentDrop,
+        DocumentDropResume,
+    }
+
+    #[derive(Clone, serde::Deserialize, serde::Serialize)]
+    #[serde(rename_all = "camelCase", deny_unknown_fields)]
+    struct DocumentDropSeed {
+        schema_version: String,
+        project_id: String,
+        work_id: String,
+        work_revision_id: String,
+        version_id: String,
+        version_revision_id: String,
+        source_assertion_revision_id: String,
+        synthetic_source_sha256: String,
+        protected_database: bool,
+    }
+
+    const DOCUMENT_DROP_SEED_RECEIPT: &str = "t01-document-seed.json";
+    const DOCUMENT_DROP_COMMIT_RECEIPT: &str = "t01-document-commit.json";
+
+    #[derive(Clone, serde::Deserialize, serde::Serialize, Eq, PartialEq)]
+    #[serde(rename_all = "camelCase", deny_unknown_fields)]
+    struct DocumentDropSelection {
+        project_id: String,
+        work_id: String,
+        work_revision_id: String,
+        version_id: String,
+        version_revision_id: String,
+        source_assertion_revision_id: String,
+    }
+
+    impl From<&DocumentDropSeed> for DocumentDropSelection {
+        fn from(seed: &DocumentDropSeed) -> Self {
+            Self {
+                project_id: seed.project_id.clone(),
+                work_id: seed.work_id.clone(),
+                work_revision_id: seed.work_revision_id.clone(),
+                version_id: seed.version_id.clone(),
+                version_revision_id: seed.version_revision_id.clone(),
+                source_assertion_revision_id: seed.source_assertion_revision_id.clone(),
+            }
+        }
+    }
+
+    #[derive(Clone, serde::Deserialize, serde::Serialize)]
+    #[serde(rename_all = "camelCase", deny_unknown_fields)]
+    struct DocumentDropCommitReceipt {
+        schema_version: String,
+        selection: DocumentDropSelection,
+        operation_id: String,
+        command_id: String,
+        candidate_id: String,
+        attachment_id: String,
+        document_revision_id: String,
+    }
+
+    impl DocumentDropCommitReceipt {
+        fn valid_for(&self, seed: &DocumentDropSeed) -> bool {
+            self.schema_version == "1.0"
+                && self.selection == DocumentDropSelection::from(seed)
+                && [
+                    &self.operation_id,
+                    &self.command_id,
+                    &self.candidate_id,
+                    &self.attachment_id,
+                    &self.document_revision_id,
+                ]
+                .into_iter()
+                .all(|id| crate::supervisor::canonical_uuid_v7(id))
+        }
+    }
+
+    fn validate_document_drop_seed(
+        fixture: &Fixture,
+        seed: &DocumentDropSeed,
+    ) -> Result<(), &'static str> {
+        if seed.schema_version != "1.0"
+            || !seed.protected_database
+            || !super::supervisor::canonical_project_id(&seed.project_id)
+            || [
+                &seed.work_id,
+                &seed.work_revision_id,
+                &seed.version_id,
+                &seed.version_revision_id,
+                &seed.source_assertion_revision_id,
+            ]
+            .into_iter()
+            .any(|id| !super::supervisor::canonical_uuid_v7(id))
+            || seed.synthetic_source_sha256.len() != 64
+            || !seed
+                .synthetic_source_sha256
+                .bytes()
+                .all(|byte| byte.is_ascii_hexdigit())
+            || fixture.document_drop_project().is_err()
+        {
+            return Err("probe-attachment-seed-invalid");
+        }
+        Ok(())
+    }
+
+    fn write_document_receipt<T: serde::Serialize>(
+        fixture: &Fixture,
+        name: &str,
+        receipt: &T,
+    ) -> Result<(), &'static str> {
+        fixture.revalidate()?;
+        let bytes = serde_json::to_vec(receipt).map_err(|_| "probe-attachment-receipt-invalid")?;
+        if bytes.len() > 4096 {
+            return Err("probe-attachment-receipt-invalid");
+        }
+        let mut file = std::fs::File::create_new(fixture.root.join(name))
+            .map_err(|_| "probe-attachment-receipt-create-denied")?;
+        file.write_all(&bytes)
+            .and_then(|_| file.sync_all())
+            .map_err(|_| "probe-attachment-receipt-create-denied")?;
+        Ok(())
+    }
+
+    fn read_document_receipt<T: serde::de::DeserializeOwned>(
+        fixture: &Fixture,
+        name: &str,
+    ) -> Result<T, &'static str> {
+        fixture.revalidate()?;
+        let file = std::fs::OpenOptions::new()
+            .read(true)
+            .share_mode(0x1)
+            .custom_flags(0x00200000)
+            .open(fixture.root.join(name))
+            .map_err(|_| "probe-attachment-receipt-unavailable")?;
+        let mut information = BY_HANDLE_FILE_INFORMATION::default();
+        if unsafe { GetFileInformationByHandle(file.as_raw_handle(), &mut information) } == 0
+            || information.dwFileAttributes & (0x10 | 0x400) != 0
+            || information.nNumberOfLinks != 1
+            || information.nFileSizeHigh != 0
+            || information.nFileSizeLow > 4096
+        {
+            return Err("probe-attachment-receipt-invalid");
+        }
+        let mut bytes = Vec::new();
+        (&file)
+            .take(4097)
+            .read_to_end(&mut bytes)
+            .map_err(|_| "probe-attachment-receipt-unavailable")?;
+        serde_json::from_slice(&bytes).map_err(|_| "probe-attachment-receipt-invalid")
+    }
+
+    fn seed_document_drop(fixture: &Fixture) -> Result<DocumentDropSeed, &'static str> {
+        if !fixture.document_drop {
+            return Err("probe-attachment-mode-unavailable");
+        }
+        fixture.revalidate()?;
+        let repo = repository()?;
+        let result = std::process::Command::new(repo.join(".venv/Scripts/python.exe"))
+            .arg("-I")
+            .arg(repo.join("tests/desktop/tools/seed_document_drop_fixture.py"))
+            .arg("--fixture-root")
+            .arg(&fixture.root)
+            .env("PYTHONDONTWRITEBYTECODE", "1")
+            .creation_flags(0x08000000)
+            .output()
+            .map_err(|_| "probe-attachment-seed-unavailable")?;
+        if !result.status.success() || result.stdout.len() > 4096 {
+            return Err("probe-attachment-seed-failed");
+        }
+        let seed: DocumentDropSeed =
+            serde_json::from_slice(&result.stdout).map_err(|_| "probe-attachment-seed-invalid")?;
+        validate_document_drop_seed(fixture, &seed)?;
+        Ok(seed)
     }
 
     impl Mode {
@@ -1450,6 +1715,8 @@ pub mod directory_integration_harness {
                 "main-close" => Some(Self::MainClose),
                 "lifecycle" => Some(Self::Lifecycle),
                 "lifecycle-resume" => Some(Self::LifecycleResume),
+                "document-drop" => Some(Self::DocumentDrop),
+                "document-drop-resume" => Some(Self::DocumentDropResume),
                 _ => None,
             }
         }
@@ -1460,11 +1727,17 @@ pub mod directory_integration_harness {
                 Self::MainClose => "main-close",
                 Self::Lifecycle => "lifecycle",
                 Self::LifecycleResume => "lifecycle-resume",
+                Self::DocumentDrop => "document-drop",
+                Self::DocumentDropResume => "document-drop-resume",
             }
         }
 
         fn is_lifecycle(self) -> bool {
             matches!(self, Self::Lifecycle | Self::LifecycleResume)
+        }
+
+        fn is_document_attachment(self) -> bool {
+            matches!(self, Self::DocumentDrop | Self::DocumentDropResume)
         }
     }
 
@@ -1543,6 +1816,922 @@ pub mod directory_integration_harness {
   } else { mount(); }
 })();
 "#;
+
+    fn document_drop_ui_script(seed: &DocumentDropSeed) -> String {
+        let project = serde_json::to_string(&seed.project_id).expect("fixture project ID");
+        let work = serde_json::to_string(&seed.work_id).expect("fixture Work ID");
+        let source =
+            serde_json::to_string(&seed.source_assertion_revision_id).expect("fixture source ID");
+        format!(
+            r#"
+(() => {{
+  const projectId = {project}, workId = {work}, sourceId = {source};
+  const data = {{ phase: 0, ready: false, error: null, html5: {{ dragEnter: 0, dragOver: 0, drop: 0,
+    exposedFiles: 0, exposedFileItems: 0 }} }};
+  Object.defineProperty(window, '__RO_DROP_PROBE', {{ value: data, configurable: false }});
+  for (const [name, field] of [['dragenter', 'dragEnter'], ['dragover', 'dragOver'], ['drop', 'drop']]) {{
+    window.addEventListener(name, (event) => {{
+      data.html5[field]++;
+      try {{ data.html5.exposedFiles += event.dataTransfer?.files?.length ?? 0;
+        data.html5.exposedFileItems += Array.from(event.dataTransfer?.items ?? []).filter((item) => item.kind === 'file').length;
+      }} catch (_) {{ data.error = 'drag-observation-unavailable'; }}
+    }}, true);
+  }}
+  const button = (label) => Array.from(document.querySelectorAll('button')).find((item) =>
+    item.textContent?.trim() === label && !item.disabled);
+  const begin = performance.now();
+  const timer = setInterval(() => {{
+    try {{
+      if (data.ready || data.error) {{ clearInterval(timer); return; }}
+      if (performance.now() - begin > 90000) {{ data.error = 'ui-sequence-timeout'; clearInterval(timer); return; }}
+      if (data.phase === 0) {{
+        const tools = document.querySelector('details[data-all-tools]'); if (tools) tools.open = true;
+        const projects = document.querySelector('button[aria-label="Local projects"]');
+        if (projects && !projects.disabled) {{ projects.click(); data.phase = 1; }}
+      }} else if (data.phase === 1) {{
+        const choose = document.querySelector('#project-root-choose');
+        if (choose && !choose.disabled) {{ choose.click(); data.phase = 2; }}
+      }} else if (data.phase === 2) {{
+        const form = document.querySelector('#project-root')?.closest('form');
+        const open = form?.querySelector('button[type="submit"]');
+        if (open && !open.disabled) {{ open.click(); data.phase = 3; }}
+      }} else if (data.phase === 3) {{
+        if (document.querySelector(`[data-current-project="${{projectId}}"]`)) {{
+          const imports = document.querySelector('button[aria-label="Ingestion & Reconciliation"]');
+          if (imports && !imports.disabled) {{ imports.click(); data.phase = 4; }}
+        }}
+      }} else if (data.phase === 4) {{
+        const versions = button('Open Work versions');
+        if (versions) {{ versions.click(); data.phase = 5; }}
+      }} else if (data.phase === 5) {{
+        const label = Array.from(document.querySelectorAll('label')).find((item) =>
+          item.textContent?.includes(`Select Work ${{workId}}`));
+        const box = label?.querySelector('input[type="checkbox"]');
+        if (box && !box.checked) box.click();
+        const review = button('Review selected Work versions');
+        if (box?.checked && review) {{ review.click(); data.phase = 6; }}
+      }} else if (data.phase === 6) {{
+        const attach = button('Attach full text to this version');
+        if (attach) {{ attach.click(); data.phase = 7; }}
+      }} else if (data.phase === 7) {{
+        const select = document.querySelector('#attachment-source');
+        if (select && Array.from(select.options).some((item) => item.value === sourceId)) {{
+          select.value = sourceId;
+          select.dispatchEvent(new Event('change', {{ bubbles: true }}));
+          data.phase = 8;
+        }}
+      }} else if (data.phase === 8) {{
+        const zone = document.querySelector('[data-document-native-drop-target="true"]');
+        if (zone) {{
+          const rect = zone.getBoundingClientRect();
+          const x = Math.max(4, Math.min(innerWidth - 4, rect.left + rect.width / 2));
+          const y = Math.max(4, Math.min(innerHeight - 4, rect.top + Math.min(12, rect.height / 4)));
+          if (rect.width > 0 && rect.height > 0 &&
+              document.elementFromPoint(x, y)?.closest('[data-document-native-drop-target="true"]') === zone) {{
+            data.ready = true; clearInterval(timer);
+          }}
+        }}
+      }}
+    }} catch (_) {{ data.error = 'ui-sequence-error'; clearInterval(timer); }}
+  }}, 100);
+}})();
+"#
+        )
+    }
+
+    fn document_picker_action_script(seed: &DocumentDropSeed) -> String {
+        let source = serde_json::to_string(&seed.source_assertion_revision_id)
+            .expect("fixture source assertion ID");
+        format!(
+            r#"
+(() => {{
+  const sourceId = {source};
+  const probe = window.__RO_DROP_PROBE;
+  if (!probe) return 'observer-unavailable';
+  const pane = () => document.querySelector('section[aria-label="Selected-version attachment"]');
+  const exactButton = (root, text) => {{
+    const matches = Array.from(root?.querySelectorAll('button') ?? []).filter((item) =>
+      item.textContent?.trim() === text && !item.disabled);
+    return matches.length === 1 ? matches[0] : null;
+  }};
+  const clickPicker = () => {{
+    const control = exactButton(pane(), 'Choose local full-text file…');
+    if (!control) return false;
+    control.click(); probe.pickerAction = 'clicked'; return true;
+  }};
+  if (clickPicker()) return 'clicked';
+  if (pane()) return 'control-unavailable';
+  const reopen = exactButton(document, 'Attach full text to this version');
+  if (!reopen) return 'reopen-unavailable';
+  reopen.click(); probe.pickerAction = 'reopening';
+  const deadline = performance.now() + 10000;
+  const timer = setInterval(() => {{
+    if (performance.now() >= deadline) {{ probe.pickerAction = 'reopen-timeout'; clearInterval(timer); return; }}
+    const mounted = pane();
+    const select = mounted?.querySelector('#attachment-source');
+    if (!select) return;
+    if (select.value !== sourceId) {{
+      if (!Array.from(select.options).some((option) => option.value === sourceId)) {{
+        probe.pickerAction = 'source-unavailable'; clearInterval(timer); return;
+      }}
+      select.value = sourceId;
+      select.dispatchEvent(new Event('change', {{ bubbles: true }}));
+      return;
+    }}
+    if (clickPicker()) clearInterval(timer);
+  }}, 75);
+  return 'reopening';
+}})()
+"#
+        )
+    }
+
+    const DOCUMENT_COMMIT_ACTION_SCRIPT: &str = r#"
+(() => {
+  const probe = window.__RO_DROP_PROBE;
+  if (!probe) return 'observer-unavailable';
+  const pane = document.querySelector('section[aria-label="Selected-version attachment"]');
+  if (!pane?.querySelector('section[aria-label="Pending document candidate"]')) return 'candidate-unavailable';
+  probe.commitAction = 'reviewing';
+  const deadline = performance.now() + 10000;
+  const timer = setInterval(() => {
+    if (performance.now() >= deadline) { probe.commitAction = 'control-timeout'; clearInterval(timer); return; }
+    const candidate = document.querySelector('section[aria-label="Selected-version attachment"] section[aria-label="Pending document candidate"]');
+    if (!candidate) { probe.commitAction = 'candidate-lost'; clearInterval(timer); return; }
+    const label = Array.from(candidate.querySelectorAll('label')).find((item) =>
+      item.textContent?.trim() === 'I confirm this file belongs to the selected Work and version shown above.');
+    const check = label?.querySelector('input[type="checkbox"]');
+    if (!check || check.disabled) return;
+    if (!check.checked) { check.click(); return; }
+    const rights = candidate.querySelector('#attachment-rights');
+    if (!rights || rights.disabled || !Array.from(rights.options).some((item) => item.value === 'project-only')) return;
+    if (rights.value !== 'project-only') {
+      rights.value = 'project-only'; rights.dispatchEvent(new Event('change', { bubbles: true })); return;
+    }
+    const buttons = Array.from(candidate.querySelectorAll('button')).filter((item) =>
+      item.textContent?.trim() === 'Attach to selected version' && !item.disabled);
+    if (buttons.length !== 1) return;
+    buttons[0].click(); probe.commitAction = 'clicked'; clearInterval(timer);
+  }, 75);
+  return 'reviewing';
+})()
+"#;
+
+    const DOCUMENT_ACTION_READOUT_SCRIPT: &str = r#"
+(() => {
+  const probe = window.__RO_DROP_PROBE;
+  const allowed = (value, values) => values.includes(value) ? value : null;
+  return { pickerAction: allowed(probe?.pickerAction,
+    ['clicked','reopening','reopen-timeout','source-unavailable']),
+    commitAction: allowed(probe?.commitAction,
+    ['reviewing','clicked','control-timeout','candidate-lost']),
+    candidateVisible: !!document.querySelector('section[aria-label="Selected-version attachment"] section[aria-label="Pending document candidate"]'),
+    paneVisible: !!document.querySelector('section[aria-label="Selected-version attachment"]'),
+    sourceSelected: !!document.querySelector('section[aria-label="Selected-version attachment"] #attachment-source')?.value };
+})()
+"#;
+
+    const DROP_READOUT_SCRIPT: &str = r#"
+(() => {
+  const probe = window.__RO_DROP_PROBE;
+  if (!probe) return { ready: false, phase: -1, error: 'observer-missing', html5: null, geometry: null };
+  const zone = document.querySelector('[data-document-native-drop-target="true"]');
+  let geometry = null;
+  if (probe.ready && zone) {
+    const rect = zone.getBoundingClientRect();
+    const inside = [Math.max(4, Math.min(innerWidth - 4, rect.left + rect.width / 2)),
+      Math.max(4, Math.min(innerHeight - 4, rect.top + Math.min(12, rect.height / 4)))];
+    const insideHit = document.elementFromPoint(inside[0], inside[1]);
+    const corners = [[4, 4], [innerWidth - 4, 4], [4, innerHeight - 4], [innerWidth - 4, innerHeight - 4]];
+    const outside = corners.find(([x, y]) => {
+      const hit = document.elementFromPoint(x, y);
+      return hit && !hit.closest('[data-document-native-drop-target="true"]');
+    });
+    if (outside && rect.width > 0 && rect.height > 0 &&
+        insideHit?.closest('[data-document-native-drop-target="true"]') === zone)
+      geometry = { inside, outside, dpr: window.devicePixelRatio };
+  }
+  return { ready: probe.ready, phase: probe.phase, error: probe.error,
+    html5: { ...probe.html5 }, geometry,
+    controls: {
+      localProjects: !!document.querySelector('button[aria-label="Local projects"]'),
+      projectChoose: !!document.querySelector('#project-root-choose'),
+      projectChooseEnabled: document.querySelector('#project-root-choose')?.disabled === false,
+      projectOpen: !!document.querySelector('#project-root')?.closest('form')?.querySelector('button[type="submit"]'),
+      projectOpenEnabled: document.querySelector('#project-root')?.closest('form')?.querySelector('button[type="submit"]')?.disabled === false,
+      projectRootHasValue: !!document.querySelector('#project-root')?.value,
+      boundaryState: (() => { const value = document.querySelector('[data-local-service-boundary]')?.getAttribute('data-boundary-state');
+        return typeof value === 'string' && /^[a-z-]{1,32}$/.test(value) ? value : null; })(),
+      currentProject: !!document.querySelector('[data-current-project]'),
+      imports: !!document.querySelector('button[aria-label="Ingestion & Reconciliation"]'),
+      workVersions: Array.from(document.querySelectorAll('button')).some((button) => button.textContent?.trim() === 'Open Work versions'),
+      workSelect: !!document.querySelector('label input[type="checkbox"]'),
+      attach: Array.from(document.querySelectorAll('button')).some((button) => button.textContent?.trim() === 'Attach full text to this version'),
+      source: !!document.querySelector('#attachment-source'),
+      zone: !!zone
+    } };
+})()
+"#;
+
+    #[derive(Default)]
+    struct TauriDragCounts {
+        enter: std::sync::atomic::AtomicU64,
+        over: std::sync::atomic::AtomicU64,
+        drop: std::sync::atomic::AtomicU64,
+        leave: std::sync::atomic::AtomicU64,
+    }
+
+    impl TauriDragCounts {
+        fn snapshot(&self) -> Value {
+            use std::sync::atomic::Ordering::Relaxed;
+            json!({"enter":self.enter.load(Relaxed), "over":self.over.load(Relaxed),
+                "drop":self.drop.load(Relaxed), "leave":self.leave.load(Relaxed)})
+        }
+    }
+
+    fn listen_for_tauri_drag(window: &tauri::WebviewWindow) -> std::sync::Arc<TauriDragCounts> {
+        use std::sync::{Arc, atomic::Ordering::Relaxed};
+        use tauri::Listener;
+        let counts = Arc::new(TauriDragCounts::default());
+        for (name, counter) in [
+            ("tauri://drag-enter", &counts.enter),
+            ("tauri://drag-over", &counts.over),
+            ("tauri://drag-drop", &counts.drop),
+            ("tauri://drag-leave", &counts.leave),
+        ] {
+            let counts = Arc::clone(&counts);
+            let which = name;
+            let _ = counter;
+            window.listen(which, move |_| {
+                let selected = match which {
+                    "tauri://drag-enter" => &counts.enter,
+                    "tauri://drag-over" => &counts.over,
+                    "tauri://drag-drop" => &counts.drop,
+                    _ => &counts.leave,
+                };
+                selected.fetch_add(1, Relaxed);
+            });
+        }
+        counts
+    }
+
+    fn safe_document_stage_probe_event(payload: &str) -> Option<Value> {
+        let value: Value = serde_json::from_str(payload).ok()?;
+        let status = value.get("status")?.as_str()?;
+        if !matches!(status, "candidate" | "rejected" | "cancelled") {
+            return None;
+        }
+        let operation = value.get("operationId")?.as_str()?;
+        if !crate::supervisor::canonical_uuid_v7(operation) {
+            return None;
+        }
+        let candidate = value
+            .get("candidate")
+            .and_then(|item| item.get("candidateId"))
+            .and_then(Value::as_str)
+            .filter(|id| crate::supervisor::canonical_uuid_v7(id));
+        if status == "candidate" && candidate.is_none() {
+            return None;
+        }
+        let code = value.get("code").and_then(Value::as_str).filter(|code| {
+            (1..=40).contains(&code.len())
+                && code
+                    .bytes()
+                    .all(|byte| byte.is_ascii_lowercase() || byte == b'-')
+        });
+        Some(
+            json!({"kind":"document-drop-probe-stage-result","status":status,
+            "code":code,"operationId":operation,"candidateId":candidate}),
+        )
+    }
+
+    fn listen_for_document_stage(
+        window: &tauri::WebviewWindow,
+        picker_pending: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    ) {
+        use tauri::Listener;
+        window.listen("document_attachment_result", move |event| {
+            if let Some(safe) = safe_document_stage_probe_event(event.payload()) {
+                if picker_pending.swap(false, std::sync::atomic::Ordering::AcqRel) {
+                    let status = match safe["status"].as_str() {
+                        Some("candidate") => "selected",
+                        Some("cancelled") => "cancelled",
+                        _ => "rejected",
+                    };
+                    emit(json!({"kind":"document-attachment-probe-picker-result",
+                        "status":status,"operationId":safe["operationId"],
+                        "candidateId":safe["candidateId"],"code":safe["code"]}));
+                }
+                emit(safe);
+            }
+        });
+    }
+
+    fn commit_receipt_from_native(
+        fixture: &Fixture,
+        request: &Value,
+        result: &Value,
+    ) -> Result<DocumentDropCommitReceipt, &'static str> {
+        if !fixture.document_drop_mode()
+            || request["schemaVersion"] != "1.0"
+            || request["matchConfirmed"] != true
+            || request["permittedUse"] != "project-only"
+            || result["schemaVersion"] != "1.0"
+            || result["status"] != "attached"
+            || request["operationId"] != result["operationId"]
+            || request["sessionId"] != result["sessionId"]
+            || request["candidateId"] != result["candidateId"]
+            || request["selection"] != result["selection"]
+        {
+            return Err("probe-attachment-commit-identity-invalid");
+        }
+        let seed: DocumentDropSeed = read_document_receipt(fixture, DOCUMENT_DROP_SEED_RECEIPT)?;
+        validate_document_drop_seed(fixture, &seed)?;
+        let selection: DocumentDropSelection = serde_json::from_value(request["selection"].clone())
+            .map_err(|_| "probe-attachment-commit-identity-invalid")?;
+        let field = |value: &Value, name: &str| -> Result<String, &'static str> {
+            value[name]
+                .as_str()
+                .map(str::to_owned)
+                .ok_or("probe-attachment-commit-identity-invalid")
+        };
+        let receipt = DocumentDropCommitReceipt {
+            schema_version: "1.0".into(),
+            selection,
+            operation_id: field(request, "operationId")?,
+            command_id: field(request, "commandId")?,
+            candidate_id: field(request, "candidateId")?,
+            attachment_id: field(result, "attachmentId")?,
+            document_revision_id: field(result, "documentRevisionId")?,
+        };
+        let session = field(request, "sessionId")?;
+        let confirmation = field(request, "confirmationSha256")?;
+        if !receipt.valid_for(&seed)
+            || !lower_hex_exact(&session, 32)
+            || !lower_hex_exact(&confirmation, 64)
+        {
+            return Err("probe-attachment-commit-identity-invalid");
+        }
+        Ok(receipt)
+    }
+
+    fn lower_hex_exact(value: &str, length: usize) -> bool {
+        value.len() == length
+            && value
+                .bytes()
+                .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+    }
+
+    pub(crate) fn observe_document_commit(
+        window: &tauri::WebviewWindow,
+        request: &Value,
+        result: &Value,
+    ) {
+        let Some(fixture) = window.try_state::<Fixture>() else {
+            emit(json!({"kind":"document-attachment-probe-commit",
+                "status":"unverified","code":"fixture-unavailable"}));
+            return;
+        };
+        let Ok(receipt) = commit_receipt_from_native(&fixture, request, result) else {
+            emit(json!({"kind":"document-attachment-probe-commit",
+                "status":"unverified","code":"identity-invalid"}));
+            return;
+        };
+        if write_document_receipt(&fixture, DOCUMENT_DROP_COMMIT_RECEIPT, &receipt).is_err() {
+            emit(json!({"kind":"document-attachment-probe-commit",
+                "status":"unverified","code":"receipt-unavailable"}));
+            return;
+        }
+        emit(
+            json!({"kind":"document-attachment-probe-commit", "status":"attached",
+            "receiptSaved":true,"selectionIds":receipt.selection,
+            "operationId":receipt.operation_id,"commandId":receipt.command_id,
+            "candidateId":receipt.candidate_id,"attachmentId":receipt.attachment_id,
+            "documentRevisionId":receipt.document_revision_id}),
+        );
+    }
+
+    fn safe_document_stage_finish(
+        operation_id: &str,
+        status: &str,
+        code: Option<&str>,
+        candidate_id: Option<&str>,
+        protected_closure_entered: bool,
+        event_emit_succeeded: bool,
+        delivery_error: Option<&str>,
+    ) -> Option<Value> {
+        if !crate::supervisor::canonical_uuid_v7(operation_id) {
+            return None;
+        }
+        let status = if matches!(status, "candidate" | "rejected" | "cancelled") {
+            status
+        } else {
+            "unavailable"
+        };
+        let code = code.filter(|code| {
+            (1..=40).contains(&code.len())
+                && code
+                    .bytes()
+                    .all(|byte| byte.is_ascii_lowercase() || byte == b'-')
+        });
+        let candidate_id = candidate_id.filter(|id| crate::supervisor::canonical_uuid_v7(id));
+        let delivery_code = match delivery_error {
+            None => None,
+            Some("RO-APPLICATION-LOCKED") => Some("lock-denied"),
+            Some("RO-DOCUMENT-SESSION-UNAVAILABLE") => Some("session-denied"),
+            Some("RO-DOCUMENT-OPERATION-UNAVAILABLE") => Some("operation-denied"),
+            Some("RO-DOCUMENT-EVENT-UNAVAILABLE") => Some("event-failed"),
+            Some("RO-DOCUMENT-STATE-UNAVAILABLE") => Some("state-unavailable"),
+            Some(_) => Some("other-denied"),
+        };
+        Some(json!({"kind":"document-drop-probe-stage-finish",
+            "operationId":operation_id,"status":status,"code":code,"candidateId":candidate_id,
+            "protectedClosureEntered":protected_closure_entered,
+            "protectedCommitSucceeded":delivery_error.is_none(),
+            "eventEmitSucceeded":event_emit_succeeded,"deliveryCode":delivery_code}))
+    }
+
+    pub(crate) fn observe_document_stage_finish(
+        operation_id: &str,
+        status: &str,
+        code: Option<&str>,
+        candidate_id: Option<&str>,
+        protected_closure_entered: bool,
+        event_emit_succeeded: bool,
+        delivery_error: Option<&str>,
+    ) {
+        if let Some(safe) = safe_document_stage_finish(
+            operation_id,
+            status,
+            code,
+            candidate_id,
+            protected_closure_entered,
+            event_emit_succeeded,
+            delivery_error,
+        ) {
+            emit(safe);
+        }
+    }
+
+    fn safe_document_transport_phase(phase: &str, code: Option<&str>) -> Option<Value> {
+        if !matches!(
+            phase,
+            "spawn-scheduled"
+                | "body-start"
+                | "header-sent"
+                | "source-transfer-complete"
+                | "response-accepted"
+                | "response-rejected"
+                | "transport-error"
+                | "finish-invoked"
+                | "response-read-end"
+                | "response-read-error"
+                | "response-parse-error"
+                | "response-http-class"
+        ) {
+            return None;
+        }
+        let error = match phase {
+            "transport-error" => Some(match code {
+                Some("RO-CORE-API-CANCELLED") => "cancelled",
+                Some("RO-DOCUMENT-STAGE-INVALID") => "invalid",
+                Some("RO-DOCUMENT-STAGE-EARLY-RESPONSE") => "early-response",
+                Some("RO-DOCUMENT-STAGE-RESPONSE-INVALID") => "response-invalid",
+                Some("RO-DOCUMENT-STAGE-UNAVAILABLE") => "unavailable",
+                Some("RO-DOCUMENT-STAGE-TIMEOUT") => "timeout",
+                Some("RO-CORE-API-RESPONSE-INVALID") => "http-invalid",
+                Some("RO-IMPORT-SOURCE-CANCELLED") => "source-cancelled",
+                Some(_) | None => "other",
+            }),
+            "response-read-end" => match code {
+                Some("eof-empty" | "eof-with-data" | "io-after-data") => code,
+                _ => return None,
+            },
+            "response-read-error" => match code {
+                Some("cancelled" | "timeout" | "io-empty" | "oversize") => code,
+                _ => return None,
+            },
+            "response-parse-error" => match code {
+                Some(
+                    "head-incomplete" | "head-decode" | "status-invalid" | "trace-missing"
+                    | "trace-mismatch" | "framing-invalid" | "body-decode" | "other-invalid",
+                ) => code,
+                _ => return None,
+            },
+            "response-http-class" => match code {
+                Some("2xx" | "3xx" | "4xx" | "5xx" | "invalid") => code,
+                _ => return None,
+            },
+            _ => None,
+        };
+        Some(json!({"kind":"document-drop-probe-transport","phase":phase,"code":error}))
+    }
+
+    pub(crate) fn observe_document_transport_phase(
+        phase: &'static str,
+        code: Option<&'static str>,
+    ) {
+        if let Some(safe) = safe_document_transport_phase(phase, code) {
+            emit(safe);
+        }
+    }
+
+    fn safe_document_drop_decision(
+        reason: &str,
+        cache_age: &str,
+        probe_pending: bool,
+    ) -> Option<Value> {
+        if !matches!(
+            reason,
+            "accepted"
+                | "not-armed"
+                | "point-unavailable"
+                | "cache-lock"
+                | "cache-operation"
+                | "cache-point"
+                | "cache-unknown"
+                | "cache-negative"
+                | "cache-expired"
+                | "source-format"
+                | "source-open"
+                | "stage-admission"
+        ) || !matches!(
+            cache_age,
+            "none" | "fresh" | "aging" | "expired-short" | "expired-long"
+        ) {
+            return None;
+        }
+        Some(
+            json!({"kind":"document-drop-probe-native-decision", "reason":reason,
+            "cacheAge":cache_age,"probePending":probe_pending}),
+        )
+    }
+
+    pub(crate) fn observe_document_drop_decision(
+        reason: &'static str,
+        cache_age: &'static str,
+        probe_pending: bool,
+    ) {
+        if let Some(safe) = safe_document_drop_decision(reason, cache_age, probe_pending) {
+            emit(safe);
+        }
+    }
+
+    fn drop_geometry(window: &tauri::WebviewWindow, readout: &Value) -> Option<(Value, Value)> {
+        let geometry = readout.get("geometry")?;
+        let dpr = geometry.get("dpr")?.as_f64()?;
+        let point = |key: &str| -> Option<(f64, f64)> {
+            let values = geometry.get(key)?.as_array()?;
+            if values.len() != 2 {
+                return None;
+            }
+            Some((values[0].as_f64()?, values[1].as_f64()?))
+        };
+        let inside = crate::document_drop::screen_point(window, point("inside")?, dpr)?;
+        let outside = crate::document_drop::screen_point(window, point("outside")?, dpr)?;
+        Some((
+            json!({"x":inside.0,"y":inside.1}),
+            json!({"x":outside.0,"y":outside.1}),
+        ))
+    }
+
+    fn observe_document_drop(
+        app: AppHandle,
+        seed: DocumentDropSeed,
+        tauri_drag: std::sync::Arc<TauriDragCounts>,
+        picker_pending: std::sync::Arc<std::sync::atomic::AtomicBool>,
+    ) {
+        use std::sync::{
+            Arc,
+            atomic::{AtomicBool, Ordering},
+        };
+        let ready_sent = Arc::new(AtomicBool::new(false));
+        let armed_sent = Arc::new(AtomicBool::new(false));
+        let poll_app = app.clone();
+        let poll_ready = Arc::clone(&ready_sent);
+        let poll_armed = Arc::clone(&armed_sent);
+        let poll_drag = Arc::clone(&tauri_drag);
+        let poll_seed = seed.clone();
+        let progress = Arc::new(std::sync::Mutex::new((None, Instant::now())));
+        std::thread::spawn(move || {
+            let deadline = Instant::now() + Duration::from_secs(150);
+            while Instant::now() < deadline {
+                let Some(window) = poll_app.get_webview_window("main") else {
+                    break;
+                };
+                if !poll_ready.load(Ordering::Acquire) {
+                    let (
+                        callback_window,
+                        callback_ready,
+                        callback_drag,
+                        callback_app,
+                        callback_seed,
+                        callback_progress,
+                    ) = (
+                        window.clone(),
+                        Arc::clone(&poll_ready),
+                        Arc::clone(&poll_drag),
+                        poll_app.clone(),
+                        poll_seed.clone(),
+                        Arc::clone(&progress),
+                    );
+                    let _ = window.eval_with_callback(DROP_READOUT_SCRIPT, move |raw| {
+                        let Ok(readout) = serde_json::from_str::<Value>(&raw) else { return; };
+                        if let Some(phase) = readout["phase"].as_u64()
+                            && let Ok(mut progress) = callback_progress.lock()
+                            && (progress.0 != Some(phase) || progress.1.elapsed() >= Duration::from_secs(5))
+                        {
+                            progress.0 = Some(phase);
+                            progress.1 = Instant::now();
+                            let supervisor = callback_app.state::<RuntimeSupervisor>();
+                            let core = supervisor.status();
+                            let recent_codes: Vec<&str> = supervisor.diagnostics().iter().rev()
+                                .take(8).map(|item| item.code).collect();
+                            emit(json!({"kind":"document-drop-probe-progress", "phase":phase,
+                                "ready":readout["ready"], "error":readout["error"],
+                                "controls":readout["controls"],
+                                "coreState":core.state,"coreDiagnostic":core.diagnostic_reference,
+                                "coreRecentCodes":recent_codes}));
+                        }
+                        if readout["error"].is_string() && readout["error"] != Value::Null {
+                            if !callback_ready.swap(true, Ordering::AcqRel) {
+                                emit(json!({"kind":"document-drop-probe-failure","phase":readout["phase"],
+                                    "code":readout["error"]}));
+                            }
+                            return;
+                        }
+                        if readout["ready"] != true { return; }
+                        let Some((inside, outside)) = drop_geometry(&callback_window, &readout) else { return; };
+                        if callback_ready.swap(true, Ordering::AcqRel) { return; }
+                        emit(json!({"kind":"document-drop-probe-ready",
+                            "ownerHwnd":callback_window.hwnd().ok().map(|hwnd| hwnd.0 as isize),
+                            "insideScreen":inside,"outsideScreen":outside,
+                            "targetClasses":crate::document_drop::target_classes(),
+                            "observationInstalled":true,"armed":false,
+                            "native":crate::document_drop::counts(),"tauri":callback_drag.snapshot(),
+                            "html5":readout["html5"],
+                            "selectionIds":{"projectId":callback_seed.project_id,
+                                "workId":callback_seed.work_id,"workRevisionId":callback_seed.work_revision_id,
+                                "versionId":callback_seed.version_id,"versionRevisionId":callback_seed.version_revision_id,
+                                "sourceAssertionRevisionId":callback_seed.source_assertion_revision_id},
+                            "coreState":callback_app.state::<RuntimeSupervisor>().status().state}));
+                    });
+                }
+                if poll_ready.load(Ordering::Acquire)
+                    && !poll_armed.load(Ordering::Acquire)
+                    && poll_app
+                        .state::<document_attachment::DocumentAttachmentManager>()
+                        .armed_drop()
+                        .is_some()
+                {
+                    poll_armed.store(true, Ordering::Release);
+                    emit(json!({"kind":"document-drop-probe-armed","armed":true,
+                        "native":crate::document_drop::counts(),"tauri":poll_drag.snapshot()}));
+                }
+                std::thread::sleep(Duration::from_millis(100));
+            }
+            if !poll_ready.load(Ordering::Acquire) {
+                emit(json!({"kind":"document-drop-probe-failure","code":"readiness-timeout"}));
+            }
+        });
+
+        std::thread::spawn(move || {
+            use std::io::BufRead;
+            for line in std::io::stdin().lock().lines() {
+                let Ok(line) = line else {
+                    break;
+                };
+                if line.len() > 256 {
+                    continue;
+                }
+                let Ok(command) = serde_json::from_str::<Value>(&line) else {
+                    continue;
+                };
+                let Some(window) = app.get_webview_window("main") else {
+                    break;
+                };
+                match command["action"].as_str() {
+                    Some("arm") => {
+                        let _ = window.eval("(() => { const zone = document.querySelector('[data-document-native-drop-target=\"true\"]'); const button = Array.from(zone?.querySelectorAll('button') ?? []).find((item) => item.textContent?.trim() === 'Arm native file drop' && !item.disabled); button?.click(); })()");
+                    }
+                    Some("observe") => {
+                        let Some(attempt) = command["attempt"].as_str().filter(|value| {
+                            matches!(
+                                *value,
+                                "outside-disarmed" | "inside-disarmed" | "outside-armed" | "inside"
+                            )
+                        }) else {
+                            continue;
+                        };
+                        let (attempt, counts, check_app) =
+                            (attempt.to_owned(), Arc::clone(&tauri_drag), app.clone());
+                        let _ = window.eval_with_callback(DROP_READOUT_SCRIPT, move |raw| {
+                            let readout = serde_json::from_str::<Value>(&raw).unwrap_or(Value::Null);
+                            emit(json!({"kind":"document-drop-probe-observation","attempt":attempt,
+                                "armed":check_app.state::<document_attachment::DocumentAttachmentManager>().armed_drop().is_some(),
+                                "native":crate::document_drop::counts(),"tauri":counts.snapshot(),
+                                "html5":readout["html5"],"uiPhase":readout["phase"],"uiError":readout["error"]}));
+                        });
+                        let _ = window.eval_with_callback(DOCUMENT_ACTION_READOUT_SCRIPT, |raw| {
+                            if let Ok(value) = serde_json::from_str::<Value>(&raw) {
+                                emit(json!({"kind":"document-attachment-probe-action-state",
+                                    "pickerAction":value["pickerAction"],
+                                    "commitAction":value["commitAction"],
+                                    "candidateVisible":value["candidateVisible"],
+                                    "paneVisible":value["paneVisible"],
+                                    "sourceSelected":value["sourceSelected"]}));
+                            }
+                        });
+                    }
+                    Some("choose") => {
+                        picker_pending.store(true, Ordering::Release);
+                        let flag = Arc::clone(&picker_pending);
+                        let script = document_picker_action_script(&seed);
+                        let _ = window.eval_with_callback(&script, move |raw| {
+                            let status = serde_json::from_str::<String>(&raw)
+                                .ok()
+                                .filter(|status| {
+                                    matches!(
+                                        status.as_str(),
+                                        "clicked"
+                                            | "reopening"
+                                            | "control-unavailable"
+                                            | "reopen-unavailable"
+                                            | "observer-unavailable"
+                                    )
+                                })
+                                .unwrap_or_else(|| "eval-unavailable".into());
+                            if !matches!(status.as_str(), "clicked" | "reopening") {
+                                flag.store(false, Ordering::Release);
+                            }
+                            emit(json!({"kind":"document-attachment-probe-picker-action",
+                                "status":status}));
+                        });
+                    }
+                    Some("commit-project-only") => {
+                        let _ = window.eval_with_callback(DOCUMENT_COMMIT_ACTION_SCRIPT, |raw| {
+                            let status = serde_json::from_str::<String>(&raw)
+                                .ok()
+                                .filter(|status| {
+                                    matches!(
+                                        status.as_str(),
+                                        "reviewing"
+                                            | "candidate-unavailable"
+                                            | "observer-unavailable"
+                                    )
+                                })
+                                .unwrap_or_else(|| "eval-unavailable".into());
+                            emit(json!({"kind":"document-attachment-probe-commit-action",
+                                "status":status}));
+                        });
+                    }
+                    Some("close") => {
+                        let _ = window.close();
+                        break;
+                    }
+                    _ => {}
+                }
+            }
+        });
+    }
+
+    fn observe_document_resume(app: AppHandle, fixture: Fixture, seed: DocumentDropSeed) {
+        use std::sync::{
+            Arc,
+            atomic::{AtomicBool, Ordering},
+        };
+        let ready = Arc::new(AtomicBool::new(false));
+        let poll_app = app.clone();
+        let poll_ready = Arc::clone(&ready);
+        std::thread::spawn(move || {
+            let deadline = Instant::now() + Duration::from_secs(150);
+            while Instant::now() < deadline && !poll_ready.load(Ordering::Acquire) {
+                let Some(window) = poll_app.get_webview_window("main") else {
+                    break;
+                };
+                let (callback_window, callback_fixture, callback_seed, callback_ready) = (
+                    window.clone(),
+                    fixture.clone(),
+                    seed.clone(),
+                    Arc::clone(&poll_ready),
+                );
+                let _ = window.eval_with_callback(DROP_READOUT_SCRIPT, move |raw| {
+                    let Ok(readout) = serde_json::from_str::<Value>(&raw) else {
+                        return;
+                    };
+                    if readout["error"].is_string() && readout["error"] != Value::Null {
+                        if !callback_ready.swap(true, Ordering::AcqRel) {
+                            emit(json!({"kind":"document-attachment-probe-resume-failure",
+                                "code":"ui-unavailable","phase":readout["phase"]}));
+                        }
+                        return;
+                    }
+                    if readout["ready"] != true || callback_ready.swap(true, Ordering::AcqRel) {
+                        return;
+                    }
+                    emit(json!({"kind":"document-attachment-probe-resume-ready",
+                        "selectionIds":DocumentDropSelection::from(&callback_seed),
+                        "resumedOriginalFixture":true,"reseeding":false}));
+                    let (status_window, status_fixture, status_seed) = (
+                        callback_window.clone(),
+                        callback_fixture.clone(),
+                        callback_seed.clone(),
+                    );
+                    std::thread::spawn(move || {
+                        let receipt: DocumentDropCommitReceipt =
+                            match read_document_receipt::<DocumentDropCommitReceipt>(
+                                &status_fixture,
+                                DOCUMENT_DROP_COMMIT_RECEIPT,
+                            ) {
+                                Ok(receipt) if receipt.valid_for(&status_seed) => receipt,
+                                _ => {
+                                    emit(json!({"kind":"document-attachment-probe-resume-failure",
+                                    "code":"receipt-invalid"}));
+                                    return;
+                                }
+                            };
+                        let request = json!({"schemaVersion":"1.0",
+                            "selection":receipt.selection,"operationId":receipt.operation_id,
+                            "commandId":receipt.command_id});
+                        let Ok(request) = serde_json::from_value::<
+                            crate::document_attachment::StatusRequest,
+                        >(request) else {
+                            emit(json!({"kind":"document-attachment-probe-resume-failure",
+                                "code":"request-invalid"}));
+                            return;
+                        };
+                        let result = tauri::async_runtime::block_on(
+                            crate::document_attachment::document_attachment_status(
+                                status_window.clone(),
+                                status_window
+                                    .state::<crate::document_attachment::DocumentAttachmentManager>(
+                                    ),
+                                status_window.state::<RuntimeSupervisor>(),
+                                status_window.state::<ApplicationLockManager>(),
+                                request,
+                            ),
+                        );
+                        let received = result.ok().flatten().unwrap_or(Value::Null);
+                        let status = received["status"]
+                            .as_str()
+                            .filter(|value| {
+                                matches!(
+                                    *value,
+                                    "processing"
+                                        | "available"
+                                        | "metadata-only"
+                                        | "unavailable"
+                                        | "candidate"
+                                        | "cancelled"
+                                        | "unconfirmed"
+                                        | "denied"
+                                        | "failed"
+                                )
+                            })
+                            .unwrap_or("unavailable");
+                        let exact = matches!(status, "processing" | "available")
+                            && received["schemaVersion"] == "1.0"
+                            && received["selection"]
+                                == serde_json::to_value(&receipt.selection).unwrap_or(Value::Null)
+                            && received["operationId"] == receipt.operation_id
+                            && received["commandId"] == receipt.command_id
+                            && received["attachmentId"] == receipt.attachment_id
+                            && received["documentRevisionId"] == receipt.document_revision_id;
+                        emit(json!({"kind":"document-attachment-probe-resume-status",
+                            "status":status,"exact":exact,"selectionIds":receipt.selection,
+                            "operationId":receipt.operation_id,"commandId":receipt.command_id,
+                            "candidateId":receipt.candidate_id,"attachmentId":receipt.attachment_id,
+                            "documentRevisionId":receipt.document_revision_id}));
+                    });
+                });
+                std::thread::sleep(Duration::from_millis(100));
+            }
+            if !poll_ready.load(Ordering::Acquire) {
+                emit(json!({"kind":"document-attachment-probe-resume-failure",
+                    "code":"readiness-timeout"}));
+            }
+        });
+        std::thread::spawn(move || {
+            use std::io::BufRead;
+            for line in std::io::stdin().lock().lines() {
+                let Ok(line) = line else {
+                    break;
+                };
+                if line.len() > 256 {
+                    continue;
+                }
+                let Ok(command) = serde_json::from_str::<Value>(&line) else {
+                    continue;
+                };
+                if command["action"] == "close" {
+                    if let Some(window) = app.get_webview_window("main") {
+                        let _ = window.close();
+                    }
+                    break;
+                }
+            }
+        });
+    }
 
     // At most 512 spans (two records each); no worker, timer, or policy data.
     // Router return is not response delivery. Body timing encloses status() but
@@ -1783,6 +2972,7 @@ pub mod directory_integration_harness {
         temporary: PathBuf,
         pins: std::sync::Arc<Vec<PinnedDirectory>>,
         status_diagnostics: std::sync::Arc<StatusDiagnostics>,
+        document_drop: bool,
     }
 
     struct PinnedDirectory {
@@ -1919,6 +3109,36 @@ pub mod directory_integration_harness {
         Ok(repo)
     }
 
+    fn fixture_python_path(repo: &Path) -> Result<OsString, &'static str> {
+        // The disposable sidecar imports both the Core package and its
+        // repository-owned document inspector. Production packaging has
+        // its own sealed module layout; this path applies only here.
+        std::env::join_paths([
+            repo.join("tests/service/fixtures"),
+            repo.join("services/core-api/src"),
+            repo.to_owned(),
+            repo.join(".venv/Lib/site-packages"),
+        ])
+        .map_err(|_| "probe-python-unavailable")
+    }
+
+    fn signed_document_probe_environment(
+        lookup: impl Fn(&str) -> Option<OsString>,
+    ) -> Result<Vec<(OsString, OsString)>, &'static str> {
+        let mut selected = Vec::with_capacity(3);
+        for name in [
+            "RO_W2_SIGNED_WORKER_BUILD",
+            "RO_W2_CORE_SIDECAR_GUARDIAN",
+            "RO_W2_CORE_SIDECAR_GUARDIAN_SHA256",
+        ] {
+            let value = lookup(name)
+                .filter(|value| !value.is_empty())
+                .ok_or("probe-signed-document-input-unavailable")?;
+            selected.push((OsString::from(name), value));
+        }
+        Ok(selected)
+    }
+
     fn valid_nonce(value: &str) -> bool {
         (1..=96).contains(&value.len())
             && value
@@ -1938,6 +3158,36 @@ pub mod directory_integration_harness {
     }
 
     impl Fixture {
+        pub(crate) fn document_drop_mode(&self) -> bool {
+            self.document_drop
+        }
+
+        pub(crate) fn document_drop_project(&self) -> Result<String, &'static str> {
+            if !self.document_drop {
+                return Err("probe-attachment-mode-unavailable");
+            }
+            self.revalidate()?;
+            let project = self.projects.join("document-drop-project");
+            validate_directory(&project)?;
+            project
+                .to_str()
+                .map(str::to_owned)
+                .ok_or("probe-attachment-project-unavailable")
+        }
+
+        fn create_document_drop(nonce: &str) -> Result<Self, &'static str> {
+            let mut fixture = Self::create_lifecycle(nonce)?;
+            fixture.document_drop = true;
+            Ok(fixture)
+        }
+
+        fn resume_document_drop(nonce: &str) -> Result<Self, &'static str> {
+            let mut fixture = Self::resume_lifecycle(nonce)?;
+            fixture.document_drop = true;
+            validate_directory(&fixture.projects.join("document-drop-project"))?;
+            Ok(fixture)
+        }
+
         pub(crate) fn status_trace(&self, phase: &'static str) -> Option<StatusTrace> {
             let span = self.status_diagnostics.reserve()?;
             let entered = Instant::now();
@@ -1978,6 +3228,7 @@ pub mod directory_integration_harness {
                 root,
                 pins: std::sync::Arc::new(Vec::new()),
                 status_diagnostics: std::sync::Arc::new(StatusDiagnostics::new()),
+                document_drop: false,
             }
         }
 
@@ -2148,12 +3399,18 @@ pub mod directory_integration_harness {
             }
             let executable =
                 String::from_utf8(output.stdout).map_err(|_| "probe-python-unavailable")?;
-            let python_path = std::env::join_paths([
-                repo.join("tests/service/fixtures"),
-                repo.join("services/core-api/src"),
-                repo.join(".venv/Lib/site-packages"),
-            ])
-            .map_err(|_| "probe-python-unavailable")?;
+            let python_path = fixture_python_path(&repo)?;
+            let mut environment = vec![
+                ("PYTHONPATH".into(), python_path),
+                ("PYTHONDONTWRITEBYTECODE".into(), "1".into()),
+                ("TEMP".into(), self.temporary.as_os_str().to_owned()),
+                ("TMP".into(), self.temporary.as_os_str().to_owned()),
+            ];
+            if self.document_drop {
+                environment.extend(signed_document_probe_environment(|name| {
+                    std::env::var_os(name)
+                })?);
+            }
             SupervisorConfig::for_integration_harness(
                 PathBuf::from(executable.trim()),
                 self.root.clone(),
@@ -2163,12 +3420,7 @@ pub mod directory_integration_harness {
                     "--profile-vault-root".into(),
                     self.vault.as_os_str().to_owned(),
                 ],
-                vec![
-                    ("PYTHONPATH".into(), python_path),
-                    ("PYTHONDONTWRITEBYTECODE".into(), "1".into()),
-                    ("TEMP".into(), self.temporary.as_os_str().to_owned()),
-                    ("TMP".into(), self.temporary.as_os_str().to_owned()),
-                ],
+                environment,
             )
         }
     }
@@ -2213,7 +3465,11 @@ pub mod directory_integration_harness {
                             .is_some_and(|window| window.close().is_ok());
                         emit(json!({"kind":"tauri-directory-main-close", "requested":requested}));
                     }
-                    Mode::Selection | Mode::Lifecycle | Mode::LifecycleResume => {}
+                    Mode::Selection
+                    | Mode::Lifecycle
+                    | Mode::LifecycleResume
+                    | Mode::DocumentDrop
+                    | Mode::DocumentDropResume => {}
                 }
             }
             let deadline = Instant::now() + Duration::from_secs(180);
@@ -2267,7 +3523,28 @@ pub mod directory_integration_harness {
         let fixture = match mode {
             Mode::Lifecycle => Fixture::create_lifecycle(nonce)?,
             Mode::LifecycleResume => Fixture::resume_lifecycle(nonce)?,
+            Mode::DocumentDrop => Fixture::create_document_drop(nonce)?,
+            Mode::DocumentDropResume => Fixture::resume_document_drop(nonce)?,
             _ => Fixture::create(nonce)?,
+        };
+        let drop_seed = match mode {
+            Mode::DocumentDrop => {
+                let seed = seed_document_drop(&fixture)?;
+                write_document_receipt(&fixture, DOCUMENT_DROP_SEED_RECEIPT, &seed)?;
+                Some(seed)
+            }
+            Mode::DocumentDropResume => {
+                let seed: DocumentDropSeed =
+                    read_document_receipt(&fixture, DOCUMENT_DROP_SEED_RECEIPT)?;
+                validate_document_drop_seed(&fixture, &seed)?;
+                let commit: DocumentDropCommitReceipt =
+                    read_document_receipt(&fixture, DOCUMENT_DROP_COMMIT_RECEIPT)?;
+                if !commit.valid_for(&seed) {
+                    return Err("probe-attachment-receipt-invalid");
+                }
+                Some(seed)
+            }
+            _ => None,
         };
         let config = fixture.supervisor_config()?;
         let mut context = tauri::generate_context!();
@@ -2294,22 +3571,44 @@ pub mod directory_integration_harness {
                 std::io::Error::other(error)
             })?;
             let main = tauri::WebviewWindowBuilder::from_config(app, &window_config)
-                .and_then(|builder| builder
-                .data_directory(fixture.webview.clone())
-                .initialization_script(LOCK_STATUS_DIAGNOSTIC_SCRIPT)
-                .title(format!("Research Observatory — SYNTHETIC {} {}", if mode.is_lifecycle() { "T04" } else { "T03" }, mode.name())).build())
+                .and_then(|builder| {
+                    let builder = builder.data_directory(fixture.webview.clone())
+                        .initialization_script(LOCK_STATUS_DIAGNOSTIC_SCRIPT)
+                        .visible(false).drag_and_drop(false).disable_drag_drop_handler();
+                    let builder = if let Some(seed) = &drop_seed {
+                        builder.initialization_script(document_drop_ui_script(seed))
+                    } else { builder };
+                    builder.title(format!("Research Observatory — SYNTHETIC {} {}",
+                        if mode.is_lifecycle() { "T04" } else if mode.is_document_attachment() { "T01" } else { "T03" },
+                        mode.name())).build()
+                })
                 .inspect_err(|_| { app.state::<RuntimeSupervisor>().stop(); })?;
             main_menu::install(&main).and_then(|()| install_menu_diagnostics(&main, &fixture)).map_err(|error| {
                 app.state::<RuntimeSupervisor>().stop();
                 std::io::Error::other(error)
             })?;
+            let attachments = app.state::<document_attachment::DocumentAttachmentManager>().inner().clone();
+            document_drop::install(&main, &attachments).map_err(std::io::Error::other)?;
+            attachments.set_installed(true);
+            let drop_event_counts = mode.is_document_attachment().then(|| listen_for_tauri_drag(&main));
+            let picker_pending = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+            if mode.is_document_attachment() {
+                listen_for_document_stage(&main, std::sync::Arc::clone(&picker_pending));
+            }
+            main.show()?;
             emit(json!({"kind":"tauri-directory-start", "mode":mode.name(), "fixture":fixture.relative_root(),
                 "ownerHwnd":main.hwnd().ok().map(|handle| handle.0 as isize),
                 "fixtureSubstitutions":["policy-root", "Core-vault", "WebView-data-directory", "Core-temp", "default-project-parent"],
                 "scope":"actual-renderer-tauri-ipc-lock-and-close-with-fixture-storage",
                 "credentialsInvoked":false, "productionPackagedQualification":false,
                 "projects":format!("{}/projects", fixture.relative_root()), "fixturesRetained":true}));
-            if mode.is_lifecycle() {
+            if mode == Mode::DocumentDrop {
+                observe_document_drop(app.handle().clone(), drop_seed.clone().expect("drop seed"),
+                    drop_event_counts.expect("drop event counters"), picker_pending);
+            } else if mode == Mode::DocumentDropResume {
+                observe_document_resume(app.handle().clone(), fixture.clone(),
+                    drop_seed.clone().expect("drop seed"));
+            } else if mode.is_lifecycle() {
                 emit(json!({"kind":"tauri-lifecycle-ready", "mode":mode.name(),
                     "signInMode":app.state::<ApplicationLockManager>().status().sign_in_mode,
                     "resumedOriginalFixture":mode == Mode::LifecycleResume,
@@ -2347,6 +3646,12 @@ pub mod directory_integration_harness {
             "pending":picker.has_pending(), "admissionOpen":picker.is_open(), "fixturesRetained":true,
             "exitCode":exit_code}),
         );
+        if mode.is_document_attachment() {
+            emit(
+                json!({"kind":"document-drop-probe-end","exitCode":exit_code,
+                "native":crate::document_drop::counts(),"fixturesRetained":true}),
+            );
+        }
         if exit_code == 0 {
             Ok(())
         } else {
@@ -2362,6 +3667,157 @@ pub mod directory_integration_harness {
 
         fn nonce() -> String {
             format!("unit-{}", secure_random_hex::<16>().unwrap())
+        }
+
+        #[test]
+        fn document_resume_receipt_requires_exact_seed_and_committed_ids() {
+            let seed = DocumentDropSeed {
+                schema_version: "1.0".into(),
+                project_id: "01900000-0000-7000-8000-000000000001".into(),
+                work_id: "01900000-0000-7000-8000-000000000002".into(),
+                work_revision_id: "01900000-0000-7000-8000-000000000003".into(),
+                version_id: "01900000-0000-7000-8000-000000000004".into(),
+                version_revision_id: "01900000-0000-7000-8000-000000000005".into(),
+                source_assertion_revision_id: "01900000-0000-7000-8000-000000000006".into(),
+                synthetic_source_sha256: "a".repeat(64),
+                protected_database: true,
+            };
+            let receipt = DocumentDropCommitReceipt {
+                schema_version: "1.0".into(),
+                selection: DocumentDropSelection::from(&seed),
+                operation_id: "01900000-0000-7000-8000-000000000007".into(),
+                command_id: "01900000-0000-7000-8000-000000000008".into(),
+                candidate_id: "01900000-0000-7000-8000-000000000009".into(),
+                attachment_id: "01900000-0000-7000-8000-000000000010".into(),
+                document_revision_id: "01900000-0000-7000-8000-000000000011".into(),
+            };
+            assert!(receipt.valid_for(&seed));
+            let mut changed = receipt.clone();
+            changed.selection.version_revision_id = "01900000-0000-7000-8000-000000000012".into();
+            assert!(!changed.valid_for(&seed));
+            let mut invalid = receipt;
+            invalid.command_id = "not-a-command-id".into();
+            assert!(!invalid.valid_for(&seed));
+        }
+
+        #[test]
+        fn disposable_sidecar_can_import_core_document_worker_from_fixture_root() {
+            let fixture = Fixture::create(&nonce()).unwrap();
+            let repo = repository().unwrap();
+            let base = std::process::Command::new(repo.join(".venv/Scripts/python.exe"))
+                .args(["-I", "-c", "import sys; print(sys._base_executable)"])
+                .creation_flags(0x08000000)
+                .output()
+                .unwrap();
+            assert!(base.status.success(), "fixture Python base unavailable");
+            let executable = String::from_utf8(base.stdout).unwrap();
+            let imported = std::process::Command::new(executable.trim())
+                .args([
+                    "-c",
+                    "import native_integration_sidecar; import research_observatory_core.document_attachment_api; import workers.document.inspection",
+                ])
+                .current_dir(&fixture.root)
+                .env("PYTHONPATH", fixture_python_path(&repo).unwrap())
+                .env("PYTHONDONTWRITEBYTECODE", "1")
+                .creation_flags(0x08000000)
+                .output()
+                .unwrap();
+            assert!(
+                imported.status.success(),
+                "disposable Core document import failed"
+            );
+        }
+
+        #[test]
+        fn document_probe_forwards_only_complete_explicit_signed_inputs() {
+            assert_eq!(
+                signed_document_probe_environment(|_| None).unwrap_err(),
+                "probe-signed-document-input-unavailable"
+            );
+            let selected = signed_document_probe_environment(|name| match name {
+                "RO_W2_SIGNED_WORKER_BUILD" => Some(OsString::from("worker")),
+                "RO_W2_CORE_SIDECAR_GUARDIAN" => Some(OsString::from("guardian")),
+                "RO_W2_CORE_SIDECAR_GUARDIAN_SHA256" => Some(OsString::from("digest")),
+                _ => None,
+            })
+            .unwrap();
+            assert_eq!(selected.len(), 3);
+            assert_eq!(selected[0].0, "RO_W2_SIGNED_WORKER_BUILD");
+            assert_eq!(selected[1].0, "RO_W2_CORE_SIDECAR_GUARDIAN");
+            assert_eq!(selected[2].0, "RO_W2_CORE_SIDECAR_GUARDIAN_SHA256");
+        }
+
+        #[test]
+        fn document_stage_diagnostics_emit_only_fixed_status_and_opaque_ids() {
+            let operation = "01900000-0000-7000-8000-000000000008";
+            let candidate = "01900000-0000-7000-8000-000000000009";
+            let raw = json!({"status":"candidate","operationId":operation,
+                "candidate":{"candidateId":candidate,"sourceName":"private-file-name.txt",
+                    "byteLength":123,"confirmationSha256":"a".repeat(64)},
+                "selection":{"root":"C:/private/project"}})
+            .to_string();
+            let safe = safe_document_stage_probe_event(&raw).unwrap();
+            assert_eq!(safe["operationId"], operation);
+            assert_eq!(safe["candidateId"], candidate);
+            assert!(!safe.to_string().contains("private"));
+            assert!(safe_document_stage_probe_event("{\"status\":\"candidate\"}").is_none());
+
+            let finish = safe_document_stage_finish(
+                operation,
+                "rejected",
+                Some("worker-unavailable"),
+                None,
+                true,
+                false,
+                Some("RO-DOCUMENT-SESSION-UNAVAILABLE"),
+            )
+            .unwrap();
+            assert_eq!(finish["deliveryCode"], "session-denied");
+            assert_eq!(finish["eventEmitSucceeded"], false);
+            assert_eq!(finish["code"], "worker-unavailable");
+            assert!(!finish.to_string().contains("private"));
+        }
+
+        #[test]
+        fn document_transport_milestones_reject_arbitrary_content() {
+            let normal = safe_document_transport_phase("header-sent", None).unwrap();
+            assert_eq!(normal["phase"], "header-sent");
+            assert!(normal["code"].is_null());
+            assert!(safe_document_transport_phase("C:/private/file.txt", None).is_none());
+            let denied =
+                safe_document_transport_phase("transport-error", Some("C:/private/file.txt"))
+                    .unwrap();
+            assert_eq!(denied["code"], "other");
+            assert!(!denied.to_string().contains("private"));
+            let parse =
+                safe_document_transport_phase("response-parse-error", Some("trace-missing"))
+                    .unwrap();
+            assert_eq!(parse["code"], "trace-missing");
+            assert!(
+                safe_document_transport_phase("response-parse-error", Some("C:/private/file.txt"),)
+                    .is_none()
+            );
+            assert_eq!(
+                safe_document_transport_phase(
+                    "transport-error",
+                    Some("RO-CORE-API-RESPONSE-INVALID"),
+                )
+                .unwrap()["code"],
+                "http-invalid"
+            );
+        }
+
+        #[test]
+        fn document_drop_decision_cannot_emit_source_identity_or_arbitrary_reason() {
+            let denied =
+                safe_document_drop_decision("cache-expired", "expired-short", true).unwrap();
+            assert_eq!(denied["reason"], "cache-expired");
+            assert_eq!(denied["cacheAge"], "expired-short");
+            assert_eq!(denied["probePending"], true);
+            assert!(
+                safe_document_drop_decision("C:/private/document.txt", "fresh", false).is_none()
+            );
+            assert!(safe_document_drop_decision("source-open", "C:/private", false).is_none());
         }
 
         #[test]
@@ -2926,6 +4382,9 @@ fn start_lock_monitor(
                 break;
             }
             if let Some(snapshot) = lock.lock_if_idle() {
+                #[cfg(windows)]
+                app.state::<document_attachment::DocumentAttachmentManager>()
+                    .cancel_all();
                 picker.cancel_pending();
                 support.clear_pending();
                 emit_lock_snapshot(&app, &lock, &snapshot);

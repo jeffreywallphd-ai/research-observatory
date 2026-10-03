@@ -13,9 +13,10 @@ import sys
 import threading
 import time
 import unittest
+from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
-from typing import BinaryIO
+from typing import BinaryIO, cast
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -25,22 +26,25 @@ sys.path.insert(0, str(REPO / "services/core-api/src"))
 
 from research_observatory_core.app import create_app
 from research_observatory_core.authentication import capability_token_digest
-from research_observatory_core.document_attachment_api import DocumentStageCommand
+from research_observatory_core.corpus_service import CorpusService
+from research_observatory_core.document_attachment_api import DocumentCommit, DocumentStageCommand, DocumentStatusQuery
 from research_observatory_core.document_attachment_repository import (
     AttachmentCandidate,
     AttachmentProblem,
     LocalDocumentAttachmentService,
 )
 from research_observatory_core.domain_contracts import new_uuid_v7
+from research_observatory_core.import_preview_service import ImportPreviewService
 from research_observatory_core.main import DocumentAttachmentRuntime
 from research_observatory_core.ports.corpus import CorpusActor
+from research_observatory_core.ports.document_attachments import DocumentAttachment, DocumentAttachmentStatus
 from research_observatory_core.ports.import_previews import PreviewProblem
-from research_observatory_core.ports.object_store import ObjectStagingCancelled
+from research_observatory_core.ports.object_store import ObjectStagingCancelled, ObjectStore
 from research_observatory_core.reconciliation.contracts import SourceAddress
 from research_observatory_core.rights_policy import RightsSubject
 from research_observatory_core.storage import open_canonical_database
 
-from tests.documents import test_local_attachment as attachment_fixtures
+from tests.documents import test_local_attachment as attachment_fixtures  # type: ignore[import-not-found]
 
 
 class _AttachmentRuntime:
@@ -52,6 +56,7 @@ class _AttachmentRuntime:
         self.version_id = new_uuid_v7()
         self.version_revision_id = new_uuid_v7()
         self.candidate_id = new_uuid_v7()
+        self.operation_id = new_uuid_v7()
         self.session_id = "b" * 32
         self.received: bytes | None = None
         self.stage_calls = 0
@@ -94,7 +99,14 @@ class _AttachmentRuntime:
             raise AttachmentProblem("attachment-authority-changed")
         return self.session_id
 
-    def stage(self, command: DocumentStageCommand, source: BinaryIO, *, trace_id: str, cancellation_requested: object):
+    def stage(
+        self,
+        command: DocumentStageCommand,
+        source: BinaryIO,
+        *,
+        trace_id: str,
+        cancellation_requested: Callable[[], bool],
+    ) -> AttachmentCandidate:
         self.stage_calls += 1
         assert command.session_id == self.session_id
         assert command.project_id == self.project_id
@@ -128,8 +140,38 @@ class _AttachmentRuntime:
             raise AttachmentProblem("attachment-candidate-unavailable")
         return self.candidate
 
-    def cancel(self, root: str, project_id: str, session_id: str, candidate_id: str, *, trace_id: str) -> None:
+    def cancel(
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        candidate_id: str,
+        *,
+        operation_id: str,
+        trace_id: str,
+    ) -> None:
+        assert operation_id == self.operation_id
         self.load_candidate(root, project_id, session_id, candidate_id, trace_id=trace_id)
+
+    def status(self, command: DocumentStatusQuery, *, trace_id: str) -> DocumentAttachmentStatus:
+        assert command.operation_id == self.operation_id
+        return DocumentAttachmentStatus(
+            "candidate",
+            self.project_id,
+            self.source_id,
+            self.work_id,
+            self.work_revision_id,
+            self.version_id,
+            self.version_revision_id,
+            self.operation_id,
+            None,
+            self.candidate_id,
+            None,
+            None,
+        )
+
+    def commit(self, command: DocumentCommit, *, trace_id: str) -> DocumentAttachment:
+        raise AssertionError("the route-double must not commit a document")
 
 
 class DocumentAttachmentApiTests(unittest.TestCase):
@@ -154,6 +196,7 @@ class DocumentAttachmentApiTests(unittest.TestCase):
             "root": "C:/synthetic-project",
             "projectId": self.runtime.project_id,
             "sessionId": self.runtime.session_id,
+            "operationId": self.runtime.operation_id,
             "sourceName": "synthetic.txt",
             "declaredMediaType": "text/plain",
             "sourceAssertionRevisionId": self.runtime.source_id,
@@ -314,7 +357,11 @@ class DocumentAttachmentApiTests(unittest.TestCase):
         self_project = self.runtime.project_id
         self_candidate = self.runtime.candidate
         imports, corpus = Imports(), Corpus()
-        runtime = DocumentAttachmentRuntime(imports, corpus, lambda _path, _identity: object())
+        runtime = DocumentAttachmentRuntime(
+            cast(ImportPreviewService, imports),
+            cast(CorpusService, corpus),
+            cast(Callable[[Path, str], ObjectStore], lambda _path, _identity: object()),
+        )
         command = DocumentStageCommand.model_validate(self._header(1))
 
         def inspect():
@@ -354,7 +401,29 @@ class DocumentAttachmentApiTests(unittest.TestCase):
         candidate = self.client.post("/native/document-attachments/candidate", json=context)
         self.assertEqual(200, candidate.status_code, candidate.text)
         self.assertEqual(self.runtime.candidate_id, candidate.json()["candidateId"])
-        self.assertEqual(204, self.client.post("/native/document-attachments/cancel", json=context).status_code)
+        self.assertEqual(
+            204,
+            self.client.post(
+                "/native/document-attachments/cancel", json={**context, "operationId": self.runtime.operation_id}
+            ).status_code,
+        )
+        status = self.client.post(
+            "/native/document-attachments/status",
+            json={
+                "root": context["root"],
+                "projectId": context["projectId"],
+                "sessionId": context["sessionId"],
+                "sourceAssertionRevisionId": self.runtime.source_id,
+                "workId": self.runtime.work_id,
+                "workRevisionId": self.runtime.work_revision_id,
+                "versionId": self.runtime.version_id,
+                "versionRevisionId": self.runtime.version_revision_id,
+                "operationId": self.runtime.operation_id,
+                "commandId": None,
+            },
+        )
+        self.assertEqual(200, status.status_code, status.text)
+        self.assertEqual("candidate", status.json()["state"])
         self.assertEqual(
             403,
             self.client.post(
@@ -389,7 +458,11 @@ class DocumentAttachmentRealPortTests(unittest.TestCase):
                     raise AttachmentProblem("attachment-authority-changed")
                 return action(None, actor, actor.intent_revision_id, fixture.project_root, fixture.corpus.project)
 
-        runtime = DocumentAttachmentRuntime(Imports(), Corpus(), lambda _path, _identity: fixture.store)
+        runtime = DocumentAttachmentRuntime(
+            cast(ImportPreviewService, Imports()),
+            cast(CorpusService, Corpus()),
+            lambda _path, _identity: fixture.store,
+        )
         app = create_app(
             attachments=runtime,
             capability_digest=capability_token_digest("a" * 64),
@@ -408,6 +481,7 @@ class DocumentAttachmentRealPortTests(unittest.TestCase):
             "root": str(fixture.project_root),
             "projectId": fixture.corpus.project,
             "sessionId": session,
+            "operationId": new_uuid_v7(),
             "sourceName": "paper.txt",
             "declaredMediaType": "text/plain",
             "sourceAssertionRevisionId": fixture._assertion_id(),
@@ -447,27 +521,47 @@ class DocumentAttachmentRealPortTests(unittest.TestCase):
                 "sessionId": session,
                 "candidateId": candidate["candidateId"],
             }
+            decision = {
+                **address,
+                "operationId": header["operationId"],
+                "sourceAssertionRevisionId": header["sourceAssertionRevisionId"],
+                "workId": header["workId"],
+                "workRevisionId": header["workRevisionId"],
+                "versionId": header["versionId"],
+                "versionRevisionId": header["versionRevisionId"],
+                "matchConfirmed": True,
+                "permittedUse": "project-only",
+            }
             denied = client.post(
                 "/native/document-attachments/commit",
                 json={**address, "confirmationSha256": candidate["candidateSha256"], "commandId": new_uuid_v7()},
             )
-            self.assertEqual(403, denied.status_code, denied.text)
-            current = fixture.service.load_candidate(candidate["candidateId"], actor=actor)
-            fixture.publish_right(current)
+            self.assertEqual(422, denied.status_code, denied.text)
             wrong_confirmation = client.post(
                 "/native/document-attachments/commit",
-                json={**address, "confirmationSha256": "0" * 64, "commandId": new_uuid_v7()},
+                json={**decision, "confirmationSha256": "0" * 64, "commandId": new_uuid_v7()},
             )
             self.assertEqual(409, wrong_confirmation.status_code)
+            command_id = new_uuid_v7()
             committed = client.post(
                 "/native/document-attachments/commit",
-                json={**address, "confirmationSha256": candidate["candidateSha256"], "commandId": new_uuid_v7()},
+                json={**decision, "confirmationSha256": candidate["candidateSha256"], "commandId": command_id},
             )
             self.assertEqual(200, committed.status_code, committed.text)
             self.assertEqual(header["versionRevisionId"], committed.json()["versionRevisionId"])
-            self.assertEqual(
-                200, client.post("/native/document-attachments/candidate", json=address).status_code
+            status = client.post(
+                "/native/document-attachments/status",
+                json={
+                    key: value
+                    for key, value in decision.items()
+                    if key not in {"candidateId", "matchConfirmed", "permittedUse"}
+                }
+                | {"commandId": command_id},
             )
+            self.assertEqual(200, status.status_code, status.text)
+            self.assertEqual("committed", status.json()["state"])
+            self.assertEqual(committed.json()["attachmentId"], status.json()["attachmentId"])
+            self.assertEqual(200, client.post("/native/document-attachments/candidate", json=address).status_code)
             with open_canonical_database(fixture.corpus.database, expected_project_id=fixture.corpus.project) as db:
                 self.assertEqual(1, db.execute("SELECT COUNT(*) FROM document_attachment_assertions").fetchone()[0])
 
@@ -511,7 +605,11 @@ class DocumentAttachmentRealPortTests(unittest.TestCase):
                     raise AttachmentProblem("attachment-authority-changed")
                 return action(None, actor, actor.intent_revision_id, fixture.project_root, fixture.corpus.project)
 
-        runtime = DocumentAttachmentRuntime(Imports(), Corpus(), lambda _path, _identity: fixture.store)
+        runtime = DocumentAttachmentRuntime(
+            cast(ImportPreviewService, Imports()),
+            cast(CorpusService, Corpus()),
+            lambda _path, _identity: fixture.store,
+        )
         app = create_app(
             attachments=runtime,
             capability_digest=capability_token_digest("a" * 64),
@@ -522,6 +620,7 @@ class DocumentAttachmentRealPortTests(unittest.TestCase):
             "root": str(fixture.project_root),
             "projectId": fixture.corpus.project,
             "sessionId": session,
+            "operationId": new_uuid_v7(),
             "sourceName": "paper.txt",
             "declaredMediaType": "text/plain",
             "sourceAssertionRevisionId": fixture._assertion_id(),
@@ -560,11 +659,20 @@ class DocumentAttachmentRealPortTests(unittest.TestCase):
                     "candidateId": candidate["candidateId"],
                     "confirmationSha256": candidate["candidateSha256"],
                     "commandId": new_uuid_v7(),
+                    "operationId": header["operationId"],
+                    "sourceAssertionRevisionId": header["sourceAssertionRevisionId"],
+                    "workId": header["workId"],
+                    "workRevisionId": header["workRevisionId"],
+                    "versionId": header["versionId"],
+                    "versionRevisionId": header["versionRevisionId"],
+                    "matchConfirmed": True,
+                    "permittedUse": "project-only",
                 },
             )
-            self.assertEqual(403, denied.status_code, denied.text)
+            self.assertEqual(200, denied.status_code, denied.text)
             with open_canonical_database(fixture.corpus.database, expected_project_id=fixture.corpus.project) as db:
-                self.assertEqual(0, db.execute("SELECT COUNT(*) FROM document_attachment_assertions").fetchone()[0])
+                self.assertEqual(1, db.execute("SELECT COUNT(*) FROM document_attachment_assertions").fetchone()[0])
+
 
 if __name__ == "__main__":
     unittest.main()

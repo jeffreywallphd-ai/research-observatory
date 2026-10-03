@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Literal, Protocol
 
 from ..rights_policy import RightsSubject
 
@@ -64,3 +64,33 @@ class DocumentAttachment:
     rights_policy_revision_id: str
     provenance_event_id: str
     outbox_id: str
+
+
+type AttachmentStatusState = Literal[
+    "metadata-only",
+    "candidate",
+    "unresolved",
+    "committed",
+    "cancelled",
+    "stale-session",
+    "legacy",
+    "unavailable",
+]
+
+
+@dataclass(frozen=True, slots=True)
+class DocumentAttachmentStatus:
+    """Exact durable database result; committed does not imply reader availability."""
+
+    state: AttachmentStatusState
+    project_id: str
+    source_assertion_revision_id: str
+    work_id: str
+    work_revision_id: str
+    version_id: str
+    version_revision_id: str
+    operation_id: str | None
+    command_id: str | None
+    candidate_id: str | None
+    attachment_id: str | None
+    document_revision_id: str | None

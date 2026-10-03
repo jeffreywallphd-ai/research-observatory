@@ -162,6 +162,15 @@ export function attachmentStatusRequest(selected: AttachmentSelection, operation
   commandId: string | null = null): AttachmentStatusRequest {
   return { schemaVersion: "1.0", selection: selected, operationId, commandId };
 }
+export function isInterruptedPriorSessionStatus(saved: AttachmentCommitRequest | null, request: AttachmentStatusRequest,
+  result: AttachmentStatus, hasPriorAttachedReply = false): boolean {
+  return Boolean(saved && !hasPriorAttachedReply && request.operationId === saved.operationId
+    && request.commandId === saved.commandId && sameAttachmentSelection(request.selection, saved.selection)
+    && result.status === "unavailable" && result.code === "interrupted"
+    && result.operationId === saved.operationId && result.commandId === null
+    && sameAttachmentSelection(result.selection, saved.selection)
+    && result.attachmentId === null && result.documentRevisionId === null && result.retryRequest === null);
+}
 export function decodeAttachmentCommitRequest(value: unknown): AttachmentCommitRequest | null {
   const item = object(value, ["schemaVersion", "operationId", "sessionId", "candidateId", "confirmationSha256",
     "commandId", "selection", "matchConfirmed", "permittedUse"]);

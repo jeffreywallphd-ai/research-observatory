@@ -25,6 +25,9 @@ from research_observatory_core.migrations.versions import (
     v0018_rights_policy,
     v0019_corpus_reports,
     v0020_corpus_source_projection,
+    v0021_plugin_grants,
+    v0022_document_attachments,
+    v0023_attachment_operations,
 )
 
 from tests.data import test_sqlite_migrations as migration_fixture
@@ -211,12 +214,15 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 project = restore_v17(database, kind)["projectId"]
                 plan = runner.plan_database_migration(database, expected_project_id=project)
                 self.assertEqual(17, plan.source_schema_version)
-                self.assertEqual(20, plan.target_schema_version)
+                self.assertEqual(23, plan.target_schema_version)
                 self.assertEqual(
                     (
                         v0018_rights_policy.revision,
                         v0019_corpus_reports.revision,
                         v0020_corpus_source_projection.revision,
+                        v0021_plugin_grants.revision,
+                        v0022_document_attachments.revision,
+                        v0023_attachment_operations.revision,
                     ),
                     plan.migration_ids,
                 )
@@ -228,6 +234,9 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                         v0018_rights_policy.revision,
                         v0019_corpus_reports.revision,
                         v0020_corpus_source_projection.revision,
+                        v0021_plugin_grants.revision,
+                        v0022_document_attachments.revision,
+                        v0023_attachment_operations.revision,
                     ),
                     result.migration_ids,
                 )
@@ -245,12 +254,15 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 validator = Draft202012Validator(schema, format_checker=FormatChecker())
                 self.assertEqual([], list(validator.iter_errors(manifest)))
                 self.assertEqual(17, manifest["sourceSchemaVersion"])
-                self.assertEqual(20, manifest["targetSchemaVersion"])
+                self.assertEqual(23, manifest["targetSchemaVersion"])
                 self.assertEqual(
                     [
                         v0018_rights_policy.revision,
                         v0019_corpus_reports.revision,
                         v0020_corpus_source_projection.revision,
+                        v0021_plugin_grants.revision,
+                        v0022_document_attachments.revision,
+                        v0023_attachment_operations.revision,
                     ],
                     manifest["migrationIds"],
                 )
@@ -309,7 +321,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                     with closing(storage.open_canonical_database(database, expected_project_id=project)) as reopened:
                         report = storage.database_integrity_report(reopened, expected_project_id=project)
                         self.assertTrue(report.ok, report.errors)
-                        self.assertEqual(20, report.schema_version)
+                        self.assertEqual(23, report.schema_version)
                 repeated = runner.migrate_database(database, expected_project_id=project)
                 self.assertEqual("current", repeated.status)
                 self.assertIsNone(repeated.backup_relative_path)
@@ -326,9 +338,9 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual(17, old["properties"]["targetSchemaVersion"]["const"])
-        self.assertEqual(20, current["properties"]["targetSchemaVersion"]["const"])
+        self.assertEqual([21, 22, 23], current["properties"]["targetSchemaVersion"]["enum"])
         self.assertEqual(SCHEMA_SHA256, old["properties"]["targetSchemaSha256"]["const"])
-        self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, current["properties"]["targetSchemaSha256"]["const"])
+        self.assertIn(storage.EXPECTED_SCHEMA_SHA256, current["properties"]["targetSchemaSha256"]["enum"])
         # A structural historical witness remains interpretable by the frozen
         # contract and is rejected by the v18-only current contract.
         historical_shape = {
@@ -430,7 +442,14 @@ class LiteralV17PredecessorTests(unittest.TestCase):
                 self.assertEqual([], saved.execute("PRAGMA cipher_integrity_check").fetchall())
         result = runner.migrate_database(fixture.database, expected_project_id=project)
         self.assertEqual(
-            (v0018_rights_policy.revision, v0019_corpus_reports.revision, v0020_corpus_source_projection.revision),
+            (
+                v0018_rights_policy.revision,
+                v0019_corpus_reports.revision,
+                v0020_corpus_source_projection.revision,
+                v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
+            ),
             result.migration_ids,
         )
         assert result.backup_relative_path is not None
@@ -444,7 +463,7 @@ class LiteralV17PredecessorTests(unittest.TestCase):
             with closing(storage.open_canonical_database(fixture.database, expected_project_id=project)) as current:
                 report = storage.database_integrity_report(current, expected_project_id=project)
                 self.assertTrue(report.ok, report.errors)
-                self.assertEqual(20, report.schema_version)
+                self.assertEqual(23, report.schema_version)
 
     def test_import_history_can_be_exported_to_encrypted_sqlcipher_and_reopened(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -45,6 +45,8 @@ from research_observatory_core.migrations.versions import (  # noqa: E402
     v0019_corpus_reports,
     v0020_corpus_source_projection,
     v0021_plugin_grants,
+    v0022_document_attachments,
+    v0023_attachment_operations,
 )
 
 v0006_actor_identity = runner.v0006_actor_identity
@@ -710,7 +712,7 @@ class SqliteMigrationTests(unittest.TestCase):
         before = self.database.read_bytes()
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(1, plan.source_schema_version)
-        self.assertEqual(21, plan.target_schema_version)
+        self.assertEqual(23, plan.target_schema_version)
         self.assertTrue(plan.migration_required)
         self.assertEqual(
             (
@@ -734,6 +736,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -747,7 +751,7 @@ class SqliteMigrationTests(unittest.TestCase):
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
         self.assertEqual(1, result.source_schema_version)
-        self.assertEqual(21, result.target_schema_version)
+        self.assertEqual(23, result.target_schema_version)
         self.assertEqual(
             (
                 "0002_schema_history",
@@ -770,6 +774,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -786,10 +792,35 @@ class SqliteMigrationTests(unittest.TestCase):
             (REPO / "packages/contracts/storage/sqlite-migration-recovery.schema.json").read_text(encoding="utf-8")
         )
         document = json.loads(manifest.read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema, format_checker=FormatChecker())
         self.assertEqual(
             [],
-            list(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(document)),
+            list(validator.iter_errors(document)),
         )
+        for target_version, target_sha256 in (
+            (21, storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256),
+            (22, storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256),
+        ):
+            historical = json.loads(json.dumps(document))
+            historical["targetSchemaVersion"] = target_version
+            historical["targetSchemaSha256"] = target_sha256
+            historical["migrationIds"] = document["migrationIds"][: target_version - 1]
+            historical["backup"]["relativePath"] = document["backup"]["relativePath"].replace(
+                "-to-v23-", f"-to-v{target_version}-"
+            )
+            self.assertEqual([], list(validator.iter_errors(historical)))
+            historical["migrationIds"] = document["migrationIds"]
+            self.assertNotEqual([], list(validator.iter_errors(historical)))
+        v22_predecessor = json.loads(json.dumps(document))
+        v22_predecessor["sourceSchemaVersion"] = 22
+        v22_predecessor["sourceSchemaSha256"] = storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256
+        v22_predecessor["migrationIds"] = [v0023_attachment_operations.revision]
+        v22_predecessor["backup"]["relativePath"] = document["backup"]["relativePath"].replace(
+            "v1-to-v23-", "v22-to-v23-"
+        )
+        self.assertEqual([], list(validator.iter_errors(v22_predecessor)))
+        v22_predecessor["migrationIds"] = [v0022_document_attachments.revision]
+        self.assertNotEqual([], list(validator.iter_errors(v22_predecessor)))
         self.assertEqual(result.backup_relative_path, document["backup"]["relativePath"])
         self.assertEqual(document["checkpoint"]["logFrames"], document["checkpoint"]["checkpointedFrames"])
 
@@ -986,6 +1017,24 @@ class SqliteMigrationTests(unittest.TestCase):
                         21,
                         result.recovery_manifest_sha256,
                         storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        v0022_document_attachments.revision,
+                        21,
+                        22,
+                        result.recovery_manifest_sha256,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
+                        "alembic-1.18.5",
+                    ),
+                    (
+                        v0023_attachment_operations.revision,
+                        22,
+                        23,
+                        result.recovery_manifest_sha256,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                         "alembic-1.18.5",
                     ),
@@ -1025,7 +1074,7 @@ class SqliteMigrationTests(unittest.TestCase):
         create_version_2_fixture(self.database)
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(2, plan.source_schema_version)
-        self.assertEqual(21, plan.target_schema_version)
+        self.assertEqual(23, plan.target_schema_version)
         self.assertEqual(
             (
                 "0003_object_envelopes",
@@ -1047,6 +1096,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -1074,6 +1125,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -1240,6 +1293,20 @@ class SqliteMigrationTests(unittest.TestCase):
                         20,
                         21,
                         storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0022_document_attachments.revision,
+                        21,
+                        22,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0023_attachment_operations.revision,
+                        22,
+                        23,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1275,6 +1342,8 @@ class SqliteMigrationTests(unittest.TestCase):
                         v0019_corpus_reports.revision,
                         v0020_corpus_source_projection.revision,
                         v0021_plugin_grants.revision,
+                        v0022_document_attachments.revision,
+                        v0023_attachment_operations.revision,
                     ),
                     plan.migration_ids,
                 )
@@ -1299,6 +1368,8 @@ class SqliteMigrationTests(unittest.TestCase):
                         v0019_corpus_reports.revision,
                         v0020_corpus_source_projection.revision,
                         v0021_plugin_grants.revision,
+                        v0022_document_attachments.revision,
+                        v0023_attachment_operations.revision,
                     ),
                     result.migration_ids,
                 )
@@ -1336,6 +1407,8 @@ class SqliteMigrationTests(unittest.TestCase):
                             v0019_corpus_reports.revision,
                             v0020_corpus_source_projection.revision,
                             v0021_plugin_grants.revision,
+                            v0022_document_attachments.revision,
+                            v0023_attachment_operations.revision,
                         )
                         if legacy_object
                         else (
@@ -1357,6 +1430,8 @@ class SqliteMigrationTests(unittest.TestCase):
                             v0019_corpus_reports.revision,
                             v0020_corpus_source_projection.revision,
                             v0021_plugin_grants.revision,
+                            v0022_document_attachments.revision,
+                            v0023_attachment_operations.revision,
                         ),
                         history,
                     )
@@ -1386,6 +1461,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -1410,6 +1487,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -1553,6 +1632,20 @@ class SqliteMigrationTests(unittest.TestCase):
                         20,
                         21,
                         storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0022_document_attachments.revision,
+                        21,
+                        22,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0023_attachment_operations.revision,
+                        22,
+                        23,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),
@@ -1596,6 +1689,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -1619,6 +1714,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -1672,6 +1769,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -1694,6 +1793,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -1738,6 +1839,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -1760,6 +1863,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -1814,6 +1919,8 @@ class SqliteMigrationTests(unittest.TestCase):
                     v0019_corpus_reports.revision,
                     v0020_corpus_source_projection.revision,
                     v0021_plugin_grants.revision,
+                    v0022_document_attachments.revision,
+                    v0023_attachment_operations.revision,
                 ),
                 tuple(
                     str(row[0])
@@ -1859,6 +1966,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -1878,6 +1987,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -1912,7 +2023,7 @@ class SqliteMigrationTests(unittest.TestCase):
             }
             self.assertEqual(workflow_tables_before, workflow_tables_after)
             self.assertEqual(
-                v0021_plugin_grants.revision,
+                v0023_attachment_operations.revision,
                 current.execute(
                     "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
                 ).fetchone()[0],
@@ -1939,6 +2050,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -1959,6 +2072,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             result.migration_ids,
         )
@@ -1988,7 +2103,7 @@ class SqliteMigrationTests(unittest.TestCase):
             ):
                 self.assertEqual(0, current.execute(f"SELECT count(*) FROM {table}").fetchone()[0])
             self.assertEqual(
-                v0021_plugin_grants.revision,
+                v0023_attachment_operations.revision,
                 current.execute(
                     "SELECT migration_id FROM schema_migrations ORDER BY to_schema_version DESC LIMIT 1"
                 ).fetchone()[0],
@@ -1999,8 +2114,8 @@ class SqliteMigrationTests(unittest.TestCase):
     def test_fresh_v6_history_remains_current_after_v15_upgrade_and_restart(self) -> None:
         create_fresh_version_6_fixture(self.database)
         projection = runner.migration_framework_projection()
-        self.assertEqual(21, projection["targetSchemaVersion"])
-        self.assertEqual(v0021_plugin_grants.revision, projection["revisions"][-1])
+        self.assertEqual(23, projection["targetSchemaVersion"])
+        self.assertEqual(v0023_attachment_operations.revision, projection["revisions"][-1])
 
         plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual(6, plan.source_schema_version)
@@ -2021,6 +2136,8 @@ class SqliteMigrationTests(unittest.TestCase):
                 v0019_corpus_reports.revision,
                 v0020_corpus_source_projection.revision,
                 v0021_plugin_grants.revision,
+                v0022_document_attachments.revision,
+                v0023_attachment_operations.revision,
             ),
             plan.migration_ids,
         )
@@ -2151,6 +2268,20 @@ class SqliteMigrationTests(unittest.TestCase):
                         20,
                         21,
                         storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0022_document_attachments.revision,
+                        21,
+                        22,
+                        storage.DOCUMENT_ATTACHMENT_PREDECESSOR_SCHEMA_SHA256,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0023_attachment_operations.revision,
+                        22,
+                        23,
+                        storage.ATTACHMENT_OPERATION_PREDECESSOR_SCHEMA_SHA256,
                         storage.EXPECTED_SCHEMA_SHA256,
                     ),
                 ),

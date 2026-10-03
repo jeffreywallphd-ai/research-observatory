@@ -13,6 +13,9 @@
       {
         "label": "main",
         "title": "Research Observatory",
+        "create": false,
+        "visible": false,
+        "dragDropEnabled": false,
         "width": 1440,
         "height": 900,
         "minWidth": 720,

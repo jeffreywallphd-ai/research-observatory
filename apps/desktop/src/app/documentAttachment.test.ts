@@ -8,6 +8,7 @@ import {
   attachmentBeginRequest,
   attachmentCommitRequest,
   attachmentStatusRequest,
+  isInterruptedPriorSessionStatus,
   canStartAttachmentReview,
   decodeAttachmentStatus,
   DOCUMENT_ATTACHMENT_COMMANDS,
@@ -121,6 +122,24 @@ describe("opaque native attachment contract", () => {
     expect(decodeAttachmentStatus({ ...durable, status: "metadata-only", attachmentId: null, documentRevisionId: null })).toEqual({
       ...durable, status: "metadata-only", attachmentId: null, documentRevisionId: null,
     });
+  });
+  it("releases only an exact saved command on a terminal prior-session result without replay", () => {
+    const saved = attachmentCommitRequest(operationId, sessionId, candidateId, "d".repeat(64), commandId, selection);
+    const request = attachmentStatusRequest(selection, operationId, commandId);
+    const terminal = { schemaVersion: "1.0" as const, status: "unavailable" as const, selection,
+      operationId, commandId: null, attachmentId: null, documentRevisionId: null,
+      code: "interrupted" as const, retryRequest: null };
+    expect(isInterruptedPriorSessionStatus(saved, request, terminal)).toBe(true);
+    expect(isInterruptedPriorSessionStatus(saved, request, terminal, true)).toBe(false);
+    expect(isInterruptedPriorSessionStatus(null, request, terminal)).toBe(false);
+    expect(isInterruptedPriorSessionStatus(saved, { ...request, commandId: workB }, terminal)).toBe(false);
+    expect(isInterruptedPriorSessionStatus(saved, request, { ...terminal, operationId: workB })).toBe(false);
+    expect(isInterruptedPriorSessionStatus(saved, request, { ...terminal,
+      selection: { ...selection, workRevisionId: workB } })).toBe(false);
+    expect(isInterruptedPriorSessionStatus(saved, request, { ...terminal, code: "candidate-unavailable" })).toBe(false);
+    expect(isInterruptedPriorSessionStatus(saved, request, { ...terminal, status: "processing" })).toBe(false);
+    expect(isInterruptedPriorSessionStatus(saved, request, { ...terminal, retryRequest: saved })).toBe(false);
+    expect(isInterruptedPriorSessionStatus(saved, request, { ...terminal, attachmentId: workB })).toBe(false);
   });
   it("allows a fresh review after terminal recoverable status but holds denial and active operations", () => {
     const baseline = { schemaVersion: "1.0" as const, selection, operationId, commandId: null,

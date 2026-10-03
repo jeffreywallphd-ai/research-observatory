@@ -1,0 +1,33 @@
+{
+  "attachmentId": "01a0ffad-b1fa-7520-96f6-c869991fcb0c",
+  "candidateId": "01a0ffad-b1cb-74be-8ebf-d47544bf5060",
+  "ciphertext": [
+    {
+      "relativePath": "objects/10/45/1045e37c17209722aa982beb22a5d2bd80603b6263c3f14382cf7bfd814a66fb.blob",
+      "sha256": "a2a8642e55ff8269ba08404eff7fdd8fab211eda8052f2278dd88c8a5a14d8e0"
+    },
+    {
+      "relativePath": "objects/25/c0/25c07de19188a1c82867adac598e5027cea3a8fa53ffaa5a098bc82bb8e6656b.blob",
+      "sha256": "14507bb1b3372b4c2b33f5b33816d02b06df995358dad3b7cd860c35aec86378"
+    }
+  ],
+  "counts": {
+    "document_attachment_assertions": 1,
+    "document_attachment_candidates": 1,
+    "object_records": 2,
+    "rights_policy_revisions": 1
+  },
+  "databaseSha256": "58ce90f7c8443a4fc7eb7c664f631e797af0b290f3aa0db1e8189e2ca07773d6",
+  "documentRevisionId": "01a0ffad-b1fa-7e81-b28b-c6e785be5e3a",
+  "objectSha256": "d31a837bc6bd39d44152363e5cd4292039697627eb8c8b6bc33d780ef356eae4",
+  "profileSha256": "67361cdaa6b082a552f89a40c5a83036526da3a1230c8f6d3bef4cb57cc43997",
+  "projectId": "db9b9946-0917-43c6-9139-987abfef8e86",
+  "rightsPolicyRevisionId": "01a0ffad-b1e3-7e84-a9a9-c0ce563fd372",
+  "schemaSha256": "32dc9a2b87efdd8b69b92271b8b1841e40da07bbc86e9943f59dbe5784f2617e",
+  "schemaVersion": 22,
+  "sourceAssertionRevisionId": "01a0ffad-af84-7d03-9844-837d4cf77242",
+  "versionId": "01a0ffad-b158-77cc-8b06-bb3f3b7e73dd",
+  "versionRevisionId": "01a0ffad-b158-74d2-84d1-636d1a9d3274",
+  "workId": "01a0ffad-af88-73f7-bbb8-61bf27c4246e",
+  "workRevisionId": "01a0ffad-b15d-7709-a0f9-17794e0e18b4"
+}

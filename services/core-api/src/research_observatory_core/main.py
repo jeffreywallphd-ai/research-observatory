@@ -33,7 +33,7 @@ from .corpus_query import ConnectorWorkerQueryResolver
 from .corpus_report_repository import SqliteCorpusReportRepository
 from .corpus_repository import SqliteCorpusRepository
 from .corpus_service import CorpusService
-from .document_attachment_api import DocumentCommit, DocumentStageCommand
+from .document_attachment_api import DocumentCommit, DocumentStageCommand, DocumentStatusQuery
 from .document_attachment_repository import LocalDocumentAttachmentService
 from .import_preview_repository import sqlite_import_preview_repository
 from .import_preview_service import ImportPreviewService, ImportProjectAdapters
@@ -54,7 +54,12 @@ from .plugin_worker import PluginWorkerAdapters, PluginWorkerService
 from .ports.corpus import CorpusActor
 from .ports.credential_store import CredentialStoreProblem
 from .ports.database_keys import DatabaseKeyProvider
-from .ports.document_attachments import AttachmentCandidate, AttachmentProblem, DocumentAttachment
+from .ports.document_attachments import (
+    AttachmentCandidate,
+    AttachmentProblem,
+    DocumentAttachment,
+    DocumentAttachmentStatus,
+)
 from .ports.import_previews import PreviewProblem
 from .ports.object_store import ObjectStore
 from .ports.object_store_keys import ObjectMasterKeyProvider
@@ -162,7 +167,7 @@ class DocumentAttachmentRuntime:
                 return True
             try:
                 return self._imports.native_context(command.root, command.project_id) != command.session_id
-            except (PreviewProblem, ProjectLifecycleProblem):
+            except PreviewProblem, ProjectLifecycleProblem:
                 return True
 
         def publication_guard(publish: Callable[[], AttachmentCandidate]) -> AttachmentCandidate:
@@ -191,6 +196,8 @@ class DocumentAttachmentRuntime:
             version_id=command.version_id,
             version_revision_id=command.version_revision_id,
             actor=actor,
+            operation_id=command.operation_id,
+            session_id=command.session_id,
             cancellation_requested=cancelled,
             publication_guard=publication_guard,
         )
@@ -206,9 +213,43 @@ class DocumentAttachmentRuntime:
             lambda service, actor: service.load_candidate(candidate_id, actor=actor),
         )
 
-    def cancel(self, root: str, project_id: str, session_id: str, candidate_id: str, *, trace_id: str) -> None:
+    def cancel(
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        candidate_id: str,
+        *,
+        operation_id: str,
+        trace_id: str,
+    ) -> None:
         self._action(
-            root, project_id, session_id, trace_id, lambda service, actor: service.cancel(candidate_id, actor=actor)
+            root,
+            project_id,
+            session_id,
+            trace_id,
+            lambda service, actor: service.cancel(
+                candidate_id, actor=actor, operation_id=operation_id, session_id=session_id
+            ),
+        )
+
+    def status(self, command: DocumentStatusQuery, *, trace_id: str) -> DocumentAttachmentStatus:
+        return self._action(
+            command.root,
+            command.project_id,
+            command.session_id,
+            trace_id,
+            lambda service, actor: service.status(
+                source_assertion_revision_id=command.source_assertion_revision_id,
+                work_id=command.work_id,
+                work_revision_id=command.work_revision_id,
+                version_id=command.version_id,
+                version_revision_id=command.version_revision_id,
+                operation_id=command.operation_id,
+                command_id=command.command_id,
+                session_id=command.session_id,
+                actor=actor,
+            ),
         )
 
     def commit(self, command: DocumentCommit, *, trace_id: str) -> DocumentAttachment:
@@ -222,9 +263,19 @@ class DocumentAttachmentRuntime:
                 confirmation_sha256=command.confirmation_sha256,
                 command_id=command.command_id,
                 actor=actor,
+                operation_id=command.operation_id,
+                session_id=command.session_id,
+                match_confirmed=command.match_confirmed,
+                permitted_use=command.permitted_use,
+                exact_selection=(
+                    command.source_assertion_revision_id,
+                    command.work_id,
+                    command.work_revision_id,
+                    command.version_id,
+                    command.version_revision_id,
+                ),
             ),
         )
-
 
 
 def create_runtime_app(

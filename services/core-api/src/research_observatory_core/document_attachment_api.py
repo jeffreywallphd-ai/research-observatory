@@ -15,7 +15,7 @@ import threading
 from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import asdict
-from typing import Annotated, BinaryIO, Protocol, cast
+from typing import Annotated, BinaryIO, Literal, Protocol, cast
 
 from fastapi import APIRouter, FastAPI, Request, Response
 from pydantic import Field, ValidationError, field_validator
@@ -26,7 +26,12 @@ from workers.document.inspection import MAX_DOCUMENT_BYTES, DocumentInspectionEr
 from .corpus.membership import CorpusProblem
 from .import_api import BoundedImportRoute
 from .ingestion.import_drafts import DraftValue, Identity, ProjectIdentity
-from .ports.document_attachments import AttachmentCandidate, AttachmentProblem, DocumentAttachment
+from .ports.document_attachments import (
+    AttachmentCandidate,
+    AttachmentProblem,
+    DocumentAttachment,
+    DocumentAttachmentStatus,
+)
 from .ports.import_previews import PreviewProblem
 from .ports.object_store import (
     ObjectSourceTooLarge,
@@ -56,6 +61,7 @@ class DocumentSession(DocumentProject):
 
 
 class DocumentStageCommand(DocumentSession):
+    operation_id: Identity
     source_name: Annotated[str, Field(min_length=1, max_length=255)]
     declared_media_type: Annotated[str, Field(min_length=1, max_length=200)] | None
     source_assertion_revision_id: Identity
@@ -77,9 +83,54 @@ class DocumentAddress(DocumentSession):
     candidate_id: Identity
 
 
-class DocumentCommit(DocumentAddress):
+class DocumentCancel(DocumentAddress):
+    operation_id: Identity
+
+
+class DocumentCommit(DocumentCancel):
     confirmation_sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
     command_id: Identity
+    source_assertion_revision_id: Identity
+    work_id: Identity
+    work_revision_id: Identity
+    version_id: Identity
+    version_revision_id: Identity
+    match_confirmed: Literal[True]
+    permitted_use: Literal["project-only"]
+
+
+class DocumentStatusQuery(DocumentSession):
+    source_assertion_revision_id: Identity
+    work_id: Identity
+    work_revision_id: Identity
+    version_id: Identity
+    version_revision_id: Identity
+    operation_id: Identity | None
+    command_id: Identity | None
+
+
+class DocumentStatusView(DraftValue):
+    state: Literal[
+        "metadata-only",
+        "candidate",
+        "unresolved",
+        "committed",
+        "cancelled",
+        "stale-session",
+        "legacy",
+        "unavailable",
+    ]
+    project_id: ProjectIdentity
+    source_assertion_revision_id: Identity
+    work_id: Identity
+    work_revision_id: Identity
+    version_id: Identity
+    version_revision_id: Identity
+    operation_id: Identity | None
+    command_id: Identity | None
+    candidate_id: Identity | None
+    attachment_id: Identity | None
+    document_revision_id: Identity | None
 
 
 class DocumentContext(DraftValue):
@@ -137,7 +188,18 @@ class DocumentRuntimePort(Protocol):
         self, root: str, project_id: str, session_id: str, candidate_id: str, *, trace_id: str
     ) -> AttachmentCandidate: ...
 
-    def cancel(self, root: str, project_id: str, session_id: str, candidate_id: str, *, trace_id: str) -> None: ...
+    def cancel(
+        self,
+        root: str,
+        project_id: str,
+        session_id: str,
+        candidate_id: str,
+        *,
+        operation_id: str,
+        trace_id: str,
+    ) -> None: ...
+
+    def status(self, command: DocumentStatusQuery, *, trace_id: str) -> DocumentAttachmentStatus: ...
 
     def commit(self, command: DocumentCommit, *, trace_id: str) -> DocumentAttachment: ...
 
@@ -576,7 +638,7 @@ def register_document_attachment_routes(app: FastAPI, service: Callable[[Request
         return DocumentCandidateView.model_validate(asdict(result))
 
     @json_router.post("/cancel", status_code=204)
-    def cancel(request: Request, command: DocumentAddress) -> Response:
+    def cancel(request: Request, command: DocumentCancel) -> Response:
         run(
             request,
             lambda selected: selected.cancel(
@@ -584,10 +646,16 @@ def register_document_attachment_routes(app: FastAPI, service: Callable[[Request
                 command.project_id,
                 command.session_id,
                 command.candidate_id,
+                operation_id=command.operation_id,
                 trace_id=request.state.trace_id,
             ),
         )
         return Response(status_code=204, headers={"Cache-Control": "no-store"})
+
+    @json_router.post("/status", response_model=DocumentStatusView)
+    def status(request: Request, command: DocumentStatusQuery) -> DocumentStatusView:
+        result = run(request, lambda selected: selected.status(command, trace_id=request.state.trace_id))
+        return DocumentStatusView.model_validate(asdict(result))
 
     @json_router.post("/commit", response_model=DocumentAttachmentView)
     def commit(request: Request, command: DocumentCommit) -> DocumentAttachmentView:
