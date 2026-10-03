@@ -8,6 +8,7 @@ its inherited pipes. It has no listener and no network or filesystem broker.
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 import re
 import sys
@@ -189,7 +190,22 @@ def run_worker(stdin: BinaryIO, stdout: BinaryIO, *, asset_root: Path) -> None:
         next_sequence += 2
         return response
 
-    output = invoke(input_data, broker, request["connectorOperation"])
+    try:
+        context_parameter = inspect.signature(invoke).parameters.get("context")
+    except TypeError, ValueError:
+        # A callable without inspectable parameters retains the legacy call.
+        context_parameter = None
+    if context_parameter is not None and context_parameter.kind is inspect.Parameter.KEYWORD_ONLY:
+        # The parent owns invocation identity. The plugin may echo this one
+        # identifier in its result, but receives no project or broker authority.
+        output = invoke(
+            input_data,
+            broker,
+            request["connectorOperation"],
+            context={"invocationId": request["invocationId"]},
+        )
+    else:
+        output = invoke(input_data, broker, request["connectorOperation"])
     if not isinstance(output, bytes) or len(output) > MAX_BINARY_FRAME:
         raise WorkerProtocolError("worker-output-invalid")
     write_frame(

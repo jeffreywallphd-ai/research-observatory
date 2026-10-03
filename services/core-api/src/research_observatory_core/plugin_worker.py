@@ -18,7 +18,12 @@ from .connectors.plugin_broker import PluginBrokerCall, PluginBrokerRates
 from .connectors.plugin_credentials import PluginCredentialSettings, PluginCredentialStatus
 from .connectors.plugin_dispatch import PluginDispatchController, PluginDispatchProblem
 from .connectors.plugin_grants import PluginGrantActor
-from .connectors.plugin_manifest import Operation, PluginInvocationRequest
+from .connectors.plugin_manifest import Operation, PluginInvocationPlan, PluginInvocationRequest
+from .connectors.plugin_scientific_request import (
+    PluginScientificRequest,
+    PluginScientificRequestProblem,
+    parse_plugin_scientific_request,
+)
 from .connectors.plugin_workflow import ACTIVITY, PluginJobInput, bind_plugin_claim, build_plugin_job
 from .domain_contracts import is_uuid_v7
 from .logging import emit_log_record
@@ -59,39 +64,15 @@ class PluginWorkerProblem(ValueError):
         super().__init__(code)
 
 
-_SCIENTIFIC_FIELD: dict[Operation, str] = {
-    "lookup": "identifier",
-    "search": "query",
-    "references": "identifier",
-    "citations": "identifier",
-    "open-access-locations": "identifier",
-    "repository-metadata": "repositoryId",
-}
-
-
 def _assert_scientific_broker_call(input_data: bytes, operation: Operation, call: PluginBrokerCall) -> None:
-    """Bind first-page egress to the exact Core-held scientific parameter."""
+    """Bind one broker call to the exact consented scientific page."""
 
     try:
-        if not input_data or len(input_data) > 4096:
-            raise ValueError
-        fields = json.loads(input_data.decode("utf-8"), object_pairs_hook=_unique_json_fields)
-        if not isinstance(fields, dict) or set(fields) != {_SCIENTIFIC_FIELD[operation]}:
-            raise ValueError
-        expected = PluginBrokerCall.model_validate({"operation": operation, **fields})
-    except ValueError, UnicodeError, KeyError:
+        expected = parse_plugin_scientific_request(input_data, operation).call
+    except PluginScientificRequestProblem:
         raise PluginWorkerProblem("plugin-worker-broker-parameters-denied") from None
     if call.model_copy(update={"credential_scope": None}) != expected:
         raise PluginWorkerProblem("plugin-worker-broker-parameters-denied")
-
-
-def _unique_json_fields(pairs: list[tuple[str, object]]) -> dict[str, object]:
-    values: dict[str, object] = {}
-    for key, value in pairs:
-        if key in values:
-            raise ValueError("duplicate scientific parameter")
-        values[key] = value
-    return values
 
 
 @dataclass(frozen=True, slots=True)
@@ -201,6 +182,55 @@ class PluginWorkerService:
     ) -> None:
         authority.guard(inputs.request, authority.plan, stage, lambda stamp: self._stamp(inputs, stamp))
 
+    def _predecessor(
+        self,
+        binding: _Binding,
+        plan: PluginInvocationPlan,
+        scientific: PluginScientificRequest,
+    ) -> None:
+        """A continuation follows one already published, same-authority page."""
+
+        previous_id = scientific.previous_invocation_id
+        if previous_id is None:
+            return
+        try:
+            if plan.operation != "search" or previous_id == plan.invocation_id:
+                raise ValueError
+            previous = binding.adapters.jobs.input(previous_id)
+            page = binding.adapters.jobs.result(previous)
+            if page is None:
+                raise ValueError
+            prior_scientific = parse_plugin_scientific_request(
+                self._input_bytes(binding, previous), previous.request.operation
+            )
+            prior_plan = page.plan
+            if (
+                previous.project_id != binding.project_id
+                or prior_plan.project_id != plan.project_id
+                or prior_plan.invocation_id != previous_id
+                or prior_plan.plugin_id != plan.plugin_id
+                or prior_plan.plugin_version != plan.plugin_version
+                or prior_plan.sdk_version != plan.sdk_version
+                or prior_plan.required_features != plan.required_features
+                or prior_plan.package_sha256 != plan.package_sha256
+                or prior_plan.manifest_sha256 != plan.manifest_sha256
+                or prior_plan.signature_sha256 != plan.signature_sha256
+                or prior_plan.publisher_key_id != plan.publisher_key_id
+                or prior_plan.grant_revision != plan.grant_revision
+                or prior_plan.permissions != plan.permissions
+                or prior_plan.source_id != plan.source_id
+                or prior_plan.operation != plan.operation
+                or prior_plan.destination != plan.destination
+                or prior_scientific.call.query != scientific.call.query
+                or prior_scientific.call.page_size != scientific.call.page_size
+                or prior_scientific.call.cursor == scientific.call.cursor
+                or page.continuation != "next-page"
+                or page.next_cursor != scientific.call.cursor
+            ):
+                raise ValueError
+        except PluginJobRepositoryProblem, PluginWorkerProblem, PluginScientificRequestProblem, ValueError:
+            raise PluginWorkerProblem("plugin-worker-page-predecessor-denied") from None
+
     def submit(
         self,
         root: str,
@@ -215,6 +245,10 @@ class PluginWorkerService:
             or "sha256:" + hashlib.sha256(input_data).hexdigest() != request.scientific_request_sha256
         ):
             raise PluginWorkerProblem("plugin-worker-input-invalid")
+        try:
+            scientific = parse_plugin_scientific_request(input_data, request.operation)
+        except PluginScientificRequestProblem:
+            raise PluginWorkerProblem("plugin-worker-input-invalid") from None
         authority = self._consent.authority(root, preview_id)
         plan = authority.plan
         stamp = authority.guard(request, plan, "admission", lambda stamp: stamp)
@@ -223,6 +257,7 @@ class PluginWorkerService:
             if binding.project_id != plan.project_id:
                 raise PluginWorkerProblem("plugin-worker-project-denied")
             authority.guard(request, plan, "admission", lambda current: self._check_stamp(stamp, current))
+            self._predecessor(binding, plan, scientific)
             digest = hashlib.sha256(input_data).hexdigest()
             stored = binding.adapters.objects.put(
                 io.BytesIO(input_data),
@@ -453,6 +488,11 @@ class PluginWorkerService:
                     authority = self._consent.authority(str(binding.path), inputs.consent_preview_id)
                     self._guard(authority, inputs, "dispatch")
                     data = self._input_bytes(binding, inputs)
+                    try:
+                        scientific = parse_plugin_scientific_request(data, inputs.request.operation)
+                    except PluginScientificRequestProblem:
+                        raise PluginWorkerProblem("plugin-worker-input-invalid") from None
+                    self._predecessor(binding, authority.plan, scientific)
                     return inputs, authority, data
 
                 inputs, authority, data = self._action(str(binding.path), admit)
@@ -496,6 +536,11 @@ class PluginWorkerService:
 
                 def publish(_binding: _Binding):
                     self._guard(authority, inputs, "publication")
+                    self._predecessor(
+                        binding,
+                        authority.plan,
+                        parse_plugin_scientific_request(data, inputs.request.operation),
+                    )
                     return binding.adapters.jobs.publish(
                         inputs,
                         authority.plan,

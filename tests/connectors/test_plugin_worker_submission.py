@@ -22,11 +22,18 @@ from research_observatory_core.authentication import (  # noqa: E402
     LocalAuthenticationMiddleware,
     capability_token_digest,
 )
-from research_observatory_core.connectors.plugin_broker import PluginBrokerCall, PluginNetworkBroker  # noqa: E402
+from research_observatory_core.connectors.plugin_broker import (  # noqa: E402
+    PluginBrokerCall,
+    PluginBrokerResponse,
+    PluginNetworkBroker,
+)
 from research_observatory_core.connectors.plugin_credentials import PluginCredentialSettings  # noqa: E402
 from research_observatory_core.connectors.plugin_grants import PluginGrantActor  # noqa: E402
 from research_observatory_core.connectors.plugin_manifest import PluginProjectGrant, verify_plugin_package  # noqa: E402
 from research_observatory_core.connectors.plugin_package_intake import inspect_plugin_archive  # noqa: E402
+from research_observatory_core.connectors.plugin_scientific_request import (  # noqa: E402
+    parse_plugin_scientific_request,
+)
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
 from research_observatory_core.plugin_admin_service import PluginAdminService, PluginAuthorizedDispatch  # noqa: E402
 from research_observatory_core.plugin_consent import (  # noqa: E402
@@ -41,6 +48,7 @@ from research_observatory_core.plugin_worker import (  # noqa: E402
     PluginWorkerProblem,
     PluginWorkerService,
     _assert_scientific_broker_call,
+    _Binding,
 )
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
 from research_observatory_core.repositories import sqlite_workflow_admission_binding  # noqa: E402
@@ -152,6 +160,7 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
 
         def run(_runtime, _package, _files, **kwargs):
             calls.append(kwargs["input_data"])
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
             output = json.dumps(
                 {
                     "schemaVersion": "1.0",
@@ -170,12 +179,17 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
                     "capabilityCount": 0,
                     "allApplicationPackagesDenied": True,
                 },
-                broker_calls=0,
+                broker_calls=1,
             )
 
         self.worker._runtime = cast(InstalledPluginRuntime, SimpleNamespace(load=lambda: object(), run=run))
-        queued = self.worker.submit(str(self.root), self.preview_id, self.inputs.request, self.input_data)
-        self.worker.run_pending()
+
+        async def synthetic_fetch(_broker, _plan, _call):
+            return PluginBrokerResponse(body=b'{"id":"synthetic-1"}', redacted=False)
+
+        with patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", synthetic_fetch):
+            queued = self.worker.submit(str(self.root), self.preview_id, self.inputs.request, self.input_data)
+            self.worker.run_pending()
         result = self.queue.get(queued.job_id)
         self.assertEqual("succeeded", result.state)
         self.assertEqual([self.input_data], calls)
@@ -183,6 +197,9 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
         assert page is not None
         self.assertEqual(queued.job_id, page.job_id)
         self.assertEqual(self.plan.source_id, page.plan.source_id)
+        self.assertEqual(1, len(page.broker_responses))
+        with self.objects.open(page.broker_responses[0].object_sha256, purpose="document-analysis") as source:
+            self.assertEqual(b'{"id":"synthetic-1"}', source.read())
         physical = tuple(path for path in (self.root / "objects").rglob("*") if path.is_file())
         self.assertTrue(physical)
         self.assertFalse(any(self.input_data in path.read_bytes() for path in physical))
@@ -302,6 +319,92 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
                 "search",
                 PluginBrokerCall(operation="search", query="approved", cursor="unapproved-page"),
             )
+
+    def test_search_continuation_requires_exact_consented_broker_cursor(self):
+        previous_id = new_uuid_v7()
+        raw = json.dumps(
+            {"query": "public records", "pageSize": 2, "cursor": "page-b", "previousInvocationId": previous_id},
+            separators=(",", ":"),
+        ).encode()
+        _assert_scientific_broker_call(
+            raw,
+            "search",
+            PluginBrokerCall(operation="search", query="public records", page_size=2, cursor="page-b"),
+        )
+        with self.assertRaisesRegex(PluginWorkerProblem, "broker-parameters-denied"):
+            _assert_scientific_broker_call(
+                raw,
+                "search",
+                PluginBrokerCall(operation="search", query="public records", page_size=2, cursor="page-c"),
+            )
+
+    def test_predecessor_must_be_published_same_package_and_exact_next_cursor(self):
+        previous_id = new_uuid_v7()
+        current_id = new_uuid_v7()
+        prior_plan = self.plan.model_copy(update={"operation": "search", "invocation_id": previous_id})
+        current_plan = self.plan.model_copy(update={"operation": "search", "invocation_id": current_id})
+        prior_request = self.inputs.request.model_copy(update={"operation": "search", "invocation_id": previous_id})
+        prior_input = self.inputs.model_copy(update={"request": prior_request})
+        current = parse_plugin_scientific_request(
+            json.dumps(
+                {"query": "public records", "pageSize": 2, "cursor": "page-b", "previousInvocationId": previous_id},
+                separators=(",", ":"),
+            ).encode(),
+            "search",
+        )
+        page = SimpleNamespace(plan=prior_plan, continuation="next-page", next_cursor="page-b")
+        jobs = SimpleNamespace(input=lambda _id: prior_input, result=lambda _input: page)
+        binding = SimpleNamespace(project_id=self.inputs.project_id, adapters=SimpleNamespace(jobs=jobs))
+        with patch.object(self.worker, "_input_bytes", return_value=b'{"query":"public records","pageSize":2}'):
+            self.worker._predecessor(cast(_Binding, binding), current_plan, current)
+            for changed in (
+                SimpleNamespace(plan=prior_plan, continuation="next-page", next_cursor="page-c"),
+                SimpleNamespace(plan=prior_plan, continuation="exhausted", next_cursor=None),
+                SimpleNamespace(
+                    plan=prior_plan.model_copy(update={"package_sha256": "sha256:" + "a" * 64}),
+                    continuation="next-page",
+                    next_cursor="page-b",
+                ),
+                SimpleNamespace(
+                    plan=prior_plan.model_copy(update={"grant_revision": prior_plan.grant_revision + 1}),
+                    continuation="next-page",
+                    next_cursor="page-b",
+                ),
+            ):
+                with (
+                    self.subTest(changed=changed),
+                    self.assertRaisesRegex(PluginWorkerProblem, "page-predecessor-denied"),
+                ):
+                    self.worker._predecessor(
+                        cast(
+                            _Binding,
+                            SimpleNamespace(
+                                project_id=self.inputs.project_id,
+                                adapters=SimpleNamespace(
+                                    jobs=SimpleNamespace(
+                                        input=lambda _id: prior_input,
+                                        result=lambda _input, page=changed: page,
+                                    )
+                                ),
+                            ),
+                        ),
+                        current_plan,
+                        current,
+                    )
+            with self.assertRaisesRegex(PluginWorkerProblem, "page-predecessor-denied"):
+                self.worker._predecessor(
+                    cast(
+                        _Binding,
+                        SimpleNamespace(
+                            project_id=self.inputs.project_id,
+                            adapters=SimpleNamespace(
+                                jobs=SimpleNamespace(input=lambda _id: prior_input, result=lambda _input: None)
+                            ),
+                        ),
+                    ),
+                    current_plan,
+                    current,
+                )
 
     def test_restart_without_ephemeral_consent_cancels_durable_runnable_job(self):
         queued = self.worker.submit(str(self.root), self.preview_id, self.inputs.request, self.input_data)

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "invocationId": "0190a000-0000-7000-8000-000000000051",
+  "operation": "repository-metadata",
+  "input": {"repositoryId": "archive-01"},
+  "brokerCall": {"operation": "repository-metadata", "repositoryId": "archive-01"},
+  "brokerResponse": {
+    "repositoryId": "archive-01",
+    "displayName": "Synthetic Public Archive",
+    "description": "Synthetic fixture; no live service"
+  },
+  "output": {
+    "schemaVersion": "1.0",
+    "invocationId": "0190a000-0000-7000-8000-000000000051",
+    "operation": "repository-metadata",
+    "records": [
+      {
+        "rawIdentifier": {"scheme": "repository", "value": "archive-01"},
+        "identifiers": [{"scheme": "repository", "value": "archive-01"}],
+        "fields": [
+          {"name": "displayName", "encoding": "text", "value": "Synthetic Public Archive"},
+          {"name": "description", "encoding": "text", "value": "Synthetic fixture; no live service"}
+        ],
+        "terms": {
+          "license": {"state": "not-reported", "value": null},
+          "terms": {"state": "not-reported", "value": null},
+          "access": "unknown"
+        }
+      }
+    ],
+    "continuation": "exhausted"
+  }
+}

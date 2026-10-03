@@ -1,0 +1,231 @@
+{
+  "$defs": {
+    "BoundedText": {
+      "maxLength": 65536,
+      "minLength": 1,
+      "type": "string"
+    },
+    "IdentifierValue": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "type": "string"
+    },
+    "InvocationId": {
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "type": "string"
+    },
+    "Operation": {
+      "enum": [
+        "lookup",
+        "search",
+        "references",
+        "citations",
+        "open-access-locations",
+        "repository-metadata"
+      ],
+      "type": "string"
+    },
+    "PluginWorkerField": {
+      "additionalProperties": false,
+      "properties": {
+        "encoding": {
+          "enum": [
+            "text",
+            "json"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "name": {
+          "pattern": "^[A-Za-z][A-Za-z0-9_.:-]{0,127}$",
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 65536,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "encoding",
+        "value"
+      ],
+      "title": "PluginWorkerField",
+      "type": "object"
+    },
+    "PluginWorkerRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/PluginWorkerField"
+          },
+          "maxItems": 256,
+          "title": "Fields",
+          "type": "array"
+        },
+        "identifiers": {
+          "items": {
+            "$ref": "#/$defs/ProviderIdentifier"
+          },
+          "maxItems": 64,
+          "title": "Identifiers",
+          "type": "array"
+        },
+        "rawIdentifier": {
+          "$ref": "#/$defs/ProviderIdentifier"
+        },
+        "terms": {
+          "$ref": "#/$defs/SourceTerms"
+        }
+      },
+      "required": [
+        "rawIdentifier",
+        "identifiers",
+        "fields",
+        "terms"
+      ],
+      "title": "PluginWorkerRecord",
+      "type": "object"
+    },
+    "ProviderId": {
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$",
+      "type": "string"
+    },
+    "ProviderIdentifier": {
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "$ref": "#/$defs/ProviderId"
+        },
+        "value": {
+          "$ref": "#/$defs/IdentifierValue"
+        }
+      },
+      "required": [
+        "scheme",
+        "value"
+      ],
+      "title": "ProviderIdentifier",
+      "type": "object"
+    },
+    "SourceObservation": {
+      "additionalProperties": false,
+      "description": "A source-reported value or explicit absence; never a permission decision.",
+      "properties": {
+        "state": {
+          "enum": [
+            "reported",
+            "not-reported",
+            "unknown",
+            "not-applicable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundedText"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "state",
+        "value"
+      ],
+      "title": "SourceObservation",
+      "type": "object"
+    },
+    "SourceTerms": {
+      "additionalProperties": false,
+      "properties": {
+        "access": {
+          "enum": [
+            "open",
+            "closed",
+            "unknown",
+            "not-reported"
+          ],
+          "title": "Access",
+          "type": "string"
+        },
+        "license": {
+          "$ref": "#/$defs/SourceObservation"
+        },
+        "terms": {
+          "$ref": "#/$defs/SourceObservation"
+        }
+      },
+      "required": [
+        "license",
+        "terms",
+        "access"
+      ],
+      "title": "SourceTerms",
+      "type": "object"
+    }
+  },
+  "$id": "https://research-observatory.local/contracts/connectors/connector-plugin-worker-page.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "continuation": {
+      "enum": [
+        "exhausted",
+        "next-page"
+      ],
+      "title": "Continuation",
+      "type": "string"
+    },
+    "invocationId": {
+      "$ref": "#/$defs/InvocationId"
+    },
+    "nextCursor": {
+      "anyOf": [
+        {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Nextcursor"
+    },
+    "operation": {
+      "$ref": "#/$defs/Operation"
+    },
+    "records": {
+      "items": {
+        "$ref": "#/$defs/PluginWorkerRecord"
+      },
+      "maxItems": 1000,
+      "title": "Records",
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": "1.0",
+      "title": "Schemaversion",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "invocationId",
+    "operation",
+    "records",
+    "continuation"
+  ],
+  "title": "PluginWorkerPage",
+  "type": "object"
+}

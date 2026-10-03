@@ -345,6 +345,10 @@ publication path still need their separate output/provenance validation.
 
 ## Local plugin trust and project grants — CAP-04.S05.T02
 
+The [connector SDK developer guide](../developer/connector-sdk.md) provides
+the synthetic repository example, unsigned draft and signed-archive
+conformance commands, result shape, and the limit of static checks.
+
 `CAP-04.S05.T02` is integrating the native selected-file review, encrypted
 package persistence, restricted worker and durable job. The components below
 do not authorize plugin execution on their own; final packaged-worker and
@@ -410,6 +414,12 @@ source namespace and retrieval time before encrypted staging. The owning
 workflow attempt must validate its lease and cancellation fence before
 publishing a page with exact package, manifest, request, policy and raw-response
 provenance; a staged object alone is not a successful source observation.
+For plugin results, Core retains the exact **sanitized broker response bytes**
+that it gave the worker as separate encrypted objects. The published page and
+material dependencies bind their ordered object digests; these references do
+not assert that untrusted worker fields are true or grant rights. Original wire
+headers, credential values, and unsanitized response bytes are not retained as
+plugin provenance.
 
 Plugin egress has a separate, ephemeral exact-request consent authority. An
 accepted Intent must permit the plugin source ID in `approved-content` mode;

@@ -545,6 +545,13 @@
     "tests/desktop/tools/run_windows_document_picker_probe.py",
     "tests/desktop/test_document_stage_fixture_probe.py",
     "tests/desktop/test_document_attachment_fixture_verifier.py",
-    "tests/desktop/test_windows_document_picker_probe.py"
+    "tests/desktop/test_windows_document_picker_probe.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py",
+    "tests/connectors/test_plugin_scientific_request.py",
+    "tests/connectors/test_plugin_worker_api.py",
+    "tests/contracts/test_plugin_worker_contract.py",
+    "tools/connector_conformance.py",
+    "tests/connectors/test_plugin_sample_conformance.py",
+    "tests/connectors/test_plugin_sample_native_lpac.py"
   ]
 }

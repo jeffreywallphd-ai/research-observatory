@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "1.0",
+  "pluginId": "sample.repository",
+  "pluginVersion": "1.0.0",
+  "sdkVersion": "1.0.0",
+  "requiredFeatures": ["source-assertions-v1", "brokered-requests-v1"],
+  "publisherKeyId": "sample-repository-publisher",
+  "sourceIdentity": {
+    "sourceId": "plugin.sample.repository",
+    "displayName": "Synthetic public repository sample"
+  },
+  "authentication": {"mode": "none"},
+  "terms": {"status": "not-reported"},
+  "rateLimits": {"maxRequestsPerSecond": 1, "maxConcurrent": 1},
+  "entryPoint": "plugin/connector.py",
+  "files": [
+    {
+      "path": "plugin/connector.py",
+      "sha256": "sha256:4bc50f376d9ff083cd3f6c493533c61e09cb865b5877bcabd9c52e3f7bdf776a"
+    }
+  ],
+  "operations": ["repository-metadata", "search"],
+  "destinations": [
+    {
+      "scheme": "https",
+      "host": "repository.example.invalid",
+      "port": 443,
+      "pathTemplate": "/v1/repositories/{repository_id}"
+    },
+    {
+      "scheme": "https",
+      "host": "repository.example.invalid",
+      "port": 443,
+      "pathTemplate": "/v1/records"
+    }
+  ],
+  "credentialScopes": [],
+  "dataClasses": ["public-metadata"],
+  "rightsBehavior": "source-assertions-only",
+  "resourceProfile": {"committedMemoryMiB": 256, "maxJobsPerProject": 1, "wallTimeSeconds": 60},
+  "permissions": ["provider-network"]
+}

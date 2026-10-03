@@ -19,10 +19,16 @@ from typing import Annotated, Literal
 from pydantic import Field, model_validator
 
 from .connectors.contracts import ConnectorModel, ConnectorRecord, InvocationId, ObjectDigest, UtcInstant
-from .connectors.plugin_dispatch import PluginStagedOutput
+from .connectors.plugin_dispatch import PluginBrokerResponseRef, PluginStagedOutput
 from .connectors.plugin_manifest import PluginInvocationPlan
 from .connectors.plugin_result import validate_plugin_output
+from .connectors.plugin_scientific_request import (
+    PluginScientificRequest,
+    PluginScientificRequestProblem,
+    parse_plugin_scientific_request,
+)
 from .connectors.plugin_workflow import PluginJobInput, bind_plugin_claim
+from .connectors.transport import bounded_json
 from .domain_contracts import new_uuid_v7
 from .ports.object_store import ObjectPutCommand, ObjectStore, ObjectStoreProblem
 from .ports.plugin_jobs import PluginJobRepositoryProblem
@@ -46,7 +52,7 @@ _MAX_DOCUMENT = 16 * 1024 * 1024
 
 
 class PluginPublishedPage(ConnectorModel):
-    """A source-reported page with Core-owned identity and retrieval facts."""
+    """A source-reported page with Core identity and sanitized broker-body references."""
 
     schema_version: Literal["1.0"] = "1.0"
     revision_id: InvocationId
@@ -57,6 +63,9 @@ class PluginPublishedPage(ConnectorModel):
     raw_object_sha256: ObjectDigest
     raw_byte_length: Annotated[int, Field(strict=True, ge=0, le=10 * 1_048_576)]
     broker_calls: Annotated[int, Field(strict=True, ge=0, le=64)]
+    broker_responses: Annotated[tuple[PluginBrokerResponseRef, ...], Field(max_length=64)] = Field(
+        default=(), repr=False
+    )
     records: Annotated[tuple[ConnectorRecord, ...], Field(max_length=1000)] = Field(repr=False)
     continuation: Literal["exhausted", "next-page"]
     next_cursor: Annotated[str, Field(strict=True, min_length=1, max_length=4096)] | None = Field(
@@ -68,6 +77,7 @@ class PluginPublishedPage(ConnectorModel):
         if (
             self.observed_at < self.retrieved_at
             or (self.continuation == "next-page") != (self.next_cursor is not None)
+            or (self.broker_responses and len(self.broker_responses) != self.broker_calls)
             or any(
                 record.provider_id != self.plan.source_id or record.retrieved_at != self.retrieved_at
                 for record in self.records
@@ -251,6 +261,69 @@ class PluginJobRepository:
             raise PluginJobRepositoryProblem("plugin-job-result-corrupt")
         return page
 
+    def _scientific(self, inputs: PluginJobInput) -> PluginScientificRequest:
+        data = self._read(inputs.input_object_sha256)
+        if (
+            len(data) != inputs.input_byte_length
+            or "sha256:" + hashlib.sha256(data).hexdigest() != inputs.request.scientific_request_sha256
+        ):
+            raise PluginJobRepositoryProblem("plugin-job-input-unavailable")
+        try:
+            return parse_plugin_scientific_request(data, inputs.request.operation)
+        except PluginScientificRequestProblem:
+            raise PluginJobRepositoryProblem("plugin-job-input-unavailable") from None
+
+    @staticmethod
+    def _continuation_plan(plan: PluginInvocationPlan) -> dict:
+        identity = plan.model_dump(mode="json", by_alias=True)
+        for field in ("invocationId", "scientificRequestSha256", "requestSha256"):
+            identity.pop(field)
+        return identity
+
+    def _predecessor_candidate(
+        self, inputs: PluginJobInput, plan: PluginInvocationPlan
+    ) -> tuple[str, PluginPublishedPage] | None:
+        if plan.operation != "search":
+            return None
+        scientific = self._scientific(inputs)
+        previous_id = scientific.previous_invocation_id
+        if previous_id is None:
+            return None
+        if previous_id == inputs.invocation_id:
+            raise PluginJobRepositoryProblem("plugin-job-predecessor-invalid")
+        try:
+            previous_inputs = self.input(previous_id)
+            previous_page = self.result(previous_inputs)
+        except PluginJobRepositoryProblem:
+            raise PluginJobRepositoryProblem("plugin-job-predecessor-invalid") from None
+        if previous_page is None:
+            raise PluginJobRepositoryProblem("plugin-job-predecessor-invalid")
+        previous_scientific = self._scientific(previous_inputs)
+        if (
+            previous_page.continuation != "next-page"
+            or not previous_page.broker_responses
+            or previous_page.next_cursor != scientific.call.cursor
+            or previous_scientific.call.cursor == scientific.call.cursor
+            or previous_scientific.call.query != scientific.call.query
+            or previous_scientific.call.page_size != scientific.call.page_size
+            or self._continuation_plan(previous_page.plan) != self._continuation_plan(plan)
+        ):
+            raise PluginJobRepositoryProblem("plugin-job-predecessor-invalid")
+        return previous_id, previous_page
+
+    def _predecessor(
+        self,
+        connection: CanonicalConnection,
+        aggregates: _SqliteAggregateRepository,
+        candidate: tuple[str, PluginPublishedPage] | None,
+    ) -> AggregateRevision | None:
+        if candidate is None:
+            return None
+        previous_id, page = candidate
+        if self._pointer(connection, previous_id) != page.revision_id:
+            raise PluginJobRepositoryProblem("plugin-job-predecessor-invalid")
+        return aggregates.get_revision(page.revision_id)
+
     def result(self, inputs: PluginJobInput) -> PluginPublishedPage | None:
         inputs = PluginJobInput.model_validate(inputs)
         if inputs.project_id != self._project:
@@ -297,6 +370,8 @@ class PluginJobRepository:
             or plan.signature_sha256 != inputs.signature_sha256
             or plan.request_sha256 != inputs.authorization_request_sha256
             or plan.scientific_request_sha256 != inputs.request.scientific_request_sha256
+            or plan.operation != inputs.request.operation
+            or plan.destination != inputs.request.destination
             or not isinstance(staged, PluginStagedOutput)
         ):
             raise PluginJobRepositoryProblem("plugin-job-publication-invalid")
@@ -309,6 +384,33 @@ class PluginJobRepository:
             or validate_plugin_output(plan, raw, retrieved_at=staged.retrieved_at) != staged.validated_page
         ):
             raise PluginJobRepositoryProblem("plugin-job-stage-invalid")
+        try:
+            broker_responses = tuple(PluginBrokerResponseRef.model_validate(ref) for ref in staged.broker_responses)
+            if not 1 <= len(broker_responses) == staged.broker_calls <= 64 or (
+                plan.operation == "search" and len(broker_responses) != 1
+            ):
+                raise ValueError
+            observed_search_cursor = None
+            for ref in broker_responses:
+                body = self._read(ref.object_sha256)
+                if len(body) != ref.byte_length:
+                    raise ValueError
+                response = bounded_json(body)
+                if plan.operation == "search":
+                    if not isinstance(response, dict):
+                        raise ValueError
+                    observed_search_cursor = response.get("nextCursor")
+            if plan.operation == "search" and (
+                observed_search_cursor != staged.validated_page.next_cursor
+                or (
+                    observed_search_cursor is not None
+                    and observed_search_cursor == self._scientific(inputs).call.cursor
+                )
+            ):
+                raise ValueError
+        except Exception:
+            raise PluginJobRepositoryProblem("plugin-job-broker-response-invalid") from None
+        predecessor_candidate = self._predecessor_candidate(inputs, plan)
         revision_id = new_uuid_v7()
         observed_at = now()
         page = PluginPublishedPage(
@@ -320,6 +422,7 @@ class PluginJobRepository:
             raw_object_sha256=staged.object_sha256,
             raw_byte_length=staged.byte_length,
             broker_calls=staged.broker_calls,
+            broker_responses=broker_responses,
             records=staged.validated_page.records,
             continuation=staged.validated_page.continuation,
             next_cursor=staged.validated_page.next_cursor,
@@ -340,14 +443,20 @@ class PluginJobRepository:
                 prior_id = self._pointer(connection, inputs.invocation_id)
                 if prior_id is not None:
                     prior = self._published(aggregates, prior_id, inputs)
-                    if prior.raw_object_sha256 != staged.object_sha256 or prior.job_id != claim.job_id:
+                    if (
+                        prior.raw_object_sha256 != staged.object_sha256
+                        or prior.broker_responses != broker_responses
+                        or prior.job_id != claim.job_id
+                    ):
                         raise PluginJobRepositoryProblem("plugin-job-result-conflict")
                     output = self._output(aggregates.get_revision(prior_id))
                     self._queue._complete_with_connection(connection, claim, now=now(), outputs=(output,))
                     return output
                 source = aggregates.get_revision(inputs.invocation_id)
-                if source.aggregate_kind != "document":
+                expected_input_digest = hashlib.sha256(inputs.model_dump_json(by_alias=True).encode()).hexdigest()
+                if source.aggregate_kind != "document" or source.object_sha256 != expected_input_digest:
                     raise PluginJobRepositoryProblem("plugin-job-input-unavailable")
+                predecessor = self._predecessor(connection, aggregates, predecessor_candidate)
                 dependencies = tuple(
                     MaterialDependency(
                         new_uuid_v7(),
@@ -369,6 +478,19 @@ class PluginJobRepository:
                         ("input", inputs.configuration_hash),
                         ("raw-output", "sha256:" + staged.object_sha256),
                     )
+                ) + tuple(
+                    MaterialDependency(
+                        new_uuid_v7(),
+                        "parameter-set",
+                        "direct",
+                        None,
+                        f"plugin.broker-response.{index}",
+                        "1.0.0",
+                        "sha256:" + ref.object_sha256,
+                        "dependency.material.v1",
+                        "1.0.0",
+                    )
+                    for index, ref in enumerate(broker_responses, 1)
                 )
                 revision = aggregates.append(
                     AggregateRevisionDraft(
@@ -383,7 +505,7 @@ class PluginJobRepository:
                         rights_status="unknown",
                         dependency_coverage="complete",
                         object_sha256=digest,
-                        provenance_inputs=(source,),
+                        provenance_inputs=(source,) if predecessor is None else (source, predecessor),
                         material_dependencies=dependencies,
                     ),
                     AtomicRepositoryEvent(

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "invocationId": "0190a000-0000-7000-8000-000000000052",
+  "operation": "search",
+  "input": {"query": "synthetic metadata", "pageSize": 1},
+  "brokerCall": {"operation": "search", "query": "synthetic metadata", "pageSize": 1},
+  "brokerResponse": {
+    "records": [
+      {"id": "fixture-001", "title": "Synthetic record 001", "license": null, "access": "unknown"}
+    ],
+    "nextCursor": "page-2"
+  },
+  "output": {
+    "schemaVersion": "1.0",
+    "invocationId": "0190a000-0000-7000-8000-000000000052",
+    "operation": "search",
+    "records": [
+      {
+        "rawIdentifier": {"scheme": "repository", "value": "fixture-001"},
+        "identifiers": [{"scheme": "repository", "value": "fixture-001"}],
+        "fields": [{"name": "title", "encoding": "text", "value": "Synthetic record 001"}],
+        "terms": {
+          "license": {"state": "not-reported", "value": null},
+          "terms": {"state": "not-reported", "value": null},
+          "access": "unknown"
+        }
+      }
+    ],
+    "continuation": "next-page",
+    "nextCursor": "page-2"
+  }
+}

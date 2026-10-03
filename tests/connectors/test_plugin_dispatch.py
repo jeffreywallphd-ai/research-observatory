@@ -9,6 +9,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from contextlib import suppress
 from pathlib import Path
 from types import SimpleNamespace
 from typing import cast
@@ -17,6 +18,7 @@ from unittest.mock import patch
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "services/core-api/src"))
 
+from research_observatory_core.connectors.plugin_broker import PluginBrokerProblem  # noqa: E402
 from research_observatory_core.connectors.plugin_dispatch import (  # noqa: E402
     PluginDispatchController,
     PluginDispatchProblem,
@@ -35,6 +37,7 @@ from research_observatory_core.plugin_grant_repository import SqlitePluginGrantR
 from research_observatory_core.ports.object_store import ObjectStore, StoredObject  # noqa: E402
 from research_observatory_core.storage import configure_protected_database_provider, initialize_database  # noqa: E402
 
+from tests.connectors.test_plugin_manifest_contract import _manifest_bytes, _manifest_document  # noqa: E402
 from tests.connectors.test_plugin_package_intake import archive  # noqa: E402
 from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
 
@@ -81,10 +84,12 @@ class _Admin:
 class _Store:
     def __init__(self):
         self.puts = 0
+        self.bodies: dict[str, bytes] = {}
 
     def put(self, source, command):
         self.puts += 1
         body = source.read()
+        self.bodies[hashlib.sha256(body).hexdigest()] = body
         assert command.protection_profile == "project-encrypted-v1"
         assert command.rights_status == "allowed"
         assert command.retention_class == "project-lifetime"
@@ -179,34 +184,147 @@ class PluginDispatchTests(unittest.TestCase):
             separators=(",", ":"),
         ).encode("utf-8")
 
-    def test_verified_worker_result_is_encrypted_stage_without_publication(self):
-        output = self._valid_output()
+    @staticmethod
+    async def _lookup_response(_broker, _plan, _call):
+        return SimpleNamespace(body=b'{"id":"synthetic-1"}', redacted=False)
+
+    def _search(self):
+        manifest_document = _manifest_document()
+        manifest_document["operations"].append("search")
+        raw, key = archive(manifest=_manifest_bytes(manifest_document))
+        inspected = inspect_plugin_archive(raw)
+        package = verify_plugin_package(
+            inspected.manifest_bytes,
+            inspected.signature,
+            inspected.files,
+            {inspected.manifest.publisher_key_id: key},
+        )
+        self.input_data = b'{"query":"approved","pageSize":2}'
+        self.request = PluginInvocationRequest(
+            project_id=PROJECT,
+            invocation_id=new_uuid_v7(),
+            scientific_request_sha256="sha256:" + hashlib.sha256(self.input_data).hexdigest(),
+            operation="search",
+            destination=package.manifest.destinations[0],
+        )
+        grant = PluginProjectGrant(
+            project_id=PROJECT,
+            plugin_id=package.manifest.plugin_id,
+            plugin_version=package.manifest.plugin_version,
+            package_sha256=package.package_sha256,
+            manifest_sha256=package.manifest_sha256,
+            publisher_key_id=package.manifest.publisher_key_id,
+            permissions=package.manifest.permissions,
+            destinations=package.manifest.destinations,
+            revision=1,
+        )
+        self.admin = _Admin(
+            package, dict(inspected.files), authorize_plugin_invocation(package, grant, self.request), grant
+        )
+
+    def _search_output(self, next_cursor):
+        page = {
+            "schemaVersion": "1.0",
+            "invocationId": self.request.invocation_id,
+            "operation": "search",
+            "records": [],
+            "continuation": "next-page" if next_cursor is not None else "exhausted",
+        }
+        if next_cursor is not None:
+            page["nextCursor"] = next_cursor
+        return json.dumps(page, separators=(",", ":")).encode()
+
+    def test_broker_observation_has_separate_encrypted_stage_reference(self):
+        response = b'{"id":"synthetic-1"}'
+
+        async def fetch(_broker, _plan, _call):
+            return SimpleNamespace(body=response, redacted=False)
 
         def runner(_runtime, _package, _files, **kwargs):
-            self.assertEqual(self.request.invocation_id, kwargs["invocation_id"])
-            self.assertEqual(self.input_data, kwargs["input_data"])
+            self.assertEqual(response, kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"}))
             return SimpleNamespace(
-                output=output,
+                output=self._valid_output(),
                 token={
                     "appContainer": True,
                     "lessPrivileged": True,
                     "capabilityCount": 0,
                     "allApplicationPackagesDenied": True,
                 },
-                broker_calls=0,
+                broker_calls=1,
             )
 
-        staged = self._run(runner)
+        with patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch):
+            staged = self._run(runner)
+        self.assertEqual(2, self.store.puts)
+        self.assertEqual(1, len(staged.broker_responses))
+        reference = staged.broker_responses[0]
         self.assertEqual(
-            (hashlib.sha256(output).hexdigest(), len(output), 0),
-            (staged.object_sha256, staged.byte_length, staged.broker_calls),
+            (hashlib.sha256(response).hexdigest(), len(response)), (reference.object_sha256, reference.byte_length)
         )
-        self.assertEqual(1, self.store.puts)
-        self.assertEqual("exhausted", staged.validated_page.continuation)
-        self.assertEqual((), staged.validated_page.records)
-        self.assertRegex(staged.retrieved_at, r"^20[0-9]{2}-")
+        self.assertEqual(response, self.store.bodies[reference.object_sha256])
+        self.assertNotEqual(staged.object_sha256, reference.object_sha256)
 
-    def test_durable_claim_dispatch_uses_package_pair_without_candidate_token(self):
+    def test_non_search_changed_identifier_denied_before_broker_fetch(self):
+        fetches: list[str] = []
+
+        async def fetch(_broker, _plan, _call):
+            fetches.append("egress")
+            return SimpleNamespace(body=b'{"id":"different"}', redacted=False)
+
+        def runner(_runtime, _package, _files, **kwargs):
+            with suppress(PluginDispatchProblem):
+                kwargs["broker_callback"]({"operation": "lookup", "identifier": "different"})
+            return SimpleNamespace(
+                output=self._valid_output(),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        with (
+            patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-failed"),
+        ):
+            self._run(runner)
+        self.assertEqual([], fetches)
+        self.assertEqual(0, self.store.puts)
+
+    def test_non_search_multiple_exact_calls_retain_ordered_sanitized_responses(self):
+        responses = [b'{"sequence":1}', b'{"sequence":2}']
+
+        async def fetch(_broker, _plan, _call):
+            return SimpleNamespace(body=responses.pop(0), redacted=False)
+
+        def runner(_runtime, _package, _files, **kwargs):
+            call = {"operation": "lookup", "identifier": "synthetic-1"}
+            first = kwargs["broker_callback"](call)
+            second = kwargs["broker_callback"](call)
+            self.assertEqual((b'{"sequence":1}', b'{"sequence":2}'), (first, second))
+            return SimpleNamespace(
+                output=self._valid_output(),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=2,
+            )
+
+        with patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch):
+            staged = self._run(runner)
+        self.assertEqual(2, staged.broker_calls)
+        self.assertEqual(3, self.store.puts)
+        self.assertEqual(
+            (b'{"sequence":1}', b'{"sequence":2}'),
+            tuple(self.store.bodies[ref.object_sha256] for ref in staged.broker_responses),
+        )
+
+    def test_zero_broker_call_result_cannot_stage_source_assertion(self):
         def runner(_runtime, _package, _files, **_kwargs):
             return SimpleNamespace(
                 output=self._valid_output(),
@@ -219,19 +337,228 @@ class PluginDispatchTests(unittest.TestCase):
                 broker_calls=0,
             )
 
-        plan = self.admin.dispatch.plan
-        staged = asyncio.run(
-            self._controller(runner).dispatch_persisted(
-                root="C:/synthetic",
-                project_id=PROJECT,
-                package_sha256=plan.package_sha256,
-                manifest_sha256=plan.manifest_sha256,
-                signature_sha256=plan.signature_sha256,
-                request=self.request,
-                input_data=self.input_data,
-                actor=self.actor,
+        with self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-result-invalid"):
+            self._run(runner)
+        self.assertEqual(0, self.store.puts)
+
+    def test_search_next_cursor_must_equal_sanitized_broker_observation(self):
+        self._search()
+
+        async def fetch(_broker, _plan, _call):
+            return SimpleNamespace(body=b'{"items":[],"nextCursor":"page-2"}', redacted=False)
+
+        def runner(_runtime, _package, _files, **kwargs):
+            kwargs["broker_callback"]({"operation": "search", "query": "approved", "pageSize": 2})
+            return SimpleNamespace(
+                output=self._search_output("forged-page"),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
             )
+
+        with (
+            patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-output-invalid"),
+        ):
+            self._run(runner)
+        self.assertEqual(1, self.store.puts)
+
+        def omitted_runner(_runtime, _package, _files, **kwargs):
+            kwargs["broker_callback"]({"operation": "search", "query": "approved", "pageSize": 2})
+            return SimpleNamespace(
+                output=self._search_output(None),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        with (
+            patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-output-invalid"),
+        ):
+            self._run(omitted_runner)
+        self.assertEqual(2, self.store.puts)
+
+        with patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch):
+
+            def valid_runner(_runtime, _package, _files, **kwargs):
+                kwargs["broker_callback"]({"operation": "search", "query": "approved", "pageSize": 2})
+                return SimpleNamespace(
+                    output=self._search_output("page-2"),
+                    token={
+                        "appContainer": True,
+                        "lessPrivileged": True,
+                        "capabilityCount": 0,
+                        "allApplicationPackagesDenied": True,
+                    },
+                    broker_calls=1,
+                )
+
+            staged = self._run(valid_runner)
+        self.assertEqual("page-2", staged.validated_page.next_cursor)
+        self.assertEqual(4, self.store.puts)
+
+    def test_swallowed_broker_failure_cannot_stage_search_page(self):
+        self._search()
+
+        async def failed_fetch(_broker, _plan, _call):
+            raise PluginBrokerProblem("provider-unavailable")
+
+        def runner(_runtime, _package, _files, **kwargs):
+            with suppress(PluginBrokerProblem):
+                kwargs["broker_callback"]({"operation": "search", "query": "approved", "pageSize": 2})
+            return SimpleNamespace(
+                output=self._search_output(None),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        with (
+            patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", failed_fetch),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-failed"),
+        ):
+            self._run(runner)
+        self.assertEqual(0, self.store.puts)
+
+    def test_search_second_broker_attempt_is_denied_before_egress(self):
+        self._search()
+        fetches: list[str] = []
+
+        async def fetch(_broker, _plan, _call):
+            fetches.append("egress")
+            return SimpleNamespace(body=b'{"records":[],"nextCursor":"page-2"}', redacted=False)
+
+        def runner(_runtime, _package, _files, **kwargs):
+            call = {"operation": "search", "query": "approved", "pageSize": 2}
+            kwargs["broker_callback"](call)
+            with suppress(PluginDispatchProblem):
+                kwargs["broker_callback"](call)
+            return SimpleNamespace(
+                output=self._search_output("page-2"),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        with (
+            patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-failed"),
+        ):
+            self._run(runner)
+        self.assertEqual(["egress"], fetches)
+        self.assertEqual(1, self.store.puts)
+
+    def test_search_failed_first_broker_attempt_cannot_retry_egress(self):
+        self._search()
+        fetches: list[str] = []
+
+        async def fetch(_broker, _plan, _call):
+            fetches.append("egress")
+            raise PluginBrokerProblem("provider-unavailable")
+
+        def runner(_runtime, _package, _files, **kwargs):
+            call = {"operation": "search", "query": "approved", "pageSize": 2}
+            with suppress(PluginBrokerProblem):
+                kwargs["broker_callback"](call)
+            with suppress(PluginDispatchProblem):
+                kwargs["broker_callback"](call)
+            return SimpleNamespace(
+                output=self._search_output(None),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        with (
+            patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", fetch),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-worker-failed"),
+        ):
+            self._run(runner)
+        self.assertEqual(["egress"], fetches)
+        self.assertEqual(0, self.store.puts)
+
+    def test_verified_worker_result_is_encrypted_stage_without_publication(self):
+        output = self._valid_output()
+
+        def runner(_runtime, _package, _files, **kwargs):
+            self.assertEqual(self.request.invocation_id, kwargs["invocation_id"])
+            self.assertEqual(self.input_data, kwargs["input_data"])
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
+            return SimpleNamespace(
+                output=output,
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        with patch(
+            "research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", self._lookup_response
+        ):
+            staged = self._run(runner)
+        self.assertEqual(
+            (hashlib.sha256(output).hexdigest(), len(output), 1),
+            (staged.object_sha256, staged.byte_length, staged.broker_calls),
         )
+        self.assertEqual(2, self.store.puts)
+        self.assertEqual("exhausted", staged.validated_page.continuation)
+        self.assertEqual((), staged.validated_page.records)
+        self.assertRegex(staged.retrieved_at, r"^20[0-9]{2}-")
+
+    def test_durable_claim_dispatch_uses_package_pair_without_candidate_token(self):
+        def runner(_runtime, _package, _files, **kwargs):
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
+            return SimpleNamespace(
+                output=self._valid_output(),
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        plan = self.admin.dispatch.plan
+        with patch(
+            "research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", self._lookup_response
+        ):
+            staged = asyncio.run(
+                self._controller(runner).dispatch_persisted(
+                    root="C:/synthetic",
+                    project_id=PROJECT,
+                    package_sha256=plan.package_sha256,
+                    manifest_sha256=plan.manifest_sha256,
+                    signature_sha256=plan.signature_sha256,
+                    request=self.request,
+                    input_data=self.input_data,
+                    actor=self.actor,
+                )
+            )
         self.assertEqual(hashlib.sha256(self._valid_output()).hexdigest(), staged.object_sha256)
 
     def test_bad_broker_frame_and_revocation_never_stage(self):
@@ -243,7 +570,8 @@ class PluginDispatchTests(unittest.TestCase):
         self.assertIn("plugin-broker-call-invalid", self.admin.denials)
         self.assertEqual(0, self.store.puts)
 
-        def revoked(_runtime, _package, _files, **_kwargs):
+        def revoked(_runtime, _package, _files, **kwargs):
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
             self.admin.current = False
             return SimpleNamespace(
                 output=self._valid_output(),
@@ -253,12 +581,17 @@ class PluginDispatchTests(unittest.TestCase):
                     "capabilityCount": 0,
                     "allApplicationPackagesDenied": True,
                 },
-                broker_calls=0,
+                broker_calls=1,
             )
 
-        with self.assertRaisesRegex(PluginDispatchProblem, "plugin-policy-denied"):
+        with (
+            patch(
+                "research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", self._lookup_response
+            ),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-policy-denied"),
+        ):
             self._run(revoked)
-        self.assertEqual(0, self.store.puts)
+        self.assertEqual(1, self.store.puts)
 
     def test_failed_persisted_worker_records_content_free_durable_denial_without_staging(self):
         with tempfile.TemporaryDirectory(prefix="ro-plugin-worker-denial-", dir=REPO / "artifacts/tmp") as temporary:
@@ -313,9 +646,10 @@ class PluginDispatchTests(unittest.TestCase):
     def test_same_project_second_job_denied_while_first_worker_runs(self):
         entered, release = threading.Event(), threading.Event()
 
-        def runner(_runtime, _package, _files, **_kwargs):
+        def runner(_runtime, _package, _files, **kwargs):
             entered.set()
             release.wait(5)
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
             return SimpleNamespace(
                 output=self._valid_output(),
                 token={
@@ -324,7 +658,7 @@ class PluginDispatchTests(unittest.TestCase):
                     "capabilityCount": 0,
                     "allApplicationPackagesDenied": True,
                 },
-                broker_calls=0,
+                broker_calls=1,
             )
 
         controller = self._controller(runner)
@@ -348,8 +682,11 @@ class PluginDispatchTests(unittest.TestCase):
                 release.set()
             await first
 
-        asyncio.run(concurrent())
-        self.assertEqual(1, self.store.puts)
+        with patch(
+            "research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", self._lookup_response
+        ):
+            asyncio.run(concurrent())
+        self.assertEqual(2, self.store.puts)
 
     def test_cancel_during_broker_wait_cannot_stage_a_late_response(self):
         entered = threading.Event()
@@ -406,12 +743,14 @@ class PluginDispatchTests(unittest.TestCase):
 
         def stage_then_revoke(source, command):
             stored = original_put(source, command)
-            self.admin.current = False
+            if self.store.puts == 2:
+                self.admin.current = False
             return stored
 
         setattr(self.store, "put", stage_then_revoke)  # noqa: B010 - deliberate fault injection
 
-        def runner(_runtime, _package, _files, **_kwargs):
+        def runner(_runtime, _package, _files, **kwargs):
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
             return SimpleNamespace(
                 output=self._valid_output(),
                 token={
@@ -420,12 +759,17 @@ class PluginDispatchTests(unittest.TestCase):
                     "capabilityCount": 0,
                     "allApplicationPackagesDenied": True,
                 },
-                broker_calls=0,
+                broker_calls=1,
             )
 
-        with self.assertRaisesRegex(PluginDispatchProblem, "plugin-policy-denied"):
+        with (
+            patch(
+                "research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", self._lookup_response
+            ),
+            self.assertRaisesRegex(PluginDispatchProblem, "plugin-policy-denied"),
+        ):
             self._run(runner)
-        self.assertEqual(1, self.store.puts)
+        self.assertEqual(2, self.store.puts)
 
 
 if __name__ == "__main__":
