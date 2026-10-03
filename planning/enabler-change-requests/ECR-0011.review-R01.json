@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0011",
+  "proposedAmendmentId": "W2.A03",
+  "targetWave": "W2",
+  "attemptId": "R01",
+  "candidateCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+  "packetSha256": "31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3",
+  "reviewer": "agent:/root/maint26_independent_review",
+  "reviewedAt": "2026-10-03T21:06:09Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "summary": "The exact pending ECR-0011 candidate is structurally valid, hash-bound, paused and quiescent, and decision-complete for the ordered W2.A03 bootstrap and two-task approved-1.8 desktop activation amendment. It retains the immutable W2/A01/A02 authorities, approved 1.8 reference, original CAP-05.S01.T01 base and criteria, and separate native/Core, S05, W2 and release obligations. This independent packet disposition makes an exact owner decision available; it is not that decision or execution authority.",
+  "independence": {
+    "proposalPacketOrSiteAuthoredByReviewer": false,
+    "priorParticipation": "Read-only preflight of the ECR-0011 proposal and static review page; no ECR-0011 proposal, packet, site, product, reference or gate authorship. The reviewer independently reviewed the earlier GOV-MAINT-0026 maintenance and W2.C10.T01 correction at their own committed candidates. This packet review reauthenticates their immutable Git records and already recorded dispositions; it does not substitute a self-approval for those prior independent task reviews.",
+    "persistentWrites": [
+      "planning/enabler-change-requests/ECR-0011.review-R01.json"
+    ],
+    "workflowMutations": "None in this ECR-0011 review: no taskctl transition, human approval, amendment bootstrap, reference edit, product change, integration or release action."
+  },
+  "bindings": {
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0011.packet.json",
+      "sha256": "31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3",
+      "introductionCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+      "lastRebindingCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5"
+    },
+    "canonicalProposal": {
+      "path": "planning/enabler-change-requests/ECR-0011.md",
+      "sha256": "eaaa396784de05993b68b505d86dd27f7bcc4a69fb78f1872345300df172fe37",
+      "introductionCommit": "f77cd5820bdab06dbc1ae35f089d98d901337f07"
+    },
+    "humanReview": {
+      "path": "planning/enabler-change-requests/ECR-0011-review.html",
+      "sha256": "2b9484f7cd7ca57fb16334988274d5efb8800d3ff58d7524ce128e0a4ebd6834",
+      "introductionCommit": "f77cd5820bdab06dbc1ae35f089d98d901337f07"
+    },
+    "proposalSchema": {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c"
+    },
+    "generatedReviewPage": {
+      "path": "planning/review-site/enablers/ECR-0011.html",
+      "sha256": "15f228acfc7dee896865faaab9a5e8ee5491ce4056fbe5c0dfbb8c8986929524"
+    },
+    "siteCheck": {
+      "path": "artifacts/tmp/ECR-0011-review-site-check.json",
+      "sha256": "2ce47eed765b1371db7f402a6908814de3285f6d1e23534441cdbd0da60c0a43",
+      "status": "pass",
+      "htmlPageCount": 495,
+      "errors": 0,
+      "warnings": 0
+    },
+    "authentication": "All 58 unique packet file rows match regular HEAD Git blobs at the exact clean candidate: 55 byte-unchanged approved 1.8 reference files plus canonical proposal, v4.1 schema and static human review page. The 55 rows equal ECR-0010 and the approved manifest's 54 governed files plus REFERENCE_MANIFEST.yaml. The 1.8 publication package digest cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94 is current; the prepublication proposal digest is distinct. No generated site byte is treated as independent approval."
+  },
+  "checks": [
+    {
+      "id": "IR-R01-packet-structure-and-history",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr review ECR-0011; .venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0011",
+      "result": "PASS",
+      "observation": "Both read-only commands passed at clean committed candidate 746c05dc. The v4.1 packet is pending approval and non-executable, has the exact W2.A03 B00/S01/T01/T02 inventory and ordered T02 dependency, and binds three immutable support files plus the approved reference inventory. No owner approval was required, recorded or inferred."
+    },
+    {
+      "id": "IR-R01-58-file-hash-inventory",
+      "result": "PASS",
+      "observation": "Independently checked all 58 packet-bound exact-candidate Git blobs, modes and raw SHA-256 values: no mismatch, redirect or missing file. The 55 approved 1.8 rows are identical to ECR-0010 and publication acdc67b6 and match the 54 governed files plus REFERENCE_MANIFEST.yaml. Current reference validation reports 33 product pages and the exact published package digest. The packet Git blob SHA-256 is 31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3."
+    },
+    {
+      "id": "IR-R01-ordered-authority-and-quiescence",
+      "result": "PASS",
+      "observation": "The immutable c85a59f3 W2 packet precedes its 3bc1c182 human approval. W2.A01/ECR-0009 and W2.A02/ECR-0010 exact packet hashes, human approval introductions, independently approved R01 reviews, effective ADOPTED states and order are authentic. GOV-MIG-0001 matches its immutable and current Git blob. At paused predecessor 015f0272 and candidate, W2 remains PAUSED with scope wave and no lease; original CAP-05.S01.T01 is BLOCKED at base 6506c684 with no lease; no ordinary W2 task is IN_PROGRESS or REVIEW. W2.A03 is not materialized, and no active recovery hold or competing amendment is asserted."
+    },
+    {
+      "id": "IR-R01-maintenance-and-correction-ancestry",
+      "result": "PASS",
+      "observation": "GOV-MAINT-0026 candidate 6e396c5e is the direct child of paused 0847aea4 and changes only quality-scope.json and its own record; its candidate/adopted record and independent approved R01 ledger match the packet path, commit and Git-blob hashes. W2.C10.T01 follows immutable spec eee6f5df, claim 72fc01b1, product candidate 3dde9123, evidence/submission 29110a0f and approved R01 projection 015f0272; its spec/evidence/review hashes match, with authority preserved and affected integration reviewed. Neither reviewed predecessor creates W2.A03 authority or qualifies S05."
+    },
+    {
+      "id": "IR-R01-scope-security-and-selected-proof",
+      "result": "PASS_WITH_LATER_TASK_PROOF",
+      "observation": "The proposal, packet and static/generated pages consistently confine T01 to the exact 11 named witness/gate/schema/test/procedure/Proposed-ADR/index paths and T02 to the exact seven activation/assembly/baseline/test paths; no approved reference, Core/native permission, migration, original task base or release edit is admitted. The 1.8 semantic delta from frozen 1.5 has only the enumerated identity/date/CAP-05 page and capability, exact purpose and ordered required-region changes. T01 must retain v1.3 fields and old v1.0-v1.3 denials; T02 follows independent T01 review, uses the guarded pinned Windows-x64 writer for the current 33-page/66-capture 1.7 baseline successor, and retains prior lineage and same-reference overwrite denial. These are future criteria, not checks claimed passing now. Joined S05, current CAP-05 native/Core/fifth-D3D proof and W2 qualification remain open."
+    },
+    {
+      "id": "IR-R01-estimate-and-common-budget",
+      "result": "PASS",
+      "observation": "The packet exactly reproduces the immutable W2 original 33 tasks and 143 S=1/M=3/L=5 normalized points. Approved W2 initiation separately itemizes 236+294=530 engineering-hours, including planned W2-RUNNER-PROGRESS two hours, and one 79.5-hour supplemental-refactoring ceiling. Proposed T01 L/5 (~28 hours) and T02 M/3 (~18 hours) are provisional additional planned amendment-delivery forecasts, not a conversion from points or measured spend. Empty refactor allocations and zero packet points/share mean no proposed structural cleanup; prior cumulative actual R_hours remain unknown and no unused capacity is asserted."
+    },
+    {
+      "id": "IR-R01-site-links-and-hygiene",
+      "result": "PASS",
+      "observation": "The separately generated ECR-0011 page and enabler register at committed candidate show pending, non-executable W2.A03 authority and the distinct owner approval, B00, task, slice/exit and later W2 sequence. All 16 static review-page and 92 generated ECR-page local links/anchors resolve. Existing ignored site report SHA-256 2ce47eed765b1371db7f402a6908814de3285f6d1e23534441cdbd0da60c0a43 reports 495 pages, pass, errors=[], warnings=[]; canonical working-tree generated bytes match candidate Git blobs despite Windows CRLF checkout. Candidate changes only proposal, packet and generated planning-site paths after 015f0272, git diff --check passes, and the checkout was clean before this ledger write."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "priorFindingsReplayed": [],
+  "readiness": {
+    "exactPacketReviewAccepted": true,
+    "humanApprovalRecorded": false,
+    "referenceApprovalRecorded": true,
+    "recordingCondition": "Commit this exact independent R01 ledger as the sole changed path after candidate 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5. A later immutable W2.A03 owner-approval record must bind the same candidate, packet SHA-256, reviewer, ledger SHA-256/introduction commit and empty closure list before planctl ecr validate ECR-0011 --require-approved can pass.",
+    "executionCondition": "Only after explicit owner approval of this exact ECR-0011 packet and immutable approval record may supported W2.A03.B00 shell/bootstrap, independent B00 review, separate exact two-task materialization and amendment activation begin. Independent T01 then T02, S01, exit and separate control/security adoption review precede explicit ordinary W2 resume. Joined CAP-04.S05 and original CAP-05.S01.T01 native/Core/fifth-D3D proof, later W2 qualification and separate human release remain due."
+  },
+  "authorityLimits": {
+    "humanProductOrControlApproval": false,
+    "newReferencePublished": false,
+    "amendmentMaterializedOrAdopted": false,
+    "ordinaryTaskOrWaveComplete": false,
+    "releaseAuthorized": false
+  }
+}
