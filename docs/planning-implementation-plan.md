@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 357ee83787da006decbe1c03e9da6fe9ce11592a50d82621de67cb6a74fbb2c5
+source_sha256: ae08958f37f615ff65c8272706845180c5d1a208bb4e478e56c0b5c676d9b797
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9869,13 +9869,13 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 
-**Status / priority / estimate / risk:** `READY` / `P1` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
 **Dependencies:** `CAP-04.S05.T02`
 
-**Owner / review:** - / - (`-`)
+**Owner / review:** codex-w2-implementation / - (`-`)
 
 **Objective:** Reference connector for a local/institutional repository plus tests for pagination, errors, provenance, rights, and replay.
 
@@ -9919,7 +9919,7 @@ Original tasks and approvals remain unchanged.
 
 **Outcome:** Full-text acquisition is explicit, resumable, checksum-verified, and governed by permitted use.
 
-**Wave / priority / status / review:** `W2` / `P0` / `IN_PROGRESS` / `PENDING`
+**Wave / priority / status / review:** `W2` / `P0` / `NOT_STARTED` / `PENDING`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

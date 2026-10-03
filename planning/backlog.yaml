@@ -25185,11 +25185,11 @@ capabilities:
       - python tools/verify.py --profile service
       - python tools/verify.py --profile foundation
       - python tools/taskctl.py validate
-      status: READY
-      owner: null
-      branch: null
-      started_at: null
-      updated_at: '2026-10-02T03:00:21+00:00'
+      status: IN_PROGRESS
+      owner: codex-w2-implementation
+      branch: codex/w2-implementation
+      started_at: '2026-10-03T15:59:02+00:00'
+      updated_at: '2026-10-03T15:59:02+00:00'
       completed_at: null
       blocker: null
       implementation_notes: ''
@@ -25199,10 +25199,13 @@ capabilities:
         result: null
         reviewed_at: null
         notes: null
-      base_sha: null
-      lease: null
+      base_sha: 2283e37e43cb56f8330b060b4c7d4b4f0f19489b
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-03T15:59:02+00:00'
+        expires_at: '2026-10-03T23:59:02+00:00'
       verification_state: null
-      worktree: null
+      worktree: .
       platform_targets:
       - windows-x64
     platform_targets:
@@ -25244,7 +25247,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T02
     - CAP-02.S03.T03
-    status: IN_PROGRESS
+    status: NOT_STARTED
     tasks:
     - id: CAP-05.S01.T01
       capability_id: CAP-05

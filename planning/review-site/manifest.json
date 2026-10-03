@@ -17881,7 +17881,7 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -17932,18 +17932,21 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "READY",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S05.T03.html",
               "dependencies": [
                 "CAP-04.S05.T02"
               ],
               "claim": {
-                "owner": null,
-                "branch": null,
-                "base_sha": null
+                "owner": "codex-w2-implementation",
+                "branch": "codex/w2-implementation",
+                "base_sha": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b"
               },
               "plan_section_sha256": "ac716ffb31be03d0a7572478a9fc3679ae94a73f51a7994e8d7dd2eb4a87710c",
-              "worksheet": null
+              "worksheet": {
+                "path": "artifacts/evidence/CAP-04.S05.T03.task-start.md",
+                "sha256": "d9c35bece131ccdb8f6d970cc12752d2444ce9c145da2e9fd084dd3819411776"
+              }
             }
           ]
         }

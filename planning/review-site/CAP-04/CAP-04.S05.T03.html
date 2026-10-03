@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-scholarly-ingestion</a><span>/</span><a href="CAP-04.S05.html">SLICE-connector-sdk-and-controlled-extensibility</a><span>/</span><span aria-current="page">CAP-04.S05.T03</span></nav>
 
 <section class="hero compact" data-task-page="CAP-04.S05.T03">
-  <div class="hero-top"><div><span class="eyebrow">CAP-04.S05.T03 · task 3 of 3</span><h1>Deliver a sample repository connector and conformance suite</h1><p>Reference connector for a local/institutional repository plus tests for pagination, errors, provenance, rights, and replay.</p></div><span class="status status-ready">Ready</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-04.S05.T03 · task 3 of 3</span><h1>Deliver a sample repository connector and conformance suite</h1><p>Reference connector for a local/institutional repository plus tests for pagination, errors, provenance, rights, and replay.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-04.S05.html">SLICE-connector-sdk-and-controlled-extensibility</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -49,7 +49,7 @@
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Verification inventory</span><h2>Profiles and commands</h2></div>
   <h3>Verification profiles</h3><ul class="gate-criteria"><li>service</li><li>foundation</li></ul>
   <h3>Commands</h3><ul class="gate-criteria"><li>python tools/verify.py --profile service</li><li>python tools/verify.py --profile foundation</li><li>python tools/taskctl.py validate</li></ul>
-  <p data-task-claim="CAP-04.S05.T03" data-task-owner="unclaimed" data-task-branch="none" data-task-base-sha="none"><strong>Claim projection:</strong> owner <code>unclaimed</code> · branch <code>none</code> · base <code>none</code></p>
+  <p data-task-claim="CAP-04.S05.T03" data-task-owner="codex-w2-implementation" data-task-branch="codex/w2-implementation" data-task-base-sha="2283e37e43cb56f8330b060b4c7d4b4f0f19489b"><strong>Claim projection:</strong> owner <code>codex-w2-implementation</code> · branch <code>codex/w2-implementation</code> · base <code>2283e37e43cb56f8330b060b4c7d4b4f0f19489b</code></p>
 </section>
 <section class="task-summary" data-task-plan="CAP-04.S05.T03" data-task-plan-sha256="ac716ffb31be03d0a7572478a9fc3679ae94a73f51a7994e8d7dd2eb4a87710c"><div class="section-heading"><span class="eyebrow">Approved implementation intent</span><h2>Task plan</h2></div><article class="plan-article compact-article"><pre class='markdown-fallback'>### 9.3 `CAP-04.S05.T03` - Deliver a sample repository connector and conformance suite
 **Objective:** Reference connector for a local/institutional repository plus tests for pagination, errors, provenance, rights, and replay.
@@ -236,13 +236,32 @@ These sources constrain implementation choices but do not replace repository-spe
 **Plan status:** PROPOSED - HUMAN APPROVAL REQUIRED.
 **Authoritative work state remains:** `planning/backlog.yaml`.</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
-<p class="decision-meta" data-task-worksheet-absent="CAP-04.S05.T03">No optional task-start worksheet is assigned. This does not block execution.</p>
+
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-04.S05.T03" data-worksheet-sha256="d9c35bece131ccdb8f6d970cc12752d2444ce9c145da2e9fd084dd3819411776">
+  <summary>Assigned task-start worksheet</summary>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-04.S05.T03.task-start.md</code> · <strong>SHA-256:</strong> <code>d9c35bece131ccdb8f6d970cc12752d2444ce9c145da2e9fd084dd3819411776</code></div>
+  <article class="plan-article"><pre class='markdown-fallback'># CAP-04.S05.T03 task-start acceptance closure
+
+Claim base: `2283e37e43cb56f8330b060b4c7d4b4f0f19489b`. Taskctl claimed the next dependency-eligible W2 task after `CAP-04.S05.T02` completed and `CAP-05.S01.T01` was blocked at its documented approval boundary.
+
+Authority: approved CAP-04.S05 §9.3, accepted ADR-0028 and ADR-0027, the T01 manifest/authorization contract, and the T02 LPAC/Core broker and publication boundary. This task supplies a public-metadata repository example and third-party conformance path; it does not authorize private repository access, arbitrary network destinations, a weaker sandbox, or a new desktop experience.
+
+| Material outcome or invariant | Planned proof |
+|---|---|
+| A third-party developer can build and validate a connector using the published manifest, worker request/result shape, sample, and documented commands. Existing three-argument plugins remain compatible. | A signed synthetic sample executes through the real worker/Core path; focused old/new worker API and documentation/contract checks. |
+| Each page is broker-observed and Core-authorized; a plugin cannot forge a cursor, skip consent, replay a cursor in another project/package/query, or publish a partial error as success. | Red-first two-page, changed-query/project/package, uncommitted predecessor, cursor mismatch, broker-error, and cancellation tests; one real-principal worker path where relevant. |
+| A published assertion preserves source provenance and rights limits without accepting worker-selected project, source identity, rights, or retrieval time. | Exact output contract tests, publication/reopen evidence, rights/provenance assertions, and malformed/forged output denials. |
+| A failed, timed-out, or restarted invocation has an explainable result and cannot change previously committed pages or hide a failure. | Repository restart/replay and staged-output/failure tests with stable identities and denial audit. |
+| Conformance failures identify the exact rule and JSON location without leaking request, response, credential, or private research content. | Positive sample and negative fixture CLI tests checking stable codes/pointers and redacted output. |
+
+Select affected worker, broker, dispatch, result, repository, contract, and conformance checks first. Run broader service/foundation profiles at slice integration or sooner if a shared-runtime failure cannot be localized. Bind qualification to the exact committed candidate and preserve every adverse result. Independent review must cover the public/cross-process and security boundaries before task completion.</pre></article>
+</details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-04.S05.T03" data-review-mode="latest-review-only">
   <h3>CAP-04.S05.T03 — Deliver a sample repository connector and conformance suite</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-04.S05.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>READY</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-04.S05.T03" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> None</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-04.S05.T02.html">Previous</a><a class="button button-primary" href="CAP-04.S05.html">Next</a></nav>
