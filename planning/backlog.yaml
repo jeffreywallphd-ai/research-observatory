@@ -52461,7 +52461,7 @@ wave_amendments:
       notes: Independent R01 ledger artifacts/evidence/W2.A02.B00.review-R01.json at d22a451bf2dc3917b3c27c1b5a62b70e7bfb023c
         approves candidate f97c32f1 and submitted state d61a9e1c with no findings.
   campaign:
-    status: REVIEW
+    status: COMPLETE
     scope: wave-amendment
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -52470,7 +52470,7 @@ wave_amendments:
     profile: LOC
     platform: windows-x64
     started_at: '2026-10-03T11:31:01+00:00'
-    updated_at: '2026-10-03T14:10:25+00:00'
+    updated_at: '2026-10-03T14:25:12+00:00'
     pause_reason: null
     lease: null
   tasks:
@@ -52670,33 +52670,61 @@ wave_amendments:
             closed_finding_ids: []
       current_submission: null
   completion:
-    status: REVIEW
-    reviewer: null
-    reviewed_at: null
+    status: APPROVED
+    reviewer: agent:/root/activation_privacy_review
+    reviewed_at: '2026-10-03T14:25:12+00:00'
     evidence:
     - artifacts/evidence/W2.A02.exit.json
-    notes: ''
+    notes: Independent R01 approval of the exact W2.A02 amendment-exit submission at clean REVIEW-state commit 392b71b1. The
+      exit manifest introduced at bfafa6b8 declares the completed contribution candidate b9719a97; all four ECR-0010 criteria
+      match the immutable approved packet, and the frozen submission, selected checks and evidence hashes validate. B00, T01
+      and S01 have separate committed independent approvals and no open findings. The v1.3 gate and Proposed ADR-0037 preserve
+      the approved 1.8 reference, original 6506 task base, authenticated T02 and T01 contracts, reviewed intervening control
+      history, exact one-off 9727 exception and future independent current-product classification. The pre-fix six-file scope
+      bypass remains adverse evidence; the exact repaired regression passed. This exit approval does not perform the separate
+      security checkpoint or adoption, resume ordinary W2, prove current native/Core attachment or fifth-D3D startup closure,
+      qualify W2, or approve release.
     exit_review_control:
       version: 1
-      attempts: []
-      current_submission:
-        id: R01
-        submitted_by: codex-w2-implementation
-        submitted_at: '2026-10-03T14:10:25+00:00'
-        candidate_commit: bfafa6b89c8dd64b5133ae9ab659ba58d235f30e
-        declared_candidate_commit: b9719a975864b866805862082a6454904967a661
-        branch: codex/w2-implementation
-        evidence_reference:
-          type: amendment-exit-evidence
-          amendment_id: W2.A02
-          path: artifacts/evidence/W2.A02.exit.json
-          sha256: bda866f0e80b490909ac0e9f79880ec1340fa35b56cc81572ca590085a17d5a7
-          commit: bfafa6b89c8dd64b5133ae9ab659ba58d235f30e
-        acceptance_criteria_sha256: b39c11f248c0c5b72a94b5dfd65014a0c86d2eeaccf03fcdc0098e4e48c18499
-        selected_checks:
-        - .venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0010 --require-approved
-        - .venv\Scripts\python.exe tools/backlog_views.py --repo . --check
-        selected_checks_sha256: a624ad7466ac0120b473a70b105939110b806a96114e74bdc78493f688fd92e4
-        prior_attempt_id: null
-        open_finding_ids: []
-        packet_sha256: 9c1d9bc16a9fe0d6cfc1d884c43e7ac47c1e5e569bb603f6ac4c8eef253dd2ba
+      attempts:
+      - submission:
+          id: R01
+          submitted_by: codex-w2-implementation
+          submitted_at: '2026-10-03T14:10:25+00:00'
+          candidate_commit: bfafa6b89c8dd64b5133ae9ab659ba58d235f30e
+          declared_candidate_commit: b9719a975864b866805862082a6454904967a661
+          branch: codex/w2-implementation
+          evidence_reference:
+            type: amendment-exit-evidence
+            amendment_id: W2.A02
+            path: artifacts/evidence/W2.A02.exit.json
+            sha256: bda866f0e80b490909ac0e9f79880ec1340fa35b56cc81572ca590085a17d5a7
+            commit: bfafa6b89c8dd64b5133ae9ab659ba58d235f30e
+          acceptance_criteria_sha256: b39c11f248c0c5b72a94b5dfd65014a0c86d2eeaccf03fcdc0098e4e48c18499
+          selected_checks:
+          - .venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0010 --require-approved
+          - .venv\Scripts\python.exe tools/backlog_views.py --repo . --check
+          selected_checks_sha256: a624ad7466ac0120b473a70b105939110b806a96114e74bdc78493f688fd92e4
+          prior_attempt_id: null
+          open_finding_ids: []
+          packet_sha256: 9c1d9bc16a9fe0d6cfc1d884c43e7ac47c1e5e569bb603f6ac4c8eef253dd2ba
+        review:
+          reviewer: agent:/root/activation_privacy_review
+          result: approved
+          reviewed_at: '2026-10-03T14:25:12+00:00'
+          reviewed_state_commit: 392b71b1848aded2b8b7c6fc6ae49f96db74bf04
+          notes: Independent R01 approval of the exact W2.A02 amendment-exit submission at clean REVIEW-state commit 392b71b1.
+            The exit manifest introduced at bfafa6b8 declares the completed contribution candidate b9719a97; all four ECR-0010
+            criteria match the immutable approved packet, and the frozen submission, selected checks and evidence hashes validate.
+            B00, T01 and S01 have separate committed independent approvals and no open findings. The v1.3 gate and Proposed
+            ADR-0037 preserve the approved 1.8 reference, original 6506 task base, authenticated T02 and T01 contracts, reviewed
+            intervening control history, exact one-off 9727 exception and future independent current-product classification.
+            The pre-fix six-file scope bypass remains adverse evidence; the exact repaired regression passed. This exit approval
+            does not perform the separate security checkpoint or adoption, resume ordinary W2, prove current native/Core attachment
+            or fifth-D3D startup closure, qualify W2, or approve release.
+        ledger:
+          path: artifacts/evidence/W2.A02.exit-review-R01.json
+          sha256: 428526f9e634885899485b8d03d8f849c144aef9cf6f7568a525525de0e368aa
+        findings: []
+        closures: []
+      current_submission: null

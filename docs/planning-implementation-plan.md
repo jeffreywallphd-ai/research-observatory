@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: ee1e06d2d286e35b25a9ca3fe7b1cb214bee997b6681db28a3d51ad6ce2e22fa
+source_sha256: dcb4eb5441590c527168546565a43b0c9e999a9ebed966918c0811da6d23bfbc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2630,7 +2630,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A02.json` (`d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -2641,9 +2641,11 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### Amendment-exit review and adoption — W2.A02
 
-**Exit-review mode:** `append-only v1` / 0 completed round(s)
+**Exit-review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `9c1d9bc16a9fe0d6cfc1d884c43e7ac47c1e5e569bb603f6ac4c8eef253dd2ba`
+#### Exit round R01
+
+**Immutable amendment-exit packet:** `R01` / packet SHA-256 `9c1d9bc16a9fe0d6cfc1d884c43e7ac47c1e5e569bb603f6ac4c8eef253dd2ba`
 
 - Candidate / declared candidate / branch: `bfafa6b89c8dd64b5133ae9ab659ba58d235f30e` / `b9719a975864b866805862082a6454904967a661` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T14:10:25+00:00`
@@ -2653,11 +2655,29 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Selected checks: `.venv\Scripts\python.exe tools/planctl.py --repo . ecr validate ECR-0010 --require-approved`, `.venv\Scripts\python.exe tools/backlog_views.py --repo . --check`
 - Prior round / replayed open findings: `-` / -
 
-**Latest completion projection:** `REVIEW` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/activation_privacy_review / `2026-10-03T14:25:12+00:00`
+
+**Reviewed state commit:** `392b71b1848aded2b8b7c6fc6ae49f96db74bf04`
+
+**Immutable exit-review ledger:** `artifacts/evidence/W2.A02.exit-review-R01.json` / `428526f9e634885899485b8d03d8f849c144aef9cf6f7568a525525de0e368aa`
+
+**Review notes:** Independent R01 approval of the exact W2.A02 amendment-exit submission at clean REVIEW-state commit 392b71b1. The exit manifest introduced at bfafa6b8 declares the completed contribution candidate b9719a97; all four ECR-0010 criteria match the immutable approved packet, and the frozen submission, selected checks and evidence hashes validate. B00, T01 and S01 have separate committed independent approvals and no open findings. The v1.3 gate and Proposed ADR-0037 preserve the approved 1.8 reference, original 6506 task base, authenticated T02 and T01 contracts, reviewed intervening control history, exact one-off 9727 exception and future independent current-product classification. The pre-fix six-file scope bypass remains adverse evidence; the exact repaired regression passed. This exit approval does not perform the separate security checkpoint or adoption, resume ordinary W2, prove current native/Core attachment or fifth-D3D startup closure, qualify W2, or approve release.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable amendment-exit submission awaiting review:** None
+
+**Latest completion projection:** `APPROVED` by agent:/root/activation_privacy_review at `2026-10-03T14:25:12+00:00`
 
 **Latest completion evidence:** `artifacts/evidence/W2.A02.exit.json`
 
-**Latest completion notes:** -
+**Latest completion notes:** Independent R01 approval of the exact W2.A02 amendment-exit submission at clean REVIEW-state commit 392b71b1. The exit manifest introduced at bfafa6b8 declares the completed contribution candidate b9719a97; all four ECR-0010 criteria match the immutable approved packet, and the frozen submission, selected checks and evidence hashes validate. B00, T01 and S01 have separate committed independent approvals and no open findings. The v1.3 gate and Proposed ADR-0037 preserve the approved 1.8 reference, original 6506 task base, authenticated T02 and T01 contracts, reviewed intervening control history, exact one-off 9727 exception and future independent current-product classification. The pre-fix six-file scope bypass remains adverse evidence; the exact repaired regression passed. This exit approval does not perform the separate security checkpoint or adoption, resume ordinary W2, prove current native/Core attachment or fifth-D3D startup closure, qualify W2, or approve release.
 
 **Bound amendment-adoption checkpoints:**
 
