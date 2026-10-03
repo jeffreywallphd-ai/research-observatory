@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: f0f9dd4e7eb6ae9e2849bd6314134404f4f16d8f315e503e1d610769a6d1d30f
+source_sha256: 343176c6afe18f2b2441e191a7be659bd5ae3bf4c143f1bb06ef4f12454bb845
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3618,6 +3618,35 @@ Original tasks and approvals remain unchanged.
 **Current latest-review projection:** `approved` by agent:/root/s04_integration_test_review at `2026-10-01T10:08:07+00:00`
 
 **Latest notes:** Independent R01 review authenticates the frozen packet, committed correction spec and approved CAP-04.S04.T03 origin. The exact base-to-candidate diff has one spec-admitted test change and five taskctl/generated planning paths; no frozen snapshot, migration, product, rights, governed experience or W2 authority changes. The retained predecessor report-suite log shows the v18 raw-hash failure. Fresh candidate report tests pass 14 model/control and 17 migration/repository cases, including v18/v19 recovery and revoked historical-report denial. The v18 Git and physical LF blob hashes to 3151702e1039ffe1e19a8d8d0470560c839661be5f3909743d27411e2aa50661; explicit LF-to-CRLF conversion yields the former 95472000d9b20b6a25d503ef4b842bc2b7b822e6530e0fd73f0211d64472041e. The 463-file quality report passes. The fresh protected benchmark is PASS on the exact candidate: three authenticated children, all 526 physical/Git inputs and all eight measured metrics match the reviewed baseline and limits. Its claim is confined to the synthetic 64-item Windows workload. Structure, backlog, view and site checks are submitted zero-exit execution claims without independently retained raw logs. Original task evidence supports only unchanged behavior; S04 slice, checkpoint, W2 exit and human release remain open.
+
+**Currently open findings:** -
+
+### W2.C10.T01 — Implement plugin isolation, configuration, and secret access controls
+
+**Status:** `IN_PROGRESS`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+
+**Reproduction:** At clean paused predecessor b763fa8ccff87c2828e94459252f02e35e1f4ef1, both encrypted grant-migration tests fail before migration: the v20 fixture slices the full DDL sequence by only the grant group length and now includes v22/v23 DDL, so its schema fingerprint differs from the frozen v20 fingerprint (ignored raw log artifacts/tmp/W2.C10.T01.grant-migration-red-b763fa8c.log, SHA-256 95588b3d40405e3f227056ae6414e31047c92ddff9b677b59bc49a0d390bb053). Separately, an unmodified protected local DPAPI/SQLCipher Core probe with real package trust, human enable, current Intent/privacy/consent and selected signed-LPAC sample inputs fails at persisted grant authorization: PluginWorkerService constructs actor_type workload, while PluginGrantService.current_authorization admits only human or system actors for runtime checks. The durable job fails before broker egress or LPAC launch (ignored raw log artifacts/tmp/W2.C10.T01.protected-core-red-b763fa8c.log, SHA-256 55dbc4d7642205143ba0df88b32be653c26b7bb189c1a6996dd152625efcb7a8; ignored input report artifacts/tmp/W2.C10.T01.red-inputs-b763fa8c.json, SHA-256 624d0c5635879846a529d4bfafcfd5d3fc23a58a01fe369076a7cb8bc0b5b993). These red probes prove defects, not native launch, task, slice or Wave qualification.
+
+**Inherited criteria:**
+
+- A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.
+- Automated tests cover the expected path and at least one material failure or boundary condition.
+- Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion.
+
+**Bounded changed paths:**
+
+- services/core-api/src/research_observatory_core/plugin_worker.py
+- tests/connectors/test_plugin_grant_migration.py
+- tests/connectors/test_plugin_worker_submission.py
+#### Review history — W2.C10.T01
+
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `-` by - at `-`
+
+**Latest notes:** -
 
 **Currently open findings:** -
 

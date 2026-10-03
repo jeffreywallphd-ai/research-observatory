@@ -2595,6 +2595,55 @@
               "current_submission": null
             }
           }
+        },
+        {
+          "task_id": "W2.C10.T01",
+          "title": "Implement plugin isolation, configuration, and secret access controls",
+          "status": "IN_PROGRESS",
+          "acceptance_criteria": [
+            "A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.",
+            "Automated tests cover the expected path and at least one material failure or boundary condition.",
+            "Relevant contracts, migrations, fixtures, documentation, and audit behavior are updated without unrelated scope expansion."
+          ],
+          "correction": {
+            "origin_task_id": "CAP-04.S05.T02",
+            "origin_commit": "6506c68461144747b0ee9be10853211717aa381d",
+            "paused_state_sha256": "82d3b76410fcf7ded042bb87da08857306b116a62bec4a0794533c489e8c7322",
+            "origin_sha256": "a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994",
+            "origin_contract_sha256": "4a867aa5a62b1d48a6f2465487d4a35c07471b761047991fbe02407923211142",
+            "origin_history_sha256": "2954c8a730902f5fdf78d205c3ad8166a9dbefd78f1ce4b654f4a8dab7505843",
+            "origin_amendment_id": null,
+            "authority_sha256": "c92ce7e9bac1b8a49d13d649a5980fea61e56ee953d238c734d8ff5f04f4c9e5",
+            "spec": {
+              "path": "artifacts/evidence/W2.C10.T01.spec.json",
+              "sha256": "b2163a0d2053ef8aa47d4881aa2d08db3d7abb0349ab761940739f4e2f433a6f",
+              "commit": "eee6f5df4ba2b940e69fc8d7b49c033139e01856"
+            },
+            "reproduction": "At clean paused predecessor b763fa8ccff87c2828e94459252f02e35e1f4ef1, both encrypted grant-migration tests fail before migration: the v20 fixture slices the full DDL sequence by only the grant group length and now includes v22/v23 DDL, so its schema fingerprint differs from the frozen v20 fingerprint (ignored raw log artifacts/tmp/W2.C10.T01.grant-migration-red-b763fa8c.log, SHA-256 95588b3d40405e3f227056ae6414e31047c92ddff9b677b59bc49a0d390bb053). Separately, an unmodified protected local DPAPI/SQLCipher Core probe with real package trust, human enable, current Intent/privacy/consent and selected signed-LPAC sample inputs fails at persisted grant authorization: PluginWorkerService constructs actor_type workload, while PluginGrantService.current_authorization admits only human or system actors for runtime checks. The durable job fails before broker egress or LPAC launch (ignored raw log artifacts/tmp/W2.C10.T01.protected-core-red-b763fa8c.log, SHA-256 55dbc4d7642205143ba0df88b32be653c26b7bb189c1a6996dd152625efcb7a8; ignored input report artifacts/tmp/W2.C10.T01.red-inputs-b763fa8c.json, SHA-256 624d0c5635879846a529d4bfafcfd5d3fc23a58a01fe369076a7cb8bc0b5b993). These red probes prove defects, not native launch, task, slice or Wave qualification.",
+            "changed_paths": [
+              "services/core-api/src/research_observatory_core/plugin_worker.py",
+              "tests/connectors/test_plugin_grant_migration.py",
+              "tests/connectors/test_plugin_worker_submission.py"
+            ],
+            "impact_analysis": "Restore the original approved T02 grant isolation, encrypted migration and restart behavior without new actor authority. Add a red-first regression in the existing worker-submission test module using real Core package/grant authorization and current human trust/enable, proving the queued worker reaches authorized dispatch under the existing system runtime actor and that system cannot grant or enable. Change only the persisted-dispatch actor type from workload to system; keep the same authenticated local actor ID, project/package/job binding, Core checks, grant validators, storage triggers, human-only trust/enable, LPAC and broker denial unchanged. Repair the test-only v20 fixture to stop before grant DDL and update expected v21/v22/v23 plan, history, recovery and fingerprints; do not edit production DDL or migrations. Run focused grant/worker/migration tests and real protected integration, then independent expanded security/migration review. Re-qualify the joined signed-sample-to-Core durable publication, denial and restart at S05 slice integration; the ignored feasibility probe is not task or slice acceptance."
+          },
+          "task_review": {
+            "task_id": "W2.C10.T01",
+            "title": "Implement plugin isolation, configuration, and secret access controls",
+            "status": "IN_PROGRESS",
+            "mode": "append-only",
+            "latest_review": {
+              "reviewer": null,
+              "result": null,
+              "reviewed_at": null,
+              "notes": null
+            },
+            "review_control": {
+              "version": 1,
+              "attempts": [],
+              "current_submission": null
+            }
+          }
         }
       ]
     },
