@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 81166b0ceba709ea6629da1b3752bcbdb4ab0ec68a53e4b57b823a21b2096249
+source_sha256: a5d7f7bc1e4eb641bd0ae8eb28f05bf32924e5bf149f32ae8973b044da45e596
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2487,9 +2487,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Currently open findings:** -
 
-### - [ ] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
+### - [x] W2.A01.T02 - Publish Academic Minimal 1.8 and stage attachment UI
 
-**Status / owner / review:** `REVIEW` / codex-w2-implementation / agent:/root/w2_a01_t02_independent_review (`changes-requested`)
+**Status / owner / review:** `DONE` / codex-w2-implementation / agent:/root/t02_gate_maintenance_review (`approved`)
 
 **Dependencies:** `W2.A01.B00`, `W2.A01.T01`
 
@@ -2518,7 +2518,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 #### Review history — W2.A01.T02
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ##### Round R01
 
@@ -2551,7 +2551,9 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `2c32f27323835dc3b780f58ecbc0b7ca93a9fd8788a7d340f07a2708589f0f1a`
+##### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `2c32f27323835dc3b780f58ecbc0b7ca93a9fd8788a7d340f07a2708589f0f1a`
 
 - Candidate / base / branch: `988ee4789f2004cce83187f971760d5b5f3e02ca` / `a6588fc5d2473d028a4f8d6c24ec8aa48e527255` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-02T23:57:26+00:00`
@@ -2565,11 +2567,28 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Prior round / replayed open findings: `R01` / `W2.A01.T02-R01-F01`, `W2.A01.T02-R01-F02`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:/root/w2_a01_t02_independent_review at `2026-10-02T23:13:49+00:00`
+**Disposition / reviewer / time:** `approved` / agent:/root/t02_gate_maintenance_review / `2026-10-03T00:12:14+00:00`
 
-**Latest notes:** Independent expanded review inspected the frozen R01 submission, exact 70-path task-base diff, committed reference-before-renderer chronology, approved ECR-0009 and Academic Minimal 1.8 contracts, the opaque native adapter and mounted interaction source. The line-ending-canonical evidence SHA-256 matches the submission and all 13 cited raw-log SHA-256 values match their files. Reference, whole-base external UI gate, typecheck, 27 focused Vitest cases, Vite product build, one mounted real-Core/synthetic-native interaction, affected lint/format, site/smoke, backlog and diff checks report passing at a6588fc5. The external UI checker is the disclosed separate reviewed 5078ef4c2ca6f2b8a0ffd08a8945b9c9b6b831d0 commit; the earlier in-tree parser failure remains adverse evidence, not a pass. The first pre-submission replacement, terminal-event, focus and return-context findings remain preserved in task-start.md and their exercised paths were replayed. The submitted tests do not cover a successful native reply followed by an authoritative failure, or a live announcement when a later authoritative denial arrives. The two findings below therefore block T02 task approval. The stale historical planning review pages were disclosed and refreshed after submission outside the a6588fc5 product range. Global quality inventory, full desktop profiles, real native/Core admission, protected reader, slice review and W2 qualification remain separate later work; this review grants none of them.
+**Immutable review ledger:** `artifacts/evidence/W2.A01.T02.review-R02.json` / `e56190d1c45e41d0f07d47b46030131b2b873bdb7f4b9cbed7916784cf79eec6`
 
-**Currently open findings:** `W2.A01.T02-R01-F01`, `W2.A01.T02-R01-F02`
+**Review notes:** Independent expanded R02 review inspected the frozen product candidate, committed submission record, approved Academic Minimal 1.8 contract, immutable R01 changes-requested ledger, exact source and mounted regression, and task-base chronology. The line-ending-canonical evidence SHA-256 and frozen packet SHA-256 recompute exactly; all ten cited raw-log SHA-256 values match, and the 13 declared changed paths equal the exact a6588fc5..988ee478 Git diff. The R01 ledger and approved reference package are unchanged. An independently executed whole-base gate from the separately reviewed external 38dd61f3 control returns ok with no errors, and an independently rerun mounted real-Core/synthetic-native journey passes. R01 F01 is closed because exact authoritative failed, cancelled, and recoverable unavailable statuses after an attached reply expose a fresh lawful-copy action under current Work/version authority; denied and mismatched status remain blocked, unconfirmed retries retain exact payload identity, and historical command/revision IDs survive Task Center return. R01 F02 is closed because safe decoded authoritative status is in a polite live region and delayed status changes do not move focus. The red R01 and R02 characterization logs remain adverse history. This task approval does not qualify production native/Core file admission, protected reader, full desktop or security profiles, the integrated amendment slice, W2 qualification, or release. The external gate maintenance commits remain separate from the product task range.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- `W2.A01.T02-R01-F01` `fixed` — At 988ee478, DocumentAttachmentPane retains the historical exact command and revision IDs, gates new-copy actions on matching recoverable durable status, and blocks denied, stale, unconfirmed or mismatched state. The submitted and independently rerun mounted test replays attached-to-failed/cancelled/unavailable Task Center returns, same-command uncertainty, altered retry payload, rejected retry and mismatched IDs.
+- `W2.A01.T02-R01-F02` `fixed` — At 988ee478, attachmentStatusMessage of the decoded status renders in a polite inline role=status live region. The mounted replay observes failed, denied and unconfirmed announcements and proves delayed authoritative unconfirmed/processing updates do not steal focus.
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/t02_gate_maintenance_review at `2026-10-03T00:12:14+00:00`
+
+**Latest notes:** Independent expanded R02 review inspected the frozen product candidate, committed submission record, approved Academic Minimal 1.8 contract, immutable R01 changes-requested ledger, exact source and mounted regression, and task-base chronology. The line-ending-canonical evidence SHA-256 and frozen packet SHA-256 recompute exactly; all ten cited raw-log SHA-256 values match, and the 13 declared changed paths equal the exact a6588fc5..988ee478 Git diff. The R01 ledger and approved reference package are unchanged. An independently executed whole-base gate from the separately reviewed external 38dd61f3 control returns ok with no errors, and an independently rerun mounted real-Core/synthetic-native journey passes. R01 F01 is closed because exact authoritative failed, cancelled, and recoverable unavailable statuses after an attached reply expose a fresh lawful-copy action under current Work/version authority; denied and mismatched status remain blocked, unconfirmed retries retain exact payload identity, and historical command/revision IDs survive Task Center return. R01 F02 is closed because safe decoded authoritative status is in a polite live region and delayed status changes do not move focus. The red R01 and R02 characterization logs remain adverse history. This task approval does not qualify production native/Core file admission, protected reader, full desktop or security profiles, the integrated amendment slice, W2 qualification, or release. The external gate maintenance commits remain separate from the product task range.
+
+**Currently open findings:** -
 
 
 ## Linked corrective tasks

@@ -1,0 +1,81 @@
+{
+  "task_id": "W2.A01.T02",
+  "attempt_id": "R02",
+  "candidate_commit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+  "base_commit": "a6588fc5d2473d028a4f8d6c24ec8aa48e527255",
+  "submission_record_commit": "7dd50bba7a4d59452c2c5ea6132a7d4cfcd20e90",
+  "reviewer": "agent:/root/t02_gate_maintenance_review",
+  "result": "approved",
+  "evidence_sha256": "177f4b42f495f1e26661eab83164b9eeb1a57df5fb02354fd7aeb0265f818d98",
+  "packet_sha256": "2c32f27323835dc3b780f58ecbc0b7ca93a9fd8788a7d340f07a2708589f0f1a",
+  "acceptance_criteria_sha256": "a88ca37f57ae373595f4a7939bdb7e4b68215f0b6d34ef6d87e295c016e7d286",
+  "selection_sha256": "c0b94239fbb73374caa8737a2e9526dcddead754b0287907591e2910591ed12b",
+  "notes": "Independent expanded R02 review inspected the frozen product candidate, committed submission record, approved Academic Minimal 1.8 contract, immutable R01 changes-requested ledger, exact source and mounted regression, and task-base chronology. The line-ending-canonical evidence SHA-256 and frozen packet SHA-256 recompute exactly; all ten cited raw-log SHA-256 values match, and the 13 declared changed paths equal the exact a6588fc5..988ee478 Git diff. The R01 ledger and approved reference package are unchanged. An independently executed whole-base gate from the separately reviewed external 38dd61f3 control returns ok with no errors, and an independently rerun mounted real-Core/synthetic-native journey passes. R01 F01 is closed because exact authoritative failed, cancelled, and recoverable unavailable statuses after an attached reply expose a fresh lawful-copy action under current Work/version authority; denied and mismatched status remain blocked, unconfirmed retries retain exact payload identity, and historical command/revision IDs survive Task Center return. R01 F02 is closed because safe decoded authoritative status is in a polite live region and delayed status changes do not move focus. The red R01 and R02 characterization logs remain adverse history. This task approval does not qualify production native/Core file admission, protected reader, full desktop or security profiles, the integrated amendment slice, W2 qualification, or release. The external gate maintenance commits remain separate from the product task range.",
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "The immutable ECR-0009 approval, 1.8 package and owner/base binding remain the approved authority; the independent whole-base gate verifies their unchanged chronology at the exact R02 candidate."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "The task claim, separate 1.8 publication and renderer commits retain strict Git order, with the adverse R01 ledger before the R02 corrections and approved 1.7 history unchanged."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "The opaque selected-version contract and exact status/command reconciliation support recovery after a later matched terminal result while keeping denial, uncertainty, stale authority and mismatched identities closed. The production native bridge remains a downstream task."
+    },
+    {
+      "criterion_index": 4,
+      "result": "satisfied",
+      "assessment": "The task-owned UI evidence still names only the eight governed renderer paths and approved 1.8 package. The separately reviewed 38dd61f3 external checker independently passes the complete base-to-R02 history without altering product or approval authority."
+    },
+    {
+      "criterion_index": 5,
+      "result": "satisfied",
+      "assessment": "Red-before-fix and passing mounted real-Core/synthetic-native replays cover both R01 findings and incremental same-command, historical-ID, focus, denial and stale-authority risks; focused contract tests, strict typing, product build and affected lint/format also pass. Real file admission and reader are not claimed."
+    },
+    {
+      "criterion_index": 6,
+      "result": "satisfied",
+      "assessment": "This independent, commit-bound R02 task review explicitly closes the two preserved R01 blocking findings. Integrated W2.A01.S01 slice review and later amendment/Wave gates remain separate prerequisites."
+    }
+  ],
+  "independent_checks": [
+    {
+      "check": "Frozen submission and immutable history",
+      "result": "passed",
+      "observation": "Submission record 7dd50bba has REVIEW state and a recomputed packet hash 2c32f27323835dc3b780f58ecbc0b7ca93a9fd8788a7d340f07a2708589f0f1a for candidate 988ee478. The evidence hash, ten raw-log hashes, 13 changed paths and two additional red-log hashes match; the R01 ledger and approved reference files are unchanged."
+    },
+    {
+      "check": "Independent whole-base UI authority gate",
+      "result": "passed",
+      "observation": "The external checker checkout is exactly 38dd61f302000317f9fd84151afeba3365cb528f. An independent read-only run against 1f628843e415b6affbd811eb37d9fff437fac51f..988ee4789f2004cce83187f971760d5b5f3e02ca returned ok:true, errors:[], approved reference RO-UI-ACADEMIC-MINIMAL-1.8 and only the eight declared renderer files."
+    },
+    {
+      "check": "Independent mounted recovery replay",
+      "result": "passed",
+      "observation": "A fresh read-only rerun of tests.desktop.test_document_attachment_interactions passed one mounted real-Core/synthetic-native journey in 34.805 seconds. Source and test review also covered exact retry payload equality, post-reply terminal status, Task Center handoff, mismatched IDs, denial, stale authority and lock recovery."
+    },
+    {
+      "check": "Accessible status and focus replay",
+      "result": "passed",
+      "observation": "Decoded authoritative status and denial enter a polite inline live region. Delayed unconfirmed and processing results leave focus on the researcher's chosen control in the mounted regression; the status content exposes no local path or document content."
+    }
+  ],
+  "findings": [],
+  "closures": [
+    {
+      "finding_id": "W2.A01.T02-R01-F01",
+      "disposition": "fixed",
+      "evidence": "At 988ee478, DocumentAttachmentPane retains the historical exact command and revision IDs, gates new-copy actions on matching recoverable durable status, and blocks denied, stale, unconfirmed or mismatched state. The submitted and independently rerun mounted test replays attached-to-failed/cancelled/unavailable Task Center returns, same-command uncertainty, altered retry payload, rejected retry and mismatched IDs."
+    },
+    {
+      "finding_id": "W2.A01.T02-R01-F02",
+      "disposition": "fixed",
+      "evidence": "At 988ee478, attachmentStatusMessage of the decoded status renders in a polite inline role=status live region. The mounted replay observes failed, denied and unconfirmed announcements and proves delayed authoritative unconfirmed/processing updates do not steal focus."
+    }
+  ]
+}
