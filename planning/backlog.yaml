@@ -52521,14 +52521,17 @@ wave_amendments:
     - Exact committed-candidate full original-base UI gate qualification with independent product/reference conformance classification
       is deferred to resumed CAP-05.S01.T01, not claimed by this control task.
     packet_task_sha256: 7296e7634979c1b35103f2a60d98806f3cf40c71be2c5dfa6b69a76935f431f7
-    status: READY
-    owner: null
-    branch: null
-    base_sha: null
-    worktree: null
-    lease: null
-    started_at: null
-    updated_at: '2026-10-03T11:31:01+00:00'
+    status: IN_PROGRESS
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    base_sha: 23b019825f944e75edb6420b742e82f1216be7c6
+    worktree: .
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-03T11:43:44+00:00'
+      expires_at: '2026-10-03T19:43:44+00:00'
+    started_at: '2026-10-03T11:43:44+00:00'
+    updated_at: '2026-10-03T11:43:44+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''

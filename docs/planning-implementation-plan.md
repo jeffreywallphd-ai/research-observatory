@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 2707eef617da6706b9c07ffc7b071c9e99c108994fffd34ad54f898508eefdee
+source_sha256: ef9ba6eb43fd45e261abc2018737c98d010009f6a30d0a0080eedc2939541d55
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2656,7 +2656,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A02.T01 - Authenticate adopted attachment UI continuation
 
-**Status / owner / review:** `READY` / - / - (`-`)
+**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A02.B00`
 

@@ -39118,7 +39118,7 @@
         {
           "task_id": "W2.A02.T01",
           "title": "Authenticate adopted attachment UI continuation",
-          "status": "READY",
+          "status": "IN_PROGRESS",
           "mode": "latest-review-only",
           "latest_review": {
             "reviewer": null,

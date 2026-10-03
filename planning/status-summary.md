@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 2707eef617da6706b9c07ffc7b071c9e99c108994fffd34ad54f898508eefdee
+source_sha256: ef9ba6eb43fd45e261abc2018737c98d010009f6a30d0a0080eedc2939541d55
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -70,7 +70,7 @@ manual_edit: prohibited
 
 | Status | Count |
 |---|---:|
-| `READY` | 1 |
+| `IN_PROGRESS` | 1 |
 | `DONE` | 17 |
 
 ## Wave authority and append-only amendments
@@ -796,6 +796,7 @@ Append-only rounds remain distinct from the current latest-review projection. Le
 | Task | Status | Owner | Branch |
 |---|---|---|---|
 | `CAP-05.S01.T01` Implement local document attachment and version association | `BLOCKED` | codex-w2-implementation | `codex/w2-implementation` |
+| `W2.A02.T01` Authenticate adopted attachment UI continuation | `IN_PROGRESS` | codex-w2-implementation | `codex/w2-implementation` |
 
 ## Linked corrective tasks
 
