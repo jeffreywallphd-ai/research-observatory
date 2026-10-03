@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "enabler-change-request-packet-review",
+  "changeRequestId": "ECR-0010",
+  "proposedAmendmentId": "W2.A02",
+  "targetWave": "W2",
+  "attemptId": "R01",
+  "candidateCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+  "packetSha256": "f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43",
+  "reviewer": "agent:/root/ecr0010_independent_proposal_review",
+  "reviewedAt": "2026-10-03T09:11:27Z",
+  "result": "approved",
+  "approvalAvailable": true,
+  "summary": "The exact pending ECR-0010 candidate is structurally valid, hash-bound, quiescent, and decision-complete for one bounded W2.A02 control task. It preserves the adopted Academic Minimal 1.8 reference and the original CAP-05.S01.T01 base, criteria, adverse evidence, and distinct native/Core and release obligations. This independent packet disposition makes a separate exact owner decision available; it is not that decision or execution authority.",
+  "independence": {
+    "proposalPacketOrSiteAuthoredByReviewer": false,
+    "priorParticipation": "Read-only scratch and exact-candidate preflight. The reviewer identified a potential circular phrasing around later T01 review and an overstatement of a distinct ADR-check maintenance review; the authors corrected both before this candidate. The reviewer did not author ECR-0010 proposal, packet, review page, generated site, product, reference, gate implementation, or W2 state.",
+    "persistentWrites": [
+      "planning/enabler-change-requests/ECR-0010.review-R01.json"
+    ],
+    "workflowMutations": "None: no taskctl transition, approval, amendment bootstrap, reference edit, product change, integration, or release action was performed by this reviewer."
+  },
+  "bindings": {
+    "packet": {
+      "path": "planning/enabler-change-requests/ECR-0010.packet.json",
+      "sha256": "f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43",
+      "introductionCommit": "5475d071da280e7f49d391de9eab0e8b0cef259f",
+      "lastRebindingCommit": "4ea3a8d91d78bdb08a94b95146c170de98cd5f1a"
+    },
+    "canonicalProposal": {
+      "path": "planning/enabler-change-requests/ECR-0010.md",
+      "sha256": "f688916e42852828da7d313106ffcffd1acd697872f6bf568dfa73aefee2fb2c"
+    },
+    "humanReview": {
+      "path": "planning/enabler-change-requests/ECR-0010-review.html",
+      "sha256": "e28badcb2dd7293b0402f6984476ad00ea788b7fd17aef76537158e82e09f5e5"
+    },
+    "proposalSchema": {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c"
+    },
+    "generatedReviewPage": {
+      "path": "planning/review-site/enablers/ECR-0010.html",
+      "sha256": "3c7134f340362ddc5b0fc1dd27613fe8d8763b46910c981a16aea3cb458e82ca"
+    },
+    "mismatchEvidence": {
+      "path": "artifacts/evidence/CAP-05.S01.T01.ui-lineage-mismatch-post-adoption.md",
+      "sha256": "3ccbd67039446393d2b704e4939babb6b7720986fafb1cc03862254a8aac179b"
+    },
+    "authentication": "All 58 unique packet file rows match regular Git blobs at the exact candidate: 55 unchanged approved 1.8 governed files, the canonical proposal, v4.1 schema, and static human review page. The 55 reference rows equal the 54 governed files named by the approved reference manifest plus the manifest itself. Packet and source SHA-256 values match their committed blobs; no scratch sentinel remains."
+  },
+  "checks": [
+    {
+      "id": "IR-R01-packet-structure-and-history",
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0010",
+      "result": "PASS",
+      "observation": "Independently executed at clean committed 60e8a2d3. planctl reported ECR-0010 structurally and historically valid and printed the exact generated ECR, canonical proposal, and hash-bound packet locations. Approval was not required or inferred by this read-only validation."
+    },
+    {
+      "id": "IR-R01-hash-inventory",
+      "result": "PASS",
+      "observation": "Independently SHA-256 hashed all 58 unique packet-bound HEAD Git blobs and checked regular 100644/100755 modes; there were no mismatches or redirected objects. The 55 governed-reference rows match exactly the manifest's 54 governed entries plus REFERENCE_MANIFEST.yaml. The current approved 1.8 reference has no path delta after its acdc67b6 publication. The packet Git blob SHA-256 is f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43."
+    },
+    {
+      "id": "IR-R01-authority-and-quiescence",
+      "result": "PASS",
+      "observation": "W2's immutable c85a59f3 packet precedes its 3bc1c182 human approval. Adopted W2.A01's 3fb76d6c packet SHA-256 matches its f8a49a2e human approval, whose exact Git blob and current bytes match the proposed predecessor SHA-256 6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096. That approval precedes the 56187d40 effective adoption state. GOV-MIG-0001's immutable and current Git bytes match packet SHA-256 4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d. Current W2 is PAUSED for human-decision without a lease; CAP-05.S01.T01 is BLOCKED without a lease and retains base 6506c68461144747b0ee9be10853211717aa381d; W2.A01 is ADOPTED, independently completed, and lease-free; active amendment is null and retained recovery holds are RELEASED. W2.A02 is not materialized. taskctl next's generic resume hint is not approval to bypass this pending ECR decision."
+    },
+    {
+      "id": "IR-R01-scope-security-and-history",
+      "result": "PASS_WITH_LATER_ORIGINAL_TASK_PROOF",
+      "observation": "The proposal, v4.1 task inventory, and review pages consistently limit W2.A02.T01 to the six named gate/schema/test/procedure/Proposed-ADR/index control-source paths. The v1.3 lane is exact to original T01 and preserves 1.0/1.1/1.2 denials while authenticating historical T02, approved 1.7-to-1.8 publication, reviewed W2.A01 and intervening f54da79f, 0d9ab50b/089c00c6/fff7a04b, GOV-MAINT-0025, and W2.A02 control history, independent current 1.8 classification, and full original-base automatic selection. The separately named 3658da21 ADR-check repair is correctly described as included in W2.A01.T01's independently reviewed full-range candidate, with no invented distinct maintenance ledger. Git confirms 9727f1b1 is sole-parent, changes exactly two governed renderer files and strictly appends nine newly introduced regular Python paths to quality-scope.json; the proposal makes this a one-commit, non-reusable exception, not prior independent control approval. A later T01 independent review follows gate submission rather than being a prerequisite to the gate. Renderer paths/bytes, stock Tauri path-drop, broader security grants, a new 1.9 reference, and changed W2/T01 criteria remain outside this packet. Native/Core acquisition, intermittent fifth-D3D startup, task/slice/Wave checks, and human release remain open."
+    },
+    {
+      "id": "IR-R01-estimate-and-common-budget",
+      "result": "PASS",
+      "observation": "The immutable v4.1 machine baseline reproduces 33 W2 tasks and 143 normalized points at S=1/M=3/L=5. The approved W2 initiation assessment separately records P_hours=530 engineering-hours and a shared 79.5-hour 15% supplemental-refactoring ceiling, including its planned 2-hour runner-progress allocation within P. W2.A02 adds one L/5 control task, a credible size for this full-history and real-Git authority lane, and proposes no supplemental refactor task or points. Its required new-product-work label denotes capability-enabling additive control in v4.1, not renderer/Core source or a budget reset. Documented prior allocation is zero, while historical actual structural R_hours is explicitly unknown; the packet claims no unused capacity or measured savings."
+    },
+    {
+      "id": "IR-R01-site-and-links",
+      "result": "PASS",
+      "observation": "The separately generated ECR-0010 page and enabler register at committed 60e8a2d3 display pending-approval, non-executable/NOT_MATERIALIZED authority and the separate B00, control, original-task, and release sequence. Independently checked all 15 static review-page and 91 generated ECR-page links/anchors against their intended canonical locations with no missing target. The retained artifacts/tmp/ECR-0010-review-site-check.json report has SHA-256 29cb1998ffc93528424bcb5e03e02e30a3e4e45220fa969b4b5b01a6667dd03f and reports 494 HTML pages, status pass, errors=[], warnings=[]; this report is a selected site check, not W2 qualification."
+    },
+    {
+      "id": "IR-R01-candidate-delta-and-hygiene",
+      "result": "PASS",
+      "observation": "The source proposal and static review page were committed at b55863dc; the 3658 review wording was corrected at 0f40d795 and rebound in the packet at 4ea3a8d9. The final 60e8a2d3 descendant changes only five generated review-site paths relative to 4ea3a8d9; packet, proposal, static review page, schema and approved 1.8 package blobs remain unchanged. git diff --check 4ea3a8d9..60e8a2d3 passes and the candidate worktree was clean before this ledger write."
+    }
+  ],
+  "findings": [],
+  "closures": [],
+  "priorFindingsReplayed": [],
+  "readiness": {
+    "exactPacketReviewAccepted": true,
+    "humanApprovalRecorded": false,
+    "referenceApprovalRecorded": true,
+    "recordingCondition": "Commit this exact independent R01 ledger as the sole changed path after candidate 60e8a2d3. A later immutable W2.A02 owner-approval record must bind the same candidate, packet SHA-256, reviewer, ledger SHA-256/introduction commit and empty closure list before planctl ecr validate ECR-0010 --require-approved can pass.",
+    "executionCondition": "Only after explicit owner approval of this exact ECR-0010 packet and an immutable approved record may supported W2.A02.B00 shell/bootstrap review, separate exact task materialization, activation and W2.A02.T01 control execution begin. Independent task/slice/exit/control-security review and adoption precede explicit W2 resume and original CAP-05.S01.T01 recovery; real native/Core proof, D3D startup closure, W2 qualification and the separate human release decision remain outstanding."
+  },
+  "authorityLimits": {
+    "humanProductOrControlApproval": false,
+    "newReferencePublished": false,
+    "amendmentMaterializedOrAdopted": false,
+    "ordinaryTaskOrWaveComplete": false,
+    "releaseAuthorized": false
+  }
+}
