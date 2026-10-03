@@ -25221,7 +25221,7 @@ capabilities:
     depends_on:
     - CAP-04.S04.T02
     - CAP-02.S03.T03
-    status: NOT_STARTED
+    status: IN_PROGRESS
     tasks:
     - id: CAP-05.S01.T01
       capability_id: CAP-05
@@ -25251,35 +25251,31 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: BLOCKED
+      status: IN_PROGRESS
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-02T11:38:18+00:00'
+      updated_at: '2026-10-03T02:34:05+00:00'
       completed_at: null
-      blocker:
-        reason: Approved Academic Minimal 1.7 lacks the selected Work/version attachment interaction required for this task;
-          bounded backend/native groundwork is committed and independently checked, but renderer work requires an approved
-          newer reference and bounded UI-gate authority.
-        next_action: Keep W2 paused; repair the missing historical W2 approval-base projection, validate and independently
-          review exact ECR-0009 and Academic Minimal 1.8 proposal, then obtain explicit owner approval before amendment bootstrap.
-          After reviewed amendment adoption, resume W2 and recover CAP-05.S01.T01 through taskctl for complete attachment
-          evidence and review.
-        recorded_at: '2026-10-02T11:38:18+00:00'
-        owner: codex-w2-implementation
+      blocker: null
       implementation_notes: ''
       evidence: []
       review:
         reviewer: null
         result: null
         reviewed_at: null
-        notes: null
+        notes: 'Reopened: W2.A01 adopted and W2 resumed; approved Academic Minimal 1.8 now governs the selected Work/version
+          attachment interaction. Complete the original native/Core bridge and real-boundary evidence.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease: null
+      lease:
+        claimed_by: codex-w2-implementation
+        claimed_at: '2026-10-03T02:34:05+00:00'
+        expires_at: '2026-10-03T10:34:05+00:00'
       verification_state: null
       worktree: .
       platform_targets:
       - windows-x64
+      cancellation: null
     - id: CAP-05.S01.T02
       capability_id: CAP-05
       slice_id: CAP-05.S01

@@ -17972,13 +17972,13 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
                 "result": null,
                 "reviewed_at": null,
-                "notes": null
+                "notes": "Reopened: W2.A01 adopted and W2 resumed; approved Academic Minimal 1.8 now governs the selected Work/version attachment interaction. Complete the original native/Core bridge and real-boundary evidence."
               },
               "review_control": null
             },
@@ -18013,7 +18013,7 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "BLOCKED",
+              "status": "IN_PROGRESS",
               "page": "CAP-05/CAP-05.S01.T01.html",
               "dependencies": [
                 "CAP-04.S04.T02",
@@ -18028,7 +18028,7 @@
               "plan_section_sha256": "89a49d436097cfafeb28f30971ba08e6634b396b0cf419f53e9d681bc85b69d4",
               "worksheet": {
                 "path": "artifacts/evidence/CAP-05.S01.T01.task-start.md",
-                "sha256": "97fd0a1403ad053777b2050cae4b2fb509aee0d132b59fc0071190bd270fa68f"
+                "sha256": "831f848779a4b9aa36538d69ff3b3301177edb64c5f3933c35e3083e019aa35b"
               }
             },
             {

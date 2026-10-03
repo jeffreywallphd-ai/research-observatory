@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S01.html">SLICE-rights-aware-document-acquisition</a><span>/</span><span aria-current="page">CAP-05.S01.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S01.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S01.T01 · task 1 of 3</span><h1>Implement local document attachment and version association</h1><p>Drag/drop and file-picker flows for PDF, JATS, TEI, XML, HTML, DOCX, and plain text with work/version selection.</p></div><span class="status status-blocked">Blocked</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S01.T01 · task 1 of 3</span><h1>Implement local document attachment and version association</h1><p>Drag/drop and file-picker flows for PDF, JATS, TEI, XML, HTML, DOCX, and plain text with work/version selection.</p></div><span class="status status-in-progress">In_Progress</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S01.html">SLICE-rights-aware-document-acquisition</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -89,9 +89,9 @@ python tools/verify.py --profile desktop
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T01" data-worksheet-sha256="97fd0a1403ad053777b2050cae4b2fb509aee0d132b59fc0071190bd270fa68f">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T01" data-worksheet-sha256="831f848779a4b9aa36538d69ff3b3301177edb64c5f3933c35e3083e019aa35b">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>97fd0a1403ad053777b2050cae4b2fb509aee0d132b59fc0071190bd270fa68f</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>831f848779a4b9aa36538d69ff3b3301177edb64c5f3933c35e3083e019aa35b</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S01.T01 task-start acceptance closure
 
 Claim base: `6506c68461144747b0ee9be10853211717aa381d`; W2 campaign owner `codex-w2-implementation`.
@@ -114,15 +114,31 @@ Current boundary: Core schema v21 has a `documents` subtype with an object diges
 
 Initial tests: start with backend success and stale/cross-project/password/duplicate/failure characterizations before product edits. Inspect and reuse the exact v21 migration fixture and protected object-store boundary. Select affected document, object-store, rights, reconciliation, migration, worker, contract, native and UI checks only as changed paths warrant. Full documents/desktop profiles and cross-capability matrix remain for slice/checkpoint/W2 qualification unless a shared runtime change expands risk.
 
-The approved 1.7 Source Manager “Add local library” action is an adapter chooser, not this Work/version attachment. No renderer implementation or implied 1.7 conformance will be claimed from that control. Backend work independent of page layout may proceed while the design-first packet is prepared; no task-completion claim precedes the governed reference decision and complete vertical proof.</pre></article>
+The approved 1.7 Source Manager “Add local library” action is an adapter chooser, not this Work/version attachment. No renderer implementation or implied 1.7 conformance will be claimed from that control. Backend work independent of page layout may proceed while the design-first packet is prepared; no task-completion claim precedes the governed reference decision and complete vertical proof.
+
+## Continuation after W2.A01 adoption
+
+W2.A01 adopted `RO-UI-ACADEMIC-MINIMAL-1.8` at `56187d40ca5d38f72f7c9dfb132070b034032a57`. The W2 campaign resumed through `taskctl` at `97777d31a7a0f9b68fc59875c064989f7f38e501`, and the original task was reopened without replacing its `6506c68461144747b0ee9be10853211717aa381d` claim base. The preceding 1.7 design stop and bounded backend/native work above remain historical facts; the adopted 1.8 reference and ECR-0009 now govern the selected Work/version attachment interaction. Amendment completion did not complete this original task.
+
+The current implementation has a Core v22 staged candidate, cancel and commit lifecycle, an encrypted object handoff and qualified document inspector, plus a renderer contract that deliberately fails closed until native commands exist. The task must supply the live bridge, durable status, and real Windows evidence. Remote OA retrieval belongs to `CAP-05.S01.T02`; post-stage orphan cleanup belongs to `CAP-05.S01.T03`; protected reader opening belongs to `CAP-05.S04`.
+
+| Material continuation rule | First proof and recovery boundary |
+|---|---|
+| A chosen or dropped source stays native-only; the renderer receives no path, handle or bytes and no stock Tauri drop scope grant. The main window must remain hidden until stock handlers are disabled, WebView2 external drops are denied and a native OLE target is installed. | Failing native command/drop tests before wiring, followed by an actual Windows picker and OS drop into the built app with listeners asserting zero HTML5 file/byte and `tauri://drag-*` exposure. Wrong window, multiple files, directory, disarmed, lock and recreation deny. Installation failure leaves attachment unavailable. |
+| Fixed native actions bind exact project, source, Work/version, operation, session and current Core authority. `begin` arms promptly; later candidate/error events correlate to that session. Core `plain-text` is mapped to the frozen renderer `txt` value only in the native adapter. | Native/contract tests for successful stage, stale selection, session switch, cancellation, lock and format mapping; a real held-source-to-Core stream beyond one frame, with no path in IPC. |
+| Status is authoritative across a lost reply and restart, not inferred from a toast or stale renderer state. A durable operation-to-candidate binding and exact command lookup must not leak another project/version or invent an available copy. Old random Core sessions are never replayed after restart. | First add failing Core status/identity and populated-v22 migration tests, then assert exact committed revision and rights on reopen. Same-session identical-command retry is bounded; after restart an unresolved attempt requires a fresh stage. |
+| The explicit project-only choice is a researcher-confirmed current-copy rights decision, not a label that implies permission. Derive the rights subject from the loaded candidate, publish only local store/inspect grants through the existing rights authority, and recheck at commit. | Failing rights-publish/commit tests for current candidate, same-byte distinct candidate, revoked/unknown policy and denial audit. No renderer-supplied rights subject grants authority. |
+| Accepted bytes reuse one encrypted project object while preserving separate immutable source, version and provenance assertions; unsafe, unsupported, password-protected, oversized or interrupted intake never publishes a canonical association. | Reuse focused Core/worker tests and add one mounted production journey through native picker/drop, authenticated Core, signed LPAC inspector, encrypted object, exact Work/version, rights, provenance and restart. Mocked UI results remain limited to renderer interaction proof. |
+
+The initial focused checks cover the new Core status/rights/migration tests, Rust command/OLE lifecycle tests, renderer contract and mounted interaction tests, and the existing inspector/attachment boundary cases changed by this task. The full documents, desktop, security and repository profiles remain slice/checkpoint/W2 qualification unless new shared-runtime failures require earlier breadth. `GOV-MAINT-0025` closed the Python inventory only; prior CAP-05 formatting/type findings remain open and must be repaired under this task before its quality evidence is claimed.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S01.T01" data-review-mode="latest-review-only">
   <h3>CAP-05.S01.T01 — Implement local document attachment and version association</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S01.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>BLOCKED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
-  <p><strong>Latest notes:</strong> None</p>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S01.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <p><strong>Latest notes:</strong> Reopened: W2.A01 adopted and W2 resumed; approved Academic Minimal 1.8 now governs the selected Work/version attachment interaction. Complete the original native/Core bridge and real-boundary evidence.</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S01.html">Previous</a><a class="button button-primary" href="CAP-05.S01.T02.html">Next</a></nav>
 
