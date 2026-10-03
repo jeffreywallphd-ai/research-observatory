@@ -78,7 +78,7 @@
         "W2.A02.T01"
       ],
       "acceptanceCriteria": [
-        "Only original CAP-05.S01.T01 with unchanged 6506 claim base may use the continuation after authenticated W2.A01 adoption, independently reviewed T02 publication, exact intervening reviewed verifier/UI-gate/quality/ADR-check maintenance, and reviewed W2.A02 control delivery.",
+        "Only original CAP-05.S01.T01 with unchanged 6506 claim base may use the continuation after authenticated W2.A01 adoption, independently reviewed T02 publication, exact intervening reviewed verifier/UI-gate/quality maintenance, the 3658da21 ADR-check repair covered by W2.A01.T01 full-range review, and reviewed W2.A02 control delivery.",
         "The approved 1.8 package stays unchanged: exactly one historical T02 v1.2 and one current T01 v1.3 contract, historical approved 1.7-to-1.8 transition, exact one-off 9727 additive Python inventory/renderer co-commit, and independent current product/1.8 conformance classification are required over the full frozen range.",
         "Control implementation, task, slice and exit independent reviews bind exact committed candidates; adoption remains separate from ordinary T01 approval and W2 release."
       ]
@@ -551,7 +551,7 @@
   "files": [
     {
       "path": "planning/enabler-change-requests/ECR-0010.md",
-      "sha256": "f89d2bffd38dc56a914c8e5799486f0b77c4c98bf563e8575e6e1ba3056b8a94",
+      "sha256": "f688916e42852828da7d313106ffcffd1acd697872f6bf568dfa73aefee2fb2c",
       "role": "canonical-proposal"
     },
     {
