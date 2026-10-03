@@ -145,21 +145,37 @@ class WindowsFileDialogActionContractTests(unittest.TestCase):
         cls.source = (ROOT / "tests/desktop/tools/WindowsFileDialogUia.cs").read_text(encoding="utf-8")
         cls.action = cls.source.split("public static string Act(", 1)[1]
 
-    def test_exact_filename_is_verified_and_set_before_open_is_required(self) -> None:
+    def test_exact_filename_and_native_idok_are_rechecked_before_single_invoke(self) -> None:
         source = self.action.index("SyntheticSource(fixtureRoot, out held)")
-        set_value = self.action.index("value.SetValue(source)")
-        ready_open = self.action.index('ReadyControls(dialog, timeoutMs, "open")')
+        set_value = self.action.index("selectedValue.SetValue(selectedSource)")
+        native_open = self.action.index("ExactNativeOpenButton(dialog, ownerPid, IntPtr.Zero)")
+        from_handle = self.action.index("NativeOpenFromHandle(idOk)")
         same_dialog = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)")
-        same_dialog_before_invoke = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)", ready_open)
+        same_dialog_before_invoke = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)", from_handle)
+        native_recheck = self.action.index("ExactNativeOpenButton(dialog, ownerPid, idOk)")
+        source_recheck = self.action.index("selectedValue.Current.Value != selectedSource", from_handle)
         invoke = self.action.index("((InvokePattern)invokeObject).Invoke()")
         self.assertLess(source, set_value)
         self.assertLess(same_dialog, set_value)
         self.assertIn("GetForegroundWindow() != dialog", self.action[source:set_value])
-        self.assertLess(set_value, ready_open)
-        self.assertLess(ready_open, same_dialog_before_invoke)
+        self.assertLess(set_value, native_open)
+        self.assertLess(native_open, from_handle)
+        self.assertLess(from_handle, same_dialog_before_invoke)
+        self.assertLess(same_dialog_before_invoke, native_recheck)
+        self.assertLess(native_recheck, source_recheck)
+        self.assertLess(source_recheck, invoke)
         self.assertLess(same_dialog_before_invoke, invoke)
         self.assertIn('ReadyControls(dialog, timeoutMs, "file-name")', self.action[:set_value])
         self.assertIn("GetForegroundWindow() != dialog", self.action[same_dialog_before_invoke:invoke])
+        self.assertEqual(self.action.count("((InvokePattern)invokeObject).Invoke()"), 1)
+
+    def test_select_has_only_exact_native_idok_uia_action(self) -> None:
+        self.assertIn("GetDlgItem(dialog, 1)", self.source)
+        self.assertIn("GetDlgCtrlID(idOk)", self.source)
+        self.assertIn("AutomationElement.FromHandle(idOk)", self.source)
+        self.assertIn("current.NativeWindowHandle", self.source)
+        self.assertNotIn("BM_CLICK", self.source)
+        self.assertNotIn("SendInput", self.source)
 
     def test_adverse_uia_result_retains_only_sanitized_control_state(self) -> None:
         self.assertIn('result["controlDiagnostic"] = Diagnostic(controls)', self.action)
@@ -184,7 +200,13 @@ $values = foreach ($name in $names) {{
     $arguments[0] = [string]$name
     $method.Invoke($null, $arguments)
 }}
-ConvertTo-Json -InputObject @($values) -Compress
+$failure = [WindowsFileDialogUia].GetMethod(
+    'SafeFailure', [Reflection.BindingFlags]'Static, NonPublic'
+)
+$failureArguments = New-Object 'object[]' 1
+$failureArguments[0] = [InvalidOperationException]::new('secret-participant.txt')
+$failureCode = $failure.Invoke($null, $failureArguments)
+ConvertTo-Json -InputObject @{{names=@($values); failure=$failureCode}} -Compress
 """
         completed = subprocess.run(
             ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script],
@@ -197,14 +219,17 @@ ConvertTo-Json -InputObject @($values) -Compress
         self.assertTrue(completed.stdout.strip(), f"stdout empty; stderr={completed.stderr!r}")
         self.assertEqual(
             json.loads(completed.stdout),
-            ["open", "open", "open", "select", "ok", "other", "other"],
+            {
+                "names": ["open", "open", "open", "select", "ok", "other", "other"],
+                "failure": "dialog-action-failed",
+            },
             f"stdout={completed.stdout!r}; stderr={completed.stderr!r}",
         )
 
     def test_accept_diagnostic_remains_read_only_and_includes_split_button_and_idok(self) -> None:
         diagnostic = self.source.split("private static Dictionary<string, object> Diagnostic(", 1)[1]
         diagnostic = diagnostic.split("private static bool FileNameReady(", 1)[0]
-        action_selector = self.source.split("private static AutomationElement ExactAction(", 1)[1]
+        action_selector = self.source.split("private static AutomationElement ExactCancel(", 1)[1]
         action_selector = action_selector.split("private static string SafeFailure(", 1)[0]
         self.assertIn("ControlType.SplitButton", self.source)
         self.assertIn("GetDlgItem(dialog, 1)", self.source)

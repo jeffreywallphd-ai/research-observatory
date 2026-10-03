@@ -28,6 +28,9 @@ public static class WindowsFileDialogUia
     private static extern bool EnumWindows(EnumWindowsCallback callback, IntPtr state);
 
     [DllImport("user32.dll")]
+    private static extern bool EnumChildWindows(IntPtr parent, EnumWindowsCallback callback, IntPtr state);
+
+    [DllImport("user32.dll")]
     private static extern bool IsWindowVisible(IntPtr window);
 
     [DllImport("user32.dll")]
@@ -38,6 +41,9 @@ public static class WindowsFileDialogUia
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetDlgItem(IntPtr dialog, int controlId);
+
+    [DllImport("user32.dll")]
+    private static extern int GetDlgCtrlID(IntPtr window);
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetParent(IntPtr window);
@@ -397,21 +403,64 @@ public static class WindowsFileDialogUia
         return source;
     }
 
-    private static AutomationElement ExactAction(Controls controls, string action)
+    // The OS-owned direct IDOK child is the only select target. An ID or label
+    // found elsewhere in the dialog tree cannot substitute for this HWND.
+    private static IntPtr ExactNativeOpenButton(IntPtr dialog, int ownerPid, IntPtr expectedButton)
     {
-        if (action == "cancel")
+        if (!IsWindow(dialog) || GetForegroundWindow() != dialog)
+            throw new InvalidOperationException("dialog-native-open-control-unproven");
+        uint dialogPid;
+        uint dialogThread = GetWindowThreadProcessId(dialog, out dialogPid);
+        IntPtr idOk = GetDlgItem(dialog, 1);
+        if (dialogThread == 0 || dialogPid != (uint)ownerPid
+            || idOk == IntPtr.Zero || !IsWindow(idOk)
+            || (expectedButton != IntPtr.Zero && idOk != expectedButton)
+            || GetParent(idOk) != dialog || GetDlgCtrlID(idOk) != 1)
+            throw new InvalidOperationException("dialog-native-open-control-unproven");
+        List<IntPtr> directIdOkChildren = new List<IntPtr>();
+        EnumChildWindows(dialog, delegate(IntPtr child, IntPtr state)
         {
-            if (controls.CancelIdCount != 1 || controls.Cancel == null || !controls.CancelIdInvokePattern)
-                throw new InvalidOperationException("dialog-cancel-control-unproven");
-            return controls.Cancel;
-        }
-        if (!FileNameReady(controls))
-            throw new InvalidOperationException("dialog-file-name-control-unproven");
-        if (controls.OpenIdCount == 1 && controls.OpenMatches == 1 && controls.OpenIdInvokePattern)
-            return controls.Open;
-        if (controls.OpenIdCount == 0 && controls.OpenNameMatches == 1 && controls.OpenNameInvokePattern)
-            return controls.OpenByName;
-        throw new InvalidOperationException("dialog-open-control-unproven");
+            if (GetParent(child) == dialog && GetDlgCtrlID(child) == 1)
+                directIdOkChildren.Add(child);
+            return true;
+        }, IntPtr.Zero);
+        if (directIdOkChildren.Count != 1 || directIdOkChildren[0] != idOk)
+            throw new InvalidOperationException("dialog-native-open-control-unproven");
+        uint idOkPid;
+        uint idOkThread = GetWindowThreadProcessId(idOk, out idOkPid);
+        if (idOkThread == 0 || idOkPid != dialogPid || idOkThread != dialogThread
+            || !IsWindowVisible(idOk) || !IsWindowEnabled(idOk)
+            || Text(idOk, true) != "Button" || SafeActionName(Text(idOk, false)) != "open")
+            throw new InvalidOperationException("dialog-native-open-control-unproven");
+        return idOk;
+    }
+
+    private static AutomationElement NativeOpenFromHandle(IntPtr idOk)
+    {
+        AutomationElement target = AutomationElement.FromHandle(idOk);
+        if (target == null)
+            throw new InvalidOperationException("dialog-native-open-uia-unproven");
+        AutomationElement.AutomationElementInformation current = target.Current;
+        uint idOkPid;
+        if (GetWindowThreadProcessId(idOk, out idOkPid) == 0
+            || current.NativeWindowHandle == 0
+            || current.NativeWindowHandle != unchecked((int)idOk.ToInt64())
+            || current.ProcessId != (int)idOkPid
+            || current.ControlType != ControlType.Button
+            || SafeActionName(current.Name) != "open"
+            || !current.IsEnabled || current.IsOffscreen)
+            throw new InvalidOperationException("dialog-native-open-uia-unproven");
+        object pattern;
+        if (!target.TryGetCurrentPattern(InvokePattern.Pattern, out pattern))
+            throw new InvalidOperationException("dialog-native-open-uia-unproven");
+        return target;
+    }
+
+    private static AutomationElement ExactCancel(Controls controls)
+    {
+        if (controls.CancelIdCount != 1 || controls.Cancel == null || !controls.CancelIdInvokePattern)
+            throw new InvalidOperationException("dialog-cancel-control-unproven");
+        return controls.Cancel;
     }
 
     private static string SafeFailure(Exception error)
@@ -427,6 +476,8 @@ public static class WindowsFileDialogUia
                 case "dialog-cancel-control-unproven":
                 case "dialog-file-name-control-unproven":
                 case "dialog-open-control-unproven":
+                case "dialog-native-open-control-unproven":
+                case "dialog-native-open-uia-unproven":
                 case "dialog-not-foreground":
                 case "dialog-value-not-set":
                 case "dialog-did-not-close":
@@ -452,6 +503,9 @@ public static class WindowsFileDialogUia
         FileStream held = null;
         Controls controls = null;
         IntPtr dialog = IntPtr.Zero;
+        IntPtr idOk = IntPtr.Zero;
+        ValuePattern selectedValue = null;
+        string selectedSource = null;
         string controlPhase = "find-dialog";
         try
         {
@@ -468,25 +522,28 @@ public static class WindowsFileDialogUia
             {
                 if (!FileNameReady(controls))
                     throw new InvalidOperationException("dialog-file-name-control-unproven");
-                string source = SyntheticSource(fixtureRoot, out held);
+                selectedSource = SyntheticSource(fixtureRoot, out held);
                 object valueObject;
                 if (!controls.FileName.TryGetCurrentPattern(ValuePattern.Pattern, out valueObject))
                     throw new InvalidOperationException("dialog-file-name-control-unproven");
-                ValuePattern value = (ValuePattern)valueObject;
+                selectedValue = (ValuePattern)valueObject;
                 if (!controls.FileName.Current.IsEnabled || controls.FileName.Current.IsOffscreen)
                     throw new InvalidOperationException("dialog-file-name-control-unproven");
                 if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
                     || GetForegroundWindow() != dialog)
                     throw new InvalidOperationException("dialog-owner-invalid");
-                value.SetValue(source);
-                if (value.Current.Value != source)
+                selectedValue.SetValue(selectedSource);
+                if (selectedValue.Current.Value != selectedSource)
                     throw new InvalidOperationException("dialog-value-not-set");
                 held.Dispose();
                 held = null;
                 controlPhase = "open";
-                controls = ReadyControls(dialog, timeoutMs, "open");
+                if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog)
+                    throw new InvalidOperationException("dialog-owner-invalid");
+                idOk = ExactNativeOpenButton(dialog, ownerPid, IntPtr.Zero);
             }
-            AutomationElement target = ExactAction(controls, action);
+            AutomationElement target = action == "select"
+                ? NativeOpenFromHandle(idOk) : ExactCancel(controls);
             if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
                 || GetForegroundWindow() != dialog)
                 throw new InvalidOperationException("dialog-owner-invalid");
@@ -496,6 +553,17 @@ public static class WindowsFileDialogUia
             object invokeObject;
             if (!target.TryGetCurrentPattern(InvokePattern.Pattern, out invokeObject))
                 throw new InvalidOperationException("dialog-open-control-unproven");
+            if (action == "select")
+            {
+                if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
+                    || GetForegroundWindow() != dialog)
+                    throw new InvalidOperationException("dialog-owner-invalid");
+                ExactNativeOpenButton(dialog, ownerPid, idOk);
+                if (selectedValue.Current.Value != selectedSource
+                    || !controls.FileName.Current.IsEnabled
+                    || controls.FileName.Current.IsOffscreen)
+                    throw new InvalidOperationException("dialog-value-not-set");
+            }
             ((InvokePattern)invokeObject).Invoke();
             Stopwatch clock = Stopwatch.StartNew();
             while (IsWindow(dialog) && clock.ElapsedMilliseconds < timeoutMs)
