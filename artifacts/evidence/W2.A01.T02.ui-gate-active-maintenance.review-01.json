@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "bounded-control-maintenance-independent-review",
+  "subject": "W2.A01.T02 active-branch UI gate evidence-path and projection maintenance",
+  "riskTier": "high",
+  "branch": "codex/w2-implementation",
+  "baseCommit": "f306579cd802ae22576db35a735101a4d92c1215",
+  "candidateCommit": "fff7a04b20ad571c40c81a524b1eec447d206e9f",
+  "reviewer": "agent:/root/t02_gate_maintenance_review",
+  "result": "approved",
+  "findings": [],
+  "scope": {
+    "commits": [
+      "0d9ab50b25e980c454c14ba597e06333b21d6d93",
+      "089c00c62a3e1301b76bc6f0fd7052c63605eb05",
+      "fff7a04b20ad571c40c81a524b1eec447d206e9f"
+    ],
+    "changedPaths": [
+      "artifacts/evidence/W2.A01.T02.ui-gate-active-maintenance.md",
+      "artifacts/evidence/W2.A01.T02.ui-gate-projection-maintenance.md",
+      "tests/foundation/test_ui_change_gate.py",
+      "tools/ui_change_gate.py"
+    ],
+    "externalReviewedCommits": [
+      "5078ef4c2ca6f2b8a0ffd08a8945b9c9b6b831d0",
+      "38dd61f302000317f9fd84151afeba3365cb528f"
+    ],
+    "blobAuthentication": "The active 0d9ab50b gate/test Git blobs e2a3ab582c2627d32f1e7bc4bfd810648856ae9c and dba75cc7a0a93644f0422fec8cda87458a21a69e exactly match external 5078ef4c. The active 089c00c6 gate/test/original-note blobs 5008f005cf6e9a3eb3cc7decc021a75df53aa264, af05dbb9e171bbe2f188c6a497bd7ea175696f70, and 2f85598e8d4b1f5f48ba6f569adca29e0757cd3e exactly match external 38dd61f3. At fff7a04b the gate and original note remain those exact blobs; only the historical test fixture changes to be345593fe5de96d67d1f4cd456c571919d468be and a new append-only active maintenance note is added."
+  },
+  "authorityAssessment": "The first increment accepts canonical R01-and-later JSON evidence names only under the exact task namespace; cross-task, malformed round, nested/traversal, alternate-extension and double-round variants remain denied. The second admits a post-publication current-reference phrase refresh only on a regular pre-existing ECR-NNNN HTML page when its whole Git blob equals the prior blob with exactly one approved supersedes-to-current phrase substitution. Extra content, wrong reference, new or nested pages, and pre-publication changes remain denied. The range changes no product renderer, approved UI reference, amendment packet, backlog identity, review history, contract, security authority or release criterion. The follow-up changes only a stale historical test fixture and explicitly asserts the unchanged live-head reference denial; it does not weaken the control helper.",
+  "checks": [
+    {
+      "id": "exact-range-and-blob-comparison",
+      "result": "passed",
+      "observation": "The four changed paths are exactly the f306579c..fff7a04b Git diff; git diff --check passes. The imported active Git blobs match the two separately approved external commits exactly, with the disclosed test-only follow-up after 089c00c6."
+    },
+    {
+      "id": "original-frozen-product-gate",
+      "result": "passed-at-original-candidate",
+      "rawOutput": "artifacts/tmp/W2.A01.T02.R02.ui-gate-988ee478.log",
+      "rawOutputSha256": "d60715bf172c4aea25ca3b006c03f1b7e93531a80e7a03996f49ad63a9b3217a",
+      "observation": "The independently reviewed external 38dd61f3 checker passed the exact whole-base gate for frozen product candidate 988ee478 while that candidate was current. The active checker source is the same Git blob. This prior candidate-bound pass is reused as such, not relabeled as a current-HEAD pass."
+    },
+    {
+      "id": "original-adverse-control-reproductions",
+      "result": "preserved-adverse",
+      "rawOutputs": [
+        {
+          "path": "artifacts/tmp/W2.A01.T02.ui-gate-1d11c818.log",
+          "sha256": "4f86d305e17990734cb5d79c9628de1b711e9b356d2e279334d2fe23671b7995"
+        },
+        {
+          "path": "artifacts/tmp/W2.A01.T02.R02.gate-historical-red.log",
+          "sha256": "0f624123bb61fd67a5bd3de3ed15ad50237215a371b49335eb70287b921c92cf"
+        },
+        {
+          "path": "artifacts/tmp/W2.A01.T02.R02.projection-test-red.log",
+          "sha256": "bfa50097df8e98e3bebf33a12f30183470b639013dc2773ede33ce63655f44e5"
+        }
+      ],
+      "observation": "The prior denials identify the canonical T01 R02 evidence-path rejection, the existing historical ECR page projection rejection and the pre-fix real-Git projection regression. Their bytes and hashes are retained."
+    },
+    {
+      "id": "current-state-gate-replays",
+      "result": "preserved-adverse",
+      "rawOutputs": [
+        {
+          "path": "artifacts/tmp/W2.A01.T02.ui-gate-active-089c00c6.log",
+          "sha256": "9746753ac64559c84e8193cadd964c9ead970024a0133f7b0953bb53708ad0fa"
+        },
+        {
+          "path": "artifacts/tmp/W2.A01.T02.ui-gate-detached-089c00c6.log",
+          "sha256": "7ad33f1a2d4bcd0777a236449ada92b64fe46345184dbd2d99d225ad3e4d13e1"
+        }
+      ],
+      "observation": "The active checkout correctly rejects --head 988ee478 after HEAD advances to 089c00c6; a detached checkout at 988ee478 correctly rejects the exact campaign branch/worktree requirement. Neither guard was changed or counted as a passing replay."
+    },
+    {
+      "id": "full-foundation-ui-gate-suite",
+      "result": "failed-adverse",
+      "rawOutput": "artifacts/tmp/W2.A01.T02.ui-gate-tests-089c00c6.log",
+      "rawOutputSha256": "8a6458c74c130d99c18ba17358d52be24f072d62b0a00f709d1414d091f6577c",
+      "observation": "At 089c00c6, 98 of 99 tests passed; the historical W2 conformance fixture expected live HEAD to have no post-packet governed reference change. The unchanged control properly denied that assumption. Independent immutable-snapshot replay returned no error at acdc67b6^ before the approved 1.8 publication, then the same later-reference denial at publication acdc67b6, pre-maintenance f306579c and active 089c00c6. This is a pre-existing fixture error, not a regression from either imported control increment. The 99-test failure remains adverse; no 99/99 rerun is claimed."
+    },
+    {
+      "id": "historical-fixture-correction",
+      "result": "precommit-pass",
+      "rawOutput": "artifacts/tmp/W2.A01.T02.ui-gate-historical-green-089c00c6.log",
+      "rawOutputSha256": "e4ec55182a8d9b70fc22f2beeacacc388a8217a7b69aea82eba84ff3eed5e9ca",
+      "observation": "The fff7a04b test-only change chooses the last snapshot before the first post-packet reference change for the positive real completed-W2 authority assertion and adds an explicit live-head rejection assertion. The focused corrected test passed before commit; the separate eight-test run at committed fff7a04b includes it. Independent replay at fff7a04b again returned the expected live-head denial."
+    },
+    {
+      "id": "committed-focused-real-git-and-lineage",
+      "result": "passed",
+      "rawOutput": "artifacts/tmp/W2.A01.T02.ui-gate-focused-fff7a04b.log",
+      "rawOutputSha256": "e380808c5d196381b06f5c44a9433c3609b4932a41e9a8542eb3c9d526e6fe76",
+      "observation": "Eight selected real-Git, canonical-namespace, approved-packet-to-renderer lineage, hostile projection, hidden-history and corrected historical-authority tests passed at the clean committed fff7a04b candidate."
+    },
+    {
+      "id": "affected-python-static-checks",
+      "result": "passed",
+      "rawOutputs": [
+        {
+          "path": "artifacts/tmp/W2.A01.T02.ui-gate-ruff-fff7a04b.log",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        },
+        {
+          "path": "artifacts/tmp/W2.A01.T02.ui-gate-format-fff7a04b.log",
+          "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+        },
+        {
+          "path": "artifacts/tmp/W2.A01.T02.ui-gate-mypy-089c00c6.log",
+          "sha256": "8e63ae22e8213e327a5e9cbd584067681681bd8ef7f25c869877887ccdcfc4ff"
+        }
+      ],
+      "observation": "Ruff lint and format pass on both changed Python files at fff7a04b. Mypy passed on the 089c00c6 checker source, whose exact Git blob is unchanged at fff7a04b."
+    }
+  ],
+  "limitations": "This disposition covers only the bounded gate and historical-test maintenance in f306579c..fff7a04b. It does not convert the 98/99 full suite into a pass, claim a fresh whole-base UI gate run with current HEAD fff7a04b, or approve W2.A01.S01 slice/exit/adoption, ordinary W2 resume, native/Core acquisition or release. Future full task-base checks must respect the gate's exact current-HEAD and campaign branch/worktree requirements; no authority rule should be relaxed solely to replay an older product candidate after HEAD advances."
+}
