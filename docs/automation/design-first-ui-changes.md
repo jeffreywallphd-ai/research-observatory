@@ -2,7 +2,7 @@
 
 `tools/ui_change_gate.py` is the pull-request and foundation guard for researcher-facing implementation. It compares an immutable Git base and head, rather than trusting the working tree, and activates when renderer files under the governed UI roots in `ui-change-policy.json` change.
 
-Every activated change must have one current task contract at `artifacts/evidence/ui-change/<task-id>.json`. Only the exact adopted continuation in version 1.3 below may also retain its separately authenticated historical amendment contract in the full task-base range. The current contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml` or one of the exact authenticated amendment/restoration authorities below. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
+Every activated change must have one current task contract at `artifacts/evidence/ui-change/<task-id>.json`. Only the exact adopted continuation in versions 1.3 and 1.4 below may also retain its separately authenticated historical amendment contract in the full task-base range. The current contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml` or one of the exact authenticated amendment/restoration authorities below. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
 
 ## Change kinds
 
@@ -150,6 +150,53 @@ original task's full-base gate and independent task review, the unresolved
 intermittent D3D startup denial, later slice/Wave checks and human release
 decision remain separate obligations. A partial UI-gate result cannot complete
 T01 or W2.
+
+## Approved 1.8 desktop activation continuation (opt-in 1.4)
+
+The exact owner-approved `ECR-0011` adds reviewed `W2.A03.T01` control/witness
+work and later `W2.A03.T02` desktop consumer work before the original
+`CAP-05.S01.T01` can resume. Version 1.4 is available only to that original
+task as `defect-restoration` over its unchanged `6506c684...` claim base. It
+retains the entire version 1.3 `adoptedContinuationAuthority` object unchanged,
+including the historical post-A02 `reactivationCommit`. Its additional required,
+closed `referenceActivationAuthority` names exactly `W2.A03`/`ECR-0011`,
+`W2.A03.T01`/`W2.A03.T02`, the approved 1.8 reference approval path, the
+committed 1.8 presentation witness path, the publication/witness/A03 adoption
+commits, the separate post-A03 ordinary-task reactivation, and the four
+activation/baseline/assembly consumer paths and their ordered commits.
+Versions 1.0–1.3 cannot carry the new object; version 1.4 cannot omit either
+authority object or select another task or change kind.
+
+The gate derives these assertions from Git, the exact independently reviewed
+ECR-0011 approval and B00 bootstrap, separate materialization/activation,
+completed task submissions, S01/exit/adoption records, original W2 approval,
+the A01/A02 history, and the exact frozen, independently reviewed
+CAP-04.S05.T03 R01–R03, GOV-MAINT-0026, and W2.C10.T01 predecessors. The T03
+admission covers only its three historical product/control commits, including
+its temporary sample-source move and per-commit path/mode history. T01's single
+committed 1.8 witness introduction must follow its claim, and independent T01
+approval must precede the T02 claim and every T02
+source edit. Each reviewed task's source must remain inside its packet envelope;
+task-owned evidence and generated planning projections are separate workflow
+outputs. The gate attributes the witness and seven T02 source paths to those
+reviewed amendment ranges, rather than treating them as original T01 product
+work. After adoption, the original task may touch only T02's three shared test
+modules within this envelope, after its authenticated reactivation and with
+both sides of each commit under its active claim; its independent classification
+must bind those dependent inputs. The witness, controls, four activation
+consumers and all other amendment source stay frozen. It rejects a foreign or
+shortened base, changed mode or bytes, extra UI
+contract, hidden add/revert, unreviewed control/product input, stale lease or
+classification, and any consumer file touched after its reviewed T02 segment.
+
+The committed activation keeps its prior configuration except the approved 1.8
+ID and package. The baseline keeps its pinned renderer settings and has exactly
+33 approved product pages in both themes, with 66 schema-valid entries; both
+assemblers declare the same exact 1.8 selectors. This structural lineage check
+does not prove the PNG contents or desktop runtime. T02's guarded pinned
+capture and independent baseline review, the current T01 classification and
+native/Core evidence, joined slice checks, W2 qualification, and human release
+decision remain separate.
 
 ## Linked completed-task restoration (existing 1.0)
 

@@ -152,6 +152,30 @@ approved new invariant. No UX score, new approval layer or automatic baseline
 refresh. Deterministic checks cover executable behavior; models and humans supply
 different evidence, not interchangeable passes.
 
+## Approved 1.8 presentation and desktop activation
+
+`W2.A03.T01` commits
+`packages/contracts/workflow-profile/presentation-compatibility-1.8.json`
+before any consumer rebinding. `presentation_compatibility_errors` verifies the
+clean committed witness against the immutable approved 1.5 semantic source and
+the exact published Academic Minimal 1.8 package. Its closed ordered mapping
+permits only identity/version updates in the workflow catalog and the approved
+coverage date, CAP-05 page/capability insertion, exact purpose and required-region
+changes in capability coverage. A missing, extra or reordered semantic change,
+stale package, redirected file, or dirty witness fails. Historical 1.6/1.7
+witnesses retain their own rules and evidence.
+
+Only after independent `W2.A03.T01` review may `W2.A03.T02` select the approved
+1.8 ID/package in both desktop assemblers and
+`verification/extensions/desktop-ui.json`. The protected baseline writer below
+then produces the Windows-x64 light/dark capture inventory for all 33 current
+product pages: 66 entries under the unchanged pinned settings. The full original
+`CAP-05.S01.T01` v1.4 gate checks the reviewed activation lineage and committed
+33/66 baseline shape; task and slice conformance must separately verify real
+bundles, PNGs, denial cases and current product behavior. Neither the witness
+nor a structurally valid baseline alone qualifies the native/Core attachment or
+W2 exit.
+
 ## Visual baseline changes
 
 ### Pre-Wave reference publication

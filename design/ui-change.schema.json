@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://research-observatory.local/schemas/ui-change-evidence-1.3.json",
+  "$id": "https://research-observatory.local/schemas/ui-change-evidence-1.4.json",
   "title": "Research Observatory UI change evidence",
   "type": "object",
   "required": [
@@ -15,7 +15,7 @@
     "focusedEvidence"
   ],
   "properties": {
-    "schemaVersion": {"enum": ["1.0", "1.1", "1.2", "1.3"]},
+    "schemaVersion": {"enum": ["1.0", "1.1", "1.2", "1.3", "1.4"]},
     "documentType": {"const": "ui-change-evidence"},
     "taskId": {
       "type": "string",
@@ -167,6 +167,38 @@
         }
       },
       "additionalProperties": false
+    },
+    "referenceActivationAuthority": {
+      "type": "object",
+      "required": [
+        "amendmentId",
+        "changeRequestId",
+        "controlTaskId",
+        "consumerTaskId",
+        "referenceApprovalPath",
+        "witnessPath",
+        "publicationCommit",
+        "witnessCommit",
+        "adoptionCommit",
+        "reactivationCommit",
+        "activationUiFiles",
+        "activationUiCommits"
+      ],
+      "properties": {
+        "amendmentId": {"const": "W2.A03"},
+        "changeRequestId": {"const": "ECR-0011"},
+        "controlTaskId": {"const": "W2.A03.T01"},
+        "consumerTaskId": {"const": "W2.A03.T02"},
+        "referenceApprovalPath": {"const": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"},
+        "witnessPath": {"const": "packages/contracts/workflow-profile/presentation-compatibility-1.8.json"},
+        "publicationCommit": {"$ref": "#/$defs/commit"},
+        "witnessCommit": {"$ref": "#/$defs/commit"},
+        "adoptionCommit": {"$ref": "#/$defs/commit"},
+        "reactivationCommit": {"$ref": "#/$defs/commit"},
+        "activationUiFiles": {"$ref": "#/properties/changedFiles"},
+        "activationUiCommits": {"$ref": "#/$defs/commits"}
+      },
+      "additionalProperties": false
     }
   },
   "$defs": {
@@ -219,7 +251,7 @@
       "else": {"not": {"required": ["intentionalAmendmentAuthority"]}}
     },
     {
-      "if": {"properties": {"schemaVersion": {"const": "1.3"}}},
+      "if": {"properties": {"schemaVersion": {"enum": ["1.3", "1.4"]}}},
       "then": {
         "required": ["adoptedContinuationAuthority"],
         "properties": {
@@ -242,6 +274,17 @@
         }
       },
       "else": {"not": {"required": ["adoptedContinuationAuthority"]}}
+    },
+    {
+      "if": {"properties": {"schemaVersion": {"const": "1.4"}}},
+      "then": {
+        "required": ["referenceActivationAuthority", "adoptedContinuationAuthority"],
+        "properties": {
+          "taskId": {"const": "CAP-05.S01.T01"},
+          "changeKind": {"const": "defect-restoration"}
+        }
+      },
+      "else": {"not": {"required": ["referenceActivationAuthority"]}}
     },
     {
       "if": {"properties": {"changeKind": {"const": "defect-restoration"}}},

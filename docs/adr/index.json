@@ -377,6 +377,15 @@
       "linkedTasks": [
         "CAP-04.S05.T03"
       ]
+    },
+    {
+      "id": "ADR-0039",
+      "path": "docs/adr/ADR-0039-bind-approved-desktop-reference-activation.md",
+      "title": "Bind approved desktop reference activation",
+      "status": "Proposed",
+      "linkedTasks": [
+        "W2.A03.T01"
+      ]
     }
   ]
 }
