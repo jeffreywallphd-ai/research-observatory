@@ -43744,7 +43744,7 @@ verification_profiles:
 control_plane:
   revision: 12
   minimum_tool_revision: 12
-  active_amendment: null
+  active_amendment: W2.A03
   recovery_holds:
   - id: HOLD-W1-GRR-0001
     recovery_request_id: GRR-0001
@@ -53420,7 +53420,7 @@ wave_amendments:
     sha256: 8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087
     introduction_commit: c972e2116113afa7ad84f0e43bdad58660cc69bb
   lifecycle:
-    status: MATERIALIZED
+    status: ACTIVE
     history:
     - id: E01
       status: APPROVED
@@ -53441,6 +53441,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-03T21:48:31+00:00'
       rationale: Materialized the exact human-approved task inventory.
+    - id: E03
+      status: ACTIVE
+      actor: codex-w2-implementation
+      at: '2026-10-03T21:52:27+00:00'
+      rationale: Activated the bounded amendment campaign.
   bootstrap:
     id: W2.A03.B00
     status: APPROVED
@@ -53461,7 +53466,22 @@ wave_amendments:
       notes: Independent R01 ledger artifacts/evidence/W2.A03.B00.review-R01.json at 77dc6ab8de883323ccd10b146aa1f050e04b7328
         approves candidate 17da0a4fd81da38e7d4b1430f935dcd3f7028085 and submitted state e596806cf13179227b600f664df852591ee585e0
         with zero findings.
-  campaign: null
+  campaign:
+    status: ACTIVE
+    scope: wave-amendment
+    owner: codex-w2-implementation
+    branch: codex/w2-implementation
+    worktree: .
+    base_sha: b3120e32f521b60bbd03ddca8f755ba9871947cc
+    profile: LOC
+    platform: windows-x64
+    started_at: '2026-10-03T21:52:27+00:00'
+    updated_at: '2026-10-03T21:52:27+00:00'
+    pause_reason: null
+    lease:
+      claimed_by: codex-w2-implementation
+      claimed_at: '2026-10-03T21:52:27+00:00'
+      expires_at: '2026-10-04T21:52:27+00:00'
   tasks:
   - id: W2.A03.T01
     amendment_id: W2.A03
@@ -53502,14 +53522,14 @@ wave_amendments:
     - Do not claim original CAP-05.S01.T01 current-product gate, native attachment, S05 integration or W2 qualification from
       T01 controls alone.
     packet_task_sha256: 47e24fc5ffd3e89ce7d3b49d311ec262c1180089c9a12d0f9f8f3abaf9da9d3f
-    status: NOT_STARTED
+    status: READY
     owner: null
     branch: null
     base_sha: null
     worktree: null
     lease: null
     started_at: null
-    updated_at: null
+    updated_at: '2026-10-03T21:52:27+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
