@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-approval",
+  "amendmentId": "W2.A03",
+  "changeRequestId": "ECR-0011",
+  "targetWave": "W2",
+  "status": "APPROVED",
+  "approvedBy": "human:repository-owner",
+  "approvedAt": "2026-10-03T21:08:57Z",
+  "decision": "The repository owner answered 'Approve this exact reviewed packet' to the displayed ECR-0011/W2.A03 decision identifying exact reviewed candidate 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5, packet SHA-256 31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3, and independent R01 approval recorded at c29e582fd161bd4df740191e532e47e3c5e991a3. This approves only the bounded already-approved Academic Minimal 1.8 desktop witness/control and consumer activation amendment in that packet: W2.A03.B00, W2.A03.S01, ordered W2.A03.T01 then W2.A03.T02, exact source envelopes, checks and independent reviews. Approval is inert until supported B00 bootstrap, separate B00 review, materialization and activation. It does not change the approved 1.8 reference, original CAP-05.S01.T01 base or criteria, Core/native security or migration authority, or the unresolved fifth-D3D finding. W2 remains PAUSED and original CAP-05.S01.T01 remains BLOCKED; joined CAP-04.S05 integration, original T01 native/Core/current-UI proof, W2 qualification and separate human release decision remain due. This timestamp records binding of the owner's explicit answer to the exact reviewed packet, not a new release decision.",
+  "packet": {
+    "commit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+    "path": "planning/enabler-change-requests/ECR-0011.packet.json",
+    "sha256": "31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3",
+    "proposalPath": "planning/enabler-change-requests/ECR-0011.md",
+    "proposalSha256": "eaaa396784de05993b68b505d86dd27f7bcc4a69fb78f1872345300df172fe37"
+  },
+  "effectiveBase": {
+    "waveBase": {
+      "waveId": "W2",
+      "packetCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "approvalRecordCommit": "3bc1c1828efab50efc730bf3907c3036eff58a2f"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W2.A01",
+        "changeRequestId": "ECR-0009",
+        "status": "ADOPTED",
+        "packetCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A01.json",
+          "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+          "introductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+        },
+        "effectiveStateCommit": "56187d40ca5d38f72f7c9dfb132070b034032a57"
+      },
+      {
+        "id": "W2.A02",
+        "changeRequestId": "ECR-0010",
+        "status": "ADOPTED",
+        "packetCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A02.json",
+          "sha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
+          "introductionCommit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba"
+        },
+        "effectiveStateCommit": "04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf"
+      }
+    ],
+    "reservedAmendments": []
+  },
+  "bootstrapUnit": "W2.A03.B00",
+  "authorizedTaskIds": [
+    "W2.A03.T01",
+    "W2.A03.T02"
+  ],
+  "independentPacketReview": {
+    "reviewer": "agent:/root/maint26_independent_review",
+    "candidateCommit": "746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5",
+    "reviewedStateCommit": "c29e582fd161bd4df740191e532e47e3c5e991a3",
+    "result": "APPROVED",
+    "attemptId": "R01",
+    "findingIdsClosed": [],
+    "ledger": {
+      "path": "planning/enabler-change-requests/ECR-0011.review-R01.json",
+      "sha256": "9f3b07f9f23c106b78ccb71d7d37d323af185f855c2a7395483ff35863fecda8",
+      "introductionCommit": "c29e582fd161bd4df740191e532e47e3c5e991a3"
+    }
+  }
+}
