@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0026",
+  "title": "Close the paused W2 Python quality inventory for the seed document-drop fixture test",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "agent:w2-quality-inventory-prepare",
+  "predecessor": {
+    "commit": "0847aea4cf93bfc444373045ade4e17891b4afe5",
+    "wave": "W2",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "adoptedAmendment": "W2.A02",
+    "adoptionCheckpoint": "W2.CP03",
+    "sourceGitBlobSha256": {
+      "quality-scope.json": "51450eb7d29b4e9a73c8198a91f8ea2c6c7b28658b7062f7503a6e43baa7a84b",
+      "tools/quality_check.py": "32cb0e3444e17c24d18ca827a970cd04a6d27b61ce7d6ab2c8dabaefa9cc9c69",
+      "tools/ui_change_gate.py": "4711f596c468e7f317122a71853f73f00b3e56cccd94ff27c546b9abd80037b0",
+      "tests/foundation/test_quality_check.py": "0900781c33de2b9216cb05ec0ab7c5f1052bc5774d78b804c0d42554448ea80a",
+      "tests/foundation/test_ui_change_gate.py": "f06a1fdc9f760ab59a6ef69cd9c52ba04393ef1bc84f0baf103df8c2ae53f765"
+    }
+  },
+  "trigger": {
+    "historicalAdverseLog": "artifacts/tmp/GOV-MAINT-0026.preflight-red-f5f0a30a.log",
+    "historicalAdverseLogSha256": "76f66aca7de6f1fe6029fe233328e7ec5b4a98debd8e93f4b3e312c1dff6e80e",
+    "freshRedCommand": ".venv/Scripts/python.exe -B -m unittest tests.foundation.test_quality_check.PythonQualityCheckTests.test_quality_scope_is_explicit_and_valid -v",
+    "freshRedLog": "artifacts/tmp/GOV-MAINT-0026.quality-red-0847aea4.log",
+    "freshRedLogSha256": "76f66aca7de6f1fe6029fe233328e7ec5b4a98debd8e93f4b3e312c1dff6e80e",
+    "freshRedResult": "The existing closed-inventory test fails on exactly one pre-existing tracked regular Python path: tests/desktop/test_seed_document_drop_fixture.py.",
+    "freshQualityCliCommand": ".venv/Scripts/python.exe -B tools/quality_check.py --repo .",
+    "freshQualityCliLog": "artifacts/tmp/GOV-MAINT-0026.quality-cli-red-0847aea4.log",
+    "freshQualityCliLogSha256": "d2521ad6f3f2ab6f7e000912f42fb2906116a9d93256a3a9d65969b7c21d84b4"
+  },
+  "authority": "AGENTS.md bounded Tier 2 maintenance restores the closed Python quality inventory for one already tracked regular W2 test at a clean paused campaign predecessor. This exact direct-child control-only candidate requires independent review and an append-only review projection. No product behavior, security permission, migration guarantee, UI reference or gate behavior, CAP-05 task approval, W2 qualification, release authority or new 1.8 continuation authority is granted.",
+  "intendedDelta": {
+    "implementation": "Append exactly tests/desktop/test_seed_document_drop_fixture.py to pythonFiles; preserve all 543 predecessor entries in order, governed roots, schema and metadata. The target source remains the same mode-100644 Git blob.",
+    "addedFiles": [
+      "tests/desktop/test_seed_document_drop_fixture.py"
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0026.json",
+      "quality-scope.json"
+    ],
+    "failClosed": [
+      "No predecessor inventory row is removed, reordered or duplicated; no governed root, schema or metadata changes.",
+      "The sole added path was already a tracked mode-100644 Python blob at the predecessor and its source bytes stay unchanged.",
+      "No quality checker, UI gate, test source, product behavior, task state, amendment history or release criterion changes in this candidate.",
+      "A focused inventory pass cannot be claimed as a full foundation quality, CAP-05 task, UI gate or W2 qualification pass."
+    ]
+  },
+  "verification": {
+    "status": "Fresh paused-predecessor inventory and quality CLI failures reproduced; exact committed candidate checks and independent review pending.",
+    "riskAnalysis": "One additive quality-inventory row affects closed-scope acceptance and reviewed pre-UI maintenance provenance. Select the quality unit module, two real-Git late-inventory/independent-maintenance guard tests, exact Git blob/mode/additive assertions, preserved red hashes, diff hygiene and a disposable positive/negative approval-projection rehearsal. Defer broad product, native, desktop and Wave suites to their own affected boundaries.",
+    "selectedChecks": [
+      ".venv/Scripts/python.exe -B -m unittest tests.foundation.test_quality_check -v",
+      ".venv/Scripts/python.exe -B -m unittest tests.foundation.test_ui_change_gate.UiChangeGateTests.test_late_inventory_rejects_control_or_nonadditive_or_noncanonical_changes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_independently_reviewed_maintenance_can_repair_the_gate_after_ui -v",
+      "Exact Git predecessor/candidate inventory, source blob, mode, raw hash and two-path diff assertions",
+      "git diff --check <predecessor> <candidate>",
+      "Disposable real-Git reviewed_preimplementation_maintenance_errors positive and negative projection rehearsal"
+    ]
+  },
+  "rollback": "Preserve all prior adverse logs and the exact rejected candidate if review requests changes. Remediate only by a descendant control-only candidate and append-only independent finding closure; do not rewrite this predecessor, alter 1.8 authority, suppress quality failure, or label inventory closure as W2 completion.",
+  "reviewAttempts": [],
+  "review": null
+}

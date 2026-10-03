@@ -552,6 +552,7 @@
     "tests/contracts/test_plugin_worker_contract.py",
     "tools/connector_conformance.py",
     "tests/connectors/test_plugin_sample_conformance.py",
-    "tests/connectors/test_plugin_sample_native_lpac.py"
+    "tests/connectors/test_plugin_sample_native_lpac.py",
+    "tests/desktop/test_seed_document_drop_fixture.py"
   ]
 }
