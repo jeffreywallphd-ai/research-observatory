@@ -359,6 +359,15 @@
       "linkedTasks": [
         "W2.A01.T02"
       ]
+    },
+    {
+      "id": "ADR-0037",
+      "path": "docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md",
+      "title": "Authenticate adopted attachment UI continuation",
+      "status": "Proposed",
+      "linkedTasks": [
+        "W2.A02.T01"
+      ]
     }
   ]
 }

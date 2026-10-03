@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://research-observatory.local/schemas/ui-change-evidence-1.2.json",
+  "$id": "https://research-observatory.local/schemas/ui-change-evidence-1.3.json",
   "title": "Research Observatory UI change evidence",
   "type": "object",
   "required": [
@@ -15,7 +15,7 @@
     "focusedEvidence"
   ],
   "properties": {
-    "schemaVersion": {"enum": ["1.0", "1.1", "1.2"]},
+    "schemaVersion": {"enum": ["1.0", "1.1", "1.2", "1.3"]},
     "documentType": {"const": "ui-change-evidence"},
     "taskId": {
       "type": "string",
@@ -124,9 +124,55 @@
         "referenceApprovalPath": {"const": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"}
       },
       "additionalProperties": false
+    },
+    "adoptedContinuationAuthority": {
+      "type": "object",
+      "required": [
+        "amendmentId",
+        "changeRequestId",
+        "controlTaskId",
+        "inheritedAmendmentId",
+        "inheritedTaskId",
+        "inheritedContractPath",
+        "adoptionCommit",
+        "reactivationCommit",
+        "inheritedUiFiles",
+        "inheritedUiCommits",
+        "resumedUiFiles",
+        "resumedUiCommits",
+        "classification"
+      ],
+      "properties": {
+        "amendmentId": {"const": "W2.A02"},
+        "changeRequestId": {"const": "ECR-0010"},
+        "controlTaskId": {"const": "W2.A02.T01"},
+        "inheritedAmendmentId": {"const": "W2.A01"},
+        "inheritedTaskId": {"const": "W2.A01.T02"},
+        "inheritedContractPath": {"const": "artifacts/evidence/ui-change/W2.A01.T02.json"},
+        "adoptionCommit": {"$ref": "#/$defs/commit"},
+        "reactivationCommit": {"$ref": "#/$defs/commit"},
+        "inheritedUiFiles": {"$ref": "#/properties/changedFiles"},
+        "inheritedUiCommits": {"$ref": "#/$defs/commits"},
+        "resumedUiFiles": {"$ref": "#/properties/changedFiles"},
+        "resumedUiCommits": {"$ref": "#/$defs/commits"},
+        "classification": {
+          "type": "object",
+          "required": ["path", "sha256", "commit"],
+          "properties": {
+            "path": {"type": "string", "pattern": "^artifacts/evidence/CAP-05\\.S01\\.T01\\.ui-classification-R[0-9]{2}\\.json$"},
+            "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "commit": {"$ref": "#/$defs/commit"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
-  "$defs": {"commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}},
+  "$defs": {
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "commits": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/commit"}, "uniqueItems": true}
+  },
   "allOf": [
     {
       "if": {"required": ["restorationClassification"]},
@@ -171,6 +217,31 @@
         "not": {"anyOf": [{"required": ["restoration"]}, {"required": ["restorationClassification"]}]}
       },
       "else": {"not": {"required": ["intentionalAmendmentAuthority"]}}
+    },
+    {
+      "if": {"properties": {"schemaVersion": {"const": "1.3"}}},
+      "then": {
+        "required": ["adoptedContinuationAuthority"],
+        "properties": {
+          "taskId": {"const": "CAP-05.S01.T01"},
+          "changeKind": {"const": "defect-restoration"},
+          "reference": {
+            "properties": {
+              "referenceId": {"const": "RO-UI-ACADEMIC-MINIMAL-1.8"},
+              "version": {"const": "1.8"},
+              "previousReferenceId": {"const": "RO-UI-ACADEMIC-MINIMAL-1.7"}
+            }
+          }
+        },
+        "not": {
+          "anyOf": [
+            {"required": ["restorationClassification"]},
+            {"required": ["amendmentAuthority"]},
+            {"required": ["intentionalAmendmentAuthority"]}
+          ]
+        }
+      },
+      "else": {"not": {"required": ["adoptedContinuationAuthority"]}}
     },
     {
       "if": {"properties": {"changeKind": {"const": "defect-restoration"}}},

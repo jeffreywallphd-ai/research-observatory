@@ -2,7 +2,7 @@
 
 `tools/ui_change_gate.py` is the pull-request and foundation guard for researcher-facing implementation. It compares an immutable Git base and head, rather than trusting the working tree, and activates when renderer files under the governed UI roots in `ui-change-policy.json` change.
 
-Every activated change must add exactly one contract at `artifacts/evidence/ui-change/<task-id>.json`. The contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml` or one of the exact authenticated amendment/restoration authorities below. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
+Every activated change must have one current task contract at `artifacts/evidence/ui-change/<task-id>.json`. Only the exact adopted continuation in version 1.3 below may also retain its separately authenticated historical amendment contract in the full task-base range. The current contract must match `design/ui-change.schema.json`, list the exact changed implementation files, cite the exact approved reference ID/version/package SHA-256 and approval commit, identify the claimed task owner, and match the task's `experience_change` field in `planning/backlog.yaml` or one of the exact authenticated amendment/restoration authorities below. The task must be active and its full `base_sha` must equal the validated range base. Governed implementation entries must be regular Git blobs; symlinks, gitlinks, trees, and other redirected object types fail closed.
 
 ## Change kinds
 
@@ -20,7 +20,7 @@ For a task branch, validate the whole task/PR range:
 .venv\Scripts\python.exe tools\ui_change_gate.py --repo . --base <task-base-sha> --head HEAD
 ```
 
-The foundation profile uses `UI_CHANGE_BASE_SHA` when CI supplies the pull-request or push base. A manual dispatch requires an explicit immutable base SHA. Locally, the gate uses the sole active task's governed `base_sha` when that task carries `experience_change`, fails on ambiguous or invalid active-task state, and falls back to `HEAD^` only when no UI task is active. CI performs a full-history checkout so commit ordering and ancestry are verifiable. The pull-request template records the same lineage for reviewers, but prose or a checked box cannot replace the committed contract.
+The foundation profile uses `UI_CHANGE_BASE_SHA` when CI supplies the pull-request or push base. A manual dispatch requires an explicit immutable base SHA. Locally, the gate uses the sole active task's governed `base_sha` when that task carries `experience_change` or is the exact authenticated active `CAP-05.S01.T01` continuation below. It fails on ambiguous or invalid active-task state and falls back to `HEAD^` only when no UI task is active. CI performs a full-history checkout so commit ordering and ancestry are verifiable. The pull-request template records the same lineage for reviewers, but prose or a checked box cannot replace the committed contract.
 
 The gate fails for a missing, extra, malformed, renamed, or stale contract; incomplete changed-file coverage; unknown or mismatched task metadata; forged reference hashes; a nonhuman or self approval; same-commit approval and implementation; intentional implementation without a newer approved reference; or restoration/conformance work that also modifies the reference.
 
@@ -67,6 +67,85 @@ T02 begins. The staged T02 renderer keeps production choose/drop unavailable;
 real native/Core attachment and native-only path handling remain in the
 resumed `CAP-05.S01.T01`. Neither amendment adoption nor this gate result is W2
 release approval.
+
+## Adopted attachment UI continuation (opt-in 1.3)
+
+The owner-approved `ECR-0010` authorizes a distinct lane for the original,
+ordinary `CAP-05.S01.T01` after adoption of `W2.A01` and completion of the
+separately reviewed `W2.A02.T01` control task. The immutable ordinary task has
+`agent-review`, no `experience_change`, and original claim base
+`6506c68461144747b0ee9be10853211717aa381d`. A later or shorter base must
+not hide its inherited 1.7-to-1.8 publication and renderer history. The lane
+does not create a new reference: Academic Minimal 1.8 remains the unchanged
+approved package, and T01's work is classified against it.
+
+Only this task may use `schemaVersion: "1.3"` with
+`changeKind: "defect-restoration"`, reference
+`RO-UI-ACADEMIC-MINIMAL-1.8` version `1.8`, predecessor
+`RO-UI-ACADEMIC-MINIMAL-1.7`, and the existing `restoration` description of
+approved interruption/restart behavior. Its closed
+`adoptedContinuationAuthority` selects `W2.A02`/`ECR-0010`/`W2.A02.T01`
+and inherited `W2.A01`/`W2.A01.T02` with the exact inherited
+`artifacts/evidence/ui-change/W2.A01.T02.json` contract. It declares the
+authenticated `adoptionCommit` and `reactivationCommit`, separate
+`inheritedUiFiles`/`inheritedUiCommits` and
+`resumedUiFiles`/`resumedUiCommits`, and an independently committed
+`classification` with task-namespaced path, SHA-256 and introduction commit.
+These are assertions to verify against committed authority, not an agent's
+permission to select a convenient history. Versions 1.0-1.2 cannot carry this
+object; version 1.3 cannot combine it with their authority objects.
+
+In the full original-base range the gate admits exactly two contracts: the
+unchanged, independently reviewed historical `W2.A01.T02` v1.2 contract and
+the current T01 v1.3 contract. It authenticates W2 and W2.A01 approvals, the
+approved 1.8 publication and T02 exact reviewed candidate, W2.A01 adoption,
+the W2.A02 approval/control review and explicit ordinary-task reactivation,
+and the current T01 owner, unexpired lease, branch and unchanged 6506 base.
+The reviewed W2.A01.T01, reference-verifier/ADR-0036, active UI-gate/fixture,
+GOV-MAINT-0025 quality-inventory and W2.A02.T01 chains must each account for
+their attributed control commits. Neither a filename nor a historical task
+label substitutes for its exact independent review and Git ancestry. The
+original T01 definition is checked against the immutable W2 packet Git blob,
+not only the current backlog projection. Every governed reference, renderer,
+typed-source, backlog and gate-control commit is attributed to the proper
+segment, including paths changed and later reverted. A T01 reference rewrite,
+extra contract, redirected object, unattributed control edit or foreign live
+claim denies qualification.
+
+The T01 classification independently judges the **current committed product**
+against the unchanged approved 1.8 reference. It binds exact candidate,
+reviewer, criteria, captures, report hashes, complete T01 UI commit/path list,
+current Git blobs and producer-input snapshot. The existing capture reader
+authenticates the Core, native Rust, renderer, contract, build and checker
+inputs. The gate separately derives every T01-owned test, fixture, worker or
+other product input outside that snapshot and requires the classification's
+exact `dependentInputFiles` and Git blobs. Missing or stale captures, an
+omitted dependent input, or any later input touch including add-and-revert
+invalidates the classification. It is not task approval or a substitute for
+native/Core evidence.
+
+One historical mixed commit has an exact-identity exception:
+`9727f1b195e7dee300e7f3df3c289e7739fb0fdc`. Its sole-parent tree must
+show `quality-scope.json` strictly appending exactly nine newly introduced,
+canonical, regular `.py` files while preserving every earlier entry, order,
+metadata and root; the same commit changes exactly the two approved 1.8
+restoration renderer files and no other gate control. The gate verifies the
+immutable commit/tree and same-commit Python introductions. This is not a
+reusable mixed-commit allowance or prior independent approval of that product
+commit; the resumed T01 full-candidate independent review examines it after
+submission. Every other mixed control/product commit denies. For the sole
+authenticated active continuation task, automatic base selection uses 6506,
+never `HEAD^`; other task/version routes retain their existing rules.
+
+Proposed ADR-0037 supplies ADR-0001's association for the protected control
+change and does not supersede Accepted ADR-0003 or grant UI authority itself.
+Focused schema and real-Git hostile/compatibility checks and expanded
+independent control/security/ADR review precede W2.A02 exit. Adoption leaves
+W2 paused; explicit Wave resume, current conformance classification, the
+original task's full-base gate and independent task review, the unresolved
+intermittent D3D startup denial, later slice/Wave checks and human release
+decision remain separate obligations. A partial UI-gate result cannot complete
+T01 or W2.
 
 ## Linked completed-task restoration (existing 1.0)
 

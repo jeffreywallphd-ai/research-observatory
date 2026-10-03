@@ -12,6 +12,7 @@ import os
 import re
 import subprocess
 from datetime import date
+from functools import lru_cache
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -34,6 +35,76 @@ INTENTIONAL_AMENDMENT_CONTROL_TASK_ID = "W2.A01.T01"
 INTENTIONAL_AMENDMENT_CHANGE_REQUEST_ID = "ECR-0009"
 INTENTIONAL_AMENDMENT_REFERENCE_ID = "RO-UI-ACADEMIC-MINIMAL-1.8"
 INTENTIONAL_AMENDMENT_REFERENCE_APPROVAL_PATH = "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json"
+ADOPTED_CONTINUATION_TASK_ID = "CAP-05.S01.T01"
+ADOPTED_CONTINUATION_BASE = "6506c68461144747b0ee9be10853211717aa381d"
+ADOPTED_CONTINUATION_CONTRACT_PATH = "artifacts/evidence/ui-change/CAP-05.S01.T01.json"
+ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH = "artifacts/evidence/ui-change/W2.A01.T02.json"
+ADOPTED_CONTINUATION_APPROVED_REFERENCE = "RO-UI-ACADEMIC-MINIMAL-1.8"
+ADOPTED_CONTINUATION_MIXED_COMMIT = "9727f1b195e7dee300e7f3df3c289e7739fb0fdc"
+ADOPTED_CONTINUATION_MIXED_TREE = "86070473647696598c9af57c5fc088eadaea667d"
+ADOPTED_CONTINUATION_MIXED_UI_PATHS = frozenset(
+    {
+        "apps/desktop/src/app/DocumentAttachmentPane.tsx",
+        "apps/desktop/src/app/documentAttachment.ts",
+    }
+)
+ADOPTED_CONTINUATION_MIXED_PYTHON = (
+    "services/core-api/src/research_observatory_core/migrations/versions/v0023_attachment_operations.py",
+    "tests/desktop/tools/run_windows_document_drop_probe.py",
+    "tests/desktop/tools/seed_document_drop_fixture.py",
+    "tests/documents/test_attachment_lifecycle_regressions.py",
+    "tests/desktop/tools/verify_document_attachment_fixture.py",
+    "tests/desktop/tools/run_windows_document_picker_probe.py",
+    "tests/desktop/test_document_stage_fixture_probe.py",
+    "tests/desktop/test_document_attachment_fixture_verifier.py",
+    "tests/desktop/test_windows_document_picker_probe.py",
+)
+ADOPTED_CONTINUATION_VERIFIER_CANDIDATE = "f54da79f9313bda175676f36d1ea0a29e8f57378"
+ADOPTED_CONTINUATION_VERIFIER_REVIEW = "1f628843e415b6affbd811eb37d9fff437fac51f"
+ADOPTED_CONTINUATION_VERIFIER_REVIEW_SHA256 = "cd0cfcb7f733fa45f739cfb282f3ef50bed935792daaeaa1aefd402b9c199dc7"
+ADOPTED_CONTINUATION_GATE_CHAIN = (
+    "0d9ab50b25e980c454c14ba597e06333b21d6d93",
+    "089c00c62a3e1301b76bc6f0fd7052c63605eb05",
+    "fff7a04b20ad571c40c81a524b1eec447d206e9f",
+)
+ADOPTED_CONTINUATION_GATE_REVIEW = "ab2c868eea54b00dc1e9e71c6cd2f2d9a0e5b9c1"
+ADOPTED_CONTINUATION_GATE_REVIEW_SHA256 = "7b56f3896962b53d14f9e28b32ec0bc483c55ff6b09e2de655f784396af20398"
+ADOPTED_CONTINUATION_QUALITY_CANDIDATE = "52ff3d04a4a6dd61b8f49c7de620ea4cbc9cfb0e"
+ADOPTED_CONTINUATION_TASKCTL_PREDECESSOR = "9b72d0213d6210f7457654ebaccd26779bee2431"
+ADOPTED_CONTINUATION_TASKCTL_TREE = "7fd55261c16d85d0f4beede92880c3358e136f3b"
+ADOPTED_CONTINUATION_SITE_REPAIR_SOURCE = (
+    "b07472407749386cfbd76d5d5649fb120a880cc8",
+    "63eb761d82b98bbce5ae81d2dcaecb987ecc10b7",
+)
+ADOPTED_CONTINUATION_SITE_REPAIR_CANDIDATE = "c7489ac184ad1b2422f049c4bd1a28887c5a7aae"
+ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW = "3fb76d6cb6bce6eaf16774931704de68c6168500"
+ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW_SHA256 = "f24f9645a9a24d4023e84909e28660e57e39252fa6312bf59d22daf73fad721a"
+ADOPTED_CONTINUATION_BOOTSTRAP_FOLLOWUP = "907ed1adefa1607aa372873eb804c8a1375b9ba0"
+ADOPTED_CONTINUATION_BOOTSTRAP_FOLLOWUP_TREE = "233e7ffde2781a424c699783a2573d22227544b6"
+ADOPTED_CONTINUATION_PLANNING_TOOLS = frozenset({"tools/plan_review_site.py", "tools/plan_review_check.py"})
+ADOPTED_CONTINUATION_AUTHORITY_INPUTS = frozenset(
+    {
+        "tools/taskctl.py",
+        "tools/planctl.py",
+        "tools/governance_kernel.py",
+        "tools/desktop_app_check.py",
+        "tools/product_style_check.py",
+        "tools/build_manifest.py",
+        "tools/product_layout_measurements.py",
+        "tools/ui_reference_check.py",
+        "tools/adr_check.py",
+    }
+)
+ADOPTED_CONTINUATION_PRODUCT_ROOTS = (
+    "apps/",
+    "services/",
+    "workers/",
+    "tests/",
+    "modules/",
+    "packages/",
+    "verification/",
+)
+ADOPTED_CONTINUATION_PRODUCT_TOOLS = frozenset({"tools/architecture_check.py", "tools/core_sidecar_build.py"})
 INTENTIONAL_AMENDMENT_CONTROL_PATHS = frozenset(
     {
         "tools/ui_change_gate.py",
@@ -362,6 +433,61 @@ def additive_preimplementation_quality_scope_errors(repo: Path, commit: str, pol
         }:
             return ["additive quality inventory source must be a newly added regular Git blob: " + path]
     return []
+
+
+def adopted_continuation_quality_scope_errors(repo: Path, commit: str, policy: dict[str, Any]) -> list[str]:
+    """Authenticate the one frozen T01 mixed inventory/product commit.
+
+    This is deliberately separate from the reusable additive-inventory rule:
+    that rule must continue to reject a quality-scope edit mixed with UI work.
+    """
+
+    try:
+        if (
+            commit != ADOPTED_CONTINUATION_MIXED_COMMIT
+            or git(repo, "rev-parse", f"{commit}^{{tree}}").decode().strip() != ADOPTED_CONTINUATION_MIXED_TREE
+        ):
+            return ["adopted continuation mixed inventory is not the exact frozen T01 commit/tree"]
+        if len(git(repo, "rev-list", "--parents", "-n", "1", commit).split()) != 2:
+            return ["adopted continuation mixed inventory requires one parent"]
+        parent = resolve_commit(repo, f"{commit}^")
+        paths = commit_paths(repo, commit)
+        if paths & GATE_CONTROL_PATHS != {"quality-scope.json"}:
+            return ["adopted continuation mixed commit changed another gate control"]
+        if {path for path in paths if is_implementation_path(path, policy)} != ADOPTED_CONTINUATION_MIXED_UI_PATHS:
+            return ["adopted continuation mixed commit changed an unexpected governed renderer path"]
+        if tree_entry(repo, parent, "quality-scope.json") != ("100644", "blob") or tree_entry(
+            repo, commit, "quality-scope.json"
+        ) != ("100644", "blob"):
+            return ["adopted continuation quality inventory must remain a regular non-executable blob"]
+        before = json_object(blob(repo, parent, "quality-scope.json"), "parent quality inventory")
+        after = json_object(blob(repo, commit, "quality-scope.json"), "adopted continuation quality inventory")
+        if {key: value for key, value in before.items() if key != "pythonFiles"} != {
+            key: value for key, value in after.items() if key != "pythonFiles"
+        }:
+            return ["adopted continuation quality inventory changed metadata or governed roots"]
+        prior_files, current_files = before.get("pythonFiles"), after.get("pythonFiles")
+        if (
+            not isinstance(prior_files, list)
+            or not all(isinstance(path, str) and path for path in prior_files)
+            or not isinstance(current_files, list)
+            or current_files != [*prior_files, *ADOPTED_CONTINUATION_MIXED_PYTHON]
+            or len(current_files) != len(set(current_files))
+        ):
+            return ["adopted continuation quality inventory must append exactly the nine frozen Python paths"]
+        for path in ADOPTED_CONTINUATION_MIXED_PYTHON:
+            if (
+                path not in paths
+                or not path.endswith(".py")
+                or not path.startswith(("services/", "tests/", "tools/"))
+                or canonical_path(path) != path
+                or tree_entry(repo, parent, path) is not None
+                or tree_entry(repo, commit, path) != ("100644", "blob")
+            ):
+                return ["adopted continuation Python source is not a canonical newly introduced regular blob: " + path]
+        return []
+    except (UnicodeDecodeError, ValueError, json.JSONDecodeError) as exc:
+        return [f"invalid adopted continuation mixed inventory: {exc}"]
 
 
 def reviewed_historical_hardening_errors(
@@ -1882,6 +2008,7 @@ def automatic_base(repo: Path, head_ref: str) -> str:
             or (
                 task.get("id") == INTENTIONAL_AMENDMENT_TASK_ID and task.get("amendment_id") == INTENTIONAL_AMENDMENT_ID
             )
+            or task.get("id") == ADOPTED_CONTINUATION_TASK_ID
             or bool(corrective_ui_paths(task))
         )
     ]
@@ -1897,6 +2024,43 @@ def automatic_base(repo: Path, head_ref: str) -> str:
             raise ValueError(f"active UI experience task {active[0].get('id')} has an invalid base_sha range")
         if corrective_ui_paths(active[0]):
             linked_correction_authority(repo.resolve(), candidate, head, backlog, active[0])
+        if active[0].get("id") == ADOPTED_CONTINUATION_TASK_ID:
+            from taskctl import require_active_lease, wave_resume_record_errors
+
+            task = active[0]
+            owner = task.get("owner")
+            branch = git(repo, "branch", "--show-current").decode().strip()
+            wave = next((item for item in backlog.get("waves", []) if item.get("id") == "W2"), None)
+            if (
+                candidate != ADOPTED_CONTINUATION_BASE
+                or wave is None
+                or wave.get("campaign", {}).get("status") != "ACTIVE"
+                or not isinstance(owner, str)
+                or not owner
+                or task.get("branch") != branch
+                or task.get("worktree") != "."
+                or wave.get("campaign", {}).get("owner") != owner
+                or wave.get("campaign", {}).get("scope") != "wave"
+                or wave.get("campaign", {}).get("branch") != branch
+                or wave.get("campaign", {}).get("worktree") != "."
+                or wave.get("campaign", {}).get("profile") != "LOC"
+                or wave.get("campaign", {}).get("platform") != "windows-x64"
+                or backlog.get("control_plane", {}).get("active_amendment") is not None
+            ):
+                raise ValueError("active adopted continuation T01 lacks its exact original claim/W2 campaign")
+            try:
+                require_active_lease(wave["campaign"], owner, "W2 campaign")
+                require_active_lease(task, owner, ADOPTED_CONTINUATION_TASK_ID)
+                if wave_resume_record_errors(backlog, "W2", wave["campaign"], repo.resolve()):
+                    raise ValueError("active adopted continuation W2 resume history is invalid")
+                adopted_continuation_original_task(repo.resolve(), head, backlog, task)
+                amendment = amendment_record(backlog, "W2.A02")
+                packet, _, _ = approved_amendment_packet(repo.resolve(), head, amendment)
+                adopted_continuation_adoption(repo.resolve(), head, backlog, amendment, packet)
+            except (SystemExit, KeyError, StopIteration) as exc:
+                raise ValueError(
+                    f"active adopted continuation T01 has invalid amendment/lease authority: {exc}"
+                ) from exc
         return candidate
     return f"{head_ref}^"
 
@@ -3208,6 +3372,929 @@ def restoration_classification_errors(
     return []
 
 
+def adopted_continuation_reviewed_maintenance(repo: Path, head: str) -> dict[str, set[str]]:
+    """Return only the two exact independently reviewed historical control chains."""
+
+    verifier_path = "artifacts/evidence/W2.reference-approval-verifier-repair.review.md"
+    verifier_review = blob(repo, head, verifier_path)
+    verifier_introductions = git(repo, "log", "--format=%H", head, "--", verifier_path).decode().splitlines()
+    verifier_source_paths = {
+        "artifacts/evidence/W2.reference-approval-verifier-repair.md",
+        "docs/adr/ADR-0036-verify-exact-amendment-reference-approval-metadata.md",
+        "docs/adr/index.json",
+        "tests/desktop/test_ui_conformance.py",
+        "tools/ui_conformance.py",
+    }
+    if (
+        verifier_introductions != [ADOPTED_CONTINUATION_VERIFIER_REVIEW]
+        or hashlib.sha256(verifier_review).hexdigest() != ADOPTED_CONTINUATION_VERIFIER_REVIEW_SHA256
+        or commit_paths(repo, ADOPTED_CONTINUATION_VERIFIER_CANDIDATE) != verifier_source_paths
+        or commit_paths(repo, ADOPTED_CONTINUATION_VERIFIER_REVIEW) != {verifier_path}
+        or not is_ancestor(repo, ADOPTED_CONTINUATION_VERIFIER_CANDIDATE, ADOPTED_CONTINUATION_VERIFIER_REVIEW)
+        or not is_ancestor(repo, ADOPTED_CONTINUATION_VERIFIER_REVIEW, head)
+    ):
+        raise ValueError("adopted continuation lacks exact independent verifier repair review")
+
+    gate_path = "artifacts/evidence/W2.A01.T02.ui-gate-active-maintenance.review-01.json"
+    gate_review, gate_introduction = immutable_record(repo, head, gate_path, ADOPTED_CONTINUATION_GATE_REVIEW_SHA256)
+    gate_base = "f306579cd802ae22576db35a735101a4d92c1215"
+    if (
+        gate_introduction != ADOPTED_CONTINUATION_GATE_REVIEW
+        or gate_review.get("documentType") != "bounded-control-maintenance-independent-review"
+        or gate_review.get("result") != "approved"
+        or gate_review.get("findings") != []
+        or gate_review.get("candidateCommit") != ADOPTED_CONTINUATION_GATE_CHAIN[-1]
+        or gate_review.get("baseCommit") != gate_base
+        or (gate_review.get("scope") or {}).get("commits") != list(ADOPTED_CONTINUATION_GATE_CHAIN)
+        or not independent_identity(gate_review.get("reviewer"), "codex-w2-implementation")
+        or git(repo, "rev-list", "--reverse", f"{gate_base}..{ADOPTED_CONTINUATION_GATE_CHAIN[-1]}")
+        .decode()
+        .splitlines()
+        != list(ADOPTED_CONTINUATION_GATE_CHAIN)
+        or not is_ancestor(repo, ADOPTED_CONTINUATION_GATE_CHAIN[-1], gate_introduction)
+    ):
+        raise ValueError("adopted continuation lacks exact independently reviewed active UI gate chain")
+    gate_paths = set().union(*(commit_paths(repo, commit) for commit in ADOPTED_CONTINUATION_GATE_CHAIN))
+    if sorted(gate_paths) != (gate_review.get("scope") or {}).get("changedPaths"):
+        raise ValueError("adopted continuation gate-chain paths differ from independent review")
+    admitted = {ADOPTED_CONTINUATION_VERIFIER_CANDIDATE: verifier_source_paths}
+    admitted.update({commit: commit_paths(repo, commit) for commit in ADOPTED_CONTINUATION_GATE_CHAIN})
+    return admitted
+
+
+def adopted_continuation_historical_planning_inputs(
+    repo: Path, head: str, inherited_approval: str, continuation_packet_commit: str
+) -> set[str]:
+    """Separate three packet-bound planning-site test edits from T01 product."""
+
+    review_path = "artifacts/evidence/W2-enabler-review-site-projection-repair.review.md"
+    site_paths = {
+        "artifacts/evidence/W2-enabler-review-site-projection-repair.md",
+        "tests/foundation/test_plan_review_amendments.py",
+        "tools/plan_review_site.py",
+    }
+    review = blob(repo, head, review_path)
+    if (
+        git(repo, "log", "--format=%H", head, "--", review_path).decode().splitlines()
+        != [ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW]
+        or hashlib.sha256(review).hexdigest() != ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW_SHA256
+        or any(commit_paths(repo, commit) != site_paths for commit in ADOPTED_CONTINUATION_SITE_REPAIR_SOURCE)
+        or commit_paths(repo, ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW) != {review_path}
+        or not is_ancestor(repo, ADOPTED_CONTINUATION_SITE_REPAIR_SOURCE[0], ADOPTED_CONTINUATION_SITE_REPAIR_SOURCE[1])
+        or not is_ancestor(repo, ADOPTED_CONTINUATION_SITE_REPAIR_SOURCE[1], ADOPTED_CONTINUATION_SITE_REPAIR_CANDIDATE)
+        or not is_ancestor(repo, ADOPTED_CONTINUATION_SITE_REPAIR_CANDIDATE, ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW)
+        or not is_ancestor(repo, ADOPTED_CONTINUATION_SITE_REPAIR_REVIEW, inherited_approval)
+    ):
+        raise ValueError("adopted continuation lacks exact reviewed planning-site repair history")
+    followup_paths = {f"planning/review-site/enablers/ECR-{number:04d}.html" for number in range(1, 10)} | {
+        "planning/review-site/enablers/index.html",
+        "planning/review-site/manifest.json",
+        "planning/review-site/waves/W1.html",
+        "planning/review-site/waves/W2.html",
+        "tests/foundation/test_plan_review_amendments.py",
+        "tools/plan_review_check.py",
+        "tools/plan_review_site.py",
+    }
+    followup = ADOPTED_CONTINUATION_BOOTSTRAP_FOLLOWUP
+    disposition = "167dc7a457eecf85ebf1f64fb014329491a6c55f"
+    bootstrap_state = yaml_object(blob(repo, disposition, "planning/backlog.yaml"), "A01 bootstrap disposition")
+    bootstrap_amendment = amendment_record(bootstrap_state, "W2.A01")
+    bootstrap = bootstrap_amendment.get("bootstrap") or {}
+    if (
+        commit_paths(repo, followup) != followup_paths
+        or git(repo, "rev-parse", f"{followup}^{{tree}}").decode().strip()
+        != ADOPTED_CONTINUATION_BOOTSTRAP_FOLLOWUP_TREE
+        or git(repo, "rev-list", "--parents", "-n", "1", followup).decode().split()
+        != [followup, "5d60cb40a28ad37cf8b903b87dc1ceed4536b402"]
+        or bootstrap.get("status") != "APPROVED"
+        or bootstrap.get("implementation_commit") != "68d36d6722202cc2e9a497755596cb629bb32174"
+        or followup[:8] not in str((bootstrap.get("review") or {}).get("notes") or "")
+        or not is_ancestor(repo, followup, disposition)
+        or not is_ancestor(repo, disposition, "468cb390")
+        or not is_ancestor(repo, disposition, continuation_packet_commit)
+        or not is_ancestor(repo, followup, head)
+    ):
+        raise ValueError("adopted continuation inherited planning-site follow-up differs from packet-bound history")
+    # The 907 source is exact inherited context; its separate review occurs in
+    # this A02.T01 control task, not in the earlier B00 independent ledger.
+    return {*ADOPTED_CONTINUATION_SITE_REPAIR_SOURCE, followup}
+
+
+def adopted_continuation_reviewed_task_commits(
+    repo: Path, head: str, task: dict[str, Any]
+) -> tuple[list[dict[str, Any]], dict[str, set[str]]]:
+    """Attribute every source commit to an immutable independent task submission."""
+
+    ranges = correction_submission_ranges(repo, head, {"tasks": [task]})
+    admitted: dict[str, set[str]] = {}
+    for reviewed in ranges:
+        net = sorted(changed_paths(repo, reviewed["base"], reviewed["candidate"]))
+        if reviewed["paths"] != net:
+            raise ValueError("adopted continuation reviewed task path inventory differs from Git")
+        rows = git(repo, "rev-list", "--reverse", f"{reviewed['base']}..{reviewed['candidate']}").decode().splitlines()
+        for commit in rows:
+            paths = commit_paths(repo, commit)
+            if not paths.issubset(set(reviewed["paths"])) or commit in admitted:
+                raise ValueError("adopted continuation task review has hidden or overlapping source paths")
+            admitted[commit] = paths
+    return ranges, admitted
+
+
+def adopted_continuation_adoption(
+    repo: Path, head: str, backlog: dict[str, Any], amendment: dict[str, Any], packet: dict[str, Any]
+) -> str:
+    """Authenticate task, exit, checkpoint and first ADOPTED transition."""
+
+    from planctl import _adoption_transition_errors
+    from taskctl import amendment_adoption_checkpoints, amendment_adoption_reference_errors
+
+    identity = str(amendment["id"])
+    if amendment.get("lifecycle", {}).get("status") != "ADOPTED":
+        raise ValueError(f"{identity} is not adopted")
+    for task in amendment.get("tasks", []):
+        adopted_continuation_reviewed_task_commits(repo, head, task)
+    errors = correction_exit_errors(repo, head, amendment, packet)
+    wave = next(item for item in backlog["waves"] if item["id"] == "W2")
+    checkpoints = amendment_adoption_checkpoints(wave, identity)
+    if len(checkpoints) != 1:
+        raise ValueError(f"{identity} lacks exactly one security adoption checkpoint")
+    references = [item for item in checkpoints[0]["evidence"] if item.get("amendment_id") == identity]
+    if len(references) != 1 or references[0].get("path") != f"artifacts/evidence/{identity}.adoption.json":
+        raise ValueError(f"{identity} checkpoint lacks exact adoption evidence")
+    errors.extend(amendment_adoption_reference_errors(repo, references[0], amendment))
+    evidence, introduction = immutable_record(
+        repo, head, references[0]["path"], references[0].get("sha256"), evidence=True
+    )
+    if evidence.get("amendmentId") != identity or introduction != references[0].get("commit"):
+        errors.append(f"{identity} adoption evidence differs from checkpoint")
+    candidate_commits = [
+        commit
+        for commit in git(repo, "rev-list", "--reverse", f"{introduction}..{head}").decode().splitlines()
+        if "planning/backlog.yaml" in commit_paths(repo, commit)
+        and amendment_record(yaml_object(blob(repo, commit, "planning/backlog.yaml"), "adoption state"), identity)
+        .get("lifecycle", {})
+        .get("status")
+        == "ADOPTED"
+    ]
+    if not candidate_commits:
+        errors.append(f"{identity} has no ADOPTED transition")
+        adoption = ""
+    else:
+        adoption = candidate_commits[0]
+        errors.extend(_adoption_transition_errors(repo, identity, adoption))
+        if not is_ancestor(repo, introduction, adoption) or introduction == adoption:
+            errors.append(f"{identity} adoption evidence did not precede transition")
+    if errors:
+        raise ValueError("; ".join(errors))
+    return adoption
+
+
+def adopted_continuation_original_task(repo: Path, head: str, backlog: dict[str, Any], current: dict[str, Any]) -> str:
+    """Bind ordinary T01 to the immutable human-approved W2 task/slice packet."""
+
+    import taskctl
+
+    bases = [item for item in backlog.get("wave_approval_bases", []) if item.get("wave_id") == "W2"]
+    wave = next(item for item in backlog["waves"] if item["id"] == "W2")
+    if len(bases) != 1 or wave.get("approval") != bases[0].get("approval"):
+        raise ValueError("adopted continuation lacks the exact W2 approval base")
+    record = bases[0]
+    packet_commit, approval_commit = record.get("packet_commit"), record.get("record_commit")
+    if (
+        not isinstance(packet_commit, str)
+        or not isinstance(approval_commit, str)
+        or resolve_commit(repo, packet_commit) != packet_commit
+        or resolve_commit(repo, approval_commit) != approval_commit
+        or resolve_commit(repo, f"{approval_commit}^") != packet_commit
+        or not is_ancestor(repo, approval_commit, ADOPTED_CONTINUATION_BASE)
+        or wave["approval"].get("status") != "APPROVED"
+        or wave["approval"].get("approved_commit") != packet_commit
+        or HUMAN_ID.fullmatch(str(wave["approval"].get("approved_by"))) is None
+    ):
+        raise ValueError("adopted continuation W2 packet/human approval ancestry differs")
+    original = yaml_object(blob(repo, packet_commit, "planning/backlog.yaml"), "frozen W2 packet")
+    approved = yaml_object(blob(repo, approval_commit, "planning/backlog.yaml"), "W2 approval introduction")
+    original_task = backlog_task(original, ADOPTED_CONTINUATION_TASK_ID)
+    original_wave = next(item for item in original["waves"] if item["id"] == "W2")
+    approved_wave = next(item for item in approved["waves"] if item["id"] == "W2")
+    if (
+        original_task is None
+        or original_task.get("status") != "NOT_STARTED"
+        or original_task.get("review_gate") != "agent-review"
+        or original_task.get("experience_change") is not None
+        or original_wave.get("approval", {}).get("status") == "APPROVED"
+        or approved_wave.get("approval") != wave["approval"]
+        or taskctl.corrective_contract(original, original_task) != taskctl.corrective_contract(backlog, current)
+        or current.get("review_gate") != "agent-review"
+        or current.get("experience_change") is not None
+    ):
+        raise ValueError("adopted continuation ordinary task/slice differs from approved W2")
+    return taskctl.canonical_json_sha256(taskctl.corrective_contract(original, original_task))
+
+
+def adopted_continuation_live_claim(
+    repo: Path, base: str, head: str, contract: dict[str, Any], policy: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, Any], str]:
+    """Require the sole active original T01 owner, base, branch and lease."""
+
+    from taskctl import require_active_lease, wave_resume_record_errors
+
+    authority = contract.get("adoptedContinuationAuthority")
+    selectors = {
+        "amendmentId": "W2.A02",
+        "changeRequestId": "ECR-0010",
+        "controlTaskId": "W2.A02.T01",
+        "inheritedAmendmentId": "W2.A01",
+        "inheritedTaskId": "W2.A01.T02",
+        "inheritedContractPath": ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH,
+    }
+    if (
+        head != resolve_commit(repo, "HEAD")
+        or base != ADOPTED_CONTINUATION_BASE
+        or contract.get("schemaVersion") != "1.3"
+        or contract.get("taskId") != ADOPTED_CONTINUATION_TASK_ID
+        or contract.get("changeKind") != "defect-restoration"
+        or not isinstance(authority, dict)
+        or any(authority.get(key) != value for key, value in selectors.items())
+        or contract.get("contractPath") != ADOPTED_CONTINUATION_CONTRACT_PATH
+    ):
+        raise ValueError("adopted continuation selector/head/base is not the approved T01 lane")
+    backlog = yaml_object(blob(repo, head, "planning/backlog.yaml"), "adopted continuation backlog")
+    task = backlog_task(backlog, ADOPTED_CONTINUATION_TASK_ID)
+    wave = next(item for item in backlog["waves"] if item["id"] == "W2")
+    active = [
+        item
+        for item in backlog_tasks(backlog)
+        if item.get("wave") == "W2" and item.get("status") in {"IN_PROGRESS", "REVIEW"}
+    ]
+    owner = task.get("owner") if task else None
+    branch = git(repo, "branch", "--show-current").decode().strip()
+    root = Path(git(repo, "rev-parse", "--show-toplevel").decode().strip()).resolve()
+    if (
+        task is None
+        or active != [task]
+        or task.get("status") not in {"IN_PROGRESS", "REVIEW"}
+        or task.get("base_sha") != base
+        or not isinstance(owner, str)
+        or not owner
+        or contract.get("implementationAgent") != f"agent:{owner}"
+        or task.get("branch") != branch
+        or task.get("worktree") != "."
+        or root != repo
+        or wave.get("campaign", {}).get("status") != "ACTIVE"
+        or wave.get("campaign", {}).get("scope") != "wave"
+        or wave.get("campaign", {}).get("owner") != owner
+        or wave.get("campaign", {}).get("branch") != branch
+        or wave.get("campaign", {}).get("worktree") != "."
+        or wave.get("campaign", {}).get("profile") != "LOC"
+        or wave.get("campaign", {}).get("platform") != "windows-x64"
+        or backlog.get("control_plane", {}).get("active_amendment") is not None
+        or any(
+            (item.get("campaign") or {}).get("status") in {"ACTIVE", "REVIEW"}
+            for item in backlog.get("wave_amendments", [])
+        )
+    ):
+        raise ValueError("adopted continuation requires the exact sole active W2/T01 claim")
+    try:
+        require_active_lease(wave["campaign"], owner, "W2 campaign")
+        require_active_lease(task, owner, "CAP-05.S01.T01")
+        if wave_resume_record_errors(backlog, "W2", wave["campaign"], repo):
+            raise ValueError("adopted continuation current W2 resume history is invalid")
+    except SystemExit as exc:
+        raise ValueError(f"adopted continuation lease is stale or foreign: {exc}") from exc
+    ordered = git(repo, "rev-list", "--reverse", f"{base}..{head}").decode().splitlines()
+    if not ordered or resolve_commit(repo, f"{ordered[0]}^") != base:
+        raise ValueError("adopted continuation original claim is not a direct child of its frozen base")
+    first = yaml_object(blob(repo, ordered[0], "planning/backlog.yaml"), "original T01 claim")
+    claimed = backlog_task(first, ADOPTED_CONTINUATION_TASK_ID) or {}
+    if (
+        claimed.get("status") != "IN_PROGRESS"
+        or claimed.get("base_sha") != base
+        or claimed.get("owner") != owner
+        or claimed.get("branch") != branch
+        or claimed.get("worktree") != "."
+        or (claimed.get("lease") or {}).get("claimed_by") != owner
+        or any(
+            is_implementation_path(path, policy) or path.startswith(f"{policy['referenceRoot']}/")
+            for path in commit_paths(repo, ordered[0])
+        )
+    ):
+        raise ValueError("adopted continuation original T01 claim/base is not authentic")
+    task_digest = adopted_continuation_original_task(repo, head, backlog, task)
+    return backlog, task, task_digest
+
+
+def adopted_continuation_projection_at(repo: Path, commit: str) -> dict[str, Any]:
+    """Select the committed backlog object; reused blobs share one projection."""
+
+    blob_id = git(repo, "rev-parse", f"{commit}:planning/backlog.yaml").decode().strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", blob_id):
+        raise ValueError("historical W2/T01 backlog has an invalid Git blob ID")
+    return adopted_continuation_projection_for_blob(repo, blob_id)
+
+
+@lru_cache(maxsize=64)
+def adopted_continuation_projection_for_blob(repo: Path, blob_id: str) -> dict[str, Any]:
+    """Parse one immutable YAML blob and retain only bounded authority fields."""
+
+    payload = git(repo, "cat-file", "blob", blob_id).decode("utf-8")
+    state = yaml.load(payload, Loader=getattr(yaml, "CSafeLoader", yaml.SafeLoader))
+    if not isinstance(state, dict):
+        raise ValueError("historical W2/T01 backlog is not a YAML object")
+    wave = next(item for item in state.get("waves", []) if item.get("id") == "W2")
+    campaign = wave.get("campaign") or {}
+    task = backlog_task(state, ADOPTED_CONTINUATION_TASK_ID) or {}
+    campaign_fields = (
+        "status",
+        "scope",
+        "owner",
+        "branch",
+        "worktree",
+        "base_sha",
+        "profile",
+        "platform",
+        "updated_at",
+        "lease",
+        "resume_records",
+    )
+    task_fields = ("status", "base_sha", "owner", "branch", "worktree", "lease")
+    return {
+        "waves": [{"id": "W2", "campaign": {field: campaign.get(field) for field in campaign_fields}}],
+        "task": {field: task.get(field) for field in task_fields},
+        "control_plane": {
+            "revision": (state.get("control_plane") or {}).get("revision"),
+            "active_amendment": (state.get("control_plane") or {}).get("active_amendment"),
+        },
+    }
+
+
+@lru_cache(maxsize=512)
+def adopted_continuation_active_at(
+    repo: Path, commit: str, base: str, owner: str, branch: str, profile: str, platform: str
+) -> bool:
+    """Attribute a source edit to the original active Wave/task on both sides."""
+
+    state = adopted_continuation_projection_at(repo, commit)
+    task = state["task"]
+    wave: dict[str, Any] = next((item for item in state.get("waves", []) if item.get("id") == "W2"), {})
+    campaign = wave.get("campaign") or {}
+    return (
+        task.get("status") in {"IN_PROGRESS", "REVIEW"}
+        and task.get("base_sha") == base
+        and task.get("owner") == owner
+        and task.get("branch") == branch
+        and task.get("worktree") == "."
+        and (task.get("lease") or {}).get("claimed_by") == owner
+        and campaign.get("status") == "ACTIVE"
+        and campaign.get("scope") == "wave"
+        and campaign.get("owner") == owner
+        and campaign.get("branch") == branch
+        and campaign.get("worktree") == "."
+        and campaign.get("profile") == profile
+        and campaign.get("platform") == platform
+        and (campaign.get("lease") or {}).get("claimed_by") == owner
+        and (state.get("control_plane") or {}).get("active_amendment") is None
+    )
+
+
+def adopted_continuation_authority(
+    repo: Path, base: str, head: str, contract: dict[str, Any], policy: dict[str, Any]
+) -> dict[str, Any]:
+    """Authenticate exactly the adopted A01 publication plus ordinary T01 work."""
+
+    from planctl import _reference_publication_content_errors
+
+    backlog, task, task_digest = adopted_continuation_live_claim(repo, base, head, contract, policy)
+    authority = contract["adoptedContinuationAuthority"]
+    amendments = backlog.get("wave_amendments", [])
+    if [item.get("id") for item in amendments if item.get("target_wave") == "W2"][-2:] != [
+        "W2.A01",
+        "W2.A02",
+    ]:
+        raise ValueError("adopted continuation requires the ordered A01/A02 W2 amendments")
+    inherited = amendment_record(backlog, "W2.A01")
+    continuation = amendment_record(backlog, "W2.A02")
+    inherited_packet, inherited_packet_commit, inherited_approval = approved_amendment_packet(repo, head, inherited)
+    continuation_packet, continuation_packet_commit, continuation_approval = approved_amendment_packet(
+        repo, head, continuation
+    )
+    if (
+        inherited.get("change_request_id") != "ECR-0009"
+        or continuation.get("change_request_id") != "ECR-0010"
+        or inherited_packet.get("authorizedTaskIds") != ["W2.A01.T01", "W2.A01.T02"]
+        or continuation_packet.get("authorizedTaskIds") != ["W2.A02.T01"]
+        or inherited_packet.get("governedExperience", {}).get("referenceId") != ADOPTED_CONTINUATION_APPROVED_REFERENCE
+        or continuation_packet.get("governedExperience", {}).get("referenceId")
+        != ADOPTED_CONTINUATION_APPROVED_REFERENCE
+    ):
+        raise ValueError("adopted continuation packets do not bind exact A01/A02 task and reference authority")
+    inherited_adoption = adopted_continuation_adoption(repo, head, backlog, inherited, inherited_packet)
+    adoption = adopted_continuation_adoption(repo, head, backlog, continuation, continuation_packet)
+    if (
+        authority.get("adoptionCommit") != adoption
+        or not is_ancestor(repo, inherited_approval, inherited_adoption)
+        or not is_ancestor(repo, inherited_adoption, continuation_packet_commit)
+        or not is_ancestor(repo, continuation_approval, adoption)
+        or not is_ancestor(repo, adoption, head)
+    ):
+        raise ValueError("adopted continuation approved amendment/adoption ancestry differs")
+    for item in continuation_packet.get("governedExperience", {}).get("files", []):
+        path = item.get("path") if isinstance(item, dict) else None
+        if (
+            not isinstance(path, str)
+            or not path.startswith(f"{policy['referenceRoot']}/")
+            or tree_entry(repo, continuation_packet_commit, path) != ("100644", "blob")
+            or hashlib.sha256(blob(repo, continuation_packet_commit, path)).hexdigest() != item.get("sha256")
+            or blob(repo, continuation_packet_commit, path) != blob(repo, head, path)
+        ):
+            raise ValueError("adopted continuation changed the packet-bound approved 1.8 package")
+
+    inherited_task = backlog_task(backlog, "W2.A01.T02")
+    control_task = backlog_task(backlog, "W2.A02.T01")
+    if inherited_task is None or control_task is None:
+        raise ValueError("adopted continuation lacks materialized reviewed predecessor/control tasks")
+    inherited_ranges, inherited_source = adopted_continuation_reviewed_task_commits(repo, head, inherited_task)
+    if not inherited_ranges:
+        raise ValueError("adopted continuation inherited task has no independent review")
+    inherited_candidate = inherited_ranges[-1]["candidate"]
+    inherited_base = inherited_task.get("base_sha")
+    if not isinstance(inherited_base, str) or not re.fullmatch(r"[0-9a-f]{40}", inherited_base):
+        raise ValueError("adopted continuation inherited task lacks its canonical base")
+    predecessor = intentional_amendment_control_predecessor(repo, inherited_candidate, inherited_base, inherited)
+    inherited_contract, inherited_contract_intro = immutable_record(
+        repo, head, ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH
+    )
+    historical_schema = json_object(
+        blob(repo, inherited_candidate, str(policy["contractSchemaPath"])), "historical v1.2 UI schema"
+    )
+    if (
+        list(Draft202012Validator(historical_schema).iter_errors(inherited_contract))
+        or inherited_contract.get("schemaVersion") != "1.2"
+        or inherited_contract.get("taskId") != "W2.A01.T02"
+        or inherited_contract.get("changeKind") != "intentional-design-change"
+        or inherited_contract.get("contractPath") != ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH
+        or inherited_contract.get("implementationAgent") != f"agent:{inherited_task.get('owner')}"
+        or inherited_contract.get("intentionalAmendmentAuthority")
+        != {
+            "amendmentId": "W2.A01",
+            "changeRequestId": "ECR-0009",
+            "controlTaskId": "W2.A01.T01",
+            "referenceApprovalPath": INTENTIONAL_AMENDMENT_REFERENCE_APPROVAL_PATH,
+        }
+        or inherited_contract_intro == inherited_candidate
+        or not is_ancestor(repo, inherited_contract_intro, inherited_candidate)
+        or blob(repo, inherited_candidate, ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH)
+        != blob(repo, head, ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH)
+    ):
+        raise ValueError("adopted continuation inherited T02 v1.2 contract differs from reviewed history")
+    publication = inherited_contract["reference"]["approvalCommit"]
+    before_state, before_errors = reference_state(repo, inherited_base, policy)
+    published_state, published_errors = reference_state(repo, publication, policy)
+    current_state, current_errors = reference_state(repo, head, policy)
+    publication_errors = _reference_publication_content_errors(
+        repo, inherited_packet, inherited_packet_commit, publication
+    )
+    if (
+        before_errors
+        or published_errors
+        or current_errors
+        or publication_errors
+        or before_state.get("referenceId") != "RO-UI-ACADEMIC-MINIMAL-1.7"
+        or published_state != current_state
+        or published_state.get("referenceId") != ADOPTED_CONTINUATION_APPROVED_REFERENCE
+        or published_state.get("version") != "1.8"
+        or inherited_contract["reference"].get("packageSha256") != published_state.get("packageSha256")
+        or inherited_contract["reference"].get("approvedBy") != published_state.get("approval", {}).get("approved_by")
+        or not is_ancestor(repo, predecessor["reviewIntroduction"], inherited_base)
+        or not is_ancestor(repo, inherited_approval, publication)
+    ):
+        raise ValueError("adopted continuation inherited 1.7-to-1.8 publication is not authentic")
+    reference_paths = {
+        path
+        for path in changed_paths(repo, inherited_base, publication)
+        if path.startswith(f"{policy['referenceRoot']}/")
+    }
+    historical = intentional_amendment_segments(
+        repo,
+        inherited_base,
+        inherited_candidate,
+        publication,
+        ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH,
+        reference_paths,
+        policy,
+    )
+    if (
+        historical["uiFiles"] != inherited_contract.get("changedFiles")
+        or historical["referenceFiles"] != sorted(reference_paths)
+        or not is_ancestor(repo, inherited_candidate, inherited_adoption)
+    ):
+        raise ValueError("adopted continuation inherited T02 renderer/reference segment differs")
+
+    _, inherited_controls = adopted_continuation_reviewed_task_commits(
+        repo, head, backlog_task(backlog, "W2.A01.T01") or {}
+    )
+    _, continuation_controls = adopted_continuation_reviewed_task_commits(repo, head, control_task)
+    reviewed_controls = {**inherited_controls, **continuation_controls}
+    if set(inherited_controls) & set(continuation_controls):
+        raise ValueError("adopted continuation control review ranges overlap")
+    reviewed_controls.update(adopted_continuation_reviewed_maintenance(repo, head))
+    historical_planning_inputs = adopted_continuation_historical_planning_inputs(
+        repo, head, inherited_approval, continuation_packet_commit
+    )
+
+    ordered_rows = (
+        git(repo, "rev-list", "--reverse", "--topo-order", "--parents", f"{base}..{head}").decode().splitlines()
+    )
+    ordered: list[str] = []
+    previous = base
+    for row in ordered_rows:
+        values = row.split()
+        if len(values) != 2 or values[1] != previous:
+            raise ValueError("adopted continuation full task-base history must remain linear")
+        previous = values[0]
+        ordered.append(previous)
+    if not ordered or previous != head:
+        raise ValueError("adopted continuation full task-base history is incomplete")
+    positions = {commit: index for index, commit in enumerate([base, *ordered])}
+    if any(anchor not in positions for anchor in (publication, inherited_adoption, adoption)):
+        raise ValueError("adopted continuation historical anchors are outside the original T01 range")
+    import taskctl
+
+    owner = str(task["owner"])
+    branch = str(task["branch"])
+    profile = str(next(item for item in backlog["waves"] if item["id"] == "W2")["campaign"]["profile"])
+    platform = str(next(item for item in backlog["waves"] if item["id"] == "W2")["campaign"]["platform"])
+    reactivations: list[str] = []
+    resumes: list[str] = []
+    for adopted, limit in ((inherited_adoption, adoption), (adoption, head)):
+        resumed = None
+        reopened = None
+        for commit in ordered[positions[adopted] : positions[limit]]:
+            if "planning/backlog.yaml" not in commit_paths(repo, commit):
+                continue
+            parent = resolve_commit(repo, f"{commit}^")
+            previous_state = adopted_continuation_projection_at(repo, parent)
+            state = adopted_continuation_projection_at(repo, commit)
+            prior_wave = next(item for item in previous_state["waves"] if item["id"] == "W2")
+            active_wave = next(item for item in state["waves"] if item["id"] == "W2")
+            prior_campaign = prior_wave.get("campaign") or {}
+            campaign = active_wave.get("campaign") or {}
+            if prior_campaign.get("status") == "PAUSED" and campaign.get("status") == "ACTIVE":
+                prior_records = prior_campaign.get("resume_records") or []
+                records = campaign.get("resume_records") or []
+                record = records[-1] if records else {}
+                if (
+                    resumed is not None
+                    or len(records) != len(prior_records) + 1
+                    or records[:-1] != prior_records
+                    or record.get("pre_resume_commit") != parent
+                    or taskctl.wave_resume_record_errors(state, "W2", campaign, repo)
+                    or campaign.get("base_sha") != parent
+                    or campaign.get("owner") != owner
+                    or campaign.get("branch") != branch
+                    or campaign.get("worktree") != "."
+                    or campaign.get("profile") != profile
+                    or campaign.get("platform") != platform
+                    or campaign.get("scope") != "wave"
+                ):
+                    raise ValueError("adopted continuation W2 PAUSED-to-ACTIVE resume record is invalid")
+                resumed = commit
+            prior_task = previous_state["task"]
+            active_task = state["task"]
+            if prior_task.get("status") not in {"IN_PROGRESS", "REVIEW"} and active_task.get("status") in {
+                "IN_PROGRESS",
+                "REVIEW",
+            }:
+                if (
+                    resumed is None
+                    or resumed == commit
+                    or not adopted_continuation_active_at(repo, commit, base, owner, branch, profile, platform)
+                    or active_task.get("base_sha") != base
+                ):
+                    raise ValueError("adopted continuation reopened T01 without authenticated W2 resume")
+                reopened = commit
+                break
+        if resumed is None or reopened is None:
+            raise ValueError("adopted continuation lacks an authenticated W2 resume and T01 reactivation")
+        resumes.append(resumed)
+        reactivations.append(reopened)
+    if authority.get("reactivationCommit") != reactivations[1] or not (
+        positions[inherited_adoption] < positions[reactivations[0]] < positions[adoption] < positions[reactivations[1]]
+    ):
+        raise ValueError("adopted continuation T01 reactivation anchors are stale or out of order")
+
+    reference_root = f"{policy['referenceRoot']}/"
+    contract_root = f"{policy['contractRoot']}/"
+    control_paths = (
+        MAINTENANCE_CONTROL_PATHS
+        | ADOPTED_CONTINUATION_AUTHORITY_INPUTS
+        | ADOPTED_CONTINUATION_PLANNING_TOOLS
+        | frozenset(
+            {
+                "docs/adr/index.json",
+                "docs/adr/ADR-0035-admit-exact-intentional-amendment-ui-lineage.md",
+                "docs/adr/ADR-0036-verify-exact-amendment-reference-approval-metadata.md",
+                "docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md",
+            }
+        )
+    )
+    inherited_commits = set(historical["uiCommits"])
+    touched_ui: set[str] = set()
+    resumed_ui: set[str] = set()
+    resumed_commits: list[str] = []
+    product_paths: set[str] = set()
+    t01_contract_touches: list[str] = []
+    classification_ref = authority.get("classification") or {}
+    _, classification_intro = immutable_record(repo, head, classification_ref["path"], classification_ref["sha256"])
+    for commit in ordered:
+        parent = resolve_commit(repo, f"{commit}^")
+        paths = commit_paths(repo, commit)
+        if "planning/backlog.yaml" in paths:
+            prior_state = adopted_continuation_projection_at(repo, parent)
+            current_state = adopted_continuation_projection_at(repo, commit)
+            prior_wave = next(item for item in prior_state["waves"] if item["id"] == "W2")
+            current_wave = next(item for item in current_state["waves"] if item["id"] == "W2")
+            prior_task = prior_state["task"]
+            current_task = current_state["task"]
+            if (
+                (prior_wave.get("campaign") or {}).get("status") == "PAUSED"
+                and (current_wave.get("campaign") or {}).get("status") == "ACTIVE"
+                and commit not in resumes
+            ):
+                raise ValueError("adopted continuation has an unbound W2 campaign resume")
+            if (
+                prior_task.get("status") not in {"IN_PROGRESS", "REVIEW"}
+                and current_task.get("status") in {"IN_PROGRESS", "REVIEW"}
+                and commit not in {ordered[0], *reactivations}
+            ):
+                raise ValueError("adopted continuation has an unbound original T01 reactivation")
+        ui_paths = {path for path in paths if is_implementation_path(path, policy)}
+        reference_delta = {path for path in paths if path.startswith(reference_root)}
+        control_delta = paths & control_paths
+        contract_delta = {path for path in paths if path.startswith(contract_root)}
+        product_delta = {
+            path
+            for path in paths
+            if path.startswith(ADOPTED_CONTINUATION_PRODUCT_ROOTS)
+            or path in ADOPTED_CONTINUATION_PRODUCT_TOOLS
+            or path == "Cargo.lock"
+        }
+        if contract_delta - {
+            ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH,
+            ADOPTED_CONTINUATION_CONTRACT_PATH,
+        }:
+            raise ValueError("adopted continuation has an extra or reverted UI contract")
+        if reference_delta and (commit != publication or ui_paths or "planning/backlog.yaml" in paths):
+            raise ValueError("adopted continuation reference changed outside separate approved publication")
+        if "planning/backlog.yaml" in paths and ui_paths:
+            raise ValueError("adopted continuation backlog transition mixed with governed renderer")
+        imported_delta = paths & ADOPTED_CONTINUATION_AUTHORITY_INPUTS
+        if imported_delta:
+            if commit == ADOPTED_CONTINUATION_TASKCTL_PREDECESSOR:
+                if (
+                    paths != {"tools/taskctl.py", "tests/foundation/test_taskctl_workflow.py"}
+                    or len(git(repo, "rev-list", "--parents", "-n", "1", commit).decode().split()) != 2
+                    or git(repo, "rev-parse", f"{commit}^{{tree}}").decode().strip()
+                    != ADOPTED_CONTINUATION_TASKCTL_TREE
+                    or not is_ancestor(repo, commit, "468cb390")
+                    or not is_ancestor(repo, commit, continuation_packet_commit)
+                ):
+                    raise ValueError("adopted continuation inherited taskctl predecessor is not packet-bound")
+            elif imported_delta == {"tools/adr_check.py"} and commit in inherited_controls:
+                if commit not in {
+                    "3658da21dfdb2d10765a0578d6629beedc1cae17",
+                    "0948d63449cd7e1efdffe4eec7751d5dfd775146",
+                }:
+                    raise ValueError("adopted continuation ADR checker changed outside reviewed A01 source")
+            else:
+                raise ValueError("adopted continuation imported authority code changed without exact approval")
+        if control_delta:
+            if commit in historical_planning_inputs:
+                pass  # Exact reviewed/packet-bound historical planning-site source only.
+            elif commit == ADOPTED_CONTINUATION_TASKCTL_PREDECESSOR:
+                pass  # Exact packet-bound inherited source, independently covered in A02.T01 review.
+            elif commit == ADOPTED_CONTINUATION_MIXED_COMMIT:
+                errors = adopted_continuation_quality_scope_errors(repo, commit, policy)
+                if errors:
+                    raise ValueError("; ".join(errors))
+            elif commit == ADOPTED_CONTINUATION_QUALITY_CANDIDATE:
+                errors = reviewed_preimplementation_maintenance_errors(repo, commit, head, paths, [])
+                if errors:
+                    raise ValueError("; ".join(errors))
+            elif commit not in reviewed_controls or paths != reviewed_controls[commit] or ui_paths or reference_delta:
+                raise ValueError("adopted continuation has unreviewed or mixed gate-control history")
+        for path in contract_delta:
+            if tree_entry(repo, commit, path) != ("100644", "blob"):
+                raise ValueError("adopted continuation UI contract has non-regular history: " + path)
+            if path == ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH:
+                if commit not in inherited_source:
+                    raise ValueError("adopted continuation inherited contract changed outside reviewed T02 source")
+            elif path == ADOPTED_CONTINUATION_CONTRACT_PATH:
+                if (
+                    not all(
+                        adopted_continuation_active_at(repo, at, base, owner, branch, profile, platform)
+                        for at in (parent, commit)
+                    )
+                    or tree_entry(repo, parent, path) is not None
+                ):
+                    raise ValueError("adopted continuation T01 contract lacks a single active-claim introduction")
+                t01_contract_touches.append(commit)
+        if ui_paths:
+            if implementation_object_errors(repo, parent, commit, sorted(ui_paths)):
+                raise ValueError("adopted continuation has redirected governed renderer history")
+            if commit in inherited_commits:
+                if positions[commit] >= positions[inherited_adoption]:
+                    raise ValueError("adopted continuation inherited renderer crossed adoption boundary")
+            else:
+                if (
+                    positions[commit] <= positions[reactivations[0]]
+                    or commit in reviewed_controls
+                    or not all(
+                        adopted_continuation_active_at(repo, at, base, owner, branch, profile, platform)
+                        for at in (parent, commit)
+                    )
+                ):
+                    raise ValueError("adopted continuation T01 renderer lacks an active original claim")
+                for path in ui_paths:
+                    if tree_entry(repo, commit, path) not in {("100644", "blob"), ("100755", "blob")}:
+                        raise ValueError("adopted continuation T01 renderer was deleted or redirected: " + path)
+                resumed_ui.update(ui_paths)
+                resumed_commits.append(commit)
+            touched_ui.update(ui_paths)
+        if (
+            commit in reviewed_controls
+            or commit in inherited_source
+            or commit in historical_planning_inputs
+            or commit
+            in {
+                ADOPTED_CONTINUATION_TASKCTL_PREDECESSOR,
+                ADOPTED_CONTINUATION_QUALITY_CANDIDATE,
+            }
+        ):
+            product_delta.clear()
+        if product_delta:
+            if not all(
+                adopted_continuation_active_at(repo, at, base, owner, branch, profile, platform)
+                for at in (parent, commit)
+            ):
+                raise ValueError("adopted continuation dependent product changed outside active original T01")
+            for path in product_delta:
+                if tree_entry(repo, commit, path) not in {("100644", "blob"), ("100755", "blob")}:
+                    raise ValueError("adopted continuation dependent product has non-regular history: " + path)
+                predecessor_entry = tree_entry(repo, parent, path)
+                if predecessor_entry is not None and predecessor_entry not in {
+                    ("100644", "blob"),
+                    ("100755", "blob"),
+                }:
+                    raise ValueError("adopted continuation dependent product redirected in history: " + path)
+            product_paths.update(product_delta)
+    if len(t01_contract_touches) != 1 or positions[t01_contract_touches[0]] <= positions[classification_intro]:
+        raise ValueError("adopted continuation T01 contract changed without fresh independent classification")
+    if (
+        authority.get("inheritedUiFiles") != historical["uiFiles"]
+        or authority.get("inheritedUiCommits") != historical["uiCommits"]
+        or authority.get("resumedUiFiles") != sorted(resumed_ui)
+        or authority.get("resumedUiCommits") != resumed_commits
+        or touched_ui != {path for path in changed_paths(repo, base, head) if is_implementation_path(path, policy)}
+        or not resumed_commits
+        or set(historical["uiCommits"]) & set(resumed_commits)
+    ):
+        raise ValueError("adopted continuation UI path/commit attribution is incomplete or stale")
+    return {
+        "taskDefinitionSha256": task_digest,
+        "adoptionCommit": adoption,
+        "reactivationCommit": reactivations[1],
+        "inheritedUiFiles": historical["uiFiles"],
+        "inheritedUiCommits": historical["uiCommits"],
+        "resumedUiFiles": sorted(resumed_ui),
+        "resumedUiCommits": resumed_commits,
+        "t01ProductPaths": sorted(product_paths),
+        "publicationCommit": publication,
+        "packetCommit": continuation_packet_commit,
+    }
+
+
+def adopted_continuation_classification_errors(
+    repo: Path, base: str, head: str, contract: dict[str, Any], scope: dict[str, Any], policy: dict[str, Any]
+) -> list[str]:
+    """Reuse the locked capture reader, then bind omitted T01 product inputs."""
+
+    reference = contract["adoptedContinuationAuthority"]["classification"]
+    existing_contract = {**contract, "restorationClassification": reference}
+    existing_scope = {**scope, "correctionProductPaths": scope["t01ProductPaths"]}
+    errors = restoration_classification_errors(repo, base, head, existing_contract, existing_scope, policy)
+    if errors:
+        return errors
+    record, _ = immutable_record(repo, head, reference["path"], reference["sha256"])
+    candidate = str(record["candidateCommit"])
+    manifest_ref = record["captures"]
+    manifest, _ = immutable_record(repo, head, manifest_ref["path"], manifest_ref["sha256"])
+    producer_blobs = (manifest.get("producer") or {}).get("inputGitBlobs") or {}
+    if not isinstance(producer_blobs, dict):
+        return ["adopted continuation capture producer lacks Git input inventory"]
+    dependent = sorted(set(scope["t01ProductPaths"]) - set(producer_blobs))
+    claimed = record.get("dependentInputFiles")
+    bindings = record.get("dependentInputGitBlobs")
+    if claimed != dependent or not isinstance(bindings, dict) or sorted(bindings) != dependent:
+        return ["adopted continuation classification omits or adds dependent T01 product inputs"]
+    for path in dependent:
+        if (
+            canonical_path(path) != path
+            or tree_entry(repo, candidate, path) != ("100644", "blob")
+            or tree_entry(repo, head, path) != ("100644", "blob")
+        ):
+            return ["adopted continuation dependent product input is absent or redirected: " + path]
+        entry = git(repo, "rev-parse", f"{candidate}:{path}").decode().strip()
+        if bindings.get(path) != entry or blob(repo, candidate, path) != blob(repo, head, path):
+            return ["adopted continuation dependent product input changed after classification: " + path]
+    inputs = set(dependent) | set(producer_blobs)
+    for commit in git(repo, "rev-list", f"{candidate}..{head}").decode().splitlines():
+        if commit_paths(repo, commit) & inputs:
+            return ["adopted continuation classification is stale after a dependent input touch"]
+    return []
+
+
+def validate_adopted_continuation(
+    repo: Path,
+    base: str,
+    head: str,
+    changed: set[str],
+    ui_files: list[str],
+    contract_paths: list[str],
+    schema: dict[str, Any],
+    policy: dict[str, Any],
+) -> dict[str, Any]:
+    """Check the sole approved two-contract exception over T01's whole base."""
+
+    errors: list[str] = []
+    report: dict[str, Any] = {
+        "ok": False,
+        "base": base,
+        "head": head,
+        "uiFiles": ui_files,
+        "contract": ADOPTED_CONTINUATION_CONTRACT_PATH,
+        "changeKind": "defect-restoration",
+        "referenceId": None,
+        "referencePackageSha256": None,
+        "errors": errors,
+    }
+    if contract_paths != sorted([ADOPTED_CONTINUATION_CONTRACT_PATH, ADOPTED_CONTINUATION_INHERITED_CONTRACT_PATH]):
+        errors.append("adopted continuation requires exactly inherited T02 and current T01 UI contracts")
+        return report
+    try:
+        if tree_entry(repo, head, ADOPTED_CONTINUATION_CONTRACT_PATH) != ("100644", "blob"):
+            errors.append("adopted continuation current T01 contract is not a regular 100644 Git blob")
+            return report
+        contract = json_object(blob(repo, head, ADOPTED_CONTINUATION_CONTRACT_PATH), "adopted continuation contract")
+        for issue in sorted(
+            Draft202012Validator(schema).iter_errors(contract), key=lambda item: list(item.absolute_path)
+        ):
+            location = ".".join(str(part) for part in issue.absolute_path) or "<root>"
+            errors.append(f"{ADOPTED_CONTINUATION_CONTRACT_PATH}:{location}: {issue.message}")
+        if errors:
+            return report
+        if contract.get("changedFiles") != ui_files:
+            errors.append("adopted continuation changedFiles omit the original-base governed UI inventory")
+        errors.extend(implementation_object_errors(repo, base, head, ui_files))
+        state, state_errors = reference_state(repo, head, policy)
+        errors.extend(state_errors)
+        reference = contract["reference"]
+        expected = {
+            "referenceId": state.get("referenceId"),
+            "version": state.get("version"),
+            "packageSha256": state.get("packageSha256"),
+            "approvalCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+            "approvedBy": state.get("approval", {}).get("approved_by"),
+            "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
+        }
+        if any(reference.get(key) != value for key, value in expected.items()):
+            errors.append("adopted continuation contract reference differs from the exact approved 1.8 package")
+        report["referenceId"] = state.get("referenceId")
+        report["referencePackageSha256"] = state.get("packageSha256")
+        if errors:
+            return report
+        scope = adopted_continuation_authority(repo, base, head, contract, policy)
+        report["rangeAuthority"] = scope
+        if scope["publicationCommit"] != reference["approvalCommit"]:
+            errors.append("adopted continuation cited a different historical 1.8 publication")
+        if not errors:
+            errors.extend(adopted_continuation_classification_errors(repo, base, head, contract, scope, policy))
+    except (
+        KeyError,
+        IndexError,
+        StopIteration,
+        TypeError,
+        ValueError,
+        UnicodeError,
+        OSError,
+        subprocess.TimeoutExpired,
+        yaml.YAMLError,
+    ) as exc:
+        errors.append(f"invalid adopted continuation UI authority: {exc}")
+    report["ok"] = not errors
+    return report
+
+
 def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any]:
     errors: list[str] = []
     try:
@@ -3279,12 +4366,22 @@ def validate(repo: Path, base_ref: str, head_ref: str = "HEAD") -> dict[str, Any
                     raise ValueError("intentional amendment task has a stale or foreign base")
                 if implementation_commits(repo, base, head, policy):
                     errors.append("intentional amendment has reverted renderer history but no net governed change")
-        except (KeyError, TypeError, UnicodeError, ValueError, yaml.YAMLError) as exc:
+            continuation = backlog_task(no_ui_backlog, ADOPTED_CONTINUATION_TASK_ID)
+            if continuation is not None and continuation.get("status") in {"IN_PROGRESS", "REVIEW"}:
+                if automatic_base(repo, head) != base:
+                    raise ValueError("active adopted continuation cannot shorten its original 6506 task base")
+                if implementation_commits(repo, base, head, policy):
+                    errors.append("adopted continuation has reverted UI history without its exact two contracts")
+                else:
+                    errors.append("active adopted continuation T01 requires its full-range UI authority contract")
+        except (KeyError, StopIteration, TypeError, UnicodeError, ValueError, yaml.YAMLError) as exc:
             errors.append(str(exc))
         if contract_paths:
             errors.append("UI change evidence is present but no governed UI implementation file changed")
         report["ok"] = not errors
         return report
+    if ADOPTED_CONTINUATION_CONTRACT_PATH in contract_paths:
+        return validate_adopted_continuation(repo, base, head, changed, ui_files, contract_paths, schema, policy)
     if len(contract_paths) != 1:
         errors.append(f"exactly one changed UI evidence contract is required; found {contract_paths}")
         return report

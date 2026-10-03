@@ -324,6 +324,580 @@ class UiChangeGateTests(unittest.TestCase):
         head = self.commit(root, "render exact approved 1.8 interaction")
         return root, base, head, candidate, contract
 
+    def adopted_continuation_git_fixture(self, temporary: str) -> tuple[Path, str, str, dict[str, Any], dict[str, Any]]:
+        """Extend real W2 history with test-only reviewed/adopted control records."""
+        root = Path(temporary) / "adopted-continuation-fixture"
+        protected_config = Path(temporary) / "fixture-gitconfig"
+        protected_config.write_text(f"[safe]\n\tdirectory = {(REPO / '.git').as_posix()}\n", encoding="utf-8")
+        clone = subprocess.run(
+            ["git", "clone", "--quiet", "--shared", "--no-checkout", str(REPO), str(root)],
+            check=False,
+            capture_output=True,
+            text=True,
+            env={**os.environ, "GIT_CONFIG_GLOBAL": str(protected_config)},
+        )
+        self.assertEqual(0, clone.returncode, clone.stderr)
+        self.git(root, "config", "user.name", "UI Gate Test")
+        self.git(root, "config", "user.email", "ui-gate@example.invalid")
+        self.git(root, "config", "core.autocrlf", "false")
+        self.git(root, "switch", "-C", "codex/w2-implementation", "23b019825f944e75edb6420b742e82f1216be7c6")
+        backlog_path = root / "planning/backlog.yaml"
+        backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+        amendment = next(item for item in backlog["wave_amendments"] if item["id"] == "W2.A02")
+        control_task = amendment["tasks"][0]
+        owner = "codex-w2-implementation"
+        branch = "codex/w2-implementation"
+        control_base = self.git(root, "rev-parse", "HEAD")
+        control_task.update(
+            status="IN_PROGRESS",
+            owner=owner,
+            branch=branch,
+            worktree=".",
+            base_sha=control_base,
+            started_at="2026-10-03T11:43:44+00:00",
+            updated_at="2026-10-03T11:43:44+00:00",
+            lease={
+                "claimed_by": owner,
+                "claimed_at": "2026-10-03T11:43:44+00:00",
+                "expires_at": "2099-01-01T00:00:00Z",
+            },
+        )
+        self.write_yaml(backlog_path, backlog)
+        self.commit(root, "synthetic control task claim")
+        for relative in (
+            "design/ui-change.schema.json",
+            "tools/ui_change_gate.py",
+            "tests/foundation/test_ui_change_gate.py",
+            "docs/automation/design-first-ui-changes.md",
+            "docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md",
+            "docs/adr/index.json",
+        ):
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / relative, target)
+        control_candidate = self.commit(root, "synthetic W2.A02.T01 control candidate")
+        changed = sorted(ui_gate.changed_paths(root, control_base, control_candidate))
+        evidence_path = "artifacts/evidence/W2.A02.T01.json"
+        selection = {
+            "riskAnalysis": "Synthetic real-Git authority fixture; no production approval claim.",
+            "deferred": ["real product qualification"],
+            "selectedCommandIds": ["foundation:unit"],
+        }
+        self.write_json(
+            root / evidence_path,
+            {
+                "taskId": "W2.A02.T01",
+                "commit": control_candidate,
+                "baseCommit": control_base,
+                "branch": branch,
+                "changedFiles": changed,
+                "checks": [{"command": "synthetic real-Git fixture", "exitCode": 0}],
+                "acceptanceCriteria": [
+                    {"criterion_index": index, "evidence": ["synthetic fixture boundary"]}
+                    for index, _ in enumerate(control_task["acceptance_criteria"], start=1)
+                ],
+                "unverifiedItems": [],
+                "verificationSelection": selection,
+            },
+        )
+        evidence_sha = hashlib.sha256((root / evidence_path).read_bytes()).hexdigest()
+        evidence_ref = {
+            "type": "criterion-manifest",
+            "path": evidence_path,
+            "sha256": evidence_sha,
+            "commit": control_candidate,
+            "recorded_at": "2026-10-03T12:00:00Z",
+        }
+        self.commit(root, "synthetic control evidence delivery")
+        submission = {
+            "id": "R01",
+            "submitted_by": owner,
+            "submitted_at": "2026-10-03T12:00:00Z",
+            "candidate_commit": control_candidate,
+            "base_commit": control_base,
+            "branch": branch,
+            "evidence_reference": evidence_ref,
+            "acceptance_criteria_sha256": taskctl.canonical_json_sha256(control_task["acceptance_criteria"]),
+            "changed_paths": changed,
+            "selected_checks": ["synthetic real-Git fixture"],
+            "selected_command_ids": ["foundation:unit"],
+            "deferred_checks": selection["deferred"],
+            "selection_rationale": selection["riskAnalysis"],
+            "selection_sha256": taskctl.canonical_json_sha256(selection),
+            "prior_attempt_id": None,
+            "open_finding_ids": [],
+            "root_cause_analysis": None,
+        }
+        submission["packet_sha256"] = taskctl.task_submission_packet_sha256(submission)
+        control_task.update(
+            status="REVIEW",
+            verification_state="passed",
+            evidence=[evidence_ref],
+            review_control={"version": 1, "attempts": [], "current_submission": submission},
+        )
+        self.write_yaml(backlog_path, backlog)
+        self.commit(root, "freeze synthetic W2.A02.T01 submission")
+        reviewer = "agent:/root/synthetic-independent-control-review"
+        notes = "Test-only Git fixture; no product or owner approval claim."
+        ledger_path = "artifacts/evidence/W2.A02.T01.review-R01.json"
+        self.write_json(
+            root / ledger_path,
+            {
+                "task_id": "W2.A02.T01",
+                "attempt_id": "R01",
+                "candidate_commit": control_candidate,
+                "reviewer": reviewer,
+                "result": "approved",
+                "notes": notes,
+                "findings": [],
+                "closures": [],
+            },
+        )
+        review = {"reviewer": reviewer, "result": "approved", "reviewed_at": "2026-10-03T12:01:00Z", "notes": notes}
+        attempt = {
+            "submission": submission,
+            "review": review,
+            "ledger": {"path": ledger_path, "sha256": hashlib.sha256((root / ledger_path).read_bytes()).hexdigest()},
+            "findings": [],
+            "closures": [],
+        }
+        attempt["telemetry"] = taskctl.build_task_review_telemetry_event(control_task, attempt)
+        control_task.update(
+            status="DONE",
+            lease=None,
+            completed_at=review["reviewed_at"],
+            updated_at=review["reviewed_at"],
+            review=review,
+            review_control={"version": 1, "attempts": [attempt], "current_submission": None},
+        )
+        self.write_yaml(backlog_path, backlog)
+        self.commit(root, "synthetic independent W2.A02.T01 disposition")
+
+        # A separate test-only contribution record precedes the exit request.
+        contribution_path = "artifacts/evidence/W2.A02.S01.review-01.json"
+        self.write_json(
+            root / contribution_path,
+            {
+                "schemaVersion": "1.0",
+                "documentType": "amendment-contribution-independent-review",
+                "sliceId": "W2.A02.S01",
+                "amendmentId": "W2.A02",
+                "capabilityId": "CAP-05",
+                "reviewer": "agent:/root/synthetic-independent-slice-review",
+                "result": "approved",
+                "taskBindings": [{"taskId": "W2.A02.T01", "candidateCommit": control_candidate}],
+                "findings": [],
+                "openFindingIds": [],
+                "notes": "Synthetic fixture only; no production slice disposition.",
+            },
+        )
+        contribution_commit = self.commit(root, "synthetic independent W2.A02.S01 contribution")
+        packet = json.loads(
+            (root / "planning/enabler-change-requests/ECR-0010.packet.json").read_text(encoding="utf-8")
+        )
+        exit_path = "artifacts/evidence/W2.A02.exit.json"
+        wave = next(item for item in backlog["waves"] if item["id"] == "W2")
+        self.write_json(
+            root / exit_path,
+            {
+                "schemaVersion": "1.0",
+                "documentType": "wave-amendment-exit-evidence",
+                "amendmentId": "W2.A02",
+                "changeRequestId": "ECR-0010",
+                "targetWave": "W2",
+                "branch": branch,
+                "candidateCommit": contribution_commit,
+                "outcome": "ready-for-independent-amendment-exit-review",
+                "waveCampaign": {
+                    "status": wave["campaign"]["status"],
+                    "scope": wave["campaign"]["scope"],
+                    "pauseReason": wave["campaign"]["pause_reason"],
+                },
+                "amendmentCampaign": {"status": "ACTIVE", "scope": "wave-amendment", "pauseReason": None},
+                "requiredNextTransition": "independent amendment exit review",
+                "acceptanceClosure": [
+                    {
+                        "criterionIndex": index,
+                        "criterion": criterion,
+                        "status": "ready-for-independent-exit-disposition",
+                    }
+                    for index, criterion in enumerate(packet["acceptanceCriteria"], start=1)
+                ],
+                "checks": [{"command": "synthetic real-Git authority fixture", "result": "passed"}],
+            },
+        )
+        exit_evidence_commit = self.commit(root, "synthetic W2.A02 exit evidence")
+        exit_submission = taskctl.build_amendment_exit_submission(
+            Namespace(file=str(backlog_path), amendment="W2.A02", agent=owner),
+            backlog,
+            amendment,
+            str(root / exit_path),
+        )
+        amendment["lifecycle"]["status"] = "REVIEW"
+        amendment["lifecycle"]["history"].append(
+            {
+                "id": "E04",
+                "status": "REVIEW",
+                "actor": owner,
+                "at": "2026-10-03T12:02:00Z",
+                "rationale": "Synthetic exit submission.",
+            }
+        )
+        amendment["campaign"].update(status="REVIEW", lease=None)
+        amendment["completion"].update(
+            status="REVIEW",
+            evidence=[exit_path],
+            exit_review_control={"version": 1, "attempts": [], "current_submission": exit_submission},
+        )
+        self.write_yaml(backlog_path, backlog)
+        reviewed_state = self.commit(root, "freeze synthetic W2.A02 exit submission")
+        exit_reviewer = "agent:/root/synthetic-independent-exit-review"
+        exit_ledger_path = "artifacts/evidence/W2.A02.exit-review-R01.json"
+        exit_ledger = {
+            "amendment_id": "W2.A02",
+            "attempt_id": "R01",
+            "reviewed_state_commit": reviewed_state,
+            "candidate_commit": exit_evidence_commit,
+            "reviewer": exit_reviewer,
+            "result": "approved",
+            "notes": "Test-only review of synthetic committed history.",
+            "evidence": {
+                "path": exit_path,
+                "sha256": exit_submission["evidence_reference"]["sha256"],
+            },
+            "findings": [],
+            "closures": [],
+        }
+        self.write_json(root / exit_ledger_path, exit_ledger)
+        exit_attempt = taskctl.prepare_amendment_exit_attempt(
+            amendment,
+            exit_submission,
+            exit_ledger_path,
+            (root / exit_ledger_path).read_bytes(),
+            exit_ledger,
+            reviewer=exit_reviewer,
+            result="approved",
+        )
+        amendment["campaign"].update(status="COMPLETE", lease=None)
+        amendment["completion"].update(
+            status="APPROVED",
+            reviewer=exit_reviewer,
+            reviewed_at=exit_attempt["review"]["reviewed_at"],
+            notes="Synthetic fixture only.",
+            exit_review_control={"version": 1, "attempts": [exit_attempt], "current_submission": None},
+        )
+        self.write_yaml(backlog_path, backlog)
+        approved_completion_commit = self.commit(root, "synthetic independent W2.A02 exit disposition")
+        adoption_path = "artifacts/evidence/W2.A02.adoption.json"
+        self.write_json(
+            root / adoption_path,
+            {
+                "schemaVersion": "1.0",
+                "documentType": "wave-amendment-adoption-evidence",
+                "amendmentId": "W2.A02",
+                "targetWave": "W2",
+                "branch": branch,
+                "candidateCommit": approved_completion_commit,
+                "reviewedCompletionCommit": approved_completion_commit,
+                "approvedExitAttempt": "R01",
+                "notes": "Synthetic fixture only; no production adoption claim.",
+            },
+        )
+        adoption_evidence_sha = hashlib.sha256((root / adoption_path).read_bytes()).hexdigest()
+        adoption_evidence_commit = self.commit(root, "synthetic W2.A02 checkpoint evidence")
+        wave.setdefault("checkpoints", []).append(
+            {
+                "id": "W2.CP03",
+                "kind": "security",
+                "recorded_by": owner,
+                "recorded_at": "2026-10-03T12:04:00Z",
+                "evidence": [
+                    {
+                        "type": "amendment-adoption-evidence",
+                        "amendment_id": "W2.A02",
+                        "path": adoption_path,
+                        "sha256": adoption_evidence_sha,
+                        "commit": adoption_evidence_commit,
+                    }
+                ],
+                "notes": "Synthetic W2.A02 control/security checkpoint.",
+            }
+        )
+        amendment["lifecycle"]["status"] = "ADOPTED"
+        amendment["lifecycle"]["history"].append(
+            {
+                "id": "E05",
+                "status": "ADOPTED",
+                "actor": owner,
+                "at": "2026-10-03T12:05:00Z",
+                "rationale": "Synthetic test-only adoption.",
+            }
+        )
+        backlog["control_plane"]["active_amendment"] = None
+        wave["campaign"]["scope"] = "wave"
+        self.write_yaml(backlog_path, backlog)
+        adoption = self.commit(root, "synthetic W2.A02 adoption transition")
+        return root, adoption, branch, backlog, amendment
+
+    def reactivate_adopted_continuation(self, root: Path, adoption: str, backlog: dict[str, Any]) -> str:
+        """Create a test-only ordinary Wave resume and original-base T01 claim."""
+        wave = next(item for item in backlog["waves"] if item["id"] == "W2")
+        original = next(
+            task
+            for capability in backlog["capabilities"]
+            for slice_ in capability["slices"]
+            for task in slice_["tasks"]
+            if task["id"] == "CAP-05.S01.T01"
+        )
+        prior_campaign = copy.deepcopy(wave["campaign"])
+        owner = "codex-w2-implementation"
+        claimed = "2026-10-03T12:06:00Z"
+        lease = {"claimed_by": owner, "claimed_at": claimed, "expires_at": "2099-01-01T00:00:00Z"}
+        wave["campaign"].update(
+            status="ACTIVE",
+            scope="wave",
+            owner=owner,
+            branch="codex/w2-implementation",
+            worktree=".",
+            base_sha=adoption,
+            updated_at=claimed,
+            pause_reason=None,
+            pause_category=None,
+            lease=lease,
+        )
+        records = wave["campaign"].setdefault("resume_records", [])
+        records.append(
+            {
+                "id": f"W2.R{len(records) + 1:02d}",
+                "wave_id": "W2",
+                "control_revision": backlog["control_plane"]["revision"],
+                "prior_status": "PAUSED",
+                "pre_resume_commit": adoption,
+                "prior_campaign_sha256": taskctl.canonical_json_sha256(prior_campaign),
+                "branch": "codex/w2-implementation",
+                "worktree": ".",
+                "profile": "LOC",
+                "platform": "windows-x64",
+                "actor": owner,
+                "resumed_at": claimed,
+            }
+        )
+        self.write_yaml(root / "planning/backlog.yaml", backlog)
+        self.commit(root, "synthetic explicit W2 resume with T01 still blocked")
+        self.assertEqual("6506c68461144747b0ee9be10853211717aa381d", original["base_sha"])
+        original.update(
+            status="IN_PROGRESS",
+            blocker=None,
+            owner=owner,
+            branch="codex/w2-implementation",
+            worktree=".",
+            updated_at="2026-10-03T12:07:00Z",
+            lease=lease,
+        )
+        self.write_yaml(root / "planning/backlog.yaml", backlog)
+        return self.commit(root, "synthetic original-base T01 reactivation after Wave resume")
+
+    def classified_adopted_continuation_fixture(
+        self, temporary: str
+    ) -> tuple[Path, str, str, dict[str, Any], dict[str, Any], dict[str, Any]]:
+        """Build a test-only current classification atop authenticated historical Git."""
+        root, adoption, _branch, backlog, _amendment = self.adopted_continuation_git_fixture(temporary)
+        reactivation = self.reactivate_adopted_continuation(root, adoption, backlog)
+        base = "6506c68461144747b0ee9be10853211717aa381d"
+        policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+        inherited_candidate = "988ee4789f2004cce83187f971760d5b5f3e02ca"
+        inherited_contract = json.loads(
+            (root / "artifacts/evidence/ui-change/W2.A01.T02.json").read_text(encoding="utf-8")
+        )
+        inherited_commits = [
+            commit
+            for commit in self.git(root, "rev-list", "--reverse", f"{base}..{inherited_candidate}").splitlines()
+            if any(ui_gate.is_implementation_path(path, policy) for path in ui_gate.commit_paths(root, commit))
+        ]
+        resumed_commit = "9727f1b195e7dee300e7f3df3c289e7739fb0fdc"
+        resumed_files = sorted(
+            path for path in ui_gate.commit_paths(root, resumed_commit) if ui_gate.is_implementation_path(path, policy)
+        )
+        changed_files = sorted(
+            path
+            for path in ui_gate.changed_paths(root, base, reactivation)
+            if ui_gate.is_implementation_path(path, policy)
+        )
+        classification_path = "artifacts/evidence/CAP-05.S01.T01.ui-classification-R01.json"
+        contract: dict[str, Any] = self.contract(
+            "defect-restoration",
+            inherited_contract["reference"]["packageSha256"],
+            inherited_contract["reference"]["approvalCommit"],
+            approved_by=inherited_contract["reference"]["approvedBy"],
+            previous="RO-UI-ACADEMIC-MINIMAL-1.7",
+            reference_id="RO-UI-ACADEMIC-MINIMAL-1.8",
+            version="1.8",
+            implementation_agent="agent:codex-w2-implementation",
+            task_id="CAP-05.S01.T01",
+        )
+        contract.update(
+            schemaVersion="1.3",
+            changedFiles=changed_files,
+            adoptedContinuationAuthority={
+                "amendmentId": "W2.A02",
+                "changeRequestId": "ECR-0010",
+                "controlTaskId": "W2.A02.T01",
+                "inheritedAmendmentId": "W2.A01",
+                "inheritedTaskId": "W2.A01.T02",
+                "inheritedContractPath": "artifacts/evidence/ui-change/W2.A01.T02.json",
+                "adoptionCommit": adoption,
+                "reactivationCommit": reactivation,
+                "inheritedUiFiles": inherited_contract["changedFiles"],
+                "inheritedUiCommits": inherited_commits,
+                "resumedUiFiles": resumed_files,
+                "resumedUiCommits": [resumed_commit],
+                "classification": {"path": classification_path, "sha256": "0" * 64, "commit": "0" * 40},
+            },
+        )
+        # Construct expected input closure from committed task state and paths,
+        # before invoking the gate under test. Only product edits made while
+        # the original T01 claim and W2 campaign are active belong to T01.
+        product_roots = ("apps/", "services/", "workers/", "tests/", "modules/", "packages/", "verification/")
+        product_tools = {"tools/architecture_check.py", "tools/core_sidecar_build.py", "Cargo.lock"}
+        product_paths: set[str] = set()
+        state_cache: dict[str, dict[str, Any]] = {}
+        for row in self.git(root, "rev-list", "--reverse", "--parents", f"{base}..{reactivation}").splitlines():
+            commit, parent = row.split()
+            changed = ui_gate.commit_paths(root, commit)
+            if changed & {
+                "tools/ui_change_gate.py",
+                "tools/taskctl.py",
+                "tools/planctl.py",
+                "design/ui-change.schema.json",
+                "docs/adr/index.json",
+            }:
+                continue  # Separately reviewed control source is not T01 product groundwork.
+            paths = {path for path in changed if path.startswith(product_roots) or path in product_tools}
+            if not paths:
+                continue
+            active_on_both_sides = True
+            for state_commit in (parent, commit):
+                state_blob = self.git(root, "rev-parse", f"{state_commit}:planning/backlog.yaml")
+                if state_blob not in state_cache:
+                    state_cache[state_blob] = yaml.load(
+                        ui_gate.blob(root, state_commit, "planning/backlog.yaml").decode("utf-8"),
+                        Loader=getattr(yaml, "CSafeLoader", yaml.SafeLoader),
+                    )
+                state = state_cache[state_blob]
+                original = next(
+                    task
+                    for capability in state["capabilities"]
+                    for slice_ in capability["slices"]
+                    for task in slice_["tasks"]
+                    if task["id"] == "CAP-05.S01.T01"
+                )
+                wave = next(item for item in state["waves"] if item["id"] == "W2")
+                if (
+                    original["status"] not in {"IN_PROGRESS", "REVIEW"}
+                    or original["base_sha"] != base
+                    or wave["campaign"]["status"] != "ACTIVE"
+                    or wave["campaign"]["scope"] != "wave"
+                ):
+                    active_on_both_sides = False
+                    break
+            if active_on_both_sides:
+                product_paths.update(paths)
+        frozen = yaml.load(
+            ui_gate.blob(root, "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55", "planning/backlog.yaml").decode("utf-8"),
+            Loader=getattr(yaml, "CSafeLoader", yaml.SafeLoader),
+        )
+        frozen_task = next(
+            task
+            for capability in frozen["capabilities"]
+            for slice_ in capability["slices"]
+            for task in slice_["tasks"]
+            if task["id"] == "CAP-05.S01.T01"
+        )
+        scope: dict[str, Any] = {
+            "taskDefinitionSha256": taskctl.canonical_json_sha256(taskctl.corrective_contract(frozen, frozen_task)),
+            "inheritedUiFiles": inherited_contract["changedFiles"],
+            "inheritedUiCommits": inherited_commits,
+            "resumedUiFiles": resumed_files,
+            "resumedUiCommits": [resumed_commit],
+            "reactivationCommit": reactivation,
+            "t01ProductPaths": sorted(product_paths),
+        }
+        producer_blobs = {path: self.git(root, "rev-parse", f"{reactivation}:{path}") for path in resumed_files}
+        producer = {
+            "producerCommit": reactivation,
+            "referencePackageSha256": contract["reference"]["packageSha256"],
+            "inputGitBlobs": producer_blobs,
+        }
+        capture_path = "artifacts/evidence/CAP-05.S01.T01.captures-01/manifest.json"
+        manifest = {
+            "schemaVersion": "1.0",
+            "documentType": "product-style-capture-bundle",
+            "producer": producer,
+            "report": {"fixtureOnly": True},
+        }
+        self.write_json(root / capture_path, manifest)
+        capture_commit = self.commit(root, "synthetic current product/reference capture delivery")
+        capture_sha = hashlib.sha256((root / capture_path).read_bytes()).hexdigest()
+        visual_path = "artifacts/evidence/CAP-05.S01.T01.visual-review-01.json"
+        self.write_json(
+            root / visual_path,
+            {
+                "documentType": "independent-product-visual-disposition",
+                "taskId": "CAP-05.S01.T01",
+                "reviewer": "agent:/root/synthetic-independent-visual-review",
+                "disposition": "approved",
+                "findings": [],
+                "bindings": {
+                    "producerCommit": reactivation,
+                    "manifest": capture_path,
+                    "manifestSha256": capture_sha,
+                    "captureDeliveryCommit": capture_commit,
+                    "referencePackageSha256": contract["reference"]["packageSha256"],
+                },
+            },
+        )
+        visual_commit = self.commit(root, "synthetic independent visual disposition")
+        dependent = sorted(set(scope["t01ProductPaths"]) - set(producer_blobs))
+        self.write_json(
+            root / classification_path,
+            {
+                "schemaVersion": "1.0",
+                "documentType": "independent-ui-restoration-disposition",
+                "taskId": "CAP-05.S01.T01",
+                "baseCommit": base,
+                "candidateCommit": reactivation,
+                "reviewer": "agent:/root/synthetic-independent-classification",
+                "disposition": "approved",
+                "taskDefinitionSha256": scope["taskDefinitionSha256"],
+                "referencePackageSha256": contract["reference"]["packageSha256"],
+                "resumedUiFiles": scope["resumedUiFiles"],
+                "resumedUiCommits": scope["resumedUiCommits"],
+                "approvedTaskAllowsRestoration": True,
+                "authorityPreserved": True,
+                "formalTaskApproval": False,
+                "normativeRationale": "Synthetic independent classification of fixture history only.",
+                "dependentInputFiles": dependent,
+                "dependentInputGitBlobs": {
+                    path: self.git(root, "rev-parse", f"{reactivation}:{path}") for path in dependent
+                },
+                "captures": {"path": capture_path, "sha256": capture_sha, "deliveryCommit": capture_commit},
+                "visualReview": {
+                    "path": visual_path,
+                    "sha256": hashlib.sha256((root / visual_path).read_bytes()).hexdigest(),
+                    "commit": visual_commit,
+                },
+            },
+        )
+        classification_commit = self.commit(root, "synthetic independent current T01 classification")
+        contract["adoptedContinuationAuthority"]["classification"] = {
+            "path": classification_path,
+            "sha256": hashlib.sha256((root / classification_path).read_bytes()).hexdigest(),
+            "commit": classification_commit,
+        }
+        self.write_json(root / "artifacts/evidence/ui-change/CAP-05.S01.T01.json", contract)
+        head = self.commit(root, "synthetic T01 v1.3 evidence contract")
+        return root, base, head, contract, manifest, scope
+
     def linked_fixture(
         self,
         temporary: str,
@@ -2018,6 +2592,95 @@ class UiChangeGateTests(unittest.TestCase):
             with self.subTest(extra=extra):
                 self.assertTrue(list(validator.iter_errors({**contract, extra: {}})))
 
+    def test_adopted_continuation_schema_is_closed_and_exact_to_original_t01(self) -> None:
+        schema = json.loads((REPO / "design/ui-change.schema.json").read_text(encoding="utf-8"))
+        Draft202012Validator.check_schema(schema)
+        validator = Draft202012Validator(schema)
+        contract: dict[str, Any] = self.contract(
+            "defect-restoration",
+            "a" * 64,
+            "b" * 40,
+            previous="RO-UI-ACADEMIC-MINIMAL-1.7",
+            reference_id="RO-UI-ACADEMIC-MINIMAL-1.8",
+            version="1.8",
+            task_id="CAP-05.S01.T01",
+        )
+        contract["schemaVersion"] = "1.3"
+        authority: dict[str, Any] = {
+            "amendmentId": "W2.A02",
+            "changeRequestId": "ECR-0010",
+            "controlTaskId": "W2.A02.T01",
+            "inheritedAmendmentId": "W2.A01",
+            "inheritedTaskId": "W2.A01.T02",
+            "inheritedContractPath": "artifacts/evidence/ui-change/W2.A01.T02.json",
+            "adoptionCommit": "c" * 40,
+            "reactivationCommit": "d" * 40,
+            "inheritedUiFiles": ["apps/desktop/src/app/ImportReviewPane.tsx"],
+            "inheritedUiCommits": ["e" * 40],
+            "resumedUiFiles": ["apps/desktop/src/app/DocumentAttachmentPane.tsx"],
+            "resumedUiCommits": ["f" * 40],
+            "classification": {
+                "path": "artifacts/evidence/CAP-05.S01.T01.ui-classification-R01.json",
+                "sha256": "0" * 64,
+                "commit": "1" * 40,
+            },
+        }
+        contract["adoptedContinuationAuthority"] = authority
+        self.assertEqual([], list(validator.iter_errors(contract)))
+        for field in authority:
+            with self.subTest(missing=field):
+                invalid = copy.deepcopy(contract)
+                del invalid["adoptedContinuationAuthority"][field]
+                self.assertTrue(list(validator.iter_errors(invalid)))
+        for field, value in (
+            ("amendmentId", "W2.A01"),
+            ("changeRequestId", "ECR-0009"),
+            ("controlTaskId", "W2.A01.T01"),
+            ("inheritedAmendmentId", "W2.A02"),
+            ("inheritedTaskId", "CAP-05.S01.T01"),
+            ("inheritedContractPath", "artifacts/evidence/ui-change/CAP-05.S01.T01.json"),
+            ("adoptionCommit", "short"),
+            ("reactivationCommit", "short"),
+            ("inheritedUiFiles", []),
+            ("inheritedUiCommits", []),
+            ("resumedUiFiles", []),
+            ("resumedUiCommits", []),
+            ("classification", {"path": "artifacts/evidence/W2.A02.T01.ui-classification-R01.json"}),
+        ):
+            with self.subTest(substituted=field):
+                invalid = copy.deepcopy(contract)
+                invalid["adoptedContinuationAuthority"][field] = value
+                self.assertTrue(list(validator.iter_errors(invalid)))
+        for field, value in (
+            ("schemaVersion", "1.0"),
+            ("schemaVersion", "1.1"),
+            ("schemaVersion", "1.2"),
+            ("taskId", "CAP-05.S01.T02"),
+            ("changeKind", "approved-reference-implementation"),
+        ):
+            with self.subTest(top_level=field, value=value):
+                self.assertTrue(list(validator.iter_errors({**contract, field: value})))
+        for field, value in (
+            ("referenceId", "RO-UI-ACADEMIC-MINIMAL-1.7"),
+            ("version", "1.7"),
+            ("previousReferenceId", "RO-UI-ACADEMIC-MINIMAL-1.6"),
+        ):
+            with self.subTest(reference=field):
+                invalid = copy.deepcopy(contract)
+                invalid["reference"][field] = value
+                self.assertTrue(list(validator.iter_errors(invalid)))
+        for extra in ("restorationClassification", "amendmentAuthority", "intentionalAmendmentAuthority"):
+            with self.subTest(extra=extra):
+                self.assertTrue(list(validator.iter_errors({**contract, extra: {}})))
+        for field in ("classification", "adoptedContinuationAuthority"):
+            with self.subTest(extra_nested=field):
+                invalid = copy.deepcopy(contract)
+                if field == "classification":
+                    invalid["adoptedContinuationAuthority"][field]["extra"] = True
+                else:
+                    invalid[field]["extra"] = True
+                self.assertTrue(list(validator.iter_errors(invalid)))
+
     def test_resumed_amendment_selects_original_base_without_a_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root, base, _package = self.prepare(temporary)
@@ -2835,6 +3498,234 @@ class UiChangeGateTests(unittest.TestCase):
                     policy,
                 ),
             )
+
+    def test_adopted_continuation_inventory_exception_is_one_historical_commit(self) -> None:
+        exact = "9727f1b195e7dee300e7f3df3c289e7739fb0fdc"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "real-history"
+            protected_config = Path(temporary) / "fixture-gitconfig"
+            protected_config.write_text(f"[safe]\n\tdirectory = {(REPO / '.git').as_posix()}\n", encoding="utf-8")
+            clone = subprocess.run(
+                ["git", "clone", "--quiet", "--shared", "--no-checkout", str(REPO), str(root)],
+                check=False,
+                capture_output=True,
+                text=True,
+                env={**os.environ, "GIT_CONFIG_GLOBAL": str(protected_config)},
+            )
+            self.assertEqual(0, clone.returncode, clone.stderr)
+            self.git(root, "config", "user.name", "UI Gate Test")
+            self.git(root, "config", "user.email", "ui-gate@example.invalid")
+            policy = json.loads((REPO / "ui-change-policy.json").read_text(encoding="utf-8"))
+            self.assertEqual([], ui_gate.adopted_continuation_quality_scope_errors(root, exact, policy))
+            # The legacy generic rule still rejects inventory mixed with UI work.
+            self.assertTrue(additive_preimplementation_quality_scope_errors(root, exact, policy))
+            parent = self.git(root, "rev-parse", f"{exact}^")
+            tree = self.git(root, "rev-parse", f"{exact}^{{tree}}")
+            lookalike = self.git(root, "commit-tree", tree, "-p", parent, "-m", "same tree, foreign commit")
+            self.assertNotEqual(exact, lookalike)
+            self.assertTrue(ui_gate.adopted_continuation_quality_scope_errors(root, lookalike, policy))
+            self.assertTrue(ui_gate.adopted_continuation_quality_scope_errors(root, parent, policy))
+
+    def test_adopted_continuation_automatic_base_uses_live_original_claim(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, adoption, _branch, backlog, _amendment = self.adopted_continuation_git_fixture(temporary)
+            reactivation = self.reactivate_adopted_continuation(root, adoption, backlog)
+            self.assertNotEqual("6506c68461144747b0ee9be10853211717aa381d", reactivation)
+            self.assertEqual("6506c68461144747b0ee9be10853211717aa381d", automatic_base(root, "HEAD"))
+
+    def test_adopted_continuation_a02_adoption_rejects_rewritten_independent_task_ledger(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, adoption, _branch, backlog, amendment = self.adopted_continuation_git_fixture(temporary)
+            packet = json.loads(
+                (root / "planning/enabler-change-requests/ECR-0010.packet.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                adoption, ui_gate.adopted_continuation_adoption(root, adoption, backlog, amendment, packet)
+            )
+            ledger_path = root / "artifacts/evidence/W2.A02.T01.review-R01.json"
+            ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+            ledger["result"] = "changes-requested"
+            self.write_json(ledger_path, ledger)
+            rewritten = self.commit(root, "synthetic adverse rewrite of independent A02 control review")
+            with self.assertRaisesRegex(ValueError, "review|ledger|immutable"):
+                ui_gate.adopted_continuation_adoption(root, rewritten, backlog, amendment, packet)
+
+    def test_adopted_continuation_short_base_cannot_hide_no_net_ui_or_reverted_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, adoption, _branch, backlog, _amendment = self.adopted_continuation_git_fixture(temporary)
+            reactivation = self.reactivate_adopted_continuation(root, adoption, backlog)
+            path = root / "apps/desktop/src/app/DocumentAttachmentPane.tsx"
+            original = path.read_bytes()
+            evidence = root / "artifacts/evidence/CAP-05.S01.T01.fixture-only.txt"
+            evidence.write_text("Test-only evidence delivery; no UI contract.\n", encoding="utf-8")
+            evidence_only = self.commit(root, "synthetic evidence-only T01 head")
+            self.assertFalse(validate(root, reactivation, evidence_only)["ok"])
+            with path.open("ab") as stream:
+                stream.write(b"\n// Synthetic intermediate governed UI edit.\n")
+            self.commit(root, "synthetic hidden UI edit")
+            path.write_bytes(original)
+            reverted = self.commit(root, "synthetic UI revert with no task contract")
+            self.assertFalse(validate(root, reactivation, reverted)["ok"])
+
+    def test_adopted_continuation_public_gate_authenticates_two_contracts_and_current_classification(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, head, contract, manifest, scope = self.classified_adopted_continuation_fixture(temporary)
+            self.assertEqual(
+                [
+                    "artifacts/evidence/ui-change/CAP-05.S01.T01.json",
+                    "artifacts/evidence/ui-change/W2.A01.T02.json",
+                ],
+                sorted(
+                    path
+                    for path in ui_gate.changed_paths(root, base, head)
+                    if path.startswith("artifacts/evidence/ui-change/")
+                ),
+            )
+            self.assertEqual("6506c68461144747b0ee9be10853211717aa381d", automatic_base(root, head))
+            self.assertEqual(["9727f1b195e7dee300e7f3df3c289e7739fb0fdc"], scope["resumedUiCommits"])
+            authority = contract["adoptedContinuationAuthority"]
+            resume = self.git(root, "rev-parse", f"{authority['reactivationCommit']}^")
+            self.assertEqual(authority["adoptionCommit"], self.git(root, "rev-parse", f"{resume}^"))
+            classification = json.loads(
+                (root / "artifacts/evidence/CAP-05.S01.T01.ui-classification-R01.json").read_text(encoding="utf-8")
+            )
+            for groundwork in (
+                "tests/fixtures/documents/v21-predecessor.zip",
+                "workers/document/inspection.py",
+                "tools/architecture_check.py",
+                "tools/core_sidecar_build.py",
+            ):
+                with self.subTest(groundwork=groundwork):
+                    self.assertIn(groundwork, scope["t01ProductPaths"])
+                    self.assertIn(groundwork, classification["dependentInputFiles"])
+                    self.assertEqual(
+                        self.git(root, "rev-parse", f"{classification['candidateCommit']}:{groundwork}"),
+                        classification["dependentInputGitBlobs"][groundwork],
+                    )
+            with (
+                patch("product_style_check.read_capture_bundle", return_value=manifest),
+                patch("desktop_app_check.qualification_capture_contract", return_value=[]),
+                patch("desktop_app_check.qualification_report_errors", return_value=[]),
+                patch("product_style_check.capture_producer_snapshot", return_value=manifest["producer"]),
+            ):
+                result = validate(root, base, head)
+            self.assertTrue(result["ok"], result["errors"])
+            self.assertEqual("CAP-05.S01.T01", contract["taskId"])
+
+    def test_adopted_continuation_classification_closes_dependent_git_inputs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, head, contract, manifest, scope = self.classified_adopted_continuation_fixture(temporary)
+            policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+            reference = contract["adoptedContinuationAuthority"]["classification"]
+            record_path = root / reference["path"]
+            original_record = json.loads(record_path.read_text(encoding="utf-8"))
+            dependent = "workers/document/inspection.py"
+            self.assertIn(dependent, original_record["dependentInputFiles"])
+
+            # Exercise the actual confined capture reader once. This fixture's
+            # manifest deliberately has no PNG inventory and must fail closed.
+            with self.assertRaisesRegex(ValueError, "invalid capture manifest fields"):
+                ui_gate.adopted_continuation_classification_errors(root, base, head, contract, scope, policy)
+
+            original = (root / dependent).read_bytes()
+            (root / dependent).write_bytes(original + b"\n# unreviewed post-classification touch\n")
+            self.commit(root, "synthetic dependent input touched after classification")
+            (root / dependent).write_bytes(original)
+            reverted = self.commit(root, "synthetic dependent input reverted after classification")
+            with (
+                patch("product_style_check.read_capture_bundle", return_value=manifest),
+                patch("desktop_app_check.qualification_capture_contract", return_value=[]),
+                patch("desktop_app_check.qualification_report_errors", return_value=[]),
+                patch("product_style_check.capture_producer_snapshot", return_value=manifest["producer"]),
+            ):
+                errors = ui_gate.adopted_continuation_classification_errors(
+                    root, base, reverted, contract, scope, policy
+                )
+            self.assertTrue(any("stale after a product/reference change" in error for error in errors), errors)
+
+            parent = self.git(root, "rev-parse", f"{reference['commit']}^")
+            for case in ("omitted dependent file", "wrong dependent Git blob"):
+                with self.subTest(case=case):
+                    self.git(root, "reset", "--hard", parent)
+                    revised = copy.deepcopy(original_record)
+                    if case == "omitted dependent file":
+                        revised["dependentInputFiles"].remove(dependent)
+                        del revised["dependentInputGitBlobs"][dependent]
+                        expected = "omits or adds dependent T01 product inputs"
+                    else:
+                        revised["dependentInputGitBlobs"][dependent] = "0" * 40
+                        expected = "dependent product input changed after classification"
+                    self.write_json(record_path, revised)
+                    introduction = self.commit(root, f"synthetic classification with {case}")
+                    bad_contract = copy.deepcopy(contract)
+                    bad_contract["adoptedContinuationAuthority"]["classification"] = {
+                        "path": reference["path"],
+                        "sha256": hashlib.sha256(record_path.read_bytes()).hexdigest(),
+                        "commit": introduction,
+                    }
+                    self.write_json(root / "artifacts/evidence/ui-change/CAP-05.S01.T01.json", bad_contract)
+                    bad_head = self.commit(root, f"synthetic current contract citing {case}")
+                    with (
+                        patch("product_style_check.read_capture_bundle", return_value=manifest),
+                        patch("desktop_app_check.qualification_capture_contract", return_value=[]),
+                        patch("desktop_app_check.qualification_report_errors", return_value=[]),
+                        patch("product_style_check.capture_producer_snapshot", return_value=manifest["producer"]),
+                    ):
+                        errors = ui_gate.adopted_continuation_classification_errors(
+                            root, base, bad_head, bad_contract, scope, policy
+                        )
+                    self.assertTrue(any(expected in error for error in errors), errors)
+
+            self.git(root, "reset", "--hard", head)
+            self.write_json(root / "artifacts/evidence/ui-change/FOREIGN.json", {"taskId": "FOREIGN"})
+            foreign = self.commit(root, "synthetic unapproved extra UI contract")
+            result = validate(root, base, foreign)
+            self.assertTrue(any("exactly inherited T02 and current T01" in error for error in result["errors"]), result)
+
+            self.git(root, "reset", "--hard", head)
+            with self.assertRaisesRegex(ValueError, "selector/head/base"):
+                ui_gate.adopted_continuation_live_claim(
+                    root, contract["adoptedContinuationAuthority"]["reactivationCommit"], head, contract, policy
+                )
+            self.git(root, "switch", "-c", "codex/foreign-fixture")
+            with self.assertRaisesRegex(ValueError, "sole active W2/T01 claim"):
+                ui_gate.adopted_continuation_live_claim(root, base, head, contract, policy)
+            self.git(root, "switch", "codex/w2-implementation")
+
+            backlog_path = root / "planning/backlog.yaml"
+            backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            task = next(
+                task
+                for capability in backlog["capabilities"]
+                for slice_ in capability["slices"]
+                for task in slice_["tasks"]
+                if task["id"] == "CAP-05.S01.T01"
+            )
+            task["lease"]["claimed_by"] = "foreign-owner"
+            self.write_yaml(backlog_path, backlog)
+            foreign_lease = self.commit(root, "synthetic foreign original T01 lease")
+            with self.assertRaisesRegex(ValueError, "lease is stale or foreign"):
+                ui_gate.adopted_continuation_live_claim(root, base, foreign_lease, contract, policy)
+
+            self.git(root, "reset", "--hard", head)
+            backlog = yaml.safe_load(backlog_path.read_text(encoding="utf-8"))
+            wave = next(item for item in backlog["waves"] if item["id"] == "W2")
+            wave["campaign"]["resume_records"].pop()
+            self.write_yaml(backlog_path, backlog)
+            forged_resume = self.commit(root, "synthetic active W2 projection without its resume record")
+            with self.assertRaisesRegex(ValueError, "W2 resume history is invalid"):
+                automatic_base(root, forged_resume)
+
+    def test_adopted_continuation_rejects_unreviewed_imported_authority_source(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, base, _head, contract, _manifest, _scope = self.classified_adopted_continuation_fixture(temporary)
+            path = root / "tools/taskctl.py"
+            with path.open("a", encoding="utf-8", newline="\n") as stream:
+                stream.write("\n# Synthetic unreviewed post-classification authority edit.\n")
+            attack = self.commit(root, "synthetic unreviewed taskctl authority edit")
+            policy = json.loads((root / "ui-change-policy.json").read_text(encoding="utf-8"))
+            with self.assertRaisesRegex(ValueError, "imported authority code changed without exact approval"):
+                ui_gate.adopted_continuation_authority(root, base, attack, contract, policy)
 
     def test_late_inventory_rejects_control_or_nonadditive_or_noncanonical_changes(self) -> None:
         cases = (
