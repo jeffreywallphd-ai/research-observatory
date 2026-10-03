@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "amendment-contribution-independent-review",
+  "sliceId": "W2.A01.S01",
+  "amendmentId": "W2.A01",
+  "capabilityId": "CAP-05",
+  "title": "Selected-version attachment experience authority",
+  "reviewer": "agent:/root/t02_site_mismatch_diagnose",
+  "result": "approved",
+  "reviewedCompletionDeliveryCommit": "f306579cd802ae22576db35a735101a4d92c1215",
+  "reviewedControlCheckpointCommit": "ab2c868eea54b00dc1e9e71c6cd2f2d9a0e5b9c1",
+  "bindingCheckedAt": "2026-10-03T00:53:35Z",
+  "notes": "Independent accumulated W2.A01.S01 review approves the four immutable ECR-0009 contribution criteria at the exact two-task DONE delivery, with the later separately reviewed active-branch UI gate control checkpoint. T01 and T02 each retain their adverse R01 round and independently approved R02 closure. A fresh mounted disposable-Core/synthetic-native journey and current backlog/ECR validation pass; the product and governed reference are unchanged since the T02 candidate. The original whole task-base UI gate pass remains bound to frozen candidate 988ee478 and the byte-identical reviewed checker. Later current-HEAD and branch denials remain adverse and are not relabeled as passing runs. This disposition is a contribution review, not amendment exit, adoption, ordinary W2 resume, native/Core file admission, protected reader qualification, W2 exit or release approval.",
+  "independence": {
+    "implementationOwner": "codex-w2-implementation",
+    "statement": "The reviewer did not author W2.A01.T01/T02 product, reference, gate or task evidence, did not own the amendment campaign, and did not record either task disposition. Earlier read-only planning-site diagnosis and a separate quality-inventory control review did not implement this contribution. This review independently binds task history and replays the affected mounted integration boundary."
+  },
+  "authority": {
+    "approvedPacketCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+    "packetPath": "planning/enabler-change-requests/ECR-0009.packet.json",
+    "packetRawSha256": "9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2",
+    "amendmentApprovalPath": "planning/wave-amendment-approvals/W2.A01.json",
+    "amendmentApprovalRawSha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+    "amendmentApprovalIntroductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287",
+    "sliceDefinitionCanonicalSha256": "310d08b22f5ac53fb6091103dee6a57952804c16b84019a94eb7d64248ef63a0",
+    "sliceCriteriaCanonicalSha256": "b8e5dbd911b032c4f754065bf65236d4f7bbbb42dc2badb1fcf34499a5f935a2",
+    "reference": {
+      "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+      "previousReferenceId": "RO-UI-ACADEMIC-MINIMAL-1.7",
+      "approvalRecordPath": "planning/reference-approvals/RO-UI-ACADEMIC-MINIMAL-1.8.json",
+      "approvalRecordRawSha256": "1f1d39020a770adf5fd3df1ba3717bfd31a4798b6e39d8e4eb5f76ce44315105",
+      "approvedBy": "human:repository-owner",
+      "proposalCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+      "proposalPackageSha256": "19fbd0f9250e4994b561913beacb0aecbea07478e53981272b7866682a778b7e",
+      "publicationCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+      "publishedPackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
+    },
+    "controlReview": {
+      "path": "artifacts/evidence/W2.A01.T02.ui-gate-active-maintenance.review-01.json",
+      "rawSha256": "7b56f3896962b53d14f9e28b32ec0bc483c55ff6b09e2de655f784396af20398",
+      "candidateCommit": "fff7a04b20ad571c40c81a524b1eec447d206e9f",
+      "introductionCommit": "ab2c868eea54b00dc1e9e71c6cd2f2d9a0e5b9c1",
+      "result": "approved",
+      "activeGateGitBlob": "5008f005cf6e9a3eb3cc7decc021a75df53aa264",
+      "externalReviewedGateCommit": "38dd61f302000317f9fd84151afeba3365cb528f"
+    }
+  },
+  "taskBindings": [
+    {
+      "taskId": "W2.A01.T01",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/verifier_repair_review",
+      "attemptId": "R02",
+      "candidateCommit": "a2e16012cfa9eb9a0f3413438fa0a88583d0be50",
+      "submissionPacketSha256": "ccf45f6499f9d474c7d490465bb55c2ad61e095047fe1b533590199b06192a57",
+      "manifestPath": "artifacts/evidence/W2.A01.T01-R02.json",
+      "manifestRawSha256": "6dae87844fb671678a01241151595100a6a61a43a986893a03e5f244feeb2f33",
+      "reviewLedgerPath": "artifacts/evidence/W2.A01.T01.review-R02.json",
+      "reviewLedgerRawSha256": "7b6ad12d4b0a7bb482c41a8df2986a30966bf04678c0cd63b18853616f346c1f",
+      "doneTaskRecordCanonicalSha256": "0130d71f015c99c31f81118ff2ca7342b124d0f42936315fb5abfb804ca5692e",
+      "retainedAdverseAttempt": "R01",
+      "closedFindingIds": ["W2.A01.T01-R01-F01"],
+      "openFindings": []
+    },
+    {
+      "taskId": "W2.A01.T02",
+      "status": "DONE",
+      "reviewResult": "approved",
+      "reviewer": "agent:/root/t02_gate_maintenance_review",
+      "attemptId": "R02",
+      "candidateCommit": "988ee4789f2004cce83187f971760d5b5f3e02ca",
+      "submissionPacketSha256": "2c32f27323835dc3b780f58ecbc0b7ca93a9fd8788a7d340f07a2708589f0f1a",
+      "manifestPath": "artifacts/evidence/W2.A01.T02-R02.json",
+      "manifestRawSha256": "177f4b42f495f1e26661eab83164b9eeb1a57df5fb02354fd7aeb0265f818d98",
+      "reviewLedgerPath": "artifacts/evidence/W2.A01.T02.review-R02.json",
+      "reviewLedgerRawSha256": "e56190d1c45e41d0f07d47b46030131b2b873bdb7f4b9cbed7916784cf79eec6",
+      "doneTaskRecordCanonicalSha256": "3a9dabb33cd0f6c70d7842792941f98fad8722d8c80c87c2c93630717ca39a04",
+      "retainedAdverseAttempt": "R01",
+      "closedFindingIds": ["W2.A01.T02-R01-F01", "W2.A01.T02-R01-F02"],
+      "openFindings": []
+    }
+  ],
+  "criterionDispositions": [
+    {
+      "criterionIndex": 1,
+      "criterion": "The gate extension and a new indexed Proposed ADR-0035 companion are independently reviewed and committed together before the UI delivery task; only exact approved W2.A01.T02 may use the intentional amendment lane, with existing 1.0/1.1 denials preserved.",
+      "result": "satisfied",
+      "basis": "T01 R02 is independently approved with the indexed Proposed ADR-0035, bounded 1.2 route, prior 1.0/1.1 denials and adverse R01 closure. The approved control candidate a2e16012 precedes the distinct 1.8 publication and every renderer source commit. Later canonical evidence-path and generated-page control repairs received separate independent review at ab2c868e; they changed no product or authority scope."
+    },
+    {
+      "criterionIndex": 2,
+      "criterion": "The approved 1.8 reference is published from the exact reviewed proposal with only permitted approval metadata substitutions and derived hashes; publication strictly precedes every renderer implementation commit.",
+      "result": "satisfied",
+      "basis": "The ECR-0009 packet and W2.A01/1.8 human approvals bind the immutable proposal. The whole-base gate result at frozen 988ee478 reports 55 reference files, the exact 1.8 package digest, publication acdc67b6 and renderer commits strictly later; the current approval record, active reference bytes and approved package are unchanged since that candidate. Planctl validates ECR-0009 as approved and history-bound."
+    },
+    {
+      "criterionIndex": 3,
+      "criterion": "Mounted renderer tests cover selected Work/version, opaque choose/drop intents, uncertain association, rights/status, cancel/retry/errors, exact-revision status/route handoff, pending reader state and keyboard/focus return with typed mock outcomes and fail-closed unavailable production actions. Real native/Core attachment and drop-path safety proof remain with resumed CAP-05.S01.T01; protected viewer opening remains CAP-05.S04.",
+      "result": "satisfied-with-declared-boundary",
+      "basis": "A fresh 35.132-second mounted disposable-Core/synthetic-native run at ab2c868e passes selected Work/version, two-Work ambiguity, stale revision, native choose/drop intent, unsafe/password/oversize/rights-denied states, cancel/Escape and focus return, exact operation/command retry, Task Center handoff, delayed authoritative denial/failure announcement, lock/reopen and pending reader. Opaque command/event identities are fixed; source inspection finds no renderer file/path/drop-channel shortcut. Production actions report native unavailable. This proof does not assert real native file acquisition, Core attachment persistence or protected viewer opening."
+    },
+    {
+      "criterionIndex": 4,
+      "criterion": "Expanded task/slice/exit review binds exact committed evidence and leaves ordinary CAP-05.S01.T01 and W2 release criteria separate.",
+      "result": "satisfied-at-contribution-review-boundary",
+      "basis": "Both tasks are DONE with exact independently approved R02 evidence/review bindings, closed R01 findings and cleared leases at delivery f306579c. This distinct slice review binds their accumulated result and the separately approved control checkpoint ab2c868e. Independent amendment-exit review, separate adoption and ordinary W2 resumption are later transitions; this document does not perform or approve them. Original CAP-05.S01.T01 and full W2 release criteria remain unchanged."
+    }
+  ],
+  "checksPerformedForThisContributionReview": [
+    {
+      "check": "Mounted selected-version attachment journey",
+      "command": ".venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_attachment_interactions",
+      "result": "passed",
+      "observation": "One mounted disposable-Core/synthetic-native integration test passed in 35.132 seconds at clean ab2c868e. The test exercised success, failure, denial, cancellation, retry, lock/reopen, exact-revision return and live status/focus."
+    },
+    {
+      "check": "Canonical task and amendment state",
+      "command": ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "result": "passed",
+      "observation": "Valid backlog: 20 capabilities, 117 slices, 387 tasks and 12 release gates; both W2.A01 tasks project DONE/approved with no current submission or task lease and all R01 findings closed in R02."
+    },
+    {
+      "check": "Approved ECR authority",
+      "command": ".venv/Scripts/python.exe -B tools/planctl.py --repo . ecr validate ECR-0009 --require-approved",
+      "result": "passed",
+      "observation": "ECR-0009 is approved and history-bound at the review checkpoint. The packet, approval, proposal and governed-reference history remain intact."
+    },
+    {
+      "check": "Git and evidence binding",
+      "command": "Read-only Git ancestry, f306579c backlog blob and 988ee478..ab2c868e affected-source comparison; SHA-256 of packet, approvals, R02 ledgers and selected raw logs",
+      "result": "passed",
+      "observation": "T01 approval precedes 1.8 publication; publication precedes all renderer commits; f306579c is the approved two-task DONE delivery. Its backlog blob is unchanged at ab2c868e. No app, governed reference, Core or document-worker source changed from 988ee478 to ab2c868e. The referenced T01/T02 evidence and review ledgers, control review and candidate-bound UI gate log reproduce their recorded hashes."
+    }
+  ],
+  "reusedEvidence": [
+    {
+      "source": "artifacts/evidence/W2.A01.T01.review-R02.json",
+      "boundary": "Independent R02 gate/ADR task disposition, 17-case schema/Git-history adversarial suite, exact T01 UI/ADR checks and retained R01 adverse finding. These are source-bound prior executions, not newly run slice checks."
+    },
+    {
+      "source": "artifacts/evidence/W2.A01.T02.review-R02.json",
+      "boundary": "Independent exact-candidate R02 product review, mounted real-Core/synthetic-native replay, focused Vitest/type/build/lint, exact command and focus review, and explicit R01 F01/F02 closures. Earlier executions retain their original candidate and modality."
+    },
+    {
+      "source": "artifacts/tmp/W2.A01.T02.R02.ui-gate-988ee478.log",
+      "rawSha256": "d60715bf172c4aea25ca3b006c03f1b7e93531a80e7a03996f49ad63a9b3217a",
+      "boundary": "The complete task-base UI gate passed only for frozen current-head product candidate 988ee478 using the separately reviewed 38dd61f3 checker; its Git blob is identical to the active checker at ab2c868e. The gate's later current-HEAD and branch denials are preserved, so no fresh ab2c868e whole-base pass is claimed."
+    },
+    {
+      "source": "artifacts/evidence/W2.A01.T02.ui-gate-active-maintenance.review-01.json",
+      "boundary": "Independent approval of the linear active-branch control repair and corrected historical fixture, including 8/8 focused real-Git/lineage tests. The prior 98/99 broad-suite result is retained as adverse, not reported as a passing full suite."
+    }
+  ],
+  "findings": [],
+  "openFindingIds": [],
+  "retainedObligations": [
+    "Original CAP-05.S01.T01 must wire fixed-action native-only picker/drop, true Core admission/persistence, file safety, rights, provenance, denial, cancellation, interruption, retry and restart before W2 release. The synthetic native adapter in this slice supplies none of that real-boundary proof.",
+    "CAP-05.S04 still owns protected reader transport/opening. This slice leaves the reader action disabled or pending and binds only exact-revision status/route and return context.",
+    "The foundation:quality inventory and existing CAP-05 formatting/type failures remain unresolved W2 work; the prior failed log at artifacts/tmp/W2.A01.T01.quality-da2b026d.log (SHA-256 409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44) remains adverse. No global quality pass is claimed.",
+    "The active control review preserves the 98/99 full UI gate suite result and later current-HEAD/branch denials. The corrected focused fixture and eight-case lineage suite pass; broader fresh profile coverage remains for the next affected stage or Wave qualification when required.",
+    "W2.A01 independent amendment-exit review, separate adoption checkpoint and explicit ordinary W2 resume remain mandatory. Full W2 cross-capability security, privacy, rights, accessibility, performance, packaging, Windows x64 and recovery checks, independent Wave review and human release gate are not completed by this contribution review."
+  ],
+  "reviewerSafety": {
+    "productOrControlMutation": false,
+    "backlogOrSiteMutation": false,
+    "remoteEffect": false,
+    "canonicalFilesAuthored": ["artifacts/evidence/W2.A01.S01.review-01.json"]
+  }
+}
