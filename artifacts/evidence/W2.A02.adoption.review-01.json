@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-adoption-security-independent-review",
+  "amendmentId": "W2.A02",
+  "targetWave": "W2",
+  "reviewer": "agent:/root/w2a02_exit_preflight",
+  "result": "approved",
+  "reviewedAt": "2026-10-03T14:39:25Z",
+  "reviewedManifest": {
+    "path": "artifacts/evidence/W2.A02.adoption.json",
+    "introductionCommit": "7730a060ce0e92184c56f7d7f291652c3a35003d",
+    "gitBlob": "8de6686e3bc9fbc204ffdd962968474fca5c8b4b",
+    "sha256": "ff767dcbc6aab20106500d827865b0892852416c6dedf55e05e43d0fec44aaa5"
+  },
+  "approvedExit": {
+    "attemptId": "R01",
+    "reviewedCompletionCommit": "b4e319252341139aa8b9977976e0d1f694a45326",
+    "reviewedSubmissionCommit": "392b71b1848aded2b8b7c6fc6ae49f96db74bf04",
+    "exitEvidence": {
+      "path": "artifacts/evidence/W2.A02.exit.json",
+      "sha256": "bda866f0e80b490909ac0e9f79880ec1340fa35b56cc81572ca590085a17d5a7",
+      "introductionCommit": "bfafa6b89c8dd64b5133ae9ab659ba58d235f30e"
+    },
+    "exitReview": {
+      "path": "artifacts/evidence/W2.A02.exit-review-R01.json",
+      "sha256": "428526f9e634885899485b8d03d8f849c144aef9cf6f7568a525525de0e368aa",
+      "introductionCommit": "b4e319252341139aa8b9977976e0d1f694a45326",
+      "result": "approved",
+      "openFindings": []
+    }
+  },
+  "independence": {
+    "campaignOwner": "codex-w2-implementation",
+    "statement": "This reviewer did not author ECR-0010, W2.A02.B00, W2.A02.T01 source or evidence, W2.A02.S01 review, amendment exit evidence or review, or the proposed adoption manifest. Earlier read-only exit/adoption preflight changed no amendment authority. This separate ledger is the only W2.A02 artifact authored by this reviewer."
+  },
+  "securityControlDisposition": {
+    "scope": "Approve the exact committed pre-adoption security checkpoint evidence for the reviewed W2.A02 UI authority continuation only. No product, filesystem permission, native/Core qualification, ordinary task completion, Wave release or human gate decision is conferred by this review.",
+    "authority": "The manifest's ECR-0010 packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43 matches the Git blob at approved candidate 60e8a2d3. Its owner-approval SHA-256 d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79 matches introduction 5fbeea66. B00, W2.A02.T01 R01, W2.A02.S01 and the four-criterion exit R01 have distinct committed independent approvals with no open findings. The checkpoint proposes only indexed Proposed ADR-0037 and the reviewed opt-in UI gate/schema v1.3 route for the original CAP-05.S01.T01.",
+    "reference": "Academic Minimal 1.8 remains the human-approved reference. The design/ui-reference Git tree is f8ee7488c28f3ddd3638be25cc03b37ba89b64f5 at both publication acdc67b6 and proposed checkpoint 7730a060. The manifest retains the published package SHA-256 cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94 and does not claim a 1.9 reference or changed researcher interaction.",
+    "sourceAndGrants": "The W2.A02.T01 base-to-source-candidate diff contains exactly the six ECR-0010 control-source files and five taskctl/generated planning outputs. From source candidate f989ba75 through proposed checkpoint 7730a060, no app, package, service, governed reference, UI schema/gate/test or verification source changed. The approved-exit-state-to-checkpoint diff contains only the adoption manifest. No renderer file/path channel, stock Tauri drop-path event, native/Core source or broad filesystem grant is added by this checkpoint.",
+    "originalTask": "At ECR packet candidate 60e8a2d3, approved exit b4e31925 and proposed checkpoint 7730a060, CAP-05.S01.T01 is BLOCKED with the same base 6506c68461144747b0ee9be10853211717aa381d and no lease. W2 remains PAUSED in amendment-hold scope until supported adoption; ordinary Wave resume and task reopen are separate transitions."
+  },
+  "independentChecks": [
+    {
+      "check": "Exact manifest and approved exit binding",
+      "result": "passed",
+      "observation": "The committed 7730a060 adoption Git blob and line-ending-canonical physical file have SHA-256 ff767dcbc6aab20106500d827865b0892852416c6dedf55e05e43d0fec44aaa5. The manifest names b4e31925 for both candidateCommit and reviewedCompletionCommit, exact approved R01 evidence/ledger bindings and codex/w2-implementation. Read-only taskctl.amendment_adoption_reference_errors returned no errors. The B00 evidence/review, exit evidence/review, contribution review, task evidence/review, packet and approval hashes were independently recomputed from their introducing Git commits and match their stated bindings."
+    },
+    {
+      "check": "Committed state, history and source boundary",
+      "result": "passed",
+      "observation": "At clean 7730a060, W2.A02 lifecycle is REVIEW, campaign COMPLETE and completion APPROVED with immutable R01 result approved and empty findings/closures; W2 is PAUSED/amendment-hold, has no ordinary lease, and its latest adoption checkpoint remains W2.CP02 for W2.A01. The b4e31925 and 7730a060 backlog Git blobs are identical. The approved 1.8 reference Git tree matches publication, and Git diff --check for b4e31925..7730a060 passed."
+    }
+  ],
+  "retainedObligations": [
+    "The pre-fix six-source bypass remains an adverse real-Git result; the focused repaired denial and 13-case authority suite belong to the reviewed f989ba75 task candidate. This checkpoint does not convert them into current-product qualification.",
+    "CAP-05.S01.T01 must still provide independent current-product/approved-1.8 classification, a current v1.3 contract and capture/dependent-input closure, and a complete UI gate from the immutable original 6506 base on its own committed candidate.",
+    "CAP-05.S01.T01 must prove real Windows native-only picker/drop and signed LPAC/Core acquisition, rights, provenance, denial, cancellation, interruption and restart. The intermittent fifth-D3D pre-show startup denial remains open; prior four-child successes do not close it.",
+    "Remaining W2 slices/checkpoints, full affected/repository/profile Windows x64 qualification, independent Wave review and the separate human release gate remain outstanding."
+  ],
+  "findings": [],
+  "closures": [],
+  "transitionTruth": "This is an independent pre-adoption security/control approval of the exact 7730a060 manifest. It does not assert that taskctl amendment adopt ran, that a new security checkpoint exists, that W2 resumed, that CAP-05.S01.T01 reopened, or that W2 release was approved. Adoption remains conditional on committing this ledger without changing the reviewed manifest or authority inputs and using the supported taskctl transition from a clean state."
+}
