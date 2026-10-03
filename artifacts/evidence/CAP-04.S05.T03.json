@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "CAP-04.S05.T03",
+  "baseCommit": "2283e37e43cb56f8330b060b4c7d4b4f0f19489b",
+  "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/CAP-04.S05.T03.task-start.md",
+    "docs/adr/ADR-0038-bind-sample-connector-page-and-port-to-existing-plugin-authority.md",
+    "docs/adr/index.json",
+    "docs/architecture/connector-contracts.md",
+    "docs/developer/connector-sdk.md",
+    "docs/developer/sample_repository/fixtures/repository-metadata.case.json",
+    "docs/developer/sample_repository/fixtures/search-page-1.case.json",
+    "docs/developer/sample_repository/fixtures/search-page-2.case.json",
+    "docs/developer/sample_repository/manifest.json",
+    "docs/developer/sample_repository/plugin/__init__.py",
+    "docs/developer/sample_repository/plugin/connector.py",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/connectors/connector-plugin-worker-page.schema.json",
+    "packaging/build-inputs.json",
+    "planning/backlog.yaml",
+    "planning/review-site/CAP-04/CAP-04.S05.T03.html",
+    "planning/review-site/CAP-04/CAP-04.S05.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "quality-scope.json",
+    "services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py",
+    "services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py",
+    "services/core-api/src/research_observatory_core/plugin_job_repository.py",
+    "services/core-api/src/research_observatory_core/plugin_worker.py",
+    "services/core-api/src/research_observatory_core/ports/plugin_jobs.py",
+    "tests/connectors/test_plugin_dispatch.py",
+    "tests/connectors/test_plugin_job_repository.py",
+    "tests/connectors/test_plugin_sample_conformance.py",
+    "tests/connectors/test_plugin_sample_native_lpac.py",
+    "tests/connectors/test_plugin_scientific_request.py",
+    "tests/connectors/test_plugin_worker_api.py",
+    "tests/connectors/test_plugin_worker_submission.py",
+    "tests/contracts/test_plugin_worker_contract.py",
+    "tools/connector_conformance.py",
+    "tools/core_api_contract.py",
+    "workers/windows/plugin_worker.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The documented synthetic repository manifest, source, three fixtures, worker-page schema and exact CLI command give a third-party developer a complete local example. The sample-cli check passes three cases; sample-conformance tests in the focused-connector check identify stable codes and JSON pointers for malformed packages, outputs, cursors and rights fields without echoing supplied content.",
+        "The focused-connector check covers the fixed three-argument worker entry point and additive keyword-only invocation context, public page schema aliases, closed scientific input, and signed sample behavior. The native-sample check executes two sample pages inside a locally test-signed real Windows LPAC worker; a malformed broker response fails closed. Static conformance alone is not used as proof of runtime isolation or current authorization."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The focused-connector check passes the expected two-page repository search and metadata paths, Core-observed per-page broker response, same-authority cursor and committed-predecessor restrictions, source-reported terms, true/false/unknown redaction provenance, publication and reopen. It also exercises changed project/package/query, unobserved cursor, malformed/extra/null scientific fields, broker errors, cancellation, restart and replay denial or recovery.",
+        "The native-sample check passes two real Windows x64 LPAC worker tests, including a malformed broker page that does not echo content. A synthetic local provider and local test-signing are used; this does not claim a live institutional repository, production signature, or external network qualification."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The exact base-to-candidate diff adds the sample and guide, public worker-page schema, Core-owned scientific parser and job/provenance changes, staged-page and native worker compatibility, synthetic fixtures and regressions. No storage migration is needed for the additive page metadata: historical redaction state reopens as unknown and new publications require an observed boolean. Accepted ADR-0027/0028 still govern authority; indexed Proposed ADR-0038 only binds three protected paths to those decisions.",
+        "The focused-connector, native-sample, packaging, generated Core API contract, architecture, ADR, build-manifest, affected Ruff/format/mypy and backlog checks pass on the same clean commit. The preexisting repository-wide quality inventory omission and stale completed-T02 grant-migration fixture are preserved as adverse evidence with separate bounded repair routes; neither is represented as a T03 pass or as W2 qualification."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "search:connectors",
+      "contracts:unit",
+      "packaging:unit",
+      "foundation:build-manifest",
+      "foundation:architecture",
+      "foundation:adr",
+      "foundation:quality",
+      "foundation:backlog"
+    ],
+    "riskAnalysis": "T03 changes a public connector/page contract and Core/worker cross-process publication boundary. Select exact-candidate focused happy, denial, cancellation, restart and conformance regressions; real locally signed LPAC sample execution; directly affected packaging, schema, architecture, ADR, build-input, static quality and backlog checks. The first pre-review found four content/provenance/contract defects; red-first regressions and remediation are recorded in the task-start note and replayed by independent review. Full foundation quality was attempted but fails on a preexisting CAP-05.S01.T01 inventory omission; selected affected Ruff/format/mypy pass. The broader grant-migration run finds a stale completed-T02 test fixture; no migration qualification is claimed. Full profile and cross-capability runs belong to S05 integration/checkpoint and W2 exit, after those separate repairs.",
+    "deferred": [
+      "Full foundation quality is currently red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is the bounded control-repair route. Affected T03 Ruff, format and mypy pass, but the full quality check is not represented as passing.",
+      "The expanded connector suite's two grant-migration failures are a stale completed-T02 v20 fixture after v22/v23 DDL additions. A linked correction is required before S05/W2 migration qualification; no production migration defect was demonstrated by the isolated audit.",
+      "S05 integrated slice/checkpoint and W2 exit retain the complete affected/full profiles, cross-capability denial/restart/recovery, desktop accessibility, packaging, performance and security matrix. Live provider, production code signing and external network behavior are not established by synthetic local tests."
+    ]
+  },
+  "reviewerDisposition": {
+    "openFindingIds": []
+  },
+  "checks": [
+    {
+      "id": "focused-connector",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.focused-verbose-9a22c5fe.log",
+      "rawOutputSha256": "fadede0d2e5cb16985129775dbf665b87c76d96abd8caa75dd1f675f59060fbf",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Focused connector, worker, repository and public contract tests passed; exact count is in verbose output."
+    },
+    {
+      "id": "native-sample",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_native_lpac",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.native-sample-9a22c5fe.log",
+      "rawOutputSha256": "9426fbca7de3997e98ab78c89a18b35244cf8a1239af93bfd55f70ff0ef1cf82",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh unsandboxed local Windows x64 execution on the exact clean commit; the ignored signed worker bundle and frozen Core/guardian were verified by inventory/signature and exercised by the tests. Test signing only.",
+      "result": "Two locally test-signed real Windows x64 LPAC sample tests passed in 11.104 seconds."
+    },
+    {
+      "id": "packaging",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.packaging.test_core_sidecar_package",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.packaging-9a22c5fe.log",
+      "rawOutputSha256": "11f5d10f9efc9c6ed18c6bcc839bfe9a3c82727e3ebaba49ac571cfa02670809",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Six Core sidecar packaging tests passed; one environment-dependent test skipped."
+    },
+    {
+      "id": "build-manifest",
+      "command": ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.build-9a22c5fe.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.build-9a22c5fe.log",
+      "rawOutputSha256": "cd4d2bf33dc272bf08ff1ef8bb2fc6953f231feb3c096b19343bde94b8824b1f",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Clean 0.1.0+g9a22c5f build manifest passed with the new page schema inventoried."
+    },
+    {
+      "id": "adr",
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 2283e37e43cb56f8330b060b4c7d4b4f0f19489b --head HEAD",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.adr-9a22c5fe.log",
+      "rawOutputSha256": "84ee84cd42921e0b896020fc01f9725c2707025b230b553758ae9e405c48fccc",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "ADR registry passed: 38 indexed records and 37 changed paths inspected."
+    },
+    {
+      "id": "architecture",
+      "command": ".venv\\Scripts\\python.exe tools/architecture_check.py --repo .",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.architecture-9a22c5fe.log",
+      "rawOutputSha256": "51a256bf6a7b2e89ab1d1b97aa19077aabf0e8858a450de1f5ceb155ed5c3e88",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Architecture contract passed."
+    },
+    {
+      "id": "core-api-contract",
+      "command": ".venv\\Scripts\\python.exe tools/core_api_contract.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.contract-9a22c5fe.log",
+      "rawOutputSha256": "d0de6df4695ae12810b382025f30caee94c9e9bc81887720850df6345026980f",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Generated Core API contract passed without drift."
+    },
+    {
+      "id": "ruff",
+      "command": ".venv\\Scripts\\python.exe -m ruff check docs/developer/sample_repository/plugin tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py services/core-api/src/research_observatory_core/plugin_job_repository.py services/core-api/src/research_observatory_core/plugin_worker.py services/core-api/src/research_observatory_core/ports/plugin_jobs.py workers/windows/plugin_worker.py tests/connectors/test_plugin_sample_conformance.py tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.ruff-9a22c5fe.log",
+      "rawOutputSha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Affected Ruff lint passed."
+    },
+    {
+      "id": "format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check docs/developer/sample_repository/plugin tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_dispatch.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py services/core-api/src/research_observatory_core/plugin_job_repository.py services/core-api/src/research_observatory_core/plugin_worker.py services/core-api/src/research_observatory_core/ports/plugin_jobs.py workers/windows/plugin_worker.py tests/connectors/test_plugin_sample_conformance.py tests/connectors/test_plugin_sample_native_lpac.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.format-9a22c5fe.log",
+      "rawOutputSha256": "adcd6fb65e52993c562b582cb65cda0104a0be0c45abff78db13c7f5591bb9e3",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Affected Ruff format passed."
+    },
+    {
+      "id": "mypy",
+      "command": ".venv\\Scripts\\python.exe -m mypy tools/connector_conformance.py services/core-api/src/research_observatory_core/connectors/plugin_scientific_request.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.mypy-9a22c5fe.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Affected mypy type check passed."
+    },
+    {
+      "id": "sample-cli",
+      "command": ".venv\\Scripts\\python.exe tools/connector_conformance.py --manifest docs/developer/sample_repository/manifest.json --case docs/developer/sample_repository/fixtures/repository-metadata.case.json --case docs/developer/sample_repository/fixtures/search-page-1.case.json --case docs/developer/sample_repository/fixtures/search-page-2.case.json",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.sample-cli-9a22c5fe.log",
+      "rawOutputSha256": "3c2954fdebcc336a6e6d5af46ac2597d50b875de04193b2809b02e45dc1e53e4",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Static synthetic sample conformance passed three cases."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/CAP-04.S05.T03.taskctl-9a22c5fe.log",
+      "rawOutputSha256": "a2f9b2323fc2cbf2161f47e0637bdf7748398cf3e45a581670e4104f96163300",
+      "commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+      "provenance": "Fresh local execution on the clean committed Windows x64 candidate.",
+      "result": "Backlog validation passed: 20 capabilities, 117 slices, 388 tasks and 12 gates."
+    }
+  ],
+  "buildReport": {
+    "path": "artifacts/tmp/CAP-04.S05.T03.build-9a22c5fe.json",
+    "sha256": "915b495d472b14b061f55301364841dbd6952ec648018d84b543ece3c62635ab"
+  },
+  "adverseEvidence": "artifacts/evidence/CAP-04.S05.T03.task-start.md",
+  "scopeDeviation": "No approved scope, security authority, migration guarantee, governed-experience or release change. The documentation-only synthetic sample follows the existing architecture. Proposed ADR-0038 records the three new protected path bindings to accepted ADR-0027/0028 and grants no new authority. Local test signing is not production signing."
+}
