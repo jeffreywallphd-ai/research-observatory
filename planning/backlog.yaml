@@ -1490,7 +1490,7 @@ waves:
     notes: Owner explicitly approved the complete W2 execution packet and requested implementation; G1 prototype limitations
       remain recorded, not waived.
   campaign:
-    status: ACTIVE
+    status: PAUSED
     scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
@@ -1499,13 +1499,13 @@ waves:
     profile: LOC
     platform: windows-x64
     started_at: '2026-09-19T17:21:58+00:00'
-    updated_at: '2026-10-03T02:20:13+00:00'
-    pause_reason: null
-    pause_category: null
-    lease:
-      claimed_by: codex-w2-implementation
-      claimed_at: '2026-10-03T02:20:13+00:00'
-      expires_at: '2026-10-04T02:20:13+00:00'
+    updated_at: '2026-10-03T08:31:06+00:00'
+    pause_reason: CAP-05.S01.T01 is BLOCKED at the independently recorded full-original-base UI authority mismatch. A narrowly
+      scoped ECR-0010/W2.A02 amendment needs exact packet review and explicit owner approval before ordinary T01 can resume.
+      Its intermittent fifth-D3D pre-show startup denial remains separately unresolved; passing four-node picker and OS-drop
+      runs do not close that risk.
+    pause_category: human-decision
+    lease: null
     corrective_tasks:
     - title: Implement idempotent import commits and import manifests
       objective: Batch transaction and manifest linking source file hash, parser version, record decisions, errors, and resulting
@@ -3576,7 +3576,7 @@ waves:
       commit: 1e51bf12d5105928a4740b9a2950c6851f8a5dcd
     notes: Adopted W2.A01 control-plane amendment.
   completion:
-    status: IN_PROGRESS
+    status: PAUSED
     reviewer: null
     reviewed_at: null
     evidence: []
@@ -25251,13 +25251,22 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-03T02:34:05+00:00'
+      updated_at: '2026-10-03T08:27:51+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Full immutable 6506-base UI gate rejects inherited W2.A01.T02 v1.2 outside paused activation; post-adoption
+          T01 has no authority contract. Two earlier built-app starts also denied an uncharacterized fifth D3D child and exited
+          before metadata UI. Exact r12 picker encrypted commit/restart and r18 native OS-drop passed on the ordinary four-child
+          path; neither unmet gate is waived.
+        next_action: Pause W2 for a reviewed ECR-0010/W2.A02 adopted-1.8 continuation authority packet and explicit owner
+          decision. After approved control adoption, resume T01, characterize the fifth D3D child on a bounded real recurrence
+          before any native target change, then complete exact gate checks, independent task review and integration.
+        recorded_at: '2026-10-03T08:27:51+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -25267,10 +25276,7 @@ capabilities:
         notes: 'Reopened: W2.A01 adopted and W2 resumed; approved Academic Minimal 1.8 now governs the selected Work/version
           attachment interaction. Complete the original native/Core bridge and real-boundary evidence.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-03T02:34:05+00:00'
-        expires_at: '2026-10-03T10:34:05+00:00'
+      lease: null
       verification_state: null
       worktree: .
       platform_targets:

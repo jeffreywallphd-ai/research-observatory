@@ -1039,7 +1039,7 @@
       "exit_gate_id": "G2",
       "gate_status": "PENDING",
       "approval_status": "APPROVED",
-      "completion_status": "IN_PROGRESS",
+      "completion_status": "PAUSED",
       "unlocks_waves": [
         "W3"
       ],
@@ -17972,7 +17972,7 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "mode": "latest-review-only",
               "latest_review": {
                 "reviewer": null,
@@ -18013,7 +18013,7 @@
             {
               "task_id": "CAP-05.S01.T01",
               "title": "Implement local document attachment and version association",
-              "status": "IN_PROGRESS",
+              "status": "BLOCKED",
               "page": "CAP-05/CAP-05.S01.T01.html",
               "dependencies": [
                 "CAP-04.S04.T02",
