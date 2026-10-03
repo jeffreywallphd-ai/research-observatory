@@ -133,5 +133,36 @@ class PickerControlReadinessTests(unittest.TestCase):
                 picker.wait_for_picker_control(ReadoutFixture([state]), timeout=1)
 
 
+class WindowsFileDialogActionContractTests(unittest.TestCase):
+    source: str
+    action: str
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.source = (ROOT / "tests/desktop/tools/WindowsFileDialogUia.cs").read_text(encoding="utf-8")
+        cls.action = cls.source.split("public static string Act(", 1)[1]
+
+    def test_exact_filename_is_verified_and_set_before_open_is_required(self) -> None:
+        source = self.action.index("SyntheticSource(fixtureRoot, out held)")
+        set_value = self.action.index("value.SetValue(source)")
+        ready_open = self.action.index('ReadyControls(dialog, timeoutMs, "open")')
+        same_dialog = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)")
+        same_dialog_before_invoke = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)", ready_open)
+        invoke = self.action.index("((InvokePattern)invokeObject).Invoke()")
+        self.assertLess(source, set_value)
+        self.assertLess(same_dialog, set_value)
+        self.assertIn("GetForegroundWindow() != dialog", self.action[source:set_value])
+        self.assertLess(set_value, ready_open)
+        self.assertLess(ready_open, same_dialog_before_invoke)
+        self.assertLess(same_dialog_before_invoke, invoke)
+        self.assertIn('ReadyControls(dialog, timeoutMs, "file-name")', self.action[:set_value])
+        self.assertIn("GetForegroundWindow() != dialog", self.action[same_dialog_before_invoke:invoke])
+
+    def test_adverse_uia_result_retains_only_sanitized_control_state(self) -> None:
+        self.assertIn('result["controlDiagnostic"] = Diagnostic(controls)', self.action)
+        self.assertIn('result["controlPhase"] = controlPhase', self.action)
+        self.assertIn("SafeId(current.AutomationId)", self.source)
+
+
 if __name__ == "__main__":
     unittest.main()

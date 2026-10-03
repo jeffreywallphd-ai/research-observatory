@@ -111,7 +111,8 @@ def dialog_action(action: str, owner_hwnd: int, owner_pid: int, fixture_root: Pa
         str(fixture_root),
     ]
     try:
-        completed = subprocess.run(command, capture_output=True, text=True, timeout=40, check=False)
+        # Exact dialog, file-name, Open and closure each have their own 15 s bound.
+        completed = subprocess.run(command, capture_output=True, text=True, timeout=70, check=False)
     except subprocess.TimeoutExpired as timeout:
 
         def encoded(value: bytes | str | None) -> bytes:

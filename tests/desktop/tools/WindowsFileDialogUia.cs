@@ -198,12 +198,6 @@ public static class WindowsFileDialogUia
 
     private static Dictionary<string, object> Diagnostic(Controls controls)
     {
-        object valuePattern;
-        object invokePattern;
-        bool hasValuePattern = controls.FileName != null
-            && controls.FileName.TryGetCurrentPattern(ValuePattern.Pattern, out valuePattern);
-        bool hasInvokePattern = controls.Open != null
-            && controls.Open.TryGetCurrentPattern(InvokePattern.Pattern, out invokePattern);
         return new Dictionary<string, object> {
             { "dialogExactOwnerAndPid", true },
             { "editCount", controls.Edits },
@@ -224,27 +218,42 @@ public static class WindowsFileDialogUia
             { "cancelIdInvokePattern", controls.CancelIdInvokePattern },
             { "editAutomationIds", controls.EditIds },
             { "buttonAutomationIds", controls.ButtonIds },
-            { "fileNameValuePattern", hasValuePattern },
-            { "openInvokePattern", hasInvokePattern },
+            { "fileNameValuePattern", controls.FileNameIdValuePattern },
+            { "openInvokePattern", controls.OpenIdInvokePattern },
         };
     }
 
-    private static Controls ReadyControls(IntPtr dialog, int timeoutMs, string action)
+    private static bool FileNameReady(Controls controls)
+    {
+        return controls.FileNameIdCount == 1 && controls.FileNameMatches == 1
+            && controls.FileNameIdValuePattern;
+    }
+
+    private static bool OpenReady(Controls controls)
+    {
+        bool exactOpen = controls.OpenIdCount == 1 && controls.OpenMatches == 1
+            && controls.OpenIdInvokePattern;
+        bool namedOpen = controls.OpenIdCount == 0 && controls.OpenNameMatches == 1
+            && controls.OpenNameInvokePattern;
+        return exactOpen || namedOpen;
+    }
+
+    private static Controls ReadyControls(IntPtr dialog, int timeoutMs, string phase)
     {
         Stopwatch clock = Stopwatch.StartNew();
         Controls controls;
         do
         {
             controls = LocateControls(dialog);
-            bool exactOpen = controls.OpenIdCount == 1 && controls.OpenMatches == 1
-                && controls.OpenIdInvokePattern;
-            bool namedOpen = controls.OpenIdCount == 0 && controls.OpenNameMatches == 1
-                && controls.OpenNameInvokePattern;
+            if (controls.CancelIdCount > 1
+                || (phase != "cancel" && (controls.FileNameIdCount > 1
+                    || controls.OpenIdCount > 1 || controls.OpenNameMatches > 1)))
+                throw new InvalidOperationException("dialog-ambiguous");
             bool exactCancel = controls.CancelIdCount == 1 && controls.Cancel != null
                 && controls.CancelIdInvokePattern;
-            if ((action == "cancel" && exactCancel)
-                || (action != "cancel" && controls.FileNameMatches == 1
-                    && controls.FileNameIdValuePattern && (exactOpen || namedOpen)))
+            if ((phase == "cancel" && exactCancel)
+                || (phase == "file-name" && FileNameReady(controls))
+                || (phase == "open" && FileNameReady(controls) && OpenReady(controls)))
                 return controls;
             Thread.Sleep(100);
         } while (IsWindow(dialog) && clock.ElapsedMilliseconds < timeoutMs);
@@ -254,7 +263,7 @@ public static class WindowsFileDialogUia
     public static string Inspect(long ownerHwnd, int ownerPid, int timeoutMs)
     {
         IntPtr dialog = ExactDialog(ownerHwnd, ownerPid, timeoutMs);
-        return new JavaScriptSerializer().Serialize(Diagnostic(ReadyControls(dialog, timeoutMs, "select")));
+        return new JavaScriptSerializer().Serialize(Diagnostic(ReadyControls(dialog, timeoutMs, "open")));
     }
 
     private static void RequireSyntheticFixture(string fixtureRoot)
@@ -298,7 +307,7 @@ public static class WindowsFileDialogUia
                 throw new InvalidOperationException("dialog-cancel-control-unproven");
             return controls.Cancel;
         }
-        if (controls.FileNameMatches != 1 || !controls.FileNameIdValuePattern)
+        if (!FileNameReady(controls))
             throw new InvalidOperationException("dialog-file-name-control-unproven");
         if (controls.OpenIdCount == 1 && controls.OpenMatches == 1 && controls.OpenIdInvokePattern)
             return controls.Open;
@@ -343,29 +352,49 @@ public static class WindowsFileDialogUia
             { "sourceSha256", action == "select" ? SourceSha256 : null },
         };
         FileStream held = null;
+        Controls controls = null;
+        IntPtr dialog = IntPtr.Zero;
+        string controlPhase = "find-dialog";
         try
         {
             if (action != "select" && action != "cancel")
                 throw new InvalidOperationException("dialog-action-invalid");
-            IntPtr dialog = ExactDialog(ownerHwnd, ownerPid, timeoutMs);
+            dialog = ExactDialog(ownerHwnd, ownerPid, timeoutMs);
             result["dialogExactOwnerAndPid"] = true;
             if (GetForegroundWindow() != dialog)
                 throw new InvalidOperationException("dialog-not-foreground");
-            Controls controls = ReadyControls(dialog, timeoutMs, action);
-            AutomationElement target = ExactAction(controls, action);
+            controlPhase = action == "cancel" ? "cancel" : "file-name";
+            controls = action == "cancel" ? ReadyControls(dialog, timeoutMs, "cancel")
+                : ReadyControls(dialog, timeoutMs, "file-name");
             if (action == "select")
             {
+                if (!FileNameReady(controls))
+                    throw new InvalidOperationException("dialog-file-name-control-unproven");
                 string source = SyntheticSource(fixtureRoot, out held);
                 object valueObject;
                 if (!controls.FileName.TryGetCurrentPattern(ValuePattern.Pattern, out valueObject))
                     throw new InvalidOperationException("dialog-file-name-control-unproven");
                 ValuePattern value = (ValuePattern)valueObject;
+                if (!controls.FileName.Current.IsEnabled || controls.FileName.Current.IsOffscreen)
+                    throw new InvalidOperationException("dialog-file-name-control-unproven");
+                if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
+                    || GetForegroundWindow() != dialog)
+                    throw new InvalidOperationException("dialog-owner-invalid");
                 value.SetValue(source);
                 if (value.Current.Value != source)
                     throw new InvalidOperationException("dialog-value-not-set");
                 held.Dispose();
                 held = null;
+                controlPhase = "open";
+                controls = ReadyControls(dialog, timeoutMs, "open");
             }
+            AutomationElement target = ExactAction(controls, action);
+            if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
+                || GetForegroundWindow() != dialog)
+                throw new InvalidOperationException("dialog-owner-invalid");
+            if (!target.Current.IsEnabled || target.Current.IsOffscreen)
+                throw new InvalidOperationException(action == "select"
+                    ? "dialog-open-control-unproven" : "dialog-cancel-control-unproven");
             object invokeObject;
             if (!target.TryGetCurrentPattern(InvokePattern.Pattern, out invokeObject))
                 throw new InvalidOperationException("dialog-open-control-unproven");
@@ -382,6 +411,14 @@ public static class WindowsFileDialogUia
         catch (Exception error)
         {
             result["failureCode"] = SafeFailure(error);
+            result["controlPhase"] = controlPhase;
+            if (dialog != IntPtr.Zero && IsWindow(dialog))
+            {
+                try { controls = LocateControls(dialog); }
+                catch (Exception) { /* Retain the last safe snapshot if UIA vanished. */ }
+            }
+            if (controls != null)
+                result["controlDiagnostic"] = Diagnostic(controls);
         }
         finally
         {
