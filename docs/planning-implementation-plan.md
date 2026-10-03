@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 390bb78e65e294868a28fb54bbdfb8df2c71ad233e956502e2ea825fed7b2792
+source_sha256: f3babda7d808af489fcd11633e4e4d9c2e7711a830fd7a234446eb35a0268957
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -2789,7 +2789,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 ### - [ ] W2.A03.T01 - Bind exact 1.8 presentation and UI control authority
 
-**Status / owner / review:** `IN_PROGRESS` / codex-w2-implementation / - (`-`)
+**Status / owner / review:** `REVIEW` / codex-w2-implementation / - (`-`)
 
 **Dependencies:** `W2.A03.B00`
 
@@ -2808,13 +2808,33 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - Focused schema and real-Git v1.4 full-original-base tests authenticate exact A01/A02/A03 and GOV25/GOV26/C10 chains, two-contract count, current classification/capture producer and dependent inputs, intermediate control/product changes, forged review, changed mode/bytes, hidden add/revert, foreign task, shortened base and old v1.0-v1.3 cases. Run ADR association, selected foundation/quality checks and expanded independent review.
 - Do not claim original CAP-05.S01.T01 current-product gate, native attachment, S05 integration or W2 qualification from T01 controls alone.
 
+**Evidence:**
+
+- `artifacts/evidence/W2.A03.T01.json` at `aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd`
+
 #### Review history — W2.A03.T01
 
-**Review mode:** `legacy latest-review-only projection` — no append-only rounds are recorded; this view does not fabricate historical attempts.
+**Review mode:** `append-only v1` / 0 completed round(s)
+
+**Current immutable submission awaiting review:** `R01` / packet SHA-256 `db9f32de6ea1c746755792dc625811ec70a2ee2555a4f581bc864d6172cd6d29`
+
+- Candidate / base / branch: `aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd` / `cd61bae9681690f92b754e443cd61f2c62026288` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-03T23:31:58+00:00`
+- Evidence: `artifacts/evidence/W2.A03.T01.json` / `3c16cfc101bfd9aea58197b44eab35c628180ae718b366da43eef8e1a89f883a` / `aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd`
+- Acceptance-criteria SHA-256: `2f6cf72465a551d93229db9483004b02f1abea46d2a39ebc2a2db1fc184026de`
+- Verification-selection SHA-256: `7f84fa8d2ad5cc189004712dcaa116cd0afd6825409ba293b58b6ff60f044fd6`
+- Changed paths: `artifacts/evidence/W2.A03.T01.task-start.md`, `design/ui-change.schema.json`, `docs/adr/ADR-0039-bind-approved-desktop-reference-activation.md`, `docs/adr/index.json`, `docs/automation/design-first-ui-changes.md`, `docs/automation/ui-conformance-verification.md`, `docs/planning-implementation-plan.md`, `packages/contracts/workflow-profile/presentation-compatibility-1.8.json`, `planning/backlog.yaml`, `planning/review-site/enablers/ECR-0011.html`, `planning/review-site/enablers/index.html`, `planning/review-site/manifest.json`, `planning/review-site/waves/W2.html`, `planning/status-summary.md`, `tests/contracts/test_workflow_profile_contracts.py`, `tests/foundation/test_ui_change_gate.py`, `tools/ui_change_gate.py`, `tools/ui_conformance.py`
+- Selected checks: `.venv/Scripts/python.exe -m unittest -v tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_semantic_sources_are_original_approved_bytes_and_generate_without_git tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_bridge_allows_only_exact_root_metadata_mapping tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_witness_rejects_missing_uncommitted_and_duplicate_records tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_new_presentation_can_append_only_declared_required_regions tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_approved_18_presentation_requires_exact_ordered_semantic_delta tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_witness_authenticates_real_git_publication_and_inputs tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_new_witness_rejects_empty_or_malformed_region_declarations tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_pre_wave_design_witness_authenticates_real_git_publication_and_inputs tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_approved_18_witness_authenticates_committed_git_and_denies_dirty_inputs`, `.venv\Scripts\python.exe -c 'from pathlib import Path; import sys; sys.path.insert(0,"tools"); from ui_conformance import presentation_compatibility_errors; errors=presentation_compatibility_errors(Path.cwd(), "RO-UI-ACADEMIC-MINIMAL-1.8", "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"); print(errors); raise SystemExit(bool(errors))'`, `.venv\Scripts\python.exe -B -m unittest tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_actual_a02_adoption_accepts_stable_ancestor_evidence_only tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_historical_t03_binds_reviewed_protected_source_commits tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_reviewed_task_cannot_launder_site_asset tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_rejects_unreviewed_source_between_adoption_and_resume tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_allows_only_shared_tests_under_reactivated_original_claim -v`, `.venv\Scripts\python.exe -B -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_authenticates_future_full_base_git`, `.venv\Scripts\python.exe tools/adr_check.py --repo . --base cd61bae9681690f92b754e443cd61f2c62026288 --head aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd`, `.venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base cd61bae9681690f92b754e443cd61f2c62026288 --head aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd`, `.venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv\Scripts\python.exe tools/backlog_views.py --repo . --check`, `.venv\Scripts\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tools/ui_conformance.py tests/foundation/test_ui_change_gate.py tests/contracts/test_workflow_profile_contracts.py`, `.venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tools/ui_conformance.py tests/foundation/test_ui_change_gate.py tests/contracts/test_workflow_profile_contracts.py`, `MYPYPATH=services/core-api/src .venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py tools/ui_conformance.py tests/foundation/test_ui_change_gate.py tests/contracts/test_workflow_profile_contracts.py`, `git diff --check cd61bae9681690f92b754e443cd61f2c62026288 aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd`
+- Deferred checks: `The currently active desktop selector is 1.7, so the desktop activation test and guarded 33-page/66-capture visual baseline belong to W2.A03.T02; the known pre-activation failure is preserved.`, `Fresh real CAP-05.S01.T01 product/reference capture, native/Core attachment and authentic fifth D3D startup case require A03 adoption and separate ordinary W2 resume. The synthetic full-base fixture does not complete them.`, `Full repository/profile, joined CAP-04.S05 slice and W2 qualification/security/privacy/accessibility/performance/packaging checks remain for their later slice and Wave gates.`
+- Selection rationale: T01 changes a protected witness, UI schema/gate and public verification contract. Fresh exact-aa096646 checks cover the approved 1.8 semantic transform and old witnesses, actual reviewed A02/T03/GOV26/C10 history, hostile scope and source attribution, a disposable full original-base v1.4 continuation, ADR association, canonical backlog/views and targeted static quality. The two pre-submission full-base failures and witness fixture failure remain preserved in the task-start worksheet; their exact corrections are exercised by the final passing cases. No desktop consumer or native/Core product code changed in T01.
+- Prior round / replayed open findings: `-` / -
+- Root-cause escalation: -
 
 **Current latest-review projection:** `-` by - at `-`
 
 **Latest notes:** -
+
+**Currently open findings:** -
 
 ### - [ ] W2.A03.T02 - Activate approved 1.8 desktop consumers and pinned baseline
 

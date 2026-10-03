@@ -1,0 +1,204 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A03.T01",
+  "baseCommit": "cd61bae9681690f92b754e443cd61f2c62026288",
+  "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "artifacts/evidence/W2.A03.T01.task-start.md",
+    "design/ui-change.schema.json",
+    "docs/adr/ADR-0039-bind-approved-desktop-reference-activation.md",
+    "docs/adr/index.json",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/automation/ui-conformance-verification.md",
+    "docs/planning-implementation-plan.md",
+    "packages/contracts/workflow-profile/presentation-compatibility-1.8.json",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0011.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json",
+    "planning/review-site/waves/W2.html",
+    "planning/status-summary.md",
+    "tests/contracts/test_workflow_profile_contracts.py",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py",
+    "tools/ui_conformance.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The committed 1.8 presentation witness selects approved publication acdc67b616f5ecdec448f57a7efe46e4f359aa9f and package cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94, retaining unchanged approved 1.5 semantic bytes and only the closed ordered 1.8 delta.",
+        "The exact-candidate direct live witness check returned no errors, and the nine-case presentation suite passed real-Git 1.6, 1.7 and 1.8 histories plus missing/extra/reordered/changed, stale/dirty/redirected denials."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "Closed schemaVersion 1.4 requires the unchanged v1.3 adoptedContinuationAuthority and exact W2.A03/ECR-0011 referenceActivationAuthority only for original CAP-05.S01.T01 restoration; older v1.0-v1.3 routes remain separate.",
+        "The six focused real-Git/schema cases passed actual W2.A02 CP03 stable ancestor evidence and frozen CAP-04.S05.T03 R01-R03 history, denied forged/missing review, unrelated review-site asset and post-adoption source, and allowed only shared tests after authenticated original-task reactivation.",
+        "The fresh full original-6506-base synthetic future-state positive passed W2.A01/A02/A03, GOV-MAINT-0025/0026, W2.C10.T01, reviewed T01/T02 control-to-consumer, separate adoption/resume, two-contract and current classification/capture/dependent-input lineage. Its fixture capture readers are mocked; actual T02 desktop and original T01 product/native proof remain separate."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The exact cd61bae9..aa096646 diff has 18 paths: 10 of the packet's 11 allowed T01 source files (the optional desktop test remains untouched) and eight task-owned evidence/generated status/site outputs. No consumer assembler, activation, baseline, approved reference, native/Core, original task-base, migration or release source changed.",
+        "Targeted reviewed-site asset and post-adoption source denials pass. The exact task-base UI gate is control-only (uiFiles []), ADR checker inspected all 18 paths, and fresh diff, Ruff, mypy, backlog and generated-view checks pass."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "Indexed Proposed ADR-0039 associates the witness, verifier, schema and gate with W2.A03.T01 without superseding Accepted ADR-0003/0004 or Proposed ADR-0037; the exact task-base ADR check passes.",
+        "Expanded independent control/security/ADR task review is pending this frozen submission; no reviewer approval or T02/W2 release is claimed by this manifest."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "contracts:unit",
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "T01 changes a protected witness, UI schema/gate and public verification contract. Fresh exact-aa096646 checks cover the approved 1.8 semantic transform and old witnesses, actual reviewed A02/T03/GOV26/C10 history, hostile scope and source attribution, a disposable full original-base v1.4 continuation, ADR association, canonical backlog/views and targeted static quality. The two pre-submission full-base failures and witness fixture failure remain preserved in the task-start worksheet; their exact corrections are exercised by the final passing cases. No desktop consumer or native/Core product code changed in T01.",
+    "deferred": [
+      "The currently active desktop selector is 1.7, so the desktop activation test and guarded 33-page/66-capture visual baseline belong to W2.A03.T02; the known pre-activation failure is preserved.",
+      "Fresh real CAP-05.S01.T01 product/reference capture, native/Core attachment and authentic fifth D3D startup case require A03 adoption and separate ordinary W2 resume. The synthetic full-base fixture does not complete them.",
+      "Full repository/profile, joined CAP-04.S05 slice and W2 qualification/security/privacy/accessibility/performance/packaging checks remain for their later slice and Wave gates."
+    ]
+  },
+  "checks": [
+    {
+      "id": "witness",
+      "command": ".venv/Scripts/python.exe -m unittest -v tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_semantic_sources_are_original_approved_bytes_and_generate_without_git tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_bridge_allows_only_exact_root_metadata_mapping tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_witness_rejects_missing_uncommitted_and_duplicate_records tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_new_presentation_can_append_only_declared_required_regions tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_approved_18_presentation_requires_exact_ordered_semantic_delta tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_presentation_witness_authenticates_real_git_publication_and_inputs tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_new_witness_rejects_empty_or_malformed_region_declarations tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_pre_wave_design_witness_authenticates_real_git_publication_and_inputs tests.contracts.test_workflow_profile_contracts.WorkflowProfileContractTests.test_approved_18_witness_authenticates_committed_git_and_denies_dirty_inputs",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.witness-aa096646.log",
+      "rawOutputSha256": "654ff7d56fe321ae51a8a2fe0d85c3988b7fb5a15f9a1ffe2729226921049af6",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh Windows x64 owner-identity execution on clean committed candidate; no global Git trust change.",
+      "result": "Nine focused semantic/witness tests passed, including real-Git 1.6, 1.7 and 1.8 positives and denials."
+    },
+    {
+      "id": "live-witness",
+      "command": ".venv\\Scripts\\python.exe -c 'from pathlib import Path; import sys; sys.path.insert(0,\"tools\"); from ui_conformance import presentation_compatibility_errors; errors=presentation_compatibility_errors(Path.cwd(), \"RO-UI-ACADEMIC-MINIMAL-1.8\", \"cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94\"); print(errors); raise SystemExit(bool(errors))'",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.live-witness-aa096646.log",
+      "rawOutputSha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local direct verifier call on clean committed candidate.",
+      "result": "Live committed approved-1.8 presentation witness returned no errors."
+    },
+    {
+      "id": "targeted",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_schema_requires_both_closed_authorities tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_actual_a02_adoption_accepts_stable_ancestor_evidence_only tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_historical_t03_binds_reviewed_protected_source_commits tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_reviewed_task_cannot_launder_site_asset tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_rejects_unreviewed_source_between_adoption_and_resume tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_allows_only_shared_tests_under_reactivated_original_claim -v",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.targeted-aa096646.log",
+      "rawOutputSha256": "0a5895ddd78d49935795c8592422e149e23fa0ddf2723df9f7f4c937732a02c8",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh clean committed candidate; disposable real-Git fixtures, unchanged HEAD.",
+      "result": "Six focused v1.4 schema, actual A02/T03 history, site-asset, post-adoption source and shared-test tests passed."
+    },
+    {
+      "id": "full-base",
+      "command": ".venv\\Scripts\\python.exe -B -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_reference_activation_v14_authenticates_future_full_base_git",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.full-base-aa096646.log",
+      "rawOutputSha256": "7dab21cf6266250c7d0d6f14d6c378feabc73b9ec9e66bbc86bb1516287e417c",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh 527.641-second clean committed candidate run; shared HEAD fixed.",
+      "result": "Full original-6506-base synthetic future W2.A03 adoption and CAP-05.S01.T01 reactivation lineage passed. Fixture capture readers are mocked; no actual product qualification is claimed."
+    },
+    {
+      "id": "adr",
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base cd61bae9681690f92b754e443cd61f2c62026288 --head aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.adr-aa096646.log",
+      "rawOutputSha256": "48437ef6b7d69784ac2a294e98b2c02d92151858e848d93476303223f0a75fd3",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact task-base check on clean committed candidate.",
+      "result": "ADR registry passed: 39 indexed records and 18 changed paths inspected."
+    },
+    {
+      "id": "ui-gate",
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base cd61bae9681690f92b754e443cd61f2c62026288 --head aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.ui-gate-aa096646.log",
+      "rawOutputSha256": "c3ae6b94c5072a4ecdbf1ca0448da158ac634d74e87ff2ed612124069a17af67",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact task-base check on clean committed candidate.",
+      "result": "Task-base control-only UI gate passed with no governed renderer files. Original-6506 future lane is proved only by the synthetic full-base test."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.backlog-aa096646.log",
+      "rawOutputSha256": "35f9df1aa90d383ead8c129ccffd1cb8a2b6daf7defd6722245c02861487d743",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact-candidate backlog validation.",
+      "result": "Canonical backlog valid: 20 capabilities, 117 slices, 391 tasks, 12 release gates."
+    },
+    {
+      "id": "views",
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.views-aa096646.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact-candidate generated-view check.",
+      "result": "Generated backlog views match the committed claim-state projection."
+    },
+    {
+      "id": "ruff",
+      "command": ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tools/ui_conformance.py tests/foundation/test_ui_change_gate.py tests/contracts/test_workflow_profile_contracts.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.ruff-aa096646.log",
+      "rawOutputSha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact-candidate targeted lint.",
+      "result": "Changed Python control, verifier and test files pass Ruff lint."
+    },
+    {
+      "id": "ruff-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tools/ui_conformance.py tests/foundation/test_ui_change_gate.py tests/contracts/test_workflow_profile_contracts.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.ruff-format-aa096646.log",
+      "rawOutputSha256": "55b5a2cb0bdd55641f1b6dad60805a4c29520e41d507781e75aa8ec8d6ed9a10",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact-candidate targeted format check.",
+      "result": "Changed Python files pass Ruff format."
+    },
+    {
+      "id": "mypy",
+      "command": "MYPYPATH=services/core-api/src .venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py tools/ui_conformance.py tests/foundation/test_ui_change_gate.py tests/contracts/test_workflow_profile_contracts.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.mypy-aa096646.log",
+      "rawOutputSha256": "d9a5631f7d87a741fbecc3236286d1792d22d349ff13846d71cdc9217307bb76",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact-candidate targeted mypy; MYPYPATH set for this process only.",
+      "result": "Four changed Python files pass mypy with the repository Core source root provided for test imports."
+    },
+    {
+      "id": "diff",
+      "command": "git diff --check cd61bae9681690f92b754e443cd61f2c62026288 aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A03.T01.diff-aa096646.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "aa09664678ca3ca8fa7a428cb60f3565d2c0e9bd",
+      "provenance": "Fresh local exact-candidate diff check.",
+      "result": "Exact task-base patch has no whitespace errors."
+    }
+  ],
+  "scopeDeviation": "No approved T01 scope or security authority change. Ten allowed source paths and eight task-owned workflow outputs are the complete 18-path diff. Read-only preflight found and corrected a review-site asset allowance and post-adoption source attribution gap within approved gate paths; development full-base failures identified authentic A02 CP03 ancestor evidence and frozen CAP-04.S05.T03 R01-R03 history, fixed with narrow regressions. Initial witness Git failures were sandbox ownership and a no-op 1.8 fixture after witness introduction; owner-identity exact-candidate tests now pass without global Git configuration. All adverse logs and limitations remain recorded in the task-start worksheet. No actual T02 activation or original T01/W2 completion is claimed.",
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "expanded-independent-control-security-ADR-review",
+    "openFindingIds": [],
+    "note": "Review exact aa096646 candidate, 18-path source/projection scope, 12 passing check logs/hashes, preserved pre-submission adverse outputs and fixes, immutable ECR-0011/GOV26/C10/T03 lineage, only two UI contracts and current classification/input bindings. Synthetic future-state capture mocks are fixture-only; T02 activation, original CAP-05.S01.T01 native/Core/D3D proof and W2 release remain separate."
+  }
+}
