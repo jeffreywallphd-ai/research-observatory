@@ -1,0 +1,568 @@
+{
+  "$schema": "./enabler-change-request.v4.1.schema.json",
+  "schemaVersion": "4.1-proposal",
+  "documentType": "enabler-change-request-packet",
+  "changeRequestId": "ECR-0010",
+  "proposedAmendmentId": "W2.A02",
+  "targetWave": "W2",
+  "status": "pending-approval",
+  "executionState": "non-executable",
+  "classification": "product-scope-security-experience",
+  "authorityChain": {
+    "waveBase": {
+      "waveId": "W2",
+      "packetCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "approvalRecordCommit": "3bc1c1828efab50efc730bf3907c3036eff58a2f"
+    },
+    "orderedAmendments": [
+      {
+        "id": "W2.A01",
+        "changeRequestId": "ECR-0009",
+        "status": "ADOPTED",
+        "packetCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+        "approvalReference": {
+          "path": "planning/wave-amendment-approvals/W2.A01.json",
+          "sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+          "introductionCommit": "f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287"
+        },
+        "effectiveStateCommit": "56187d40ca5d38f72f7c9dfb132070b034032a57"
+      }
+    ],
+    "reservedAmendments": []
+  },
+  "migrationAuthority": {
+    "id": "GOV-MIG-0001",
+    "path": "planning/governance-migrations/GOV-MIG-0001.json",
+    "sha256": "4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d",
+    "commit": "d8adf48e9c2e0319e4ece573a9381f6ec305310e"
+  },
+  "activationBoundary": {
+    "waveStatus": "PAUSED",
+    "ordinaryTaskStatesDenied": [
+      "IN_PROGRESS",
+      "REVIEW"
+    ],
+    "reviewCandidateMutationDenied": true,
+    "otherEnablerCampaignDenied": true,
+    "activeRecoveryHolds": []
+  },
+  "bootstrapUnit": {
+    "id": "W2.A02.B00",
+    "kind": "append-only-amendment-bootstrap",
+    "exceptionReason": "Append only the exact owner-approved W2.A02 B00 shell and review projection at a clean quiescent W2 stop; separate approved-B00 materialization and activation retain original T01 history and blocker.",
+    "authorizedPaths": [
+      "planning/review-site/enablers/ECR-0010.html",
+      "planning/review-site/enablers/index.html",
+      "planning/review-site/manifest.json"
+    ],
+    "requiredOutcomes": [
+      "Authenticate the W2 base, adopted W2.A01 approval and exit, GOV-MIG-0001, unchanged approved 1.8 reference inventory, independent ECR-0010 packet review and explicit owner decision.",
+      "Append only the approved W2.A02 shell and B00 REVIEW projection through supported compare-and-swap with tasks: []; retain T01 BLOCKED, original base and history.",
+      "Independently review and approve the exact B00 candidate before separate packet-exact W2.A02.S01/T01 materialization and subsequent amendment activation; keep W2 PAUSED and no ordinary lease throughout.",
+      "Bootstrap grants no renderer, native, Core, reference or release authority and no competing Wave executor."
+    ],
+    "prohibitedOutcomes": [
+      "No renderer/native/Core/reference edit, ordinary task claim, Wave resume, release, destructive research I/O or external effect in bootstrap.",
+      "No rewrite of W2 approval, W2.A01 approval/adoption, Academic Minimal 1.8, T02 review/contract, T01 base or GOV-MIG-0001."
+    ]
+  },
+  "sliceContributions": [
+    {
+      "id": "W2.A02.S01",
+      "capabilityId": "CAP-05",
+      "title": "Authenticated adopted attachment UI continuation",
+      "objective": "Provide a reviewed exact-history authority route for original T01 to qualify its approved 1.8 attachment recovery and real native/Core integration without changing the reference or product scope.",
+      "workType": "new-product-work",
+      "refactorTaskIds": [],
+      "taskIds": [
+        "W2.A02.T01"
+      ],
+      "acceptanceCriteria": [
+        "Only original CAP-05.S01.T01 with unchanged 6506 claim base may use the continuation after authenticated W2.A01 adoption, independently reviewed T02 publication, exact intervening reviewed verifier/UI-gate/quality/ADR-check maintenance, and reviewed W2.A02 control delivery.",
+        "The approved 1.8 package stays unchanged: exactly one historical T02 v1.2 and one current T01 v1.3 contract, historical approved 1.7-to-1.8 transition, exact one-off 9727 additive Python inventory/renderer co-commit, and independent current product/1.8 conformance classification are required over the full frozen range.",
+        "Control implementation, task, slice and exit independent reviews bind exact committed candidates; adoption remains separate from ordinary T01 approval and W2 release."
+      ]
+    }
+  ],
+  "authorizedTaskIds": [
+    "W2.A02.T01"
+  ],
+  "taskInventory": [
+    {
+      "id": "W2.A02.T01",
+      "title": "Authenticate adopted attachment UI continuation",
+      "objective": "Add one tightly bound, independently reviewed design-first gate/schema route for T01's inherited W2.A01 and later approved-reference restoration history without changing product, reference or ordinary task authority.",
+      "estimate": "L",
+      "dependencies": [
+        "W2.A02.B00"
+      ],
+      "acceptanceCriteria": [
+        "Add exact-identity-only v1.3 adoptedContinuationAuthority for CAP-05.S01.T01 defect-restoration: authenticate frozen original 6506 base/owner/lease/branch, W2 and W2.A01 approvals/adoption, T02 reviewed candidate and unchanged v1.2 contract, historical approved 1.7-to-1.8 publication, independently reviewed W2.A01.T01, f54da79f, 0d9ab50b/089c00c6/fff7a04b, GOV-MAINT-0025 52ff3d04 and W2.A02.T01 control chains, and complete per-commit inherited/T01 inventories.",
+        "Require exactly historical T02 and current T01 contracts; admit T01 agent-review/absent experience_change only with independent exact-candidate current product/approved-1.8 conformance classification and no T01 reference change. The closed 1.3 object binds exact W2.A01/W2.A02/T02 selectors, authenticated adoption/reactivation anchors, separately derived inherited/resumed UI files and commits, and task-namespaced classification path/SHA/introduction commit; no other schema version may carry it. Reuse the capture reader for its authenticated Core/native Rust/renderer/contract/build/checker snapshot and separately derive/bind T01-owned test, fixture, worker and other product inputs omitted from that snapshot as exact dependentInputFiles/Git blobs. Deny missing/stale classification/captures, later dependent-input edits including add/revert, extra contracts, redirected objects, foreign claim or unattributed control changes.",
+        "Allow one historical mixed control/product commit only at exact immutable 9727f1b195e7dee300e7f3df3c289e7739fb0fdc: quality-scope.json strictly appends nine canonical regular Python files introduced in the same sole-parent commit, with all prior entries/metadata/roots unchanged and exactly two governed renderer edits. The v1.3 gate verifies its full tree and task history; a later separate independent T01 full-candidate review examines the verified exception and current product after submission, not as a gate prerequisite. This is not prior independent control approval or a reusable mixed-commit allowance; deny all other mixed commits.",
+        "Make automatic_base select the sole authenticated active T01 original 6506 base rather than HEAD^, with hostile ordinary-task/foreign-state denials; preserve all existing 1.0, 1.1 and 1.2 positive/hostile assertions, roots, thresholds and approval-before-code rules.",
+        "Introduce indexed Proposed docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md with exact protected paths and no silent supersession of ADR-0003; pass ADR check and expanded independent control/security review before amendment exit.",
+        "Limit W2.A02.T01 control source to design/ui-change.schema.json, tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py, docs/automation/design-first-ui-changes.md, new Proposed ADR-0037 and one appended docs/adr/index.json entry; no renderer, native, Core, reference, original T01 task-base, migration or release edit occurs in this control task. Task-owned evidence/reviews and generated review-site projections are separate workflow outputs."
+      ],
+      "verification": [
+        "Focused schema and real-Git authority chronology tests for two authenticated contracts, historical 1.7-to-1.8 segment, exact f54da79f/1f628843 verifier, 0d9ab50b/089c00c6/fff7a04b/ab2c868e UI-gate, 52ff3d04/639a6b2e GOV-MAINT-0025, W2.A01/W2.A02 control reviews, exact 9727 strict-additive nine-file/two-renderer mixed commit, independent current classification, and automatic_base full 6506 selection.",
+        "Deny forged or absent approvals/reviews, stale or foreign task/lease/base/branch, extra or mutated UI contracts, changed 9727 tree or Python introductions, any other mixed control/product commit, reference rewrite, symlink/redirect, hidden add/revert, and stale captures or captured Core/native Rust/renderer/contract/build/checker inputs and separately bound T01-dependent test/fixture/worker/product inputs; retain unchanged positive/adversarial 1.0/1.1/1.2 UI gate fixtures, taskctl/planctl validity, ADR association and independent expanded security/control/ADR review.",
+        "Exact committed-candidate full original-base UI gate qualification with independent product/reference conformance classification is deferred to resumed CAP-05.S01.T01, not claimed by this control task."
+      ]
+    }
+  ],
+  "refactorBudget": {
+    "baseline": {
+      "waveId": "W2",
+      "sourceCommit": "c85a59f3a293f8e3f2eaf6454682c9a14b1efa55",
+      "sourcePath": "planning/backlog.yaml",
+      "estimateScale": {
+        "S": 1,
+        "M": 3,
+        "L": 5
+      },
+      "tasks": [
+        {
+          "id": "CAP-04.S01.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S01.T02",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S01.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S02.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S02.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S02.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S03.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S03.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S03.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S04.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S04.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S04.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S05.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-04.S05.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-04.S05.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S01.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S01.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S01.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S02.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S02.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S02.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S03.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S03.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S03.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S04.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S04.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S04.T03",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S05.T01",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S05.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S05.T03",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S06.T01",
+          "estimate": "M",
+          "points": 3
+        },
+        {
+          "id": "CAP-05.S06.T02",
+          "estimate": "L",
+          "points": 5
+        },
+        {
+          "id": "CAP-05.S06.T03",
+          "estimate": "L",
+          "points": 5
+        }
+      ],
+      "totalPoints": 143
+    },
+    "refactorAllocations": [],
+    "refactorPoints": 0,
+    "refactorSharePercent": 0,
+    "limitPolicy": {
+      "mode": "standard-15-percent",
+      "limitPercent": 15
+    },
+    "refactorTaskIds": [],
+    "method": "Approved planning/W2-initiation.md governs 33 atomic tasks at P_hours=530 engineering-hours (CAP-04 236 + CAP-05 294), with 15% ceiling=79.5 engineering-hours; planned W2-RUNNER-PROGRESS 2 hours are included in P. This v4.1 packet separately retains immutable c85a59f3 backlog's normalized 143-point/33-task S=1/M=3/L=5 machine baseline and its 21.45-point projection, which is not an hours conversion/replacement/reset. Documented prior supplemental allocation/reported spending is zero, but historical actual structural engineering-hours and committed remaining, including mixed/abandoned work, are not independently time-reconciled. This packet's refactorAllocations=[]/refactorPoints=0/refactorSharePercent=0 denote no proposed new supplemental allocation, not verified cumulative R_hours=0 or unused capacity. Before committing future supplemental structural work, quantify actual spent plus committed remaining engineering-hours across W2 tasks, corrections, maintenance and amendments and prove the common 79.5-hour ceiling; reconcile at task/checkpoint review. W2.A02.T01 L/5 is proposed additive planned control delivery, sized for two-contract full-base authority, independently reviewed intervening control chains, exact 9727 mixed-inventory history, current independent capture classification and hostile real-Git compatibility; independent proposal preflight must assess that size before packet freeze and exact-commit packet review must confirm it before approval; v4.1 new-product-work is the only non-refactor workType and means capability-enabling authority for the already approved attachment outcome, not product source change, structural cleanup or supplemental refactoring. The L/5 estimate does not enlarge original W2 P and may be revised in this inert proposal before packet freeze."
+  },
+  "governedExperience": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "approvalRequired": true,
+    "files": [
+      {
+        "path": "design/ui-reference/APPROVAL.yaml",
+        "sha256": "9e5628479727b45439bb6326e053ac3b026ad14cec79ffd1b9dfbfceceb38b1f"
+      },
+      {
+        "path": "design/ui-reference/CAPABILITY_COVERAGE.json",
+        "sha256": "35bf4ea4cf9cbc5bbfc30e48ecdf9ab6e91b333ce016816a3fd5713f01e4f945"
+      },
+      {
+        "path": "design/ui-reference/CAPABILITY_COVERAGE.md",
+        "sha256": "0d82db579cb7d4a2988ec623c0556ea47086c7fcb9245ec0f332f71c8e7efb16"
+      },
+      {
+        "path": "design/ui-reference/PAGE_INVENTORY.md",
+        "sha256": "42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c"
+      },
+      {
+        "path": "design/ui-reference/PAGE_INVENTORY_SOURCE.md",
+        "sha256": "42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c"
+      },
+      {
+        "path": "design/ui-reference/README.md",
+        "sha256": "ef9065dd2609b7af791bf3911325b42d83b9cb159bb638be37286ea2603e338f"
+      },
+      {
+        "path": "design/ui-reference/SITE_MANIFEST.json",
+        "sha256": "56a8d6cb772fe3b787e51d38794d5d000a47cfa185b1c4885bff4bdbedcea3a2"
+      },
+      {
+        "path": "design/ui-reference/STYLE_GUIDE.md",
+        "sha256": "4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db"
+      },
+      {
+        "path": "design/ui-reference/STYLE_GUIDE_SOURCE.md",
+        "sha256": "4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db"
+      },
+      {
+        "path": "design/ui-reference/WORKFLOW_CATALOG.json",
+        "sha256": "a47ff01ec5d485fd2a87dffd5480576cadbc7af23986ed4d6b414323c2d3cb21"
+      },
+      {
+        "path": "design/ui-reference/WORKFLOW_CATALOG.md",
+        "sha256": "c2b98b103574156a60695639af5572ded2475ca00f745e700ded6a1d5a25f071"
+      },
+      {
+        "path": "design/ui-reference/application-settings.html",
+        "sha256": "c13d1fd7eeecd372fe9a49839d5c8989ac04e72e7a67c7751a975517ac964a6a"
+      },
+      {
+        "path": "design/ui-reference/assets/app.css",
+        "sha256": "0e085d1112322ff9277fbc10fd9244690e3e97e0638a1aa34848ca5e971f8f56"
+      },
+      {
+        "path": "design/ui-reference/assets/app.js",
+        "sha256": "cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b"
+      },
+      {
+        "path": "design/ui-reference/assets/print.css",
+        "sha256": "03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c"
+      },
+      {
+        "path": "design/ui-reference/assets/tokens.css",
+        "sha256": "e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5"
+      },
+      {
+        "path": "design/ui-reference/audit-lineage.html",
+        "sha256": "4f08394bfcb370a86a002b59d276524da8f533013726022a4f02dd5e656f8a6f"
+      },
+      {
+        "path": "design/ui-reference/claim-graph.html",
+        "sha256": "cf8f265a664d3bc1f6a15fd8f4f4720e2d043334dc0f5e98ec660e2518e8bfd5"
+      },
+      {
+        "path": "design/ui-reference/corpus-canvas.html",
+        "sha256": "f23d2cc6c3eecb9e5f5be146f9f0f442e42cf1cd29e56199011fb491f28bf16f"
+      },
+      {
+        "path": "design/ui-reference/critical-lens.html",
+        "sha256": "4877a11d140de166e82f939eca7a1f19b0ac1cdff515217582f84dfe91284980"
+      },
+      {
+        "path": "design/ui-reference/document-reader.html",
+        "sha256": "6527e09137d9ebe0d2f48c3c30bdc2a45eae5e2680e7f09f4deda4c81a8a32c0"
+      },
+      {
+        "path": "design/ui-reference/evidence-matrix.html",
+        "sha256": "82dc38d05ee7843be44849698c07a230618dbdbabc559ccc98d25c52cd6f4cf2"
+      },
+      {
+        "path": "design/ui-reference/help-onboarding.html",
+        "sha256": "7fd6cf66441053dc403b43b843b5f73449caa69be4ea8c189cd3bb0546d8245d"
+      },
+      {
+        "path": "design/ui-reference/index.html",
+        "sha256": "23628190d9093db1d3d7cbebc5ca9af5cc2f081acd678b01fe1097906242473d"
+      },
+      {
+        "path": "design/ui-reference/ingestion-reconciliation.html",
+        "sha256": "83df119e8e28ab69fcfd999855a29b896bed7928f17588c31944765ec593d0d8"
+      },
+      {
+        "path": "design/ui-reference/intent-contract.html",
+        "sha256": "a361cd8ce9381b24521f0e3e1218cd62c4dec253fec6338bdd8fcd1a31ba8dbf"
+      },
+      {
+        "path": "design/ui-reference/living-monitor.html",
+        "sha256": "bc2ee881037faae2540f23519a6c3abc49d59dd402d21ac17e6305164c0887dc"
+      },
+      {
+        "path": "design/ui-reference/manuscript-blueprint.html",
+        "sha256": "d63828eb45010e12f7225dbe9e8cf7aa503c171bce33b52c1ae4ce573635e308"
+      },
+      {
+        "path": "design/ui-reference/manuscript-studio.html",
+        "sha256": "9eb95f05404e4bb3ed07353633e4c6eab60339c294d855eb6946892f150aa867"
+      },
+      {
+        "path": "design/ui-reference/model-center.html",
+        "sha256": "a1ec25442e042126c99eac67b4943d79b6485fe4a888f68314468d7b66581005"
+      },
+      {
+        "path": "design/ui-reference/new-project.html",
+        "sha256": "e42091e46dfff96a15da5a9d733ca83e8009148fef1853099079fddb6d8bad94"
+      },
+      {
+        "path": "design/ui-reference/novelty-audit.html",
+        "sha256": "9f7912c327ef5a0f5987f2925cf0e96d8e6547a23c1a4856a7d06c3b9a570853"
+      },
+      {
+        "path": "design/ui-reference/opportunity-radar.html",
+        "sha256": "52b61e184ffebbc6f70ead74e6fcd9a12da0976696fbee8165a80e9141c6866a"
+      },
+      {
+        "path": "design/ui-reference/parsing-quality.html",
+        "sha256": "e61d819d284090a61ffbcf8d0ad7b383e2632ef74aa9cac5c11e362f79795ff6"
+      },
+      {
+        "path": "design/ui-reference/project-settings.html",
+        "sha256": "170fb77689f5950a36530dbd1adf228ce1bdc874ab19f3c81199b2574986504c"
+      },
+      {
+        "path": "design/ui-reference/projects.html",
+        "sha256": "ef1fc62b5465f8c9d98d5e004d8df0f5b397d79bd5f94a306a95a3f6f61e2e52"
+      },
+      {
+        "path": "design/ui-reference/prototype-index.html",
+        "sha256": "87f19ba1a6e7a392badd2a2e2aba35fd8ae4d3aa6fc06bd50be269a2f0a2f9d0"
+      },
+      {
+        "path": "design/ui-reference/research-notebook.html",
+        "sha256": "98f794165f3b60b20321d7d40f56b6573501491c60e909eb43092260d6f9c15d"
+      },
+      {
+        "path": "design/ui-reference/reviewer-simulation.html",
+        "sha256": "a3976fcfb87eaa2738fc53e8d34d1d7fdc51bb1503b74ec8ac5f0f68669c30b4"
+      },
+      {
+        "path": "design/ui-reference/revision-response.html",
+        "sha256": "30dbc69b1fc72ecc040d46b2b8f0d47cf52cc74ec2f97a723458106c23f0dcc2"
+      },
+      {
+        "path": "design/ui-reference/schema-manager.html",
+        "sha256": "69f8973f29f7d9651d5c72c171d919d93c9aa8afcf3dbfb9df18aefbf34223c8"
+      },
+      {
+        "path": "design/ui-reference/screening.html",
+        "sha256": "52addf3853e395b1151b75c7cd6881ffaadf250538f366dba8318417abdf0464"
+      },
+      {
+        "path": "design/ui-reference/scripts/build_mockups.py",
+        "sha256": "da0caa083e75e382feffb6c6682a24100c23b8fb44af5d78cf7ef692ecc80cc4"
+      },
+      {
+        "path": "design/ui-reference/scripts/render_previews.py",
+        "sha256": "f7b868716f56e70b11004a61aa85762a1bfc6ea06036260f3dd19746bf004959"
+      },
+      {
+        "path": "design/ui-reference/scripts/smoke_interactions.py",
+        "sha256": "ecd92ebca427b5edb5fe687ed14d838341e66277370b0ecf3cfc432f8bc347ac"
+      },
+      {
+        "path": "design/ui-reference/scripts/verify_site.py",
+        "sha256": "891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f"
+      },
+      {
+        "path": "design/ui-reference/search-studio.html",
+        "sha256": "506a48064f570bbecbe6e802fdb9e09677614e1241665e5d9d88f6d0829fd26c"
+      },
+      {
+        "path": "design/ui-reference/source-manager.html",
+        "sha256": "5bd6e40b7f59f2fe86dab243272c63af8cba4de14911b0e1adbbd4db9ba60d40"
+      },
+      {
+        "path": "design/ui-reference/study-design.html",
+        "sha256": "2f764a0f5a823551ac8b774466c215bbb5eb1e4897dd1b3da2e7c75193d012fa"
+      },
+      {
+        "path": "design/ui-reference/style-guide.html",
+        "sha256": "1453b8b205534cbbf361cc52cb2ae19e9c0b84711401656af013d6a8c2a63311"
+      },
+      {
+        "path": "design/ui-reference/synthesis-studio.html",
+        "sha256": "a1742692ea189665511a2b455a1bcde673f06973258f941f445d11b5b94cea63"
+      },
+      {
+        "path": "design/ui-reference/task-center.html",
+        "sha256": "ee47f6dd88fa1564043192aae0d0f7030e4fe48ddfd673eeaea6b775c017e11e"
+      },
+      {
+        "path": "design/ui-reference/technical-reports.html",
+        "sha256": "5fb3754d65aa9ffb06c1b8008994bc4ab4c79ba26188fb0c193e8c45b8036ae6"
+      },
+      {
+        "path": "design/ui-reference/theory-map.html",
+        "sha256": "729b32cf41942a900057721f4402d8fab48f005b4e31e9e6ac3abf88c93db44d"
+      },
+      {
+        "path": "design/ui-reference/REFERENCE_MANIFEST.yaml",
+        "sha256": "4da9bf6e94c9b2f16b1dbbaff6bd76b90b89ac396321689685ed24dc191c63a5"
+      }
+    ]
+  },
+  "acceptanceCriteria": [
+    "W2 is cleanly PAUSED, original T01 is BLOCKED with its 6506 base retained, and the packet binds the exact W2 base, adopted W2.A01, GOV-MIG-0001 and unchanged approved 1.8 package before independent packet review and explicit owner approval.",
+    "The independently reviewed v1.3 control and ADR authenticate exactly historical T02 v1.2 plus current T01 v1.3 contracts, the approved 1.7-to-1.8 change, all named independently reviewed intervening control chains, exact one-off 9727 additive Python inventory/renderer history, and independently classified current 1.8 product; automatic-base 6506 selection denies self-approval and shortened lineage.",
+    "B00 appends shell tasks:[], receives independent review, then separate materialization and activation; only exact W2.A02.T01/S01 execute, with task, slice, exit and security checkpoint reviews before adoption. W2 remains PAUSED until explicit resume.",
+    "Resumed ordinary T01 separately proves real native/Core attachment and current 1.8 conformance through a full original-base UI gate, exact-candidate task checks and independent review; W2 release stays separate."
+  ],
+  "verificationObligations": [
+    "ECR v4.1 schema, proposal SHA/Git ancestry, ordered W2.A01 predecessor and current approved 1.8 file-hash validation at a quiescent W2 boundary.",
+    "Focused hostile UI gate/schema real-Git fixtures for exact two-contract count, historical 1.7-to-1.8 segment, reviewed W2.A01/W2.A02 task controls plus f54da79f verifier, 0d9ab50b/089c00c6/fff7a04b gate, GOV-MAINT-0025 52ff3d04 quality and prerequisite 3658da21 ADR-check repair, exact 9727 strict-additive mixed history, automatic_base full 6506 versus HEAD^, agent-review exception, approvals, task/lease/branch, intermediate governed paths, stale captured producer or separately bound T01-dependent inputs/captures, redirected files, and unchanged 1.0/1.1/1.2 behavior.",
+    "ADR-0001/0003 association for Proposed ADR-0037 and exact modified protected controls; selected foundation/quality checks and expanded independent security/control/ADR review.",
+    "Distinct amendment task/slice/exit/adoption evidence and later original T01 real Windows native-only picker/drop, signed LPAC/Core, rights, provenance, interruption, restart and full UI conformance evidence; no mock claim of trusted attachment."
+  ],
+  "rollback": [
+    "Before approval, revise or defer only inert proposal bytes; keep approved W2/W2.A01/1.8 history and T01's claimed base intact.",
+    "On bootstrap/control/review failure, retain W2 PAUSED and T01 BLOCKED, preserve adverse tests and append reviewed remediation; no direct backlog edit or partial manual transition.",
+    "After adoption, a T01 product or classification failure blocks T01/W2; do not erase approved amendment history, silently revert a source edit, auto-retry attachment or weaken the UI gate."
+  ],
+  "nonGoals": [
+    "No 1.9 reference, redesigned attachment journey, new product feature, path-bearing renderer IPC, stock Tauri path drop, broad filesystem permission or remote/cloud effect.",
+    "No edit or reapproval of the frozen W2 packet, original T01 base/criteria, adopted W2.A01/T02 records, approved 1.8 bytes, GOV-MIG-0001, migration guarantees or release criteria.",
+    "No refactor-budget reset, premature T01 or W2 completion, push, destructive research I/O, substantial spend or human release decision."
+  ],
+  "files": [
+    {
+      "path": "planning/enabler-change-requests/ECR-0010.md",
+      "sha256": "f89d2bffd38dc56a914c8e5799486f0b77c4c98bf563e8575e6e1ba3056b8a94",
+      "role": "canonical-proposal"
+    },
+    {
+      "path": "planning/enabler-change-requests/enabler-change-request.v4.1.schema.json",
+      "sha256": "f51e2162aa45ca0a1c9b88adadaf4a5fe4536ec086cfcf7503054d9c0827786c",
+      "role": "proposal-schema"
+    },
+    {
+      "path": "planning/enabler-change-requests/ECR-0010-review.html",
+      "sha256": "e28badcb2dd7293b0402f6984476ad00ea788b7fd17aef76537158e82e09f5e5",
+      "role": "human-review"
+    }
+  ]
+}
