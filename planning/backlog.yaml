@@ -25274,13 +25274,22 @@ capabilities:
       verification_commands:
       - python tools/verify.py --profile documents
       - python tools/verify.py --profile desktop
-      status: IN_PROGRESS
+      status: BLOCKED
       owner: codex-w2-implementation
       branch: codex/w2-implementation
       started_at: '2026-10-02T03:11:13+00:00'
-      updated_at: '2026-10-03T15:14:51+00:00'
+      updated_at: '2026-10-03T15:45:31+00:00'
       completed_at: null
-      blocker: null
+      blocker:
+        reason: Approved Academic Minimal 1.8 current-product capture is denied by stale 1.7 desktop activation/baseline;
+          adopted v1.3 gate has no authority for new protected control edits. Authentic fifth D3D startup topology also remains
+          uncharacterized; unsandboxed four-node setup does not close it.
+        next_action: Prepare exact append-only ECR-0011/W2.A03 authority packet for 1.8 activation/baseline/build-manifest
+          alignment and narrowly reviewed v1.3 attribution; obtain owner approval before protected edits. Then reopen original
+          T01, complete capture/full 6506 UI gate and exact native/Core proof, including genuine fifth-window characterization
+          or separately approved redesign. CAP-04.S05.T03 can proceed independently.
+        recorded_at: '2026-10-03T15:45:31+00:00'
+        owner: codex-w2-implementation
       implementation_notes: ''
       evidence: []
       review:
@@ -25291,10 +25300,7 @@ capabilities:
           and security review; W2 resumed at 0394ed16. Preserve original 6506 base; finish fifth D3D characterization and
           exact current-product UI and native/Core proof.'
       base_sha: 6506c68461144747b0ee9be10853211717aa381d
-      lease:
-        claimed_by: codex-w2-implementation
-        claimed_at: '2026-10-03T15:14:51+00:00'
-        expires_at: '2026-10-03T23:14:51+00:00'
+      lease: null
       verification_state: null
       worktree: .
       platform_targets:

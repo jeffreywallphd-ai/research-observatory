@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 54d7bb1885e871a6494bebfe40a62c49ab657c2e7f467b3599355319fc7cb4c3
+source_sha256: 357ee83787da006decbe1c03e9da6fe9ce11592a50d82621de67cb6a74fbb2c5
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9927,7 +9927,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-05.S01.T01 - Implement local document attachment and version association
 
-**Status / priority / estimate / risk:** `IN_PROGRESS` / `P0` / `M` / `medium`
+**Status / priority / estimate / risk:** `BLOCKED` / `P0` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `ALL` / `windows-x64`
 

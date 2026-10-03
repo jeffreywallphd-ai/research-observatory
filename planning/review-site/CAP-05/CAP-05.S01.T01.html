@@ -38,7 +38,7 @@
       <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">CAP-document-inspection</a><span>/</span><a href="CAP-05.S01.html">SLICE-rights-aware-document-acquisition</a><span>/</span><span aria-current="page">CAP-05.S01.T01</span></nav>
 
 <section class="hero compact" data-task-page="CAP-05.S01.T01">
-  <div class="hero-top"><div><span class="eyebrow">CAP-05.S01.T01 · task 1 of 3</span><h1>Implement local document attachment and version association</h1><p>Drag/drop and file-picker flows for PDF, JATS, TEI, XML, HTML, DOCX, and plain text with work/version selection.</p></div><span class="status status-in-progress">In_Progress</span></div>
+  <div class="hero-top"><div><span class="eyebrow">CAP-05.S01.T01 · task 1 of 3</span><h1>Implement local document attachment and version association</h1><p>Drag/drop and file-picker flows for PDF, JATS, TEI, XML, HTML, DOCX, and plain text with work/version selection.</p></div><span class="status status-blocked">Blocked</span></div>
   <dl class="summary-grid"><div><dt>Wave</dt><dd>W2</dd></div><div><dt>Slice</dt><dd><a href="CAP-05.S01.html">SLICE-rights-aware-document-acquisition</a></dd></div><div><dt>Risk / review</dt><dd>medium / agent-review</dd></div><div><dt>Latest review</dt><dd>not reviewed</dd></div></dl>
 </section>
 <section class="task-summary"><div class="section-heading"><span class="eyebrow">Authoritative task record</span><h2>Scope and acceptance</h2></div>
@@ -89,9 +89,9 @@ python tools/verify.py --profile desktop
 ```</pre></article></section>
 <section class="section-heading"><span class="eyebrow">Task-start planning</span><h2>Assigned worksheet</h2><p>The worksheet is an optional planning aid and does not create a new approval or task state.</p></section>
 
-<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T01" data-worksheet-sha256="9519a8b2fb16635ec4937f070ca6aab14127afea92e2ff4ec4dd10bdf07e9d86">
+<details class="plan-details task-worksheet" open data-task-worksheet="CAP-05.S01.T01" data-worksheet-sha256="754d2c05d0e5f1be3bbe81478935dafae222b0eac02aa7a959df4b9ccd4b19c2">
   <summary>Assigned task-start worksheet</summary>
-  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>9519a8b2fb16635ec4937f070ca6aab14127afea92e2ff4ec4dd10bdf07e9d86</code></div>
+  <div class="worksheet-meta"><strong>Source:</strong> <code>artifacts/evidence/CAP-05.S01.T01.task-start.md</code> · <strong>SHA-256:</strong> <code>754d2c05d0e5f1be3bbe81478935dafae222b0eac02aa7a959df4b9ccd4b19c2</code></div>
   <article class="plan-article"><pre class='markdown-fallback'># CAP-05.S01.T01 task-start acceptance closure
 
 Claim base: `6506c68461144747b0ee9be10853211717aa381d`; W2 campaign owner `codex-w2-implementation`.
@@ -272,14 +272,24 @@ A separate fresh synthetic real-Windows OLE drag run (`drop-20261003-78af-os-r18
 
 The two selected real signed-LPAC worker cases were rerun with explicit signed worker and guardian inputs: PDF, JATS, TEI/XML, HTML and DOCX acceptance, password/oversize denial, and a text stream beyond the 10 MiB frame boundary all passed with zero skips in 33.606 seconds. The ignored verbose result has SHA-256 `3119F8E2084F404A8DF620A1CC5A5AD3D3F5423227D5BDD0057E2E502FFF9592`. An initial command addressed the wrong unittest class and ran no tests; that ignored adverse setup log remains at SHA-256 `B704DC267D189B2107E1C350D055FA8F3B78E0C9900055A5BC241AF1AB80E95D` and is not counted as coverage.
 
-Remaining task boundaries include the intermittent fifth-child startup case, current UI-lineage authority for the original claim base, and the task&#x27;s final committed evidence/review. Preserve r04/r06 fail-closed D3D findings; neither a class allowlist expansion nor a visible degraded startup is proven safe by the four-node passes.</pre></article>
+Remaining task boundaries include the intermittent fifth-child startup case, current UI-lineage authority for the original claim base, and the task&#x27;s final committed evidence/review. Preserve r04/r06 fail-closed D3D findings; neither a class allowlist expansion nor a visible degraded startup is proven safe by the four-node passes.
+
+## Resumed candidate 881af71b: environment and activation findings (2026-10-03)
+
+After W2.A02 adoption and explicit W2 resume, `taskctl` reopened the original T01 with its immutable `6506c68461144747b0ee9be10853211717aa381d` base. The narrow integration-harness-only phase diagnostics at committed `881af71b` do not alter native drop admission. A fresh 206-input linked build passed and produced binary SHA-256 `B28212709C0107F7AF292E33E392976ABB7D4E17731C178397602401F4B8A41D`; the ignored binding report is `artifacts/tmp/CAP-05.S01.T01.881a-native-build.json` (SHA-256 `F2784A6B070C811DFD401E7E956B05A17DD4E21886A6D4D072CFA754B4B430F0`).
+
+Two sandboxed setup-only starts of the unchanged prior binary (r24/r25) and one of the newly linked binary (r26) timed out without a ready event. Core handshake, health and runtime-version probes passed. r26 fixed-category diagnostics locate the stall inside WebView window creation, before native drop-target installation; its WebView Crashpad folder contains two local dumps. Preserve the ignored r24/r25/r26 results with SHA-256 `386B35281DD868DF6D9E67EC04CFDC341CEA25DFEF2CDECA5A3A1CD6`, `04B4C944A32B122C915D015E7F3FE880EE36EDECFAF301AF8C7C3F37A1E1EECE`, and `FF2969BEC1D497585EB9431DC10CC9B3EF0A09B48732B791934F8050CBB82E58`, respectively. r26 stderr SHA-256 is `6CE56188E6CE5DDC6D7B02283D688D49D90E0132A723A3876F960F22CA40836F`. These failures prove no D3D topology or product admission result.
+
+One otherwise identical, bounded local unsandboxed setup-only r27 reached readiness in 19.7 seconds with the ordinary four-node WebView subtree and zero native, HTML5 or stock Tauri drag events; its ignored result SHA-256 is `1EF68C59114AE6112EA2A6B83A2CD1C4CE8591C8071087E4B4745882C7F216BC`. The sandbox is implicated in the new WebView startup failures, but this comparison is not a fifth-window qualification or a full picker/Core/drop journey. Do not repeat ordinary starts merely to search for the intermittent fifth child. On a necessary authentic recurrence, use the existing redacted ancestry/ownership diagnostics before changing admission; a synthetic fifth child cannot substitute for its real topology and OS routing.
+
+The first committed-current-product capture attempt failed closed before creating a bundle: `tools/product_style_check.py --capture` reported `desktop UI activation reference ID does not match the approved reference`. The ignored report `artifacts/tmp/CAP-05.S01.T01.capture-01.check.json` has SHA-256 `344548081265CE88037577929F128A4F3B5509E1607AF5B2A15949B842EA8FB3`. The owner-approved reference is Academic Minimal 1.8, but `verification/extensions/desktop-ui.json`, the visual baseline and both desktop build assemblers still identify 1.7. The adopted v1.3 continuation gate admits only exact historical reviewed control chains and cannot authenticate a new activation/baseline control edit under this ordinary T01. Preserve the denial; prepare a narrow append-only authority amendment and obtain owner approval before changing those protected controls. Current UI classification, full original-base gate, and formal T01 completion remain unproved.</pre></article>
 </details>
 <section class="section-heading"><span class="eyebrow">Execution evidence</span><h2>Review packets, rounds, and current projection</h2><p>Append-only controls retain every immutable round and finding closure. Pre-policy tasks remain explicitly latest-review-only.</p></section>
 
 <section class="review-toolbar" data-task-review-id="CAP-05.S01.T01" data-review-mode="latest-review-only">
   <h3>CAP-05.S01.T01 — Implement local document attachment and version association</h3>
   <p><strong>Legacy latest-review-only projection.</strong> No append-only review rounds are recorded; this view does not fabricate historical attempts.</p>
-  <dl class="summary-grid" data-current-review-projection="CAP-05.S01.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>IN_PROGRESS</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
+  <dl class="summary-grid" data-current-review-projection="CAP-05.S01.T01" data-current-review-result="not-reviewed" data-current-reviewer="none" data-current-reviewed-at="none"><div><dt>Task status</dt><dd>BLOCKED</dd></div><div><dt>Latest result</dt><dd>not reviewed</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div></dl>
   <p><strong>Latest notes:</strong> Reopened: W2.A02 adopted at 04d6ae3fb29a133e6e31c8191ba1d6b80fa0b0cf with independent control, slice, exit and security review; W2 resumed at 0394ed16. Preserve original 6506 base; finish fifth D3D characterization and exact current-product UI and native/Core proof.</p>
 </section>
 <nav class="page-turn" aria-label="Task navigation"><a class="button button-quiet" href="CAP-05.S01.html">Previous</a><a class="button button-primary" href="CAP-05.S01.T02.html">Next</a></nav>
