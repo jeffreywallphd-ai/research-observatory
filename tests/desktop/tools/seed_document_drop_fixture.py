@@ -38,6 +38,31 @@ def _post(client, route: str, body: dict) -> dict:
     return response.json()
 
 
+def published_seed_selection(before: dict, published: list[dict], context: dict) -> dict[str, str]:
+    """Bind the seed to the post-registration Work and exact version context."""
+    if len(published) != 1 or len(context.get("works", ())) != 1 or len(context.get("versions", ())) != 1:
+        raise RuntimeError("synthetic published Work/version is not exact")
+    current = published[0]
+    contextual = context["works"][0]
+    if (
+        current.get("workId") != before.get("workId")
+        or current.get("revisionId") == before.get("revisionId")
+        or current.get("assertionRevisionIds") != before.get("assertionRevisionIds")
+        or contextual.get("workId") != current.get("workId")
+        or contextual.get("revisionId") != current.get("revisionId")
+        or contextual.get("assertionRevisionIds") != current.get("assertionRevisionIds")
+    ):
+        raise RuntimeError("synthetic published Work identity changed")
+    version = context["versions"][0]
+    return {
+        "workId": current["workId"],
+        "workRevisionId": current["revisionId"],
+        "versionId": version["versionId"],
+        "versionRevisionId": version["revisionId"],
+        "sourceAssertionRevisionId": current["assertionRevisionIds"][0],
+    }
+
+
 def seed(fixture_root: Path) -> dict[str, object]:
     fixture_root = fixture_root.resolve(strict=True)
     temporary_parent = (ROOT / "artifacts/tmp").resolve(strict=True)
@@ -184,14 +209,17 @@ def seed(fixture_root: Path) -> dict[str, object]:
                 },
             },
         )
+        published_works = _post(
+            client,
+            "/projects/reconciliation/versions/works",
+            {"root": root, "after": None, "limit": 32},
+        )["items"]
         final_context = _post(
             client,
             "/projects/reconciliation/versions/context",
             {"root": root, "workIds": [work["workId"]]},
         )
-        if len(final_context["versions"]) != 1:
-            raise RuntimeError("synthetic version publication is not exact")
-        version = final_context["versions"][0]
+        selection = published_seed_selection(work, published_works, final_context)
         _post(client, "/projects/close", {"root": root})
 
     if (Path(root) / "state/project.sqlite3").read_bytes()[:16] == b"SQLite format 3\x00":
@@ -199,11 +227,7 @@ def seed(fixture_root: Path) -> dict[str, object]:
     return {
         "schemaVersion": "1.0",
         "projectId": project_id,
-        "workId": work["workId"],
-        "workRevisionId": work["revisionId"],
-        "versionId": version["versionId"],
-        "versionRevisionId": version["revisionId"],
-        "sourceAssertionRevisionId": work["assertionRevisionIds"][0],
+        **selection,
         "syntheticSourceSha256": hashlib.sha256(source_file.read_bytes()).hexdigest(),
         "protectedDatabase": True,
     }

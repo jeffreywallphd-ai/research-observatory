@@ -2140,45 +2140,66 @@ pub mod directory_integration_harness {
         request: &Value,
         result: &Value,
     ) -> Result<DocumentDropCommitReceipt, &'static str> {
-        if !fixture.document_drop_mode()
-            || request["schemaVersion"] != "1.0"
-            || request["matchConfirmed"] != true
-            || request["permittedUse"] != "project-only"
-            || result["schemaVersion"] != "1.0"
-            || result["status"] != "attached"
-            || request["operationId"] != result["operationId"]
-            || request["sessionId"] != result["sessionId"]
-            || request["candidateId"] != result["candidateId"]
-            || request["selection"] != result["selection"]
-        {
-            return Err("probe-attachment-commit-identity-invalid");
+        if !fixture.document_drop_mode() {
+            return Err("mode");
         }
-        let seed: DocumentDropSeed = read_document_receipt(fixture, DOCUMENT_DROP_SEED_RECEIPT)?;
-        validate_document_drop_seed(fixture, &seed)?;
-        let selection: DocumentDropSelection = serde_json::from_value(request["selection"].clone())
-            .map_err(|_| "probe-attachment-commit-identity-invalid")?;
-        let field = |value: &Value, name: &str| -> Result<String, &'static str> {
-            value[name]
-                .as_str()
-                .map(str::to_owned)
-                .ok_or("probe-attachment-commit-identity-invalid")
+        if request["schemaVersion"] != "1.0" {
+            return Err("request-schema");
+        }
+        if request["matchConfirmed"] != true {
+            return Err("match-confirmation");
+        }
+        if request["permittedUse"] != "project-only" {
+            return Err("permitted-use");
+        }
+        if result["schemaVersion"] != "1.0" {
+            return Err("result-schema");
+        }
+        if result["status"] != "attached" {
+            return Err("result-status");
+        }
+        if request["operationId"] != result["operationId"] {
+            return Err("operation-binding");
+        }
+        if request["sessionId"] != result["sessionId"] {
+            return Err("session-binding");
+        }
+        if request["candidateId"] != result["candidateId"] {
+            return Err("candidate-binding");
+        }
+        if request["selection"] != result["selection"] {
+            return Err("selection-binding");
+        }
+        let seed: DocumentDropSeed =
+            read_document_receipt(fixture, DOCUMENT_DROP_SEED_RECEIPT).map_err(|_| "seed-read")?;
+        validate_document_drop_seed(fixture, &seed).map_err(|_| "seed-validation")?;
+        let selection: DocumentDropSelection =
+            serde_json::from_value(request["selection"].clone()).map_err(|_| "selection-decode")?;
+        let field = |value: &Value, name: &str, check| -> Result<String, &'static str> {
+            value[name].as_str().map(str::to_owned).ok_or(check)
         };
         let receipt = DocumentDropCommitReceipt {
             schema_version: "1.0".into(),
             selection,
-            operation_id: field(request, "operationId")?,
-            command_id: field(request, "commandId")?,
-            candidate_id: field(request, "candidateId")?,
-            attachment_id: field(result, "attachmentId")?,
-            document_revision_id: field(result, "documentRevisionId")?,
+            operation_id: field(request, "operationId", "operation-field")?,
+            command_id: field(request, "commandId", "command-field")?,
+            candidate_id: field(request, "candidateId", "candidate-field")?,
+            attachment_id: field(result, "attachmentId", "attachment-field")?,
+            document_revision_id: field(result, "documentRevisionId", "revision-field")?,
         };
-        let session = field(request, "sessionId")?;
-        let confirmation = field(request, "confirmationSha256")?;
-        if !receipt.valid_for(&seed)
-            || !lower_hex_exact(&session, 32)
-            || !lower_hex_exact(&confirmation, 64)
-        {
-            return Err("probe-attachment-commit-identity-invalid");
+        let session = field(request, "sessionId", "session-field")?;
+        let confirmation = field(request, "confirmationSha256", "confirmation-field")?;
+        if receipt.selection != DocumentDropSelection::from(&seed) {
+            return Err("seed-selection-binding");
+        }
+        if !receipt.valid_for(&seed) {
+            return Err("receipt-id-format");
+        }
+        if !lower_hex_exact(&session, 32) {
+            return Err("session-format");
+        }
+        if !lower_hex_exact(&confirmation, 64) {
+            return Err("confirmation-format");
         }
         Ok(receipt)
     }
@@ -2200,10 +2221,16 @@ pub mod directory_integration_harness {
                 "status":"unverified","code":"fixture-unavailable"}));
             return;
         };
-        let Ok(receipt) = commit_receipt_from_native(&fixture, request, result) else {
-            emit(json!({"kind":"document-attachment-probe-commit",
-                "status":"unverified","code":"identity-invalid"}));
-            return;
+        let receipt = match commit_receipt_from_native(&fixture, request, result) {
+            Ok(receipt) => receipt,
+            Err(check) => {
+                // The closed check name is diagnostic only; the public probe
+                // event stays generic and carries no authority-bearing data.
+                eprintln!("RO-DOCUMENT-COMMIT-PROBE check={check}");
+                emit(json!({"kind":"document-attachment-probe-commit",
+                    "status":"unverified","code":"identity-invalid"}));
+                return;
+            }
         };
         if write_document_receipt(&fixture, DOCUMENT_DROP_COMMIT_RECEIPT, &receipt).is_err() {
             emit(json!({"kind":"document-attachment-probe-commit",
@@ -3708,6 +3735,55 @@ pub mod directory_integration_harness {
             let mut invalid = receipt;
             invalid.command_id = "not-a-command-id".into();
             assert!(!invalid.valid_for(&seed));
+        }
+
+        #[test]
+        fn document_commit_probe_binds_native_reply_to_v4_project_seed() {
+            let fixture = Fixture::create_document_drop(&nonce()).unwrap();
+            std::fs::create_dir(fixture.projects.join("document-drop-project")).unwrap();
+            let seed = DocumentDropSeed {
+                schema_version: "1.0".into(),
+                project_id: "20df2f61-0d04-4439-8a66-b7b6afb36ee5".into(),
+                work_id: "01900000-0000-7000-8000-000000000002".into(),
+                work_revision_id: "01900000-0000-7000-8000-000000000003".into(),
+                version_id: "01900000-0000-7000-8000-000000000004".into(),
+                version_revision_id: "01900000-0000-7000-8000-000000000005".into(),
+                source_assertion_revision_id: "01900000-0000-7000-8000-000000000006".into(),
+                synthetic_source_sha256: "a".repeat(64),
+                protected_database: true,
+            };
+            write_document_receipt(&fixture, DOCUMENT_DROP_SEED_RECEIPT, &seed).unwrap();
+            let selection = serde_json::to_value(DocumentDropSelection::from(&seed)).unwrap();
+            let request = json!({"schemaVersion":"1.0",
+                "operationId":"01900000-0000-7000-8000-000000000007",
+                "sessionId":"a".repeat(32),
+                "candidateId":"01900000-0000-7000-8000-000000000008",
+                "confirmationSha256":"b".repeat(64),
+                "commandId":"01900000-0000-7000-8000-000000000009",
+                "selection":selection,"matchConfirmed":true,"permittedUse":"project-only"});
+            let request = serde_json::to_value(
+                serde_json::from_value::<crate::document_attachment::CommitRequest>(request)
+                    .unwrap(),
+            )
+            .unwrap();
+            let mut result = json!({"schemaVersion":"1.0","status":"attached",
+                "operationId":request["operationId"],"sessionId":request["sessionId"],
+                "candidateId":request["candidateId"],"selection":request["selection"],
+                "attachmentId":"01900000-0000-7000-8000-000000000010",
+                "documentRevisionId":"01900000-0000-7000-8000-000000000011"});
+            let receipt = commit_receipt_from_native(&fixture, &request, &result).unwrap();
+            assert!(receipt.valid_for(&seed));
+            result["selection"]["workId"] = "01900000-0000-7000-8000-000000000012".into();
+            assert_eq!(
+                commit_receipt_from_native(&fixture, &request, &result).err(),
+                Some("selection-binding")
+            );
+            result["selection"] = request["selection"].clone();
+            result["attachmentId"] = "not-a-uuid".into();
+            assert_eq!(
+                commit_receipt_from_native(&fixture, &request, &result).err(),
+                Some("receipt-id-format")
+            );
         }
 
         #[test]
