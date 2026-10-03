@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
+import os
+import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -28,20 +32,33 @@ from research_observatory_core.connectors.plugin_broker import (  # noqa: E402
     PluginNetworkBroker,
 )
 from research_observatory_core.connectors.plugin_credentials import PluginCredentialSettings  # noqa: E402
-from research_observatory_core.connectors.plugin_grants import PluginGrantActor  # noqa: E402
+from research_observatory_core.connectors.plugin_grants import (  # noqa: E402
+    PluginEnableConfirmation,
+    PluginGrantActor,
+    PluginGrantProblem,
+)
 from research_observatory_core.connectors.plugin_manifest import PluginProjectGrant, verify_plugin_package  # noqa: E402
 from research_observatory_core.connectors.plugin_package_intake import inspect_plugin_archive  # noqa: E402
+from research_observatory_core.connectors.plugin_package_store import PluginPackageStore  # noqa: E402
 from research_observatory_core.connectors.plugin_scientific_request import (  # noqa: E402
     parse_plugin_scientific_request,
 )
+from research_observatory_core.connectors.plugin_trust import (  # noqa: E402
+    PluginPublisherTrustStore,
+    PluginTrustDecision,
+)
 from research_observatory_core.domain_contracts import new_uuid_v7  # noqa: E402
+from research_observatory_core.object_store import create_local_object_store  # noqa: E402
 from research_observatory_core.plugin_admin_service import PluginAdminService, PluginAuthorizedDispatch  # noqa: E402
 from research_observatory_core.plugin_consent import (  # noqa: E402
     PluginConsentProblem,
     PluginConsentService,
     PluginConsentStamp,
 )
+from research_observatory_core.plugin_grant_repository import SqlitePluginGrantRepository  # noqa: E402
 from research_observatory_core.plugin_invocation_api import register_plugin_invocation_routes  # noqa: E402
+from research_observatory_core.plugin_job_repository import PluginJobRepository  # noqa: E402
+from research_observatory_core.plugin_package_repository import SqlitePluginPackageRepository  # noqa: E402
 from research_observatory_core.plugin_runtime import InstalledPluginRuntime  # noqa: E402
 from research_observatory_core.plugin_worker import (  # noqa: E402
     PluginWorkerAdapters,
@@ -51,8 +68,16 @@ from research_observatory_core.plugin_worker import (  # noqa: E402
     _Binding,
 )
 from research_observatory_core.projects import ProjectLifecycleService  # noqa: E402
-from research_observatory_core.repositories import sqlite_workflow_admission_binding  # noqa: E402
+from research_observatory_core.repositories import (  # noqa: E402
+    _SqliteWorkflowQueueRepository,
+    sqlite_workflow_admission_binding,
+)
+from research_observatory_core.storage import (  # noqa: E402
+    configure_protected_database_provider,
+    initialize_database,
+)
 from research_observatory_core.transport import CoreProblem, TraceCorrelationMiddleware  # noqa: E402
+from research_observatory_core.windows_credentials import WindowsCredentialStore  # noqa: E402
 from research_observatory_core.workflow_executor import (  # noqa: E402
     LocalAdmissionController,
     ProjectWorkerPolicy,
@@ -62,8 +87,11 @@ from research_observatory_core.workflow_executor import (  # noqa: E402
 from tests.connectors.test_plugin_admin_service import FakeProjects, _project_error  # noqa: E402
 from tests.connectors.test_plugin_broker import streamed  # noqa: E402
 from tests.connectors.test_plugin_dispatch import _Admin  # noqa: E402
+from tests.connectors.test_plugin_job_repository import NOW as JOB_NOW  # noqa: E402
 from tests.connectors.test_plugin_job_repository import PluginJobFixture  # noqa: E402
 from tests.connectors.test_plugin_package_intake import archive  # noqa: E402
+from tests.connectors.test_plugin_package_store import MemoryKeyProvider  # noqa: E402
+from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
 from tests.service import test_core_api as api  # noqa: E402
 
 
@@ -133,6 +161,177 @@ class PluginWorkerSubmissionTests(PluginJobFixture):
             lambda _path, _identity: PluginWorkerAdapters(self.repository, self.queue, self.admission, self.objects),
             local_actor_id=self.actor.actor_id,
         )
+
+    @unittest.skipUnless(os.name == "nt", "Windows publisher trust authority")
+    def test_persisted_dispatch_uses_real_core_grant_without_system_trust_or_enable(self):
+        """Use real package/grant authority with fixture consent, runtime, and broker I/O."""
+        # Keep the inherited plaintext fixture outside this protected Core root.
+        protected = tempfile.TemporaryDirectory(prefix="ro-plugin-worker-protected-")
+        self.addCleanup(protected.cleanup)
+        self.root = Path(protected.name).resolve()
+        for directory in ("state", "objects", ".tmp"):
+            (self.root / directory).mkdir()
+        self.database = self.root / "state/project.sqlite3"
+        configure_protected_database_provider(InMemoryDatabaseKeyProvider())
+        self.assertTrue(
+            initialize_database(self.database, project_id=self.inputs.project_id, project_created_at=JOB_NOW).ok
+        )
+        self.keys = MemoryKeyProvider()
+        self.objects = create_local_object_store(self.root, self.inputs.project_id, key_provider=self.keys)
+        self.repository = PluginJobRepository(self.database, self.inputs.project_id, self.objects)
+        self.queue = _SqliteWorkflowQueueRepository(self.database, self.inputs.project_id)
+        demand = WorkerResources(1, 64 * 1024**2, 0, 64 * 1024**2)
+        self.admission = sqlite_workflow_admission_binding(
+            self.queue,
+            controller=LocalAdmissionController(interactive_reserve=demand),
+            policy=ProjectWorkerPolicy(self.inputs.project_id, demand, {"document": demand}, {"document": 1}),
+        )
+        self.worker = PluginWorkerService(
+            cast(ProjectLifecycleService, FakeProjects(self.root)),
+            cast(PluginAdminService, None),
+            cast(PluginConsentService, self.consent),
+            lambda _path, _identity: PluginWorkerAdapters(self.repository, self.queue, self.admission, self.objects),
+            local_actor_id=self.actor.actor_id,
+        )
+        self.addCleanup(
+            lambda: subprocess.run(
+                [
+                    str(Path(os.environ["SYSTEMROOT"]) / "System32/icacls.exe"),
+                    str(self.root),
+                    "/reset",
+                    "/t",
+                    "/c",
+                    "/q",
+                ],
+                capture_output=True,
+                timeout=30,
+                check=False,
+            )
+        )
+        admin = PluginAdminService(
+            cast(ProjectLifecycleService, FakeProjects(self.root)),
+            PluginPublisherTrustStore(
+                WindowsCredentialStore(self.root / "profile-vault", audit_sink=lambda _event: None),
+                "worker-grant-test",
+            ),
+            actor_id=self.actor.actor_id,
+            grant_repository_factory=lambda path, identity: SqlitePluginGrantRepository(
+                path / "state/project.sqlite3", identity
+            ),
+            package_repository_factory=lambda path, identity: SqlitePluginPackageRepository(
+                path / "state/project.sqlite3", identity
+            ),
+            package_store_factory=lambda _path, _identity: PluginPackageStore(self.objects),
+            runtime_available=lambda: True,
+        )
+        root, project_id = str(self.root), self.inputs.project_id
+        session = admin.context(root, project_id)
+        human = admin.actor("a" * 32)
+        system = PluginGrantActor(human.actor_id, human.trace_id, human.occurred_at, actor_type="system")
+        raw, public_key = archive()
+        intake = admin.create(root, project_id, session)
+        admin.chunk(root, project_id, session, intake.intake_id, 1, raw)
+        sealed = admin.seal(
+            root,
+            project_id,
+            session,
+            intake.intake_id,
+            archive_sha256="sha256:" + hashlib.sha256(raw).hexdigest(),
+            byte_length=len(raw),
+            chunk_count=1,
+            trace_id=human.trace_id,
+        )
+        assert sealed.review is not None and sealed.package_token is not None
+        key_sha256 = "sha256:" + hashlib.sha256(public_key).hexdigest()
+        trust = PluginTrustDecision(new_uuid_v7(), sealed.review.publisher_key_id, key_sha256, None, "trust")
+        with self.assertRaisesRegex(PluginGrantProblem, "plugin-grant-actor-invalid"):
+            admin.trust_decide(root, project_id, session, trust, public_key, actor=system)
+        self.assertEqual(
+            "untrusted",
+            admin.review(root, project_id, session, sealed.package_token, trace_id=human.trace_id).review.trust_status,
+        )
+        trusted = admin.trust_decide(root, project_id, session, trust, public_key, actor=human)
+        self.assertEqual("active", trusted.status)
+        assert trusted.public_key_sha256 is not None and trusted.revision is not None
+        reviewed = admin.review(root, project_id, session, sealed.package_token, trace_id=human.trace_id).review
+        assert reviewed is not None
+        confirmation = PluginEnableConfirmation(
+            action_id=new_uuid_v7(),
+            project_id=project_id,
+            plugin_id=reviewed.plugin_id,
+            plugin_version=reviewed.plugin_version,
+            publisher_key_id=reviewed.publisher_key_id,
+            trusted_key_sha256=trusted.public_key_sha256,
+            trusted_key_revision=trusted.revision,
+            package_sha256=reviewed.package_sha256,
+            manifest_sha256=reviewed.manifest_sha256,
+            permissions=reviewed.permissions,
+            destinations=reviewed.destinations,
+            operations=reviewed.operations,
+            data_classes=reviewed.data_classes,
+            credential_scopes=reviewed.credential_scopes,
+            expected_revision=None,
+        )
+        with self.assertRaisesRegex(PluginGrantProblem, "plugin-grant-actor-invalid"):
+            admin.enable(root, project_id, session, sealed.package_token, confirmation, actor=system)
+        self.assertIsNone(admin.current_grant_persisted(root, project_id, reviewed.plugin_id))
+        enabled = admin.enable(root, project_id, session, sealed.package_token, confirmation, actor=human)
+        self.assertEqual(("enabled", 1), (enabled.status, enabled.revision))
+        grants = SqlitePluginGrantRepository(self.database, project_id)
+        self.assertEqual(["enabled"], [event.event_kind for event in grants.audit_history(reviewed.plugin_id)])
+
+        self.worker._admin = admin
+        requests: list[str] = []
+
+        async def synthetic_fetch(_broker, _plan, _call):
+            requests.append("lookup")
+            return PluginBrokerResponse(body=b'{"id":"synthetic-1"}', redacted=False)
+
+        def run(_runtime, _package, _files, **kwargs):
+            kwargs["broker_callback"]({"operation": "lookup", "identifier": "synthetic-1"})
+            output = json.dumps(
+                {
+                    "schemaVersion": "1.0",
+                    "invocationId": self.inputs.invocation_id,
+                    "operation": self.inputs.request.operation,
+                    "records": [],
+                    "continuation": "exhausted",
+                },
+                separators=(",", ":"),
+            ).encode()
+            return SimpleNamespace(
+                output=output,
+                token={
+                    "appContainer": True,
+                    "lessPrivileged": True,
+                    "capabilityCount": 0,
+                    "allApplicationPackagesDenied": True,
+                },
+                broker_calls=1,
+            )
+
+        self.worker._runtime = cast(InstalledPluginRuntime, SimpleNamespace(load=lambda: object(), run=run))
+        with (
+            patch("research_observatory_core.connectors.plugin_dispatch.PluginNetworkBroker.fetch", synthetic_fetch),
+            patch.object(admin, "prepare_persisted_invocation", wraps=admin.prepare_persisted_invocation) as prepare,
+        ):
+            queued = self.worker.submit(root, self.preview_id, self.inputs.request, self.input_data)
+            self.worker.run_pending()
+        result = self.queue.get(queued.job_id)
+        self.assertGreaterEqual(prepare.call_count, 1)
+        self.assertEqual(
+            "succeeded",
+            result.state,
+            f"persisted Core actor type={prepare.call_args.kwargs['actor'].actor_type}",
+        )
+        self.assertEqual("system", prepare.call_args.kwargs["actor"].actor_type)
+        self.assertEqual(self.actor.actor_id, prepare.call_args.kwargs["actor"].actor_id)
+        self.assertEqual(queued.job_id.replace("-", ""), prepare.call_args.kwargs["actor"].trace_id)
+        self.assertEqual(["lookup"], requests)
+        page = self.repository.result(self.repository.input(self.inputs.invocation_id))
+        self.assertIsNotNone(page)
+        self.assertNotEqual(b"SQLite format 3\0", self.database.read_bytes()[:16])
+        self.assertEqual(["enabled"], [event.event_kind for event in grants.audit_history(reviewed.plugin_id)])
 
     def test_confirmed_job_runs_through_claim_and_fenced_encrypted_publication(self):
         raw, key = archive()

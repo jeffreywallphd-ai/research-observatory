@@ -1,4 +1,4 @@
-"""Exact encrypted v20 predecessor and v21 grant-authority migration proof."""
+"""Exact encrypted v20 predecessor through current grant-authority migrations."""
 
 from __future__ import annotations
 
@@ -21,12 +21,21 @@ from research_observatory_core.migrations.runner import (  # noqa: E402
     migrate_database,
     plan_database_migration,
 )
-from research_observatory_core.migrations.versions import v0021_plugin_grants  # noqa: E402
+from research_observatory_core.migrations.versions import (  # noqa: E402
+    v0021_plugin_grants,
+    v0022_document_attachments,
+    v0023_attachment_operations,
+)
 
 from tests.database_key_fixtures import InMemoryDatabaseKeyProvider  # noqa: E402
 
 PROJECT_ID = "01890f6e-6a40-4cc5-98b7-7f3f36b60210"
 CREATED_AT = "2026-10-01T12:00:00.000Z"
+MIGRATION_IDS = (
+    v0021_plugin_grants.revision,
+    v0022_document_attachments.revision,
+    v0023_attachment_operations.revision,
+)
 
 
 class PluginGrantMigrationTests(unittest.TestCase):
@@ -58,8 +67,8 @@ class PluginGrantMigrationTests(unittest.TestCase):
         self.temporary.cleanup()
 
     def _create_exact_v20(self) -> None:
-        # DDL is the frozen current-fresh v20 inventory, before only the v21
-        # grant table/triggers and metadata version were appended.
+        # The first grant DDL statement is the stable v20 boundary. Later
+        # v22/v23 statements must not enter this frozen predecessor fixture.
         self.database.touch(exist_ok=False)
         connection = storage._connect_held(self.database, project_id=PROJECT_ID, create_key=True)
         try:
@@ -67,9 +76,14 @@ class PluginGrantMigrationTests(unittest.TestCase):
             connection.execute("BEGIN IMMEDIATE")
             connection.execute(f"PRAGMA application_id={storage.APPLICATION_ID}")
             connection.execute("PRAGMA user_version=20")
+            grant_start = storage._DDL_STATEMENTS.index(storage.PLUGIN_GRANT_DDL[0])
+            self.assertEqual(
+                storage.PLUGIN_GRANT_DDL,
+                storage._DDL_STATEMENTS[grant_start : grant_start + len(storage.PLUGIN_GRANT_DDL)],
+            )
             for statement in (
                 storage.SCHEMA_METADATA_V20_DDL,
-                *storage._DDL_STATEMENTS[1 : -len(storage.PLUGIN_GRANT_DDL)],
+                *storage._DDL_STATEMENTS[1:grant_start],
             ):
                 connection.execute(statement)
             self.assertEqual(storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256, storage._schema_fingerprint(connection))
@@ -95,44 +109,66 @@ class PluginGrantMigrationTests(unittest.TestCase):
             connection.close()
         self.assertNotEqual(b"SQLite format 3\x00", self.database.read_bytes()[:16])
 
-    def test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens(self) -> None:
-        plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual(20, plan.source_schema_version)
-        self.assertEqual((v0021_plugin_grants.revision,), plan.migration_ids)
-        self.assertEqual(storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256, plan.source_schema_sha256)
-        result = migrate_database(self.database, expected_project_id=PROJECT_ID)
-        self.assertEqual("migrated", result.status)
-        self.assertEqual((v0021_plugin_grants.revision,), result.migration_ids)
-        self.assertEqual("current", migrate_database(self.database, expected_project_id=PROJECT_ID).status)
+    def _assert_current_v23_history(self) -> None:
         current = storage.open_canonical_database(self.database, expected_project_id=PROJECT_ID)
         try:
+            self.assertEqual(23, current.execute("PRAGMA user_version").fetchone()[0])
+            self.assertEqual(v0023_attachment_operations.TARGET_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(storage.EXPECTED_SCHEMA_SHA256, storage._schema_fingerprint(current))
             self.assertEqual(0, current.execute("SELECT count(*) FROM plugin_grant_events").fetchone()[0])
             self.assertEqual(
-                (
-                    v0021_plugin_grants.revision,
-                    20,
-                    21,
-                    storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
-                    storage.EXPECTED_SCHEMA_SHA256,
-                ),
-                tuple(
-                    current.execute(
+                [
+                    (
+                        v0021_plugin_grants.revision,
+                        20,
+                        21,
+                        storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256,
+                        v0021_plugin_grants.TARGET_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0022_document_attachments.revision,
+                        21,
+                        22,
+                        v0021_plugin_grants.TARGET_SCHEMA_SHA256,
+                        v0022_document_attachments.TARGET_SCHEMA_SHA256,
+                    ),
+                    (
+                        v0023_attachment_operations.revision,
+                        22,
+                        23,
+                        v0022_document_attachments.TARGET_SCHEMA_SHA256,
+                        v0023_attachment_operations.TARGET_SCHEMA_SHA256,
+                    ),
+                ],
+                [
+                    tuple(row)
+                    for row in current.execute(
                         "SELECT migration_id,from_schema_version,to_schema_version,source_schema_sha256,"
-                        "target_schema_sha256 FROM schema_migrations"
-                    ).fetchone()
-                ),
+                        "target_schema_sha256 FROM schema_migrations ORDER BY from_schema_version"
+                    ).fetchall()
+                ],
             )
         finally:
             current.close()
+
+    def test_exact_encrypted_v20_migrates_with_verified_backup_and_reopens(self) -> None:
+        plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual(20, plan.source_schema_version)
+        self.assertEqual(MIGRATION_IDS, plan.migration_ids)
+        self.assertEqual(storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256, plan.source_schema_sha256)
+        result = migrate_database(self.database, expected_project_id=PROJECT_ID)
+        self.assertEqual("migrated", result.status)
+        self.assertEqual(MIGRATION_IDS, result.migration_ids)
+        self.assertEqual("current", migrate_database(self.database, expected_project_id=PROJECT_ID).status)
+        self._assert_current_v23_history()
         assert result.recovery_manifest_relative_path is not None
         manifest_path = self.state.parent / result.recovery_manifest_relative_path
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         backup_path = self.state.parent / manifest["backup"]["relativePath"]
         self.assertEqual(hashlib.sha256(backup_path.read_bytes()).hexdigest(), manifest["backup"]["sha256"])
         self.assertEqual(20, manifest["sourceSchemaVersion"])
-        self.assertEqual(21, manifest["targetSchemaVersion"])
-        self.assertEqual([v0021_plugin_grants.revision], manifest["migrationIds"])
+        self.assertEqual(23, manifest["targetSchemaVersion"])
+        self.assertEqual(list(MIGRATION_IDS), manifest["migrationIds"])
 
     def test_each_v21_step_failure_rolls_back_exact_v20_and_retries(self) -> None:
         # Exercise every material step because schema replacement and history
@@ -153,7 +189,17 @@ class PluginGrantMigrationTests(unittest.TestCase):
                 self.assertIsNotNone(raised.exception.recovery_manifest_relative_path)
                 plan = plan_database_migration(self.database, expected_project_id=PROJECT_ID)
                 self.assertEqual(20, plan.source_schema_version)
-                self.assertEqual((v0021_plugin_grants.revision,), plan.migration_ids)
+                self.assertEqual(MIGRATION_IDS, plan.migration_ids)
                 self.assertEqual(storage.PLUGIN_GRANT_PREDECESSOR_SCHEMA_SHA256, plan.source_schema_sha256)
         result = migrate_database(self.database, expected_project_id=PROJECT_ID)
         self.assertEqual("migrated", result.status)
+        self.assertEqual(MIGRATION_IDS, result.migration_ids)
+        self._assert_current_v23_history()
+        assert result.recovery_manifest_relative_path is not None
+        manifest_path = self.state.parent / result.recovery_manifest_relative_path
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        backup_path = self.state.parent / manifest["backup"]["relativePath"]
+        self.assertEqual(hashlib.sha256(backup_path.read_bytes()).hexdigest(), manifest["backup"]["sha256"])
+        self.assertEqual(20, manifest["sourceSchemaVersion"])
+        self.assertEqual(23, manifest["targetSchemaVersion"])
+        self.assertEqual(list(MIGRATION_IDS), manifest["migrationIds"])

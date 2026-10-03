@@ -529,7 +529,7 @@ class PluginWorkerService:
                         request=inputs.request,
                         input_data=data,
                         actor=PluginGrantActor(
-                            self._actor_id, claim.job_id.replace("-", ""), self._now(), actor_type="workload"
+                            self._actor_id, claim.job_id.replace("-", ""), self._now(), actor_type="system"
                         ),
                     )
                 )
