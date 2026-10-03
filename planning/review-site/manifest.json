@@ -1043,9 +1043,7 @@
       "unlocks_waves": [
         "W3"
       ],
-      "interrupting_change_request_ids": [
-        "ECR-0009"
-      ],
+      "interrupting_change_request_ids": [],
       "interrupting_recovery_request_ids": [],
       "corrective_tasks": [
         {
@@ -37523,7 +37521,7 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A01.json",
       "approval_sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
       "approval_status": "APPROVED",
-      "lifecycle_status": "REVIEW",
+      "lifecycle_status": "ADOPTED",
       "bootstrap_status": "APPROVED",
       "campaign_status": "COMPLETE",
       "bootstrap_attempts": [
@@ -38614,7 +38612,24 @@
           "current_submission": null
         }
       },
-      "adoption_checkpoints": [],
+      "adoption_checkpoints": [
+        {
+          "id": "W2.CP02",
+          "kind": "security",
+          "recorded_by": "codex-w2-implementation",
+          "recorded_at": "2026-10-03T01:29:10+00:00",
+          "notes": "Adopted W2.A01 control-plane amendment.",
+          "evidence_references": [
+            {
+              "type": "amendment-adoption-evidence",
+              "amendment_id": "W2.A01",
+              "path": "artifacts/evidence/W2.A01.adoption.json",
+              "sha256": "c9a0c04eea44bcb97fbb0b2cfd262320ad27daa03a532f229ef6df9e5ebd0d30",
+              "commit": "1e51bf12d5105928a4740b9a2950c6851f8a5dcd"
+            }
+          ]
+        }
+      ],
       "page": "enablers/ECR-0009.html"
     }
   ],

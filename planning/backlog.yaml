@@ -1491,7 +1491,7 @@ waves:
       remain recorded, not waived.
   campaign:
     status: PAUSED
-    scope: amendment-hold
+    scope: wave
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
@@ -3551,6 +3551,17 @@ waves:
     - artifacts/evidence/W2.CP01.review-R01.json
     notes: CAP-04.S01-S03 import, four-source and reconciliation cluster independently approved at exact candidate 9a319a1b;
       targeted checks and native smoke pass; full W2 exit qualification remains due.
+  - id: W2.CP02
+    kind: security
+    recorded_by: codex-w2-implementation
+    recorded_at: '2026-10-03T01:29:10+00:00'
+    evidence:
+    - type: amendment-adoption-evidence
+      amendment_id: W2.A01
+      path: artifacts/evidence/W2.A01.adoption.json
+      sha256: c9a0c04eea44bcb97fbb0b2cfd262320ad27daa03a532f229ef6df9e5ebd0d30
+      commit: 1e51bf12d5105928a4740b9a2950c6851f8a5dcd
+    notes: Adopted W2.A01 control-plane amendment.
   completion:
     status: PAUSED
     reviewer: null
@@ -51481,7 +51492,7 @@ wave_amendments:
     sha256: 6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096
     introduction_commit: f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287
   lifecycle:
-    status: REVIEW
+    status: ADOPTED
     history:
     - id: E01
       status: APPROVED
@@ -51510,6 +51521,11 @@ wave_amendments:
       actor: codex-w2-implementation
       at: '2026-10-03T00:59:19+00:00'
       rationale: Submitted amendment exit for review.
+    - id: E05
+      status: ADOPTED
+      actor: codex-w2-implementation
+      at: '2026-10-03T01:29:10+00:00'
+      rationale: Adopted via W2.CP02.
   bootstrap:
     id: W2.A01.B00
     status: APPROVED

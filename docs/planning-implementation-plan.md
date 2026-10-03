@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: eef35a96fa5c49423f8a3c62befbdd34616eea615370f4811ad74c3452fa3837
+source_sha256: 3fa2eb75d7a045f0db3de0abbd5937cae41c0c22dbacb1fb08005e8337574099
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
-| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `REVIEW` |
+| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 
 ## Waves
 
@@ -2362,7 +2362,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A01.json` (`6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096`)
 
-**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `COMPLETE` / `APPROVED`
+**Lifecycle / bootstrap / campaign / completion:** `ADOPTED` / `APPROVED` / `COMPLETE` / `APPROVED`
 
 **Append-only lifecycle history:**
 
@@ -2370,6 +2370,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 - `E02` `MATERIALIZED` at `2026-10-02T18:11:43+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-02T18:39:35+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
 - `E04` `REVIEW` at `2026-10-03T00:59:19+00:00` by codex-w2-implementation: Submitted amendment exit for review.
+- `E05` `ADOPTED` at `2026-10-03T01:29:10+00:00` by codex-w2-implementation: Adopted via W2.CP02.
 
 ### Amendment-exit review and adoption — W2.A01
 
@@ -2413,7 +2414,8 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Bound amendment-adoption checkpoints:**
 
-- None
+- `W2.CP02` `security` by codex-w2-implementation at `2026-10-03T01:29:10+00:00` — Adopted W2.A01 control-plane amendment.
+  - amendment `W2.A01` / `artifacts/evidence/W2.A01.adoption.json` / `c9a0c04eea44bcb97fbb0b2cfd262320ad27daa03a532f229ef6df9e5ebd0d30` / `1e51bf12d5105928a4740b9a2950c6851f8a5dcd`
 
 **Bounded tasks:**
 
