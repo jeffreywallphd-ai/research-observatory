@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "governance-control-maintenance",
+  "maintenanceId": "GOV-MAINT-0025",
+  "title": "Close the active W2 Python quality inventory with canonical control provenance",
+  "status": "candidate",
+  "riskTier": 2,
+  "humanApprovalRequired": false,
+  "implementationAgent": "agent:w2-quality-inventory-prepare",
+  "predecessor": {
+    "commit": "56187d40ca5d38f72f7c9dfb132070b034032a57",
+    "wave": "W2",
+    "waveStatus": "PAUSED",
+    "waveScope": "wave",
+    "adoptedAmendment": "W2.A01",
+    "adoptionCheckpoint": "W2.CP02",
+    "sourceGitBlobSha256": {
+      "quality-scope.json": "195f3123809c8d9b05a1395a6c16bf34f40b9538f10f918d931e57d280535732",
+      "tools/quality_check.py": "32cb0e3444e17c24d18ca827a970cd04a6d27b61ce7d6ab2c8dabaefa9cc9c69",
+      "tools/ui_change_gate.py": "a225abf6d28d712e093ea7f6e826fef6f4c4c6735992ce8271dc175b30bb6dab",
+      "tests/foundation/test_quality_check.py": "0900781c33de2b9216cb05ec0ab7c5f1052bc5774d78b804c0d42554448ea80a",
+      "tests/foundation/test_ui_change_gate.py": "9f712e77ac0cf4e1a11fdf1e27f4579e9114a686e2af9200498542bf82a55b36"
+    }
+  },
+  "trigger": {
+    "historicalAdverseLog": "artifacts/tmp/W2.A01.T01.quality-da2b026d.log",
+    "historicalAdverseLogSha256": "409ed6a71962c6d49171d6b39d39d8d3b8638e482be0ec218ad4f4d68c137b44",
+    "freshRedCommand": ".venv/Scripts/python.exe -B -m unittest tests.foundation.test_quality_check.PythonQualityCheckTests.test_quality_scope_is_explicit_and_valid -v",
+    "freshRedLog": "artifacts/tmp/GOV-MAINT-0025.quality-red-56187d40.log",
+    "freshRedLogSha256": "d1783136964fac61b2262f1cdfa91293fec39b474061b07150f629fb93b11edf",
+    "freshRedResult": "At the exact clean adopted W2.A01 predecessor 56187d40, the existing inventory test fails on eleven tracked regular Python files. The historical adverse log names ten; the approved W2.A01.T02 mounted test is the eleventh. Neither failure is overwritten."
+  },
+  "authority": "AGENTS.md bounded Tier 2 maintenance restores the closed quality inventory for already tracked W2 Python source and tests after W2.A01 adoption. No product behavior, permission, scope change, scanner suppression, gate exemption, task approval, Wave qualification or release authority is granted. This fresh direct-child candidate requires its own exact-commit independent control review and canonical append-only adoption projection; rejected GOV-MAINT-0023/0024 and isolated GOV-MAINT-0022 histories are supporting diagnosis only.",
+  "intendedDelta": {
+    "implementation": "Append exactly eleven already tracked regular Python paths to pythonFiles. Preserve all 516 existing entries in order, every governed root and metadata field, and the quality checker, UI gate and test source without edits.",
+    "addedFiles": [
+      "services/core-api/src/research_observatory_core/document_attachment_api.py",
+      "services/core-api/src/research_observatory_core/document_attachment_repository.py",
+      "services/core-api/src/research_observatory_core/migrations/versions/v0022_document_attachments.py",
+      "services/core-api/src/research_observatory_core/ports/document_attachments.py",
+      "tests/desktop/test_document_attachment_interactions.py",
+      "tests/documents/test_format_inspection.py",
+      "tests/documents/test_local_attachment.py",
+      "tests/service/test_document_attachment_api.py",
+      "workers/document/__init__.py",
+      "workers/document/inspection.py",
+      "workers/windows/document_launcher.py"
+    ],
+    "changedPaths": [
+      "planning/governance-migrations/GOV-MAINT-0025.json",
+      "quality-scope.json"
+    ],
+    "failClosed": [
+      "No pre-existing quality inventory row is removed, reordered or duplicated; no root, schema or metadata changes.",
+      "Each addition is an existing tracked mode-100644 Python path under a governed root; no symlink, untracked path or source-file edit is admitted.",
+      "No quality rule, UI authority, product behavior, original task state, approved amendment history or release criterion changes in this candidate.",
+      "The full quality profile remains adverse until the original open CAP-05.S01.T01 source/test formatting and typing findings are repaired; this inventory closure is not a full quality pass."
+    ]
+  },
+  "verification": {
+    "status": "Fresh predecessor red reproduced at 56187d40; exact committed GOV-MAINT-0025 focused checks, real-Git protocol rehearsal, and independent review remain pending.",
+    "riskAnalysis": "Inventory control only. Select the existing closed-scope quality module, two real-Git late-inventory/independent-maintenance guard cases, exact tracked path/mode/additive assertions, predecessor and adverse-log hashes, and diff hygiene. No product, native, platform, full quality, or Wave suite is justified by this two-path correction alone. The original CAP-05 format/type issues and W2 qualification retain their own gates.",
+    "selectedChecks": [
+      ".venv/Scripts/python.exe -B -m unittest tests.foundation.test_quality_check -v",
+      ".venv/Scripts/python.exe -B -m unittest tests.foundation.test_ui_change_gate.UiChangeGateTests.test_late_inventory_rejects_control_or_nonadditive_or_noncanonical_changes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_independently_reviewed_maintenance_can_repair_the_gate_after_ui -v",
+      "Exact Git inventory/root/path/mode/additive and preserved adverse-log assertions",
+      "git diff --check 56187d40ca5d38f72f7c9dfb132070b034032a57 <candidate>",
+      "Disposable real-Git reviewed_preimplementation_maintenance_errors approval-projection rehearsal using exact candidate record and canonical implementer identity"
+    ],
+    "reusedSourceIdenticalEvidence": [
+      {
+        "sourceCandidate": "665e4d3209cff48b619cee294f07cb32d5850219",
+        "scopeGitBlobSha256": "8caa3dde3083fbd0e19b6a1c1cb0e515e614dedd12f137c5d821f993f80ed9b0",
+        "rawOutput": "artifacts/tmp/GOV-MAINT-0023.quality-green-665e4d32.log",
+        "rawOutputSha256": "1fd219489414417c22cc112163602ec8911a631b611b976fd77dd96f8e1ada3f",
+        "boundary": "Four quality-module tests passed at the rejected 0023 source-identical candidate. This is supporting red/green diagnosis, not 0025 review or adoption."
+      },
+      {
+        "sourceCandidate": "665e4d3209cff48b619cee294f07cb32d5850219",
+        "scopeGitBlobSha256": "8caa3dde3083fbd0e19b6a1c1cb0e515e614dedd12f137c5d821f993f80ed9b0",
+        "rawOutput": "artifacts/tmp/GOV-MAINT-0023.ui-gate-focused-665e4d32.log",
+        "rawOutputSha256": "87c428703b3ee9834130cee80af3d14028d8132bf2b8917c7d87b257ffe7275e",
+        "boundary": "Two focused real-Git late-inventory and reviewed-maintenance cases passed at the rejected candidate. Exact 0025 candidate replay remains required."
+      }
+    ],
+    "retainedAdverseScope": "The independent isolated GOV-MAINT-0022 diagnosis found three Ruff formatting failures and thirteen mypy errors in the ten original CAP-05 Python paths. Those ten Git blobs are unchanged from 369cd712 through this predecessor; the results are prior-source evidence, not a fresh full-quality run or an active-branch approval. CAP-05.S01.T01 must repair them under its original task after Wave resume."
+  },
+  "rollback": "Preserve rejected 665e4d32, 511564a0, bd2db157 and all adverse logs. If this candidate receives a finding, retain its exact record and review attempt, then use a descendant control-only remediation with explicit closure. Do not alter approved W2.A01 history, import divergent side commits, weaken quality or UI controls, or claim full quality from inventory closure.",
+  "reviewAttempts": [],
+  "review": null,
+  "priorAdverseCandidates": [
+    {
+      "maintenanceId": "GOV-MAINT-0023",
+      "commit": "665e4d3209cff48b619cee294f07cb32d5850219",
+      "preservationRef": "refs/heads/codex/w2-quality-inventory-adverse-665",
+      "disposition": "inadmissible-before-independent-review",
+      "rootCause": "The initial candidate maintenance record omitted the canonical reviewAttempts: [] and review: null fields required by the existing UI gate review provenance protocol. It was preserved on a side ref without review, adoption, amendment to its bytes, or import into the active branch."
+    },
+    {
+      "maintenanceId": "GOV-MAINT-0024",
+      "candidateCommit": "511564a06cac3f74249c76cb1679cdd7bc62f897",
+      "invalidReviewDeliveryCommit": "bd2db157fcf62f592fdae7032b15cfbcb62fad7f",
+      "preservationRef": "refs/heads/codex/w2-quality-inventory-adverse-0024",
+      "protocolFailureLog": "artifacts/tmp/GOV-MAINT-0024.protocol-failure-bd2db157.log",
+      "protocolFailureLogSha256": "9523dc51a6b5f8e7beada8cd76a0d385b1659ad69c82d4e8280643acbf214dd1",
+      "disposition": "inadmissible-review-projection",
+      "rootCause": "The candidate and independent approval projection used implementationAgent agent:/root/w2_quality_inventory_prepare. The pre-UI maintenance protocol rejected that noncanonical identity, so the review delivery is not an admissible adoption; both exact commits are preserved on a side ref and are not imported into this direct-child candidate."
+    }
+  ]
+}

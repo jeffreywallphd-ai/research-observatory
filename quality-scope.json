@@ -525,6 +525,17 @@
     "workers/windows/no_write_acl.py",
     "workers/windows/plugin_worker.py",
     "workers/windows/recovery_guardian.py",
-    "workers/windows/runtime_inventory.py"
+    "workers/windows/runtime_inventory.py",
+    "services/core-api/src/research_observatory_core/document_attachment_api.py",
+    "services/core-api/src/research_observatory_core/document_attachment_repository.py",
+    "services/core-api/src/research_observatory_core/migrations/versions/v0022_document_attachments.py",
+    "services/core-api/src/research_observatory_core/ports/document_attachments.py",
+    "tests/desktop/test_document_attachment_interactions.py",
+    "tests/documents/test_format_inspection.py",
+    "tests/documents/test_local_attachment.py",
+    "tests/service/test_document_attachment_api.py",
+    "workers/document/__init__.py",
+    "workers/document/inspection.py",
+    "workers/windows/document_launcher.py"
   ]
 }
