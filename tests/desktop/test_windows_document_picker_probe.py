@@ -145,41 +145,47 @@ class WindowsFileDialogActionContractTests(unittest.TestCase):
         cls.source = (ROOT / "tests/desktop/tools/WindowsFileDialogUia.cs").read_text(encoding="utf-8")
         cls.action = cls.source.split("public static string Act(", 1)[1]
 
-    def test_exact_filename_and_native_idok_are_rechecked_before_single_invoke(self) -> None:
+    def test_exact_filename_and_native_idok_are_rechecked_before_single_send(self) -> None:
         source = self.action.index("SyntheticSource(fixtureRoot, out held)")
         set_value = self.action.index("selectedValue.SetValue(selectedSource)")
         native_open = self.action.index("ExactNativeOpenButton(dialog, ownerPid, IntPtr.Zero)")
-        from_handle = self.action.index("NativeOpenFromHandle(idOk)")
         same_dialog = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)")
-        same_dialog_before_invoke = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)", from_handle)
+        source_recheck = self.action.index("selectedValue.Current.Value != selectedSource", native_open)
+        same_dialog_before_send = self.action.index("ExactDialog(ownerHwnd, ownerPid, 1000)", native_open)
         native_recheck = self.action.index("ExactNativeOpenButton(dialog, ownerPid, idOk)")
-        source_recheck = self.action.index("selectedValue.Current.Value != selectedSource", from_handle)
-        invoke = self.action.index("((InvokePattern)invokeObject).Invoke()")
+        send = self.action.index("ClickExactNativeOpen(idOk)")
         self.assertLess(source, set_value)
         self.assertLess(same_dialog, set_value)
         self.assertIn("GetForegroundWindow() != dialog", self.action[source:set_value])
         self.assertLess(set_value, native_open)
-        self.assertLess(native_open, from_handle)
-        self.assertLess(from_handle, same_dialog_before_invoke)
-        self.assertLess(same_dialog_before_invoke, native_recheck)
-        self.assertLess(native_recheck, source_recheck)
-        self.assertLess(source_recheck, invoke)
-        self.assertLess(same_dialog_before_invoke, invoke)
+        self.assertLess(native_open, source_recheck)
+        self.assertLess(source_recheck, same_dialog_before_send)
+        self.assertLess(same_dialog_before_send, native_recheck)
+        self.assertLess(native_recheck, send)
         self.assertIn('ReadyControls(dialog, timeoutMs, "file-name")', self.action[:set_value])
-        self.assertIn("GetForegroundWindow() != dialog", self.action[same_dialog_before_invoke:invoke])
+        self.assertIn("GetForegroundWindow() != dialog", self.action[same_dialog_before_send:send])
+        self.assertEqual(self.action.count("ClickExactNativeOpen(idOk)"), 1)
         self.assertEqual(self.action.count("((InvokePattern)invokeObject).Invoke()"), 1)
 
-    def test_select_has_only_exact_native_idok_uia_action(self) -> None:
+    def test_select_has_one_bounded_exact_native_action_and_no_fallback(self) -> None:
         self.assertIn("GetDlgItem(dialog, 1)", self.source)
         self.assertIn("GetDlgCtrlID(idOk)", self.source)
-        self.assertIn("AutomationElement.FromHandle(idOk)", self.source)
-        self.assertIn("current.NativeWindowHandle", self.source)
-        self.assertNotIn("BM_CLICK", self.source)
+        native_send = self.source.split("private static void ClickExactNativeOpen(", 1)[1]
+        native_send = native_send.split("private static AutomationElement ExactCancel(", 1)[0]
+        self.assertEqual(native_send.count("SendMessageTimeoutW("), 1)
+        self.assertIn("SendMessageTimeoutW(idOk, BmClick", native_send)
+        self.assertIn("SmtoAbortIfHung | SmtoErrorOnExit", native_send)
+        self.assertIn("NativeSendTimeoutMs", native_send)
+        self.assertIn("dialog-native-open-send-failed", native_send)
+        self.assertNotIn("NativeOpenFromHandle", self.action)
+        self.assertNotIn("SetActiveWindow", self.source)
         self.assertNotIn("SendInput", self.source)
+        self.assertNotIn("PostMessage", self.source)
 
-    def test_adverse_uia_result_retains_only_sanitized_control_state(self) -> None:
+    def test_adverse_native_result_retains_only_sanitized_control_state(self) -> None:
         self.assertIn('result["controlDiagnostic"] = Diagnostic(controls)', self.action)
         self.assertIn('result["controlPhase"] = controlPhase', self.action)
+        self.assertIn('case "dialog-native-open-send-failed":', self.source)
         self.assertIn("SafeId(current.AutomationId)", self.source)
 
     @unittest.skipUnless(os.name == "nt", "Windows UI Automation helper")
@@ -206,7 +212,24 @@ $failure = [WindowsFileDialogUia].GetMethod(
 $failureArguments = New-Object 'object[]' 1
 $failureArguments[0] = [InvalidOperationException]::new('secret-participant.txt')
 $failureCode = $failure.Invoke($null, $failureArguments)
-ConvertTo-Json -InputObject @{{names=@($values); failure=$failureCode}} -Compress
+$failureArguments[0] = [InvalidOperationException]::new('dialog-native-open-send-failed')
+$sendFailureCode = $failure.Invoke($null, $failureArguments)
+$native = [WindowsFileDialogUia].GetMethod(
+    'ExactNativeOpenButton', [Reflection.BindingFlags]'Static, NonPublic'
+)
+$nativeArguments = New-Object 'object[]' 3
+$nativeArguments[0] = [IntPtr]::Zero
+$nativeArguments[1] = [int]1
+$nativeArguments[2] = [IntPtr]::Zero
+$nativeDenial = $null
+try {{ [void]$native.Invoke($null, $nativeArguments) }}
+catch {{
+    if ($null -eq $_.Exception.InnerException) {{ throw }}
+    $failureArguments[0] = $_.Exception.InnerException
+    $nativeDenial = $failure.Invoke($null, $failureArguments)
+}}
+ConvertTo-Json -InputObject @{{names=@($values); failure=$failureCode;
+  sendFailure=$sendFailureCode; nativeDenial=$nativeDenial}} -Compress
 """
         completed = subprocess.run(
             ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script],
@@ -222,6 +245,8 @@ ConvertTo-Json -InputObject @{{names=@($values); failure=$failureCode}} -Compres
             {
                 "names": ["open", "open", "open", "select", "ok", "other", "other"],
                 "failure": "dialog-action-failed",
+                "sendFailure": "dialog-native-open-send-failed",
+                "nativeDenial": "dialog-native-open-control-unproven",
             },
             f"stdout={completed.stdout!r}; stderr={completed.stderr!r}",
         )

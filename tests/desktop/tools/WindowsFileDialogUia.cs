@@ -21,6 +21,10 @@ public static class WindowsFileDialogUia
     private const string ExpectedClass = "#32770";
     private const string SourceName = "document-drop-source.txt";
     private const string SourceSha256 = "b83fc32249fefc9f92520155a0f78353d02a23365d582bb39bc060c096890d91";
+    private const uint BmClick = 0x00F5;
+    private const uint SmtoAbortIfHung = 0x0002;
+    private const uint SmtoErrorOnExit = 0x0020;
+    private const uint NativeSendTimeoutMs = 1000;
 
     private delegate bool EnumWindowsCallback(IntPtr window, IntPtr state);
 
@@ -62,6 +66,13 @@ public static class WindowsFileDialogUia
 
     [DllImport("user32.dll")]
     private static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+
+    [DllImport("kernel32.dll")]
+    private static extern uint GetCurrentThreadId();
+
+    [DllImport("user32.dll", EntryPoint = "SendMessageTimeoutW", SetLastError = true)]
+    private static extern IntPtr SendMessageTimeoutW(IntPtr window, uint message,
+        IntPtr wParam, IntPtr lParam, uint flags, uint timeoutMs, out IntPtr messageResult);
 
     private static string Text(IntPtr window, bool className)
     {
@@ -435,25 +446,17 @@ public static class WindowsFileDialogUia
         return idOk;
     }
 
-    private static AutomationElement NativeOpenFromHandle(IntPtr idOk)
+    private static void ClickExactNativeOpen(IntPtr idOk)
     {
-        AutomationElement target = AutomationElement.FromHandle(idOk);
-        if (target == null)
-            throw new InvalidOperationException("dialog-native-open-uia-unproven");
-        AutomationElement.AutomationElementInformation current = target.Current;
-        uint idOkPid;
-        if (GetWindowThreadProcessId(idOk, out idOkPid) == 0
-            || current.NativeWindowHandle == 0
-            || current.NativeWindowHandle != unchecked((int)idOk.ToInt64())
-            || current.ProcessId != (int)idOkPid
-            || current.ControlType != ControlType.Button
-            || SafeActionName(current.Name) != "open"
-            || !current.IsEnabled || current.IsOffscreen)
-            throw new InvalidOperationException("dialog-native-open-uia-unproven");
-        object pattern;
-        if (!target.TryGetCurrentPattern(InvokePattern.Pattern, out pattern))
-            throw new InvalidOperationException("dialog-native-open-uia-unproven");
-        return target;
+        uint ignoredPid;
+        uint targetThread = GetWindowThreadProcessId(idOk, out ignoredPid);
+        // SendMessageTimeout cannot bound a call to our own message queue.
+        if (targetThread == 0 || targetThread == GetCurrentThreadId())
+            throw new InvalidOperationException("dialog-native-open-control-unproven");
+        IntPtr messageResult;
+        if (SendMessageTimeoutW(idOk, BmClick, IntPtr.Zero, IntPtr.Zero,
+            SmtoAbortIfHung | SmtoErrorOnExit, NativeSendTimeoutMs, out messageResult) == IntPtr.Zero)
+            throw new InvalidOperationException("dialog-native-open-send-failed");
     }
 
     private static AutomationElement ExactCancel(Controls controls)
@@ -478,6 +481,7 @@ public static class WindowsFileDialogUia
                 case "dialog-open-control-unproven":
                 case "dialog-native-open-control-unproven":
                 case "dialog-native-open-uia-unproven":
+                case "dialog-native-open-send-failed":
                 case "dialog-not-foreground":
                 case "dialog-value-not-set":
                 case "dialog-did-not-close":
@@ -542,29 +546,31 @@ public static class WindowsFileDialogUia
                     throw new InvalidOperationException("dialog-owner-invalid");
                 idOk = ExactNativeOpenButton(dialog, ownerPid, IntPtr.Zero);
             }
-            AutomationElement target = action == "select"
-                ? NativeOpenFromHandle(idOk) : ExactCancel(controls);
-            if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
-                || GetForegroundWindow() != dialog)
-                throw new InvalidOperationException("dialog-owner-invalid");
-            if (!target.Current.IsEnabled || target.Current.IsOffscreen)
-                throw new InvalidOperationException(action == "select"
-                    ? "dialog-open-control-unproven" : "dialog-cancel-control-unproven");
-            object invokeObject;
-            if (!target.TryGetCurrentPattern(InvokePattern.Pattern, out invokeObject))
-                throw new InvalidOperationException("dialog-open-control-unproven");
             if (action == "select")
             {
-                if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
-                    || GetForegroundWindow() != dialog)
-                    throw new InvalidOperationException("dialog-owner-invalid");
-                ExactNativeOpenButton(dialog, ownerPid, idOk);
                 if (selectedValue.Current.Value != selectedSource
                     || !controls.FileName.Current.IsEnabled
                     || controls.FileName.Current.IsOffscreen)
                     throw new InvalidOperationException("dialog-value-not-set");
+                if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
+                    || GetForegroundWindow() != dialog)
+                    throw new InvalidOperationException("dialog-owner-invalid");
+                ExactNativeOpenButton(dialog, ownerPid, idOk);
+                ClickExactNativeOpen(idOk);
             }
-            ((InvokePattern)invokeObject).Invoke();
+            else
+            {
+                AutomationElement target = ExactCancel(controls);
+                if (ExactDialog(ownerHwnd, ownerPid, 1000) != dialog
+                    || GetForegroundWindow() != dialog)
+                    throw new InvalidOperationException("dialog-owner-invalid");
+                if (!target.Current.IsEnabled || target.Current.IsOffscreen)
+                    throw new InvalidOperationException("dialog-cancel-control-unproven");
+                object invokeObject;
+                if (!target.TryGetCurrentPattern(InvokePattern.Pattern, out invokeObject))
+                    throw new InvalidOperationException("dialog-open-control-unproven");
+                ((InvokePattern)invokeObject).Invoke();
+            }
             Stopwatch clock = Stopwatch.StartNew();
             while (IsWindow(dialog) && clock.ElapsedMilliseconds < timeoutMs)
                 Thread.Sleep(100);
