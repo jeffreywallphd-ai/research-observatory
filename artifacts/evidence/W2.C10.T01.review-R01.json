@@ -1,0 +1,38 @@
+{
+  "task_id": "W2.C10.T01",
+  "attempt_id": "R01",
+  "candidate_commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+  "base_commit": "eee6f5df4ba2b940e69fc8d7b49c033139e01856",
+  "reviewer": "agent:/root/maint26_independent_review",
+  "result": "approved",
+  "evidence_sha256": "93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a",
+  "packet_sha256": "dbcff21bb0648e655a5f32a6d0adfab03f9a04c867184ed488a829f335995eb1",
+  "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+  "selection_sha256": "f43f537e609368cbc226fbd926aa2933f6d484b17c57e8191161664fc47056ce",
+  "notes": "Independent expanded R01 security and migration review authenticates the frozen packet, committed correction spec and approved CAP-04.S05.T02 origin. The exact base-to-candidate diff has one product-line change, two test modules and five taskctl/generated planning paths. Persisted Core dispatch uses the existing system runtime-check role with the same authenticated local actor and job trace; trust, enable, revoke and storage validators remain human-only. The new real Core-admin regression denies system trust/enable, records human grant and reaches one synthetic broker call and durable publication. The frozen v20 schema fingerprint, ordered v21-v23 history, backup hash, encrypted reopen and injected v21 rollback/retry are verified. Fresh focused 20 Core, 9 authority and 49 dispatch/denial tests and three-path Ruff/mypy pass. Original signed LPAC evidence is historical support only for unchanged worker, guardian and broker boundaries. The one-page protected signed LPAC/Core preflight passed, but uses test signing, synthetic HTTP, an overridden runtime-availability gate and an ignored helper without full frozen input closure; it does not qualify joined S05 denial/cancellation/restart or W2 exit. The separate development plaintext package-pointer trace remains adverse evidence outside this fixed correction scope. No criterion-bound blocker remains.",
+  "corrective_integration": {
+    "evidence_sha256": "93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a",
+    "authority_preserved": true,
+    "affected_integration_reviewed": true,
+    "notes": "The original DONE and independently approved CAP-04.S05.T02 origin snapshot SHA-256 a9faa34a543433fdfe1665e54ade2892554e6bf893a1824c6155d8114d3bd994 is unchanged. The correction changes only the three spec-admitted product/test paths, retaining the authenticated actor ID, human trust/enable, existing system runtime checks, grant validators, storage triggers, LPAC, broker, audit and production migration authority. Fresh real Core grant and encrypted migration checks, dispatch/broker denial tests and bounded native positive preflight cover affected integration. Original R02 evidence remains historical for unchanged boundaries; full joined S05 and W2 qualification remain open."
+  },
+  "acceptance_reviews": [
+    {
+      "criterion_index": 1,
+      "result": "satisfied",
+      "assessment": "Original T02 R02 independent approval supports unchanged malicious-worker LPAC, broker-denial and durable failure-audit boundaries, without treating historical evidence as fresh qualification. The correction keeps those controls unchanged. Fresh 49 dispatch, job, broker and consent tests pass, including destination/path/method/scheme denial before egress. The real Core-admin regression proves system cannot trust/enable, then authentic human grant permits system runtime dispatch to one synthetic broker call; the protected signed LPAC/Core preflight publishes and reopens one page. Direct individual OS-denial audit and joined S05 denial/cancellation/restart are not claimed by this evidence."
+    },
+    {
+      "criterion_index": 2,
+      "result": "satisfied",
+      "assessment": "Retained predecessor red logs show the mixed-version v20 fixture and unauthorized workload actor. On the exact committed candidate, 20 Core/grant/migration, 9 admin/package and 49 dispatch/broker/consent tests pass. The corrected encrypted v20 fixture pins the frozen fingerprint, ordered v21-v23 history and target hashes, verified backup/reopen and injected v21 rollback/retry. The new regression was red first and now passes while system trust/enable remains denied. One protected signed native preflight passes within its stated one-page synthetic limits."
+    },
+    {
+      "criterion_index": 3,
+      "result": "satisfied",
+      "assessment": "Only plugin_worker.py and the two correction-spec test modules changed beyond five generated claim/planning paths. No permission contract, production DDL/migration, validator, LPAC image, guardian, broker, UX or audit policy changed. Ruff lint/format and mypy pass on all three changed Python files, and taskctl validation is submitted as a zero-exit claim without a retained raw log. Full S05 slice integration, checkpoint and W2 exit checks remain separately due."
+    }
+  ],
+  "findings": [],
+  "closures": []
+}

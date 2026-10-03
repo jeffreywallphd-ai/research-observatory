@@ -2599,7 +2599,7 @@
         {
           "task_id": "W2.C10.T01",
           "title": "Implement plugin isolation, configuration, and secret access controls",
-          "status": "REVIEW",
+          "status": "DONE",
           "acceptance_criteria": [
             "A malicious test connector cannot read unrelated secrets or project files; network and export attempts outside manifest permissions are blocked and audited.",
             "Automated tests cover the expected path and at least one material failure or boundary condition.",
@@ -2630,67 +2630,110 @@
           "task_review": {
             "task_id": "W2.C10.T01",
             "title": "Implement plugin isolation, configuration, and secret access controls",
-            "status": "REVIEW",
+            "status": "DONE",
             "mode": "append-only",
             "latest_review": {
-              "reviewer": null,
-              "result": null,
-              "reviewed_at": null,
-              "notes": null
+              "reviewer": "agent:/root/maint26_independent_review",
+              "result": "approved",
+              "reviewed_at": "2026-10-03T20:19:54+00:00",
+              "notes": "Independent expanded R01 security and migration review authenticates the frozen packet, committed correction spec and approved CAP-04.S05.T02 origin. The exact base-to-candidate diff has one product-line change, two test modules and five taskctl/generated planning paths. Persisted Core dispatch uses the existing system runtime-check role with the same authenticated local actor and job trace; trust, enable, revoke and storage validators remain human-only. The new real Core-admin regression denies system trust/enable, records human grant and reaches one synthetic broker call and durable publication. The frozen v20 schema fingerprint, ordered v21-v23 history, backup hash, encrypted reopen and injected v21 rollback/retry are verified. Fresh focused 20 Core, 9 authority and 49 dispatch/denial tests and three-path Ruff/mypy pass. Original signed LPAC evidence is historical support only for unchanged worker, guardian and broker boundaries. The one-page protected signed LPAC/Core preflight passed, but uses test signing, synthetic HTTP, an overridden runtime-availability gate and an ignored helper without full frozen input closure; it does not qualify joined S05 denial/cancellation/restart or W2 exit. The separate development plaintext package-pointer trace remains adverse evidence outside this fixed correction scope. No criterion-bound blocker remains."
             },
             "review_control": {
               "version": 1,
-              "attempts": [],
-              "current_submission": {
-                "id": "R01",
-                "submitted_by": "codex-w2-implementation",
-                "submitted_at": "2026-10-03T20:04:04+00:00",
-                "candidate_commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
-                "base_commit": "eee6f5df4ba2b940e69fc8d7b49c033139e01856",
-                "branch": "codex/w2-implementation",
-                "evidence_reference": {
-                  "type": "criterion-manifest",
-                  "path": "artifacts/evidence/W2.C10.T01.json",
-                  "sha256": "93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a",
-                  "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
-                  "recorded_at": "2026-10-03T20:04:04+00:00"
-                },
-                "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
-                "changed_paths": [
-                  "docs/planning-implementation-plan.md",
-                  "planning/backlog.yaml",
-                  "planning/review-site/manifest.json",
-                  "planning/review-site/waves/W2.html",
-                  "planning/status-summary.md",
-                  "services/core-api/src/research_observatory_core/plugin_worker.py",
-                  "tests/connectors/test_plugin_grant_migration.py",
-                  "tests/connectors/test_plugin_worker_submission.py"
-                ],
-                "selected_checks": [
-                  "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_grant_migration tests.connectors.test_plugin_grants",
-                  "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_package_repository",
-                  "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_broker tests.connectors.test_plugin_consent",
-                  "$env:RO_W2_SIGNED_WORKER_BUILD='artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated'; $env:RO_W2_CORE_SIDECAR_GUARDIAN='artifacts/tmp/CAP-04.S05.T03.R02.core-42379f73/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe'; .venv\\Scripts\\python.exe -B -s artifacts/tmp/s05_protected_authority_probe.red-b763fa8c.py",
-                  "$files=@('services/core-api/src/research_observatory_core/plugin_worker.py','tests/connectors/test_plugin_grant_migration.py','tests/connectors/test_plugin_worker_submission.py'); $env:MYPYPATH='tools;services/core-api/src'; .venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- $files",
-                  "python tools/taskctl.py --file planning/backlog.yaml validate"
-                ],
-                "deferred_checks": [
-                  "S05 slice integration must join signed sample to protected Core for two pages, denial/cancellation and restart/recovery with independent slice review; the one-page preflight does not discharge that obligation.",
-                  "Unchanged broad service/security-local/desktop/packaging profiles remain checkpoint or fresh W2 exit work under verification §8.1; this correction has no changed worker image, guardian, build or desktop inputs.",
-                  "Dev-only plaintext package-pointer transaction behavior requires separate triage outside this fixed correction spec."
-                ],
-                "selection_rationale": "The one-line product change affects persisted Core grant authorization; the second change repairs a test-only encrypted migration fixture. Focused worker/grant/admin, broker/consent and native signed-LPAC/Core checks target the plausible identity, denial, migration and durable-publication failures. Ruff/mypy cover all three changed paths; taskctl validates the correction claim. The ignored native probe authenticates its selected worker/guardian/sample bytes but overrides source-checkout runtime availability and imports an ignored helper outside a fully frozen input closure; it is only a one-page synthetic preflight. A separate development plaintext Python 3.14 package-pointer transaction failure was preserved and does not reproduce in the protected correction path; it is outside this three-path correction scope.",
-                "selection_sha256": "f43f537e609368cbc226fbd926aa2933f6d484b17c57e8191161664fc47056ce",
-                "prior_attempt_id": null,
-                "open_finding_ids": [],
-                "root_cause_analysis": null,
-                "selected_command_ids": [
-                  "search:connectors",
-                  "foundation:quality",
-                  "foundation:backlog"
-                ],
-                "packet_sha256": "dbcff21bb0648e655a5f32a6d0adfab03f9a04c867184ed488a829f335995eb1"
-              }
+              "attempts": [
+                {
+                  "submission": {
+                    "id": "R01",
+                    "submitted_by": "codex-w2-implementation",
+                    "submitted_at": "2026-10-03T20:04:04+00:00",
+                    "candidate_commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+                    "base_commit": "eee6f5df4ba2b940e69fc8d7b49c033139e01856",
+                    "branch": "codex/w2-implementation",
+                    "evidence_reference": {
+                      "type": "criterion-manifest",
+                      "path": "artifacts/evidence/W2.C10.T01.json",
+                      "sha256": "93f0eec82a82629b6035c64226906d5fc0382d365c30b273ff05b5e5c29c157a",
+                      "commit": "3dde91238b0be11847f68845a52b9785048dc8cd",
+                      "recorded_at": "2026-10-03T20:04:04+00:00"
+                    },
+                    "acceptance_criteria_sha256": "831c2a4cc6c6cf0bd8ca53f4c85cce254f359e6c80f198692babeaf6a7f96dd5",
+                    "changed_paths": [
+                      "docs/planning-implementation-plan.md",
+                      "planning/backlog.yaml",
+                      "planning/review-site/manifest.json",
+                      "planning/review-site/waves/W2.html",
+                      "planning/status-summary.md",
+                      "services/core-api/src/research_observatory_core/plugin_worker.py",
+                      "tests/connectors/test_plugin_grant_migration.py",
+                      "tests/connectors/test_plugin_worker_submission.py"
+                    ],
+                    "selected_checks": [
+                      "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_worker_submission tests.connectors.test_plugin_grant_migration tests.connectors.test_plugin_grants",
+                      "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_admin_service tests.connectors.test_plugin_package_repository",
+                      "$env:PYTHONPATH='services/core-api/src;.'; .venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_broker tests.connectors.test_plugin_consent",
+                      "$env:RO_W2_SIGNED_WORKER_BUILD='artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated'; $env:RO_W2_CORE_SIDECAR_GUARDIAN='artifacts/tmp/CAP-04.S05.T03.R02.core-42379f73/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe'; .venv\\Scripts\\python.exe -B -s artifacts/tmp/s05_protected_authority_probe.red-b763fa8c.py",
+                      "$files=@('services/core-api/src/research_observatory_core/plugin_worker.py','tests/connectors/test_plugin_grant_migration.py','tests/connectors/test_plugin_worker_submission.py'); $env:MYPYPATH='tools;services/core-api/src'; .venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- $files; .venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- $files",
+                      "python tools/taskctl.py --file planning/backlog.yaml validate"
+                    ],
+                    "deferred_checks": [
+                      "S05 slice integration must join signed sample to protected Core for two pages, denial/cancellation and restart/recovery with independent slice review; the one-page preflight does not discharge that obligation.",
+                      "Unchanged broad service/security-local/desktop/packaging profiles remain checkpoint or fresh W2 exit work under verification §8.1; this correction has no changed worker image, guardian, build or desktop inputs.",
+                      "Dev-only plaintext package-pointer transaction behavior requires separate triage outside this fixed correction spec."
+                    ],
+                    "selection_rationale": "The one-line product change affects persisted Core grant authorization; the second change repairs a test-only encrypted migration fixture. Focused worker/grant/admin, broker/consent and native signed-LPAC/Core checks target the plausible identity, denial, migration and durable-publication failures. Ruff/mypy cover all three changed paths; taskctl validates the correction claim. The ignored native probe authenticates its selected worker/guardian/sample bytes but overrides source-checkout runtime availability and imports an ignored helper outside a fully frozen input closure; it is only a one-page synthetic preflight. A separate development plaintext Python 3.14 package-pointer transaction failure was preserved and does not reproduce in the protected correction path; it is outside this three-path correction scope.",
+                    "selection_sha256": "f43f537e609368cbc226fbd926aa2933f6d484b17c57e8191161664fc47056ce",
+                    "prior_attempt_id": null,
+                    "open_finding_ids": [],
+                    "root_cause_analysis": null,
+                    "selected_command_ids": [
+                      "search:connectors",
+                      "foundation:quality",
+                      "foundation:backlog"
+                    ],
+                    "packet_sha256": "dbcff21bb0648e655a5f32a6d0adfab03f9a04c867184ed488a829f335995eb1"
+                  },
+                  "review": {
+                    "reviewer": "agent:/root/maint26_independent_review",
+                    "result": "approved",
+                    "reviewed_at": "2026-10-03T20:19:54+00:00",
+                    "notes": "Independent expanded R01 security and migration review authenticates the frozen packet, committed correction spec and approved CAP-04.S05.T02 origin. The exact base-to-candidate diff has one product-line change, two test modules and five taskctl/generated planning paths. Persisted Core dispatch uses the existing system runtime-check role with the same authenticated local actor and job trace; trust, enable, revoke and storage validators remain human-only. The new real Core-admin regression denies system trust/enable, records human grant and reaches one synthetic broker call and durable publication. The frozen v20 schema fingerprint, ordered v21-v23 history, backup hash, encrypted reopen and injected v21 rollback/retry are verified. Fresh focused 20 Core, 9 authority and 49 dispatch/denial tests and three-path Ruff/mypy pass. Original signed LPAC evidence is historical support only for unchanged worker, guardian and broker boundaries. The one-page protected signed LPAC/Core preflight passed, but uses test signing, synthetic HTTP, an overridden runtime-availability gate and an ignored helper without full frozen input closure; it does not qualify joined S05 denial/cancellation/restart or W2 exit. The separate development plaintext package-pointer trace remains adverse evidence outside this fixed correction scope. No criterion-bound blocker remains."
+                  },
+                  "ledger": {
+                    "path": "artifacts/evidence/W2.C10.T01.review-R01.json",
+                    "sha256": "38db2884e79a7f43462d33553c57147f371d61ce931a35672602550bdd3e0a47"
+                  },
+                  "findings": [],
+                  "closures": [],
+                  "telemetry": {
+                    "task_id": "W2.C10.T01",
+                    "amendment_id": null,
+                    "attempt_id": "R01",
+                    "submitted_at": "2026-10-03T20:04:04+00:00",
+                    "reviewed_at": "2026-10-03T20:19:54+00:00",
+                    "duration_seconds": 950,
+                    "outcome": "approved",
+                    "finding_counts": {
+                      "critical": 0,
+                      "high": 0,
+                      "medium": 0,
+                      "low": 0,
+                      "blocking": 0,
+                      "total": 0
+                    },
+                    "command_ids": [
+                      "search:connectors",
+                      "foundation:quality",
+                      "foundation:backlog"
+                    ],
+                    "remediation": {
+                      "prior_attempt_id": null,
+                      "replayed_finding_ids": [],
+                      "closed_finding_ids": []
+                    }
+                  }
+                }
+              ],
+              "current_submission": null
             }
           }
         }

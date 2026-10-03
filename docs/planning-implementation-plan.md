@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7edcf567cee0df5a50ee2aabb4db12da1fbd079b36dfb624fe69c994ff8749a4
+source_sha256: 74dcec7e95f0061d42a3ddd32d75342253a2838d62de459afcf4bc24fe8b3e27
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -3623,7 +3623,7 @@ Original tasks and approvals remain unchanged.
 
 ### W2.C10.T01 — Implement plugin isolation, configuration, and secret access controls
 
-**Status:** `REVIEW`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `-`.
+**Status:** `DONE`. **Original task:** `CAP-04.S05.T02`. **Latest review:** `approved`.
 
 **Reproduction:** At clean paused predecessor b763fa8ccff87c2828e94459252f02e35e1f4ef1, both encrypted grant-migration tests fail before migration: the v20 fixture slices the full DDL sequence by only the grant group length and now includes v22/v23 DDL, so its schema fingerprint differs from the frozen v20 fingerprint (ignored raw log artifacts/tmp/W2.C10.T01.grant-migration-red-b763fa8c.log, SHA-256 95588b3d40405e3f227056ae6414e31047c92ddff9b677b59bc49a0d390bb053). Separately, an unmodified protected local DPAPI/SQLCipher Core probe with real package trust, human enable, current Intent/privacy/consent and selected signed-LPAC sample inputs fails at persisted grant authorization: PluginWorkerService constructs actor_type workload, while PluginGrantService.current_authorization admits only human or system actors for runtime checks. The durable job fails before broker egress or LPAC launch (ignored raw log artifacts/tmp/W2.C10.T01.protected-core-red-b763fa8c.log, SHA-256 55dbc4d7642205143ba0df88b32be653c26b7bb189c1a6996dd152625efcb7a8; ignored input report artifacts/tmp/W2.C10.T01.red-inputs-b763fa8c.json, SHA-256 624d0c5635879846a529d4bfafcfd5d3fc23a58a01fe369076a7cb8bc0b5b993). These red probes prove defects, not native launch, task, slice or Wave qualification.
 
@@ -3640,9 +3640,11 @@ Original tasks and approvals remain unchanged.
 - tests/connectors/test_plugin_worker_submission.py
 #### Review history — W2.C10.T01
 
-**Review mode:** `append-only v1` / 0 completed round(s)
+**Review mode:** `append-only v1` / 1 completed round(s)
 
-**Current immutable submission awaiting review:** `R01` / packet SHA-256 `dbcff21bb0648e655a5f32a6d0adfab03f9a04c867184ed488a829f335995eb1`
+##### Round R01
+
+**Immutable submission packet:** `R01` / packet SHA-256 `dbcff21bb0648e655a5f32a6d0adfab03f9a04c867184ed488a829f335995eb1`
 
 - Candidate / base / branch: `3dde91238b0be11847f68845a52b9785048dc8cd` / `eee6f5df4ba2b940e69fc8d7b49c033139e01856` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T20:04:04+00:00`
@@ -3656,9 +3658,25 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `-` / -
 - Root-cause escalation: -
 
-**Current latest-review projection:** `-` by - at `-`
+**Disposition / reviewer / time:** `approved` / agent:/root/maint26_independent_review / `2026-10-03T20:19:54+00:00`
 
-**Latest notes:** -
+**Immutable review ledger:** `artifacts/evidence/W2.C10.T01.review-R01.json` / `38db2884e79a7f43462d33553c57147f371d61ce931a35672602550bdd3e0a47`
+
+**Review notes:** Independent expanded R01 security and migration review authenticates the frozen packet, committed correction spec and approved CAP-04.S05.T02 origin. The exact base-to-candidate diff has one product-line change, two test modules and five taskctl/generated planning paths. Persisted Core dispatch uses the existing system runtime-check role with the same authenticated local actor and job trace; trust, enable, revoke and storage validators remain human-only. The new real Core-admin regression denies system trust/enable, records human grant and reaches one synthetic broker call and durable publication. The frozen v20 schema fingerprint, ordered v21-v23 history, backup hash, encrypted reopen and injected v21 rollback/retry are verified. Fresh focused 20 Core, 9 authority and 49 dispatch/denial tests and three-path Ruff/mypy pass. Original signed LPAC evidence is historical support only for unchanged worker, guardian and broker boundaries. The one-page protected signed LPAC/Core preflight passed, but uses test signing, synthetic HTTP, an overridden runtime-availability gate and an ignored helper without full frozen input closure; it does not qualify joined S05 denial/cancellation/restart or W2 exit. The separate development plaintext package-pointer trace remains adverse evidence outside this fixed correction scope. No criterion-bound blocker remains.
+
+**Findings opened:**
+
+- None
+
+**Prior finding closures:**
+
+- None
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `approved` by agent:/root/maint26_independent_review at `2026-10-03T20:19:54+00:00`
+
+**Latest notes:** Independent expanded R01 security and migration review authenticates the frozen packet, committed correction spec and approved CAP-04.S05.T02 origin. The exact base-to-candidate diff has one product-line change, two test modules and five taskctl/generated planning paths. Persisted Core dispatch uses the existing system runtime-check role with the same authenticated local actor and job trace; trust, enable, revoke and storage validators remain human-only. The new real Core-admin regression denies system trust/enable, records human grant and reaches one synthetic broker call and durable publication. The frozen v20 schema fingerprint, ordered v21-v23 history, backup hash, encrypted reopen and injected v21 rollback/retry are verified. Fresh focused 20 Core, 9 authority and 49 dispatch/denial tests and three-path Ruff/mypy pass. Original signed LPAC evidence is historical support only for unchanged worker, guardian and broker boundaries. The one-page protected signed LPAC/Core preflight passed, but uses test signing, synthetic HTTP, an overridden runtime-availability gate and an ignored helper without full frozen input closure; it does not qualify joined S05 denial/cancellation/restart or W2 exit. The separate development plaintext package-pointer trace remains adverse evidence outside this fixed correction scope. No criterion-bound blocker remains.
 
 **Currently open findings:** -
 
