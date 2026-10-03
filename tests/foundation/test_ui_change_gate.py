@@ -718,7 +718,14 @@ class UiChangeGateTests(unittest.TestCase):
     def test_linked_conformance_authenticates_real_completed_wave_authority(self) -> None:
         # Read-only historical authority, not a live correction admission or a
         # claim that this repository's product currently passes conformance.
-        head = self.git(REPO, "rev-parse", "HEAD")
+        live_head = self.git(REPO, "rev-parse", "HEAD")
+        live_data = yaml.safe_load(ui_gate.blob(REPO, live_head, "planning/backlog.yaml").decode("utf-8"))
+        wave = next(item for item in live_data["waves"] if item["id"] == "W2")
+        packet = wave["approval"]["approved_commit"]
+        later_references = self.git(
+            REPO, "rev-list", "--reverse", f"{packet}..{live_head}", "--", "design/ui-reference"
+        ).splitlines()
+        head = self.git(REPO, "rev-parse", f"{later_references[0]}^") if later_references else live_head
         data = yaml.safe_load(ui_gate.blob(REPO, head, "planning/backlog.yaml").decode("utf-8"))
         origin = taskctl.index_backlog(copy.deepcopy(data))[3]["CAP-04.S02.T03"]
         task: dict[str, Any] = {
@@ -731,6 +738,17 @@ class UiChangeGateTests(unittest.TestCase):
             },
         }
         self.assertEqual([], ui_gate.linked_conformance_origin_errors(REPO, head, data, task, origin))
+        if later_references:
+            live_origin = taskctl.index_backlog(copy.deepcopy(live_data))[3]["CAP-04.S02.T03"]
+            live_task = copy.deepcopy(task)
+            live_task["correction"]["origin_commit"] = live_head
+            live_task["correction"]["origin_sha256"] = taskctl.canonical_json_sha256(
+                taskctl.corrective_origin_snapshot(live_origin)
+            )
+            self.assertIn(
+                "conformance origin cannot borrow a later changed reference",
+                ui_gate.linked_conformance_origin_errors(REPO, live_head, live_data, live_task, live_origin),
+            )
         for mutation in (
             "approver",
             "human-approver",
