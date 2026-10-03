@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A02.T01",
+  "baseCommit": "23b019825f944e75edb6420b742e82f1216be7c6",
+  "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "design/ui-change.schema.json",
+    "docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md",
+    "docs/adr/index.json",
+    "docs/automation/design-first-ui-changes.md",
+    "docs/planning-implementation-plan.md",
+    "planning/backlog.yaml",
+    "planning/review-site/enablers/ECR-0010.html",
+    "planning/review-site/manifest.json",
+    "planning/status-summary.md",
+    "tests/foundation/test_ui_change_gate.py",
+    "tools/ui_change_gate.py"
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "Closed v1.3 adoptedContinuationAuthority selects only CAP-05.S01.T01 and authenticates its original 6506 claim, W2/W2.A01/W2.A02 approval/adoption/review lineage, reviewed T02 contract, historical 1.7-to-1.8 publication, GOV-MAINT-0025, and full per-commit inherited/T01 inventories.",
+        "The 13-case exact-candidate real-Git/schema suite passes the positive lineage plus approval, ledger and control-source tamper denials. It includes the immutable 9727 exception and retained older branches."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The v1.3 object requires exactly the historical T02 and current T01 contracts and a task-namespaced independent current product/approved-1.8 classification with exact capture and dependent-input Git bindings. Hostile tests deny stale captures, dependent source edits, extra/redirected contracts, shortened base, and rewritten or unattributed authority.",
+        "This control task tests the guard with real-Git fixtures. Independent classification of the real resumed product candidate and full original-base gate are explicitly deferred to CAP-05.S01.T01."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "The 9727f1b195e7dee300e7f3df3c289e7739fb0fdc mixed-history exception verifies exact tree/history: nine canonical added Python files, unchanged prior quality inventory metadata and roots, and exactly two governed renderer edits. Other mixed commits remain denied.",
+        "No prior independent approval is attributed to that mixed commit; the eventual full T01 product review remains separate."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "automatic_base resolves the authenticated original CAP-05.S01.T01 6506 base rather than HEAD^; tests deny short-base and foreign/rewritten ledger substitutions.",
+        "The exact run preserves and passes selected v1.2 Git lineage/schema, v1.1 resumed-amendment, and v1.0 approved-reference restoration tests without changing their policy roots or approval-before-code requirement."
+      ]
+    },
+    {
+      "criterion_index": 5,
+      "evidence": [
+        "Proposed ADR-0037 is indexed and names the exact protected route without superseding ADR-0003. The exact task-base ADR checker passes on all 11 changed paths.",
+        "Expanded independent control, security and ADR task review is pending this frozen submission; no approval is claimed by this manifest."
+      ]
+    },
+    {
+      "criterion_index": 6,
+      "evidence": [
+        "Exact task-base diff contains only the six authorized W2.A02.T01 control-source files plus taskctl/generated planning projections. No renderer, native, Core, reference, original task-base, migration or release source is changed.",
+        "Read-only preflight found a six-file source scope bypass at dcb37d84. Its ignored red real-Git log remains adverse (artifacts/tmp/W2.A02.T01-six-path-scope-pre-fix-red.log, SHA-256 21bc427e84b308b81e35db5cc48a23fe48485d036522295b543b1b6f5d8c2f95). The f989ba75 focused regression passes, along with the 13-case authority suite and selected ADR/backlog/UI/quality checks. Formal independent review remains pending."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "selectedCommandIds": [
+      "foundation:ui-change",
+      "foundation:adr",
+      "foundation:backlog",
+      "foundation:backlog-views"
+    ],
+    "riskAnalysis": "The changed gate/schema is security- and authority-sensitive. Fresh exact-f989ba75 real-Git tests cover authenticated inherited and current chronology, denial of forged reviews/extra controls/hidden Git inputs, exact 9727 mixed exception and six-file task scope, plus retained 1.0-1.2 behavior. The dcb preflight bypass and red result remain preserved; f989 closes it with a focused green case. Exact task-base ADR, backlog, control-only UI gate and targeted Python quality bind this candidate. The current CAP-05 product/reference conformance and original-base UI qualification are a separate resumed task boundary.",
+    "deferred": [
+      "The full original-6506-base current product UI gate, independent approved-1.8 classification, built-app native drop path and D3D fifth-window denial belong to resumed CAP-05.S01.T01, its slice review and W2 qualification; none is claimed passed here.",
+      "Fresh review-site validation follows taskctl REVIEW/DONE projection updates; full repository/profile, cross-capability and release qualification remain for W2 exit, since this control task changes no product runtime."
+    ]
+  },
+  "checks": [
+    {
+      "id": "authority",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01 tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_inventory_exception_is_one_historical_commit tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_automatic_base_uses_live_original_claim tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_a02_adoption_rejects_rewritten_independent_task_ledger tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_short_base_cannot_hide_no_net_ui_or_reverted_contract tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_public_gate_authenticates_two_contracts_and_current_classification tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_classification_closes_dependent_git_inputs tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_unreviewed_imported_authority_source tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks tests.foundation.test_ui_change_gate.UiChangeGateTests.test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance tests.foundation.test_ui_change_gate.UiChangeGateTests.test_approved_reference_implementation_and_defect_restoration_pass",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.authority-f989ba75.log",
+      "rawOutputSha256": "e71f56d16ab024a5102d9d5bf51394730d3d07861c0b943e3da866af2e6768b9",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "13 focused v1.3 authority, inherited v1.2 Git, and retained v1.0/v1.1 tests passed in 1267.302 seconds."
+    },
+    {
+      "id": "six-path-scope",
+      "command": ".venv\\Scripts\\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_reviewed_a02_source_outside_six_files",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.six-path-scope-f989ba75.log",
+      "rawOutputSha256": "a93a0c79463963fc9782467a4760e8386bc2eea21d8388aa3443ad329f337b17",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Real-Git bypass regression now denies an extra reviewed W2.A02 source path outside the six approved files."
+    },
+    {
+      "id": "adr",
+      "command": ".venv\\Scripts\\python.exe tools/adr_check.py --repo . --base 23b019825f944e75edb6420b742e82f1216be7c6 --head f989ba75b605c2d53db058441ecea211ae41c776",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.adr-f989ba75.log",
+      "rawOutputSha256": "b5b7900f23699a8b6a6b13ac3268d12cd3a026ca58efe7a0b2cb0266405d567f",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Exact task-base ADR registry check passed: 37 indexed records and 11 changed paths inspected."
+    },
+    {
+      "id": "backlog",
+      "command": ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.backlog-f989ba75.log",
+      "rawOutputSha256": "a2f9b2323fc2cbf2161f47e0637bdf7748398cf3e45a581670e4104f96163300",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Canonical backlog validates: 20 capabilities, 117 slices, 388 tasks, 12 release gates."
+    },
+    {
+      "id": "ui-gate",
+      "command": ".venv\\Scripts\\python.exe tools/ui_change_gate.py --repo . --base 23b019825f944e75edb6420b742e82f1216be7c6 --head f989ba75b605c2d53db058441ecea211ae41c776",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.ui-gate-f989ba75.log",
+      "rawOutputSha256": "7a5ee624c49fcc3368c9a297bf2da0b164df11defe46a79d54d1f1f80b9dc154",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Exact task-base control-only UI gate passed; no current product conformance is claimed."
+    },
+    {
+      "id": "backlog-views",
+      "command": ".venv\\Scripts\\python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.views-f989ba75.log",
+      "rawOutputSha256": "36ebe8ba5eed16d416087f957ce901132e936a4ed14c97dbcb91651c3e2678aa",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Generated backlog views match the committed claim-state projection."
+    },
+    {
+      "id": "ruff-format",
+      "command": ".venv\\Scripts\\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.ruff-format-f989ba75.log",
+      "rawOutputSha256": "97d85b4b6c185a05396e2d09a3c304ff0f7cc77f8b7b7bb7989ec6cd875b3898",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Both changed Python files pass Ruff format check."
+    },
+    {
+      "id": "ruff-lint",
+      "command": ".venv\\Scripts\\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.ruff-f989ba75.log",
+      "rawOutputSha256": "a4443afdcfb6d7363adb285762515ccf7cf50473b1a05c20c1a50f6bed4d26b0",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Both changed Python files pass Ruff lint."
+    },
+    {
+      "id": "mypy",
+      "command": ".venv\\Scripts\\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.mypy-f989ba75.log",
+      "rawOutputSha256": "0c37c4158c91ef55c724ba017bf6465f26018199badb08e3ff13f98acdf056c2",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Both changed Python files pass mypy."
+    },
+    {
+      "id": "diff",
+      "command": "git diff --check 23b019825f944e75edb6420b742e82f1216be7c6 f989ba75b605c2d53db058441ecea211ae41c776",
+      "exitCode": 0,
+      "rawOutput": "artifacts/tmp/W2.A02.T01.diff-f989ba75.log",
+      "rawOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "commit": "f989ba75b605c2d53db058441ecea211ae41c776",
+      "provenance": "Fresh local execution on clean committed Windows x64 f989ba75; shared HEAD and selected inputs remained fixed during this check.",
+      "result": "Exact task-base patch has no whitespace errors."
+    }
+  ],
+  "scopeDeviation": "No approved W2.A02.T01 scope or security authority change. A pre-submission scope bypass was fixed within the six authorized source files; its red log is preserved and no formal adverse review ledger is rewritten. The 11 net changed paths include five taskctl/generated planning outputs.",
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "expanded-independent-security-control-ADR-review",
+    "openFindingIds": [],
+    "note": "Review the exact f989ba75 candidate, six-file source boundary and five projections, all ten raw check hashes, the preserved dcb preflight red result and f989 closure, historical packet/control chains, input capture/classification, 9727 exception, and retained 1.0-1.2 routes. Do not treat this control proof as real current-product qualification or W2.A02 adoption."
+  }
+}

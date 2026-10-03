@@ -52521,7 +52521,7 @@ wave_amendments:
     - Exact committed-candidate full original-base UI gate qualification with independent product/reference conformance classification
       is deferred to resumed CAP-05.S01.T01, not claimed by this control task.
     packet_task_sha256: 7296e7634979c1b35103f2a60d98806f3cf40c71be2c5dfa6b69a76935f431f7
-    status: IN_PROGRESS
+    status: REVIEW
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     base_sha: 23b019825f944e75edb6420b742e82f1216be7c6
@@ -52531,17 +52531,98 @@ wave_amendments:
       claimed_at: '2026-10-03T11:43:44+00:00'
       expires_at: '2026-10-03T19:43:44+00:00'
     started_at: '2026-10-03T11:43:44+00:00'
-    updated_at: '2026-10-03T11:43:44+00:00'
+    updated_at: '2026-10-03T13:33:53+00:00'
     completed_at: null
     blocker: null
     implementation_notes: ''
-    evidence: []
-    verification_state: null
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A02.T01.json
+      sha256: ed80bda41ecb2e2688afb570a3e2ca7aeabc0d76e4a0cf056e0372467329f04f
+      commit: f989ba75b605c2d53db058441ecea211ae41c776
+      recorded_at: '2026-10-03T13:33:53+00:00'
+    verification_state: passed
     review:
       reviewer: null
       result: null
       reviewed_at: null
       notes: null
+    review_control:
+      version: 1
+      attempts: []
+      current_submission:
+        id: R01
+        submitted_by: codex-w2-implementation
+        submitted_at: '2026-10-03T13:33:53+00:00'
+        candidate_commit: f989ba75b605c2d53db058441ecea211ae41c776
+        base_commit: 23b019825f944e75edb6420b742e82f1216be7c6
+        branch: codex/w2-implementation
+        evidence_reference:
+          type: criterion-manifest
+          path: artifacts/evidence/W2.A02.T01.json
+          sha256: ed80bda41ecb2e2688afb570a3e2ca7aeabc0d76e4a0cf056e0372467329f04f
+          commit: f989ba75b605c2d53db058441ecea211ae41c776
+          recorded_at: '2026-10-03T13:33:53+00:00'
+        acceptance_criteria_sha256: 61c068878d1eef469dbb4c45a6069f41a01c98b31dd08df22c1465c4ba588809
+        changed_paths:
+        - design/ui-change.schema.json
+        - docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md
+        - docs/adr/index.json
+        - docs/automation/design-first-ui-changes.md
+        - docs/planning-implementation-plan.md
+        - planning/backlog.yaml
+        - planning/review-site/enablers/ECR-0010.html
+        - planning/review-site/manifest.json
+        - planning/status-summary.md
+        - tests/foundation/test_ui_change_gate.py
+        - tools/ui_change_gate.py
+        selected_checks:
+        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_schema_is_closed_and_exact_to_original_t01
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_inventory_exception_is_one_historical_commit
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_automatic_base_uses_live_original_claim
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_a02_adoption_rejects_rewritten_independent_task_ledger
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_short_base_cannot_hide_no_net_ui_or_reverted_contract
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_public_gate_authenticates_two_contracts_and_current_classification
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_classification_closes_dependent_git_inputs
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_unreviewed_imported_authority_source
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_schema_is_exact_and_cannot_extend_legacy_lanes
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_intentional_amendment_exact_approved_packet_to_renderer_git_lineage
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_resumed_amendment_schema_is_opt_in_and_cannot_authorize_ordinary_tasks
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_current_w1_amendment_ui_range_accepts_reviewed_historical_maintenance
+          tests.foundation.test_ui_change_gate.UiChangeGateTests.test_approved_reference_implementation_and_defect_restoration_pass
+        - .venv\Scripts\python.exe -m unittest -v tests.foundation.test_ui_change_gate.UiChangeGateTests.test_adopted_continuation_rejects_reviewed_a02_source_outside_six_files
+        - .venv\Scripts\python.exe tools/adr_check.py --repo . --base 23b019825f944e75edb6420b742e82f1216be7c6 --head f989ba75b605c2d53db058441ecea211ae41c776
+        - .venv\Scripts\python.exe tools/taskctl.py --file planning/backlog.yaml validate
+        - .venv\Scripts\python.exe tools/ui_change_gate.py --repo . --base 23b019825f944e75edb6420b742e82f1216be7c6 --head
+          f989ba75b605c2d53db058441ecea211ae41c776
+        - .venv\Scripts\python.exe tools/backlog_views.py --repo . --check
+        - .venv\Scripts\python.exe -m ruff format --check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py
+        - .venv\Scripts\python.exe -m ruff check --config pyproject.toml -- tools/ui_change_gate.py tests/foundation/test_ui_change_gate.py
+        - .venv\Scripts\python.exe -m mypy --config-file pyproject.toml --no-namespace-packages -- tools/ui_change_gate.py
+          tests/foundation/test_ui_change_gate.py
+        - git diff --check 23b019825f944e75edb6420b742e82f1216be7c6 f989ba75b605c2d53db058441ecea211ae41c776
+        deferred_checks:
+        - The full original-6506-base current product UI gate, independent approved-1.8 classification, built-app native drop
+          path and D3D fifth-window denial belong to resumed CAP-05.S01.T01, its slice review and W2 qualification; none is
+          claimed passed here.
+        - Fresh review-site validation follows taskctl REVIEW/DONE projection updates; full repository/profile, cross-capability
+          and release qualification remain for W2 exit, since this control task changes no product runtime.
+        selection_rationale: The changed gate/schema is security- and authority-sensitive. Fresh exact-f989ba75 real-Git tests
+          cover authenticated inherited and current chronology, denial of forged reviews/extra controls/hidden Git inputs,
+          exact 9727 mixed exception and six-file task scope, plus retained 1.0-1.2 behavior. The dcb preflight bypass and
+          red result remain preserved; f989 closes it with a focused green case. Exact task-base ADR, backlog, control-only
+          UI gate and targeted Python quality bind this candidate. The current CAP-05 product/reference conformance and original-base
+          UI qualification are a separate resumed task boundary.
+        selection_sha256: 0e87213a4c45996ce26ed8325c759837622a49387f5f374a1279f854fdbcd748
+        prior_attempt_id: null
+        open_finding_ids: []
+        root_cause_analysis: null
+        selected_command_ids:
+        - foundation:ui-change
+        - foundation:adr
+        - foundation:backlog
+        - foundation:backlog-views
+        packet_sha256: 9e6e90f73a4fd0a710f28f407e239f5d519b46a81a36072a97ece35294f8fba1
   completion:
     status: PENDING
     reviewer: null
