@@ -3600,13 +3600,16 @@ pub mod directory_integration_harness {
         let application = application_builder().setup(move |app| {
             app.manage(fixture.clone());
             fixture.revalidate().map_err(std::io::Error::other)?;
+            eprintln!("RO-DOCUMENT-SETUP phase=runtime-start");
             setup_runtime(app, Ok(config), &fixture.application_data, DirectoryPickerManager::for_fixture(fixture.projects.clone()))?;
+            eprintln!("RO-DOCUMENT-SETUP phase=runtime-ready");
             // A WindowConfig absolute data_directory is ignored by Tauri;
             // the direct builder API is the actual WebView storage boundary.
             fixture.revalidate().map_err(|error| {
                 app.state::<RuntimeSupervisor>().stop();
                 std::io::Error::other(error)
             })?;
+            eprintln!("RO-DOCUMENT-SETUP phase=webview-start");
             let main = tauri::WebviewWindowBuilder::from_config(app, &window_config)
                 .and_then(|builder| {
                     let builder = builder.data_directory(fixture.webview.clone())
@@ -3620,12 +3623,15 @@ pub mod directory_integration_harness {
                         mode.name())).build()
                 })
                 .inspect_err(|_| { app.state::<RuntimeSupervisor>().stop(); })?;
+            eprintln!("RO-DOCUMENT-SETUP phase=webview-ready");
             main_menu::install(&main).and_then(|()| install_menu_diagnostics(&main, &fixture)).map_err(|error| {
                 app.state::<RuntimeSupervisor>().stop();
                 std::io::Error::other(error)
             })?;
+            eprintln!("RO-DOCUMENT-SETUP phase=drop-install-start");
             let attachments = app.state::<document_attachment::DocumentAttachmentManager>().inner().clone();
             document_drop::install(&main, &attachments).map_err(std::io::Error::other)?;
+            eprintln!("RO-DOCUMENT-SETUP phase=drop-install-ready");
             attachments.set_installed(true);
             let drop_event_counts = mode.is_document_attachment().then(|| listen_for_tauri_drag(&main));
             let picker_pending = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
