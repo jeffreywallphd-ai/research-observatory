@@ -33,6 +33,15 @@ public static class WindowsFileDialogUia
     [DllImport("user32.dll")]
     private static extern bool IsWindow(IntPtr window);
 
+    [DllImport("user32.dll")]
+    private static extern bool IsWindowEnabled(IntPtr window);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetDlgItem(IntPtr dialog, int controlId);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetParent(IntPtr window);
+
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern int GetClassName(IntPtr window, StringBuilder result, int capacity);
 
@@ -99,6 +108,7 @@ public static class WindowsFileDialogUia
         public AutomationElement Cancel;
         public int Edits;
         public int Buttons;
+        public int SplitButtons;
         public int FileNameMatches;
         public int OpenMatches;
         public int FileNameIdCount;
@@ -115,6 +125,15 @@ public static class WindowsFileDialogUia
         public bool CancelIdInvokePattern;
         public List<string> EditIds = new List<string>();
         public List<string> ButtonIds = new List<string>();
+        public List<Dictionary<string, object>> ActionCandidates = new List<Dictionary<string, object>>();
+        public bool ActionCandidatesTruncated;
+        public bool IdOkPresent;
+        public bool IdOkDirectChild;
+        public bool IdOkSameProcess;
+        public bool IdOkVisible;
+        public bool IdOkEnabled;
+        public string IdOkClass = "<other>";
+        public string IdOkNameClass = "other";
     }
 
     private static string SafeId(string automationId)
@@ -127,12 +146,50 @@ public static class WindowsFileDialogUia
         return automationId;
     }
 
+    // Closed vocabulary: arbitrary UIA names can contain user file and folder names.
+    private static string SafeActionName(string name)
+    {
+        if (name == null)
+            return "other";
+        switch (name.Trim())
+        {
+            case "Open":
+            case "&Open":
+            case "Open...":
+            case "Open…":
+                return "open";
+            case "Select":
+            case "&Select":
+                return "select";
+            case "OK":
+            case "&OK":
+                return "ok";
+            default:
+                return "other";
+        }
+    }
+
     private static Controls LocateControls(IntPtr dialog)
     {
         AutomationElement root = AutomationElement.FromHandle(dialog);
         if (root == null)
             throw new InvalidOperationException("dialog-uia-unavailable");
         Controls result = new Controls();
+        IntPtr idOk = GetDlgItem(dialog, 1);
+        uint dialogPid;
+        uint idOkPid;
+        bool dialogPidKnown = GetWindowThreadProcessId(dialog, out dialogPid) != 0;
+        result.IdOkPresent = idOk != IntPtr.Zero && IsWindow(idOk);
+        if (result.IdOkPresent)
+        {
+            result.IdOkDirectChild = GetParent(idOk) == dialog;
+            result.IdOkSameProcess = dialogPidKnown
+                && GetWindowThreadProcessId(idOk, out idOkPid) != 0 && idOkPid == dialogPid;
+            result.IdOkVisible = IsWindowVisible(idOk);
+            result.IdOkEnabled = IsWindowEnabled(idOk);
+            result.IdOkClass = Text(idOk, true) == "Button" ? "Button" : "<other>";
+            result.IdOkNameClass = SafeActionName(Text(idOk, false));
+        }
         AutomationElementCollection descendants = root.FindAll(TreeScope.Descendants, Condition.TrueCondition);
         foreach (AutomationElement element in descendants)
         {
@@ -192,6 +249,37 @@ public static class WindowsFileDialogUia
                         result.Cancel = element;
                 }
             }
+            if (current.ControlType == ControlType.Button
+                || current.ControlType == ControlType.SplitButton)
+            {
+                if (current.ControlType == ControlType.SplitButton)
+                    result.SplitButtons++;
+                if (result.ActionCandidates.Count >= 64)
+                {
+                    result.ActionCandidatesTruncated = true;
+                    continue;
+                }
+                try
+                {
+                    object pattern;
+                    bool invokes = element.TryGetCurrentPattern(InvokePattern.Pattern, out pattern);
+                    bool matchesIdOk = result.IdOkPresent && result.IdOkDirectChild
+                        && result.IdOkSameProcess && current.NativeWindowHandle != 0
+                        && current.NativeWindowHandle == unchecked((int)idOk.ToInt64());
+                    result.ActionCandidates.Add(new Dictionary<string, object> {
+                        { "type", current.ControlType == ControlType.SplitButton ? "split-button" : "button" },
+                        { "id", SafeId(current.AutomationId) },
+                        { "nameClass", SafeActionName(current.Name) },
+                        { "enabled", current.IsEnabled },
+                        { "offscreen", current.IsOffscreen },
+                        { "invokePattern", invokes },
+                        { "matchesIdOk", matchesIdOk },
+                    });
+                }
+                catch (ElementNotAvailableException) { /* Diagnostic only. */ }
+                catch (InvalidOperationException) { /* Diagnostic only. */ }
+                catch (COMException) { /* Diagnostic only. */ }
+            }
         }
         return result;
     }
@@ -202,6 +290,7 @@ public static class WindowsFileDialogUia
             { "dialogExactOwnerAndPid", true },
             { "editCount", controls.Edits },
             { "buttonCount", controls.Buttons },
+            { "splitButtonCount", controls.SplitButtons },
             { "fileNameMatches", controls.FileNameMatches },
             { "openMatches", controls.OpenMatches },
             { "fileNameIdCount", controls.FileNameIdCount },
@@ -218,6 +307,15 @@ public static class WindowsFileDialogUia
             { "cancelIdInvokePattern", controls.CancelIdInvokePattern },
             { "editAutomationIds", controls.EditIds },
             { "buttonAutomationIds", controls.ButtonIds },
+            { "actionCandidates", controls.ActionCandidates },
+            { "actionCandidatesTruncated", controls.ActionCandidatesTruncated },
+            { "idOkPresent", controls.IdOkPresent },
+            { "idOkDirectChild", controls.IdOkDirectChild },
+            { "idOkSameProcess", controls.IdOkSameProcess },
+            { "idOkVisible", controls.IdOkVisible },
+            { "idOkEnabled", controls.IdOkEnabled },
+            { "idOkClass", controls.IdOkClass },
+            { "idOkNameClass", controls.IdOkNameClass },
             { "fileNameValuePattern", controls.FileNameIdValuePattern },
             { "openInvokePattern", controls.OpenIdInvokePattern },
         };

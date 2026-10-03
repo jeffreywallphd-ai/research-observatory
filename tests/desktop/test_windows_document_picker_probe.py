@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import json
+import os
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -162,6 +165,55 @@ class WindowsFileDialogActionContractTests(unittest.TestCase):
         self.assertIn('result["controlDiagnostic"] = Diagnostic(controls)', self.action)
         self.assertIn('result["controlPhase"] = controlPhase', self.action)
         self.assertIn("SafeId(current.AutomationId)", self.source)
+
+    @unittest.skipUnless(os.name == "nt", "Windows UI Automation helper")
+    def test_accept_diagnostic_redacts_unknown_control_names(self) -> None:
+        source_path = str(ROOT / "tests/desktop/tools/WindowsFileDialogUia.cs").replace("'", "''")
+        script = f"""
+Add-Type -ErrorAction Stop -Path '{source_path}' -ReferencedAssemblies @(
+    'UIAutomationClient', 'UIAutomationTypes', 'System.Web.Extensions', 'System'
+)
+$method = [WindowsFileDialogUia].GetMethod(
+    'SafeActionName', [Reflection.BindingFlags]'Static, NonPublic'
+)
+if ($null -eq $method) {{ throw 'classifier-missing' }}
+$names = @('Open', '&Open', 'Open...', 'Select', 'OK',
+  'secret-participant.txt', 'document-drop-source.txt')
+$values = foreach ($name in $names) {{
+    $arguments = New-Object 'object[]' 1
+    $arguments[0] = [string]$name
+    $method.Invoke($null, $arguments)
+}}
+ConvertTo-Json -InputObject @($values) -Compress
+"""
+        completed = subprocess.run(
+            ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertTrue(completed.stdout.strip(), f"stdout empty; stderr={completed.stderr!r}")
+        self.assertEqual(
+            json.loads(completed.stdout),
+            ["open", "open", "open", "select", "ok", "other", "other"],
+            f"stdout={completed.stdout!r}; stderr={completed.stderr!r}",
+        )
+
+    def test_accept_diagnostic_remains_read_only_and_includes_split_button_and_idok(self) -> None:
+        diagnostic = self.source.split("private static Dictionary<string, object> Diagnostic(", 1)[1]
+        diagnostic = diagnostic.split("private static bool FileNameReady(", 1)[0]
+        action_selector = self.source.split("private static AutomationElement ExactAction(", 1)[1]
+        action_selector = action_selector.split("private static string SafeFailure(", 1)[0]
+        self.assertIn("ControlType.SplitButton", self.source)
+        self.assertIn("GetDlgItem(dialog, 1)", self.source)
+        self.assertIn("actionCandidates", diagnostic)
+        self.assertIn("idOk", diagnostic)
+        self.assertNotIn("current.Name", diagnostic)
+        self.assertNotIn(".Invoke()", diagnostic)
+        self.assertNotIn("IdOk", action_selector)
+        self.assertNotIn("ActionCandidates", action_selector)
 
 
 if __name__ == "__main__":
