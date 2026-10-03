@@ -440,6 +440,7 @@ def presentation_mapping_errors(
     version: str,
     *,
     required_region_additions: dict[str, list[str]] | None = None,
+    semantic_deltas: dict[str, Any] | None = None,
 ) -> list[str]:
     """Map metadata and explicit presentation regions without scholarly/order drift."""
     names = {"WORKFLOW_CATALOG.json", "CAPABILITY_COVERAGE.json"}
@@ -449,6 +450,13 @@ def presentation_mapping_errors(
         not isinstance(required_region_additions, dict) or not required_region_additions
     ):
         return ["presentation required-region additions must be a nonempty object"]
+    if semantic_deltas is not None and (
+        required_region_additions is not None
+        or reference_id != "RO-UI-ACADEMIC-MINIMAL-1.8"
+        or version != "1.8"
+        or semantic_deltas != PRESENTATION_18_SEMANTIC_DELTAS
+    ):
+        return ["presentation semantic deltas must be the exact approved 1.8 mapping"]
     errors: list[str] = []
     for name in sorted(names):
         original = semantic[name].replace("\r\n", "\n").replace("\r", "\n")
@@ -463,7 +471,49 @@ def presentation_mapping_errors(
             if original.count(old_line) != 1:
                 errors.append(f"{name}: authenticated semantic root metadata is not exact")
             expected = expected.replace(old_line, prefix + json.dumps(new) + ",\n", 1)
-        if name == "CAPABILITY_COVERAGE.json" and required_region_additions is not None:
+        if name == "CAPABILITY_COVERAGE.json" and semantic_deltas is not None:
+            try:
+                document = json.loads(expected, object_pairs_hook=unique_json_object)
+                date = semantic_deltas["coverageDate"]
+                if document["date"] != date["from"]:
+                    raise ValueError("approved semantic coverage date is not the frozen predecessor")
+                document["date"] = date["to"]
+                insertion = semantic_deltas["capabilityPageInsertion"]
+                matching = [item for item in document["capabilities"] if item["capability"] == insertion["capability"]]
+                if len(matching) != 1:
+                    raise ValueError("approved semantic capability page owner is not unique")
+                pages = matching[0]["pages"]
+                if pages.count(insertion["after"]) != 1 or insertion["page"] in pages:
+                    raise ValueError("approved semantic capability page insertion has a stale predecessor")
+                pages.insert(pages.index(insertion["after"]) + 1, insertion["page"])
+                contracts = document["page_contracts"]
+                for change in semantic_deltas["pageChanges"]:
+                    page = contracts[change["page"]]
+                    purpose = change.get("purpose")
+                    if purpose is not None:
+                        if page["purpose"] != purpose["from"]:
+                            raise ValueError("approved semantic page purpose has a stale predecessor")
+                        page["purpose"] = purpose["to"]
+                    additions = change.get("appendCapabilities", [])
+                    if any(value in page["capabilities"] for value in additions):
+                        raise ValueError("approved semantic page capability was already present")
+                    page["capabilities"].extend(additions)
+                    additions = change.get("appendRequiredRegions", [])
+                    regions = page["required_regions"]
+                    if any(value in regions for value in additions):
+                        raise ValueError("approved semantic required region was already present")
+                    regions.extend(additions)
+                    inserted = change.get("insertRequiredRegions")
+                    if inserted is not None:
+                        anchor = inserted["before"]
+                        additions = inserted["regions"]
+                        if regions.count(anchor) != 1 or any(value in regions for value in additions):
+                            raise ValueError("approved semantic region insertion has a stale predecessor")
+                        regions[regions.index(anchor) : regions.index(anchor)] = additions
+                expected = json.dumps(document, ensure_ascii=False, indent=2) + "\n"
+            except (KeyError, TypeError, ValueError) as exc:
+                errors.append(f"{name}: {exc}")
+        elif name == "CAPABILITY_COVERAGE.json" and required_region_additions is not None:
             try:
                 document = json.loads(expected, object_pairs_hook=unique_json_object)
                 contracts = document["page_contracts"]
@@ -499,6 +549,57 @@ SEMANTIC_SOURCE_AUTHORITY: dict[str, Any] = {
         "WORKFLOW_CATALOG.json": "2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
         "CAPABILITY_COVERAGE.json": "d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d",
     },
+}
+PRESENTATION_18_PUBLICATION_COMMIT = "acdc67b616f5ecdec448f57a7efe46e4f359aa9f"
+PRESENTATION_18_PACKAGE_SHA256 = "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
+PRESENTATION_18_SEMANTIC_DELTAS: dict[str, Any] = {
+    "coverageDate": {"from": "2026-09-02", "to": "2026-10-01"},
+    "capabilityPageInsertion": {
+        "capability": "CAP-05",
+        "after": "document-reader.html",
+        "page": "ingestion-reconciliation.html",
+    },
+    "pageChanges": [
+        {
+            "page": "source-manager.html",
+            "appendRequiredRegions": ["connector publisher trust and project permission review"],
+        },
+        {
+            "page": "ingestion-reconciliation.html",
+            "purpose": {
+                "from": (
+                    "Import provenance, canonicalization, duplicates, versions, corrections, "
+                    "retractions, and rights review."
+                ),
+                "to": (
+                    "Import provenance, canonicalization, duplicates, versions, corrections, "
+                    "retractions, rights review, and selected work/version local full-text attachment."
+                ),
+            },
+            "appendCapabilities": ["CAP-05"],
+            "insertRequiredRegions": {
+                "before": "reversible merge decisions",
+                "regions": [
+                    "selected work/version and metadata/full-text status",
+                    "inline local full-text picker/drop and pending candidate",
+                    "uncertain-association confirmation and permitted-use decision",
+                    "attachment cancellation, retry, error remedies, exact-revision status/route "
+                    "handoff, and pending reader state",
+                ],
+            },
+        },
+        {
+            "page": "document-reader.html",
+            "purpose": {
+                "from": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+                "to": (
+                    "Secure source inspection, parsed structure, page anchors, evidence selection, "
+                    "and return to the selected work/version."
+                ),
+            },
+            "appendRequiredRegions": ["selected work/version return route"],
+        },
+    ],
 }
 PRESENTATION_WITNESS_PATH = "packages/contracts/workflow-profile/presentation-compatibility.json"
 
@@ -544,10 +645,12 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
         }
         if isinstance(witness, dict) and witness.get("schemaVersion") == "1.1":
             keys.add("requiredRegionAdditions")
+        if isinstance(witness, dict) and witness.get("schemaVersion") == "1.2":
+            keys.add("semanticDeltas")
         if not isinstance(witness, dict) or set(witness) != keys:
             raise ValueError("witness fields must be exact")
         if (
-            witness["schemaVersion"] not in ("1.0", "1.1")
+            witness["schemaVersion"] not in ("1.0", "1.1", "1.2")
             or witness["documentType"] != "workflow-profile-presentation-compatibility"
         ):
             raise ValueError("witness identity is invalid")
@@ -555,6 +658,8 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
             not isinstance(witness["requiredRegionAdditions"], dict) or not witness["requiredRegionAdditions"]
         ):
             raise ValueError("required-region additions must be a nonempty object")
+        if witness["schemaVersion"] == "1.2" and witness["semanticDeltas"] != PRESENTATION_18_SEMANTIC_DELTAS:
+            raise ValueError("semantic deltas differ from the closed approved 1.8 mapping")
         if witness["semanticSource"] != SEMANTIC_SOURCE_AUTHORITY:
             raise ValueError("semantic source authority differs from original approval")
         presentation = witness["presentation"]
@@ -579,6 +684,14 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
             or not re.fullmatch(r"[0-9a-f]{40}", approval_commit)
         ):
             raise ValueError("presentation identity/package/commit is invalid or stale")
+        if (version == "1.8") != (witness["schemaVersion"] == "1.2") or (
+            version == "1.8"
+            and (
+                approval_commit != PRESENTATION_18_PUBLICATION_COMMIT
+                or package_sha256 != PRESENTATION_18_PACKAGE_SHA256
+            )
+        ):
+            raise ValueError("1.8 presentation witness must bind the exact approved publication and package")
         head = git(repo, "rev-parse", "HEAD")
         committed, error = git_blob_at(repo, head, witness_relative)
         if (
@@ -702,6 +815,7 @@ def presentation_compatibility_errors(repo: Path, reference_id: str, package_sha
             reference_id,
             version,
             required_region_additions=witness.get("requiredRegionAdditions"),
+            semantic_deltas=witness.get("semanticDeltas"),
         )
     except (OSError, ValueError, UnicodeError, yaml.YAMLError, subprocess.SubprocessError) as exc:
         return [f"{label}: {exc}"]

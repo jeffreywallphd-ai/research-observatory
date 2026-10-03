@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "1.2",
+  "documentType": "workflow-profile-presentation-compatibility",
+  "semanticSource": {
+    "schemaVersion": "1.0",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.5",
+    "referenceVersion": "1.5",
+    "approvalCommit": "7ec1b27d72c189216d7a203586b7339202733531",
+    "sourceRoot": "design/ui-reference",
+    "sourceSha256": {
+      "WORKFLOW_CATALOG.json": "2f9f27334e38e090088551433ff5f156257f02f8fd0545a5c735fed8762c39ca",
+      "CAPABILITY_COVERAGE.json": "d0a86f107ac288a04ab47e5126f9a6cd2b82ce5c5d370e6d2963c76ae04d971d"
+    }
+  },
+  "presentation": {
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "version": "1.8",
+    "approvalCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
+  },
+  "semanticDeltas": {
+    "coverageDate": {
+      "from": "2026-09-02",
+      "to": "2026-10-01"
+    },
+    "capabilityPageInsertion": {
+      "capability": "CAP-05",
+      "after": "document-reader.html",
+      "page": "ingestion-reconciliation.html"
+    },
+    "pageChanges": [
+      {
+        "page": "source-manager.html",
+        "appendRequiredRegions": [
+          "connector publisher trust and project permission review"
+        ]
+      },
+      {
+        "page": "ingestion-reconciliation.html",
+        "purpose": {
+          "from": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, and rights review.",
+          "to": "Import provenance, canonicalization, duplicates, versions, corrections, retractions, rights review, and selected work/version local full-text attachment."
+        },
+        "appendCapabilities": [
+          "CAP-05"
+        ],
+        "insertRequiredRegions": {
+          "before": "reversible merge decisions",
+          "regions": [
+            "selected work/version and metadata/full-text status",
+            "inline local full-text picker/drop and pending candidate",
+            "uncertain-association confirmation and permitted-use decision",
+            "attachment cancellation, retry, error remedies, exact-revision status/route handoff, and pending reader state"
+          ]
+        }
+      },
+      {
+        "page": "document-reader.html",
+        "purpose": {
+          "from": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+          "to": "Secure source inspection, parsed structure, page anchors, evidence selection, and return to the selected work/version."
+        },
+        "appendRequiredRegions": [
+          "selected work/version return route"
+        ]
+      }
+    ]
+  }
+}

@@ -224,6 +224,114 @@ class WorkflowProfileContractTests(unittest.TestCase):
                 )
             )
 
+    def test_approved_18_presentation_requires_exact_ordered_semantic_delta(self) -> None:
+        sys.path.insert(0, str(REPO / "tools"))
+        from ui_conformance import presentation_mapping_errors
+
+        names = ("WORKFLOW_CATALOG.json", "CAPABILITY_COVERAGE.json")
+        semantic = {
+            name: (CONTRACT_ROOT / "source/academic-minimal-1.5" / name).read_text(encoding="utf-8") for name in names
+        }
+        publication = "acdc67b616f5ecdec448f57a7efe46e4f359aa9f"
+        presentation = {
+            name: subprocess.check_output(
+                ["git", "show", f"{publication}:design/ui-reference/{name}"], cwd=REPO, text=True
+            )
+            for name in names
+        }
+        deltas: dict[str, Any] = {
+            "coverageDate": {"from": "2026-09-02", "to": "2026-10-01"},
+            "capabilityPageInsertion": {
+                "capability": "CAP-05",
+                "after": "document-reader.html",
+                "page": "ingestion-reconciliation.html",
+            },
+            "pageChanges": [
+                {
+                    "page": "source-manager.html",
+                    "appendRequiredRegions": ["connector publisher trust and project permission review"],
+                },
+                {
+                    "page": "ingestion-reconciliation.html",
+                    "purpose": {
+                        "from": (
+                            "Import provenance, canonicalization, duplicates, versions, corrections, "
+                            "retractions, and rights review."
+                        ),
+                        "to": (
+                            "Import provenance, canonicalization, duplicates, versions, corrections, "
+                            "retractions, rights review, and selected work/version local full-text attachment."
+                        ),
+                    },
+                    "appendCapabilities": ["CAP-05"],
+                    "insertRequiredRegions": {
+                        "before": "reversible merge decisions",
+                        "regions": [
+                            "selected work/version and metadata/full-text status",
+                            "inline local full-text picker/drop and pending candidate",
+                            "uncertain-association confirmation and permitted-use decision",
+                            "attachment cancellation, retry, error remedies, exact-revision status/route "
+                            "handoff, and pending reader state",
+                        ],
+                    },
+                },
+                {
+                    "page": "document-reader.html",
+                    "purpose": {
+                        "from": "Secure source inspection, parsed structure, page anchors, and evidence selection.",
+                        "to": (
+                            "Secure source inspection, parsed structure, page anchors, evidence selection, "
+                            "and return to the selected work/version."
+                        ),
+                    },
+                    "appendRequiredRegions": ["selected work/version return route"],
+                },
+            ],
+        }
+        args = (semantic, presentation, "RO-UI-ACADEMIC-MINIMAL-1.8", "1.8")
+        self.assertEqual([], presentation_mapping_errors(*args, semantic_deltas=deltas))
+
+        mutations = []
+        changed = copy.deepcopy(deltas)
+        changed["pageChanges"][1]["insertRequiredRegions"]["regions"].reverse()
+        mutations.append(changed)
+        changed = copy.deepcopy(deltas)
+        changed["pageChanges"][1]["purpose"]["to"] += " unapproved"
+        mutations.append(changed)
+        changed = copy.deepcopy(deltas)
+        del changed["capabilityPageInsertion"]
+        mutations.append(changed)
+        changed = copy.deepcopy(deltas)
+        changed["extraSemanticException"] = True
+        mutations.append(changed)
+        for changed in mutations:
+            with self.subTest(declared=changed):
+                self.assertTrue(presentation_mapping_errors(*args, semantic_deltas=changed))
+
+        published = json.loads(presentation["CAPABILITY_COVERAGE.json"])
+        for mutation in ("date", "purpose", "page-order", "region-order", "extra-region"):
+            with self.subTest(published=mutation):
+                changed = copy.deepcopy(published)
+                if mutation == "date":
+                    changed["date"] = "2026-10-02"
+                elif mutation == "purpose":
+                    changed["page_contracts"]["document-reader.html"]["purpose"] += " Unreviewed."
+                elif mutation == "page-order":
+                    pages = next(item["pages"] for item in changed["capabilities"] if item["capability"] == "CAP-05")
+                    pages[0], pages[1] = pages[1], pages[0]
+                elif mutation == "region-order":
+                    regions = changed["page_contracts"]["ingestion-reconciliation.html"]["required_regions"]
+                    regions[-3], regions[-2] = regions[-2], regions[-3]
+                else:
+                    changed["page_contracts"]["ingestion-reconciliation.html"]["required_regions"].append("unapproved")
+                candidate = {
+                    **presentation,
+                    "CAPABILITY_COVERAGE.json": json.dumps(changed, ensure_ascii=False, indent=2) + "\n",
+                }
+                self.assertTrue(
+                    presentation_mapping_errors(semantic, candidate, args[2], args[3], semantic_deltas=deltas)
+                )
+
     def test_presentation_witness_authenticates_real_git_publication_and_inputs(self) -> None:
         # Preserve the exact accepted 1.6 publication, not the mutable active reference.
         self.exercise_presentation_witness("5904c7eb152167f2f65c172d499fea8de5181689", "1.6")
@@ -248,8 +356,85 @@ class WorkflowProfileContractTests(unittest.TestCase):
                     self.assertIn("required-region additions must be a nonempty object", " ".join(errors))
 
     def test_pre_wave_design_witness_authenticates_real_git_publication_and_inputs(self) -> None:
-        base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
-        self.exercise_presentation_witness(base, "1.7")
+        # The active reference is now 1.8; keep the exact historical 1.7 witness state.
+        self.exercise_presentation_witness("44598316f6824b445bfe7278f17b906471267850", "1.7")
+
+    def test_approved_18_witness_authenticates_committed_git_and_denies_dirty_inputs(self) -> None:
+        sys.path.insert(0, str(REPO / "tools"))
+        from ui_conformance import presentation_compatibility_errors, presentation_witness_path
+
+        relative = presentation_witness_path("RO-UI-ACADEMIC-MINIMAL-1.8")
+        with tempfile.TemporaryDirectory(prefix="ro-approved-18-witness-") as temporary:
+            root = Path(temporary) / "fixture"
+            cloned = subprocess.run(
+                ["git", "clone", "--shared", "--no-checkout", str(REPO), str(root)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(0, cloned.returncode, cloned.stderr)
+
+            def git(*args: str) -> str:
+                return subprocess.run(
+                    [
+                        "git",
+                        "-c",
+                        "core.autocrlf=false",
+                        "-c",
+                        "user.name=Contract fixture",
+                        "-c",
+                        "user.email=fixture@example.invalid",
+                        *args,
+                    ],
+                    cwd=root,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout.strip()
+
+            git("checkout", "--detach", "HEAD")
+            witness = root / relative
+            witness.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(REPO / relative, witness)
+            git("add", "--", relative)
+            git("commit", "-m", "Candidate 1.8 witness fixture")
+            package = "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
+            args = (root, "RO-UI-ACADEMIC-MINIMAL-1.8", package)
+            self.assertEqual([], presentation_compatibility_errors(*args))
+
+            original = witness.read_bytes()
+            witness.write_bytes(original + b"\n")
+            self.assertIn("current committed Git blob", " ".join(presentation_compatibility_errors(*args)))
+            witness.write_bytes(original)
+            semantic = root / "packages/contracts/workflow-profile/source/academic-minimal-1.5/CAPABILITY_COVERAGE.json"
+            semantic_original = semantic.read_bytes()
+            semantic.write_bytes(semantic_original + b"\n")
+            self.assertIn("clean committed", " ".join(presentation_compatibility_errors(*args)))
+            semantic.write_bytes(semantic_original)
+
+            wrong = json.loads(original)
+            wrong["semanticDeltas"]["pageChanges"][1]["insertRequiredRegions"]["regions"].reverse()
+            witness.write_text(json.dumps(wrong, indent=2) + "\n", encoding="utf-8")
+            self.assertIn("closed approved 1.8 mapping", " ".join(presentation_compatibility_errors(*args)))
+            witness.write_bytes(original)
+
+            wrong = json.loads(original)
+            wrong["presentation"]["approvalCommit"] = "0" * 40
+            witness.write_text(json.dumps(wrong, indent=2) + "\n", encoding="utf-8")
+            self.assertIn("exact approved publication", " ".join(presentation_compatibility_errors(*args)))
+            witness.write_bytes(original)
+
+            wrong = json.loads(original)
+            wrong["presentation"]["referencePackageSha256"] = "0" * 64
+            witness.write_text(json.dumps(wrong, indent=2) + "\n", encoding="utf-8")
+            self.assertIn("invalid or stale", " ".join(presentation_compatibility_errors(*args)))
+            witness.write_bytes(original)
+
+            object_id = git("rev-parse", f"HEAD:{relative}")
+            git("update-index", "--cacheinfo", f"120000,{object_id},{relative}")
+            git("commit", "-m", "Adverse redirected witness mode fixture")
+            self.assertTrue(git("ls-tree", "HEAD", "--", relative).startswith("120000 blob "))
+            self.assertIn("current committed Git blob", " ".join(presentation_compatibility_errors(*args)))
 
     def exercise_presentation_witness(self, base: str, version: str) -> None:
         sys.path.insert(0, str(REPO / "tools"))
