@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
+import stat
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -20,6 +23,51 @@ import run_windows_document_picker_probe as picker  # noqa: E402
 CANCEL_OPERATION = "01a1001f-caed-7a8b-8163-b6760593f112"
 SELECT_OPERATION = "01a1001f-e009-74be-be23-c1f397ed34fd"
 CANDIDATE = "01a1001f-e010-74be-be23-c1f397ed34fd"
+
+
+class PickerSourceFixtureTests(unittest.TestCase):
+    def test_reparse_entry_is_denied_before_following_its_target(self) -> None:
+        class ReparseEntry:
+            def lstat(self) -> SimpleNamespace:
+                return SimpleNamespace(st_mode=stat.S_IFREG, st_file_attributes=0x400)
+
+            def is_symlink(self) -> bool:
+                return False
+
+            def resolve(self, *, strict: bool) -> Path:
+                raise AssertionError("reparse target must not be followed")
+
+        self.assertFalse(picker._exact_fixture_entry(ReparseEntry(), Path("synthetic"), directory=False))
+
+    def test_copy_is_exactly_under_admitted_projects_root_and_preserves_seed(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="directory-dialog-drop-") as location:
+            root = Path(location)
+            (root / "projects").mkdir()
+            temporary = root / "temporary"
+            temporary.mkdir()
+            seed = temporary / picker.SOURCE_NAME
+            payload = b"test-owned document source\n"
+            seed.write_bytes(payload)
+            digest = hashlib.sha256(payload).hexdigest()
+            with patch.object(drop, "SYNTHETIC_SOURCE_SHA256", digest):
+                selected = picker.prepare_picker_source(root)
+                self.assertEqual(selected, root / "projects" / picker.SOURCE_NAME)
+                self.assertEqual(selected.read_bytes(), payload)
+                self.assertEqual(seed.read_bytes(), payload)
+                with self.assertRaises(drop.ProbeFailure):
+                    picker.prepare_picker_source(root)
+
+    def test_wrong_seed_digest_denies_copy_without_leaking_a_path(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="directory-dialog-drop-") as location:
+            root = Path(location)
+            (root / "projects").mkdir()
+            temporary = root / "temporary"
+            temporary.mkdir()
+            (temporary / picker.SOURCE_NAME).write_bytes(b"wrong test-owned source")
+            with self.assertRaises(drop.ProbeFailure) as denied:
+                picker.prepare_picker_source(root)
+            self.assertEqual(str(denied.exception), "synthetic-source-digest-mismatch")
+            self.assertFalse((root / "projects" / picker.SOURCE_NAME).exists())
 
 
 def stage(kind: str, operation: str, status: str, candidate: str | None) -> dict[str, object]:
@@ -144,6 +192,16 @@ class WindowsFileDialogActionContractTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.source = (ROOT / "tests/desktop/tools/WindowsFileDialogUia.cs").read_text(encoding="utf-8")
         cls.action = cls.source.split("public static string Act(", 1)[1]
+
+    def test_selects_only_the_admitted_projects_copy(self) -> None:
+        fixture_guard = self.source.split("private static void RequireSyntheticFixture(", 1)[1]
+        fixture_guard = fixture_guard.split("private static string SyntheticSource(", 1)[0]
+        source_opener = self.source.split("private static string SyntheticSource(", 1)[1]
+        source_opener = source_opener.split("private static IntPtr ExactNativeOpenButton(", 1)[0]
+        self.assertIn('string projects = Path.Combine(root, "projects")', fixture_guard)
+        self.assertIn("new[] { root, projects, source }", fixture_guard)
+        self.assertIn('Path.Combine(Path.GetFullPath(fixtureRoot), "projects", SourceName)', source_opener)
+        self.assertNotIn('"temporary"', source_opener)
 
     def test_exact_filename_and_native_idok_are_rechecked_before_single_send(self) -> None:
         source = self.action.index("SyntheticSource(fixtureRoot, out held)")

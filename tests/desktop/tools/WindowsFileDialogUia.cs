@@ -388,9 +388,9 @@ public static class WindowsFileDialogUia
         string root = Path.GetFullPath(fixtureRoot).TrimEnd(Path.DirectorySeparatorChar);
         if (!Path.GetFileName(root).StartsWith("directory-dialog-drop-", StringComparison.Ordinal))
             throw new InvalidOperationException("synthetic-fixture-invalid");
-        string temporary = Path.Combine(root, "temporary");
-        string source = Path.Combine(temporary, SourceName);
-        foreach (string path in new[] { root, temporary, source })
+        string projects = Path.Combine(root, "projects");
+        string source = Path.Combine(projects, SourceName);
+        foreach (string path in new[] { root, projects, source })
         {
             FileAttributes attributes = File.GetAttributes(path);
             if ((attributes & FileAttributes.ReparsePoint) != 0)
@@ -401,7 +401,7 @@ public static class WindowsFileDialogUia
     private static string SyntheticSource(string fixtureRoot, out FileStream held)
     {
         RequireSyntheticFixture(fixtureRoot);
-        string source = Path.Combine(Path.GetFullPath(fixtureRoot), "temporary", SourceName);
+        string source = Path.Combine(Path.GetFullPath(fixtureRoot), "projects", SourceName);
         held = new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.Read);
         if (held.Length <= 0 || held.Length > 8192)
             throw new InvalidOperationException("synthetic-source-size-invalid");

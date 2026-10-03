@@ -10,11 +10,13 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import json
 import os
 import queue
 import re
 import secrets
+import stat
 import subprocess
 import sys
 import threading
@@ -64,13 +66,74 @@ def synthetic_source(fixture_root: Path) -> Path:
     source = fixture_root / "temporary" / SOURCE_NAME
     canonical_root = fixture_root.resolve(strict=True)
     canonical_source = source.resolve(strict=True)
-    if canonical_source != canonical_root / "temporary" / SOURCE_NAME or not source.is_file():
+    if canonical_source != canonical_root / "temporary" / SOURCE_NAME or not source.is_file() or source.is_symlink():
         raise drop.ProbeFailure("synthetic-source-location-invalid")
     if not 0 < source.stat().st_size <= 8192:
         raise drop.ProbeFailure("synthetic-source-size-invalid")
     if drop.file_hash(source) != drop.SYNTHETIC_SOURCE_SHA256:
         raise drop.ProbeFailure("synthetic-source-digest-mismatch")
     return source
+
+
+def _exact_fixture_entry(path: Path, expected: Path, *, directory: bool) -> bool:
+    metadata = path.lstat()
+    if path.is_symlink() or getattr(metadata, "st_file_attributes", 0) & getattr(
+        stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400
+    ):
+        return False
+    kind_matches = stat.S_ISDIR(metadata.st_mode) if directory else stat.S_ISREG(metadata.st_mode)
+    return kind_matches and path.resolve(strict=True) == expected
+
+
+def picker_source(fixture_root: Path) -> Path:
+    """Verify the exact file admitted by the fixture's projects-only picker guard."""
+    source = fixture_root / "projects" / SOURCE_NAME
+    try:
+        if (
+            not _exact_fixture_entry(fixture_root, fixture_root, directory=True)
+            or not _exact_fixture_entry(fixture_root / "projects", fixture_root / "projects", directory=True)
+            or not _exact_fixture_entry(source, source, directory=False)
+        ):
+            raise drop.ProbeFailure("picker-source-location-invalid")
+        if not 0 < source.stat().st_size <= 8192:
+            raise drop.ProbeFailure("picker-source-size-invalid")
+        if drop.file_hash(source) != drop.SYNTHETIC_SOURCE_SHA256:
+            raise drop.ProbeFailure("picker-source-digest-mismatch")
+    except OSError:
+        raise drop.ProbeFailure("picker-source-location-invalid") from None
+    except RuntimeError:
+        raise drop.ProbeFailure("picker-source-location-invalid") from None
+    return source
+
+
+def prepare_picker_source(fixture_root: Path) -> Path:
+    """Copy a verified seeded source into the test-owned picker admission root."""
+    try:
+        if (
+            not _exact_fixture_entry(fixture_root, fixture_root, directory=True)
+            or not _exact_fixture_entry(fixture_root / "temporary", fixture_root / "temporary", directory=True)
+            or not _exact_fixture_entry(fixture_root / "projects", fixture_root / "projects", directory=True)
+        ):
+            raise drop.ProbeFailure("picker-source-fixture-invalid")
+        seed = synthetic_source(fixture_root)
+        if not _exact_fixture_entry(seed, seed, directory=False):
+            raise drop.ProbeFailure("synthetic-source-location-invalid")
+        target = fixture_root / "projects" / SOURCE_NAME
+        if target.exists() or target.is_symlink():
+            raise drop.ProbeFailure("picker-source-target-exists")
+        payload = seed.read_bytes()
+        if not 0 < len(payload) <= 8192 or hashlib.sha256(payload).hexdigest() != drop.SYNTHETIC_SOURCE_SHA256:
+            raise drop.ProbeFailure("synthetic-source-digest-mismatch")
+        with target.open("xb") as output:
+            output.write(payload)
+        selected = picker_source(fixture_root)
+        if drop.file_hash(seed) != drop.SYNTHETIC_SOURCE_SHA256:
+            raise drop.ProbeFailure("synthetic-source-digest-mismatch")
+        return selected
+    except OSError:
+        raise drop.ProbeFailure("picker-source-copy-unavailable") from None
+    except RuntimeError:
+        raise drop.ProbeFailure("picker-source-copy-unavailable") from None
 
 
 def require_exact_window(process: subprocess.Popen[str], ready: dict[str, Any]) -> dict[str, Any]:
@@ -889,7 +952,7 @@ def main() -> int:
             result["pickerResults"] = fixture.picker_results
             result["commitActions"] = fixture.commit_actions
             result["commitEvents"] = fixture.commits
-            synthetic_source(fixture_root)
+            prepare_picker_source(fixture_root)
             initial = native_counters(ready)
             if any(initial.values()):
                 raise drop.ProbeFailure("picker-fixture-native-counters-not-zero")
@@ -916,6 +979,7 @@ def main() -> int:
                 result["dialogActions"].append(dialog_action(action, owner, process.pid, fixture_root, raw_file))
                 if action == "select":
                     synthetic_source(fixture_root)
+                    picker_source(fixture_root)
                 observations = (
                     result["cancelObservations"] if action == "cancel" else result["selectedCandidateObservations"]
                 )
