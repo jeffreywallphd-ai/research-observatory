@@ -392,7 +392,8 @@ class WorkflowProfileContractTests(unittest.TestCase):
                     text=True,
                 ).stdout.strip()
 
-            git("checkout", "--detach", "HEAD")
+            # Recreate introduction from its committed pre-witness parent; current HEAD already has this witness.
+            git("checkout", "--detach", "9824e2baad59705bd985a33624fc3e27837e7bc1^")
             witness = root / relative
             witness.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(REPO / relative, witness)
