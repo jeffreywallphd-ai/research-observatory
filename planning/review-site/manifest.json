@@ -37523,9 +37523,9 @@
       "approval_path": "planning/wave-amendment-approvals/W2.A01.json",
       "approval_sha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
       "approval_status": "APPROVED",
-      "lifecycle_status": "ACTIVE",
+      "lifecycle_status": "REVIEW",
       "bootstrap_status": "APPROVED",
-      "campaign_status": "ACTIVE",
+      "campaign_status": "REVIEW",
       "bootstrap_attempts": [
         {
           "id": "R01",
@@ -38553,15 +38553,49 @@
       ],
       "exit_review": {
         "amendment_id": "W2.A01",
-        "mode": "latest-completion-only",
+        "mode": "append-only",
         "latest_completion": {
-          "status": "PENDING",
+          "status": "REVIEW",
           "reviewer": null,
           "reviewed_at": null,
-          "evidence": [],
-          "notes": null
+          "evidence": [
+            "artifacts/evidence/W2.A01.exit.json"
+          ],
+          "notes": ""
         },
-        "exit_review_control": null
+        "exit_review_control": {
+          "version": 1,
+          "attempts": [],
+          "current_submission": {
+            "id": "R01",
+            "submitted_by": "codex-w2-implementation",
+            "submitted_at": "2026-10-03T00:59:19+00:00",
+            "candidate_commit": "b33122d1e6e77f3ac67890c13492a02f3aca271c",
+            "declared_candidate_commit": "7f7770a5ec2c536c5b426662ad3e12a786c4efe9",
+            "branch": "codex/w2-implementation",
+            "evidence_reference": {
+              "type": "amendment-exit-evidence",
+              "amendment_id": "W2.A01",
+              "path": "artifacts/evidence/W2.A01.exit.json",
+              "sha256": "6723bfd2988716a699caba27db722afe683ace3cb42ead080ba5ece4d7dcf342",
+              "commit": "b33122d1e6e77f3ac67890c13492a02f3aca271c"
+            },
+            "acceptance_criteria_sha256": "60dc12087c336952a46effaabe13636602c72362a799054eb18e3084add25909",
+            "selected_checks": [
+              ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0009 --require-approved",
+              ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+              ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+              ".venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_attachment_interactions",
+              "Eight selected real-Git UI gate, canonical namespace, and historical authority tests",
+              "Complete T02 task-base UI gate with externally reviewed byte-identical checker",
+              ".venv/Scripts/python.exe tools/plan_review_check.py --repo ."
+            ],
+            "selected_checks_sha256": "f5bbf7233a8be80abc101f3e703ea1c14e61dadad0d633184a5035d628d620ea",
+            "prior_attempt_id": null,
+            "open_finding_ids": [],
+            "packet_sha256": "180f327f658fba6416642063e0ddd227cf91cee4e30a93abcaa4fa35ad05bab1"
+          }
+        }
       },
       "adoption_checkpoints": [],
       "page": "enablers/ECR-0009.html"

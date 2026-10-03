@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: a5d7f7bc1e4eb641bd0ae8eb28f05bf32924e5bf149f32ae8973b044da45e596
+source_sha256: cfe399f9f92eb69b5d1d479612fa1e15d8a4d334ce525e3a69a12dad66c8b640
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -50,7 +50,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A07` | `ECR-0006` | `planning/wave-amendment-approvals/W1.A07.json` | `ADOPTED` |
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
-| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ACTIVE` |
+| `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `REVIEW` |
 
 ## Waves
 
@@ -2362,21 +2362,32 @@ See `planning/status-summary.md` for the generated status distributions and capa
 
 **Approval record:** `planning/wave-amendment-approvals/W2.A01.json` (`6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096`)
 
-**Lifecycle / bootstrap / campaign / completion:** `ACTIVE` / `APPROVED` / `ACTIVE` / `PENDING`
+**Lifecycle / bootstrap / campaign / completion:** `REVIEW` / `APPROVED` / `REVIEW` / `REVIEW`
 
 **Append-only lifecycle history:**
 
 - `E01` `APPROVED` at `2026-10-02T16:23:51Z` by human:repository-owner: The repository owner replied 'Approved, please proceed.' to the decision request explicitly identifying ECR-0009's exact candidate 3fb76d6cb6bce6eaf16774931704de68c6168500, packet SHA-256 9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2, and proposed Academic Minimal 1.8 reference RO-UI-ACADEMIC-MINIMAL-1.8. This records the owner decision for only the reviewed W2.A01.B00 bootstrap, W2.A01.S01 contribution, W2.A01.T01 gate/ADR task, and W2.A01.T02 reference/typed opaque renderer-contract task. Production choose/drop/attach remains unavailable in T02; original CAP-05.S01.T01 later owns real native/Core attachment proof after amendment adoption. This approval does not complete any task or slice, adopt the amendment, resume ordinary W2, approve W2 qualification/release, authorize a renderer file-path shortcut, or waive independent checks. The timestamp records binding of the owner's decision to this exact reviewed candidate.
 - `E02` `MATERIALIZED` at `2026-10-02T18:11:43+00:00` by codex-w2-implementation: Materialized the exact human-approved task inventory.
 - `E03` `ACTIVE` at `2026-10-02T18:39:35+00:00` by codex-w2-implementation: Activated the bounded amendment campaign.
+- `E04` `REVIEW` at `2026-10-03T00:59:19+00:00` by codex-w2-implementation: Submitted amendment exit for review.
 
 ### Amendment-exit review and adoption — W2.A01
 
-**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+**Exit-review mode:** `append-only v1` / 0 completed round(s)
 
-**Latest completion projection:** `PENDING` by - at `-`
+**Current immutable amendment-exit submission awaiting review:** `R01` / packet SHA-256 `180f327f658fba6416642063e0ddd227cf91cee4e30a93abcaa4fa35ad05bab1`
 
-**Latest completion evidence:** -
+- Candidate / declared candidate / branch: `b33122d1e6e77f3ac67890c13492a02f3aca271c` / `7f7770a5ec2c536c5b426662ad3e12a786c4efe9` / `codex/w2-implementation`
+- Submitted by / at: codex-w2-implementation / `2026-10-03T00:59:19+00:00`
+- Bound exit evidence: amendment `W2.A01` / `artifacts/evidence/W2.A01.exit.json` / `6723bfd2988716a699caba27db722afe683ace3cb42ead080ba5ece4d7dcf342` / `b33122d1e6e77f3ac67890c13492a02f3aca271c`
+- Acceptance-criteria SHA-256: `60dc12087c336952a46effaabe13636602c72362a799054eb18e3084add25909`
+- Selected-check SHA-256: `f5bbf7233a8be80abc101f3e703ea1c14e61dadad0d633184a5035d628d620ea`
+- Selected checks: `.venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0009 --require-approved`, `.venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate`, `.venv/Scripts/python.exe tools/backlog_views.py --repo . --check`, `.venv/Scripts/python.exe -B -m unittest -v tests.desktop.test_document_attachment_interactions`, `Eight selected real-Git UI gate, canonical namespace, and historical authority tests`, `Complete T02 task-base UI gate with externally reviewed byte-identical checker`, `.venv/Scripts/python.exe tools/plan_review_check.py --repo .`
+- Prior round / replayed open findings: `-` / -
+
+**Latest completion projection:** `REVIEW` by - at `-`
+
+**Latest completion evidence:** `artifacts/evidence/W2.A01.exit.json`
 
 **Latest completion notes:** -
 
