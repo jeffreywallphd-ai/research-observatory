@@ -63,6 +63,7 @@
     "packages/contracts/connectors/connector-plugin-invocation-request.schema.json",
     "packages/contracts/connectors/connector-plugin-manifest.schema.json",
     "packages/contracts/connectors/connector-plugin-repository-metadata.schema.json",
+    "packages/contracts/connectors/connector-plugin-worker-page.schema.json",
     "packages/contracts/connectors/connector-request.schema.json",
     "packages/contracts/ingestion/import-record.schema.json",
     "packages/contracts/model-gateway/model-manifest.schema.json",
