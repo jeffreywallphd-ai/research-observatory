@@ -48,9 +48,10 @@ def _signed_document_probe():
         "RO_W2_CORE_SIDECAR_GUARDIAN_SHA256",
     )
     values = tuple(os.environ.get(name) for name in names)
+    worker_build_input, guardian_input, guardian_digest = values
     if not any(values):
         return None
-    if not all(values):
+    if not worker_build_input or not guardian_input or not guardian_digest:
         raise ValueError("signed-probe-input-incomplete")
 
     from workers.windows.runtime_inventory import (
@@ -62,13 +63,12 @@ def _signed_document_probe():
     scratch = Path(__file__).resolve().parents[3] / "artifacts" / "tmp"
     if scratch != scratch.resolve(strict=True) or scratch.is_symlink() or scratch.is_junction():
         raise ValueError("signed-probe-scratch-invalid")
-    worker_build = _canonical_probe_path(values[0], scratch, directory=True)
+    worker_build = _canonical_probe_path(worker_build_input, scratch, directory=True)
     if worker_build.parent != scratch:
         raise ValueError("signed-probe-worker-location-invalid")
-    guardian = _canonical_probe_path(values[1], scratch, directory=False)
+    guardian = _canonical_probe_path(guardian_input, scratch, directory=False)
     if guardian.name != "research-observatory-core-x86_64-pc-windows-msvc.exe":
         raise ValueError("signed-probe-guardian-identity-invalid")
-    guardian_digest = values[2]
     if re.fullmatch(r"[0-9a-fA-F]{64}", guardian_digest) is None:
         raise ValueError("signed-probe-guardian-hash-invalid")
     digest = hashlib.sha256()

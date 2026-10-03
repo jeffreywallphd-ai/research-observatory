@@ -20,7 +20,7 @@ import sys
 import threading
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 from uuid import UUID
 
 import run_windows_document_drop_probe as drop
@@ -270,6 +270,11 @@ def safe_commit_event(event: dict[str, Any]) -> dict[str, Any]:
     return event
 
 
+class StagePairEvents(Protocol):
+    picker_results: list[dict[str, Any]]
+    stage: list[dict[str, Any]]
+
+
 class FixtureEvents:
     def __init__(self, events: queue.Queue[dict[str, Any]], process: subprocess.Popen[str]) -> None:
         self.events = events
@@ -359,7 +364,7 @@ class FixtureEvents:
 
 
 def exact_stage_pair(
-    fixture: FixtureEvents,
+    fixture: StagePairEvents,
     *,
     stage_start: int,
     picker_start: int,
@@ -896,6 +901,7 @@ def main() -> int:
             if process is not None:
                 try:
                     drop.send(process, {"action": "close"})
+                    ended: dict[str, Any] | None
                     if fixture is None:
                         ended = drop.await_event(events, process, "document-drop-probe-end", 20, stage_events)
                     else:
