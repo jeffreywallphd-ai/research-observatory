@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-adoption-evidence",
+  "amendmentId": "W2.A02",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "b4e319252341139aa8b9977976e0d1f694a45326",
+  "reviewedCompletionCommit": "b4e319252341139aa8b9977976e0d1f694a45326",
+  "approvedExitAttempt": "R01",
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W2.A02.exit.json",
+    "sha256": "bda866f0e80b490909ac0e9f79880ec1340fa35b56cc81572ca590085a17d5a7",
+    "introductionCommit": "bfafa6b89c8dd64b5133ae9ab659ba58d235f30e",
+    "declaredContributionCommit": "b9719a975864b866805862082a6454904967a661"
+  },
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W2.A02.exit-review-R01.json",
+    "sha256": "428526f9e634885899485b8d03d8f849c144aef9cf6f7568a525525de0e368aa",
+    "introductionCommit": "b4e319252341139aa8b9977976e0d1f694a45326",
+    "reviewedStateCommit": "392b71b1848aded2b8b7c6fc6ae49f96db74bf04",
+    "result": "approved",
+    "openFindings": []
+  },
+  "contributionReview": {
+    "path": "artifacts/evidence/W2.A02.S01.review-01.json",
+    "sha256": "4ce20278ff5eebf84b44716a4c407c7b3b770eb57a77ee51abad6b3bf9d22c85",
+    "introductionCommit": "b9719a975864b866805862082a6454904967a661",
+    "result": "approved"
+  },
+  "taskReview": {
+    "taskId": "W2.A02.T01",
+    "candidateCommit": "f989ba75b605c2d53db058441ecea211ae41c776",
+    "evidencePath": "artifacts/evidence/W2.A02.T01.json",
+    "evidenceSha256": "ed80bda41ecb2e2688afb570a3e2ca7aeabc0d76e4a0cf056e0372467329f04f",
+    "reviewPath": "artifacts/evidence/W2.A02.T01.review-R01.json",
+    "reviewSha256": "d50593a6bd6f5e180b373bd925647179f40a192fb9d7d59c2ebaffb27f910c45",
+    "result": "approved",
+    "openFindings": []
+  },
+  "authority": {
+    "changeRequestId": "ECR-0010",
+    "approvedPacketCommit": "60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db",
+    "approvedPacketSha256": "f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43",
+    "approvalPath": "planning/wave-amendment-approvals/W2.A02.json",
+    "approvalSha256": "d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79",
+    "approvedBy": "human:repository-owner",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePublicationCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94",
+    "referenceUnchanged": true
+  },
+  "waveDisposition": {
+    "statusAfterAdoption": "PAUSED",
+    "scopeAfterAdoption": "wave",
+    "activeAmendmentAfterAdoption": null,
+    "ordinaryResumeRequiresExplicitCommand": true,
+    "gateApprovalAuthorized": false
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "actualScope": "Adopt only the independently reviewed W2.A02 exact-history UI continuation control for original CAP-05.S01.T01 under unchanged approved Academic Minimal 1.8; no product or release approval is added.",
+    "adopts": [
+      "Exact owner-approved ECR-0010 packet, independently approved B00 bootstrap, W2.A02.T01 R01 six-source control task, W2.A02.S01 three-criterion contribution and W2.A02 four-criterion exit R01 with no open findings.",
+      "Indexed Proposed ADR-0037 and opt-in schema/gate v1.3 for the sole original 6506-base T01 continuation, requiring historical reviewed T02 v1.2 and later current T01 v1.3 contracts, authentic intervening reviews, exact one-off 9727 mixed history and original-base automatic selection.",
+      "The unchanged approved Academic Minimal 1.8 reference and historical 1.7-to-1.8 publication. The guard requires independent current-product/1.8 classification, captured producer/dependent Git inputs and complete original-base conformance before resumed T01 evidence may pass."
+    ],
+    "retains": [
+      "The original CAP-05.S01.T01 remains BLOCKED with its immutable 6506c68461144747b0ee9be10853211717aa381d claim base and no lease until explicit W2 resume and taskctl reopen. Adoption alone supplies no current product classification, capture bundle, v1.3 T01 contract or full original-base UI gate pass.",
+      "Real Windows native-only picker/drop acquisition, Core rights/provenance/receipt, denial/cancellation/interruption/restart and fifth-D3D startup availability remain original T01 proof. Do not admit an extra window by class name, use renderer path/bytes or stock Tauri file-drop, or grant broad filesystem access.",
+      "The pre-fix six-source gate-bypass real-Git red result remains adverse. The repaired focused test and 13-case task suite are candidate-bound, not a substitute for future current-product qualification.",
+      "Remaining W2 tasks/slices/checkpoints and full Windows x64 cross-capability security/privacy/rights/accessibility/performance/packaging/recovery qualification, independent Wave review and separate human release gate remain required. No remote push, destructive research I/O, substantial spend or release decision is authorized."
+    ]
+  },
+  "requiredNextTransitions": [
+    "Obtain a separate independent security/control review of this exact committed pre-adoption manifest and commit its ledger before taskctl amendment adopt W2.A02.",
+    "Use taskctl amendment adopt W2.A02 with this committed checkpoint record, then verify the new security Wave checkpoint, W2.A02 ADOPTED history and W2 still PAUSED with ordinary wave scope.",
+    "Explicitly resume W2 through taskctl, then reopen CAP-05.S01.T01 with its preserved original claim base and perform current-product/1.8 classification, full original-base UI gate and real native/Core/D3D qualification.",
+    "Complete the remaining W2 slices, checkpoints, affected/repository/profile checks, independent Wave review and separate human release decision before declaring W2 complete."
+  ],
+  "transitionTruth": "This committed document proposes and bounds the pre-adoption security checkpoint. Independent checkpoint review, supported adoption, ordinary Wave resume and original T01 qualification must be evidenced by later separate records; none is claimed here."
+}
