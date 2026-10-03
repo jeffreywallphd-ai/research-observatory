@@ -1491,7 +1491,7 @@ waves:
       remain recorded, not waived.
   campaign:
     status: PAUSED
-    scope: wave
+    scope: amendment-hold
     owner: codex-w2-implementation
     branch: codex/w2-implementation
     worktree: .
@@ -53420,7 +53420,7 @@ wave_amendments:
     sha256: 8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087
     introduction_commit: c972e2116113afa7ad84f0e43bdad58660cc69bb
   lifecycle:
-    status: APPROVED
+    status: MATERIALIZED
     history:
     - id: E01
       status: APPROVED
@@ -53436,6 +53436,11 @@ wave_amendments:
         fifth-D3D finding. W2 remains PAUSED and original CAP-05.S01.T01 remains BLOCKED; joined CAP-04.S05 integration, original
         T01 native/Core/current-UI proof, W2 qualification and separate human release decision remain due. This timestamp
         records binding of the owner''s explicit answer to the exact reviewed packet, not a new release decision.'
+    - id: E02
+      status: MATERIALIZED
+      actor: codex-w2-implementation
+      at: '2026-10-03T21:48:31+00:00'
+      rationale: Materialized the exact human-approved task inventory.
   bootstrap:
     id: W2.A03.B00
     status: APPROVED
@@ -53457,7 +53462,112 @@ wave_amendments:
         approves candidate 17da0a4fd81da38e7d4b1430f935dcd3f7028085 and submitted state e596806cf13179227b600f664df852591ee585e0
         with zero findings.
   campaign: null
-  tasks: []
+  tasks:
+  - id: W2.A03.T01
+    amendment_id: W2.A03
+    title: Bind exact 1.8 presentation and UI control authority
+    objective: Create a committed exact-delta approved-1.8 presentation witness and narrowly reviewed v1.4 full-base UI gate
+      lane, including authentic GOV26/A03 history, without consumer/product/reference edits.
+    dependencies:
+    - W2.A03.B00
+    acceptance_criteria:
+    - New presentation-compatibility-1.8.json authenticates exact approved 1.8 publication/package after its introduction
+      and frozen approved 1.5 source bytes. WORKFLOW_CATALOG changes only identity/version. CAPABILITY_COVERAGE changes only
+      identity/version/date, the CAP-05 page-list insertion, exact ingestion purpose and CAP-05 addition, inherited source-manager
+      appended region, four exact ingestion regions inserted in order before reversible merge decisions, and exact reader
+      purpose/one appended region; no open-ended semantic exception.
+    - A closed schemaVersion 1.4 CAP-05.S01.T01 restoration lane retains the exact v1.3 adoptedContinuationAuthority and adds
+      one required closed referenceActivationAuthority object with the proposal-frozen amendmentId/changeRequestId/controlTaskId/consumerTaskId,
+      referenceApprovalPath/witnessPath, publicationCommit/witnessCommit/adoptionCommit/reactivationCommit and activationUiFiles/activationUiCommits
+      fields. The gate derives and authenticates W2.A03/ECR-0011 approval, T01/T02 reviewed control-to-consumer commits, exact
+      independently reviewed GOV-MAINT-0026 candidate/review/projection, inherited W2.A01/A02 and C10 histories, original
+      6506 base, and independent current 1.8 classification. It preserves exactly historical W2.A01.T02 v1.2 plus one current
+      T01 contract, v1.0-v1.3 behavior, per-commit path/input closure and all denial cases; no generic amendment/maintenance
+      allowlist.
+    - Limit task source to exactly packages/contracts/workflow-profile/presentation-compatibility-1.8.json, tools/ui_conformance.py,
+      tests/contracts/test_workflow_profile_contracts.py, tests/desktop/test_ui_conformance.py, tools/ui_change_gate.py, tests/foundation/test_ui_change_gate.py,
+      design/ui-change.schema.json, docs/automation/design-first-ui-changes.md, docs/automation/ui-conformance-verification.md,
+      docs/adr/ADR-0039-bind-approved-desktop-reference-activation.md, docs/adr/index.json. Task-owned evidence/reviews and
+      generated projections are separately declared workflow output; no renderer, consumer assembler, activation JSON, visual
+      baseline, Core/native, 1.8 reference, original task-base, migration or release edit.
+    - Introduce one indexed Proposed ADR-0039 for the protected control/witness boundary without superseding Accepted ADR-0003/0004
+      or Proposed ADR-0037; obtain expanded independent control/security/ADR review on exact committed candidate.
+    verification_commands:
+    - Focused 1.8 semantic/witness tests deny missing/extra/reordered/changed deltas, stale or wrong approval/package, dirty
+      or redirected inputs; retain 1.6/1.7 and frozen 1.5 compatibility denials.
+    - Focused schema and real-Git v1.4 full-original-base tests authenticate exact A01/A02/A03 and GOV25/GOV26/C10 chains,
+      two-contract count, current classification/capture producer and dependent inputs, intermediate control/product changes,
+      forged review, changed mode/bytes, hidden add/revert, foreign task, shortened base and old v1.0-v1.3 cases. Run ADR
+      association, selected foundation/quality checks and expanded independent review.
+    - Do not claim original CAP-05.S01.T01 current-product gate, native attachment, S05 integration or W2 qualification from
+      T01 controls alone.
+    packet_task_sha256: 47e24fc5ffd3e89ce7d3b49d311ec262c1180089c9a12d0f9f8f3abaf9da9d3f
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  - id: W2.A03.T02
+    amendment_id: W2.A03
+    title: Activate approved 1.8 desktop consumers and pinned baseline
+    objective: Bind exact approved 1.8 identity/package into both desktop assemblers and protected activation, then produce
+      a guarded Windows-x64 66-capture visual baseline for all 33 product pages.
+    dependencies:
+    - W2.A03.B00
+    - W2.A03.T01
+    acceptance_criteria:
+    - After independently approved T01 committed witness/control, align verification/extensions/desktop-ui.json and both desktop
+      assemblers to exact approved Academic Minimal 1.8 ID/package; both emitted bundles match the published reference, and
+      the product bundle excludes reference-only pages.
+    - Generate verification/baselines/desktop-ui.json only with guarded pinned Windows-x64 Chromium writer after committed
+      clean witness/activation/build input; preserve 33 pages and 66 light/dark captures, viewport/scale/locale/font/animation/browser/platform
+      settings, prior 1.7 lineage and same-reference overwrite denial. Independently review exact baseline candidate; never
+      fabricate digests or suppress diffs.
+    - Limit task source to exactly verification/extensions/desktop-ui.json, verification/baselines/desktop-ui.json, apps/desktop/scripts/assemble-reference.mjs,
+      apps/desktop/scripts/assemble-application.mjs, tests/desktop/test_desktop_app_check.py, tests/desktop/test_ui_conformance.py,
+      tests/foundation/test_ui_reference_check.py. The three test modules update mutable current-identity expectations while
+      retaining historical 1.7 adversarial cases; no governed 1.8 reference, Core/native drop, permission, release or original
+      T01 edit.
+    verification_commands:
+    - Check both assemblers, generated manifest and production desktop capture against approved 1.8 package; run focused reference/desktop/checker
+      tests and exact-candidate pinned 33-page/66-capture conformance.
+    - Deny stale 1.7 or mixed package, extra/missing product pages or captures, reference-only page leakage, changed baseline
+      settings, same-reference overwrite and unreviewed/dirty inputs; independent protected activation/baseline review precedes
+      S01 integration.
+    - Fresh original CAP-05.S01.T01 product/native/Core evidence and full-base gate remain later obligations, including unresolved
+      authentic fifth D3D child characterization.
+    packet_task_sha256: 5dc2789685c520f534b336c05a8663f50e00e6bb1ea80f4a9bfd6da3a4f100c8
+    status: NOT_STARTED
+    owner: null
+    branch: null
+    base_sha: null
+    worktree: null
+    lease: null
+    started_at: null
+    updated_at: null
+    completed_at: null
+    blocker: null
+    implementation_notes: ''
+    evidence: []
+    verification_state: null
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
   completion:
     status: PENDING
     reviewer: null
