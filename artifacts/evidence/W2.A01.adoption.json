@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "wave-amendment-adoption-evidence",
+  "amendmentId": "W2.A01",
+  "targetWave": "W2",
+  "branch": "codex/w2-implementation",
+  "candidateCommit": "ffd2ed71fd3ec0a5cf880f13a3979d3e846eb830",
+  "reviewedCompletionCommit": "ffd2ed71fd3ec0a5cf880f13a3979d3e846eb830",
+  "approvedExitAttempt": "R01",
+  "approvedExitEvidence": {
+    "path": "artifacts/evidence/W2.A01.exit.json",
+    "sha256": "6723bfd2988716a699caba27db722afe683ace3cb42ead080ba5ece4d7dcf342",
+    "introductionCommit": "b33122d1e6e77f3ac67890c13492a02f3aca271c"
+  },
+  "approvedExitLedger": {
+    "path": "artifacts/evidence/W2.A01.exit-review-R01.json",
+    "sha256": "4d65f33bea45a4362bb7333d6a1a868b8a9905da3910da36225bc2e32ea263f1",
+    "introductionCommit": "ffd2ed71fd3ec0a5cf880f13a3979d3e846eb830",
+    "reviewedStateCommit": "5c99e233029323084a4d182295514d5227ed938f",
+    "result": "approved",
+    "openFindings": []
+  },
+  "contributionReview": {
+    "path": "artifacts/evidence/W2.A01.S01.review-01.json",
+    "sha256": "0f0bae014347f8a49b97da67173c1220b02a8f218979d9aff1e10be9f4a24766",
+    "introductionCommit": "7f7770a5ec2c536c5b426662ad3e12a786c4efe9",
+    "result": "approved"
+  },
+  "controlReview": {
+    "path": "artifacts/evidence/W2.A01.T02.ui-gate-active-maintenance.review-01.json",
+    "sha256": "7b56f3896962b53d14f9e28b32ec0bc483c55ff6b09e2de655f784396af20398",
+    "introductionCommit": "ab2c868eea54b00dc1e9e71c6cd2f2d9a0e5b9c1",
+    "result": "approved"
+  },
+  "authority": {
+    "changeRequestId": "ECR-0009",
+    "approvedPacketCommit": "3fb76d6cb6bce6eaf16774931704de68c6168500",
+    "approvedPacketSha256": "9b86ac8c6db43785bc6f783adc5c287e405b3925f1d8fea9f2cc048cd4fb00d2",
+    "approvalPath": "planning/wave-amendment-approvals/W2.A01.json",
+    "approvalSha256": "6fe58c9791d224a51367f42ced40e27a45a0d83ee07464e237fc2a302edc4096",
+    "approvedBy": "human:repository-owner",
+    "referenceId": "RO-UI-ACADEMIC-MINIMAL-1.8",
+    "referencePublicationCommit": "acdc67b616f5ecdec448f57a7efe46e4f359aa9f",
+    "referencePackageSha256": "cd8995fdcea2fe44452eaa1fdd258b6f9fab5714cbd443a81a8e5b4251220b94"
+  },
+  "waveDisposition": {
+    "statusAfterAdoption": "PAUSED",
+    "scopeAfterAdoption": "wave",
+    "activeAmendmentAfterAdoption": null,
+    "ordinaryResumeRequiresExplicitCommand": true,
+    "gateApprovalAuthorized": false
+  },
+  "checkpointScope": {
+    "kind": "security",
+    "actualScope": "Adopt only the approved W2.A01 selected-version attachment experience authority, typed opaque renderer contract, independently reviewed UI gate and exact 1.8 reference publication. No native file access or release authority is added by this checkpoint.",
+    "adopts": [
+      "Exact ECR-0009 and immutable owner approval, W2.A01.B00 bootstrap, independently approved W2.A01.T01 R02 and W2.A01.T02 R02 tasks, W2.A01.S01 contribution and five-criterion amendment exit R01.",
+      "Proposed indexed ADR-0035 and the narrow UI gate 1.2 intentional-amendment lane, with ordinary 1.0 and restoration 1.1 denials retained; separate active-branch evidence-path and byte-exact historical-page projection maintenance has its own independent control disposition.",
+      "Human-approved Academic Minimal 1.8 package published after its proposal/approval and before renderer commits; the approved 1.7 historical package remains unchanged.",
+      "Inline selected Work/version attachment interaction, exact-revision status/route return, keyboard/focus/recovery and typed opaque native command/event names, with production choose/drop explicitly unavailable before trusted native wiring."
+    ],
+    "retains": [
+      "No renderer path or bytes, stock Tauri file-drop path event, broad filesystem grant, or weaker origin/authentication channel is authorized. Native-only picker/drop, held-source pinning, real principal and Core acquisition/rights/provenance/cancellation/restart proof remain original CAP-05.S01.T01 work after explicit W2 resume.",
+      "Protected reader opening remains CAP-05.S04. Post-stage encrypted orphan cleanup remains CAP-05.S01.T03. Existing original task claim bases, identities and adverse/approval history remain append-only.",
+      "The candidate-bound whole T02 UI gate pass at 988ee478 is retained with its externally reviewed byte-identical checker; later current-HEAD/branch replay denials and the 98/99 historical-fixture suite result remain adverse. The focused fixture and real-Git repairs pass but no 99/99 rerun is claimed.",
+      "Foundation:quality inventory/format/type failure remains W2 work and is not a passing profile. Remaining slices/checkpoints, real native/Core and protected-reader safety, cross-capability happy/failure/denial/cancellation/migration/restart/recovery, security/privacy/rights/accessibility/performance/packaging, required Windows x64 profiles, independent W2 review and a separate human release gate remain mandatory.",
+      "No local-main switch, remote push, external effect, destructive research operation, substantial spend or W2 release decision is granted by this amendment approval or checkpoint."
+    ]
+  },
+  "requiredNextTransitions": [
+    "Use supported taskctl amendment adopt W2.A01 with this separately committed checkpoint record.",
+    "Verify W2.A01 ADOPTED, campaign/completion approved history, bound W2 security checkpoint, no active amendment and ordinary W2 still PAUSED.",
+    "Explicitly resume W2 through taskctl, then reopen original CAP-05.S01.T01 with its preserved claim base and complete real native/Core admission under the approved 1.8 interaction boundary.",
+    "Finish remaining W2 tasks, risk-selected checks, independent slices/checkpoints, fresh Wave qualification and independent Wave review before asking for the separate human release-gate decision."
+  ],
+  "transitionTruth": "This committed pre-adoption checkpoint binds the exact reviewed completion and retained security boundary. Adoption and any later ordinary Wave resume must be established by their separate supported taskctl transitions; this record alone does not assert they occurred."
+}
