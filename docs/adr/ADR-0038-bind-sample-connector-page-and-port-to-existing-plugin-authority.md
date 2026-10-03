@@ -61,11 +61,13 @@ Core and renderer, and retains the signed package's relative fixed entry point.
 `PluginJobStore.result` returns a structural predecessor view (`plan`,
 `continuation`, `next_cursor`) rather than importing the concrete repository
 adapter into the port. Core separately checks the current plan, exact committed
-predecessor, query, page size and cursor before advancing. The worker receives
-only its opaque invocation label. Core persists only sanitized broker bytes in
-encrypted storage, records the broker's explicit redaction boolean, and binds
-response references to published provenance. Historical pages without that
-marker remain explicitly unknown; new publication requires true or false.
+predecessor, query, page size and cursor before advancing. The optional worker
+context adds only its opaque invocation label to the existing bounded
+operation, scientific input and broker callback. Core persists only sanitized
+broker bytes in encrypted storage, records the broker's explicit redaction
+boolean, and binds response references to published provenance. Historical
+pages without that marker remain explicitly unknown; new publication requires
+true or false.
 
 The same-commit `quality-scope.json` addition inventories seven new governed
 Python files, without removing existing entries or admitting an already tracked
