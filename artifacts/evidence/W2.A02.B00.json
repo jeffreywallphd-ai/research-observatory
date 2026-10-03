@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A02.B00",
+  "commit": "f97c32f1330a92cb64c5a95f6d66b2f3f56da147",
+  "baseCommit": "5fbeea66e84bac5ab24cf1bb8d2522838529a0ba",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0010.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe tools/planctl.py --repo . ecr validate ECR-0010 --require-approved",
+      "exitCode": 0,
+      "result": "At the clean f97c32f1 candidate, ECR-0010 is approved and history-bound to the exact independently reviewed packet and committed owner record."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "Canonical backlog validates: 20 capabilities, 117 slices, 387 tasks, 12 release gates."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated backlog views pass without change."
+    },
+    {
+      "command": ".venv/Scripts/python.exe tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A02.B00-site-validation.json",
+      "exitCode": 0,
+      "result": "All 494 generated planning-review HTML pages validate with errors=[] and warnings=[]; ignored raw report SHA-256 29cb1998ffc93528424bcb5e03e02e30a3e4e45220fa969b4b5b01a6667dd03f."
+    },
+    {
+      "command": "From tests/foundation: ..\\..\\.venv\\Scripts\\python.exe -B -m unittest -v test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment test_taskctl_workflow.TaskctlWorkflowTests.test_b00_r01_review_and_materialization_revalidate_the_frozen_bootstrap",
+      "exitCode": 0,
+      "result": "Two focused real-controller tests passed: reserved successor append and frozen B00 review/materialization revalidation."
+    },
+    {
+      "command": "git diff --check 5fbeea66e84bac5ab24cf1bb8d2522838529a0ba..f97c32f1330a92cb64c5a95f6d66b2f3f56da147; git diff --name-only 5fbeea66e84bac5ab24cf1bb8d2522838529a0ba..f97c32f1330a92cb64c5a95f6d66b2f3f56da147",
+      "exitCode": 0,
+      "result": "Patch hygiene passes and approval-to-candidate changedFiles are exactly the three packet-authorized generated ECR-0010 site paths."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The committed owner approval at 5fbeea66 binds reviewed candidate 60e8a2d3, exact ECR-0010 packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43, independently approved R01 ledger at a64febae, immutable W2 base and adopted W2.A01 predecessor, and GOV-MIG-0001; fresh planctl --require-approved passes.",
+        "The independently reviewed ECR packet authenticates the unchanged 55-file approved Academic Minimal 1.8 inventory. This bootstrap candidate changes no reference file."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The approval-to-candidate Git diff is exactly the three packet-authorized generated ECR-0010 approval-projection paths. The detail/register show human APPROVED with lifecycle NOT_MATERIALIZED and bootstrap NOT_SUBMITTED, not task execution.",
+        "Focused controller tests cover append-only successor history and frozen B00 review/materialization checks. Supported bootstrap-submit will append the W2.A02 shell with tasks:[] and B00 REVIEW after this manifest passes; independent B00 review must verify the actual append."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "Before submission W2 remains PAUSED without an ordinary lease, original CAP-05.S01.T01 remains BLOCKED with its 6506 claim base and no lease, and W2.A02 is not materialized or active.",
+        "The actual append, independent B00 review, separate packet-exact task materialization and later amendment activation remain distinct controlled transitions. The reviewer must confirm the submitted state before B00 approval."
+      ]
+    },
+    {
+      "criterion_index": 4,
+      "evidence": [
+        "The complete approval-to-candidate Git diff contains no renderer, native, Core, design/ui-reference, migration, task-base, controller, or release file. The approved 1.8 reference and W2/W2.A01 authority records remain unchanged.",
+        "Bootstrap makes no ordinary task claim, Wave resume, destructive research I/O or external effect; original T01 and W2 qualification/release gates remain open."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 changes only three generated approval projections and uses the existing append-only controller. Exact ECR approval validation, canonical backlog and view checks, the full generated-site checker, two focused controller transition tests and exact Git scope cover material authority, atomicity and presentation risks. No product/runtime suite is relevant to this projection-only candidate.",
+    "deferred": "Independent B00 review will inspect the actual atomic append and unchanged W2/T01 holds before materialization. W2.A02.T01 owns schema/gate/ADR and hostile real-Git proof; original CAP-05.S01.T01 and W2 exit retain native/Core, security, privacy, accessibility, packaging and release qualification."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-review",
+    "note": "Review exact f97c32f1 candidate, approved packet and owner record, criterion evidence and submitted atomic append. Confirm only three authorized paths, W2.A02 B00 REVIEW with tasks:[], unchanged prior amendments, W2 PAUSED and original T01 BLOCKED with no ordinary lease."
+  }
+}

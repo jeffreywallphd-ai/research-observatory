@@ -52402,3 +52402,53 @@ wave_amendments:
         findings: []
         closures: []
       current_submission: null
+- id: W2.A02
+  change_request_id: ECR-0010
+  target_wave: W2
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W2.A02.json
+    sha256: d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79
+    introduction_commit: 5fbeea66e84bac5ab24cf1bb8d2522838529a0ba
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: human:repository-owner
+      at: '2026-10-03T10:28:36Z'
+      rationale: The repository owner replied 'Approved, please continue' to the decision request explicitly identifying ECR-0010/W2.A02,
+        reviewed candidate 60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db, packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43,
+        and the independent R01 packet disposition. This approves only the bounded adopted-attachment-UI continuation authority
+        proposed in the exact packet, beginning with W2.A02.B00 and the ordered W2.A02.S01/W2.A02.T01 control work and reviews.
+        Academic Minimal 1.8 remains the unchanged approved reference; this is not approval of a 1.9 reference or a new researcher
+        interaction. W2 remains PAUSED and CAP-05.S01.T01 BLOCKED until supported amendment bootstrap, independent control/slice/exit/security
+        reviews, adoption, and explicit Wave resume. The separate intermittent D3D startup finding, original task evidence/review,
+        remaining W2 slices, qualification and human release decision are not waived or completed. The timestamp records binding
+        of the owner's decision to this exact reviewed candidate.
+  bootstrap:
+    id: W2.A02.B00
+    status: REVIEW
+    implementer: codex-w2-implementation
+    implementation_commit: f97c32f1330a92cb64c5a95f6d66b2f3f56da147
+    submission_branch: codex/w2-implementation
+    scope_addenda: []
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A02.B00.json
+      sha256: c522b8677acbc9a4a2b75830a28887d98fb74484145ac6ecf0bac69f82d6838e
+      commit: f97c32f1330a92cb64c5a95f6d66b2f3f56da147
+      recorded_at: '2026-10-03T10:44:39+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: e19d6222bdb29d7949be790f951b200d72cb6d1c2cacb4a2c6cb75e35ff270e2
+source_sha256: 8cc8040b0c68c200eb8ab07e45c426473a1ca838f76c2617c5a5b0fa30c03e8c
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 17 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 10 |
+| Wave amendments | 11 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -51,6 +51,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A08` | `ECR-0007` | `planning/wave-amendment-approvals/W1.A08.json` | `ADOPTED` |
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
+| `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `APPROVED` |
 
 ## Waves
 
@@ -2622,6 +2623,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** Independent expanded R02 review inspected the frozen product candidate, committed submission record, approved Academic Minimal 1.8 contract, immutable R01 changes-requested ledger, exact source and mounted regression, and task-base chronology. The line-ending-canonical evidence SHA-256 and frozen packet SHA-256 recompute exactly; all ten cited raw-log SHA-256 values match, and the 13 declared changed paths equal the exact a6588fc5..988ee478 Git diff. The R01 ledger and approved reference package are unchanged. An independently executed whole-base gate from the separately reviewed external 38dd61f3 control returns ok with no errors, and an independently rerun mounted real-Core/synthetic-native journey passes. R01 F01 is closed because exact authoritative failed, cancelled, and recoverable unavailable statuses after an attached reply expose a fresh lawful-copy action under current Work/version authority; denied and mismatched status remain blocked, unconfirmed retries retain exact payload identity, and historical command/revision IDs survive Task Center return. R01 F02 is closed because safe decoded authoritative status is in a polite live region and delayed status changes do not move focus. The red R01 and R02 characterization logs remain adverse history. This task approval does not qualify production native/Core file admission, protected reader, full desktop or security profiles, the integrated amendment slice, W2 qualification, or release. The external gate maintenance commits remain separate from the product task range.
 
 **Currently open findings:** -
+
+## W2.A02 - ECR-0010
+
+**Target Wave / class:** `W2` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W2.A02.json` (`d99be15aa110248b0e10e7090210787fe5cfa8e929e759f91a7d84a8e57a8d79`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-10-03T10:28:36Z` by human:repository-owner: The repository owner replied 'Approved, please continue' to the decision request explicitly identifying ECR-0010/W2.A02, reviewed candidate 60e8a2d3bbd3ba50cc4809a7ebe799764e6b00db, packet SHA-256 f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43, and the independent R01 packet disposition. This approves only the bounded adopted-attachment-UI continuation authority proposed in the exact packet, beginning with W2.A02.B00 and the ordered W2.A02.S01/W2.A02.T01 control work and reviews. Academic Minimal 1.8 remains the unchanged approved reference; this is not approval of a 1.9 reference or a new researcher interaction. W2 remains PAUSED and CAP-05.S01.T01 BLOCKED until supported amendment bootstrap, independent control/slice/exit/security reviews, adoption, and explicit Wave resume. The separate intermittent D3D startup finding, original task evidence/review, remaining W2 slices, qualification and human release decision are not waived or completed. The timestamp records binding of the owner's decision to this exact reviewed candidate.
+
+### Amendment-exit review and adoption — W2.A02
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 ## Linked corrective tasks
