@@ -1,0 +1,85 @@
+{
+  "task_id": "CAP-04.S05.T03",
+  "attempt_id": "R02",
+  "candidate_commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+  "reviewer": "agent:/root/t03_independent_review",
+  "result": "changes-requested",
+  "approvalAvailable": false,
+  "notes": "Independent expanded R02 review closes CAP-04.S05.T03-R01-F01 on the exact clean strict-descendant candidate: the selected locally test-signed worker and fresh frozen Core guardian are path/hash bound to a no-skip 2/2 real Windows x64 LPAC run, the worker/build source is unchanged from its signed build, and fresh 68/68 focused tests pass. The sandbox guardian-handshake failure remains retained as a non-equivalent-principal adverse result. However the frozen R02 criterion manifest and submitted backlog packet incorrectly direct the outstanding T02 migration-fixture repair to W2.C05.T01. Canonical W2.C05.T01 was already completed for unrelated CAP-04.S01.T03 test typing, and W2.C01.T01 through W2.C09.T01 are all DONE. The erroneous pointer could make a required S05/W2 migration prerequisite appear assigned or discharged by unrelated work. This is a new medium blocking evidence-accuracy finding under criterion 3; R02 approval is unavailable. Keep R02 and R01 immutable and correct the deferral in an append-only R03 packet, using a newly allocated linked-correction ID only after validating the canonical ledger. The earlier quality-inventory omission remains a separate S05/W2 obligation. Test signing and synthetic broker data do not establish production signing or a live provider.",
+  "evidence_reproduction": {
+    "submission_manifest": {
+      "path": "artifacts/evidence/CAP-04.S05.T03.R02.json",
+      "canonical_sha256": "0497627f354903da8e9d3ee83f2ca413dca1d59f3fabc0b2bfdd8110ef6a801b",
+      "result": "PASS: candidate, strict-descendant base, all nine changed paths, three criterion maps and 15 raw-log/report/witness hashes agree."
+    },
+    "selected_inputs": {
+      "path": "artifacts/tmp/CAP-04.S05.T03.R02.inputs-42379f73.json",
+      "sha256": "ac6c1be6e2298c97ed2d84d98002397feb6d7ffad17e2f22e536b08adc3803bc",
+      "result": "PASS: reported inventory, signature, packaged worker image, guardian, Core report and sample hashes match local bytes; worker/build-tool source comparison to 33333d0f is empty."
+    },
+    "native_execution_witness": {
+      "path": "artifacts/tmp/CAP-04.S05.T03.R02.native-witness-42379f73.json",
+      "sha256": "43bfe68ae73e1d1bedc421d00ac4628aefe7780f18f5f8738936fb144cfd9e63",
+      "runner_sha256": "e0ed70ec06bdd4689caf6771a862f29836661e3e45703f0b26ba9288637ae333",
+      "native_log_sha256": "847f25d46deafd572a77aaeca59111596d3b9feecb5e99bdc8a8a86caaf275ab",
+      "result": "PASS: runner sets RO_W2_SIGNED_WORKER_BUILD and RO_W2_CORE_SIDECAR_GUARDIAN to the fixed reported paths, rehashes selected bytes, and emits a content-free input preamble followed by two real LPAC test passes with no skip."
+    },
+    "focused_connector": {
+      "path": "artifacts/tmp/CAP-04.S05.T03.R02.focused-42379f73.log",
+      "sha256": "b0b287f8718f91981a620d8856349d50deb44b0670e798059067add6655b1e25",
+      "result": "PASS: 68 focused connector, worker, repository and public-contract tests."
+    },
+    "adverse_sandbox_replay": {
+      "path": "artifacts/tmp/CAP-04.S05.T03.R02.independent-native-42379f73.log",
+      "sha256": "eac272d8436df3ff66727d052895c034a5918819ca46ba173decba1f19b8060a",
+      "result": "RETAINED ADVERSE: default-sandbox Medium-integrity replay stopped at guardian handshake before broker execution; it is not the approved unsandboxed Windows principal used for the qualifying 2/2 run."
+    },
+    "future_work_pointer": {
+      "path": "artifacts/evidence/CAP-04.S05.T03.R02.json",
+      "result": "FAIL R02-F01: verificationSelection.deferred[1] names W2.C05.T01 as the future T02 migration-fixture correction, while canonical planning/backlog.yaml records W2.C05.T01 DONE for CAP-04.S01.T03 test typing and W2.C01.T01 through W2.C09.T01 all DONE."
+    }
+  },
+  "checks": [
+    {
+      "command": "Compare clean HEAD 42379f73, R01 submission and review, the nine R01-to-R02 changed paths and worker/build-tool source from 33333d0f to 42379f73",
+      "result": "PASS: exact candidate and diff inventory agree; worker/build source closure is unchanged; R01 adverse history remains immutable."
+    },
+    {
+      "command": "Recompute selected input, runner, witness, raw native log, Core build report, build manifest, focused and adverse replay SHA-256 values",
+      "result": "PASS: 15 manifest/witness references match local bytes; selected worker and guardian hashes match the input report and fresh Core bundle."
+    },
+    {
+      "command": "Inspect the input-verifying runner, content-free native preamble, witness, signed runtime verifier and no-skip native test output",
+      "result": "PASS: both env-selected paths are fixed and rehashed before the test process; the passing 2/2 log is bound to report and runner bytes. Runtime verification precedes guardian launch."
+    },
+    {
+      "command": "Inspect 68 focused test results, Core build inventory, build-manifest/backlog results and disclosed quality/migration limitations",
+      "result": "PASS: 68/68 focused tests, 784-file Core build, clean build manifest and backlog validation; the stated T02 migration-fixture corrective ID is contradicted by the canonical ledger."
+    },
+    {
+      "command": "Resolve every deferred corrective ID in the frozen R02 manifest and backlog selected-check packet against the canonical W2 corrective ledger and correction specification",
+      "result": "FAIL R02-F01: W2.C05.T01 exists but is already DONE for unrelated CAP-04.S01.T03 test typing; no W2.C10.T01 is allocated yet. The R02 future-work pointer is materially false."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CAP-04.S05.T03-R02-F01",
+      "severity": "medium",
+      "blocking": true,
+      "criterion_index": 3,
+      "title": "Frozen R02 migration-fixture deferral points to a completed unrelated corrective task",
+      "reproduction": "At exact committed submission state f5f0a30a23478690c32ab3522a49b33f905adc0f for candidate 42379f73cf6853be3618a8bb554ffa50a3fdf5c0, artifacts/evidence/CAP-04.S05.T03.R02.json:66 and planning/backlog.yaml's frozen R02 current_submission.deferred_checks say the earlier CAP-04.S05.T02 v20 grant-migration test fixture will be restored through linked correction W2.C05.T01 before S05/W2 migration proof. The canonical backlog already records W2.C05.T01 DONE, and artifacts/evidence/W2.C05.T01.spec.json identifies its origin as CAP-04.S01.T03 and its scope as typing six import-commit test files, not the T02 grant-migration fixture. W2.C01.T01 through W2.C09.T01 are all DONE; W2.C10.T01 is not yet allocated. Therefore R02's criterion-linked verification deferral names an immutable ID that cannot perform the promised pending repair. A later S05/W2 gate could wrongly count unrelated completed work as satisfying the migration prerequisite.",
+      "required_remediation": "Preserve frozen R02 and its positive R01-F01 closure. In a strict-descendant append-only R03, update the missed evidence/proof note and replace the false W2.C05.T01 future-work pointer in the new criterion manifest with a correct pending linked-correction dependency. Verify the canonical corrective ledger and allocate the next valid ID through the governed task route before naming it; do not assert W2.C10.T01 exists until it is actually recorded. Add a bounded referential check of the cited corrective task's origin, scope and status, retain the stale T02 fixture failure as an open S05/W2 obligation, rerun affected evidence checks, and obtain independent replay. Do not alter the completed W2.C05.T01 record or frozen R02 packet."
+    }
+  ],
+  "closures": [
+    {
+      "finding_id": "CAP-04.S05.T03-R01-F01",
+      "disposition": "fixed",
+      "evidence": "artifacts/evidence/CAP-04.S05.T03.R02.json"
+    }
+  ],
+  "prior_findings_replayed": [
+    "CAP-04.S05.T03-R01-F01"
+  ]
+}

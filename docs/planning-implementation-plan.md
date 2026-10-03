@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 7d701ea9aac6b3fa144dcd30647ed8cc767ba3d2b8df3b9c63b3e46b919aff05
+source_sha256: 72f2222c3b7d383089694bd2d7f353fcac61ec6b671ada489e8fa100341856bc
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -9869,7 +9869,7 @@ Original tasks and approvals remain unchanged.
 
 #### - [ ] CAP-04.S05.T03 - Deliver a sample repository connector and conformance suite
 
-**Status / priority / estimate / risk:** `REVIEW` / `P1` / `M` / `medium`
+**Status / priority / estimate / risk:** `IN_PROGRESS` / `P1` / `M` / `medium`
 
 **Profiles / platforms:** `LOC`, `LAB`, `UNI`, `CLD` / `windows-x64`
 
@@ -9902,7 +9902,7 @@ Original tasks and approvals remain unchanged.
 
 ##### Review history — CAP-04.S05.T03
 
-**Review mode:** `append-only v1` / 1 completed round(s)
+**Review mode:** `append-only v1` / 2 completed round(s)
 
 ###### Round R01
 
@@ -9934,7 +9934,9 @@ Original tasks and approvals remain unchanged.
 
 - None
 
-**Current immutable submission awaiting review:** `R02` / packet SHA-256 `1c336168bb60def992357ab6cd003cbe801abe55888ac8133b95d0b273b571d6`
+###### Round R02
+
+**Immutable submission packet:** `R02` / packet SHA-256 `1c336168bb60def992357ab6cd003cbe801abe55888ac8133b95d0b273b571d6`
 
 - Candidate / base / branch: `42379f73cf6853be3618a8bb554ffa50a3fdf5c0` / `9a22c5fe122358b854ceae6c7cb47cdfd68c8f12` / `codex/w2-implementation`
 - Submitted by / at: codex-w2-implementation / `2026-10-03T17:37:18+00:00`
@@ -9948,11 +9950,27 @@ Original tasks and approvals remain unchanged.
 - Prior round / replayed open findings: `R01` / `CAP-04.S05.T03-R01-F01`
 - Root-cause escalation: -
 
-**Current latest-review projection:** `changes-requested` by agent:/root/t03_independent_review at `2026-10-03T17:14:06+00:00`
+**Disposition / reviewer / time:** `changes-requested` / agent:/root/t03_independent_review / `2026-10-03T17:54:31+00:00`
 
-**Latest notes:** Independent expanded review of the exact CAP-04.S05.T03 candidate reproduces the 37-path base-to-candidate inventory, three criterion mappings, clean build identity and matching hashes for all twelve submitted passing check logs and the build report. Focused connector and public-contract tests pass 68/68; two real locally signed Windows LPAC sample tests pass without skip; six Core packaging tests pass with one environment skip. The static sample, architecture, ADR, generated contract, build-input and backlog checks pass. The four adverse pre-review product findings are closed on this candidate: malformed scientific input and snake_case output no longer receive conformance passes; unknown field names are absent from diagnostics; Core-owned broker redaction state persists through encrypted response staging, publication and reopen. Proposed ADR-0038 associates the new protected paths with accepted ADR-0027/0028 without asserting new authority. The completed-T02 migration fixture and older quality inventory omission remain separately disclosed for later correction and W2 qualification. One blocking evidence gap remains: the native test command uses environment-selected ignored signed worker and Core guardian binaries, but the immutable R01 manifest and raw native log do not bind those selected inputs by path and digest or establish their source equivalence to this candidate. Therefore the real-boundary result cannot yet be independently reproduced as an exact selected-input proof; task approval is unavailable until an append-only R02 packet closes F01.
+**Immutable review ledger:** `artifacts/evidence/CAP-04.S05.T03.review-R02.json` / `f186b6f01b7f4461fde3e60dc530267090f54d96e7f2cd8303b160c68a6f4b15`
 
-**Currently open findings:** `CAP-04.S05.T03-R01-F01`
+**Review notes:** Independent expanded R02 review closes CAP-04.S05.T03-R01-F01 on the exact clean strict-descendant candidate: the selected locally test-signed worker and fresh frozen Core guardian are path/hash bound to a no-skip 2/2 real Windows x64 LPAC run, the worker/build source is unchanged from its signed build, and fresh 68/68 focused tests pass. The sandbox guardian-handshake failure remains retained as a non-equivalent-principal adverse result. However the frozen R02 criterion manifest and submitted backlog packet incorrectly direct the outstanding T02 migration-fixture repair to W2.C05.T01. Canonical W2.C05.T01 was already completed for unrelated CAP-04.S01.T03 test typing, and W2.C01.T01 through W2.C09.T01 are all DONE. The erroneous pointer could make a required S05/W2 migration prerequisite appear assigned or discharged by unrelated work. This is a new medium blocking evidence-accuracy finding under criterion 3; R02 approval is unavailable. Keep R02 and R01 immutable and correct the deferral in an append-only R03 packet, using a newly allocated linked-correction ID only after validating the canonical ledger. The earlier quality-inventory omission remains a separate S05/W2 obligation. Test signing and synthetic broker data do not establish production signing or a live provider.
+
+**Findings opened:**
+
+- `CAP-04.S05.T03-R02-F01` `medium` blocking=`True` criterion=`3` — Frozen R02 migration-fixture deferral points to a completed unrelated corrective task; reproduce: At exact committed submission state f5f0a30a23478690c32ab3522a49b33f905adc0f for candidate 42379f73cf6853be3618a8bb554ffa50a3fdf5c0, artifacts/evidence/CAP-04.S05.T03.R02.json:66 and planning/backlog.yaml's frozen R02 current_submission.deferred_checks say the earlier CAP-04.S05.T02 v20 grant-migration test fixture will be restored through linked correction W2.C05.T01 before S05/W2 migration proof. The canonical backlog already records W2.C05.T01 DONE, and artifacts/evidence/W2.C05.T01.spec.json identifies its origin as CAP-04.S01.T03 and its scope as typing six import-commit test files, not the T02 grant-migration fixture. W2.C01.T01 through W2.C09.T01 are all DONE; W2.C10.T01 is not yet allocated. Therefore R02's criterion-linked verification deferral names an immutable ID that cannot perform the promised pending repair. A later S05/W2 gate could wrongly count unrelated completed work as satisfying the migration prerequisite.; remediate: Preserve frozen R02 and its positive R01-F01 closure. In a strict-descendant append-only R03, update the missed evidence/proof note and replace the false W2.C05.T01 future-work pointer in the new criterion manifest with a correct pending linked-correction dependency. Verify the canonical corrective ledger and allocate the next valid ID through the governed task route before naming it; do not assert W2.C10.T01 exists until it is actually recorded. Add a bounded referential check of the cited corrective task's origin, scope and status, retain the stale T02 fixture failure as an open S05/W2 obligation, rerun affected evidence checks, and obtain independent replay. Do not alter the completed W2.C05.T01 record or frozen R02 packet.
+
+**Prior finding closures:**
+
+- `CAP-04.S05.T03-R01-F01` `fixed` — artifacts/evidence/CAP-04.S05.T03.R02.json
+
+**Current immutable submission awaiting review:** None
+
+**Current latest-review projection:** `changes-requested` by agent:/root/t03_independent_review at `2026-10-03T17:54:31+00:00`
+
+**Latest notes:** Independent expanded R02 review closes CAP-04.S05.T03-R01-F01 on the exact clean strict-descendant candidate: the selected locally test-signed worker and fresh frozen Core guardian are path/hash bound to a no-skip 2/2 real Windows x64 LPAC run, the worker/build source is unchanged from its signed build, and fresh 68/68 focused tests pass. The sandbox guardian-handshake failure remains retained as a non-equivalent-principal adverse result. However the frozen R02 criterion manifest and submitted backlog packet incorrectly direct the outstanding T02 migration-fixture repair to W2.C05.T01. Canonical W2.C05.T01 was already completed for unrelated CAP-04.S01.T03 test typing, and W2.C01.T01 through W2.C09.T01 are all DONE. The erroneous pointer could make a required S05/W2 migration prerequisite appear assigned or discharged by unrelated work. This is a new medium blocking evidence-accuracy finding under criterion 3; R02 approval is unavailable. Keep R02 and R01 immutable and correct the deferral in an append-only R03 packet, using a newly allocated linked-correction ID only after validating the canonical ledger. The earlier quality-inventory omission remains a separate S05/W2 obligation. Test signing and synthetic broker data do not establish production signing or a live provider.
+
+**Currently open findings:** `CAP-04.S05.T03-R02-F01`
 
 ## CAP-document-inspection (`CAP-05`) - Document acquisition, parsing, source inspection, and page anchors
 

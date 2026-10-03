@@ -17881,13 +17881,13 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "mode": "append-only",
               "latest_review": {
                 "reviewer": "agent:/root/t03_independent_review",
                 "result": "changes-requested",
-                "reviewed_at": "2026-10-03T17:14:06+00:00",
-                "notes": "Independent expanded review of the exact CAP-04.S05.T03 candidate reproduces the 37-path base-to-candidate inventory, three criterion mappings, clean build identity and matching hashes for all twelve submitted passing check logs and the build report. Focused connector and public-contract tests pass 68/68; two real locally signed Windows LPAC sample tests pass without skip; six Core packaging tests pass with one environment skip. The static sample, architecture, ADR, generated contract, build-input and backlog checks pass. The four adverse pre-review product findings are closed on this candidate: malformed scientific input and snake_case output no longer receive conformance passes; unknown field names are absent from diagnostics; Core-owned broker redaction state persists through encrypted response staging, publication and reopen. Proposed ADR-0038 associates the new protected paths with accepted ADR-0027/0028 without asserting new authority. The completed-T02 migration fixture and older quality inventory omission remain separately disclosed for later correction and W2 qualification. One blocking evidence gap remains: the native test command uses environment-selected ignored signed worker and Core guardian binaries, but the immutable R01 manifest and raw native log do not bind those selected inputs by path and digest or establish their source equivalence to this candidate. Therefore the real-boundary result cannot yet be independently reproduced as an exact selected-input proof; task approval is unavailable until an append-only R02 packet closes F01."
+                "reviewed_at": "2026-10-03T17:54:31+00:00",
+                "notes": "Independent expanded R02 review closes CAP-04.S05.T03-R01-F01 on the exact clean strict-descendant candidate: the selected locally test-signed worker and fresh frozen Core guardian are path/hash bound to a no-skip 2/2 real Windows x64 LPAC run, the worker/build source is unchanged from its signed build, and fresh 68/68 focused tests pass. The sandbox guardian-handshake failure remains retained as a non-equivalent-principal adverse result. However the frozen R02 criterion manifest and submitted backlog packet incorrectly direct the outstanding T02 migration-fixture repair to W2.C05.T01. Canonical W2.C05.T01 was already completed for unrelated CAP-04.S01.T03 test typing, and W2.C01.T01 through W2.C09.T01 are all DONE. The erroneous pointer could make a required S05/W2 migration prerequisite appear assigned or discharged by unrelated work. This is a new medium blocking evidence-accuracy finding under criterion 3; R02 approval is unavailable. Keep R02 and R01 immutable and correct the deferral in an append-only R03 packet, using a newly allocated linked-correction ID only after validating the canonical ledger. The earlier quality-inventory omission remains a separate S05/W2 obligation. Test signing and synthetic broker data do not establish production signing or a live provider."
               },
               "review_control": {
                 "version": 1,
@@ -18037,65 +18037,130 @@
                         "closed_finding_ids": []
                       }
                     }
+                  },
+                  {
+                    "submission": {
+                      "id": "R02",
+                      "submitted_by": "codex-w2-implementation",
+                      "submitted_at": "2026-10-03T17:37:18+00:00",
+                      "candidate_commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+                      "base_commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
+                      "branch": "codex/w2-implementation",
+                      "evidence_reference": {
+                        "type": "criterion-manifest",
+                        "path": "artifacts/evidence/CAP-04.S05.T03.R02.json",
+                        "sha256": "0497627f354903da8e9d3ee83f2ca413dca1d59f3fabc0b2bfdd8110ef6a801b",
+                        "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
+                        "recorded_at": "2026-10-03T17:37:18+00:00"
+                      },
+                      "acceptance_criteria_sha256": "05609bef191428a127b093c2f2706ee09cfc130bfa4ebdc841a7db64b09035fd",
+                      "changed_paths": [
+                        "artifacts/evidence/CAP-04.S05.T03.json",
+                        "artifacts/evidence/CAP-04.S05.T03.review-R01.json",
+                        "artifacts/evidence/CAP-04.S05.T03.task-start.md",
+                        "docs/planning-implementation-plan.md",
+                        "planning/backlog.yaml",
+                        "planning/review-site/CAP-04/CAP-04.S05.T03.html",
+                        "planning/review-site/CAP-04/CAP-04.S05.html",
+                        "planning/review-site/manifest.json",
+                        "planning/status-summary.md"
+                      ],
+                      "selected_checks": [
+                        ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_inputs.py --guardian artifacts/tmp/c11/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --core-report artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.json --output artifacts/tmp/CAP-04.S05.T03.R02.inputs-42379f73.json",
+                        "& artifacts/tmp/t03_r02_bound_native.ps1",
+                        ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_native_witness.py",
+                        ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/c11 --worker-build artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated",
+                        ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
+                        ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.R02.build-42379f73.json",
+                        ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
+                      ],
+                      "deferred_checks": [
+                        "Full foundation quality remains red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is required before S05/W2 quality proof.",
+                        "The older T02 v20 grant-migration test fixture must be restored through linked correction W2.C05.T01 before S05/W2 migration proof; no production migration defect was demonstrated.",
+                        "S05 integrated slice and W2 exit retain the complete affected/full profile matrix, cross-capability security/rights/accessibility/performance and live-signing/provider limits."
+                      ],
+                      "selection_rationale": "R02 changes only task-start evidence and generated review/planning state, not worker, Core, package, UI or public-schema source. The blocking finding concerns exact native selected-input identity. Select a byte-hashed input report, worker source-equivalence Git check, fresh frozen Core/guardian build and two no-skip real LPAC sample cases on this committed candidate. The input-verifying runner emits a content-free preamble in the passing raw log; the execution witness hashes that log, runner bytes and input report, records both env assignments and unsandboxed local context. Repeat the 68 focused connector/contract tests to confirm the same behavior after the evidence correction, plus clean build and backlog controls. R01's broader architecture/ADR/packaging/static checks remain independently reviewed against unchanged product inputs; full profile reruns are left for S05 integration and W2 exit. The first R02 Core copy failed in a long ignored output path (WinError 3) and is retained; the unchanged build succeeded in fresh short artifacts/tmp/c11. An independent native replay from the default sandbox failed at guardian handshake before a broker call; it is retained as a non-equivalent-principal adverse result, not represented as a native pass or product denial proof. The qualifying 2/2 run used the approved unsandboxed local Windows execution context and exact reported inputs.",
+                      "selection_sha256": "4e2744e2459f9205ad6fd9bed6e248e5993980ea200e408c78be8fa08eb89d64",
+                      "prior_attempt_id": "R01",
+                      "open_finding_ids": [
+                        "CAP-04.S05.T03-R01-F01"
+                      ],
+                      "root_cause_analysis": null,
+                      "selected_command_ids": [
+                        "search:connectors",
+                        "contracts:unit",
+                        "security-local:unit",
+                        "packaging:unit",
+                        "foundation:build-manifest",
+                        "foundation:backlog"
+                      ],
+                      "packet_sha256": "1c336168bb60def992357ab6cd003cbe801abe55888ac8133b95d0b273b571d6"
+                    },
+                    "review": {
+                      "reviewer": "agent:/root/t03_independent_review",
+                      "result": "changes-requested",
+                      "reviewed_at": "2026-10-03T17:54:31+00:00",
+                      "notes": "Independent expanded R02 review closes CAP-04.S05.T03-R01-F01 on the exact clean strict-descendant candidate: the selected locally test-signed worker and fresh frozen Core guardian are path/hash bound to a no-skip 2/2 real Windows x64 LPAC run, the worker/build source is unchanged from its signed build, and fresh 68/68 focused tests pass. The sandbox guardian-handshake failure remains retained as a non-equivalent-principal adverse result. However the frozen R02 criterion manifest and submitted backlog packet incorrectly direct the outstanding T02 migration-fixture repair to W2.C05.T01. Canonical W2.C05.T01 was already completed for unrelated CAP-04.S01.T03 test typing, and W2.C01.T01 through W2.C09.T01 are all DONE. The erroneous pointer could make a required S05/W2 migration prerequisite appear assigned or discharged by unrelated work. This is a new medium blocking evidence-accuracy finding under criterion 3; R02 approval is unavailable. Keep R02 and R01 immutable and correct the deferral in an append-only R03 packet, using a newly allocated linked-correction ID only after validating the canonical ledger. The earlier quality-inventory omission remains a separate S05/W2 obligation. Test signing and synthetic broker data do not establish production signing or a live provider."
+                    },
+                    "ledger": {
+                      "path": "artifacts/evidence/CAP-04.S05.T03.review-R02.json",
+                      "sha256": "f186b6f01b7f4461fde3e60dc530267090f54d96e7f2cd8303b160c68a6f4b15"
+                    },
+                    "findings": [
+                      {
+                        "id": "CAP-04.S05.T03-R02-F01",
+                        "severity": "medium",
+                        "blocking": true,
+                        "criterion_index": 3,
+                        "title": "Frozen R02 migration-fixture deferral points to a completed unrelated corrective task",
+                        "reproduction": "At exact committed submission state f5f0a30a23478690c32ab3522a49b33f905adc0f for candidate 42379f73cf6853be3618a8bb554ffa50a3fdf5c0, artifacts/evidence/CAP-04.S05.T03.R02.json:66 and planning/backlog.yaml's frozen R02 current_submission.deferred_checks say the earlier CAP-04.S05.T02 v20 grant-migration test fixture will be restored through linked correction W2.C05.T01 before S05/W2 migration proof. The canonical backlog already records W2.C05.T01 DONE, and artifacts/evidence/W2.C05.T01.spec.json identifies its origin as CAP-04.S01.T03 and its scope as typing six import-commit test files, not the T02 grant-migration fixture. W2.C01.T01 through W2.C09.T01 are all DONE; W2.C10.T01 is not yet allocated. Therefore R02's criterion-linked verification deferral names an immutable ID that cannot perform the promised pending repair. A later S05/W2 gate could wrongly count unrelated completed work as satisfying the migration prerequisite.",
+                        "required_remediation": "Preserve frozen R02 and its positive R01-F01 closure. In a strict-descendant append-only R03, update the missed evidence/proof note and replace the false W2.C05.T01 future-work pointer in the new criterion manifest with a correct pending linked-correction dependency. Verify the canonical corrective ledger and allocate the next valid ID through the governed task route before naming it; do not assert W2.C10.T01 exists until it is actually recorded. Add a bounded referential check of the cited corrective task's origin, scope and status, retain the stale T02 fixture failure as an open S05/W2 obligation, rerun affected evidence checks, and obtain independent replay. Do not alter the completed W2.C05.T01 record or frozen R02 packet."
+                      }
+                    ],
+                    "closures": [
+                      {
+                        "finding_id": "CAP-04.S05.T03-R01-F01",
+                        "disposition": "fixed",
+                        "evidence": "artifacts/evidence/CAP-04.S05.T03.R02.json"
+                      }
+                    ],
+                    "telemetry": {
+                      "task_id": "CAP-04.S05.T03",
+                      "amendment_id": null,
+                      "attempt_id": "R02",
+                      "submitted_at": "2026-10-03T17:37:18+00:00",
+                      "reviewed_at": "2026-10-03T17:54:31+00:00",
+                      "duration_seconds": 1033,
+                      "outcome": "changes-requested",
+                      "finding_counts": {
+                        "critical": 0,
+                        "high": 0,
+                        "medium": 1,
+                        "low": 0,
+                        "blocking": 1,
+                        "total": 1
+                      },
+                      "command_ids": [
+                        "search:connectors",
+                        "contracts:unit",
+                        "security-local:unit",
+                        "packaging:unit",
+                        "foundation:build-manifest",
+                        "foundation:backlog"
+                      ],
+                      "remediation": {
+                        "prior_attempt_id": "R01",
+                        "replayed_finding_ids": [
+                          "CAP-04.S05.T03-R01-F01"
+                        ],
+                        "closed_finding_ids": [
+                          "CAP-04.S05.T03-R01-F01"
+                        ]
+                      }
+                    }
                   }
                 ],
-                "current_submission": {
-                  "id": "R02",
-                  "submitted_by": "codex-w2-implementation",
-                  "submitted_at": "2026-10-03T17:37:18+00:00",
-                  "candidate_commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
-                  "base_commit": "9a22c5fe122358b854ceae6c7cb47cdfd68c8f12",
-                  "branch": "codex/w2-implementation",
-                  "evidence_reference": {
-                    "type": "criterion-manifest",
-                    "path": "artifacts/evidence/CAP-04.S05.T03.R02.json",
-                    "sha256": "0497627f354903da8e9d3ee83f2ca413dca1d59f3fabc0b2bfdd8110ef6a801b",
-                    "commit": "42379f73cf6853be3618a8bb554ffa50a3fdf5c0",
-                    "recorded_at": "2026-10-03T17:37:18+00:00"
-                  },
-                  "acceptance_criteria_sha256": "05609bef191428a127b093c2f2706ee09cfc130bfa4ebdc841a7db64b09035fd",
-                  "changed_paths": [
-                    "artifacts/evidence/CAP-04.S05.T03.json",
-                    "artifacts/evidence/CAP-04.S05.T03.review-R01.json",
-                    "artifacts/evidence/CAP-04.S05.T03.task-start.md",
-                    "docs/planning-implementation-plan.md",
-                    "planning/backlog.yaml",
-                    "planning/review-site/CAP-04/CAP-04.S05.T03.html",
-                    "planning/review-site/CAP-04/CAP-04.S05.html",
-                    "planning/review-site/manifest.json",
-                    "planning/status-summary.md"
-                  ],
-                  "selected_checks": [
-                    ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_inputs.py --guardian artifacts/tmp/c11/dist/research-observatory-core-x86_64-pc-windows-msvc/research-observatory-core-x86_64-pc-windows-msvc.exe --core-report artifacts/tmp/CAP-04.S05.T03.R02.core-build-c11-42379f73.json --output artifacts/tmp/CAP-04.S05.T03.R02.inputs-42379f73.json",
-                    "& artifacts/tmp/t03_r02_bound_native.ps1",
-                    ".venv\\Scripts\\python.exe artifacts/tmp/t03_r02_native_witness.py",
-                    ".venv\\Scripts\\python.exe tools/core_sidecar_build.py --repo . --output artifacts/tmp/c11 --worker-build artifacts/tmp/CAP-04.S05.T03.native-worker-33333d0f-elevated",
-                    ".venv\\Scripts\\python.exe -m unittest -v tests.connectors.test_plugin_sample_conformance tests.connectors.test_plugin_scientific_request tests.connectors.test_plugin_dispatch tests.connectors.test_plugin_job_repository tests.connectors.test_plugin_worker_api tests.connectors.test_plugin_worker_submission tests.contracts.test_plugin_worker_contract",
-                    ".venv\\Scripts\\python.exe tools/build_manifest.py --repo . --output artifacts/tmp/CAP-04.S05.T03.R02.build-42379f73.json",
-                    ".venv\\Scripts\\python.exe tools/taskctl.py --file planning/backlog.yaml validate"
-                  ],
-                  "deferred_checks": [
-                    "Full foundation quality remains red on the preexisting tests/desktop/test_seed_document_drop_fixture.py inventory omission; GOV-MAINT-0026 is required before S05/W2 quality proof.",
-                    "The older T02 v20 grant-migration test fixture must be restored through linked correction W2.C05.T01 before S05/W2 migration proof; no production migration defect was demonstrated.",
-                    "S05 integrated slice and W2 exit retain the complete affected/full profile matrix, cross-capability security/rights/accessibility/performance and live-signing/provider limits."
-                  ],
-                  "selection_rationale": "R02 changes only task-start evidence and generated review/planning state, not worker, Core, package, UI or public-schema source. The blocking finding concerns exact native selected-input identity. Select a byte-hashed input report, worker source-equivalence Git check, fresh frozen Core/guardian build and two no-skip real LPAC sample cases on this committed candidate. The input-verifying runner emits a content-free preamble in the passing raw log; the execution witness hashes that log, runner bytes and input report, records both env assignments and unsandboxed local context. Repeat the 68 focused connector/contract tests to confirm the same behavior after the evidence correction, plus clean build and backlog controls. R01's broader architecture/ADR/packaging/static checks remain independently reviewed against unchanged product inputs; full profile reruns are left for S05 integration and W2 exit. The first R02 Core copy failed in a long ignored output path (WinError 3) and is retained; the unchanged build succeeded in fresh short artifacts/tmp/c11. An independent native replay from the default sandbox failed at guardian handshake before a broker call; it is retained as a non-equivalent-principal adverse result, not represented as a native pass or product denial proof. The qualifying 2/2 run used the approved unsandboxed local Windows execution context and exact reported inputs.",
-                  "selection_sha256": "4e2744e2459f9205ad6fd9bed6e248e5993980ea200e408c78be8fa08eb89d64",
-                  "prior_attempt_id": "R01",
-                  "open_finding_ids": [
-                    "CAP-04.S05.T03-R01-F01"
-                  ],
-                  "root_cause_analysis": null,
-                  "selected_command_ids": [
-                    "search:connectors",
-                    "contracts:unit",
-                    "security-local:unit",
-                    "packaging:unit",
-                    "foundation:build-manifest",
-                    "foundation:backlog"
-                  ],
-                  "packet_sha256": "1c336168bb60def992357ab6cd003cbe801abe55888ac8133b95d0b273b571d6"
-                }
+                "current_submission": null
               }
             }
           ],
@@ -18139,7 +18204,7 @@
             {
               "task_id": "CAP-04.S05.T03",
               "title": "Deliver a sample repository connector and conformance suite",
-              "status": "REVIEW",
+              "status": "IN_PROGRESS",
               "page": "CAP-04/CAP-04.S05.T03.html",
               "dependencies": [
                 "CAP-04.S05.T02"
