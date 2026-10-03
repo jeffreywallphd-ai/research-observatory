@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>ECR-0010 Authenticate the adopted attachment UI continuation - Research Observatory Planning Review</title>
+  <link rel="stylesheet" href="../assets/review.css">
+</head>
+<body data-page-type="enabler-detail">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html" aria-label="Planning review home">
+      <span class="brand-mark" aria-hidden="true">RO</span>
+      <span><strong>Research Observatory</strong><small>Planning Review</small></span>
+    </a>
+    <div class="header-actions">
+      <button class="button button-quiet" type="button" data-theme-toggle aria-label="Toggle light and dark theme">Theme</button>
+    </div>
+  </header>
+
+  <div class="page-frame">
+    <aside class="side-panel" aria-label="Planning navigation">
+<div class="planning-nav" data-planning-nav data-default-tab="waves">
+  <div class="planning-nav-tabs" role="tablist" aria-label="Planning views">
+    <button id="planning-tab-capabilities" class="planning-nav-tab" type="button" role="tab" aria-selected="false" aria-controls="planning-panel-capabilities" data-nav-tab="capabilities">Capabilities</button>
+    <button id="planning-tab-waves" class="planning-nav-tab" type="button" role="tab" aria-selected="true" aria-controls="planning-panel-waves" data-nav-tab="waves">Waves</button>
+  </div>
+  <section id="planning-panel-capabilities" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-capabilities" data-nav-panel="capabilities" hidden>
+    <nav class='cap-nav' aria-label='Capabilities'><a class="nav-item" href="../CAP-01/index.html"><span>CAP-windows-desktop-runtime</span><small>CAP-01 · Windows-first desktop shell and supervised local runtime</small></a><a class="nav-item" href="../CAP-02/index.html"><span>CAP-local-project-storage</span><small>CAP-02 · Local projects, durable storage, security, and recovery</small></a><a class="nav-item" href="../CAP-03/index.html"><span>CAP-research-domain-workflows</span><small>CAP-03 · Canonical domain, research intent, provenance, and durable workflows</small></a><a class="nav-item" href="../CAP-04/index.html"><span>CAP-scholarly-ingestion</span><small>CAP-04 · Scholarly ingestion, connectors, canonicalization, and corpus governance</small></a><a class="nav-item" href="../CAP-05/index.html"><span>CAP-document-inspection</span><small>CAP-05 · Document acquisition, parsing, source inspection, and page anchors</small></a><a class="nav-item" href="../CAP-06/index.html"><span>CAP-search-screening</span><small>CAP-06 · Local search, discovery, corpus diagnostics, and screening</small></a><a class="nav-item" href="../CAP-07/index.html"><span>CAP-model-gateway</span><small>CAP-07 · Provider-neutral model gateway and governed AI execution</small></a><a class="nav-item" href="../CAP-08/index.html"><span>CAP-evidence-verification</span><small>CAP-08 · Evidence schemas, extraction, verification, and adjudication</small></a><a class="nav-item" href="../CAP-09/index.html"><span>CAP-scholarly-graph-synthesis</span><small>CAP-09 · Scholarly graph, comparison sets, synthesis, and reproducibility</small></a><a class="nav-item" href="../CAP-10/index.html"><span>CAP-novelty-opportunities</span><small>CAP-10 · Novelty auditing, research opportunities, and plural research modes</small></a><a class="nav-item" href="../CAP-11/index.html"><span>CAP-windows-release</span><small>CAP-11 · Windows PC/lab product hardening, validation, packaging, and release</small></a><a class="nav-item" href="../CAP-12/index.html"><span>CAP-university-hosting</span><small>CAP-12 · University-hosted deployment, institutional identity, collaboration, and operations</small></a><a class="nav-item" href="../CAP-13/index.html"><span>CAP-cloud-platform</span><small>CAP-13 · Managed cloud control plane, tenant data planes, governance, and SaaS operations</small></a><a class="nav-item" href="../CAP-14/index.html"><span>CAP-cross-platform-desktop</span><small>CAP-14 · Cross-platform desktop qualification and release</small></a><a class="nav-item" href="../CAP-15/index.html"><span>CAP-study-design</span><small>CAP-15 · Empirical study design and protocol development</small></a><a class="nav-item" href="../CAP-16/index.html"><span>CAP-manuscript-blueprints</span><small>CAP-16 · Manuscript blueprint, venue profiles, and article architecture</small></a><a class="nav-item" href="../CAP-17/index.html"><span>CAP-results-integration</span><small>CAP-17 · Technical report and study-results integration</small></a><a class="nav-item" href="../CAP-18/index.html"><span>CAP-manuscript-drafting</span><small>CAP-18 · Source-grounded manuscript drafting and publication artifacts</small></a><a class="nav-item" href="../CAP-19/index.html"><span>CAP-review-revision</span><small>CAP-19 · Reviewer simulation, editorial synthesis, and revision</small></a></nav>
+  </section>
+  <section id="planning-panel-waves" class="planning-nav-panel" role="tabpanel" aria-labelledby="planning-tab-waves" data-nav-panel="waves">
+    <nav class='cap-nav' aria-label='Waves'><a class="nav-item" href="../waves/W0.html"><span>W0</span><small>Engineering foundation</small></a><a class="nav-item" href="../waves/W1.html"><span>W1</span><small>Windows local runtime and durable core</small></a><a class="nav-item active" href="../waves/W2.html"><span>W2</span><small>Windows local evidence foundation</small></a><a class="nav-item" href="../waves/W3.html"><span>W3</span><small>Windows local research workbench</small></a><a class="nav-item" href="../waves/W4.html"><span>W4</span><small>Windows scholarly reasoning and novelty MVP</small></a><a class="nav-item" href="../waves/W5.html"><span>W5</span><small>Windows PC/lab production release</small></a><a class="nav-item" href="../waves/W6.html"><span>W6</span><small>Cross-platform desktop qualification</small></a><a class="nav-item" href="../waves/W7.html"><span>W7</span><small>Study design and manuscript foundations</small></a><a class="nav-item" href="../waves/W8.html"><span>W8</span><small>Results integration, manuscript drafting, and reviewer simulation</small></a><a class="nav-item" href="../waves/W9.html"><span>W9</span><small>Advanced research-intelligence preview</small></a><a class="nav-item" href="../waves/W10.html"><span>W10</span><small>University-hosted pilot</small></a><a class="nav-item" href="../waves/W11.html"><span>W11</span><small>Managed cloud delivery</small></a></nav>
+  </section>
+</div>
+</aside>
+    <main id="main-content" class="main-panel">
+      <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="../index.html">Planning review</a><span>/</span><a href="index.html">Enabler change requests</a><span>/</span><span aria-current="page">ECR-0010</span></nav>
+
+<section class="hero compact">
+  <div class="hero-top"><div><span class="eyebrow">W2.A02 · W2</span><h1>ECR-0010 — Authenticate the adopted attachment UI continuation</h1></div><span class="status status-pending">Pending</span></div>
+  <p>product-scope-security-experience. This page preserves the distinction between authorized scope and executable state.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposal, approval, materialization, and campaign state</h2>
+  <dl class="summary-grid"><div><dt>Proposal record</dt><dd>pending-approval / non-executable</dd></div><div><dt>Human approval</dt><dd>PENDING</dd></div><div><dt>Amendment lifecycle</dt><dd>NOT_MATERIALIZED</dd></div><div><dt>Bootstrap</dt><dd>NOT_SUBMITTED</dd></div><div><dt>Amendment campaign</dt><dd>NONE</dd></div></dl>
+  <p>No human approval is recorded. The proposal is non-executable and grants no bootstrap, task, amendment, Wave-resume, or release-gate authority.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Hash-bound source records</h2>
+  <table><thead><tr><th>Record</th><th>Repository-relative path</th><th>SHA-256</th></tr></thead><tbody>
+  <tr><th>Proposal</th><td><code>planning/enabler-change-requests/ECR-0010.md</code></td><td><code>f688916e42852828da7d313106ffcffd1acd697872f6bf568dfa73aefee2fb2c</code></td></tr>
+  <tr><th>Packet</th><td><code>planning/enabler-change-requests/ECR-0010.packet.json</code></td><td><code>f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43</code></td></tr>
+  <tr><th>Human review</th><td><code>planning/enabler-change-requests/ECR-0010-review.html</code></td><td><code>e28badcb2dd7293b0402f6984476ad00ea788b7fd17aef76537158e82e09f5e5</code></td></tr>
+  <tr><th>Approval</th><td><code>pending</code></td><td><code>pending</code></td></tr>
+
+  </tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap scope addenda</h2>
+  <ul class="gate-criteria"><li>None</li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Append-only bootstrap review attempts</h2>
+  <table><thead><tr><th>Attempt</th><th>Frozen candidate</th><th>Disposition / state</th><th>Reviewer</th></tr></thead><tbody><tr><td colspan="4">Not submitted</td></tr></tbody></table>
+</section>
+<section class="review-toolbar">
+  <h2>Ordered Wave authority chain</h2>
+  <table><thead><tr><th>Authority</th><th>Packet commit / hash</th><th>Record commit / hash</th><th>Meaning</th></tr></thead><tbody><tr><th>W2 base approval</th><td><code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></td><td><code>3bc1c1828efab50efc730bf3907c3036eff58a2f</code></td><td>Original complete Wave packet</td></tr><tr><th>W2.A01</th><td><code>3fb76d6cb6bce6eaf16774931704de68c6168500</code></td><td><code>f8a49a2ec7ff4daf6e1c5e14da369e06ddff5287</code></td><td>Adopted predecessor authority; preserved unchanged</td></tr><tr><th>GOV-MIG-0001</th><td><code>d8adf48e9c2e0319e4ece573a9381f6ec305310e</code></td><td><code>4851bcb71d47e5adc3541a6ca0c39b20241cf740e41f644c52ba210288fe105d</code></td><td>Post-migration governance authority; does not grant product execution</td></tr><tr><th>W2.A02</th><td><code>f452dcd6f522bcaf2697d64751a1a55a8b747247bfb37000786bee4458f12c43</code></td><td><code>pending</code></td><td>Pending, non-executable proposal; no bootstrap/task authority</td></tr></tbody></table>
+  <p>Effective ordinary W2 authority remains the approved base plus adopted ordered amendments. W2.A02 is pending and non-executable. If separately approved, it would authorize only bootstrap unit <code>W2.A02.B00</code> and the exact bounded task inventory below.</p>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed slice contributions</h2>
+  <p>These slices are packet data, not hard-coded review-page inventory. They remain non-executable until exact approval and independently approved bootstrap materialization.</p>
+  <details class="plan-details"><summary>W2.A02.S01 — Authenticated adopted attachment UI continuation</summary><p>Provide a reviewed exact-history authority route for original T01 to qualify its approved 1.8 attachment recovery and real native/Core integration without changing the reference or product scope.</p><p><strong>Work type:</strong> new-product-work. <strong>Tasks:</strong> W2.A02.T01. <strong>Refactor tasks:</strong> none.</p><ul class="gate-criteria"><li>Only original CAP-05.S01.T01 with unchanged 6506 claim base may use the continuation after authenticated W2.A01 adoption, independently reviewed T02 publication, exact intervening reviewed verifier/UI-gate/quality maintenance, the 3658da21 ADR-check repair covered by W2.A01.T01 full-range review, and reviewed W2.A02 control delivery.</li><li>The approved 1.8 package stays unchanged: exactly one historical T02 v1.2 and one current T01 v1.3 contract, historical approved 1.7-to-1.8 transition, exact one-off 9727 additive Python inventory/renderer co-commit, and independent current product/1.8 conformance classification are required over the full frozen range.</li><li>Control implementation, task, slice and exit independent reviews bind exact committed candidates; adoption remains separate from ordinary T01 approval and W2 release.</li></ul></details>
+</section>
+<section class="review-toolbar">
+  <h2>Refactor allocation and planning exception</h2>
+  <dl class="summary-grid"><div><dt>Approved-Wave baseline</dt><dd>143 points at <code>c85a59f3a293f8e3f2eaf6454682c9a14b1efa55</code></dd></div><div><dt>Refactor allocation</dt><dd>0 points / 0%</dd></div><div><dt>Policy</dt><dd>standard-15-percent</dd></div><div><dt>Method</dt><dd>Approved planning/W2-initiation.md governs 33 atomic tasks at P_hours=530 engineering-hours (CAP-04 236 + CAP-05 294), with 15% ceiling=79.5 engineering-hours; planned W2-RUNNER-PROGRESS 2 hours are included in P. This v4.1 packet separately retains immutable c85a59f3 backlog&#x27;s normalized 143-point/33-task S=1/M=3/L=5 machine baseline and its 21.45-point projection, which is not an hours conversion/replacement/reset. Documented prior supplemental allocation/reported spending is zero, but historical actual structural engineering-hours and committed remaining, including mixed/abandoned work, are not independently time-reconciled. This packet&#x27;s refactorAllocations=[]/refactorPoints=0/refactorSharePercent=0 denote no proposed new supplemental allocation, not verified cumulative R_hours=0 or unused capacity. Before committing future supplemental structural work, quantify actual spent plus committed remaining engineering-hours across W2 tasks, corrections, maintenance and amendments and prove the common 79.5-hour ceiling; reconcile at task/checkpoint review. W2.A02.T01 L/5 is proposed additive planned control delivery, sized for two-contract full-base authority, independently reviewed intervening control chains, exact 9727 mixed-inventory history, current independent capture classification and hostile real-Git compatibility; independent proposal preflight must assess that size before packet freeze and exact-commit packet review must confirm it before approval; v4.1 new-product-work is the only non-refactor workType and means capability-enabling authority for the already approved attachment outcome, not product source change, structural cleanup or supplemental refactoring. The L/5 estimate does not enlarge original W2 P and may be revised in this inert proposal before packet freeze.</dd></div></dl>
+  <table><thead><tr><th>Refactor task</th><th>Estimate</th><th>Points</th></tr></thead><tbody><tr><td colspan="3">No refactor task declared</td></tr></tbody></table>
+  <p>Standard refactor limit: 15%</p>
+</section>
+<section class="review-toolbar">
+  <h2>Governed experience proposal</h2>
+  <p>Reference <code>RO-UI-ACADEMIC-MINIMAL-1.8</code> is already human-approved. Human approval of this ECR reaffirms and binds that existing authority unchanged; it does not reserve a new reference or authorize bootstrap materialization of reference approval.</p>
+  <ul class="gate-criteria"><li><a href="../../../design/ui-reference/APPROVAL.yaml">design/ui-reference/APPROVAL.yaml</a> — <code>9e5628479727b45439bb6326e053ac3b026ad14cec79ffd1b9dfbfceceb38b1f</code></li><li><a href="../../../design/ui-reference/CAPABILITY_COVERAGE.json">design/ui-reference/CAPABILITY_COVERAGE.json</a> — <code>35bf4ea4cf9cbc5bbfc30e48ecdf9ab6e91b333ce016816a3fd5713f01e4f945</code></li><li><a href="../../../design/ui-reference/CAPABILITY_COVERAGE.md">design/ui-reference/CAPABILITY_COVERAGE.md</a> — <code>0d82db579cb7d4a2988ec623c0556ea47086c7fcb9245ec0f332f71c8e7efb16</code></li><li><a href="../../../design/ui-reference/PAGE_INVENTORY.md">design/ui-reference/PAGE_INVENTORY.md</a> — <code>42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c</code></li><li><a href="../../../design/ui-reference/PAGE_INVENTORY_SOURCE.md">design/ui-reference/PAGE_INVENTORY_SOURCE.md</a> — <code>42253f4ef65ef8e32fb66c57dcbf671bc3c65e32b8892349064ec8cdc6ab3e4c</code></li><li><a href="../../../design/ui-reference/README.md">design/ui-reference/README.md</a> — <code>ef9065dd2609b7af791bf3911325b42d83b9cb159bb638be37286ea2603e338f</code></li><li><a href="../../../design/ui-reference/SITE_MANIFEST.json">design/ui-reference/SITE_MANIFEST.json</a> — <code>56a8d6cb772fe3b787e51d38794d5d000a47cfa185b1c4885bff4bdbedcea3a2</code></li><li><a href="../../../design/ui-reference/STYLE_GUIDE.md">design/ui-reference/STYLE_GUIDE.md</a> — <code>4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db</code></li><li><a href="../../../design/ui-reference/STYLE_GUIDE_SOURCE.md">design/ui-reference/STYLE_GUIDE_SOURCE.md</a> — <code>4421afe6a1eb4f9fe05dc201503cc94cce1bdd92d72e30e11cae6b710bd221db</code></li><li><a href="../../../design/ui-reference/WORKFLOW_CATALOG.json">design/ui-reference/WORKFLOW_CATALOG.json</a> — <code>a47ff01ec5d485fd2a87dffd5480576cadbc7af23986ed4d6b414323c2d3cb21</code></li><li><a href="../../../design/ui-reference/WORKFLOW_CATALOG.md">design/ui-reference/WORKFLOW_CATALOG.md</a> — <code>c2b98b103574156a60695639af5572ded2475ca00f745e700ded6a1d5a25f071</code></li><li><a href="../../../design/ui-reference/application-settings.html">design/ui-reference/application-settings.html</a> — <code>c13d1fd7eeecd372fe9a49839d5c8989ac04e72e7a67c7751a975517ac964a6a</code></li><li><a href="../../../design/ui-reference/assets/app.css">design/ui-reference/assets/app.css</a> — <code>0e085d1112322ff9277fbc10fd9244690e3e97e0638a1aa34848ca5e971f8f56</code></li><li><a href="../../../design/ui-reference/assets/app.js">design/ui-reference/assets/app.js</a> — <code>cfd064ffd003172dad6d2189705f4b25257e58aec916b3f2038085c926d50d8b</code></li><li><a href="../../../design/ui-reference/assets/print.css">design/ui-reference/assets/print.css</a> — <code>03b327a45c53aa2e1135c5de598c88524d5a1edc7f546f7aa4355e4b8d41618c</code></li><li><a href="../../../design/ui-reference/assets/tokens.css">design/ui-reference/assets/tokens.css</a> — <code>e6aa1ebf847e983f4f5c9d20ad0e753716737cdfbedf617df2292bf510bebfa5</code></li><li><a href="../../../design/ui-reference/audit-lineage.html">design/ui-reference/audit-lineage.html</a> — <code>4f08394bfcb370a86a002b59d276524da8f533013726022a4f02dd5e656f8a6f</code></li><li><a href="../../../design/ui-reference/claim-graph.html">design/ui-reference/claim-graph.html</a> — <code>cf8f265a664d3bc1f6a15fd8f4f4720e2d043334dc0f5e98ec660e2518e8bfd5</code></li><li><a href="../../../design/ui-reference/corpus-canvas.html">design/ui-reference/corpus-canvas.html</a> — <code>f23d2cc6c3eecb9e5f5be146f9f0f442e42cf1cd29e56199011fb491f28bf16f</code></li><li><a href="../../../design/ui-reference/critical-lens.html">design/ui-reference/critical-lens.html</a> — <code>4877a11d140de166e82f939eca7a1f19b0ac1cdff515217582f84dfe91284980</code></li><li><a href="../../../design/ui-reference/document-reader.html">design/ui-reference/document-reader.html</a> — <code>6527e09137d9ebe0d2f48c3c30bdc2a45eae5e2680e7f09f4deda4c81a8a32c0</code></li><li><a href="../../../design/ui-reference/evidence-matrix.html">design/ui-reference/evidence-matrix.html</a> — <code>82dc38d05ee7843be44849698c07a230618dbdbabc559ccc98d25c52cd6f4cf2</code></li><li><a href="../../../design/ui-reference/help-onboarding.html">design/ui-reference/help-onboarding.html</a> — <code>7fd6cf66441053dc403b43b843b5f73449caa69be4ea8c189cd3bb0546d8245d</code></li><li><a href="../../../design/ui-reference/index.html">design/ui-reference/index.html</a> — <code>23628190d9093db1d3d7cbebc5ca9af5cc2f081acd678b01fe1097906242473d</code></li><li><a href="../../../design/ui-reference/ingestion-reconciliation.html">design/ui-reference/ingestion-reconciliation.html</a> — <code>83df119e8e28ab69fcfd999855a29b896bed7928f17588c31944765ec593d0d8</code></li><li><a href="../../../design/ui-reference/intent-contract.html">design/ui-reference/intent-contract.html</a> — <code>a361cd8ce9381b24521f0e3e1218cd62c4dec253fec6338bdd8fcd1a31ba8dbf</code></li><li><a href="../../../design/ui-reference/living-monitor.html">design/ui-reference/living-monitor.html</a> — <code>bc2ee881037faae2540f23519a6c3abc49d59dd402d21ac17e6305164c0887dc</code></li><li><a href="../../../design/ui-reference/manuscript-blueprint.html">design/ui-reference/manuscript-blueprint.html</a> — <code>d63828eb45010e12f7225dbe9e8cf7aa503c171bce33b52c1ae4ce573635e308</code></li><li><a href="../../../design/ui-reference/manuscript-studio.html">design/ui-reference/manuscript-studio.html</a> — <code>9eb95f05404e4bb3ed07353633e4c6eab60339c294d855eb6946892f150aa867</code></li><li><a href="../../../design/ui-reference/model-center.html">design/ui-reference/model-center.html</a> — <code>a1ec25442e042126c99eac67b4943d79b6485fe4a888f68314468d7b66581005</code></li><li><a href="../../../design/ui-reference/new-project.html">design/ui-reference/new-project.html</a> — <code>e42091e46dfff96a15da5a9d733ca83e8009148fef1853099079fddb6d8bad94</code></li><li><a href="../../../design/ui-reference/novelty-audit.html">design/ui-reference/novelty-audit.html</a> — <code>9f7912c327ef5a0f5987f2925cf0e96d8e6547a23c1a4856a7d06c3b9a570853</code></li><li><a href="../../../design/ui-reference/opportunity-radar.html">design/ui-reference/opportunity-radar.html</a> — <code>52b61e184ffebbc6f70ead74e6fcd9a12da0976696fbee8165a80e9141c6866a</code></li><li><a href="../../../design/ui-reference/parsing-quality.html">design/ui-reference/parsing-quality.html</a> — <code>e61d819d284090a61ffbcf8d0ad7b383e2632ef74aa9cac5c11e362f79795ff6</code></li><li><a href="../../../design/ui-reference/project-settings.html">design/ui-reference/project-settings.html</a> — <code>170fb77689f5950a36530dbd1adf228ce1bdc874ab19f3c81199b2574986504c</code></li><li><a href="../../../design/ui-reference/projects.html">design/ui-reference/projects.html</a> — <code>ef1fc62b5465f8c9d98d5e004d8df0f5b397d79bd5f94a306a95a3f6f61e2e52</code></li><li><a href="../../../design/ui-reference/prototype-index.html">design/ui-reference/prototype-index.html</a> — <code>87f19ba1a6e7a392badd2a2e2aba35fd8ae4d3aa6fc06bd50be269a2f0a2f9d0</code></li><li><a href="../../../design/ui-reference/research-notebook.html">design/ui-reference/research-notebook.html</a> — <code>98f794165f3b60b20321d7d40f56b6573501491c60e909eb43092260d6f9c15d</code></li><li><a href="../../../design/ui-reference/reviewer-simulation.html">design/ui-reference/reviewer-simulation.html</a> — <code>a3976fcfb87eaa2738fc53e8d34d1d7fdc51bb1503b74ec8ac5f0f68669c30b4</code></li><li><a href="../../../design/ui-reference/revision-response.html">design/ui-reference/revision-response.html</a> — <code>30dbc69b1fc72ecc040d46b2b8f0d47cf52cc74ec2f97a723458106c23f0dcc2</code></li><li><a href="../../../design/ui-reference/schema-manager.html">design/ui-reference/schema-manager.html</a> — <code>69f8973f29f7d9651d5c72c171d919d93c9aa8afcf3dbfb9df18aefbf34223c8</code></li><li><a href="../../../design/ui-reference/screening.html">design/ui-reference/screening.html</a> — <code>52addf3853e395b1151b75c7cd6881ffaadf250538f366dba8318417abdf0464</code></li><li><a href="../../../design/ui-reference/scripts/build_mockups.py">design/ui-reference/scripts/build_mockups.py</a> — <code>da0caa083e75e382feffb6c6682a24100c23b8fb44af5d78cf7ef692ecc80cc4</code></li><li><a href="../../../design/ui-reference/scripts/render_previews.py">design/ui-reference/scripts/render_previews.py</a> — <code>f7b868716f56e70b11004a61aa85762a1bfc6ea06036260f3dd19746bf004959</code></li><li><a href="../../../design/ui-reference/scripts/smoke_interactions.py">design/ui-reference/scripts/smoke_interactions.py</a> — <code>ecd92ebca427b5edb5fe687ed14d838341e66277370b0ecf3cfc432f8bc347ac</code></li><li><a href="../../../design/ui-reference/scripts/verify_site.py">design/ui-reference/scripts/verify_site.py</a> — <code>891940c2a6d0906e211528b04b74fc6fe1351a3d4ded82eea650b051e18c9e0f</code></li><li><a href="../../../design/ui-reference/search-studio.html">design/ui-reference/search-studio.html</a> — <code>506a48064f570bbecbe6e802fdb9e09677614e1241665e5d9d88f6d0829fd26c</code></li><li><a href="../../../design/ui-reference/source-manager.html">design/ui-reference/source-manager.html</a> — <code>5bd6e40b7f59f2fe86dab243272c63af8cba4de14911b0e1adbbd4db9ba60d40</code></li><li><a href="../../../design/ui-reference/study-design.html">design/ui-reference/study-design.html</a> — <code>2f764a0f5a823551ac8b774466c215bbb5eb1e4897dd1b3da2e7c75193d012fa</code></li><li><a href="../../../design/ui-reference/style-guide.html">design/ui-reference/style-guide.html</a> — <code>1453b8b205534cbbf361cc52cb2ae19e9c0b84711401656af013d6a8c2a63311</code></li><li><a href="../../../design/ui-reference/synthesis-studio.html">design/ui-reference/synthesis-studio.html</a> — <code>a1742692ea189665511a2b455a1bcde673f06973258f941f445d11b5b94cea63</code></li><li><a href="../../../design/ui-reference/task-center.html">design/ui-reference/task-center.html</a> — <code>ee47f6dd88fa1564043192aae0d0f7030e4fe48ddfd673eeaea6b775c017e11e</code></li><li><a href="../../../design/ui-reference/technical-reports.html">design/ui-reference/technical-reports.html</a> — <code>5fb3754d65aa9ffb06c1b8008994bc4ab4c79ba26188fb0c193e8c45b8036ae6</code></li><li><a href="../../../design/ui-reference/theory-map.html">design/ui-reference/theory-map.html</a> — <code>729b32cf41942a900057721f4402d8fab48f005b4e31e9e6ac3abf88c93db44d</code></li><li><a href="../../../design/ui-reference/REFERENCE_MANIFEST.yaml">design/ui-reference/REFERENCE_MANIFEST.yaml</a> — <code>4da9bf6e94c9b2f16b1dbbaff6bd76b90b89ac396321689685ed24dc191c63a5</code></li></ul>
+</section>
+<section class="review-toolbar">
+  <h2>Proposed bounded inventory</h2><ul class="wave-slice-list"><li><span><strong>W2.A02.T01 — Authenticate adopted attachment UI continuation</strong><small>Add one tightly bound, independently reviewed design-first gate/schema route for T01&#x27;s inherited W2.A01 and later approved-reference restoration history without changing product, reference or ordinary task authority.</small><small>Estimate L · dependencies: W2.A02.B00</small></span><span class="status status-pending">Pending</span></li></ul>
+  <h3>Exit criteria</h3><ul class="gate-criteria"><li>W2 is cleanly PAUSED, original T01 is BLOCKED with its 6506 base retained, and the packet binds the exact W2 base, adopted W2.A01, GOV-MIG-0001 and unchanged approved 1.8 package before independent packet review and explicit owner approval.</li><li>The independently reviewed v1.3 control and ADR authenticate exactly historical T02 v1.2 plus current T01 v1.3 contracts, the approved 1.7-to-1.8 change, all named independently reviewed intervening control chains, exact one-off 9727 additive Python inventory/renderer history, and independently classified current 1.8 product; automatic-base 6506 selection denies self-approval and shortened lineage.</li><li>B00 appends shell tasks:[], receives independent review, then separate materialization and activation; only exact W2.A02.T01/S01 execute, with task, slice, exit and security checkpoint reviews before adoption. W2 remains PAUSED until explicit resume.</li><li>Resumed ordinary T01 separately proves real native/Core attachment and current 1.8 conformance through a full original-base UI gate, exact-candidate task checks and independent review; W2 release stays separate.</li></ul>
+</section>
+<section class="section-heading"><span class="eyebrow">Executable projection</span><h2>Materialized task review packets and history</h2><p>The proposed packet inventory above remains distinct from current task state. Each task below shows either its complete append-only review control or an explicit legacy latest-review-only projection.</p></section>
+<p>No amendment task has been materialized.</p>
+
+<section data-amendment-exit-id="W2.A02" data-exit-review-mode="latest-completion-only">
+  <div class="section-heading"><span class="eyebrow">Amendment exit and adoption</span><h2>Independent amendment-exit review</h2></div>
+
+  <p><strong>Legacy latest-completion-only projection.</strong> No immutable amendment-exit rounds are recorded; this view does not fabricate exit-review history.</p>
+  <section class="review-toolbar" data-latest-completion-projection="W2.A02" data-latest-completion-status="PENDING" data-latest-completion-reviewer="none" data-latest-completion-reviewed-at="none" data-latest-completion-notes="none"><h3>Latest completion projection</h3><dl class="summary-grid"><div><dt>Status</dt><dd>PENDING</dd></div><div><dt>Reviewer</dt><dd>none</dd></div><div><dt>Reviewed at</dt><dd><code>none</code></dd></div><div><dt>Evidence</dt><dd>None</dd></div></dl><p><strong>Latest notes:</strong> None</p></section>
+  <div class="section-heading"><span class="eyebrow">Bound Wave checkpoint evidence</span><h3>Adoption checkpoints</h3><p>These typed references are retained separately from exit-review evidence and do not rewrite completion history.</p></div>
+<p>No bound amendment-adoption checkpoint is recorded.</p>
+</section>
+<section class="callout callout-warning">
+  <div><span class="eyebrow">Ordinary Wave execution remains stopped</span><h2>Safe resume boundary</h2><p>First obtain independent approval of this exact packet and explicit human approval. Only then may the amendment continue through independently approved bootstrap, materialization, completion and independent approval of the one task, amendment-exit control/security review, and the W2 adoption checkpoint. The alternatives are an append-only defer or withdraw disposition with an explicit safe resume condition; editing or reapproving W2 in place is prohibited.</p></div>
+</section>
+<details class="plan-details"><summary>Rollback and recovery duties</summary><ul class="gate-criteria"><li>Before approval, revise or defer only inert proposal bytes; keep approved W2/W2.A01/1.8 history and T01&#x27;s claimed base intact.</li><li>On bootstrap/control/review failure, retain W2 PAUSED and T01 BLOCKED, preserve adverse tests and append reviewed remediation; no direct backlog edit or partial manual transition.</li><li>After adoption, a T01 product or classification failure blocks T01/W2; do not erase approved amendment history, silently revert a source edit, auto-retry attachment or weaken the UI gate.</li></ul></details>
+<details class="plan-details"><summary>Read the canonical proposal</summary><article class="plan-article"><pre class='markdown-fallback'>This is an inert, append-only proposal for one bounded UI authority lane. It
+requires an exact hash-bound packet, independent committed-candidate review and
+explicit owner approval before W2.A02 can execute. It does not alter the
+approved Academic Minimal 1.8 reference, activate an amendment, resume the
+blocked task or Wave, or authorize release.
+
+## Decision and exact boundary
+
+**Recommended:** add one narrowly scoped, independently reviewed continuation
+lane to the design-first UI gate so the existing `CAP-05.S01.T01` can prove its
+full frozen-base UI history after adopted `W2.A01`. The lane must distinguish
+the already approved `W2.A01.T02` intentional 1.8 publication and renderer
+delivery from later ordinary-task restoration of the approved interruption and
+restart behavior. It must authenticate both histories from committed Git,
+taskctl, packet, approval, and review records; an implementation agent&#x27;s label
+or shortened base grants no authority. This ECR does not propose a 1.9 design or
+new researcher interaction. The currently approved Academic Minimal 1.8
+package remains byte-identical and governs T01.
+
+At clean commit `b73046628b88bb9e2a47e88f08cc75c90773b7f1` (and earlier
+clean `9ed95f34a051cc4289c68c2cf16022d2c3cc470b`), the full
+`6506c68461144747b0ee9be10853211717aa381d..b73046628b88bb9e2a47e88f08cc75c90773b7f1` UI gate fails because
+the inherited `W2.A01.T02` v1.2 contract is only valid during that amendment&#x27;s
+paused, active T02 boundary. The post-adoption `293483d05aa49f4c7106663e4abf7fcf37ce98a7..b73046628b88bb9e2a47e88f08cc75c90773b7f1`
+range instead finds two T01 renderer source changes but no T01 UI contract.
+These adverse reports are preserved in ignored `artifacts/tmp`; the committed
+[post-adoption mismatch note](../../artifacts/evidence/CAP-05.S01.T01.ui-lineage-mismatch-post-adoption.md)
+binds their hashes and the later 78af reports. The original T01 has
+`review_gate: agent-review`, no `experience_change`, and immutable 6506 claim
+base. When T01 was active, the current `automatic_base` implementation did not
+select it because it had neither `experience_change` nor another qualifying
+marker; it fell back to `HEAD^`. Explicitly supplying 6506 exposed the full
+lineage denial; a HEAD-parent pass would be misleading. Existing v1.0, v1.1,
+v1.2 and linked-correction routes do not admit this complete lineage. Do not
+rewrite the original base, mutate the
+completed T02 contract, or treat the W2.A01 approval as a blanket UI exception.
+
+An alternative is to keep T01 and W2 blocked pending later governed work;
+that is safe but does not complete the approved attachment outcome. A new 1.9
+reference or redesigned attachment route would add an unnecessary experience
+decision, implementation, and verification burden. A short-base check or a
+borrowed T02 contract would hide the original task range and is not a credible
+qualification alternative.
+
+At later clean candidate `78afaf07e08fe987a59c5e2929dfbcd7aafdeb15`,
+the bounded real-Windows evidence advanced. Fresh r12 native picker cancellation,
+selection, protected Core candidate, researcher project-only confirmation,
+saved `attached` receipt, two database reopen phases on each side of a fresh
+application session, encrypted object, canonical provenance/outbox, and exact
+identity-bound `processing` status passed. Its ignored result SHA-256 is
+`3DD4DDCD5BF392DF221B3E97B76F21FFC2094EC281B4A6B5E8CECBFB164E5C48`.
+Fresh r18 native OLE drag passed disarmed-inside and armed-outside denial, then
+armed exact-zone `Copy` with one held stage and candidate; all three attempts
+observed zero HTML5 and stock Tauri file/drag events. Its ignored result SHA-256
+is `A780E08BEC8D1551BCD4F469404430E8D5472D9E7671D931DF3343F0C4882AB6`.
+The r18 drop stops at candidate by design; the separate r12 picker proves the
+confirmation and durable commit. Both runs saw the usual four-node WebView
+subtree and do not resolve r04/r06&#x27;s intermittent fifth `Intermediate D3D
+Window` startup denial. That child remains fail-closed and cannot be admitted
+by class alone without topology, ownership and native-only drop-boundary proof.
+Five further bounded OS-drop starts on the same linked binary (r19–r23) all
+observed the normal four-node topology and passed; they neither reproduced nor
+resolved the fifth-child case. Independent risk review retains the two r04/r06
+pre-show app exits as a blocking availability finding. Selected real signed-LPAC
+worker format/denial tests used explicit signed worker and guardian inputs and
+passed with zero skips in 33.606 seconds; their ignored result SHA-256 is
+`3119F8E2084F404A8DF620A1CC5A5AD3D3F5423227D5BDD0057E2E502FFF9592`.
+The initial wrong-class command ran no tests and remains adverse setup evidence,
+not coverage.
+
+Fresh read-only UI-gate checks on clean committed 78af confirmed the authority
+gap: the full original `6506c68461144747b0ee9be10853211717aa381d..78afaf07e08fe987a59c5e2929dfbcd7aafdeb15`
+report `artifacts/tmp/CAP-05.S01.T01.ui-gate-full-base-78af.log` has SHA-256
+`427514D78E360AB35CD9BA1C3144A2F27C6D3731B61D982D8F402E373A2E2411` and
+rejects the inherited T02 contract outside its exclusive paused activation.
+The post-adoption `293483d05aa49f4c7106663e4abf7fcf37ce98a7..78afaf07e08fe987a59c5e2929dfbcd7aafdeb15`
+report `artifacts/tmp/CAP-05.S01.T01.ui-gate-post-adoption-78af.log` has
+SHA-256 `E836BF89F5F41F287689894CCB24996AD9B1F358B9A6F6F45AFA4B559556BF85`
+and finds the two T01 renderer files with no task-owned UI contract. No
+governed renderer or UI-gate control changed from b730 through 78af. All these
+reports are adverse, not a UI-gate pass. Preserve r04/r06 and earlier picker,
+verifier and UI-gate results alongside the r12/r18 successes.
+
+## Prerequisites and entry
+
+The final packet must bind W2&#x27;s immutable packet and approval, adopted W2.A01&#x27;s
+exact ECR-0009 packet, approval, adoption and independent task/slice/exit
+reviews, the 1.8 approval/publication, GOV-MIG-0001, and the unchanged approved
+1.8 file inventory. The committed post-adoption mismatch note preserves the
+clean 78af r12/r18 proof and exact 78af UI-gate denials without promoting them
+to whole-task completion. It records the intermittent D3D startup availability
+blocker; further unchanged normal-path replay cannot close it. Any later
+product change requires its own exact proof. Preserve every adverse R15/R16 and
+UI-gate result. At packet freeze, require a clean committed taskctl BLOCKED
+`CAP-05.S01.T01` and PAUSED W2 `human-decision` boundary, and verify no ordinary
+task remains IN_PROGRESS or REVIEW, no campaign lease, active recovery hold, or
+competing amendment. This quiescent state is required before ECR validation,
+review, and approval; it is not permission to claim T01 complete. Keep T01&#x27;s
+6506 base and history.
+
+The ECR-0010 proposal source and review page must be committed before its
+v4.1 packet hashes those exact bytes. The packet binds the ordered W2.A01
+predecessor and current 1.8 reference file hashes; its immutable candidate
+requires `planctl ecr validate ECR-0010`, independent exact-commit packet review,
+then explicit owner approval recorded in a new `W2.A02` approval file. Approval
+alone is inert until supported bootstrap and independent review.
+
+## Ordered scope
+
+| Unit | Bounded outcome |
+|---|---|
+| `W2.A02.B00` | Through supported compare-and-swap, append only the approved W2.A02 shell and B00 review projection with `tasks: []`; independently review the exact B00 candidate. Only after B00 approval, separately materialize the exact packet CAP-05 contribution and `W2.A02.T01` inventory, then activate the amendment lease. W2 remains PAUSED and ordinary T01 BLOCKED throughout. |
+| `W2.A02.T01` | Add a distinct versioned adopted-amendment continuation/restoration authority in the UI schema and gate, hostile real-Git tests, the affected design-first procedure, and indexed Proposed ADR-0037. No renderer, Core, native, reference, task-base, or migration edits in this control task. Obtain expanded independent control/security/ADR review before amendment exit. |
+| `W2.A02.S01` and exit | Review integrated control scope and exact approved packet criteria; adopt only after independent exit review and a separate control/security checkpoint. Adoption leaves W2 paused for explicit resume. |
+| Resumed `CAP-05.S01.T01` | Add its own UI evidence contract and independent current conformance classification, qualify the whole original 6506-base range, resolve the intermittent D3D startup denial under the approved native-only boundary, and complete exact-candidate native/Core task evidence and independent review. If a conforming D3D remedy is not proven, keep T01 blocked pending a separate decision rather than waive the startup finding. The r12/r18 passes remain selected evidence, not automatic whole-task qualification. This ordinary task is not an amendment task and is not completed by W2.A02 adoption. |
+
+The proposed `schemaVersion: &quot;1.3&quot;` T01 contract must be **the only current
+ordinary-task contract**, alongside **exactly one authenticated inherited**
+`W2.A01.T02` v1.2 contract in the full 6506 range; no third UI contract is
+admitted. It must bind the immutable W2.A01 approval/publication, T02 task
+claim, independently reviewed exact candidate, and the historical approved
+1.7-to-1.8 reference transition, then bind the separate adopted-W2.A01 to T01
+restoration segment. Attribute every governed reference, renderer, typed-source,
+backlog and UI-gate control commit to its authenticated, independently reviewed
+segment. In particular, authenticate the W2.A01.T01 source rounds and R02
+approval, the separately reviewed `f54da79f` reference-verifier/ADR-0036
+repair (`1f628843` review), the `0d9ab50b`/`089c00c6`/`fff7a04b` active
+gate/fixture maintenance chain (`ab2c868e` independent review), the adopted
+`GOV-MAINT-0025` `52ff3d04` Python inventory candidate (`639a6b2e` review),
+and the later W2.A02.T01 source/review chain. The `3658da21` ADR-check repair
+is covered by the independently reviewed W2.A01.T01 full-range candidate and
+remains a prerequisite to the inherited ADR-0035 association, not a UI-gate
+source exemption; no distinct maintenance review is asserted. A name, path or
+commit hash by itself never substitutes for its immutable evidence/review
+ancestry. The T01 segment
+needs an independent classification of the **current committed product**
+against the unchanged approved 1.8 reference, with exact candidate, captures,
+criteria, reviewer and report hashes; an agent label or a historical T02 review
+cannot substitute. The full T01 `changedFiles` list must cover the original-base
+net governed inventory; per-commit checks must also catch paths added and
+reverted before HEAD. The task owner, live lease, branch, immutable 6506 base,
+and exact candidate remain checked. The selected Work/version identity is
+verified in the separate native/Core task evidence, not inferred from Git UI
+lineage.
+
+The v1.3 schema adds one closed `adoptedContinuationAuthority` object, permitted
+only for `CAP-05.S01.T01` with `changeKind: defect-restoration`, reference ID
+`RO-UI-ACADEMIC-MINIMAL-1.8`, version `1.8`, and predecessor ID
+`RO-UI-ACADEMIC-MINIMAL-1.7`. It requires exact selectors
+`amendmentId: W2.A02`, `changeRequestId: ECR-0010`,
+`controlTaskId: W2.A02.T01`, `inheritedAmendmentId: W2.A01`,
+`inheritedTaskId: W2.A01.T02`, and
+`inheritedContractPath: artifacts/evidence/ui-change/W2.A01.T02.json`;
+canonical `adoptionCommit` and `reactivationCommit` anchors; separately
+enumerated `inheritedUiFiles`, `inheritedUiCommits`, `resumedUiFiles` and
+`resumedUiCommits`; and closed independent `classification` fields `path`,
+`sha256`, and introduction `commit`. The classification path is confined to
+`artifacts/evidence/CAP-05.S01.T01.ui-classification-Rnn.json`. The existing
+`restoration` object states the approved interruption/restart behavior being
+restored. Every selector, anchor, inventory and hash is recomputed against
+committed W2/W2.A01/W2.A02 packets, taskctl state, reviews and Git history;
+contract values are assertions, not authority. Other schema versions cannot
+carry this object, and v1.3 cannot combine it with the v1.0/1.1/1.2 authority
+objects. T01&#x27;s exact original approved task definition is read from the
+`planning/backlog.yaml` Git blob at W2&#x27;s immutable packet commit and checked
+against its human approval, rather than a mutable current task projection.
+
+The classification reuses the existing locked product/reference capture and
+independent visual-disposition reader. Its candidate, reviewer, 1.8 package,
+complete T01 UI commit/path set, source Git blobs and current producer-input
+snapshot must agree. Reuse the existing capture producer for its Core, native
+Rust, renderer, contract, build and checker inventory. The new gate separately
+derives and binds every T01-owned test, fixture, worker or other product input
+not covered by that snapshot, with the classified record&#x27;s exact
+`dependentInputFiles` and Git blobs; an added, omitted, redirected or later
+edited dependent input, including an add-and-revert, invalidates the
+disposition. This adds no file to the six-file control-source envelope. A classification is not task
+approval. The historical v1.2 T02 contract is authenticated at its frozen
+independently reviewed candidate with its then-current active claim and exact
+Git publication/renderer history; an impossible present-day replay of T02&#x27;s
+exclusive live lease/paused state cannot be substituted for that immutable
+record.
+
+The lane may make five **exact-identity-only** exceptions that current generic
+validation denies: (1) allow two contracts only when one is the authenticated
+historical T02 and one is T01&#x27;s new v1.3; (2) recognize the reviewed inherited
+1.7-to-1.8 reference transition while prohibiting a T01 reference edit; (3)
+attribute reviewed control commits in the full range without treating them as
+T01 product self-authorization; and (4) admit T01&#x27;s frozen `agent-review` and
+absent `experience_change` only with the independent current 1.8 conformance
+classification and amendment authority. The fifth is confined to the existing
+`9727f1b195e7dee300e7f3df3c289e7739fb0fdc` T01 product commit: its
+`quality-scope.json` change strictly appends exactly nine canonical Python
+paths introduced as regular `.py` files in that same sole-parent commit,
+preserves every prior entry in order and all other inventory metadata/roots,
+and shares the commit with exactly the two approved 1.8 restoration renderer
+edits. The v1.3 gate verifies the exact immutable commit and tree, original
+T01 claim/history, same-commit file introductions, and no other gate-control
+change. After the gate and full-candidate submission, a separate independent
+T01 review examines this exception and the current product; that review is
+not a prerequisite to the gate. This is not a prior independent control
+approval of `9727`, a reusable mixed-commit pattern, or a general
+quality-inventory exception. All other mixed control/product commits fail.
+`automatic_base` must select T01&#x27;s
+exact 6506 `base_sha` when it is the sole authenticated active continuation
+task; it must never silently use `HEAD^`. All unrelated tasks and all v1.0,
+v1.1 and v1.2 cases keep their existing requirements and denials.
+
+The protected control source delivery is limited to `design/ui-change.schema.json`,
+`tools/ui_change_gate.py`, `tests/foundation/test_ui_change_gate.py`,
+`docs/automation/design-first-ui-changes.md`, indexed Proposed
+`docs/adr/ADR-0037-authenticate-adopted-attachment-ui-continuation.md` plus one
+appended `docs/adr/index.json` entry. Task-owned evidence/review records and
+generated review-site projections are separate workflow outputs, not new
+control-source files. `verification-profiles.json` already invokes the UI gate,
+and ordinary taskctl evidence handles exact changed-file lists; no taskctl or
+verify source change is currently required. If
+taskctl, verification wiring, or another file proves necessary, revise the
+unapproved packet and independently review the exact expanded envelope before
+owner approval. A control commit cannot contain renderer product changes or
+self-qualify under the new lane.
+
+## Acceptance and hostile proof
+
+1. Authenticate W2 and W2.A01 human approvals, immutable ECR-0009 proposal,
+   historical 1.7-to-approved-1.8 publication order, exact T02 candidate and
+   independent review, unchanged T02 v1.2 contract, adopted amendment
+   checkpoint, original T01 claim base, current owner/lease/branch, reviewed
+   W2.A01/W2.A02 control commits, and the exact intervening reviewed
+   verifier, UI-gate, ADR-check and quality-inventory maintenance chains named
+   above. Do not rely on a
+   current-HEAD-only historical T02 gate invocation as a substitute for its
+   frozen review and Git record.
+2. Allow only the historical T02 contract and current T01 v1.3 contract, with
+   the approved reference change confined to the authenticated T02 segment and
+   independent current 1.8 classification for T01. Reject forged/missing
+   approvals or reviews, different tasks, missing/extra UI contracts, reference
+   rewrite in the T01 segment, stale classification/captures/producer snapshot,
+   source/path redirection, hidden add-then-revert history, every mixed
+   control/product commit except the exact verified 9727 additive inventory,
+   a changed 9727 tree or noncanonical/non-same-commit Python addition,
+   stale/foreign lease/base/branch, and any renderer
+   path/bytes or stock Tauri drop event. Test that CLI automatic base is 6506,
+   not `HEAD^`, for the exact active T01 and remains fail-closed otherwise.
+3. Keep all existing v1.0, v1.1 and v1.2 passing and adversarial assertions
+   unchanged. Run focused schema and real-Git gate tests, ADR association,
+   taskctl/planctl state checks and current UI conformance on committed inputs.
+   Preserve failed findings and obtain expanded independent control review.
+4. W2.A02 exit proves the exact authority route only. The selected r12 picker,
+   protected commit/database/restart, r18 native-only OS-drop and signed-LPAC
+   format/denial results support their observed boundaries; they do not close
+   r04/r06&#x27;s intermittent D3D startup denial or qualify all T01 criteria.
+   Remaining interruption/cancellation coverage, exact-candidate independent
+   T01 review, later slice checks, fresh W2 qualification and human release
+   gate remain separate task/Wave obligations.
+
+## Effort, risks and rollback
+
+Proposed W2.A02.T01 estimate is L/5 because the control must authenticate two
+contracts across the full original base, several independently reviewed
+maintenance chains, a one-off mixed inventory commit, current independent
+capture classification and hostile real-Git compatibility cases. The
+independent proposal preflight must assess that estimate before packet freeze;
+the later exact-commit packet review must confirm it before owner approval.
+The v4.1 `new-product-work` value
+is its non-refactor classification: this additive control enables completion
+of the already approved researcher-facing attachment outcome, and includes no
+structural cleanup or debt repayment. It does not assert a renderer or Core
+edit in W2.A02.T01. The approved `planning/W2-initiation.md` itemizes
+33 atomic tasks in **engineering-hours**, with `P_hours = 236 + 294 = 530`;
+the governing 15% supplemental-refactoring ceiling is **79.5 engineering-hours**.
+Its planned W2-RUNNER-PROGRESS 2 hours were already inside the 530-hour scope;
+only excess or later supplemental work draws on that ceiling. The v4.1 packet
+also requires a normalized deterministic machine baseline of **143 points**
+at S=1, M=3, L=5, copied from the immutable `c85a59f3` backlog, with a
+corresponding machine projection of `0.15 × 143 = 21.45 points`. This point
+projection is not an hours conversion, a replacement of `P_hours`, or a budget
+reset.
+
+Documented supplemental allocations and reported spending are zero so far,
+including W2.A01&#x27;s zero proposed allocation and this proposal&#x27;s
+`refactorAllocations: []`, `refactorPoints: 0`. Historical actual structural
+engineering-hours, including mixed work and abandoned/spent portions, have
+**not** been independently time-reconciled. The controlling cumulative
+`R_hours = actual supplemental refactoring already performed + committed
+remaining` across all W2 capability, slice, task, linked correction,
+maintenance and amendment work therefore remains unverified. This amendment
+proposes no new supplemental structural work and claims neither actual
+`R_hours=0` nor unused capacity from the documented allocation zero. Before
+committing any future supplemental structural addition, classify and quantify
+actual spent plus committed remaining engineering-hours across that full W2
+scope, including mixed and abandoned work, and establish compliance with the
+79.5-hour ceiling; reconcile the resulting charge at task and checkpoint
+review. This L/5 control addition is proposed planned amendment delivery, not
+supplemental refactoring. Neither the 530-hour governing base nor the
+143-point machine projection is enlarged by this amendment.
+
+The principal risk is admitting an unreviewed UI history through a nominal
+continuation exception. Keep the ECR exact, fail closed on unknown commit
+attribution, and require independent review of both the control and T01
+classification. Before owner approval, revise or defer only inert proposal
+bytes. After approval, retain the paused hold and append adverse/remediation
+rounds for failures; never rewrite W2, W2.A01, 1.8, T02 evidence or the 6506
+task base. No automatic attach retry, renderer file-path fallback, broad file
+grant, remote effect, destructive research I/O, release approval, or claim of
+Wave completion is authorized.
+
+Exact resume condition: a final hash-bound ECR-0010 packet at a quiescent W2
+boundary passes validation and independent packet review; the owner explicitly
+approves that exact packet; its immutable W2.A02 approval record is committed
+and `planctl ecr validate ECR-0010 --require-approved` passes. Only then may
+supported B00 shell, independent B00 review, separate exact materialization,
+activation and then the bounded W2.A02 control task begin. Ordinary T01
+resumes only after reviewed W2.A02 adoption and explicit W2 resume.</pre></article></details>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span>Static, local-first review surface</span>
+    <span>Capability decisions precede implementation</span>
+  </footer>
+  <script src="../assets/review.js"></script>
+</body>
+</html>
