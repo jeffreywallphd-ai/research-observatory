@@ -1,7 +1,7 @@
 ---
 document_type: generated-backlog-status-summary
 source: planning/backlog.yaml
-source_sha256: 74dcec7e95f0061d42a3ddd32d75342253a2838d62de459afcf4bc24fe8b3e27
+source_sha256: 50e1429bd49bd89668fa9ec1ed91674dc1c3edd5940fae030daa2499a2e22d1d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -20,7 +20,7 @@ manual_edit: prohibited
 | Enabler tasks | 18 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 11 |
+| Wave amendments | 12 |
 | Release gates | 12 |
 
 ## Status distributions
@@ -62,6 +62,7 @@ manual_edit: prohibited
 | Status | Count |
 |---|---:|
 | `ADOPTED` | 10 |
+| `APPROVED` | 1 |
 | `SUPERSEDED` | 1 |
 
 ### Enabler task state
@@ -89,6 +90,7 @@ Proposal approval, materialization lifecycle, and campaign state remain distinct
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 4 |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 2 |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` | `APPROVED` | `COMPLETE` | 1 |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `APPROVED` | `REVIEW` | `NONE` | 0 |
 
 ## Amendment-exit review and adoption projections
 
@@ -640,6 +642,20 @@ Immutable exit rounds, the latest completion projection, and bound adoption chec
 
 - `W2.CP03` `security` by codex-w2-implementation at `2026-10-03T14:40:21+00:00` — Adopt independently reviewed ECR-0010 control route; retain original CAP-05.S01.T01 and W2 gates
   - amendment `W2.A02` / `artifacts/evidence/W2.A02.adoption.json` / `ff767dcbc6aab20106500d827865b0892852416c6dedf55e05e43d0fec44aaa5` / `db7edd6c6021ed78afd9084b37d2ef48e1fc12cb`
+
+### Amendment-exit review and adoption — W2.A03
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
 
 
 ## Task review history projections

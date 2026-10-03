@@ -53411,3 +53411,54 @@ wave_amendments:
         findings: []
         closures: []
       current_submission: null
+- id: W2.A03
+  change_request_id: ECR-0011
+  target_wave: W2
+  kind: product-scope-security-experience
+  approval_reference:
+    path: planning/wave-amendment-approvals/W2.A03.json
+    sha256: 8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087
+    introduction_commit: c972e2116113afa7ad84f0e43bdad58660cc69bb
+  lifecycle:
+    status: APPROVED
+    history:
+    - id: E01
+      status: APPROVED
+      actor: human:repository-owner
+      at: '2026-10-03T21:08:57Z'
+      rationale: 'The repository owner answered ''Approve this exact reviewed packet'' to the displayed ECR-0011/W2.A03 decision
+        identifying exact reviewed candidate 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5, packet SHA-256 31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3,
+        and independent R01 approval recorded at c29e582fd161bd4df740191e532e47e3c5e991a3. This approves only the bounded
+        already-approved Academic Minimal 1.8 desktop witness/control and consumer activation amendment in that packet: W2.A03.B00,
+        W2.A03.S01, ordered W2.A03.T01 then W2.A03.T02, exact source envelopes, checks and independent reviews. Approval is
+        inert until supported B00 bootstrap, separate B00 review, materialization and activation. It does not change the approved
+        1.8 reference, original CAP-05.S01.T01 base or criteria, Core/native security or migration authority, or the unresolved
+        fifth-D3D finding. W2 remains PAUSED and original CAP-05.S01.T01 remains BLOCKED; joined CAP-04.S05 integration, original
+        T01 native/Core/current-UI proof, W2 qualification and separate human release decision remain due. This timestamp
+        records binding of the owner''s explicit answer to the exact reviewed packet, not a new release decision.'
+  bootstrap:
+    id: W2.A03.B00
+    status: REVIEW
+    implementer: codex-w2-implementation
+    implementation_commit: 17da0a4fd81da38e7d4b1430f935dcd3f7028085
+    submission_branch: codex/w2-implementation
+    scope_addenda: []
+    evidence:
+    - type: criterion-manifest
+      path: artifacts/evidence/W2.A03.B00.json
+      sha256: 986c13d7ba63af050aedc96bc94d02afd35d13aaeef14521ff81f2e1f6ee95ab
+      commit: 17da0a4fd81da38e7d4b1430f935dcd3f7028085
+      recorded_at: '2026-10-03T21:25:35+00:00'
+    review:
+      reviewer: null
+      result: null
+      reviewed_at: null
+      notes: null
+  campaign: null
+  tasks: []
+  completion:
+    status: PENDING
+    reviewer: null
+    reviewed_at: null
+    evidence: []
+    notes: null

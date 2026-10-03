@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "task-criterion-evidence",
+  "taskId": "W2.A03.B00",
+  "commit": "17da0a4fd81da38e7d4b1430f935dcd3f7028085",
+  "baseCommit": "c972e2116113afa7ad84f0e43bdad58660cc69bb",
+  "branch": "codex/w2-implementation",
+  "changedFiles": [
+    "planning/review-site/enablers/ECR-0011.html",
+    "planning/review-site/enablers/index.html",
+    "planning/review-site/manifest.json"
+  ],
+  "checks": [
+    {
+      "command": ".venv/Scripts/python.exe -B tools/planctl.py --repo . ecr validate ECR-0011 --require-approved",
+      "exitCode": 0,
+      "result": "At the fixed clean 17da0a4f candidate, ECR-0011 is approved and history-bound to the exact independently reviewed packet, immutable R01 ledger and committed owner record."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B tools/taskctl.py --file planning/backlog.yaml validate",
+      "exitCode": 0,
+      "result": "Canonical backlog validates: 20 capabilities, 117 slices, 389 tasks and 12 release gates."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B tools/backlog_views.py --repo . --check",
+      "exitCode": 0,
+      "result": "Generated backlog views pass without change."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -B tools/plan_review_check.py --repo . --report artifacts/tmp/W2.A03.B00-site-validation.json",
+      "exitCode": 0,
+      "result": "Retained ignored report artifacts/tmp/W2.A03.B00-site-validation.json has SHA-256 2ce47eed765b1371db7f402a6908814de3285f6d1e23534441cdbd0da60c0a43 and status pass: 19 capabilities, 111 slices, 337 tasks, 495 HTML pages, errors=[] and warnings=[]."
+    },
+    {
+      "command": "From tests/foundation: ..\\..\\.venv\\Scripts\\python.exe -B -m unittest -v test_taskctl_workflow.TaskctlWorkflowTests.test_post_migration_v4_successor_preserves_interleaved_history_and_first_increment test_taskctl_workflow.TaskctlWorkflowTests.test_b00_r01_review_and_materialization_revalidate_the_frozen_bootstrap",
+      "exitCode": 0,
+      "result": "Both selected real-controller successor/bootstrap-review/materialization tests pass (2 tests, 4.017 seconds)."
+    },
+    {
+      "command": "git diff --check c972e2116113afa7ad84f0e43bdad58660cc69bb..17da0a4fd81da38e7d4b1430f935dcd3f7028085; git diff --name-only c972e2116113afa7ad84f0e43bdad58660cc69bb..17da0a4fd81da38e7d4b1430f935dcd3f7028085",
+      "exitCode": 0,
+      "result": "Patch hygiene passes and the approval-to-candidate changed paths are exactly the three packet-authorized generated ECR-0011 site files, all tracked regular Git blobs."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "criterion_index": 1,
+      "evidence": [
+        "The committed owner approval at c972e2116113afa7ad84f0e43bdad58660cc69bb binds reviewed ECR-0011 candidate 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5, packet SHA-256 31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3, and independently approved R01 ledger introduced at c29e582fd161bd4df740191e532e47e3c5e991a3, SHA-256 9f3b07f9f23c106b78ccb71d7d37d323af185f855c2a7395483ff35863fecda8; fresh planctl --require-approved passes at this candidate.",
+        "That reviewed packet binds the immutable W2 base, ordered adopted W2.A01/A02, GOV-MIG-0001, reviewed GOV-MAINT-0026 and W2.C10.T01 chains, and unchanged approved 55-file Academic Minimal 1.8 reference inventory. The B00 candidate changes none of those sources."
+      ]
+    },
+    {
+      "criterion_index": 2,
+      "evidence": [
+        "The c972e211..17da0a4f Git diff changes only planning/review-site/enablers/ECR-0011.html, planning/review-site/enablers/index.html and planning/review-site/manifest.json. The ECR-0011 detail/register present human APPROVED while W2.A03 is NOT_MATERIALIZED and B00 is NOT_SUBMITTED; they do not claim amendment task execution.",
+        "The supported bootstrap-submit transition is still due: it must atomically append only the W2.A03 shell with B00 REVIEW and tasks: []. Independent B00 review must verify that actual append before approval. This site-only candidate and its pre-submit evidence do not claim the shell already exists."
+      ]
+    },
+    {
+      "criterion_index": 3,
+      "evidence": [
+        "At the candidate, W2 remains PAUSED in ordinary Wave scope with no lease; CAP-05.S01.T01 remains BLOCKED at original base 6506c68461144747b0ee9be10853211717aa381d without a lease. No ordinary W2 task is IN_PROGRESS or REVIEW; W2.A01/A02 are ADOPTED and W2.A03 is not yet materialized.",
+        "The actual B00 append and independent review precede separate packet-exact W2.A03.S01/T01/T02 materialization and later amendment activation. B00 does not start T01, approve T02, resume the ordinary Wave, complete a slice or grant release.",
+        "The complete three-path approval-to-candidate Git diff contains no renderer, native, Core, approved design/ui-reference, consumer activation, baseline, migration, original task-base, controller or release file. W2/A01/A02 approvals, 1.8 publication, GOV26/C10 review history, original T01 base and GOV-MIG-0001 remain unchanged.",
+        "No ordinary task claim, Wave resume, destructive research I/O, external effect or release decision occurs in B00. Original T01, joined S05, W2 qualification and human release gates remain open."
+      ]
+    }
+  ],
+  "unverifiedItems": [],
+  "verificationSelection": {
+    "riskAnalysis": "B00 changes precisely three generated approval projections and relies on the existing append-only controller. Exact ECR approval validation, canonical backlog and view checks, the generated-site checker, two focused controller transition tests and exact Git scope/mode assertions cover authority, atomicity and presentation risks. No product/runtime suite is indicated by this projection-only candidate.",
+    "deferred": "Supported bootstrap-submit must append the B00 REVIEW shell with tasks:[]; independent B00 review must inspect that state before separate materialization and activation. W2.A03.T01 owns witness/gate/ADR hostile proof; W2.A03.T02 owns activation/assembly/baseline capture; original CAP-05.S01.T01 and W2 exit retain native/Core, security, privacy, accessibility, packaging and release qualification."
+  },
+  "reviewerDisposition": {
+    "status": "pending-review",
+    "requiredGate": "independent-control-review",
+    "note": "Review exact 17da0a4f candidate, approved packet/owner record, this criterion evidence and the later supported B00 REVIEW append. Confirm only the three authorized source paths, tasks:[], unchanged W2 PAUSED/original T01 BLOCKED holds and no open findings before B00 approval."
+  }
+}

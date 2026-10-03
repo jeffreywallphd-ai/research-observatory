@@ -3,7 +3,7 @@ document_type: generated-backlog-plan
 plan_id: RO-IMPLEMENTATION-PLAN-001
 plan_version: 1.3
 source: planning/backlog.yaml
-source_sha256: 74dcec7e95f0061d42a3ddd32d75342253a2838d62de459afcf4bc24fe8b3e27
+source_sha256: 50e1429bd49bd89668fa9ec1ed91674dc1c3edd5940fae030daa2499a2e22d1d
 generator: tools/backlog_views.py
 manual_edit: prohibited
 ---
@@ -30,7 +30,7 @@ This YAML file is the authoritative task, dependency, gate, and progress ledger.
 | Enabler tasks | 18 |
 | Waves | 12 |
 | Wave approval bases | 2 |
-| Wave amendments | 11 |
+| Wave amendments | 12 |
 | Release gates | 12 |
 
 See `planning/status-summary.md` for the generated status distributions and capability progress table.
@@ -52,6 +52,7 @@ See `planning/status-summary.md` for the generated status distributions and capa
 | `W1` | `W1.A09` | `ECR-0008` | `planning/wave-amendment-approvals/W1.A09.json` | `ADOPTED` |
 | `W2` | `W2.A01` | `ECR-0009` | `planning/wave-amendment-approvals/W2.A01.json` | `ADOPTED` |
 | `W2` | `W2.A02` | `ECR-0010` | `planning/wave-amendment-approvals/W2.A02.json` | `ADOPTED` |
+| `W2` | `W2.A03` | `ECR-0011` | `planning/wave-amendment-approvals/W2.A03.json` | `APPROVED` |
 
 ## Waves
 
@@ -2755,6 +2756,34 @@ See `planning/status-summary.md` for the generated status distributions and capa
 **Latest notes:** Independent expanded control, security and ADR review of the exact W2.A02.T01 source candidate f989ba75 and frozen REVIEW state 4872e6ca. The 11-path task-base diff contains the six ECR-0010 control-source files and five generated planning outputs; no renderer, native, Core, approved reference, original T01 base, migration or release source changed. The initial dcb37d84 draft had a real six-file scope bypass: the retained pre-fix red log SHA-256 21bc427e84b308b81e35db5cc48a23fe48485d036522295b543b1b6f5d8c2f95 records ValueError not raised for an extra reviewed worker file. The repaired f989ba75 real-Git regression denies that file and passed (SHA-256 a93a0c79463963fc9782467a4760e8386bc2eea21d8388aa3443ad329f337b17). The 13-case authority/compatibility suite passed (SHA-256 e71f56d16ab024a5102d9d5bf51394730d3d07861c0b943e3da866af2e6768b9); all ten manifest log hashes match their retained outputs. I inspected the exact packet-bound 907ed1ad planning-site follow-up and 9b72d021 relative-worktree taskctl repair as historical context, and the independently reviewed 3658/0948 ADR-check, 694a T01 groundwork, 9727 mixed commit, verifier, active-gate and maintenance chains. No prior standalone approval is attributed to 907ed1ad or 9b72d021; this review covers their bounded effect on the new lane. The v1.3 gate binds the inherited T02 review/publication, original T01 claim, current lease, separate adoption/reactivation, per-commit UI/reference/control history, exact 9727 exception, and independent capture/dependent-input classification. Proposed ADR-0037 remains documentary and does not supersede Accepted ADR-0003. At clean REVIEW commit 4872e6ca, independent read-only taskctl validation and planning review-site check both passed. This approves only the W2.A02.T01 control task; W2.A02 slice/exit/security checkpoint/adoption, actual CAP-05.S01.T01 current-product classification/native and startup proof, later W2 qualification and human release remain separate.
 
 **Currently open findings:** -
+
+## W2.A03 - ECR-0011
+
+**Target Wave / class:** `W2` / `product-scope-security-experience`
+
+**Approval record:** `planning/wave-amendment-approvals/W2.A03.json` (`8852d6631a6656e94cc75e4f9dc705c7095ecf111786748e5630fe13b8fa9087`)
+
+**Lifecycle / bootstrap / campaign / completion:** `APPROVED` / `REVIEW` / `NONE` / `PENDING`
+
+**Append-only lifecycle history:**
+
+- `E01` `APPROVED` at `2026-10-03T21:08:57Z` by human:repository-owner: The repository owner answered 'Approve this exact reviewed packet' to the displayed ECR-0011/W2.A03 decision identifying exact reviewed candidate 746c05dcd7dbabaa7f5eebee8e3fa56b8ac6b9b5, packet SHA-256 31a31459b0895316972203e6b2b301ca9bc2fb83bdd566034ff61e1bc0a3b0e3, and independent R01 approval recorded at c29e582fd161bd4df740191e532e47e3c5e991a3. This approves only the bounded already-approved Academic Minimal 1.8 desktop witness/control and consumer activation amendment in that packet: W2.A03.B00, W2.A03.S01, ordered W2.A03.T01 then W2.A03.T02, exact source envelopes, checks and independent reviews. Approval is inert until supported B00 bootstrap, separate B00 review, materialization and activation. It does not change the approved 1.8 reference, original CAP-05.S01.T01 base or criteria, Core/native security or migration authority, or the unresolved fifth-D3D finding. W2 remains PAUSED and original CAP-05.S01.T01 remains BLOCKED; joined CAP-04.S05 integration, original T01 native/Core/current-UI proof, W2 qualification and separate human release decision remain due. This timestamp records binding of the owner's explicit answer to the exact reviewed packet, not a new release decision.
+
+### Amendment-exit review and adoption — W2.A03
+
+**Exit-review mode:** `legacy latest-completion-only projection` — no immutable exit rounds are recorded; this view does not fabricate history.
+
+**Latest completion projection:** `PENDING` by - at `-`
+
+**Latest completion evidence:** -
+
+**Latest completion notes:** -
+
+**Bound amendment-adoption checkpoints:**
+
+- None
+
+**Bounded tasks:**
 
 
 ## Linked corrective tasks
