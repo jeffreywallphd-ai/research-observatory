@@ -21,16 +21,16 @@ from fastapi import APIRouter, FastAPI, Request, Response
 from pydantic import Field, ValidationError, field_validator
 from starlette.requests import ClientDisconnect
 
-from workers.document.inspection import MAX_DOCUMENT_BYTES, DocumentInspectionError
-
 from .corpus.membership import CorpusProblem
 from .import_api import BoundedImportRoute
 from .ingestion.import_drafts import DraftValue, Identity, ProjectIdentity
 from .ports.document_attachments import (
+    MAX_DOCUMENT_BYTES,
     AttachmentCandidate,
     AttachmentProblem,
     DocumentAttachment,
     DocumentAttachmentStatus,
+    DocumentInspectionProblem,
 )
 from .ports.import_previews import PreviewProblem
 from .ports.object_store import (
@@ -259,7 +259,7 @@ def _problem(request: Request, status: int, code: str, detail: str, remediation:
 
 
 def _mapped_error(request: Request, error: BaseException) -> CoreProblem:
-    if isinstance(error, DocumentInspectionError):
+    if isinstance(error, DocumentInspectionProblem):
         code = error.code
         if code == "oversize":
             return _problem(
@@ -590,7 +590,7 @@ def register_document_attachment_routes(app: FastAPI, service: Callable[[Request
             return action(runtime(request))
         except (
             AttachmentProblem,
-            DocumentInspectionError,
+            DocumentInspectionProblem,
             ObjectStoreProblem,
             PreviewProblem,
             CorpusProblem,
@@ -613,7 +613,7 @@ def register_document_attachment_routes(app: FastAPI, service: Callable[[Request
             candidate = await _stage_stream(request, runtime(request))
         except (
             AttachmentProblem,
-            DocumentInspectionError,
+            DocumentInspectionProblem,
             ObjectStoreProblem,
             PreviewProblem,
             CorpusProblem,

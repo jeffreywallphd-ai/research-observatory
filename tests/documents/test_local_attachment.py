@@ -68,6 +68,26 @@ PROJECT_ID = object_fixtures.PROJECT_ID
 MemoryKeyProvider = object_fixtures.MemoryKeyProvider
 
 
+class DocumentInspectionAdapterTests(unittest.TestCase):
+    def test_worker_denial_crosses_port_as_content_free_problem(self) -> None:
+        from research_observatory_core.document_attachment_repository import _inspect_signed_worker
+        from research_observatory_core.ports.document_attachments import DocumentInspectionProblem
+
+        from workers.document.inspection import DocumentInspectionError
+
+        with (
+            patch(
+                "workers.windows.document_launcher.inspect_document",
+                side_effect=DocumentInspectionError("password-protected"),
+            ),
+            self.assertRaises(DocumentInspectionProblem) as caught,
+        ):
+            _inspect_signed_worker(
+                io.BytesIO(b"synthetic"), filename="synthetic.pdf", declared_media_type="application/pdf", cancel=None
+            )
+        self.assertEqual("password-protected", caught.exception.code)
+
+
 class AttachmentStagingTests(unittest.TestCase):
     def setUp(self) -> None:
         self.fixture = object_fixtures.EncryptedObjectStoreTests(methodName="runTest")

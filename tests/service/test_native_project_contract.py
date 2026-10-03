@@ -21,12 +21,7 @@ from ui_conformance import confined_path, stable_file_bytes  # noqa: E402
 
 
 def project_probe_build_command(cargo: Path, *, release: bool = False) -> list[str]:
-    """Examples need the same Common Controls v6 activation as Tauri's main bin.
-
-    Tauri's resource compiler attaches the production manifest to binary targets,
-    not this example. Keep the correction in the example verification build;
-    do not broaden production settings, dependencies or privileges.
-    """
+    """Build the probe with the single manifest embedded for examples by build.rs."""
     return [
         str(cargo),
         "rustc",
@@ -40,14 +35,6 @@ def project_probe_build_command(cargo: Path, *, release: bool = False) -> list[s
         "--example",
         "project_contract_probe",
         *(["--release"] if release else []),
-        "--",
-        "-C",
-        "link-arg=/MANIFEST:EMBED",
-        "-C",
-        "link-arg=/MANIFESTUAC:level='asInvoker' uiAccess='false'",
-        "-C",
-        "link-arg=/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' "
-        "version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'",
     ]
 
 

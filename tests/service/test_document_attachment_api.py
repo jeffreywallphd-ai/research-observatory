@@ -249,6 +249,24 @@ class DocumentAttachmentApiTests(unittest.TestCase):
         self.assertEqual(422, repeated.status_code)
         self.assertEqual(0, self.runtime.stage_calls)
 
+    def test_portable_inspection_denials_remain_actionable_without_worker_details(self) -> None:
+        from research_observatory_core.ports.document_attachments import DocumentInspectionProblem
+
+        data = b"synthetic"
+        frame = self._frame(self._header(len(data)), data)
+        for code, status, public in (
+            ("password-protected", 422, "RO-CORE-DOCUMENT-PASSWORD-PROTECTED"),
+            ("worker-unavailable", 503, "RO-CORE-DOCUMENT-WORKER-UNAVAILABLE"),
+        ):
+            with (
+                self.subTest(code=code),
+                patch.object(self.runtime, "stage", side_effect=DocumentInspectionProblem(code)),
+            ):
+                response = self._stage(frame)
+                self.assertEqual(status, response.status_code, response.text)
+                self.assertEqual(public, response.json()["code"])
+                self.assertNotIn(data.decode(), response.text)
+
     def test_private_stage_requires_core_capability_and_hides_invalid_input(self) -> None:
         data = b"Synthetic input"
         private_path = r"C:\private-research\secret.txt"

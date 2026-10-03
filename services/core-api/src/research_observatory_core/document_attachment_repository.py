@@ -23,12 +23,14 @@ from .corpus_repository import SqliteCorpusRepository
 from .domain_contracts import is_uuid_v7, new_uuid_v7
 from .ports.corpus import CorpusActor
 from .ports.document_attachments import (
+    MAX_DOCUMENT_BYTES,
     AttachmentCandidate,
     AttachmentProblem,
     AttachmentStatusState,
     DocumentAttachment,
     DocumentAttachmentStatus,
     DocumentInspection,
+    DocumentInspectionProblem,
 )
 from .ports.object_store import ObjectPutCommand, ObjectStagingCancelled, ObjectStore
 from .ports.repositories import AggregateRevisionDraft, AtomicRepositoryEvent, MaterialDependency
@@ -39,7 +41,6 @@ from .rights_policy import RightsDecision, RightsRequest, RightsSubject, RightsU
 from .rights_repository import RightsProblem, SqliteRightsRepository, _digest
 from .storage import CanonicalConnection
 
-MAX_DOCUMENT_BYTES = 128 * 1024 * 1024
 _FORMATS = frozenset({"pdf", "jats", "tei", "xml", "html", "docx", "plain-text"})
 _SESSION = re.compile(r"[0-9a-f]{32}\Z")
 
@@ -66,9 +67,13 @@ def _inspect_signed_worker(
 ) -> DocumentInspection:
     # This import is intentionally at the platform adapter edge. The service
     # contract itself carries no Windows path, worker handle or process token.
+    from workers.document.inspection import DocumentInspectionError
     from workers.windows.document_launcher import inspect_document
 
-    return inspect_document(source, filename=filename, declared_media_type=declared_media_type, cancel=cancel)
+    try:
+        return inspect_document(source, filename=filename, declared_media_type=declared_media_type, cancel=cancel)
+    except DocumentInspectionError as error:
+        raise DocumentInspectionProblem(error.code) from None
 
 
 class LocalDocumentAttachmentService:

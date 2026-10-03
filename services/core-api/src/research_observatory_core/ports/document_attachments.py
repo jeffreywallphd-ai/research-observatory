@@ -7,6 +7,16 @@ from typing import Literal, Protocol
 
 from ..rights_policy import RightsSubject
 
+MAX_DOCUMENT_BYTES = 128 * 1024 * 1024
+
+
+class DocumentInspectionProblem(ValueError):
+    """Content-free inspection denial crossing the portable attachment port."""
+
+    def __init__(self, code: str) -> None:
+        self.code = code
+        super().__init__(code)
+
 
 class DocumentInspection(Protocol):
     @property

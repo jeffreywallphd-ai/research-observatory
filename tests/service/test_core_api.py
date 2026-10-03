@@ -62,6 +62,25 @@ def authenticated_client(app: FastAPI | None = None) -> TestClient:
 
 
 class CoreApiTests(unittest.TestCase):
+    def test_document_attachment_http_contract_imports_without_worker_package(self) -> None:
+        script = (
+            "import sys\n"
+            "sys.path.insert(0, sys.argv[1])\n"
+            "from research_observatory_core.document_attachment_api import DocumentStageCommand\n"
+            "from research_observatory_core.ports.document_attachments import MAX_DOCUMENT_BYTES\n"
+            "assert MAX_DOCUMENT_BYTES == 128 * 1024 * 1024\n"
+            "assert not any(name == 'workers' or name.startswith('workers.') for name in sys.modules)\n"
+        )
+        isolated = subprocess.run(
+            [sys.executable, "-I", "-c", script, str(SERVICE_SRC)],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+        self.assertEqual(0, isolated.returncode, isolated.stdout + isolated.stderr)
+
     def test_project_projection_binds_identity_and_exact_compatibility_recovery(self) -> None:
         projection = {
             "schemaVersion": "1.0",
